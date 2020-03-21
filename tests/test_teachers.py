@@ -57,5 +57,30 @@ class TestAbstractImageTeacher(unittest.TestCase):
         self._test_display_output('resnet152')
 
 
+class TestParlAIDialogTeacher(unittest.TestCase):
+    def test_good_fileformat(self):
+        """
+        Checks that we fail to load a dataset where the use specified eval_labels.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "goodfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\ttext:input\tlabels:good label\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp}
+            testing_utils.display_data(opt)
+
+    def test_bad_fileformat(self):
+        """
+        Checks that we fail to load a dataset where the use specified eval_labels.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\ttext:input\teval_labels:bad label\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp}
+            with self.assertRaises(ValueError):
+                testing_utils.display_data(opt)
+
+
 if __name__ == '__main__':
     unittest.main()

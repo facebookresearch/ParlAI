@@ -8,9 +8,13 @@ Utility functions and classes for handling text strings.
 """
 
 
-def normalize_reply(text: str) -> str:
+def normalize_reply(text: str, version=1) -> str:
     """
     Standardize the capitalization and punctuation spacing of the input text.
+
+    Version 1: Fix sentence start casing, and punctuation.
+
+    Version 2: Add trailing period, if missing.
     """
 
     switch_list = [(' .', '.'), (' ,', ','), (' ?', '?'), (' !', '!'), (" ' ", "'")]
@@ -41,6 +45,9 @@ def normalize_reply(text: str) -> str:
     # get rid of surrounding whitespace
     new_text = new_text.strip()
     new_text = new_text.replace('  ', ' ')
+
+    if version > 1 and new_text and new_text[-1] not in '!.?)"\'':
+        new_text += '.'
 
     return new_text
 

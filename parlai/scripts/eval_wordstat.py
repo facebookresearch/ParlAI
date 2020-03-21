@@ -75,7 +75,7 @@ def setup_args(parser=None):
         default=True,
         help='Compute %% of unique responses from the model',
     )
-    parser.set_defaults(datatype='valid', model='repeat_label')
+    parser.set_defaults(datatype='valid')
     TensorboardLogger.add_cmdline_args(parser)
     return parser
 

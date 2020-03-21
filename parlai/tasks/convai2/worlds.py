@@ -9,7 +9,7 @@ from copy import deepcopy
 from parlai.core.worlds import create_task
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.tasks.self_chat.worlds import SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 import random
 from typing import List
@@ -23,6 +23,7 @@ def load_personas(opt):
     if convai2_opt['datatype'].startswith('train'):
         convai2_opt['datatype'] = 'train:evalmode'
     convai2_opt['interactive_task'] = False
+    convai2_opt['selfchat_task'] = False
     convai2_agent = RepeatLabelAgent(convai2_opt)
     convai2_world = create_task(convai2_opt, convai2_agent)
     personas = set()
@@ -115,7 +116,7 @@ class InteractiveWorld(DialogPartnerWorld):
             self.cnt = 0
 
 
-class InteractiveSelfchatWorld(SelfChatBaseWorld):
+class SelfChatWorld(SelfChatBaseWorld):
     def init_contexts(self):
         self.personas_list = load_personas(self.opt)
 

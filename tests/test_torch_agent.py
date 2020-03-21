@@ -741,6 +741,14 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
+        # test global_end_token, this will append a selected token to the end
+        # of history block
+        agent = get_agent(history_add_global_end_token='end')
+        agent.history.reset()
+        agent.history.update_history(obs)
+        vec = agent.history.get_history_vec()
+        self.assertEqual(vec, deque([1, 2, 3, MockDict.END_IDX]))
+
     def test_observe(self):
         """
         Make sure agent stores and returns observation.

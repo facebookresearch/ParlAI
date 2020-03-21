@@ -383,6 +383,24 @@ class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
             yield (t, a), e
 
 
+class ClassifierTeacher(CandidateTeacher):
+    """
+    Classifier Teacher.
+
+    Good for testing simple classifier models.
+    """
+
+    def setup_data(self, fold):
+        raw = super().setup_data(fold)
+        for (t, _a, _r, _c), e in raw:
+            letters = t.split(' ')
+            # everything starts with 0 or 1
+            letters[0] = str(int(int(t[0]) % 2))
+            label = 'one' if letters[0] == '1' else 'zero'
+            text = ' '.join(letters)
+            yield (text, [label], 0, ['one', 'zero']), e
+
+
 class BadExampleTeacher(CandidateTeacher):
     """
     Teacher which produces a variety of examples that upset verify_data.py.

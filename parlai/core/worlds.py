@@ -45,7 +45,6 @@ import copy
 import random
 import time
 
-from functools import lru_cache
 from typing import List, Dict, Any, Union
 
 try:
@@ -309,9 +308,7 @@ class DialogPartnerWorld(World):
             self.agents = create_agents_from_shared(shared['agents'])
         else:
             if len(agents) != 2:
-                raise RuntimeError(
-                    'There must be exactly two agents for this ' 'world.'
-                )
+                raise RuntimeError('There must be exactly two agents for this world.')
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
@@ -381,7 +378,6 @@ class DialogPartnerWorld(World):
             self.total_exs += metrics['exs'].value()
         return metrics
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return number of examples.
@@ -736,7 +732,10 @@ class MultiWorld(World):
         """
         Report aggregate metrics across all subworlds.
         """
-        metrics = aggregate_named_reports({w.getID(): w.report() for w in self.worlds})
+        metrics = aggregate_named_reports(
+            {w.getID(): w.report() for w in self.worlds},
+            micro_average=self.opt.get('aggregate_micro', False),
+        )
         if 'exs' in metrics:
             self.total_exs += metrics['exs'].value()
         return metrics
@@ -1423,12 +1422,14 @@ class HogwildWorld(World):
         """
         return self.inner_world.getID()
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return the number of examples.
         """
-        return self.inner_world.num_examples()
+        if hasattr(self, '_num_examples'):
+            return self._num_examples_cache
+        self._num_examples_cache = self.inner_world.num_examples()
+        return self._num_examples_cache
 
     def num_episodes(self):
         """
@@ -1541,6 +1542,10 @@ def _create_task_agents(opt: Opt):
     defined by the task name directly.  (This saves the task creator bothering to define
     the create_agents function when it is not needed.)
     """
+    if opt.get('interactive_task', False) or opt.get('selfchat_task', False):
+        # do not need task agents in interactive or self chat settings
+        return []
+
     my_module = load_task_module(opt['task'])
     try:
         # Tries to call the create_agent function in agents.py
@@ -1563,8 +1568,9 @@ def create_task_world(opt: Opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
     world_class = load_world_module(
         opt['task'],
-        opt.get('interactive_task', False),
-        len(user_agents + task_agents),
+        interactive_task=opt.get('interactive_task', False),
+        selfchat_task=opt.get('selfchat_task', False),
+        num_agents=len(user_agents + task_agents),
         default_world=default_world,
     )
 

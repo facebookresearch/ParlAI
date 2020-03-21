@@ -182,6 +182,36 @@ class TestTransformerRanker(unittest.TestCase):
         self.assertGreaterEqual(test['hits@1'], 0.90)
 
     @testing_utils.retry(ntries=3)
+    def test_prelayernorm(self):
+        """
+        Test --variant prelayernorm with history_add_global_end_token option.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:candidate',
+                model='transformer/ranker',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=16,
+                validation_every_n_epochs=5,
+                validation_patience=2,
+                n_layers=1,
+                n_heads=4,
+                ffn_size=64,
+                embedding_size=32,
+                candidates='batch',
+                eval_candidates='inline',
+                gradient_clip=0.5,
+                variant='prelayernorm',
+                activation='gelu',
+                history_add_global_end_token='end',
+            )
+        )
+
+        self.assertGreaterEqual(valid['hits@1'], 0.90)
+        self.assertGreaterEqual(test['hits@1'], 0.90)
+
+    @testing_utils.retry(ntries=3)
     def test_alt_reduction(self):
         """
         Test a transformer ranker reduction method other than `mean`.
@@ -429,6 +459,23 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
+    def test_beamdelay(self):
+        """
+        Test delayedbeam generation.
+        """
+        # Delayed Beam is inherently stochastic, just ensure no crash.
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:multiturn_candidate',
+                model='transformer/generator',
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=32,
+                inference='delayedbeam',
+                topk=10,
+                beam_delay=5,
+            )
+        )
+
     def test_topk(self):
         """
         Test topk generation.
@@ -518,6 +565,35 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test['ppl'], 1.30)
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
+    @testing_utils.retry(ntries=3)
+    def test_prelayernorm(self):
+        """
+        Test --variant prelayernorm.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:nocandidate',
+                model='transformer/generator',
+                optimizer='adamax',
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=20,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+                inference='greedy',
+                beam_size=1,
+                variant='prelayernorm',
+                activation='gelu',
+            )
+        )
+
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertGreaterEqual(valid['bleu-4'], 0.90)
+        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertGreaterEqual(test['bleu-4'], 0.90)
+
     def test_compute_tokenized_bleu(self):
         """
         Test that the model outputs self-computed bleu correctly.
@@ -593,6 +669,50 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertEqual(agent.model.encoder.n_layers, 2)
         self.assertEqual(agent.model.decoder.n_layers, 2)
 
+    def test_temperature(self):
+        """
+        Test temperature.
+        """
+        # Just ensuring no crash.
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:multiturn_candidate',
+                model='transformer/generator',
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=32,
+                inference='beam',
+                beam_size=5,
+                temperature=0.99,
+            )
+        )
+
+
+class TestClassifier(unittest.TestCase):
+    """
+    Test transformer/classifier.
+    """
+
+    @testing_utils.retry()
+    def test_simple(self):
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:classifier',
+                model='transformer/classifier',
+                classes=['one', 'zero'],
+                optimizer='adamax',
+                truncate=8,
+                learningrate=7e-3,
+                batchsize=32,
+                num_epochs=5,
+                n_layers=1,
+                n_heads=1,
+                ffn_size=32,
+                embedding_size=32,
+            )
+        )
+        assert valid['accuracy'] > 0.97
+        assert test['accuracy'] > 0.97
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     """
@@ -637,9 +757,7 @@ class TestLearningRateScheduler(unittest.TestCase):
                 'Finetuning LR scheduler reset failed (total_train_updates).',
             )
             self.assertEqual(
-                valid3['lr'],
-                valid1['lr'],
-                'Finetuning LR scheduler reset failed (lr).',
+                valid3['lr'], valid1['lr'], 'Finetuning LR scheduler reset failed (lr).'
             )
             # and make sure we're not loading the scheduler if it changes
             valid4, test4 = testing_utils.train_model(
@@ -734,6 +852,105 @@ class TestLearningRateScheduler(unittest.TestCase):
             msg='Invsqrt LR {} was not 1/4 at step 16'.format(valid2['lr']),
             delta=0.001,
         )
+
+
+@testing_utils.skipUnlessTorch14
+class TestImagePolyencoder(unittest.TestCase):
+    """
+    Unit tests for the ImagePolyencoderAgent.
+
+    Test that the model is able to handle simple train tasks.
+    """
+
+    base_args = {
+        'log_every_n_secs': 5,
+        'validation_every_n_secs': 30,
+        'model': 'transformer/image_polyencoder',
+        'embedding_size': 32,
+        'n_heads': 2,
+        'n_layers': 2,
+        'n_positions': 128,
+        'truncate': 128,
+        'ffn_size': 128,
+        'variant': 'xlm',
+        'activation': 'gelu',
+        'candidates': 'batch',
+        'eval_candidates': 'batch',  # No inline cands
+        'embeddings_scale': False,
+        'gradient_clip': 0.1,
+        'learningrate': 3e-5,
+        'batchsize': 16,
+        'optimizer': 'adamax',
+        'learn_positional_embeddings': True,
+        'reduction_type': 'first',
+        'num_epochs': 30,
+    }
+    text_args = {'task': 'integration_tests:nocandidate'}
+    image_args = {
+        'task': 'integration_tests:ImageTeacher',
+        'image_mode': 'resnet152',
+        'image_features_dim': 2048,
+        'image_encoder_num_layers': 1,
+        'image_combination_mode': 'prepend',
+        'n_image_tokens': 1,
+        'num_epochs': 60,
+    }
+    multitask_args = {
+        'task': 'integration_tests:nocandidate,integration_tests:ImageTeacher',
+        'image_mode': 'resnet152',
+        'image_features_dim': 2048,
+        'image_encoder_num_layers': 1,
+        'image_combination_mode': 'prepend',
+        'n_image_tokens': 1,
+        'multitask_weights': [1, 1],
+        'num_epochs': 30,
+    }
+
+    @testing_utils.retry(ntries=3)
+    def test_text_task(self):
+        """
+        Test that model correctly handles text task.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.text_args})
+        valid, test = testing_utils.train_model(args)
+        assert (
+            valid['accuracy'] > 0.2
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_image_task(self):
+        """
+        Test that model correctly handles a basic image training task.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.image_args})
+        valid, test = testing_utils.train_model(args)
+        assert (
+            valid['accuracy'] > 0.15
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessTorch
+    @testing_utils.skipUnlessGPU
+    def test_multitask(self):
+        """
+        Test that model correctly handles multiple inputs.
+
+        Random chance is 10%, so this should be able to get much better than that very
+        quickly.
+        """
+        args = Opt({**self.base_args, **self.multitask_args})
+        valid, test = testing_utils.train_model(args)
+        assert (
+            valid['accuracy'] > 0.2
+        ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
 
 if __name__ == '__main__':

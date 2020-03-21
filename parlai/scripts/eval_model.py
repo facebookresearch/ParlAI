@@ -49,6 +49,12 @@ def setup_args(parser=None):
         help='Saves a jsonl file containing all of the task examples and '
         'model replies. Must also specify --report-filename.',
     )
+    parser.add_argument(
+        '--save-format',
+        type=str,
+        default='conversations',
+        choices=['jsonl', 'conversations', 'parlai'],
+    )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -61,6 +67,14 @@ def setup_args(parser=None):
         'or give a list split by , like '
         'ppl,f1,accuracy,hits@1,rouge,bleu'
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
+    )
+    parser.add_argument(
+        '-micro',
+        '--aggregate-micro',
+        type='bool',
+        default=False,
+        help='Report micro-averaged metrics instead of macro averaged metrics.',
+        recommended=False,
     )
     WorldLogger.add_cmdline_args(parser)
     TensorboardLogger.add_cmdline_args(parser)
@@ -127,8 +141,7 @@ def _eval_single_world(opt, agent, task):
         world_logger.reset()  # add final acts to logs
         base_outfile = opt['report_filename'].split('.')[0]
         outfile = base_outfile + f'_{task}_replies.jsonl'
-        # world_logger.write_jsonl_format(outfile)
-        world_logger.write_parlai_format(outfile)
+        world_logger.write(outfile, world, file_format=opt['save_format'])
 
     return report
 
@@ -168,7 +181,9 @@ def eval_model(opt, print_parser=None):
         task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
 
-    report = aggregate_named_reports(dict(zip(tasks, reports)))
+    report = aggregate_named_reports(
+        dict(zip(tasks, reports)), micro_average=opt.get('aggregate_micro', False)
+    )
 
     # print announcments and report
     print_announcements(opt)

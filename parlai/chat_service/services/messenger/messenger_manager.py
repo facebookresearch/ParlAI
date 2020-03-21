@@ -44,6 +44,7 @@ class MessengerManager(ChatServiceManager):
 
     def parse_additional_args(self, opt):
         self.service_reference_id = self.config['additional_args']['page_id']
+        self.should_load_model = self.config['additional_args'].get('load_model', True)
         if self.service_reference_id == 1:
             raise RuntimeError(
                 'Please configure your own page in order to run this task. '
@@ -68,7 +69,7 @@ class MessengerManager(ChatServiceManager):
         """
         Load model if necessary.
         """
-        if 'model_file' in self.opt or 'model' in self.opt:
+        if ('model_file' in self.opt or 'model' in self.opt) and self.should_load_model:
             self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
 
     def _init_logs(self):
@@ -233,22 +234,23 @@ class MessengerManager(ChatServiceManager):
         """
         Set up socket to start communicating to workers.
         """
-        if not self.bypass_server_setup:
-            shared_utils.print_and_log(
-                logging.INFO, 'Local: Setting up WebSocket...', should_print=True
-            )
+        if self.bypass_server_setup:
+            return
+
+        shared_utils.print_and_log(
+            logging.INFO, 'Local: Setting up WebSocket...', should_print=True
+        )
 
         self.app_token = self.get_app_token()
         self.sender = MessageSender(self.app_token)
 
         # Set up receive
-        if not self.bypass_server_setup:
-            socket_use_url = self.server_url
-            if self.opt['local']:  # skip some hops for local stuff
-                socket_use_url = 'https://localhost'
-            self.socket = ChatServiceMessageSocket(
-                socket_use_url, self.port, self._handle_webhook_event
-            )
+        socket_use_url = self.server_url
+        if self.opt['local']:  # skip some hops for local stuff
+            socket_use_url = 'https://localhost'
+        self.socket = ChatServiceMessageSocket(
+            socket_use_url, self.port, self._handle_webhook_event
+        )
         shared_utils.print_and_log(
             logging.INFO, 'done with websocket', should_print=True
         )

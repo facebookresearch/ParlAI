@@ -38,22 +38,21 @@ This is a template of the expected format with the minimal expected fields:
     {
       "is_onboarding": false,
       "speakers_to_eval": ["first_modelname", "second_modelname"],
+      "dialogue_ids": [dialogue_1_id, dialogue_2_id],
       "dialogue_dicts": [
         {
           "speakers": ["first_modelname", "other_speaker"],
-          "conversation_id": "id",
           "dialogue": [
-            {"speaker": "model1", "text": "Hi"},
-            {"speaker": "other_speaker", "text": "Hi back"},
+            {"id": "model1", "text": "Hi"},
+            {"id": "other_speaker", "text": "Hi back"},
             ...
           ]
         },
         {
           "speakers": ["other_speaker", "second_modelname"],
-          "conversation_id": "id",
           "dialogue": [
-            {"speaker": "model1", "text": "Hi"},
-            {"speaker": "other_speaker", "text": "Hi back"},
+            {"id": "model1", "text": "Hi"},
+            {"id": "other_speaker", "text": "Hi back"},
             ...
           ]
         }
@@ -83,7 +82,7 @@ In our paper, we address the problem of wording the questions and binary choices
 
 As discussed in the paper, we found that we had better annotation quality if we screened turkers with an 'onboarding' comparison, consisting of a weak baseline conversation and a human-human conversation. Our code is set up so that this is optional.
 
-By default `--block-on-onboarding` is set to `True`, which means that workers who fail onboarding will be soft blocked - they won't be able to see or complete any more hits from you but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `--block-qualification`.
+By default `--block-on-onboarding-fail` is set to `True`, which means that workers who fail onboarding will be soft blocked - they won't be able to see or complete any more hits from you but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `--block-qualification`.
 
 By setting `--onboarding-threshold`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) which must be answered correctly to pass onboarding.
 

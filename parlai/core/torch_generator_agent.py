@@ -324,7 +324,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus'},
+            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
             default='greedy',
             help='Generation algorithm',
         )
@@ -333,6 +333,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--topp', type=float, default=0.9, help='p used in nucleus sampling'
+        )
+        agent.add_argument(
+            '--beam-delay', type=int, default=30, help='used in delayedbeam search'
+        )
+        agent.add_argument(
+            '--temperature',
+            type=float,
+            default=1.0,
+            help='temperature to add during decoding',
         )
         agent.add_argument(
             '--compute-tokenized-bleu',
@@ -352,6 +361,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
         self.beam_context_block_ngram = opt.get('beam_context_block_ngram', -1)
+        self.temperature = opt.get('temperature', 1.0)
+        assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
 
@@ -601,7 +612,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
-                self.global_metrics.update('skipped_batches', SumMetric(1))
+                self.global_metrics.add('skipped_batches', SumMetric(1))
                 # gradients are synced on backward, now this model is going to be
                 # out of sync! catch up with the other workers
                 self._init_cuda_buffer(8, 8, True)
@@ -779,6 +790,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
             )
+        elif method == 'delayedbeam':
+            return DelayedBeamSearch(
+                self.opt['topk'],
+                self.opt['beam_delay'],
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
         elif method == 'topk':
             return TopKSampling(
                 self.opt['topk'],
@@ -884,7 +909,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
-            score = F.log_softmax(score, dim=-1)
+            if self.temperature != 1.0:
+                score.div_(self.temperature)
+            # force to fp32 to avoid overflow issues during search calculations
+            score = F.log_softmax(score, dim=-1, dtype=torch.float32)
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -903,8 +931,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
 
-        # get all finilized candidates for each sample (and validate them)
+        # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+
+        if hasattr(self, '_rerank_beams'):
+            n_best_beam_preds_scores = self._rerank_beams(
+                batch, n_best_beam_preds_scores
+            )
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
@@ -1022,7 +1055,7 @@ class TreeSearch(object):
         return self.bookkeep[-1]
 
     @abstractmethod
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         """
         Select the next vocabulary item in these beams.
 
@@ -1032,7 +1065,8 @@ class TreeSearch(object):
         :param prior_scores:
             a (beamsize) tensor of weights with the cumulative running
             log-probability of each beam. If the first turn, it will be a (1) tensor.
-
+        :param current_length:
+            the current length in tokens
         :return:
             a (hypothesis_ids, token_id, scores) tuple, where:
 
@@ -1103,7 +1137,9 @@ class TreeSearch(object):
                 self.context_block_ngram, logprobs, self.context
             )
 
-        hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
+        hyp_ids, tok_ids, self.scores = self.select_paths(
+            logprobs, self.scores, current_length
+        )
         # use clone() here to ensure that self.all_scores will not be changed
         # later due to any penalties to self.scores
         self.all_scores.append(self.scores.clone())
@@ -1118,7 +1154,7 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
-                if self.scores[hypid] == neginf(self.scores.dtype):
+                if self.scores[hypid] <= neginf(self.scores.dtype):
                     continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
@@ -1260,7 +1296,7 @@ class GreedySearch(TreeSearch):
         if self.beam_size != 1:
             raise ValueError('Greedy search can only be run with beam size 1.')
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         tok_scores, tok_ids = logprobs.max(1)
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
@@ -1272,7 +1308,7 @@ class BeamSearch(TreeSearch):
     Beam search.
     """
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         """
         Select the next vocabulary item in these beams.
         """
@@ -1294,6 +1330,31 @@ class BeamSearch(TreeSearch):
         return (hyp_ids, tok_ids, best_scores)
 
 
+class DelayedBeamSearch(TreeSearch):
+    """
+    DelayedBeam: Top-K sampling followed by beam search (Massarelli et al., 2019).
+
+    Samples from a truncated distribution where only the most probable K words
+    are considered at each time for the first N tokens, then switches to beam
+    after N steps.
+
+    See https://arxiv.org/abs/1911.03587 for details.
+    """
+
+    def __init__(self, k, delay, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.k = k
+        self.delay = delay
+
+    def select_paths(self, logprobs, prior_scores, current_length):
+        if current_length < self.delay:
+            return TopKSampling.select_paths(
+                self, logprobs, prior_scores, current_length
+            )
+        else:
+            return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
+
+
 class TopKSampling(TreeSearch):
     """
     Top-K sampling (Fan et al., 2018).
@@ -1310,7 +1371,7 @@ class TopKSampling(TreeSearch):
         super().__init__(*args, **kwargs)
         self.k = k
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         values, indices = logprobs.topk(self.k, dim=-1)
         probs = torch.softmax(values, dim=-1)
         choices = torch.multinomial(probs, 1)[:, 0]
@@ -1337,7 +1398,7 @@ class NucleusSampling(TreeSearch):
         super().__init__(*args, **kwargs)
         self.p = p
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         # Unlike the other treesearch methods, we have to switch to linspace
         # for the probabilities in order to compute the CDF.
         probs = torch.softmax(logprobs, dim=-1)

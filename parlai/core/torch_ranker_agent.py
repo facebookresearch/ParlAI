@@ -25,6 +25,7 @@ from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import padded_3d
+from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
 
 
@@ -152,6 +153,12 @@ class TorchRankerAgent(TorchAgent):
             default=5,
             help='K used in Top K sampling inference, when selected',
         )
+        agent.add_argument(
+            '--return-cand-scores',
+            type='bool',
+            default=False,
+            help='Return sorted candidate scores from eval_step',
+        )
 
     def __init__(self, opt: Opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
@@ -215,7 +222,10 @@ class TorchRankerAgent(TorchAgent):
 
         By default torch.nn.CrossEntropyLoss.
         """
-        return torch.nn.CrossEntropyLoss(reduction='none')
+        if self.fp16:
+            return FP16SafeCrossEntropy(reduction='none')
+        else:
+            return torch.nn.CrossEntropyLoss(reduction='none')
 
     def set_interactive_mode(self, mode, shared=False):
         super().set_interactive_mode(mode, shared)
@@ -440,11 +450,16 @@ class TorchRankerAgent(TorchAgent):
 
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         if self.rank_top_k > 0:
-            _, ranks = scores.topk(
+            sorted_scores, ranks = scores.topk(
                 min(self.rank_top_k, scores.size(1)), 1, largest=True
             )
         else:
-            _, ranks = scores.sort(1, descending=True)
+            sorted_scores, ranks = scores.sort(1, descending=True)
+
+        if self.opt.get('return_cand_scores', False):
+            sorted_scores = sorted_scores.cpu()
+        else:
+            sorted_scores = None
 
         # Update metrics
         if label_inds is not None:
@@ -489,7 +504,7 @@ class TorchRankerAgent(TorchAgent):
             for i in range(batchsize):
                 preds.append(random.choice(cand_preds[i][0 : self.opt['topk']]))
 
-        return Output(preds, cand_preds)
+        return Output(preds, cand_preds, sorted_scores=sorted_scores)
 
     def block_repeats(self, cand_preds):
         """

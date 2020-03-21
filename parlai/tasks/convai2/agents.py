@@ -4,9 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher, create_task_agent_from_taskname
+from parlai.core.teachers import FbDialogTeacher
 from parlai.utils.misc import warn_once
 from .build import build
+from parlai.utils.strings import normalize_reply
 
 import copy
 import os
@@ -85,6 +86,105 @@ class SelfRevisedTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
+class NormalizedTeacher(SelfOriginalTeacher):
+    def normalize_replies(self, x):
+        xs = x.split('\n')
+        xs2 = []
+        for x in xs:
+            xs2.append(normalize_reply(x))
+        return '\n'.join(xs2)
+
+    def setup_data(self, path):
+        print("[loading normalized fbdialog data:" + path + "]")
+        with open(path) as read:
+            start = True
+            x = ''
+            reward = 0
+            last_conv_id = None
+            for line in read:
+                line = line.strip().replace('\\n', '\n')
+                if len(line) == 0:
+                    # empty response
+                    continue
+
+                # first, get conversation index -- '1' means start of episode
+                space_idx = line.find(' ')
+                if space_idx == -1:
+                    # empty line, both individuals are saying whitespace
+                    conv_id = int(line)
+                else:
+                    conv_id = int(line[:space_idx])
+
+                # split line into constituent parts, if available:
+                # x<tab>y<tab>reward<tab>label_candidates
+                # where y, reward, and label_candidates are optional
+                split = line[space_idx + 1 :].split('\t')
+
+                # remove empty items and strip each one
+                for i in range(len(split)):
+                    word = split[i].strip()
+                    if len(word) == 0:
+                        split[i] = ''
+                    else:
+                        split[i] = word
+                # Empty reward string same as None
+                if len(split) > 2 and split[2] == '':
+                    split[2] = None
+
+                # now check if we're at a new episode
+                if last_conv_id is None or conv_id <= last_conv_id:
+                    x = x.strip()
+                    if x:
+                        x = self.normalize_replies(x)
+                        import pdb
+
+                        pdb.set_trace()
+                        yield [x, None, reward], start
+                    start = True
+                    reward = 0
+                    # start a new episode
+                    x = split[0]
+                else:
+                    if x:
+                        # otherwise add current x to what we have so far
+                        x = '{x}\n{next_x}'.format(x=x, next_x=split[0])
+                    else:
+                        x = split[0]
+                last_conv_id = conv_id
+                if len(split) > 2 and split[2]:
+                    reward += float(split[2])
+
+                if len(split) > 1 and split[1]:
+                    # only generate an example if we have a y
+                    split[0] = x
+                    # split labels
+                    split[1] = split[1].split('|')
+                    if len(split) > 3:
+                        # split label_candidates
+                        split[3] = split[3].split('|')
+                    if len(split) > 2:
+                        split[2] = reward
+                    else:
+                        split.append(reward)
+                    # normalize
+                    split[0] = self.normalize_replies(split[0])
+                    for i, _c in enumerate(split[1]):
+                        split[1][i] = self.normalize_replies(split[1][i])
+                    for i, _c in enumerate(split[3]):
+                        split[3][i] = self.normalize_replies(split[3][i])
+                    if start:
+                        yield split, True
+                        start = False
+                    else:
+                        yield split, False
+                    # reset x in case there is unlabeled data still left
+                    x = ''
+                    reward = 0
+            if x:
+                x = self.normalize_replies(x)
+                yield [x, None, reward], start
+
+
 class DefaultTeacher(SelfOriginalTeacher):
     pass
 
@@ -97,11 +197,3 @@ class InteractiveTeacher(SelfOriginalTeacher):
 class SelfchatTeacher(SelfOriginalTeacher):
     # Dummy class to add arguments for interactive world.
     pass
-
-
-def create_agents(opt):
-    if not opt.get('interactive_task', False):
-        return create_task_agent_from_taskname(opt)
-    else:
-        # interactive task has no task agents (they are attached as user agents)
-        return []

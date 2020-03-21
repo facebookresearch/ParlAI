@@ -16,11 +16,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 import copy
-from parlai.core.teachers import (
-    FixedDialogTeacher,
-    MultiTaskTeacher,
-    create_task_agent_from_taskname,
-)
+from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import json
@@ -303,10 +299,13 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             labels = [wizard_entry['text']]
         else:
             title, sentence = _get_chosen_title_and_sent(wizard_entry, knowledge_dict)
-            labels = ['{} {}'.format(title, sentence)]
+            if self.knowledge_separator and title != TOKEN_NOCHOSEN:
+                labels = ['{} {} {}'.format(title, TOKEN_KNOWLEDGE, sentence)]
+            else:
+                labels = ['{} {}'.format(title, sentence)]
 
         # finally, get label_candidates
-        label_cands = [TOKEN_NOCHOSEN + ' ' + TOKEN_NOCHOSEN]
+        label_cands = ['{} {}'.format(TOKEN_NOCHOSEN, TOKEN_NOCHOSEN)]
         knowledge_str = ''
         for title, passage in knowledge_dict.items():
             for p in passage:
@@ -928,11 +927,3 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     """
 
     pass
-
-
-def create_agents(opt):
-    if not opt.get('interactive_task', False):
-        return create_task_agent_from_taskname(opt)
-    else:
-        # interactive task has no task agents (they are attached as user agents)
-        return []

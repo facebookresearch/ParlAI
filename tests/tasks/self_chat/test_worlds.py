@@ -6,7 +6,7 @@
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
-from parlai.tasks.self_chat.worlds import SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 import unittest
 from unittest.mock import MagicMock
@@ -18,7 +18,7 @@ class TestSelfChat(unittest.TestCase):
         parser.set_defaults(
             interactive_mode=True,
             task='self_chat',
-            interactive_task=True,
+            selfchat_task=True,
             selfchat_max_turns=1,
         )
         self.opt = parser.parse_args([], print_args=False)

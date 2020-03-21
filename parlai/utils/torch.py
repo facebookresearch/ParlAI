@@ -46,6 +46,7 @@ def padded_tensor(
     left_padded: bool = False,
     max_len: Optional[int] = None,
     fp16friendly: bool = False,
+    device: int = -1,
 ) -> Tuple[torch.LongTensor, List[int]]:
     """
     Create a padded matrix from an uneven list of lists.
@@ -65,6 +66,7 @@ def padded_tensor(
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
     :param bool fp16friendly: if True, pads the time dimension to be a multiple of 4.
+    :param int device: GPU device.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -107,6 +109,8 @@ def padded_tensor(
 
     if use_cuda:
         output = output.cuda()
+        if device >= 0:
+            output = output.to(device)
     return output, lens
 
 

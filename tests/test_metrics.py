@@ -9,7 +9,16 @@ import unittest
 import torch
 import random
 
-from parlai.core.metrics import AverageMetric, SumMetric, FixedMetric, Metrics
+from parlai.core.metrics import (
+    AverageMetric,
+    SumMetric,
+    FixedMetric,
+    Metrics,
+    GlobalAverageMetric,
+    MacroAverageMetric,
+    aggregate_unnamed_reports,
+    aggregate_named_reports,
+)
 
 
 class TestMetric(unittest.TestCase):
@@ -94,6 +103,13 @@ class TestMetric(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = FixedMetric(3) + FixedMetric(4)
 
+    def test_macroaverage_additions(self):
+        m1 = AverageMetric(1, 3)
+        m2 = AverageMetric(3, 4)
+
+        assert (m1 + m2) == AverageMetric(4, 7)
+        assert MacroAverageMetric([m1, m2]) == 0.5 * (1.0 / 3 + 3.0 / 4)
+
 
 class TestMetrics(unittest.TestCase):
     """
@@ -171,6 +187,83 @@ class TestMetrics(unittest.TestCase):
         m2.flush()
 
         assert m.report()['key'] == 32768 + 1
+
+
+class TestAggregators(unittest.TestCase):
+    def test_unnamed_aggregation(self):
+        report1 = {
+            'avg': AverageMetric(3, 4),
+            'sum': SumMetric(3),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(3, 4),
+        }
+        report2 = {
+            'avg': AverageMetric(1, 3),
+            'sum': SumMetric(4),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(1, 3),
+        }
+        agg = aggregate_unnamed_reports([report1, report2])
+        assert agg['avg'] == 4.0 / 7
+        assert agg['sum'] == 7
+        assert agg['fixed'] == 4
+        assert agg['global_avg'] == 4.0 / 7
+
+    def test_macro_aggregation(self):
+        report1 = {
+            'avg': AverageMetric(3, 4),
+            'sum': SumMetric(3),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(3, 4),
+        }
+        report2 = {
+            'avg': AverageMetric(1, 3),
+            'sum': SumMetric(4),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(1, 3),
+        }
+        agg = aggregate_named_reports({'a': report1, 'b': report2}, micro_average=False)
+        assert agg['avg'] == 0.5 * (3.0 / 4 + 1.0 / 3)
+        assert agg['sum'] == 7
+        assert agg['fixed'] == 4
+        assert agg['global_avg'] in (report1['global_avg'], report2['global_avg'])
+        # task level metrics
+        assert agg['a/avg'] == 3.0 / 4
+        assert agg['a/sum'] == 3
+        assert agg['a/fixed'] == 4
+        assert 'a/global_avg' not in agg
+        assert agg['b/avg'] == 1.0 / 3
+        assert agg['b/sum'] == 4
+        assert agg['b/fixed'] == 4
+        assert 'b/global_avg' not in agg
+
+    def test_micro_aggregation(self):
+        report1 = {
+            'avg': AverageMetric(3, 4),
+            'sum': SumMetric(3),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(3, 4),
+        }
+        report2 = {
+            'avg': AverageMetric(1, 3),
+            'sum': SumMetric(4),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(1, 3),
+        }
+        agg = aggregate_named_reports({'a': report1, 'b': report2}, micro_average=True)
+        assert agg['avg'] == 4.0 / 7
+        assert agg['sum'] == 7
+        assert agg['fixed'] == 4
+        assert agg['global_avg'] in (report1['global_avg'], report2['global_avg'])
+        # task level metrics
+        assert agg['a/avg'] == 3.0 / 4
+        assert agg['a/sum'] == 3
+        assert agg['a/fixed'] == 4
+        assert 'a/global_avg' not in agg
+        assert agg['b/avg'] == 1.0 / 3
+        assert agg['b/sum'] == 4
+        assert agg['b/fixed'] == 4
+        assert 'b/global_avg' not in agg
 
 
 if __name__ == '__main__':
