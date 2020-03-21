@@ -110,7 +110,7 @@ def verify(opt, printargs=None, print_parser=None):
     # max number of examples to evaluate
     max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     cnt = 0
-    
+
     # Show some example dialogs.
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
