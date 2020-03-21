@@ -305,11 +305,6 @@ class PolyEncoderModule(torch.nn.Module):
                 get_weights=False,
             )
 
-    def model_parallel(self):
-        self.encoder_ctxt.model_parallel()
-        self.encoder_cand.model_parallel()
-        return self
-
     def get_encoder(self, opt, dict_, null_idx, reduction_type, for_context: bool):
         """
         Return encoder, given options.

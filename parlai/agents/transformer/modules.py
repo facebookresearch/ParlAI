@@ -528,7 +528,7 @@ class TransformerEncoder(nn.Module):
             tensor = tensor + self.segment_embeddings(segments)
 
         if self.variant == 'xlm':
-            tensor = self.norm_embeddings(tensor)
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
@@ -544,7 +544,7 @@ class TransformerEncoder(nn.Module):
                 tensor = self.layers[i](tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = self.norm_embeddings(tensor)
+            tensor = _normalize(tensor, self.norm_embeddings)
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
@@ -619,17 +619,17 @@ class TransformerEncoderLayer(nn.Module):
 
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = self.norm1(tensor)
+            tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            tensor = self.norm1(tensor)
+            tensor = _normalize(tensor, self.norm1)
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = self.norm2(tensor)
+            tensor = _normalize(tensor, self.norm2)
         tensor = residual + self.dropout(self.ffn(tensor))
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            tensor = self.norm2(tensor)
+            tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -760,7 +760,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = self.norm_embeddings(tensor)
+            tensor = _normalize(tensor, self.norm_embeddings)
         if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
@@ -786,7 +786,7 @@ class TransformerDecoder(nn.Module):
                 )
 
         if self.variant == 'prelayernorm':
-            tensor = self.norm_embeddings(tensor)
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor, new_incr_state
 
@@ -878,7 +878,7 @@ class TransformerDecoderLayer(nn.Module):
         # first self attn
         residual = x
         if self.variant == 'prelayernorm':
-            x = self.norm1(x)
+            x = _normalize(x, self.norm1)
 
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
@@ -890,12 +890,12 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            x = self.norm1(x)
+            x = _normalize(x, self.norm1)
 
         residual = x
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
-            x = self.norm2(x)
+            x = _normalize(x, self.norm2)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -907,17 +907,17 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            x = self.norm2(x)
+            x = _normalize(x, self.norm2)
 
         # finally the ffn
         residual = x
         if self.variant == 'prelayernorm':
-            x = self.norm3(x)
+            x = _normalize(x, self.norm3)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm':
-            x = self.norm3(x)
+            x = _normalize(x, self.norm3)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
