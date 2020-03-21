@@ -410,6 +410,7 @@ class PipelineHelper(object):
                 # size later. This happens for the incremental_state in
                 # MultiheadAttention.
                 return itertools.repeat({})  # type: ignore
+
             # we can't handle dicts with empty objects in them, due to how we handle
             # the case above.  awkward syntax because pytorch 1.3 doesn't like
             # comparing tensors to dicts.
@@ -417,10 +418,11 @@ class PipelineHelper(object):
                 raise ValueError(
                     'Cannot handle a dictionary with an empty dictionary inside.'
                 )
-            if () in item.values():
+            if () in [x for x in item.values() if isinstance(x, tuple)]:
                 raise ValueError(
                     'Cannot handle a dictionary with an empty tuple inside.'
                 )
+
             # we start with Dict[key,tensor]
             # we map it to d: Dict[key, List[Tensor]], where we have split each mapping
             d = {k: PipelineHelper.split(v, split_size, dim) for k, v in item.items()}
