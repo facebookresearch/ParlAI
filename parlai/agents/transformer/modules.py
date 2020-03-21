@@ -30,7 +30,7 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
 try:
-    raise ImportError
+    # raise ImportError
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
     APEX_LAYER_NORM = True
@@ -40,6 +40,13 @@ except ImportError:
     APEX_LAYER_NORM = False
 
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
+
+
+def _normalize(tensor, norm_layer):
+    """
+    Broadcast layer norm.
+    """
+    return norm_layer(tensor.float()).type_as(tensor.dtype)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
