@@ -377,11 +377,12 @@ class TestByteLevelBPE(unittest.TestCase):
 class TestBuildDict(unittest.TestCase):
     def _run_test(self, opt):
         with testing_utils.tempdir() as tmpdir:
-            dictfile = os.path.join(tmpdir, "dict")
+            dict_file = os.path.join(tmpdir, "dict")
             pp = build_dict.setup_args()
             pp.set_defaults(**opt)
             pp.set_defaults(task='babi')
             popt = pp.parse_args([], print_args=False)
+            popt['dict_file'] = dict_file
             for k, v in opt.items():
                 popt[k] = v
 
