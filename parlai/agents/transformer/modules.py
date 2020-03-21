@@ -30,6 +30,7 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
 try:
+    raise ImportError
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
     APEX_LAYER_NORM = True
