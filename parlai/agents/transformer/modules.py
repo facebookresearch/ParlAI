@@ -30,7 +30,6 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
 try:
-    # raise ImportError
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
     APEX_LAYER_NORM = True
@@ -46,7 +45,14 @@ def _normalize(tensor, norm_layer):
     """
     Broadcast layer norm.
     """
-    return norm_layer(tensor.float()).type_as(tensor.dtype)
+    if APEX_LAYER_NORM:
+        # fused_layer_norm has a bug around multi-device networks.
+        # https://github.com/NVIDIA/apex/issues/770
+        # https://github.com/NVIDIA/apex/issues/371
+        with torch.cuda.device(tensor.device):
+            return norm_layer(tensor)
+    else:
+        return norm_layer(tensor)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
