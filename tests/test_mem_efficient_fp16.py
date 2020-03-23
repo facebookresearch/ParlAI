@@ -16,6 +16,7 @@ class TestMemEfficientFP16(unittest.TestCase):
     Test memory efficient FP16 implementation.
     """
 
+    @testing_utils.retry()
     def test_adam(self):
         valid, _ = testing_utils.train_model(
             dict(
