@@ -45,7 +45,8 @@ def _normalize(tensor, norm_layer):
     """
     Broadcast layer norm.
     """
-    if APEX_LAYER_NORM:
+    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
+    if APEX_LAYER_NORM and not is_cpu:
         # fused_layer_norm has a bug around multi-device networks.
         # https://github.com/NVIDIA/apex/issues/770
         # https://github.com/NVIDIA/apex/issues/371
