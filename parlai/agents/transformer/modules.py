@@ -543,7 +543,7 @@ class TransformerEncoder(nn.Module):
         tensor *= mask.unsqueeze(-1).type_as(tensor)
 
         if getattr(self.layers, 'is_model_parallel', False):
-            # factored out for readability. It is equivalent the other
+            # factored out for readability. It is equivalent to the other
             # condition
             tensor = self._apply_model_parallel(tensor, mask)
         else:

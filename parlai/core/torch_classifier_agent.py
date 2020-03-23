@@ -163,7 +163,7 @@ class TorchClassifierAgent(TorchAgent):
                 self.model.cuda()
                 if self.data_parallel:
                     self.model = torch.nn.DataParallel(self.model)
-                if self.model_parallel:
+                elif self.model_parallel:
                     self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
             if init_model:
