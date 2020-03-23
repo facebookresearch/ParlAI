@@ -22,7 +22,7 @@ class ParlaiLogger(logging.Logger):
     def __init__(
         self,
         name,
-        console_level=DEBUG,
+        console_level=INFO,
         console_format=None,
         file_format=None,
         file_level=INFO,

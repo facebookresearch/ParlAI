@@ -350,7 +350,7 @@ class PipelineHelper(object):
         for layer_no, layer in enumerate(layers):
             layer_gpu = devices[0]
             assert layer_assignments[layer_gpu] > 0
-            logging.debug(f"Assigning {layer_no} to {layer_gpu}")
+            logging.debug(f"Model Parallel: Assigning {layer_no} to {layer_gpu}")
             layer._mp_gpu = layer_gpu
             layers[layer_no] = layer.to(layer_gpu)
             layer_assignments[layer_gpu] -= 1
