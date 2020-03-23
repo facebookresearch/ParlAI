@@ -125,7 +125,8 @@ def default_assign_roles_fn(agents):
 
 
 class SafetyDetectionResult(Enum):
-    """Result of identfying offensive language in a response.
+    """
+    Result of identfying offensive language in a response.
 
     SAFE:       the message is safe
     BLACKLIST:  the message contains a word from the blacklist
@@ -138,7 +139,8 @@ class SafetyDetectionResult(Enum):
 
 
 class ReportResult(Enum):
-    """Result of filing a report
+    """
+    Result of filing a report.
 
     FAILURE:    a player timed out while reporting, or it was an accidental report
     BLOCK:      a player is blocked, for having been reported > 1 times
@@ -153,7 +155,8 @@ class ReportResult(Enum):
 
 
 class UploadImageResult(Enum):
-    """Result of uploading an image.
+    """
+    Result of uploading an image.
 
     SUCCESS:        user successfully uploaded an image
     OBJECTIONABLE:  the image contains objectionable content
@@ -166,12 +169,14 @@ class UploadImageResult(Enum):
 
 
 class PersonalInfoDetector(object):
-    """Detects whether a string contains any of the following personal
-    information datapoints using regular expressions:
-        - credit card
-        - phone number
-        - email
-        - SSN
+    """
+    Detects whether a string contains any of the following personal information
+    datapoints using regular expressions:
+
+    - credit card
+    - phone number
+    - email
+    - SSN
     """
 
     def __init__(self):

@@ -122,7 +122,9 @@ class ChatServiceWorldRunner:
         self.tasks[task_name] = task
 
         def _world_fn():
-            log_utils.print_and_log(logging.INFO, 'Starting task {}...'.format(task_name))
+            log_utils.print_and_log(
+                logging.INFO, 'Starting task {}...'.format(task_name)
+            )
             return self._run_world(task, world_name, agents)
 
         fut = self.executor.submit(_world_fn)

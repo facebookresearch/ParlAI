@@ -53,7 +53,7 @@ class ImageLicense(object):
 
 class ImageInformation(object):
     """
-    Representation of image information
+    Representation of image information.
     """
 
     def __init__(
@@ -134,6 +134,7 @@ class ImageFeaturesGenerator(object):
 
 class ObjectionableContentError(Exception):
     """
-    Error if an image is objectionable
+    Error if an image is objectionable.
     """
+
     pass

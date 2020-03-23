@@ -19,7 +19,9 @@ import time
 region_name = 'us-east-1'
 user_name = getpass.getuser()
 
-core_dir = os.path.join(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0], 'core')
+core_dir = os.path.join(
+    os.path.split(os.path.dirname(os.path.abspath(__file__)))[0], 'core'
+)
 server_source_directory_name = 'server'
 heroku_server_directory_name = 'heroku_server'
 local_server_directory_name = 'local_server'
@@ -53,9 +55,7 @@ def setup_heroku_server(task_name):
         bit_architecture = 'x86'
 
     # Remove existing heroku client files
-    existing_heroku_directory_names = glob.glob(
-        os.path.join(core_dir, 'heroku-cli-*')
-    )
+    existing_heroku_directory_names = glob.glob(os.path.join(core_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names) == 0:
         if os.path.exists(os.path.join(core_dir, 'heroku.tar.gz')):
             os.remove(os.path.join(core_dir, 'heroku.tar.gz'))
@@ -75,9 +75,7 @@ def setup_heroku_server(task_name):
     heroku_directory_path = os.path.join(core_dir, heroku_directory_name)
     heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
 
-    server_source_directory_path = os.path.join(
-        core_dir, server_source_directory_name
-    )
+    server_source_directory_path = os.path.join(core_dir, server_source_directory_name)
     heroku_server_directory_path = os.path.join(
         core_dir, '{}_{}'.format(heroku_server_directory_name, task_name)
     )
@@ -237,9 +235,7 @@ def setup_local_server(task_name):
     global server_process
     print("Local Server: Collecting files...")
 
-    server_source_directory_path = os.path.join(
-        core_dir, server_source_directory_name
-    )
+    server_source_directory_path = os.path.join(core_dir, server_source_directory_name)
     local_server_directory_path = os.path.join(
         core_dir, '{}_{}'.format(local_server_directory_name, task_name)
     )

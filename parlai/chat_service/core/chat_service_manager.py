@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import sys
-import copy
 import logging
 import datetime
 import threading
@@ -561,7 +560,7 @@ class ChatServiceManager(ABC):
         :param world_type:
             string world type
         :param agent_pool:
-            list of ``AgentState``s
+            list of AgentStates
         :param max_time_in_pool:
             int maximum time allowed for agent to be in pool
         :param backup_task:
@@ -633,9 +632,7 @@ class ChatServiceManager(ABC):
                 self.after_agent_removed(agent.id)
                 agent_state = self.get_agent_state(agent.id)
                 next_task = agent.data.get("next_task")
-                log_utils.print_and_log(
-                    logging.INFO, "Next task: {}".format(next_task)
-                )
+                log_utils.print_and_log(logging.INFO, "Next task: {}".format(next_task))
                 if next_task is None:
                     self._launch_overworld(agent.id)
                     agent_state.set_active_agent(agent_state.get_overworld_agent())

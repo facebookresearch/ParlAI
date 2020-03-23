@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2017-present, Facebook, Inc.
-# All rights reserved.
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree. An additional grant
-# of patent rights can be found in the PATENTS file in the same directory.
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 import time
 from typing import List, Optional
 from parlai.core.agents import Agent
@@ -59,8 +57,10 @@ class TimeoutUtils(object):
 
     @staticmethod
     def _get_response_timeout_loop(
-        agent: Agent, world: World, timeout: int = DEFAULT_TIMEOUT,
-        timeout_msg: str = 'You have timed out'
+        agent: Agent,
+        world: World,
+        timeout: int = DEFAULT_TIMEOUT,
+        timeout_msg: str = 'You have timed out',
     ) -> Optional[Message]:
         """
         Get a response from the agent.
@@ -80,12 +80,10 @@ class TimeoutUtils(object):
         a = TimeoutUtils.get_timeout_act(agent, timeout)
         if a is None:
             world.episodeDone = True
-            agent.observe(
-                {"id": "", "text": timeout_msg}
-            )
+            agent.observe({"id": "", "text": timeout_msg})
             return None
 
-        if a["text"].upper() == "EXIT":
+        if (a.get("text", "") or "").upper() == "EXIT":
             world.episodeDone = True
             return None
         return a

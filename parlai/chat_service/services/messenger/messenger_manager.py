@@ -257,9 +257,7 @@ class MessengerManager(ChatServiceManager):
         self.socket = ChatServiceMessageSocket(
             socket_use_url, self.port, self._handle_webhook_event
         )
-        log_utils.print_and_log(
-            logging.INFO, 'done with websocket', should_print=True
-        )
+        log_utils.print_and_log(logging.INFO, 'done with websocket', should_print=True)
 
     # Agent Interaction Functions #
 

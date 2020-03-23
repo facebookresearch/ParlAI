@@ -44,7 +44,11 @@ class MessengerBotChatTaskWorld(World):
         if opt['model'] is None and opt['model_file'] is None:
             raise RuntimeError("Model must be specified")
         return MessengerBotChatTaskWorld(
-            opt, agents[0], create_agent_from_shared(opt['shared_bot_params'][MessengerBotChatTaskWorld.MODEL_KEY])
+            opt,
+            agents[0],
+            create_agent_from_shared(
+                opt['shared_bot_params'][MessengerBotChatTaskWorld.MODEL_KEY]
+            ),
         )
 
     @staticmethod

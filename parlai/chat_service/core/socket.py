@@ -25,8 +25,7 @@ class ChatServiceMessageSocket:
         """
         server_url:           url at which the server is to be run
         port:                 port for the socket to operate on
-        message_callback:     function to be called on incoming message objects
-                              format: message_callback(self, data)
+        message_callback:     function to be called on incoming message objects (format: message_callback(self, data))
         """
         self.server_url = server_url
         self.port = port
