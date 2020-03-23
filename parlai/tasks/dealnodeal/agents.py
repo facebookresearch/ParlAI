@@ -46,7 +46,8 @@ class NegotiationTeacher(Teacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.datatype = opt['datatype'].split(':')[0]
-        self.random = self.datatype == 'train' and 'ordered' not in opt['datatype']
+        self.datatype_ = opt['datatype']
+        self.random = self.datatype_ == 'train'
         build(opt)
 
         filename = 'val' if self.datatype == 'valid' else self.datatype
