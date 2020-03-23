@@ -313,7 +313,8 @@ class PipelineHelper(object):
         # first assume all layers will go onto gpu 0 as an optimizer. The
         # optimizer and embeddings are not quite as expensive as the
         # activations (which scale via batchsize), Empirically, I found this
-        # heuristic works well enough.
+        # heuristic works well enough. The weighting factor of 3 is more or
+        # less made up.
         self.__device_allocations['cuda:0'] += trainable_parameters(model) * 3
 
         model.apply(self._place_modulelist)
@@ -342,6 +343,9 @@ class PipelineHelper(object):
             else:
                 # otherwise dynamic allocation
                 mostfree = min(self.devices, key=keyfunc)
+            # 32 is a totally arbitrary, made up number that worked in practice
+            # on the large models I tested on. I believe it should be roughly
+            # batch size, but this was set empirically.
             self.__device_allocations[mostfree] += trainable_parameters(layer) * 32
             # mark a layer as going to the given element
             layer_assignments[mostfree] += 1
