@@ -187,13 +187,3 @@ class NormalizedTeacher(SelfOriginalTeacher):
 
 class DefaultTeacher(SelfOriginalTeacher):
     pass
-
-
-class InteractiveTeacher(SelfOriginalTeacher):
-    # Dummy class to add arguments for interactive world.
-    pass
-
-
-class SelfchatTeacher(SelfOriginalTeacher):
-    # Dummy class to add arguments for interactive world.
-    pass

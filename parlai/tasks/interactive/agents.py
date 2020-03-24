@@ -8,8 +8,3 @@
 class DefaultTeacher:
     # Dummy class.
     pass
-
-
-class InteractiveTeacher:
-    # Dummy class to add arguments for interactive world.
-    pass

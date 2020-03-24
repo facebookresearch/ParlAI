@@ -714,6 +714,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         cand_scores = None
         token_losses = None
 
+        import pdb; pdb.set_trace()
+        
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
             loss, model_output = self.compute_loss(batch, return_output=True)

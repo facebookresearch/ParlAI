@@ -44,8 +44,8 @@ def load_personas(opt):
                     )
                 if t.startswith('your persona:'):
                     a2_persona += t + '\n'
-            personas.add(a1_persona)
-            personas.add(a2_persona)
+            personas.add(a1_persona.rstrip('\n'))
+            personas.add(a2_persona.rstrip('\n'))
     print('[ loaded ' + str(len(personas)) + ' personas ]')
     return list(personas)
 
