@@ -333,10 +333,9 @@ class ChatServiceManager(ABC):
         for world_type in self.agent_pool:
             agent_state = self.get_agent_state(agent_id)
             if agent_state in self.agent_pool[world_type]:
+                assert agent_state is not None  # for typing
                 self.agent_pool[world_type].remove(agent_state)
-                self.remove_agent_from_pool(
-                    agent_state, world_type=world_type
-                )  # type: ignore
+                self.remove_agent_from_pool(agent_state, world_type=world_type)
         del self.messenger_agent_states[agent_id]
         del self.agent_id_to_overworld_future[agent_id]
 
