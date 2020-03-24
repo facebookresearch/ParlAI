@@ -4,10 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from copy import deepcopy
-
 from parlai.core.worlds import create_task
-from parlai.core.worlds import validate
 from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
