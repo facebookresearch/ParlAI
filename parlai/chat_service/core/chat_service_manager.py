@@ -464,7 +464,9 @@ class ChatServiceManager(ABC):
             # add agent to pool
             self.agent_pool.setdefault(world_type, []).append(agent)
 
-    def remove_agent_from_pool(self, agent: AgentState, world_type: str = 'default', mark_removed: bool = True):
+    def remove_agent_from_pool(
+        self, agent: AgentState, world_type: str = 'default', mark_removed: bool = True
+    ):
         """
         Remove agent from the pool.
 
@@ -567,7 +569,11 @@ class ChatServiceManager(ABC):
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
     def check_timeout_in_pool(
-        self, world_type: str, agent_pool: List[AgentState], max_time_in_pool: int, backup_task: str = None
+        self,
+        world_type: str,
+        agent_pool: List[AgentState],
+        max_time_in_pool: int,
+        backup_task: str = None,
     ):
         """
         Check for timed-out agents in pool.
@@ -613,7 +619,9 @@ class ChatServiceManager(ABC):
                     self.sender.typing_on(agent_state.service_id)
                     agent_state.stored_data['seen_wait_message'] = True
 
-    def _get_done_callback_for_agents(self, task_id: str, world_type: str, agents: List[ChatServiceAgent]) -> Callable[[Future], None]:
+    def _get_done_callback_for_agents(
+        self, task_id: str, world_type: str, agents: List[ChatServiceAgent]
+    ) -> Callable[[Future], None]:
         """
         Create done callback for finishing task world with particular agents.
 
@@ -766,7 +774,13 @@ class ChatServiceManager(ABC):
                 server_utils.delete_server(self.server_task_name, self.opt['local'])
 
     @abstractmethod
-    def observe_message(self, receiver_id: int, text: str, quick_replies: List[str] = None, persona_id: str = None):
+    def observe_message(
+        self,
+        receiver_id: int,
+        text: str,
+        quick_replies: List[str] = None,
+        persona_id: str = None,
+    ):
         """
         Send a message through the message manager.
 
@@ -811,7 +825,13 @@ class ChatServiceManager(ABC):
 
     # Agent Interaction Functions [Also extra utils]
 
-    def observe_payload(self, receiver_id: str, data: Dict[Any, Any], quick_replies: List[str] = None, persona_id: str = None):
+    def observe_payload(
+        self,
+        receiver_id: str,
+        data: Dict[Any, Any],
+        quick_replies: List[str] = None,
+        persona_id: str = None,
+    ):
         """
         Send a payload through the message manager.
 
