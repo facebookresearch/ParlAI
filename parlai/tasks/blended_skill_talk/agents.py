@@ -251,32 +251,6 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
         return gotten
 
 
-class WoWBasicPersonaTopicifierTeacher(BasicdialogTeacher):
-    """
-    Adds personas to WoW data.
-    """
-
-    def __init__(self, opt, shared=None):
-        if opt.get('add_topic', False) is not True:
-            raise ValueError(
-                'add_topic must be True so that BasicPersonaTopicifierTeacher only '
-                'needs to add personas.'
-            )
-        self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'],
-            should_have_personas=False,
-            should_have_topics=True,
-        )
-        super().__init__(opt, shared=shared)
-
-    def get(self, episode_idx, entry_idx=None):
-        gotten = super().get(episode_idx, entry_idx=entry_idx)
-        if entry_idx == 0:
-            modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
-            gotten['text'] = modified_text
-        return gotten
-
-
 class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
     """
     Adds persona and WoW topic to ED context strings.
