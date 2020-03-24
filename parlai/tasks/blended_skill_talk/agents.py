@@ -13,17 +13,14 @@ from typing import List, Optional, Dict
 
 from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname
 from parlai.tasks.blended_skill_talk.dataset_classification_teacher import (
-    AbstractDatasetClassificationTeacher,
+    DatasetClassificationTeacherBase,
 )
 from parlai.tasks.blended_skill_talk.mixed_candidates_teacher import (
-    AbstractMixedCandidatesTeacher,
+    MixedCandidatesTeacherBase,
 )
 from parlai.tasks.convai2.agents import DefaultTeacher as Convai2DefaultTeacher
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
-from parlai.tasks.wizard_of_wikipedia.agents import (
-    WizardDialogKnowledgeTeacher,
-    BasicdialogTeacher,
-)
+from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
 from parlai.utils.misc import warn_once
 from .build import build
 
@@ -133,11 +130,10 @@ class BSTBuilder(object):
         )
 
 
-class BST3DatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
+class BST3DatasetClassificationTeacher(DatasetClassificationTeacherBase):
     """
-    Subclasses AbstractDatasetClassificationTeacher which separates examples from a list
-    of input teachers into their own episodes and sets the label to be name of the
-    dataset.
+    Subclasses DatasetClassificationTeacherBase which separates examples from a list of
+    input teachers into their own episodes and sets the label to be name of the dataset.
     """
 
     def create_dataset_teachers_map(self, opt):
@@ -162,7 +158,7 @@ class BST3DatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
         super().build(opt)
 
 
-class BSTMixedCandidatesTeacher(AbstractMixedCandidatesTeacher):
+class BSTMixedCandidatesTeacher(MixedCandidatesTeacherBase):
     def create_dataset_teachers_map(self, opt):
         """
         Implement the superclass' abstract method.

@@ -15,7 +15,7 @@ import numpy as np
 from parlai.core.teachers import FixedDialogTeacher
 
 
-class AbstractMixedCandidatesTeacher(FixedDialogTeacher):
+class MixedCandidatesTeacherBase(FixedDialogTeacher):
     """
     This teacher can do mixed candidate evaluation of a model where examples come from a
     specified task (self.mc_task) but N more inline candidates are added from each of
@@ -39,7 +39,7 @@ class AbstractMixedCandidatesTeacher(FixedDialogTeacher):
 
         if not shared:
             # is primary
-            print(f'[AbstractMixedCandidatesTeacher] task: {self.mc_task}')
+            print(f'[MixedCandidatesTeacherBase] task: {self.mc_task}')
             self.build(opt)
             self.teachers_map = self.create_dataset_teachers_map(opt)
             self.data = self._setup_mixed_candidates()

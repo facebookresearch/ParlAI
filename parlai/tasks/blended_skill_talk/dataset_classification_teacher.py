@@ -13,7 +13,7 @@ import numpy as np
 from parlai.core.teachers import FixedDialogTeacher, create_task_agent_from_taskname
 
 
-class AbstractDatasetClassificationTeacher(FixedDialogTeacher):
+class DatasetClassificationTeacherBase(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         self.opt = opt
         self.datapath = os.path.join(opt['datapath'], 'blended_skill_talk')
@@ -199,7 +199,7 @@ class AbstractDatasetClassificationTeacher(FixedDialogTeacher):
         return shared
 
 
-class SingleDatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
+class SingleDatasetClassificationTeacher(DatasetClassificationTeacherBase):
     @staticmethod
     def add_cmdline_args(parser):
         # A single teacher to pull examples from and to separate them into their
