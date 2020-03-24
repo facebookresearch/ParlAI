@@ -32,6 +32,7 @@ class InteractiveWorld(DialogPartnerWorld):
     def get_contexts(self):
         """
         Override to return a pair of contexts with which to seed the episode.
+
         This function will be called before the first turn of every episode.
         """
         return ['__SILENCE__', '']
@@ -39,6 +40,7 @@ class InteractiveWorld(DialogPartnerWorld):
     def parley(self):
         """
         Agent 0 goes first.
+
         Alternate between the two agents.
         """
         if self.turn_cnt == 0:

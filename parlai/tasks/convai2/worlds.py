@@ -12,7 +12,6 @@ from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 import random
-from typing import List
 
 
 def load_personas(opt):

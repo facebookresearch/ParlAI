@@ -5,12 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import create_task
-from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 
-from copy import deepcopy
 import random
 import pickle
 import os
