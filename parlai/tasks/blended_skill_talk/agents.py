@@ -19,7 +19,7 @@ from parlai.tasks.wizard_of_wikipedia.agents import (
 from parlai_internal.projects.blended_skill_talk.add_personas_topics import (
     PersonaTopicifier,
 )
-from parlai_internal.tasks.blended_skill_talk.dataset_classification_teacher import (
+from parlai.tasks.blended_skill_talk.dataset_classification_teacher import (
     AbstractDatasetClassificationTeacher,
 )
 from parlai_internal.tasks.blended_skill_talk.mixed_candidates_teacher import (
