@@ -7,7 +7,6 @@
 Websocket Manager Module Contains implementation of the WebsocketManager which helps run
 ParlAI via websockets.
 """
-import copy
 import json
 import asyncio
 import logging
