@@ -335,7 +335,7 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                 full_opt = Opt(
                     {**opt, 'task': 'blended_skill_talk', 'datapath': data_path}
                 )
-                teacher = create_task_agent_from_taskname(full_opt)
+                teacher = create_task_agent_from_taskname(full_opt)[0]
                 self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
 
 
