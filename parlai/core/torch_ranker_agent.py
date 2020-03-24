@@ -24,7 +24,12 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import padded_3d
+from parlai.utils.torch import (
+    padded_3d,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
 
@@ -175,16 +180,21 @@ class TorchRankerAgent(TorchAgent):
             # should correctly initialize to floats or ints here
             self.criterion = self.build_criterion()
             self.model = self.build_model()
+
             if self.model is None or self.criterion is None:
                 raise AttributeError(
-                    'build_model() and build_criterion() need to return the model or criterion'
+                    'build_model() and build_criterion() need to return the model '
+                    'or criterion'
                 )
             if self.use_cuda:
                 self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
 
-            print("Total parameters: {}".format(self._total_parameters()))
-            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
 
             if self.fp16:
                 self.model = self.model.half()
@@ -204,7 +214,8 @@ class TorchRankerAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        else:
+        elif 'train' in opt.get('datatype', ''):
+            # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(
                 optim_params, states.get('optimizer'), states.get('optimizer_type')
@@ -212,8 +223,9 @@ class TorchRankerAgent(TorchAgent):
             self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         if shared is None and is_distributed():
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
     def build_criterion(self):
@@ -762,7 +774,8 @@ class TorchRankerAgent(TorchAgent):
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
-        shared['optimizer'] = self.optimizer
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         return shared
 
     def set_vocab_candidates(self, shared):

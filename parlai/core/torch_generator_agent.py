@@ -32,7 +32,12 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import warn_once
 from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
-from parlai.utils.torch import neginf
+from parlai.utils.torch import (
+    neginf,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
 
 
 try:
@@ -384,11 +389,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
             if self.use_cuda:
                 self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
 
             sync_parameters(self.model)
-            print("Total parameters: {}".format(self._total_parameters()))
-            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
 
             if self.fp16:
                 self.model = self.model.half()
@@ -415,8 +423,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         if shared is None and is_distributed():
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
         self.reset()
