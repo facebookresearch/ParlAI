@@ -72,7 +72,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
         return a1_persona, a2_persona
 
 
-class InteractiveSelfchatWorld(SelfChatBaseWorld):
+class SelfChatWorld(SelfChatBaseWorld):
     def init_contexts(self):
         print('[ loading contexts.. ]')
         data_path = os.path.join(

@@ -120,7 +120,7 @@ class SelfChatWorld(SelfChatBaseWorld):
     def init_contexts(self):
         self.personas_list = load_personas(self.opt)
 
-    def get_contexts(self, episode_num: int) -> List[str]:
+    def get_contexts(self):
         random.seed()
         personas_1 = random.choice(self.personas_list)
         personas_2 = random.choice(self.personas_list)
