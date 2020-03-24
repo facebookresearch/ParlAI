@@ -35,10 +35,10 @@ class AgentState:
         self.service_id = service_id
         self.overworld_agent = overworld_agent
         self.active_agent = overworld_agent
-        self.task_id_to_agent = {}
+        self.task_id_to_agent: Dict[str, ChatServiceAgent] = {}
         self.onboard_data = None
-        self.stored_data = {}
-        self.time_in_pool = {}
+        self.stored_data: Dict[str, Any] = {}
+        self.time_in_pool: Dict[str, float] = {}
 
     def get_active_agent(self) -> ChatServiceAgent:
         """
@@ -89,7 +89,7 @@ class AgentState:
         """
         return task_id in self.task_id_to_agent
 
-    def get_agent_for_task(self, task_id: str) -> ChatServiceAgent:
+    def get_agent_for_task(self, task_id: str) -> Optional[ChatServiceAgent]:
         """
         Return ChatServiceAgent for given task id.
 
@@ -151,7 +151,7 @@ class ChatServiceManager(ABC):
         self.server_url = None
         self.port = 443
         self.agent_pool_change_condition = threading.Condition()
-        self.active_worlds = {}
+        self.active_worlds: Dict[str, Future] = {}
         self.socket = None
         self.sender = None
         self.running = True
@@ -322,7 +322,7 @@ class ChatServiceManager(ABC):
             for partner in agent.message_partners:
                 # We don't know who sent the message that was seen, but we can
                 # send a message observed event to everyone else in the chat
-                self.sender.send_read(partner.id)
+                self.sender.send_read(partner.id)  # type: ignore
 
     def _remove_agent(self, agent_id: int):
         """
@@ -334,7 +334,9 @@ class ChatServiceManager(ABC):
             agent_state = self.get_agent_state(agent_id)
             if agent_state in self.agent_pool[world_type]:
                 self.agent_pool[world_type].remove(agent_state)
-                self.remove_agent_from_pool(agent_state, world_type=world_type)
+                self.remove_agent_from_pool(
+                    agent_state, world_type=world_type
+                )  # type: ignore
         del self.messenger_agent_states[agent_id]
         del self.agent_id_to_overworld_future[agent_id]
 
@@ -420,6 +422,7 @@ class ChatServiceManager(ABC):
             return
 
         agent_state = self.get_agent_state(agent_id)
+        assert agent_state is not None
         if agent_state.get_active_agent() is None:
             # return agent to overworld
             if message.get("text", "") and message['text'].upper() == 'EXIT':
@@ -439,13 +442,13 @@ class ChatServiceManager(ABC):
                     'Please wait while we pair you with another person. '
                     'If you wish to exit, type *EXIT*.',
                 )
-                self.sender.typing_on(agent_id)
+                self.sender.typing_on(agent_id)  # type: ignore
         else:
             # If an agent is in a solo world, we can put a typing indicator
             # and mark the message as read
             agent = agent_state.get_active_agent()
             if len(agent.message_partners) == 0:
-                self.handle_bot_read(agent.id)
+                self.handle_bot_read(agent.id)  # type: ignore
             agent.put_data(message)
 
     def add_agent_to_pool(self, agent: AgentState, world_type: str = 'default'):
@@ -490,6 +493,7 @@ class ChatServiceManager(ABC):
                     if self.service_reference_id is not None:
                         self.mark_removed(agent.service_id, self.service_reference_id)
 
+    @abstractmethod
     def _create_agent(self, task_id: str, agent_id: int) -> ChatServiceAgent:
         """
         Initialize an agent and return it.
@@ -501,7 +505,6 @@ class ChatServiceManager(ABC):
         :param agent_id:
             agent id
         """
-        return ChatServiceAgent(self.opt, self, task_id, agent_id)
 
     def _get_agent(self, agent_id: int, task_id: str) -> Optional[ChatServiceAgent]:
         """
@@ -616,7 +619,7 @@ class ChatServiceManager(ABC):
                         'Pairing is taking longer than expected. '
                         'If you wish to exit, type *EXIT*.',
                     )
-                    self.sender.typing_on(agent_state.service_id)
+                    self.sender.typing_on(agent_state.service_id)  # type: ignore
                     agent_state.stored_data['seen_wait_message'] = True
 
     def _get_done_callback_for_agents(
