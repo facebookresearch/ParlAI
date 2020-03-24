@@ -213,7 +213,7 @@ class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            should_have_personas=True, should_have_topics=False
+            datapath=opt['datapath'], should_have_personas=True, should_have_topics=False
         )
         super().__init__(opt, shared=shared)
 
@@ -232,7 +232,7 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            should_have_personas=False, should_have_topics=True
+            datapath=opt['datapath'], should_have_personas=False, should_have_topics=True
         )
         super().__init__(opt, shared=shared)
 
@@ -256,7 +256,7 @@ class WoWBasicPersonaTopicifierTeacher(BasicdialogTeacher):
                 'needs to add personas.'
             )
         self.persona_topicifier = PersonaTopicifier(
-            should_have_personas=False, should_have_topics=True
+            datapath=opt['datapath'], should_have_personas=False, should_have_topics=True
         )
         super().__init__(opt, shared=shared)
 
@@ -275,7 +275,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            should_have_personas=False, should_have_topics=False
+            datapath=opt['datapath'], should_have_personas=False, should_have_topics=False
         )
         super().__init__(opt, shared=shared)
 
@@ -354,8 +354,9 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 class PersonaTopicifier:
     def __init__(
         self,
-        should_have_personas=False,
-        should_have_topics=False,
+        datapath: str,
+        should_have_personas: bool = False,
+        should_have_topics: bool = False,
         no_persona_is_error: bool = False,
     ):
         print('IN PERSONA TOPICIFIER INIT')
@@ -371,7 +372,7 @@ class PersonaTopicifier:
             self.persona_strings_to_wow_topics_map,
         ) = self._setup_personas_to_wow_topics()
         self.personas_file_path = os.path.join(
-            opt['datapath'], 'blended_skill_talk', 'persona_list.txt'
+            datapath, 'blended_skill_talk', 'persona_list.txt'
         )
         with open(self.personas_file_path, 'r') as f:
             self.personas = f.read().strip().split('||')
@@ -381,7 +382,7 @@ class PersonaTopicifier:
 
     def _setup_personas_to_wow_topics(self) -> Dict[str, List[str]]:
         topic_to_persona_path = os.path.join(
-            opt['datapath'], 'blended_skill_talk', 'topic_to_persona_list.txt'
+            datapath, 'blended_skill_talk', 'topic_to_persona_list.txt'
         )
         persona_strings_to_topics = defaultdict(list)
         topics_to_persona_strings = defaultdict(list)
