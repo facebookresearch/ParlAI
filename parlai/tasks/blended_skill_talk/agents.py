@@ -8,7 +8,7 @@ import copy
 import os
 
 from parlai.core.teachers import ParlAIDialogTeacher
-from parlai.tasks.blended_skill_talk.build import build
+from .build import build
 
 
 def _path(opt):
