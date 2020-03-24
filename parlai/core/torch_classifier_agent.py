@@ -159,6 +159,9 @@ class TorchClassifierAgent(TorchAgent):
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
+            if init_model:
+                print('Loading existing model parameters from ' + init_model)
+                self.load(init_model)
             if self.use_cuda:
                 self.model.cuda()
                 if self.data_parallel:
@@ -166,9 +169,6 @@ class TorchClassifierAgent(TorchAgent):
                 elif self.model_parallel:
                     self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
-            if init_model:
-                print('Loading existing model parameters from ' + init_model)
-                self.load(init_model)
             if self.use_cuda:
                 if self.opt['data_parallel']:
                     self.model = torch.nn.DataParallel(self.model)
