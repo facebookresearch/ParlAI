@@ -74,8 +74,7 @@ class WebsocketManager(ChatServiceManager):
         if 'models' in self.opt and self.should_load_model:
             model_params = {}
             for model in self.opt['models']:
-                model_opt = copy.deepcopy(self.runner_opt)
-                model_opt.update(self.opt['models'][model])
+                model_opt = self.opt['models'][model]
                 model_params[model] = create_agent(model_opt).share()
             self.runner_opt['shared_bot_params'] = model_params
 
