@@ -45,30 +45,30 @@ class AbstractDatasetClassificationTeacher(FixedDialogTeacher):
     @abstractmethod
     def create_dataset_teachers_map(self, opt):
         """
-        Implemented by subclass
+        Implemented by subclass.
+
         :return: Must return a map of dataset label to an instantiated teacher
-        (e.g. {'__WIZARD__': <instance of Wizard teacher>, ...})
+            (e.g. {'__WIZARD__': <instance of Wizard teacher>, ...})
         """
         raise NotImplementedError('Subclass must implement this method!')
 
     def build(self, opt):
         """
-        subclass can do something if it wants
+        subclass can do something if it wants.
         """
         return
 
     @abstractmethod
     def preprocess_utterance(self, utterance):
         """
-        Do something to utterance before including
-        For example: we have removed lines with \n (topics for Wizard or
-        personas for persona chat)
+        Do something to utterance before including For example: we have removed lines
+        with \n (topics for Wizard or personas for persona chat)
         """
         raise NotImplementedError('Subclass must implement!')
 
     def _setup_for_classifier(self):
         """
-        Collect the utterances to be used to train/eval the classifier
+        Collect the utterances to be used to train/eval the classifier.
         """
         # map of utterance to boolean across all datasets - to track dups
         utterances_map_for_duplicates = {}
@@ -119,7 +119,7 @@ class AbstractDatasetClassificationTeacher(FixedDialogTeacher):
         # Upsample the observations so all datasets are equally represented
         max_dataset_len = max([len(d) for d in list(utterances_map.values())])
         final_utterances = []
-        for dataset_label, dataset_observations in utterances_map.items():
+        for _dataset_label, dataset_observations in utterances_map.items():
             dataset_len = len(dataset_observations)
             upsample_num = max_dataset_len - dataset_len
             if dataset_len == 0:
@@ -127,7 +127,7 @@ class AbstractDatasetClassificationTeacher(FixedDialogTeacher):
                 # where there's some weird get() error as per above
                 print('Warning! Dataset was length 0. Skipping upsampling')
                 continue
-            for i in range(0, upsample_num):
+            for _ in range(0, upsample_num):
                 random_int = np.random.randint(0, dataset_len)
                 dataset_observations.append(dataset_observations[random_int])
             final_utterances.extend(dataset_observations)
@@ -138,7 +138,7 @@ class AbstractDatasetClassificationTeacher(FixedDialogTeacher):
         duplicates_summary = ''
         for dataset_label in self.teachers_map.keys():
             duplicates_for_dataset_count = 0
-            for utt, dataset_list in utterances_map_for_duplicates.items():
+            for _utt, dataset_list in utterances_map_for_duplicates.items():
                 if dataset_label in dataset_list and len(dataset_list) > 1:
                     duplicates_for_dataset_count += 1
             duplicates_summary += f' {dataset_label}: {duplicates_for_dataset_count}'
@@ -222,7 +222,8 @@ class SingleDatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
 
     def create_dataset_teachers_map(self, opt):
         """
-        Implement the superclass' abstract method
+        Implement the superclass' abstract method.
+
         :return: map of {<dataset label>: <teacher>}
         """
         new_opt = copy.deepcopy(opt)
@@ -232,6 +233,6 @@ class SingleDatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
 
     def preprocess_utterance(self, utterance):
         """
-        Implement superclass' abstract method
+        Implement superclass' abstract method.
         """
         return utterance

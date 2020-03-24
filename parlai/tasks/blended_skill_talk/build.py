@@ -56,8 +56,10 @@ def build(opt):
 
 def _create_parlai_format(dpath: str):
     """
-    Copy data into the format read by ParlAIDialogTeacher. 'text' will be from the free
-    Turker, who speaks first, and 'label' will be from the guided Turker.
+    Copy data into the format read by ParlAIDialogTeacher.
+
+    'text' will be from the free Turker, who speaks first, and 'label' will be from the
+    guided Turker.
     """
 
     datatypes = ['train', 'valid', 'test']

@@ -91,9 +91,9 @@ class BSTBuilder(object):
     @staticmethod
     def build_fixed_candidates(opt):
         """
-        Gather all the labels in the current datetype and write to a file if not
-        already there (otherwise skip)
-        This is then used in a two stage model to instantiate pretrained instances
+        Gather all the labels in the current datetype and write to a file if not already
+        there (otherwise skip) This is then used in a two stage model to instantiate
+        pretrained instances.
         """
         teachers_map = BSTBuilder.create_three_dataset_teachers_map(opt)
         for dset_label, dset_task_teacher in teachers_map.items():
@@ -103,8 +103,8 @@ class BSTBuilder(object):
     @staticmethod
     def _build_fixed_candidates(task_teacher, fixed_candidates_file):
         """
-        Gathering all the labels in the current datetype and write to a file
-        Which is then used in the model
+        Gathering all the labels in the current datetype and write to a file Which is
+        then used in the model.
         """
         if os.path.isfile(fixed_candidates_file):
             print(f'Candidates file: {fixed_candidates_file} exists. Returning')
@@ -135,22 +135,22 @@ class BSTBuilder(object):
 
 class BST3DatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
     """
-    Subclasses AbstractDatasetClassificationTeacher which separates examples
-    from a list of input teachers into their own episodes and sets the label to
-    be name of the dataset
+    Subclasses AbstractDatasetClassificationTeacher which separates examples from a list
+    of input teachers into their own episodes and sets the label to be name of the
+    dataset.
     """
 
     def create_dataset_teachers_map(self, opt):
         """
-        Implement the superclass' abstract method
+        Implement the superclass' abstract method.
+
         :return: map of {<dataset label>: <teacher>}
         """
         return BSTBuilder.create_three_dataset_teachers_map(opt)
 
     def preprocess_utterance(self, utterance):
         """
-        Implement superclass' abstract method
-        Do something to utterance before including
+        Implement superclass' abstract method Do something to utterance before including
         We remove lines with \n (topics for Wizard or personas for persona chat)
         """
         return utterance.split('\n')[-1].strip()
@@ -165,13 +165,16 @@ class BST3DatasetClassificationTeacher(AbstractDatasetClassificationTeacher):
 class BSTMixedCandidatesTeacher(AbstractMixedCandidatesTeacher):
     def create_dataset_teachers_map(self, opt):
         """
-        Implement the superclass' abstract method
+        Implement the superclass' abstract method.
+
         :return: map of {<dataset label>: <teacher>}
         """
         return BSTBuilder.create_three_dataset_teachers_map(opt)
 
     def get_mixed_candidates_path(self, opt):
-        """Where to look for or store the mixed candidates calculated"""
+        """
+        Where to look for or store the mixed candidates calculated.
+        """
         return os.path.join(
             opt['datapath'],
             'blended_skill_talk',
@@ -213,7 +216,9 @@ class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'], should_have_personas=True, should_have_topics=False
+            datapath=opt['datapath'],
+            should_have_personas=True,
+            should_have_topics=False,
         )
         super().__init__(opt, shared=shared)
 
@@ -232,7 +237,9 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'], should_have_personas=False, should_have_topics=True
+            datapath=opt['datapath'],
+            should_have_personas=False,
+            should_have_topics=True,
         )
         super().__init__(opt, shared=shared)
 
@@ -256,7 +263,9 @@ class WoWBasicPersonaTopicifierTeacher(BasicdialogTeacher):
                 'needs to add personas.'
             )
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'], should_have_personas=False, should_have_topics=True
+            datapath=opt['datapath'],
+            should_have_personas=False,
+            should_have_topics=True,
         )
         super().__init__(opt, shared=shared)
 
@@ -275,7 +284,9 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'], should_have_personas=False, should_have_topics=False
+            datapath=opt['datapath'],
+            should_have_personas=False,
+            should_have_topics=False,
         )
         super().__init__(opt, shared=shared)
 
@@ -360,6 +371,7 @@ class PersonaTopicifier:
         no_persona_is_error: bool = False,
     ):
         print('IN PERSONA TOPICIFIER INIT')
+        self.datapath = datapath
         self.utterance_to_persona_map = {}
         self.should_have_personas = should_have_personas
         self.should_have_topics = should_have_topics
@@ -372,7 +384,7 @@ class PersonaTopicifier:
             self.persona_strings_to_wow_topics_map,
         ) = self._setup_personas_to_wow_topics()
         self.personas_file_path = os.path.join(
-            datapath, 'blended_skill_talk', 'persona_list.txt'
+            self.datapath, 'blended_skill_talk', 'persona_list.txt'
         )
         with open(self.personas_file_path, 'r') as f:
             self.personas = f.read().strip().split('||')
@@ -382,7 +394,7 @@ class PersonaTopicifier:
 
     def _setup_personas_to_wow_topics(self) -> Dict[str, List[str]]:
         topic_to_persona_path = os.path.join(
-            datapath, 'blended_skill_talk', 'topic_to_persona_list.txt'
+            self.datapath, 'blended_skill_talk', 'topic_to_persona_list.txt'
         )
         persona_strings_to_topics = defaultdict(list)
         topics_to_persona_strings = defaultdict(list)

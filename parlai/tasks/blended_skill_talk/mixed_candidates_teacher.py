@@ -17,11 +17,10 @@ from parlai.core.teachers import FixedDialogTeacher
 
 class AbstractMixedCandidatesTeacher(FixedDialogTeacher):
     """
-    This teacher can do mixed candidate evaluation of a model where examples
-    come from a specified task (self.mc_task) but N more inline
-    candidates are added from each of the other datasets specified in the map
-    self.teachers_map which is created by abstractmethod in subclass: create_dataset_teachers_map
-
+    This teacher can do mixed candidate evaluation of a model where examples come from a
+    specified task (self.mc_task) but N more inline candidates are added from each of
+    the other datasets specified in the map self.teachers_map which is created by
+    abstractmethod in subclass: create_dataset_teachers_map.
     """
 
     def __init__(self, opt, shared=None):
@@ -63,15 +62,16 @@ class AbstractMixedCandidatesTeacher(FixedDialogTeacher):
     @abstractmethod
     def create_dataset_teachers_map(self, opt):
         """
-        Implemented by subclass
+        Implemented by subclass.
+
         :return: Must return a map of dataset label to an instantiated teacher
-        (e.g. {'__WIZARD__': <instance of Wizard teacher>, ...})
+            (e.g. {'__WIZARD__': <instance of Wizard teacher>, ...})
         """
         raise NotImplementedError('Subclass must implement this!')
 
     def build(self, opt):
         """
-        Subclass can do something if it wants
+        Subclass can do something if it wants.
         """
         return
 
@@ -158,7 +158,7 @@ class AbstractMixedCandidatesTeacher(FixedDialogTeacher):
 
     def _get_all_labels_for_dataset(self, dataset_label):
         """
-        Get all the possible labels from all the examples/episodes for a given dataset
+        Get all the possible labels from all the examples/episodes for a given dataset.
         """
         print(
             f'[AbstractMixedCandidateTeacher] Getting all labels for {dataset_label}...'

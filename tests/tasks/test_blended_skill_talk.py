@@ -15,19 +15,17 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
     """
     Basic tests to count the number of examples/episodes and to check a few utterances.
 
-    # # Counting num episodes and examples
+    Manual check of the number of episodes and examples:
+    >>> import json
+    >>> for datatype in ['train', 'valid', 'test']:
+    >>>    with open(f'data/blended_skill_talk/{datatype}.json') as f:
+    >>>        data = json.load(f)
+    >>>    num_episodes = len(data)
+    >>>    num_examples = sum([len(d['dialog']) // 2 for d in data])
+    >>>    print(f'Number of episodes: {num_episodes:d}')
+    >>>    print(f'Number of examples: {num_examples:d}')
 
-    # Input:
-    import json
-    for datatype in ['train', 'valid', 'test']:
-        with open(f'data/blended_skill_talk/{datatype}.json') as f:
-            data = json.load(f)
-        num_episodes = len(data)
-        num_examples = sum([len(d['dialog']) // 2 for d in data])
-        print(f'Number of episodes: {num_episodes:d}')
-        print(f'Number of examples: {num_examples:d}')
-
-    # Output:
+    Output of manual check:
     Number of episodes: 4819
     Number of examples: 27018
     Number of episodes: 1009
