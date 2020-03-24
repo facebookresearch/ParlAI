@@ -38,7 +38,7 @@ def load_personas(opt):
             a2_persona = []
             for t in txt:
                 if t.startswith("partner's persona:"):
-                    a1_persona.appen(t.replace("partner's persona:", 'your persona:'))
+                    a1_persona.append(t.replace("partner's persona:", 'your persona:'))
                 if t.startswith('your persona:'):
                     a2_persona.append(t)
             personas.add('\n'.join(a1_persona))
