@@ -45,8 +45,10 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                 ({'datatype': 'test'}, 980, 5482),
             ]
             for opt, num_episodes, num_examples in opts_episodes_and_examples:
-                full_opt = Opt({**opt, 'datapath': data_path})
-                teacher = BlendedSkillTalkTeacher(full_opt)
+                full_opt = Opt(
+                    {**opt, 'task': 'blended_skill_talk', 'datapath': data_path}
+                )
+                teacher = create_task_agent_from_taskname(full_opt)[0]
                 self.assertEqual(teacher.num_episodes(), num_episodes)
                 self.assertEqual(teacher.num_examples(), num_examples)
 
@@ -71,8 +73,14 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                     'episode_done': False,
                 },
             )
-            full_opt = Opt({**train_opt_and_example[0], 'datapath': data_path})
-            teacher = BlendedSkillTalkTeacher(full_opt)
+            full_opt = Opt(
+                {
+                    **train_opt_and_example[0],
+                    'task': 'blended_skill_talk',
+                    'datapath': data_path,
+                }
+            )
+            teacher = create_task_agent_from_taskname(full_opt)[0]
             self.assertEqual(
                 teacher.get(episode_idx=1, entry_idx=0), train_opt_and_example[1]
             )
@@ -324,8 +332,10 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                 ),
             ]
             for opt, example in opts_and_examples:
-                full_opt = Opt({**opt, 'datapath': data_path})
-                teacher = BlendedSkillTalkTeacher(full_opt)
+                full_opt = Opt(
+                    {**opt, 'task': 'blended_skill_talk', 'datapath': data_path}
+                )
+                teacher = create_task_agent_from_taskname(full_opt)
                 self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
 
 
