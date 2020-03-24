@@ -40,7 +40,7 @@ class InteractiveWorld(DialogPartnerWorld):
     def finalize_episode(self):
         print("CHAT DONE ")
         print("\n... preparing new chat... \n")
-    
+
     def parley(self):
         """
         Agent 0 goes first.

@@ -65,7 +65,7 @@ class InteractiveWorld(InteractiveBaseWorld):
 
     def init_contexts(self):
         self.personas_list = load_personas(self.opt)
-        
+
     def get_contexts(self):
         random.seed()
         personas_1 = random.choice(self.personas_list)
@@ -75,13 +75,9 @@ class InteractiveWorld(InteractiveBaseWorld):
     def finalize_episode(self):
         print("\nCHAT DONE.\n")
         if self.display_partner_persona:
-            partner_persona = self.p2.replace(
-                'your persona:', 'partner\'s persona:'
-            )
-            print(
-                f"Your partner was playing the following persona:\n{partner_persona}"
-            )
-        print("[ Preparing new chat ... ]\n")        
+            partner_persona = self.p2.replace('your persona:', 'partner\'s persona:')
+            print(f"Your partner was playing the following persona:\n{partner_persona}")
+        print("[ Preparing new chat ... ]\n")
 
 
 class SelfChatWorld(SelfChatBaseWorld):
