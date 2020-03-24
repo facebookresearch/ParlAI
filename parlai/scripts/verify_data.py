@@ -27,7 +27,7 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='train:stream')
+    parser.set_defaults(datatype='train:ordered')
     return parser
 
 
