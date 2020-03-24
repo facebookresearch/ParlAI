@@ -8,9 +8,9 @@
 import os
 import parlai.core.build_data as build_data
 from parlai.core.build_data import DownloadableFile
-from .anli_constants import ANLI
 
 ANLI_VERSION = 'v0.1'
+ANLI = 'ANLI'
 
 RESOURCES = [
     DownloadableFile(
@@ -39,3 +39,4 @@ def build(opt):
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)
+    return dpath, version

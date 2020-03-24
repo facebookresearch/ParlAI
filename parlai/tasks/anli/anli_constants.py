@@ -6,10 +6,7 @@
 
 ANLI = 'ANLI'
 ANLI_PREFIX = 'anli_'
-ANLI_PREMISE_PREFIX = 'Premise: '
-ANLI_HYPO_PREFIX = 'Hypothesis: '
 ANLI_LABEL_DICT = {'e': 'entailment', 'c': 'contradiction', 'n': 'neutral'}
-ANLI_LABELS = list(ANLI_LABEL_DICT.values())
 ANLI_PREMISE_KEY = 'context'
 ANLI_HYPO_KEY = 'hypothesis'
 ANLI_ANSWER_KEY = 'label'

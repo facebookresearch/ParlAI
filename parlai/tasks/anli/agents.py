@@ -9,12 +9,18 @@ import copy
 import json
 
 from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
+from parlai.tasks.multinli.agents import convert_to_dialogData, BICLASS_LABELS, MULTINLI_LABELS
 from .build import build
 
-from .anli_constants import ANLI, ANLI_ANSWER_KEY, ANLI_LABEL_DICT, ANLI_HYPO_KEY, \
-    ANLI_HYPO_PREFIX, ANLI_LABELS, ANLI_PREFIX, ANLI_PREMISE_KEY, ANLI_PREMISE_PREFIX, ANLI_ROUNDS
-
+ANLI = 'ANLI'
+ANLI_PREFIX = 'anli_'
 ANLI_VERSION = 'v0.1'
+ANLI_LABEL_DICT = {'e': 'entailment', 'c': 'contradiction', 'n': 'neutral'}
+ANLI_PREMISE_KEY = 'context'
+ANLI_HYPO_KEY = 'hypothesis'
+ANLI_ANSWER_KEY = 'label'
+ANLI_ROUNDS = ['R1', 'R2', 'R3']
+
 
 def _path(opt):
     build(opt)
@@ -42,38 +48,52 @@ def _path(opt):
 
 
 class RoundBaseTeacher(DialogTeacher):
+    @staticmethod
+    def add_cmdline_args(parser):
+        parser = parser.add_argument_group('RoundBase Teacher Args')
+        parser.add_argument(
+            '--to-parlaitext',
+            type='bool',
+            default=False,
+            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+        )
+
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['round'] = opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else 1
         opt['round'] = opt['round'].upper()
-
         if not opt['round'] in ANLI_ROUNDS:
             raise KeyError(f"Undefined task round: {opt['round']}.")
 
         data_path = _path(opt)
         opt['datafile'] = data_path
+        self.to_parlaitext = opt.get('to_parlaitext', False)
         self.id = opt['task'].upper()
-        self.round = opt['round']
         super().__init__(opt, shared)
 
     def label_candidates(self):
-        return ANLI_LABELS
+        if self.to_parlaitext:
+            return BICLASS_LABELS
+        return MULTINLI_LABELS
 
     def setup_data(self, path):
         print('loading: ' + path)
         with open(path, 'r') as data_file:
             for pair_line in data_file:
                 pair = json.loads(pair_line)
-                premise = ANLI_PREMISE_PREFIX + pair[ANLI_PREMISE_KEY]
-                hypo = ANLI_HYPO_PREFIX + pair[ANLI_HYPO_KEY]
-                answer = [ANLI_LABEL_DICT[pair[ANLI_ANSWER_KEY]]]
-
-                if answer == ['-']:
+                if pair[ANLI_ANSWER_KEY] == '-':
                     continue
 
-                question = premise + '\n' + hypo
+                label_raw = pair[ANLI_ANSWER_KEY]
+                if label_raw in ANLI_LABEL_DICT:
+                    label_raw = ANLI_LABEL_DICT[label_raw]
 
-                yield (question, answer, None, ANLI_LABELS), True
+                question, answer_list, clas = convert_to_dialogData(premise_raw=pair[ANLI_PREMISE_KEY],
+                                                                    hypo_raw=pair[ANLI_HYPO_KEY],
+                                                                    answer_raw=label_raw,
+                                                                    to_parlaitext=self.to_parlaitext)
+
+                yield (question, answer_list, None, clas), True
 
 
 class R1Teacher(RoundBaseTeacher):
@@ -89,6 +109,16 @@ class R3Teacher(RoundBaseTeacher):
 
 
 class DefaultTeacher(MultiTaskTeacher):
+    @staticmethod
+    def add_cmdline_args(parser):
+        parser = parser.add_argument_group('ANLI Teacher Args')
+        parser.add_argument(
+            '--to-parlaitext',
+            type='bool',
+            default=False,
+            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+        )
+
     def __init__(self, opt, shared=None):
         anli_tasks = [
             'anli:r1',

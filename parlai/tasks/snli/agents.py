@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
-from parlai.tasks.multinli.agents import setup_data
+from parlai.tasks.multinli.agents import setup_data, BICLASS_LABELS
 from .build import build
 
 import os
@@ -42,15 +42,28 @@ def _path(opt):
 
 
 class DefaultTeacher(DialogTeacher):
+    @staticmethod
+    def add_cmdline_args(parser):
+        parser = parser.add_argument_group('SNLI Teacher Args')
+        parser.add_argument(
+            '--to-parlaitext',
+            type='bool',
+            default=False,
+            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+        )
+
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         data_path = _path(opt)
         opt['datafile'] = data_path
         self.id = 'SNLI'
+        self.to_parlaitext = opt.get('to_parlaitext', False)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        return setup_data(path)
+        return setup_data(path, self.to_parlaitext)
 
     def label_candidates(self):
+        if self.to_parlaitext:
+            return BICLASS_LABELS
         return ('entailment', 'contradiction', 'neutral')
