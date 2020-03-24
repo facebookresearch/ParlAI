@@ -18,12 +18,17 @@ class SimpleMessengerOverworld(World):
     def __init__(self, opt, agent):
         self.agent = agent
         self.opt = opt
+        self.episodeDone = False
+
+    def episode_done(self):
+        return self.episodeDone
 
     @staticmethod
     def generate_world(opt, agents):
         return SimpleMessengerOverworld(opt, agents[0])
 
     def parley(self):
+        self.episodeDone = True
         return 'default'
 
 

@@ -4,18 +4,22 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from abc import ABC, abstractmethod
+from asyncio import Future
 import sys
 import logging
 import datetime
 import threading
 import time
 import traceback
+from typing import Dict, Any, Optional, List, Callable
+
 from parlai.chat_service.core.agents import ChatServiceAgent
 import parlai.chat_service.utils.logging as log_utils
 import parlai.chat_service.utils.misc as utils
 import parlai.chat_service.utils.server as server_utils
 from parlai.chat_service.core.world_runner import ChatServiceWorldRunner
-from abc import ABC, abstractmethod
+from parlai.core.opt import Opt
 
 
 class AgentState:
@@ -26,7 +30,7 @@ class AgentState:
     world do we message, etc.
     """
 
-    def __init__(self, service_id, overworld_agent):
+    def __init__(self, service_id: int, overworld_agent: ChatServiceAgent):
         self.service_id = service_id
         self.overworld_agent = overworld_agent
         self.active_agent = overworld_agent
@@ -35,79 +39,79 @@ class AgentState:
         self.stored_data = {}
         self.time_in_pool = {}
 
-    def get_active_agent(self):
+    def get_active_agent(self) -> ChatServiceAgent:
         """
         Return active messenger agent.
 
         :return:
-            a MessengerAgent, which corresponds to the active agent for this
+            a ChatServiceAgent, which corresponds to the active agent for this
             agent state.
         """
         return self.active_agent
 
-    def set_active_agent(self, active_agent):
+    def set_active_agent(self, active_agent: ChatServiceAgent):
         """
         Set active agent for this agent.
 
         :param active_agent:
-            A MessengerAgent, the new active agent for this given agent state
+            A ChatServiceAgent, the new active agent for this given agent state
         """
         self.active_agent = active_agent
 
-    def get_overworld_agent(self):
+    def get_overworld_agent(self) -> ChatServiceAgent:
         """
         Return overworld messenger agent.
 
         :return:
-            a MessengerAgent, which corresponds agent object in the overworld
+            a ChatServiceAgent, which corresponds agent object in the overworld
         """
         return self.overworld_agent
 
-    def get_id(self):
+    def get_id(self) -> int:
         """
-        Return agent's ID.
+        Return the agent's ID.
 
         :return:
-            int agent ID
+            int agent's service ID
         """
         return self.service_id
 
-    def has_task(self, task_id):
+    def has_task(self, task_id: str) -> bool:
         """
         Determine if an agent is in a task.
 
         :param task_id:
-            string task id
+            task id
 
         :return:
             if agent is in that task.
         """
         return task_id in self.task_id_to_agent
 
-    def get_agent_for_task(self, task_id):
+    def get_agent_for_task(self, task_id: str) -> ChatServiceAgent:
         """
-        Return MessengerAgent for given task id.
+        Return ChatServiceAgent for given task id.
 
         For each "player", a separate agent is created for each task. This
         returns the appropriate MessengerAgent given the task id
 
         :param task_id:
-            string, task id
+            task id
 
         :return:
-            messenger agent object associated with the given task
+            ChatServiceAgent object associated with the given task
         """
         if self.has_task(task_id):
             return self.task_id_to_agent[task_id]
         else:
             return None
 
-    def assign_agent_to_task(self, agent, task_id):
+    def assign_agent_to_task(self, agent: ChatServiceAgent, task_id: str):
         """
         Mark agent in task.
 
         :param agent:
-            MessengerAgent object to mark in task
+            ChatServiceAgent object to mark in task
         :param task_id:
             string task name
         """
@@ -122,16 +126,22 @@ class ChatServiceManager(ABC):
         """
 
         @abstractmethod
-        def send_read(self, receiver_id):
+        def send_read(self, receiver_id: int):
+            """
+            Send read receipt to agent at receiver_id.
+            """
             pass
 
         @abstractmethod
-        def typing_on(self, receiver_id, persona_id=None):
+        def typing_on(self, receiver_id: int, persona_id: str = None):
+            """
+            Send typing on msg to agent at receiver_id.
+            """
             pass
 
     EXIT_STR = 'EXIT'
 
-    def __init__(self, opt):
+    def __init__(self, opt: Opt):
         """
         Create a ChatServiceManager using the given setup options.
         """
@@ -155,11 +165,11 @@ class ChatServiceManager(ABC):
         self.handle_message_read = self._handle_message_read
         self.handle_bot_read = self._handle_bot_read
 
-    def _log_debug(self, text):
+    def _log_debug(self, text: str):
         time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log_utils.print_and_log(logging.DEBUG, f'{time}: {text}', should_print=True)
 
-    def _parse_config(self, opt):
+    def _parse_config(self, opt: Opt):
         """
         Parse config for task.
 
@@ -193,19 +203,19 @@ class ChatServiceManager(ABC):
         self.parse_additional_args(opt)
 
     @abstractmethod
-    def parse_additional_args(self, opt):
+    def parse_additional_args(self, opt: Opt):
         """
         Parse any other service specific args here.
         """
         # page id for messenger to be obtained here
 
-    def _get_port(self):
+    def _get_port(self) -> int:
         """
         Return the port number currently being used.
         """
         return self.port
 
-    def _set_port(self, port_no):
+    def _set_port(self, port_no: int):
         """
         Use a custom port number.
 
@@ -280,25 +290,27 @@ class ChatServiceManager(ABC):
         return valid_pools
 
     @abstractmethod
-    def restructure_message(self):
+    def restructure_message(self, message: Dict[str, Any]) -> Dict[str, Any]:
         """
         Use this function to restructure the message into the provided format.
+
+        returns the appropriate message.
         """
 
     @abstractmethod
-    def _handle_bot_read(self, agent_id):
+    def _handle_bot_read(self, agent_id: int):
         """
         Use this function to handle/execute events once the bot has observed the
         message.
         """
 
     @abstractmethod
-    def _confirm_message_delivery(self, event):
+    def _confirm_message_delivery(self, event: Dict[str, Any]):
         """
         A callback for when messages are marked as delivered.
         """
 
-    def _handle_message_read(self, event):
+    def _handle_message_read(self, event: Dict[str, Any]):
         # If the message was sent by another user (as in during a conversation)
         # then we need to propogate the read back to that user.
         reader = event['sender']['id']
@@ -312,7 +324,7 @@ class ChatServiceManager(ABC):
                 # send a message observed event to everyone else in the chat
                 self.sender.send_read(partner.id)
 
-    def _remove_agent(self, agent_id):
+    def _remove_agent(self, agent_id: int):
         """
         Remove an agent from the system (after they disconnect or leave in some other
         way)
@@ -326,7 +338,7 @@ class ChatServiceManager(ABC):
         del self.messenger_agent_states[agent_id]
         del self.agent_id_to_overworld_future[agent_id]
 
-    def _launch_overworld(self, agent_id):
+    def _launch_overworld(self, agent_id: int):
         """
         Launch an overworld for the given agent id, replacing the existing overworld if
         it exists already.
@@ -363,7 +375,7 @@ class ChatServiceManager(ABC):
         future.add_done_callback(_done_callback)
         self.agent_id_to_overworld_future[agent_id] = future
 
-    def _on_first_message(self, message):
+    def _on_first_message(self, message: Dict[str, Any]):
         """
         Handle first message from player.
 
@@ -388,13 +400,14 @@ class ChatServiceManager(ABC):
 
         self._launch_overworld(agent_id)
 
-    def _on_new_message(self, message):
+    def _on_new_message(self, message: Dict[str, Any]):
         """
         Put an incoming message onto the correct agent's message queue.
 
         :param message:
             message to put on queue
         """
+        message = self.restructure_message(message)
         agent_id = message['sender']['id']
         if not self.world_runner.is_initialized():
             self.observe_message(
@@ -435,7 +448,7 @@ class ChatServiceManager(ABC):
                 self.handle_bot_read(agent.id)
             agent.put_data(message)
 
-    def add_agent_to_pool(self, agent, world_type='default'):
+    def add_agent_to_pool(self, agent: AgentState, world_type: str = 'default'):
         """
         Add the agent to pool.
 
@@ -451,16 +464,16 @@ class ChatServiceManager(ABC):
             # add agent to pool
             self.agent_pool.setdefault(world_type, []).append(agent)
 
-    def remove_agent_from_pool(self, agent, world_type='default', mark_removed=True):
+    def remove_agent_from_pool(self, agent: AgentState, world_type: str = 'default', mark_removed: bool = True):
         """
         Remove agent from the pool.
 
         :param agent:
-            Agent object
+            AgentState object
         :param world_type:
-            string, world name
+            world name
         :param mark_removed:
-            bool, whether to mark an agent as removed from the pool
+            whether to mark an agent as removed from the pool
         """
         with self.agent_pool_change_condition:
             self._log_debug('Removing agent {} from pool...'.format(agent.service_id))
@@ -475,28 +488,30 @@ class ChatServiceManager(ABC):
                     if self.service_reference_id is not None:
                         self.mark_removed(agent.service_id, self.service_reference_id)
 
-    def _create_agent(self, task_id, agent_id):
+    def _create_agent(self, task_id: str, agent_id: int) -> ChatServiceAgent:
         """
         Initialize an agent and return it.
 
         Called each time an agent is placed into a new task.
 
+        :param task_id:
+            task identifier
         :param agent_id:
-            int agent id
+            agent id
         """
         return ChatServiceAgent(self.opt, self, task_id, agent_id)
 
-    def _get_agent(self, agent_id, task_id):
+    def _get_agent(self, agent_id: int, task_id: str) -> Optional[ChatServiceAgent]:
         """
         Return agent object for given agent ID and task ID.
 
         :param agent_id:
-            int agent identifier
+            agent identifier
         :param task_id:
-            string task name
+            task name
 
         :return:
-            MessengerAgent object associated with given agent ID and task ID if
+            ChatServiceAgent object associated with given agent ID and task ID if
             possible, else None
         """
         agent_state = self.get_agent_state(agent_id)
@@ -505,12 +520,12 @@ class ChatServiceManager(ABC):
                 return agent_state.get_agent_for_task(task_id)
         return None
 
-    def get_agent_state(self, agent_id):
+    def get_agent_state(self, agent_id: int) -> Optional[AgentState]:
         """
         Return agent state.
 
         :param agent_id:
-            int agent identifier
+            agent identifier
 
         :return:
             AgentState object if agent_id is being tracked, else None
@@ -552,19 +567,19 @@ class ChatServiceManager(ABC):
         self.task_group_id = '{}_{}'.format(self.opt['task'], self.run_id)
 
     def check_timeout_in_pool(
-        self, world_type, agent_pool, max_time_in_pool, backup_task=None
+        self, world_type: str, agent_pool: List[AgentState], max_time_in_pool: int, backup_task: str = None
     ):
         """
         Check for timed-out agents in pool.
 
         :param world_type:
-            string world type
+            world type
         :param agent_pool:
             list of AgentStates
         :param max_time_in_pool:
-            int maximum time allowed for agent to be in pool
+            maximum time allowed for agent to be in pool
         :param backup_task:
-            string backup_task to start if we reach a timeout in the original pool
+            backup_task to start if we reach a timeout in the original pool
         """
         for agent_state in agent_pool:
             time_in_pool = agent_state.time_in_pool.get(world_type)
@@ -598,9 +613,20 @@ class ChatServiceManager(ABC):
                     self.sender.typing_on(agent_state.service_id)
                     agent_state.stored_data['seen_wait_message'] = True
 
-    def _get_done_callback_for_agents(self, task_id, world_type, agents):
+    def _get_done_callback_for_agents(self, task_id: str, world_type: str, agents: List[ChatServiceAgent]) -> Callable[[Future], None]:
         """
         Create done callback for finishing task world with particular agents.
+
+        :param task_id:
+            task identifier
+        :param world_type:
+            world name
+        :param agents:
+            agents for which we are retrieving done callback
+
+        :return:
+            the done callback, i.e. the callback function for when agents are done
+            in a world.
         """
 
         def _done_callback(fut):
@@ -740,14 +766,14 @@ class ChatServiceManager(ABC):
                 server_utils.delete_server(self.server_task_name, self.opt['local'])
 
     @abstractmethod
-    def observe_message(self, receiver_id, text, quick_replies=None, persona_id=None):
+    def observe_message(self, receiver_id: int, text: str, quick_replies: List[str] = None, persona_id: str = None):
         """
         Send a message through the message manager.
 
         :param receiver_id:
-            int identifier for agent to send message to
+            identifier for agent to send message to
         :param text:
-            string text to send
+            text to send
         :param quick_replies:
             list of quick replies
         :param persona_id:
@@ -756,13 +782,13 @@ class ChatServiceManager(ABC):
 
     # Other util functions
 
-    def _handle_webhook_event(self, event):
+    def _handle_webhook_event(self, event: Dict[str, Any]):
         """
         Use this if the service uses webhooks.
         """
         pass
 
-    def mark_removed(self, agent_id, pageid):
+    def mark_removed(self, agent_id: int, pageid: int):
         """
         Mark the agent as removed from the pool.
 
@@ -775,7 +801,7 @@ class ChatServiceManager(ABC):
         """
         pass
 
-    def after_agent_removed(self, agent_id):
+    def after_agent_removed(self, agent_id: int):
         """
         Perform any changes to metadata on agent removal.
 
@@ -785,7 +811,7 @@ class ChatServiceManager(ABC):
 
     # Agent Interaction Functions [Also extra utils]
 
-    def observe_payload(self, receiver_id, data, quick_replies=None, persona_id=None):
+    def observe_payload(self, receiver_id: str, data: Dict[Any, Any], quick_replies: List[str] = None, persona_id: str = None):
         """
         Send a payload through the message manager.
 
@@ -800,7 +826,7 @@ class ChatServiceManager(ABC):
         """
         pass
 
-    def upload_attachment(self, payload):
+    def upload_attachment(self, payload: Dict[str, str]) -> str:
         """
         Upload an attachment and return an attachment ID.
 
@@ -810,5 +836,8 @@ class ChatServiceManager(ABC):
                 {'type': <TYPE>, 'filename': <FILENAME>, 'format': <FILEFORMAT>}.
                 For example,
                 {'type': 'image', 'filename': 'test.png', 'format': 'png'}
+
+        :return:
+            attachment id associated with attachment.
         """
         pass

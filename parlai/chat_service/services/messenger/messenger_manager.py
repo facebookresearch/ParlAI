@@ -53,8 +53,9 @@ class MessengerManager(ChatServiceManager):
                 'for more information.'
             )
 
-    def restructure_message(self):
-        pass
+    def restructure_message(self, message):
+        message.update(message.get('message', {}))
+        return message
 
     def _complete_setup(self):
         """

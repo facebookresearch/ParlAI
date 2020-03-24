@@ -41,7 +41,7 @@ class MessengerBotChatTaskWorld(World):
 
     @staticmethod
     def generate_world(opt, agents):
-        if opt['model'] is None and opt['model_file'] is None:
+        if opt['models'] is None:
             raise RuntimeError("Model must be specified")
         return MessengerBotChatTaskWorld(
             opt,

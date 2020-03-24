@@ -55,7 +55,7 @@ class WebsocketManager(ChatServiceManager):
         self._complete_setup()
 
     def parse_additional_args(self, opt):
-        pass
+        self.should_load_model = self.config['additional_args'].get('load_model', True)
 
     def _complete_setup(self):
         """
@@ -263,12 +263,12 @@ class WebsocketManager(ChatServiceManager):
             return
         return self.subs[socket_id].write_message(message)
 
-    def restructure_message(self):
+    def restructure_message(self, message):
         """
         This is to restructure a new message to conform to the message structure defined
         in the `chat_service` README.
         """
-        pass
+        return message
 
     def _handle_bot_read(self, agent_id):
         pass
