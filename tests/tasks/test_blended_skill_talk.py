@@ -8,7 +8,7 @@ import unittest
 
 import parlai.utils.testing as testing_utils
 from parlai.core.opt import Opt
-from parlai.tasks.blended_skill_talk.agents import BlendedSkillTalkTeacher
+from parlai.core.teachers import create_task_agent_from_taskname
 
 
 class TestBlendedSkillTalkTeacher(unittest.TestCase):
