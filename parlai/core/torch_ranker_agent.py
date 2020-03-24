@@ -186,12 +186,6 @@ class TorchRankerAgent(TorchAgent):
                     'build_model() and build_criterion() need to return the model '
                     'or criterion'
                 )
-            if self.use_cuda:
-                self.model.cuda()
-                if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
-                self.criterion.cuda()
-
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
             print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
@@ -203,6 +197,14 @@ class TorchRankerAgent(TorchAgent):
                 states = self.load(init_model)
             else:
                 states = {}
+
+            if self.use_cuda:
+                self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
+                elif self.data_parallel:
+                    self.model = torch.nn.DataParallel(self.model)
+                self.criterion.cuda()
 
         self.rank_top_k = opt.get('rank_top_k', -1)
 
