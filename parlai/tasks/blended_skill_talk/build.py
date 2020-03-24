@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+# Download and build the data if it does not exist.
+
+import json
+import os
+
+import parlai.core.build_data as build_data
+
+
+CHECKPOINT_FOLDER = '/checkpoint/parlai/tasks/blended_skill_talk'
+
+
+def build(opt):
+    version = 'v1.1'
+    dpath = os.path.join(opt['datapath'], 'blended_skill_talk')
+
+    if not build_data.built(dpath, version):
+        print('[building data: ' + dpath + ']')
+        build_data.make_dir(dpath)
+
+        # Format it for use with ParlAIDialogTeacher
+        _create_parlai_format(dpath)
+
+        # Mark the data as built
+        build_data.mark_done(dpath, version)
+
+
+def _create_parlai_format(dpath: str):
+    """
+    Copy data into the format read by ParlAIDialogTeacher. 'text' will be from the free
+    Turker, who speaks first, and 'label' will be from the guided Turker.
+    """
+
+    datatypes = ['train', 'valid', 'test']
+    for datatype in datatypes:
+
+        load_path = os.path.join(CHECKPOINT_FOLDER, f'{datatype}.json')
+        save_path = os.path.join(dpath, f'{datatype}.txt')
+
+        print(f'Loading {load_path}.')
+        with open(load_path, 'r') as f_read:
+            data = json.load(f_read)
+
+        print(f'Saving to {save_path}')
+        with open(save_path, 'w') as f_write:
+            for episode in data:
+                num_entries = len(episode['dialog']) // 2
+                for entry_idx in range(num_entries):
+                    line = _get_line(
+                        episode=episode, num_entries=num_entries, entry_idx=entry_idx
+                    )
+                    f_write.write(f'{line} \n')
+
+
+def _get_line(episode: dict, num_entries: int, entry_idx: int) -> str:
+    """
+    Return the line to print in the reformatted file.
+    """
+    episode_done = entry_idx == num_entries - 1
+    if entry_idx == 0:
+        # Add those pieces of context that appear in the datasets that this one was
+        # based on. Specifically:
+        # - Your persona, but not your partner's persona (from ConvAI2)
+        # - Topic (from Wizard of Wikipedia)
+        # - **Not** the situation (from EmpatheticDialogues)
+        persona_pieces = [
+            f"your persona: {episode['personas'][1][0]}",
+            f"your persona: {episode['personas'][1][1]}",
+        ]
+        if episode['context_dataset'] == 'wizard_of_wikipedia':
+            additional_context_pieces = [episode['additional_context']]
+        else:
+            additional_context_pieces = []
+        previous_utterance_pieces = [
+            episode['free_turker_utterance'],
+            episode['guided_turker_utterance'],
+        ]
+        original_context = (
+            '\n'.join(
+                persona_pieces + additional_context_pieces + previous_utterance_pieces
+            )
+            + '\n'
+        )
+    else:
+        original_context = ''
+    free_turker_message = episode['dialog'][2 * entry_idx][1]
+    guided_turker_message = episode['dialog'][2 * entry_idx + 1][1]
+    guided_turker_chosen_suggestion = episode['chosen_suggestions'][2 * entry_idx + 1]
+    parts = {
+        'text': original_context + free_turker_message,
+        'labels': guided_turker_message,
+        'context_dataset': episode['context_dataset'],
+        'free_turker_message': free_turker_message,
+        'guided_turker_chosen_suggestion': guided_turker_chosen_suggestion,
+    }
+    assert all([isinstance(part, str) for part in parts.values()])
+    line = '\t'.join([f'{key}:{_escape(value)}' for key, value in parts.items()])
+    if episode_done:
+        line += '\tepisode_done:True'
+    if 'label_candidates' in episode:
+        label_candidates = episode['label_candidates'][entry_idx]
+        # Note that episode['dialog'] is indexed by utterance (from either Turker) and
+        # episode['label_candidates'] is indexed by guided Turker response
+        assert all([isinstance(cand, str) for cand in label_candidates])
+        escaped_label_candidates = [_escape(cand) for cand in label_candidates]
+        line += '\tlabel_candidates:' + '|'.join(escaped_label_candidates)
+    return line
+
+
+def _escape(value: str) -> str:
+    return value.replace('\t', '\\t').replace('\n', '\\n').replace('|', '__PIPE__')
