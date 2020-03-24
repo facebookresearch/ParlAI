@@ -15,18 +15,18 @@ RESOURCES = [
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/blended_skill_talk.tar.gz',
         'blended_skill_talk.tar.gz',
-        'fooofooofoo',
+        '5fbed0068ee89e2d43b93c3ecb341e784617033efa5e8e911a219d4eda6134a6',
     ),
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/personas_list.txt',
         'persona_list.txt',
-        'fooofooofoo',
+        '59a51adedc78e806a380f16477de3740cefe3494d20f8a2a733841bedaaa3ee5',
         zipped=False,
     ),
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/topic_to_persona_list.txt',
         'topic_to_persona_list.txt',
-        'fooofooofoo',
+        '47cdb6cbee0516ca7400be35fa07761339b86c6c026425bf5dba00e5534e8182',
         zipped=False,
     ),
 ]
