@@ -27,11 +27,11 @@ def build(opt):
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
-            # An older version exists, so remove these outdated files.
+            # An older version exists, so remove these outdated files
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data.
+        # Download the data
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(dpath)
 
