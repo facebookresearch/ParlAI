@@ -6,6 +6,7 @@
 
 from abc import ABC, abstractmethod
 from asyncio import Future
+import copy
 import sys
 import logging
 import datetime
@@ -185,8 +186,7 @@ class ChatServiceManager(ABC):
         self.max_workers = self.config['max_workers']
         self.opt['task'] = self.config['task_name']
         # Deepcopy the opts so the manager opts aren't changed by the world runner
-        # self.runner_opt = copy.deepcopy(opt)
-        self.runner_opt = opt.copy()
+        self.runner_opt = copy.deepcopy(opt)
         self.world_runner = ChatServiceWorldRunner(
             self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner
