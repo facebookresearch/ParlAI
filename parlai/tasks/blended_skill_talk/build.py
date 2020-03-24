@@ -8,25 +8,38 @@
 import json
 import os
 
-import parlai.core.build_data as build_data
+from parlai.core import build_data
 
 
-CHECKPOINT_FOLDER = '/checkpoint/parlai/tasks/blended_skill_talk'
+RESOURCES = [
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/blended_skill_talk.tar.gz',
+        'blended_skill_talk.tar.gz',
+        'fooofooofoo',
+    )
+]
 
 
 def build(opt):
-    version = 'v1.1'
     dpath = os.path.join(opt['datapath'], 'blended_skill_talk')
+    version = 'v1.2'
 
-    if not build_data.built(dpath, version):
+    if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
+        if build_data.built(dpath):
+            # An older version exists, so remove these outdated files.
+            build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
+
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Format it for use with ParlAIDialogTeacher
         _create_parlai_format(dpath)
 
         # Mark the data as built
-        build_data.mark_done(dpath, version)
+        build_data.mark_done(dpath, version_string=version)
 
 
 def _create_parlai_format(dpath: str):
@@ -38,7 +51,7 @@ def _create_parlai_format(dpath: str):
     datatypes = ['train', 'valid', 'test']
     for datatype in datatypes:
 
-        load_path = os.path.join(CHECKPOINT_FOLDER, f'{datatype}.json')
+        load_path = os.path.join(dpath, f'{datatype}.json')
         save_path = os.path.join(dpath, f'{datatype}.txt')
 
         print(f'Loading {load_path}.')
