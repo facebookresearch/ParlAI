@@ -50,13 +50,13 @@ class InteractiveWorld(DialogPartnerWorld):
         agents = self.agents
         if self.turn_cnt == 0 and self.p1 != '':
             # add the context on to the first message to agent 0
-            context_act = {'id': context, 'text': self.p1, 'episode_done': False}
+            context_act = {'id': 'context', 'text': self.p1, 'episode_done': False}
             agents[0].observe(validate(context_act))
         act = deepcopy(agents[0].act())
         acts[0] = act
         if self.turn_cnt == 0 and self.p2 != '':
             # add the context on to the first message to agent 1
-            context_act = {'id': context, 'text': self.p2, 'episode_done': False}
+            context_act = {'id': 'context', 'text': self.p2, 'episode_done': False}
             agents[1].observe(validate(context_act))
         agents[1].observe(validate(act))
         acts[1] = agents[1].act()
