@@ -16,7 +16,19 @@ RESOURCES = [
         'http://parl.ai/downloads/blended_skill_talk/blended_skill_talk.tar.gz',
         'blended_skill_talk.tar.gz',
         'fooofooofoo',
-    )
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/personas_list.txt',
+        'persona_list.txt',
+        'fooofooofoo',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/topic_to_persona_list.txt',
+        'topic_to_persona_list.txt',
+        'fooofooofoo',
+        zipped=False,
+    ),
 ]
 
 

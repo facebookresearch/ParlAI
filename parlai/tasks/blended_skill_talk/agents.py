@@ -370,7 +370,9 @@ class PersonaTopicifier:
             self.wow_topics_to_persona_strings_map,
             self.persona_strings_to_wow_topics_map,
         ) = self._setup_personas_to_wow_topics()
-        self.personas_file_path = '/checkpoint/marywilliamson/all_in_one_dialogue/context_personas_self_original_train_20191203'
+        self.personas_file_path = os.path.join(
+            opt['datapath'], 'blended_skill_talk', 'persona_list.txt'
+        )
         with open(self.personas_file_path, 'r') as f:
             self.personas = f.read().strip().split('||')
             # There's an extra line at the end of the file which is ''
@@ -378,8 +380,8 @@ class PersonaTopicifier:
             print(f'Got {len(self.personas)} personas.')
 
     def _setup_personas_to_wow_topics(self) -> Dict[str, List[str]]:
-        topic_to_persona_path = (
-            '/checkpoint/parlai/tasks/wizard_of_wikipedia/topic_to_persona_list.txt'
+        topic_to_persona_path = os.path.join(
+            opt['datapath'], 'blended_skill_talk', 'topic_to_persona_list.txt'
         )
         persona_strings_to_topics = defaultdict(list)
         topics_to_persona_strings = defaultdict(list)
