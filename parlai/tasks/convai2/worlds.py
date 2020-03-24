@@ -34,17 +34,15 @@ def load_personas(opt):
             convai2_world.parley()
             msg = convai2_world.get_acts()[0]
             txt = msg.get('text', '').split('\n')
-            a1_persona = ""
-            a2_persona = ""
+            a1_persona = []
+            a2_persona = []
             for t in txt:
                 if t.startswith("partner's persona:"):
-                    a1_persona += (
-                        t.replace("partner's persona:", 'your persona:') + '\n'
-                    )
+                    a1_persona.appen(t.replace("partner's persona:", 'your persona:'))
                 if t.startswith('your persona:'):
-                    a2_persona += t + '\n'
-            personas.add(a1_persona.rstrip('\n'))
-            personas.add(a2_persona.rstrip('\n'))
+                    a2_persona.append(t)
+            personas.add('\n'.join(a1_persona))
+            personas.add('\n'.join(a2_persona))
     print('[ loaded ' + str(len(personas)) + ' personas ]')
     return list(personas)
 

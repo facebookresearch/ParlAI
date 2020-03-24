@@ -35,7 +35,7 @@ class InteractiveWorld(DialogPartnerWorld):
 
         This function will be called before the first turn of every episode.
         """
-        return ['__SILENCE__', '']
+        return ['', '']
 
     def parley(self):
         """
@@ -48,21 +48,25 @@ class InteractiveWorld(DialogPartnerWorld):
 
         acts = self.acts
         agents = self.agents
-        if self.turn_cnt == 0:
+        if self.turn_cnt == 0 and self.p1 != '':
             # add the context on to the first message to agent 0
-            act = {}
-            act['text'] = self.p1
-            act['episode_done'] = False
-            act['id'] = 'context'
-            agents[0].observe(validate(act))
+            context_act = {
+                'id': context,
+                'text': self.p1,
+                'episode_done': False
+            }
+            agents[0].observe(validate(context_act))
         act = deepcopy(agents[0].act())
         acts[0] = act
-        if self.turn_cnt == 0:
+        if self.turn_cnt == 0 and self.p2 != '':
             # add the context on to the first message to agent 1
-            act.force_set('text', self.p2 + act.get('text', 'hi'))
-            agents[1].observe(validate(act))
-        else:
-            agents[1].observe(validate(act))
+            context_act = {
+                'id': context,
+                'text': self.p2,
+                'episode_done': False
+            }
+            agents[0].observe(validate(context_act))
+        agents[1].observe(validate(act))
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
         self.update_counters()
