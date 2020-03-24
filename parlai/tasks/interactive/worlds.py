@@ -37,6 +37,10 @@ class InteractiveWorld(DialogPartnerWorld):
         """
         return ['', '']
 
+    def finalize_episode(self):
+        print("CHAT DONE ")
+        print("\n... preparing new chat... \n")
+    
     def parley(self):
         """
         Agent 0 goes first.
@@ -65,6 +69,5 @@ class InteractiveWorld(DialogPartnerWorld):
         self.turn_cnt += 1
 
         if act['episode_done']:
-            print("CHAT DONE ")
-            print("\n... preparing new chat... \n")
+            self.finalize_episode()
             self.turn_cnt = 0
