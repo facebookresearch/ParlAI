@@ -530,10 +530,9 @@ class RepeatTeacher(DialogTeacher):
         opt = copy.deepcopy(opt)
         opt['datafile'] = 'unused_path'
         task = opt.get('task', 'integration_tests:RepeatTeacher:50')
-        task_options = task.split(':')
         try:
             self.data_length = int(task.split(':')[-1])
-        except:
+        except ValueError:
             self.data_length = 10
         super().__init__(opt, shared)
 
