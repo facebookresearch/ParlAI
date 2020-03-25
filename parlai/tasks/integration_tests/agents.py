@@ -54,11 +54,16 @@ class CandidateBaseTeacher(Teacher, ABC):
         num_test: int = NUM_TEST,
     ):
         """
-        :param int vocab_size: size of the vocabulary
-        :param int example_size: length of each example
-        :param int num_candidates: number of label_candidates generated
-        :param int num_train: size of the training set
-        :param int num_test: size of the valid/test sets
+        :param int vocab_size:
+            size of the vocabulary
+        :param int example_size:
+            length of each example
+        :param int num_candidates:
+            number of label_candidates generated
+        :param int num_train:
+            size of the training set
+        :param int num_test:
+            size of the valid/test sets
         """
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
@@ -541,10 +546,6 @@ class RepeatTeacher(DialogTeacher):
 
     def num_episodes(self):
         return self.data_length
-
-
-class FakeTeacher(CandidateTeacher):
-    pass
 
 
 class DefaultTeacher(CandidateTeacher):
