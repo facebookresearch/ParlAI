@@ -63,7 +63,7 @@ class SelfChatWorld(DialogPartnerWorld):
         """
         pass
 
-    def get_contexts(self, episode_num: int) -> List[str]:
+    def get_contexts(self):
         """
         Override to return a pair of contexts with which to seed the self chat episode.
 
@@ -125,7 +125,7 @@ class SelfChatWorld(DialogPartnerWorld):
             self.acts = [None, None]
             # get the beginning of the conversation, which can include contexts
             # and/or any number of starting messages
-            self.contexts = self.get_contexts(self.episode_cnt)
+            self.contexts = self.get_contexts()
             self.seed_utterances = self._get_seed_utt_acts(
                 self.episode_cnt, self.agents
             )
