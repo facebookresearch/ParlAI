@@ -88,12 +88,12 @@ class RoundBaseTeacher(DialogTeacher):
                 if label_raw in ANLI_LABEL_DICT:
                     label_raw = ANLI_LABEL_DICT[label_raw]
 
-                question, answer_list, clas = convert_to_dialogData(premise_raw=pair[ANLI_PREMISE_KEY],
+                question, answer, clas = convert_to_dialogData(premise_raw=pair[ANLI_PREMISE_KEY],
                                                                     hypo_raw=pair[ANLI_HYPO_KEY],
                                                                     answer_raw=label_raw,
                                                                     to_parlaitext=self.to_parlaitext)
 
-                yield (question, answer_list, None, clas), True
+                yield (question, answer, None, clas), True
 
 
 class R1Teacher(RoundBaseTeacher):
