@@ -22,7 +22,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
             '--add-task-string',
             type='bool',
             default=False,
-            help='Add _task_speech to text input to model or not'
+            help='Add _task_speech to text input to model or not',
         )
 
     def init_contexts(self):
@@ -55,7 +55,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
 
         else:
             task_name = ''
-            
+
         a1_persona = (
             task_name
             + p['_setting_name']
