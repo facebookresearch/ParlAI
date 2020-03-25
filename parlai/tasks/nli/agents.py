@@ -30,10 +30,11 @@ class NliTeacher(MultiTaskTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('NLI Teacher Args')
         parser.add_argument(
-            '--to-parlaitext',
+            '--dialog-format',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
+            help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
+            " and 'Hypothesis' (default: False).",
         )
 
     def __init__(self, opt, shared=None):

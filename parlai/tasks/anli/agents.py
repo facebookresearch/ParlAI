@@ -57,10 +57,11 @@ class RoundBaseTeacher(DialogTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('RoundBase Teacher Args')
         parser.add_argument(
-            '--to-parlaitext',
+            '--dialog-format',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
+            help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
+            " and 'Hypothesis' (default: False).",
         )
 
     def __init__(self, opt, shared=None):
@@ -74,12 +75,12 @@ class RoundBaseTeacher(DialogTeacher):
 
         data_path = _path(opt)
         opt['datafile'] = data_path
-        self.to_parlaitext = opt.get('to_parlaitext', False)
+        self.dialog_format = opt.get('dialog_format', False)
         self.id = opt['task'].upper()
         super().__init__(opt, shared)
 
     def label_candidates(self):
-        if self.to_parlaitext:
+        if self.dialog_format:
             return BICLASS_LABELS
         return MULTINLI_LABELS
 
@@ -99,7 +100,7 @@ class RoundBaseTeacher(DialogTeacher):
                     premise_raw=pair[ANLI_PREMISE_KEY],
                     hypo_raw=pair[ANLI_HYPO_KEY],
                     answer_raw=label_raw,
-                    to_parlaitext=self.to_parlaitext,
+                    dialog_format=self.dialog_format,
                 )
 
                 yield (question, answer, None, clas), True
@@ -122,10 +123,11 @@ class DefaultTeacher(MultiTaskTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('ANLI Teacher Args')
         parser.add_argument(
-            '--to-parlaitext',
+            '--dialog-format',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
+            help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
+            " and 'Hypothesis' (default: False).",
         )
 
     def __init__(self, opt, shared=None):

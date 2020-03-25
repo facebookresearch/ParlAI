@@ -46,10 +46,11 @@ class DefaultTeacher(DialogTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('SNLI Teacher Args')
         parser.add_argument(
-            '--to-parlaitext',
+            '--dialog-format',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+            help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
+            " and 'Hypothesis' (default: False).",
         )
 
     def __init__(self, opt, shared=None):
@@ -57,13 +58,13 @@ class DefaultTeacher(DialogTeacher):
         data_path = _path(opt)
         opt['datafile'] = data_path
         self.id = 'SNLI'
-        self.to_parlaitext = opt.get('to_parlaitext', False)
+        self.dialog_format = opt.get('dialog_format', False)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        return setup_data(path, self.to_parlaitext)
+        return setup_data(path, self.dialog_format)
 
     def label_candidates(self):
-        if self.to_parlaitext:
+        if self.dialog_format:
             return BICLASS_LABELS
         return ('entailment', 'contradiction', 'neutral')

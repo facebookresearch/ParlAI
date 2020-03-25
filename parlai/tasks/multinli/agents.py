@@ -49,12 +49,12 @@ def _path(opt):
     return data_path
 
 
-def setup_data(path, to_parlaitext=False):
+def setup_data(path, dialog_format=False):
     """
     Set up data in DialogData format from path.
 
     :param path: path to the data file that stores the MNLI dataset
-    :param to_parlaitext:
+    :param dialog_format: if set True, omit the special tokens 'Hypothesis' and 'Premise' in the text.
     :return:  a tuple in the parlai.core.teachers.DialogData format ``((x, y, r, c, i), new_episode?)`` where the ``x``
             is the query/question and ``y`` is the answer/label, ``clas`` represents the ``c`` the avaiable choices.
             ``new_episode`` is set True in any NLI teacher.
@@ -71,20 +71,20 @@ def setup_data(path, to_parlaitext=False):
                 premise_raw=pair[MULTINLI_PREMISE_KEY],
                 hypo_raw=pair[MULTINLI_HYPO_KEY],
                 answer_raw=pair[MULTINLI_ANSWER_KEY],
-                to_parlaitext=to_parlaitext,
+                dialog_format=dialog_format,
             )
 
             yield (question, answer, None, clas), True
 
 
-def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, to_parlaitext=False):
+def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, dialog_format=False):
     """
     Convert from NLI context to dialog text.
 
-    :param premise_raw:
-    :param hypo_raw:
-    :param answer_raw:
-    :param to_parlaitext:
+    :param premise_raw: raw premise extracted from jsonl file.
+    :param hypo_raw: raw hypothesis extracted from jsonl file.
+    :param answer_raw: raw answer extracted from jsonl file.
+    :param dialog_format: if set True, omit the special tokens 'Hypothesis' and 'Premise' in the text.
     :return: a tuple (question, answer, clas)
         - ``question`` (str) is a query and possibly context
         - ``answer`` (iter) is an iterable of label(s) for that query
@@ -94,7 +94,7 @@ def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, to_parlaitext=False
     hypo_raw = hypo_raw.strip('\n').strip('\t')
     clas = MULTINLI_LABELS
 
-    if to_parlaitext:
+    if dialog_format:
         if answer_raw != 'contradiction':
             answer_raw = NOT_CONTRADICT
         clas = BICLASS_LABELS
@@ -113,10 +113,11 @@ class DefaultTeacher(DialogTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('MNLI Teacher Args')
         parser.add_argument(
-            '--to-parlaitext',
+            '--dialog-format',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
+            help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
+            " and 'Hypothesis' (default: False).",
         )
 
     def __init__(self, opt, shared=None):
@@ -124,13 +125,13 @@ class DefaultTeacher(DialogTeacher):
         data_path = _path(opt)
         opt['datafile'] = data_path
         self.id = 'MultiNLI'
-        self.to_parlaitext = opt.get('to_parlaitext', False)
+        self.dialog_format = opt.get('dialog_format', False)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        return setup_data(path, self.to_parlaitext)
+        return setup_data(path, self.dialog_format)
 
     def label_candidates(self):
-        if self.to_parlaitext:
+        if self.dialog_format:
             return BICLASS_LABELS
         return MULTINLI_LABELS

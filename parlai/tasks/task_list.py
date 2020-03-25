@@ -1094,7 +1094,7 @@ task_list = [
         "id": "NLI",
         "display_name": "Natural Language Inference (NLI) Corpus",
         "task": "nli",
-        "tags": ["All", "Entailment", "NLI"],
+        "tags": ["All", "Entailment"],
         "description": (
             "A collection of 3 popular Natural Language Inference(NLI) benchmark tasks: "
             "ANLI v0.1, MultiNLI 1.0, SNLI 1.0."
