@@ -525,7 +525,11 @@ class RepeatTeacher(DialogTeacher):
         opt = copy.deepcopy(opt)
         opt['datafile'] = 'unused_path'
         task = opt.get('task', 'integration_tests:RepeatTeacher:50')
-        self.data_length = int(task.split(':')[-1])
+        task_options = task.split(':')
+        try:
+            self.data_length = int(task.split(':')[-1])
+        except:
+            self.data_length = 10
         super().__init__(opt, shared)
 
     def setup_data(self, unused_path):
@@ -537,6 +541,10 @@ class RepeatTeacher(DialogTeacher):
 
     def num_episodes(self):
         return self.data_length
+
+
+class FakeTeacher(CandidateTeacher):
+    pass
 
 
 class DefaultTeacher(CandidateTeacher):

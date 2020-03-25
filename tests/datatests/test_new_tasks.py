@@ -13,7 +13,9 @@ from parlai.scripts.verify_data import verify, setup_args
 import parlai.utils.testing as testing_utils
 
 KEYS = ['missing_text', 'missing_labels', 'empty_string_label_candidates']
-BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
+BASE_TEACHERS = dir(teach_module) + [
+    'CandidateBaseTeacher',
+]
 
 
 class TestNewTasks(unittest.TestCase):
@@ -40,7 +42,7 @@ class TestNewTasks(unittest.TestCase):
             subtasks = [
                 ':'.join([task, x])
                 for x in dir(task_module)
-                if ('teacher' in x.lower() and x not in BASE_TEACHERS)
+                if x.endswith('Teacher') and x not in BASE_TEACHERS
             ]
 
             if testing_utils.is_this_circleci():
