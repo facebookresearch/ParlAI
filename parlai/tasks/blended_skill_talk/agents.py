@@ -83,7 +83,7 @@ class BSTBuilder(object):
 
     @staticmethod
     def get_fixed_candidates_path(opt, dataset_label):
-        return f'{opt["datapath"]}/blended_skill_talk/{dataset_label}_utterances_{opt["datatype"]}.cands'
+        return f'{opt["datapath"]}/blended_skill_talk/{dataset_label}_utterances_{opt["datatype"].split(":")[0]}.cands'
 
     @staticmethod
     def build_fixed_candidates(opt):
@@ -174,7 +174,7 @@ class BSTMixedCandidatesTeacher(MixedCandidatesTeacherBase):
         return os.path.join(
             opt['datapath'],
             'blended_skill_talk',
-            f'mixed_candidates_{self.__class__.__name__}_{self.mc_task}_{self.opt["datatype"]}.cands',
+            f'mixed_candidates_{self.__class__.__name__}_{self.mc_task}_{self.opt["datatype"].split(":")[0]}.cands',
         )
 
 
@@ -276,7 +276,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
             self.opt['datapath'],
             'empatheticdialogues',
             'persona_topicifier',
-            f'{self.datatype}__{side_string}.json',
+            f'{self.datatype.split(":")[0]}__{side_string}.json',
         )
         os.makedirs(os.path.dirname(self.cached_data_path), exist_ok=True)
         if not os.path.isfile(self.cached_data_path):

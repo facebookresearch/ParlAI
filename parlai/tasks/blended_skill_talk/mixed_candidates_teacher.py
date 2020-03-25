@@ -92,7 +92,7 @@ class MixedCandidatesTeacherBase(FixedDialogTeacher):
     def get_mixed_candidates_path(self, opt):
         return os.path.join(
             opt['datapath'],
-            f'mixed_candidates_{self.__class__.__name__}_{self.mc_task}_{self.opt["datatype"]}.cands',
+            f'mixed_candidates_{self.__class__.__name__}_{self.mc_task}_{self.opt["datatype"].split(":")[0]}.cands',
         )
 
     def _setup_mixed_candidates(self):
