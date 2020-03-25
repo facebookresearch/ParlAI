@@ -3,7 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.utils.distributed import is_distributed
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.utils.torch import padded_3d
 from parlai.zoo.bert.build import download
