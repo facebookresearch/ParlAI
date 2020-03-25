@@ -79,11 +79,11 @@ class TimeoutUtils(object):
         """
         a = TimeoutUtils.get_timeout_act(agent, timeout)
         if a is None:
-            world.episodeDone = True
+            world.episodeDone = True  # type: ignore
             agent.observe({"id": "", "text": timeout_msg})
             return None
 
         if (a.get("text", "") or "").upper() == "EXIT":
-            world.episodeDone = True
+            world.episodeDone = True  # type: ignore
             return None
         return a
