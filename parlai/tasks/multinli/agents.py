@@ -67,10 +67,12 @@ def setup_data(path, to_parlaitext=False):
             if pair[MULTINLI_ANSWER_KEY] == '-':
                 continue
 
-            question, answer, clas = convert_to_dialogData(premise_raw=pair[MULTINLI_PREMISE_KEY],
-                                                           hypo_raw=pair[MULTINLI_HYPO_KEY],
-                                                           answer_raw=pair[MULTINLI_ANSWER_KEY],
-                                                           to_parlaitext=to_parlaitext)
+            question, answer, clas = convert_to_dialogData(
+                premise_raw=pair[MULTINLI_PREMISE_KEY],
+                hypo_raw=pair[MULTINLI_HYPO_KEY],
+                answer_raw=pair[MULTINLI_ANSWER_KEY],
+                to_parlaitext=to_parlaitext,
+            )
 
             yield (question, answer, None, clas), True
 

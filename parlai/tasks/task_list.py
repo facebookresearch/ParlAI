@@ -1082,7 +1082,7 @@ task_list = [
         "task": "anli",
         "tags": ["All", "Entailment", "NLI"],
         "description": (
-            "The ANLI corpus (version 1.0) is a new large-scale NLI benchmark dataset," 
+            "The ANLI corpus (version 1.0) is a new large-scale NLI benchmark dataset,"
             "collected via an iterative, adversarial human-and-model-in-the-loop procedure"
             "with the labels entailment, contradiction, and neutral. A total of three rounds "
             "of data are collected that progressively increase in difficulty and complexity."

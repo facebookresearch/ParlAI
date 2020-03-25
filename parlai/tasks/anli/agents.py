@@ -9,7 +9,11 @@ import json
 import os
 
 from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
-from parlai.tasks.multinli.agents import convert_to_dialogData, BICLASS_LABELS, MULTINLI_LABELS
+from parlai.tasks.multinli.agents import (
+    convert_to_dialogData,
+    BICLASS_LABELS,
+    MULTINLI_LABELS,
+)
 
 from .build import build
 
@@ -61,7 +65,9 @@ class RoundBaseTeacher(DialogTeacher):
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['round'] = opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else 1
+        opt['round'] = (
+            opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else 1
+        )
         opt['round'] = opt['round'].upper()
         if not opt['round'] in ANLI_ROUNDS:
             raise KeyError(f"Undefined task round: {opt['round']}.")
@@ -89,10 +95,12 @@ class RoundBaseTeacher(DialogTeacher):
                 if label_raw in ANLI_LABEL_DICT:
                     label_raw = ANLI_LABEL_DICT[label_raw]
 
-                question, answer, clas = convert_to_dialogData(premise_raw=pair[ANLI_PREMISE_KEY],
-                                                               hypo_raw=pair[ANLI_HYPO_KEY],
-                                                               answer_raw=label_raw,
-                                                               to_parlaitext=self.to_parlaitext)
+                question, answer, clas = convert_to_dialogData(
+                    premise_raw=pair[ANLI_PREMISE_KEY],
+                    hypo_raw=pair[ANLI_HYPO_KEY],
+                    answer_raw=label_raw,
+                    to_parlaitext=self.to_parlaitext,
+                )
 
                 yield (question, answer, None, clas), True
 
