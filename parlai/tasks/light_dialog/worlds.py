@@ -15,6 +15,16 @@ import os
 
 
 class InteractiveSimpleWorld(InteractiveBaseWorld):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        parser = argparser.add_argument_group('LIGHT Interactive World')
+        parser.add_argument(
+            '--add-task-string',
+            type='bool',
+            default=False,
+            help='Add _task_speech to text input to model or not',
+        )
+
     def init_contexts(self):
         # Create Light data so we can assign personas.
         light_opt = self.opt.copy()
@@ -40,8 +50,14 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
         for t in txt:
             p[t.split(' ')[0]] = t
 
+        if self.opt['add_task_string']:
+            task_name = ' _task_speech\n'
+
+        else:
+            task_name = ''
+
         a1_persona = (
-            ' _task_speech\n'
+            task_name
             + p['_setting_name']
             + '\n'
             + p['_setting_desc']
@@ -56,7 +72,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
         )
 
         a2_persona = (
-            ' _task_speech\n'
+            task_name
             + p['_setting_name']
             + '\n'
             + p['_setting_desc']
