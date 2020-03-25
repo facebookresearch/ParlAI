@@ -17,6 +17,7 @@ class CrossencoderAgent(TorchRankerAgent):
     Equivalent of bert_ranker/crossencoder but does not rely on an external library
     (hugging face).
     """
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         """
