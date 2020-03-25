@@ -33,8 +33,9 @@ class NliTeacher(MultiTaskTeacher):
             '--to-parlaitext',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
         )
+
     def __init__(self, opt, shared=None):
         nli_tasks = [
             'anli',

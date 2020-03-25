@@ -4,13 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import copy
+import os
+
 from parlai.core.teachers import DialogTeacher
 from parlai.tasks.multinli.agents import setup_data, BICLASS_LABELS
+
 from .build import build
-
-import os
-import copy
-
 
 SNLI = 'SNLI'
 SNLI_VERSION = '1.0'

@@ -4,12 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import copy
 import json
+import os
 
 from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
 from parlai.tasks.multinli.agents import convert_to_dialogData, BICLASS_LABELS, MULTINLI_LABELS
+
 from .build import build
 
 ANLI = 'ANLI'
@@ -55,7 +56,7 @@ class RoundBaseTeacher(DialogTeacher):
             '--to-parlaitext',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
         )
 
     def __init__(self, opt, shared=None):
@@ -89,9 +90,9 @@ class RoundBaseTeacher(DialogTeacher):
                     label_raw = ANLI_LABEL_DICT[label_raw]
 
                 question, answer, clas = convert_to_dialogData(premise_raw=pair[ANLI_PREMISE_KEY],
-                                                                    hypo_raw=pair[ANLI_HYPO_KEY],
-                                                                    answer_raw=label_raw,
-                                                                    to_parlaitext=self.to_parlaitext)
+                                                               hypo_raw=pair[ANLI_HYPO_KEY],
+                                                               answer_raw=label_raw,
+                                                               to_parlaitext=self.to_parlaitext)
 
                 yield (question, answer, None, clas), True
 
@@ -116,7 +117,7 @@ class DefaultTeacher(MultiTaskTeacher):
             '--to-parlaitext',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
         )
 
     def __init__(self, opt, shared=None):

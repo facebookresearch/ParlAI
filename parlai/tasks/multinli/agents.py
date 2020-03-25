@@ -4,12 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import DialogTeacher
-from .build import build
-
-import os
 import copy
 import json
+import os
+
+from parlai.core.teachers import DialogTeacher
+
+from .build import build
 
 MULTINLI = 'MultiNLI'
 MULTINLI_VERSION = '1.0'
@@ -50,11 +51,13 @@ def _path(opt):
 
 def setup_data(path, to_parlaitext=False):
     """
-    Set up data in DialogData format from path
+    Set up data in DialogData format from path.
+
     :param path: path to the data file that stores the MNLI dataset
     :param to_parlaitext:
-    :return:  a tuple in the parlai.core.teachers.DialogData form ``((x, y, r, c, i), new_episode?)`` where the ``x`` and ``new_episode``
-        fields are mandatory and other fields may be omitted or ``None``.
+    :return:  a tuple in the parlai.core.teachers.DialogData format ``((x, y, r, c, i), new_episode?)`` where the ``x``
+            is the query/question and ``y`` is the answer/label, ``clas`` represents the ``c`` the avaiable choices.
+            ``new_episode`` is set True in any NLI teacher.
     """
     print('loading: ' + path)
 
@@ -74,7 +77,8 @@ def setup_data(path, to_parlaitext=False):
 
 def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, to_parlaitext=False):
     """
-    Convert from NLI context to dialog text
+    Convert from NLI context to dialog text.
+
     :param premise_raw:
     :param hypo_raw:
     :param answer_raw:
@@ -110,7 +114,7 @@ class DefaultTeacher(DialogTeacher):
             '--to-parlaitext',
             type='bool',
             default=False,
-            help="True if one would like to convert to 'Parlai Text' format (default: False)",
+            help="True if one would like to convert to 'ParlAI Text' format (default: False)",
         )
 
     def __init__(self, opt, shared=None):
