@@ -670,6 +670,16 @@ class TorchAgent(ABC, Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+
+        # whether we're using multi-gpu, a few different ways. these are not
+        # supported by all models, but we can still keep track of the options
+        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+        self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
+        if self.data_parallel and is_distributed():
+            raise RuntimeError('Cannot combine --data-parallel and distributed mode.')
+        if self.model_parallel and self.data_parallel:
+            raise RuntimeError('Cannot combine --data-parallel and --model-parallel.')
+
         # indicate whether using fp16
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
@@ -2017,21 +2027,3 @@ class TorchAgent(ABC, Agent):
             return
 
         self.optimizer.zero_grad()
-
-    def _total_parameters(self):
-        """
-        Compute the total number of parameters in the model.
-
-        :return:
-            total number of parameters in the model.
-        """
-        return sum(p.numel() for p in self.model.parameters())
-
-    def _trainable_parameters(self):
-        """
-        Compute the total number of trainable parameters in the model.
-
-        :return:
-            total number of trainable parameters in the model.
-        """
-        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)

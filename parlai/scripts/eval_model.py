@@ -129,7 +129,7 @@ def _eval_single_world(opt, agent, task):
         if log_time.time() > log_every_n_secs:
             report = world.report()
             text, report = log_time.log(
-                report.get('exs', 0), world.num_examples(), report
+                report.get('exs', 0), min(max_cnt, world.num_examples()), report
             )
             print(text)
 

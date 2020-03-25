@@ -4,6 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.worlds import World, validate
+from parlai.chat_service.services.messenger.worlds import (
+    SimpleMessengerOverworld,
+    OnboardWorld,
+)
 import importlib
 
 
@@ -96,3 +100,11 @@ class QADataCollectionTaskWorld(World):
 
     def review_work(self):
         pass
+
+
+class QADataCollectionOnboardWorld(OnboardWorld):
+    pass
+
+
+class QADataCollectionOverWorld(SimpleMessengerOverworld):
+    pass

@@ -3,7 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.utils.distributed import is_distributed
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.utils.torch import padded_3d
 from parlai.zoo.bert.build import download
@@ -47,11 +46,6 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel and shared is None:
-            self.model = torch.nn.DataParallel(self.model)
-        if is_distributed():
-            raise ValueError('Cannot combine --data-parallel and distributed mode')
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx
         self.END_IDX = self.dict.end_idx
