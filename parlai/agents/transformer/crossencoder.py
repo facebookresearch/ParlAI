@@ -18,17 +18,6 @@ class CrossencoderAgent(TorchRankerAgent):
     (hugging face).
     """
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.utils.distributed import is_distributed
-
-            if is_distributed():
-                raise ValueError('Cannot combine --data-parallel and distributed mode')
-            if shared is None:
-                self.model = torch.nn.DataParallel(self.model)
-
     @classmethod
     def add_cmdline_args(cls, argparser):
         """
