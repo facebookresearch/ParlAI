@@ -60,7 +60,8 @@ class TestNewTasks(unittest.TestCase):
                 opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
                 try:
-                    text, log = verify(opt, print_parser=False)
+                    with testing_utils.capture_output():
+                        text, log = verify(opt, print_parser=False)
                 except Exception:
                     found_errors = True
                     traceback.print_exc()
@@ -70,7 +71,11 @@ class TestNewTasks(unittest.TestCase):
                         print('There are {} {} in {}.'.format(log[key], key, subt))
                         found_errors = True
 
-        self.assertFalse(found_errors, "Errors were found.")
+        if found_errors:
+            self.fail(
+                "Please fix the above listed errors, or describe in the PR why "
+                "you do not expect them to pass.",
+            )
 
 
 if __name__ == '__main__':
