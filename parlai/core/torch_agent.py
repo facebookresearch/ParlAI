@@ -1997,6 +1997,19 @@ class TorchAgent(ABC, Agent):
                 'clip',
                 GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
             )
+        else:
+            parameters = self.model.parameters()
+            if isinstance(parameters, torch.Tensor):
+                parameters = [parameters]
+            parameters = list(filter(lambda p: p.grad is not None, parameters))
+            norm_type = 2.0
+            total_norm = 0
+            for p in parameters:
+                param_norm = p.grad.data.norm(norm_type)
+                total_norm += param_norm.item() ** norm_type
+            grad_norm = total_norm ** (1. / norm_type)
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
+
         if self.fp16:
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
