@@ -230,12 +230,9 @@ def compute_grad_norm(parameters, norm_type=2.0):
     """
     Compute norm over gradients of model parameters.
 
-    Mostly taken from the body of torch.nn.utils.clip_grad_norm_
-
     :param parameters:
         the model parameters for gradient norm calculation. Iterable of
         Tensors or single Tensor
-
     :param norm_type:
         type of p-norm to use
 
