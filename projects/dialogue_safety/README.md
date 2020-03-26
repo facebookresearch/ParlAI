@@ -41,17 +41,17 @@ python examples/display_data.py -t dialogue_safety:multiturn --single-turn True
 
 Evaluate a pre-trained Transformer-based model on the test sets of rounds 1-3 or the **adversarial** task:
 ```bash
-python examples/eval_model.py -t dialogue_safety:adversarial --round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40
+python examples/eval_model.py -t dialogue_safety:adversarial --round 3 -dt test -m transformer/classifier -mf zoo:dialogue_safety/single_turn/model -bs 40
 ```
 
 Evaluate the same pre-trained Transformer-based model on the test sets of rounds 1-3 or the **standard** task:
 ```bash
-python examples/eval_model.py -t dialogue_safety:standard --round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40
+python examples/eval_model.py -t dialogue_safety:standard --round 3 -dt test -m transformer/classifier -mf zoo:dialogue_safety/single_turn/model -bs 40
 ```
 
 Interact with the single-turn model to see its classifications of your input in real time:
 ```bash
-python examples/interactive.py -mf zoo:dialogue_safety/single_turn/model --print-scores True --single-turn True
+python examples/interactive.py -mf zoo:dialogue_safety/single_turn/model -m transformer/classifier --print-scores True --single-turn True
 ```
 Here are some example outputs from the above script:
 ```bash
