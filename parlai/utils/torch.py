@@ -226,6 +226,29 @@ def argsort(keys: List[Any], *lists: List[List[Any]], descending: bool = False):
     return output
 
 
+def compute_grad_norm(parameters, norm_type=2.0):
+    """
+    Compute norm over gradients of model parameters.
+    Mostly taken from the body of torch.nn.utils.clip_grad_norm_
+
+    :param parameters:
+        the model parameters for gradient norm calculation. Iterable of
+        Tensors or single Tensor
+
+    :param norm_type
+        type of p-norm to use
+
+    """
+    if isinstance(parameters, torch.Tensor):
+        parameters = [parameters]
+    parameters = list(filter(lambda p: p.grad is not None, parameters))
+    total_norm = 0
+    for p in parameters:
+        param_norm = p.grad.data.norm(norm_type)
+        total_norm += param_norm.item() ** norm_type
+    return total_norm ** (1. / norm_type)
+
+
 class IdentityLayer(torch.nn.Module):
     """
     Identity layer module.

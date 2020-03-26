@@ -52,7 +52,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
 
 
 class Batch(AttrDict):
@@ -1999,15 +1999,7 @@ class TorchAgent(ABC, Agent):
             )
         else:
             parameters = self.model.parameters()
-            if isinstance(parameters, torch.Tensor):
-                parameters = [parameters]
-            parameters = list(filter(lambda p: p.grad is not None, parameters))
-            norm_type = 2.0
-            total_norm = 0
-            for p in parameters:
-                param_norm = p.grad.data.norm(norm_type)
-                total_norm += param_norm.item() ** norm_type
-            grad_norm = total_norm ** (1. / norm_type)
+            grad_norm = compute_grad_norm(parameters)
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
 
         if self.fp16:
