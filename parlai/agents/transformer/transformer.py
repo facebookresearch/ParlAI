@@ -371,6 +371,11 @@ class TransformerClassifierAgent(TorchClassifierAgent):
             )
             obs['added_start_end'] = True
 
+        # check truncation after adding start end tokens
+        if obs.get('text_vec') is not None:
+            truncated_vec = self._check_truncate(obs['text_vec'], self.text_truncate, True)
+            obs.force_set('text_vec', torch.LongTensor(truncated_vec))
+
         return obs
 
     def score(self, batch):
