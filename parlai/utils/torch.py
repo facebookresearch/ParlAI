@@ -236,8 +236,11 @@ def compute_grad_norm(parameters, norm_type=2.0):
         the model parameters for gradient norm calculation. Iterable of
         Tensors or single Tensor
 
-    :param norm_type
+    :param norm_type:
         type of p-norm to use
+
+    :returns:
+        the computed gradient norm
     """
     if isinstance(parameters, torch.Tensor):
         parameters = [parameters]
