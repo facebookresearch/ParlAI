@@ -7,7 +7,7 @@ import json
 import logging
 import requests
 
-import parlai.mturk.core.shared_utils as shared_utils
+import parlai.chat_service.utils.logging as log_utils
 
 MAX_QUICK_REPLIES = 10
 MAX_TEXT_CHARS = 640
@@ -156,8 +156,7 @@ class MessageSender:
         """
         server_url:           url at which the server is to be run
         port:                 port for the socket to operate on
-        message_callback:     function to be called on incoming message objects
-                              format: message_callback(self, data)
+        message_callback:     function to be called on incoming message objects (format: message_callback(self, data))
         """
         self.auth_args = {'access_token': secret_token}
 
@@ -207,7 +206,7 @@ class MessageSender:
                     api_address, params=self.auth_args, json=message
                 )
                 result = response.json()
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO, '"Facebook response from message send: {}"'.format(result)
         )
         return result
@@ -242,7 +241,7 @@ class MessageSender:
                         api_address, params=self.auth_args, json=payload
                     )
                     result = response.json()
-            shared_utils.print_and_log(
+            log_utils.print_and_log(
                 logging.INFO, '"Facebook response from message send: {}"'.format(result)
             )
             results.append(result)
@@ -256,7 +255,7 @@ class MessageSender:
         message = {'name': name, "profile_picture_url": image_url}
         response = requests.post(api_address, params=self.auth_args, json=message)
         result = response.json()
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO, '"Facebook response from create persona: {}"'.format(result)
         )
         return result
@@ -268,7 +267,7 @@ class MessageSender:
         api_address = 'https://graph.facebook.com/' + persona_id
         response = requests.delete(api_address, params=self.auth_args)
         result = response.json()
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO, '"Facebook response from delete persona: {}"'.format(result)
         )
         return result
@@ -317,7 +316,7 @@ class MessageSender:
                     files=filedata,
                 )
         result = response.json()
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO,
             '"Facebook response from attachment upload: {}"'.format(result),
         )

@@ -16,3 +16,7 @@ which you can send and receive messages using a browser.
 3. Interact
 
 If no port number is specified in `--port` then the default port used will be `34596`. If specifying, ensure both port numbers match on client and server side.
+
+## Note
+
+If your 8080 port is already in use, please edit the port number in `_run_browser` in `client.py`.
