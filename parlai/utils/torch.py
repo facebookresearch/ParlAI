@@ -241,7 +241,7 @@ def compute_grad_norm(parameters, norm_type=2.0):
     """
     if isinstance(parameters, torch.Tensor):
         parameters = [parameters]
-    parameters = list(filter(lambda p: p.grad is not None, parameters))
+    parameters = [p.grad for p in parameters if p is not None]
     total_norm = 0
     for p in parameters:
         param_norm = p.grad.data.norm(norm_type)
