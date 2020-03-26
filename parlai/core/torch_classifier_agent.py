@@ -169,9 +169,7 @@ class TorchClassifierAgent(TorchAgent):
                 elif self.model_parallel:
                     self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
-            if self.use_cuda:
-                if self.opt['data_parallel']:
-                    self.model = torch.nn.DataParallel(self.model)
+
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
