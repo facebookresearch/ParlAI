@@ -229,6 +229,7 @@ def argsort(keys: List[Any], *lists: List[List[Any]], descending: bool = False):
 def compute_grad_norm(parameters, norm_type=2.0):
     """
     Compute norm over gradients of model parameters.
+
     Mostly taken from the body of torch.nn.utils.clip_grad_norm_
 
     :param parameters:
@@ -237,7 +238,6 @@ def compute_grad_norm(parameters, norm_type=2.0):
 
     :param norm_type
         type of p-norm to use
-
     """
     if isinstance(parameters, torch.Tensor):
         parameters = [parameters]
