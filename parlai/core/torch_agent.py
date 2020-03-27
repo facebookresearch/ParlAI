@@ -52,7 +52,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
 
 
 class Batch(AttrDict):
@@ -1997,6 +1997,11 @@ class TorchAgent(ABC, Agent):
                 'clip',
                 GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
             )
+        else:
+            parameters = self.model.parameters()
+            grad_norm = compute_grad_norm(parameters)
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
+
         if self.fp16:
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
