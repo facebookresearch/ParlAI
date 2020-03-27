@@ -27,7 +27,7 @@ ANLI_ANSWER_KEY = 'label'
 ANLI_ROUNDS = ['R1', 'R2', 'R3']
 
 
-def _path(opt):
+def _path(opt, anli_round):
     build(opt)
 
     dt = opt['datatype'].split(':')[0]
@@ -45,7 +45,7 @@ def _path(opt):
         opt['datapath'],
         ANLI,
         ANLI_PREFIX + ANLI_VERSION,
-        opt['round'],
+        anli_round,
         suffix + '.jsonl',
     )
 
@@ -53,6 +53,19 @@ def _path(opt):
 
 
 class RoundBaseTeacher(DialogTeacher):
+    """
+    Base class for teachers in all 3 rounds in ANLI tasks.
+
+      ``RoundBaseTeacher`` derives anli_round (the round index of ANLI task which consists of 3 rounds NLI tasks with
+      increasing difficulty. (See https://arxiv.org/abs/1910.14599 for more information)  from ``opt['task']``.
+      ``anli_round`` is used to set the correct path to the downloaded data file for the specified round.
+
+      ``RoundBaseTeacher`` also parses the requested dialog format(text format w/ or w/o special tokens 'Hypothesis',
+      'Premise') and number of classes (3 classes entailment, neutral, contradiction or 2 classes contradiction, not
+      contradiction) desired for particular training purposes.
+
+    """
+
     @staticmethod
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('RoundBase Teacher Args')
@@ -75,14 +88,14 @@ class RoundBaseTeacher(DialogTeacher):
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['round'] = (
+        self.anli_round = (
             opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else None
         )
-        opt['round'] = opt['round'].upper()
-        if not opt['round'] in ANLI_ROUNDS:
-            raise KeyError(f"Undefined task round: {opt['round']}.")
+        self.anli_round = self.anli_round.upper()
+        if self.anli_round not in ANLI_ROUNDS:
+            raise KeyError(f"Undefined task round: {self.anli_round}.")
 
-        data_path = _path(opt)
+        data_path = _path(opt, self.anli_round)
         opt['datafile'] = data_path
         self.dialog_format = opt.get('dialog_format', False)
         self.binary_classes = opt.get('binary_classes', False)
