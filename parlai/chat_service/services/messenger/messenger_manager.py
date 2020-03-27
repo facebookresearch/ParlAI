@@ -14,7 +14,6 @@ import os
 
 from parlai.core.agents import create_agent
 import parlai.chat_service.utils.logging as log_utils
-import parlai.chat_service.utils.misc as utils
 import parlai.chat_service.utils.server as server_utils
 from parlai.chat_service.services.messenger.agents import MessengerAgent
 from parlai.chat_service.core.socket import ChatServiceMessageSocket
@@ -81,7 +80,7 @@ class MessengerManager(ChatServiceManager):
         """
         Initialize logging settings from the opt.
         """
-        utils.set_is_debug(self.opt['is_debug'])
+        log_utils.set_is_debug(self.opt['is_debug'])
         log_utils.set_log_level(self.opt['log_level'])
 
     def mark_removed(self, agent_id, pageid):
