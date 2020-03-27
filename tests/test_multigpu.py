@@ -15,7 +15,6 @@ MODEL_OPTS = {
     'num_epochs': 0.1,
     'batchsize': 32,
     'truncate': 8,
-    'model_parallel': True,
 }
 
 
@@ -26,6 +25,7 @@ class TestModelParallel(unittest.TestCase):
             {
                 'task': 'integration_tests',
                 'model': 'transformer/polyencoder',
+                'model_parallel': True,
                 'candidates': 'batch',
                 'poly_n_codes': 4,
                 **MODEL_OPTS,
@@ -38,6 +38,7 @@ class TestModelParallel(unittest.TestCase):
                     'task': 'integration_tests',
                     'model': 'transformer/polyencoder',
                     'data_parallel': True,
+                    'model_parallel': True,
                     'candidates': 'batch',
                     'poly_n_codes': 4,
                     **MODEL_OPTS,
@@ -50,6 +51,7 @@ class TestModelParallel(unittest.TestCase):
                 'task': 'integration_tests',
                 'model': 'transformer/ranker',
                 'candidates': 'batch',
+                'model_parallel': True,
                 **MODEL_OPTS,
             }
         )
@@ -71,6 +73,7 @@ class TestModelParallel(unittest.TestCase):
                 'task': 'integration_tests:classifier',
                 'classes': ['one', 'zero'],
                 'model': 'transformer/classifier',
+                'model_parallel': True,
                 **MODEL_OPTS,
             }
         )
@@ -81,6 +84,7 @@ class TestModelParallel(unittest.TestCase):
                     'classes': ['one', 'zero'],
                     'model': 'transformer/classifier',
                     'data_parallel': True,
+                    'model_parallel': True,
                     **MODEL_OPTS,
                 }
             )
@@ -90,6 +94,44 @@ class TestModelParallel(unittest.TestCase):
             {
                 'task': 'integration_tests',
                 'model': 'transformer/generator',
+                'model_parallel': True,
+                **MODEL_OPTS,
+            }
+        )
+
+
+@testing_utils.skipUnlessGPU
+class TestDataParallel(unittest.TestCase):
+    def test_polyencoder(self):
+        testing_utils.train_model(
+            {
+                'task': 'integration_tests',
+                'model': 'transformer/polyencoder',
+                'candidates': 'batch',
+                'poly_n_codes': 4,
+                'data_parallel': True,
+                **MODEL_OPTS,
+            }
+        )
+
+    def test_ranker(self):
+        testing_utils.train_model(
+            {
+                'task': 'integration_tests',
+                'model': 'transformer/ranker',
+                'candidates': 'batch',
+                'data_parallel': True,
+                **MODEL_OPTS,
+            }
+        )
+
+    def test_classifier(self):
+        testing_utils.train_model(
+            {
+                'task': 'integration_tests:classifier',
+                'classes': ['one', 'zero'],
+                'data_parallel': True,
+                'model': 'transformer/classifier',
                 **MODEL_OPTS,
             }
         )
