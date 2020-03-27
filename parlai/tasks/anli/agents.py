@@ -56,14 +56,13 @@ class RoundBaseTeacher(DialogTeacher):
     """
     Base class for teachers in all 3 rounds in ANLI tasks.
 
-      ``RoundBaseTeacher`` derives anli_round (the round index of ANLI task which consists of 3 rounds NLI tasks with
-      increasing difficulty. (See https://arxiv.org/abs/1910.14599 for more information)  from ``opt['task']``.
-      ``anli_round`` is used to set the correct path to the downloaded data file for the specified round.
+    ``RoundBaseTeacher`` derives anli_round (the round index of ANLI task which consists of 3 rounds NLI tasks with
+    increasing difficulty. (See https://arxiv.org/abs/1910.14599 for more information)  from ``opt['task']``.
+    ``anli_round`` is used to set the correct path to the downloaded data file for thaue specified round.
 
-      ``RoundBaseTeacher`` also parses the requested dialog format(text format w/ or w/o special tokens 'Hypothesis',
-      'Premise') and number of classes (3 classes entailment, neutral, contradiction or 2 classes contradiction, not
-      contradiction) desired for particular training purposes.
-
+    ``RoundBaseTeacher`` also parses the requested dialog format(text format w/ or w/o special tokens 'Hypothesis',
+    'Premise') and number of classes (3 classes entailment, neutral, contradiction or 2 classes contradiction, not
+    contradiction) desired for particular training purposes.
     """
 
     @staticmethod
