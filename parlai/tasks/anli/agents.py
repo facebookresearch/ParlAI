@@ -42,11 +42,7 @@ def _path(opt, anli_round):
         raise RuntimeError('Not valid datatype.')
 
     data_path = os.path.join(
-        opt['datapath'],
-        ANLI,
-        ANLI_PREFIX + ANLI_VERSION,
-        anli_round,
-        suffix + '.jsonl',
+        opt['datapath'], ANLI, ANLI_PREFIX + ANLI_VERSION, anli_round, suffix + '.jsonl'
     )
 
     return data_path
@@ -163,11 +159,7 @@ class DefaultTeacher(MultiTaskTeacher):
         )
 
     def __init__(self, opt, shared=None):
-        anli_tasks = [
-            'anli:r1',
-            'anli:r2',
-            'anli:r3',
-        ]
+        anli_tasks = ['anli:r1', 'anli:r2', 'anli:r3']
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join(anli_tasks)
         super().__init__(opt, shared)

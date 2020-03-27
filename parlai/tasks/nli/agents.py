@@ -52,12 +52,7 @@ class NliTeacher(MultiTaskTeacher):
         )
 
     def __init__(self, opt, shared=None):
-        nli_tasks = [
-            'anli',
-            'multinli',
-            'snli',
-            'dialogue_nli',
-        ]
+        nli_tasks = ['anli:r1', 'anli:r2', 'anli:r3', 'multinli', 'snli', 'dialogue_nli']
         opt = deepcopy(opt)
         opt['task'] = ','.join(nli_tasks)
         super().__init__(opt, shared)
