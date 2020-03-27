@@ -13,6 +13,7 @@ from parlai.core.dict import find_ngrams
 from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
+import parlai.scripts.build_dict as build_dict
 
 import parlai.utils.testing as testing_utils
 import os
@@ -373,5 +374,23 @@ class TestByteLevelBPE(unittest.TestCase):
             assert da2.txt2vec("hello") == da.txt2vec("hello")
 
 
-if __name__ == '__main__':
-    unittest.main()
+class TestBuildDict(unittest.TestCase):
+    def _run_test(self, opt):
+        with testing_utils.tempdir() as tmpdir:
+            dict_file = os.path.join(tmpdir, "dict")
+            pp = build_dict.setup_args()
+            pp.set_defaults(**opt)
+            pp.set_defaults(task='babi')
+            popt = pp.parse_args([], print_args=False)
+            popt['dict_file'] = dict_file
+            for k, v in opt.items():
+                popt[k] = v
+
+    def test_build_space(self):
+        self._run_test({'dict_tokenizer': 'space'})
+
+    def test_build_split(self):
+        self._run_test({'dict_tokenizer': 'split'})
+
+    def test_build_bpe(self):
+        self._run_test({'dict_tokenizer': 'bpe', 'max_tokens': 50})
