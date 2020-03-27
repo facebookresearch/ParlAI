@@ -57,17 +57,26 @@ class RoundBaseTeacher(DialogTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('RoundBase Teacher Args')
         parser.add_argument(
+            '-dfm',
             '--dialog-format',
             type='bool',
             default=False,
             help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
             " and 'Hypothesis' (default: False).",
         )
+        parser.add_argument(
+            '-bcl',
+            '--binary-classes',
+            type='bool',
+            default=False,
+            help="True if label candidates are (contradiction, not_contradiction), and (entailment, contradiction, "
+            "neutral) otherwise (default: False).",
+        )
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['round'] = (
-            opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else 1
+            opt['task'].split(':')[1] if len(opt['task'].split(':')) > 1 else None
         )
         opt['round'] = opt['round'].upper()
         if not opt['round'] in ANLI_ROUNDS:
@@ -76,11 +85,12 @@ class RoundBaseTeacher(DialogTeacher):
         data_path = _path(opt)
         opt['datafile'] = data_path
         self.dialog_format = opt.get('dialog_format', False)
+        self.binary_classes = opt.get('binary_classes', False)
         self.id = opt['task'].upper()
         super().__init__(opt, shared)
 
     def label_candidates(self):
-        if self.dialog_format:
+        if self.binary_classes:
             return BICLASS_LABELS
         return MULTINLI_LABELS
 
@@ -96,14 +106,15 @@ class RoundBaseTeacher(DialogTeacher):
                 if label_raw in ANLI_LABEL_DICT:
                     label_raw = ANLI_LABEL_DICT[label_raw]
 
-                question, answer, clas = convert_to_dialogData(
+                question, answers, clas = convert_to_dialogData(
                     premise_raw=pair[ANLI_PREMISE_KEY],
                     hypo_raw=pair[ANLI_HYPO_KEY],
                     answer_raw=label_raw,
                     dialog_format=self.dialog_format,
+                    binary_classes=self.binary_classes,
                 )
 
-                yield (question, answer, None, clas), True
+                yield (question, answers, None, clas), True
 
 
 class R1Teacher(RoundBaseTeacher):
@@ -123,11 +134,20 @@ class DefaultTeacher(MultiTaskTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('ANLI Teacher Args')
         parser.add_argument(
+            '-dfm',
             '--dialog-format',
             type='bool',
             default=False,
             help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
             " and 'Hypothesis' (default: False).",
+        ),
+        parser.add_argument(
+            '-bcl',
+            '--binary-classes',
+            type='bool',
+            default=False,
+            help="True if label candidates are (contradiction, not_contradiction), and (entailment, contradiction, "
+            "neutral) otherwise (default: False).",
         )
 
     def __init__(self, opt, shared=None):

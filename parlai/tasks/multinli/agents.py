@@ -22,6 +22,11 @@ MULTINLI_PREMISE_KEY = 'sentence1'
 MULTINLI_HYPO_KEY = 'sentence2'
 MULTINLI_ANSWER_KEY = 'gold_label'
 NOT_CONTRADICT = 'not_contradiction'
+BICLASS_DICT = {
+    'contradiction': 'contradiction',
+    'entailment': NOT_CONTRADICT,
+    'neutral': NOT_CONTRADICT,
+}
 BICLASS_LABELS = ['contradiction', NOT_CONTRADICT]
 
 
@@ -49,12 +54,13 @@ def _path(opt):
     return data_path
 
 
-def setup_data(path, dialog_format=False):
+def setup_data(path, dialog_format=False, binary_classes=False):
     """
     Set up data in DialogData format from path.
 
     :param path: path to the data file that stores the MNLI dataset
     :param dialog_format: if set True, omit the special tokens 'Hypothesis' and 'Premise' in the text.
+    :param binary_classes:  if set True, bucketize neutral and entailment in one (not_contradiction)
     :return:  a tuple in the parlai.core.teachers.DialogData format ``((x, y, r, c, i), new_episode?)`` where the ``x``
             is the query/question and ``y`` is the answer/label, ``clas`` represents the ``c`` the avaiable choices.
             ``new_episode`` is set True in any NLI teacher.
@@ -67,17 +73,20 @@ def setup_data(path, dialog_format=False):
             if pair[MULTINLI_ANSWER_KEY] == '-':
                 continue
 
-            question, answer, clas = convert_to_dialogData(
+            question, answers, clas = convert_to_dialogData(
                 premise_raw=pair[MULTINLI_PREMISE_KEY],
                 hypo_raw=pair[MULTINLI_HYPO_KEY],
                 answer_raw=pair[MULTINLI_ANSWER_KEY],
                 dialog_format=dialog_format,
+                binary_classes=binary_classes,
             )
 
-            yield (question, answer, None, clas), True
+            yield (question, answers, None, clas), True
 
 
-def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, dialog_format=False):
+def convert_to_dialogData(
+    premise_raw, hypo_raw, answer_raw, dialog_format=False, binary_classes=False
+):
     """
     Convert from NLI context to dialog text.
 
@@ -85,6 +94,7 @@ def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, dialog_format=False
     :param hypo_raw: raw hypothesis extracted from jsonl file.
     :param answer_raw: raw answer extracted from jsonl file.
     :param dialog_format: if set True, omit the special tokens 'Hypothesis' and 'Premise' in the text.
+    :param binary_classes: if set True, bucketize (neutral, entailment) into one (no_contradiction)
     :return: a tuple (question, answer, clas)
         - ``question`` (str) is a query and possibly context
         - ``answer`` (iter) is an iterable of label(s) for that query
@@ -94,18 +104,17 @@ def convert_to_dialogData(premise_raw, hypo_raw, answer_raw, dialog_format=False
     hypo_raw = hypo_raw.strip('\n').strip('\t')
     clas = MULTINLI_LABELS
 
-    if dialog_format:
-        if answer_raw != 'contradiction':
-            answer_raw = NOT_CONTRADICT
+    if binary_classes:
+        answer_raw = BICLASS_DICT[answer_raw]
         clas = BICLASS_LABELS
-    else:
+    if not dialog_format:
         premise_raw = MULTINLI_PREMISE_PREFIX + premise_raw
         hypo_raw = MULTINLI_HYPO_PREFIX + hypo_raw
 
     question = premise_raw + '\n' + hypo_raw
-    answer = [answer_raw]
+    answers = [answer_raw]
 
-    return question, answer, clas
+    return question, answers, clas
 
 
 class DefaultTeacher(DialogTeacher):
@@ -113,11 +122,20 @@ class DefaultTeacher(DialogTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('MNLI Teacher Args')
         parser.add_argument(
+            '-dfm',
             '--dialog-format',
             type='bool',
             default=False,
             help="True if one would like to convert to a dialogue format without special tokens such as 'Premise'"
             " and 'Hypothesis' (default: False).",
+        )
+        parser.add_argument(
+            '-bcl',
+            '--binary-classes',
+            type='bool',
+            default=False,
+            help="True if label candidates are (contradiction, not_contradiction), and (entailment, contradiction, "
+            "neutral) otherwise (default: False).",
         )
 
     def __init__(self, opt, shared=None):
@@ -126,12 +144,13 @@ class DefaultTeacher(DialogTeacher):
         opt['datafile'] = data_path
         self.id = 'MultiNLI'
         self.dialog_format = opt.get('dialog_format', False)
+        self.binary_classes = opt.get('binary_classes', False)
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        return setup_data(path, self.dialog_format)
+        return setup_data(path, self.dialog_format, self.binary_classes)
 
     def label_candidates(self):
-        if self.dialog_format:
+        if self.binary_classes:
             return BICLASS_LABELS
         return MULTINLI_LABELS
