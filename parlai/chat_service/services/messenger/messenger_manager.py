@@ -81,7 +81,7 @@ class MessengerManager(ChatServiceManager):
         """
         Initialize logging settings from the opt.
         """
-        utils.set_is_debug(self.opt['is_debug'])
+        log_utils.set_is_debug(self.opt['is_debug'])
         log_utils.set_log_level(self.opt['log_level'])
 
     def mark_removed(self, agent_id, pageid):

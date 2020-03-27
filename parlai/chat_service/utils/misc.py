@@ -14,11 +14,6 @@ from enum import Enum
 THREAD_MEDIUM_SLEEP = 0.3
 
 
-def set_is_debug(is_debug):
-    global debug
-    debug = is_debug
-
-
 class TaskState:
     """
     Wrapper for an agent running on a Worker.
