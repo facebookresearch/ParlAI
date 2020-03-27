@@ -97,7 +97,7 @@ def convert_to_dialogData(
     :param binary_classes: if set True, bucketize (neutral, entailment) into one (no_contradiction)
     :return: a tuple (question, answer, clas)
         - ``question`` (str) is a query and possibly context
-        - ``answer`` (iter) is an iterable of label(s) for that query
+        - ``answers`` (iter) is an iterable of label(s) for that query
         - ``clas`` (iter) is an iterable of label candidates that the student can choose from
     """
     premise_raw = premise_raw.strip('\n').strip('\t')
