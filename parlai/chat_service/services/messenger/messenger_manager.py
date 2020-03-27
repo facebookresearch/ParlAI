@@ -14,7 +14,6 @@ import os
 
 from parlai.core.agents import create_agent
 import parlai.chat_service.utils.logging as log_utils
-import parlai.chat_service.utils.misc as utils
 import parlai.chat_service.utils.server as server_utils
 from parlai.chat_service.services.messenger.agents import MessengerAgent
 from parlai.chat_service.core.socket import ChatServiceMessageSocket
