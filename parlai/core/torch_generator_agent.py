@@ -388,9 +388,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
             if self.use_cuda:
-                self.model.cuda()
                 if self.model_parallel:
                     self.model = PipelineHelper().make_parallel(self.model)
+                else:
+                    self.model.cuda()
                 self.criterion.cuda()
 
             sync_parameters(self.model)

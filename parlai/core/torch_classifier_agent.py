@@ -163,11 +163,12 @@ class TorchClassifierAgent(TorchAgent):
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
             if self.use_cuda:
-                self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
+                else:
+                    self.model.cuda()
                 if self.data_parallel:
                     self.model = torch.nn.DataParallel(self.model)
-                elif self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
 
         if shared:
