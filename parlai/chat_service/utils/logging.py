@@ -17,6 +17,12 @@ logging_enabled = True
 debug = True
 log_level = logging.ERROR
 
+
+def set_is_debug(is_debug):
+    global debug
+    debug = is_debug
+
+
 if logging_enabled:
     logging.basicConfig(
         filename=str(time.time()) + '.log',
