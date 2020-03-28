@@ -55,7 +55,7 @@ class TestMemEfficientFP16(unittest.TestCase):
     @testing_utils.skipIfCircleCI
     def test_resuming_apex2memeff(self):
         """
-        Test switching from memory efficient fp16 to apex fp16
+        Test switching from memory efficient fp16 to apex fp16.
         """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
@@ -102,7 +102,7 @@ class TestMemEfficientFP16(unittest.TestCase):
     @testing_utils.skipIfCircleCI
     def test_resuming_memeff2apex(self):
         """
-        Test switching from memory efficient fp16 to apex fp16
+        Test switching from memory efficient fp16 to apex fp16.
         """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
