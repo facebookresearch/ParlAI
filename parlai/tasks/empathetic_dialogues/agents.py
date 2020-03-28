@@ -32,10 +32,11 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
             and self.datatype == 'train'
         ) or self.datatype != 'train'
-        print(
-            f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
-            f'{self.experiencer_side_only}, datatype: {self.datatype}'
-        )
+        if not shared:
+            print(
+                f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
+                f'{self.experiencer_side_only}, datatype: {self.datatype}'
+            )
         self.remove_political_convos = opt.get(
             'remove_political_convos', DEFAULT_REMOVE_POLITICAL_CONVOS
         )
