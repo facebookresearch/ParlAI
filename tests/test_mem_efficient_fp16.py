@@ -51,7 +51,51 @@ class TestMemEfficientFP16(unittest.TestCase):
                 )
             )
 
-    def test_resuming(self):
+    def test_resuming_adam(self):
+        """
+        Test resuming without FP16.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model')
+
+            valid1, test1 = testing_utils.train_model(
+                dict(
+                    model_file=model_file,
+                    task='integration_tests:candidate',
+                    model='transformer/ranker',
+                    optimizer='adam',
+                    fp16=True,
+                    fp16_impl='mem_efficient',
+                    learningrate=7e-3,
+                    batchsize=32,
+                    num_epochs=1,
+                    n_layers=1,
+                    n_heads=1,
+                    ffn_size=32,
+                    embedding_size=32,
+                    warmup_updates=1,
+                    lr_scheduler='invsqrt',
+                )
+            )
+
+            valid2, test2 = testing_utils.train_model(
+                dict(
+                    model_file=model_file,
+                    task='integration_tests:candidate',
+                    model='transformer/ranker',
+                    num_epochs=2,
+                    fp16=True,
+                )
+            )
+
+            # make sure the number of updates is being tracked correctly
+            self.assertGreater(
+                valid2['total_train_updates'],
+                valid1['total_train_updates'],
+                'Number of updates is not increasing',
+            )
+
+    def test_resuming_fp32(self):
         """
         Test resuming without FP16.
         """
