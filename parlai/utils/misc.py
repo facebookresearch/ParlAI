@@ -757,7 +757,11 @@ def display_messages(
             # are ignoring the agent reply.
             continue
         agent_id = msg.get('id', '[no id field]')
-        lines.append(colorize('- - - - - - - Msg: ' + agent_id + ' - - - - - - - - - -', 'highlight'))
+        lines.append(
+            colorize(
+                '- - - - - - - Msg: ' + agent_id + ' - - - - - - - - - -', 'highlight'
+            )
+        )
         if msg.get('episode_done'):
             episode_done = True
         # Possibly indent the text (for the second speaker, if two).
@@ -780,11 +784,16 @@ def display_messages(
             lines.append(f'[ image ]: {msg["image"]}')
         if msg.get('text', ''):
             text = clip_text(msg['text'], max_len)
-            lines.append(space + colorize('[text]:', 'field') + ' ' + colorize(text, 'text'))
+            lines.append(
+                space + colorize('[text]:', 'field') + ' ' + colorize(text, 'text')
+            )
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
             if msg.get(field) and field not in ignore_fields_:
-                string = '{}{} {}'.format(space, colorize('[' + field + ']:', 'field'),
-                                           colorize(_ellipse(msg[field]), field))
+                string = '{}{} {}'.format(
+                    space,
+                    colorize('[' + field + ']:', 'field'),
+                    colorize(_ellipse(msg[field]), field),
+                )
                 lines.append(string)
         # Handling this separately since we need to clean up the raw output before displaying.
         token_loss_line = _token_losses_line(msg, ignore_fields_, space)
@@ -792,7 +801,9 @@ def display_messages(
             lines.append(token_loss_line)
 
     if episode_done:
-        lines.append(colorize('- - - - - - - END OF EPISODE - - - - - - - - - -', 'highlight2'))
+        lines.append(
+            colorize('- - - - - - - END OF EPISODE - - - - - - - - - -', 'highlight2')
+        )
 
     return '\n'.join(lines)
 

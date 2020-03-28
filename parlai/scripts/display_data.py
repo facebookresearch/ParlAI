@@ -33,11 +33,17 @@ def setup_args(parser=None):
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
     parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
     parser.add_argument('--display-ignore-fields', type=str, default='agent_reply')
-    parser.add_argument('-s','--simple', default=False, action='store_true',
-                        help='Simple converational view, does not show other message fields.')
-   
+    parser.add_argument(
+        '-s',
+        '--simple',
+        default=False,
+        action='store_true',
+        help='Simple converational view, does not show other message fields.',
+    )
+
     parser.set_defaults(datatype='train:stream')
     return parser
+
 
 def simple_display(opt, world, turn):
     if opt['batchsize'] > 1:
@@ -51,7 +57,8 @@ def simple_display(opt, world, turn):
     labels = act.get('labels', act.get('eval_labels', ['[no labels field]']))
     labels = '|'.join(labels)
     print('\t' + colorize(labels, 'labels_nobold'))
-        
+
+
 def display_data(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
@@ -67,11 +74,11 @@ def display_data(opt):
         if opt['simple']:
             simple_display(opt, world, turn)
             turn += 1
-            if (world.get_acts()[0]['episode_done']):
+            if world.get_acts()[0]['episode_done']:
                 turn = 0
         else:
             print(world.display())
-                
+
         if world.epoch_done():
             print('EPOCH DONE')
             break
@@ -85,9 +92,8 @@ def display_data(opt):
         )
     except Exception:
         pass
-    
 
-    
+
 if __name__ == '__main__':
     random.seed(42)
 

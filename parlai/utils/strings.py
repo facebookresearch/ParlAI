@@ -8,6 +8,7 @@ Utility functions and classes for handling text strings.
 """
 import sys as _sys
 
+
 def normalize_reply(text: str, version=1) -> str:
     """
     Standardize the capitalization and punctuation spacing of the input text.
@@ -67,7 +68,7 @@ def colorize(text, style):
     RED = '\033[1;91m'
     BLUE = '\033[1;94m'
     DARK_BLUE = '\033[0;37;40m\033[1;34;40m'
-    #DARK_BLUE = '\033[1;34;40m'
+    # DARK_BLUE = '\033[1;34;40m'
     RED = '\033[0;91m'
     YELLOW = '\033[0;93m'
     GREEN = '\033[1;92m'
@@ -87,18 +88,18 @@ def colorize(text, style):
         return HIGHLIGHT_RED + text + RESET
     if style == 'highlight2':
         return HIGHLIGHT_BLUE + text + RESET
-    elif style == 'text': 
+    elif style == 'text':
         return BLUE + text + RESET
-    elif style == 'labels' or style == 'eval_labels': 
+    elif style == 'labels' or style == 'eval_labels':
         return BOLD_LIGHT_GRAY + text + RESET
     elif style == 'labels_nobold':
         return LIGHT_GRAY + text + RESET
     elif style == 'label_candidates':
         return LIGHT_GRAY + text + RESET
-    elif style == 'text2': 
-        return MAGENTA + text + RESET 
-    elif style == 'field': 
-        #return RED + text + RESET
+    elif style == 'text2':
+        return MAGENTA + text + RESET
+    elif style == 'field':
+        # return RED + text + RESET
         return HIGHLIGHT_BLUE + text + RESET
     else:
         return MAGENTA + text + RESET
