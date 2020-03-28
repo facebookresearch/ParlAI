@@ -62,6 +62,7 @@ class TestModelParallel(unittest.TestCase):
                     'task': 'integration_tests',
                     'model': 'transformer/ranker',
                     'data_parallel': True,
+                    'model_parallel': True,
                     'candidates': 'batch',
                     **MODEL_OPTS,
                 }
