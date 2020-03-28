@@ -402,6 +402,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         for k, v in state_dict['state'].items():
             if k in id_map:
                 param = id_map[k]
+                self.optimizer.state[param] = v
 
     @property
     def loss_scale(self):
