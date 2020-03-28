@@ -68,7 +68,6 @@ def colorize(text, style):
     RED = '\033[1;91m'
     BLUE = '\033[1;94m'
     DARK_BLUE = '\033[0;37;40m\033[1;34;40m'
-    # DARK_BLUE = '\033[1;34;40m'
     RED = '\033[0;91m'
     YELLOW = '\033[0;93m'
     GREEN = '\033[1;92m'

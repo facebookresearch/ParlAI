@@ -401,14 +401,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         }
         for k, v in state_dict['state'].items():
             if k in id_map:
-                # make sure when we copy the original state back, we make sure
-                # that original state is on the correct device
                 param = id_map[k]
-                like_device_v = {
-                    j: w.to(param.device) if torch.is_tensor(w) else w
-                    for j, w in v.items()
-                }
-                self.optimizer.state[param] = like_device_v
 
     @property
     def loss_scale(self):

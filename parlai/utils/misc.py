@@ -759,9 +759,6 @@ def display_messages(
             continue
         agent_id = msg.get('id', '[no id field]')
         if verbose:
-            # lines.append(colorize(
-            #    '- - - - - - - Msg: ' + agent_id + ' - - - - - - - - - -', 'highlight2'
-            # ))
             lines.append(colorize('[id]:', 'field') + ' ' + colorize(agent_id, 'id'))
 
         if msg.get('episode_done'):
