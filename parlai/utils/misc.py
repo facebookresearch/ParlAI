@@ -721,6 +721,7 @@ def display_messages(
     prettify: bool = False,
     ignore_fields: str = '',
     max_len: int = 1000,
+    verbose: bool = False,
 ) -> Optional[str]:
     """
     Return a string describing the set of messages provided.
@@ -757,11 +758,12 @@ def display_messages(
             # are ignoring the agent reply.
             continue
         agent_id = msg.get('id', '[no id field]')
-        lines.append(
-            colorize(
-                '- - - - - - - Msg: ' + agent_id + ' - - - - - - - - - -', 'highlight'
-            )
-        )
+        if verbose:
+            # lines.append(colorize(
+            #    '- - - - - - - Msg: ' + agent_id + ' - - - - - - - - - -', 'highlight2'
+            # ))
+            lines.append(colorize('[id]:', 'field') + ' ' + colorize(agent_id, 'id'))
+
         if msg.get('episode_done'):
             episode_done = True
         # Possibly indent the text (for the second speaker, if two).
@@ -784,9 +786,21 @@ def display_messages(
             lines.append(f'[ image ]: {msg["image"]}')
         if msg.get('text', ''):
             text = clip_text(msg['text'], max_len)
-            lines.append(
-                space + colorize('[text]:', 'field') + ' ' + colorize(text, 'text')
-            )
+            if index == 0:
+                style = 'bold_text'
+            else:
+                style = 'labels'
+            if verbose:
+                lines.append(
+                    space + colorize('[text]:', 'field') + ' ' + colorize(text, style)
+                )
+            else:
+                lines.append(
+                    space
+                    + colorize("[" + agent_id + "]:", 'field')
+                    + ' '
+                    + colorize(text, style)
+                )
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
             if msg.get(field) and field not in ignore_fields_:
                 string = '{}{} {}'.format(
@@ -802,7 +816,7 @@ def display_messages(
 
     if episode_done:
         lines.append(
-            colorize('- - - - - - - END OF EPISODE - - - - - - - - - -', 'highlight2')
+            colorize('- - - - - - - END OF EPISODE - - - - - - - - - -', 'highlight')
         )
 
     return '\n'.join(lines)

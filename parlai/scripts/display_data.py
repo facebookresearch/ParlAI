@@ -35,9 +35,9 @@ def setup_args(parser=None):
     parser.add_argument('--display-ignore-fields', type=str, default='agent_reply')
     parser.add_argument(
         '-s',
-        '--simple',
-        default=False,
-        action='store_true',
+        '--display-verbose',
+        default=True,
+        action='store_false',
         help='Simple converational view, does not show other message fields.',
     )
 
@@ -50,13 +50,15 @@ def simple_display(opt, world, turn):
         raise RuntimeError('Simple view only support batchsize=1')
     act = world.get_acts()[0]
     if turn == 0:
-        text = "     NEW EPISODE: " + act.get('id', "[no agent id]") + "            "
+        text = (
+            "    - - - NEW EPISODE: " + act.get('id', "[no agent id]") + " - - -       "
+        )
         print(colorize(text, 'highlight'))
     text = act.get('text', '[no text field]')
     print(colorize(text, 'text'))
     labels = act.get('labels', act.get('eval_labels', ['[no labels field]']))
     labels = '|'.join(labels)
-    print('\t' + colorize(labels, 'labels_nobold'))
+    print('   ' + colorize(labels, 'labels'))
 
 
 def display_data(opt):
@@ -71,13 +73,13 @@ def display_data(opt):
 
         # NOTE: If you want to look at the data from here rather than calling
         # world.display() you could access world.acts[0] directly, see simple_display above.
-        if opt['simple']:
+        if opt['display_verbose']:
+            print(world.display() + '\n~~')
+        else:
             simple_display(opt, world, turn)
             turn += 1
             if world.get_acts()[0]['episode_done']:
                 turn = 0
-        else:
-            print(world.display())
 
         if world.epoch_done():
             print('EPOCH DONE')

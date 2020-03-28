@@ -89,17 +89,18 @@ def colorize(text, style):
     if style == 'highlight2':
         return HIGHLIGHT_BLUE + text + RESET
     elif style == 'text':
-        return BLUE + text + RESET
-    elif style == 'labels' or style == 'eval_labels':
-        return BOLD_LIGHT_GRAY + text + RESET
-    elif style == 'labels_nobold':
         return LIGHT_GRAY + text + RESET
+    elif style == 'bold_text':
+        return BOLD_LIGHT_GRAY + text + RESET
+    elif style == 'labels' or style == 'eval_labels':
+        return BLUE + text + RESET
     elif style == 'label_candidates':
+        return LIGHT_GRAY + text + RESET
+    elif style == 'id':
         return LIGHT_GRAY + text + RESET
     elif style == 'text2':
         return MAGENTA + text + RESET
     elif style == 'field':
-        # return RED + text + RESET
         return HIGHLIGHT_BLUE + text + RESET
     else:
         return MAGENTA + text + RESET
