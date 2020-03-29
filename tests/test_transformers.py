@@ -496,22 +496,18 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Tests that the generator model files work over time.
         """
-        valid, test = testing_utils.eval_model(
+        _, test = testing_utils.eval_model(
             dict(
                 task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
                 model_file='zoo:unittest/transformer_generator2/model',
                 dict_file='zoo:unittest/transformer_generator2/model.dict',
-                rank_candidates=True,
+                rank_candidates=False,
                 batch_size=64,
-            )
+            ),
+            skip_valid=True,
         )
 
-        self.assertGreaterEqual(valid['hits@1'], 0.95)
-        self.assertLessEqual(valid['ppl'], 1.01)
-        self.assertGreaterEqual(valid['accuracy'], 0.99)
-        self.assertGreaterEqual(valid['f1'], 0.99)
-        self.assertGreaterEqual(test['hits@1'], 0.95)
         self.assertLessEqual(test['ppl'], 1.01)
         self.assertGreaterEqual(test['accuracy'], 0.99)
         self.assertGreaterEqual(test['f1'], 0.99)
