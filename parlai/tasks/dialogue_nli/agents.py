@@ -114,23 +114,19 @@ class DialogueNliTeacher(FixedDialogTeacher):
         entry = self.data[episode_idx]
         entry['id'] = self.id
         entry['episode_done'] = True
-        entry['labels'] = [entry['label']]
-        entry['text'] = entry['sentence1'] + '\n' + entry['sentence2']
-        if self.dialog_format or self.binary_classes:
-            (
-                entry['text'],
-                entry['labels'],
-                entry['label_candidates'],
-            ) = convert_to_dialogData(
-                premise_raw=entry[DNLI_PREMISE_KEY],
-                hypo_raw=entry[DNLI_HYPO_KEY],
-                answer_raw=DNLI_LABEL_DICT[entry[DNLI_ANSWER_KEY]],
-                dialog_format=self.dialog_format,
-                binary_classes=self.binary_classes,
-            )
-            new_entry = {k: entry[k] for k in ENTRY_FIELDS if k in entry}
-            return new_entry
-        return entry
+        (
+            entry['text'],
+            entry['labels'],
+            entry['label_candidates'],
+        ) = convert_to_dialogData(
+            premise_raw=entry[DNLI_PREMISE_KEY],
+            hypo_raw=entry[DNLI_HYPO_KEY],
+            answer_raw=DNLI_LABEL_DICT[entry[DNLI_ANSWER_KEY]],
+            dialog_format=self.dialog_format,
+            binary_classes=self.binary_classes,
+        )
+        new_entry = {k: entry[k] for k in ENTRY_FIELDS if k in entry}
+        return new_entry
 
 
 class ExtrasTeacher(DialogueNliTeacher):
