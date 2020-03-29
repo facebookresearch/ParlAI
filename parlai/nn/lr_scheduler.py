@@ -397,11 +397,11 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
             warn_once(
                 '--lr-scheduler invsqrt requires a value for '
                 '--invsqrt-lr-decay-gamma. Defaulting to set gamma to '
-                '--warmup-updates value for backwards'
+                '--warmup-updates value for backwards compatibility.'
             )
             self.invsqrt_lr_decay_gamma = self.warmup_updates
 
-        self.decay_factor = np.sqrt(max(1, invsqrt_lr_decay_gamma))
+        self.decay_factor = np.sqrt(max(1, self.invsqrt_lr_decay_gamma))
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._invsqrt_lr)
 
     def _invsqrt_lr(self, step):
