@@ -13,7 +13,9 @@ from parlai.scripts.verify_data import verify, setup_args
 import parlai.utils.testing as testing_utils
 
 KEYS = ['missing_text', 'missing_labels', 'empty_string_label_candidates']
-BASE_TEACHERS = dir(teach_module) + ['PytorchDataTeacher', 'MultiTaskTeacher']
+BASE_TEACHERS = dir(teach_module) + [
+    'CandidateBaseTeacher',
+]
 
 
 class TestNewTasks(unittest.TestCase):
@@ -40,7 +42,7 @@ class TestNewTasks(unittest.TestCase):
             subtasks = [
                 ':'.join([task, x])
                 for x in dir(task_module)
-                if ('teacher' in x.lower() and x not in BASE_TEACHERS)
+                if x.endswith('Teacher') and x not in BASE_TEACHERS
             ]
 
             if testing_utils.is_this_circleci():
@@ -58,7 +60,8 @@ class TestNewTasks(unittest.TestCase):
                 opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
                 try:
-                    text, log = verify(opt, print_parser=False)
+                    with testing_utils.capture_output():
+                        text, log = verify(opt, print_parser=False)
                 except Exception:
                     found_errors = True
                     traceback.print_exc()
@@ -68,7 +71,11 @@ class TestNewTasks(unittest.TestCase):
                         print('There are {} {} in {}.'.format(log[key], key, subt))
                         found_errors = True
 
-        self.assertFalse(found_errors, "Errors were found.")
+        if found_errors:
+            self.fail(
+                "Please fix the above listed errors, or describe in the PR why "
+                "you do not expect them to pass.",
+            )
 
 
 if __name__ == '__main__':

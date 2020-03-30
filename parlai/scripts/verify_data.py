@@ -84,7 +84,7 @@ def verify(opt, printargs=None, print_parser=None):
         if not isinstance(act, Message):
             counts['did_not_return_message'] += 1
 
-        if 'text' not in act:
+        if 'text' not in act and 'image' not in act:
             warn("warning: missing text field:\n", act, opt)
             counts['missing_text'] += 1
 
