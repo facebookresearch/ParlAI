@@ -13,18 +13,21 @@ from parlai.tasks.integration_tests.agents import NUM_TEST, EXAMPLE_SIZE
 
 _TASK = 'integration_tests:variable_length'
 _DEFAULT_OPTIONS = {
-    'batchsize': 8,
+    'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
+    'batchsize': 16,
     'dynamic_batching': 'full',
-    'optimizer': 'adamax',
+    'optimizer': 'sgd',
     'learningrate': 7e-3,
     'num_epochs': 1,
     'n_layers': 1,
     'n_heads': 1,
-    'ffn_size': 32,
-    'embedding_size': 32,
+    'ffn_size': 4,
+    'embedding_size': 4,
     'truncate': 8,
     'model': 'transformer/generator',
     'task': _TASK,
+    'skip_generation': True,
+    'candidates': 'batch',
 }
 
 
