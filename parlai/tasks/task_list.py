@@ -1076,4 +1076,28 @@ task_list = [
             "https://arxiv.org/abs/1701.08251 for more information."
         ),
     },
+    {
+        "id": "ANLI",
+        "display_name": "Adversarial Natural Language Inference (ANLI) Corpus",
+        "task": "anli",
+        "tags": ["All", "Entailment", "NLI"],
+        "description": (
+            "The ANLI corpus (version 1.0) is a new large-scale NLI benchmark dataset,"
+            "collected via an iterative, adversarial human-and-model-in-the-loop procedure"
+            "with the labels entailment, contradiction, and neutral. A total of three rounds "
+            "of data are collected that progressively increase in difficulty and complexity."
+            "See https://github.com/facebookresearch/anli and https://arxiv.org/abs/1910.14599 "
+            "for more information."
+        ),
+    },
+    {
+        "id": "NLI",
+        "display_name": "Natural Language Inference (NLI) Corpus",
+        "task": "nli",
+        "tags": ["All", "Entailment"],
+        "description": (
+            "A collection of 3 popular Natural Language Inference(NLI) benchmark tasks: "
+            "ANLI v0.1, MultiNLI 1.0, SNLI 1.0."
+        ),
+    },
 ]
