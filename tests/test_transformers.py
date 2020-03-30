@@ -526,6 +526,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 numthreads=1,
                 no_cuda=True,
                 embedding_size=16,
+                skip_generation=True,
                 hiddensize=16,
             )
         )
