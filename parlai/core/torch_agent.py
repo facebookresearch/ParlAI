@@ -969,7 +969,7 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
-            except ValueError:
+            except (ValueError, KeyError):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
