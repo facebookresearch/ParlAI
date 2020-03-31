@@ -13,7 +13,8 @@ from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
 from parlai.utils.strings import colorize
-from parlai.utils.safety import OffensiveStringMatcher,OffensiveLanguageClassifier
+from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassifier
+
 
 class LocalHumanAgent(Agent):
     def add_cmdline_args(argparser):
@@ -49,7 +50,12 @@ class LocalHumanAgent(Agent):
         self.finished = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
         self.init_safety(opt)
-        print(colorize("Enter [DONE] if you want to end the episode, [EXIT] to quit.", 'highlight'))
+        print(
+            colorize(
+                "Enter [DONE] if you want to end the episode, [EXIT] to quit.",
+                'highlight',
+            )
+        )
 
     def epoch_done(self):
         return self.finished
@@ -60,16 +66,17 @@ class LocalHumanAgent(Agent):
         if opt['safety'] == 'classifier' or opt['safety'] == 'all':
             self.offensive_classifier = OffensiveLanguageClassifier()
 
-    
     def offensive(self, text):
-        if (hasattr(self, 'offensive_string_matcher') and 
-            self.offensive_string_matcher.__contains__(text)):
+        if hasattr(
+            self, 'offensive_string_matcher'
+        ) and self.offensive_string_matcher.__contains__(text):
             return True
-        if (hasattr(self, 'offensive_classifier') and 
-            self.offensive_classifier.__contains__(text)):
+        if hasattr(
+            self, 'offensive_classifier'
+        ) and self.offensive_classifier.__contains__(text):
             return True
         return False
-    
+
     def observe(self, msg):
         if not self.self_offensive:
             # check offensiveness of other agent.
