@@ -32,6 +32,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
                 'task': 'integration_tests:ImageTeacher',
                 'datapath': data_path,
                 'image_mode': image_mode,
+                'display_verbose': True
             }
             output = testing_utils.display_data(opt)
             train_labels = re.findall(r"\[labels: .*\]", output[0])
@@ -66,7 +67,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
             fp = os.path.join(tmpdir, "goodfile.txt")
             with open(fp, "w") as f:
                 f.write('id:test_file\ttext:input\tlabels:good label\n\n')
-            opt = {'task': 'fromfile', 'fromfile_datapath': fp}
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
             testing_utils.display_data(opt)
 
     def test_bad_fileformat(self):
@@ -77,7 +78,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
             fp = os.path.join(tmpdir, "badfile.txt")
             with open(fp, "w") as f:
                 f.write('id:test_file\ttext:input\teval_labels:bad label\n\n')
-            opt = {'task': 'fromfile', 'fromfile_datapath': fp}
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(ValueError):
                 testing_utils.display_data(opt)
 
