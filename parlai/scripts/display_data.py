@@ -34,11 +34,11 @@ def setup_args(parser=None):
     parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
     parser.add_argument('--display-ignore-fields', type=str, default='agent_reply')
     parser.add_argument(
-        '-s',
+        '-v',
         '--display-verbose',
-        default=True,
-        action='store_false',
-        help='Simple converational view, does not show other message fields.',
+        default=False,
+        action='store_true',
+        help='If false, simple converational view, does not show other message fields.',
     )
 
     parser.set_defaults(datatype='train:stream')
