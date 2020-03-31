@@ -13,7 +13,7 @@ from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
 from parlai.utils.strings import colorize
-
+from parlai.utils.safety import OffensiveStringMatcher,OffensiveLanguageClassifier
 
 class LocalHumanAgent(Agent):
     def add_cmdline_args(argparser):
@@ -34,6 +34,13 @@ class LocalHumanAgent(Agent):
             default=False,
             help='If on, assumes single turn episodes.',
         )
+        agent.add_argument(
+            '--safety',
+            type=str,
+            default='none',
+            choices={'none', 'string_matcher', 'classifier', 'all'},
+            help='Apply safety filtering to messages',
+        )
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
@@ -41,30 +48,53 @@ class LocalHumanAgent(Agent):
         self.episodeDone = False
         self.finished = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
-        print(
-            colorize(
-                "Enter [DONE] if you want to end the episode, [EXIT] to quit.",
-                'highlight',
-            )
-        )
+        self.init_safety(opt)
+        print(colorize("Enter [DONE] if you want to end the episode, [EXIT] to quit.", 'highlight'))
 
     def epoch_done(self):
         return self.finished
 
+    def init_safety(self, opt):
+        if opt['safety'] == 'string_matcher' or opt['safety'] == 'all':
+            self.offensive_string_matcher = OffensiveStringMatcher()
+        if opt['safety'] == 'classifier' or opt['safety'] == 'all':
+            self.offensive_classifier = OffensiveLanguageClassifier()
+
+    
+    def offensive(self, text):
+        if (hasattr(self, 'offensive_string_matcher') and 
+            self.offensive_string_matcher.__contains__(text)):
+            return True
+        if (hasattr(self, 'offensive_classifier') and 
+            self.offensive_classifier.__contains__(text)):
+            return True
+        return False
+    
     def observe(self, msg):
-        print(
-            display_messages(
-                [msg],
-                ignore_fields=self.opt.get('display_ignore_fields', ''),
-                prettify=self.opt.get('display_prettify', False),
-            )
-        )
+        if not self.self_offensive:
+            # check offensiveness of other agent.
+            if not self.offensive(msg.get('text', '')):
+                print(
+                    display_messages(
+                        [msg],
+                        ignore_fields=self.opt.get('display_ignore_fields', ''),
+                        prettify=self.opt.get('display_prettify', False),
+                    )
+                )
+            else:
+                # do not print anything at all.
+                pass
 
     def act(self):
         reply = Message()
         reply['id'] = self.getID()
         reply_text = input(colorize("Enter Your Message:", 'field') + ' ')
         reply_text = reply_text.replace('\\n', '\n')
+        if self.offensive(reply_text):
+            print("[ Sorry, could not process that message. ]")
+            self.self_offensive = True
+        else:
+            self.self_offensive = False
         if self.opt.get('single_turn', False):
             reply_text += '[DONE]'
         reply['episode_done'] = False
