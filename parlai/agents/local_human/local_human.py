@@ -12,7 +12,7 @@ Example: python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
 from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
-
+from parlai.utils.strings import colorize
 
 class LocalHumanAgent(Agent):
     def add_cmdline_args(argparser):
@@ -40,7 +40,7 @@ class LocalHumanAgent(Agent):
         self.episodeDone = False
         self.finished = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
-        print("Enter [DONE] if you want to end the episode, [EXIT] to quit.\n")
+        print(colorize("Enter [DONE] if you want to end the episode, [EXIT] to quit.", 'highlight'))
 
     def epoch_done(self):
         return self.finished
@@ -57,7 +57,7 @@ class LocalHumanAgent(Agent):
     def act(self):
         reply = Message()
         reply['id'] = self.getID()
-        reply_text = input("Enter Your Message: ")
+        reply_text = input(colorize("Enter Your Message:", 'field') + ' ')
         reply_text = reply_text.replace('\\n', '\n')
         if self.opt.get('single_turn', False):
             reply_text += '[DONE]'
