@@ -14,6 +14,7 @@ from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
 from parlai.utils.strings import colorize
 
+
 class LocalHumanAgent(Agent):
     def add_cmdline_args(argparser):
         """
@@ -40,7 +41,12 @@ class LocalHumanAgent(Agent):
         self.episodeDone = False
         self.finished = False
         self.fixedCands_txt = load_cands(self.opt.get('local_human_candidates_file'))
-        print(colorize("Enter [DONE] if you want to end the episode, [EXIT] to quit.", 'highlight'))
+        print(
+            colorize(
+                "Enter [DONE] if you want to end the episode, [EXIT] to quit.",
+                'highlight',
+            )
+        )
 
     def epoch_done(self):
         return self.finished
