@@ -174,7 +174,7 @@ class TorchClassifierAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        else:
+        elif self._should_initialize_optimizer():
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
             self.build_lr_scheduler()

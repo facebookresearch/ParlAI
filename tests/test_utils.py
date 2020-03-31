@@ -98,14 +98,16 @@ class TestUtils(unittest.TestCase):
         opt = Opt(opt)
         opt['x'] += 1
         opt['x'] = 10
-        history = opt.history['x']
-        self.assertEqual(history[0][1], 1, 'History not set properly')
-        self.assertEqual(history[1][1], 10, 'History not set properly')
+        self.assertEqual(opt.history[0][0], 'x', 'History not set properly')
+        self.assertEqual(opt.history[0][1], 1, 'History not set properly')
+        self.assertEqual(opt.history[1][0], 'x', 'History not set properly')
+        self.assertEqual(opt.history[1][1], 10, 'History not set properly')
 
         opt_copy = deepcopy(opt)
-        history = opt_copy.history['x']
-        self.assertEqual(history[0][1], 1, 'Deepcopy history not set properly')
-        self.assertEqual(history[1][1], 10, 'Deepcopy history not set properly')
+        self.assertEqual(opt_copy.history[0][1], 1, 'Deepcopy history not set properly')
+        self.assertEqual(
+            opt_copy.history[1][1], 10, 'Deepcopy history not set properly'
+        )
 
 
 class TestStrings(unittest.TestCase):

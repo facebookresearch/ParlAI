@@ -12,19 +12,33 @@ import parlai.utils.testing as testing_utils
 from parlai.tasks.integration_tests.agents import NUM_TEST, EXAMPLE_SIZE
 
 _TASK = 'integration_tests:variable_length'
+
+# we don't need a real agent, since we're only checking the number examples
+# is correct
 _DEFAULT_OPTIONS = {
-    'batchsize': 8,
+    'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
+    'dict_tokenizer': 'space',
+    'batchsize': 16,
     'dynamic_batching': 'full',
-    'optimizer': 'adamax',
-    'learningrate': 7e-3,
     'num_epochs': 1,
+    'truncate': 8,
+    'model': 'parlai.agents.test_agents.test_agents:SilentTorchAgent',
+    'task': _TASK,
+}
+
+_RANKER_OPTIONS = {
+    'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
+    'dict_tokenizer': 'space',
+    'batchsize': 32,
+    'num_epochs': 0.1,
     'n_layers': 1,
     'n_heads': 1,
-    'ffn_size': 32,
-    'embedding_size': 32,
-    'truncate': 8,
-    'model': 'transformer/generator',
+    'candidates': 'batch',
+    'ffn_size': 4,
+    'embedding_size': 4,
     'task': _TASK,
+    'truncate': 8,
+    'model': 'transformer/ranker',
 }
 
 
@@ -55,13 +69,13 @@ class TestDynamicBatching(unittest.TestCase):
             testing_utils.eval_model(model='repeat_label', task=_TASK)
 
     def test_ranking(self):
-        self._test_correct_processed(
-            NUM_TEST, model='transformer/ranker', datatype='train'
+        testing_utils.train_model(
+            Opt(datatype='train', dynamic_batching='full', **_RANKER_OPTIONS)
         )
 
     def test_ranking_streaming(self):
-        self._test_correct_processed(
-            NUM_TEST, model='transformer/ranker', datatype='train:stream'
+        testing_utils.train_model(
+            Opt(datatype='train:stream', dynamic_batching='full', **_RANKER_OPTIONS)
         )
 
     def test_training(self):
@@ -111,13 +125,15 @@ class TestBatchSort(unittest.TestCase):
             testing_utils.eval_model(model='repeat_label', task=_TASK)
 
     def test_ranking(self):
-        self._test_correct_processed(
-            NUM_TEST, model='transformer/ranker', datatype='train'
+        testing_utils.train_model(
+            Opt(datatype='train', dynamic_batching='batchsort', **_RANKER_OPTIONS)
         )
 
     def test_ranking_streaming(self):
-        self._test_correct_processed(
-            NUM_TEST, model='transformer/ranker', datatype='train:stream'
+        testing_utils.train_model(
+            Opt(
+                datatype='train:stream', dynamic_batching='batchsort', **_RANKER_OPTIONS
+            )
         )
 
     def test_training(self):

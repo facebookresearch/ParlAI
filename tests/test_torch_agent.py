@@ -19,7 +19,7 @@ from collections import deque
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import Output
-    from parlai.agents.test_agents.dummy_torch_agent import MockTorchAgent, MockDict
+    from parlai.agents.test_agents.test_agents import MockTorchAgent, MockDict
     import torch
 except ImportError:
     SKIP_TESTS = True
@@ -991,7 +991,7 @@ class TestTorchAgent(unittest.TestCase):
             return {
                 'task': 'integration_tests',
                 'init_model': init_mf,
-                'model': 'parlai.agents.test_agents.dummy_torch_agent:MockTorchAgent',
+                'model': 'parlai.agents.test_agents.test_agents:MockTorchAgent',
                 'model_file': mf,
                 'num_epochs': 3,
                 'validation_every_n_epochs': 1,
