@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Script for safety protected interaction between a local human keyboard input and a trained model.
+Script for safety protected interaction between a local human keyboard input and a
+trained model.
 """
 
 from parlai.core.params import ParlaiParser

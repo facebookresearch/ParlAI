@@ -5,12 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 """
 Agent that gets the local keyboard input in the act() function.
+
 Applies safety classifier(s) to process user and partner messages.
 """
 
-from parlai.core.agents import Agent
 from parlai.core.message import Message
-from parlai.utils.misc import display_messages, load_cands
+from parlai.utils.misc import display_messages
 from parlai.utils.strings import colorize
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassifier
