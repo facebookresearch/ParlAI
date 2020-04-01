@@ -45,13 +45,12 @@ class SafeLocalHumanAgent(LocalHumanAgent):
         self.self_offensive = False
 
     def offensive(self, text):
-        if hasattr(
-            self, 'offensive_string_matcher'
-        ) and self.offensive_string_matcher.__contains__(text):
+        if (
+            hasattr(self, 'offensive_string_matcher')
+            and text in self.offensive_string_matcher
+        ):
             return True
-        if hasattr(
-            self, 'offensive_classifier'
-        ) and self.offensive_classifier.__contains__(text):
+        if hasattr(self, 'offensive_classifier') and text in self.offensive_classifier:
             return True
         return False
 
