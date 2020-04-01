@@ -14,7 +14,7 @@ from functools import lru_cache
 import json
 import os
 import re
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from typing_extensions import final
 
 from parlai.core.build_data import download, make_dir
@@ -50,7 +50,7 @@ def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
 
     tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
 
-    bpe_helper: BPEHelper = None
+    bpe_helper: Optional[BPEHelper] = None
 
     if tokenizer == 'bytelevelbpe':
         # Attempt to instantiate HF tokenizer
@@ -77,6 +77,10 @@ def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
         bpe_helper = Gpt2BpeHelper(opt, shared)
     if tokenizer == 'bpe':
         bpe_helper = SubwordBPEHelper(opt, shared)
+
+    assert (
+        bpe_helper is not None
+    ), f"bpe_factory called with invalid tokenizer: {tokenizer}"
 
     return bpe_helper
 
@@ -120,7 +124,7 @@ class BPEHelper(ABC):
         return parser
 
     @final
-    def encode(self, text: str) -> List[int]:
+    def encode(self, text: str) -> List[str]:
         """
         Tokenize text.
 
@@ -139,7 +143,7 @@ class BPEHelper(ABC):
         return self.helper_encode(text)
 
     @abstractmethod
-    def helper_encode(self, text: str) -> List[int]:
+    def helper_encode(self, text: str) -> List[str]:
         """
         Tokenize text.
 
@@ -248,7 +252,7 @@ class SubwordBPEHelper(BPEHelper):
         if os.path.exists(self.codecs):
             self._load_from_codecs()
 
-    def helper_encode(self, text: str) -> List[int]:
+    def helper_encode(self, text: str) -> List[str]:
         """
         Tokenize the text with bpe if codecs are already finalized.
 
@@ -408,8 +412,8 @@ class Gpt2BpeHelper(BPEHelper):
         bpe_data, json_path = self._build_data()
 
         # build encoder & decoder
-        self.encoder = self._build_encoder(json_path)
-        self.decoder = {v: k for k, v in self.encoder.items()}
+        self.encoder: Dict[str, str] = self._build_encoder(json_path)
+        self.decoder: Dict[str, str] = {v: k for k, v in self.encoder.items()}
 
         bpe_merges = [
             tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]
@@ -457,7 +461,7 @@ class Gpt2BpeHelper(BPEHelper):
 
         return bpe_data, json_path
 
-    def _build_encoder(self, json_path: str) -> Dict[int, str]:
+    def _build_encoder(self, json_path: str) -> Dict[str, str]:
         """
         Build and return the encoder.
 
@@ -465,7 +469,7 @@ class Gpt2BpeHelper(BPEHelper):
             path to encoder json file
 
         :return:
-            encoder, mapping token IDs to tokens
+            encoder, mapping tokens to unicode reps
         """
         with open(json_path, 'r') as f:
             encoder = json.load(f)
@@ -491,22 +495,22 @@ class Gpt2BpeHelper(BPEHelper):
         avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
         avoids mapping to whitespace/control characters the bpe code barfs on.
         """
-        bs = (
+        bs: List[int] = (
             list(range(ord("!"), ord("~") + 1))
             + list(range(ord("¡"), ord("¬") + 1))
             + list(range(ord("®"), ord("ÿ") + 1))
         )
-        cs = bs[:]
+        cs: List[int] = bs[:]
         n = 0
         for b in range(2 ** 8):
             if b not in bs:
                 bs.append(b)
                 cs.append(2 ** 8 + n)
                 n += 1
-        cs = [chr(n) for n in cs]
-        return dict(zip(bs, cs))
+        str_cs: List[str] = [chr(n) for n in cs]
+        return dict(zip(bs, str_cs))
 
-    def get_pairs(self, word: str) -> Set[Tuple[str, str]]:
+    def get_pairs(self, word: Tuple[str, ...]) -> Set[Tuple[str, str]]:
         """
         Return set of symbol pairs in a word.
 
