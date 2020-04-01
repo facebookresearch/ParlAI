@@ -596,7 +596,6 @@ class Gpt2BpeHelper(BPEHelper):
         :return text:
             decoded text
         """
-        text = delimiter.join(tokens)
         text = ''.join([self.decoder[token] for token in tokens])
         text = bytearray([self.byte_decoder[c] for c in text]).decode(
             'utf-8', errors=self.ERRORS_METHOD
@@ -609,10 +608,10 @@ class Gpt2BpeHelper(BPEHelper):
 
         Just add all of the tokens to the dict
 
+        NOTE: How does this handle special tokens?
+
         :param dict_agent:
             A DictionaryAgent instantiation
-
-        TODO: why was this correct before??
         """
         for each_token in self.encoder.values():
             dict_agent.add_token(each_token)
@@ -779,22 +778,3 @@ class Gpt2HFStandinHelper(Gpt2BpeHelper):
         for each_token in self.encoder.values():
             dict_agent.add_token(each_token)
             dict_agent.freq[each_token] = 1
-
-    def helper_encode(self, text: str) -> List[str]:
-        """
-        Tokenize text.
-
-        :param text:
-            text to tokenize
-
-        :return tokens:
-            A list of tokens
-        """
-        bpe_tokens: List[str] = []
-        for token in self.re.findall(self.pat, text):
-            token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
-            bpe_tokens.extend(
-                # self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
-                self.bpe(token).split(' ')
-            )
-        return bpe_tokens

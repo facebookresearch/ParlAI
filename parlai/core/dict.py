@@ -704,10 +704,10 @@ class DictionaryAgent(Agent):
         the delimiter (default ``' '``).
         """
         tokens = [self[int(idx)] for idx in vector]
-        if self.tokenizer in ['gpt2', 'bpe']:
+        if self.tokenizer in ['gpt2', 'bpe', 'gpt2_standin']:
             # if we used a BPE tokenizer we need to rejoin the encodings
             text = self.bpe.decode(tokens, vector, delimiter)
-        elif self.tokenizer == 'bytelevelbpe':
+        elif self.tokenizer in ['bytelevelbpe', 'gpt2_standin']:
             # We add special tokens in the beginning of ParlAI dict but in the
             # end of Hugging Face dict,there is an offset of 4 between them.
             vector = [
