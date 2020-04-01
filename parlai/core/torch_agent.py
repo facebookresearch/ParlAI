@@ -641,6 +641,12 @@ class TorchAgent(ABC, Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
             'available on the device.',
         )
+        agent.add_argument(
+            '--quantize',
+            type='bool',
+            default=False,
+            help='Whether to quantize the model (Only enabled with --no-cuda).',
+        )
 
         cls.dictionary_class().add_cmdline_args(argparser)
         ParlAILRScheduler.add_cmdline_args(argparser)
@@ -671,6 +677,8 @@ class TorchAgent(ABC, Agent):
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
 
+        # whether we're supporting quantization
+        self.quantize = opt.get('quantize', False) and not self.use_cuda
         # whether we're using multi-gpu, a few different ways. these are not
         # supported by all models, but we can still keep track of the options
         self.model_parallel = opt.get('model_parallel', False) and self.use_cuda

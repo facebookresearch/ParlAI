@@ -371,6 +371,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
 
+        self.quantize = opt.get('quantize', True)
+
         if shared:
             # set up shared properties
             states = shared.get('states', {})
@@ -407,6 +409,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 states = self.load(init_model)
             else:
                 states = {}
+
+            if self.quantize:
+                self.model = torch.quantization.quantize_dynamic(
+                    self.model, {torch.nn.Linear}, dtype=torch.qint8
+                )
 
         if (
             # only build an optimizer if we're training

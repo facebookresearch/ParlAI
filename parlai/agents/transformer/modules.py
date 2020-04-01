@@ -136,7 +136,12 @@ def gelu(tensor):
 
     c.f. https://arxiv.org/abs/1606.08415
     """
-    return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
+    if tensor.dtype is torch.float16:
+        # pytorch 1.4 doesn't have an implementation of fp16 gelu
+        return 0.5 * tensor * (1.0 + torch.erf(tensor / 1.4142135623730951))
+    else:
+        # but it does have a very fast fp32 version
+        return F.gelu(tensor)
 
 
 def get_n_positions_from_options(opt):
@@ -431,7 +436,6 @@ class TransformerEncoder(nn.Module):
         self.n_layers = n_layers
         self.n_heads = n_heads
         self.dim = embedding_size
-        self.embeddings_scale = embeddings_scale
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
@@ -439,6 +443,7 @@ class TransformerEncoder(nn.Module):
         self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
+        self.embeddings_scale = math.sqrt(self.dim) if embeddings_scale else None
 
         self.n_positions = n_positions
         self.out_dim = embedding_size
@@ -516,8 +521,8 @@ class TransformerEncoder(nn.Module):
         if positions is None:
             positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
-        if self.embeddings_scale:
-            tensor = tensor * np.sqrt(self.dim)
+        if self.embeddings_scale is not None:
+            tensor = tensor * self.embeddings_scale
 
         if positions.max().item() > self.n_positions:
             warn_once(
@@ -1170,10 +1175,8 @@ class MultiHeadAttention(nn.Module):
             # output is [batch_size * n_heads, seq_len, dim_per_head]
             bsz, seq_len, _ = tensor.size()
             tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
-            tensor = (
-                tensor.transpose(1, 2)
-                .contiguous()
-                .view(batch_size * n_heads, seq_len, dim_per_head)
+            tensor = tensor.transpose(1, 2).reshape(
+                batch_size * n_heads, seq_len, dim_per_head
             )
             return tensor
 
@@ -1254,8 +1257,7 @@ class MultiHeadAttention(nn.Module):
             attentioned.type_as(query)
             .view(batch_size, n_heads, query_len, dim_per_head)
             .transpose(1, 2)
-            .contiguous()
-            .view(batch_size, query_len, dim)
+            .reshape(batch_size, query_len, dim)
         )
 
         out = self.out_lin(attentioned)
@@ -1269,7 +1271,7 @@ class MultiHeadAttention(nn.Module):
         Reorder the input incremental-state tensors.
         """
         return {
-            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
+            key: torch.index_select(val, 0, inds.to(val.device))
             for key, val in incremental_state.items()
         }
 

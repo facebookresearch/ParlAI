@@ -198,6 +198,11 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
+            if self.quantize:
+                self.model = torch.quantization.quantize_dynamic(
+                    self.model, {torch.nn.Linear}, dtype=torch.qint8
+                )
+
             if self.use_cuda:
                 self.model.cuda()
                 if self.model_parallel:
