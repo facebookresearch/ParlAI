@@ -612,6 +612,10 @@ class MultiWorld(World):
                 weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
+        task_ids = {w.getID() for w in self.worlds}
+        # Having overlap in teacher ids will cause issues for metrics aggregation.
+        if len(task_ids) != len(self.worlds):
+            raise KeyError('Teachers have overlap in ids. Please fix.')
 
     def num_examples(self):
         """
