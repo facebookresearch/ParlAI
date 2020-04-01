@@ -199,10 +199,11 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
             if self.use_cuda:
-                self.model.cuda()
                 if self.model_parallel:
                     self.model = PipelineHelper().make_parallel(self.model)
-                elif self.data_parallel:
+                else:
+                    self.model.cuda()
+                if self.data_parallel:
                     self.model = torch.nn.DataParallel(self.model)
                 self.criterion.cuda()
 
