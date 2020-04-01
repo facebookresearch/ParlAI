@@ -17,6 +17,7 @@ from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassif
 
 
 class SafeLocalHumanAgent(LocalHumanAgent):
+    @classmethod
     def add_cmdline_args(cls, argparser):
         """
         Add command-line arguments specifically for this agent.

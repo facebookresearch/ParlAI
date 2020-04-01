@@ -41,7 +41,7 @@ def setup_args(parser=None):
         help='Create interactive version of task',
     )
     parser.set_defaults(interactive_mode=True, task='interactive')
-    SafeLocalHumanAgent.add_cmdline_args(SafeLocalHumanAgent, parser)
+    SafeLocalHumanAgent.add_cmdline_args(parser)
     return parser
 
 
