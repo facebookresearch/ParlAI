@@ -21,21 +21,22 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
-        self.datatype = opt.get('datatype', 'train').split(':')[0]
+        base_datatype = self.datatype.split(':')[0]
         self.datapath = os.path.join(
             self.opt['datapath'],
             'empatheticdialogues',
             'empatheticdialogues',
-            self.datatype + '.csv',
+            base_datatype + '.csv',
         )
         self.experiencer_side_only = (
             opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
-            and self.datatype == 'train'
-        ) or self.datatype != 'train'
-        print(
-            f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
-            f'{self.experiencer_side_only}, datatype: {self.datatype}'
-        )
+            and base_datatype == 'train'
+        ) or base_datatype != 'train'
+        if not shared:
+            print(
+                f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
+                f'{self.experiencer_side_only}, datatype: {self.datatype}'
+            )
         self.remove_political_convos = opt.get(
             'remove_political_convos', DEFAULT_REMOVE_POLITICAL_CONVOS
         )
@@ -44,7 +45,7 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             self.data = shared['data']
         else:
             build(opt)
-            self._setup_data(self.datatype)
+            self._setup_data(base_datatype)
 
         self.num_exs = sum([len(d) for d in self.data])
         self.num_eps = len(self.data)
@@ -75,10 +76,10 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
     def num_examples(self):
         return self.num_exs
 
-    def _setup_data(self, datatype):
+    def _setup_data(self, base_datatype):
 
         if self.opt.get('deepmoji') is not None:
-            self.embed = np.load(self.opt['deepmoji'] + datatype + ".npy")
+            self.embed = np.load(self.opt['deepmoji'] + base_datatype + ".npy")
 
         if self.opt.get('fasttextloc') is not None and self.opt.get('prepend', -1) > 0:
             try:
