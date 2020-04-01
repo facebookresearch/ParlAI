@@ -21,7 +21,7 @@ class TestDisplayData(unittest.TestCase):
         )
 
         self.assertGreater(len(str_output), 0, "Output is empty")
-        self.assertIn("[babi:task1k:1]:", str_output, "Babi task did not print")
+        self.assertIn("babi:task1k:1", str_output, "Babi task did not print")
         self.assertIn("~~", str_output, "Example output did not complete")
 
 
