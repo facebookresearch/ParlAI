@@ -497,8 +497,8 @@ class TaskDescription extends React.Component {
         </b>
         <br />
         <br />
-        NOTE: please be sure to only accept one of this task at a time.&nbsp;
-        Additional pages will show errors or fail to load and you wll not be
+        NOTE: please be sure to only accept one of these tasks at a time.&nbsp;
+        Additional pages will show errors or fail to load and you will not be
         able to submit the hit.&nbsp;
         <h4>Please accept the task if you're ready.</h4>
       </div>
@@ -523,7 +523,7 @@ class TaskDescription extends React.Component {
           on the quality of conversation.{" "}
           <b>Don't base your judgement&nbsp; on their hobbies, job, etc. </b>
           &nbsp; Do your best to ignore the{" "}
-          <div style={otherspeaker_style}>other speaker</div>.&nbsp; You may
+          <div style={otherspeaker_style}>other speaker.</div>&nbsp; You may
           need to scroll down to see the full conversations.&nbsp;
           <br />
           <br />
