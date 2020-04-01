@@ -9,7 +9,7 @@ Contains code for parsing and building a dictionary from text.
 
 from parlai.core.opt import Opt
 from parlai.core.build_data import modelzoo_path
-from parlai.utils.bpe import HuggingFaceBpeHelper, bpe_factory, BPEHelper
+from parlai.utils.bpe import bpe_factory, BPEHelper
 from .agents import Agent
 from .build_data import make_dir
 from collections import defaultdict
@@ -624,9 +624,7 @@ class DictionaryAgent(Agent):
         if self.tokenizer == 'bytelevelbpe':
             # This saves filename-vocab.json and filename-merges.txt as
             # hugging face tokenizer does
-            self.bpe.save(
-                os.path.dirname(filename), os.path.basename(filename),
-            )
+            self.bpe.save(os.path.dirname(filename), os.path.basename(filename))
 
     def sort(self, trim=True):
         """
@@ -762,5 +760,3 @@ class DictionaryAgent(Agent):
         Return string representation of frequencies in dictionary.
         """
         return str(self.freq)
-
-

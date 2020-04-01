@@ -47,6 +47,7 @@ def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
         returns the appropriate BPEHelper object
     """
     from parlai.core.dict import DictionaryAgent
+
     tokenizer = opt.get('dict_tokenizer', DictionaryAgent.default_tok)
 
     bpe_helper: BPEHelper = None
@@ -94,6 +95,7 @@ class BPEHelper(ABC):
         Subclasses _should_ override __init__ to initialize other things.
         """
         from parlai.core.dict import DictionaryAgent
+
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.maxtokens = opt.get('dict_maxtokens', DictionaryAgent.default_maxtokens)
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
@@ -180,7 +182,9 @@ class BPEHelper(ABC):
         return text
 
     @abstractmethod
-    def helper_decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
+    def helper_decode(
+        self, tokens: List[str], token_ids: List[int], delimiter: str
+    ) -> str:
         """
         Decode list of tokens into text string.
 
@@ -208,6 +212,7 @@ class BPEHelper(ABC):
 ###############
 # Subword BPE #
 ###############
+
 
 class SubwordBPEHelper(BPEHelper):
     """
@@ -264,7 +269,9 @@ class SubwordBPEHelper(BPEHelper):
         else:
             return tokens
 
-    def helper_decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
+    def helper_decode(
+        self, tokens: List[str], token_ids: List[int], delimiter: str
+    ) -> str:
         """
         Decode list of tokens into text string.
 
@@ -286,7 +293,9 @@ class SubwordBPEHelper(BPEHelper):
         text = text.replace('__newln__', '\n')
         return text
 
-    def finalize(self, frequencies: Dict[str, int], num_symbols: int = 30000, minfreq: int = 2) -> bool:
+    def finalize(
+        self, frequencies: Dict[str, int], num_symbols: int = 30000, minfreq: int = 2
+    ) -> bool:
         """
         Build the codecs.
 
@@ -354,6 +363,7 @@ class SubwordBPEHelper(BPEHelper):
         """
         pass
 
+
 #######################
 # GPT2 BPE            #
 # Inspired by Fairseq #
@@ -378,7 +388,10 @@ class Gpt2BpeHelper(BPEHelper):
         add before encoding
         remove after decoding
     """
-    DEFAULT_ENCODER_JSON = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/encoder.json'
+
+    DEFAULT_ENCODER_JSON = (
+        'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/encoder.json'
+    )
     DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
     ERRORS_METHOD = 'replace'
 
@@ -477,12 +490,12 @@ class Gpt2BpeHelper(BPEHelper):
         """
         Returns list of utf-8 byte and a corresponding list of unicode strings.
 
-        The reversible bpe codes work on unicode strings. This means you need a large # of
-        unicode characters in your vocab if you want to avoid UNKs. When you're at something
-        like a 10B token dataset you end up needing around 5K for decent coverage. This is a
-        signficant percentage of your normal, say, 32K bpe vocab. To avoid that, we want
-        lookup tables between utf-8 bytes and unicode strings. And avoids mapping to
-        whitespace/control characters the bpe code barfs on.
+        The reversible bpe codes work on unicode strings. This means you need a large #
+        of unicode characters in your vocab if you want to avoid UNKs. When you're at
+        something like a 10B token dataset you end up needing around 5K for decent
+        coverage. This is a signficant percentage of your normal, say, 32K bpe vocab. To
+        avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
+        avoids mapping to whitespace/control characters the bpe code barfs on.
         """
         bs = (
             list(range(ord("!"), ord("~") + 1))
@@ -582,7 +595,9 @@ class Gpt2BpeHelper(BPEHelper):
             )
         return bpe_tokens
 
-    def helper_decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
+    def helper_decode(
+        self, tokens: List[str], token_ids: List[int], delimiter: str
+    ) -> str:
         """
         Decode list of tokens into text string.
 
@@ -700,7 +715,9 @@ class HuggingFaceBpeHelper(BPEHelper):
         """
         return self.tokenizer.encode(text).tokens
 
-    def helper_decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
+    def helper_decode(
+        self, tokens: List[str], token_ids: List[int], delimiter: str
+    ) -> str:
         """
         Decode list of tokens into text string.
 

@@ -479,7 +479,9 @@ class PipelineHelper(object):
             # base case
             return torch.cat(items, dim=dim)  # type: ignore
         elif isinstance(item0, tuple):
-            return tuple(PipelineHelper.join(x, dim=dim) for x in zip(*items))  # type: ignore
+            return tuple(
+                PipelineHelper.join(x, dim=dim) for x in zip(*items)
+            )  # type: ignore
         elif isinstance(item0, dict):
             keys = item0.keys()
             return {  # type: ignore
@@ -499,9 +501,13 @@ class PipelineHelper(object):
         if isinstance(chunk, torch.Tensor):
             return chunk.to(device)  # type: ignore
         elif isinstance(chunk, tuple):
-            return tuple(PipelineHelper.chunk_to(c, device) for c in chunk)  # type: ignore
+            return tuple(
+                PipelineHelper.chunk_to(c, device) for c in chunk
+            )  # type: ignore
         elif isinstance(chunk, dict):
-            return {k: PipelineHelper.chunk_to(v, device) for k, v in chunk.items()}  # type: ignore
+            return {
+                k: PipelineHelper.chunk_to(v, device) for k, v in chunk.items()
+            }  # type: ignore
         else:
             raise TypeError('chunk_to only compatible with tensors, tuples or dicts.')
 

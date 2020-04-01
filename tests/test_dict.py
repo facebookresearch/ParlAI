@@ -53,7 +53,23 @@ GPT2_BPE_RESULT = [
     r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
     r'\xc4\xa2',
 ]
-GPT2_STANDIN_RESULT = ['H', 'ello', ',', '\\xc4\\xa0', 'P', 'ar', 'l', 'A', 'I', '!', '\\xc4\\xa0', '\\xc3\\xb0', '\\xc5\\x81', '\\xc4\\xba', '\\xc4\\xa2']
+GPT2_STANDIN_RESULT = [
+    'H',
+    'ello',
+    ',',
+    '\\xc4\\xa0',
+    'P',
+    'ar',
+    'l',
+    'A',
+    'I',
+    '!',
+    '\\xc4\\xa0',
+    '\\xc3\\xb0',
+    '\\xc5\\x81',
+    '\\xc4\\xba',
+    '\\xc4\\xa2',
+]
 
 
 class TestDictionary(unittest.TestCase):
@@ -70,10 +86,7 @@ class TestDictionary(unittest.TestCase):
             GPT2_BPE_RESULT,
         )
         self.assertEqual(
-            agent.vec2txt(
-                agent.tok2ind[w]
-                for w in GPT2_BPE_RESULT
-            ),
+            agent.vec2txt(agent.tok2ind[w] for w in GPT2_BPE_RESULT),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
@@ -393,9 +406,10 @@ class TestGpt2HFInteropt(unittest.TestCase):
     """
     Test for Gpt2HFStandinHelper.
 
-    Essentially, test whether using a stand-in GPT2 tokenizer for a dict
-    originally built with HF's tokenizer produces the same results.
+    Essentially, test whether using a stand-in GPT2 tokenizer for a dict originally
+    built with HF's tokenizer produces the same results.
     """
+
     def _get_dict_opt(self, tokenizer: str):
         parser = ParlaiParser()
         parser.set_params(
@@ -403,14 +417,14 @@ class TestGpt2HFInteropt(unittest.TestCase):
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
             bpe_add_prefix_space=False,
-            dict_loaded=True
+            dict_loaded=True,
         )
         opt = parser.parse_args([], print_args=False)
         return opt
 
     def _run_test(self, gpt2_standin, hf_bpe):
         """
-        run the actual test
+        run the actual test.
         """
         self.assertEqual(
             # grinning face emoji
@@ -418,7 +432,9 @@ class TestGpt2HFInteropt(unittest.TestCase):
             GPT2_STANDIN_RESULT,
         )
         self.assertEqual(
-            gpt2_standin.vec2txt([gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT]),
+            gpt2_standin.vec2txt(
+                [gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT]
+            ),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
@@ -436,8 +452,10 @@ class TestGpt2HFInteropt(unittest.TestCase):
 
         # next, check that hf_bpe and gpt2_standin are equivalent
         self.assertEqual(
-            gpt2_standin.vec2txt([gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT]),
-            hf_bpe.vec2txt([hf_bpe.tok2ind[w] for w in BYTELEVEL_BPE_RESULT])
+            gpt2_standin.vec2txt(
+                [gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT]
+            ),
+            hf_bpe.vec2txt([hf_bpe.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
         )
 
     def test_gpt2standin(self):
@@ -476,7 +494,9 @@ class TestGpt2HFInteropt(unittest.TestCase):
             ['\\xc4\\xa0'] + GPT2_STANDIN_RESULT,
         )
         self.assertEqual(
-            agent.vec2txt([agent.tok2ind[w] for w in ['\\xc4\\xa0'] + GPT2_STANDIN_RESULT]),
+            agent.vec2txt(
+                [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + GPT2_STANDIN_RESULT]
+            ),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
