@@ -12,12 +12,6 @@ import os
 
 """
 Task for rephrasing sentences from Wikipedia conditioned on a persona.
-Data can be viewed by doing:
-`python examples/display_data.py -t internal:rephrase_sentences`
-
-Data is in the following format:
-text: passage title: <passage title> \n personality: <personality> \n <original sentence>
-label: <rephrased sentence>
 """
 
 
@@ -40,7 +34,9 @@ def _choose_sentence_path(opt):
 
 
 def _strip_reader(filename):
-    """Reads a file, stripping line endings."""
+    """
+    Reads a file, stripping line endings.
+    """
     with open(filename) as f:
         for line in f:
             yield line.rstrip()
@@ -49,7 +45,9 @@ def _strip_reader(filename):
 # this is a standard itertools recipe, but not included by default.
 # see https://docs.python.org/3/library/itertools.html#itertools-recipes
 def grouper(iterable, n, fillvalue=None):
-    "Collect data into fixed-length chunks or blocks"
+    """
+    Collect data into fixed-length chunks or blocks.
+    """
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * n
     from itertools import zip_longest
@@ -141,8 +139,8 @@ class NopersonaTeacher(FunpediaTeacher):
 
 
 class LmTeacher(FunpediaTeacher):
-    """Modifies the data to drop the query entirely, creating a language
-    modeling task.
+    """
+    Modifies the data to drop the query entirely, creating a language modeling task.
     """
 
     def get_text(self, entry):
@@ -151,8 +149,9 @@ class LmTeacher(FunpediaTeacher):
 
 class EchoTeacher(FunpediaTeacher):
     """
-    Replaces answers with an echo of the passage. Useful for measuring how
-    much a model learns to simply repeat what is said.
+    Replaces answers with an echo of the passage.
+
+    Useful for measuring how much a model learns to simply repeat what is said.
     """
 
     def _setup_data(self):
@@ -162,8 +161,10 @@ class EchoTeacher(FunpediaTeacher):
 
 
 class SentencechooseTeacher(FbDialogTeacher):
-    """Teacher for the sentence choosing task. Turkers were instructed to
-    choose the 'most interesting' sentence from a paragraph.
+    """
+    Teacher for the sentence choosing task.
+
+    Turkers were instructed to choose the 'most interesting' sentence from a paragraph.
     """
 
     def __init__(self, opt, shared=None):
