@@ -32,7 +32,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
                 'task': 'integration_tests:ImageTeacher',
                 'datapath': data_path,
                 'image_mode': image_mode,
-                'display_verbose': True
+                'display_verbose': True,
             }
             output = testing_utils.display_data(opt)
             train_labels = re.findall(r"\[labels\].*\n", output[0])

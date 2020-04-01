@@ -65,21 +65,12 @@ def uppercase(string: str) -> str:
 
 def colorize(text, style):
     USE_COLORS = _sys.stdout.isatty()
-    RED = '\033[1;91m'
     BLUE = '\033[1;94m'
-    DARK_BLUE = '\033[0;37;40m\033[1;34;40m'
-    RED = '\033[0;91m'
-    YELLOW = '\033[0;93m'
-    GREEN = '\033[1;92m'
-    CYAN = '\033[1;96m'
-    GREEN = '\033[1;32;40m'
     BOLD_LIGHT_GRAY = '\033[1;37;40m'
     LIGHT_GRAY = '\033[0;37;40m'
-    WHITE = '\033[1;37m'
     MAGENTA = '\033[0;95m'
     HIGHLIGHT_RED = '\033[1;37;41m'
     HIGHLIGHT_BLUE = '\033[1;37;44m'
-    BOLD = '\033[1m'
     RESET = '\033[0;0m'
     if not USE_COLORS:
         return text
