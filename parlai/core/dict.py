@@ -598,7 +598,7 @@ class DictionaryAgent(Agent):
                 self.bpe.copy_codecs_file(filename + '.codecs')
             if sort:
                 self.sort(trim=False)
-        elif self.tokenizer in ['gpt2', 'bytelevelbpe']:
+        elif self.tokenizer in ['gpt2', 'bytelevelbpe', 'gpt2_standin']:
             # never remove or sort tokens from gpt2 or HF
             pass
         elif sort:
@@ -702,7 +702,7 @@ class DictionaryAgent(Agent):
         if self.tokenizer in ['gpt2', 'bpe', 'gpt2_standin']:
             # if we used a BPE tokenizer we need to rejoin the encodings
             text = self.bpe.decode(tokens, vector, delimiter)
-        elif self.tokenizer in ['bytelevelbpe', 'gpt2_standin']:
+        elif self.tokenizer == 'bytelevelbpe':
             # We add special tokens in the beginning of ParlAI dict but in the
             # end of Hugging Face dict,there is an offset of 4 between them.
             vector = [

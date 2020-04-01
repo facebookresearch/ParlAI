@@ -26,14 +26,14 @@ try:
     from subword_nmt import learn_bpe, apply_bpe
 
     # Don't explicitly throw the runtime error unless the user needs it
-    BPE_INSTALLED = True
+    SUBWORD_BPE_INSTALLED = True
 except ImportError:
-    BPE_INSTALLED = False
+    SUBWORD_BPE_INSTALLED = False
 
 
 def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
     """
-    BPE Helper Factor.
+    BPE Helper Factory.
 
     Returns the appropriate BPE helper given the opt
     as well as available libraries.
@@ -54,7 +54,6 @@ def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
 
     if tokenizer == 'bytelevelbpe':
         # Attempt to instantiate HF tokenizer
-        # WARN LOUDLY if tokenizers not installed
         try:
             bpe_helper = HuggingFaceBpeHelper(opt, shared)
         except ImportError:
@@ -74,7 +73,6 @@ def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
                 )
     if tokenizer == 'gpt2_standin':
         bpe_helper = Gpt2HFStandinHelper(opt, shared)
-        opt['tokenizer'] = 'bytelevelbpe'
     if tokenizer == 'gpt2':
         bpe_helper = Gpt2BpeHelper(opt, shared)
     if tokenizer == 'bpe':
@@ -106,7 +104,7 @@ class BPEHelper(ABC):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('ByteLevelBPE Arguments')
+        parser = argparser.add_argument_group('BPEHelper Arguments')
         parser.add_argument(
             '--bpe-vocab', type=str, help='path to pre-trained tokenizer vocab'
         )
@@ -145,6 +143,8 @@ class BPEHelper(ABC):
         """
         Tokenize text.
 
+        Subclasses should override this method for encoding.
+
         :param text:
             text to tokenize
 
@@ -156,9 +156,6 @@ class BPEHelper(ABC):
     def decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
         """
         Decode list of tokens into a text string.
-
-        Subclasses override the helper_decode function, which is only called
-        if we're not in debug mode.
 
         NOTE: DO NOT OVERRIDE
 
@@ -176,7 +173,6 @@ class BPEHelper(ABC):
         if not self.debug:
             text = self.helper_decode(tokens, token_ids, delimiter)
             if self.add_prefix_space:
-                print('ADD PREFIX SPACE')
                 assert text.startswith(' ')
                 text = text.lstrip(' ')
         return text
@@ -187,6 +183,8 @@ class BPEHelper(ABC):
     ) -> str:
         """
         Decode list of tokens into text string.
+
+        Subclasses should override this method for decoding.
 
         :param tokens:
             list of tokens
@@ -221,7 +219,7 @@ class SubwordBPEHelper(BPEHelper):
     For technical details, please refer to https://arxiv.org/abs/1508.07909.
     This class just wraps around the official subword-nmt repository.
 
-    This API expects the user to call tokenize() onto the training data,
+    This API expects the user to call tokenize() (encode) onto the training data,
     then call finalize() to learn the encodings, and then iterate over the data
     in a second pass, calling tokenize() again to get processed output.
     """
@@ -236,7 +234,7 @@ class SubwordBPEHelper(BPEHelper):
             shared dictionary
         """
         super().__init__(opt, shared)
-        if not BPE_INSTALLED:
+        if not SUBWORD_BPE_INSTALLED:
             raise RuntimeError(
                 "Please run \"pip install 'git+https://github.com/rsennrich"
                 "/subword-nmt.git#egg=subword-nmt'\""
@@ -383,10 +381,6 @@ class Gpt2BpeHelper(BPEHelper):
         https://github.com/pytorch/fairseq/blob/master/fairseq/data/encoders/gpt2_bpe_utils.py
 
     Fairseq license: MIT
-
-    TODO: if instantiated from HF, use add_prefix stuff
-        add before encoding
-        remove after decoding
     """
 
     DEFAULT_ENCODER_JSON = (
@@ -633,10 +627,9 @@ class Gpt2BpeHelper(BPEHelper):
             dict_agent.freq[each_token] = 1
 
 
-#####################
-# HuggingFace BPE   #
-# Fast because Rust #
-#####################
+###################
+# HuggingFace BPE #
+###################
 
 
 class HuggingFaceBpeHelper(BPEHelper):
@@ -770,7 +763,8 @@ class Gpt2HFStandinHelper(Gpt2BpeHelper):
     """
     Stand-in for HuggingFace if we do not have access to tokenizers.
 
-    Only EVER used for
+    Only EVER used for a model used in interactive mode that was previously trained with
+    HF BPE.
     """
 
     def sync_with_dict(self, dict_agent):
