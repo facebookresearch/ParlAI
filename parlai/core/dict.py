@@ -195,7 +195,7 @@ class DictionaryAgent(Agent):
             default=DictionaryAgent.default_tok,
             help='Which tokenizer to use. Defaults to "split", which splits '
             'on whitespace as well as recognizing basic punctuation. '
-            'Other options include nltk, spacy, gpt2 and bytelevelbpe.',
+            'Other options include nltk, gpt2 and bytelevelbpe.',
             hidden=True,
         )
         dictionary.add_argument(
@@ -307,18 +307,6 @@ class DictionaryAgent(Agent):
                 nltk.download('punkt')
                 self.sent_tok = nltk.data.load(st_path)
             self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
-        elif self.tokenizer == 'spacy':
-            try:
-                import spacy
-            except ImportError:
-                raise ImportError(
-                    'Please install spacy and spacy "en" model: '
-                    '`pip install -U spacy && '
-                    'python -m spacy download en` '
-                    'or find alternative installation options '
-                    'at spacy.io'
-                )
-            self.NLP = spacy.load('en')
         elif self.tokenizer == 'bpe':
             if not opt.get('dict_file'):
                 raise RuntimeError('--dict-file is mandatory.')
@@ -442,54 +430,6 @@ class DictionaryAgent(Agent):
         """
         return self.tok2ind.keys()
 
-    def copy_dict(self, dictionary):
-        """
-        Overwrite own state with any state in the other dictionary.
-
-        This allows loading of the contents of another dictionary while keeping the
-        current dictionary version.
-        """
-        for k, v in vars(dictionary).items():
-            setattr(self, k, v)
-
-    def max_freq(self):
-        """
-        Return the largest frequency of any nonspecial token.
-        """
-        return max(
-            self.freq[k]
-            for k in self.freq.keys()
-            if k
-            not in [self.null_token, self.end_token, self.start_token, self.unk_token]
-        )
-
-    def freqs(self):
-        """
-        Return the frequency dictionary.
-        """
-        # TODO: deprecate this
-        return self.freq
-
-    def spacy_tokenize(self, text, **kwargs):
-        """
-        Tokenize using spaCy.
-
-        Does whatever spaCy does. See https://spacy.io/.
-        """
-        tokens = self.NLP.tokenizer(text)
-        return [t.text for t in tokens]
-
-    def spacy_span_tokenize(self, text):
-        """
-        Return tuple of tokens, spans.
-        """
-        # TODO: can we delete this?
-        tokens = self.NLP.tokenizer(text)
-        return (
-            [t.text for t in tokens],
-            [(t.idx, t.idx + len(t.text)) for t in tokens],
-        )
-
     def nltk_tokenize(self, text, building=False):
         """
         Tokenize using NLTK PunktTokenizer.
@@ -561,10 +501,6 @@ class DictionaryAgent(Agent):
         """
         Tokenize and find  starting index of each token in the original string.
         """
-        # TODO: can this be deleted?
-        if self.tokenizer == 'spacy':
-            # spacy has own
-            return self.spacy_span_tokenize(text)
         tokens = self.tokenize(text)
         curr_idx = 0
         indices = []

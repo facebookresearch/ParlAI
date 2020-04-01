@@ -199,10 +199,11 @@ class TorchRankerAgent(TorchAgent):
                 states = {}
 
             if self.use_cuda:
-                self.model.cuda()
                 if self.model_parallel:
                     self.model = PipelineHelper().make_parallel(self.model)
-                elif self.data_parallel:
+                else:
+                    self.model.cuda()
+                if self.data_parallel:
                     self.model = torch.nn.DataParallel(self.model)
                 self.criterion.cuda()
 
@@ -216,7 +217,7 @@ class TorchRankerAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        elif 'train' in opt.get('datatype', ''):
+        elif self._should_initialize_optimizer():
             # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(

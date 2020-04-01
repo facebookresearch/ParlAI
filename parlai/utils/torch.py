@@ -226,6 +226,29 @@ def argsort(keys: List[Any], *lists: List[List[Any]], descending: bool = False):
     return output
 
 
+def compute_grad_norm(parameters, norm_type=2.0):
+    """
+    Compute norm over gradients of model parameters.
+
+    :param parameters:
+        the model parameters for gradient norm calculation. Iterable of
+        Tensors or single Tensor
+    :param norm_type:
+        type of p-norm to use
+
+    :returns:
+        the computed gradient norm
+    """
+    if isinstance(parameters, torch.Tensor):
+        parameters = [parameters]
+    parameters = [p.grad for p in parameters if p is not None]
+    total_norm = 0
+    for p in parameters:
+        param_norm = p.grad.data.norm(norm_type)
+        total_norm += param_norm.item() ** norm_type
+    return total_norm ** (1.0 / norm_type)
+
+
 class IdentityLayer(torch.nn.Module):
     """
     Identity layer module.
@@ -318,7 +341,14 @@ class PipelineHelper(object):
         self.__device_allocations['cuda:0'] += trainable_parameters(model) * 3
 
         model.apply(self._place_modulelist)
+        model._apply(self._move_rest_to_cuda0)
         return model
+
+    def _move_rest_to_cuda0(self, parameter):
+        if parameter.device.type == 'cpu':
+            return parameter.to('cuda:0')
+        else:
+            return parameter
 
     def _place_modulelist(self, submodule: torch.nn.Module) -> None:
         if not isinstance(submodule, torch.nn.ModuleList):

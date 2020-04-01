@@ -10,18 +10,21 @@ import os
 import parlai.core.build_data as build_data
 from parlai.core.build_data import DownloadableFile
 
+ANLI_VERSION = 'v0.1'
+ANLI = 'ANLI'
+
 RESOURCES = [
     DownloadableFile(
-        'https://nlp.stanford.edu/projects/snli/snli_1.0.zip',
-        'snli_1.0.zip',
-        'afb3d70a5af5d8de0d9d81e2637e0fb8c22d1235c2749d83125ca43dab0dbd3e',
+        'https://dl.fbaipublicfiles.com/anli/anli_v0.1.zip',
+        'anli_v0.1.zip',
+        '16ac929a7e90ecf9093deaec89cc81fe86a379265a5320a150028efe50c5cde8',
     )
 ]
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'SNLI')
-    version = '1.0'
+    dpath = os.path.join(opt['datapath'], ANLI)
+    version = ANLI_VERSION
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
@@ -37,3 +40,4 @@ def build(opt):
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)
+    return dpath, version

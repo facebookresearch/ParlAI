@@ -139,29 +139,6 @@ buildwebsite: &buildwebsite
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  datatests:
-    <<: *standard_cpu37
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - restore_cache:
-          key: deps-v4-dt-{{ checksum "requirements.txt" }}
-      - <<: *setup
-      - <<: *installdeps
-      - save_cache:
-          key: deps-v4-dt-{{ checksum "requirements.txt" }}
-          paths:
-            - "~/venv/bin"
-            - "~/venv/lib"
-      - <<: *installtorchcpu
-      - run:
-          name: Data tests
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m data -v
-      - <<: *codecov
-      - store_test_results:
-          path: test-results
-
   unittests_osx:
     <<: *osx_cpu37
     working_directory: ~/ParlAI
