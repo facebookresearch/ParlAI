@@ -301,9 +301,6 @@ class DictionaryAgent(Agent):
             self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
         elif self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'gpt2_standin']:
             self.bpe = bpe_factory(opt, shared)
-            # if self.tokenizer == 'bytelevelbpe' and not isinstance(self.bpe, HuggingFaceBpeHelper):
-            #     # Failed to instantiate HuggingFaceBPEHelper
-            #     self.tokenizer = 'gpt2'
             self.bpe.sync_with_dict(self)
 
         if not shared:
