@@ -617,7 +617,7 @@ class MultiWorld(World):
         for each_world in self.worlds:
             world_id = each_world.getID()
             if world_id in task_ids:
-                raise KeyError(
+                raise AssertionError(
                     '{} and {} teachers have overlap in id {}.'.format(
                         task_ids[world_id],
                         each_world.get_agents()[0].__class__,
