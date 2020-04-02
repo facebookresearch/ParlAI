@@ -773,7 +773,7 @@ class Gpt2HFStandinHelper(Gpt2BpeHelper):
             bpe_data and path to encoder json
         """
         bpe_data = None
-        json_path = None
+        json_path = ''
         if self.opt.get('dict_loaded'):
             dfname = self.opt['dict_file']
             if os.path.isfile(f'{dfname}-merges.txt'):
