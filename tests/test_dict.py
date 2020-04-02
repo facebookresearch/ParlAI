@@ -43,6 +43,33 @@ BYTELEVEL_BPE_RESULT = [
     'ĺ',
     'Ģ',
 ]
+GPT2_BPE_RESULT = [
+    'Hello',
+    ',',
+    r'\xc4\xa0Par',
+    'l',
+    'AI',
+    '!',
+    r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
+    r'\xc4\xa2',
+]
+slow_bytelevel_bpe_RESULT = [
+    'H',
+    'ello',
+    ',',
+    '\\xc4\\xa0',
+    'P',
+    'ar',
+    'l',
+    'A',
+    'I',
+    '!',
+    '\\xc4\\xa0',
+    '\\xc3\\xb0',
+    '\\xc5\\x81',
+    '\\xc4\\xba',
+    '\\xc4\\xa2',
+]
 
 
 class TestDictionary(unittest.TestCase):
@@ -56,31 +83,10 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(
             # grinning face emoji
             agent.gpt2_tokenize(u'Hello, ParlAI! \U0001f600'),
-            [
-                'Hello',
-                ',',
-                r'\xc4\xa0Par',
-                'l',
-                'AI',
-                '!',
-                r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
-                r'\xc4\xa2',
-            ],
+            GPT2_BPE_RESULT,
         )
         self.assertEqual(
-            agent.vec2txt(
-                agent.tok2ind[w]
-                for w in [
-                    'Hello',
-                    ',',
-                    r'\xc4\xa0Par',
-                    'l',
-                    'AI',
-                    '!',
-                    r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
-                    r'\xc4\xa2',
-                ]
-            ),
+            agent.vec2txt(agent.tok2ind[w] for w in GPT2_BPE_RESULT),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
@@ -247,13 +253,13 @@ class TestByteLevelBPE(unittest.TestCase):
             agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
             [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
         )
-        vocab_size = agent.byte_level_bpe.tokenizer.get_vocab_size()
+        vocab_size = agent.bpe.tokenizer.get_vocab_size()
         with testing_utils.tempdir() as tmpdir:
             path = os.path.join(tmpdir, 'dict-checkpoint')
             agent.save(filename=path)
             agent.load(filename=path)
         # Test loading / saving
-        self.assertEqual(vocab_size, agent.byte_level_bpe.tokenizer.get_vocab_size())
+        self.assertEqual(vocab_size, agent.bpe.tokenizer.get_vocab_size())
         self.assertEqual(
             # grinning face emoji
             agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
@@ -394,3 +400,107 @@ class TestBuildDict(unittest.TestCase):
 
     def test_build_bpe(self):
         self._run_test({'dict_tokenizer': 'bpe', 'max_tokens': 50})
+
+
+class TestGpt2HFInterop(unittest.TestCase):
+    """
+    Test for SlowBytelevelBPE.
+
+    Essentially, test whether using a stand-in GPT2 tokenizer for a dict originally
+    built with HF's tokenizer produces the same results.
+    """
+
+    def _get_dict_opt(self, tokenizer: str):
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer=tokenizer,
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            bpe_add_prefix_space=False,
+            dict_loaded=True,
+        )
+        opt = parser.parse_args([], print_args=False)
+        return opt
+
+    def _run_test(self, slow_bytelevel_bpe, hf_bpe):
+        """
+        run the actual test.
+        """
+        self.assertEqual(
+            # grinning face emoji
+            slow_bytelevel_bpe.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            slow_bytelevel_bpe_RESULT,
+        )
+        self.assertEqual(
+            slow_bytelevel_bpe.vec2txt(
+                [slow_bytelevel_bpe.tok2ind[w] for w in slow_bytelevel_bpe_RESULT]
+            ),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            slow_bytelevel_bpe.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [slow_bytelevel_bpe.tok2ind[w] for w in slow_bytelevel_bpe_RESULT],
+        )
+        vocab_size = len(slow_bytelevel_bpe.bpe.encoder)
+        with testing_utils.tempdir() as tmpdir:
+            path = os.path.join(tmpdir, 'dict-checkpoint')
+            slow_bytelevel_bpe.save(filename=path)
+            slow_bytelevel_bpe.load(filename=path)
+        # Test loading / saving
+        self.assertEqual(vocab_size, len(slow_bytelevel_bpe.bpe.encoder))
+
+        # next, check that hf_bpe and slow_bytelevel_bpe are equivalent
+        self.assertEqual(
+            slow_bytelevel_bpe.vec2txt(
+                [slow_bytelevel_bpe.tok2ind[w] for w in slow_bytelevel_bpe_RESULT]
+            ),
+            hf_bpe.vec2txt([hf_bpe.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
+        )
+
+    def test_gpt2standin(self):
+        with testing_utils.tempdir() as tmpdir:
+            # we need to build the dict file
+            hf_bpe_opt = self._get_dict_opt('bytelevelbpe')
+            slow_bytelevel_bpe_opt = self._get_dict_opt('slow_bytelevel_bpe')
+
+            dict_file = os.path.join(tmpdir, "dict")
+            pp = build_dict.setup_args()
+            pp.set_defaults(**hf_bpe_opt)
+            pp.set_defaults(task='babi')
+            popt = pp.parse_args([], print_args=False)
+            popt['dict_file'] = dict_file
+            build_dict.build_dict(popt)
+
+            hf_bpe_opt['dict_file'] = dict_file
+            hf_bpe = DictionaryAgent(hf_bpe_opt)
+
+            slow_bytelevel_bpe_opt['dict_file'] = dict_file
+            slow_bytelevel_bpe = DictionaryAgent(slow_bytelevel_bpe_opt)
+
+            self._run_test(slow_bytelevel_bpe, hf_bpe)
+
+            slow_bytelevel_bpe_opt['bpe_add_prefix_space'] = True
+            slow_bytelevel_bpe = DictionaryAgent(slow_bytelevel_bpe_opt)
+            self._run_prefix_space_test(slow_bytelevel_bpe)
+
+    def _run_prefix_space_test(self, agent):
+        """
+        Tests gpt2standin can handle prefix space.
+        """
+        self.assertEqual(
+            # grinning face emoji
+            agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT,
+        )
+        self.assertEqual(
+            agent.vec2txt(
+                [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT]
+            ),
+            # grinning face emoji
+            u'Hello, ParlAI! \U0001f600',
+        )
+        self.assertEqual(
+            agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT],
+        )
