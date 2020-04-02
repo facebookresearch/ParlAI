@@ -41,7 +41,7 @@ class FP16SafeCrossEntropy(torch.nn.Module):
         # default ignore_index=-100 mimics pytorch's default in
         # torch.nn.functional.nll_loss
         super().__init__()
-        self.register_buffer('weight', weight)
+        self.register_buffer('weight', weight)  # type: ignore
         self.ignore_index = ignore_index
         self.reduction = reduction
 
