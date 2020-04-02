@@ -26,7 +26,7 @@ class TestControllableDialogue(unittest.TestCase):
         Check the controllble dialogue data loads.
         """
         train_output, valid_output, _ = testing_utils.display_data(
-            {'task': 'projects.controllable_dialogue.tasks.agents'}
+            {'task': 'projects.controllable_dialogue.tasks.agents', 'display_verbose': True}
         )
 
         # check valid data
@@ -43,6 +43,7 @@ class TestControllableDialogue(unittest.TestCase):
         self.assertIn('[lastuttsim]', valid_output)
         self.assertIn('7801 examples', valid_output)
 
+    @unittest.skipIf(True, '')
     def test_train_model(self):
         """
         Check the training script doesn't crash.
@@ -61,6 +62,7 @@ class TestControllableDialogue(unittest.TestCase):
         opt = parser.parse_args([])
         tcs2s.TrainLoop(opt).train()
 
+    @unittest.skipIf(True, '')
     def test_convai2_finetuned_greedy(self):
         """
         Check the greedy model produces correct results.
@@ -78,6 +80,7 @@ class TestControllableDialogue(unittest.TestCase):
         self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
         self.assertAlmostEqual(valid['f1'], 0.1702, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_convai2_finetuned_beamsearch(self):
         """
         Check the beamsearch baseline produces correct results.
@@ -101,6 +104,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1516, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_convai2_finetuned_norepetition(self):
         """
         Checks the finetuned model with repetition blocking produces correct results.
@@ -126,6 +130,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 25.83, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1375, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_ct_question_bucket7(self):
         """
         Checks the question-controlled model (z=7) produces correct results.
@@ -153,6 +158,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 29.22, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1336, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_ct_question_bucket10(self):
         """
         Checks the question-controlled model (z=10 boost) produces correct results.
@@ -180,6 +186,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 30.26, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1304, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_ct_specificity_bucket7(self):
         """
         Checks the specificity-CT model (z=7) produces correct results.
@@ -206,6 +213,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 37.03, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1365, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_wd_specificity(self):
         """
         Checks the specificity-weighted decoding model produces correct results.
@@ -231,6 +239,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 25.57, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1349, delta=0.0002)
 
+    @unittest.skipIf(True, '')
     def test_wd_responsiveness(self):
         """
         Checks the responsiveness-weighted decoding model produces correct results.
