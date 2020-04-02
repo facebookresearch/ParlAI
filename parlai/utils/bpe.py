@@ -66,13 +66,13 @@ def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
                     'For now, defaulting to the GPT2Tokenizer.'
                     '\n\n--------------------------------------------------\n\n'
                 )
-                tokenizer = 'gpt2_standin'
+                tokenizer = 'slow_bytelevel_bpe'
             else:
                 raise ImportError(
                     'Please install HuggingFace tokenizer with: pip install tokenizers.\n'
                 )
-    if tokenizer == 'gpt2_standin':
-        bpe_helper = Gpt2HFStandinHelper(opt, shared)
+    if tokenizer == 'slow_bytelevel_bpe':
+        bpe_helper = SlowBytelevelBPE(opt, shared)
     if tokenizer == 'gpt2':
         bpe_helper = Gpt2BpeHelper(opt, shared)
     if tokenizer == 'bpe':
@@ -209,6 +209,48 @@ class BPEHelper(ABC):
         :param dict_agent:
             agent with which we are syncing the dictionary
         """
+
+    def finalize(
+        self, frequencies: Dict[str, int], num_symbols: int, minfreq: int
+    ) -> bool:
+        """
+        Build the codecs.
+
+        Default helpers are pre-trained and thus do not build their own codecs
+
+        :param frequencies:
+            dictionary of (token: frequency) pairs
+        :param num_symbols:
+            Number of BPE symbols. Recommend 30000-40000.  If <= 0, default
+            30000 will be used.
+        :param minfreq:
+            Minimum frequency of a token before forced BPE decomposition. If <=
+            0 will use subword-nmt default of 2.
+
+        :return did_finalize:
+            return whether codecs are finalized this call.
+        """
+        return False
+
+    def copy_codecs_file(self, target_file: str):
+        """
+        Copy the codecs file to a new location.
+
+        Default behavior is to do nothing.
+
+        :param target_file:
+            where to copy the codecs.
+        """
+        pass
+
+    def should_sort(self) -> bool:
+        """
+        Return whether tokens should be sorted for this particular helper.
+
+        DictionaryAgent sorts tokens upon saving; we don't generally want to sort with
+        our pre-trained dictionaries, so default is False.
+        """
+        return False
 
 
 ###############
@@ -364,6 +406,14 @@ class SubwordBPEHelper(BPEHelper):
         No need to sync subword BPE.
         """
         pass
+
+    def should_sort(self) -> bool:
+        """
+        Return whether tokens should be sorted for this particular helper.
+
+        We want to sort with SubwordBPEHelper.
+        """
+        return True
 
 
 #######################
@@ -757,7 +807,7 @@ class HuggingFaceBpeHelper(BPEHelper):
         self.tokenizer.save(dir_name, file_name)
 
 
-class Gpt2HFStandinHelper(Gpt2BpeHelper):
+class SlowBytelevelBPE(Gpt2BpeHelper):
     """
     Stand-in for HuggingFace if we do not have access to tokenizers.
 

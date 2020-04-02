@@ -299,7 +299,7 @@ class DictionaryAgent(Agent):
                 nltk.download('punkt')
                 self.sent_tok = nltk.data.load(st_path)
             self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
-        elif self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'gpt2_standin']:
+        elif self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
             self.bpe = bpe_factory(opt, shared)
             self.bpe.sync_with_dict(self)
 
@@ -407,7 +407,7 @@ class DictionaryAgent(Agent):
         """
         return self.bpe_tokenize(text)
 
-    def gpt2_standin_tokenize(self, text):
+    def slow_bytelevel_bpe_tokenize(self, text):
         """
         Tokenize using Gpt2 BPE tokenizer.
         """
@@ -587,20 +587,17 @@ class DictionaryAgent(Agent):
         """
         filename = self.opt['dict_file'] if filename is None else filename
 
-        if self.tokenizer == 'bpe':
+        if self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
             needs_removal = self.bpe.finalize(
                 self.freq, num_symbols=self.maxtokens, minfreq=self.minfreq
             )
             if needs_removal:
                 self._remove_non_bpe()
-            elif filename != self.opt['dict_file']:
+            elif filename != self.opt.get('dict_file'):
                 # need to copy over the old codecs file
                 self.bpe.copy_codecs_file(filename + '.codecs')
-            if sort:
+            if sort and self.bpe.should_sort():
                 self.sort(trim=False)
-        elif self.tokenizer in ['gpt2', 'bytelevelbpe', 'gpt2_standin']:
-            # never remove or sort tokens from gpt2 or HF
-            pass
         elif sort:
             self.sort(trim=True)
 
@@ -699,7 +696,7 @@ class DictionaryAgent(Agent):
         the delimiter (default ``' '``).
         """
         tokens = [self[int(idx)] for idx in vector]
-        if self.tokenizer in ['gpt2', 'bpe', 'gpt2_standin']:
+        if self.tokenizer in ['gpt2', 'bpe', 'slow_bytelevel_bpe']:
             # if we used a BPE tokenizer we need to rejoin the encodings
             text = self.bpe.decode(tokens, vector, delimiter)
         elif self.tokenizer == 'bytelevelbpe':

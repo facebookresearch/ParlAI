@@ -53,7 +53,7 @@ GPT2_BPE_RESULT = [
     r'\xc4\xa0\xc3\xb0\xc5\x81\xc4\xba',
     r'\xc4\xa2',
 ]
-GPT2_STANDIN_RESULT = [
+slow_bytelevel_bpe_RESULT = [
     'H',
     'ello',
     ',',
@@ -404,7 +404,7 @@ class TestBuildDict(unittest.TestCase):
 
 class TestGpt2HFInterop(unittest.TestCase):
     """
-    Test for Gpt2HFStandinHelper.
+    Test for SlowBytelevelBPE.
 
     Essentially, test whether using a stand-in GPT2 tokenizer for a dict originally
     built with HF's tokenizer produces the same results.
@@ -422,38 +422,38 @@ class TestGpt2HFInterop(unittest.TestCase):
         opt = parser.parse_args([], print_args=False)
         return opt
 
-    def _run_test(self, gpt2_standin, hf_bpe):
+    def _run_test(self, slow_bytelevel_bpe, hf_bpe):
         """
         run the actual test.
         """
         self.assertEqual(
             # grinning face emoji
-            gpt2_standin.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
-            GPT2_STANDIN_RESULT,
+            slow_bytelevel_bpe.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
+            slow_bytelevel_bpe_RESULT,
         )
         self.assertEqual(
-            gpt2_standin.vec2txt(
-                [gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT]
+            slow_bytelevel_bpe.vec2txt(
+                [slow_bytelevel_bpe.tok2ind[w] for w in slow_bytelevel_bpe_RESULT]
             ),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
         self.assertEqual(
-            gpt2_standin.txt2vec(u'Hello, ParlAI! \U0001f600'),
-            [gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT],
+            slow_bytelevel_bpe.txt2vec(u'Hello, ParlAI! \U0001f600'),
+            [slow_bytelevel_bpe.tok2ind[w] for w in slow_bytelevel_bpe_RESULT],
         )
-        vocab_size = len(gpt2_standin.bpe.encoder)
+        vocab_size = len(slow_bytelevel_bpe.bpe.encoder)
         with testing_utils.tempdir() as tmpdir:
             path = os.path.join(tmpdir, 'dict-checkpoint')
-            gpt2_standin.save(filename=path)
-            gpt2_standin.load(filename=path)
+            slow_bytelevel_bpe.save(filename=path)
+            slow_bytelevel_bpe.load(filename=path)
         # Test loading / saving
-        self.assertEqual(vocab_size, len(gpt2_standin.bpe.encoder))
+        self.assertEqual(vocab_size, len(slow_bytelevel_bpe.bpe.encoder))
 
-        # next, check that hf_bpe and gpt2_standin are equivalent
+        # next, check that hf_bpe and slow_bytelevel_bpe are equivalent
         self.assertEqual(
-            gpt2_standin.vec2txt(
-                [gpt2_standin.tok2ind[w] for w in GPT2_STANDIN_RESULT]
+            slow_bytelevel_bpe.vec2txt(
+                [slow_bytelevel_bpe.tok2ind[w] for w in slow_bytelevel_bpe_RESULT]
             ),
             hf_bpe.vec2txt([hf_bpe.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
         )
@@ -462,7 +462,7 @@ class TestGpt2HFInterop(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             # we need to build the dict file
             hf_bpe_opt = self._get_dict_opt('bytelevelbpe')
-            gpt2_standin_opt = self._get_dict_opt('gpt2_standin')
+            slow_bytelevel_bpe_opt = self._get_dict_opt('slow_bytelevel_bpe')
 
             dict_file = os.path.join(tmpdir, "dict")
             pp = build_dict.setup_args()
@@ -475,14 +475,14 @@ class TestGpt2HFInterop(unittest.TestCase):
             hf_bpe_opt['dict_file'] = dict_file
             hf_bpe = DictionaryAgent(hf_bpe_opt)
 
-            gpt2_standin_opt['dict_file'] = dict_file
-            gpt2_standin = DictionaryAgent(gpt2_standin_opt)
+            slow_bytelevel_bpe_opt['dict_file'] = dict_file
+            slow_bytelevel_bpe = DictionaryAgent(slow_bytelevel_bpe_opt)
 
-            self._run_test(gpt2_standin, hf_bpe)
+            self._run_test(slow_bytelevel_bpe, hf_bpe)
 
-            gpt2_standin_opt['bpe_add_prefix_space'] = True
-            gpt2_standin = DictionaryAgent(gpt2_standin_opt)
-            self._run_prefix_space_test(gpt2_standin)
+            slow_bytelevel_bpe_opt['bpe_add_prefix_space'] = True
+            slow_bytelevel_bpe = DictionaryAgent(slow_bytelevel_bpe_opt)
+            self._run_prefix_space_test(slow_bytelevel_bpe)
 
     def _run_prefix_space_test(self, agent):
         """
@@ -491,16 +491,16 @@ class TestGpt2HFInterop(unittest.TestCase):
         self.assertEqual(
             # grinning face emoji
             agent.bytelevelbpe_tokenize(u'Hello, ParlAI! \U0001f600'),
-            ['\\xc4\\xa0'] + GPT2_STANDIN_RESULT,
+            ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT,
         )
         self.assertEqual(
             agent.vec2txt(
-                [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + GPT2_STANDIN_RESULT]
+                [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT]
             ),
             # grinning face emoji
             u'Hello, ParlAI! \U0001f600',
         )
         self.assertEqual(
             agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
-            [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + GPT2_STANDIN_RESULT],
+            [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT],
         )
