@@ -402,7 +402,7 @@ class TestBuildDict(unittest.TestCase):
         self._run_test({'dict_tokenizer': 'bpe', 'max_tokens': 50})
 
 
-class TestGpt2HFInteropt(unittest.TestCase):
+class TestGpt2HFInterop(unittest.TestCase):
     """
     Test for Gpt2HFStandinHelper.
 
