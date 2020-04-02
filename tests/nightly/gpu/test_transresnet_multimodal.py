@@ -44,9 +44,9 @@ class TestTransresnet(unittest.TestCase):
         _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
 
         # Overall
-        self.assertAlmostEqual(test['accuracy'].value(), 0.3667, places=4)
-        self.assertAlmostEqual(test['hits@5'].value(), 0.6333, places=4)
-        self.assertAlmostEqual(test['hits@10'].value(), 0.7667, places=4)
+        self.assertAlmostEqual(test['accuracy'], 0.3667, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.6333, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.7667, places=4)
 
         # First round
         self.assertAlmostEqual(test['first_round/hits@1/100'], 0.2, places=4)

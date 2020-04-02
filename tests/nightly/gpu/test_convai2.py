@@ -46,7 +46,7 @@ class TestConvai2LanguageModel(unittest.TestCase):
         import projects.convai2.baselines.language_model.eval_f1 as eval_f1
 
         report = eval_f1.main(args=[])
-        self.assertAlmostEqual(report['f1'].value(), 0.1531, places=4)
+        self.assertAlmostEqual(report['f1'], 0.1531, places=4)
 
 
 class TestLegacyVersioning(unittest.TestCase):
