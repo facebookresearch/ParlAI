@@ -41,7 +41,7 @@ class TestTrainModel(unittest.TestCase):
         task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
         total_acc = valid['accuracy']
         self.assertEqual(
-            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly',
+            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly'
         )
 
         valid, test = testing_utils.train_model(
@@ -58,7 +58,7 @@ class TestTrainModel(unittest.TestCase):
         total_acc = valid['accuracy']
         # metrics should be averaged equally across tasks
         self.assertEqual(
-            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly',
+            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly'
         )
 
     def test_multitasking_metrics_macro(self):
@@ -99,6 +99,16 @@ class TestTrainModel(unittest.TestCase):
             0.5 * (task1_acc.value() + task2_acc.value()),
             'Task accuracy is averaged incorrectly',
         )
+
+    def test_multitasking_id_overlap(self):
+        with self.assertRaises(KeyError) as context:
+            testing_utils.train_model(
+                {'task': 'integration_tests,' 'integration_tests'}
+            )
+            self.assertTrue(
+                'teachers have overlap in id integration_tests.'
+                in str(context.exception)
+            )
 
 
 if __name__ == '__main__':
