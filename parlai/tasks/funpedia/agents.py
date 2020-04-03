@@ -44,6 +44,7 @@ def _strip_reader(filename):
 
 # this is a standard itertools recipe, but not included by default.
 # see https://docs.python.org/3/library/itertools.html#itertools-recipes
+# (included in `pip install more-itertools`)
 def grouper(iterable, n, fillvalue=None):
     """
     Collect data into fixed-length chunks or blocks.
