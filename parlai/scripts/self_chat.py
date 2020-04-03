@@ -10,7 +10,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
-from parlai.utils.misc import TimeLogger, nice_report
+from parlai.utils.misc import TimeLogger
 
 import math
 import random
