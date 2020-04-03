@@ -37,6 +37,7 @@ class AgentState:
         self.active_agent = overworld_agent
         self.task_id_to_agent: Dict[str, ChatServiceAgent] = {}
         self.onboard_data = None
+        self.data = {}
         self.stored_data: Dict[str, Any] = {}
         self.time_in_pool: Dict[str, float] = {}
 
@@ -667,6 +668,7 @@ class ChatServiceManager(ABC):
             for agent in agents:
                 self.after_agent_removed(agent.id)
                 agent_state = self.get_agent_state(agent.id)
+                agent_state.data = agent.data
                 next_task = agent.data.get("next_task")
                 log_utils.print_and_log(logging.INFO, "Next task: {}".format(next_task))
                 if next_task is None:
@@ -719,6 +721,7 @@ class ChatServiceManager(ABC):
                         for state in agent_states:
                             agent = self._create_agent(task_id, state.get_id())
                             agent.onboard_data = state.onboard_data
+                            agent.data = state.data
                             state.assign_agent_to_task(agent, task_id)
                             state.set_active_agent(agent)
                             agents.append(agent)

@@ -117,6 +117,7 @@ class WebsocketManager(ChatServiceManager):
                     for state in agent_states:
                         agent = self._create_agent(task_id, state.get_id())
                         agent.onboard_data = state.onboard_data
+                        agent.data = state.data
                         state.assign_agent_to_task(agent, task_id)
                         state.set_active_agent(agent)
                         agents.append(agent)
@@ -161,7 +162,7 @@ class WebsocketManager(ChatServiceManager):
         self.app = self._make_app()
         self.app.listen(self.port)
         # Must use a tornado callback to run the main loop
-        callback_time = utils.THREAD_MEDIUM_SLEEP * 1000
+        callback_time = utils.THREAD_MEDIUM_SLEEP * 10
         tornado.ioloop.PeriodicCallback(
             callback=self._manager_loop_fn, callback_time=callback_time
         ).start()
