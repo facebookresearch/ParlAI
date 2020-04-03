@@ -162,7 +162,7 @@ class WebsocketManager(ChatServiceManager):
         self.app = self._make_app()
         self.app.listen(self.port)
         # Must use a tornado callback to run the main loop
-        callback_time = utils.THREAD_MEDIUM_SLEEP * 10
+        callback_time = utils.THREAD_MEDIUM_SLEEP * 1000
         tornado.ioloop.PeriodicCallback(
             callback=self._manager_loop_fn, callback_time=callback_time
         ).start()
