@@ -1100,4 +1100,13 @@ task_list = [
             "ANLI v0.1, MultiNLI 1.0, SNLI 1.0."
         ),
     },
+    {
+        "id": "Funpedia",
+        "display_name": "Funpedia",
+        "task": "funpedia",
+        "tags": ["All"],
+        "description": (
+            "Task for rephrasing sentences from Wikipedia conditioned on a persona."
+        ),
+    },
 ]
