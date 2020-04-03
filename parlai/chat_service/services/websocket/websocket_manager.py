@@ -117,6 +117,7 @@ class WebsocketManager(ChatServiceManager):
                     for state in agent_states:
                         agent = self._create_agent(task_id, state.get_id())
                         agent.onboard_data = state.onboard_data
+                        agent.data = state.data
                         state.assign_agent_to_task(agent, task_id)
                         state.set_active_agent(agent)
                         agents.append(agent)

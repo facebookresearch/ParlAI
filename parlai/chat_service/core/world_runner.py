@@ -184,6 +184,7 @@ class ChatServiceWorldRunner:
                     agent_state.assign_agent_to_task(agent, onboard_id)
                     _, onboard_data = self._run_world(task, onboard_type, [agent])
                     agent_state.onboard_data = onboard_data
+                    agent_state.data = agent.data
                 self.manager.add_agent_to_pool(agent_state, world_type)
                 log_utils.print_and_log(logging.INFO, 'onboarding/overworld complete')
 
