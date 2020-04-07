@@ -335,7 +335,7 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
