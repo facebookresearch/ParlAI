@@ -69,7 +69,7 @@ class SelfChatWorld(DialogPartnerWorld):
 
         This function will be called before the first turn of every episode.
         """
-        return ['__SILENCE__', '']
+        return ['Hi!', '']
 
     def init_openers(self) -> None:
         """

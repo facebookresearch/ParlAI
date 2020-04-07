@@ -10,6 +10,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
+from parlai.utils.misc import TimeLogger
 
 import math
 import random
@@ -54,8 +55,8 @@ def setup_args(parser=None):
         '--save-format',
         type=str,
         default='conversations',
-        choices=['conversations', 'parlai', 'jsonl'],
-        help='Format to save logs in',
+        choices=['conversations', 'parlai'],
+        help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     WorldLogger.add_cmdline_args(parser)
@@ -97,10 +98,14 @@ def self_chat(opt):
 
     # Set up world logging
     logger = WorldLogger(opt)
+    log_time = TimeLogger()
 
     # Run some self chats.
-    for _ in range(opt['num_self_chats']):
+    for i in range(opt['num_self_chats']):
         _run_self_chat_episode(opt, world, logger)
+        report = world.report()
+        text, report = log_time.log(i + 1, opt['num_self_chats'], report)
+        print(text)
 
     # Save chats
     if opt['outfile'] is None:
