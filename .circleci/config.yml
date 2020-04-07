@@ -6,16 +6,22 @@ version: 2
 standard_cpu38: &standard_cpu38
   docker:
     - image: circleci/python:3.8.0-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
   resource_class: large
 
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
   resource_class: large
 
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
   resource_class: large
 
 osx_cpu37: &osx_cpu37
@@ -24,11 +30,13 @@ osx_cpu37: &osx_cpu37
     xcode: "11.3.1"
   environment:
     PYTHON: 3.7.1
+    PYTHONUNBUFFERED: 1
     HOMEBREW_NO_AUTO_UPDATE: 1
 
 gpu: &gpu
   environment:
     CUDA_VERSION: "10.2"
+    PYTHONUNBUFFERED: 1
   machine:
     image: ubuntu-1604:201903-01
   resource_class: gpu.medium # tesla m60
