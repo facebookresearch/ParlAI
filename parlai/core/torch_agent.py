@@ -1166,7 +1166,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
-        if self.opt['embedding_type'] == 'random':
+        if (
+            self.opt['embedding_type'] == 'random'
+            or not self._should_initialize_optimizer()
+        ):
             # Random embedding means no copying of pretrained embeddings
             return
 
