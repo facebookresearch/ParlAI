@@ -10,7 +10,6 @@ This file contains the main code for running CT and WD controlled models.
 
 import torch
 import numpy as np
-from parlai.core.build_data import modelzoo_path
 from projects.controllable_dialogue.tasks.build import build
 from .stopwords import STOPWORDS
 from .nidf import load_word2nidf
@@ -108,7 +107,7 @@ def initialize_control_information(opt, build_task=True):
         arora_data['glove_name'],
         arora_data['glove_dim'],
         arora_data['first_sv'],
-        glove_cache=modelzoo_path(opt['datapath'], 'models:glove_vectors'),
+        data_path=opt['datapath'],
     )
 
 

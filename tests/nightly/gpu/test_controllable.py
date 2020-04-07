@@ -60,6 +60,7 @@ class TestControllableDialogue(unittest.TestCase):
             batchsize=16,
             truncate=32,
             short_final_eval=True,
+            embedding_type='random',
         )
         opt = parser.parse_args([])
         tcs2s.TrainLoop(opt).train()
