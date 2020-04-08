@@ -24,8 +24,8 @@ with open('requirements.txt') as f:
 if __name__ == '__main__':
     setup(
         name='parlai',
-        version='0.1.20200407',
-        description='Unified API for accessing dialog datasets.',
+        version='0.1.20200408',
+        description='Unified platform for dialogue research.',
         long_description=readme,
         url='http://parl.ai/',
         license=license,
