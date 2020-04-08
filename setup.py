@@ -41,4 +41,5 @@ if __name__ == '__main__':
             "License :: OSI Approved :: MIT License",
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
             "Natural Language :: English",
+        ],
     )
