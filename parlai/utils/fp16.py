@@ -6,10 +6,12 @@
 """
 Utility methods for mixed precision training.
 """
-from parlai.utils.misc import warn_once
 
-from itertools import chain
 import math
+from itertools import chain
+from typing import Optional
+
+from parlai.utils.misc import warn_once
 
 try:
     import torch
@@ -30,10 +32,16 @@ class FP16SafeCrossEntropy(torch.nn.Module):
     This avoids overflow in the softmax by doing the operation in FP32.
     """
 
-    def __init__(self, ignore_index=-100, reduction='none'):
+    def __init__(
+        self,
+        weight: Optional[torch.Tensor] = None,
+        ignore_index: int = -100,
+        reduction: str = 'none',
+    ):
         # default ignore_index=-100 mimics pytorch's default in
         # torch.nn.functional.nll_loss
         super().__init__()
+        self.register_buffer('weight', weight)  # type: ignore
         self.ignore_index = ignore_index
         self.reduction = reduction
 
@@ -41,6 +49,7 @@ class FP16SafeCrossEntropy(torch.nn.Module):
         return F.nll_loss(
             F.log_softmax(scores, 1, dtype=torch.float32),
             targets,
+            weight=self.weight,
             ignore_index=self.ignore_index,
             reduction=self.reduction,
         )
@@ -264,11 +273,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         """
         List of compatible optimizers.
         """
-        return [
-            'adam',
-            'mem_eff_adam',
-            'adafactor',
-        ]
+        return ['adam', 'mem_eff_adam', 'adafactor']
 
     @property
     def params(self):
@@ -401,8 +406,14 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         }
         for k, v in state_dict['state'].items():
             if k in id_map:
+                # make sure when we copy the original state back, we make sure
+                # that original state is on the correct device
                 param = id_map[k]
-                self.optimizer.state[param] = v
+                like_device_v = {
+                    j: w.to(param.device) if torch.is_tensor(w) else w
+                    for j, w in v.items()
+                }
+                self.optimizer.state[param] = like_device_v
 
     @property
     def loss_scale(self):

@@ -26,7 +26,10 @@ class TestControllableDialogue(unittest.TestCase):
         Check the controllble dialogue data loads.
         """
         train_output, valid_output, _ = testing_utils.display_data(
-            {'task': 'projects.controllable_dialogue.tasks.agents'}
+            {
+                'task': 'projects.controllable_dialogue.tasks.agents',
+                'display_verbose': True,
+            }
         )
 
         # check valid data

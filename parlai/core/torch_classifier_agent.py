@@ -163,20 +163,19 @@ class TorchClassifierAgent(TorchAgent):
                 print('Loading existing model parameters from ' + init_model)
                 self.load(init_model)
             if self.use_cuda:
-                self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
+                else:
+                    self.model.cuda()
                 if self.data_parallel:
                     self.model = torch.nn.DataParallel(self.model)
-                elif self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
                 self.criterion.cuda()
-            if self.use_cuda:
-                if self.opt['data_parallel']:
-                    self.model = torch.nn.DataParallel(self.model)
+
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        else:
+        elif self._should_initialize_optimizer():
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
             self.build_lr_scheduler()

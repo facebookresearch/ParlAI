@@ -52,7 +52,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
 
 
 class Batch(AttrDict):
@@ -825,6 +825,18 @@ class TorchAgent(ABC, Agent):
         """
         raise NotImplementedError('not implemented for this class')
 
+    def _should_initialize_optimizer(self) -> bool:
+        """
+        Used to indicate whether we should initialize an optimizer.
+
+        When this is off, we can save memory and use larger batches.
+        """
+        if self.opt.get('interactive_mode'):
+            return False
+        datatype = self.opt.get('datatype', '')
+        is_train = 'train' in datatype and 'evalmode' not in datatype
+        return is_train or self.opt.get('numthreads', 1) > 1
+
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
         Initialize optimizer with model parameters.
@@ -957,7 +969,7 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
-            except ValueError:
+            except (ValueError, KeyError):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
@@ -1997,6 +2009,11 @@ class TorchAgent(ABC, Agent):
                 'clip',
                 GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
             )
+        else:
+            parameters = self.model.parameters()
+            grad_norm = compute_grad_norm(parameters)
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
+
         if self.fp16:
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)

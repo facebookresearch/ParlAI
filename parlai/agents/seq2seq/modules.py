@@ -15,7 +15,7 @@ from torch.nn.parameter import Parameter
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 import torch.nn.functional as F
 
-from parlai.utils.torch import NEAR_INF
+from parlai.utils.torch import neginf
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 
 
@@ -568,7 +568,7 @@ class OutputLayer(nn.Module):
             scores = F.linear(e, self.weight, self.bias)
 
         if self.padding_idx >= 0:
-            scores[:, :, self.padding_idx] = -NEAR_INF
+            scores[:, :, self.padding_idx] = neginf(scores.dtype)
 
         return scores
 
@@ -692,7 +692,7 @@ class AttentionLayer(nn.Module):
             # calculate activation scores, apply mask if needed
             if attn_mask is not None:
                 # remove activation from NULL symbols
-                attn_w_premask.masked_fill_((~attn_mask), -NEAR_INF)
+                attn_w_premask.masked_fill_((~attn_mask), neginf(attn_w_premask.dtype))
             attn_weights = F.softmax(attn_w_premask, dim=1)
 
         # apply the attention weights to the encoder states

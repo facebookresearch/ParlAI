@@ -122,6 +122,7 @@ class World(object):
             ignore_fields=self.opt.get('display_ignore_fields', ''),
             prettify=self.opt.get('display_prettify', False),
             max_len=self.opt.get('max_display_len', 1000),
+            verbose=self.opt.get('display_verbose', False),
         )
 
     def episode_done(self):
@@ -611,6 +612,20 @@ class MultiWorld(World):
                 weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
+        task_ids = {}
+        # Having overlap in teacher ids will cause issues for metrics aggregation.
+        for each_world in self.worlds:
+            world_id = each_world.getID()
+            if world_id in task_ids:
+                raise AssertionError(
+                    '{} and {} teachers have overlap in id {}.'.format(
+                        task_ids[world_id],
+                        each_world.get_agents()[0].__class__,
+                        world_id,
+                    )
+                )
+            else:
+                task_ids[world_id] = each_world.get_agents()[0]
 
     def num_examples(self):
         """

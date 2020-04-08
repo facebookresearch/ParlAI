@@ -25,7 +25,7 @@ class TestSeq2Seq(unittest.TestCase):
                 model='seq2seq',
                 learningrate=LR,
                 batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS,
+                num_epochs=3,
                 numthreads=1,
                 embeddingsize=16,
                 hiddensize=16,
@@ -34,6 +34,7 @@ class TestSeq2Seq(unittest.TestCase):
                 gradient_clip=1.0,
                 dropout=0.0,
                 lookuptable='all',
+                skip_generation=True,
                 rank_candidates=True,
             )
         )

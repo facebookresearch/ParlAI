@@ -19,7 +19,9 @@ import time
 region_name = 'us-east-1'
 user_name = getpass.getuser()
 
-parent_dir = os.path.dirname(os.path.abspath(__file__))
+core_dir = os.path.join(
+    os.path.split(os.path.dirname(os.path.abspath(__file__)))[0], 'core'
+)
 server_source_directory_name = 'server'
 heroku_server_directory_name = 'heroku_server'
 local_server_directory_name = 'local_server'
@@ -53,15 +55,13 @@ def setup_heroku_server(task_name):
         bit_architecture = 'x86'
 
     # Remove existing heroku client files
-    existing_heroku_directory_names = glob.glob(
-        os.path.join(parent_dir, 'heroku-cli-*')
-    )
+    existing_heroku_directory_names = glob.glob(os.path.join(core_dir, 'heroku-cli-*'))
     if len(existing_heroku_directory_names) == 0:
-        if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
-            os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
+        if os.path.exists(os.path.join(core_dir, 'heroku.tar.gz')):
+            os.remove(os.path.join(core_dir, 'heroku.tar.gz'))
 
         # Get the heroku client and unzip
-        os.chdir(parent_dir)
+        os.chdir(core_dir)
         sh.wget(
             shlex.split(
                 '{}-{}-{}.tar.gz -O heroku.tar.gz'.format(
@@ -71,15 +71,13 @@ def setup_heroku_server(task_name):
         )
         sh.tar(shlex.split('-xvzf heroku.tar.gz'))
 
-    heroku_directory_name = glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
-    heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
+    heroku_directory_name = glob.glob(os.path.join(core_dir, 'heroku-cli-*'))[0]
+    heroku_directory_path = os.path.join(core_dir, heroku_directory_name)
     heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
 
-    server_source_directory_path = os.path.join(
-        parent_dir, server_source_directory_name
-    )
+    server_source_directory_path = os.path.join(core_dir, server_source_directory_name)
     heroku_server_directory_path = os.path.join(
-        parent_dir, '{}_{}'.format(heroku_server_directory_name, task_name)
+        core_dir, '{}_{}'.format(heroku_server_directory_name, task_name)
     )
 
     # Delete old server files
@@ -194,11 +192,11 @@ def setup_heroku_server(task_name):
     subprocess.check_output(
         shlex.split('{} ps:scale web=1'.format(heroku_executable_path))
     )
-    os.chdir(parent_dir)
+    os.chdir(core_dir)
 
     # Clean up heroku files
-    if os.path.exists(os.path.join(parent_dir, 'heroku.tar.gz')):
-        os.remove(os.path.join(parent_dir, 'heroku.tar.gz'))
+    if os.path.exists(os.path.join(core_dir, 'heroku.tar.gz')):
+        os.remove(os.path.join(core_dir, 'heroku.tar.gz'))
 
     sh.rm(shlex.split('-rf {}'.format(heroku_server_directory_path)))
 
@@ -206,8 +204,8 @@ def setup_heroku_server(task_name):
 
 
 def delete_heroku_server(task_name):
-    heroku_directory_name = glob.glob(os.path.join(parent_dir, 'heroku-cli-*'))[0]
-    heroku_directory_path = os.path.join(parent_dir, heroku_directory_name)
+    heroku_directory_name = glob.glob(os.path.join(core_dir, 'heroku-cli-*'))[0]
+    heroku_directory_path = os.path.join(core_dir, heroku_directory_name)
     heroku_executable_path = os.path.join(heroku_directory_path, 'bin', 'heroku')
 
     heroku_user_identifier = netrc.netrc(
@@ -237,11 +235,9 @@ def setup_local_server(task_name):
     global server_process
     print("Local Server: Collecting files...")
 
-    server_source_directory_path = os.path.join(
-        parent_dir, server_source_directory_name
-    )
+    server_source_directory_path = os.path.join(core_dir, server_source_directory_name)
     local_server_directory_path = os.path.join(
-        parent_dir, '{}_{}'.format(local_server_directory_name, task_name)
+        core_dir, '{}_{}'.format(local_server_directory_name, task_name)
     )
 
     # Delete old server files
@@ -277,7 +273,7 @@ def delete_local_server(task_name):
     server_process.wait()
     print('Cleaning temp directory')
     local_server_directory_path = os.path.join(
-        parent_dir, '{}_{}'.format(local_server_directory_name, task_name)
+        core_dir, '{}_{}'.format(local_server_directory_name, task_name)
     )
     sh.rm(shlex.split('-rf ' + local_server_directory_path))
 

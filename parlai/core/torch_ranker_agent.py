@@ -186,12 +186,6 @@ class TorchRankerAgent(TorchAgent):
                     'build_model() and build_criterion() need to return the model '
                     'or criterion'
                 )
-            if self.use_cuda:
-                self.model.cuda()
-                if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
-                self.criterion.cuda()
-
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
             print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
@@ -204,6 +198,15 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
+            if self.use_cuda:
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
+                else:
+                    self.model.cuda()
+                if self.data_parallel:
+                    self.model = torch.nn.DataParallel(self.model)
+                self.criterion.cuda()
+
         self.rank_top_k = opt.get('rank_top_k', -1)
 
         # Vectorize and save fixed/vocab candidates once upfront if applicable
@@ -214,7 +217,7 @@ class TorchRankerAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        elif 'train' in opt.get('datatype', ''):
+        elif self._should_initialize_optimizer():
             # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(

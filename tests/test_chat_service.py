@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-from parlai.chat_service.core.shared_utils import WorldConfig
+from parlai.chat_service.utils.config import WorldConfig
 from parlai.chat_service.services.messenger.agents import MessengerAgent
 from parlai.chat_service.services.messenger.messenger_manager import MessengerManager
 from parlai.core.params import ParlaiParser

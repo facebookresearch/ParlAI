@@ -7,14 +7,14 @@
 Websocket Manager Module Contains implementation of the WebsocketManager which helps run
 ParlAI via websockets.
 """
-
 import json
 import asyncio
 import logging
 from parlai.core.agents import create_agent
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
-import parlai.chat_service.core.shared_utils as shared_utils
+import parlai.chat_service.utils.logging as log_utils
+import parlai.chat_service.utils.misc as utils
 from parlai.chat_service.services.websocket.sockets import MessageSocketHandler
 from agents import WebsocketAgent
 import tornado
@@ -54,7 +54,7 @@ class WebsocketManager(ChatServiceManager):
         self._complete_setup()
 
     def parse_additional_args(self, opt):
-        pass
+        self.should_load_model = self.config['additional_args'].get('load_model', True)
 
     def _complete_setup(self):
         """
@@ -70,8 +70,12 @@ class WebsocketManager(ChatServiceManager):
         """
         Load model if necessary.
         """
-        if 'model_file' in self.opt or 'model' in self.opt:
-            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
+        if 'models' in self.opt and self.should_load_model:
+            model_params = {}
+            for model in self.opt['models']:
+                model_opt = self.opt['models'][model]
+                model_params[model] = create_agent(model_opt).share()
+            self.runner_opt['shared_bot_params'] = model_params
 
     def _handle_message_read(self, event):
         """
@@ -100,7 +104,7 @@ class WebsocketManager(ChatServiceManager):
 
                 needed_agents = self.max_agents_for[world_type]
                 if len(agent_pool) >= needed_agents:
-                    shared_utils.print_and_log(
+                    log_utils.print_and_log(
                         logging.INFO, 'starting pool', should_print=True
                     )
                     # enough agents in pool to start new conversation
@@ -113,16 +117,17 @@ class WebsocketManager(ChatServiceManager):
                     for state in agent_states:
                         agent = self._create_agent(task_id, state.get_id())
                         agent.onboard_data = state.onboard_data
+                        agent.data = state.data
                         state.assign_agent_to_task(agent, task_id)
                         state.set_active_agent(agent)
                         agents.append(agent)
                         # reset wait message state
                         state.stored_data['seen_wait_message'] = False
-                    assign_role_function = shared_utils.get_assign_roles_fn(
+                    assign_role_function = utils.get_assign_roles_fn(
                         self.world_module, self.taskworld_map[world_type]
                     )
                     if assign_role_function is None:
-                        assign_role_function = shared_utils.default_assign_roles_fn
+                        assign_role_function = utils.default_assign_roles_fn
                     assign_role_function(agents)
                     # Allow task creator to filter out workers and run
                     # versions of the task that require fewer agents
@@ -157,7 +162,7 @@ class WebsocketManager(ChatServiceManager):
         self.app = self._make_app()
         self.app.listen(self.port)
         # Must use a tornado callback to run the main loop
-        callback_time = shared_utils.THREAD_MEDIUM_SLEEP * 1000
+        callback_time = utils.THREAD_MEDIUM_SLEEP * 1000
         tornado.ioloop.PeriodicCallback(
             callback=self._manager_loop_fn, callback_time=callback_time
         ).start()
@@ -257,12 +262,12 @@ class WebsocketManager(ChatServiceManager):
             return
         return self.subs[socket_id].write_message(message)
 
-    def restructure_message(self):
+    def restructure_message(self, message):
         """
         This is to restructure a new message to conform to the message structure defined
         in the `chat_service` README.
         """
-        pass
+        return message
 
     def _handle_bot_read(self, agent_id):
         pass
