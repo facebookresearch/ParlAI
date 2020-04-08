@@ -14,9 +14,6 @@ if sys.version_info < (3, 6):
 with open('README.md', encoding="utf8") as f:
     readme = f.read()
 
-with open('LICENSE') as f:
-    license = f.read()
-
 with open('requirements.txt') as f:
     reqs = f.read()
 
@@ -27,8 +24,8 @@ if __name__ == '__main__':
         version='0.1.20200408',
         description='Unified platform for dialogue research.',
         long_description=readme,
+        long_description_content_type='text/markdown',
         url='http://parl.ai/',
-        license=license,
         python_requires='>=3.6',
         packages=find_packages(
             exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal',)
