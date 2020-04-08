@@ -22,22 +22,26 @@ def load_personas(opt):
         data = json.load(json_file)
     contexts = []
     for d in data:
-        p1 = (
-            'your persona: '
-            + d['personas'][0][0]
-            + '\n'
-            + 'your persona: '
-            + d['personas'][0][1]
-            + '\n'
-        )
-        p2 = (
-            'your persona: '
-            + d['personas'][1][0]
-            + '\n'
-            + 'your persona: '
-            + d['personas'][1][1]
-            + '\n'
-        )
+        if opt.get('include_personas', True):
+            p1 = (
+                    'your persona: '
+                    + d['personas'][0][0]
+                    + '\n'
+                    + 'your persona: '
+                    + d['personas'][0][1]
+                    + '\n'
+            )
+            p2 = (
+                    'your persona: '
+                    + d['personas'][1][0]
+                    + '\n'
+                    + 'your persona: '
+                    + d['personas'][1][1]
+                    + '\n'
+            )
+        else:
+            p1 = ''
+            p2 = ''
         if d['context_dataset'] == 'wizard_of_wikipedia':
             p1 += d['additional_context'] + '\n'
             p2 += d['additional_context'] + '\n'
@@ -57,6 +61,12 @@ class InteractiveWorld(DialogPartnerWorld):
             type='bool',
             default=True,
             help='Display your partner persona at the end of the chat',
+        )
+        parser.add_argument(
+            '--include-personas',
+            type='bool',
+            default=True,
+            help='Include personas as input context, or not',
         )
 
     def __init__(self, opt, agents, shared=None):
@@ -114,6 +124,15 @@ class InteractiveWorld(DialogPartnerWorld):
 
 
 class SelfChatWorld(SelfChatBaseWorld):
+    def add_cmdline_args(argparser):
+        parser = argparser.add_argument_group('BST SelfChat World')
+        parser.add_argument(
+            '--include-personas',
+            type='bool',
+            default=True,
+            help='Include personas as input context, or not',
+        )
+
     def init_contexts(self):
         self.contexts_data = load_personas(self.opt)
 
