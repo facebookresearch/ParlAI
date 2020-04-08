@@ -259,20 +259,23 @@ class MacroAverageMetric(Metric):
     AverageMetrics already.
     """
 
-    __slots__ = ('_values',)
+    __slots__ = ('_values', '_names')
 
-    def __init__(self, metrics: List[Metric]) -> None:
+    def __init__(self, metrics: List[Metric], names: List[str]) -> None:
         self._values = metrics
+        self._names = names
 
     def __add__(self, other: Optional['MacroAverageMetric']) -> 'MacroAverageMetric':
         if other is None:
             return self
-        if len(self._values) != len(other._values):
-            raise AssertionError(
-                "MacroAverage keeping track of an uneven number of submetrics. "
-                "There should be exactly one per task."
-            )
-        return MacroAverageMetric([a + b for a, b in zip(self._values, other._values)])
+        output = {}
+        for k, v in zip(self._names, self._values):
+            output[k] = v
+        for k, v in zip(other._names, other._values):
+            output[k] = output.get(k, None) + v
+        names = output.keys()
+        values = [output[k] for k in names]
+        return MacroAverageMetric(values, names)
 
     def value(self) -> float:
         sum_ = sum(v.value() for v in self._values)
@@ -527,9 +530,9 @@ def aggregate_named_reports(
                     # macro average
                     if each_metric not in macro_averages:
                         macro_averages[each_metric] = []
-                    macro_averages[each_metric].append(value)
+                    macro_averages[each_metric].append((value, task_id))
     for key, values in macro_averages.items():
-        m[key] = MacroAverageMetric(values)
+        m[key] = MacroAverageMetric(*zip(*values))
     return m
 
 
