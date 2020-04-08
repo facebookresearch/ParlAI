@@ -24,16 +24,21 @@ with open('requirements.txt') as f:
 if __name__ == '__main__':
     setup(
         name='parlai',
-        version='0.1.0',
+        version='0.1.20200407',
         description='Unified API for accessing dialog datasets.',
         long_description=readme,
         url='http://parl.ai/',
         license=license,
         python_requires='>=3.6',
         packages=find_packages(
-            exclude=('data', 'docs', 'downloads', 'examples', 'logs', 'tests')
+            exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal',)
         ),
         install_requires=reqs.strip().split('\n'),
         include_package_data=True,
         entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
+        classifiers=[
+            "Programming Language :: Python :: 3",
+            "License :: OSI Approved :: MIT License",
+            "Topic :: Scientific/Engineering :: Artificial Intelligence",
+            "Natural Language :: English",
     )
