@@ -75,6 +75,11 @@ def _create_parlai_format(dpath: str):
         print(f'Saving to {save_path}')
         with open(save_path, 'w') as f_write:
             for episode in data:
+                assert (
+                    len(episode['dialog'])
+                    == len(episode['suggestions'])
+                    == len(episode['chosen_suggestions'])
+                )
                 num_entries = len(episode['dialog']) // 2
                 for entry_idx in range(num_entries):
                     line = _get_line(
@@ -88,6 +93,8 @@ def _get_line(episode: dict, num_entries: int, entry_idx: int) -> str:
     Return the line to print in the reformatted file.
     """
     episode_done = entry_idx == num_entries - 1
+
+    # Compile original context
     if entry_idx == 0:
         # Add those pieces of context that appear in the datasets that this one was
         # based on. Specifically:
@@ -114,20 +121,33 @@ def _get_line(episode: dict, num_entries: int, entry_idx: int) -> str:
         )
     else:
         original_context = ''
+
+    # Gather messages and suggestions
     free_turker_message = episode['dialog'][2 * entry_idx][1]
     guided_turker_message = episode['dialog'][2 * entry_idx + 1][1]
+    single_task_suggestions = {
+        task: episode['suggestions'][2 * entry_idx + 1][task]
+        for task in ['convai2', 'empathetic_dialogues', 'wizard_of_wikipedia']
+    }
     guided_turker_chosen_suggestion = episode['chosen_suggestions'][2 * entry_idx + 1]
+
+    # Compile into text string
     parts = {
         'text': original_context + free_turker_message,
         'labels': guided_turker_message,
         'context_dataset': episode['context_dataset'],
         'free_turker_message': free_turker_message,
+        **single_task_suggestions,
         'guided_turker_chosen_suggestion': guided_turker_chosen_suggestion,
     }
     assert all([isinstance(part, str) for part in parts.values()])
     line = '\t'.join([f'{key}:{_escape(value)}' for key, value in parts.items()])
+
+    # Add episode_done
     if episode_done:
         line += '\tepisode_done:True'
+
+    # Add label_candidates
     if 'label_candidates' in episode:
         label_candidates = episode['label_candidates'][entry_idx]
         # Note that episode['dialog'] is indexed by utterance (from either Turker) and
