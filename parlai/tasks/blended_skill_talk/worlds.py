@@ -75,11 +75,11 @@ class InteractiveWorld(InteractiveBaseWorld):
         self.display_partner_persona = self.opt['display_partner_persona']
 
     def init_contexts(self):
-        self.personas_list = load_personas(self.opt)
+        self.contexts_data = load_personas(self.opt)
 
     def get_contexts(self):
         random.seed()
-        p = random.choice(self.personas_list)
+        p = random.choice(self.contexts_data)
         return p[0], p[1]
 
     def finalize_episode(self):
