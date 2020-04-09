@@ -259,26 +259,21 @@ class MacroAverageMetric(Metric):
     AverageMetrics already.
     """
 
-    __slots__ = ('_values', '_names')
+    __slots__ = '_values'
 
-    def __init__(self, metrics: List[Metric], names: List[str]) -> None:
+    def __init__(self, metrics: Dict[str, Metric]) -> None:
         self._values = metrics
-        self._names = names
 
     def __add__(self, other: Optional['MacroAverageMetric']) -> 'MacroAverageMetric':
         if other is None:
             return self
-        output = {}
-        for k, v in zip(self._names, self._values):
-            output[k] = v
-        for k, v in zip(other._names, other._values):
+        output = dict(**self._values)
+        for k, v in other._values.items():
             output[k] = output.get(k, None) + v
-        names = output.keys()
-        values = [output[k] for k in names]
-        return MacroAverageMetric(values, names)
+        return MacroAverageMetric(output)
 
     def value(self) -> float:
-        sum_ = sum(v.value() for v in self._values)
+        sum_ = sum(v.value() for v in self._values.values())
         n = len(self._values)
         return sum_ / n
 
@@ -529,10 +524,10 @@ def aggregate_named_reports(
                 else:
                     # macro average
                     if each_metric not in macro_averages:
-                        macro_averages[each_metric] = []
-                    macro_averages[each_metric].append((value, task_id))
+                        macro_averages[each_metric] = {}
+                    macro_averages[each_metric][task_id] = value
     for key, values in macro_averages.items():
-        m[key] = MacroAverageMetric(*zip(*values))
+        m[key] = MacroAverageMetric(values)
     return m
 
 

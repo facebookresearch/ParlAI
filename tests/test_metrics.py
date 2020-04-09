@@ -108,7 +108,7 @@ class TestMetric(unittest.TestCase):
         m2 = AverageMetric(3, 4)
 
         assert (m1 + m2) == AverageMetric(4, 7)
-        assert MacroAverageMetric([m1, m2], ['a', 'b']) == 0.5 * (1.0 / 3 + 3.0 / 4)
+        assert MacroAverageMetric({'a': m1, 'b': m2}) == 0.5 * (1.0 / 3 + 3.0 / 4)
 
 
 class TestMetrics(unittest.TestCase):
