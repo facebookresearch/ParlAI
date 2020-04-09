@@ -508,7 +508,7 @@ def aggregate_named_reports(
 
     # reporters is a list of teachers or worlds
     m: Dict[str, Metric] = {}
-    macro_averages: Dict[str, List[Metric]] = {}
+    macro_averages: Dict[str, Dict[str, Metric]] = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
             if value.is_global:
