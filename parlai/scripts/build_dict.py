@@ -52,7 +52,7 @@ def setup_args(parser=None, hidden=True):
         hidden=hidden,
     )
     dict_loop.add_argument(
-        '-ltim', '--log-every-n-secs', type=float, default=2, hidden=hidden
+        '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
     partial, _ = parser.parse_known_args(nohelp=True)
     if vars(partial).get('dict_class'):
