@@ -641,15 +641,16 @@ class DialogData(object):
     """
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
-        # self.data is a list of episodes
-        # each episode is a tuple of entries
-        # each entry is a tuple of values for the action/observation table
+        # in case we need to shard the dataset
         self.rank = get_rank()
         self.num_workers = num_workers()
         self.is_distributed_and_is_eval = is_distributed() and any(
             x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
         )
 
+        # self.data is a list of episodes
+        # each episode is a tuple of entries
+        # each entry is a tuple of values for the action/observation table
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
