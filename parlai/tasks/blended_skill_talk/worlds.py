@@ -82,40 +82,6 @@ class InteractiveWorld(InteractiveBaseWorld):
         p = random.choice(self.personas_list)
         return p[0], p[1]
 
-    def parley(self):
-        """
-        Agent 0 goes first.
-
-        Alternate between the two agents.
-        """
-        if self.turn_cnt == 0:
-            self.p1, self.p2 = self.get_contexts()
-
-        acts = self.acts
-        human_agent, model_agent = self.agents
-        if self.turn_cnt == 0:
-            # add the persona on to the first message to human agent
-            act = {}
-            act['text'] = self.p1
-            act['episode_done'] = False
-            act['id'] = 'persona'
-            human_agent.observe(validate(act))
-        act = deepcopy(human_agent.act())
-        if self.turn_cnt == 0:
-            # add the persona on to the first message to model agent
-            act.force_set('text', self.p2 + '\n' + act.get('text', 'hi'))
-            model_agent.observe(validate(act))
-        else:
-            model_agent.observe(validate(act))
-        acts[1] = model_agent.act()
-        human_agent.observe(validate(acts[1]))
-        self.update_counters()
-        self.turn_cnt += 1
-
-        if act['episode_done']:
-            self.finalize_episode()
-            self.turn_cnt = 0
-
     def finalize_episode(self):
         print("\nCHAT DONE.\n")
         if self.display_partner_persona:
