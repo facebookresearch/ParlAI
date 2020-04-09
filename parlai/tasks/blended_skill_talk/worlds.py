@@ -113,16 +113,15 @@ class InteractiveWorld(InteractiveBaseWorld):
         self.turn_cnt += 1
 
         if act['episode_done']:
-            print("\nCHAT DONE.\n")
-            if self.display_partner_persona:
-                partner_persona = self.p2.replace(
-                    'your persona:', 'partner\'s persona:'
-                )
-                print(
-                    f"Your partner was playing the following persona:\n{partner_persona}"
-                )
-            print("[ Preparing new chat ... ]\n")
+            self.finalize_episode()
             self.turn_cnt = 0
+
+    def finalize_episode(self):
+        print("\nCHAT DONE.\n")
+        if self.display_partner_persona:
+            partner_persona = self.p2.replace('your persona:', 'partner\'s persona:')
+            print(f"Your partner was playing the following persona:\n{partner_persona}")
+        print("[ Preparing new chat ... ]\n")
 
 
 class SelfChatWorld(SelfChatBaseWorld):
