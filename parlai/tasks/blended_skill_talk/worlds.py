@@ -7,9 +7,7 @@
 import json
 import random
 import os
-from copy import deepcopy
 
-from parlai.core.worlds import validate
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
