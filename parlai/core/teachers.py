@@ -644,6 +644,11 @@ class DialogData(object):
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = is_distributed() and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
 
         if shared:
             self.image_loader = shared.get('image_loader', None)
@@ -654,12 +659,6 @@ class DialogData(object):
             self.data = []
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
-
-        self.rank = get_rank()
-        self.num_workers = num_workers()
-        self.is_distributed_and_is_eval = is_distributed() and any(
-            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
-        )
 
         self.addedCands = []
         self.copied_cands = False
@@ -756,8 +755,9 @@ class DialogData(object):
             class docstring.
         :param str datafile:
         """
-        for episode in self._read_episode(data_loader(datafile)):
-            self.data.append(episode)
+        for i, episode in enumerate(self._read_episode(data_loader(datafile))):
+            if not self.is_distributed_and_is_eval or i % self.num_workers == self.rank:
+                self.data.append(episode)
 
     def num_episodes(self):
         """
@@ -786,18 +786,9 @@ class DialogData(object):
             which example to return from the episode. Many datasets have only
             single-entry episodes, so this defaults to zero.
         """
+        if episode_idx >= len(self.data):
+            return {'episode_done': True}, True
         next_episode_idx_for_rank = episode_idx + 1
-        if self.is_distributed_and_is_eval:
-            raw_episode_idx = episode_idx
-            episode_idx = raw_episode_idx * self.num_workers + self.rank
-            next_episode_idx_for_rank = episode_idx + self.num_workers
-
-            if episode_idx >= len(self.data):
-                # This can occur in spite of the check below if epoch ends
-                # mid-batch b/c BatchWorld calls act() on all the worlds without
-                # checking if epochDone
-                return {'episode_done': True}, True
-
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
