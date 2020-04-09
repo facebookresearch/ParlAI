@@ -9,7 +9,8 @@ import random
 import os
 from copy import deepcopy
 
-from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.core.worlds import validate
+from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 
@@ -24,20 +25,20 @@ def load_personas(opt):
     for d in data:
         if opt.get('include_personas', True):
             p1 = (
-                    'your persona: '
-                    + d['personas'][0][0]
-                    + '\n'
-                    + 'your persona: '
-                    + d['personas'][0][1]
-                    + '\n'
+                'your persona: '
+                + d['personas'][0][0]
+                + '\n'
+                + 'your persona: '
+                + d['personas'][0][1]
+                + '\n'
             )
             p2 = (
-                    'your persona: '
-                    + d['personas'][1][0]
-                    + '\n'
-                    + 'your persona: '
-                    + d['personas'][1][1]
-                    + '\n'
+                'your persona: '
+                + d['personas'][1][0]
+                + '\n'
+                + 'your persona: '
+                + d['personas'][1][1]
+                + '\n'
             )
         else:
             p1 = ''
@@ -52,7 +53,7 @@ def load_personas(opt):
     return contexts
 
 
-class InteractiveWorld(DialogPartnerWorld):
+class InteractiveWorld(InteractiveBaseWorld):
     @staticmethod
     def add_cmdline_args(argparser):
         parser = argparser.add_argument_group('BST Interactive World')
@@ -71,13 +72,14 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
-        self.contexts = load_personas(self.opt)
         self.display_partner_persona = self.opt['display_partner_persona']
-        self.cnt = 0
 
-    def get_new_personas(self):
+    def init_contexts(self):
+        self.personas_list = load_personas(self.opt)
+
+    def get_contexts(self):
         random.seed()
-        p = random.choice(self.contexts)
+        p = random.choice(self.personas_list)
         return p[0], p[1]
 
     def parley(self):
@@ -86,12 +88,12 @@ class InteractiveWorld(DialogPartnerWorld):
 
         Alternate between the two agents.
         """
-        if self.cnt == 0:
-            self.p1, self.p2 = self.get_new_personas()
+        if self.turn_cnt == 0:
+            self.p1, self.p2 = self.get_contexts()
 
         acts = self.acts
         human_agent, model_agent = self.agents
-        if self.cnt == 0:
+        if self.turn_cnt == 0:
             # add the persona on to the first message to human agent
             act = {}
             act['text'] = self.p1
@@ -99,7 +101,7 @@ class InteractiveWorld(DialogPartnerWorld):
             act['id'] = 'persona'
             human_agent.observe(validate(act))
         act = deepcopy(human_agent.act())
-        if self.cnt == 0:
+        if self.turn_cnt == 0:
             # add the persona on to the first message to model agent
             act.force_set('text', self.p2 + '\n' + act.get('text', 'hi'))
             model_agent.observe(validate(act))
@@ -108,7 +110,7 @@ class InteractiveWorld(DialogPartnerWorld):
         acts[1] = model_agent.act()
         human_agent.observe(validate(acts[1]))
         self.update_counters()
-        self.cnt += 1
+        self.turn_cnt += 1
 
         if act['episode_done']:
             print("\nCHAT DONE.\n")
@@ -120,7 +122,7 @@ class InteractiveWorld(DialogPartnerWorld):
                     f"Your partner was playing the following persona:\n{partner_persona}"
                 )
             print("[ Preparing new chat ... ]\n")
-            self.cnt = 0
+            self.turn_cnt = 0
 
 
 class SelfChatWorld(SelfChatBaseWorld):
