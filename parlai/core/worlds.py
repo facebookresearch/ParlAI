@@ -56,7 +56,7 @@ from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.metrics import aggregate_named_reports
 from parlai.core.opt import Opt
-from parlai.core.teachers import create_task_agent_from_taskname
+from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -612,7 +612,7 @@ class MultiWorld(World):
                 weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
-        task_ids = {}
+        task_ids: Dict[str, Teacher] = {}
         # Having overlap in teacher ids will cause issues for metrics aggregation.
         for each_world in self.worlds:
             world_id = each_world.getID()
@@ -625,7 +625,7 @@ class MultiWorld(World):
                     )
                 )
             else:
-                task_ids[world_id] = each_world.get_agents()[0]
+                task_ids[world_id] = each_world.get_task_agent()
 
     def num_examples(self):
         """
