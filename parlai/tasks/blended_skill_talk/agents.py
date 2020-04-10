@@ -216,6 +216,9 @@ class PersonaTopicifier:
         self.no_persona_is_error = no_persona_is_error
         # Throw an exception if a persona is not found for the input WoW topic
 
+        # Get persona files
+        build(opt)
+
         # this returns map of persona line str to WoW topic
         (
             self.wow_topics_to_persona_strings_map,
