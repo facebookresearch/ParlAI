@@ -132,7 +132,7 @@ task_list = [
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "Fictional conversations extracted from raw movie scripts. "
             "Danescu-Niculescu-Mizil & Lee, '11. Link: "
@@ -262,7 +262,7 @@ task_list = [
         "id": "LIGHT-Dialogue",
         "display_name": "LIGHT-Dialogue",
         "task": "light_dialog",
-        "tags": ["All", "Grounded"],
+        "tags": ["All", "Grounded", "Dodeca"],
         "description": (
             "LIGHT is a text adventure game with actions and dialogue collected."
             "The source data is collected between crowdworkers playing the game."
@@ -531,7 +531,7 @@ task_list = [
         "id": "Ubuntu",
         "display_name": "Ubuntu",
         "task": "ubuntu",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "Dialogs between an Ubuntu user and an expert trying to fix issue, "
             "we use the V2 version, which cleaned the data to some extent. "
@@ -682,7 +682,7 @@ task_list = [
         "id": "ConvAI2",
         "display_name": "ConvAI2",
         "task": "convai2",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A chit-chat dataset based on PersonaChat "
             "(https://arxiv.org/abs/1801.07243) for a NIPS 2018 competition. "
@@ -764,7 +764,7 @@ task_list = [
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No "
             "train/valid/test split was provided so 10k for valid and 10k for "
@@ -951,6 +951,15 @@ task_list = [
         ),
     },
     {
+        "id": "Image_Chat_Generation",
+        "display_name": "Image_Chat_Generation",
+        "task": "image_chat:Generation",
+        "tags": ["All", "Visual", "ChitChat", "Dodeca"],
+        "description": (
+            "Image Chat task to train generative model"
+        ),
+    },
+    {
         "id": "TalkTheWalk",
         "display_name": "Talk the Walk",
         "task": "talkthewalk",
@@ -982,10 +991,19 @@ task_list = [
         ),
     },
     {
+        "id": "Wizard_of_Wikipedia_Generator",
+        "display_name": "Wizard_of_Wikipedia_Generator",
+        "task": "wizard_of_wikipedia:Generator",
+        "tags": ["All", "ChitChat", "Dodeca"],
+        "description": (
+            "Wizard of Wikipedia task to train generative models"
+        ),
+    },
+    {
         "id": "DailyDialog",
         "display_name": "Daily Dialog",
         "task": "dailydialog",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of chitchat dialogues with strong annotations for "
             "topic, emotion and utterance act. This version contains both sides "
@@ -998,7 +1016,7 @@ task_list = [
         "id": "EmpatheticDialogues",
         "display_name": "Empathetic Dialogues",
         "task": "empathetic_dialogues",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of 25k conversations grounded in emotional situations "
             "to facilitate training and evaluating dialogue systems. See "
@@ -1069,7 +1087,7 @@ task_list = [
         "id": "IGC",
         "display_name": "Image Grounded Conversations",
         "task": "igc",
-        "tags": ["All", "Visual", "ChitChat"],
+        "tags": ["All", "Visual", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of (image, context, question, answer) tuples, comprised "
             "of eventful images taken from Bing, Flickr, and COCO. See "
