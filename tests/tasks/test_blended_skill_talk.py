@@ -194,49 +194,18 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
 
 class TestPersonaTopicifierTeachers(unittest.TestCase):
     """
-    Test the outputs of the first example of teachers used for all-in-one training,
-    including those that add ConvAI2 personas and WoW topics to contexts.
+    Test two PersonaTopicifier teachers.
+
+    Check the contents of the first example of two teachers in which ConvAI2 personas
+    and WoW topics are added to contexts. We don't check
+    blended_skill_talk:EDPersonaTopicifier because, the first time that is run, it
+    requires a caching step that takes roughly an hour.
     """
 
     def test_check_examples(self):
 
         # Define all pairs of task strings and examples
-        no_header_normal = [
-            (
-                'empathetic_dialogues',
-                {
-                    'situation': 'I remember going to the fireworks with my best friend. There was a lot of people, but it only felt like us in the world.',
-                    'emotion': 'sentimental',
-                    'text': 'I remember going to see the fireworks with my best friend. It was the first time we ever spent time alone together. Although there was a lot of people, we felt like the only people in the world.',
-                    'labels': [
-                        'Was this a friend you were in love with, or just a best friend?'
-                    ],
-                    'prepend_ctx': None,
-                    'prepend_cand': None,
-                    'deepmoji_ctx': None,
-                    'deepmoji_cand': None,
-                    'episode_done': False,
-                    'label_candidates': [],
-                },
-            ),
-            (
-                'wizard_of_wikipedia',
-                {
-                    'id': 'WizardDialogKnowledgeTeacher',
-                    'text': 'Science fiction',
-                    'labels': [
-                        "I think science fiction is an amazing genre for anything. Future science, technology, time travel, FTL travel, they're all such interesting concepts."
-                    ],
-                    'chosen_topic': 'Science fiction',
-                    'episode_done': False,
-                    'label_candidates': [],
-                    'knowledge': 'Science fiction Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.\nScience fiction Science fiction often explores the potential consequences of scientific and other innovations, and has been called a "literature of ideas".\nScience fiction It usually avoids the supernatural, unlike the related genre of fantasy.\nScience fiction Historically, science-fiction stories have had a grounding in actual science, but now this is only expected of hard science fiction.\nScience fiction Science fiction is difficult to define, as it includes a wide range of subgenres and themes.\nScience fiction Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories" magazine, wrote: "By \'scientifiction\' I mean the Jules Verne, H. G. Wells and Edgar Allan Poe type of story—a charming romance intermingled with scientific fact and prophetic vision... Not only do these amazing tales make tremendously interesting reading—they are always instructive.\nScience fiction They supply knowledge... in a very palatable form... New adventures pictured for us in the scientifiction of today are not at all impossible of realization tomorrow...\n',
-                    'title': 'Science fiction',
-                    'checked_sentence': 'Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.',
-                },
-            ),
-        ]
-        persona_and_topic_normal = [
+        tasks_and_messages = [
             (
                 "blended_skill_talk:ConvAI2PersonaTopicifier",
                 {
@@ -271,23 +240,6 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 },
             ),
             (
-                "blended_skill_talk:EDPersonaTopicifier",
-                {
-                    'situation': 'I remember going to the fireworks with my best friend. There was a lot of people, but it only felt like us in the world.',
-                    'emotion': 'sentimental',
-                    'text': 'your persona: people hate that i obsess about the poor.\nyour persona: i like to make cellphone apps that would help heal our world.\nyour persona: i like to watch people pray together.\nyour persona: people don t like me too much but i like them anyways.\nAndroid (operating system)#Applications\nI remember going to see the fireworks with my best friend. It was the first time we ever spent time alone together. Although there was a lot of people, we felt like the only people in the world.',
-                    'labels': [
-                        'Was this a friend you were in love with, or just a best friend?'
-                    ],
-                    'prepend_ctx': None,
-                    'prepend_cand': None,
-                    'deepmoji_ctx': None,
-                    'deepmoji_cand': None,
-                    'episode_done': False,
-                    'label_candidates': [],
-                },
-            ),
-            (
                 "blended_skill_talk:WoWPersonaTopicifier",
                 {
                     'id': 'WizardDialogKnowledgeTeacher',
@@ -304,9 +256,7 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 },
             ),
         ]
-        all_tasks_and_messages = no_header_normal + persona_and_topic_normal
-
-        for task_string, desired_message in all_tasks_and_messages:
+        for task_string, desired_message in tasks_and_messages:
 
             # Get message
             kwargs = {'task': task_string, 'datatype': 'train:ordered'}
