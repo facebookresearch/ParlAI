@@ -11,7 +11,7 @@ Conversation is between a "free" Amazon Mechanical Turk worker who can speak fre
 - `[convai2]`, `[empathetic_dialogues]`, and `[wizard_of_wikipedia]`: The suggestions given to the guided worker by the three models that were trained on one single task each
 - `[guided_chosen_suggestion]`: If not blank, specifies the dataset (convai2, empathetic_dialogues, or wizard_of_wikipedia) that the suggestion chosen by the guided worker came from
 
-# ConvAI2PersonaTopicifierTeacher, EDPersonaTopicifierTeacher, WoWPersonaTopicifierTeacher
+## ConvAI2PersonaTopicifierTeacher, EDPersonaTopicifierTeacher, WoWPersonaTopicifierTeacher
 Versions of teachers for the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia datasets in which ConvAI2-style persona strings and Wizard-of-Wikipedia-style topic strings have been added to the start of all contexts.
 
 Tags: #BlendedSkillTalk, #All, #ChitChat
