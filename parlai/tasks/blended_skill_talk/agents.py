@@ -336,7 +336,6 @@ class PersonaTopicifier:
         # Should be used for entry_idx == 0 only (for all first
         # utterances only)
 
-        # Doesn't work b/c Wizard sometimes sends only the topic
         # has_neither = 'persona:' not in text and '\n' not in text
         # has_wow_topic_only = 'persona:' not in text and '\n' in text
         # has_persona_only = 'persona:' in text
