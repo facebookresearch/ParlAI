@@ -303,7 +303,7 @@ class PersonaTopicifier:
             raise ValueError(f'ERROR: Found no persona for topic: {topic}.')
         else:
             warn_once(
-                f'Found no persona for topic: {topic}. Returning first ' f'persona.'
+                f'Found no persona for topic: {topic}. Returning first persona.'
             )
             return self.personas[0]
 
@@ -312,11 +312,9 @@ class PersonaTopicifier:
         for p in persona_lines:
             p_str = p.replace('your persona:', '')
             p_str = p_str.strip()
-            # print(f'Looking for \"{p_str}\" in wow topics map.')
             if p_str in self.persona_strings_to_wow_topics_map:
                 topics = self.persona_strings_to_wow_topics_map[p_str]
                 topic = topics[0] + '\n'
-                # print(f'Found topic: {topic} for persona: \"{persona}\"')
                 return topic
 
         for utt, topics in self.persona_strings_to_wow_topics_map.items():
@@ -324,7 +322,6 @@ class PersonaTopicifier:
             utt_words_long = [utt for utt in utt_words if len(utt) > 6]
             for long_utt in utt_words_long:
                 if long_utt in persona:
-                    # print(f'Returning topic: {topics[0]} for \"{persona}\" after exact match not found.')
                     return topics[0] + '\n'
         warn_once(
             f'Found no WoW topic for persona: \"{persona}\". Returning topics[0]: {topics[0]}'
