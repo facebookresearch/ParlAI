@@ -123,22 +123,22 @@ def _get_line(episode: dict, num_entries: int, entry_idx: int) -> str:
         original_context = ''
 
     # Gather messages and suggestions
-    free_turker_message = episode['dialog'][2 * entry_idx][1]
+    free_message = episode['dialog'][2 * entry_idx][1]
     guided_turker_message = episode['dialog'][2 * entry_idx + 1][1]
     single_task_suggestions = {
         task: episode['suggestions'][2 * entry_idx + 1][task]
         for task in ['convai2', 'empathetic_dialogues', 'wizard_of_wikipedia']
     }
-    guided_turker_chosen_suggestion = episode['chosen_suggestions'][2 * entry_idx + 1]
+    guided_chosen_suggestion = episode['chosen_suggestions'][2 * entry_idx + 1]
 
     # Compile into text string
     parts = {
-        'text': original_context + free_turker_message,
+        'text': original_context + free_message,
         'labels': guided_turker_message,
         'context_dataset': episode['context_dataset'],
-        'free_turker_message': free_turker_message,
+        'free_message': free_message,
         **single_task_suggestions,
-        'guided_turker_chosen_suggestion': guided_turker_chosen_suggestion,
+        'guided_chosen_suggestion': guided_chosen_suggestion,
     }
     assert all([isinstance(part, str) for part in parts.values()])
     line = '\t'.join([f'{key}:{_escape(value)}' for key, value in parts.items()])

@@ -75,8 +75,8 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                         "Awesome. Me and my partner just bought a house. I can't wait to cook in my kitchen."
                     ],
                     'context_dataset': 'wizard_of_wikipedia',
-                    'free_turker_message': 'Oh really!? That is interesting. I am actually italian myself.',
-                    'guided_turker_chosen_suggestion': ' ',
+                    'free_message': 'Oh really!? That is interesting. I am actually italian myself.',
+                    'guided_chosen_suggestion': ' ',
                     'episode_done': False,
                 },
             )
@@ -104,8 +104,8 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                             'I like to think so. I love to make coffee for an after dinner treat too.'
                         ],
                         'context_dataset': 'wizard_of_wikipedia',
-                        'free_turker_message': 'Moving in a new place can be a lot of fun. Are you a good cook?',
-                        'guided_turker_chosen_suggestion': ' ',
+                        'free_message': 'Moving in a new place can be a lot of fun. Are you a good cook?',
+                        'guided_chosen_suggestion': ' ',
                         'episode_done': False,
                     },
                 ),
@@ -117,8 +117,8 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                             "I have never done that.  Not really the physical activity type, but I'd be willing to give it a try, I guess"
                         ],
                         'context_dataset': 'empathetic_dialogues',
-                        'free_turker_message': 'I like to go mountain biking with my friends.',
-                        'guided_turker_chosen_suggestion': '',
+                        'free_message': 'I like to go mountain biking with my friends.',
+                        'guided_chosen_suggestion': '',
                         'label_candidates': [
                             'i work as a vet so no days off over here!',
                             'I love the book 1984',
@@ -232,8 +232,8 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                             'No, not at the moment.  I have 3 girls and they are enough trouble! LOL'
                         ],
                         'context_dataset': 'empathetic_dialogues',
-                        'free_turker_message': "He eats insects, leaves and sun flower seeds. It's easy. They don't need walking and cleanup is simple. Do you have any pets?",
-                        'guided_turker_chosen_suggestion': '',
+                        'free_message': "He eats insects, leaves and sun flower seeds. It's easy. They don't need walking and cleanup is simple. Do you have any pets?",
+                        'guided_chosen_suggestion': '',
                         'label_candidates': [
                             "Wow, engineering, sounds impressive.  I'm sure the income will be awesome.",
                             'Do you own lots of things related to The Beatles?',
