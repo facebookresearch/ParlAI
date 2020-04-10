@@ -134,7 +134,8 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
             or self.opt.get('prepend', -1) > 0
         ):
             raise NotImplementedError(
-                'Using deepmoji or fasttextloc not supported with this teacher.'
+                'Using deepmoji, fasttextloc, or prepend not supported with this '
+                'teacher.'
             )
 
         # Running over all examples is really slow because the process of finding a WoW
@@ -243,8 +244,6 @@ class PersonaTopicifier:
             for line in f:
                 match = re.fullmatch(r'([^[]+): (\[.+\])\n', line)
                 topic = match.group(1)
-                # if topic not in self.wow_topics_to_episode_idxes:
-                #     continue
                 persona_strings = eval(match.group(2))
                 assert isinstance(persona_strings, list)
                 topics_to_persona_strings[topic] = persona_strings
@@ -258,7 +257,7 @@ class PersonaTopicifier:
 
     def __calculate_word_overlap(self, a, b):
         """
-        Super stupid way of calculating.
+        Very rudimentary way to calculate word overlap.
         """
         score = 0
         tokens_a = a.split(' ')
@@ -380,5 +379,4 @@ class PersonaTopicifier:
             raise Exception(f'Unknown structure of utterance: {text}')
 
         modified_utterance = persona + topic + utt
-        # print(f'Text was: \"{text}\", now is: \"{modified_utterance}\"')
         return modified_utterance
