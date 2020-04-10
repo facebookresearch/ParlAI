@@ -6,12 +6,6 @@
 Images and Dialogues from Image-Chat dataset.
 
 202k images, 401k utterances, over 215 different personalities.
-
-An example is given as follows:
-    obs = {'text': <personality>,
-           'image': <image features if specified else image>,
-           'label': <comment/response>,
-          }
 """
 import json
 import os
@@ -65,7 +59,7 @@ class ImageChatTeacher(FixedDialogTeacher):
         self.opt = opt
         self.image_mode = opt.get('image_mode', 'no_image_model')
         self.data_path, personalities_data_path, self.image_path = _path(opt)
-        self.datatype = opt.get('datatype').split(':')[0]
+        self.datatype = opt['datatype'].split(':')[0]
         self.include_personality = opt.get('include_personality')
         self.include_image = opt.get('include_image') and opt.get('load_images')
         self.num_cands = opt.get('num_cands')
@@ -104,7 +98,7 @@ class ImageChatTeacher(FixedDialogTeacher):
             '--load-images',
             type='bool',
             default=True,
-            help='Specify whether to load images'
+            help='Specify whether to load images',
         )
         agent.add_argument(
             '--num-cands',
@@ -137,7 +131,7 @@ class ImageChatTeacher(FixedDialogTeacher):
     def num_examples(self) -> int:
         return sum(len(d['dialog']) for d in self.data)
 
-    def submit_load_request(self, image_id: str):
+    def submit_load_request(self, image_id: str):  # type: ignore
         img_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
         self.data_loader.request_load(
             self.receive_data, self.image_loader.load, (img_path,)
@@ -160,10 +154,13 @@ class ImageChatTeacher(FixedDialogTeacher):
 
         return action
 
-    def next_example(self) -> Message:
+    def next_example(self) -> Tuple[Message, bool]:
         """
         Returns the next example from this dataset after starting to queue up the next
         example.
+
+        :return (example, epoch done):
+            returns the next example as well as whether the epoch is done.
         """
         ready = None
         load_image = self.image_mode != 'no_image_model' and self.include_image
@@ -174,7 +171,7 @@ class ImageChatTeacher(FixedDialogTeacher):
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
-            ready = (self.example, self.imageEpochDone)
+            ready = (self.example, self.imageEpochDone)  # type: ignore
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
         # if self.image_mode != 'none' and 'image_id' in self.example:
