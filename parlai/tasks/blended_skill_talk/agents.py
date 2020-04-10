@@ -11,6 +11,7 @@ import re
 from collections import defaultdict
 from typing import List, Optional, Dict
 
+from parlai.core.opt import Opt
 from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname
 from parlai.tasks.convai2.agents import DefaultTeacher as Convai2DefaultTeacher
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
@@ -79,7 +80,7 @@ class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
             assert opt['datatype'].endswith(':stream')
             opt['datatype'] = opt['datatype'][:-len(':stream')]
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'],
+            opt=opt,
             should_have_personas=True,
             should_have_topics=False,
         )
@@ -100,7 +101,7 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'],
+            opt=opt,
             should_have_personas=False,
             should_have_topics=True,
         )
@@ -121,7 +122,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            datapath=opt['datapath'],
+            opt=opt,
             should_have_personas=False,
             should_have_topics=False,
         )
@@ -202,13 +203,13 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 class PersonaTopicifier:
     def __init__(
         self,
-        datapath: str,
+        opt: Opt,
         should_have_personas: bool = False,
         should_have_topics: bool = False,
         no_persona_is_error: bool = False,
     ):
         print('IN PERSONA TOPICIFIER INIT')
-        self.datapath = datapath
+        self.datapath = opt['datapath']
         self.utterance_to_persona_map = {}
         self.should_have_personas = should_have_personas
         self.should_have_topics = should_have_topics
