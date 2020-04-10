@@ -7,8 +7,9 @@
 import unittest
 
 import parlai.utils.testing as testing_utils
-from parlai.core.opt import Opt
-from parlai.core.teachers import create_task_agent_from_taskname
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.worlds import create_task
+from parlai.scripts.display_data import setup_args
 
 
 class TestBlendedSkillTalkTeacher(unittest.TestCase):
@@ -44,11 +45,17 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                 ({'datatype': 'valid'}, 1009, 5651),
                 ({'datatype': 'test'}, 980, 5482),
             ]
-            for opt, num_episodes, num_examples in opts_episodes_and_examples:
-                full_opt = Opt(
-                    {**opt, 'task': 'blended_skill_talk', 'datapath': data_path}
-                )
-                teacher = create_task_agent_from_taskname(full_opt)[0]
+            for kwargs, num_episodes, num_examples in opts_episodes_and_examples:
+                all_kwargs = {
+                    **kwargs,
+                    'task': 'blended_skill_talk',
+                    'datapath': data_path,
+                }
+                parser = setup_args()
+                parser.set_defaults(all_kwargs)
+                opt = parser.parse_args([])
+                agent = RepeatLabelAgent(opt)
+                teacher = create_task(opt, agent)[0]
                 self.assertEqual(teacher.num_episodes(), num_episodes)
                 self.assertEqual(teacher.num_examples(), num_examples)
 
@@ -73,14 +80,16 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                     'episode_done': False,
                 },
             )
-            full_opt = Opt(
-                {
-                    **train_opt_and_example[0],
-                    'task': 'blended_skill_talk',
-                    'datapath': data_path,
-                }
-            )
-            teacher = create_task_agent_from_taskname(full_opt)[0]
+            all_kwargs = {
+                **train_opt_and_example[0],
+                'task': 'blended_skill_talk',
+                'datapath': data_path,
+            }
+            parser = setup_args()
+            parser.set_defaults(**all_kwargs)
+            opt = parser.parse_args([])
+            agent = RepeatLabelAgent(opt)
+            teacher = create_task(opt, agent)[0]
             self.assertEqual(
                 teacher.get(episode_idx=1, entry_idx=0), train_opt_and_example[1]
             )
@@ -331,12 +340,153 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                     },
                 ),
             ]
-            for opt, example in opts_and_examples:
-                full_opt = Opt(
-                    {**opt, 'task': 'blended_skill_talk', 'datapath': data_path}
-                )
-                teacher = create_task_agent_from_taskname(full_opt)[0]
+            for kwargs, example in opts_and_examples:
+                all_kwargs = {
+                    **kwargs,
+                    'task': 'blended_skill_talk',
+                    'datapath': data_path,
+                }
+                parser = setup_args()
+                parser.set_defaults(**all_kwargs)
+                opt = parser.parse_args([])
+                agent = RepeatLabelAgent(opt)
+                teacher = create_task(opt, agent)[0]
                 self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
+
+
+class TestPersonaTopicifierTeachers(unittest.TestCase):
+    """
+    Test the outputs of the first example of teachers used for all-in-one training,
+    including those that add ConvAI2 personas and WoW topics to contexts.
+    """
+
+    def test_check_examples(self):
+
+        # Define all pairs of task strings and examples
+        no_header_normal = [
+            (
+                'empathetic_dialogues',
+                {
+                    'situation': 'I remember going to the fireworks with my best friend. There was a lot of people, but it only felt like us in the world.',
+                    'emotion': 'sentimental',
+                    'text': 'I remember going to see the fireworks with my best friend. It was the first time we ever spent time alone together. Although there was a lot of people, we felt like the only people in the world.',
+                    'labels': [
+                        'Was this a friend you were in love with, or just a best friend?'
+                    ],
+                    'prepend_ctx': None,
+                    'prepend_cand': None,
+                    'deepmoji_ctx': None,
+                    'deepmoji_cand': None,
+                    'episode_done': False,
+                    'label_candidates': [],
+                },
+            ),
+            (
+                'wizard_of_wikipedia',
+                {
+                    'id': 'WizardDialogKnowledgeTeacher',
+                    'text': 'Science fiction',
+                    'labels': [
+                        "I think science fiction is an amazing genre for anything. Future science, technology, time travel, FTL travel, they're all such interesting concepts."
+                    ],
+                    'chosen_topic': 'Science fiction',
+                    'episode_done': False,
+                    'label_candidates': [],
+                    'knowledge': 'Science fiction Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.\nScience fiction Science fiction often explores the potential consequences of scientific and other innovations, and has been called a "literature of ideas".\nScience fiction It usually avoids the supernatural, unlike the related genre of fantasy.\nScience fiction Historically, science-fiction stories have had a grounding in actual science, but now this is only expected of hard science fiction.\nScience fiction Science fiction is difficult to define, as it includes a wide range of subgenres and themes.\nScience fiction Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories" magazine, wrote: "By \'scientifiction\' I mean the Jules Verne, H. G. Wells and Edgar Allan Poe type of story—a charming romance intermingled with scientific fact and prophetic vision... Not only do these amazing tales make tremendously interesting reading—they are always instructive.\nScience fiction They supply knowledge... in a very palatable form... New adventures pictured for us in the scientifiction of today are not at all impossible of realization tomorrow...\n',
+                    'title': 'Science fiction',
+                    'checked_sentence': 'Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.',
+                },
+            ),
+        ]
+        persona_and_topic_normal = [
+            (
+                "blended_skill_talk:ConvAI2PersonaTopicifier",
+                {
+                    'text': "your persona: i like to remodel homes.\nyour persona: i like to go hunting.\nyour persona: i like to shoot a bow.\nyour persona: my favorite holiday is halloween.\nNicholas Sparks\nhi , how are you doing ? i'm getting ready to do some cheetah chasing to stay in shape .",
+                    'labels': (
+                        'you must be very fast . hunting is one of my favorite hobbies .',
+                    ),
+                    'reward': 0,
+                    'label_candidates': (
+                        'my mom was single with 3 boys , so we never left the projects .',
+                        'i try to wear all black every day . it makes me feel comfortable .',
+                        'well nursing stresses you out so i wish luck with sister',
+                        'yeah just want to pick up nba nfl getting old',
+                        'i really like celine dion . what about you ?',
+                        'no . i live near farms .',
+                        "i wish i had a daughter , i'm a boy mom . they're beautiful boys though still lucky",
+                        'yeah when i get bored i play gone with the wind my favorite movie .',
+                        "hi how are you ? i'm eatingdinner with my hubby and 2 kids .",
+                        'were you married to your high school sweetheart ? i was .',
+                        'that is great to hear ! are you a competitive rider ?',
+                        "hi , i'm doing ok . i'm abanker . how about you ?",
+                        "i'm 5 years old",
+                        'hi there . how are you today ?',
+                        'i totally understand how stressful that can be .',
+                        'yeah sometimes you do not know what you are actually watching',
+                        'mother taught me to cook ! we are looking for an exterminator .',
+                        'i enjoy romantic movie . what is your favorite season ? mine is summer .',
+                        'editing photos takesa lot of work .',
+                        'you must be very fast . hunting is one of my favorite hobbies .',
+                    ),
+                    'episode_done': False,
+                },
+            ),
+            (
+                "blended_skill_talk:EDPersonaTopicifier",
+                {
+                    'situation': 'I remember going to the fireworks with my best friend. There was a lot of people, but it only felt like us in the world.',
+                    'emotion': 'sentimental',
+                    'text': 'your persona: people hate that i obsess about the poor.\nyour persona: i like to make cellphone apps that would help heal our world.\nyour persona: i like to watch people pray together.\nyour persona: people don t like me too much but i like them anyways.\nAndroid (operating system)#Applications\nI remember going to see the fireworks with my best friend. It was the first time we ever spent time alone together. Although there was a lot of people, we felt like the only people in the world.',
+                    'labels': [
+                        'Was this a friend you were in love with, or just a best friend?'
+                    ],
+                    'prepend_ctx': None,
+                    'prepend_cand': None,
+                    'deepmoji_ctx': None,
+                    'deepmoji_cand': None,
+                    'episode_done': False,
+                    'label_candidates': [],
+                },
+            ),
+            (
+                "blended_skill_talk:WoWPersonaTopicifier",
+                {
+                    'id': 'WizardDialogKnowledgeTeacher',
+                    'text': "your persona: not a day goes by that i don't drink four mountain dews.\nyour persona: i enjoy movies about aliens invading the earth.\nyour persona: my favorite hobby is chess.\nyour persona: i just dyed my hair hot pink with purple highlights.\nScience fiction\n",
+                    'labels': [
+                        "I think science fiction is an amazing genre for anything. Future science, technology, time travel, FTL travel, they're all such interesting concepts."
+                    ],
+                    'chosen_topic': 'Science fiction',
+                    'episode_done': False,
+                    'label_candidates': [],
+                    'knowledge': 'Science fiction Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.\nScience fiction Science fiction often explores the potential consequences of scientific and other innovations, and has been called a "literature of ideas".\nScience fiction It usually avoids the supernatural, unlike the related genre of fantasy.\nScience fiction Historically, science-fiction stories have had a grounding in actual science, but now this is only expected of hard science fiction.\nScience fiction Science fiction is difficult to define, as it includes a wide range of subgenres and themes.\nScience fiction Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories" magazine, wrote: "By \'scientifiction\' I mean the Jules Verne, H. G. Wells and Edgar Allan Poe type of story—a charming romance intermingled with scientific fact and prophetic vision... Not only do these amazing tales make tremendously interesting reading—they are always instructive.\nScience fiction They supply knowledge... in a very palatable form... New adventures pictured for us in the scientifiction of today are not at all impossible of realization tomorrow...\n',
+                    'title': 'Science fiction',
+                    'checked_sentence': 'Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.',
+                },
+            ),
+        ]
+        all_tasks_and_messages = no_header_normal + persona_and_topic_normal
+
+        for task_string, desired_message in all_tasks_and_messages:
+
+            # Get message
+            parser = setup_args()
+            parser.set_defaults({'task': task_string, 'datatype': 'train:ordered'})
+            opt = parser.parse_args([])
+            agent = RepeatLabelAgent(opt)
+            teacher = create_task(opt, agent)[0]
+            # We use this function because that's what's called in train_model.py
+            actual_message = teacher.get(episode_idx=0, entry_idx=0)
+
+            print(f'\nChecking {task_string}:')
+            for key in desired_message.keys():
+                if key in ['label_candidates']:
+                    # These are often created randomly and thus will vary
+                    continue
+                print(key)
+                self.assertEqual(desired_message[key], actual_message[key])
+            print('')
 
 
 if __name__ == '__main__':
