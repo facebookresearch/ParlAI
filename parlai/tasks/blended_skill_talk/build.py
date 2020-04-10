@@ -124,7 +124,7 @@ def _get_line(episode: dict, num_entries: int, entry_idx: int) -> str:
 
     # Gather messages and suggestions
     free_message = episode['dialog'][2 * entry_idx][1]
-    guided_turker_message = episode['dialog'][2 * entry_idx + 1][1]
+    guided_message = episode['dialog'][2 * entry_idx + 1][1]
     single_task_suggestions = {
         task: episode['suggestions'][2 * entry_idx + 1][task]
         for task in ['convai2', 'empathetic_dialogues', 'wizard_of_wikipedia']
@@ -134,7 +134,7 @@ def _get_line(episode: dict, num_entries: int, entry_idx: int) -> str:
     # Compile into text string
     parts = {
         'text': original_context + free_message,
-        'labels': guided_turker_message,
+        'labels': guided_message,
         'context_dataset': episode['context_dataset'],
         'free_message': free_message,
         **single_task_suggestions,
