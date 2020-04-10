@@ -52,10 +52,10 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                     'datapath': data_path,
                 }
                 parser = setup_args()
-                parser.set_defaults(all_kwargs)
+                parser.set_defaults(**all_kwargs)
                 opt = parser.parse_args([])
                 agent = RepeatLabelAgent(opt)
-                teacher = create_task(opt, agent)[0]
+                teacher = create_task(opt, agent).get_task_agent()
                 self.assertEqual(teacher.num_episodes(), num_episodes)
                 self.assertEqual(teacher.num_examples(), num_examples)
 
@@ -89,7 +89,7 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
             parser.set_defaults(**all_kwargs)
             opt = parser.parse_args([])
             agent = RepeatLabelAgent(opt)
-            teacher = create_task(opt, agent)[0]
+            teacher = create_task(opt, agent).get_task_agent()
             self.assertEqual(
                 teacher.get(episode_idx=1, entry_idx=0), train_opt_and_example[1]
             )
@@ -350,7 +350,7 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
                 parser.set_defaults(**all_kwargs)
                 opt = parser.parse_args([])
                 agent = RepeatLabelAgent(opt)
-                teacher = create_task(opt, agent)[0]
+                teacher = create_task(opt, agent).get_task_agent()
                 self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
 
 
@@ -471,12 +471,12 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
         for task_string, desired_message in all_tasks_and_messages:
 
             # Get message
+            kwargs = {'task': task_string, 'datatype': 'train:ordered'}
             parser = setup_args()
-            parser.set_defaults({'task': task_string, 'datatype': 'train:ordered'})
+            parser.set_defaults(**kwargs)
             opt = parser.parse_args([])
             agent = RepeatLabelAgent(opt)
-            teacher = create_task(opt, agent)[0]
-            # We use this function because that's what's called in train_model.py
+            teacher = create_task(opt, agent).get_task_agent()
             actual_message = teacher.get(episode_idx=0, entry_idx=0)
 
             print(f'\nChecking {task_string}:')
