@@ -50,8 +50,8 @@ PUNCTUATION_LST = [
 
 def get_finegrained_count(text, gender_dct):
     """
-    Count the number of female, male, and neutral gendered
-    words in a string, given the gender dict.
+    Count the number of female, male, and neutral gendered words in a string, given the
+    gender dict.
     """
     text = text.lower()
     f_count = 0
@@ -115,8 +115,8 @@ def flatten(episode, context_length, include_labels=True, delimiter='\n'):
     """
     Flatten the data into single example episodes.
 
-    This is used to make conditional training easier and for a fair comparison
-    of methods.
+    This is used to make conditional training easier and for a fair comparison of
+    methods.
     """
     context = deque(maxlen=context_length if context_length > 0 else None)
     new_episode = []
@@ -142,8 +142,8 @@ def flatten(episode, context_length, include_labels=True, delimiter='\n'):
 ##############################################################
 class LightGenderTeacher(FixedDialogTeacher):
     """
-    ALL LIGHT Teacher: combines all gender bias mitigation methods
-    described in <https://arxiv.org/abs/1911.03842>.
+    ALL LIGHT Teacher: combines all gender bias mitigation methods described in
+    <https://arxiv.org/abs/1911.03842>.
 
     This teacher combines methods for gender bias mitigation in
     dialogue generation on the LIGHT dialogue task, including:
@@ -204,9 +204,7 @@ class LightGenderTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         self.opt = opt
-        self.gender_dict = read_gender_tsv(
-            os.path.join(_path(opt), GENDERED_LIST)
-        )
+        self.gender_dict = read_gender_tsv(os.path.join(_path(opt), GENDERED_LIST))
         self.fixed_random = random.Random(42)
 
         self.add_conditional = opt['add_conditional']
@@ -238,8 +236,8 @@ class LightGenderTeacher(FixedDialogTeacher):
         """
         Get the bin or "bucket" that a string falls into.
 
-        The bucket is determined based on the presence of
-        male or femael gendered words in the text.
+        The bucket is determined based on the presence of male or femael gendered words
+        in the text.
         """
         text = format_text(text)
         # we're bucketing based on the number of gendered words
@@ -262,8 +260,7 @@ class LightGenderTeacher(FixedDialogTeacher):
 
     def _flip_ex(self, ex):
         """
-        Return the counterfactual example for a given
-        example (i.e. swap 'he' --> 'she')
+        Return the counterfactual example for a given example (i.e. swap 'he' --> 'she')
         """
 
         def flip_str(txt_lines):
