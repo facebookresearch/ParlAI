@@ -64,6 +64,17 @@ task_list = [
         ),
     },
     {
+        "id": "BlendedSkillTalk",
+        "display_name": "Blended Skill Talk",
+        "task": "blended_skill_talk",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of 7k conversations explicitly designed to exhibit multiple "
+            "conversation modes: displaying personality, having empathy, and "
+            "demonstrating knowledge."
+        ),
+    },
+    {
         "id": "BookTest",
         "display_name": "BookTest",
         "task": "booktest",
