@@ -78,11 +78,9 @@ class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
             # alteration, but this teacher must append a WoW topic string to the context
             # of the first example of each episode.
             assert opt['datatype'].endswith(':stream')
-            opt['datatype'] = opt['datatype'][:-len(':stream')]
+            opt['datatype'] = opt['datatype'][: -len(':stream')]
         self.persona_topicifier = PersonaTopicifier(
-            opt=opt,
-            should_have_personas=True,
-            should_have_topics=False,
+            opt=opt, should_have_personas=True, should_have_topics=False
         )
         super().__init__(opt, shared=shared)
 
@@ -101,9 +99,7 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            opt=opt,
-            should_have_personas=False,
-            should_have_topics=True,
+            opt=opt, should_have_personas=False, should_have_topics=True
         )
         super().__init__(opt, shared=shared)
 
@@ -122,9 +118,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
-            opt=opt,
-            should_have_personas=False,
-            should_have_topics=False,
+            opt=opt, should_have_personas=False, should_have_topics=False
         )
         super().__init__(opt, shared=shared)
 
@@ -302,9 +296,7 @@ class PersonaTopicifier:
         if self.no_persona_is_error:
             raise ValueError(f'ERROR: Found no persona for topic: {topic}.')
         else:
-            warn_once(
-                f'Found no persona for topic: {topic}. Returning first persona.'
-            )
+            warn_once(f'Found no persona for topic: {topic}. Returning first persona.')
             return self.personas[0]
 
     def __choose_topic(self, persona):
