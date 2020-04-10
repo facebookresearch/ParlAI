@@ -70,6 +70,7 @@ class ImageChatTeacher(FixedDialogTeacher):
         else:
             self.image_loader = ImageLoader(opt)
             self._setup_data(self.data_path, personalities_data_path)
+        self.num_exs = sum(len(d['dialog']) for d in self.data)
         self.reset()
 
     @staticmethod
@@ -129,7 +130,7 @@ class ImageChatTeacher(FixedDialogTeacher):
         return len(self.data)
 
     def num_examples(self) -> int:
-        return sum(len(d['dialog']) for d in self.data)
+        return self.num_exs
 
     def submit_load_request(self, image_id: str):  # type: ignore
         img_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
@@ -235,9 +236,6 @@ class GenerationTeacher(ImageChatTeacher):
 
     def num_episodes(self) -> int:
         return self.num_eps
-
-    def num_examples(self) -> int:
-        return sum([len(d['dialog']) for d in self.data])
 
     def get(self, episode_idx: int, entry_idx: int = 0):
         entry_idx *= 2
