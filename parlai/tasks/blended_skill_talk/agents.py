@@ -71,6 +71,13 @@ class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        if 'stream' in opt['datatype']:
+            print('Warning: this teacher is not compatible with StreamDialogData!')
+            # StreamDialogData works by reading directly from a text file without any
+            # alteration, but this teacher must append a WoW topic string to the context
+            # of the first example of each episode.
+            assert opt['datatype'].endswith(':stream')
+            opt['datatype'] = opt['datatype'][:-len(':stream')]
         self.persona_topicifier = PersonaTopicifier(
             datapath=opt['datapath'],
             should_have_personas=True,
