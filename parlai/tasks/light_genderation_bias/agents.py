@@ -142,7 +142,8 @@ def flatten(episode, context_length, include_labels=True, delimiter='\n'):
 ##############################################################
 class LightGenderTeacher(FixedDialogTeacher):
     """
-    ALL LIGHT Teacher: combines all gender bias mitigation methods described in
+    ALL LIGHT Teacher: combines all gender bias mitigation methods described in.
+
     <https://arxiv.org/abs/1911.03842>.
 
     This teacher combines methods for gender bias mitigation in
