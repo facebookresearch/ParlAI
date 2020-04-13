@@ -259,43 +259,43 @@ class LightGenderTeacher(FixedDialogTeacher):
         all_bucket = ' '.join([f_bucket, m_bucket])
         return all_bucket
 
+    def _flip_str(self, txt_lines):
+        new_lines = []
+        lines = txt_lines.split('\n')
+        for text in lines:
+            f_text = format_text(text)
+            f_text_lst = f_text.split(' ')
+            new_words = []
+            for word in f_text_lst:
+                if word in self.swap_dct:
+                    if word == 'her':
+                        # silly heuristic: choose him/his 50% of the time
+                        random_choice = random.choice([0, 1])
+                        if random_choice:
+                            new_word = 'his'
+                        else:
+                            new_word = 'him'
+                    else:
+                        new_word = self.swap_dct[word]['word']
+                else:
+                    new_word = word
+                new_words.append(new_word)
+            new_f_text = ' '.join(new_words)
+            uf_text = unformat_text(new_f_text)
+            new_lines.append(uf_text)
+
+        return '\n'.join(new_lines)
+
     def _flip_ex(self, ex):
         """
         Return the counterfactual example for a given example (i.e. swap 'he' --> 'she')
         """
-
-        def flip_str(txt_lines):
-            new_lines = []
-            lines = txt_lines.split('\n')
-            for text in lines:
-                f_text = format_text(text)
-                f_text_lst = f_text.split(' ')
-                new_words = []
-                for word in f_text_lst:
-                    if word in self.swap_dct:
-                        if word == 'her':
-                            # silly heuristic: choose him/his 50% of the time
-                            random_choice = random.choice([0, 1])
-                            if random_choice:
-                                new_word = 'his'
-                            else:
-                                new_word = 'him'
-                        else:
-                            new_word = self.swap_dct[word]['word']
-                    else:
-                        new_word = word
-                    new_words.append(new_word)
-                new_f_text = ' '.join(new_words)
-                uf_text = unformat_text(new_f_text)
-                new_lines.append(uf_text)
-            return '\n'.join(new_lines)
-
         new_ex = deepcopy(ex)
         text = ex['text']
         labels = 'labels' if 'labels' in ex else 'eval_labels'
         label = ex[labels][0]
-        new_ex.force_set('text', flip_str(text))
-        new_ex.force_set(labels, [flip_str(label)])
+        new_ex.force_set('text', self._flip_str(text))
+        new_ex.force_set(labels, [self._flip_str(label)])
         return new_ex
 
     def _get_new_data(self, opt):
