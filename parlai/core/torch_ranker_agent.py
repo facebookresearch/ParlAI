@@ -72,6 +72,15 @@ class TorchRankerAgent(TorchAgent):
             'value as --candidates if no flag is given)',
         )
         agent.add_argument(
+            '-icands',
+            '--interactive-candidates',
+            type=str,
+            default='fixed',
+            choices=['fixed', 'inline', 'vocab'],
+            help='The source of candidates during interactive mode. Since in '
+            'interactive mode, batchsize == 1, we cannot use batch candidates.',
+        )
+        agent.add_argument(
             '--repeat-blocking-heuristic',
             type='bool',
             default=True,
@@ -170,6 +179,7 @@ class TorchRankerAgent(TorchAgent):
         # (e.g., a .dict file)
         init_model, is_finetune = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
+        self._set_candidate_variables(opt)
         super().__init__(opt, shared)
 
         states: Dict[str, Any]
@@ -209,7 +219,7 @@ class TorchRankerAgent(TorchAgent):
 
         self.rank_top_k = opt.get('rank_top_k', -1)
 
-        # Vectorize and save fixed/vocab candidates once upfront if applicable
+        # Set fixed and vocab candidates if applicable
         self.set_fixed_candidates(shared)
         self.set_vocab_candidates(shared)
 
@@ -242,25 +252,55 @@ class TorchRankerAgent(TorchAgent):
         else:
             return torch.nn.CrossEntropyLoss(reduction='none')
 
+    def _set_candidate_variables(self, opt):
+        """
+        Sets candidate variables from opt.
+
+        NOTE: we call this function prior to `super().__init__` so
+        that these variables are set properly during the call to the
+        `set_interactive_mode` function.
+        """
+        # candidate variables
+        self.candidates = opt['candidates']
+        self.eval_candidates = opt['eval_candidates']
+        # options
+        self.fixed_candidates_path = opt['fixed_candidates_path']
+        self.ignore_bad_candidates = opt['ignore_bad_candidates']
+        self.encode_candidate_vecs = opt['encode_candidate_vecs']
+
     def set_interactive_mode(self, mode, shared=False):
+        """
+        Set interactive mode defaults.
+
+        In interactive mode, we set `ignore_bad_candidates` to True.
+        Additionally, we change the `eval_candidates` to the option
+        specified in `--interactive-candidates`, which defaults to False.
+
+        Interactive mode possibly changes the fixed candidates path if it
+        does not exist, automatically creating a candidates file from the
+        specified task.
+        """
         super().set_interactive_mode(mode, shared)
-        self.candidates = self.opt['candidates']
-        self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
-        if mode:
-            self.eval_candidates = 'fixed'
-            self.ignore_bad_candidates = True
-            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+        if not mode:
+            # Not in interactive mode, nothing to do
+            return
+
+        # Override eval_candidates to interactive_candidates
+        self.eval_candidates = self.opt['interactive_candidates']
+        if self.eval_candidates == 'fixed':
+            # Set fixed candidates path if it does not exist
             if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
                 # Attempt to get a standard candidate set for the given task
                 path = self.get_task_candidates_path()
                 if path:
                     if not shared:
-                        print("[setting fixed_candidates path to: " + path + " ]")
+                        print(f' [ Setting fixed_candidates path to: {path} ]')
                     self.fixed_candidates_path = path
-        else:
-            self.eval_candidates = self.opt['eval_candidates']
-            self.ignore_bad_candidates = self.opt.get('ignore_bad_candidates', False)
-            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+
+        # Ignore bad candidates in interactive mode
+        self.ignore_bad_candidates = True
+
+        return
 
     def get_task_candidates_path(self):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
