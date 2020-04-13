@@ -78,7 +78,7 @@ class TorchRankerAgent(TorchAgent):
             default='fixed',
             choices=['fixed', 'inline', 'vocab'],
             help='The source of candidates during interactive mode. Since in '
-            'interactive mode, batchsize == 1, we cannot use batch candidates.'
+            'interactive mode, batchsize == 1, we cannot use batch candidates.',
         )
         agent.add_argument(
             '--repeat-blocking-heuristic',
