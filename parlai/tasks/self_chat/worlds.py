@@ -50,14 +50,14 @@ def load_openers(opt) -> Optional[List[str]]:
 class SelfChatWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
-        self.init_contexts()
+        self.init_contexts(shared=shared)
         self.init_openers()
         self.max_turn_cnt = self.opt.get('selfchat_max_turns', 10)
         self.turn_cnt = 0
         self.episode_cnt = 0
         self._openers = None
 
-    def init_contexts(self) -> None:
+    def init_contexts(self, shared=None) -> None:
         """
         Override to load or instantiate contexts to be used to seed the self chat.
         """

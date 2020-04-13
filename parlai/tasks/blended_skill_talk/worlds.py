@@ -98,7 +98,7 @@ class SelfChatWorld(SelfChatBaseWorld):
             help='Include personas as input context, or not',
         )
 
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         self.contexts_data = load_personas(self.opt)
 
     def get_contexts(self):

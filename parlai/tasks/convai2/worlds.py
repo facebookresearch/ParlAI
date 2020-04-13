@@ -67,7 +67,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         self.display_partner_persona = self.opt['display_partner_persona']
 
     def init_contexts(self, shared=None):
-        self.personas_list = get_personas(opt=self.opt, shared=shared,)
+        self.personas_list = get_personas(opt=self.opt, shared=shared)
 
     def get_contexts(self):
         random.seed()
@@ -89,8 +89,8 @@ class InteractiveWorld(InteractiveBaseWorld):
 
 
 class SelfChatWorld(SelfChatBaseWorld):
-    def init_contexts(self):
-        self.personas_list = get_personas(self.opt)
+    def init_contexts(self, shared=None):
+        self.personas_list = get_personas(self.opt, shared=shared)
 
     def get_contexts(self):
         random.seed()

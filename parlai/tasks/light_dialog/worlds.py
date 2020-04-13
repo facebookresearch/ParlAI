@@ -87,7 +87,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
 
 
 class SelfChatWorld(SelfChatBaseWorld):
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         print('[ loading contexts.. ]')
         data_path = os.path.join(
             self.opt['datapath'], 'light_dialogue', 'light_environment.pkl'
