@@ -16,11 +16,9 @@ from parlai.tasks.convai2.worlds import InteractiveWorld
 
 
 class TestConvAI2InteractiveWorld(unittest.TestCase):
-
     @patch("parlai.tasks.convai2.worlds._load_personas")
     def test_share(
-        self,
-        mock_load_personas,
+        self, mock_load_personas,
     ):
         test_personas = ['your persona:I live on a pirate\'s shoulder']
         with testing_utils.tempdir() as data_path:
@@ -37,10 +35,7 @@ class TestConvAI2InteractiveWorld(unittest.TestCase):
             agent = RepeatLabelAgent(opt)
             agent2 = agent.clone()
             # agent2 = create_agents_from_shared(shared=agent.share())
-            world = InteractiveWorld(
-                opt=opt,
-                agents=[agent, agent2],
-            )
+            world = InteractiveWorld(opt=opt, agents=[agent, agent2],)
             # We should not reload personas on share
             mock_load_personas.return_value = None
             new_world = create_task_from_shared(shared_world=world.share())
