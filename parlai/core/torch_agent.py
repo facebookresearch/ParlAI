@@ -1587,7 +1587,7 @@ class TorchAgent(ABC, Agent):
 
         return batch_reply
 
-    def get_temp_history(self) -> str:
+    def get_temp_history(self, observation) -> str:
         """
         Return a string to temporarily insert into history.
 
@@ -1618,7 +1618,9 @@ class TorchAgent(ABC, Agent):
 
         self.observation = observation
         # update the history using the observation
-        self.history.update_history(observation, temp_history=self.get_temp_history())
+        self.history.update_history(
+            observation, temp_history=self.get_temp_history(observation)
+        )
         return self.vectorize(
             observation,
             self.history,
