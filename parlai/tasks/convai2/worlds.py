@@ -12,9 +12,13 @@ from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseW
 import random
 
 
-def load_personas(opt, shared=None):
+def get_personas(opt, shared=None):
     if shared and 'personas_list' in shared:
         return shared['personas_list']
+    return _load_personas(opt=opt)
+
+
+def _load_personas(opt):
     print('[ loading personas.. ]')
     # Create ConvAI2 data so we can assign personas.
     convai2_opt = opt.copy()
@@ -63,7 +67,10 @@ class InteractiveWorld(InteractiveBaseWorld):
         self.display_partner_persona = self.opt['display_partner_persona']
 
     def init_contexts(self, shared=None):
-        self.personas_list = load_personas(self.opt)
+        self.personas_list = get_personas(
+            opt=self.opt,
+            shared=shared,
+        )
 
     def get_contexts(self):
         random.seed()
@@ -86,7 +93,7 @@ class InteractiveWorld(InteractiveBaseWorld):
 
 class SelfChatWorld(SelfChatBaseWorld):
     def init_contexts(self):
-        self.personas_list = load_personas(self.opt)
+        self.personas_list = get_personas(self.opt)
 
     def get_contexts(self):
         random.seed()

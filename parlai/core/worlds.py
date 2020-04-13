@@ -1638,11 +1638,11 @@ def create_task(opt: Opt, user_agents, default_world=None):
 
 def create_task_from_shared(shared_world):
     """
-    Instantiate an agent from the default `shared` params.
+    Instantiate a world from the `shared` params.
 
-    :param shared_agent:
-        should include an `opt` dictionary and agent `class`, along with
-        whatever other parameters the agent needs to instantiate.
+    :param shared_world:
+        should include an `opt` dictionary and `world_class`, along with
+        whatever other parameters the world needs to instantiate.
     """
     opt = copy.deepcopy(shared_world['opt'])
     w = shared_world['world_class'](opt, agents=None, shared=shared_world)
