@@ -1591,9 +1591,8 @@ class TorchAgent(ABC, Agent):
         """
         Return a string to temporarily insert into history.
 
-        Intentionally overrideable so more complex models can
-        insert temporary history strings, i.e. strings that are
-        removed from the history after a single turn.
+        Intentionally overrideable so more complex models can insert temporary history
+        strings, i.e. strings that are removed from the history after a single turn.
         """
         return None
 
