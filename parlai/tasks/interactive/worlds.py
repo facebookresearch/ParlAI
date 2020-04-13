@@ -20,10 +20,10 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
-        self.init_contexts()
+        self.init_contexts(shared=shared)
         self.turn_cnt = 0
 
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         """
         Override to load or instantiate contexts to be used to seed the chat.
         """

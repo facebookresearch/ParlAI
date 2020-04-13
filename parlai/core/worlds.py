@@ -1634,3 +1634,16 @@ def create_task(opt: Opt, user_agents, default_world=None):
         world = BatchWorld(opt, world)
 
     return world
+
+
+def create_task_from_shared(shared_world):
+    """
+    Instantiate an agent from the default `shared` params.
+
+    :param shared_agent:
+        should include an `opt` dictionary and agent `class`, along with
+        whatever other parameters the agent needs to instantiate.
+    """
+    opt = copy.deepcopy(shared_world['opt'])
+    w = shared_world['world_class'](opt, agents=None, shared=shared_world)
+    return w
