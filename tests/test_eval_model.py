@@ -225,7 +225,7 @@ class TestEvalModel(unittest.TestCase):
                 num_examples=5,
                 display_examples=False,
                 save_world_logs=True,
-                report_filename=save_report
+                report_filename=save_report,
             )
 
             opt = parser.parse_args([], print_args=False)
