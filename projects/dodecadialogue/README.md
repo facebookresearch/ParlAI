@@ -68,7 +68,7 @@ You can also evaluate any of the pre-trained models on their respective tasks.
 To evaluate the `all_tasks_mt` model on all of the provided dodecaDialogue tasks in ParlAI, simply run the following command:
 
 ```bash
-python examples/eval_model.py -mf zoo:dodecadialogue/all_tasks_mt/model -t \#"Dodeca" \
+python examples/eval_model.py -mf zoo:dodecadialogue/all_tasks_mt/model -t "#Dodeca" \
 --prepend-personality True --prepend-gold-knowledge True
 ```
 
@@ -79,7 +79,7 @@ We currently host 10 of the 12 dodecaDialogue tasks in ParlAI, with plans to hos
 To train a pre-trained model on these tasks, simply run the following command:
 
 ```bash
-python examples/train_model.py -t \#"Dodeca" --model image_seq2seq\
+python examples/train_model.py -t "#Dodeca" --model image_seq2seq\
 --prepend-gold-knowledge true --prepend-personality true \
 -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model \
 --dict-file zoo:dodecadialogue/dict/dodeca.dict --dict-tokenizer bpe --dict-lower true \

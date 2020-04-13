@@ -61,21 +61,21 @@ class TestDodecaModel(unittest.TestCase):
         """
         valid, _ = testing_utils.eval_model(WOW_OPTIONS, skip_test=True)
         self.assertAlmostEqual(valid['ppl'], 8.5, places=1)
-        self.assertAlmostEqual(valid['f1'], 0.379, places=3)
+        self.assertAlmostEqual(valid['f1'], 0.379, places=2)
 
     def test_convai2(self):
         """
         Test ConvAI2.
         """
         valid, _ = testing_utils.eval_model(CONVAI2_OPTIONS, skip_test=True)
-        self.assertAlmostEqual(valid['ppl'], 11.2, places=2)
-        self.assertAlmostEqual(valid['f1'], 0.211, places=3)
+        self.assertAlmostEqual(valid['ppl'], 11.2, places=1)
+        self.assertAlmostEqual(valid['f1'], 0.211, places=2)
 
     def test_ed(self):
         """
         Test empathetic_dialogues.
         """
         valid, _ = testing_utils.eval_model(ED_OPTIONS, skip_test=True)
-        self.assertAlmostEqual(valid['ppl'], 11.1, places=2)
-        self.assertAlmostEqual(valid['f1'], 0.197, places=3)
+        self.assertAlmostEqual(valid['ppl'], 11.1, places=1)
+        self.assertAlmostEqual(valid['f1'], 0.197, places=2)
 
