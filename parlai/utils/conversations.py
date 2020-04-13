@@ -318,7 +318,9 @@ class Conversations:
                         if save_keys != 'all':
                             save_keys_lst = save_keys.split(',')
                         else:
-                            save_keys_lst = ex.keys()
+                            save_keys_lst = [
+                                key for key in ex.keys() if key != 'metrics'
+                            ]
                         for key in save_keys_lst:
                             turn[key] = ex.get(key, '')
                         turn['id'] = ex_id
