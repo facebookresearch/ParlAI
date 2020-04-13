@@ -1120,4 +1120,14 @@ task_list = [
             "Task for rephrasing sentences from Wikipedia conditioned on a persona."
         ),
     },
+    {
+        "id": "LIGHTGenderBias",
+        "display_name": "LIGHT Gender Bias",
+        "task": "light_genderation_bias",
+        "tags": ["All"],
+        "description": (
+            "Task for debiasing the LIGHT dataset, all mitigation methods described here: "
+            "<https://arxiv.org/abs/1911.03842>."
+        ),
+    },
 ]
