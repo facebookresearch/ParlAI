@@ -826,6 +826,7 @@ model_list = [
         "path": "zoo:dodecadialogue/eli5_ft/model",
         "agent": "image_seq2seq",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "task": "TBD",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task"
         ),
@@ -889,6 +890,14 @@ model_list = [
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Grounded Conversations task"
         ),
+        "example": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/igc_ft/model -t igc:responseOnly"
+        ),
+        "result": (
+            "[ Finished evaluating tasks ['igc:responseOnly'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss    lr   ppl  token_acc  total_train_updates   tpb\n"
+            "    162    .0726 2.832 1e-06 16.98      .4405                10215 9.852"
+        ),
     },
     {
         "title": "ImageSeq2Seq DodecaDialogue Image Chat FT Model",
@@ -899,6 +908,15 @@ model_list = [
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Chat task"
+        ),
+        "example": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/image_chat_ft/model -t image_chat:generation "
+            "--image-mode no_image_model"
+        ),
+        "result": (
+            "[ Finished evaluating tasks ['image_chat:generation'] using datatype valid ]\n"
+            "     exs  gpu_mem  loss        lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   15000    .2231 4.353 3.125e-07 77.73      .2905               321001 1653"
         ),
     },
     {
@@ -936,6 +954,7 @@ model_list = [
         "path": "zoo:dodecadialogue/reddit_ft/model",
         "agent": "image_seq2seq",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "task": "TBD",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the pushshift.io Reddit task"
         ),
@@ -1056,11 +1075,13 @@ model_list = [
         "path": "zoo:dodecadialogue/base_model/model",
         "agent": "image_seq2seq",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "task": "#Dodeca",
         "description": (
             "Image Seq2Seq base model, from which all DodecaDialogue models were trained"
         ),
         "example": (
             "python examples/train_model.py -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
         ),
+        "result": ("A trained model (logs omitted)"),
     },
 ]
