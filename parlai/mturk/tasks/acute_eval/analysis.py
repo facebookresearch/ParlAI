@@ -46,7 +46,7 @@ def setup_args():
         help='whether the run is a sandbox run or not',
     )
     parser.add_argument(
-        '--outfile', type=str, default=None, help='where to save the results'
+        '--outdir', type=str, default=None, help='where to save the results'
     )
     parser.add_argument(
         '--pairings-filepath',
@@ -89,15 +89,16 @@ class AcuteAnalyzer(object):
         self.ROOT_DIR = os.path.join(opt['datapath'], 'acute_eval')
         self.run_id = opt['run_id']
         self.is_sandbox = opt['is_sandbox']
-        self.outfile = opt['outfile']
+        self.outdir = opt['outdir']
         self.pairings_filepath = opt['pairings_filepath']
-        # Get task for loading pairing files, by default we use q as used in Q function project
-        if not self.outfile:
-            self.outfile = os.path.join(self.ROOT_DIR, f'{self.run_id}-results')
+        if not self.pairings_filepath:
+            self.pairings_filepath = ''
+        if not self.outdir:
+            self.outdir = os.path.join(self.ROOT_DIR, f'{self.run_id}-results')
         if not os.path.exists(self.ROOT_DIR):
             os.mkdir(self.ROOT_DIR)
-        if not os.path.exists(self.outfile):
-            os.mkdir(self.outfile)
+        if not os.path.exists(self.outdir):
+            os.mkdir(self.outdir)
         self.db_path = os.path.join(
             os.path.dirname(parlai_filepath),
             'mturk',
@@ -247,7 +248,7 @@ class AcuteAnalyzer(object):
         Allows for visualization of the conversations turkers rated.
         """
         df = self.dataframe
-        if not os.path.exists(self.pairings_filepath):
+        if not self.pairings_filepath or not os.path.exists(self.pairings_filepath):
             return
         pairings = []
         with open(self.pairings_filepath, 'r') as f:
@@ -527,7 +528,7 @@ class AcuteAnalyzer(object):
         if not hasattr(self, 'signficance_df'):
             self.get_matchup_totals_with_signficance()
         if path is None:
-            path = self.outfile
+            path = self.outdir
 
         def _path(filename):
             return os.path.join(path, f"{self.run_id}.{filename}")

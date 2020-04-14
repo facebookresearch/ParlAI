@@ -125,3 +125,16 @@ Coming soon.
 
 
 ** **
+
+# ACUTE-Eval Analysis
+
+Once you have successfully completed a run of ACUTE-Eval, it's time to analyze your results. We provide a handy script that does everything for you!
+
+To generate a multitude of important analysis files, simply run the following command:
+
+    python parlai/mturk/tasks/acute_eval/analysis.py -id <run_id> --is-sandbox <True/False>
+
+This will generate the following two tables for your perusal:
+
+1. A **winner/loser grid** for each model pairing in the ACUTE run, indicating the win/loss percentage for each model pairing.
+2. A **matchup table**, where each row is a model comparison, and which includes the statistical significance of the wins/losses.
