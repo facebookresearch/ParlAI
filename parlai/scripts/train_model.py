@@ -283,7 +283,6 @@ class TrainLoop:
         self.validate_time = Timer()
         self.log_time = Timer()
         self.save_time = Timer()
-        print('[ training... ]')
         self.parleys = 0
         self.max_num_epochs = (
             opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
@@ -633,6 +632,7 @@ class TrainLoop:
 
         :return: tuple of reports (validation_report, test_report)
         """
+        print('[ training... ]')
         opt = self.opt
         world = self.world
         with world:
