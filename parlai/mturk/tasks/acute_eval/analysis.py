@@ -15,7 +15,7 @@ import os
 import pandas as pd
 import numpy as np
 
-from typing import Dict, Any, List, Optional, Tuple, Hashable
+from typing import Dict, Any, List, Optional, Tuple
 from scipy.stats import binom_test
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
@@ -381,9 +381,7 @@ class AcuteAnalyzer(object):
         """
         matchups = list(self.dataframe.matchup.unique())
 
-        def _render_row(
-            matchup: List[str], row: Tuple[Optional[Hashable], pd.Series]
-        ) -> str:
+        def _render_row(matchup: List[str], row: pd.Series) -> str:
             dialogues = {'winner_dialogue': '', 'loser_dialogue': ''}
             for d_key in dialogues:
                 result = []
@@ -496,9 +494,9 @@ class AcuteAnalyzer(object):
                         'agree': total_agreement,
                     }
                 )
-        output = pd.DataFrame(output)
+        df_output = pd.DataFrame(output)
         # order the columns how we want
-        self.signficance_df = output[
+        self.signficance_df = df_output[
             [
                 'question',
                 'matchup',
