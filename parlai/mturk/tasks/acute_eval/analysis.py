@@ -105,8 +105,8 @@ class AcuteAnalyzer(object):
             f"pmt_{'sb' if opt['is_sandbox'] else ''}data.db",
         )
         self.dataframe = self._extract_to_dataframe()
-        # if remove_failed:
-        #     self._remove_failed_onboarding()
+        if remove_failed:
+            self._remove_failed_onboarding()
         self._extract_model_names()
         self._load_pairings_file()
 
