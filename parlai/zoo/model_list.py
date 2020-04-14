@@ -698,9 +698,7 @@ model_list = [
         "agent": "image_seq2seq",
         "task": "#Dodeca",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
-        "description": (
-            "Image Seq2Seq model trained on all DodecaDialogue tasks"
-        ),
+        "description": ("Image Seq2Seq model trained on all DodecaDialogue tasks"),
         "example": (
             "python examples/interactive.py -mf zoo:dodecadialogue/all_tasks_mt/model "
             "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"

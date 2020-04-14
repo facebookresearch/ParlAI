@@ -14,12 +14,12 @@ WOW_OPTIONS = {
     'model': 'image_seq2seq',
     'model_file': 'zoo:dodecadialogue/wizard_of_wikipedia_ft/model',
     'datatype': 'valid',
-    'batchsize': 32,
+    'batchsize': 16,
     'inference': 'beam',
     'beam_block_ngram': 3,
     'beam_size': 10,
     'beam_min_length': 10,
-    'skip_generation': False
+    'skip_generation': False,
 }
 
 CONVAI2_OPTIONS = {
@@ -27,12 +27,12 @@ CONVAI2_OPTIONS = {
     'model': 'image_seq2seq',
     'model_file': 'zoo:dodecadialogue/convai2_ft/model',
     'datatype': 'valid',
-    'batchsize': 32,
+    'batchsize': 16,
     'inference': 'beam',
     'beam_block_ngram': 3,
     'beam_size': 3,
     'beam_min_length': 10,
-    'skip_generation': False
+    'skip_generation': False,
 }
 
 ED_OPTIONS = {
@@ -40,12 +40,12 @@ ED_OPTIONS = {
     'model': 'image_seq2seq',
     'model_file': 'zoo:dodecadialogue/empathetic_dialogues_ft/model',
     'datatype': 'valid',
-    'batchsize': 32,
+    'batchsize': 16,
     'inference': 'beam',
     'beam_block_ngram': 3,
     'beam_size': 5,
     'beam_min_length': 10,
-    'skip_generation': False
+    'skip_generation': False,
 }
 
 
@@ -78,4 +78,3 @@ class TestDodecaModel(unittest.TestCase):
         valid, _ = testing_utils.eval_model(ED_OPTIONS, skip_test=True)
         self.assertAlmostEqual(valid['ppl'], 11.1, places=1)
         self.assertAlmostEqual(valid['f1'], 0.197, places=2)
-

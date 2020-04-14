@@ -955,9 +955,7 @@ task_list = [
         "display_name": "Image_Chat_Generation",
         "task": "image_chat:Generation",
         "tags": ["All", "Visual", "ChitChat", "Dodeca"],
-        "description": (
-            "Image Chat task to train generative model"
-        ),
+        "description": ("Image Chat task to train generative model"),
     },
     {
         "id": "TalkTheWalk",
@@ -995,9 +993,7 @@ task_list = [
         "display_name": "Wizard_of_Wikipedia_Generator",
         "task": "wizard_of_wikipedia:Generator",
         "tags": ["All", "ChitChat", "Dodeca"],
-        "description": (
-            "Wizard of Wikipedia task to train generative models"
-        ),
+        "description": ("Wizard of Wikipedia task to train generative models"),
     },
     {
         "id": "DailyDialog",
