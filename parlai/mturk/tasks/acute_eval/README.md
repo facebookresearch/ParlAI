@@ -130,6 +130,7 @@ Coming soon.
 
 Once you have successfully completed a run of ACUTE-Eval, it's time to analyze your results. We provide a handy script that does everything for you!
 
+## Matchup Grid & Signficance
 To generate a multitude of important analysis files, simply run the following command:
 
     python parlai/mturk/tasks/acute_eval/analysis.py -id <run_id> --is-sandbox <True/False>
@@ -138,3 +139,18 @@ This will generate the following two tables for your perusal:
 
 1. A **winner/loser grid** for each model pairing in the ACUTE run, indicating the win/loss percentage for each model pairing.
 2. A **matchup table**, where each row is a model comparison, and which includes the statistical significance of the wins/losses.
+
+The script automatically saves these two dataframes as `.csv` files in `ParlAI/data/acute_eval/<run-id>-results/`. To change this, simply set the `--outdir` accordingly.
+
+## Visualize Conversations
+
+To visualize what conversations were chosen, and for what reasons, you can run the same command as above with the following additional parameter:
+
+    python parlai/mturk/tasks/acute_eval/analysis.py -id <run_id> --is-sandbox <True/False> \
+    --pairings-filepath </path/to/pairs/file>
+
+Where `</path/to/pairs/file>` is your pairings file from the ACUTE Eval run. Running the command above will yield two additional HTML files saved to the same `--outdir` directory:
+
+1. **all.html** - List of all conversations, indicating which was chosen as the winner by a turker.
+2. **reason.html** - List of all conversations where reasons are provided by the turkers for why they chose a winner.
+
