@@ -33,8 +33,8 @@ def setup_args(parser=None):
         '--safety',
         type=str,
         default='all',
-        choices={'none', 'string_matcher', 'classifier', 'all'},
-        help='Apply safety filtering to messages',
+        choices={'string_matcher', 'classifier', 'all'},
+        help='Type of safety detector to apply to messages',
     )
     parser.set_defaults(datatype='train:ordered')
     parser.set_defaults(model='repeat_query')
@@ -78,6 +78,18 @@ def detect(opt, printargs=None, print_parser=None):
         'total': 0,
     }
 
+    def report(world, stats):
+        report = world.report()
+        log = {
+            'word_offenses': stats['bad_words_cnt'],
+            'classifier_offenses%': 100
+            * (stats['classifier_offensive'] / stats['total']),
+            'string_offenses%': 100 * (stats['string_offensive'] / stats['total']),
+            'total_offenses%': 100 * (stats['total_offensive'] / stats['total']),
+        }
+        text, log = log_time.log(report['exs'], world.num_examples(), log)
+        print(text)
+
     def classify(text, stats):
         offensive = False
         stats['total'] += 1
@@ -109,25 +121,11 @@ def detect(opt, printargs=None, print_parser=None):
             print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
         stats['bad_words_cnt'] += len(stats['bad_words'])
         if log_time.time() > log_every_n_secs:
-            report = world.report()
-            log = {
-                'word_offenses': stats['bad_words_cnt'],
-                'classifier_offenses%': 100
-                * (stats['classifier_offensive'] / stats['total']),
-                'string_offenses%': 100 * (stats['string_offensive'] / stats['total']),
-                'total_offenses%': 100 * (stats['total_offensive'] / stats['total']),
-            }
-            text, log = log_time.log(report['exs'], world.num_examples(), log)
-            print(text)
+            report(world, stats)
 
     if world.epoch_done():
         print("EPOCH DONE")
-    print(
-        str(cnt)
-        + " offensive messages found out of "
-        + str(world.num_examples())
-        + " messages."
-    )
+    report(world, stats)
     return world.report()
 
 
