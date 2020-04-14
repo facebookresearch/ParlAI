@@ -49,9 +49,22 @@ def setup_args():
         '--outfile', type=str, default=None, help='where to save the results'
     )
     parser.add_argument(
-        '--pairings-filepath', type=str, default=None, help='path to the acute analysis pairs for the corresponding run id'
+        '--pairings-filepath',
+        type=str,
+        default=None,
+        help='path to the acute analysis pairs for the corresponding run id',
     )
     return parser
+
+
+def _print_progress(msg: str):
+    """
+    Format a msg to print to stdout well.
+
+    :param msg:
+        message to print
+    """
+    print(f"\n{'-' * 60}\n {msg} \n {'-' * 60}")
 
 
 class AcuteAnalyzer(object):
@@ -77,9 +90,12 @@ class AcuteAnalyzer(object):
         self.run_id = opt['run_id']
         self.is_sandbox = opt['is_sandbox']
         self.outfile = opt['outfile']
+        self.pairings_filepath = opt['pairings_filepath']
         # Get task for loading pairing files, by default we use q as used in Q function project
         if not self.outfile:
             self.outfile = os.path.join(self.ROOT_DIR, f'{self.run_id}-results')
+        if not os.path.exists(self.ROOT_DIR):
+            os.mkdir(self.ROOT_DIR)
         if not os.path.exists(self.outfile):
             os.mkdir(self.outfile)
         self.db_path = os.path.join(
@@ -89,8 +105,8 @@ class AcuteAnalyzer(object):
             f"pmt_{'sb' if opt['is_sandbox'] else ''}data.db",
         )
         self.dataframe = self._extract_to_dataframe()
-        if remove_failed:
-            self._remove_failed_onboarding()
+        # if remove_failed:
+        #     self._remove_failed_onboarding()
         self._extract_model_names()
         self._load_pairings_file()
 
@@ -231,7 +247,6 @@ class AcuteAnalyzer(object):
         Allows for visualization of the conversations turkers rated.
         """
         df = self.dataframe
-        self.pairings_filepath = self.opt.get('pairings_filepath')
         if not os.path.exists(self.pairings_filepath):
             return
         pairings = []
@@ -365,14 +380,20 @@ class AcuteAnalyzer(object):
         """
         matchups = list(self.dataframe.matchup.unique())
 
-        def _render_row(row: Tuple[Optional[Hashable], pd.Series]) -> str:
+        def _render_row(
+            matchup: List[str], row: Tuple[Optional[Hashable], pd.Series]
+        ) -> str:
             dialogues = {'winner_dialogue': '', 'loser_dialogue': ''}
             for d_key in dialogues:
                 result = []
                 for _, turn in enumerate(row[d_key]['dialogue']):
                     speakername = turn['id']
                     text = turn['text']
-                    is_bot = (speakername != 'human_evaluator') and (speakername != 'other_speaker')
+                    is_bot = (
+                        (speakername != 'human_evaluator')
+                        and (speakername != 'other_speaker')
+                        and speakername in matchup
+                    )
                     align = 'right' if is_bot else 'left'
                     color = "white" if is_bot else "black"
                     bgcolor = '#2391f7' if is_bot else '#e1e1e7'
@@ -399,7 +420,10 @@ class AcuteAnalyzer(object):
             for matchup in matchups:
                 length = min(10, len(table[table['matchup'] == matchup]))
                 matchup_table = table[table['matchup'] == matchup][:length]
-                table_rows = [_render_row(row) for i, row in matchup_table.iterrows()]
+                table_rows = [
+                    _render_row(matchup.split('__vs__'), row)
+                    for i, row in matchup_table.iterrows()
+                ]
                 table_body = f"<table><tr><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
                 result += f"<h2>{matchup}</h2><body>{table_body}</body>"
             return HTML(result)
@@ -511,13 +535,13 @@ class AcuteAnalyzer(object):
         # Save significance file
         with open(_path('significance.csv'), 'w') as f:
             f.write(self.signficance_df.to_csv(index=False))
-        print(
+        _print_progress(
             f"To visualize signficance result, try cat {_path('significance.csv')} | column -t -s, | less -S"
         )
         # Save Win Grid
         with open(_path('grid.csv'), 'w') as f:
             f.write(self.get_win_fractions().to_csv(index=True))
-        print(
+        _print_progress(
             f"To visualize grid result, try cat {_path('grid.csv')} | column -t -s, | less -S"
         )
 
@@ -527,13 +551,13 @@ class AcuteAnalyzer(object):
                 self.render_conversations_per_matchups()
             with open(_path('reason.html'), 'w') as f:
                 f.write(self.rendered_with_reasons.data)
-            print(
+            _print_progress(
                 f"To visualize only conversations with reasons provided, open {_path('reason.html')} in a browser"
             )
             with open(_path('all.html'), 'w') as f:
                 f.write(self.rendered_without_reasons.data)
-            print(
-               f"To visualize all conversations, open {_path('all.html')} in a browser"
+            _print_progress(
+                f"To visualize all conversations, open {_path('all.html')} in a browser"
             )
 
 
@@ -542,9 +566,9 @@ if __name__ == "__main__":
     analyzer = AcuteAnalyzer(parser.parse_args())
     results = pd.DataFrame(analyzer.get_win_fractions())
     analyzer.save_results()
-    print('Here is the grid of results:')
+    _print_progress('Here is the grid of results:')
     print(results.round(2).to_string())
     result = pd.DataFrame(analyzer.get_matchup_totals_with_signficance())
     result = result.drop(columns=['agree'])
-    print('Here is each matchup with signficance measures:')
+    _print_progress('Here is each matchup with signficance measures:')
     print(result.round(2).to_string())
