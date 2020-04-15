@@ -824,6 +824,7 @@ class SlowBytelevelBPE(Gpt2BpeHelper):
         """
         bpe_data = None
         json_path = ''
+        vocab_path = ''
         if self.opt.get('dict_loaded'):
             dfname = self.opt['dict_file']
             if os.path.isfile(f'{dfname}-merges.txt'):
