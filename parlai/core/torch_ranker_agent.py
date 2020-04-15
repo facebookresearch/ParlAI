@@ -286,7 +286,7 @@ class TorchRankerAgent(TorchAgent):
             return
 
         # Override eval_candidates to interactive_candidates
-        self.eval_candidates = self.opt['interactive_candidates']
+        self.eval_candidates = self.opt.get('interactive_candidates', 'fixed')
         if self.eval_candidates == 'fixed':
             # Set fixed candidates path if it does not exist
             if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
