@@ -251,6 +251,75 @@ class AverageMetric(Metric):
         return self._numer / self._denom
 
 
+class PrecisionMetric(Metric):
+    __slots__ = (
+        '_true_positives',
+        '_true_negatives',
+        '_false_positives',
+        '_false_negatives',
+    )
+
+    def __init__(
+        self,
+        true_positives: TScalar = 0,
+        true_negatives: TScalar = 0,
+        false_positives: TScalar = 0,
+        false_negatives: TScalar = 0,
+    ) -> None:
+        self._true_positives = self.as_number(true_positives)
+        self._true_negatives = self.as_number(true_negatives)
+        self._false_positives = self.as_number(false_positives)
+        self._false_negatives = self.as_number(false_negatives)
+
+    def __add__(self, other: Optional['PrecisionMetric']) -> 'PrecisionMetric':
+        # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
+        # we drop Python 3.6
+        if other is None:
+            return self
+        full_true_positives: TScalar = self._true_positives + other._true_positives
+        full_true_negatives: TScalar = self._true_negatives + other._true_negatives
+        full_false_positives: TScalar = self._false_positives + other._false_positives
+        full_false_negatives: TScalar = self._false_negatives + other._false_negatives
+
+        # always keep the same return type
+        return type(self)(
+            true_positives=full_true_positives,
+            true_negatives=full_true_negatives,
+            false_positives=full_false_positives,
+            false_negatives=full_false_negatives,
+        )
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return self._true_positives / (self._true_positives + self._false_positives)
+
+
+class RecallMetric(PrecisionMetric):
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return self._true_positives / (self._true_positives + self._false_negatives)
+
+
+class ClassificationF1Metric(PrecisionMetric):
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return (
+                2
+                * self._true_positives
+                / (
+                    2 * self._true_positives
+                    + self._false_negatives
+                    + self._false_positives
+                )
+            )
+
+
 class MacroAverageMetric(Metric):
     """
     Class that represents the macro average of several numbers.
