@@ -15,7 +15,7 @@ import os
 import pandas as pd
 import numpy as np
 
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional
 from scipy.stats import binom_test
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
