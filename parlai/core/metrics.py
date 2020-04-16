@@ -252,6 +252,11 @@ class AverageMetric(Metric):
 
 
 class PrecisionMetric(Metric):
+    """
+    Class that keeps count of the confusion matrix and computes precision for classification
+
+    """
+
     __slots__ = (
         '_true_positives',
         '_true_negatives',
@@ -318,6 +323,27 @@ class ClassificationF1Metric(PrecisionMetric):
                     + self._false_positives
                 )
             )
+
+
+class ClassificationMetric(AverageMetric):
+    @staticmethod
+    def compute_many(
+        true_positives: TScalar = 0,
+        true_negatives: TScalar = 0,
+        false_positives: TScalar = 0,
+        false_negatives: TScalar = 0,
+    ):
+        return [
+            PrecisionMetric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+            RecallMetric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+            ClassificationF1Metric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+        ]
 
 
 class MacroAverageMetric(Metric):
