@@ -14,7 +14,6 @@ from parlai.utils.torch import PipelineHelper
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import AverageMetric, ClassificationMetric
-from collections import defaultdict
 
 import torch
 import torch.nn.functional as F

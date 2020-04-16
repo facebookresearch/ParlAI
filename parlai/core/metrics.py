@@ -253,8 +253,8 @@ class AverageMetric(Metric):
 
 class PrecisionMetric(Metric):
     """
-    Class that keeps count of the confusion matrix and computes precision for classification
-
+    Class that keeps count of the confusion matrix and computes precision for
+    classification.
     """
 
     __slots__ = (
@@ -327,8 +327,8 @@ class ClassificationF1Metric(PrecisionMetric):
 
 class ClassificationMetric(AverageMetric):
     """
-    Class takes sample-wise confusion matrix and computes precision, recall, f1 for classification
-
+    Class takes sample-wise confusion matrix and computes precision, recall, f1 for
+    classification.
     """
 
     @staticmethod
