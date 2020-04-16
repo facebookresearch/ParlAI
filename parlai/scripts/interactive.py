@@ -86,13 +86,14 @@ def interactive(opt, print_parser=None):
 
 
 class Interactive(ParlaiScript):
+    @classmethod
     def setup_args(cls):
         return setup_args()
 
     def run(self):
-        random.seed(42)
-        return interactive(self.opt, print_parser=True)
+        return interactive(self.opt, print_parser=self.parser)
 
 
 if __name__ == '__main__':
+    random.seed(42)
     Interactive.main()

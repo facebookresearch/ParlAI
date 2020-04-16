@@ -30,16 +30,15 @@ def simple_display(opt, world, turn):
         raise RuntimeError('Simple view only support batchsize=1')
     teacher, response = world.get_acts()
     if turn == 0:
-        text = (
-            "    - - - NEW EPISODE: "
-            + teacher.get('id', "[no agent id]")
-            + " - - -       "
-        )
+        text = "- - - NEW EPISODE: " + teacher.get('id', "[no agent id]") + "- - -"
         print(colorize(text, 'highlight'))
     text = teacher.get('text', '[no text field]')
     print(colorize(text, 'text'))
     response_text = response.get('text', 'No response')
-    print('   ' + colorize(response_text, 'labels'))
+    labels = teacher.get('labels', teacher.get('eval_labels', ['[no labels field]']))
+    labels = '|'.join(labels)
+    print(colorize('    labels: ' + labels, 'labels'))
+    print(colorize('     model: ' + response_text, 'text2'))
 
 
 def setup_args():
@@ -83,7 +82,7 @@ def display_model(opt):
                 break
 
 
-class DisplayData(ParlaiScript):
+class DisplayModel(ParlaiScript):
     @classmethod
     def setup_args(cls):
         return setup_args()
@@ -93,4 +92,4 @@ class DisplayData(ParlaiScript):
 
 
 if __name__ == '__main__':
-    DisplayData.main()
+    DisplayModel.main()

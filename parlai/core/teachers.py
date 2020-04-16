@@ -711,10 +711,10 @@ class DialogData(object):
                         # TODO: this could use the abc collections
                         # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    elif isinstance(entry[1], str):
+                        new_entry.append((sys.intern(entry[1]),))
                     else:
-                        raise TypeError(
-                            'Must provide iterable over labels, not a single string.'
-                        )
+                        raise TypeError(f"{entry[1]} is not list or str")
                 if len(entry) > 2:
                     # process reward if available
                     if entry[2] is not None:

@@ -409,7 +409,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else:
                 states = {}
 
-        if self._should_initialize_optimizer():
+        if shared:
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
+        elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],

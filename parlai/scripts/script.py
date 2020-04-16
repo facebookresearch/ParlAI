@@ -25,6 +25,7 @@ class ParlaiScript(object):
     """
 
     description: str = "Default Script Description"
+    parser: ParlaiParser
 
     @classmethod
     @abstractmethod
@@ -49,7 +50,9 @@ class ParlaiScript(object):
         """
         parser = cls.setup_args()
         opt = parser.parse_kwargs(**kwargs)
-        return cls(opt).run()
+        script = cls(opt)
+        script.parser = parser
+        script.run()
 
     @classmethod
     def _run_args(cls, args: Optional[List[str]] = None):
@@ -58,7 +61,9 @@ class ParlaiScript(object):
         """
         parser = cls.setup_args()
         opt = parser.parse_args(args=args, print_args=False)
-        return cls(opt).run()
+        script = cls(opt)
+        script.parser = parser
+        script.run()
 
     @classmethod
     def main(cls, *args, **kwargs):
@@ -74,7 +79,10 @@ class ParlaiScript(object):
             return cls._run_args(None)
 
     @classmethod
-    def help(cls, *args, **kwargs):
+    def help(cls, **kwargs):
         f = io.StringIO()
-        cls.setup_args().print_help(f)
+        parser = cls.setup_args()
+        parser.prog = cls.__name__
+        parser.add_extra_args(parser._kwargs_to_strargs(**kwargs))
+        parser.print_help(f)
         return f.getvalue()

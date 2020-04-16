@@ -1000,10 +1000,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
-    def parse_kwargs(self, **kwargs):
-        """
-        Parse kwargs, with type checking etc.
-        """
+    def _kwargs_to_strargs(self, **kwargs):
         kwname_to_action = {}
         for action in self._actions:
             if action.dest == 'help':
@@ -1020,7 +1017,6 @@ class ParlaiParser(argparse.ArgumentParser):
         for kwname, value in kwargs.items():
             if kwname not in kwname_to_action:
                 # best guess, we need to delay it
-                print(f'skipping {kwname}')
                 continue
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
@@ -1063,6 +1059,12 @@ class ParlaiParser(argparse.ArgumentParser):
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
+        return string_args
+
+    def parse_kwargs(self, **kwargs):
+        """
+        Parse kwargs, with type checking etc.
+        """
         # hack: capture any error messages without raising a SystemExit
         def _captured_error(msg):
             raise ValueError(msg)
@@ -1070,6 +1072,7 @@ class ParlaiParser(argparse.ArgumentParser):
         old_error = self.error
         self.error = _captured_error
         try:
+            string_args = self._kwargs_to_strargs(**kwargs)
             return self.parse_args(args=string_args, print_args=False)
         finally:
             self.error = old_error
