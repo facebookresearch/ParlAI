@@ -41,14 +41,11 @@ CONFIG: Dict[str, Dict] = {
         'skip_generation': False,
         'interactive_mode': False,
         'inference': 'nucleus',
-        'topp': 0.9
+        'topp': 0.9,
     },
     'example_model_log': {
         'log_path': f"{os.path.dirname(os.path.realpath(__file__))}/example/chat_log.jsonl"
     },
-    'example_dataset': {
-        'task': 'convai2',
-        'prepended_context': True
-    }
+    'example_dataset': {'task': 'convai2', 'prepended_context': True}
     # NOTE: ADD YOUR MODEL CONFIG ABOVE THIS LINE AND MAKE SURE IT HAS A UNIQUE KEY
 }

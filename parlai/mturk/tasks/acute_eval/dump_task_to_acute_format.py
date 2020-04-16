@@ -8,7 +8,7 @@ Convert a ParlAI teacher to acute-eval format.
 Examples
 --------
 .. code-block:: shell
- py parlai/mturk/tasks/acute_eval/dump_task_to_acute_format.py  -t  convai2
+py parlai/mturk/tasks/acute_eval/dump_task_to_acute_format.py  -t  convai2
 """
 
 from parlai.core.params import ParlaiParser
@@ -45,10 +45,7 @@ def setup_args() -> ParlaiParser:
                                 created in /tmp',
     )
     parser.add_argument(
-        '-s1id',
-        '--speaker-0-id',
-        type=str,
-        help='Speaker id of agent who speaks first',
+        '-s1id', '--speaker-0-id', type=str, help='Speaker id of agent who speaks first'
     )
     parser.add_argument(
         '-s1id',
@@ -85,7 +82,11 @@ def dump_data(opt: Opt):
     else:
         outfile = opt['outfile']
 
-    num_episodes = world.num_episodes() if opt['num_episodes'] == -1 else min(opt['num_episodes'], world.num_episodes())
+    num_episodes = (
+        world.num_episodes()
+        if opt['num_episodes'] == -1
+        else min(opt['num_episodes'], world.num_episodes())
+    )
     log_timer = TimeLogger()
 
     print(f'[ starting to convert, saving output to {outfile} ]')
@@ -98,18 +99,21 @@ def dump_data(opt: Opt):
             acts = world.get_acts()
             text = acts[0].get('text')
             split_text = text.split('\n')
-            label = random.choice(acts[0].get('labels', acts[0].pop('eval_labels', None)))
+            label = random.choice(
+                acts[0].get('labels', acts[0].pop('eval_labels', None))
+            )
             if not episode and opt.get('prepended_context'):
                 # first turn
                 context = split_text[:-1]
                 text = split_text[-1]
                 context_turn = [
-                    {'text': context, 'episode_done': False, 'id': 'context'} for _ in range(2)
+                    {'text': context, 'episode_done': False, 'id': 'context'}
+                    for _ in range(2)
                 ]
                 episode.append(context_turn)
             turn = [
                 {'text': text, 'episode_done': False, 'id': speaker_0_id},
-                {'text': label, 'episode_done': False, 'id': speaker_1_id}
+                {'text': label, 'episode_done': False, 'id': speaker_1_id},
             ]
             episode.append(turn)
             if acts[0].get('episode_done', False):

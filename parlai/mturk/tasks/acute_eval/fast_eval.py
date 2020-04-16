@@ -18,7 +18,7 @@ from parlai.mturk.tasks.acute_eval.analysis import (
 )
 from parlai.mturk.tasks.acute_eval.dump_task_to_acute_format import (
     dump_data as convert_task_data,
-    setup_args as convert_task_setup_args
+    setup_args as convert_task_setup_args,
 )
 from parlai.mturk.tasks.acute_eval.configs import CONFIG
 
@@ -61,7 +61,9 @@ ACUTE_EVAL_TYPES = {
         's2_choice': 'I would prefer to talk to <Speaker 2>',
     },
 }
-EXAMPLE_PATH = os.path.join(os.path.dirname(parlai_filepath), 'mturk/tasks/acute_eval/example')
+EXAMPLE_PATH = os.path.join(
+    os.path.dirname(parlai_filepath), 'mturk/tasks/acute_eval/example'
+)
 # Feel free to edit this, but not necessary
 NUM_CONVERSATIONS_EVALUATED = 160
 SUBTASKS_PER_HIT = 5
@@ -138,7 +140,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '--num-matchups-per-pair',
         type=int,
         default=100,
-        help='How many convo pairs to generate for each matchup in ACUTE Eval. '
+        help='How many convo pairs to generate for each matchup in ACUTE Eval. ',
     )
     parser.add_argument(
         '--live-acute',
@@ -150,7 +152,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '--onboarding-path',
         type=str,
         default=os.path.join(EXAMPLE_PATH, 'onboarding.json'),
-        help='path to onboarding pair'
+        help='path to onboarding pair',
     )
     parser.set_defaults(selfchat_task=True, task='self_chat')
     return parser
@@ -266,7 +268,7 @@ class ParlAIQuickAcute(object):
                 'outfile': outfile,
                 'num_episodes': NUM_TASK_DATA_EPISODES,
                 'speaker_0_id': f'{config_id}_as_human',
-                'speaker_1_id': config_id
+                'speaker_1_id': config_id,
             }
         )
         return config
@@ -313,7 +315,9 @@ class ParlAIQuickAcute(object):
         path = ''
         if 'log_path' in config:
             path = config['log_path']
-            assert os.path.exists(path), f'Path provided in log_path for {config_id} does not exist'
+            assert os.path.exists(
+                path
+            ), f'Path provided in log_path for {config_id} does not exist'
         elif 'task' in config:
             path = self._get_task_data_path(config_id)
         elif 'model' in config:
@@ -332,9 +336,7 @@ class ParlAIQuickAcute(object):
         """
         task_data_dir = os.path.join(self.root_dir, 'tasks_as_conversations')
         os.makedirs(task_data_dir, exist_ok=True)
-        return os.path.join(
-            task_data_dir, f"{config_id}.jsonl"
-        )
+        return os.path.join(task_data_dir, f"{config_id}.jsonl")
 
     def _get_selfchat_log_path(self, config_id: str) -> str:
         """
@@ -365,11 +367,7 @@ class ParlAIQuickAcute(object):
         """
         config = CONFIG[config_id]
         is_selfchat = 'model' in config
-        acute_conversation = {
-            'context': [],
-            'dialogue': [],
-            'speakers': [],
-        }
+        acute_conversation = {'context': [], 'dialogue': [], 'speakers': []}
         # dialog = dialogue_dict['dialog']
         # for act_pair in dialog:
         for i, ex in enumerate(conversation):
@@ -383,14 +381,13 @@ class ParlAIQuickAcute(object):
             if speaker_id not in acute_conversation['speakers']:
                 acute_conversation['speakers'].append(speaker_id)
             acute_conversation['dialogue'].append(
-                {
-                    'id': speaker_id,
-                    'text': normalize_reply(ex['text']),
-                }
+                {'id': speaker_id, 'text': normalize_reply(ex['text'])}
             )
         return acute_conversation
 
-    def _get_unique_ids(self, conversations: Dict[str, Conversations]) -> Dict[str, List[int]]:
+    def _get_unique_ids(
+        self, conversations: Dict[str, Conversations]
+    ) -> Dict[str, List[int]]:
         """
         Assign unique IDs for each conversation in conversations.
 
@@ -461,9 +458,7 @@ class ParlAIQuickAcute(object):
 
         pairings_filepath = self._get_vs_path('pairings_files')
 
-        self._print_progress(
-                f'building pairings file, saving at {pairings_filepath}'
-            )
+        self._print_progress(f'building pairings file, saving at {pairings_filepath}')
         conversations = {
             config_id: Conversations(self.chat_files[config_id])
             for config_id in self.config_ids
@@ -480,8 +475,8 @@ class ParlAIQuickAcute(object):
         """
         Build the pairings file for ACUTE-Eval.
 
-        If a pairings file already exists, we ask the user whether they would
-        like to overwrite the pairings file.
+        If a pairings file already exists, we ask the user whether they would like to
+        overwrite the pairings file.
         """
         pairings_filepath = self._get_vs_path('pairings_files')
         # Rebuild pairings file if necessary
@@ -525,7 +520,9 @@ class ParlAIQuickAcute(object):
         :param config_id:
             id in config
         """
-        self._print_progress(f'Converting task data to conversations format for {config_id}')
+        self._print_progress(
+            f'Converting task data to conversations format for {config_id}'
+        )
         config = self._get_task_conversion_config(config_id)
 
         with capture_output():
@@ -560,7 +557,9 @@ class ParlAIQuickAcute(object):
                 elif 'task' in CONFIG[model]:
                     self._convert_task_to_conversations(model)
                 else:
-                    raise RuntimeError(f'Path must exist if log_path specified for {model}')
+                    raise RuntimeError(
+                        f'Path must exist if log_path specified for {model}'
+                    )
 
                 if os.path.exists(outfile):
                     self._print_progress(f'Chats saved to {outfile} for {model}')
@@ -607,7 +606,7 @@ class ParlAIQuickAcute(object):
             {
                 'run_id': self.run_id,
                 'outdir': self.results_path,
-                'pairings_filepath': self.pairings_filepath
+                'pairings_filepath': self.pairings_filepath,
             }
         )
         opt.update(self.acute_args)
