@@ -151,7 +151,7 @@ def setup_args(parser=None) -> ParlaiParser:
     parser.add_argument(
         '--onboarding-path',
         type=str,
-        default=os.path.join(EXAMPLE_PATH, 'onboarding.json'),
+        default=os.path.join(EXAMPLE_PATH, 'onboarding.jsonl'),
         help='path to onboarding pair',
     )
     parser.set_defaults(selfchat_task=True, task='self_chat')

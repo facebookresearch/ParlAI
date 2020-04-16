@@ -17,10 +17,8 @@ from typing import Dict
 ROOT_DIR = '/checkpoint/parlai/acute_evals/'
 CONFIG: Dict[str, Dict] = {
     'example_model_1': {
-        # 'model_file': 'zoo:dodecadialogue/all_tasks_mt/model',
-        # 'model': 'transformer/generator',
-        'model_file': '/checkpoint/parlai/zoo/dodecadialogue/all_tasks_mt/model',
-        'model': 'internal:parlall',
+        'model_file': 'zoo:tutorial_transformer_generator/model',
+        'model': 'transformer/generator',
         # general args
         'batchsize': 1,
         'skip_generation': False,
@@ -32,10 +30,8 @@ CONFIG: Dict[str, Dict] = {
         'beam_context_block_ngram': 3,
     },
     'example_model_2': {
-        # 'model_file': 'zoo:dodecadialogue/all_tasks_mt/model',
-        # 'model': 'transformer/generator',
-        'model_file': '/checkpoint/parlai/zoo/dodecadialogue/all_tasks_mt/model',
-        'model': 'internal:parlall',
+        'model_file': 'zoo:tutorial_transformer_generator/model',
+        'model': 'transformer/generator',
         # general args
         'batchsize': 1,
         'skip_generation': False,

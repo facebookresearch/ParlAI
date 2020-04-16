@@ -192,7 +192,7 @@ The appropriate JSONL format is one that can be read by ParlAI's [Conversations]
 
 If you'd like to evaluate examples from a dataset available in ParlAI directly, simply specify the `task` in the config. You can see an example in the `example_dataset` config.
 
-### 1b. Determine the Self-Chat Task You Will Use
+### 1b. (Optional) Determine the Self-Chat Task You Will Use
 
 If you will be evaluating models via self-chat, you will need to determine the self-chat task you will use to help generate the self-chats. This is not so much any work on your part other than identfying a task that is setup for self-chat, i.e., a task that has the appropriate worlds used for conducting self-chat with the models. This is not strictly necessary, but you may want to introduce context, e.g. as in `convai2` or `blended_skill_talk`.
 
@@ -202,11 +202,11 @@ Now that you've setup everything, all you need to do is run one of the following
 
 If you want to compare a set of models in round-robin fashion, you would run:
 
-    python parlai/mturk/tasks/acute_eval/fast_eval.py --ids <comma-separated list of config identifiers> -t <self_chat_task>
+    python parlai/mturk/tasks/acute_eval/fast_eval.py --ids <comma-separated list of config identifiers>
 
 If you want multiple model comparisons, but do not want to compare ALL models with eachother, you would run:
 
-    python parlai/mturk/tasks/acute_eval/fast_eval.py --id-pairs <comma-separated, colon-delimited list of config identifiers> -t <self_chat_task>
+    python parlai/mturk/tasks/acute_eval/fast_eval.py --id-pairs <comma-separated, colon-delimited list of config identifiers>
 
 The ids specified for each of those flags corresponds to the entry in the `CONFIG`.
 
@@ -226,11 +226,11 @@ The default onboaring dialogue pair is in `example/onboarding.json`. We recommen
 
 To use a custom onboarding path, specify the `--onboarding-path` when running `fast_eval.py`. The onboarding file should be a jsonl file, where each line is a json dict consisting of a pair of dialogues to evaluate, and where `is_onboarding` is set to True.
 
-## So What Does this Script Do?
+## Script Execution
 
-Glad you asked. The script operates in three phases:
+The script operates in three phases:
 
-##### Phase 1: Compile Chat Logs
+#### Phase 1: Compile Chat Logs
 
 The script will first compile the chat logs for each identifier specified on the command line.
 
@@ -238,22 +238,22 @@ For `model`s, the script will run self-chat; for `log`s, the script will simply 
 
 Self-chats are saved to `PARLAI_PATH/data/acute_evals/self_chats/`
 
-##### Phase 2: ACUTE-Eval
+### Phase 2: ACUTE-Eval
 
 The script will then prepare the conversation-pairs file (and save to `PARLAI_PATH/data/pairings_files/`, unique according to which chat files were used to create it) and run ACUTE-Eval with appropriate arguments.
 
 Upon subsequent runs with the same configuration of `--ids` or `--id-pairs`, you will have the option to re-use a pairings file or to regenerate it.
 
-##### Phase 3: Analysis
+### Phase 3: Analysis
 
 After finishing ACUTE-Eval, the script will analyze and save relevat results to `PARLAI_PATH/data/acute_evals/acute_results/<date>/<pairings_file>/`
 
 4 Results will be generated:
 
-1. A csv file of significance result, the win rate of model pairs with p value
-2. A csv file of grid Result, as Eric did for his paper
+1. A csv file of significance result, which shows the win rates of model pairs with p value
+2. A csv file of grid result, where the model comparisons and win rates are laid out in a nice grid (as seen in the ACUTE-Eval paper).
 3. A html file of nicely visualized conversations with reason annotated only
-4. A html file of nicely visualized conversations
+4. A html file of ALL nicely visualized conversations
 
 **NOTE** the the `analysis.py` file can be run by itself as long as you specify the ACUTE-Eval `run_id`, whether a sandbox run, and whether it is qfunction eval.
 
