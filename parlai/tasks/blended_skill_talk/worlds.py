@@ -44,9 +44,10 @@ def load_personas(opt):
         if d['context_dataset'] == 'wizard_of_wikipedia':
             p1 += d['additional_context'] + '\n'
             p2 += d['additional_context'] + '\n'
-        ctxt = d['free_turker_utterance'] + '\n' + d['guided_turker_utterance']
-        p1 += ctxt
-        p2 += ctxt
+        if opt.get('include_initial_utterances', True):
+            ctxt = d['free_turker_utterance'] + '\n' + d['guided_turker_utterance']
+            p1 += ctxt
+            p2 += ctxt
         contexts.append([p1, p2])
     return contexts
 
@@ -66,6 +67,12 @@ class InteractiveWorld(InteractiveBaseWorld):
             type='bool',
             default=True,
             help='Include personas as input context, or not',
+        )
+        parser.add_argument(
+            '--include-initial-utterances',
+            type='bool',
+            default=True,
+            help='Include context conversation at beginning or not',
         )
 
     def __init__(self, opt, agents, shared=None):
@@ -96,6 +103,12 @@ class SelfChatWorld(SelfChatBaseWorld):
             type='bool',
             default=True,
             help='Include personas as input context, or not',
+        )
+        parser.add_argument(
+            '--include-initial-utterances',
+            type='bool',
+            default=True,
+            help='Include context conversation at beginning or not',
         )
 
     def init_contexts(self):
