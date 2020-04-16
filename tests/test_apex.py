@@ -13,6 +13,8 @@ except ImportError:
 
 
 import unittest
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
 
 
@@ -31,22 +33,29 @@ class TestNoApex(unittest.TestCase):
     def test_fused_adam(self):
         with self.assertRaises(ImportError):
             # we should crash if the user tries not giving --opt adam
-            testing_utils.eval_model(
+            testing_utils.train_model(
                 dict(
                     model_file='zoo:unittest/apex_fused_adam/model',
                     task='integration_tests:nocandidate',
                 )
             )
         # no problem if we give the option
-        valid, test = testing_utils.eval_model(
-            dict(
-                model_file='zoo:unittest/apex_fused_adam/model',
-                task='integration_tests:nocandidate',
-                optimizer='adam',
-            )
+
+        pp = ParlaiParser(True, True)
+        opt = pp.parse_args(
+            [
+                '--model-file',
+                'zoo:unittest/apex_fused_adam/model',
+                '--dict-file',
+                'zoo:unittest/apex_fused_adam/model.dict',
+                '--task',
+                'integration_tests:nocandidate',
+                '--optimizer',
+                'adam',
+            ],
+            print_args=False,
         )
-        assert valid['accuracy'] == 1.0
-        assert test['accuracy'] == 1.0
+        create_agent(opt, requireModelExists=True)
 
     def test_fp16(self):
         # nice clean fallback if no fp16
