@@ -9,7 +9,6 @@ from unittest.mock import patch
 
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.worlds import create_task_from_shared
 from parlai.scripts.display_data import setup_args
 from parlai.tasks.convai2.worlds import InteractiveWorld
 
@@ -33,10 +32,10 @@ class TestConvAI2InteractiveWorld(unittest.TestCase):
             opt = parser.parse_args([])
             agent = RepeatLabelAgent(opt)
             agent2 = agent.clone()
-            world = InteractiveWorld(opt=opt, agents=[agent, agent2],)
+            world = InteractiveWorld(opt=opt, agents=[agent, agent2])
             # We should not reload personas on share
             mock_load_personas.return_value = None
-            new_world = create_task_from_shared(shared_world=world.share())
+            new_world = world.clone()
 
             self.assertEqual(new_world.personas_list, test_personas)
 

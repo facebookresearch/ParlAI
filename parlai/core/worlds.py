@@ -150,6 +150,12 @@ class World(object):
         shared_data['agents'] = self._share_agents()
         return shared_data
 
+    def clone(self):
+        """
+        Create a duplicate of the world.
+        """
+        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
+
     def _share_agents(self):
         """
         Create shared data for agents.
@@ -1634,16 +1640,3 @@ def create_task(opt: Opt, user_agents, default_world=None):
         world = BatchWorld(opt, world)
 
     return world
-
-
-def create_task_from_shared(shared_world):
-    """
-    Instantiate a world from the `shared` params.
-
-    :param shared_world:
-        should include an `opt` dictionary and `world_class`, along with
-        whatever other parameters the world needs to instantiate.
-    """
-    opt = copy.deepcopy(shared_world['opt'])
-    w = shared_world['world_class'](opt, agents=None, shared=shared_world)
-    return w
