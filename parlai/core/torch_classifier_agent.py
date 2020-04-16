@@ -13,7 +13,7 @@ from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.core.metrics import AverageMetric
+from parlai.core.metrics import AverageMetric, ClassificationMetric
 from collections import defaultdict
 
 import torch
@@ -214,7 +214,7 @@ class TorchClassifierAgent(TorchAgent):
             labels_tensor = labels_tensor.cuda()
         return labels_tensor
 
-    def _update_confusion_matrix(self, batch, predictions):
+    def _update_confusion_matrix(self, predictions, batch):
         """
         Update the confusion matrix given the batch and predictions.
 
@@ -224,9 +224,16 @@ class TorchClassifierAgent(TorchAgent):
             (list of string of length batchsize) label predicted by the
             classifier
         """
-        for i, pred in enumerate(predictions):
-            label = batch.labels[i]
-            self.metrics['confusion_matrix'][(label, pred)] += 1
+        for class_name in self.class_list:
+            prec_str = 'class_{}_prec'.format(class_name)
+            recall_str = 'class_{}_recall'.format(class_name)
+            f1_str = 'class_{}_f1'.format(class_name)
+            precision, recall, f1 = ClassificationMetric.many(
+                predictions, batch.labels, class_name
+            )
+            self.record_local_metric(prec_str, precision)
+            self.record_local_metric(recall_str, recall)
+            self.record_local_metric(f1_str, f1)
 
     def _format_interactive_output(self, probs, prediction_id):
         """
@@ -263,7 +270,7 @@ class TorchClassifierAgent(TorchAgent):
         # get predictions
         _, prediction_id = torch.max(scores.cpu(), 1)
         preds = [self.class_list[idx] for idx in prediction_id]
-        self._update_confusion_matrix(batch, preds)
+        self._update_confusion_matrix(preds, batch)
 
         return Output(preds)
 
@@ -294,95 +301,12 @@ class TorchClassifierAgent(TorchAgent):
             loss = self.criterion(scores, labels)
             self.record_local_metric('loss', AverageMetric.many(loss))
             loss = loss.mean()
-            self._update_confusion_matrix(batch, preds)
+            self._update_confusion_matrix(preds, batch)
 
         if self.opt.get('print_scores', False):
             return Output(preds, probs=probs.cpu())
         else:
             return Output(preds)
-
-    def reset_metrics(self):
-        """
-        Reset metrics.
-        """
-        super().reset_metrics()
-        self.metrics['confusion_matrix'] = defaultdict(int)
-
-    def _report_prec_recall_metrics(self, confmat, class_name, metrics):
-        """
-        Use the confusion matrix to compute precision and recall.
-
-        :param confmat:
-            the confusion matrics
-        :param str class_name:
-            the class name to compute P/R for
-        :param metrics:
-            metrics dictionary to modify
-        :return:
-            the number of examples of each class.
-        """
-        # TODO: document these parameter types.
-        eps = 0.00001  # prevent divide by zero errors
-        true_positives = confmat[(class_name, class_name)]
-        num_actual_positives = (
-            sum([confmat[(class_name, c)] for c in self.class_list]) + eps
-        )
-        num_predicted_positives = (
-            sum([confmat[(c, class_name)] for c in self.class_list]) + eps
-        )
-
-        recall_str = 'class_{}_recall'.format(class_name)
-        prec_str = 'class_{}_prec'.format(class_name)
-        f1_str = 'class_{}_f1'.format(class_name)
-
-        # update metrics dict
-        metrics[recall_str] = true_positives / num_actual_positives
-        metrics[prec_str] = true_positives / num_predicted_positives
-        metrics[f1_str] = 2 * (
-            (metrics[recall_str] * metrics[prec_str])
-            / (metrics[recall_str] + metrics[prec_str] + eps)
-        )
-
-        return num_actual_positives
-
-    def report(self):
-        """
-        Report loss as well as precision, recall, and F1 metrics.
-        """
-        m = super().report()
-        # TODO: upgrade the confusion matrix to newer metrics
-        # get prec/recall metrics
-        confmat = self.metrics['confusion_matrix']
-        if self.opt.get('get_all_metrics'):
-            metrics_list = self.class_list
-        else:
-            # only give prec/recall metrics for ref class
-            metrics_list = [self.ref_class]
-
-        examples_per_class = []
-        for class_i in metrics_list:
-            class_total = self._report_prec_recall_metrics(confmat, class_i, m)
-            examples_per_class.append(class_total)
-
-        if len(examples_per_class) > 1:
-            # get weighted f1
-            f1 = 0
-            total_exs = sum(examples_per_class)
-            for i in range(len(self.class_list)):
-                f1 += (examples_per_class[i] / total_exs) * m[
-                    'class_{}_f1'.format(self.class_list[i])
-                ]
-            m['weighted_f1'] = f1
-
-            # get weighted accuracy
-            wacc = 0
-            for i in range(len(self.class_list)):
-                wacc += (1.0 / len(self.class_list)) * m[
-                    'class_{}_recall'.format(self.class_list[i])
-                ]
-            m['weighted_acc'] = wacc
-
-        return m
 
     def score(self, batch):
         """

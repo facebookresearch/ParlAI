@@ -345,6 +345,42 @@ class ClassificationMetric(AverageMetric):
             ),
         ]
 
+    @staticmethod
+    def many(
+        predictions: List[str], gold_labels: List[str], positive_class: str
+    ) -> Tuple[List[PrecisionMetric], List[RecallMetric], List[ClassificationF1Metric]]:
+        precisions = []
+        recalls = []
+        f1s = []
+        for predicted, gold_label in zip(predictions, gold_labels):
+            true_positives = (
+                1
+                if (predicted == positive_class) and (gold_label == positive_class)
+                else 0
+            )
+            true_negatives = (
+                1
+                if (predicted != positive_class) and (gold_label != positive_class)
+                else 0
+            )
+            false_positives = (
+                1
+                if (predicted == positive_class) and (gold_label != positive_class)
+                else 0
+            )
+            false_negatives = (
+                1
+                if (predicted != positive_class) and (gold_label == positive_class)
+                else 0
+            )
+            precision, recall, f1 = ClassificationMetric.compute_many(
+                true_positives, true_negatives, false_positives, false_negatives
+            )
+            precisions.append(precision)
+            recalls.append(recall)
+            f1s.append(f1)
+        return precisions, recalls, f1s
+
 
 class MacroAverageMetric(Metric):
     """
