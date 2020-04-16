@@ -354,11 +354,12 @@ class ParlAIQuickAcute(object):
         """
         config = CONFIG[config_id]
         is_selfchat = 'model' in config
-        acute_conversation = {'context': [], 'dialogue': [], 'speakers': []}
-        # dialog = dialogue_dict['dialog']
-        # for act_pair in dialog:
+        acute_conversation: Dict[str, List] = {
+            'context': [],
+            'dialogue': [],
+            'speakers': [],
+        }
         for i, ex in enumerate(conversation):
-            # for i, ex in enumerate(act_pair):
             if ex['id'] == 'context':
                 acute_conversation['context'].append(ex)
                 continue

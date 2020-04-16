@@ -14,16 +14,13 @@ py parlai/mturk/tasks/acute_eval/dump_task_to_acute_format.py  -t  convai2
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.core.opt import Opt
 from parlai.utils.conversations import Conversations
 from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 
-from typing import Any, List, Dict
 
-
-def setup_args() -> ParlaiParser:
+def setup_args():
     """
     Set up conversion args.
     """
@@ -65,7 +62,7 @@ def setup_args() -> ParlaiParser:
     return parser
 
 
-def dump_data(opt: Opt):
+def dump_data(opt):
     """
     Dump task data to ACUTE-Eval.
     """
@@ -90,9 +87,9 @@ def dump_data(opt: Opt):
     log_timer = TimeLogger()
 
     print(f'[ starting to convert, saving output to {outfile} ]')
-    dialogues: List[List[Dict]] = []
+    dialogues = []
     for _ in range(num_episodes):
-        episode: List[Dict[str, Any]] = []
+        episode = []
         episode_done = False
         while not episode_done:
             world.parley()
