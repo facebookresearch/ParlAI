@@ -521,6 +521,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Share internal states between parent and child instances.
         """
         shared = super().share()
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         if self.opt.get('numthreads', 1) > 1:
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
