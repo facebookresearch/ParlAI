@@ -8,8 +8,8 @@
 """
 The general ParlAI Script interface.
 
-An abstract class to help standardize the call to ParlAI scripts, enabling them to
-be completed easily.
+An abstract class to help standardize the call to ParlAI scripts, enabling them to be
+completed easily.
 """
 
 import io

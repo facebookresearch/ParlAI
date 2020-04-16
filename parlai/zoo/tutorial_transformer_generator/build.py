@@ -4,8 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Pretrained model allowing to get the same performances as in
-https://arxiv.org/abs/1905.01969.
+Pretrained mid-sized generative transformer for tutorial purposes.
+
+Source is the original source model for the DodecaDialog paper
+(https://parl.ai/projects/dodecadialogue/), but there have been minor tweaks for the
+purposes of the tutorial.
 """
 from parlai.core.build_data import built, download_models, get_model_dir
 import os
@@ -20,10 +23,5 @@ def download(datapath):
         opt = {'datapath': datapath}
         fnames = ['tutorial_transformer_generator_v1.tar.gz']
         download_models(
-            opt,
-            fnames,
-            model_name,
-            version=version,
-            use_model_type=False,
-            path="http://localhost:8000/",
+            opt, fnames, model_name, version=version, use_model_type=False,
         )
