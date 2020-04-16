@@ -19,7 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from typing import Dict, Any, Union, List, Tuple
+from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import deque
@@ -208,6 +208,7 @@ class History(object):
         self.history_strings = []
         self.history_raw_strings = []
         self.history_vecs = []
+        self.temp_history = None
 
         # person token args
         self.add_person_tokens = opt.get('person_tokens', False)
@@ -259,9 +260,14 @@ class History(object):
         # update history vecs
         self._update_vecs(text)
 
-    def update_history(self, obs):
+    def update_history(self, obs, temp_history=None):
         """
         Update the history with the given observation.
+
+        param obs:     Observation used to update the history. param temp_history:
+        Optional temporary string. If it is not None,     this string will be appended
+        to the end of the     history. It will not be in the history on the     next
+        dialogue turn. Set to None to stop adding     to the history.
         """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -279,12 +285,18 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
+        self.temp_history = temp_history
+
     def get_history_str(self):
         """
         Return the string version of the history.
         """
         if len(self.history_strings) > 0:
-            return self.delimiter.join(self.history_strings)
+            history = self.delimiter.join(self.history_strings)
+            if self.temp_history is not None:
+                history += self.temp_history
+            return history
+
         return None
 
     def get_history_vec(self):
@@ -300,6 +312,8 @@ class History(object):
                 history.extend(vec)
                 history.extend(self.delimiter_tok)
             history.extend(self.history_vecs[-1])
+            if self.temp_history is not None:
+                history.extend(self.parse(self.temp_history))
             if self._global_end_token is not None:
                 history.extend([self._global_end_token])
         else:
@@ -309,8 +323,11 @@ class History(object):
                 history += vec
                 history += self.delimiter_tok
             history += self.history_vecs[-1]
+            if self.temp_history is not None:
+                history.extend(self.parse(self.temp_history))
             if self._global_end_token is not None:
                 history += [self._global_end_token]
+
         return history
 
     def get_history_vec_list(self):
@@ -1575,6 +1592,15 @@ class TorchAgent(ABC, Agent):
 
         return batch_reply
 
+    def get_temp_history(self, observation) -> Optional[str]:
+        """
+        Return a string to temporarily insert into history.
+
+        Intentionally overrideable so more complex models can insert temporary history
+        strings, i.e. strings that are removed from the history after a single turn.
+        """
+        return None
+
     def observe(self, observation):
         """
         Process incoming message in preparation for producing a response.
@@ -1596,8 +1622,13 @@ class TorchAgent(ABC, Agent):
             self.__expecting_to_reply = True
 
         self.observation = observation
-        # update the history using the observation
-        self.history.update_history(observation)
+        # Update the history using the observation.
+        # We may also consider adding a temporary string to the history
+        # using the `get_temp_history()` function: this string will
+        # persist until it is updated.
+        self.history.update_history(
+            observation, temp_history=self.get_temp_history(observation)
+        )
         return self.vectorize(
             observation,
             self.history,
