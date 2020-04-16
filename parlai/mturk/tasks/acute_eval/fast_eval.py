@@ -33,19 +33,6 @@ import random
 import torch
 import hashlib
 
-"""
-Execute a QUICK ACUTE run.
-
-    Only need to specify two arguments: `--models`, and the self-chat task as `-t`
-
-    Model configurations should go in the `configs.py` file found in this directory.
-
-TODO:
-
-    4. Change to `num_matchup_pairs` or something (to simplify num_convo_pairs calculation)
-
-
-"""
 ########################
 # ACUTE EVAL CONSTANTS #
 ########################
@@ -93,7 +80,7 @@ ACUTE_DEFAULT_ARGS = {
         'hit_keywords': 'chat,evaluation,comparison,conversation',
     },
     # temp directory for MTURK
-    'tmp_dir': '/tmp',  # TODO not sure what this is
+    'tmp_dir': '/tmp',
 }
 
 #######################
