@@ -21,34 +21,24 @@ def load_personas(opt):
         data = json.load(json_file)
     contexts = []
     for d in data:
+        context1 = []
+        context2 = []
         if opt.get('include_personas', True):
-            p1 = (
-                'your persona: '
-                + d['personas'][0][0]
-                + '\n'
-                + 'your persona: '
-                + d['personas'][0][1]
-                + '\n'
-            )
-            p2 = (
-                'your persona: '
-                + d['personas'][1][0]
-                + '\n'
-                + 'your persona: '
-                + d['personas'][1][1]
-                + '\n'
-            )
-        else:
-            p1 = ''
-            p2 = ''
+            context1.append('your persona: ' + d['personas'][0][0])
+            context1.append('your persona: ' + d['personas'][0][1])
+            context2.append('your persona: ' + d['personas'][1][0])
+            context2.append('your persona: ' + d['personas'][1][1])
         if d['context_dataset'] == 'wizard_of_wikipedia':
-            p1 += d['additional_context'] + '\n'
-            p2 += d['additional_context'] + '\n'
+            context1.append(d['additional_context'])
+            context2.append(d['additional_context'])
         if opt.get('include_initial_utterances', True):
-            ctxt = d['free_turker_utterance'] + '\n' + d['guided_turker_utterance']
-            p1 += ctxt
-            p2 += ctxt
-        contexts.append([p1, p2])
+            context1.append(d['free_turker_utterance'])
+            context2.append(d['free_turker_utterance'])
+            context1.append(d['guided_turker_utterance'])
+            context2.append(d['guided_turker_utterance'])
+        c1 = '\n'.join(context1)
+        c2 = '\n'.join(context2)
+        contexts.append([c1, c2])
     return contexts
 
 
