@@ -82,7 +82,6 @@ def interactive(opt, print_parser=None):
             print("---")
             print(world.display())
         if world.epoch_done():
-            print("EPOCH DONE")
             break
 
 

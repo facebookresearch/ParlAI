@@ -691,4 +691,25 @@ model_list = [
             """{'exs': 400, 'accuracy': 1.0, 'f1': 1.0, 'bleu-4': 0.2503, 'lr': 0.001, 'total_train_updates': 5000, 'gpu_mem_percent': 9.37e-05, 'loss': 0.0262, 'token_acc': 1.0, 'nll_loss': 7.935e-05, 'ppl': 1.0}"""
         ),
     },
+    {
+        "title": "Tutorial Transformer Generator",
+        "id": "tutorial_transformer_genertor",
+        "path": "zoo:tutorial_transformer_generator/model",
+        "task": "pushshift.io",
+        "description": (
+            "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
+        ),
+        "example": (
+            "python -m parlai.scripts.interactive -mf zoo:tutorial_transformer_generator/model"
+        ),
+        "external_website": '',
+        "result": (
+            "Enter Your Message: hi, how are you today?\n"
+            "[TransformerGenerator]: i ' m doing well , how about you ?\n"
+            "Enter Your Message: I'm giving a tutorial on chatbots!\n"
+            "[TransformerGenerator]: that ' s awesome ! what ' s it about ?\n"
+            "Enter Your Message: bots just like you\n"
+            "[TransformerGenerator]: i ' ll be sure to check it out !"
+        ),
+    },
 ]
