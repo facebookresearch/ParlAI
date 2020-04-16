@@ -693,7 +693,7 @@ model_list = [
     },
     {
         "title": "Tutorial Transformer Generator",
-        "id": "tutorial_transformer_genertor",
+        "id": "tutorial_transformer_generator",
         "path": "zoo:tutorial_transformer_generator/model",
         "task": "pushshift.io",
         "description": (
