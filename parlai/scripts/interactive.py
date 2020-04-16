@@ -21,6 +21,7 @@ Input is often model or task specific, but in drqa, it is always
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.scripts.script import ParlaiScript
 from parlai.agents.local_human.local_human import LocalHumanAgent
 
 import random
@@ -85,7 +86,14 @@ def interactive(opt, print_parser=None):
             break
 
 
+class Interactive(ParlaiScript):
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        random.seed(42)
+        return interactive(self.opt, print_parser=True)
+
+
 if __name__ == '__main__':
-    random.seed(42)
-    parser = setup_args()
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    Interactive.main()

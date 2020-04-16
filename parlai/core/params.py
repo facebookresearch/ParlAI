@@ -1000,6 +1000,80 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
+    def parse_kwargs(self, **kwargs):
+        """
+        Parse kwargs, with type checking etc.
+        """
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            if kwname not in kwname_to_action:
+                # best guess, we need to delay it
+                print(f'skipping {kwname}')
+                continue
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        self.add_extra_args(string_args)
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        # hack: capture any error messages without raising a SystemExit
+        def _captured_error(msg):
+            raise ValueError(msg)
+
+        old_error = self.error
+        self.error = _captured_error
+        try:
+            return self.parse_args(args=string_args, print_args=False)
+        finally:
+            self.error = old_error
+
     def print_args(self):
         """
         Print out all the arguments in this parser.

@@ -19,6 +19,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.scripts.script import ParlaiScript
 
 import random
 
@@ -56,8 +57,14 @@ def display_model(opt):
                 break
 
 
+class DisplayData(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        display_model(self.opt)
+
+
 if __name__ == '__main__':
-    # Get command line arguments
-    parser = setup_args()
-    opt = parser.parse_args()
-    display_model(opt)
+    DisplayData.main()
