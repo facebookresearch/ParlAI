@@ -218,17 +218,17 @@ class TorchClassifierAgent(TorchAgent):
         """
         Update the confusion matrix given the batch and predictions.
 
-        :param batch:
-            a Batch object (defined in torch_agent.py)
         :param predictions:
             (list of string of length batchsize) label predicted by the
             classifier
+        :param batch:
+            a Batch object (defined in torch_agent.py)
         """
         for class_name in self.class_list:
             prec_str = 'class_{}_prec'.format(class_name)
             recall_str = 'class_{}_recall'.format(class_name)
             f1_str = 'class_{}_f1'.format(class_name)
-            precision, recall, f1 = ClassificationMetric.many(
+            precision, recall, f1 = ClassificationMetric.compute_metrics(
                 predictions, batch.labels, class_name
             )
             self.record_local_metric(prec_str, precision)

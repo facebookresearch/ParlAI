@@ -326,14 +326,19 @@ class ClassificationF1Metric(PrecisionMetric):
 
 
 class ClassificationMetric(AverageMetric):
+    """
+    Class takes sample-wise confusion matrix and computes precision, recall, f1 for classification
+
+    """
+
     @staticmethod
     def compute_many(
         true_positives: TScalar = 0,
         true_negatives: TScalar = 0,
         false_positives: TScalar = 0,
         false_negatives: TScalar = 0,
-    ):
-        return [
+    ) -> Tuple[PrecisionMetric, RecallMetric, ClassificationF1Metric]:
+        return (
             PrecisionMetric(
                 true_positives, true_negatives, false_positives, false_negatives
             ),
@@ -343,10 +348,10 @@ class ClassificationMetric(AverageMetric):
             ClassificationF1Metric(
                 true_positives, true_negatives, false_positives, false_negatives
             ),
-        ]
+        )
 
     @staticmethod
-    def many(
+    def compute_metrics(
         predictions: List[str], gold_labels: List[str], positive_class: str
     ) -> Tuple[List[PrecisionMetric], List[RecallMetric], List[ClassificationF1Metric]]:
         precisions = []
