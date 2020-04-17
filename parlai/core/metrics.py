@@ -325,10 +325,23 @@ class ClassificationF1Metric(PrecisionMetric):
             )
 
 
+class ClassificationweightedF1Metric(ClassificationF1Metric):
+    def value(self) -> float:
+        f1 = super().value()
+        total_examples = (
+            self._true_positives
+            + self._true_negatives
+            + self._false_positives
+            + self._false_negatives
+        )
+        actual_postives = self._true_positives + self._false_negatives
+        return (actual_postives / total_examples) * f1
+
+
 class ClassificationMetric(AverageMetric):
     """
-    Class takes sample-wise confusion matrix and computes precision, recall, f1 for
-    classification.
+    Class takes sample-wise confusion matrix and computes precision, recall, f1,
+    weighted_f1 for classification.
     """
 
     @staticmethod
@@ -337,7 +350,12 @@ class ClassificationMetric(AverageMetric):
         true_negatives: TScalar = 0,
         false_positives: TScalar = 0,
         false_negatives: TScalar = 0,
-    ) -> Tuple[PrecisionMetric, RecallMetric, ClassificationF1Metric]:
+    ) -> Tuple[
+        PrecisionMetric,
+        RecallMetric,
+        ClassificationF1Metric,
+        ClassificationweightedF1Metric,
+    ]:
         return (
             PrecisionMetric(
                 true_positives, true_negatives, false_positives, false_negatives
@@ -346,6 +364,9 @@ class ClassificationMetric(AverageMetric):
                 true_positives, true_negatives, false_positives, false_negatives
             ),
             ClassificationF1Metric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+            ClassificationweightedF1Metric(
                 true_positives, true_negatives, false_positives, false_negatives
             ),
         )
@@ -357,6 +378,7 @@ class ClassificationMetric(AverageMetric):
         precisions = []
         recalls = []
         f1s = []
+        weighted_f1s = []
         for predicted, gold_label in zip(predictions, gold_labels):
             true_positives = (
                 1
@@ -378,13 +400,14 @@ class ClassificationMetric(AverageMetric):
                 if (predicted != positive_class) and (gold_label == positive_class)
                 else 0
             )
-            precision, recall, f1 = ClassificationMetric.compute_many(
+            precision, recall, f1, weighted_f1 = ClassificationMetric.compute_many(
                 true_positives, true_negatives, false_positives, false_negatives
             )
             precisions.append(precision)
             recalls.append(recall)
             f1s.append(f1)
-        return precisions, recalls, f1s
+            weighted_f1s.append(weighted_f1)
+        return precisions, recalls, f1s, weighted_f1s
 
 
 class MacroAverageMetric(Metric):

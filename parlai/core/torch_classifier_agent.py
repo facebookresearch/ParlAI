@@ -227,12 +227,14 @@ class TorchClassifierAgent(TorchAgent):
             prec_str = 'class_{}_prec'.format(class_name)
             recall_str = 'class_{}_recall'.format(class_name)
             f1_str = 'class_{}_f1'.format(class_name)
-            precision, recall, f1 = ClassificationMetric.compute_metrics(
+            weighted_f1_str = 'class_{}_weighted_f1'.format(class_name)
+            precision, recall, f1, weighted_f1 = ClassificationMetric.compute_metrics(
                 predictions, batch.labels, class_name
             )
             self.record_local_metric(prec_str, precision)
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
+            self.record_local_metric(weighted_f1_str, weighted_f1)
 
     def _format_interactive_output(self, probs, prediction_id):
         """
