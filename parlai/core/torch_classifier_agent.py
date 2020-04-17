@@ -224,19 +224,22 @@ class TorchClassifierAgent(TorchAgent):
             a Batch object (defined in torch_agent.py)
         """
         for class_name in self.class_list:
+            if not self.opt['get_all_metrics']:
+                class_name = self.ref_class
             prec_str = 'class_{}_prec'.format(class_name)
             recall_str = 'class_{}_recall'.format(class_name)
             f1_str = 'class_{}_f1'.format(class_name)
             weighted_f1_str = 'class_{}_weighted_f1'.format(class_name)
-            precision, recall, f1, weighted_f1 = ClassificationMetric.compute_metrics(
+            precision, recall, f1 = ClassificationMetric.compute_metrics(
                 predictions, batch.labels, class_name
             )
             self.record_local_metric(prec_str, precision)
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
-            self.record_local_metric(weighted_f1_str, weighted_f1)
+            if not self.opt['get_all_metrics']:
+                return
 
-    def _format_interactive_output(self, probs, prediction_id):
+    def _format_interactive_output(self, probsz, prediction_id):
         """
         Format interactive mode output with scores.
         """

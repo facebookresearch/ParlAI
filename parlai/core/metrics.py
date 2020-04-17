@@ -251,7 +251,7 @@ class AverageMetric(Metric):
         return self._numer / self._denom
 
 
-class PrecisionMetric(Metric):
+class ConfusionMatrixMetric(Metric, ABC):
     """
     Class that keeps count of the confusion matrix and computes precision for
     classification.
@@ -294,6 +294,8 @@ class PrecisionMetric(Metric):
             false_negatives=full_false_negatives,
         )
 
+
+class PrecisionMetric(ConfusionMatrixMetric):
     def value(self) -> float:
         if self._true_positives == 0:
             return 0.0
@@ -301,7 +303,7 @@ class PrecisionMetric(Metric):
             return self._true_positives / (self._true_positives + self._false_positives)
 
 
-class RecallMetric(PrecisionMetric):
+class RecallMetric(ConfusionMatrixMetric):
     def value(self) -> float:
         if self._true_positives == 0:
             return 0.0
@@ -309,7 +311,7 @@ class RecallMetric(PrecisionMetric):
             return self._true_positives / (self._true_positives + self._false_negatives)
 
 
-class ClassificationF1Metric(PrecisionMetric):
+class ClassificationF1Metric(ConfusionMatrixMetric):
     def value(self) -> float:
         if self._true_positives == 0:
             return 0.0
@@ -325,19 +327,6 @@ class ClassificationF1Metric(PrecisionMetric):
             )
 
 
-class ClassificationweightedF1Metric(ClassificationF1Metric):
-    def value(self) -> float:
-        f1 = super().value()
-        total_examples = (
-            self._true_positives
-            + self._true_negatives
-            + self._false_positives
-            + self._false_negatives
-        )
-        actual_postives = self._true_positives + self._false_negatives
-        return (actual_postives / total_examples) * f1
-
-
 class ClassificationMetric(AverageMetric):
     """
     Class takes sample-wise confusion matrix and computes precision, recall, f1,
@@ -350,12 +339,7 @@ class ClassificationMetric(AverageMetric):
         true_negatives: TScalar = 0,
         false_positives: TScalar = 0,
         false_negatives: TScalar = 0,
-    ) -> Tuple[
-        PrecisionMetric,
-        RecallMetric,
-        ClassificationF1Metric,
-        ClassificationweightedF1Metric,
-    ]:
+    ) -> Tuple[PrecisionMetric, RecallMetric, ClassificationF1Metric]:
         return (
             PrecisionMetric(
                 true_positives, true_negatives, false_positives, false_negatives
@@ -364,9 +348,6 @@ class ClassificationMetric(AverageMetric):
                 true_positives, true_negatives, false_positives, false_negatives
             ),
             ClassificationF1Metric(
-                true_positives, true_negatives, false_positives, false_negatives
-            ),
-            ClassificationweightedF1Metric(
                 true_positives, true_negatives, false_positives, false_negatives
             ),
         )
@@ -378,7 +359,6 @@ class ClassificationMetric(AverageMetric):
         precisions = []
         recalls = []
         f1s = []
-        weighted_f1s = []
         for predicted, gold_label in zip(predictions, gold_labels):
             true_positives = (
                 1
@@ -400,14 +380,13 @@ class ClassificationMetric(AverageMetric):
                 if (predicted != positive_class) and (gold_label == positive_class)
                 else 0
             )
-            precision, recall, f1, weighted_f1 = ClassificationMetric.compute_many(
+            precision, recall, f1 = ClassificationMetric.compute_many(
                 true_positives, true_negatives, false_positives, false_negatives
             )
             precisions.append(precision)
             recalls.append(recall)
             f1s.append(f1)
-            weighted_f1s.append(weighted_f1)
-        return precisions, recalls, f1s, weighted_f1s
+        return precisions, recalls, f1s
 
 
 class MacroAverageMetric(Metric):
@@ -435,6 +414,43 @@ class MacroAverageMetric(Metric):
         sum_ = sum(v.value() for v in self._values.values())
         n = len(self._values)
         return sum_ / n
+
+
+class WeightedF1AverageMetric(Metric):
+    """
+    Class that represents the weighted f1 from ClassificationF1Metric
+    """
+
+    __slots__ = '_values'
+
+    def __init__(self, metrics: Dict[str, ClassificationF1Metric]) -> None:
+        self._values = metrics
+
+    def __add__(
+        self, other: Optional['WeightedF1AverageMetric']
+    ) -> 'WeightedF1AverageMetric':
+        if other is None:
+            return self
+        output = dict(**self._values)
+        for k, v in other._values.items():
+            output[k] = output.get(k, None) + v
+        return WeightedF1AverageMetric(output)
+
+    def value(self) -> float:
+        weighted_f1 = 0.0
+        values = list(self._values.values())
+        if len(values) == 0:
+            return weighted_f1
+        total_examples = (
+            values[0]._true_positives
+            + values[0]._true_negatives
+            + values[0]._false_positives
+            + values[0]._false_negatives
+        )
+        for each in values:
+            actual_positive = each._true_positives + each._false_negatives
+            weighted_f1 += each.value() * (actual_positive / total_examples)
+        return weighted_f1
 
 
 class GlobalMetric:
@@ -669,12 +685,15 @@ def aggregate_named_reports(
     m: Dict[str, Metric] = {}
     macro_averages: Dict[str, Dict[str, Metric]] = {}
     for task_id, task_report in named_reports.items():
+        weighted_f1: Dict[str, ClassificationF1Metric] = {}
         for each_metric, value in task_report.items():
             if value.is_global:
                 # just take the first one we saw
                 if each_metric not in m:
                     m[each_metric] = value
             else:
+                if isinstance(value, ClassificationF1Metric):
+                    weighted_f1[each_metric.split('__')[1]] = value
                 task_metric = f'{task_id}/{each_metric}'
                 m[task_metric] = m.get(task_metric) + value
                 if micro_average or not isinstance(value, AverageMetric):
@@ -685,6 +704,8 @@ def aggregate_named_reports(
                     if each_metric not in macro_averages:
                         macro_averages[each_metric] = {}
                     macro_averages[each_metric][task_id] = value
+            if len(weighted_f1) != 0:
+                m[f'{task_id}/weighted_f1'] = WeightedF1AverageMetric(weighted_f1)
     for key, values in macro_averages.items():
         m[key] = MacroAverageMetric(values)
     return m
@@ -874,7 +895,7 @@ class TeacherMetrics(Metrics):
 
         if prediction is not None:
             self.add('accuracy', ExactMatchMetric.compute(prediction, labels))
-            self.add('f1', F1Metric.compute(prediction, labels))
+            self.add('token_f1', F1Metric.compute(prediction, labels))
 
             for k in range(1, 5):  # 1..4
                 if f'bleu-{k}' in self._metrics_list:
