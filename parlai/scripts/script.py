@@ -83,6 +83,6 @@ class ParlaiScript(object):
         f = io.StringIO()
         parser = cls.setup_args()
         parser.prog = cls.__name__
-        parser.add_extra_args(parser._kwargs_to_strargs(**kwargs))
+        parser.add_extra_args(parser._kwargs_to_str_args(**kwargs))
         parser.print_help(f)
         return f.getvalue()
