@@ -52,9 +52,9 @@ EXAMPLE_PATH = os.path.join(
     os.path.dirname(parlai_filepath), 'mturk/tasks/acute_eval/example'
 )
 # Feel free to edit this, but not necessary
-NUM_CONVERSATIONS_EVALUATED = 160
 SUBTASKS_PER_HIT = 5
 MAX_HITS_PER_WORKER = 1
+MATCHUPS_PER_PAIR = 160
 
 ACUTE_DEFAULT_ARGS = {
     # onboarding
@@ -69,10 +69,6 @@ ACUTE_DEFAULT_ARGS = {
     'annotations_per_pair': 1,
     'seed': 42,
     'subtasks_per_hit': SUBTASKS_PER_HIT,
-    # questions
-    'num_conversations': int(
-        NUM_CONVERSATIONS_EVALUATED / (SUBTASKS_PER_HIT - 1)
-    ),  # subtract 1 for onboarding
     # Task Config
     'task_config': {
         'hit_title': 'Which Conversational Partner is Better?',
@@ -123,11 +119,11 @@ def setup_args(parser=None) -> ParlaiParser:
         help='which evaluation to run for acute',
     )
     parser.add_argument(
-        '-n',
-        '--num-matchups-per-pair',
+        '-mpp',
+        '--matchups-per-pair',
         type=int,
-        default=100,
-        help='How many convo pairs to generate for each matchup in ACUTE Eval. ',
+        default=MATCHUPS_PER_PAIR,
+        help='How many matchups to generate for each pair of ids.',
     )
     parser.add_argument(
         '--live-acute',
@@ -404,6 +400,10 @@ class ParlAIQuickAcute(object):
         """
         Build a conversation pair to show during ACUTE Eval.
 
+        We build twice as many pairs per matchup as specified
+        in the config, to account for issues where sometimes
+        we run out of pairs of conversations to evaluate.
+
         :param conversations:
             A dictionary mapping config_id to dialogues
 
@@ -412,7 +412,7 @@ class ParlAIQuickAcute(object):
         """
         unique_ids = self._get_unique_ids(conversations)
         pairs = []
-        pairs_per_id = self.opt['num_matchups_per_pair']
+        pairs_per_id = self.opt['matchups_per_pair'] * 2
         # Write random pairs of conversations
         for id_pair in self.combos:
             for _ in range(pairs_per_id):
@@ -563,6 +563,7 @@ class ParlAIQuickAcute(object):
 
         self.acute_args = acute_add_args(print_args=False)
         self.acute_args.update(ACUTE_DEFAULT_ARGS)
+        total_convos = self.opt['matchups_per_pair'] * len(self.combos)
         self.acute_args.update(
             {
                 'is_sandbox': not self.opt['live_acute'],
@@ -570,6 +571,10 @@ class ParlAIQuickAcute(object):
                 's1_choice': self.question_config['s1_choice'],
                 's2_choice': self.question_config['s2_choice'],
                 'question': self.question_config['question'],
+                'num_matchup_pairs': total_convos,
+                'num_conversations': int(
+                    total_convos / (SUBTASKS_PER_HIT - 1)  # subtract 1 for onboarding
+                ),
             }
         )
         self.acute_evaluator = AcuteEvaluator(self.acute_args)
