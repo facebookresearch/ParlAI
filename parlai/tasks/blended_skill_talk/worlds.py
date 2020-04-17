@@ -6,17 +6,15 @@
 
 import json
 import random
-import os
 
+from parlai.tasks.blended_skill_talk.agents import raw_data_path
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 
 def load_personas(opt):
     print('[ loading personas.. ]')
-    fname = os.path.join(
-        opt['datapath'], 'blended_skill_talk', opt['datatype'].split(':')[0] + '.json'
-    )
+    fname = raw_data_path(opt)
     with open(fname) as json_file:
         data = json.load(json_file)
     contexts = []
