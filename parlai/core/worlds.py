@@ -1088,15 +1088,12 @@ class DynamicBatchWorld(World):
             self.max_batch_size = opt['batchsize']
 
         # TODO: check to ensure the agent has self_observe
-        shared = world.share()
         self.world = world
         # TODO: maybe generalize this
         self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
-        self.worlds = [
-            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
-        ]
+        self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
 
         self.reset()
 
