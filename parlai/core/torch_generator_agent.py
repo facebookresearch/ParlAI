@@ -409,7 +409,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else:
                 states = {}
 
-        if self._should_initialize_optimizer():
+        if shared:
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
+        elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
@@ -518,6 +521,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Share internal states between parent and child instances.
         """
         shared = super().share()
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         if self.opt.get('numthreads', 1) > 1:
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']

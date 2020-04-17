@@ -64,13 +64,18 @@ def uppercase(string: str) -> str:
 
 
 def colorize(text, style):
-    USE_COLORS = _sys.stdout.isatty()
+    try:
+        # if we're in ipython it's okay to use colors
+        __IPYTHON__
+        USE_COLORS = True
+    except NameError:
+        USE_COLORS = _sys.stdout.isatty()
     BLUE = '\033[1;94m'
-    BOLD_LIGHT_GRAY = '\033[1;37;40m'
-    LIGHT_GRAY = '\033[0;37;40m'
+    BOLD_LIGHT_GRAY = '\033[1m'
+    LIGHT_GRAY = '\033[0m'
     MAGENTA = '\033[0;95m'
-    HIGHLIGHT_RED = '\033[1;37;41m'
-    HIGHLIGHT_BLUE = '\033[1;37;44m'
+    HIGHLIGHT_RED = '\033[1;31m'
+    HIGHLIGHT_BLUE = '\033[0;34m'
     RESET = '\033[0;0m'
     if not USE_COLORS:
         return text

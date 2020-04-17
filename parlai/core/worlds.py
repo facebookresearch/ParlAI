@@ -1561,12 +1561,11 @@ def _create_task_agents(opt: Opt):
         # do not need task agents in interactive or self chat settings
         return []
 
-    my_module = load_task_module(opt['task'])
     try:
         # Tries to call the create_agent function in agents.py
+        my_module = load_task_module(opt['task'])
         task_agents = my_module.create_agents(opt)  # type: ignore
-
-    except AttributeError:
+    except (ModuleNotFoundError, AttributeError):
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
     if type(task_agents) != list:

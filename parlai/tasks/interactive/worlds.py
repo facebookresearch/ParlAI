@@ -39,7 +39,8 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def finalize_episode(self):
         print("CHAT DONE ")
-        print("\n... preparing new chat... \n")
+        if not self.epoch_done():
+            print("\n... preparing new chat... \n")
 
     def parley(self):
         """

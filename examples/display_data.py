@@ -10,14 +10,10 @@ verification of data loading and iteration.
 For more documentation, see parlai.scripts.display_data.
 """
 
-from parlai.scripts.display_data import display_data, setup_args
 import random
+from parlai.scripts.display_data import DisplayData
 
 
 if __name__ == '__main__':
     random.seed(42)
-
-    # Get command line arguments
-    parser = setup_args()
-    opt = parser.parse_args()
-    display_data(opt)
+    DisplayData.main()

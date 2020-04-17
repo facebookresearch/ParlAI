@@ -63,7 +63,12 @@ class LocalHumanAgent(Agent):
     def act(self):
         reply = Message()
         reply['id'] = self.getID()
-        reply_text = input(colorize("Enter Your Message:", 'field') + ' ')
+        try:
+            reply_text = input(colorize("Enter Your Message:", 'text') + ' ')
+        except EOFError:
+            self.finished = True
+            return {'episode_done': True}
+
         reply_text = reply_text.replace('\\n', '\n')
         if self.opt.get('single_turn', False):
             reply_text += '[DONE]'
@@ -76,6 +81,7 @@ class LocalHumanAgent(Agent):
         reply['text'] = reply_text
         if '[EXIT]' in reply_text:
             self.finished = True
+            return {'episode_done': True}
         return reply
 
     def episode_done(self):

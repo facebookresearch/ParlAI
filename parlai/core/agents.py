@@ -42,6 +42,7 @@ This module also provides a utility method:
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
+from parlai.core.loader import register_agent  # noqa: F401
 from parlai.core.opt import Opt, load_opt_file
 from parlai.utils.misc import warn_once
 import copy

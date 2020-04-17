@@ -397,6 +397,15 @@ def float_formatter(f: Union[float, int]) -> str:
     return s
 
 
+def _line_width():
+    try:
+        # if we're in an interactive ipython notebook, hardcode a longer width
+        __IPYTHON__
+        return 128
+    except NameError:
+        return shutil.get_terminal_size((88, 24)).columns
+
+
 def nice_report(report) -> str:
     """
     Render an agent Report as a beautiful string.
@@ -434,7 +443,7 @@ def nice_report(report) -> str:
             output[k] = v
 
     if use_pandas:
-        line_width = shutil.get_terminal_size((88, 24)).columns
+        line_width = _line_width()
 
         df = pd.DataFrame([output])
         df.columns = pd.MultiIndex.from_tuples(df.columns)

@@ -24,6 +24,7 @@ from parlai.core.metrics import aggregate_named_reports, Metric
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
+from parlai.scripts.script import ParlaiScript
 
 import json
 import random
@@ -57,7 +58,7 @@ def setup_args(parser=None):
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
     parser.add_argument(
         '-mcs',
         '--metrics',
@@ -78,7 +79,7 @@ def setup_args(parser=None):
     )
     WorldLogger.add_cmdline_args(parser)
     TensorboardLogger.add_cmdline_args(parser)
-    parser.set_defaults(datatype='valid')
+    parser.set_params(datatype='valid')
     return parser
 
 
@@ -203,6 +204,14 @@ def eval_model(opt, print_parser=None):
     return report
 
 
+class EvalModel(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return eval_model(self.opt)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    eval_model(parser.parse_args(print_args=False))
+    EvalModel.main()

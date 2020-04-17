@@ -1000,6 +1000,102 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
+    def _kwargs_to_str_args(self, **kwargs):
+        """
+        Attempt to map from python-code kwargs into CLI args.
+
+        e.g. model_file -> --model-file.
+
+        Works with short options too, like t="convai2".
+        """
+
+        # we have to do this large block of repetitive code twice, the first
+        # round is basically just to become aware of anything that would have
+        # been added by add_extra_args
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            if kwname not in kwname_to_action:
+                # best guess, we need to delay it. hopefully this gets added
+                # during add_kw_Args
+                continue
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        # become aware of any extra args that might be specified if the user
+        # provides something like model="transformer/generator".
+        self.add_extra_args(string_args)
+
+        # do it again, this time knowing about ALL args.
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            # note we don't have the if kwname not in kwname_to_action here.
+            # it MUST appear, or else we legitimately should be throwing a KeyError
+            # because user has provided an unspecified option
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        return string_args
+
+    def parse_kwargs(self, **kwargs):
+        """
+        Parse kwargs, with type checking etc.
+        """
+        # hack: capture any error messages without raising a SystemExit
+        def _captured_error(msg):
+            raise ValueError(msg)
+
+        old_error = self.error
+        self.error = _captured_error
+        try:
+            string_args = self._kwargs_to_str_args(**kwargs)
+            return self.parse_args(args=string_args, print_args=False)
+        finally:
+            self.error = old_error
+
     def print_args(self):
         """
         Print out all the arguments in this parser.
