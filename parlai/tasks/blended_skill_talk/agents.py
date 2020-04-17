@@ -25,7 +25,14 @@ from .build import build
 ##################################################
 
 
-def _path(opt):
+def raw_data_path(opt):
+    # Build the data if it doesn't exist.
+    build(opt)
+    dt = opt['datatype'].split(':')[0]
+    return os.path.join(opt['datapath'], 'blended_skill_talk', dt + '.json')
+
+
+def _processed_data_path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
@@ -35,7 +42,7 @@ def _path(opt):
 class BlendedSkillTalkTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['parlaidialogteacher_datafile'] = _path(opt)
+        opt['parlaidialogteacher_datafile'] = _processed_data_path(opt)
         super().__init__(opt, shared)
 
 
