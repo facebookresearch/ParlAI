@@ -69,7 +69,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         super().__init__(opt, agents, shared)
         self.display_partner_persona = self.opt['display_partner_persona']
 
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         self.contexts_data = load_personas(self.opt)
 
     def get_contexts(self):
@@ -101,7 +101,7 @@ class SelfChatWorld(SelfChatBaseWorld):
             help='Include context conversation at beginning or not',
         )
 
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         self.contexts_data = load_personas(self.opt)
 
     def get_contexts(self):

@@ -150,6 +150,12 @@ class World(object):
         shared_data['agents'] = self._share_agents()
         return shared_data
 
+    def clone(self):
+        """
+        Create a duplicate of the world.
+        """
+        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
+
     def _share_agents(self):
         """
         Create shared data for agents.
@@ -1082,15 +1088,12 @@ class DynamicBatchWorld(World):
             self.max_batch_size = opt['batchsize']
 
         # TODO: check to ensure the agent has self_observe
-        shared = world.share()
         self.world = world
         # TODO: maybe generalize this
         self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
-        self.worlds = [
-            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
-        ]
+        self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
 
         self.reset()
 

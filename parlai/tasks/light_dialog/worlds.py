@@ -25,7 +25,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
             help='Add _task_speech to text input to model or not',
         )
 
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         # Create Light data so we can assign personas.
         light_opt = self.opt.copy()
         light_opt['task'] = 'light_dialog'
@@ -87,7 +87,7 @@ class InteractiveSimpleWorld(InteractiveBaseWorld):
 
 
 class SelfChatWorld(SelfChatBaseWorld):
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         print('[ loading contexts.. ]')
         data_path = os.path.join(
             self.opt['datapath'], 'light_dialogue', 'light_environment.pkl'

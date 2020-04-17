@@ -219,7 +219,7 @@ class InteractiveGeneratorWorld(InteractiveWorld):
 
 
 class SelfChatWorld(SelfChatBaseWorld):
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         print('[ loading topics.. ]')
         # Load possible chosen topics
         topics_path = os.path.join(
