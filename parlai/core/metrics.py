@@ -706,6 +706,11 @@ def aggregate_named_reports(
                     macro_averages[each_metric][task_id] = value
             if len(weighted_f1) != 0:
                 m[f'{task_id}/weighted_f1'] = WeightedF1AverageMetric(weighted_f1)
+                if 'weighted_f1' not in macro_averages:
+                    macro_averages['weighted_f1'] = {}
+                macro_averages['weighted_f1'][task_id] = WeightedF1AverageMetric(
+                    weighted_f1
+                )
     for key, values in macro_averages.items():
         m[key] = MacroAverageMetric(values)
     return m
