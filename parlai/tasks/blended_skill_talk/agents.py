@@ -13,7 +13,11 @@ from typing import List, Optional, Dict
 from tqdm import tqdm
 
 from parlai.core.opt import Opt
-from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname, MultiTaskTeacher
+from parlai.core.teachers import (
+    ParlAIDialogTeacher,
+    create_task_agent_from_taskname,
+    MultiTaskTeacher,
+)
 from parlai.tasks.convai2.agents import DefaultTeacher as Convai2DefaultTeacher
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
@@ -381,6 +385,7 @@ class AllTeacher(MultiTaskTeacher):
     """
     Multitask teacher that combines all "Persona Topicifier" teachers.
     """
+
     def __init__(self, opt, shared=None):
         topicifier_tasks = [
             'blended_skill_talk:ConvAI2PersonaTopicifier',  # ConvAI2
@@ -391,4 +396,3 @@ class AllTeacher(MultiTaskTeacher):
         opt = copy.deepcopy(opt)
         opt['task'] = ','.join(topicifier_tasks)
         super().__init__(opt, shared)
-
