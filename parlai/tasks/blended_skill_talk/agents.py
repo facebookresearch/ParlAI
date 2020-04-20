@@ -10,9 +10,10 @@ import os
 import re
 from collections import defaultdict
 from typing import List, Optional, Dict
+from tqdm import tqdm
 
 from parlai.core.opt import Opt
-from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname
+from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname, MultiTaskTeacher
 from parlai.tasks.convai2.agents import DefaultTeacher as Convai2DefaultTeacher
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
@@ -166,7 +167,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         """
         print(f'Starting to compile {self.num_episodes():d} episodes.')
         all_data = []
-        for episode_idx in range(self.num_episodes()):
+        for episode_idx in tqdm(range(self.num_episodes())):
             episode_data = []
             entry_idx = 0
             while True:
@@ -179,8 +180,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
                     break
                 else:
                     entry_idx += 1
-            if (episode_idx + 1) % 100 == 0:
-                print(f'Compiled {episode_idx+1:d} episodes.')
+
         return all_data
 
     def _get_example(self, episode_idx: int, entry_idx: Optional[int] = None):
@@ -375,3 +375,20 @@ class PersonaTopicifier:
 
         modified_utterance = persona + topic + utt
         return modified_utterance
+
+
+class AllTeacher(MultiTaskTeacher):
+    """
+    Multitask teacher that combines all "Persona Topicifier" teachers.
+    """
+    def __init__(self, opt, shared=None):
+        topicifier_tasks = [
+            'blended_skill_talk:ConvAI2PersonaTopicifier',  # ConvAI2
+            'blended_skill_talk:EDPersonaTopicifier',  # Empathetic Dialogues
+            'blended_skill_talk:WoWPersonaTopicifier',  # Wizard of Wikipedia
+            'blended_skill_talk:BlendedSkillTalk',  # Blended Skill Talk
+        ]
+        opt = copy.deepcopy(opt)
+        opt['task'] = ','.join(topicifier_tasks)
+        super().__init__(opt, shared)
+
