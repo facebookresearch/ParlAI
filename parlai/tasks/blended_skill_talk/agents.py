@@ -85,7 +85,7 @@ class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
 
     def __init__(self, opt, shared=None):
         if 'stream' in opt['datatype']:
-            print('Warning: this teacher is not compatible with StreamDialogData!')
+            warn_once('Warning: this teacher is not compatible with StreamDialogData!')
             # StreamDialogData works by reading directly from a text file without any
             # alteration, but this teacher must append a WoW topic string to the context
             # of the first example of each episode.
@@ -155,13 +155,15 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         )
         os.makedirs(os.path.dirname(self.cached_data_path), exist_ok=True)
         if not os.path.isfile(self.cached_data_path):
-            print(f'Cached data file at {self.cached_data_path} not found! Creating...')
+            warn_once(
+                f'Cached data file at {self.cached_data_path} not found! Creating...'
+            )
             self.persona_topic_data = self._compile_data()
-            print(f'Saving data to {self.cached_data_path}.')
+            warn_once(f'Saving data to {self.cached_data_path}.')
             with open(self.cached_data_path, 'w') as f_write:
                 json.dump(self.persona_topic_data, f_write)
         else:
-            print(f'Loading cached data from {self.cached_data_path}.')
+            warn_once(f'Loading cached data from {self.cached_data_path}.')
             with open(self.cached_data_path, 'r') as f_read:
                 self.persona_topic_data = json.load(f_read)
 
@@ -169,7 +171,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         """
         Compile data to be saved for faster future use.
         """
-        print(f'Starting to compile {self.num_episodes():d} episodes.')
+        warn_once(f'Starting to compile {self.num_episodes():d} episodes.')
         all_data = []
         for episode_idx in tqdm(range(self.num_episodes())):
             episode_data = []
@@ -214,7 +216,6 @@ class PersonaTopicifier:
         should_have_topics: bool = False,
         no_persona_is_error: bool = False,
     ):
-        print('IN PERSONA TOPICIFIER INIT')
         self.datapath = opt['datapath']
         self.utterance_to_persona_map = {}
         self.should_have_personas = should_have_personas
@@ -237,7 +238,6 @@ class PersonaTopicifier:
             self.personas = f.read().strip().split('||')
             # There's an extra line at the end of the file which is ''
             self.personas = [p for p in self.personas if p]
-            print(f'Got {len(self.personas)} personas.')
 
     def _setup_personas_to_wow_topics(self) -> Dict[str, List[str]]:
         topic_to_persona_path = os.path.join(
@@ -255,7 +255,7 @@ class PersonaTopicifier:
                 for str_ in persona_strings:
                     persona_strings_to_topics[str_].append(topic)
 
-        print(
+        warn_once(
             f'FINISHED MAPPING personas to topics, got: {len(list(persona_strings_to_topics.keys()))} persona strings to map to topics.'
         )
         return topics_to_persona_strings, persona_strings_to_topics
