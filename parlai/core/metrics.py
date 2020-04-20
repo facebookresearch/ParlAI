@@ -902,7 +902,7 @@ class TeacherMetrics(Metrics):
 
         if prediction is not None:
             self.add('accuracy', ExactMatchMetric.compute(prediction, labels))
-            self.add('token_f1', F1Metric.compute(prediction, labels))
+            self.add('f1', F1Metric.compute(prediction, labels))
 
             for k in range(1, 5):  # 1..4
                 if f'bleu-{k}' in self._metrics_list:
