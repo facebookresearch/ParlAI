@@ -326,9 +326,7 @@ class PersonaTopicifier:
             for long_utt in utt_words_long:
                 if long_utt in persona:
                     return topics[0] + '\n'
-        warn_once(
-            f'Found no WoW topic for persona: \"{persona}\". Returning topics[0]: {topics[0]}'
-        )
+
         return topics[0] + '\n'
 
     def get_modified_text(self, text):
