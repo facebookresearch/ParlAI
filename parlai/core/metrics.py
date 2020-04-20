@@ -296,6 +296,10 @@ class ConfusionMatrixMetric(Metric, ABC):
 
 
 class PrecisionMetric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes precision for classifier
+    """
+
     def value(self) -> float:
         if self._true_positives == 0:
             return 0.0
@@ -304,6 +308,10 @@ class PrecisionMetric(ConfusionMatrixMetric):
 
 
 class RecallMetric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes recall for classifier
+    """
+
     def value(self) -> float:
         if self._true_positives == 0:
             return 0.0
@@ -312,6 +320,10 @@ class RecallMetric(ConfusionMatrixMetric):
 
 
 class ClassificationF1Metric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes f1 for classifier
+    """
+
     def value(self) -> float:
         if self._true_positives == 0:
             return 0.0
@@ -360,25 +372,17 @@ class ClassificationMetric(AverageMetric):
         recalls = []
         f1s = []
         for predicted, gold_label in zip(predictions, gold_labels):
-            true_positives = (
-                1
-                if (predicted == positive_class) and (gold_label == positive_class)
-                else 0
+            true_positives = int(
+                predicted == positive_class and gold_label == positive_class
             )
-            true_negatives = (
-                1
-                if (predicted != positive_class) and (gold_label != positive_class)
-                else 0
+            true_negatives = int(
+                predicted != positive_class and gold_label != positive_class
             )
-            false_positives = (
-                1
-                if (predicted == positive_class) and (gold_label != positive_class)
-                else 0
+            false_positives = int(
+                predicted == positive_class and gold_label != positive_class
             )
-            false_negatives = (
-                1
-                if (predicted != positive_class) and (gold_label == positive_class)
-                else 0
+            false_negatives = int(
+                predicted != positive_class and gold_label == positive_class
             )
             precision, recall, f1 = ClassificationMetric.compute_many(
                 true_positives, true_negatives, false_positives, false_negatives
@@ -455,7 +459,7 @@ class WeightedF1AverageMetric(Metric):
     @staticmethod
     def compute_many(
         metrics: Dict[str, List[ClassificationF1Metric]]
-    ) -> List[WeightedF1AverageMetric]:
+    ) -> List['WeightedF1AverageMetric']:
         weighted_f1s = [dict(zip(metrics, t)) for t in zip(*metrics.values())]
         weighted_f1s = [WeightedF1AverageMetric(metrics) for metrics in weighted_f1s]
         return weighted_f1s

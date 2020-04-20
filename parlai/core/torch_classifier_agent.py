@@ -217,7 +217,7 @@ class TorchClassifierAgent(TorchAgent):
             labels_tensor = labels_tensor.cuda()
         return labels_tensor
 
-    def _update_confusion_matrix(self, predictions, batch):
+    def _update_confusion_matrix(self, batch, predictions):
         """
         Update the confusion matrix given the batch and predictions.
 
@@ -231,18 +231,18 @@ class TorchClassifierAgent(TorchAgent):
         for class_name in self.class_list:
             if not self.opt['get_all_metrics']:
                 class_name = self.ref_class
-            prec_str = 'class_{}_prec'.format(class_name)
-            recall_str = 'class_{}_recall'.format(class_name)
-            f1_str = 'class_{}_f1'.format(class_name)
+            prec_str = f'class_{class_name}_prec'
+            recall_str = f'class_{class_name}_recall'
+            f1_str = f'class_{class_name}_f1'
             precision, recall, f1 = ClassificationMetric.compute_metrics(
                 predictions, batch.labels, class_name
             )
+            f1_dict[class_name] = f1
+            if not self.opt['get_all_metrics']:
+                continue
             self.record_local_metric(prec_str, precision)
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
-            f1_dict[class_name] = f1
-            if not self.opt['get_all_metrics']:
-                return
         self.record_local_metric(
             'weighted_f1', WeightedF1AverageMetric.compute_many(f1_dict)
         )
@@ -282,7 +282,7 @@ class TorchClassifierAgent(TorchAgent):
         # get predictions
         _, prediction_id = torch.max(scores.cpu(), 1)
         preds = [self.class_list[idx] for idx in prediction_id]
-        self._update_confusion_matrix(preds, batch)
+        self._update_confusion_matrix(batch, preds)
 
         return Output(preds)
 
@@ -313,7 +313,7 @@ class TorchClassifierAgent(TorchAgent):
             loss = self.criterion(scores, labels)
             self.record_local_metric('loss', AverageMetric.many(loss))
             loss = loss.mean()
-            self._update_confusion_matrix(preds, batch)
+            self._update_confusion_matrix(batch, preds)
 
         if self.opt.get('print_scores', False):
             return Output(preds, probs=probs.cpu())
