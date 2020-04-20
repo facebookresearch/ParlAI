@@ -452,6 +452,14 @@ class WeightedF1AverageMetric(Metric):
             weighted_f1 += each.value() * (actual_positive / total_examples)
         return weighted_f1
 
+    @staticmethod
+    def compute_many(
+        metrics: Dict[str, List[ClassificationF1Metric]]
+    ) -> List[WeightedF1AverageMetric]:
+        weighted_f1s = [dict(zip(metrics, t)) for t in zip(*metrics.values())]
+        weighted_f1s = [WeightedF1AverageMetric(metrics) for metrics in weighted_f1s]
+        return weighted_f1s
+
 
 class GlobalMetric:
     """
@@ -685,15 +693,12 @@ def aggregate_named_reports(
     m: Dict[str, Metric] = {}
     macro_averages: Dict[str, Dict[str, Metric]] = {}
     for task_id, task_report in named_reports.items():
-        weighted_f1: Dict[str, ClassificationF1Metric] = {}
         for each_metric, value in task_report.items():
             if value.is_global:
                 # just take the first one we saw
                 if each_metric not in m:
                     m[each_metric] = value
             else:
-                if isinstance(value, ClassificationF1Metric):
-                    weighted_f1[each_metric.split('__')[1]] = value
                 task_metric = f'{task_id}/{each_metric}'
                 m[task_metric] = m.get(task_metric) + value
                 if micro_average or not isinstance(value, AverageMetric):
@@ -704,13 +709,6 @@ def aggregate_named_reports(
                     if each_metric not in macro_averages:
                         macro_averages[each_metric] = {}
                     macro_averages[each_metric][task_id] = value
-            if len(weighted_f1) != 0:
-                m[f'{task_id}/weighted_f1'] = WeightedF1AverageMetric(weighted_f1)
-                if 'weighted_f1' not in macro_averages:
-                    macro_averages['weighted_f1'] = {}
-                macro_averages['weighted_f1'][task_id] = WeightedF1AverageMetric(
-                    weighted_f1
-                )
     for key, values in macro_averages.items():
         m[key] = MacroAverageMetric(values)
     return m
