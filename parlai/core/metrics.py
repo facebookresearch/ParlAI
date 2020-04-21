@@ -297,7 +297,7 @@ class ConfusionMatrixMetric(AverageMetric, ABC):
 
 class PrecisionMetric(ConfusionMatrixMetric):
     """
-    Class that takes in a ConfusionMatrixMetric and computes precision for classifier.
+    Class that takes in a ConfusionMatrixMetric and computes precision for classifier
     """
 
     def value(self) -> float:
@@ -309,7 +309,7 @@ class PrecisionMetric(ConfusionMatrixMetric):
 
 class RecallMetric(ConfusionMatrixMetric):
     """
-    Class that takes in a ConfusionMatrixMetric and computes recall for classifier.
+    Class that takes in a ConfusionMatrixMetric and computes recall for classifier
     """
 
     def value(self) -> float:
@@ -321,7 +321,7 @@ class RecallMetric(ConfusionMatrixMetric):
 
 class ClassificationF1Metric(ConfusionMatrixMetric):
     """
-    Class that takes in a ConfusionMatrixMetric and computes f1 for classifier.
+    Class that takes in a ConfusionMatrixMetric and computes f1 for classifier
     """
 
     def value(self) -> float:
@@ -422,7 +422,7 @@ class MacroAverageMetric(Metric):
 
 class WeightedF1AverageMetric(AverageMetric):
     """
-    Class that represents the weighted f1 from ClassificationF1Metric.
+    Class that represents the weighted f1 from ClassificationF1Metric
     """
 
     __slots__ = '_values'
