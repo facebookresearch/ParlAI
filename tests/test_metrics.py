@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-
+import parlai.utils.testing as testing_utils
 import torch
 import random
 
@@ -238,15 +238,9 @@ class TestAggregators(unittest.TestCase):
         assert 'b/global_avg' not in agg
 
     def test_uneven_macro_aggrevation(self):
-        report1 = {
-            'avg': AverageMetric(1, 1),
-        }
-        report2 = {
-            'avg': AverageMetric(0, 1),
-        }
-        report3 = {
-            'avg': AverageMetric(0, 1),
-        }
+        report1 = {'avg': AverageMetric(1, 1)}
+        report2 = {'avg': AverageMetric(0, 1)}
+        report3 = {'avg': AverageMetric(0, 1)}
         agg1 = aggregate_named_reports(
             {'a': report1, 'b': report2}, micro_average=False
         )
@@ -287,6 +281,25 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/sum'] == 4
         assert agg['b/fixed'] == 4
         assert 'b/global_avg' not in agg
+
+    @testing_utils.skipUnlessGPU
+    def test_classifier_metrics(self):
+        valid, _ = testing_utils.eval_model(
+            dict(
+                task='dialogue_safety:adversarial,dialogue_safety:standard',
+                model='transformer/classifier',
+                model_file='zoo:dialogue_safety/single_turn/model',
+                round=3,
+            ),
+            skip_test=True,
+        )
+        self.assertAlmostEqual(
+            valid['dialogue_safety:adversarial/class___notok___f1'].value(), 0.7938, 3
+        )
+        self.assertAlmostEqual(
+            valid['dialogue_safety:standard/class___notok___f1'].value(), 0.9238, 3
+        )
+        self.assertAlmostEqual(valid['weighted_f1'].value(), 0.9707, 3)
 
 
 if __name__ == '__main__':
