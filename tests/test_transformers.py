@@ -708,6 +708,26 @@ class TestClassifier(unittest.TestCase):
         assert valid['accuracy'] > 0.97
         assert test['accuracy'] > 0.97
 
+    @testing_utils.skipUnlessGPU
+    def test_eval_classifier(self):
+        valid, _ = testing_utils.eval_model(
+            dict(
+                task='dialogue_safety:adversarial,dialogue_safety:standard',
+                model='transformer/classifier',
+                model_file='zoo:dialogue_safety/single_turn/model',
+                round=3,
+                batchsize=40,
+            ),
+            skip_test=True,
+        )
+        self.assertGreaterEqual(
+            valid['dialogue_safety:adversarial/accuracy'].value(), 0.96
+        )
+        self.assertGreaterEqual(
+            valid['dialogue_safety:standard/accuracy'].value(), 0.98
+        )
+        self.assertGreaterEqual(valid['accuracy'].value(), 0.97)
+
 
 class TestLearningRateScheduler(unittest.TestCase):
     """
