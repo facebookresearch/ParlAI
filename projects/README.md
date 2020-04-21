@@ -35,6 +35,10 @@ This directory also contains subfolders for some of the projects which are house
   
 ## Chit-chat
 
+- **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
+  _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Diaogues and Wizard of Wikipedia elements._
+
+
 - **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
   _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._
 
