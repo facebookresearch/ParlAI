@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.utils.testing as testing_utils
 import torch
 import random
 
