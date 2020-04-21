@@ -2,7 +2,7 @@
 
 ### _Can You Put it All Together: Evaluating Conversational Agents' Ability to Blend Skills_
 
-Eric Michael Smith*, Mary Williamson*, Kurt Shuster, Jason Weston, Y-Lan Boureau
+Eric Michael Smith\*, Mary Williamson\*, Kurt Shuster, Jason Weston, Y-Lan Boureau
 
 ## Abstract
 
