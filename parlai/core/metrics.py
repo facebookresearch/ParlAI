@@ -251,7 +251,7 @@ class AverageMetric(Metric):
         return self._numer / self._denom
 
 
-class ConfusionMatrixMetric(Metric, ABC):
+class ConfusionMatrixMetric(AverageMetric, ABC):
     """
     Class that keeps count of the confusion matrix and computes precision for
     classification.
@@ -420,7 +420,7 @@ class MacroAverageMetric(Metric):
         return sum_ / n
 
 
-class WeightedF1AverageMetric(Metric):
+class WeightedF1AverageMetric(AverageMetric):
     """
     Class that represents the weighted f1 from ClassificationF1Metric.
     """
