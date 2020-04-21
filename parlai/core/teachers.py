@@ -1391,6 +1391,18 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                         f"for you automatically. This is happening on Line {line_no} "
                         f"in {path}. The line is:\n\t{line}"
                     )
+                    if 'text' not in msg:
+                        raise ValueError(
+                            f'ParlaiDialogTeacher requires a "text" field in every '
+                            f'entry, but one is missing in Line {line_no} in {path}. '
+                            f'The line is:\n\t{line}'
+                        )
+                    if 'label' not in msg:
+                        raise ValueError(
+                            f'ParlaiDialogTeacher requires a "label" field in every '
+                            f'entry, but one is missing in Line {line_no} in {path}. '
+                            f'The line is:\n\t{line}'
+                        )
                 if msg:
                     self.num_exs += 1
                     eps.append(msg)
@@ -1401,6 +1413,12 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             # add last episode
             eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
+        if len(self.episodes) == 1 and line_no > 100:
+            warn_once(
+                'The data in {path} looks like one very long episode. If this '
+                'is intentional, you may ignore this, but you MAY have a bug in '
+                'your data.'
+            )
 
 
 class AbstractImageTeacher(FixedDialogTeacher):
