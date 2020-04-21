@@ -23,7 +23,7 @@ from os.path import isfile
 from os.path import join as pjoin
 from time import sleep, time
 from collections import defaultdict
-
+from parlai.core.params import ParlaiParser
 from data_utils import *
 
 REDDIT_URL = "https://files.pushshift.io/reddit/"
@@ -267,38 +267,57 @@ def post_process(reddit_dct, name=''):
     reddit_dct['comments'] = comments
     return reddit_dct
 
-
-def main():
-    parser = argparse.ArgumentParser(description='Subreddit QA pair downloader')
-    parser.add_argument(
+def setup_args():
+    """
+    Set up args.
+    """
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    reddit = parser.add_argument_group('Download Reddit Docs')
+    reddit.add_argument(
         '-sy', '--start_year', default=2011, type=int, metavar='N', help='starting year'
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-ey', '--end_year', default=2018, type=int, metavar='N', help='end year'
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-sm', '--start_month', default=7, type=int, metavar='N', help='starting year'
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-em', '--end_month', default=7, type=int, metavar='N', help='end year'
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-sr_l',
         '--subreddit_list',
         default='["explainlikeimfive"]',
         type=str,
         help='subreddit name',
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-id_l', '--id_list', type=str, help='base36 post IDs (in a json list format)'
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-Q', '--questions_only', action='store_true', help='only download submissions'
     )
-    parser.add_argument(
+    reddit.add_argument(
         '-A', '--answers_only', action='store_true', help='only download comments'
     )
-    args = parser.parse_args()
+    reddit.add_argument(
+        '-o',
+        '--output_dir',
+        default='eli5/',
+        type=str,
+        help='where to save the output',
+    )
+    return parser.parse_args()
+
+
+
+def main():
+    opt = setup_args()
+    dpath = opt['datapath']
+    parser = argparse.ArgumentParser(description='Subreddit QA pair downloader')
+    output_dir = pjoin(opt['datapath'], opt['output_dir'])
     ### collect submissions and comments monthly URLs
     date_to_url_submissions = gather_dump_urls(REDDIT_URL, "submissions")
     date_to_url_comments = gather_dump_urls(REDDIT_URL, "comments")
@@ -308,11 +327,11 @@ def main():
     ### download, filter, process, remove
     subprocess.run(['mkdir', 'reddit_tmp'], stdout=subprocess.PIPE)
     st_time = time()
-    if not args.id_list:
-        subreddit_names = json.loads(args.subreddit_list)
+    if not opt['id_list']:
+        subreddit_names = json.loads(opt['subreddit_list'])
         output_files = dict(
             [
-                (name, "processed_data/%s_qalist.json" % (name,))
+                (name, "%s/processed_data/%s_qalist.json" % (output_dir, name,))
                 for name in subreddit_names
             ]
         )
@@ -328,14 +347,14 @@ def main():
         # get monthly reddit dumps
         n_months = 0
 
-        for year in range(args.start_year, args.end_year + 1):
-            st_month = args.start_month if year == args.start_year else 1
-            end_month = args.end_month if year == args.end_year else 12
+        for year in range(opt['start_year'], opt['end_year'] + 1):
+            st_month = opt['start_month'] if year == opt['start_year'] else 1
+            end_month = opt['end_month'] if year == opt['end_year'] else 12
             months = range(st_month, end_month + 1)
             for month in months:
                 merged_comments = 0
                 submissions_url, comments_url = date_to_urls[(year, month)]
-                if not args.answers_only:
+                if not opt['answers_only']:
                     try:
                         processed_submissions = download_and_process(
                             submissions_url, 'submissions', subreddit_names, st_time
@@ -349,7 +368,7 @@ def main():
                     for name in subreddit_names:
                         for dct in processed_submissions[name]:
                             qa_dict[name][dct['id']] = dct
-                if not args.questions_only:
+                if not opt['questions_only']:
                     try:
                         processed_comments = download_and_process(
                             comments_url, 'comments', subreddit_names, st_time
@@ -393,10 +412,10 @@ def main():
                     fo.close()
 
     # get specific reddit posts
-    if args.id_list:
+    if opt['id_list']:
         sr_names = None
-        post_ids = json.loads(args.id_list)
-        if not args.answers_only:
+        post_ids = json.loads(opt['id_list'])
+        if not opt['answers_only']:
             try:
                 sr_names, processed_submissions = download_and_process_posts(
                     post_ids, st_time
@@ -409,7 +428,7 @@ def main():
                 )
 
             output_files = dict(
-                [(name, "processed_data/%s_qalist.json" % (name,)) for name in sr_names]
+                [(name, "%s/processed_data/%s_qalist.json" % (output_dir, name,)) for name in sr_names]
             )
             qa_dict = dict([(name, {}) for name in sr_names])
             for name, fname in output_files.items():
@@ -424,7 +443,7 @@ def main():
                 for dct in processed_submissions[name]:
                     qa_dict[name][dct['id']] = dct
 
-        if not args.questions_only:
+        if not opt['questions_only']:
             try:
                 sr_names, processed_comments = download_and_process_comments(
                     post_ids, st_time
@@ -437,7 +456,7 @@ def main():
                 )
 
             output_files = dict(
-                [(name, "processed_data/%s_qalist.json" % (name,)) for name in sr_names]
+                [(name, "%s/processed_data/%s_qalist.json" % (output_dir, name,)) for name in sr_names]
             )
             qa_dict = dict([(name, {}) for name in sr_names])
             for name, fname in output_files.items():
@@ -473,7 +492,7 @@ def main():
             )
             fo.close()
 
-    if not args.questions_only:
+    if not opt['questions_only']:
         for name, out_file_name in output_files.items():
             qa_dct_list = [
                 (k, post_process(rdct, name))

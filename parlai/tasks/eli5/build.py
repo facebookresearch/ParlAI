@@ -17,34 +17,39 @@ from os.path import isdir
 
 # pre-computed files
 RESOURCES = [
+    # wet.paths.gz is false because the archive format is not recognized
+    # It gets unzipped with subprocess after RESOURCES are downloaded.
     DownloadableFile(
         'https://commoncrawl.s3.amazonaws.com/crawl-data/CC-MAIN-2018-34/wet.paths.gz',
         'wet.paths.gz',
         'e3a8addc6a33b54b1dd6488a98c875851ef1aca3b80133d39f6897330a8835fb',
+        zipped=False
     ),
     DownloadableFile(
         'https://dl.fbaipublicfiles.com/eli5qa/explainlikeimfive_ccrawl_ids.json.gz',
         'explainlikeimfive_ccrawl_ids.json.gz',
-        '7fafae2c33fafc80d65bd55c8026c9f6a9e50a7eb4f98a7f0ff2780bf1459444',
+        '59cd7b6a8580421aecae66cd33d065073f2abf21d86097b3262bd460a7a14f0d',
+        zipped=False
     ),
     DownloadableFile(
         'https://dl.fbaipublicfiles.com/eli5qa/explainlikeimfive_unigram_counts.json',
         'explainlikeimfive_unigram_counts.json',
         '0433a4dda7532ba1dae2f5b6bf70cd5ab91fd2772f75e99b4c15c2e04ba80dfd',
+        zipped=False
     ),
 
 ]
 
 # Setup a directory called dir_name at dpath
 def setup_dir(dpath, dir_name):
-    if not isdir(pjoin(dpath, 'tmp')):
-            subprocess.run(['mkdir', pjoin(dpath, 'tmp')])
+    if not isdir(pjoin(dpath, dir_name)):
+            subprocess.run(['mkdir', pjoin(dpath, dir_name)])
 
 def build(opt):
     dpath = pjoin(opt['datapath'], 'eli5')
     pre_computed_path = pjoin(dpath, 'pre_computed')
     processed_path = pjoin(dpath, 'processed_data')
-    docs_path = pjoin(processed_path, 'collected_data')
+    docs_path = pjoin(processed_path, 'collected_docs')
 
     version = '1.0'
 
@@ -55,9 +60,9 @@ def build(opt):
 
         # Setup directory folders
         setup_dir(dpath, 'tmp')
-        setup_dir(dpath, 'eli5')
+        setup_dir(dpath, 'pre_computed')
         setup_dir(dpath, 'processed_data')
-        setup_dir(processed_path, 'collected_data')
+        setup_dir(processed_path, 'collected_docs')
         
 
         if build_data.built(dpath):
@@ -69,7 +74,10 @@ def build(opt):
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(pre_computed_path)
             if downloadable_file.file_name.endswith('.gz'):
-                subprocess.run(['gunzip', pjoin(pre_computed_path, downloadable_file.file_name)])
+                # Check file hasn't already been unzipped
+                if not isfile(pjoin(pre_computed_path, downloadable_file.file_name[:-3])):
+                    print(f'Unzipping {downloadable_file.file_name}')
+                    subprocess.run(['gunzip', pjoin(pre_computed_path, downloadable_file.file_name)], stdout=subprocess.PIPE)
 
         # Check that wet.paths and eli5 ccrawl ids have been unzipped
         if not isfile(pjoin(pre_computed_path, 'wet.paths')):
