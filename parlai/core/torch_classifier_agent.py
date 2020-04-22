@@ -15,7 +15,7 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import AverageMetric
 from typing import List, Optional, Tuple, Dict
-from parlai.utils.typing import TScalar, TVector
+from parlai.utils.typing import TScalar
 from abc import ABC
 
 
@@ -25,9 +25,10 @@ import torch.nn.functional as F
 
 class ConfusionMatrixMetric(AverageMetric, ABC):
     """
-    Class that keeps count of the confusion matrix for
-    classification. Also provides helper methods computes precision, recall, f1,
-    weighted_f1 for classification.
+    Class that keeps count of the confusion matrix for classification.
+
+    Also provides helper methods computes precision, recall, f1, weighted_f1 for
+    classification.
     """
 
     __slots__ = (
