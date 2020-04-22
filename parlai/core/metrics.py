@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 import queue
 import functools
-from typing import Union, List, Optional, Tuple, Set, Any, Dict
+from typing import Union, List, Optional, Tuple, Set, Any, Dict, SelfType
 
 import torch
 
@@ -232,7 +232,7 @@ class AverageMetric(Metric):
         self._numer = self.as_number(numer)
         self._denom = self.as_number(denom)
 
-    def __add__(self, other: Optional['AverageMetric']) -> 'AverageMetric':
+    def __add__(self, other: Optional[SelfType]) -> SelfType:
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
         if other is None:
@@ -253,8 +253,9 @@ class AverageMetric(Metric):
 
 class ConfusionMatrixMetric(AverageMetric, ABC):
     """
-    Class that keeps count of the confusion matrix and computes precision for
-    classification.
+    Class that keeps count of the confusion matrix for
+    classification. Also provides helper methods computes precision, recall, f1,
+    weighted_f1 for classification.
     """
 
     __slots__ = (
@@ -276,7 +277,7 @@ class ConfusionMatrixMetric(AverageMetric, ABC):
         self._false_positives = self.as_number(false_positives)
         self._false_negatives = self.as_number(false_negatives)
 
-    def __add__(self, other: Optional['PrecisionMetric']) -> 'PrecisionMetric':
+    def __add__(self, other: Optional[SelfType]) -> SelfType:
         # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
         # we drop Python 3.6
         if other is None:
@@ -293,57 +294,6 @@ class ConfusionMatrixMetric(AverageMetric, ABC):
             false_positives=full_false_positives,
             false_negatives=full_false_negatives,
         )
-
-
-class PrecisionMetric(ConfusionMatrixMetric):
-    """
-    Class that takes in a ConfusionMatrixMetric and computes precision for classifier.
-    """
-
-    def value(self) -> float:
-        if self._true_positives == 0:
-            return 0.0
-        else:
-            return self._true_positives / (self._true_positives + self._false_positives)
-
-
-class RecallMetric(ConfusionMatrixMetric):
-    """
-    Class that takes in a ConfusionMatrixMetric and computes recall for classifier.
-    """
-
-    def value(self) -> float:
-        if self._true_positives == 0:
-            return 0.0
-        else:
-            return self._true_positives / (self._true_positives + self._false_negatives)
-
-
-class ClassificationF1Metric(ConfusionMatrixMetric):
-    """
-    Class that takes in a ConfusionMatrixMetric and computes f1 for classifier.
-    """
-
-    def value(self) -> float:
-        if self._true_positives == 0:
-            return 0.0
-        else:
-            return (
-                2
-                * self._true_positives
-                / (
-                    2 * self._true_positives
-                    + self._false_negatives
-                    + self._false_positives
-                )
-            )
-
-
-class ClassificationMetric(AverageMetric):
-    """
-    Class takes sample-wise confusion matrix and computes precision, recall, f1,
-    weighted_f1 for classification.
-    """
 
     @staticmethod
     def compute_many(
@@ -384,13 +334,51 @@ class ClassificationMetric(AverageMetric):
             false_negatives = int(
                 predicted != positive_class and gold_label == positive_class
             )
-            precision, recall, f1 = ClassificationMetric.compute_many(
+            precision, recall, f1 = ConfusionMatrixMetric.compute_many(
                 true_positives, true_negatives, false_positives, false_negatives
             )
             precisions.append(precision)
             recalls.append(recall)
             f1s.append(f1)
         return precisions, recalls, f1s
+
+
+class PrecisionMetric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes precision for classifier.
+    """
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return self._true_positives / (self._true_positives + self._false_positives)
+
+
+class RecallMetric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes recall for classifier.
+    """
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return self._true_positives / (self._true_positives + self._false_negatives)
+
+
+class ClassificationF1Metric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes f1 for classifier.
+    """
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            numer = 2 * self._true_positives
+            denom = numer + self._false_negatives + self._false_positives
+            return numer / denom
 
 
 class MacroAverageMetric(Metric):
@@ -430,12 +418,10 @@ class WeightedF1AverageMetric(AverageMetric):
     def __init__(self, metrics: Dict[str, ClassificationF1Metric]) -> None:
         self._values = metrics
 
-    def __add__(
-        self, other: Optional['WeightedF1AverageMetric']
-    ) -> 'WeightedF1AverageMetric':
+    def __add__(self, other: Optional[SelfType]) -> SelfType:
         if other is None:
             return self
-        output = dict(**self._values)
+        output = self._values
         for k, v in other._values.items():
             output[k] = output.get(k, None) + v
         return WeightedF1AverageMetric(output)
@@ -461,8 +447,7 @@ class WeightedF1AverageMetric(AverageMetric):
         metrics: Dict[str, List[ClassificationF1Metric]]
     ) -> List['WeightedF1AverageMetric']:
         weighted_f1s = [dict(zip(metrics, t)) for t in zip(*metrics.values())]
-        weighted_f1s = [WeightedF1AverageMetric(metrics) for metrics in weighted_f1s]
-        return weighted_f1s
+        return [WeightedF1AverageMetric(metrics) for metrics in weighted_f1s]
 
 
 class GlobalMetric:
