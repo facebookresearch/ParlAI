@@ -14,11 +14,12 @@ from parlai.core.metrics import (
     FixedMetric,
     Metrics,
     GlobalAverageMetric,
-    ClassificationMetric,
-    WeightedF1AverageMetric,
-    MacroAverageMetric,
     aggregate_unnamed_reports,
     aggregate_named_reports,
+)
+from parlai.core.torch_classifier_agent import (
+    ConfusionMatrixMetric,
+    WeightedF1AverageMetric,
 )
 
 
@@ -283,7 +284,6 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/fixed'] == 4
         assert 'b/global_avg' not in agg
 
-    # @testing_utils.skipUnlessGPU
     def test_classifier_metrics(self):
         # We assume a batch of 16 samples, binary classification case, from 2 tasks.
         # task 1
@@ -315,7 +315,7 @@ class TestAggregators(unittest.TestCase):
             'class_notok',
         ]
         for each in classes:
-            precisions, recalls, f1s = ClassificationMetric.compute_metrics(
+            precisions, recalls, f1s = ConfusionMatrixMetric.compute_metrics(
                 task1_predictions, task1_gold_labels, each
             )
             report1.update(
@@ -354,7 +354,7 @@ class TestAggregators(unittest.TestCase):
             'class_notok',
         ]
         for each in classes:
-            precisions, recalls, f1s = ClassificationMetric.compute_metrics(
+            precisions, recalls, f1s = ConfusionMatrixMetric.compute_metrics(
                 task2_predictions, task2_gold_labels, each
             )
             report2.update(
