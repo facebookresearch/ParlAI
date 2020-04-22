@@ -193,7 +193,8 @@ class TorchClassifierAgent(TorchAgent):
         shared['class_list'] = self.class_list
         shared['class_weights'] = self.class_weights
         shared['model'] = self.model
-        shared['optimizer'] = self.optimizer
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         return shared
 
     def _get_labels(self, batch):
