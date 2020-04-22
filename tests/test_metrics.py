@@ -14,6 +14,7 @@ from parlai.core.metrics import (
     FixedMetric,
     Metrics,
     GlobalAverageMetric,
+    MacroAverageMetric,
     aggregate_unnamed_reports,
     aggregate_named_reports,
 )
