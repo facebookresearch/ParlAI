@@ -26,7 +26,8 @@ class LabelToTextTeacher(Teacher):
         # Teacher has no args, and so we don't add them
         parser = argparser.add_argument_group('LabelToText args')
         parser.add_argument(
-            '-l2t-task' '--label-to-text-task',
+            '-l2tt',
+            '--label-to-text-task',
             type=str,
             help='The task whose labels will get shifted into the text field',
         )
@@ -35,12 +36,13 @@ class LabelToTextTeacher(Teacher):
         if ',' in opt['task']:
             raise ValueError('LabelToTextTeacher cannot be used with multiple tasks!')
         self.id = opt['task']
+        self.opt = opt
         if shared and 'task' in shared:
             self.task = create_agent_from_shared(shared['task'])
         else:
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = opt['label_to_text_task']
-            self.task = create_task_agent_from_taskname(opt_singletask)
+            self.task = create_task_agent_from_taskname(opt_singletask)[0]
 
     def num_examples(self):
         """
@@ -65,10 +67,16 @@ class LabelToTextTeacher(Teacher):
         Act on the previous observation.
         """
         act = self.task.act()
+        if 'labels' in act:
+            use_eval_labels = False
+            labels = act['labels']
+        else:
+            use_eval_labels = True
+            labels = act['eval_labels']
+        assert len(labels) == 1
         new_act = copy.deepcopy(act)
-        assert len(act['labels']) == 1
-        new_act.force_set('text', act['labels'][0])
-        new_act.force_set('labels', [''])
+        new_act.force_set('text', labels[0])
+        new_act.force_set('eval_labels' if use_eval_labels else 'labels', [''])
         new_act.force_set('episode_done', True)  # Clear the dialogue history
         return new_act
 
@@ -107,6 +115,8 @@ class LabelToTextTeacher(Teacher):
         Share the subtask.
         """
         shared = {}
+        shared['class'] = type(self)
+        shared['opt'] = self.opt
         shared['task'] = self.task.share()
         return shared
 
