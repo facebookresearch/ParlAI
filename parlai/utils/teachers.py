@@ -8,11 +8,8 @@ Generalized and miscellaneous teachers.
 """
 
 import copy
-import random
-from typing import List
 
-from parlai.core.agents import Agent, create_agent_from_shared
-from parlai.core.metrics import aggregate_named_reports
+from parlai.core.agents import create_agent_from_shared
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname, Teacher
 
@@ -20,7 +17,8 @@ from parlai.core.teachers import create_task_agent_from_taskname, Teacher
 class LabelToTextTeacher(Teacher):
     """
     Teacher that will shift message['labels'][0] into message['text'] for whatever task
-    is specified with --label-to-text-task.
+    is specified with --label-to-text-task. Because the dialogue history is effectively
+    overwritten by this action, all episodes will be flattened into one example each.
     """
 
     @classmethod
@@ -38,122 +36,65 @@ class LabelToTextTeacher(Teacher):
             raise ValueError('LabelToTextTeacher cannot be used with multiple tasks!')
         self.id = opt['task']
         if shared and 'task' in shared:
-            # TODO: revise from here
             self.task = create_agent_from_shared(shared['task'])
         else:
-            tasks = opt['task'].split(',')
-            for k in tasks:
-                k = k.strip()
-                if k:
-                    opt_singletask = copy.deepcopy(opt)
-                    opt_singletask['task'] = k
-                    self.tasks = create_task_agent_from_taskname(opt_singletask)
-        self.task_idx = -1
-        self.new_task = True
-        self.random = opt.get('datatype') == 'train'
-        # Make multi-task task probabilities.
-        self.cum_task_weights = [1] * len(self.tasks)
-        self.task_choices = range(len(self.tasks))
-        weights = self.opt.get('multitask_weights', [1])
-        sum = 0
-        for i in self.task_choices:
-            if len(weights) > i:
-                weight = weights[i]
-            else:
-                weight = 1
-            self.cum_task_weights[i] = weight + sum
-            sum += weight
+            opt_singletask = copy.deepcopy(opt)
+            opt_singletask['task'] = opt['label_to_text_task']
+            self.task = create_task_agent_from_taskname(opt_singletask)
 
     def num_examples(self):
         """
         Return the number of examples.
         """
-        if not hasattr(self, 'num_exs'):
-            # num_examples is sum of all examples in all tasks
-            tasks_num_exs = [t.num_examples() for t in self.tasks]
-            if any(num is None for num in tasks_num_exs):
-                self.num_exs = None
-            else:
-                self.num_exs = sum(tasks_num_exs)
-        return self.num_exs
+        return self.task.num_examples()
 
     def num_episodes(self):
         """
-        Return the number of episodes.
+        Because the dataset is flattened, there will be one episode per example.
         """
-        if not hasattr(self, 'num_eps'):
-            # num_episodes is sum of all num_episodes in all tasks
-            tasks_num_eps = [t.num_episodes() for t in self.tasks]
-            if any(num is None for num in tasks_num_eps):
-                self.num_eps = None
-            else:
-                self.num_eps = sum(tasks_num_eps)
-        return self.num_eps
+        return self.task.num_examples()
 
     def observe(self, observation):
         """
         Make an observation.
         """
-        return self.tasks[self.task_idx].observe(observation)
+        return self.task.observe(observation)
 
     def act(self):
         """
         Act on the previous observation.
         """
-        if self.new_task:
-            self.new_task = False
-            if self.random:
-                # select random teacher
-                self.task_idx = random.choices(
-                    self.task_choices, cum_weights=self.cum_task_weights
-                )[0]
-            else:
-                # do at most one full loop looking for unfinished task
-                for _ in range(len(self.tasks)):
-                    self.task_idx = (self.task_idx + 1) % len(self.tasks)
-                    if not self.tasks[self.task_idx].epoch_done():
-                        # if this task has examples ready, break
-                        break
-                if self.tasks[self.task_idx].epoch_done():
-                    # all tasks are done, so return empty action table
-                    return {'episode_done': True}
-        t = self.tasks[self.task_idx].act()
-        if t['episode_done']:
-            self.new_task = True
-        return t
+        act = self.task.act()
+        new_act = copy.deepcopy(act)
+        assert len(act['labels']) == 1
+        new_act.force_set('text', act['labels'][0])
+        new_act.force_set('labels', [''])
+        new_act.force_set('episode_done', True)  # Clear the dialogue history
+        return new_act
 
     def epoch_done(self):
         """
-        Return whether all subtasks are completed.
+        Return whether the subtask is completed.
         """
-        for t in self.tasks:
-            if not t.epoch_done():
-                return False
-        return True
+        return self.task.epoch_done()
 
-    # return transformed metrics showing total examples and accuracy if avail.
     def report(self):
         """
-        Report aggregated metrics across all subtasks.
+        Report metrics for the subtask.
         """
-        return aggregate_named_reports(
-            {t.getID(): t.report() for t in self.tasks},
-            micro_average=self.opt.get('aggregate_micro', False),
-        )
+        self.task.report()
 
     def reset(self):
         """
-        Reset all subtasks.
+        Reset the subtask.
         """
-        for t in self.tasks:
-            t.reset()
+        self.task.reset()
 
     def reset_metrics(self):
         """
-        Reset metrics for each subtask.
+        Reset metrics for the subtask.
         """
-        for t in self.tasks:
-            t.reset_metrics()
+        self.task.reset_metrics()
 
     def save(self):
         """
@@ -171,7 +112,7 @@ class LabelToTextTeacher(Teacher):
 
     def shutdown(self):
         """
-        Shutdown the subagent.
+        Shutdown the subtask.
         """
         self.task.shutdown()
 
