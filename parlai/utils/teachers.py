@@ -67,16 +67,19 @@ class LabelToTextTeacher(Teacher):
         Act on the previous observation.
         """
         act = self.task.act()
-        if 'labels' in act:
-            use_eval_labels = False
-            labels = act['labels']
-        else:
-            use_eval_labels = True
-            labels = act['eval_labels']
-        assert len(labels) == 1
         new_act = copy.deepcopy(act)
-        new_act.force_set('text', labels[0])
-        new_act.force_set('eval_labels' if use_eval_labels else 'labels', [''])
+        if 'labels' in act:
+            labels = act['labels']
+            assert len(labels) == 1
+            new_act.force_set('text', labels[0])
+            new_act.force_set('labels', [''])
+        elif 'eval_labels' in act:
+            labels = act['eval_labels']
+            assert len(labels) == 1
+            new_act.force_set('text', labels[0])
+            new_act.force_set('eval_labels', [''])
+        else:
+            assert 'text' not in act and act['episode_done'] is True
         new_act.force_set('episode_done', True)  # Clear the dialogue history
         return new_act
 
