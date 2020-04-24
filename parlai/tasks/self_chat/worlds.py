@@ -139,7 +139,7 @@ class SelfChatWorld(DialogPartnerWorld):
                     'episode_done': False,
                     'id': 'context',
                 }
-                self.acts[1 - i] = context
+                self.acts[i] = context
                 self.agents[i].observe(validate(context))
             # clear contexts so they are only added once per episode
             self.contexts = None
