@@ -95,7 +95,7 @@ class SelfChatWorld(SelfChatBaseWorld):
         parser.add_argument(
             '--include-initial-utterances',
             type='bool',
-            default=True,
+            default=False,
             help='Include context conversation at beginning or not',
         )
 
