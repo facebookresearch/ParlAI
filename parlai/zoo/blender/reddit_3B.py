@@ -15,4 +15,3 @@ VERSION = 'v1.0'
 
 def download(datapath):
     build(datapath, 'Reddit3B_v0.tgz', model_type='reddit_3B', version=VERSION)
-

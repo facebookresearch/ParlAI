@@ -725,9 +725,7 @@ model_list = [
         "example": (
             "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_90M/model -t blended_skill_talk"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Blender 2.7B",
@@ -742,9 +740,7 @@ model_list = [
         "example": (
             "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B/model -t blended_skill_talk"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Blender 9.4B",
@@ -759,9 +755,7 @@ model_list = [
         "example": (
             "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_9B/model -t blended_skill_talk"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Reddit 2.7B",
@@ -775,9 +769,7 @@ model_list = [
         "example": (
             "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model oo:blender/reddit_3B/model --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file --model-file /tmp/test_train_27Bpython examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model oo:blender/Reddit3B_v0/model --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file --model-file /tmp/test_train_27B"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Reddit 9.4B",
@@ -791,8 +783,6 @@ model_list = [
         "example": (
             "python parlai/scripts/distributed_train.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model  --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
 ]

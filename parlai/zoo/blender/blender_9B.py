@@ -15,4 +15,3 @@ VERSION = 'v1.0'
 
 def download(datapath):
     build(datapath, 'BST9B.tgz', model_type='blender_9B', version=VERSION)
-

@@ -26,6 +26,4 @@ def build(datapath, fname, model_type, version):
     dpath = os.path.join(datapath, 'models', 'blender', model_type)
     if not built(dpath, version):
         print_blender()
-    download_models(
-        opt, [fname], 'blender', version=version, use_model_type=False
-    )
+    download_models(opt, [fname], 'blender', version=version, use_model_type=False)
