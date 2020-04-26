@@ -22,7 +22,7 @@ import json
 
 class ELI5Teacher(FixedDialogTeacher):
     """
-   ELI5 Teacher, taken from https://github.com/facebookresearch/ELI5.
+    ELI5 Teacher, taken from https://github.com/facebookresearch/ELI5.
     """
 
     def __init__(self, opt, shared=None):

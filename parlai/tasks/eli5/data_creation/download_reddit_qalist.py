@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_reddit_qalist.py
-to download specific post IDs.
+Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download
+_reddit_qalist.py to download specific post IDs.
 """
 
 ### space-efficient download from https://files.pushshift.io/reddit/
