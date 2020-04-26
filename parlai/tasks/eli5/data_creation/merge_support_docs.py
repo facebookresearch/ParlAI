@@ -12,9 +12,11 @@ Modified to use data directory rather than a hard-coded processed data directory
 
 import os
 import sys
+import json
 from parlai.core.params import ParlaiParser
+from os.path import join as pjoin 
+from os.path import isdir
 from data_utils import *
-
 
 def setup_args():
     parser = ParlaiParser(False, False)

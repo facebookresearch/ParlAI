@@ -317,8 +317,6 @@ def setup_args():
 
 def main():
     opt = setup_args()
-    dpath = opt['datapath']
-    parser = argparse.ArgumentParser(description='Subreddit QA pair downloader')
     output_dir = pjoin(opt['datapath'], opt['output_dir'])
     ### collect submissions and comments monthly URLs
     date_to_url_submissions = gather_dump_urls(REDDIT_URL, "submissions")
@@ -359,13 +357,13 @@ def main():
                 if not opt['answers_only']:
                     try:
                         processed_submissions = download_and_process(
-                            submissions_url, 'submissions', subreddit_names, st_time
+                            submissions_url, 'submissions', subreddit_names, st_time, output_dir
                         )
                     except FileNotFoundError as e:
                         sleep(60)
                         print("retrying %s once" % (submissions_url))
                         processed_submissions = download_and_process(
-                            submissions_url, 'submissions', subreddit_names, st_time
+                            submissions_url, 'submissions', subreddit_names, st_time, output_dir
                         )
                     for name in subreddit_names:
                         for dct in processed_submissions[name]:
@@ -373,13 +371,13 @@ def main():
                 if not opt['questions_only']:
                     try:
                         processed_comments = download_and_process(
-                            comments_url, 'comments', subreddit_names, st_time
+                            comments_url, 'comments', subreddit_names, st_time, output_dir
                         )
                     except FileNotFoundError as e:
                         sleep(60)
                         print("retrying %s once" % (comments_url))
                         processed_comments = download_and_process(
-                            comments_url, 'comments', subreddit_names, st_time
+                            comments_url, 'comments', subreddit_names, st_time, output_dir
                         )
                     # merge submissions and comments
                     for name in subreddit_names:
