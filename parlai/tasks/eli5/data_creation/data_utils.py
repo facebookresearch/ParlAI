@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Taken from https://github.com/facebookresearch/ELI5/blob/master/data_creation/data_utils.py
+Taken from
+https://github.com/facebookresearch/ELI5/blob/master/data_creation/data_utils.py.
 """
 
 import json

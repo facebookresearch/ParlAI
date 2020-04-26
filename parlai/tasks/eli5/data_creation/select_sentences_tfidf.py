@@ -20,6 +20,7 @@ https://github.com/facebookresearch/ELI5/blob/master/data_creation/select_senten
 Modified to use data directory rather than a hard-coded processed data directory
 """
 
+
 def select_pars(qa_dct, docs_list, word_freqs, n_sents=100, n_context=3):
     question = qa_dct['title'][0]
     split_docs = [sentence_split(doc['text'][0], max_len=64) for doc in docs_list]

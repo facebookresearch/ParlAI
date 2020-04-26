@@ -112,4 +112,3 @@ def build(opt):
         else:
             # Mark the data as built.
             build_data.mark_done(dpath, version_string=version)
-       

@@ -5,9 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-File adapted from 
+File adapted from
 https://github.com/facebookresearch/ELI5/blob/master/data_creation/merge_support_docs.py
-Modified to use data directory rather than a hard-coded processed data directory
+Modified to use data directory rather than a hard-coded processed data directory.
 """
 
 import os
