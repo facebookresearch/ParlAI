@@ -357,13 +357,21 @@ def main():
                 if not opt['answers_only']:
                     try:
                         processed_submissions = download_and_process(
-                            submissions_url, 'submissions', subreddit_names, st_time, output_dir
+                            submissions_url,
+                            'submissions',
+                            subreddit_names,
+                            st_time,
+                            output_dir,
                         )
                     except FileNotFoundError as e:
                         sleep(60)
                         print("retrying %s once" % (submissions_url))
                         processed_submissions = download_and_process(
-                            submissions_url, 'submissions', subreddit_names, st_time, output_dir
+                            submissions_url,
+                            'submissions',
+                            subreddit_names,
+                            st_time,
+                            output_dir,
                         )
                     for name in subreddit_names:
                         for dct in processed_submissions[name]:
@@ -371,13 +379,21 @@ def main():
                 if not opt['questions_only']:
                     try:
                         processed_comments = download_and_process(
-                            comments_url, 'comments', subreddit_names, st_time, output_dir
+                            comments_url,
+                            'comments',
+                            subreddit_names,
+                            st_time,
+                            output_dir,
                         )
                     except FileNotFoundError as e:
                         sleep(60)
                         print("retrying %s once" % (comments_url))
                         processed_comments = download_and_process(
-                            comments_url, 'comments', subreddit_names, st_time, output_dir
+                            comments_url,
+                            'comments',
+                            subreddit_names,
+                            st_time,
+                            output_dir,
                         )
                     # merge submissions and comments
                     for name in subreddit_names:
