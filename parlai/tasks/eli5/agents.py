@@ -33,7 +33,7 @@ class ELI5Teacher(FixedDialogTeacher):
         self.id = 'eli5'
         self.messages = self.load_eli5(opt)
         self.reset()
-    
+
     @staticmethod
     def add_cmdline_args(argparser):
         group = argparser.add_argument_group('ELI5 Knowledge arguments')
@@ -56,7 +56,6 @@ class ELI5Teacher(FixedDialogTeacher):
         with open(fname) as json_file:
             data = json.load(json_file)
         ds = []
-        print('OPT', self.opt)
         for d in data:
             if bool(self.opt['knowledge']) and self.opt['knowledge'] != 'False':
                 text = d['document'] + "\n" + d['question']
