@@ -4,6 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_reddit_qalist.py
+to download specific post IDs.
+"""
+
 ### space-efficient download from https://files.pushshift.io/reddit/
 import argparse
 import bz2
@@ -60,15 +65,16 @@ def valid_comment(a):
 
 
 # download a file, extract posts from desired subreddit, then remove from disk
-def download_and_process(file_url, mode, subreddit_names, st_time):
+def download_and_process(file_url, mode, subreddit_names, st_time, output_dir):
     # download and pre-process original posts
-    f_name = pjoin('reddit_tmp', file_url.split('/')[-1])
+    reddit_tmp_dir = pjoin(output_dir, 'reddit_tmp')
+    f_name = pjoin(reddit_tmp_dir, file_url.split('/')[-1])
     tries_left = 4
     while tries_left:
         try:
             print("downloading %s %2f" % (f_name, time() - st_time))
             subprocess.run(
-                ['wget', '-P', 'reddit_tmp', file_url], stdout=subprocess.PIPE
+                ['wget', '-P', reddit_tmp_dir, file_url], stdout=subprocess.PIPE
             )
             print("decompressing and filtering %s %2f" % (f_name, time() - st_time))
             if f_name.split('.')[-1] == 'xz':
@@ -267,6 +273,7 @@ def post_process(reddit_dct, name=''):
     reddit_dct['comments'] = comments
     return reddit_dct
 
+
 def setup_args():
     """
     Set up args.
@@ -303,14 +310,9 @@ def setup_args():
         '-A', '--answers_only', action='store_true', help='only download comments'
     )
     reddit.add_argument(
-        '-o',
-        '--output_dir',
-        default='eli5/',
-        type=str,
-        help='where to save the output',
+        '-o', '--output_dir', default='eli5/', type=str, help='where to save the output'
     )
     return parser.parse_args()
-
 
 
 def main():
@@ -325,13 +327,13 @@ def main():
     for k, v in date_to_url_submissions.items():
         date_to_urls[k] = (v, date_to_url_comments.get(k, ''))
     ### download, filter, process, remove
-    subprocess.run(['mkdir', 'reddit_tmp'], stdout=subprocess.PIPE)
+    subprocess.run(['mkdir', pjoin(output_dir, 'reddit_tmp')], stdout=subprocess.PIPE)
     st_time = time()
     if not opt['id_list']:
         subreddit_names = json.loads(opt['subreddit_list'])
         output_files = dict(
             [
-                (name, "%s/processed_data/%s_qalist.json" % (output_dir, name,))
+                (name, "%s/processed_data/%s_qalist.json" % (output_dir, name))
                 for name in subreddit_names
             ]
         )
@@ -428,7 +430,10 @@ def main():
                 )
 
             output_files = dict(
-                [(name, "%s/processed_data/%s_qalist.json" % (output_dir, name,)) for name in sr_names]
+                [
+                    (name, "%s/processed_data/%s_qalist.json" % (output_dir, name))
+                    for name in sr_names
+                ]
             )
             qa_dict = dict([(name, {}) for name in sr_names])
             for name, fname in output_files.items():
@@ -456,7 +461,10 @@ def main():
                 )
 
             output_files = dict(
-                [(name, "%s/processed_data/%s_qalist.json" % (output_dir, name,)) for name in sr_names]
+                [
+                    (name, "%s/processed_data/%s_qalist.json" % (output_dir, name))
+                    for name in sr_names
+                ]
             )
             qa_dict = dict([(name, {}) for name in sr_names])
             for name, fname in output_files.items():

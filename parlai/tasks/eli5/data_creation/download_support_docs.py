@@ -1,4 +1,8 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 import argparse
 import json
@@ -15,17 +19,47 @@ from parlai.core.params import ParlaiParser
 
 from data_utils import *
 
+"""
+Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_support_docs.py
+to download specific CommonCrawl IDs and URLs.
+"""
+
+
 def make_docs_directory(output_dir, name):
     if not isdir(pjoin(output_dir, name)):
-            subprocess.run(
-                ['mkdir', pjoin(output_dir, name)], stdout=subprocess.PIPE
-            )
+        subprocess.run(['mkdir', pjoin(output_dir, name)], stdout=subprocess.PIPE)
     for i in range(10):
         if not isdir(pjoin(output_dir, name, str(i))):
             subprocess.run(
-                ['mkdir', pjoin(output_dir, name, str(i))],
-                stdout=subprocess.PIPE,
+                ['mkdir', pjoin(output_dir, name, str(i))], stdout=subprocess.PIPE
             )
+
+
+def select_specific_ids(ccids):
+    select = {}
+    for i, ccid in enumerate(ccids):
+        if not ccid.startswith('<urn:uuid:'):
+            ccid = '<urn:uuid:' + ccid
+        if not ccid.endswith('>'):
+            ccid = ccid + '>'
+        select[ccid] = ('specific_ids', i)
+    return select
+
+
+def select_specific_urls(urls):
+    select = {}
+    for i, url in enumerate(urls):
+        if url.startswith('http://') or url.startswith('https://'):
+            url = url.split('//', 1)[-1]
+        select[url] = ('specific_urls', i)
+    return select
+
+
+def check_url(select, url):
+    if url.startswith('http://') or url.startswith('https://'):
+        url = url.split('//', 1)[-1]
+    return select.get(url, False)
+
 
 def setup_args():
     """
@@ -87,85 +121,17 @@ def setup_args():
         type=str,
         help='where to save the output in data folder',
     )
-    cc.add_argument(
-        '-u', '--urls', default='[]', type=str, help='Gather pages by URL'
-    )
+    cc.add_argument('-u', '--urls', default='[]', type=str, help='Gather pages by URL')
     cc.add_argument(
         '-ids', '--ccuids', default='[]', type=str, help='Gather pages by CCUID'
     )
     return parser.parse_args()
 
+
 def main():
     opt = setup_args()
     output_dir = pjoin(opt['datapath'], opt['output_dir'])
     wet_urls_path = pjoin(output_dir, opt['wet_urls'])
-    # parser = argparse.ArgumentParser(
-    #     description='select support document pages from common crawl'
-    # )
-    # parser.add_argument(
-    #     '-nw',
-    #     '--slsize',
-    #     default=716,
-    #     type=int,
-    #     metavar='N',
-    #     help='number of wet files in a slice',
-    # )
-    # parser.add_argument(
-    #     '-ns',
-    #     '--slnum',
-    #     default=0,
-    #     type=int,
-    #     metavar='N',
-    #     help='commoncrawl slice number [0, ..., 71520 / args.slsize]',
-    # )
-    # parser.add_argument(
-    #     '-wf',
-    #     '--wet_urls',
-    #     default='pre_computed/wet.paths',
-    #     type=str,
-    #     help='path to file containing WET file URLs',
-    # )
-    # parser.add_argument(
-    #     '-sr_l',
-    #     '--subreddit_names',
-    #     default='["explainlikeimfive"]',
-    #     type=str,
-    #     help='subreddit names',
-    # )
-    # parser.add_argument(
-    #     '-nu',
-    #     '--n_urls',
-    #     default=100,
-    #     type=int,
-    #     metavar='N',
-    #     help='number of support documents to gather for each example',
-    # )
-    # parser.add_argument(
-    #     '-sfq',
-    #     '--save_freq',
-    #     default=50,
-    #     type=int,
-    #     metavar='N',
-    #     help='how often are results written to file',
-    # )
-    # parser.add_argument(
-    #     '-o',
-    #     '--output_dir',
-    #     default=pjoin(dpath, 'eli5/'),
-    #     type=str,
-    #     help='where to save the output',
-    # )
-    # parser.add_argument(
-    #     '-u', '--urls', default='[]', type=str, help='Gather pages by URL'
-    # )
-    # parser.add_argument(
-    #     '-ids', '--ccuids', default='[]', type=str, help='Gather pages by CCUID'
-    # )
-    # args = parser.parse_args()
-    # parse full list of wet urls
-    # slice urls for WET files can be found at https://commoncrawl.org/2018/08/august-2018-crawl-archive-now-available/
-    # $ wget https://commoncrawl.s3.amazonaws.com/crawl-data/CC-MAIN-2018-34/wet.paths.gz
-    # $ gunzip wet.paths.gz
     specific_urls = json.loads(opt['urls'])
     specific_ids = json.loads(opt['ccuids'])
     f = open(wet_urls_path, buffering=4096)
@@ -187,8 +153,8 @@ def main():
     reddit_id_group = {}
     sr_names = json.loads(opt['subreddit_names'])
     # make a list of the CommonCrawl UIDs or URLs we want to process and keep
-    if  using_specific_urls:
-        select_urls = select_specific_urls(specific_urls)            
+    if using_specific_urls:
+        select_urls = select_specific_urls(specific_urls)
     elif using_specific_ids:
         select_ccid = select_specific_ids(specific_ids)
     else:
@@ -206,9 +172,7 @@ def main():
     if not isdir(output_dir):
         subprocess.run(['mkdir', output_dir], stdout=subprocess.PIPE)
         if not isdir(pjoin(output_dir, 'tmp')):
-            subprocess.run(
-                ['mkdir', pjoin(output_dir, 'tmp')], stdout=subprocess.PIPE
-            )
+            subprocess.run(['mkdir', pjoin(output_dir, 'tmp')], stdout=subprocess.PIPE)
     if using_specific_ids:
         make_docs_directory(output_dir, 'specific_ids')
     elif using_specific_urls:
@@ -225,7 +189,9 @@ def main():
         articles = dict([('specific_urls', dict([(i, []) for i in range(10)]))])
         mode = 'urls'
     else:
-        articles = dict([(name, dict([(i, []) for i in range(10)])) for name in sr_names])
+        articles = dict(
+            [(name, dict([(i, []) for i in range(10)])) for name in sr_names]
+        )
         mode = 'subreddits'
     if isfile(pjoin(output_dir, 'tmp', 'counts_%s_%d.json' % (mode, opt['slnum']))):
         start_line = json.load(
@@ -237,10 +203,11 @@ def main():
             for i_st in range(10):
                 d_name = pjoin(output_dir, name, str(i_st))
                 articles[name][i] = json.load(
-                    open(pjoin(d_name, "docs_slice_%s_%05d.json" % (mode, opt['slnum'])))
+                    open(pjoin(d_name, "docs_slice_%05d.json" % (opt['slnum'])))
                 )
         print(
-            "loaded previously downloaded pages:", start_line - opt['slnum'] * opt['slsize']
+            "loaded previously downloaded pages:",
+            start_line - opt['slnum'] * opt['slsize'],
         )
     else:
         start_line = opt['slnum'] * opt['slsize']
@@ -303,7 +270,9 @@ def main():
                     }
                     if not using_specific_urls and not using_specific_ids:
                         name, eli_k, num = ccid_path_tuple
-                        articles[name][reddit_id_group[eli_k]] += [(eli_k, num, article)]
+                        articles[name][reddit_id_group[eli_k]] += [
+                            (eli_k, num, article)
+                        ]
                     else:
                         name, num = ccid_path_tuple
                         articles[name][num % 10] += [(num, article)]
@@ -358,12 +327,17 @@ def main():
                         subprocess.run(['mkdir', d_name], stdout=subprocess.PIPE)
                     json.dump(
                         ls,
-                        open(pjoin(d_name, "docs_slice_%05d.json" % (opt['slnum'])), 'w'),
+                        open(
+                            pjoin(d_name, "docs_slice_%05d.json" % (opt['slnum'])), 'w'
+                        ),
                     )
             json.dump(
                 i + 1,
                 open(
-                    pjoin(output_dir, 'tmp', 'counts_%d.json' % (opt['slnum'])), 'w'
+                    pjoin(
+                        output_dir, 'tmp', 'counts_%s_%d.json' % (mode, opt['slnum'])
+                    ),
+                    'w',
                 ),
             )
             print('saved json files %.2f' % (time() - start_time,))
@@ -376,7 +350,7 @@ def main():
             if not isdir(d_name):
                 subprocess.run(['mkdir', d_name], stdout=subprocess.PIPE)
             json.dump(
-                ls, open(pjoin(d_name, "docs_slice_%s_%05d.json" % (mode, opt['slnum'])), 'w')
+                ls, open(pjoin(d_name, "docs_slice_%05d.json" % (opt['slnum'])), 'w')
             )
     print('saved json files %.2f' % (time() - start_time,))
     json.dump(
