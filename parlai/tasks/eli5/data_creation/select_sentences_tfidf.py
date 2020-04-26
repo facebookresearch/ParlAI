@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import argparse
 import json
 import os
 import sys
@@ -15,7 +14,7 @@ from time import time
 from data_utils import *
 
 """
-File adapted from 
+File adapted from
 https://github.com/facebookresearch/ELI5/blob/master/data_creation/select_sentences_tfidf.py
 Modified to use data directory rather than a hard-coded processed data directory
 """
