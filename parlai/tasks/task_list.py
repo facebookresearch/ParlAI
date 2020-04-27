@@ -1130,4 +1130,15 @@ task_list = [
             "<https://arxiv.org/abs/1911.03842>."
         ),
     },
+    {
+        "id": "ELI5",
+        "display_name": "ELI5",
+        "task": "eli5",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Reddit "
+            "explainlikeimfive posts and comments."
+            "Link: https://github.com/facebookresearch/ELI5/"
+        ),
+    },
 ]
