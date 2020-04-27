@@ -59,7 +59,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         parser.add_argument(
             '--include-initial-utterances',
             type='bool',
-            default=True,
+            default=False,
             help='Include context conversation at beginning or not',
         )
 
@@ -95,7 +95,7 @@ class SelfChatWorld(SelfChatBaseWorld):
         parser.add_argument(
             '--include-initial-utterances',
             type='bool',
-            default=False,
+            default=True,
             help='Include context conversation at beginning or not',
         )
 
