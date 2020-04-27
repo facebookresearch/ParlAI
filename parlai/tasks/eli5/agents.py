@@ -10,16 +10,6 @@ import os
 import json
 
 
-# def _path(opt):
-#     # build the data if it does not exist
-#     build(opt)
-
-#     # set up path to data (specific to each dataset)
-#     jsons_path = os.path.join(opt['datapath'], 'eli5', 'processed_data', 'public_examples')
-#     conversations_path = os.path.join(jsons_path, 'examples_qda_short.json')
-#     return conversations_path, jsons_path
-
-
 class ELI5Teacher(FixedDialogTeacher):
     """
     ELI5 Teacher, taken from https://github.com/facebookresearch/ELI5.
