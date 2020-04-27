@@ -55,6 +55,7 @@ html_pairs = [
 
 tokenizer = English().Defaults.create_tokenizer()
 
+
 # tokenizes and removes URLs (kept in separate list)
 def pre_word_url_tokenize(stp):
     url_list = list(set(re.findall(URL_REGEX, stp)))

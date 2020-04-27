@@ -5,8 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download
-_reddit_qalist.py to download specific post IDs.
+Adapted from 
+https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_reddit_qalist.py 
+to download specific post IDs.
 """
 
 ### space-efficient download from https://files.pushshift.io/reddit/
@@ -19,7 +20,6 @@ import os
 import re
 import requests
 import subprocess
-import urllib
 import zstandard as zstd
 
 from bs4 import BeautifulSoup
@@ -301,7 +301,10 @@ def setup_args():
         help='subreddit name',
     )
     reddit.add_argument(
-        '-id_l', '--id_list', type=str, help='base36 post IDs (in a json list format)'
+        '-id_l',
+        '--id_list',
+        type=str,
+        help='json file path of base36 post IDs (in a list format)',
     )
     reddit.add_argument(
         '-Q', '--questions_only', action='store_true', help='only download submissions'
@@ -429,8 +432,9 @@ def main():
 
     # get specific reddit posts
     if opt['id_list']:
+        with open(opt['id_list']) as f:
+            post_ids = json.load(opt['id_list'])
         sr_names = None
-        post_ids = json.loads(opt['id_list'])
         if not opt['answers_only']:
             try:
                 sr_names, processed_submissions = download_and_process_posts(
