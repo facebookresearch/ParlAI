@@ -54,6 +54,24 @@ def setup_args():
         default=None,
         help='path to the acute analysis pairs for the corresponding run id',
     )
+    parser.add_argument(
+        '--rounding-digit',
+        type=int,
+        default=2,
+        help='number of digits for rounding displayed table',
+    )
+    parser.add_argument(
+        '--max-matchups-html',
+        type=int,
+        default=10,
+        help='max number of matchups to display per model pair in html',
+    )
+    parser.add_argument(
+        '--min-dialogue-length',
+        type=int,
+        default=-1,
+        help='the minimum number of turns for both dialogues in a matchup to be counted as valid for analysis',
+    )
     return parser
 
 
@@ -105,7 +123,10 @@ class AcuteAnalyzer(object):
             'run_data',
             f"pmt_{'sb' if opt['is_sandbox'] else ''}data.db",
         )
+        import ipdb; ipdb.set_trace()
         self.dataframe = self._extract_to_dataframe()
+        self.min_dialogue_length = opt.get('min_dialogue_length', -1)
+        self.max_matchups_html = opt.get('max_matchups_html', 10)
         if remove_failed:
             self._remove_failed_onboarding()
         self._extract_model_names()
@@ -158,6 +179,18 @@ class AcuteAnalyzer(object):
                 'is_onboarding': onboarding,
                 'matchup': f"{'__vs__'.join(speakers_to_eval)}",
                 'pairing_id': task_data['pair_id'],
+                'dialogue_lengths': {
+                    task_data['task_specs']['model_left']['name']: len(
+                        task_data['task_specs']['model_left']['dialogue']
+                    ),
+                    task_data['task_specs']['model_right']['name']: len(
+                        task_data['task_specs']['model_right']['dialogue']
+                    ),
+                },
+                'speaker_model_mapping': [
+                    task_data['task_specs']['model_left']['name'],
+                    task_data['task_specs']['model_right']['name'],
+                ],
             }
         )
         return response
@@ -206,6 +239,7 @@ class AcuteAnalyzer(object):
         """
         logger = MTurkDataHandler(file_name=self.db_path)
         hits = logger.get_pairings_for_run(self.run_id)
+        import ipdb;ipdb.set_trace()
         dataframe: List[Dict[str, Any]] = []
         for hit in hits:
             if hit['conversation_id'] is None:
@@ -228,6 +262,7 @@ class AcuteAnalyzer(object):
         Remove workers who failed onboarding.
         """
         df = self.dataframe
+        import ipdb; ipdb.set_trace()
 
         all_workers_failing_onboarding = df.loc[
             df['is_onboarding'] & (df['correct'] == False), 'worker'  # noqa: E712
@@ -269,9 +304,9 @@ class AcuteAnalyzer(object):
             loser = row['loser']
             winner_dialogues.append(pairs_to_eval[i][winner])
             loser_dialogues.append(pairs_to_eval[i][loser])
-        df['pairs_to_eval'] = pd.Series(pairs_to_eval, index=df.index)
-        df['winner_dialogue'] = pd.Series(winner_dialogues, index=df.index)
-        df['loser_dialogue'] = pd.Series(loser_dialogues, index=df.index)
+        df.loc[:, 'pairs_to_eval'] = pd.Series(pairs_to_eval, index=df.index)
+        df.loc[:, 'winner_dialogue'] = pd.Series(winner_dialogues, index=df.index)
+        df.loc[:, 'loser_dialogue'] = pd.Series(loser_dialogues, index=df.index)
         self.dataframe = df
 
     def _extract_model_names(self):
@@ -308,19 +343,44 @@ class AcuteAnalyzer(object):
         """
         return self.dataframe.groupby('worker')['run_id'].count().max()
 
+    def filter_by_dialog_length(self, is_debug=False):
+        """
+        Filter out matchup with one of the conversation shorter than self.min_dialogue_length
+        This applies to calculating sorted_win_frac_df and signficance_df, but not html visualizations of conversations.
+        :param is_debug: if True, print logs indicating the number of pairings filtered out due to short conversation.
+            is_debug bool
+        """
+        df = pd.DataFrame()
+        filter_list = {}
+        for _, row in self.dataframe.iterrows():
+            keep_row = True
+            for model_name, dialog_length in row['dialogue_lengths'].items():
+                if keep_row and dialog_length < self.min_dialogue_length:
+                    keep_row = False
+                    filter_list[model_name] = filter_list.get(model_name, 0) + 1
+            if keep_row:
+                df = df.append(row, ignore_index=True)
+        if is_debug:
+            for model_name in filter_list:
+                print(
+                    f"For {self.run_id}: filter out {filter_list[model_name]} matchups due to {model_name} with dialog length shorter than {self.min_dialog_length}"
+                )
+        return df
+
     def get_wins_per_model_matchup(self) -> pd.DataFrame:
         """
         Return the wins for each model by matchup.
         """
+        df_filtered = self.filter_by_dialog_length(True)
         self.matchup_total_df = (
-            self.dataframe.groupby(['eval_choice_0', 'eval_choice_1'])['run_id']
+            df_filtered.groupby(['eval_choice_0', 'eval_choice_1'])['run_id']
             .count()
             .to_frame('matchup_total')
         )
         self.win_total_df = (
-            self.dataframe.groupby(
-                ['eval_choice_0', 'eval_choice_1', 'winner', 'loser']
-            )['loser']
+            df_filtered.groupby(['eval_choice_0', 'eval_choice_1', 'winner', 'loser'])[
+                'loser'
+            ]
             .count()
             .to_frame('win_total')
             .reset_index()
@@ -381,7 +441,7 @@ class AcuteAnalyzer(object):
         """
         matchups = list(self.dataframe.matchup.unique())
 
-        def _render_row(matchup: List[str], row: pd.Series) -> str:
+        def _render_row(matchup: List[str], row: pd.Series, row_id: int) -> str:
             dialogues = {'winner_dialogue': '', 'loser_dialogue': ''}
             for d_key in dialogues:
                 result = []
@@ -412,19 +472,47 @@ class AcuteAnalyzer(object):
                     + ''.join(result)
                     + '</div>'
                 )
-            return f"<tr><td>{dialogues['winner_dialogue']}</td><td>{dialogues['loser_dialogue']}</td><td>{row['reason']}</td></tr>"
+
+            checkbox = (
+                '<div><input type= "checkbox" id= "cherry" name= "cherry">'
+                '<label for="cherry">Cherry</label>'
+                '</div>'
+                '<div><input type= "checkbox" id= "lemon" name= "lemon">'
+                '<label for= "lemon">Lemon</label>'
+                '</div>'
+                '<div><input type= "checkbox" id= "neutral" name= "neutral">'
+                '<label for= "neutral">Neutral</label>'
+                '</div>'
+            )
+            if row['winner'] == row['speaker_model_mapping'][0]:
+                speakers_footnote = "(Speaker_1 = {}(winner), Speaker_2 = {})".format(
+                    row['speaker_model_mapping'][0], row['speaker_model_mapping'][1]
+                )
+            else:
+                speakers_footnote = "(Speaker_1 = {}, Speaker_2 = {}(winner))".format(
+                    row['speaker_model_mapping'][0], row['speaker_model_mapping'][1]
+                )
+            return f"<tr><td>{'Pair ' + str(row_id)}</td><td>{checkbox}</td><td>{dialogues['winner_dialogue']}</td><td>{dialogues['loser_dialogue']}</td><td>{row['reason']+chr(10)+speakers_footnote}</td></tr>"
 
         def _render_html(table: pd.DataFrame) -> HTML:
-            result = ''
+            result = '\
+                <div id="toc_container">\
+                <p class="toc_title">Model Pairs</p>\
+                <ul class="toc_list">'
             for matchup in matchups:
-                length = min(10, len(table[table['matchup'] == matchup]))
+                eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[0]
+                result += f"<li><a href='#{matchup}''>{matchup + '__on__' +eval_question}</a></li>"
+            result += '</ul></div>'
+            for matchup in matchups:
+                length = min(self.max_matchups_html, len(table[table['matchup'] == matchup]))
+                eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[0]
                 matchup_table = table[table['matchup'] == matchup][:length]
                 table_rows = [
-                    _render_row(matchup.split('__vs__'), row)
-                    for i, row in matchup_table.iterrows()
+                    _render_row(matchup.split('__vs__'), row, idx)
+                    for idx, (_, row) in enumerate(matchup_table.iterrows())
                 ]
-                table_body = f"<table><tr><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
-                result += f"<h2>{matchup}</h2><body>{table_body}</body>"
+                table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Comments</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
+                result += f"<h2 id='{matchup}'><li><a href='#toc_container'>{matchup + '__on__' +eval_question}</a></li></h2><body>{table_body}</body>"
             return HTML(result)
 
         table = self.dataframe
@@ -452,7 +540,8 @@ class AcuteAnalyzer(object):
                 return "", "p>.05"
 
         output = []
-        for _, run_annotations in self.dataframe.groupby('run_id'):
+        df_filtered = self.filter_by_dialog_length()
+        for _, run_annotations in df_filtered.groupby('run_id'):
             question = list(run_annotations.question)[0]
             for matchup, annotations in run_annotations.groupby('matchup'):
                 model1, model2 = matchup.split('__vs__')
@@ -562,12 +651,15 @@ class AcuteAnalyzer(object):
 
 if __name__ == "__main__":
     parser = setup_args()
-    analyzer = AcuteAnalyzer(parser.parse_args())
+    args = parser.parse_args()
+    import ipdb; ipdb.set_trace()
+    analyzer = AcuteAnalyzer(args)
     results = pd.DataFrame(analyzer.get_win_fractions())
     analyzer.save_results()
     _print_progress('Here is the grid of results:')
-    print(results.round(2).to_string())
+    rounding_digit = args.get('rounding_digit', 2)
+    print(results.round(rounding_digit).to_string())
     result = pd.DataFrame(analyzer.get_matchup_totals_with_signficance())
     result = result.drop(columns=['agree'])
     _print_progress('Here is each matchup with signficance measures:')
-    print(result.round(2).to_string())
+    print(result.round(rounding_digit).to_string())
