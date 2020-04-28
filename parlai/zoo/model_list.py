@@ -771,6 +771,7 @@ model_list = [
         "id": "blender",
         "path": "zoo:blender/reddit_3B/model",
         "agent": "transformer/generator",
+        "task": "pushshift.io",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
             "2.7B parameter generative model finetuned on blended_skill_talk tasks."
@@ -785,6 +786,7 @@ model_list = [
         "id": "blender",
         "path": "zoo:blender/reddit_9B/model",
         "agent": "transformer/generator",
+        "task": "pushshift.io",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
             "9.4B parameter generative model finetuned on blended_skill_talk tasks."
