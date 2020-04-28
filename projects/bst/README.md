@@ -21,3 +21,5 @@ You can view the data or train your own ParlAI agent on the BST tasks with
 `-t blended_skill_talk` (for just the new task). See the [ParlAI quickstart for help](http://parl.ai/docs/tutorial_quick.html).
 
 Use `-t blended_skill_talk:all` to also include multitasking with the [ConvAI2](http://convai.io/), [Empathetic Dialogues](https://github.com/facebookresearch/EmpatheticDialogues) and [Wizard of Wikipedia](http://parl.ai/projects/wizard_of_wikipedia) datasets in their blend-debiased (topicifier) versions (See Sec. 4.2 of the paper). 
+
+To access the individual (unblended, non-topicifer version) tasks, use `-t convai2:normalized`,  `-t empathetic_dialogues` and `-t wizard_of_wikipedia`.
