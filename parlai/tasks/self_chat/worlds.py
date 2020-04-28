@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.agents import Agent
 from parlai.core.worlds import create_task, DialogPartnerWorld, validate
+from parlai.core.message import Message
 
 
 def load_openers(opt) -> Optional[List[str]]:
@@ -134,11 +135,11 @@ class SelfChatWorld(DialogPartnerWorld):
             assert len(self.contexts) == 2
             # initial context
             for i in range(0, 2):
-                context = {
+                context = Message({
                     'text': self.contexts[i],
                     'episode_done': False,
                     'id': 'context',
-                }
+                })
                 self.acts[i] = context
                 self.agents[i].observe(validate(context))
             # clear contexts so they are only added once per episode
