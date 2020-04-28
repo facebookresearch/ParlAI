@@ -135,11 +135,9 @@ class SelfChatWorld(DialogPartnerWorld):
             assert len(self.contexts) == 2
             # initial context
             for i in range(0, 2):
-                context = Message({
-                    'text': self.contexts[i],
-                    'episode_done': False,
-                    'id': 'context',
-                })
+                context = Message(
+                    {'text': self.contexts[i], 'episode_done': False, 'id': 'context'}
+                )
                 self.acts[i] = context
                 self.agents[i].observe(validate(context))
             # clear contexts so they are only added once per episode
