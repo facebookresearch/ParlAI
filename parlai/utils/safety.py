@@ -44,6 +44,7 @@ class OffensiveLanguageClassifier:
             model='transformer/classifier',
             model_file='zoo:dialogue_safety/single_turn/model',
             print_scores=True,
+        )
         safety_opt = parser.parse_args([], print_args=False)
         return create_agent(safety_opt)
 
