@@ -113,6 +113,7 @@ class OffensiveStringMatcher:
 
         if datapath is None:
             from parlai.core.params import ParlaiParser
+
             parser = ParlaiParser(False, False)
             self.datapath = os.path.join(parser.parlai_home, 'data')
         else:
