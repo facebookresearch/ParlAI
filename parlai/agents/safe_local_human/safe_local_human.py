@@ -17,7 +17,9 @@ from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassif
 
 
 OFFENSIVE_USER_REPLY = '[ Sorry, could not process that message. Please try again. ]'
-OFFENSIVE_BOT_REPLY = '[ Unsafe model reply detected. Clearing agent history. Please try again. ]'
+OFFENSIVE_BOT_REPLY = (
+    '[ Unsafe model reply detected. Clearing agent history. Please try again. ]'
+)
 
 
 class SafeLocalHumanAgent(LocalHumanAgent):
@@ -54,7 +56,7 @@ class SafeLocalHumanAgent(LocalHumanAgent):
 
     def check_offensive(self, text):
         """
-        Check if text is offensive using string matcher and classifier
+        Check if text is offensive using string matcher and classifier.
         """
         if (
             hasattr(self, 'offensive_string_matcher')
@@ -98,7 +100,13 @@ class SafeLocalHumanAgent(LocalHumanAgent):
 
     def act(self):
         # get human reply
-        reply = Message({'id': self.getID(), 'label_candidates': self.fixedCands_txt, 'episode_done': False})
+        reply = Message(
+            {
+                'id': self.getID(),
+                'label_candidates': self.fixedCands_txt,
+                'episode_done': False,
+            }
+        )
         reply_text = self.get_reply()
 
         # check if human reply is offensive
