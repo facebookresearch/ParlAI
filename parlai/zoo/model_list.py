@@ -714,7 +714,7 @@ model_list = [
     },
     {
         "title": "Blender 90M",
-        "id": "Blender 90M",
+        "id": "blender",
         "path": "zoo:blender/blender_90M/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
@@ -732,7 +732,7 @@ model_list = [
     },
     {
         "title": "Blender 2.7B",
-        "id": "Blender 2.7B",
+        "id": "blender",
         "path": "zoo:blender/blender_3B/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
@@ -750,7 +750,7 @@ model_list = [
     },
     {
         "title": "Blender 9.4B",
-        "id": "Blender 9.4B",
+        "id": "blender",
         "path": "zoo:blender/blender_9B/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
@@ -768,7 +768,7 @@ model_list = [
     },
     {
         "title": "Reddit 2.7B",
-        "id": "Reddit 2.7B",
+        "id": "blender",
         "path": "zoo:blender/reddit_3B/model",
         "agent": "transformer/generator",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
@@ -782,7 +782,7 @@ model_list = [
     },
     {
         "title": "Reddit 9.4B",
-        "id": "Reddit 9.4B",
+        "id": "blender",
         "path": "zoo:blender/reddit_9B/model",
         "agent": "transformer/generator",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
