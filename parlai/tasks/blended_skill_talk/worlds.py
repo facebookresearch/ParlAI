@@ -87,7 +87,8 @@ class InteractiveWorld(InteractiveBaseWorld):
         if self.display_partner_persona:
             partner_persona = self.p2.replace('your persona:', 'partner\'s persona:')
             print(f"Your partner was playing the following persona:\n{partner_persona}")
-        print("[ Preparing new chat ... ]\n")
+        if not self.epoch_done():
+            print("\n[ Preparing new chat ... ]\n")
 
 
 class SelfChatWorld(SelfChatBaseWorld):

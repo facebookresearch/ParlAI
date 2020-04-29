@@ -121,9 +121,7 @@ class SafeLocalHumanAgent(LocalHumanAgent):
 
         # check for episode done
         if '[DONE]' in reply_text or self.opt.get('single_turn', False):
-            reply.force_set('episode_done', True)
-            self.episodeDone = True
-            reply_text = reply_text.replace('[DONE]', '')
+            raise StopIteration
 
         # set reply text
         reply['text'] = reply_text
@@ -131,5 +129,6 @@ class SafeLocalHumanAgent(LocalHumanAgent):
         # check if finished
         if '[EXIT]' in reply_text:
             self.finished = True
+            raise StopIteration
 
         return reply
