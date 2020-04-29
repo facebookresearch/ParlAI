@@ -348,10 +348,12 @@ class AcuteAnalyzer(object):
         """
         return self.dataframe.groupby('worker')['run_id'].count().max()
 
-    def filter_by_dialog_length(self, is_debug=False):
+    def filter_by_dialogue_length(self, is_debug=False):
         """
-        Filter out matchup with one of the conversation shorter than self.min_dialogue_length
-        This applies to calculating sorted_win_frac_df and signficance_df, but not html visualizations of conversations.
+        Filter out matchup with one of the conversation shorter than
+        self.min_dialogue_length This applies to calculating sorted_win_frac_df and
+        signficance_df, but not html visualizations of conversations.
+
         :param is_debug: if True, print logs indicating the number of pairings filtered out due to short conversation.
             is_debug bool
         """
@@ -359,8 +361,8 @@ class AcuteAnalyzer(object):
         filter_list = {}
         for _, row in self.dataframe.iterrows():
             keep_row = True
-            for model_name, dialog_length in row['dialogue_lengths'].items():
-                if keep_row and dialog_length < self.min_dialogue_length:
+            for model_name, dialogue_length in row['dialogue_lengths'].items():
+                if keep_row and dialogue_length < self.min_dialogue_length:
                     keep_row = False
                     filter_list[model_name] = filter_list.get(model_name, 0) + 1
             if keep_row:
@@ -368,7 +370,7 @@ class AcuteAnalyzer(object):
         if is_debug:
             for model_name in filter_list:
                 print(
-                    f"For {self.run_id}: filter out {filter_list[model_name]} matchups due to {model_name} with dialog length shorter than {self.min_dialog_length}"
+                    f"For {self.run_id}: filter out {filter_list[model_name]} matchups due to {model_name} with dialogue length shorter than {self.min_dialogue_length}"
                 )
         return df
 
@@ -376,7 +378,7 @@ class AcuteAnalyzer(object):
         """
         Return the wins for each model by matchup.
         """
-        df_filtered = self.filter_by_dialog_length(True)
+        df_filtered = self.filter_by_dialogue_length(True)
         self.matchup_total_df = (
             df_filtered.groupby(['eval_choice_0', 'eval_choice_1'])['run_id']
             .count()
@@ -515,14 +517,18 @@ class AcuteAnalyzer(object):
                 <p class="toc_title">Model Pairs</p>\
                 <ul class="toc_list">'
             for matchup in matchups:
-                eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[0]
+                eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[
+                    0
+                ]
                 result += f"<li><a href='#{matchup}''>{matchup + '__on__' +eval_question}</a></li>"
             result += '</ul></div>'
             for matchup in matchups:
                 length = min(
                     self.max_matchups_html, len(table[table['matchup'] == matchup])
                 )
-                eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[0]
+                eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[
+                    0
+                ]
                 matchup_table = table[table['matchup'] == matchup][:length]
                 table_rows = [
                     _render_row(matchup.split('__vs__'), row, idx, cherry_pick)
@@ -531,7 +537,7 @@ class AcuteAnalyzer(object):
                 if cherry_pick:
                     table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Comments</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
                 else:
-                    table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Winner Conversation</th><th>Loser Conversation</th><ths>Reason</th></tr>{''.join(table_rows)}</table>"
+                    table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
                 result += f"<h2 id='{matchup}'><li><a href='#toc_container'>{matchup + '__on__' +eval_question}</a></li></h2><body>{table_body}</body>"
             return HTML(result)
 
@@ -560,7 +566,7 @@ class AcuteAnalyzer(object):
                 return "", "p>.05"
 
         output = []
-        df_filtered = self.filter_by_dialog_length()
+        df_filtered = self.filter_by_dialogue_length()
         for _, run_annotations in df_filtered.groupby('run_id'):
             question = list(run_annotations.question)[0]
             for matchup, annotations in run_annotations.groupby('matchup'):
