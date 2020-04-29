@@ -76,7 +76,7 @@ def setup_args():
         '--cherry-pick',
         type='bool',
         default=False,
-        help='whether the run is a sandbox run or not',
+        help='whether to include cherry-picking checkbox column',
     )
     return parser
 
