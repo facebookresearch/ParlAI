@@ -139,7 +139,7 @@ def sentence_split(st, max_len=120, max_sen=-1):
 def tf_idf_vec_uni(sentence, vocounts, totcounts):
     sen_tab = sentence.lower().split()
     uni_dic = {}
-    for i, w in enumerate(sen_tab):
+    for _, w in enumerate(sen_tab):
         if w in vocounts:
             uni_dic[w] = -math.log(float(vocounts.get(w, 1.0)) / totcounts)
     # normalize
@@ -153,7 +153,7 @@ def tf_idf_vec_uni(sentence, vocounts, totcounts):
 def tf_idf_vec(sentence, vocounts, totcounts):
     sen_tab = sentence.lower().split()
     uni_dic = {}
-    for i, w in enumerate(sen_tab):
+    for _, w in enumerate(sen_tab):
         uni_dic[w] = -math.log(float(vocounts.get(w, 1.0)) / totcounts)
     for i in range(len(sen_tab)):
         a = sen_tab[i]
@@ -190,7 +190,7 @@ def make_ccid_filter(ccid_maps, n_urls):
     select = {}
     for name, ccmap_ls in ccid_maps.items():
         for eli_k, cc_ls in ccmap_ls:
-            for i, (cid, ul) in enumerate(cc_ls[:n_urls]):
+            for i, (cid, _) in enumerate(cc_ls[:n_urls]):
                 # select[cid] = (name, eli_k[:2], eli_k[:4], eli_k, i)
                 select[cid] = (name, eli_k, i)
     return select
