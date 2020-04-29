@@ -58,6 +58,8 @@ class SafeLocalHumanAgent(LocalHumanAgent):
         """
         Check if text is offensive using string matcher and classifier.
         """
+        if text == '':
+            return False
         if (
             hasattr(self, 'offensive_string_matcher')
             and text in self.offensive_string_matcher
