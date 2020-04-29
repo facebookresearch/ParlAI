@@ -12,7 +12,13 @@ from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseW
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 
-def load_personas(opt):
+def get_contexts_data(opt, shared=None):
+    if shared and 'contexts_data' in shared:
+        return shared['contexts_data']
+    return _load_personas(opt=opt)
+
+
+def _load_personas(opt):
     print('[ loading personas.. ]')
     if opt.get('include_personas', True):
         print(
@@ -75,7 +81,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         self.display_partner_persona = self.opt['display_partner_persona']
 
     def init_contexts(self, shared=None):
-        self.contexts_data = load_personas(self.opt)
+        self.contexts_data = get_contexts_data(self.opt, shared=shared)
 
     def get_contexts(self):
         random.seed()
@@ -89,6 +95,11 @@ class InteractiveWorld(InteractiveBaseWorld):
             print(f"Your partner was playing the following persona:\n{partner_persona}")
         if not self.epoch_done():
             print("\n[ Preparing new chat ... ]\n")
+
+    def share(self):
+        shared_data = super().share()
+        shared_data['contexts_data'] = self.contexts_data
+        return shared_data
 
 
 class SelfChatWorld(SelfChatBaseWorld):
@@ -108,9 +119,14 @@ class SelfChatWorld(SelfChatBaseWorld):
         )
 
     def init_contexts(self, shared=None):
-        self.contexts_data = load_personas(self.opt)
+        self.contexts_data = get_contexts_data(self.opt, shared=shared)
 
     def get_contexts(self):
         random.seed()
         p = random.choice(self.contexts_data)
         return [p[0], p[1]]
+
+    def share(self):
+        shared_data = super().share()
+        shared_data['contexts_data'] = self.contexts_data
+        return shared_data

@@ -5,11 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
+from unittest.mock import patch
 
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
+from parlai.tasks.blended_skill_talk.worlds import InteractiveWorld
 
 
 class TestBlendedSkillTalkTeacher(unittest.TestCase):
@@ -275,6 +277,33 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 print(key)
                 self.assertEqual(desired_message[key], actual_message[key])
             print('')
+
+
+class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
+    @patch("parlai.tasks.blended_skill_talk.worlds._load_personas")
+    def test_share(
+        self, mock_load_personas,
+    ):
+        test_personas = ['your persona:I live on a pirate\'s shoulder']
+        with testing_utils.tempdir() as data_path:
+            mock_load_personas.return_value = test_personas
+            kwargs = {
+                'task': 'blended_skill_talk',
+                'datapath': data_path,
+                'interactive_task': True,
+                'interactive_mode': True,
+            }
+            parser = setup_args()
+            parser.set_defaults(**kwargs)
+            opt = parser.parse_args([])
+            agent = RepeatLabelAgent(opt)
+            agent2 = agent.clone()
+            world = InteractiveWorld(opt=opt, agents=[agent, agent2])
+            # We should not reload personas on share
+            mock_load_personas.return_value = None
+            new_world = world.clone()
+
+            self.assertEqual(new_world.contexts_data, test_personas)
 
 
 if __name__ == '__main__':
