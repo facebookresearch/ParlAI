@@ -74,6 +74,6 @@ If you use the models in your own work, please cite with the following BibTex en
     @inproceedings{roller2020recipes,
       author={Stephen Roller, Emily Dinan, Naman Goyal, Da Ju, Mary Williamson, Yinhan Liu, Jing Xu, Myle Ott, Kurt Shuster, Eric M. Smith, Y-Lan Boureau, Jason Weston},
       title={Recipes for building an open-domain chatbot},
-      journal={arXiv preprint arXiv:2004.?????},
+      journal={arXiv preprint arXiv:2004.13637},
       year={2020},
     }
