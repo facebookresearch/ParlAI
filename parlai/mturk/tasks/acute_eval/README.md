@@ -118,12 +118,6 @@ The title, description, and keywords of the task as shown on MTurk default to va
 
 A comprehensive list of settings specific to ACUTE-Eval can be found in `add_args()` in `run.py`. ParlAI MTurk arguments can be found in `~/ParlAI/parlai/core/params.py` under `add_mturk_args()`. For the arguments most likely to be useful for running ACUTE-Eval, see `example_script.py`:
 
-
-## Creating the pairings file
-
-Coming soon.
-
-
 ** **
 
 # ACUTE-Eval Analysis
