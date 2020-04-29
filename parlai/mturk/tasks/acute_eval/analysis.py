@@ -73,10 +73,10 @@ def setup_args():
         help='the minimum number of turns for both dialogues in a matchup to be counted as valid for analysis',
     )
     parser.add_argument(
-        '--cherry-pick',
+        '--annotate-convo',
         type='bool',
         default=False,
-        help='whether to include cherry-picking checkbox column',
+        help='whether to include a checkbox column for annotating the conversation pairs',
     )
     return parser
 
@@ -132,7 +132,7 @@ class AcuteAnalyzer(object):
         self.dataframe = self._extract_to_dataframe()
         self.min_dialogue_length = opt.get('min_dialogue_length', -1)
         self.max_matchups_html = opt.get('max_matchups_html', 10)
-        self.cherry_pick = opt.get('cherry_pick', False)
+        self.annotate_convo = opt.get('annotate_convo', False)
         if remove_failed:
             self._remove_failed_onboarding()
         self._extract_model_names()
@@ -449,8 +449,7 @@ class AcuteAnalyzer(object):
         matchups = list(self.dataframe.matchup.unique())
 
         def _render_row(
-            matchup: List[str], row: pd.Series, row_id: int, cherry_pick: bool
-        ) -> str:
+            matchup: List[str], row: pd.Series, row_id: int) -> str:
             dialogues = {'winner_dialogue': '', 'loser_dialogue': ''}
             for d_key in dialogues:
                 result = []
@@ -506,12 +505,12 @@ class AcuteAnalyzer(object):
             )
             dialogue_row = f"<td>{dialogues['winner_dialogue']}</td><td>{dialogues['loser_dialogue']}</td>"
             reason_row = f"<td>{row['reason']}\n{speakers_footnote}</td>"
-            if cherry_pick:
+            if self.annotate_convo:
                 return f"<tr><td>Pair {str(row_id)}</td>{checkbox_row}{dialogue_row}{reason_row}</tr>"
             else:
                 return f"<tr><td>Pair {str(row_id)}</td>{dialogue_row}{reason_row}</tr>"
 
-        def _render_html(table: pd.DataFrame, cherry_pick: bool) -> HTML:
+        def _render_html(table: pd.DataFrame) -> HTML:
             result = '\
                 <div id="toc_container">\
                 <p class="toc_title">Model Pairs</p>\
@@ -531,10 +530,10 @@ class AcuteAnalyzer(object):
                 ]
                 matchup_table = table[table['matchup'] == matchup][:length]
                 table_rows = [
-                    _render_row(matchup.split('__vs__'), row, idx, cherry_pick)
+                    _render_row(matchup.split('__vs__'), row, idx)
                     for idx, (_, row) in enumerate(matchup_table.iterrows())
                 ]
-                if cherry_pick:
+                if self.annotate_convo:
                     table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Comments</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
                 else:
                     table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
@@ -543,9 +542,9 @@ class AcuteAnalyzer(object):
 
         table = self.dataframe
 
-        self.rendered_without_reasons = _render_html(table, self.cherry_pick)
+        self.rendered_without_reasons = _render_html(table)
         table = table[table['reason'] != '']
-        self.rendered_with_reasons = _render_html(table, self.cherry_pick)
+        self.rendered_with_reasons = _render_html(table)
 
     #############################
     # Functionality from Notebook
