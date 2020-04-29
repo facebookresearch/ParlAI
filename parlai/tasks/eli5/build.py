@@ -39,6 +39,7 @@ RESOURCES = [
     ),
 ]
 
+
 # Setup a directory called dir_name at dpath
 def setup_dir(dpath, dir_name):
     if not isdir(pjoin(dpath, dir_name)):

@@ -33,6 +33,7 @@ from data_utils import *
 REDDIT_URL = "https://files.pushshift.io/reddit/"
 API_URL = "https://api.pushshift.io/reddit/"
 
+
 # collects URLs for monthly dumps, has to be robust to file type changes
 def gather_dump_urls(base_url, mode):
     page = requests.get(base_url + mode)

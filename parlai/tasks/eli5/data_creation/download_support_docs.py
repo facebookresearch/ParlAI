@@ -290,7 +290,7 @@ def main():
                     article_url = line.strip().split()[-1]
                     if using_specific_urls:
                         ccid_path_tuple = check_url(select_urls, article_url)
-                except:
+                except Exception as _:
                     article_url = '<UNK>'
                     if using_specific_urls:
                         ccid_path_tuple = False
@@ -299,7 +299,7 @@ def main():
                     article_id = line.strip().split()[-1]
                     if not using_specific_urls:
                         ccid_path_tuple = select_ccid.get(article_id, False)
-                except:
+                except Exception as _:
                     article_id = '<UNK>'
                     if not using_specific_urls:
                         ccid_path_tuple = False

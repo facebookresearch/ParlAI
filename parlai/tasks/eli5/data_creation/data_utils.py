@@ -21,7 +21,6 @@ from os.path import join as pjoin
 from os.path import isfile
 from os.path import isdir
 
-import spacy
 from spacy.lang.en import English
 
 
