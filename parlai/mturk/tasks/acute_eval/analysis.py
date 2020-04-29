@@ -541,7 +541,7 @@ class AcuteAnalyzer(object):
         with open(_path('grid.csv'), 'w') as f:
             f.write(self.get_win_fractions().to_csv(index=True))
         _print_progress(
-            f"To visualize grid result, try cat {_path('grid.csv')} | column -t -s, | less -S"
+            f"To visualize grid result, try cat {_path('grid.csv')} | sed 's/,/ ,/g' | column -t -s, | less -S"
         )
 
         # Render conversations if valid pairings filepath provided
