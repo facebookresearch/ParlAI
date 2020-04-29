@@ -253,7 +253,7 @@ def download_and_process_comments(post_ids, st_time):
 
 def post_process(reddit_dct, name=''):
     # remove the ELI5 at the start of explainlikeimfive questions
-    start_re = re.compile('[\[]?[ ]?eli[5f][ ]?[\]]?[]?[:,]?', re.IGNORECASE)
+    start_re = re.compile(r'[\[]?[ ]?eli[5f][ ]?[\]]?[]?[:,]?', re.IGNORECASE)
     if name == 'explainlikeimfive':
         title, uls = reddit_dct['title']
         title = start_re.sub('', title).strip()
