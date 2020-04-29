@@ -174,7 +174,7 @@ I will enumerate a few of these options below.
 
 #### Model self-chat
 
-If you would like to evaluate a model chatting two itself, you simply specify the appropriate model parameters in the config. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc. You can see an example in the `example_model` config.
+If you would like to evaluate a model chatting to itself, you simply specify the appropriate model parameters in the config. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc. You can see an example in the `example_model` config.
 
 #### JSONL Logs
 
@@ -228,7 +228,7 @@ The script operates in three phases:
 
 The script will first compile the chat logs for each identifier specified on the command line.
 
-For `model`s, the script will run self-chat; for `log`s, the script will simply load the log from disk; and for `task`s, the script will convert the task into the appropriate format.
+For `model`s, the script will run self-chat (if a self-chat log does not already exist); for `log`s, the script will simply load the log from disk; and for `task`s, the script will convert the task into the appropriate format.
 
 Self-chats are saved to `PARLAI_PATH/data/acute_evals/self_chats/`
 
