@@ -72,6 +72,12 @@ def setup_args():
         default=-1,
         help='the minimum number of turns for both dialogues in a matchup to be counted as valid for analysis',
     )
+    parser.add_argument(
+        '--cherry-pick',
+        type='bool',
+        default=False,
+        help='whether the run is a sandbox run or not',
+    )
     return parser
 
 
@@ -123,10 +129,10 @@ class AcuteAnalyzer(object):
             'run_data',
             f"pmt_{'sb' if opt['is_sandbox'] else ''}data.db",
         )
-        import ipdb; ipdb.set_trace()
         self.dataframe = self._extract_to_dataframe()
         self.min_dialogue_length = opt.get('min_dialogue_length', -1)
         self.max_matchups_html = opt.get('max_matchups_html', 10)
+        self.cherry_pick = opt.get('cherry_pick', False)
         if remove_failed:
             self._remove_failed_onboarding()
         self._extract_model_names()
@@ -239,7 +245,7 @@ class AcuteAnalyzer(object):
         """
         logger = MTurkDataHandler(file_name=self.db_path)
         hits = logger.get_pairings_for_run(self.run_id)
-        import ipdb;ipdb.set_trace()
+
         dataframe: List[Dict[str, Any]] = []
         for hit in hits:
             if hit['conversation_id'] is None:
@@ -262,7 +268,6 @@ class AcuteAnalyzer(object):
         Remove workers who failed onboarding.
         """
         df = self.dataframe
-        import ipdb; ipdb.set_trace()
 
         all_workers_failing_onboarding = df.loc[
             df['is_onboarding'] & (df['correct'] == False), 'worker'  # noqa: E712
@@ -441,7 +446,9 @@ class AcuteAnalyzer(object):
         """
         matchups = list(self.dataframe.matchup.unique())
 
-        def _render_row(matchup: List[str], row: pd.Series, row_id: int) -> str:
+        def _render_row(
+            matchup: List[str], row: pd.Series, row_id: int, cherry_pick: bool
+        ) -> str:
             dialogues = {'winner_dialogue': '', 'loser_dialogue': ''}
             for d_key in dialogues:
                 result = []
@@ -473,7 +480,17 @@ class AcuteAnalyzer(object):
                     + '</div>'
                 )
 
-            checkbox = (
+            if row['winner'] == row['speaker_model_mapping'][0]:
+                speakers_footnote = "(Speaker_1[winner] = {}, Speaker_2 = {})".format(
+                    row['speaker_model_mapping'][0], row['speaker_model_mapping'][1]
+                )
+            else:
+                speakers_footnote = "(Speaker_1 = {}, Speaker_2[winner] = {})".format(
+                    row['speaker_model_mapping'][0], row['speaker_model_mapping'][1]
+                )
+
+            checkbox_row = (
+                '<td>'
                 '<div><input type= "checkbox" id= "cherry" name= "cherry">'
                 '<label for="cherry">Cherry</label>'
                 '</div>'
@@ -483,18 +500,16 @@ class AcuteAnalyzer(object):
                 '<div><input type= "checkbox" id= "neutral" name= "neutral">'
                 '<label for= "neutral">Neutral</label>'
                 '</div>'
+                '</td>'
             )
-            if row['winner'] == row['speaker_model_mapping'][0]:
-                speakers_footnote = "(Speaker_1 = {}(winner), Speaker_2 = {})".format(
-                    row['speaker_model_mapping'][0], row['speaker_model_mapping'][1]
-                )
+            dialogue_row = f"<td>{dialogues['winner_dialogue']}</td><td>{dialogues['loser_dialogue']}</td>"
+            reason_row = f"<td>{row['reason']}\n{speakers_footnote}</td>"
+            if cherry_pick:
+                return f"<tr><td>Pair {str(row_id)}</td>{checkbox_row}{dialogue_row}{reason_row}</tr>"
             else:
-                speakers_footnote = "(Speaker_1 = {}, Speaker_2 = {}(winner))".format(
-                    row['speaker_model_mapping'][0], row['speaker_model_mapping'][1]
-                )
-            return f"<tr><td>{'Pair ' + str(row_id)}</td><td>{checkbox}</td><td>{dialogues['winner_dialogue']}</td><td>{dialogues['loser_dialogue']}</td><td>{row['reason']+chr(10)+speakers_footnote}</td></tr>"
+                return f"<tr><td>Pair {str(row_id)}</td>{dialogue_row}{reason_row}</tr>"
 
-        def _render_html(table: pd.DataFrame) -> HTML:
+        def _render_html(table: pd.DataFrame, cherry_pick: bool) -> HTML:
             result = '\
                 <div id="toc_container">\
                 <p class="toc_title">Model Pairs</p>\
@@ -504,22 +519,27 @@ class AcuteAnalyzer(object):
                 result += f"<li><a href='#{matchup}''>{matchup + '__on__' +eval_question}</a></li>"
             result += '</ul></div>'
             for matchup in matchups:
-                length = min(self.max_matchups_html, len(table[table['matchup'] == matchup]))
+                length = min(
+                    self.max_matchups_html, len(table[table['matchup'] == matchup])
+                )
                 eval_question = table.loc[table['matchup'] == matchup, 'question'].iloc[0]
                 matchup_table = table[table['matchup'] == matchup][:length]
                 table_rows = [
-                    _render_row(matchup.split('__vs__'), row, idx)
+                    _render_row(matchup.split('__vs__'), row, idx, cherry_pick)
                     for idx, (_, row) in enumerate(matchup_table.iterrows())
                 ]
-                table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Comments</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
+                if cherry_pick:
+                    table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Comments</th><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{''.join(table_rows)}</table>"
+                else:
+                    table_body = f"<table border=1 frame=void rules=rows cellpadding='20'><tr><th>Pair Id</th><th>Winner Conversation</th><th>Loser Conversation</th><ths>Reason</th></tr>{''.join(table_rows)}</table>"
                 result += f"<h2 id='{matchup}'><li><a href='#toc_container'>{matchup + '__on__' +eval_question}</a></li></h2><body>{table_body}</body>"
             return HTML(result)
 
         table = self.dataframe
 
-        self.rendered_without_reasons = _render_html(table)
+        self.rendered_without_reasons = _render_html(table, self.cherry_pick)
         table = table[table['reason'] != '']
-        self.rendered_with_reasons = _render_html(table)
+        self.rendered_with_reasons = _render_html(table, self.cherry_pick)
 
     #############################
     # Functionality from Notebook
@@ -652,7 +672,6 @@ class AcuteAnalyzer(object):
 if __name__ == "__main__":
     parser = setup_args()
     args = parser.parse_args()
-    import ipdb; ipdb.set_trace()
     analyzer = AcuteAnalyzer(args)
     results = pd.DataFrame(analyzer.get_win_fractions())
     analyzer.save_results()
