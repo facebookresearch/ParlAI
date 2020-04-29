@@ -35,11 +35,11 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Chit-chat
 
+- **Blender** [[project]](https://parl.ai/projects/blender).
+  _We open source Blender: 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
+
 - **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
   _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Dialogues and Wizard of Wikipedia elements._
-
-- **Blender** [[project]](https://parl.ai/projects/blender).
-  _We open source Blender, our state of the art models for open domain dialogue._
 
 - **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
   _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._
