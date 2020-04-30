@@ -50,7 +50,6 @@ def build(opt):
     dpath = pjoin(opt['datapath'], 'eli5')
     pre_computed_path = pjoin(dpath, 'pre_computed')
     processed_path = pjoin(dpath, 'processed_data')
-    docs_path = pjoin(processed_path, 'collected_docs')
 
     version = '1.0'
 
@@ -96,20 +95,19 @@ def build(opt):
                 f'Unzip explainlikeimfive_ccrawl_ids.json.gz located at {pre_computed_path} with command:\n',
                 'gunzip explainlikeimfive_ccrawl_ids.json.gz',
             )
+        # Mark the data as built.
+        build_data.mark_done(dpath, version_string=version)
 
-        # Check that reddit file is there for eli5
-        sel_path = pjoin(processed_path, 'selected_15_1')
-        test_train_valid_check = (
-            isfile(pjoin(sel_path, 'explainlikeimfive_test.json'))
-            and isfile(pjoin(sel_path, 'explainlikeimfive_train.json'))
-            and isfile(pjoin(sel_path, 'explainlikeimfive_valid.json'))
+    # Check that reddit file is there for eli5
+    sel_path = pjoin(processed_path, 'selected_15_1')
+    test_train_valid_check = (
+        isfile(pjoin(sel_path, 'explainlikeimfive_test.json'))
+        and isfile(pjoin(sel_path, 'explainlikeimfive_train.json'))
+        and isfile(pjoin(sel_path, 'explainlikeimfive_valid.json'))
+    )
+    if not test_train_valid_check:
+        print(
+            '\nDid not find one of the ELI5 test, train, valid json files.',
+            '\nPlease make sure you have run the steps in',
+            'https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/eli5\n',
         )
-        if not test_train_valid_check:
-            print(
-                'Did not find one of the ELI5 test, train, valid json files. \n',
-                'Please make sure you have run the steps in',
-                'https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/eli5',
-            )
-        else:
-            # Mark the data as built.
-            build_data.mark_done(dpath, version_string=version)

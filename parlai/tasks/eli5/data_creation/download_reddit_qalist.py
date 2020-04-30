@@ -433,7 +433,7 @@ def main():
     # get specific reddit posts
     if opt['id_list']:
         with open(opt['id_list']) as f:
-            post_ids = json.load(opt['id_list'])
+            post_ids = json.load(f)
         sr_names = None
         if not opt['answers_only']:
             try:

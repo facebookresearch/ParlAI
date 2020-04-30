@@ -136,19 +136,21 @@ def setup_args():
 
 def main():
     opt = setup_args()
-    output_dir = pjoin(opt['datapath'], opt['output_dir'])
-    wet_urls_path = pjoin(output_dir, opt['wet_urls'])
+    output_dir = pjoin(
+        opt['datapath'], opt['output_dir'], 'processed_data/collected_docs'
+    )
+    wet_urls_path = pjoin(opt['datapath'], opt['output_dir'], opt['wet_urls'])
     f = open(wet_urls_path, buffering=4096)
     url_lst = [line.strip() for line in f if line.strip() != '']
     f.close()
     if opt['urls']:
         with open(opt['urls']) as f:
-            specific_urls = json.load(opt['urls'])
+            specific_urls = json.load(f)
         using_specific_urls = True
         using_specific_ids = False
     elif opt['ccuids']:
         with open(opt['ccuids']) as f:
-            specific_urls = json.load(opt['ccuids'])
+            specific_ids = json.load(f)
         using_specific_urls = False
         using_specific_ids = True
     else:
