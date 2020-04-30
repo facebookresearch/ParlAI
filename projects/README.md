@@ -35,8 +35,8 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Chit-chat
 
-- **Blender** [[project]](https://parl.ai/projects/blender).
-  _We open source Blender: 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
+- **Recipes for open-domain chatbots** [[project]](https://parl.ai/projects/recipes).
+  _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
 
 - **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
   _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Dialogues and Wizard of Wikipedia elements._
