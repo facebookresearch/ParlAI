@@ -5,4 +5,4 @@ cd "${DIR}/.."
 pwd
 echo $NM
 echo $C
-python merge_support_docs.py -n $NM -f $C
+python merge_support_docs.py -n $NM -c $C

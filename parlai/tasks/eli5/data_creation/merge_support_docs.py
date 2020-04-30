@@ -24,7 +24,11 @@ def setup_args():
     parser.add_parlai_data_path()
     merge = parser.add_argument_group('Merge Support Docs')
     merge.add_argument(
-        '-f', '--finalize', default=True, type=str, help='Finalize the output'
+        '-c',
+        '--c',
+        default=True,
+        type=str,
+        help='Finalize the output (or slice number to merge)',
     )
     merge.add_argument(
         '-n', '--name', default='explainlikeimfive', type=str, help='Slices to merge'
@@ -44,6 +48,8 @@ if __name__ == '__main__':
         num_slice = 0
         docs = []
         for i in range(10):
+            if not isfile(pjoin(rd_dir, '%d.json' % (i,))):
+                continue
             docs += json.load(open(pjoin(rd_dir, '%d.json' % (i,))))
             while len(docs) > 3000:
                 print('writing slice', num_slice, name)
@@ -58,6 +64,7 @@ if __name__ == '__main__':
             )
     else:
         d_name = pjoin(opt['datapath'], 'eli5/processed_data/collected_docs', name, ca)
+        print(d_name)
         if isdir(d_name):
             merged = merge_support_docs(d_name)
         if len(merged) > 0:
