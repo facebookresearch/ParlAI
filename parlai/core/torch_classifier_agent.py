@@ -233,7 +233,7 @@ class TorchClassifierAgent(TorchAgent):
         Format interactive mode output with scores.
         """
         preds = []
-        for i, pred_id in enumerate(prediction_id):
+        for i, pred_id in enumerate(prediction_id.tolist()):
             prob = round_sigfigs(probs[i][pred_id], 4)
             preds.append(
                 'Predicted class: {}\nwith probability: {}'.format(
@@ -279,11 +279,10 @@ class TorchClassifierAgent(TorchAgent):
         probs = F.softmax(scores, dim=1)
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
-            prediction_id = prediction_id.tolist()
         else:
             ref_prob = probs.cpu()[:, 0]
             # choose ref class if Prob(ref class) > threshold
-            prediction_id = [int(ref_prob <= self.threshold)]
+            prediction_id = (ref_prob <= self.threshold).to(torch.int64)
         preds = [self.class_list[idx] for idx in prediction_id]
 
         if batch.labels is None or self.opt['ignore_labels']:
