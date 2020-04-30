@@ -18,7 +18,7 @@ Contains the following utilities:
 """
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, List
+from typing import TypeVar, List, Dict
 import math
 from operator import attrgetter
 
@@ -30,6 +30,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output
 from parlai.utils.misc import warn_once
+import parlai.utils.logging as logging
 from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.torch import (
@@ -343,6 +344,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             '--beam-delay', type=int, default=30, help='used in delayedbeam search'
         )
         agent.add_argument(
+            '--beam-blacklist-filename',
+            type=str,
+            default=None,
+            help='Load a text file of hard blocks for beam search to never say.',
+        )
+        agent.add_argument(
             '--temperature',
             type=float,
             default=1.0,
@@ -374,14 +381,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if shared:
             # set up shared properties
             states = shared.get('states', {})
+            self.beam_blacklist = shared.get('beam_blacklist')
         else:
-            # Note: we cannot change the type of metrics ahead of time, so you
-            # should correctly initialize to floats or ints here
-
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
+
+            # load the blacklist for beam search
+            self.beam_blacklist = self._load_beam_blacklist()
 
             if self.model is None or self.criterion is None:
                 raise AttributeError(
@@ -521,6 +529,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Share internal states between parent and child instances.
         """
         shared = super().share()
+        shared['beam_blacklist'] = self.beam_blacklist
         if hasattr(self, 'optimizer'):
             shared['optimizer'] = self.optimizer
         if self.opt.get('numthreads', 1) > 1:
@@ -891,9 +900,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.text_vec is not None:
             batchsize = batch.text_vec.size(0)
             beams = [
-                self._treesearch_factory(dev).set_context(
-                    self._get_context(batch, batch_idx)
-                )
+                self._treesearch_factory(dev)
+                .set_context(self._get_context(batch, batch_idx))
+                .set_blacklist(self.beam_blacklist)
                 for batch_idx in range(batchsize)
             ]
         else:
@@ -953,6 +962,38 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
 
         return beam_preds_scores, beams
+
+    def _load_beam_blacklist(self) -> List[List[int]]:
+        """
+        Load the beam blacklist.
+
+        :return: a dict mapping ngram length to different ngrams
+        """
+        phrases = set()
+        for phrase in self._get_blocked_phrases():
+            phrases.add(phrase)
+            phrases.add(phrase.lower())
+            phrases.add(phrase.upper())
+            phrases.add(phrase.title())
+
+        ngrams_blacklist = []
+        for phrase in phrases:
+            ngram = self.dict.txt2vec(phrase)
+            logging.info(f"Adding '{phrase}' to the blacklist {ngram}")
+            ngrams_blacklist.append(ngram)
+
+        return ngrams_blacklist
+
+    def _get_blocked_phrases(self) -> List[str]:
+        if not self.opt.get('beam_blacklist_filename'):
+            return []
+        blacklist_fn = self.opt['beam_blacklist_filename']
+        try:
+            with open(blacklist_fn) as f:
+                return [line.strip() for line in f]
+        except IOError:
+            logging.error(f"Could not load beam blacklist {blacklist_fn}")
+            return []
 
 
 class _HypothesisTail(object):
@@ -1023,6 +1064,7 @@ class TreeSearch(object):
         self.pad = padding_token
         self.context = None
         self.context_block_ngram = context_block_ngram
+        self.blacklist: Dict[int, List[List[int]]] = {}
         self.device = device
         # recent score for each hypo in the beam
         self.scores = None
@@ -1050,6 +1092,14 @@ class TreeSearch(object):
             ngram blocking, if supplied
         """
         self.context = context.tolist()
+        return self
+
+    def set_blacklist(self: TSType, blacklist: List[List[int]]) -> TSType:
+        self.blacklist: Dict[int, List[List[int]]] = {}
+        for ngram in blacklist:
+            if len(ngram) not in self.blacklist:
+                self.blacklist[len(ngram)] = []
+            self.blacklist[len(ngram)].append(ngram)
         return self
 
     def get_output_from_current_step(self):
@@ -1115,6 +1165,15 @@ class TreeSearch(object):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
+    def _block_blacklist(self, logprobs: torch.Tensor):
+        for beam_id, hyp in enumerate(self.partial_hyps):
+            for ngram_size, bad_ngrams in self.blacklist.items():
+                prefix = hyp[-(ngram_size - 1) :]
+                for ngram in bad_ngrams:
+                    if ngram_size == 1 or prefix == list(ngram[:-1]):
+                        logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+        return logprobs
+
     def advance(self, logprobs):
         """
         Advance the beam one step.
@@ -1137,6 +1196,9 @@ class TreeSearch(object):
         # beam blocking
         if self.block_ngram > 0:
             logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
+
+        if self.blacklist:
+            logprobs = self._block_blacklist(logprobs)
 
         if self.context_block_ngram > 0:
             if self.context is None:
