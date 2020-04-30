@@ -64,7 +64,6 @@ if __name__ == '__main__':
             )
     else:
         d_name = pjoin(opt['datapath'], 'eli5/processed_data/collected_docs', name, ca)
-        print(d_name)
         if isdir(d_name):
             merged = merge_support_docs(d_name)
         if len(merged) > 0:
