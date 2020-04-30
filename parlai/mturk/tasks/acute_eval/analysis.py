@@ -448,8 +448,7 @@ class AcuteAnalyzer(object):
         """
         matchups = list(self.dataframe.matchup.unique())
 
-        def _render_row(
-            matchup: List[str], row: pd.Series, row_id: int) -> str:
+        def _render_row(matchup: List[str], row: pd.Series, row_id: int) -> str:
             dialogues = {'winner_dialogue': '', 'loser_dialogue': ''}
             for d_key in dialogues:
                 result = []
