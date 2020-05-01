@@ -140,6 +140,8 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
     Adds persona and WoW topic to ED context strings.
     """
 
+    RECOMPILE_DEFAULT = False
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         EmpatheticDialoguesTeacher.add_cmdline_args(argparser)
@@ -147,7 +149,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         agent.add_argument(
             '--recompile-persona-topic-data',
             type='bool',
-            default=False,
+            default=cls.RECOMPILE_DEFAULT,
             help='Re-compile data with ConvAI2 personas and WoW topics added',
         )
 
@@ -171,7 +173,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         # Running over all examples is really slow because the process of finding a WoW
         # topic is expensive, so let's load cached data with personas and topics unless
         # --recompile-persona-topic-data is True
-        if opt['recompile_persona_topic_data']:
+        if opt.get('recompile_persona_topic_data', self.RECOMPILE_DEFAULT):
             self.data_path = (
                 _cached_data_path(
                     opt=self.opt, experiencer_side_only=self.experiencer_side_only
