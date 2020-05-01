@@ -971,15 +971,27 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         phrases = set()
         for phrase in self._get_blocked_phrases():
+            phrase = phrase.strip()
+            if not phrase:
+                # paranoia
+                continue
             phrases.add(phrase)
+            phrases.add(phrase + "s")
             phrases.add(phrase.lower())
+            phrases.add(phrase.lower() + "s")
             phrases.add(phrase.upper())
+            phrases.add(phrase.upper() + "S")
             phrases.add(phrase.title())
+            phrases.add(phrase.title() + "S")
+            phrases.add(phrase[0].upper() + phrase[1:])
+            phrases.add(phrase[0].upper() + phrase[1:] + "s")
+            phrases.add(phrase[0].upper() + phrase[1:].lower())
+            phrases.add(phrase[0].upper() + phrase[1:].lower() + "s")
 
         ngrams_blacklist = []
         for phrase in phrases:
             ngram = self.dict.txt2vec(phrase)
-            logging.info(f"Adding '{phrase}' to the blacklist {ngram}")
+            logging.debug(f"Adding '{phrase}' to the beam blacklist {ngram}")
             ngrams_blacklist.append(ngram)
 
         return ngrams_blacklist
