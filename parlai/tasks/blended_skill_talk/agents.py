@@ -142,6 +142,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
+        EmpatheticDialoguesTeacher.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('EDPersonaTopicifierTeacher arguments')
         agent.add_argument(
             '--recompile-persona-topic-data',

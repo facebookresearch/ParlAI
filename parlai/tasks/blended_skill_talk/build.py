@@ -32,25 +32,25 @@ RESOURCES = [
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__train__both_sides.json',
         'ed_persona_topicifier__train__both_sides.json',
-        'fooooo',
+        'ff2ea7c5fcb0449890d57a629cc3e8794ab95ac6db1057bf58d540c2b576e4cc',
         zipped=False,
     ),
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__train__experiencer_only.json',
         'ed_persona_topicifier__train__experiencer_only.json',
-        'fooooo',
+        '751f0ba2f421a11eee2bfc896d60ab70d669093c3a5f6cb30e8d202133a90ec7',
         zipped=False,
     ),
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__valid__experiencer_only.json',
         'ed_persona_topicifier__valid__experiencer_only.json',
-        'foooo',
+        '15d5412f5990a8a9c892305009d8597a737322aafe878b03ec71143703b25ba0',
         zipped=False,
     ),
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__test__experiencer_only.json',
         'ed_persona_topicifier__test__experiencer_only.json',
-        'fooooo',
+        '2604e977787be0b5edc54561f7ce8a54c40758d235a3fee262fe20fe36b8cd15',
         zipped=False,
     ),
 ]
