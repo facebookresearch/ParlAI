@@ -29,12 +29,36 @@ RESOURCES = [
         '47cdb6cbee0516ca7400be35fa07761339b86c6c026425bf5dba00e5534e8182',
         zipped=False,
     ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__train__both_sides.json',
+        'ed_persona_topicifier__train__both_sides.json',
+        'fooooo',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__train__experiencer_only.json',
+        'ed_persona_topicifier__train__experiencer_only.json',
+        'fooooo',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__valid__experiencer_only.json',
+        'ed_persona_topicifier__valid__experiencer_only.json',
+        'foooo',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__test__experiencer_only.json',
+        'ed_persona_topicifier__test__experiencer_only.json',
+        'fooooo',
+        zipped=False,
+    ),
 ]
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'blended_skill_talk')
-    version = 'v1.2'
+    version = 'v1.3'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
