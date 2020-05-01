@@ -135,13 +135,14 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         super().__init__(opt, shared=shared)
 
         if (
-            self.opt.get('deepmoji') is not None
+            self.remove_political_convos is True
+            or self.opt.get('deepmoji') is not None
             or self.opt.get('fasttextloc') is not None
             or self.opt.get('prepend', -1) > 0
         ):
             raise NotImplementedError(
-                'Using deepmoji, fasttextloc, or prepend not supported with this '
-                'teacher.'
+                'Using remove-political-convos, deepmoji, fasttextloc, or prepend not '
+                'supported with this teacher.'
             )
 
         # Running over all examples is really slow because the process of finding a WoW
