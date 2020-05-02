@@ -22,6 +22,7 @@ except ImportError:
     # silence the error
     GIT_AVAILABLE = False
 
+import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
@@ -997,6 +998,12 @@ class ParlaiParser(argparse.ArgumentParser):
             if GIT_AVAILABLE:
                 print_git_commit()
             print_announcements(self.opt)
+
+        if os.environ.get('PARLAI_VERBOSE'):
+            self.opt['verbose'] = True
+
+        if self.opt.get('verbose'):
+            logging.set_verbose_mode()
 
         return self.opt
 

@@ -1013,6 +1013,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
+        if self.opt.get('verbose'):
+            for i, beams in enumerate(n_best_beam_preds_scores):
+                for b, (tokens, score) in enumerate(beams):
+                    gen = self._v2t(tokens)
+                    logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
+                logging.debug('-')
 
         return beam_preds_scores, beams
 

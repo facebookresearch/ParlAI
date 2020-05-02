@@ -13,7 +13,8 @@ WARN_LEVEL = logging.WARNING
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
-DEFAULT_FILE_FORMAT = '%(asctime)s : %(levelname)s : %(message)s'
+DEFAULT_CONSOLE_FORMAT = '%(asctime)s | %(levelname)s | %(message)s'
+DEFAULT_FILE_FORMAT = '%(asctime)s | %(levelname)s | %(message)s'
 
 
 # Some functions in this class assume that ':' will be the separator used in
@@ -23,7 +24,7 @@ class ParlaiLogger(logging.Logger):
         self,
         name,
         console_level=INFO,
-        console_format=None,
+        console_format=DEFAULT_CONSOLE_FORMAT,
         file_format=None,
         file_level=INFO,
         filename=None,
@@ -54,7 +55,6 @@ class ParlaiLogger(logging.Logger):
                 file_format = DEFAULT_FILE_FORMAT
             self.fileHandler = logging.FileHandler(filename)
             # Log to file levels: file_level and above
-            self.fileHandler.level = file_level
             self.fileFormatter = logging.Formatter(file_format)
             self.fileHandler.setFormatter(self.fileFormatter)
             super().addHandler(self.fileHandler)
@@ -62,7 +62,6 @@ class ParlaiLogger(logging.Logger):
         # Logging to stdout
         self.streamHandler = logging.StreamHandler(sys.stdout)
         # Log to stdout levels: console_level and above
-        self.streamHandler.level = console_level
         self.consoleFormatter = logging.Formatter(console_format)
         self.streamHandler.setFormatter(self.consoleFormatter)
         super().addHandler(self.streamHandler)
@@ -172,6 +171,10 @@ class ParlaiLogger(logging.Logger):
 # Forming the logger                #
 # -----------------------------------
 logger = ParlaiLogger(name=__name__)
+
+
+def set_verbose_mode():
+    logger.setLevel(DEBUG)
 
 
 def info(*args, **kwargs):
