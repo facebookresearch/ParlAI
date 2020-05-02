@@ -13,17 +13,16 @@ from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.core.metrics import AverageMetric
+from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict
 from parlai.utils.typing import TScalar
-from abc import ABC
 
 
 import torch
 import torch.nn.functional as F
 
 
-class ConfusionMatrixMetric(AverageMetric, ABC):
+class ConfusionMatrixMetric(Metric):
     """
     Class that keeps count of the confusion matrix for classification.
 
@@ -57,6 +56,7 @@ class ConfusionMatrixMetric(AverageMetric, ABC):
         # we drop Python 3.6
         if other is None:
             return self
+        assert isinstance(other, ConfusionMatrixMetric)
         full_true_positives: TScalar = self._true_positives + other._true_positives
         full_true_negatives: TScalar = self._true_negatives + other._true_negatives
         full_false_positives: TScalar = self._false_positives + other._false_positives
@@ -158,7 +158,7 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
             return numer / denom
 
 
-class WeightedF1AverageMetric(AverageMetric):
+class WeightedF1Metric(Metric):
     """
     Class that represents the weighted f1 from ClassificationF1Metric.
     """
@@ -166,17 +166,16 @@ class WeightedF1AverageMetric(AverageMetric):
     __slots__ = '_values'
 
     def __init__(self, metrics: Dict[str, ClassificationF1Metric]) -> None:
-        self._values = metrics
+        self._values: Dict[str, ClassificationF1Metric] = metrics
 
-    def __add__(
-        self, other: Optional['WeightedF1AverageMetric']
-    ) -> 'WeightedF1AverageMetric':
+    def __add__(self, other: Optional['WeightedF1Metric']) -> 'WeightedF1Metric':
         if other is None:
             return self
-        output = self._values
+        assert isinstance(other, WeightedF1Metric)
+        output: Dict[str, ClassificationF1Metric] = dict(**self._values)
         for k, v in other._values.items():
-            output[k] = output.get(k, None) + v
-        return WeightedF1AverageMetric(output)
+            output[k] = output.get(k, None) + v  # type: ignore
+        return WeightedF1Metric(output)
 
     def value(self) -> float:
         weighted_f1 = 0.0
@@ -197,9 +196,9 @@ class WeightedF1AverageMetric(AverageMetric):
     @staticmethod
     def compute_many(
         metrics: Dict[str, List[ClassificationF1Metric]]
-    ) -> List['WeightedF1AverageMetric']:
+    ) -> List['WeightedF1Metric']:
         weighted_f1s = [dict(zip(metrics, t)) for t in zip(*metrics.values())]
-        return [WeightedF1AverageMetric(metrics) for metrics in weighted_f1s]
+        return [WeightedF1Metric(metrics) for metrics in weighted_f1s]
 
 
 class TorchClassifierAgent(TorchAgent):
@@ -406,9 +405,7 @@ class TorchClassifierAgent(TorchAgent):
             self.record_local_metric(prec_str, precision)
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
-        self.record_local_metric(
-            'weighted_f1', WeightedF1AverageMetric.compute_many(f1_dict)
-        )
+        self.record_local_metric('weighted_f1', WeightedF1Metric.compute_many(f1_dict))
 
     def _format_interactive_output(self, probs, prediction_id):
         """
