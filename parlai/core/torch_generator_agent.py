@@ -18,7 +18,7 @@ Contains the following utilities:
 """
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, List, Dict
+from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
 from operator import attrgetter
 
@@ -28,7 +28,7 @@ import torch.nn.functional as F
 
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
-from parlai.core.torch_agent import TorchAgent, Batch, Output
+from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 import parlai.utils.logging as logging
 from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
@@ -52,6 +52,56 @@ try:
 
 except ImportError:
     fairseq_bleu = None
+
+
+class SearchBlacklist(object):
+    """
+    Search blacklist facilitates blocking ngrams from being generated.
+    """
+
+    def __init__(self, dict_agent: DictionaryAgent) -> None:
+        self.dict = dict_agent
+        self._phrases: Set[str] = set()
+        self._phrase_ngrams: Dict[int, List[List[int]]] = {}
+
+    def __bool__(self):
+        return bool(self._phrases)
+
+    def clear(self) -> None:
+        self._phrases = set()
+        self._phrase_ngrams = {}
+
+    def _add_literal(self, phrase_literal: str):
+        ngram = self.dict.txt2vec(phrase_literal)
+        self._phrases.add(phrase_literal)
+        logging.debug(f"Adding '{phrase_literal}' to the beam blacklist {ngram}")
+        l = len(ngram)
+        if l not in self._phrase_ngrams:
+            self._phrase_ngrams[l] = []
+        self._phrase_ngrams[l].append(ngram)
+
+    def add(self, phrase: str):
+        phrase = phrase.strip()
+        if not phrase:
+            return
+        self._add_literal(phrase)
+        self._add_literal(phrase + "s")
+        self._add_literal(phrase.lower())
+        self._add_literal(phrase.lower() + "s")
+        self._add_literal(phrase.upper())
+        self._add_literal(phrase.upper() + "S")
+        self._add_literal(phrase.title())
+        self._add_literal(phrase.title() + "S")
+        self._add_literal(phrase[0].upper() + phrase[1:])
+        self._add_literal(phrase[0].upper() + phrase[1:] + "s")
+        self._add_literal(phrase[0].upper() + phrase[1:].lower())
+        self._add_literal(phrase[0].upper() + phrase[1:].lower() + "s")
+
+    def items(self) -> Iterable[Tuple[int, List[List[int]]]]:
+        return self._phrase_ngrams.items()
+
+
+TSType = TypeVar('TSType', bound='TreeSearch')
 
 
 class TorchGeneratorModel(nn.Module, ABC):
@@ -377,11 +427,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
+        self.beam_blacklist: Optional[SearchBlacklist] = None
 
         if shared:
             # set up shared properties
             states = shared.get('states', {})
-            self.beam_blacklist = shared.get('beam_blacklist')
+            self.beam_blacklist = shared.get('blacklist')
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
@@ -963,49 +1014,26 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         return beam_preds_scores, beams
 
-    def _load_beam_blacklist(self) -> List[List[int]]:
+    def _load_beam_blacklist(self) -> SearchBlacklist:
         """
         Load the beam blacklist.
 
         :return: a dict mapping ngram length to different ngrams
         """
-        phrases = set()
-        for phrase in self._get_blocked_phrases():
-            phrase = phrase.strip()
-            if not phrase:
-                # paranoia
-                continue
-            phrases.add(phrase)
-            phrases.add(phrase + "s")
-            phrases.add(phrase.lower())
-            phrases.add(phrase.lower() + "s")
-            phrases.add(phrase.upper())
-            phrases.add(phrase.upper() + "S")
-            phrases.add(phrase.title())
-            phrases.add(phrase.title() + "S")
-            phrases.add(phrase[0].upper() + phrase[1:])
-            phrases.add(phrase[0].upper() + phrase[1:] + "s")
-            phrases.add(phrase[0].upper() + phrase[1:].lower())
-            phrases.add(phrase[0].upper() + phrase[1:].lower() + "s")
-
-        ngrams_blacklist = []
-        for phrase in phrases:
-            ngram = self.dict.txt2vec(phrase)
-            logging.debug(f"Adding '{phrase}' to the beam blacklist {ngram}")
-            ngrams_blacklist.append(ngram)
-
-        return ngrams_blacklist
-
-    def _get_blocked_phrases(self) -> List[str]:
+        blacklist = SearchBlacklist(self.dict)
         if not self.opt.get('beam_blacklist_filename'):
-            return []
+            return blacklist
+
         blacklist_fn = self.opt['beam_blacklist_filename']
         try:
             with open(blacklist_fn) as f:
-                return [line.strip() for line in f]
+                for line in f:
+                    blacklist.add(line.strip())
         except IOError:
-            logging.error(f"Could not load beam blacklist {blacklist_fn}")
-            return []
+            logging.error(
+                f"Could not load beam blacklist {blacklist_fn}, using empty blacklist."
+            )
+        return blacklist
 
 
 class _HypothesisTail(object):
@@ -1021,9 +1049,6 @@ class _HypothesisTail(object):
         self.hypid = hypid
         self.score = score
         self.tokenid = tokenid
-
-
-TSType = TypeVar('TSType', bound='TreeSearch')
 
 
 class TreeSearch(object):
@@ -1076,7 +1101,7 @@ class TreeSearch(object):
         self.pad = padding_token
         self.context = None
         self.context_block_ngram = context_block_ngram
-        self.blacklist: Dict[int, List[List[int]]] = {}
+        self.blacklist: Optional[SearchBlacklist] = None
         self.device = device
         # recent score for each hypo in the beam
         self.scores = None
@@ -1106,12 +1131,8 @@ class TreeSearch(object):
         self.context = context.tolist()
         return self
 
-    def set_blacklist(self: TSType, blacklist: List[List[int]]) -> TSType:
-        self.blacklist: Dict[int, List[List[int]]] = {}
-        for ngram in blacklist:
-            if len(ngram) not in self.blacklist:
-                self.blacklist[len(ngram)] = []
-            self.blacklist[len(ngram)].append(ngram)
+    def set_blacklist(self: TSType, blacklist: Optional[SearchBlacklist]) -> TSType:
+        self.blacklist = blacklist
         return self
 
     def get_output_from_current_step(self):
@@ -1177,12 +1198,15 @@ class TreeSearch(object):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
-    def _block_blacklist(self, logprobs: torch.Tensor):
+    def _block_blacklist(self, logprobs: torch.Tensor) -> torch.Tensor:
+        if self.blacklist is None:
+            return logprobs
+
         for beam_id, hyp in enumerate(self.partial_hyps):
             for ngram_size, bad_ngrams in self.blacklist.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
-                    if ngram_size == 1 or prefix == list(ngram[:-1]):
+                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
@@ -1209,8 +1233,7 @@ class TreeSearch(object):
         if self.block_ngram > 0:
             logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
 
-        if self.blacklist:
-            logprobs = self._block_blacklist(logprobs)
+        logprobs = self._block_blacklist(logprobs)
 
         if self.context_block_ngram > 0:
             if self.context is None:
