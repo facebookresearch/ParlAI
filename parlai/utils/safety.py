@@ -77,17 +77,14 @@ class OffensiveStringMatcher:
     https://github.com/LDNOOBW.
     """
 
-    def __init__(self):
+    def __init__(self, datapath: str = None):
         """
         Get data from external sources and build data representation.
         """
         import parlai.core.build_data as build_data
-        from parlai.core.params import ParlaiParser
         from parlai.core.dict import DictionaryAgent
 
         self.tokenize = DictionaryAgent.split_tokenize
-
-        parser = ParlaiParser(False, False)
 
         def _path():
             # Build the data if it doesn't exist.
@@ -114,7 +111,13 @@ class OffensiveStringMatcher:
                 # Mark the data as built.
                 build_data.mark_done(dpath, version)
 
-        self.datapath = os.path.join(parser.parlai_home, 'data')
+        if datapath is None:
+            from parlai.core.params import ParlaiParser
+
+            parser = ParlaiParser(False, False)
+            self.datapath = os.path.join(parser.parlai_home, 'data')
+        else:
+            self.datapath = datapath
         self.datafile = _path()
 
         # store a token trie: e.g.

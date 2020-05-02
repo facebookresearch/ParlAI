@@ -45,7 +45,7 @@ def setup_args(parser=None):
     return parser
 
 
-def interactive(opt, print_parser=None):
+def safe_interactive(opt, print_parser=None):
     if print_parser is not None:
         if print_parser is True and isinstance(opt, ParlaiParser):
             print_parser = opt
@@ -64,18 +64,22 @@ def interactive(opt, print_parser=None):
     human_agent = SafeLocalHumanAgent(opt)
     world = create_task(opt, [human_agent, agent])
 
-    # Show some example dialogs:
+    # Interact until episode done
     while True:
         world.parley()
+        bot_act = world.get_acts()[-1]
+        if 'bot_offensive' in bot_act and bot_act['bot_offensive']:
+            agent.reset()
+
         if opt.get('display_examples'):
-            print("---")
+            print('---')
             print(world.display())
         if world.epoch_done():
-            print("EPOCH DONE")
+            print('EPOCH DONE')
             break
 
 
 if __name__ == '__main__':
     random.seed(42)
     parser = setup_args()
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    safe_interactive(parser.parse_args(print_args=False), print_parser=parser)
