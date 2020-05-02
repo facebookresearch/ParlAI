@@ -72,6 +72,8 @@ class SearchBlacklist(object):
         self._phrase_ngrams = {}
 
     def _add_literal(self, phrase_literal: str):
+        if phrase_literal in self._phrases:
+            continue
         ngram = self.dict.txt2vec(phrase_literal)
         self._phrases.add(phrase_literal)
         logging.debug(f"Adding '{phrase_literal}' to the beam blacklist {ngram}")
