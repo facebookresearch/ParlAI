@@ -115,4 +115,4 @@ Please cite the [arXiv paper](https://arxiv.org/abs/1705.06476) if you use ParlA
 ```
 
 ## License
-ParlAI is MIT licensed. See the [LICENSE](LICENSE) file for details.
+ParlAI is MIT licensed. See the LICENSE file for details.
