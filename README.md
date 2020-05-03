@@ -18,11 +18,10 @@ Its goal is to provide researchers:
 - a large range of **helpers to create your own agents** and train on several tasks with **multitasking**
 - **multimodality**, some tasks use text and images
 
-ParlAI is described in the following paper:
-[“ParlAI: A Dialog Research Software Platform"](https://arxiv.org/abs/1705.06476)
+[“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476)	[“ParlAI: A Dialog Research Software Platform"](https://arxiv.org/abs/1705.06476)
 or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrjSp8X8Fp0_rTTRoLxUfW0aUm/view?usp=sharing).
 
-See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and [the website](http://parl.ai) for further news.
+See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
 
 <p align="center"><img width="90%" src="https://raw.githubusercontent.com/facebookresearch/ParlAI/master/docs/source/_static/img/parlai_example.png" /></p>
 
