@@ -20,7 +20,7 @@ from parlai.core.metrics import (
 )
 from parlai.core.torch_classifier_agent import (
     ConfusionMatrixMetric,
-    WeightedF1AverageMetric,
+    WeightedF1Metric,
 )
 
 
@@ -327,9 +327,7 @@ class TestAggregators(unittest.TestCase):
                 }
             )
             task1_f1s[each] = f1s
-        report1['weighted_f1'] = sum(
-            WeightedF1AverageMetric.compute_many(task1_f1s), None
-        )
+        report1['weighted_f1'] = sum(WeightedF1Metric.compute_many(task1_f1s), None)
         # task 2, for class ok
         # TP = 3, TN = 2, FP = 2, FN = 1
         # for class not ok
@@ -366,9 +364,7 @@ class TestAggregators(unittest.TestCase):
                 }
             )
             task2_f1s[each] = f1s
-        report2['weighted_f1'] = sum(
-            WeightedF1AverageMetric.compute_many(task2_f1s), None
-        )
+        report2['weighted_f1'] = sum(WeightedF1Metric.compute_many(task2_f1s), None)
 
         agg = aggregate_named_reports(
             {'task1': report1, 'task2': report2}, micro_average=False
