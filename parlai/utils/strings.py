@@ -74,7 +74,7 @@ def colorize(text, style):
 
     if not USE_COLORS:
         return text
-    
+
     colorstyle = os.environ.get('PARLAI_COLORSTYLE')
 
     if colorstyle == None or colorstyle.lower() == 'steamroller':
