@@ -1134,7 +1134,7 @@ task_list = [
         "id": "ReDial",
         "display_name": "ReDial",
         "task": "redial",
-        "tags": ["All"],
+        "tags": ["All", "ChitChat"],
         "description": (
             "Annotated dataset of dialogues where users recommend movies to eachother. ",
             "See https://redialdata.github.io/website/ for more information.",
