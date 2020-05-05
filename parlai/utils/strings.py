@@ -79,12 +79,32 @@ def colorize(text, style):
 
     if colorstyle is None or colorstyle.lower() == 'steamroller':
         BLUE = '\033[1;94m'
-        BOLD_LIGHT_GRAY = '\033[1m'
-        LIGHT_GRAY = '\033[0m'
+        BOLD_LIGHT_GRAY_NOBK = '\033[1m'
+        LIGHT_GRAY_NOBK = '\033[0m'
         MAGENTA = '\033[0;95m'
-        HIGHLIGHT_RED = '\033[1;31m'
-        HIGHLIGHT_BLUE = '\033[0;34m'
+        HIGHLIGHT_RED_NOBK = '\033[1;31m'
+        HIGHLIGHT_BLUE_NOBK = '\033[0;34m'
         RESET = '\033[0;0m'
+        if style == 'highlight':
+            return HIGHLIGHT_RED_NOBK + text + RESET
+        if style == 'highlight2':
+            return HIGHLIGHT_BLUE_NOBK + text + RESET
+        elif style == 'text':
+            return LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'bold_text':
+            return BOLD_LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'labels' or style == 'eval_labels':
+            return BLUE + text + RESET
+        elif style == 'label_candidates':
+            return LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'id':
+            return LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'text2':
+            return MAGENTA + text + RESET
+        elif style == 'field':
+            return HIGHLIGHT_BLUE_NOBK + text + RESET
+        else:
+            return MAGENTA + text + RESET
 
     if colorstyle.lower() == 'spermwhale':
         BLUE = '\033[1;94m'
@@ -94,24 +114,26 @@ def colorize(text, style):
         HIGHLIGHT_RED = '\033[1;37;41m'
         HIGHLIGHT_BLUE = '\033[1;37;44m'
         RESET = '\033[0;0m'
+        if style == 'highlight':
+            return HIGHLIGHT_RED + text + RESET
+        if style == 'highlight2':
+            return HIGHLIGHT_BLUE + text + RESET
+        elif style == 'text':
+            return LIGHT_GRAY + text + RESET
+        elif style == 'bold_text':
+            return BOLD_LIGHT_GRAY + text + RESET
+        elif style == 'labels' or style == 'eval_labels':
+            return BLUE + text + RESET
+        elif style == 'label_candidates':
+            return LIGHT_GRAY + text + RESET
+        elif style == 'id':
+            return LIGHT_GRAY + text + RESET
+        elif style == 'text2':
+            return MAGENTA + text + RESET
+        elif style == 'field':
+            return HIGHLIGHT_BLUE + text + RESET
+        else:
+            return MAGENTA + text + RESET
 
-    if style == 'highlight':
-        return HIGHLIGHT_RED + text + RESET
-    if style == 'highlight2':
-        return HIGHLIGHT_BLUE + text + RESET
-    elif style == 'text':
-        return LIGHT_GRAY + text + RESET
-    elif style == 'bold_text':
-        return BOLD_LIGHT_GRAY + text + RESET
-    elif style == 'labels' or style == 'eval_labels':
-        return BLUE + text + RESET
-    elif style == 'label_candidates':
-        return LIGHT_GRAY + text + RESET
-    elif style == 'id':
-        return LIGHT_GRAY + text + RESET
-    elif style == 'text2':
-        return MAGENTA + text + RESET
-    elif style == 'field':
-        return HIGHLIGHT_BLUE + text + RESET
-    else:
-        return MAGENTA + text + RESET
+    # No colorstyle specified/found.
+    return text
