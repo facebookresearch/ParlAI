@@ -150,7 +150,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
             '--recompile-persona-topic-data',
             type='bool',
             default=cls.RECOMPILE_DEFAULT,
-            help='Re-compile data with ConvAI2 personas and WoW topics added',
+            help='Re-compile data with ConvAI2 personas and WoW topics added. Only useful for demonstrating how data was produced.',
         )
 
     def __init__(self, opt, shared=None):
@@ -166,8 +166,8 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
             or self.opt.get('prepend', -1) > 0
         ):
             raise NotImplementedError(
-                'Using remove-political-convos, deepmoji, fasttextloc, or prepend not '
-                'supported with this teacher.'
+                'Removing political conversations or using deepmoji, fasttextloc, or '
+                'prepend not supported with this teacher.'
             )
 
         # Running over all examples is really slow because the process of finding a WoW
