@@ -1130,4 +1130,14 @@ task_list = [
             "<https://arxiv.org/abs/1911.03842>."
         ),
     },
+    {
+        "id": "ReDial",
+        "display_name": "ReDial",
+        "task": "redial",
+        "tags": ["All"],
+        "description": (
+            "Annotated dataset of dialogues where users recommend movies to eachother. ",
+            "See https://redialdata.github.io/website/ for more information.",
+        ),
+    },
 ]
