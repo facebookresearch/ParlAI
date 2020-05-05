@@ -22,10 +22,10 @@ def _load_personas(opt):
     print('[ loading personas.. ]')
     if opt.get('include_personas', True):
         print(
-            "\n  [NOTE: In the BST paper both partner's have a persona.\n"
-            + '           You can choose to ignore yours, the model never sees it.\n'
-            + '           In the Blender paper, this was not used for humans.\n'
-            + '           You can also turn personas off with --include-personas False]\n'
+            "\n  [NOTE: In the BST paper both partners have a persona.\n"
+            + '         You can choose to ignore yours, the model never sees it.\n'
+            + '         In the Blender paper, this was not used for humans.\n'
+            + '         You can also turn personas off with --include-personas False]\n'
         )
     fname = raw_data_path(opt)
     with open(fname) as json_file:
