@@ -706,10 +706,6 @@ class HuggingFaceBpeHelper(BPEHelper):
                 'Please install HuggingFace tokenizer with: pip install tokenizers'
             )
 
-        if self.lower:
-            raise ValueError(
-                'Only use --dict-lower false with --dict-tokenizer bytelevelbpe'
-            )
         if self.maxtokens > 0 or self.minfreq > 0:
             raise ValueError(
                 'You should not filter vocabulary with using --dict-tokenizer bytelevelbpe'
