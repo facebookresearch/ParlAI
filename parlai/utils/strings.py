@@ -6,6 +6,7 @@
 """
 Utility functions and classes for handling text strings.
 """
+import os
 import sys as _sys
 
 
@@ -70,15 +71,30 @@ def colorize(text, style):
         USE_COLORS = True
     except NameError:
         USE_COLORS = _sys.stdout.isatty()
-    BLUE = '\033[1;94m'
-    BOLD_LIGHT_GRAY = '\033[1m'
-    LIGHT_GRAY = '\033[0m'
-    MAGENTA = '\033[0;95m'
-    HIGHLIGHT_RED = '\033[1;31m'
-    HIGHLIGHT_BLUE = '\033[0;34m'
-    RESET = '\033[0;0m'
+
     if not USE_COLORS:
         return text
+    
+    colorstyle = os.environ.get('PARLAI_COLORSTYLE')
+
+    if colorstyle == None or colorstyle.lower() == 'steamroller':
+        BLUE = '\033[1;94m'
+        BOLD_LIGHT_GRAY = '\033[1m'
+        LIGHT_GRAY = '\033[0m'
+        MAGENTA = '\033[0;95m'
+        HIGHLIGHT_RED = '\033[1;31m'
+        HIGHLIGHT_BLUE = '\033[0;34m'
+        RESET = '\033[0;0m'
+
+    if colorstyle.lower() == 'spermwhale':
+        BLUE = '\033[1;94m'
+        BOLD_LIGHT_GRAY = '\033[1;37;40m'
+        LIGHT_GRAY = '\033[0;37;40m'
+        MAGENTA = '\033[0;95m'
+        HIGHLIGHT_RED = '\033[1;37;41m'
+        HIGHLIGHT_BLUE = '\033[1;37;44m'
+        RESET = '\033[0;0m'
+
     if style == 'highlight':
         return HIGHLIGHT_RED + text + RESET
     if style == 'highlight2':

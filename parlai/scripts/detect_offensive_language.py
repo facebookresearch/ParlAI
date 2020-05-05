@@ -110,8 +110,8 @@ def detect(opt, printargs=None, print_parser=None):
         world.parley()
         stats['bad_words'] = []
         for a in world.acts:
-            text = a.get('text', '')
-            classify(text, stats)
+            #text = a.get('text', '')
+            #classify(text, stats)
             labels = a.get('labels', a.get('eval_labels', ''))
             for l in labels:
                 classify(l, stats)
