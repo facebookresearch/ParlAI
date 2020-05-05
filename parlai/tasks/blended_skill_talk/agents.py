@@ -30,18 +30,30 @@ from .build import build
 ##################################################
 
 
-def raw_data_path(opt):
+def raw_data_path(opt: Opt) -> str:
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
     return os.path.join(opt['datapath'], 'blended_skill_talk', dt + '.json')
 
 
-def _processed_data_path(opt):
+def _processed_data_path(opt: Opt) -> str:
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
     return os.path.join(opt['datapath'], 'blended_skill_talk', dt + '.txt')
+
+
+def _cached_data_path(opt: Opt, experiencer_side_only: bool) -> str:
+    # Build the data if it doesn't exist.
+    build(opt)
+    dt = opt['datatype'].split(':')[0]
+    side_string = 'experiencer_only' if experiencer_side_only else 'both_sides'
+    return os.path.join(
+        opt['datapath'],
+        'blended_skill_talk',
+        f'ed_persona_topicifier__{dt}__{side_string}.json',
+    )
 
 
 class BlendedSkillTalkTeacher(ParlAIDialogTeacher):
@@ -128,6 +140,19 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
     Adds persona and WoW topic to ED context strings.
     """
 
+    RECOMPILE_DEFAULT = False
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        EmpatheticDialoguesTeacher.add_cmdline_args(argparser)
+        agent = argparser.add_argument_group('EDPersonaTopicifierTeacher arguments')
+        agent.add_argument(
+            '--recompile-persona-topic-data',
+            type='bool',
+            default=cls.RECOMPILE_DEFAULT,
+            help='Re-compile data with ConvAI2 personas and WoW topics added. Only useful for demonstrating how data was produced.',
+        )
+
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
             opt=opt, should_have_personas=False, should_have_topics=False
@@ -135,36 +160,37 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         super().__init__(opt, shared=shared)
 
         if (
-            self.opt.get('deepmoji') is not None
+            self.remove_political_convos is True
+            or self.opt.get('deepmoji') is not None
             or self.opt.get('fasttextloc') is not None
             or self.opt.get('prepend', -1) > 0
         ):
             raise NotImplementedError(
-                'Using deepmoji, fasttextloc, or prepend not supported with this '
-                'teacher.'
+                'Removing political conversations or using deepmoji, fasttextloc, or '
+                'prepend not supported with this teacher.'
             )
 
         # Running over all examples is really slow because the process of finding a WoW
-        # topic is expensive, so let's cache data with personas and topics
-        side_string = 'experiencer_only' if self.experiencer_side_only else 'both_sides'
-        self.cached_data_path = os.path.join(
-            self.opt['datapath'],
-            'empatheticdialogues',
-            'persona_topicifier',
-            f'{self.datatype.split(":")[0]}__{side_string}.json',
-        )
-        os.makedirs(os.path.dirname(self.cached_data_path), exist_ok=True)
-        if not os.path.isfile(self.cached_data_path):
-            warn_once(
-                f'Cached data file at {self.cached_data_path} not found! Creating...'
+        # topic is expensive, so let's load cached data with personas and topics unless
+        # --recompile-persona-topic-data is True
+        if opt.get('recompile_persona_topic_data', self.RECOMPILE_DEFAULT):
+            self.data_path = (
+                _cached_data_path(
+                    opt=self.opt, experiencer_side_only=self.experiencer_side_only
+                )
+                + '.recompiled'
             )
+            warn_once(f'Compiling data file for {self.data_path}.')
             self.persona_topic_data = self._compile_data()
-            warn_once(f'Saving data to {self.cached_data_path}.')
-            with open(self.cached_data_path, 'w') as f_write:
+            warn_once(f'Saving data to {self.data_path}.')
+            with open(self.data_path, 'w') as f_write:
                 json.dump(self.persona_topic_data, f_write)
         else:
-            warn_once(f'Loading cached data from {self.cached_data_path}.')
-            with open(self.cached_data_path, 'r') as f_read:
+            self.data_path = _cached_data_path(
+                opt=self.opt, experiencer_side_only=self.experiencer_side_only
+            )
+            warn_once(f'Loading cached data from {self.data_path}.')
+            with open(self.data_path, 'r') as f_read:
                 self.persona_topic_data = json.load(f_read)
 
     def _compile_data(self) -> List[List[dict]]:

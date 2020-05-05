@@ -196,12 +196,10 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
 
 class TestPersonaTopicifierTeachers(unittest.TestCase):
     """
-    Test two PersonaTopicifier teachers.
+    Test PersonaTopicifier teachers.
 
-    Check the contents of the first example of two teachers in which ConvAI2 personas
-    and WoW topics are added to contexts. We don't check
-    blended_skill_talk:EDPersonaTopicifier because, the first time that is run, it
-    requires a caching step that takes roughly an hour.
+    Check the contents of the first example of teachers in which ConvAI2 personas and
+    WoW topics are added to contexts.
     """
 
     def test_check_examples(self):
@@ -238,6 +236,22 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                         'editing photos takesa lot of work .',
                         'you must be very fast . hunting is one of my favorite hobbies .',
                     ),
+                    'episode_done': False,
+                },
+            ),
+            (
+                "blended_skill_talk:EDPersonaTopicifier",
+                {
+                    'situation': 'I remember going to the fireworks with my best friend. There was a lot of people, but it only felt like us in the world.',
+                    'emotion': 'sentimental',
+                    'prepend_ctx': None,
+                    'prepend_cand': None,
+                    'deepmoji_ctx': None,
+                    'deepmoji_cand': None,
+                    'text': 'your persona: people hate that i obsess about the poor.\nyour persona: i like to make cellphone apps that would help heal our world.\nyour persona: i like to watch people pray together.\nyour persona: people don t like me too much but i like them anyways.\nAndroid (operating system)#Applications\nI remember going to see the fireworks with my best friend. It was the first time we ever spent time alone together. Although there was a lot of people, we felt like the only people in the world.',
+                    'labels': [
+                        'Was this a friend you were in love with, or just a best friend?'
+                    ],
                     'episode_done': False,
                 },
             ),
@@ -281,9 +295,7 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
 
 class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
     @patch("parlai.tasks.blended_skill_talk.worlds._load_personas")
-    def test_share(
-        self, mock_load_personas,
-    ):
+    def test_share(self, mock_load_personas):
         test_personas = ['your persona:I live on a pirate\'s shoulder']
         with testing_utils.tempdir() as data_path:
             mock_load_personas.return_value = test_personas
