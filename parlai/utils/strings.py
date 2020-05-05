@@ -77,7 +77,7 @@ def colorize(text, style):
 
     colorstyle = os.environ.get('PARLAI_COLORSTYLE')
 
-    if colorstyle == None or colorstyle.lower() == 'steamroller':
+    if colorstyle is None or colorstyle.lower() == 'steamroller':
         BLUE = '\033[1;94m'
         BOLD_LIGHT_GRAY = '\033[1m'
         LIGHT_GRAY = '\033[0m'
