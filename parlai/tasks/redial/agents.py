@@ -8,6 +8,8 @@ from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 import os
 import json
+import re
+import csv
 
 
 def _path(opt):
@@ -19,6 +21,22 @@ def _path(opt):
     return jsonl_dirpath
 
 
+# Turns title from format "Title (Year)" to "Title" or leaves as is if no (Year)
+def remove_year_from_title(title):
+    matches = re.finditer(r"\s\(", title)
+    indices = [m.start(0) for m in matches]
+    if indices:
+        title_end = indices[-1]
+        return title[:title_end]
+    else:
+        return title
+
+
+def replace_movie_ids(id_string, id_map):
+    pattern = r'@\d+'
+    return re.sub(pattern, lambda s: id_map[s.group()], id_string)
+
+
 class ReDialTeacher(FixedDialogTeacher):
     """
     ReDial Teacher.
@@ -27,9 +45,19 @@ class ReDialTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         jsonl_path = _path(opt)
+        self.title_id_map = {}
+        self.get_title_dict(jsonl_path)
         self._setup_data(jsonl_path)
         self.id = 'redial'
+
         self.reset()
+
+    def get_title_dict(self, path):
+        csv_path = os.path.join(path, 'movies_with_mentions.csv')
+        with open(csv_path, mode='r') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
 
     def _setup_data(self, jsonl_path):
         test_data = []
@@ -63,10 +91,11 @@ class ReDialTeacher(FixedDialogTeacher):
             prev_speaker = None
             for message in unmerged_episode['messages']:
                 curr_speaker = message['senderWorkerId']
+                text = replace_movie_ids(message['text'], self.title_id_map)
                 if curr_speaker == prev_speaker:
-                    episode[-1] = episode[-1] + " " + message['text']
+                    episode[-1] = episode[-1] + " " + text
                 else:
-                    episode.append(message['text'])
+                    episode.append(text)
                     prev_speaker = curr_speaker
             self.episodes.append(episode)
 
