@@ -81,7 +81,14 @@ class SafeTeacher(BlendedSkillTalkTeacher):
 
     def _setup_data(self, path):
         super()._setup_data(path)
+
+        # Check whether num_examples is currently what it should be, because this'll be
+        # modified later
+        assert self.num_exs == sum([len(e) for e in self.episodes])
+
         # {{{TODO}}}
+
+        self.num_exs = sum([len(e) for e in self.episodes])
 
 
 class DefaultTeacher(BlendedSkillTalkTeacher):
