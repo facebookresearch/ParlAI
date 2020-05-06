@@ -73,6 +73,17 @@ class SelfchatTeacher(BlendedSkillTalkTeacher):
     pass
 
 
+class SafeTeacher(BlendedSkillTalkTeacher):
+    """
+    Version of the BST teacher that filters out any conversations in which personas are
+    not in a list of safe personas.
+    """
+
+    def _setup_data(self, path):
+        super()._setup_data(path)
+        # {{{TODO}}}
+
+
 class DefaultTeacher(BlendedSkillTalkTeacher):
     pass
 
