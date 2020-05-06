@@ -72,7 +72,7 @@ To run ACUTE-Eval human evaluations, see [here](https://github.com/facebookresea
 
 ## Crowdworker conversation logs
 
-Logs of crowdworker conversations talking to the Blender 2.7B model are provided in [rendered viewable format](chatlog_2.7B_render.html) or [json format](chatlog_2.7B.json).
+Logs of crowdworker conversations talking to the 2.7B model are provided in [rendered viewable format](chatlog_2.7B_render.html) or [json format](chatlog_2.7B.json).
 
 ## Citation
 
