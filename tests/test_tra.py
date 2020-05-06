@@ -41,15 +41,15 @@ class _AbstractTRATest(unittest.TestCase):
         # Accuracy threshold
         return 0.8
 
-
     def test_train_topk(self):
         args = self._get_args()
-        args['rank_top_k'] = 5
+        args['topk'] = 10
+        args['inference'] = 'topk'
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(valid['hits@1'], threshold)
-    
+
     # test train inline cands
     @testing_utils.retry(ntries=3)
     def test_train_inline(self):
@@ -155,8 +155,8 @@ class _AbstractTRATest(unittest.TestCase):
         self.assertEqual(valid['hits@100'], 0)
 
     # test train_predict by getting the output we see from training and checking
-    # that the f1 score (metric you only see with the flag set to true) is 
-    # accurate
+    # that the f1, blue-4 (some of the metrics you only see with the
+    # flag set to true) are present
     def test_train_predict(self):
         args = self._get_args()
         args['train_predict'] = True
@@ -164,16 +164,14 @@ class _AbstractTRATest(unittest.TestCase):
         with testing_utils.capture_output() as output:
             valid, test = testing_utils.train_model(args)
             out = output.getvalue()
-        # find a string within the train metrics that is '"f1: " some_number,'
-        # train f1, one of the metrics that only shows in train_predict, is the
-        # first f1 to appear
-        # 6 is the length of '"f1": '
-        f1_idx = out.index('"f1": ') + 6
-        end_comma = out.index(',', f1_idx)
-        end_curly = out.index('}', f1_idx)
-        end = min(end_comma, end_curly)
-        f1_score = float(out[f1_idx:end])
-        self.assertGreaterEqual(f1_score, 0.95)
+        valid_idx = out.index('valid:')
+        train_dict_idx = out.index('{"')
+        train_dict_end = out.index('}')
+        train_dict = out[train_dict_idx : train_dict_end + 1]
+        # Make sure dictionary we find is before valid dictionary
+        self.assertLess(train_dict_end, valid_idx)
+        self.assertIn('f1', train_dict)
+        self.assertIn('bleu-4', train_dict)
 
 
 class TestTransformerRanker(_AbstractTRATest):
@@ -261,6 +259,7 @@ class TestPolyRanker(_AbstractTRATest):
             valid, test = testing_utils.eval_model(args, skip_valid=True)
             self.assertGreaterEqual(test['hits@100'], 0.0)
 
+
 class TestTransformerCrossencoder(unittest.TestCase):
     """
     Test of Transformer crossencoder.
@@ -268,7 +267,7 @@ class TestTransformerCrossencoder(unittest.TestCase):
     Checks that CrossEncoder can be trained for about 100 samples on candidate
     integration tests task.
     """
-    
+
     # transformer/crossencoder should be the same as bert_ranker/crossencoder,
     # so this using the same options, but with integration_tests:candidate
     # instead of convai to speed it up
@@ -290,7 +289,7 @@ class TestTransformerCrossencoder(unittest.TestCase):
             )
         )
         self.assertGreaterEqual(valid['f1'], 0.5)
-        
+
 
 if __name__ == '__main__':
     # unittest.main()
