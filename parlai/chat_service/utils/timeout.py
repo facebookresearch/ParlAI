@@ -53,6 +53,7 @@ class TimeoutUtils(object):
                         "quick_replies": quick_replies,
                     }
                 )
+            time.sleep(1)
         return act
 
     @staticmethod
