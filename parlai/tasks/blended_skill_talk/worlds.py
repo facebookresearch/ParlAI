@@ -50,9 +50,7 @@ def _load_personas(opt):
                     for persona in d['personas']
                     for persona_string in persona
                 )
-                if personas_are_safe:
-                    pass
-                else:
+                if not personas_are_safe:
                     continue
             context1.append('your persona: ' + d['personas'][0][0])
             context1.append('your persona: ' + d['personas'][0][1])
