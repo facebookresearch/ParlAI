@@ -89,8 +89,6 @@ class InteractiveWorld(InteractiveBaseWorld):
 
     def init_contexts(self, shared=None):
 
-        self.contexts_data = get_contexts_data(self.opt, shared=shared)
-
         if self.opt.get('safe_personas_only', True):
 
             # Load safe personas
@@ -101,7 +99,7 @@ class InteractiveWorld(InteractiveBaseWorld):
             # Create 5000 random pairs of safe personas. For each persona, we sample two
             # persona strings from the original group
             header = 'your persona: '
-            formatted_persona_pairs = []
+            self.contexts_data = []
             for _ in range(5000):
                 raw_persona_1, raw_persona_2 = random.sample(raw_persona_groups, k=2)
                 formatted_persona_1 = '\n'.join(
@@ -116,11 +114,12 @@ class InteractiveWorld(InteractiveBaseWorld):
                         for string in random.sample(raw_persona_2.split('|'), k=2)
                     ]
                 )
-                formatted_persona_pairs.append(
-                    [formatted_persona_1, formatted_persona_2]
-                )
-            # {{{TODO: don't even first create the contexts data the other way in this case!}}}
-            self.contexts_data = formatted_persona_pairs
+                self.contexts_data.append([formatted_persona_1, formatted_persona_2])
+
+        else:
+
+            # Load personas directly from the raw BST data
+            self.contexts_data = get_contexts_data(self.opt, shared=shared)
 
     def get_contexts(self):
         random.seed()
