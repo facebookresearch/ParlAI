@@ -54,9 +54,9 @@ RESOURCES = [
         zipped=False,
     ),
     build_data.DownloadableFile(
-        'http://parl.ai/downloads/blended_skill_talk/safe_personas.txt',
+        'http://parl.ai/downloads/blended_skill_talk/safe_personas_2.txt',
         'safe_personas.txt',
-        'c6468d2ebf8547badc092abef2cc81f1778c6d8b9485fe7674071667f5b073aa',
+        'foo',
         zipped=False,
     ),
 ]
