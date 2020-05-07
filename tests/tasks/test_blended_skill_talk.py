@@ -320,9 +320,7 @@ class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
 
     def test_safe_personas(self, mock_load_personas):
 
-        base_kwargs = Opt(
-            {'datatype': 'train', 'task': 'blended_skill_talk'}
-        )
+        base_kwargs = Opt({'datatype': 'train', 'task': 'blended_skill_talk'})
         safe_personas_only_to_count = {False: 4819, True: 3890}
         for safe_personas_only, count in safe_personas_only_to_count.items():
             full_kwargs = {**base_kwargs, 'safe_personas_only': safe_personas_only}
