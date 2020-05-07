@@ -9,9 +9,10 @@ from unittest.mock import patch
 
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
-from parlai.tasks.blended_skill_talk.worlds import InteractiveWorld
+from parlai.tasks.blended_skill_talk.worlds import InteractiveWorld, _load_personas
 
 
 class TestBlendedSkillTalkTeacher(unittest.TestCase):
@@ -316,6 +317,18 @@ class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
             new_world = world.clone()
 
             self.assertEqual(new_world.contexts_data, test_personas)
+
+    def test_safe_personas(self):
+
+        base_kwargs = Opt({'datatype': 'train', 'task': 'blended_skill_talk'})
+        safe_personas_only_to_count = {False: 4819, True: 3890}
+        for safe_personas_only, count in safe_personas_only_to_count.items():
+            full_kwargs = {**base_kwargs, 'safe_personas_only': safe_personas_only}
+            parser = setup_args()
+            parser.set_defaults(**full_kwargs)
+            opt = parser.parse_args([])
+            personas = _load_personas(opt)
+            self.assertEqual(len(personas), count)
 
 
 if __name__ == '__main__':

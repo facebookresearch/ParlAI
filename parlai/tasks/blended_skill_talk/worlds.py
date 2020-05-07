@@ -7,7 +7,7 @@
 import json
 import random
 
-from parlai.tasks.blended_skill_talk.agents import raw_data_path
+from parlai.tasks.blended_skill_talk.agents import raw_data_path, safe_personas_path
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
@@ -30,11 +30,28 @@ def _load_personas(opt):
     fname = raw_data_path(opt)
     with open(fname) as json_file:
         data = json.load(json_file)
+    if opt.get('include_personas', True) and opt.get('safe_personas_only', True):
+        # Filter out unsafe personas
+        save_personas_path = safe_personas_path(opt)
+        with open(save_personas_path, 'r') as f:
+            raw_safe_persona_groups = [line.strip() for line in f.readlines()]
+        safe_persona_strings = set()
+        for group in raw_safe_persona_groups:
+            safe_group = [_standardize(string) for string in group.split('|')]
+            safe_persona_strings.update(set(safe_group))
     contexts = []
     for d in data:
         context1 = []
         context2 = []
         if opt.get('include_personas', True):
+            if opt.get('safe_personas_only', True):
+                personas_are_safe = all(
+                    _standardize(persona_string) in safe_persona_strings
+                    for persona in d['personas']
+                    for persona_string in persona
+                )
+                if not personas_are_safe:
+                    continue
             context1.append('your persona: ' + d['personas'][0][0])
             context1.append('your persona: ' + d['personas'][0][1])
             context2.append('your persona: ' + d['personas'][1][0])
@@ -51,6 +68,33 @@ def _load_personas(opt):
         c2 = '\n'.join(context2)
         contexts.append([c1, c2])
     return contexts
+
+
+def _standardize(orig: str) -> str:
+    """
+    Standardize string given punctuation differences in the list of safe personas.
+    """
+    new = orig.lower().rstrip('.!?')
+    string_replace = {
+        "i've": 'i have',
+        'i ve': 'i have',
+        'ive': 'i have',
+        "i'm": 'i am',
+        'i m': 'i am',
+        'im': 'i am',
+        "i'll": 'i will',
+        'i ll': 'i will',
+        "don't": 'do not',
+        'don t': 'do not',
+        'dont': 'do not',
+        "can't": 'cannot',
+        "can t": 'cannot',
+        "cant": 'cannot',
+        " s": "'s",
+    }
+    for i, j in string_replace.items():
+        new = new.replace(i, j)
+    return new
 
 
 class InteractiveWorld(InteractiveBaseWorld):
@@ -74,6 +118,13 @@ class InteractiveWorld(InteractiveBaseWorld):
             type='bool',
             default=False,
             help='Include context conversation at beginning or not',
+        )
+        parser.add_argument(
+            '--safe-personas-only',
+            type='bool',
+            default=True,
+            help='Only use personas on a whitelist of safe personas',
+            hidden=True,
         )
 
     def __init__(self, opt, agents, shared=None):

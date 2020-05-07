@@ -56,6 +56,12 @@ def _cached_data_path(opt: Opt, experiencer_side_only: bool) -> str:
     )
 
 
+def safe_personas_path(opt: Opt) -> str:
+    # Build the data if it doesn't exist.
+    build(opt)
+    return os.path.join(opt['datapath'], 'blended_skill_talk', 'safe_personas.txt')
+
+
 class BlendedSkillTalkTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
