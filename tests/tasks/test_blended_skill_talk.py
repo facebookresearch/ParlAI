@@ -318,7 +318,7 @@ class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
 
             self.assertEqual(new_world.contexts_data, test_personas)
 
-    def test_safe_personas(self, mock_load_personas):
+    def test_safe_personas(self):
 
         base_kwargs = Opt(
             {'datatype': 'train', 'task': 'blended_skill_talk'}
@@ -331,27 +331,6 @@ class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
             opt = parser.parse_args([])
             personas = _load_personas(opt)
             self.assertEqual(len(personas), count)
-
-        test_personas = ['your persona:I live on a pirate\'s shoulder']
-        with testing_utils.tempdir() as data_path:
-            mock_load_personas.return_value = test_personas
-            kwargs = {
-                'task': 'blended_skill_talk',
-                'datapath': data_path,
-                'interactive_task': True,
-                'interactive_mode': True,
-            }
-            parser = setup_args()
-            parser.set_defaults(**kwargs)
-            opt = parser.parse_args([])
-            agent = RepeatLabelAgent(opt)
-            agent2 = agent.clone()
-            world = InteractiveWorld(opt=opt, agents=[agent, agent2])
-            # We should not reload personas on share
-            mock_load_personas.return_value = None
-            new_world = world.clone()
-
-            self.assertEqual(new_world.contexts_data, test_personas)
 
 
 if __name__ == '__main__':
