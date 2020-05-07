@@ -37,7 +37,7 @@ def _load_personas(opt):
             raw_safe_persona_groups = [line.strip() for line in f.readlines()]
         safe_persona_strings = set()
         for group in raw_safe_persona_groups:
-            safe_group = [string.lower() for string in group.split('|')]
+            safe_group = [string.lower().rstrip('.!?') for string in group.split('|')]
             safe_persona_strings.update(set(safe_group))
         num_unsafe_contexts = 0
     else:
@@ -50,13 +50,26 @@ def _load_personas(opt):
         if opt.get('include_personas', True):
             if opt.get('safe_personas_only', True):
                 personas_are_safe = all(
-                    persona_string in safe_persona_strings
+                    persona_string.lower().rstrip('.!?') in safe_persona_strings
                     for persona in d['personas']
                     for persona_string in persona
                 )
                 if personas_are_safe:
                     pass
                 else:
+                    print(
+                        [
+                            persona_string
+                            for persona in d['personas']
+                            for persona_string in persona
+                            if persona_string.lower().rstrip('.!?')
+                            not in safe_persona_strings
+                        ]
+                    )
+                    import pdb
+
+                    pdb.set_trace()
+                    # TODO: remove
                     num_unsafe_contexts += 1
                     continue
             context1.append('your persona: ' + d['personas'][0][0])
