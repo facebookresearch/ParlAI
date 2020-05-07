@@ -39,10 +39,6 @@ def _load_personas(opt):
         for group in raw_safe_persona_groups:
             safe_group = [_standardize(string) for string in group.split('|')]
             safe_persona_strings.update(set(safe_group))
-        num_unsafe_contexts = 0
-    else:
-        safe_persona_strings = None
-        num_unsafe_contexts = None
     contexts = []
     for d in data:
         context1 = []
@@ -57,17 +53,6 @@ def _load_personas(opt):
                 if personas_are_safe:
                     pass
                 else:
-                    print(
-                        [
-                            persona_string
-                            for persona in d['personas']
-                            for persona_string in persona
-                            if persona_string.lower().rstrip('.!?')
-                            not in safe_persona_strings
-                        ]
-                    )
-                    # TODO: remove
-                    num_unsafe_contexts += 1
                     continue
             context1.append('your persona: ' + d['personas'][0][0])
             context1.append('your persona: ' + d['personas'][0][1])
@@ -84,24 +69,30 @@ def _load_personas(opt):
         c1 = '\n'.join(context1)
         c2 = '\n'.join(context2)
         contexts.append([c1, c2])
-    if num_unsafe_contexts is not None:
-        print(
-            f'{num_unsafe_contexts:d} unsafe contexts removed and {len(contexts):d} '
-            f'remaining.'
-        )
-        # TODO: probably remove?
     return contexts
 
 
 def _standardize(orig: str) -> str:
+    """
+    Standardize string given punctuation differences in the list of safe personas.
+    """
     new = orig.lower().rstrip('.!?')
     string_replace = {
         "i've": 'i have',
         'i ve': 'i have',
+        'ive': 'i have',
         "i'm": 'i am',
         'i m': 'i am',
+        'im': 'i am',
+        "i'll": 'i will',
+        'i ll': 'i will',
         "don't": 'do not',
         'don t': 'do not',
+        'dont': 'do not',
+        "can't": 'cannot',
+        "can t": 'cannot',
+        "cant": 'cannot',
+        " s": "'s",
     }
     for i, j in string_replace.items():
         new = new.replace(i, j)
