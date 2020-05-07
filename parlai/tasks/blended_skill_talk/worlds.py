@@ -96,19 +96,35 @@ class InteractiveWorld(InteractiveBaseWorld):
             # Load safe personas
             save_personas_path = safe_personas_path(self.opt)
             with open(save_personas_path, 'r') as f:
-                persona_groups = [
-                    line.strip().lower().split('|') for line in f.readlines()
-                ]
+                raw_persona_groups = [line.strip() for line in f.readlines()]
 
-            # Filter contexts to only include those with safe personas
+            # Create 5000 random pairs of safe personas. For each persona, we sample two
+            # persona strings from the original group
             header = 'your persona: '
-            filtered_contexts_data = []
-            for contexts in self.contexts_data:
+            formatted_persona_pairs = []
+            for _ in range(5000):
+                raw_persona_1, raw_persona_2 = random.sample(raw_persona_groups, k=2)
+                formatted_persona_1 = '\n'.join(
+                    [
+                        f'{header}{string.lower()}'
+                        for string in random.sample(raw_persona_1.split('|'), k=2)
+                    ]
+                )
+                formatted_persona_2 = '\n'.join(
+                    [
+                        f'{header}{string.lower()}'
+                        for string in random.sample(raw_persona_2.split('|'), k=2)
+                    ]
+                )
+                formatted_persona_pairs.append(
+                    [formatted_persona_1, formatted_persona_2]
+                )
                 import pdb
 
                 pdb.set_trace()
-                # {{{TODO}}}
-            self.contexts_data = filtered_contexts_data
+                # {{{TODO: make sure the formatting is exactly the same as before!}}}
+                # {{{TODO: don't even first create the contexts data the other way in this case!}}}
+            self.contexts_data = formatted_persona_pairs
 
     def get_contexts(self):
         random.seed()
