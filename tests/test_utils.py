@@ -162,8 +162,10 @@ class TestTeachers(unittest.TestCase):
             regular_example = regular_world.get_acts()[0]
             label_to_text_world.parley()
             label_to_text_example = label_to_text_world.get_acts()[0]
-            self.assertEqual(label_to_text_example['text'], regular_example['label'][0])
-            self.assertEqual(label_to_text_example['label'], [''])
+            self.assertEqual(
+                label_to_text_example['text'], regular_example['labels'][0]
+            )
+            self.assertEqual(label_to_text_example['labels'], [''])
             num_examples += 1
 
 
