@@ -119,11 +119,7 @@ class InteractiveWorld(InteractiveBaseWorld):
                 formatted_persona_pairs.append(
                     [formatted_persona_1, formatted_persona_2]
                 )
-                import pdb
-
-                pdb.set_trace()
-                # {{{TODO: make sure the formatting is exactly the same as before!}}}
-                # {{{TODO: don't even first create the contexts data the other way in this case!}}}
+            # {{{TODO: don't even first create the contexts data the other way in this case!}}}
             self.contexts_data = formatted_persona_pairs
 
     def get_contexts(self):
