@@ -37,7 +37,7 @@ def _load_personas(opt):
             raw_safe_persona_groups = [line.strip() for line in f.readlines()]
         safe_persona_strings = set()
         for group in raw_safe_persona_groups:
-            safe_group = [string.lower().rstrip('.!?') for string in group.split('|')]
+            safe_group = [_standardize(string) for string in group.split('|')]
             safe_persona_strings.update(set(safe_group))
         num_unsafe_contexts = 0
     else:
@@ -50,7 +50,7 @@ def _load_personas(opt):
         if opt.get('include_personas', True):
             if opt.get('safe_personas_only', True):
                 personas_are_safe = all(
-                    persona_string.lower().rstrip('.!?') in safe_persona_strings
+                    _standardize(persona_string) in safe_persona_strings
                     for persona in d['personas']
                     for persona_string in persona
                 )
@@ -66,9 +66,6 @@ def _load_personas(opt):
                             not in safe_persona_strings
                         ]
                     )
-                    import pdb
-
-                    pdb.set_trace()
                     # TODO: remove
                     num_unsafe_contexts += 1
                     continue
@@ -94,6 +91,21 @@ def _load_personas(opt):
         )
         # TODO: probably remove?
     return contexts
+
+
+def _standardize(orig: str) -> str:
+    new = orig.lower().rstrip('.!?')
+    string_replace = {
+        "i've": 'i have',
+        'i ve': 'i have',
+        "i'm": 'i am',
+        'i m': 'i am',
+        "don't": 'do not',
+        'don t': 'do not',
+    }
+    for i, j in string_replace.items():
+        new = new.replace(i, j)
+    return new
 
 
 class InteractiveWorld(InteractiveBaseWorld):
