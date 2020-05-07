@@ -4,16 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import time
-import unittest
-from copy import deepcopy
-
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.opt import Opt
-from parlai.core.worlds import create_task
-from parlai.scripts.display_data import setup_args
 from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
 import parlai.utils.strings as string_utils
+from copy import deepcopy
+import time
+import unittest
 
 
 class TestUtils(unittest.TestCase):
