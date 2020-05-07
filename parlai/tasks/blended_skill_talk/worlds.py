@@ -30,11 +30,35 @@ def _load_personas(opt):
     fname = raw_data_path(opt)
     with open(fname) as json_file:
         data = json.load(json_file)
+    if opt.get('include_personas', True) and opt.get('safe_personas_only', True):
+        # Filter out unsafe personas
+        save_personas_path = safe_personas_path(opt)
+        with open(save_personas_path, 'r') as f:
+            raw_safe_persona_groups = [line.strip() for line in f.readlines()]
+        safe_persona_strings = set()
+        for group in raw_safe_persona_groups:
+            safe_group = [string.lower() for string in group.split('|')]
+            safe_persona_strings.update(set(safe_group))
+        num_unsafe_contexts = 0
+    else:
+        safe_persona_strings = None
+        num_unsafe_contexts = None
     contexts = []
     for d in data:
         context1 = []
         context2 = []
         if opt.get('include_personas', True):
+            if opt.get('safe_personas_only', True):
+                personas_are_safe = all(
+                    persona_string in safe_persona_strings
+                    for persona in d['personas']
+                    for persona_string in persona
+                )
+                if personas_are_safe:
+                    pass
+                else:
+                    num_unsafe_contexts += 1
+                    continue
             context1.append('your persona: ' + d['personas'][0][0])
             context1.append('your persona: ' + d['personas'][0][1])
             context2.append('your persona: ' + d['personas'][1][0])
@@ -50,6 +74,12 @@ def _load_personas(opt):
         c1 = '\n'.join(context1)
         c2 = '\n'.join(context2)
         contexts.append([c1, c2])
+    if num_unsafe_contexts is not None:
+        print(
+            f'{num_unsafe_contexts:d} unsafe contexts removed and {len(contexts):d} '
+            f'remaining.'
+        )
+        # TODO: probably remove?
     return contexts
 
 
@@ -88,38 +118,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         self.display_partner_persona = self.opt['display_partner_persona']
 
     def init_contexts(self, shared=None):
-
-        if self.opt.get('safe_personas_only', True):
-
-            # Load safe personas
-            save_personas_path = safe_personas_path(self.opt)
-            with open(save_personas_path, 'r') as f:
-                raw_persona_groups = [line.strip() for line in f.readlines()]
-
-            # Create 5000 random pairs of safe personas. For each persona, we sample two
-            # persona strings from the original group
-            header = 'your persona: '
-            self.contexts_data = []
-            for _ in range(5000):
-                raw_persona_1, raw_persona_2 = random.sample(raw_persona_groups, k=2)
-                formatted_persona_1 = '\n'.join(
-                    [
-                        f'{header}{string.lower()}'
-                        for string in random.sample(raw_persona_1.split('|'), k=2)
-                    ]
-                )
-                formatted_persona_2 = '\n'.join(
-                    [
-                        f'{header}{string.lower()}'
-                        for string in random.sample(raw_persona_2.split('|'), k=2)
-                    ]
-                )
-                self.contexts_data.append([formatted_persona_1, formatted_persona_2])
-
-        else:
-
-            # Load personas directly from the raw BST data
-            self.contexts_data = get_contexts_data(self.opt, shared=shared)
+        self.contexts_data = get_contexts_data(self.opt, shared=shared)
 
     def get_contexts(self):
         random.seed()
