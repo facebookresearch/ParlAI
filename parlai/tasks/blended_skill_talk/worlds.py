@@ -7,7 +7,7 @@
 import json
 import random
 
-from parlai.tasks.blended_skill_talk.agents import raw_data_path
+from parlai.tasks.blended_skill_talk.agents import raw_data_path, safe_personas_path
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
@@ -75,13 +75,40 @@ class InteractiveWorld(InteractiveBaseWorld):
             default=False,
             help='Include context conversation at beginning or not',
         )
+        parser.add_argument(
+            '--safe-personas-only',
+            type='bool',
+            default=True,
+            help='Only use personas on a whitelist of safe personas',
+            hidden=True,
+        )
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.display_partner_persona = self.opt['display_partner_persona']
 
     def init_contexts(self, shared=None):
+
         self.contexts_data = get_contexts_data(self.opt, shared=shared)
+
+        if self.opt.get('safe_personas_only', True):
+
+            # Load safe personas
+            save_personas_path = safe_personas_path(self.opt)
+            with open(save_personas_path, 'r') as f:
+                persona_groups = [
+                    line.strip().lower().split('|') for line in f.readlines()
+                ]
+
+            # Filter contexts to only include those with safe personas
+            header = 'your persona: '
+            filtered_contexts_data = []
+            for contexts in self.contexts_data:
+                import pdb
+
+                pdb.set_trace()
+                # {{{TODO}}}
+            self.contexts_data = filtered_contexts_data
 
     def get_contexts(self):
         random.seed()

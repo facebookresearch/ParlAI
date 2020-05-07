@@ -56,6 +56,12 @@ def _cached_data_path(opt: Opt, experiencer_side_only: bool) -> str:
     )
 
 
+def safe_personas_path(opt: Opt) -> str:
+    # Build the data if it doesn't exist.
+    build(opt)
+    return os.path.join(opt['datapath'], 'blended_skill_talk', 'safe_personas.txt')
+
+
 class BlendedSkillTalkTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -71,24 +77,6 @@ class InteractiveTeacher(BlendedSkillTalkTeacher):
 class SelfchatTeacher(BlendedSkillTalkTeacher):
     # Dummy class to add arguments for interactive world.
     pass
-
-
-class SafeTeacher(BlendedSkillTalkTeacher):
-    """
-    Version of the BST teacher that filters out any conversations in which personas are
-    not in a list of safe personas.
-    """
-
-    def _setup_data(self, path):
-        super()._setup_data(path)
-
-        # Check whether num_examples is currently what it should be, because this'll be
-        # modified later
-        assert self.num_exs == sum([len(e) for e in self.episodes])
-
-        # {{{TODO}}}
-
-        self.num_exs = sum([len(e) for e in self.episodes])
 
 
 class DefaultTeacher(BlendedSkillTalkTeacher):

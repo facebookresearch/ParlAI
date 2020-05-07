@@ -53,12 +53,18 @@ RESOURCES = [
         '2604e977787be0b5edc54561f7ce8a54c40758d235a3fee262fe20fe36b8cd15',
         zipped=False,
     ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/safe_personas.txt',
+        'safe_personas.txt',
+        'add_this',
+        zipped=False,
+    ),
 ]
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'blended_skill_talk')
-    version = 'v1.3'
+    version = 'v1.4'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
