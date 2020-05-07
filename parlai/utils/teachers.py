@@ -25,7 +25,7 @@ class LabelToTextTeacher(Teacher):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
-        # Teacher has no args, and so we don't add them
+        # Teacher has no args
         parser = argparser.add_argument_group('LabelToText args')
         parser.add_argument(
             '-l2tt',

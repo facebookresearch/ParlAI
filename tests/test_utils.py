@@ -4,12 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.opt import Opt
-from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
-import parlai.utils.strings as string_utils
-from copy import deepcopy
 import time
 import unittest
+from copy import deepcopy
+
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.opt import Opt
+from parlai.core.worlds import create_task
+from parlai.scripts.display_data import setup_args
+from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
+import parlai.utils.strings as string_utils
 
 
 class TestUtils(unittest.TestCase):
@@ -128,6 +132,39 @@ class TestStrings(unittest.TestCase):
     def test_uppercase(self):
         assert string_utils.uppercase("this is a test") == "This is a test"
         assert string_utils.uppercase("tEst") == "TEst"
+
+
+class TestTeachers(unittest.TestCase):
+    def test_label_to_text_teacher(self):
+
+        # Set up regular teacher
+        kwargs = {'task': 'integration_tests:multiturn'}
+        parser = setup_args()
+        parser.set_defaults(**kwargs)
+        opt = parser.parse_args([])
+        agent = RepeatLabelAgent(opt)
+        regular_world = create_task(opt, agent)
+
+        # Set up label-to-text teacher
+        kwargs = {
+            'task': 'parlai.utils.teachers:labelToTextTeacher',
+            'label_to_text_task': 'integration_tests:multiturn',
+        }
+        parser = setup_args()
+        parser.set_defaults(**kwargs)
+        opt = parser.parse_args([])
+        agent = RepeatLabelAgent(opt)
+        label_to_text_world = create_task(opt, agent)
+
+        num_examples = 0
+        while num_examples < 5:
+            regular_world.parley()
+            regular_example = regular_world.get_acts()[0]
+            label_to_text_world.parley()
+            label_to_text_example = label_to_text_world.get_acts()[0]
+            self.assertEqual(label_to_text_example['text'], regular_example['label'][0])
+            self.assertEqual(label_to_text_example['label'], [''])
+            num_examples += 1
 
 
 if __name__ == '__main__':
