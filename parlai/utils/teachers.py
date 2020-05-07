@@ -17,8 +17,10 @@ from parlai.core.teachers import create_task_agent_from_taskname, Teacher
 class LabelToTextTeacher(Teacher):
     """
     Teacher that will shift message['labels'][0] into message['text'] for whatever task
-    is specified with --label-to-text-task. Because the dialogue history is effectively
-    overwritten by this action, all episodes will be flattened into one example each.
+    is specified with --label-to-text-task.
+
+    Because the dialogue history is effectively overwritten by this action, all episodes
+    will be flattened into one example each.
     """
 
     @classmethod
