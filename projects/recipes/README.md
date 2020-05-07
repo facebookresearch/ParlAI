@@ -23,6 +23,8 @@ We show that large scale models can learn these skills when given appropriate tr
 
 You may talk with our models. The 2.7B can be interacted with on a 16gb P100 GPU or better. The 9.4B parameter model requires at least two 32gb V100 GPUs to interact with.
 
+**Safety** We have studied improved safety from toxic language ([Dinan et al., 2019b](http://parl.ai/projects/dialogue_safety/), much work remains to be done. While we have made our models publicly available, and added a safety layer to the interaction, we have not mitigated all safety issues. We believe their release can help the community work together to understand further and fix these issues, and we recommend their use for that line of research.
+
 **90M**
 ```
 python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_90M/model
