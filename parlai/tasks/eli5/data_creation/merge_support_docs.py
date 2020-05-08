@@ -16,6 +16,7 @@ import json
 from parlai.core.params import ParlaiParser
 from os.path import join as pjoin
 from os.path import isdir
+from glob import glob
 from data_utils import *
 
 
@@ -35,11 +36,30 @@ def setup_args():
     )
     return parser.parse_args()
 
+def merge_non_eli_docs(doc_name):
+    docs = []
+    merged  = {}
+    for f_name in glob(pjoin(doc_name, '*.json')):
+        docs += json.load(open(f_name))
+    if not docs or len(docs[0]) < 3:
+        for i, (num, article) in enumerate(docs):
+            merged[i] = merged.get(i, [''] * 100)
+            merged[i][num] = article
+    else:
+        return None
+    for eli_k, articles in merged.items():
+        merged[eli_k] = [art for art in articles if art != '']
+        merged[eli_k] = [
+            x
+            for i, x in enumerate(merged[eli_k])
+            if (x['url'] not in [y['url'] for y in merged[eli_k][:i]])
+        ]
+    return list(merged.items())
 
 if __name__ == '__main__':
     opt = setup_args()
     name = opt['name']
-    ca = opt['finalize']
+    ca = opt['c']
     if ca == 'finalize':
         rd_dir = pjoin(opt['datapath'], 'eli5/processed_data/collected_docs', name)
         sl_dir = pjoin(rd_dir, 'slices')
@@ -65,7 +85,11 @@ if __name__ == '__main__':
     else:
         d_name = pjoin(opt['datapath'], 'eli5/processed_data/collected_docs', name, ca)
         if isdir(d_name):
-            merged = merge_support_docs(d_name)
+            non_eli_merged = merge_non_eli_docs(d_name)
+            if non_eli_merged is None:
+                merged = merge_support_docs(d_name)
+            else:
+                merged = non_eli_merged
         if len(merged) > 0:
             json.dump(
                 merged,

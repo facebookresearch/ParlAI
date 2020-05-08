@@ -18,7 +18,7 @@ We provide a suite of scripts to download paired questions and answers from the 
 
 ### FAQ: can you provide the processed data?
 
-No, we are not allowed to host processed Reddit or CommonCrawl data. While we are aware that it would make life a little easier, making your own version of the dataset following the instructions here is pretty straightforward if you have access to a SLURM cluster. **We're also happy to work with you if your cluster works on another operating system, open an issue and we'll get on it!** Since the creation process involves downloading, filtering and tokenizing a full CommonCrawl dump however, using a single machine is impractical.
+No, we are not allowed to host processed Reddit or CommonCrawl data. While we are aware that it would make life a little easier, making your own version of the dataset following the instructions here is pretty straightforward if you have access to a SLURM cluster. If you have issues with your cluster, please visit https://github.com/facebookresearch/ELI5/. Since the creation process involves downloading, filtering and tokenizing a full CommonCrawl dump however, using a single machine is impractical.
 
 
 ## Overview of the data creation process
@@ -30,7 +30,8 @@ The process consists of four steps. *Steps 1 and 2 should be run in parallel.*
 3. **Downloading and tokenizing the CommonCrawl pages.** This part requires access to a cluster. We provide a sample SLURM script using 100 threads, which on our cluster finishes in under 48 hours.
 4. **Selecting passages from the downloaded pages to create the final support document.** After running steps 1 and 2, this part uses our TFIDF heuristic to create the final ~1000 words support document, and create a train/valid/test split of Question-Document-Answer triplets.
 
-If you are having trouble with any of these, please open an issue stating which step is failing in the title, and attach the Python error text, if available.
+If you are having trouble with any of these, please an open an issue in the
+[ELI5 Repo](https://github.com/facebookresearch/ELI5/).
 
 ## Downloading pre-computed files for support documents
 Running `python examples/display_data.py -t eli5` to run ELI5's `build.py` file
@@ -55,7 +56,7 @@ We provide a list of CommonCrawl IDs for supporting documents for each of the qu
 These are obtained from `build.py` which we went over above.
 
 
-The next step than consists in reading through the CommonCrawl WET files to gather the text of pages which are used as support documents. In order to gather the documents for each QA pair (up to 100 per pair, sometimes less after deduplicating) using a SLURM cluster and 100 threads, run:
+The next step then consists in reading through the CommonCrawl WET files to gather the text of pages which are used as support documents. In order to gather the documents for each QA pair (up to 100 per pair, sometimes less after deduplicating) using a SLURM cluster and 100 threads, run:
 ```
 cd slurm_scripts
 ./eli_download_docs_launcher.sh
@@ -133,7 +134,7 @@ python download_support_docs.py -u [url_list.json]
 python download_support_docs.py --urls [url_list.json]
 ```
 
-The following download Common Crawl text of URLs contained in [id_list.json] that are in Common Crawl dumps in `wet.paths`. [id_list.json] should be .json file of a list of URLs.
+The following download Common Crawl text of URLs contained in [url_list.json] that are in Common Crawl dumps in `wet.paths`. [url_list.json] should be .json file of a list of URLs.
 ```
 python download_support_docs.py -ids [id_list.json]
 python download_support_docs.py --ccuids [id_list.json]

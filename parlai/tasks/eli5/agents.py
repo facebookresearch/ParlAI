@@ -17,9 +17,7 @@ class ELI5Teacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        # self.add_cmdline_args(opt)
         build(opt)
-        # self._setup_data(opt['datafile'], jsons_path)
         self.id = 'eli5'
         self.messages = self.load_eli5(opt)
         self.reset()
@@ -47,7 +45,7 @@ class ELI5Teacher(FixedDialogTeacher):
             data = json.load(json_file)
         ds = []
         for d in data:
-            if bool(self.opt['knowledge']) and self.opt['knowledge'] != 'False':
+            if self.opt['knowledge']:
                 text = d['document'] + "\n" + d['question']
             else:
                 text = d['question']
