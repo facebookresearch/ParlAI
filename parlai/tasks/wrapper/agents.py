@@ -4,7 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Teachers that wrap around other ones.
+Teachers that wrap around other teachers, for instance, to modify message fields while
+keeping the examples/episodes the same.
+
+This is useful when working with agents that expect examples to be in a certain format,
+for instance a classifier that classifies the "text" field of a message. The meta-
+teachers in this module can be used to avoid writing several different nearly identical
+variants of different teachers: for instance, if you want to flatten examples and strip
+away all but the previous utterance in the 'text' field for several different teachers,
+it would be much easier to do so with one teacher in this module than with a brand new
+teacher for each of the original teachers.
 """
 
 import copy
@@ -54,6 +63,8 @@ class LabelToTextTeacher(Teacher):
 
     def num_episodes(self):
         """
+        Return the number of episodes.
+
         Because the dataset is flattened, there will be one episode per example.
         """
         return self.task.num_examples()
