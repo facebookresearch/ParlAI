@@ -18,6 +18,7 @@ Its goal is to provide researchers:
 - a large range of **helpers to create your own agents** and train on several tasks with **multitasking**
 - **multimodality**, some tasks use text and images
 
+
 ParlAI is described in the following paper:
 [“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476)
 or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrjSp8X8Fp0_rTTRoLxUfW0aUm/view?usp=sharing).
@@ -29,8 +30,8 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 ## Installing ParlAI
 
 ParlAI currently requires Python3 and [Pytorch](https://pytorch.org) 1.1 or
-newer. Dependencies of the core modules are listed in `requirement.txt`. Some
-models included (in `parlai/agents`) have additional requirements.
+newer. Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
+models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents)) have additional requirements.
 
 Run the following commands to clone the repository and install ParlAI:
 
@@ -60,7 +61,7 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if
 
 ## Examples
 
-A large set of scripts can be found in `parlai/scripts`. Here are a few of them.
+A large set of scripts can be found in [`parlai/scripts`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/scripts). Here are a few of them.
 Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
 
 Display 10 random examples from the SQuAD task
