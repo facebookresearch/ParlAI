@@ -160,7 +160,7 @@ def download(url, path, fname, redownload=False):
 
     pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 
-    while download and retry >= 0:
+    while download and retry > 0:
         resume_file = outfile + '.part'
         resume = os.path.isfile(resume_file)
         if resume:
@@ -210,7 +210,7 @@ def download(url, path, fname, redownload=False):
             ):
                 retry -= 1
                 pbar.clear()
-                if retry >= 0:
+                if retry > 0:
                     print('Connection error, retrying. (%d retries left)' % retry)
                     time.sleep(exp_backoff[retry])
                 else:
