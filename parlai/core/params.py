@@ -1162,6 +1162,9 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden = kwargs.pop('hidden')
             if hidden:
                 kwargs['help'] = argparse.SUPPRESS
+        if 'type' in kwargs and kwargs['type'] is bool:
+            # common error, we really want simple form
+            kwargs['type'] = 'bool'
         return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):
@@ -1169,9 +1172,6 @@ class ParlaiParser(argparse.ArgumentParser):
         Override to convert underscores to hyphens for consistency.
         """
         kwargs, newattr = self._handle_custom_options(kwargs)
-        if 'type' in kwargs and kwargs['type'] is bool:
-            # common error, we really want simple form
-            kwargs['type'] = 'bool'
         action = super().add_argument(*fix_underscores(args), **kwargs)
         for k, v in newattr.items():
             setattr(action, k, v)

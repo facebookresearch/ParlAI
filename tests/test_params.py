@@ -133,8 +133,8 @@ class TestParlaiParser(unittest.TestCase):
         opt = parser.parse_args(['--foo', '0'])
         assert opt['foo'] is False
 
-        parser.add_argument_group('foo container')
-        parser.add_argument('--bar', type=bool)
+        group = parser.add_argument_group('foo container')
+        group.add_argument('--bar', type=bool)
         opt = parser.parse_args(['--bar', 'true'])
         assert opt['bar'] is True
         opt = parser.parse_args(['--bar', 'False'])
@@ -151,8 +151,8 @@ class TestParlaiParser(unittest.TestCase):
         opt = parser.parse_args(['--foo', '0'])
         assert opt['foo'] is False
 
-        parser.add_argument_group('foo container')
-        parser.add_argument('--bar', type='bool')
+        group = parser.add_argument_group('foo container')
+        group.add_argument('--bar', type='bool')
         opt = parser.parse_args(['--bar', 'true'])
         assert opt['bar'] is True
         opt = parser.parse_args(['--bar', 'False'])
