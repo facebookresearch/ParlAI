@@ -37,6 +37,13 @@ class ConfusionMatrixMetric(Metric):
         '_false_negatives',
     )
 
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
+
     def __init__(
         self,
         true_positives: TScalar = 0,
@@ -164,6 +171,13 @@ class WeightedF1Metric(Metric):
     """
 
     __slots__ = '_values'
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
 
     def __init__(self, metrics: Dict[str, ClassificationF1Metric]) -> None:
         self._values: Dict[str, ClassificationF1Metric] = metrics

@@ -73,6 +73,13 @@ class Metric(ABC):
         """
         return False
 
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return False
+
     @abstractmethod
     def value(self) -> float:
         """
@@ -227,6 +234,13 @@ class AverageMetric(Metric):
     """
 
     __slots__ = ('_numer', '_denom')
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
 
     def __init__(self, numer: TScalar, denom: TScalar = 1):
         self._numer = self.as_number(numer)
@@ -518,7 +532,7 @@ def aggregate_named_reports(
             else:
                 task_metric = f'{task_id}/{each_metric}'
                 m[task_metric] = m.get(task_metric) + value
-                if micro_average or not isinstance(value, AverageMetric):
+                if micro_average or not value.macro_average:
                     # none + a => a from implementation of Metric.__add__
                     m[each_metric] = m.get(each_metric) + value
                 else:
