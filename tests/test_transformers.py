@@ -351,6 +351,24 @@ class TestTransformerGenerator(unittest.TestCase):
                     skip_generation=False,
                 )
             )
+
+            with open(os.path.join(tmpdir, 'blacklist.txt'), 'w') as f:
+                f.write("38\n62\n")
+
+            valid_beam_block3, _ = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:repeat_words',
+                    model_file=mf,
+                    dict_file=df,
+                    batch_size=1,
+                    inference='beam',
+                    beam_size=5,
+                    beam_blacklist_filename=os.path.join(tmpdir, 'blacklist.txt'),
+                    skip_generation=False,
+                ),
+                skip_test=True,
+            )
+
         self.assertLessEqual(valid['ppl'], 1.30)
         self.assertGreaterEqual(valid['f1'], 0.80)
         self.assertGreaterEqual(valid['bleu-4'], 0.5)
@@ -369,6 +387,10 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(valid_beam_block2['bleu-4'], 1e-6)
         self.assertLessEqual(test_beam_block2['f1'], 0.6)
         self.assertLessEqual(test_beam_block2['bleu-4'], 1e-6)
+
+        # Beam Block blacklist
+        self.assertLess(valid_beam_block3['bleu-4'], valid['bleu-4'])
+        self.assertLess(valid_beam_block3['f1'], valid['f1'])
 
     @testing_utils.retry(ntries=3)
     def test_beamsearch_contextblocking(self):

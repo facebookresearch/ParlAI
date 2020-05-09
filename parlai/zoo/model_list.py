@@ -691,4 +691,109 @@ model_list = [
             """{'exs': 400, 'accuracy': 1.0, 'f1': 1.0, 'bleu-4': 0.2503, 'lr': 0.001, 'total_train_updates': 5000, 'gpu_mem_percent': 9.37e-05, 'loss': 0.0262, 'token_acc': 1.0, 'nll_loss': 7.935e-05, 'ppl': 1.0}"""
         ),
     },
+    {
+        "title": "Tutorial Transformer Generator",
+        "id": "tutorial_transformer_generator",
+        "path": "zoo:tutorial_transformer_generator/model",
+        "task": "pushshift.io",
+        "description": (
+            "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
+        ),
+        "example": (
+            "python -m parlai.scripts.interactive -mf zoo:tutorial_transformer_generator/model"
+        ),
+        "external_website": '',
+        "result": (
+            "Enter Your Message: hi, how are you today?\n"
+            "[TransformerGenerator]: i ' m doing well , how about you ?\n"
+            "Enter Your Message: I'm giving a tutorial on chatbots!\n"
+            "[TransformerGenerator]: that ' s awesome ! what ' s it about ?\n"
+            "Enter Your Message: bots just like you\n"
+            "[TransformerGenerator]: i ' ll be sure to check it out !"
+        ),
+    },
+    {
+        "title": "Blender 90M",
+        "id": "blender",
+        "path": "zoo:blender/blender_90M/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "90< parameter generative model finetuned on blended_skill_talk tasks."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_90M/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi what's up?\n"
+            "[TransformerGenerator]: hello , how are you ? i just got back from working at a law firm , how about you ?"
+        ),
+    },
+    {
+        "title": "Blender 2.7B",
+        "id": "blender",
+        "path": "zoo:blender/blender_3B/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "2.7B parameter generative model finetuned on blended_skill_talk tasks."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
+        ),
+    },
+    {
+        "title": "Blender 9.4B",
+        "id": "blender",
+        "path": "zoo:blender/blender_9B/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "9.4B parameter generative model finetuned on blended_skill_talk tasks."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_9B/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi!\n"
+            "[TransformerGenerator]: What do you do for a living? I'm a student at Miami University."
+        ),
+    },
+    {
+        "title": "Reddit 2.7B",
+        "id": "blender",
+        "path": "zoo:blender/reddit_3B/model",
+        "agent": "transformer/generator",
+        "task": "pushshift.io",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "2.7B parameter generative model finetuned on blended_skill_talk tasks."
+        ),
+        "example": (
+            "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
+        ),
+        "result": ("Results vary."),
+    },
+    {
+        "title": "Reddit 9.4B",
+        "id": "blender",
+        "path": "zoo:blender/reddit_9B/model",
+        "agent": "transformer/generator",
+        "task": "pushshift.io",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "9.4B parameter generative model finetuned on blended_skill_talk tasks."
+        ),
+        "example": (
+            "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
+        ),
+        "result": ("Results vary."),
+    },
 ]

@@ -6,6 +6,7 @@
 """
 Utility functions and classes for handling text strings.
 """
+import os
 import sys as _sys
 
 
@@ -64,33 +65,75 @@ def uppercase(string: str) -> str:
 
 
 def colorize(text, style):
-    USE_COLORS = _sys.stdout.isatty()
-    BLUE = '\033[1;94m'
-    BOLD_LIGHT_GRAY = '\033[1;37;40m'
-    LIGHT_GRAY = '\033[0;37;40m'
-    MAGENTA = '\033[0;95m'
-    HIGHLIGHT_RED = '\033[1;37;41m'
-    HIGHLIGHT_BLUE = '\033[1;37;44m'
-    RESET = '\033[0;0m'
+    try:
+        # if we're in ipython it's okay to use colors
+        __IPYTHON__
+        USE_COLORS = True
+    except NameError:
+        USE_COLORS = _sys.stdout.isatty()
+
     if not USE_COLORS:
         return text
-    if style == 'highlight':
-        return HIGHLIGHT_RED + text + RESET
-    if style == 'highlight2':
-        return HIGHLIGHT_BLUE + text + RESET
-    elif style == 'text':
-        return LIGHT_GRAY + text + RESET
-    elif style == 'bold_text':
-        return BOLD_LIGHT_GRAY + text + RESET
-    elif style == 'labels' or style == 'eval_labels':
-        return BLUE + text + RESET
-    elif style == 'label_candidates':
-        return LIGHT_GRAY + text + RESET
-    elif style == 'id':
-        return LIGHT_GRAY + text + RESET
-    elif style == 'text2':
-        return MAGENTA + text + RESET
-    elif style == 'field':
-        return HIGHLIGHT_BLUE + text + RESET
-    else:
-        return MAGENTA + text + RESET
+
+    colorstyle = os.environ.get('PARLAI_COLORSTYLE')
+
+    if colorstyle is None or colorstyle.lower() == 'steamroller':
+        BLUE = '\033[1;94m'
+        BOLD_LIGHT_GRAY_NOBK = '\033[1m'
+        LIGHT_GRAY_NOBK = '\033[0m'
+        MAGENTA = '\033[0;95m'
+        HIGHLIGHT_RED_NOBK = '\033[1;31m'
+        HIGHLIGHT_BLUE_NOBK = '\033[0;34m'
+        RESET = '\033[0;0m'
+        if style == 'highlight':
+            return HIGHLIGHT_RED_NOBK + text + RESET
+        if style == 'highlight2':
+            return HIGHLIGHT_BLUE_NOBK + text + RESET
+        elif style == 'text':
+            return LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'bold_text':
+            return BOLD_LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'labels' or style == 'eval_labels':
+            return BLUE + text + RESET
+        elif style == 'label_candidates':
+            return LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'id':
+            return LIGHT_GRAY_NOBK + text + RESET
+        elif style == 'text2':
+            return MAGENTA + text + RESET
+        elif style == 'field':
+            return HIGHLIGHT_BLUE_NOBK + text + RESET
+        else:
+            return MAGENTA + text + RESET
+
+    if colorstyle.lower() == 'spermwhale':
+        BLUE = '\033[1;94m'
+        BOLD_LIGHT_GRAY = '\033[1;37;40m'
+        LIGHT_GRAY = '\033[0;37;40m'
+        MAGENTA = '\033[0;95m'
+        HIGHLIGHT_RED = '\033[1;37;41m'
+        HIGHLIGHT_BLUE = '\033[1;37;44m'
+        RESET = '\033[0;0m'
+        if style == 'highlight':
+            return HIGHLIGHT_RED + text + RESET
+        if style == 'highlight2':
+            return HIGHLIGHT_BLUE + text + RESET
+        elif style == 'text':
+            return LIGHT_GRAY + text + RESET
+        elif style == 'bold_text':
+            return BOLD_LIGHT_GRAY + text + RESET
+        elif style == 'labels' or style == 'eval_labels':
+            return BLUE + text + RESET
+        elif style == 'label_candidates':
+            return LIGHT_GRAY + text + RESET
+        elif style == 'id':
+            return LIGHT_GRAY + text + RESET
+        elif style == 'text2':
+            return MAGENTA + text + RESET
+        elif style == 'field':
+            return HIGHLIGHT_BLUE + text + RESET
+        else:
+            return MAGENTA + text + RESET
+
+    # No colorstyle specified/found.
+    return text

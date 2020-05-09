@@ -34,6 +34,7 @@ from typing import List, Tuple
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
+from parlai.core.loader import register_teacher  # noqa: F401
 from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
@@ -641,10 +642,16 @@ class DialogData(object):
     """
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
+        # in case we need to shard the dataset
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = is_distributed() and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
+
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
-
         if shared:
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
@@ -654,12 +661,6 @@ class DialogData(object):
             self.data = []
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
-
-        self.rank = get_rank()
-        self.num_workers = num_workers()
-        self.is_distributed_and_is_eval = is_distributed() and any(
-            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
-        )
 
         self.addedCands = []
         self.copied_cands = False
@@ -710,10 +711,10 @@ class DialogData(object):
                         # TODO: this could use the abc collections
                         # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    elif isinstance(entry[1], str):
+                        new_entry.append((sys.intern(entry[1]),))
                     else:
-                        raise TypeError(
-                            'Must provide iterable over labels, not a single string.'
-                        )
+                        raise TypeError(f"{entry[1]} is not list or str")
                 if len(entry) > 2:
                     # process reward if available
                     if entry[2] is not None:
@@ -756,8 +757,9 @@ class DialogData(object):
             class docstring.
         :param str datafile:
         """
-        for episode in self._read_episode(data_loader(datafile)):
-            self.data.append(episode)
+        for i, episode in enumerate(self._read_episode(data_loader(datafile))):
+            if not self.is_distributed_and_is_eval or i % self.num_workers == self.rank:
+                self.data.append(episode)
 
     def num_episodes(self):
         """
@@ -786,18 +788,9 @@ class DialogData(object):
             which example to return from the episode. Many datasets have only
             single-entry episodes, so this defaults to zero.
         """
+        if episode_idx >= len(self.data):
+            return {'episode_done': True}, True
         next_episode_idx_for_rank = episode_idx + 1
-        if self.is_distributed_and_is_eval:
-            raw_episode_idx = episode_idx
-            episode_idx = raw_episode_idx * self.num_workers + self.rank
-            next_episode_idx_for_rank = episode_idx + self.num_workers
-
-            if episode_idx >= len(self.data):
-                # This can occur in spite of the check below if epoch ends
-                # mid-batch b/c BatchWorld calls act() on all the worlds without
-                # checking if epochDone
-                return {'episode_done': True}, True
-
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
@@ -1398,6 +1391,18 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
                         f"for you automatically. This is happening on Line {line_no} "
                         f"in {path}. The line is:\n\t{line}"
                     )
+                if msg and 'text' not in msg:
+                    raise ValueError(
+                        f'ParlaiDialogTeacher requires a "text" field in every '
+                        f'entry, but one is missing in Line {line_no} in {path}. '
+                        f'The line is:\n\t{line}'
+                    )
+                if msg and 'labels' not in msg:
+                    raise ValueError(
+                        f'ParlaiDialogTeacher requires a "labels" field in every '
+                        f'entry, but one is missing in Line {line_no} in {path}. '
+                        f'The line is:\n\t{line}'
+                    )
                 if msg:
                     self.num_exs += 1
                     eps.append(msg)
@@ -1408,6 +1413,12 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             # add last episode
             eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
+        if len(self.episodes) == 1 and line_no > 100:
+            warn_once(
+                'The data in {path} looks like one very long episode. If this '
+                'is intentional, you may ignore this, but you MAY have a bug in '
+                'your data.'
+            )
 
 
 class AbstractImageTeacher(FixedDialogTeacher):

@@ -56,7 +56,7 @@ from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.metrics import aggregate_named_reports
 from parlai.core.opt import Opt
-from parlai.core.teachers import create_task_agent_from_taskname
+from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -149,6 +149,12 @@ class World(object):
         shared_data['opt'] = self.opt
         shared_data['agents'] = self._share_agents()
         return shared_data
+
+    def clone(self):
+        """
+        Create a duplicate of the world.
+        """
+        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
 
     def _share_agents(self):
         """
@@ -612,7 +618,7 @@ class MultiWorld(World):
                 weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
-        task_ids = {}
+        task_ids: Dict[str, Teacher] = {}
         # Having overlap in teacher ids will cause issues for metrics aggregation.
         for each_world in self.worlds:
             world_id = each_world.getID()
@@ -625,7 +631,7 @@ class MultiWorld(World):
                     )
                 )
             else:
-                task_ids[world_id] = each_world.get_agents()[0]
+                task_ids[world_id] = each_world.get_task_agent()
 
     def num_examples(self):
         """
@@ -1082,15 +1088,12 @@ class DynamicBatchWorld(World):
             self.max_batch_size = opt['batchsize']
 
         # TODO: check to ensure the agent has self_observe
-        shared = world.share()
         self.world = world
         # TODO: maybe generalize this
         self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
-        self.worlds = [
-            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
-        ]
+        self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
 
         self.reset()
 
@@ -1561,12 +1564,11 @@ def _create_task_agents(opt: Opt):
         # do not need task agents in interactive or self chat settings
         return []
 
-    my_module = load_task_module(opt['task'])
     try:
         # Tries to call the create_agent function in agents.py
+        my_module = load_task_module(opt['task'])
         task_agents = my_module.create_agents(opt)  # type: ignore
-
-    except AttributeError:
+    except (ModuleNotFoundError, AttributeError):
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
     if type(task_agents) != list:

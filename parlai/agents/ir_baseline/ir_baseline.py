@@ -356,8 +356,8 @@ class IrBaselineAgent(Agent):
         rw = rep['words']
         used = {}
         for w in words:
-            if len(self.dictionary.freqs()) > 0:
-                rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freqs()[w]))
+            if len(self.dictionary.freq) > 0:
+                rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freq[w]))
             else:
                 if w not in stopwords:
                     rw[w] = 1

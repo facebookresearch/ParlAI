@@ -13,7 +13,6 @@ from parlai.utils.misc import msg_to_str
 from parlai.utils.conversations import Conversations
 
 import copy
-import json
 from tqdm import tqdm
 
 KEEP_ALL = 'all'
@@ -21,7 +20,7 @@ KEEP_ALL = 'all'
 
 class WorldLogger:
     """
-    Logs actions/observations in a world and saves in a JSONL format.
+    Logs actions/observations in a world and saves in a given format.
     """
 
     @staticmethod
@@ -139,14 +138,6 @@ class WorldLogger:
                     fw.write(txt + '\n')
                 fw.write('\n')
 
-    def write_jsonl_format(self, outfile, indent=4):
-        print('[ Saving log to {} in jsonl format ]'.format(outfile))
-        with open(outfile, 'w') as of:
-            for episode in tqdm(self._logs):
-                dialog = {'dialog': episode}
-                json_episode = json.dumps(dialog, indent=indent)
-                of.write(json_episode + '\n')
-
     def write_conversations_format(self, outfile, world):
         Conversations.save_conversations(
             self._logs,
@@ -155,13 +146,11 @@ class WorldLogger:
             self_chat=world.opt.get('selfchat_task', False),
         )
 
-    def write(self, outfile, world, file_format='jsonl', indent=4):
-        if file_format == 'jsonl':
-            self.write_jsonl_format(outfile, indent=indent)
-        elif file_format == 'conversations':
+    def write(self, outfile, world, file_format='conversations', indent=4):
+        if file_format == 'conversations':
             self.write_conversations_format(outfile, world)
         else:
-            # ParlAI format
+            # ParlAI text format
             self.write_parlai_format(outfile)
 
     def get_logs(self):

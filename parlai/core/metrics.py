@@ -259,23 +259,21 @@ class MacroAverageMetric(Metric):
     AverageMetrics already.
     """
 
-    __slots__ = ('_values',)
+    __slots__ = '_values'
 
-    def __init__(self, metrics: List[Metric]) -> None:
+    def __init__(self, metrics: Dict[str, Metric]) -> None:
         self._values = metrics
 
     def __add__(self, other: Optional['MacroAverageMetric']) -> 'MacroAverageMetric':
         if other is None:
             return self
-        if len(self._values) != len(other._values):
-            raise AssertionError(
-                "MacroAverage keeping track of an uneven number of submetrics. "
-                "There should be exactly one per task."
-            )
-        return MacroAverageMetric([a + b for a, b in zip(self._values, other._values)])
+        output = dict(**self._values)
+        for k, v in other._values.items():
+            output[k] = output.get(k, None) + v
+        return MacroAverageMetric(output)
 
     def value(self) -> float:
-        sum_ = sum(v.value() for v in self._values)
+        sum_ = sum(v.value() for v in self._values.values())
         n = len(self._values)
         return sum_ / n
 
@@ -510,7 +508,7 @@ def aggregate_named_reports(
 
     # reporters is a list of teachers or worlds
     m: Dict[str, Metric] = {}
-    macro_averages: Dict[str, List[Metric]] = {}
+    macro_averages: Dict[str, Dict[str, Metric]] = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
             if value.is_global:
@@ -526,8 +524,8 @@ def aggregate_named_reports(
                 else:
                     # macro average
                     if each_metric not in macro_averages:
-                        macro_averages[each_metric] = []
-                    macro_averages[each_metric].append(value)
+                        macro_averages[each_metric] = {}
+                    macro_averages[each_metric][task_id] = value
     for key, values in macro_averages.items():
         m[key] = MacroAverageMetric(values)
     return m

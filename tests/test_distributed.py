@@ -31,6 +31,7 @@ class TestDistributed(unittest.TestCase):
         task='integration_tests:nocandidate',
         model='transformer/generator',
         optimizer='adamax',
+        validation_metric='ppl',
         learningrate=7e-3,
         batchsize=7,
         validation_every_n_epochs=5,
@@ -82,6 +83,22 @@ class TestDistributed(unittest.TestCase):
         # It would be 200 if each worker did all the examples
         self.assertEqual(valid['exs'].value(), 100)
         self.assertEqual(test['exs'].value(), 100)
+
+    def test_multitask_distributed(self):
+        config = copy.deepcopy(self._base_config)
+        config['task'] = 'integration_tests:nocandidate,integration_tests:multiturn'
+        config['dynb'] = 'full'
+        config['skip_generation'] = 'true'
+        valid, test = self._distributed_train_model(config)
+
+        self.assertLessEqual(valid['ppl'], 1.20)
+        self.assertLessEqual(test['ppl'], 1.20)
+
+        # Tests that DialogData.get() is doing the right thing
+        # Ensure no duplication of examples among workers
+        # It would be 200 if each worker did all the examples
+        self.assertEqual(valid['exs'].value(), 500)
+        self.assertEqual(test['exs'].value(), 500)
 
     def test_distributed_eval_max_exs(self):
         config = copy.deepcopy(self._base_config)

@@ -46,6 +46,7 @@ from parlai.utils.distributed import (
     num_workers,
 )
 from parlai.utils.misc import Timer, nice_report
+from parlai.scripts.script import ParlaiScript
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -251,10 +252,6 @@ class TrainLoop:
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
         # not produced. This line brings them back
         signal.signal(signal.SIGINT, signal.default_int_handler)
-
-        if isinstance(opt, ParlaiParser):
-            print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
-            opt = opt.parse_args()
         # Possibly load from checkpoint
         trainstats_suffix = '.trainstats'  # we might load training statistics from here
         if (
@@ -283,7 +280,7 @@ class TrainLoop:
         self.validate_time = Timer()
         self.log_time = Timer()
         self.save_time = Timer()
-        print('[ training... ]')
+
         self.parleys = 0
         self.max_num_epochs = (
             opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
@@ -633,6 +630,7 @@ class TrainLoop:
 
         :return: tuple of reports (validation_report, test_report)
         """
+        print('[ training... ]')
         opt = self.opt
         world = self.world
         with world:
@@ -752,6 +750,14 @@ class TrainLoop:
         return v_report, t_report
 
 
+class TrainModel(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return TrainLoop(self.opt).train()
+
+
 if __name__ == '__main__':
-    TrainLoop(setup_args().parse_args()).train()
-    print()
+    TrainModel.main()

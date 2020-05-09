@@ -7,6 +7,7 @@
 from copy import deepcopy
 
 from parlai.core.worlds import DialogPartnerWorld, validate
+from parlai.core.message import Message
 
 
 class InteractiveWorld(DialogPartnerWorld):
@@ -20,10 +21,10 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
-        self.init_contexts()
+        self.init_contexts(shared=shared)
         self.turn_cnt = 0
 
-    def init_contexts(self):
+    def init_contexts(self, shared=None):
         """
         Override to load or instantiate contexts to be used to seed the chat.
         """
@@ -39,7 +40,8 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def finalize_episode(self):
         print("CHAT DONE ")
-        print("\n... preparing new chat... \n")
+        if not self.epoch_done():
+            print("\n... preparing new chat... \n")
 
     def parley(self):
         """
@@ -54,13 +56,23 @@ class InteractiveWorld(DialogPartnerWorld):
         agents = self.agents
         if self.turn_cnt == 0 and self.p1 != '':
             # add the context on to the first message to agent 0
-            context_act = {'id': 'context', 'text': self.p1, 'episode_done': False}
+            context_act = Message(
+                {'id': 'context', 'text': self.p1, 'episode_done': False}
+            )
             agents[0].observe(validate(context_act))
-        act = deepcopy(agents[0].act())
+        try:
+            act = deepcopy(agents[0].act())
+        except StopIteration:
+            self.reset()
+            self.finalize_episode()
+            self.turn_cnt = 0
+            return
         acts[0] = act
         if self.turn_cnt == 0 and self.p2 != '':
             # add the context on to the first message to agent 1
-            context_act = {'id': 'context', 'text': self.p2, 'episode_done': False}
+            context_act = Message(
+                {'id': 'context', 'text': self.p2, 'episode_done': False}
+            )
             agents[1].observe(validate(context_act))
         agents[1].observe(validate(act))
         acts[1] = agents[1].act()

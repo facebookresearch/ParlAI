@@ -96,6 +96,30 @@ class TestParlaiParser(unittest.TestCase):
         assert 'recommended:' in latter
         assert '1337' in latter
 
+    def test_parse_kwargs(self):
+        parser = ParlaiParser(True, True)
+
+        # implied args from the model
+        opt = parser.parse_kwargs(model='transformer/generator', relu_dropout=0.3)
+        assert opt['relu_dropout'] == 0.3
+        assert opt['model'] == 'transformer/generator'
+        assert 'n_heads' in opt
+
+        # bad types
+        with self.assertRaises(ValueError):
+            parser = ParlaiParser(True, True)
+            parser.parse_kwargs(model='transformer/generator', relu_dropout='foo')
+
+        # nonexistant args without model
+        with self.assertRaises(KeyError):
+            parser = ParlaiParser(True, True)
+            parser.parse_kwargs(fake_arg='foo')
+
+        # nonexistant args with model
+        with self.assertRaises(KeyError):
+            parser = ParlaiParser(True, True)
+            parser.parse_kwargs(model='transformer/generator', fake_arg='foo')
+
 
 if __name__ == '__main__':
     unittest.main()

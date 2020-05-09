@@ -8,7 +8,7 @@ This directory also contains subfolders for some of the projects which are house
 
 - **Unlikelihood Training for Consistent Dialogue** [[project]](https://parl.ai/projects/dialogue_unlikelihood/).
   _Methods to reduce copies & repeats, correct vocab usage, and avoiding contradiction via unlikelihood training._
-  
+
 - **What makes a good conversation? How controllable attributes affect human judgments** [[website]](https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue) [[paper]](https://arxiv.org/abs/1902.08654).
   _Optimizing for multi-turn engaging conversations -- by controlling question-asking, specificity, response-relatedness and repetition._
 
@@ -17,7 +17,7 @@ This directory also contains subfolders for some of the projects which are house
 
 - **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
   _Analysis of the performance of search in generative models for chitchat tasks._
- 
+
 
 ## Retrieval Models
 - **Poly-Encoders** [[project]](https://parl.ai/projects/polyencoder/) [[paper]](https://arxiv.org/abs/1905.01969).
@@ -27,13 +27,19 @@ This directory also contains subfolders for some of the projects which are house
 ## Interactive Learning
 
 - **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
-  _How an agent can learn from dialogue after deployment by imitating and asking for feedback._  
-  
+  _How an agent can learn from dialogue after deployment by imitating and asking for feedback._
+
 - **Beat-The-Bot Live Game** [[project]](https://parl.ai/projects/beat_the_bot/)
-  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._  
-  
-  
+  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._
+
+
 ## Chit-chat
+
+- **Recipes for open-domain chatbots** [[project]](https://parl.ai/projects/recipes).
+  _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
+
+- **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
+  _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Dialogues and Wizard of Wikipedia elements._
 
 - **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
   _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._

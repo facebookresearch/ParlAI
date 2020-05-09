@@ -341,10 +341,10 @@ class PipelineHelper(object):
         self.__device_allocations['cuda:0'] += trainable_parameters(model) * 3
 
         model.apply(self._place_modulelist)
-        model._apply(self._move_rest_to_cuda0)
+        model._apply(self._move_rest_to_cuda0)  # type: ignore
         return model
 
-    def _move_rest_to_cuda0(self, parameter):
+    def _move_rest_to_cuda0(self, parameter: torch.Tensor):
         if parameter.device.type == 'cpu':
             return parameter.to('cuda:0')
         else:

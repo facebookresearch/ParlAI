@@ -108,7 +108,7 @@ class TestMetric(unittest.TestCase):
         m2 = AverageMetric(3, 4)
 
         assert (m1 + m2) == AverageMetric(4, 7)
-        assert MacroAverageMetric([m1, m2]) == 0.5 * (1.0 / 3 + 3.0 / 4)
+        assert MacroAverageMetric({'a': m1, 'b': m2}) == 0.5 * (1.0 / 3 + 3.0 / 4)
 
 
 class TestMetrics(unittest.TestCase):
@@ -236,6 +236,29 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/sum'] == 4
         assert agg['b/fixed'] == 4
         assert 'b/global_avg' not in agg
+
+    def test_uneven_macro_aggrevation(self):
+        report1 = {
+            'avg': AverageMetric(1, 1),
+        }
+        report2 = {
+            'avg': AverageMetric(0, 1),
+        }
+        report3 = {
+            'avg': AverageMetric(0, 1),
+        }
+        agg1 = aggregate_named_reports(
+            {'a': report1, 'b': report2}, micro_average=False
+        )
+        agg2 = aggregate_named_reports({'a': {}, 'c': report3}, micro_average=False)
+
+        agg = aggregate_unnamed_reports([agg1, agg2])
+        assert agg1['avg'] == 0.5
+        assert agg2['avg'] == 0.0
+        assert agg['a/avg'] == 1.0
+        assert agg['b/avg'] == 0.0
+        assert agg['c/avg'] == 0.0
+        assert agg['avg'] == 1.0 / 3
 
     def test_micro_aggregation(self):
         report1 = {
