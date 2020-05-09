@@ -117,7 +117,7 @@ class TestControllableDialogue(unittest.TestCase):
                 'beam_min_n_best': 10,
                 'use_reply': 'model',
                 'batchsize': 64,
-                'num_examples': NUM_EXAMPLES // 1,  # this test appears v. slow
+                'num_examples': NUM_EXAMPLES,
                 'weighted_decoding': NO_REPETITION,
             },
             skip_test=True,
