@@ -132,7 +132,7 @@ def on_close(ws):
 def _run_browser():
     host = opt.get('host', 'localhost')
     serving_port = opt.get('serving_port', 8080)
-    
+
     httpd = HTTPServer((host, serving_port), BrowserHandler)
 
     print('Please connect to the link: http://{}:{}/'.format(host, serving_port))
@@ -163,12 +163,18 @@ def setup_args():
         '--port', default=35496, type=int, help='Port used by the web socket (run.py)'
     )
     parser_grp.add_argument(
-        '--host', default='localhost', type=str, help='Host from which allow requests, use 0.0.0.0 to allow all IPs'
+        '--host',
+        default='localhost',
+        type=str,
+        help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
     )
     parser_grp.add_argument(
-        '--serving_port', default=8080, type=int, help='Port used to configure the server'
+        '--serving_port',
+        default=8080,
+        type=int,
+        help='Port used to configure the server',
     )
-    
+
     return parser.parse_args()
 
 

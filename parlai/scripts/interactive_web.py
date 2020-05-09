@@ -233,9 +233,12 @@ def setup_interactive(shared):
     parser = setup_args()
     parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
     parser.add_argument(
-        '--host', default=HOST_NAME, type=str, help='Host from which allow requests, use 0.0.0.0 to allow all IPs'
+        '--host',
+        default=HOST_NAME,
+        type=str,
+        help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
     )
-   
+
     SHARED['opt'] = parser.parse_args(print_args=False)
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
