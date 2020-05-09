@@ -956,7 +956,7 @@ def get_ctrl_vec(exs, history, control_settings):
     # ctrl_vec is shape (bsz, num_controls) filled with -1's
     ctrl_vec = -torch.ones((len(exs), len(control_settings))).long()
 
-    for batch_idx, (ex, hist) in enumerate(zip(exs, history)):
+    for batch_idx, ex in enumerate(exs):
         for ctrl, ctrl_info in control_settings.items():
             set_val = ctrl_info['set_value']  # is either int or None
             if set_val is not None:  # if we're using some preset bucket for this ctrl
