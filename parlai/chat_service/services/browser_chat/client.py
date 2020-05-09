@@ -130,9 +130,12 @@ def on_close(ws):
 
 
 def _run_browser():
-    httpd = HTTPServer(('localhost', 8080), BrowserHandler)
+    host = opt.get('host', 'localhost')
+    serving_port = opt.get('serving_port', 8080)
 
-    print('Please connect to the link: http://{}:{}/'.format('localhost', 8080))
+    httpd = HTTPServer((host, serving_port), BrowserHandler)
+
+    print('Please connect to the link: http://{}:{}/'.format(host, serving_port))
 
     SHARED['wb'] = httpd
 
@@ -157,8 +160,21 @@ def setup_args():
     parser = ParlaiParser(False, False)
     parser_grp = parser.add_argument_group('Browser Chat')
     parser_grp.add_argument(
-        '--port', default=35496, type=int, help='Port to run the browser chat server'
+        '--port', default=35496, type=int, help='Port used by the web socket (run.py)'
     )
+    parser_grp.add_argument(
+        '--host',
+        default='localhost',
+        type=str,
+        help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
+    )
+    parser_grp.add_argument(
+        '--serving_port',
+        default=8080,
+        type=int,
+        help='Port used to configure the server',
+    )
+
     return parser.parse_args()
 
 
