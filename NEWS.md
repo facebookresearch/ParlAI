@@ -1,5 +1,5 @@
 ## News
-2020-04-28: [BlenderBot](https://parl.ai/projects/recipes/) has been released, including 2.7B and 9.4B parameter models.
+2020-04-28: [BlenderBot](https://parl.ai/projects/recipes/) has been released, including 2.7B and 9.4B parameter models. It received some attention in the media, including [Engadget](https://www.engadget.com/facebook-chatbot-ai-open-source-blender-150001320.html), [Technology Review](https://www.technologyreview.com/2020/04/29/1000795/facebook-ai-chatbot-blender-beats-google-meena/), [Fortune](https://fortune.com/2020/04/29/facebook-creates-the-most-human-chatbot-yet/), and [Wired](https://www.wired.com/story/new-chatbot-tries-artificial-empathy/).
 
 2020-02-04: [GPT2 fine-tuning for dialogue](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/hugging_face)  now supported in ParlAI!
 
