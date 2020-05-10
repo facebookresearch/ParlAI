@@ -63,6 +63,7 @@ def uppercase(string: str) -> str:
     else:
         return string[0].upper() + string[1:]
 
+
 def name_to_classname(name: str) -> str:
     words = name.split('_')
     class_name = ''
@@ -70,6 +71,7 @@ def name_to_classname(name: str) -> str:
         # capitalize the first letter
         class_name += w[0].upper() + w[1:]
     return class_name
+
 
 def colorize(text, style):
     try:
