@@ -1,25 +1,13 @@
 from parlai.utils.strings import colorize, name_to_classname
 import importlib
+import os
 import sys
 
 def display_image():
-    if os.environ.get('PARLAI_DISPLAY_LOGO') = 'OFF':
+    if os.environ.get('PARLAI_DISPLAY_LOGO') == 'OFF':
         return
-
-    image1 = (
-        "         \\              \n" +
-        " \\      (o>             \n" +
-        " (o>     //\   ")
-    image2 = "ParlAI    \n"
-    image3 = ("_(()_____V_/_________    \n" +
-        " ||      ||              \n" + 
-        "         ||              \n")
-    image1 = image1.replace('\\', "\\\\")
-    image1 = image1.replace('/\\\\', "/\\")
-    image = (colorize(image1, 'text')
-             + colorize(image2, 'bold_text')
-             + colorize(image3, 'text'))
-    print(image)
+    logo = colorize('ParlAI - Dialogue Research Platform', 'labels')
+    print(logo)
           
 def Parlai():
     if len(sys.argv) > 1:
@@ -28,10 +16,17 @@ def Parlai():
         print("no command given")
         exit()
         
+    map = {
+        'train': 'train_model',
+        'eval': 'eval_model'
+    }
+    if command in map:
+        command = map[command]
+        
     try:
         module_name = "parlai.scripts.%s" % command
         module = importlib.import_module(module_name)
-        class_name = name_to_classname(sys.argv[1])
+        class_name = name_to_classname(command)
         model_class = getattr(module, class_name)
     except ImportError:
         print(command + " not found")
