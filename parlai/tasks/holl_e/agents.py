@@ -66,7 +66,6 @@ class HollETeacher(FixedDialogTeacher):
         self.datatype = opt['datatype'].split(':')[0]
         self.id = 'holl_e'
         self.episodes = self.setup_data(holle_path)
-
         self.reset()
 
     def setup_data(self, path):

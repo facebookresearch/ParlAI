@@ -1130,4 +1130,15 @@ task_list = [
             "<https://arxiv.org/abs/1911.03842>."
         ),
     },
+    {
+        "id": "HollE",
+        "display_name": "Holl-E",
+        "task": "holl_e",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Sequence of utterances and responses with background knowledge about"
+            "movies. From the Holl-E dataset. More information found at"
+            " https://github.com/nikitacs16/Holl-E."
+        ),
+    },
 ]

@@ -24,5 +24,5 @@ full: All of the below
  More information can be found at https://github.com/nikitacs16/Holl-E/blob/master/data%20documentation/raw_data.md
  
 
-**Tags: #Holl_E, #All, #ChitChat**
+**Tags: #All, #ChitChat**
 
