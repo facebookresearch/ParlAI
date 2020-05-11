@@ -48,7 +48,7 @@ class HollETeacher(FixedDialogTeacher):
         group = argparser.add_argument_group('Holl-E Knowledge arguments')
         group.add_argument(
             '--knowledge',
-            type=bool,
+            type='bool',
             default=True,
             help='Whether to include supporting document knowledge',
         )
@@ -76,7 +76,6 @@ class HollETeacher(FixedDialogTeacher):
             data = json.load(f)
         episodes = []
         prev_id = None
-        # knowledge, conversation list
         episode = None, []
         for d in data:
             utterance = {'query': d['query'], 'response': d['response']}
@@ -122,7 +121,6 @@ class HollETeacher(FixedDialogTeacher):
                     knowledge += '\n' + list_to_str(data['comments'])
                 else:
                     knowledge += '\n' + data[ktype]
-        # dont return with \n at the start of the string
         return knowledge[1:]
 
     def num_examples(self):
