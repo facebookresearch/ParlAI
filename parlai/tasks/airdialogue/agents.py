@@ -40,28 +40,35 @@ class AirDialogueTeacher(FixedDialogTeacher):
         self.reset()
 
     def _setup_data(self, jsons_path):
+        messages = []
         train_path = os.path.join(jsons_path, 'train_data.json')
         test_valid_path = os.path.join(jsons_path, 'dev_data.json')
         if self.datatype.startswith('test'):
             with open(test_valid_path) as f:
                 for line in f:
                     if len(line) > 1:
-                        self.messages.append(json.loads(line))
+                        messages.append(json.loads(line))
         elif self.datatype.startswith('valid'):
             with open(test_valid_path) as f:
                 for line in f:
                     if len(line) > 1:
-                        self.messages.append(json.loads(line))
+                        messages.append(json.loads(line))
+            messages = messages[:len(messages)//2]
         else:
             with open(train_path) as f:
                 for line in f:
                     if len(line) > 1:
-                        self.messages.append(json.loads(line))
+                        messages.append(json.loads(line))
+            messages = messages[len(messages)//2]
+        
+        for message in messages:
+            self.messages.append(messages['dialogue'])
+
 
     def num_examples(self):
         examples = 0
         for data in self.messages:
-            examples += len(data['dialogue']) // 2
+            examples += len(data) // 2
         return examples
 
     def num_episodes(self):
@@ -69,12 +76,12 @@ class AirDialogueTeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         log_idx = entry_idx * 2
-        entry = self.messages[episode_idx]['dialogue'][log_idx]
+        entry = self.messages[episode_idx][log_idx]
         entry = entry.split(': ')[1]
-        last_backnforth_idx = len(self.messages[episode_idx]['dialogue']) - 2
+        last_backnforth_idx = len(self.messages[episode_idx]) - 2
         episode_done = log_idx >= last_backnforth_idx
         if log_idx < last_backnforth_idx:
-            label_text = self.messages[episode_idx]['dialogue'][log_idx + 1]
+            label_text = self.messages[episode_idx][log_idx + 1]
             label_text = label_text.split(': ')[1]
             labels = [label_text]
         else:
