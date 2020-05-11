@@ -56,7 +56,7 @@ class HollETeacher(FixedDialogTeacher):
             '--knowledge-types',
             '-kt',
             type=str,
-            default='plot,review',
+            default='full',
             help='Either "full" (all of the following) or comma separated list of knowledge types to include. Possible types: plot, review, comments, fact_table (contains awards, taglines, and similar movies). e.g. -kt plot,review,fact_table or -kt full',
         )
 
