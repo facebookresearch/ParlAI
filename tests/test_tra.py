@@ -41,15 +41,6 @@ class _AbstractTRATest(unittest.TestCase):
         # Accuracy threshold
         return 0.8
 
-    def test_train_topk(self):
-        args = self._get_args()
-        args['topk'] = 10
-        args['inference'] = 'topk'
-        valid, test = testing_utils.train_model(args)
-        threshold = self._get_threshold()
-
-        self.assertGreaterEqual(valid['hits@1'], threshold)
-
     # test train inline cands
     @testing_utils.retry(ntries=3)
     def test_train_inline(self):
@@ -292,6 +283,4 @@ class TestTransformerCrossencoder(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    a = TestTransformerRanker()
-    a.test_train_topk()
+    unittest.main()
