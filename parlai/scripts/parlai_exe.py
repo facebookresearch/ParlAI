@@ -26,14 +26,29 @@ def Parlai():
         print("no command given")
         exit()
 
-    map = {'train': 'train_model', 'eval': 'eval_model'}
-    if command in map:
-        command = map[command]
+    # List of mappings from a command name to the script to import and class to call.
+    maps = {
+        'train': ('parlai.scripts.train_model', 'TrainModel'),
+        'eval': ('parlai.scripts.eval_model', 'EvalModel'),
+    }
+    try:
+        # Add user-specified script mappings from parlai_internal, if available.
+        module_name = "parlai_internal.scripts.parlai_scripts"
+        module = importlib.import_module(module_name)
+        model_class = getattr(module, 'get_script_mappings')
+        model_class(maps)
+    except ImportError:
+        pass
+
+    if command in maps:
+        class_name = name_to_classname(maps[command][1])
+        script = maps[command][0]
+    else:
+        script = "parlai.scripts.%s" % command
+        class_name = name_to_classname(command)
 
     try:
-        module_name = "parlai.scripts.%s" % command
-        module = importlib.import_module(module_name)
-        class_name = name_to_classname(command)
+        module = importlib.import_module(script)
         model_class = getattr(module, class_name)
     except ImportError:
         print(command + " not found")
