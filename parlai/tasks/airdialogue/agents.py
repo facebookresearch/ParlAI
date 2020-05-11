@@ -40,29 +40,25 @@ class AirDialogueTeacher(FixedDialogTeacher):
         self.reset()
 
     def _setup_data(self, jsons_path):
-        messages = []
         train_path = os.path.join(jsons_path, 'train_data.json')
         test_valid_path = os.path.join(jsons_path, 'dev_data.json')
         if self.datatype.startswith('test'):
             with open(test_valid_path) as f:
                 for line in f:
                     if len(line) > 1:
-                        messages.append(json.loads(line))
+                        self.messages.append(json.loads(line)['dialogue'])
+            self.messages = self.messages[len(self.messages)//2:]
         elif self.datatype.startswith('valid'):
             with open(test_valid_path) as f:
                 for line in f:
                     if len(line) > 1:
-                        messages.append(json.loads(line))
-            messages = messages[:len(messages)//2]
+                        self.messages.append(json.loads(line)['dialogue'])
+            self.messages = self.messages[:len(self.messages)//2]
         else:
             with open(train_path) as f:
                 for line in f:
                     if len(line) > 1:
-                        messages.append(json.loads(line))
-            messages = messages[len(messages)//2]
-        
-        for message in messages:
-            self.messages.append(messages['dialogue'])
+                        self.messages.append(json.loads(line)['dialogue'])
 
 
     def num_examples(self):
