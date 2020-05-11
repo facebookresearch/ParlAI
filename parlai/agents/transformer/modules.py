@@ -66,70 +66,6 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
     return e
 
 
-def _build_encoder(
-    opt,
-    dictionary,
-    embedding=None,
-    padding_idx=None,
-    reduction_type='mean',
-    n_positions=1024,
-    n_segments=0,
-):
-    n_layers = (
-        opt['n_encoder_layers']
-        if opt.get('n_encoder_layers', -1) > 0
-        else opt['n_layers']
-    )
-    return TransformerEncoder(
-        n_heads=opt['n_heads'],
-        n_layers=n_layers,
-        embedding_size=opt['embedding_size'],
-        ffn_size=opt['ffn_size'],
-        vocabulary_size=len(dictionary),
-        embedding=embedding,
-        dropout=opt['dropout'],
-        attention_dropout=opt['attention_dropout'],
-        relu_dropout=opt['relu_dropout'],
-        padding_idx=padding_idx,
-        learn_positional_embeddings=opt['learn_positional_embeddings'],
-        embeddings_scale=opt['embeddings_scale'],
-        reduction_type=reduction_type,
-        n_positions=n_positions,
-        n_segments=n_segments,
-        activation=opt['activation'],
-        variant=opt['variant'],
-        output_scaling=opt['output_scaling'],
-    )
-
-
-def _build_decoder(
-    opt, dictionary, embedding=None, padding_idx=None, n_positions=1024, n_segments=0
-):
-    n_layers = (
-        opt['n_decoder_layers']
-        if opt.get('n_decoder_layers', -1) > 0
-        else opt['n_layers']
-    )
-    return TransformerDecoder(
-        n_heads=opt['n_heads'],
-        n_layers=n_layers,
-        embedding_size=opt['embedding_size'],
-        ffn_size=opt['ffn_size'],
-        vocabulary_size=len(dictionary),
-        embedding=embedding,
-        dropout=opt['dropout'],
-        attention_dropout=opt['attention_dropout'],
-        relu_dropout=opt['relu_dropout'],
-        padding_idx=padding_idx,
-        learn_positional_embeddings=opt['learn_positional_embeddings'],
-        embeddings_scale=opt['embeddings_scale'],
-        n_positions=n_positions,
-        activation=opt['activation'],
-        variant=opt['variant'],
-        n_segments=n_segments,
-    )
-
-
 def gelu(tensor):
     """
     Compute gelu function.
@@ -192,7 +128,7 @@ class TransformerMemNetModel(nn.Module):
         self.reduction_type = opt.get('reduction_type', 'mean')
         self.n_segments = opt.get('n_segments', 0)
 
-        self.context_encoder = _build_encoder(
+        self.context_encoder = TransformerGeneratorModel.build_encoder(
             opt,
             dictionary,
             self.embeddings,
@@ -211,7 +147,7 @@ class TransformerMemNetModel(nn.Module):
                 cand_embeddings = self.cand_embeddings
             else:
                 cand_embeddings = self.embeddings
-            self.cand_encoder = _build_encoder(
+            self.cand_encoder = TransformerGeneratorModel.build_encoder(
                 opt,
                 dictionary,
                 cand_embeddings,
@@ -965,6 +901,77 @@ class TransformerGeneratorModel(TorchGeneratorModel):
     Implements a full generator model, with one encoder and one decoder.
     """
 
+    @classmethod
+    def build_encoder(
+        cls,
+        opt,
+        dictionary,
+        embedding=None,
+        padding_idx=None,
+        reduction_type='mean',
+        n_positions=1024,
+        n_segments=0,
+    ):
+        n_layers = (
+            opt['n_encoder_layers']
+            if opt.get('n_encoder_layers', -1) > 0
+            else opt['n_layers']
+        )
+        return TransformerEncoder(
+            n_heads=opt['n_heads'],
+            n_layers=n_layers,
+            embedding_size=opt['embedding_size'],
+            ffn_size=opt['ffn_size'],
+            vocabulary_size=len(dictionary),
+            embedding=embedding,
+            dropout=opt['dropout'],
+            attention_dropout=opt['attention_dropout'],
+            relu_dropout=opt['relu_dropout'],
+            padding_idx=padding_idx,
+            learn_positional_embeddings=opt['learn_positional_embeddings'],
+            embeddings_scale=opt['embeddings_scale'],
+            reduction_type=reduction_type,
+            n_positions=n_positions,
+            n_segments=n_segments,
+            activation=opt['activation'],
+            variant=opt['variant'],
+            output_scaling=opt['output_scaling'],
+        )
+
+    @classmethod
+    def build_decoder(
+        cls,
+        opt,
+        dictionary,
+        embedding=None,
+        padding_idx=None,
+        n_positions=1024,
+        n_segments=0,
+    ):
+        n_layers = (
+            opt['n_decoder_layers']
+            if opt.get('n_decoder_layers', -1) > 0
+            else opt['n_layers']
+        )
+        return TransformerDecoder(
+            n_heads=opt['n_heads'],
+            n_layers=n_layers,
+            embedding_size=opt['embedding_size'],
+            ffn_size=opt['ffn_size'],
+            vocabulary_size=len(dictionary),
+            embedding=embedding,
+            dropout=opt['dropout'],
+            attention_dropout=opt['attention_dropout'],
+            relu_dropout=opt['relu_dropout'],
+            padding_idx=padding_idx,
+            learn_positional_embeddings=opt['learn_positional_embeddings'],
+            embeddings_scale=opt['embeddings_scale'],
+            n_positions=n_positions,
+            activation=opt['activation'],
+            variant=opt['variant'],
+            n_segments=n_segments,
+        )
+
     def __init__(self, opt, dictionary):
         self.pad_idx = dictionary[dictionary.null_token]
         self.start_idx = dictionary[dictionary.start_token]
@@ -992,7 +999,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         if n_positions < 0:
             raise ValueError('n_positions must be positive')
 
-        self.encoder = _build_encoder(
+        self.encoder = self.build_encoder(
             opt,
             dictionary,
             self.embeddings,
@@ -1001,7 +1008,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             n_positions=n_positions,
             n_segments=n_segments,
         )
-        self.decoder = _build_decoder(
+        self.decoder = self.build_decoder(
             opt, dictionary, self.embeddings, self.pad_idx, n_positions=n_positions
         )
 
