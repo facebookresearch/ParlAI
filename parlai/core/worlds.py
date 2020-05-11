@@ -150,6 +150,12 @@ class World(object):
         shared_data['agents'] = self._share_agents()
         return shared_data
 
+    def clone(self):
+        """
+        Create a duplicate of the world.
+        """
+        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
+
     def _share_agents(self):
         """
         Create shared data for agents.
@@ -1082,15 +1088,12 @@ class DynamicBatchWorld(World):
             self.max_batch_size = opt['batchsize']
 
         # TODO: check to ensure the agent has self_observe
-        shared = world.share()
         self.world = world
         # TODO: maybe generalize this
         self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
-        self.worlds = [
-            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
-        ]
+        self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
 
         self.reset()
 
@@ -1561,12 +1564,11 @@ def _create_task_agents(opt: Opt):
         # do not need task agents in interactive or self chat settings
         return []
 
-    my_module = load_task_module(opt['task'])
     try:
         # Tries to call the create_agent function in agents.py
+        my_module = load_task_module(opt['task'])
         task_agents = my_module.create_agents(opt)  # type: ignore
-
-    except AttributeError:
+    except (ModuleNotFoundError, AttributeError):
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
     if type(task_agents) != list:

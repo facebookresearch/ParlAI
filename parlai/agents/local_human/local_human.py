@@ -63,19 +63,24 @@ class LocalHumanAgent(Agent):
     def act(self):
         reply = Message()
         reply['id'] = self.getID()
-        reply_text = input(colorize("Enter Your Message:", 'field') + ' ')
+        try:
+            reply_text = input(colorize("Enter Your Message:", 'text') + ' ')
+        except EOFError:
+            self.finished = True
+            return {'episode_done': True}
+
         reply_text = reply_text.replace('\\n', '\n')
-        if self.opt.get('single_turn', False):
-            reply_text += '[DONE]'
         reply['episode_done'] = False
+        if self.opt.get('single_turn', False):
+            reply.force_set('episode_done', True)
         reply['label_candidates'] = self.fixedCands_txt
         if '[DONE]' in reply_text:
-            reply.force_set('episode_done', True)
-            self.episodeDone = True
-            reply_text = reply_text.replace('[DONE]', '')
+            # let interactive know we're resetting
+            raise StopIteration
         reply['text'] = reply_text
         if '[EXIT]' in reply_text:
             self.finished = True
+            raise StopIteration
         return reply
 
     def episode_done(self):

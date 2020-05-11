@@ -20,10 +20,11 @@ Examples
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_named_reports
+from parlai.core.metrics import aggregate_named_reports, Metric
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
+from parlai.scripts.script import ParlaiScript
 
 import json
 import random
@@ -53,11 +54,11 @@ def setup_args(parser=None):
         '--save-format',
         type=str,
         default='conversations',
-        choices=['jsonl', 'conversations', 'parlai'],
+        choices=['conversations', 'parlai'],
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
     parser.add_argument(
         '-mcs',
         '--metrics',
@@ -78,7 +79,7 @@ def setup_args(parser=None):
     )
     WorldLogger.add_cmdline_args(parser)
     TensorboardLogger.add_cmdline_args(parser)
-    parser.set_defaults(datatype='valid')
+    parser.set_params(datatype='valid')
     return parser
 
 
@@ -89,10 +90,16 @@ def _save_eval_stats(opt, report):
     if report_fname.startswith('.'):
         report_fname = opt['model_file'] + report_fname
 
+    json_serializable_report = report
+    for k, v in report.items():
+        if isinstance(v, Metric):
+            v = v.value()
+        json_serializable_report[k] = v
+
     # Save report
     with open(report_fname, 'w') as f:
         print(f'[ Saving model report to {report_fname} ... ]')
-        json.dump({'opt': opt, 'report': report}, f, indent=4)
+        json.dump({'opt': opt, 'report': json_serializable_report}, f, indent=4)
 
 
 def _eval_single_world(opt, agent, task):
@@ -197,6 +204,14 @@ def eval_model(opt, print_parser=None):
     return report
 
 
+class EvalModel(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return eval_model(self.opt)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    eval_model(parser.parse_args(print_args=False))
+    EvalModel.main()

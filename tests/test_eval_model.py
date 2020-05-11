@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.scripts.eval_model import setup_args
 
+import os
 import unittest
 import parlai.utils.testing as testing_utils
 
@@ -209,6 +210,26 @@ class TestEvalModel(unittest.TestCase):
                     500,
                     f'train:evalmode failed with bs {bs} and teacher {teacher}',
                 )
+
+    def test_save_report(self):
+        """
+        Test that we can save report from eval model.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            save_report = os.path.join(tmpdir, 'report')
+            parser = setup_args()
+            parser.set_defaults(
+                task='integration_tests',
+                model='repeat_label',
+                datatype='valid',
+                num_examples=5,
+                display_examples=False,
+                save_world_logs=True,
+                report_filename=save_report,
+            )
+
+            opt = parser.parse_args([], print_args=False)
+            valid, test = testing_utils.eval_model(opt)
 
 
 if __name__ == '__main__':

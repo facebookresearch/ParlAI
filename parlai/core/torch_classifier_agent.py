@@ -193,7 +193,8 @@ class TorchClassifierAgent(TorchAgent):
         shared['class_list'] = self.class_list
         shared['class_weights'] = self.class_weights
         shared['model'] = self.model
-        shared['optimizer'] = self.optimizer
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         return shared
 
     def _get_labels(self, batch):
@@ -281,7 +282,7 @@ class TorchClassifierAgent(TorchAgent):
         else:
             ref_prob = probs.cpu()[:, 0]
             # choose ref class if Prob(ref class) > threshold
-            prediction_id = ref_prob <= self.threshold
+            prediction_id = (ref_prob <= self.threshold).to(torch.int64)
         preds = [self.class_list[idx] for idx in prediction_id]
 
         if batch.labels is None or self.opt['ignore_labels']:

@@ -112,7 +112,6 @@ def build_dict(opt, skip_if_built=False):
         ordered_opt['datatype'] = dt
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
-        print('[ running dictionary over data.. ]')
         log_time = TimeLogger()
         total = world_dict.num_examples()
         if opt['dict_maxexs'] >= 0:

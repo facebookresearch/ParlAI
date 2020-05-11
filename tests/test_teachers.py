@@ -82,6 +82,50 @@ class TestParlAIDialogTeacher(unittest.TestCase):
             with self.assertRaises(ValueError):
                 testing_utils.display_data(opt)
 
+    def test_no_text(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\tlabels:bad label\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertRaises(ValueError):
+                testing_utils.display_data(opt)
+
+    def test_no_labels(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\ttext:bad text\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertRaises(ValueError):
+                testing_utils.display_data(opt)
+
+    def test_one_episode(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                for _ in range(1000):
+                    f.write('id:test_file\ttext:placeholder\tlabels:placeholder\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertWarnsRegex(UserWarning, "long episode"):
+                testing_utils.display_data(opt)
+
+            # invert the logic of the assertion
+            with self.assertRaises(self.failureException):
+                fp = os.path.join(tmpdir, "goodfile.txt")
+                with open(fp, "w") as f:
+                    for _ in range(1000):
+                        f.write(
+                            'id:test_file\ttext:placeholder\tlabels:placeholder\tepisode_done:True\n\n'
+                        )
+                opt = {
+                    'task': 'fromfile',
+                    'fromfile_datapath': fp,
+                    'display_verbose': True,
+                }
+                with self.assertWarnsRegex(UserWarning, "long episode"):
+                    testing_utils.display_data(opt)
+
 
 if __name__ == '__main__':
     unittest.main()

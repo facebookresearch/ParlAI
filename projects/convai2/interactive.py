@@ -116,7 +116,8 @@ def interactive(opt, print_parser=None):
             print("CHAT DONE ")
             print("In case you were curious you were talking to this bot:")
             print(bot_persona.split('\n'))
-            print("\n... preparing new chat... \n")
+            if not world.epoch_done():
+                print("\n... preparing new chat... \n")
             cnt = 0
 
 

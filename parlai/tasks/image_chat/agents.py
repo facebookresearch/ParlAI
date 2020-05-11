@@ -203,9 +203,6 @@ class GenerationTeacher(ImageChatTeacher):
     """
 
     def __init__(self, opt: Opt, shared: TShared = None):
-        if opt.get('datasplit', '100k') != '100k':
-            print('Warning: teacher only has 100k datasplit')
-            opt['datasplit'] = '100k'
         if not shared:
             self.idx_to_ep = {}
         else:

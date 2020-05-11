@@ -10,7 +10,51 @@ These functions are largely for converting strings specified in opts (like for -
 to the appropriate module.
 """
 
+from typing import Callable, Dict, Type
 import importlib
+
+
+##############################################################
+### REGISTRY
+##############################################################
+# for user added agents needed in just one script, or similar
+
+AGENT_REGISTRY: Dict[str, Type] = {}
+TEACHER_REGISTRY: Dict[str, Type] = {}
+
+
+def register_agent(name: str) -> Callable[[Type], Type]:
+    """
+    Register an agent to be available in command line calls.
+
+    >>> @register_teacher("my_agent")
+    ... class MyAgent:
+    ...     pass
+    """
+
+    def _inner(cls_):
+        global AGENT_REGISTRY
+        AGENT_REGISTRY[name] = cls_
+        return cls_
+
+    return _inner
+
+
+def register_teacher(name: str) -> Callable[[Type], Type]:
+    """
+    Register a teacher to be available as a command line.
+
+    >>> @register_teacher("my_teacher")
+    ... class MyTeacher:
+    ...    pass
+    """
+
+    def _inner(cls_):
+        global TEACHER_REGISTRY
+        TEACHER_REGISTRY[name] = cls_
+        return cls_
+
+    return _inner
 
 
 ##############################################################
@@ -72,6 +116,10 @@ def load_agent_module(agent_path: str):
     :return:
         module of agent
     """
+    global AGENT_REGISTRY
+    if agent_path in AGENT_REGISTRY:
+        return AGENT_REGISTRY[agent_path]
+
     repo = 'parlai'
     if agent_path.startswith('internal:'):
         # To switch to local repo, useful for non-public projects
@@ -212,6 +260,10 @@ def load_teacher_module(taskname: str):
     :return:
         teacher module
     """
+    global TEACHER_REGISTRY
+    if taskname in TEACHER_REGISTRY:
+        return TEACHER_REGISTRY[taskname]
+
     task_module = load_task_module(taskname)
     task_path_list, repo = _get_task_path_and_repo(taskname)
 

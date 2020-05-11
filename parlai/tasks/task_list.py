@@ -64,6 +64,17 @@ task_list = [
         ),
     },
     {
+        "id": "BlendedSkillTalk",
+        "display_name": "Blended Skill Talk",
+        "task": "blended_skill_talk",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of 7k conversations explicitly designed to exhibit multiple "
+            "conversation modes: displaying personality, having empathy, and "
+            "demonstrating knowledge."
+        ),
+    },
+    {
         "id": "BookTest",
         "display_name": "BookTest",
         "task": "booktest",
@@ -1121,6 +1132,16 @@ task_list = [
         "tags": ["All"],
         "description": (
             "Task for rephrasing sentences from Wikipedia conditioned on a persona."
+        ),
+    },
+    {
+        "id": "LIGHTGenderBias",
+        "display_name": "LIGHT Gender Bias",
+        "task": "light_genderation_bias",
+        "tags": ["All"],
+        "description": (
+            "Task for debiasing the LIGHT dataset, all mitigation methods described here: "
+            "<https://arxiv.org/abs/1911.03842>."
         ),
     },
 ]

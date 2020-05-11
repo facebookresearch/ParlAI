@@ -22,6 +22,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.strings import colorize
+from parlai.scripts.script import ParlaiScript
 
 import random
 
@@ -41,7 +42,7 @@ def setup_args(parser=None):
         help='If false, simple converational view, does not show other message fields.',
     )
 
-    parser.set_defaults(datatype='train:stream')
+    parser.set_defaults(datatype='train:ordered')
     return parser
 
 
@@ -50,9 +51,7 @@ def simple_display(opt, world, turn):
         raise RuntimeError('Simple view only support batchsize=1')
     act = world.get_acts()[0]
     if turn == 0:
-        text = (
-            "    - - - NEW EPISODE: " + act.get('id', "[no agent id]") + " - - -       "
-        )
+        text = "- - - NEW EPISODE: " + act.get('id', "[no agent id]") + " - - -"
         print(colorize(text, 'highlight'))
     text = act.get('text', '[no text field]')
     print(colorize(text, 'text'))
@@ -62,6 +61,10 @@ def simple_display(opt, world, turn):
 
 
 def display_data(opt):
+    # force ordered data to prevent repeats
+    if 'ordered' not in opt['datatype']:
+        opt['datatype'] = opt['datatype'].split(':')[0] + ':ordered'
+
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -96,10 +99,15 @@ def display_data(opt):
         pass
 
 
+class DisplayData(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return display_data(self.opt)
+
+
 if __name__ == '__main__':
     random.seed(42)
-
-    # Get command line arguments
-    parser = setup_args()
-    opt = parser.parse_args()
-    display_data(opt)
+    DisplayData.main()
