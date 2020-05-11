@@ -35,8 +35,7 @@ def Parlai():
         # Add user-specified script mappings from parlai_internal, if available.
         module_name = "parlai_internal.scripts.parlai_scripts"
         module = importlib.import_module(module_name)
-        model_class = getattr(module, 'get_script_mappings')
-        model_class(maps)
+        module.get_script_mappings(maps)
     except ImportError:
         pass
 
