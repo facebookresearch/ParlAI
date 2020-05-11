@@ -1130,4 +1130,15 @@ task_list = [
             "<https://arxiv.org/abs/1911.03842>."
         ),
     },
+    {
+        "id": "AirDialogue",
+        "display_name": "AirDialogue",
+        "task": "airdialogue",
+        "tags": ["All", "Goal"],
+        "description": (
+            "Task for goal-oriented dialogue using airplane booking conversations "
+            "between agents and customers. Paper and toolkits for the dataset can be"
+            " found at <https://github.com/google/airdialogue>."
+        ),
+    },
 ]
