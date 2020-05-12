@@ -240,6 +240,22 @@ class OffensiveStringMatcher:
 
         return None
 
+    def find_all_offensive_language(self, text):
+        """
+        Determine if text contains any offensive words in the filter.
+        """
+        if type(text) is str:
+            toks = self.tokenize(text.lower())
+        elif type(text) is list or type(text) is tuple:
+            toks = text
+
+        all_offenses = []
+        for i in range(len(toks)):
+            res = self._check_sequence(toks, i, self.offensive_trie)
+            if res:
+                all_offenses.append(res)
+        return all_offenses
+
     def __contains__(self, key):
         """
         Determine if text contains any offensive words in the filter.
