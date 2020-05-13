@@ -100,14 +100,6 @@ installtorchgpu15: &installtorchgpu15
       python -m torch.utils.collect_env
 
 
-installtorchcpuosx: &installtorchcpuosx
-  run:
-    name: Install torch CPU and dependencies
-    command: |
-      pip3 install --progress-bar off torch==1.5.0+cpu
-      python -c 'import torch; print("Torch version:", torch.__version__)'
-      python -m torch.utils.collect_env
-
 installtorchcpu: &installtorchcpu
   run:
     name: Install torch CPU and dependencies
@@ -149,7 +141,7 @@ jobs:
       - restore_cache:
           key: deps-v5-osx-testing1-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installtorchcpuosx
+      - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
           key: deps-v5-osx-testing1-{{ checksum "requirements.txt" }}
@@ -255,7 +247,7 @@ jobs:
       - restore_cache:
           key: deps-v5-gpu15-testing1-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installtorchgpu13
+      - <<: *installtorchgpu15
       - <<: *installdeps
       - save_cache:
           key: deps-v5-gpu15-testing1-{{ checksum "requirements.txt" }}
@@ -466,7 +458,7 @@ workflows:
   version: 2
   commit:
     jobs:
-      - unittests_gpu13
+      - unittests_gpu15
       - unittests_gpu14
       - unittests_38
       - unittests_37
