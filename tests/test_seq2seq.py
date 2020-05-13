@@ -100,6 +100,7 @@ class TestSeq2Seq(unittest.TestCase):
 
 class TestHogwildSeq2seq(unittest.TestCase):
     @testing_utils.skipIfGPU
+    @testing_utils.skipIfTorchVersion("1.5.0")
     def test_generation_multi(self):
         """
         This test uses a multi-turn task and multithreading.

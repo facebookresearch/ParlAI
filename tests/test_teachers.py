@@ -49,8 +49,8 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         self._test_display_output('no_image_model')
 
-    @testing_utils.skipUnlessTorch14
     @testing_utils.skipUnlessGPU
+    @testing_utils.skipUnlessTorchVersion(version="1.4.0")
     def test_display_data_resnet(self):
         """
         Test that, with pre-loaded image features, all examples are different.

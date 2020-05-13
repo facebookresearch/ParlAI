@@ -15,6 +15,7 @@ BATCHSIZE_CHOICES = [1, 8]
 
 
 @testing_utils.skipIfGPU
+@testing_utils.skipIfTorchVersion(version="1.5.0")
 class TestHogwild(unittest.TestCase):
     """
     Check that hogwild is doing the right number of examples.
@@ -33,7 +34,7 @@ class TestHogwild(unittest.TestCase):
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
-                opt['num_threads'] = nt
+                opt['numthreads'] = nt
                 opt['batchsize'] = bs
 
                 valid, test = testing_utils.train_model(opt)
@@ -49,12 +50,34 @@ class TestHogwild(unittest.TestCase):
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
-                opt['num_threads'] = nt
+                opt['numthreads'] = nt
                 opt['batchsize'] = bs
 
                 valid, test = testing_utils.eval_model(opt)
                 self.assertEqual(valid['exs'], NUM_EXS)
                 self.assertEqual(test['exs'], NUM_EXS)
+
+
+@testing_utils.skipUnlessTorchVersion(version="1.5.0")
+class TestHogwildAntiquated(unittest.TestCase):
+    """
+    Test that hogwild throws an error on pytorch 1.5 plus.
+    """
+
+    def test_errors(self):
+        opt = dict(
+            task='integration_tests:repeat:{}'.format(1),
+            model='repeat_label',
+            display_examples=False,
+            num_epochs=1,
+        )
+        for nt in NUM_THREADS_CHOICES:
+            for bs in BATCHSIZE_CHOICES:
+                opt['numthreads'] = nt
+                opt['batchsize'] = bs
+
+                with self.assertRaises(RuntimeError):
+                    testing_utils.train_model(opt)
 
 
 if __name__ == '__main__':

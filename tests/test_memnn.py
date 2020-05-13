@@ -46,6 +46,7 @@ class TestMemnn(unittest.TestCase):
         self.assertGreater(test['hits@1'], 0.95)
 
     @testing_utils.skipIfGPU
+    @testing_utils.skipIfTorchVersion("1.5.0")
     @testing_utils.retry()
     def test_labelcands_multi(self):
         """
@@ -73,6 +74,7 @@ class TestMemnn(unittest.TestCase):
         self.assertGreater(valid['hits@1'], 0.95)
         self.assertGreater(test['hits@1'], 0.95)
 
+    @unittest.skip
     def test_backcomp(self):
         """
         Tests that the memnn model files continue to works over time.

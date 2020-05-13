@@ -48,7 +48,13 @@ import time
 from typing import List, Dict, Any, Union
 
 try:
-    from torch.multiprocessing import Process, Value, Condition, Semaphore
+    from torch.multiprocessing import (
+        Process,
+        Value,
+        Condition,
+        Semaphore,
+        set_start_method,
+    )
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 
@@ -1356,6 +1362,16 @@ class HogwildWorld(World):
     """
 
     def __init__(self, opt: Opt, world):
+        from packaging import version
+        import torch
+
+        if version.parse(torch.__version__) >= version.parse('1.5.0'):
+            raise RuntimeError(
+                'Hogwild no longer works in pytorch 1.5 or newer. You can downgrade '
+                'to pytorch 1.4, but it would be better to migrate away from hogwild. '
+                'Please file a GitHub issue if you find a migration untenable.'
+            )
+
         super().__init__(opt)
         self.inner_world = world
         self.numthreads = opt['numthreads']

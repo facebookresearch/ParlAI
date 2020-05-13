@@ -12,6 +12,7 @@ import time
 
 
 @testing_utils.skipIfGPU
+@testing_utils.skipIfTorchVersion("1.5.0")
 class TestSharedTable(unittest.TestCase):
     """
     Make sure the package is alive.

@@ -89,15 +89,31 @@ def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
-def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
+def skipUnlessTorchVersion(version):
     skip = False
     if not TORCH_AVAILABLE:
         skip = True
     else:
-        from packaging import version
+        import packaging.version
 
-        skip = version.parse(torch.__version__) < version.parse('1.4.0')
-    return unittest.skipIf(skip, reason)(testfn)
+        target = packaging.version.parse(version)
+        skip = packaging.version.parse(torch.__version__) < target
+    reason = 'Test requires pytorch {version} or newer'
+    return unittest.skipIf(skip, reason)
+
+
+def skipIfTorchVersion(version):
+    skip = False
+    if not TORCH_AVAILABLE:
+        skip = True
+    else:
+        import packaging.version
+
+        target = packaging.version.parse(version)
+        skip = packaging.version.parse(torch.__version__) >= target
+    reason = 'Test requires pytorch OLDER than {version}'
+
+    return unittest.skipIf(skip, reason)
 
 
 class retry(object):

@@ -53,7 +53,7 @@ EVAL_ARGS = {
 }
 
 
-@testing_utils.skipUnlessTorch14
+@testing_utils.skipUnlessTorchVersion(version="1.4.0")
 class TestImageSeq2Seq(unittest.TestCase):
     """
     Unit tests for the ImageSeq2Seq Agent.
