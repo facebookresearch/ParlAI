@@ -48,13 +48,7 @@ import time
 from typing import List, Dict, Any, Union
 
 try:
-    from torch.multiprocessing import (
-        Process,
-        Value,
-        Condition,
-        Semaphore,
-        set_start_method,
-    )
+    from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
 
