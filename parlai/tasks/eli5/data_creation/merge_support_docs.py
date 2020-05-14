@@ -11,13 +11,12 @@ Modified to use data directory rather than a hard-coded processed data directory
 """
 
 import os
-import sys
 import json
 from parlai.core.params import ParlaiParser
 from os.path import join as pjoin
-from os.path import isdir
+from os.path import isdir, isfile
 from glob import glob
-from data_utils import *
+from data_utils import merge_support_docs
 
 
 def setup_args():
@@ -36,9 +35,11 @@ def setup_args():
     )
     return parser.parse_args()
 
+
+# merge CC docs that weren't created for eli5
 def merge_non_eli_docs(doc_name):
     docs = []
-    merged  = {}
+    merged = {}
     for f_name in glob(pjoin(doc_name, '*.json')):
         docs += json.load(open(f_name))
     if not docs or len(docs[0]) < 3:
@@ -55,6 +56,7 @@ def merge_non_eli_docs(doc_name):
             if (x['url'] not in [y['url'] for y in merged[eli_k][:i]])
         ]
     return list(merged.items())
+
 
 if __name__ == '__main__':
     opt = setup_args()
@@ -85,6 +87,7 @@ if __name__ == '__main__':
     else:
         d_name = pjoin(opt['datapath'], 'eli5/processed_data/collected_docs', name, ca)
         if isdir(d_name):
+            # merge docs in single slice (0-9) directory
             non_eli_merged = merge_non_eli_docs(d_name)
             if non_eli_merged is None:
                 merged = merge_support_docs(d_name)

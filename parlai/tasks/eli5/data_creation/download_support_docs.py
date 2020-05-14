@@ -4,18 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import argparse
 import json
 import subprocess
-import os
-
 from os.path import join as pjoin
 from os.path import isfile
 from os.path import isdir
-from subprocess import check_output
 from time import time
 from parlai.core.params import ParlaiParser
-from data_utils import *
+from data_utils import word_url_tokenize, make_ccid_filter
 
 """
 Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_support_docs.py
@@ -202,6 +198,7 @@ def main():
             [(name, dict([(i, []) for i in range(10)])) for name in sr_names]
         )
         mode = 'subreddits'
+    # check progress of slice or if slice is finished
     if isfile(pjoin(output_dir, 'tmp', 'counts_%s_%d.json' % (mode, opt['slnum']))):
         start_line = json.load(
             open(pjoin(output_dir, 'tmp', 'counts_%s_%d.json' % (mode, opt['slnum'])))
@@ -232,10 +229,10 @@ def main():
         if not isfile(fpath):
             ct_try = 0
             while not isfile(fpath):
-                resp_c = subprocess.run(['rm', fpath + ".gz"], stdout=subprocess.PIPE)
+                subprocess.run(['rm', fpath + ".gz"], stdout=subprocess.PIPE)
                 while not isfile(fpath + ".gz"):
                     url = "https://commoncrawl.s3.amazonaws.com/" + url_lst[i]
-                    resp_a = subprocess.run(
+                    subprocess.run(
                         ['wget', '-P', pjoin(output_dir, 'tmp'), url],
                         stdout=subprocess.PIPE,
                     )
@@ -246,9 +243,7 @@ def main():
                         break
                 downloaded = isfile(fpath + ".gz")
                 if downloaded:
-                    resp_b = subprocess.run(
-                        ['gunzip', fpath + ".gz"], stdout=subprocess.PIPE
-                    )
+                    subprocess.run(['gunzip', fpath + ".gz"], stdout=subprocess.PIPE)
                     print("download and gunzip:", time() - dl_time)
                 if ct_try > 5 and not isfile(fpath):
                     print("giving up on file", fname)
@@ -268,6 +263,8 @@ def main():
         ct = 0
         start_time = time()
         ccid_path_tuple = False
+        # check and save pages by IDs if getting posts by IDs, or by URLs
+        # if using URLs
         for line in f:
             if line.startswith("WARC/1.0"):
                 if ccid_path_tuple:
@@ -292,7 +289,7 @@ def main():
                     article_url = line.strip().split()[-1]
                     if using_specific_urls:
                         ccid_path_tuple = check_url(select_urls, article_url)
-                except Exception as _:
+                except Exception:
                     article_url = '<UNK>'
                     if using_specific_urls:
                         ccid_path_tuple = False
@@ -301,7 +298,7 @@ def main():
                     article_id = line.strip().split()[-1]
                     if not using_specific_urls:
                         ccid_path_tuple = select_ccid.get(article_id, False)
-                except Exception as _:
+                except Exception:
                     article_id = '<UNK>'
                     if not using_specific_urls:
                         ccid_path_tuple = False
@@ -325,7 +322,8 @@ def main():
                 name, num = ccid_path_tuple
                 articles[name][num % 10] += [(num, article)]
         f.close()
-        resp_c = subprocess.run(['rm', fpath], stdout=subprocess.PIPE)
+        subprocess.run(['rm', fpath], stdout=subprocess.PIPE)
+        # periodically save slice
         print(">>>>>>>>>> ARTICLES FOUND %d in %.2f" % (ct, time() - start_time))
         if i % opt['save_freq'] == opt['save_freq'] - 1:
             for name, elik_maps in articles.items():
@@ -350,8 +348,8 @@ def main():
                 ),
             )
             print('saved json files %.2f' % (time() - start_time,))
-        resp_c = subprocess.run(['rm', fpath], stdout=subprocess.PIPE)
-    print('final save')
+        subprocess.run(['rm', fpath], stdout=subprocess.PIPE)
+    # save items to slices
     for name, elik_maps in articles.items():
         print('saving', name, i, len(elik_maps))
         for i_st, ls in elik_maps.items():

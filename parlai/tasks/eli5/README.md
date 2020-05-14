@@ -23,7 +23,7 @@ No, we are not allowed to host processed Reddit or CommonCrawl data. While we ar
 
 ## Overview of the data creation process
 
-The process consists of four steps. *Steps 1 and 2 should be run in parallel.*
+The process consists of four steps. *Steps 2 and 3 should be run in parallel.*
 
 1. **Run build.py to setup the directory and download pre-computed files**. This only takes a few minutes.
 2. **Downloading and filtering the Reddit data.** This can be run on a single machine and may take up to 72 hours.
@@ -52,8 +52,8 @@ The first line takes about 6 hours on one machine to download the questions, and
 
 ## Downloading support documents from the CommonCrawl
 
-We provide a list of CommonCrawl IDs for supporting documents for each of the questions.
-These are obtained from `build.py` which we went over above.
+The ELI5 repo provides list of CommonCrawl IDs for supporting documents for each of the questions.
+This list is obtained from `build.py` which we went over above.
 
 
 The next step then consists in reading through the CommonCrawl WET files to gather the text of pages which are used as support documents. In order to gather the documents for each QA pair (up to 100 per pair, sometimes less after deduplicating) using a SLURM cluster and 100 threads, run:
@@ -67,7 +67,7 @@ When you have downloaded the selected pages from all of the CommonCrawl slices, 
 ```
 ./eli_merge_docs_launcher.sh
 cd ..
-python merge_support_docs.py -n explainlikeimfive -f finalize
+python merge_support_docs.py -n explainlikeimfive -c finalize
 ```
 
 ### FAQ: my SLURM cluster is not very stable and some of the threads are interrupted. Do I need to re-run everything?

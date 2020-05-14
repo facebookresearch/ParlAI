@@ -8,11 +8,8 @@
 from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import subprocess
-import os
-
 from os.path import join as pjoin
-from os.path import isfile
-from os.path import isdir
+from os.path import isfile, isdir
 
 
 # pre-computed files
@@ -54,8 +51,6 @@ def build(opt):
     version = '1.0'
 
     if not build_data.built(dpath, version_string=version):
-        print('[building image data: ' + dpath + ']')
-
         # Setup directory folders
         setup_dir(dpath, 'tmp')
         setup_dir(dpath, 'pre_computed')
@@ -84,17 +79,22 @@ def build(opt):
                         stdout=subprocess.PIPE,
                     )
 
-        # Check that wet.paths and eli5 ccrawl ids have been unzipped
-        if not isfile(pjoin(pre_computed_path, 'wet.paths')):
-            print(
-                f'Unzip wet.paths.gz located at {pre_computed_path} with command:\n',
-                'gunzip wet.paths.gz',
-            )
-        if not isfile(pjoin(pre_computed_path, 'explainlikeimfive_ccrawl_ids.json')):
-            print(
-                f'Unzip explainlikeimfive_ccrawl_ids.json.gz located at {pre_computed_path} with command:\n',
-                'gunzip explainlikeimfive_ccrawl_ids.json.gz',
-            )
+    # Check that wet.paths and eli5 ccrawl ids have been unzipped
+    paths_unzipped = True
+    eli_ids_unzipped = True
+    if not isfile(pjoin(pre_computed_path, 'wet.paths')):
+        print(
+            f'Unzip wet.paths.gz located at {pre_computed_path} with command:\n',
+            'gunzip wet.paths.gz',
+        )
+        paths_unzipped = False
+    if not isfile(pjoin(pre_computed_path, 'explainlikeimfive_ccrawl_ids.json')):
+        print(
+            f'Unzip explainlikeimfive_ccrawl_ids.json.gz located at {pre_computed_path} with command:\n',
+            'gunzip explainlikeimfive_ccrawl_ids.json.gz',
+        )
+        eli_ids_unzipped = False
+    if paths_unzipped and eli_ids_unzipped:
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
 

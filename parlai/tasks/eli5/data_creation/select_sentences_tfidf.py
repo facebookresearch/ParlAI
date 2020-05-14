@@ -6,12 +6,12 @@
 
 import json
 import os
-import sys
 
 from os.path import join as pjoin
+from os.path import isfile, isdir
 from parlai.core.params import ParlaiParser
 from time import time
-from data_utils import *
+from data_utils import sentence_split, tf_idf_vec, tf_idf_dist
 
 """
 File adapted from

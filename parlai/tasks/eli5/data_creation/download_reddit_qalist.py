@@ -10,7 +10,6 @@ _reddit_qalist.py to download specific post IDs.
 """
 
 ### space-efficient download from https://files.pushshift.io/reddit/
-import argparse
 import bz2
 import io
 import json
@@ -22,13 +21,12 @@ import subprocess
 import zstandard as zstd
 
 from bs4 import BeautifulSoup
-from glob import glob
 from os.path import isfile
 from os.path import join as pjoin
 from time import sleep, time
 from collections import defaultdict
 from parlai.core.params import ParlaiParser
-from data_utils import *
+from data_utils import word_url_tokenize
 
 REDDIT_URL = "https://files.pushshift.io/reddit/"
 API_URL = "https://api.pushshift.io/reddit/"
@@ -70,6 +68,7 @@ def download_and_process(file_url, mode, subreddit_names, st_time, output_dir):
     reddit_tmp_dir = pjoin(output_dir, 'reddit_tmp')
     f_name = pjoin(reddit_tmp_dir, file_url.split('/')[-1])
     tries_left = 4
+    # open monthly dumps and download lines in posts
     while tries_left:
         try:
             print("downloading %s %2f" % (f_name, time() - st_time))
@@ -105,7 +104,7 @@ def download_and_process(file_url, mode, subreddit_names, st_time, output_dir):
             os.remove(f_name)
             tries_left = 0
 
-        except EOFError as e:
+        except EOFError:
             sleep(10)
             print(
                 "failed reading file %s file, another %d tries" % (f_name, tries_left)
@@ -148,7 +147,7 @@ def download_and_process_posts(post_ids, st_time):
     # download and pre-process original posts
     subreddit_names = set()
     lines = defaultdict(list)
-
+    # read lines from posts
     for i, (name, l) in enumerate(get_posts(post_ids)):
         if i % 1000000 == 0:
             print(
@@ -166,7 +165,6 @@ def download_and_process_posts(post_ids, st_time):
     for name in subreddit_names:
         for line in lines[name]:
             reddit_dct = json.loads(line)
-            print(reddit_dct['score'], reddit_dct['num_comments'])
             if reddit_dct.get('num_comments', 1) > 0:
                 reddit_res = {}
                 for k in key_list:
@@ -348,8 +346,6 @@ def main():
                 print("loaded already processed documents")
         # slice file save
         # get monthly reddit dumps
-        n_months = 0
-
         for year in range(opt['start_year'], opt['end_year'] + 1):
             st_month = opt['start_month'] if year == opt['start_year'] else 1
             end_month = opt['end_month'] if year == opt['end_year'] else 12
@@ -366,7 +362,7 @@ def main():
                             st_time,
                             output_dir,
                         )
-                    except FileNotFoundError as e:
+                    except FileNotFoundError:
                         sleep(60)
                         print("retrying %s once" % (submissions_url))
                         processed_submissions = download_and_process(
@@ -388,7 +384,7 @@ def main():
                             st_time,
                             output_dir,
                         )
-                    except FileNotFoundError as e:
+                    except FileNotFoundError:
                         sleep(60)
                         print("retrying %s once" % (comments_url))
                         processed_comments = download_and_process(
@@ -440,7 +436,7 @@ def main():
                 sr_names, processed_submissions = download_and_process_posts(
                     post_ids, st_time
                 )
-            except FileNotFoundError as e:
+            except FileNotFoundError:
                 sleep(60)
                 print("retrying %s once" % (submissions_url))
                 sr_names, processed_submissions = download_and_process_posts(
@@ -471,7 +467,7 @@ def main():
                 sr_names, processed_comments = download_and_process_comments(
                     post_ids, st_time
                 )
-            except FileNotFoundError as e:
+            except FileNotFoundError:
                 sleep(60)
                 print("retrying %s once" % (submissions_url))
                 sr_names, processed_comments = download_and_process_comments(
@@ -492,7 +488,7 @@ def main():
                     qa_dict[name] = dict(json.load(f))
                     f.close()
                     print("loaded already processed documents")
-
+            # merge submissions and comments
             for name in sr_names:
                 merged_comments = 0
                 for dct in processed_comments[name]:
