@@ -14,7 +14,7 @@ Explore the Dataset: https://facebookresearch.github.io/ELI5/explore.html
 
 # Data creation
 
-We provide a suite of scripts to download paired questions and answers from the ELI5 subreddit along with supporting documents from the CommonCrawl
+This is a suite of scripts to download paired questions and answers from the ELI5 subreddit along with supporting documents from the CommonCrawl
 
 ### FAQ: can you provide the processed data?
 
@@ -30,7 +30,7 @@ The process consists of four steps. *Steps 2 and 3 should be run in parallel.*
 3. **Downloading and tokenizing the CommonCrawl pages.** This part requires access to a cluster. We provide a sample SLURM script using 100 threads, which on our cluster finishes in under 48 hours.
 4. **Selecting passages from the downloaded pages to create the final support document.** After running steps 1 and 2, this part uses our TFIDF heuristic to create the final ~1000 words support document, and create a train/valid/test split of Question-Document-Answer triplets.
 
-If you are having trouble with any of these, please an open an issue in the
+If you are having trouble with any of steps 2-4, please an open an issue in the
 [ELI5 Repo](https://github.com/facebookresearch/ELI5/).
 
 ## Downloading pre-computed files for support documents
@@ -51,10 +51,6 @@ The first line takes about 6 hours on one machine to download the questions, and
 
 
 ## Downloading support documents from the CommonCrawl
-
-The ELI5 repo provides list of CommonCrawl IDs for supporting documents for each of the questions.
-This list is obtained from `build.py` which we went over above.
-
 
 The next step then consists in reading through the CommonCrawl WET files to gather the text of pages which are used as support documents. In order to gather the documents for each QA pair (up to 100 per pair, sometimes less after deduplicating) using a SLURM cluster and 100 threads, run:
 ```
