@@ -108,7 +108,6 @@ class ReDialTeacher(FixedDialogTeacher):
     def num_episodes(self):
         return len(self.episodes)
 
-    # if the initiator speaks last gets an index out of range exception
     def get(self, episode_idx, entry_idx=0):
         text_idx = entry_idx * 2
         entry = self.episodes[episode_idx][text_idx]
