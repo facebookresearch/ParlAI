@@ -32,11 +32,12 @@ class TestAbstractImageTeacher(unittest.TestCase):
                 'task': 'integration_tests:ImageTeacher',
                 'datapath': data_path,
                 'image_mode': image_mode,
+                'display_verbose': True,
             }
             output = testing_utils.display_data(opt)
-            train_labels = re.findall(r"\[labels: .*\]", output[0])
-            valid_labels = re.findall(r"\[eval_labels: .*\]", output[1])
-            test_labels = re.findall(r"\[eval_labels: .*\]", output[2])
+            train_labels = re.findall(r"\[labels\].*\n", output[0])
+            valid_labels = re.findall(r"\[eval_labels\].*\n", output[1])
+            test_labels = re.findall(r"\[eval_labels\].*\n", output[2])
 
             for i, lbls in enumerate([train_labels, valid_labels, test_labels]):
                 self.assertGreater(len(lbls), 0, 'DisplayData failed')
@@ -55,6 +56,75 @@ class TestAbstractImageTeacher(unittest.TestCase):
         Test that, with pre-loaded image features, all examples are different.
         """
         self._test_display_output('resnet152')
+
+
+class TestParlAIDialogTeacher(unittest.TestCase):
+    def test_good_fileformat(self):
+        """
+        Checks that we fail to load a dataset where the use specified eval_labels.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "goodfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\ttext:input\tlabels:good label\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            testing_utils.display_data(opt)
+
+    def test_bad_fileformat(self):
+        """
+        Checks that we fail to load a dataset where the use specified eval_labels.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\ttext:input\teval_labels:bad label\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertRaises(ValueError):
+                testing_utils.display_data(opt)
+
+    def test_no_text(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\tlabels:bad label\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertRaises(ValueError):
+                testing_utils.display_data(opt)
+
+    def test_no_labels(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                f.write('id:test_file\ttext:bad text\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertRaises(ValueError):
+                testing_utils.display_data(opt)
+
+    def test_one_episode(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.txt")
+            with open(fp, "w") as f:
+                for _ in range(1000):
+                    f.write('id:test_file\ttext:placeholder\tlabels:placeholder\n\n')
+            opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertWarnsRegex(UserWarning, "long episode"):
+                testing_utils.display_data(opt)
+
+            # invert the logic of the assertion
+            with self.assertRaises(self.failureException):
+                fp = os.path.join(tmpdir, "goodfile.txt")
+                with open(fp, "w") as f:
+                    for _ in range(1000):
+                        f.write(
+                            'id:test_file\ttext:placeholder\tlabels:placeholder\tepisode_done:True\n\n'
+                        )
+                opt = {
+                    'task': 'fromfile',
+                    'fromfile_datapath': fp,
+                    'display_verbose': True,
+                }
+                with self.assertWarnsRegex(UserWarning, "long episode"):
+                    testing_utils.display_data(opt)
 
 
 if __name__ == '__main__':

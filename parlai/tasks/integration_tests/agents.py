@@ -56,11 +56,16 @@ class CandidateBaseTeacher(Teacher, ABC):
         num_test: int = NUM_TEST,
     ):
         """
-        :param int vocab_size: size of the vocabulary
-        :param int example_size: length of each example
-        :param int num_candidates: number of label_candidates generated
-        :param int num_train: size of the training set
-        :param int num_test: size of the valid/test sets
+        :param int vocab_size:
+            size of the vocabulary
+        :param int example_size:
+            length of each example
+        :param int num_candidates:
+            number of label_candidates generated
+        :param int num_train:
+            size of the training set
+        :param int num_test:
+            size of the valid/test sets
         """
         self.opt = opt
         datatype = opt['datatype'].split(':')[0]
@@ -425,6 +430,24 @@ class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
             yield (t, a), e
 
 
+class ClassifierTeacher(CandidateTeacher):
+    """
+    Classifier Teacher.
+
+    Good for testing simple classifier models.
+    """
+
+    def setup_data(self, fold):
+        raw = super().setup_data(fold)
+        for (t, _a, _r, _c), e in raw:
+            letters = t.split(' ')
+            # everything starts with 0 or 1
+            letters[0] = str(int(int(t[0]) % 2))
+            label = 'one' if letters[0] == '1' else 'zero'
+            text = ' '.join(letters)
+            yield (text, [label], 0, ['one', 'zero']), e
+
+
 class BadExampleTeacher(CandidateTeacher):
     """
     Teacher which produces a variety of examples that upset verify_data.py.
@@ -549,7 +572,10 @@ class RepeatTeacher(DialogTeacher):
         opt = copy.deepcopy(opt)
         opt['datafile'] = 'unused_path'
         task = opt.get('task', 'integration_tests:RepeatTeacher:50')
-        self.data_length = int(task.split(':')[-1])
+        try:
+            self.data_length = int(task.split(':')[-1])
+        except ValueError:
+            self.data_length = 10
         super().__init__(opt, shared)
 
     def setup_data(self, unused_path):

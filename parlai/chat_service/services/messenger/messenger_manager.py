@@ -9,15 +9,14 @@ Messenger Manager Module.
 Contains implementation of the MessengerManager, which helps run ParlAI via FB
 Messenger.
 """
-
 import logging
 import os
 
 from parlai.core.agents import create_agent
-import parlai.chat_service.core.server_utils as server_utils
-import parlai.chat_service.core.shared_utils as shared_utils
+import parlai.chat_service.utils.logging as log_utils
+import parlai.chat_service.utils.server as server_utils
 from parlai.chat_service.services.messenger.agents import MessengerAgent
-from parlai.chat_service.core.manager_utils import ChatServiceMessageSocket
+from parlai.chat_service.core.socket import ChatServiceMessageSocket
 from parlai.chat_service.services.messenger.message_sender import MessageSender
 from parlai.chat_service.core.chat_service_manager import ChatServiceManager
 
@@ -52,8 +51,9 @@ class MessengerManager(ChatServiceManager):
                 'for more information.'
             )
 
-    def restructure_message(self):
-        pass
+    def restructure_message(self, message):
+        message.update(message.get('message', {}))
+        return message
 
     def _complete_setup(self):
         """
@@ -69,15 +69,19 @@ class MessengerManager(ChatServiceManager):
         """
         Load model if necessary.
         """
-        if ('model_file' in self.opt or 'model' in self.opt) and self.should_load_model:
-            self.runner_opt['shared_bot_params'] = create_agent(self.runner_opt).share()
+        if 'models' in self.opt and self.should_load_model:
+            model_params = {}
+            for model in self.opt['models']:
+                model_opt = self.opt['models'][model]
+                model_params[model] = create_agent(model_opt).share()
+            self.runner_opt['shared_bot_params'] = model_params
 
     def _init_logs(self):
         """
         Initialize logging settings from the opt.
         """
-        shared_utils.set_is_debug(self.opt['is_debug'])
-        shared_utils.set_log_level(self.opt['log_level'])
+        log_utils.set_is_debug(self.opt['is_debug'])
+        log_utils.set_log_level(self.opt['log_level'])
 
     def mark_removed(self, agent_id, pageid):
         """
@@ -148,7 +152,7 @@ class MessengerManager(ChatServiceManager):
         """
         Log the occurence of a missing agent.
         """
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.WARN,
             'Expected to have an agent for {}_{}, yet none was found'.format(
                 agent_id, assignment_id
@@ -163,7 +167,7 @@ class MessengerManager(ChatServiceManager):
         if self.bypass_server_setup:
             return
 
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO,
             '\nYou are going to allow people on Facebook to be agents in '
             'ParlAI.\nDuring this process, Internet connection is required, '
@@ -172,10 +176,10 @@ class MessengerManager(ChatServiceManager):
             should_print=True,
         )
         input('Please press Enter to continue... ')
-        shared_utils.print_and_log(logging.NOTSET, '', True)
+        log_utils.print_and_log(logging.NOTSET, '', True)
 
         if self.opt['local'] is True:
-            shared_utils.print_and_log(
+            log_utils.print_and_log(
                 logging.INFO,
                 'In order to run the server locally, you will need '
                 'to have a public HTTPS endpoint (SSL signed) running on '
@@ -187,7 +191,7 @@ class MessengerManager(ChatServiceManager):
             )
             input('Please press Enter to continue... ')
 
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO, 'Setting up Messenger webhook...', should_print=True
         )
 
@@ -199,7 +203,7 @@ class MessengerManager(ChatServiceManager):
         self.server_url = server_utils.setup_server(
             self.server_task_name, local=self.opt['local']
         )
-        shared_utils.print_and_log(
+        log_utils.print_and_log(
             logging.INFO,
             'Webhook address: {}/webhook'.format(self.server_url),
             should_print=True,
@@ -234,25 +238,24 @@ class MessengerManager(ChatServiceManager):
         """
         Set up socket to start communicating to workers.
         """
-        if not self.bypass_server_setup:
-            shared_utils.print_and_log(
-                logging.INFO, 'Local: Setting up WebSocket...', should_print=True
-            )
+        if self.bypass_server_setup:
+            return
+
+        log_utils.print_and_log(
+            logging.INFO, 'Local: Setting up WebSocket...', should_print=True
+        )
 
         self.app_token = self.get_app_token()
         self.sender = MessageSender(self.app_token)
 
         # Set up receive
-        if not self.bypass_server_setup:
-            socket_use_url = self.server_url
-            if self.opt['local']:  # skip some hops for local stuff
-                socket_use_url = 'https://localhost'
-            self.socket = ChatServiceMessageSocket(
-                socket_use_url, self.port, self._handle_webhook_event
-            )
-        shared_utils.print_and_log(
-            logging.INFO, 'done with websocket', should_print=True
+        socket_use_url = self.server_url
+        if self.opt['local']:  # skip some hops for local stuff
+            socket_use_url = 'https://localhost'
+        self.socket = ChatServiceMessageSocket(
+            socket_use_url, self.port, self._handle_webhook_event
         )
+        log_utils.print_and_log(logging.INFO, 'done with websocket', should_print=True)
 
     # Agent Interaction Functions #
 

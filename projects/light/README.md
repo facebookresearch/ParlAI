@@ -19,9 +19,30 @@ relate to agents that can talk and act successfully.
 
 <p align="center"><img width="90%" src="example-dialog.png" /></p>
 
-## Paper
+## Publications
 
-A detailed description may be found in [Urbanek et al., 2019](https://arxiv.org/abs/1903.03094).
+_Original LIGHT paper_:
+
+- **[Learning to Speak and Act in a Fantasy Text Adventure Game](https://arxiv.org/abs/1903.03094)**
+Jack Urbanek, Angela Fan, Siddharth Karamcheti, Saachi Jain, Samuel Humeau, Emily Dinan, Tim Rocktäschel, Douwe Kiela, Arthur Szlam, Jason Weston. 
+
+_ML to build the interactive world in LIGHT_:
+
+- **[Generating Interactive Worlds with Text](https://arxiv.org/abs/1911.09194)**
+Angela Fan, Jack Urbanek, Pratik Ringshia, Emily Dinan, Emma Qian, Siddharth Karamcheti, Shrimai Prabhumoye, Douwe Kiela, Tim Rocktaschel, Arthur Szlam, Jason Weston.
+
+_RL agents in the LIGHT world to achieve open-domain goals_:
+
+- **[I love your chain mail! Making knights smile in a fantasy game world: Open-domain goal-oriented dialogue agents](https://arxiv.org/abs/2002.02878)**
+Shrimai Prabhumoye, Margaret Li, Jack Urbanek, Emily Dinan, Douwe Kiela, Jason Weston, Arthur Szlam.
+
+_Addressing gender bias concerns in LIGHT_:
+
+- **[Queens are Powerful too: Mitigating Gender Bias in Dialogue Generation](https://arxiv.org/abs/1911.03842)**
+Emily Dinan, Angela Fan, Adina Williams, Jack Urbanek, Douwe Kiela, Jason Weston.
+
+
+
 
 ## Datasets
 

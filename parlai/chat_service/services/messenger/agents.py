@@ -20,6 +20,7 @@ class MessengerAgent(ChatServiceAgent):
         self.disp_id = 'NewUser'
         self.message_partners = []
         self.page_id = page_id
+        self.data['allow_images'] = opt.get('allow_images', False)
 
     def observe(self, act):
         """
@@ -56,6 +57,19 @@ class MessengerAgent(ChatServiceAgent):
         """
         self.manager.message_sender.typing_on(self.id, persona_id=persona_id)
 
+    def _is_image_attempt(self, message):
+        """
+        Determine if a message is an image attempt.
+
+        The API changes frequently so could be an image for a number of reasons.
+        """
+        img_attempt = False
+        if 'attachments' in message:
+            img_attempt = message['attachments'][0]['type'] == 'image'
+        elif 'image' in message:
+            img_attempt = True
+        return img_attempt
+
     def put_data(self, messenger_data):
         """
         Put data into the message queue if it hasn't already been seen.
@@ -66,11 +80,7 @@ class MessengerAgent(ChatServiceAgent):
         if 'text' not in message:
             print('Msg: {} could not be extracted to text format'.format(message))
         text = message.get('text', None)
-        img_attempt = (
-            True
-            if 'attachments' in message and message['attachments'][0]['type'] == 'image'
-            else False
-        )
+        img_attempt = self._is_image_attempt(message)
         if mid not in self.acted_packets:
             self.acted_packets[mid] = {'mid': mid, 'seq': seq, 'text': text}
             # the fields 'report_sender' and 'sticker_sender' below are

@@ -42,6 +42,7 @@ This module also provides a utility method:
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
+from parlai.core.loader import register_agent  # noqa: F401
 from parlai.core.opt import Opt, load_opt_file
 from parlai.utils.misc import warn_once
 import copy
@@ -257,6 +258,23 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
             '\n{}'.format(' '.join(different_strs))
         )
         print('*' * 75)
+
+
+def create_agent_from_model_file(model_file, opt_overides=None):
+    """
+    Load agent from model file if it exists.
+
+    :param opt_overrides:
+        An optional dict of option overrides can also be provided.
+    :return:
+        The agent
+    """
+    opt = {}
+    opt['model_file'] = model_file
+    if opt_overides is None:
+        opt_overides = {}
+    opt['override'] = opt_overides
+    return create_agent_from_opt_file(opt)
 
 
 def create_agent_from_opt_file(opt: Opt):

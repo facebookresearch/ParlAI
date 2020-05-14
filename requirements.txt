@@ -16,6 +16,7 @@ pexpect==4.7.0
 Pillow>=6.2.0
 py-gfm==0.1.4
 py-rouge==1.1
+pyyaml==5.1
 pyzmq==18.1.0
 regex==2019.8.19
 recommonmark==0.6.0
@@ -27,7 +28,9 @@ sh==1.12.14
 Sphinx==2.2.0
 sphinx_rtd_theme==0.4.3
 sphinx-autodoc-typehints==1.10.3
+tokenizers==0.4.2
 tqdm==4.36.1
+typing-extensions==3.7.4.1
 Unidecode==1.1.1
 websocket-client==0.56.0
 websocket-server==0.4

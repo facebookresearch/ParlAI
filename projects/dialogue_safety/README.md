@@ -41,17 +41,17 @@ python examples/display_data.py -t dialogue_safety:multiturn --single-turn True
 
 Evaluate a pre-trained Transformer-based model on the test sets of rounds 1-3 or the **adversarial** task:
 ```bash
-python examples/eval_model.py -t dialogue_safety:adversarial --round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40
+python examples/eval_model.py -t dialogue_safety:adversarial --round 3 -dt test -m transformer/classifier -mf zoo:dialogue_safety/single_turn/model -bs 40
 ```
 
 Evaluate the same pre-trained Transformer-based model on the test sets of rounds 1-3 or the **standard** task:
 ```bash
-python examples/eval_model.py -t dialogue_safety:standard --round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40
+python examples/eval_model.py -t dialogue_safety:standard --round 3 -dt test -m transformer/classifier -mf zoo:dialogue_safety/single_turn/model -bs 40
 ```
 
 Interact with the single-turn model to see its classifications of your input in real time:
 ```bash
-python examples/interactive.py -mf zoo:dialogue_safety/single_turn/model --print-scores True --single-turn True
+python examples/interactive.py -mf zoo:dialogue_safety/single_turn/model -m transformer/classifier --print-scores True --single-turn True
 ```
 Here are some example outputs from the above script:
 ```bash
@@ -72,7 +72,7 @@ python examples/eval_model.py -t dialogue_safety:multiturn -dt test -mf zoo:dial
 
 Multi-task a model on the Wikipedia Toxic Comments dataset in addition to rounds 1-3 the adversarial and standard tasks, fine-tuning on top of a pretrained transformer model:
 ```bash
-python examples/train_model.py -t dialogue_safety:WikiToxicComments,dialogue_safety:adversarial,dialogue_safety:adversarial --load-from-pretrained-ranker True --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model --dict-file zoo:pretrained_transformers/bi_model_huge_reddit/model.dict --history-size 20 --label-truncate 72 --text-truncate 360 --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 --variant xlm --reduction-type mean --share-encoders False --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 --embedding-size 768 --activation gelu  --embeddings-scale False --n-segments 2 --learn-embeddings True --share-word-embeddings False --dict-endtoken __start__ --classes __notok__ __ok__ --round 3 --use-test-set True --model transformer/classifier --multitask-weights 0.6,0.2,0.2 -lr 5e-05 --shuffle True -bs 20 --data-parallel True -vtim 60 -vp 30 -stim 60 -vme 10000 --lr-scheduler fixed --lr-scheduler-patience 3 --lr-scheduler-decay 0.9 --warmup_updates 1000 --validation-metric class___notok___f1 --validation-metric-mode max --save-after-valid True --model-file /tmp/safety_model_example
+python examples/train_model.py -t dialogue_safety:WikiToxicComments,dialogue_safety:adversarial,dialogue_safety:adversarial --load-from-pretrained-ranker True --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model --dict-file zoo:pretrained_transformers/bi_model_huge_reddit/model.dict --history-size 20 --label-truncate 72 --text-truncate 360 --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 --variant xlm --reduction-type mean --share-encoders False --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 --embedding-size 768 --activation gelu  --embeddings-scale False --n-segments 2 --learn-embeddings True --share-word-embeddings False --dict-endtoken __start__ --classes __notok__ __ok__ --round 3 --use-test-set True --model transformer/classifier --multitask-weights 0.6,0.2,0.2 -lr 5e-05 -bs 20 --data-parallel True -vtim 60 -vp 30 -stim 60 -vme 10000 --lr-scheduler fixed --lr-scheduler-patience 3 --lr-scheduler-decay 0.9 --warmup_updates 1000 --validation-metric class___notok___f1 --validation-metric-mode max --save-after-valid True --model-file /tmp/safety_model_example
 ```
 
 ## Acknowledgments

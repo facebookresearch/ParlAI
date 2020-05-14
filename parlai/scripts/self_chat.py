@@ -10,8 +10,9 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
-from parlai.utils.misc import TimeLogger, warn_once
+from parlai.utils.misc import TimeLogger
 
+import math
 import random
 
 
@@ -20,8 +21,6 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, True, 'Self chat with a model')
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
-    parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=60)
     parser.add_argument(
         '--display-ignore-fields',
         type=str,
@@ -29,93 +28,103 @@ def setup_args(parser=None):
         help='Do not display these fields',
     )
     parser.add_argument(
-        '-it',
-        '--interactive-task',
+        '-st',
+        '--selfchat-task',
         type='bool',
         default=True,
-        help='Create interactive version of task',
+        help='Create a self chat version of the task',
+    )
+    parser.add_argument(
+        '--num-self-chats', type=int, default=1, help='Number of self chats to run'
     )
     parser.add_argument(
         '--selfchat-max-turns',
         type=int,
-        default=10,
-        help="The number of dialogue turns before self chat ends.",
+        default=6,
+        help='The number of dialogue turns before self chat ends',
     )
     parser.add_argument(
         '--seed-messages-from-task',
         action='store_true',
-        help="Automatically seed conversation with messages from task dataset.",
+        help='Automatically seed conversation with messages from task dataset.',
     )
-    parser.add_argument('--outfile', type=str, default='/tmp/selfchat.json')
     parser.add_argument(
-        '--format', type=str, default='json', choices={'parlai', 'json'}
+        '--outfile', type=str, default=None, help='File to save self chat logs'
+    )
+    parser.add_argument(
+        '--save-format',
+        type=str,
+        default='conversations',
+        choices=['conversations', 'parlai'],
+        help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     WorldLogger.add_cmdline_args(parser)
     return parser
 
 
-def self_chat(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: self_chat should be passed opt not Parser ]')
-        opt = opt.parse_args()
+def _run_self_chat_episode(opt, world, world_logger):
+    bsz = opt.get('batchsize', 1)
+    num_turns = opt['selfchat_max_turns']
 
-    random.seed(opt['seed'])
-    # Create models
-    agent1 = create_agent(opt, requireModelExists=True)
-    agent2 = agent1.clone()
-    if hasattr(agent2, 'id'):
-        agent2.id = agent2.id + "2"
-
-    # Check for `selfchat` in the task name
-    if 'selfchat' not in opt['task']:
-        warn_once(
-            'You are using self chat with task {}. '.format(opt['task'])
-            + 'If your task has an existing self chat world, then run with '
-            '-t {}:selfchat'.format(opt['task'])
-        )
-
-    world = create_task(opt, [agent1, agent2])
-
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent1.opt
-        print_parser.print_args()
-
-    # set up logging
-    log_every_n_secs = opt.get('log_every_n_secs', -1)
-    if log_every_n_secs <= 0:
-        log_every_n_secs = float('inf')
-    log_time = TimeLogger()
-    logger = WorldLogger(opt)
-
-    # Run some self chats.
-    max_cnt = opt['num_examples']
-    cnt = 0
-    while cnt < max_cnt:
-        cnt += opt.get('batchsize', 1)
+    num_parleys = math.ceil(num_turns / bsz)
+    for _ in range(num_parleys):
         world.parley()
-        logger.log(world)
+        world_logger.log(world)
 
-        if opt.get('display_examples'):
+        if opt['display_examples']:
             print(world.display())
-        if log_time.time() > log_every_n_secs:
-            text = log_time.log(cnt, max_cnt)
-            print(text)
 
-    if opt.get('display_examples'):
+    if opt['display_examples']:
         print('-- end of episode --')
 
-    logger.reset_world()  # flush last episode
-    logger.write(opt['outfile'], opt['format'])
+    world.reset()
+    world_logger.reset_world()  # flush this episode
+
+
+def self_chat(opt):
+    random.seed(opt['seed'])
+
+    # Create agents
+    agent1 = create_agent(opt, requireModelExists=True)
+    agent2 = agent1.clone()
+
+    # Set IDs
+    model_id = agent1.id
+    agent1.id = model_id + "_1"
+    agent2.id = model_id + "_2"
+
+    world = create_task(opt, user_agents=[agent1, agent2])
+
+    # Set up world logging
+    logger = WorldLogger(opt)
+    log_time = TimeLogger()
+
+    # Run some self chats.
+    for i in range(opt['num_self_chats']):
+        _run_self_chat_episode(opt, world, logger)
+        report = world.report()
+        text, report = log_time.log(i + 1, opt['num_self_chats'], report)
+        print(text)
+
+    # Save chats
+    if opt['outfile'] is None:
+        outfile = '/tmp/{}_selfchat'.format(model_id)
+    else:
+        outfile = opt['outfile']
+
+    if opt['save_format'] == 'conversations' and hasattr(world, 'write'):
+        # use self chat specific world to write conversation
+        # this might be useful for logging extra contextual
+        # information (like personas)
+        world.write(logger, outfile)
+    else:
+        # use default logger write function
+        logger.write(outfile, world, opt['save_format'])
+
     return logger.get_logs()
 
 
 if __name__ == '__main__':
     parser = setup_args()
-    self_chat(parser.parse_args(print_args=False), print_parser=parser)
+    self_chat(parser.parse_args(print_args=False))

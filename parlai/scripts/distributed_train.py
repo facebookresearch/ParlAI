@@ -61,7 +61,13 @@ def main():
         )
         main_host = hostnames.split()[0].decode('utf-8')
         distributed_rank = int(os.environ['SLURM_PROCID'])
-        device_id = int(os.environ['SLURM_LOCALID'])
+        if opt.get('model_parallel'):
+            # -1 signals to multiprocessing_train to use all GPUs available.
+            # (A value of None signals to multiprocessing_train to use the GPU
+            # corresponding to the rank.
+            device_id = -1
+        else:
+            device_id = int(os.environ['SLURM_LOCALID'])
         port = opt['port']
         print(
             'Initializing host {} as rank {}, main is {}'.format(

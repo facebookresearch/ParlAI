@@ -5,11 +5,23 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-
 import torch
 import random
 
-from parlai.core.metrics import AverageMetric, SumMetric, FixedMetric, Metrics
+from parlai.core.metrics import (
+    AverageMetric,
+    SumMetric,
+    FixedMetric,
+    Metrics,
+    GlobalAverageMetric,
+    MacroAverageMetric,
+    aggregate_unnamed_reports,
+    aggregate_named_reports,
+)
+from parlai.core.torch_classifier_agent import (
+    ConfusionMatrixMetric,
+    WeightedF1Metric,
+)
 
 
 class TestMetric(unittest.TestCase):
@@ -94,6 +106,13 @@ class TestMetric(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = FixedMetric(3) + FixedMetric(4)
 
+    def test_macroaverage_additions(self):
+        m1 = AverageMetric(1, 3)
+        m2 = AverageMetric(3, 4)
+
+        assert (m1 + m2) == AverageMetric(4, 7)
+        assert MacroAverageMetric({'a': m1, 'b': m2}) == 0.5 * (1.0 / 3 + 3.0 / 4)
+
 
 class TestMetrics(unittest.TestCase):
     """
@@ -171,6 +190,202 @@ class TestMetrics(unittest.TestCase):
         m2.flush()
 
         assert m.report()['key'] == 32768 + 1
+
+
+class TestAggregators(unittest.TestCase):
+    def test_unnamed_aggregation(self):
+        report1 = {
+            'avg': AverageMetric(3, 4),
+            'sum': SumMetric(3),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(3, 4),
+        }
+        report2 = {
+            'avg': AverageMetric(1, 3),
+            'sum': SumMetric(4),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(1, 3),
+        }
+        agg = aggregate_unnamed_reports([report1, report2])
+        assert agg['avg'] == 4.0 / 7
+        assert agg['sum'] == 7
+        assert agg['fixed'] == 4
+        assert agg['global_avg'] == 4.0 / 7
+
+    def test_macro_aggregation(self):
+        report1 = {
+            'avg': AverageMetric(3, 4),
+            'sum': SumMetric(3),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(3, 4),
+        }
+        report2 = {
+            'avg': AverageMetric(1, 3),
+            'sum': SumMetric(4),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(1, 3),
+        }
+        agg = aggregate_named_reports({'a': report1, 'b': report2}, micro_average=False)
+        assert agg['avg'] == 0.5 * (3.0 / 4 + 1.0 / 3)
+        assert agg['sum'] == 7
+        assert agg['fixed'] == 4
+        assert agg['global_avg'] in (report1['global_avg'], report2['global_avg'])
+        # task level metrics
+        assert agg['a/avg'] == 3.0 / 4
+        assert agg['a/sum'] == 3
+        assert agg['a/fixed'] == 4
+        assert 'a/global_avg' not in agg
+        assert agg['b/avg'] == 1.0 / 3
+        assert agg['b/sum'] == 4
+        assert agg['b/fixed'] == 4
+        assert 'b/global_avg' not in agg
+
+    def test_uneven_macro_aggrevation(self):
+        report1 = {'avg': AverageMetric(1, 1)}
+        report2 = {'avg': AverageMetric(0, 1)}
+        report3 = {'avg': AverageMetric(0, 1)}
+        agg1 = aggregate_named_reports(
+            {'a': report1, 'b': report2}, micro_average=False
+        )
+        agg2 = aggregate_named_reports({'a': {}, 'c': report3}, micro_average=False)
+
+        agg = aggregate_unnamed_reports([agg1, agg2])
+        assert agg1['avg'] == 0.5
+        assert agg2['avg'] == 0.0
+        assert agg['a/avg'] == 1.0
+        assert agg['b/avg'] == 0.0
+        assert agg['c/avg'] == 0.0
+        assert agg['avg'] == 1.0 / 3
+
+    def test_micro_aggregation(self):
+        report1 = {
+            'avg': AverageMetric(3, 4),
+            'sum': SumMetric(3),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(3, 4),
+        }
+        report2 = {
+            'avg': AverageMetric(1, 3),
+            'sum': SumMetric(4),
+            'fixed': FixedMetric(4),
+            'global_avg': GlobalAverageMetric(1, 3),
+        }
+        agg = aggregate_named_reports({'a': report1, 'b': report2}, micro_average=True)
+        assert agg['avg'] == 4.0 / 7
+        assert agg['sum'] == 7
+        assert agg['fixed'] == 4
+        assert agg['global_avg'] in (report1['global_avg'], report2['global_avg'])
+        # task level metrics
+        assert agg['a/avg'] == 3.0 / 4
+        assert agg['a/sum'] == 3
+        assert agg['a/fixed'] == 4
+        assert 'a/global_avg' not in agg
+        assert agg['b/avg'] == 1.0 / 3
+        assert agg['b/sum'] == 4
+        assert agg['b/fixed'] == 4
+        assert 'b/global_avg' not in agg
+
+    def test_classifier_metrics(self):
+        # We assume a batch of 16 samples, binary classification case, from 2 tasks.
+        # task 1
+        # confusion matrix expected, for class ok,
+        # TP = 2, TN = 2, FP = 2, FN = 2
+        report1 = {}
+        report2 = {}
+        task1_f1s = {}
+        task2_f1s = {}
+        classes = ['class_ok', 'class_notok']
+        task1_predictions = [
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+        ]
+        task1_gold_labels = [
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+        ]
+        for each in classes:
+            precisions, recalls, f1s = ConfusionMatrixMetric.compute_metrics(
+                task1_predictions, task1_gold_labels, each
+            )
+            report1.update(
+                {
+                    f'{each}_precision': sum(precisions, None),
+                    f'{each}_recall': sum(recalls, None),
+                    f'{each}_f1': sum(f1s, None),
+                }
+            )
+            task1_f1s[each] = f1s
+        report1['weighted_f1'] = sum(WeightedF1Metric.compute_many(task1_f1s), None)
+        # task 2, for class ok
+        # TP = 3, TN = 2, FP = 2, FN = 1
+        # for class not ok
+        # TP = 2, TN = 3, FP = 1, FN = 2
+        task2_predictions = [
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+        ]
+        task2_gold_labels = [
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+        ]
+        for each in classes:
+            precisions, recalls, f1s = ConfusionMatrixMetric.compute_metrics(
+                task2_predictions, task2_gold_labels, each
+            )
+            report2.update(
+                {
+                    f'{each}_precision': sum(precisions, None),
+                    f'{each}_recall': sum(recalls, None),
+                    f'{each}_f1': sum(f1s, None),
+                }
+            )
+            task2_f1s[each] = f1s
+        report2['weighted_f1'] = sum(WeightedF1Metric.compute_many(task2_f1s), None)
+
+        agg = aggregate_named_reports(
+            {'task1': report1, 'task2': report2}, micro_average=False
+        )
+        # task1
+        assert agg['task1/class_ok_precision'] == 0.5
+        assert agg['task1/class_ok_recall'] == 0.5
+        assert agg['task1/class_ok_f1'] == 0.5
+        # task2
+        assert agg['task2/class_ok_precision'] == 3 / 5
+        assert agg['task2/class_ok_recall'] == 3 / 4
+        assert agg['task2/class_ok_f1'] == 2 / 3
+        # task2 not ok
+        assert agg['task2/class_notok_precision'] == 2 / 3
+        assert agg['task2/class_notok_recall'] == 0.5
+        assert agg['task2/class_notok_f1'] == 4 / 7
+        # weighted f1
+        assert agg['task1/weighted_f1'] == 0.5
+        assert agg['task2/weighted_f1'] == (2 / 3) * 0.5 + (4 / 7) * 0.5
+        # all
+        assert agg['weighted_f1'] == (0.5 + (2 / 3) * 0.5 + (4 / 7) * 0.5) / 2
 
 
 if __name__ == '__main__':

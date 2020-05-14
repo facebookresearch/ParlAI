@@ -34,12 +34,13 @@ from typing import List, Tuple
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
+from parlai.core.loader import register_teacher  # noqa: F401
 from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.utils.distributed import get_rank, num_workers, is_distributed
 
-from functools import lru_cache
 from abc import ABC, abstractmethod
 
 import concurrent.futures
@@ -644,6 +645,13 @@ class DialogData(object):
     """
 
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
+        # in case we need to shard the dataset
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = is_distributed() and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
+
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
@@ -656,6 +664,7 @@ class DialogData(object):
             self.data = []
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(sys.intern(c) for c in cands)
+
         self.addedCands = []
         self.copied_cands = False
 
@@ -678,6 +687,7 @@ class DialogData(object):
             an iterable which returns tuples in the format described in the
             class docstring.
         """
+
         episode = []
         last_cands = None
         for entry, new in data_loader:
@@ -704,10 +714,10 @@ class DialogData(object):
                         # TODO: this could use the abc collections
                         # make sure iterable over labels, not single string
                         new_entry.append(tuple(sys.intern(e) for e in entry[1]))
+                    elif isinstance(entry[1], str):
+                        new_entry.append((sys.intern(entry[1]),))
                     else:
-                        raise TypeError(
-                            'Must provide iterable over labels, not a single string.'
-                        )
+                        raise TypeError(f"{entry[1]} is not list or str")
                 if len(entry) > 2:
                     # process reward if available
                     if entry[2] is not None:
@@ -750,8 +760,9 @@ class DialogData(object):
             class docstring.
         :param str datafile:
         """
-        for episode in self._read_episode(data_loader(datafile)):
-            self.data.append(episode)
+        for i, episode in enumerate(self._read_episode(data_loader(datafile))):
+            if not self.is_distributed_and_is_eval or i % self.num_workers == self.rank:
+                self.data.append(episode)
 
     def num_episodes(self):
         """
@@ -759,14 +770,16 @@ class DialogData(object):
         """
         return len(self.data)
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return total number of entries available.
 
         Each episode has at least one entry, but might have many more.
         """
-        return sum(len(episode) for episode in self.data)
+        if hasattr(self, '_num_examples_cache'):
+            return self._num_examples_cache
+        self._num_examples_cache = sum(len(episode) for episode in self.data)
+        return self._num_examples_cache
 
     def get(self, episode_idx, entry_idx=0):
         """
@@ -778,11 +791,15 @@ class DialogData(object):
             which example to return from the episode. Many datasets have only
             single-entry episodes, so this defaults to zero.
         """
+        if episode_idx >= len(self.data):
+            return {'episode_done': True}, True
+        next_episode_idx_for_rank = episode_idx + 1
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
         episode_done = entry_idx == len(episode) - 1
-        end_of_data = episode_done and episode_idx == len(self.data) - 1
+
+        end_of_data = episode_done and next_episode_idx_for_rank >= len(self.data)
 
         # now pack it in a action-observation dictionary
         table = self.build_table(entry)
@@ -872,6 +889,7 @@ class StreamDialogData(DialogData):
         # super() call initiates stream in self.data by calling _load()
         super().__init__(opt, data_loader, cands, shared, **kwargs)
         self.cycle = kwargs['cycle'] if 'cycle' in kwargs else True
+
         if shared:
             # auxiliary instances hold pointer to main datastream in self.data
             self.reset_data = shared['reset']
@@ -896,6 +914,12 @@ class StreamDialogData(DialogData):
         self.cur_episode = self._FIRST_PASS
         self.num_eps = None
         self.num_exs = None
+
+        self.rank = get_rank()
+        self.num_workers = num_workers()
+        self.is_distributed_and_is_eval = self.num_workers > 1 and any(
+            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        )
 
     def share(self):
         """
@@ -923,9 +947,16 @@ class StreamDialogData(DialogData):
         Generate data using the iterator over tuples constructed by data_loader.
         """
         self.is_reset = False
+        idx = 0
         while True:
             for episode in self._read_episode(data_loader(datafile)):
-                yield episode
+                # We only shard the data set at evaluation time, as training is
+                # done using sampling-with-replacement.
+                if not self.is_distributed_and_is_eval or (
+                    idx % self.num_workers == self.rank
+                ):
+                    yield episode
+                idx += 1
             while not self.cycle:
                 yield self._END_OF_EPOCH
 
@@ -1317,7 +1348,9 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         else:
             self.episodes = shared['episodes']
             self.num_exs = sum(len(e) for e in self.episodes)
-        self.id = opt.get('parlaidialogteacher_datafile', 'teacher')
+
+        self.id = opt['task']
+
         self.reset()
 
     def share(self):
@@ -1352,8 +1385,27 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.num_exs = 0
         eps = []
         with open(path, newline='\n') as read:
-            for line in read:
+            for line_no, line in enumerate(read, 1):
                 msg = str_to_msg(line.rstrip('\n'))
+                if msg and 'eval_labels' in msg:
+                    raise ValueError(
+                        f"It looks like you've written eval_labels as a key in your "
+                        f"data file. This is not appropriate; labels will be converted "
+                        f"for you automatically. This is happening on Line {line_no} "
+                        f"in {path}. The line is:\n\t{line}"
+                    )
+                if msg and 'text' not in msg:
+                    raise ValueError(
+                        f'ParlaiDialogTeacher requires a "text" field in every '
+                        f'entry, but one is missing in Line {line_no} in {path}. '
+                        f'The line is:\n\t{line}'
+                    )
+                if msg and 'labels' not in msg:
+                    raise ValueError(
+                        f'ParlaiDialogTeacher requires a "labels" field in every '
+                        f'entry, but one is missing in Line {line_no} in {path}. '
+                        f'The line is:\n\t{line}'
+                    )
                 if msg:
                     self.num_exs += 1
                     eps.append(msg)
@@ -1364,6 +1416,12 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             # add last episode
             eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
+        if len(self.episodes) == 1 and line_no > 100:
+            warn_once(
+                'The data in {path} looks like one very long episode. If this '
+                'is intentional, you may ignore this, but you MAY have a bug in '
+                'your data.'
+            )
 
 
 class AbstractImageTeacher(FixedDialogTeacher):
@@ -1866,7 +1924,10 @@ class MultiTaskTeacher(Teacher):
         """
         Report aggregated metrics across all subtasks.
         """
-        return aggregate_named_reports({t.getID(): t.report() for t in self.tasks})
+        return aggregate_named_reports(
+            {t.getID(): t.report() for t in self.tasks},
+            micro_average=self.opt.get('aggregate_micro', False),
+        )
 
     def reset(self):
         """

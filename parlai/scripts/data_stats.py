@@ -24,6 +24,7 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, False, 'Lint for ParlAI tasks')
     # Get command line arguments
+    parser.add_argument('-n', '-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument(
         '--agent',
@@ -106,8 +107,13 @@ def verify(opt, printargs=None, print_parser=None):
                 return False
         return True
 
+    # max number of examples to evaluate
+    max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
+    cnt = 0
+
     # Show some example dialogs.
-    while not world.epoch_done():
+    while not world.epoch_done() and cnt < max_cnt:
+        cnt += opt.get('batchsize', 1)
         world.parley()
         act = world.get_acts()[opt.get('agent')]
         for itype in {'input', 'labels'}:
@@ -172,4 +178,4 @@ if __name__ == '__main__':
     report_text, report_log = verify(
         parser.parse_args(print_args=False), print_parser=parser
     )
-    print(report_text)
+    print(report_text.replace('\\n', '\n'))

@@ -18,7 +18,7 @@ Contains the following utilities:
 """
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, List
+from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
 from operator import attrgetter
 
@@ -28,12 +28,18 @@ import torch.nn.functional as F
 
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
-from parlai.core.torch_agent import TorchAgent, Output
+from parlai.core.torch_agent import TorchAgent, Output, DictionaryAgent
 from parlai.utils.batch import Batch
 from parlai.utils.misc import warn_once
+import parlai.utils.logging as logging
 from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
-from parlai.utils.torch import neginf
+from parlai.utils.torch import (
+    neginf,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
 
 
 try:
@@ -47,6 +53,58 @@ try:
 
 except ImportError:
     fairseq_bleu = None
+
+
+class SearchBlacklist(object):
+    """
+    Search blacklist facilitates blocking ngrams from being generated.
+    """
+
+    def __init__(self, dict_agent: DictionaryAgent) -> None:
+        self.dict = dict_agent
+        self._phrases: Set[str] = set()
+        self._phrase_ngrams: Dict[int, List[List[int]]] = {}
+
+    def __bool__(self):
+        return bool(self._phrases)
+
+    def clear(self) -> None:
+        self._phrases = set()
+        self._phrase_ngrams = {}
+
+    def _add_literal(self, phrase_literal: str):
+        if phrase_literal in self._phrases:
+            return
+        ngram = self.dict.txt2vec(phrase_literal)
+        self._phrases.add(phrase_literal)
+        logging.debug(f"Adding '{phrase_literal}' to the beam blacklist {ngram}")
+        l = len(ngram)
+        if l not in self._phrase_ngrams:
+            self._phrase_ngrams[l] = []
+        self._phrase_ngrams[l].append(ngram)
+
+    def add(self, phrase: str):
+        phrase = phrase.strip()
+        if not phrase:
+            return
+        self._add_literal(phrase)
+        self._add_literal(phrase + "s")
+        self._add_literal(phrase.lower())
+        self._add_literal(phrase.lower() + "s")
+        self._add_literal(phrase.upper())
+        self._add_literal(phrase.upper() + "S")
+        self._add_literal(phrase.title())
+        self._add_literal(phrase.title() + "S")
+        self._add_literal(phrase[0].upper() + phrase[1:])
+        self._add_literal(phrase[0].upper() + phrase[1:] + "s")
+        self._add_literal(phrase[0].upper() + phrase[1:].lower())
+        self._add_literal(phrase[0].upper() + phrase[1:].lower() + "s")
+
+    def items(self) -> Iterable[Tuple[int, List[List[int]]]]:
+        return self._phrase_ngrams.items()
+
+
+TSType = TypeVar('TSType', bound='TreeSearch')
 
 
 class TorchGeneratorModel(nn.Module, ABC):
@@ -325,7 +383,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus'},
+            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
             default='greedy',
             help='Generation algorithm',
         )
@@ -334,6 +392,21 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--topp', type=float, default=0.9, help='p used in nucleus sampling'
+        )
+        agent.add_argument(
+            '--beam-delay', type=int, default=30, help='used in delayedbeam search'
+        )
+        agent.add_argument(
+            '--beam-blacklist-filename',
+            type=str,
+            default=None,
+            help='Load a text file of hard blocks for beam search to never say.',
+        )
+        agent.add_argument(
+            '--temperature',
+            type=float,
+            default=1.0,
+            help='temperature to add during decoding',
         )
         agent.add_argument(
             '--compute-tokenized-bleu',
@@ -353,32 +426,40 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
         self.beam_context_block_ngram = opt.get('beam_context_block_ngram', -1)
+        self.temperature = opt.get('temperature', 1.0)
+        assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
+        self.beam_blacklist: Optional[SearchBlacklist] = None
 
         if shared:
             # set up shared properties
             states = shared.get('states', {})
+            self.beam_blacklist = shared.get('blacklist')
         else:
-            # Note: we cannot change the type of metrics ahead of time, so you
-            # should correctly initialize to floats or ints here
-
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
+
+            # load the blacklist for beam search
+            self.beam_blacklist = self._load_beam_blacklist()
 
             if self.model is None or self.criterion is None:
                 raise AttributeError(
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
             if self.use_cuda:
-                self.model.cuda()
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
+                else:
+                    self.model.cuda()
                 self.criterion.cuda()
 
             sync_parameters(self.model)
-            print("Total parameters: {}".format(self._total_parameters()))
-            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
 
             if self.fp16:
                 self.model = self.model.half()
@@ -390,12 +471,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else:
                 states = {}
 
-        if (
-            # only build an optimizer if we're training
-            'train' in opt.get('datatype', '')
-            # and this is the main model, or on every fork if doing hogwild
-            and (shared is None or self.opt.get('numthreads', 1) > 1)
-        ):
+        if shared:
+            if 'optimizer' in shared:
+                self.optimizer = shared['optimizer']
+        elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
             self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
@@ -405,8 +484,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         if shared is None and is_distributed():
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
         self.reset()
@@ -503,6 +583,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Share internal states between parent and child instances.
         """
         shared = super().share()
+        shared['beam_blacklist'] = self.beam_blacklist
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         if self.opt.get('numthreads', 1) > 1:
             shared['states'] = {  # don't share optimizer states
                 'optimizer_type': self.opt['optimizer']
@@ -602,7 +685,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
-                self.global_metrics.update('skipped_batches', SumMetric(1))
+                self.global_metrics.add('skipped_batches', SumMetric(1))
                 # gradients are synced on backward, now this model is going to be
                 # out of sync! catch up with the other workers
                 self._init_cuda_buffer(8, 8, True)
@@ -777,6 +860,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
             )
+        elif method == 'delayedbeam':
+            return DelayedBeamSearch(
+                self.opt['topk'],
+                self.opt['beam_delay'],
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
         elif method == 'topk':
             return TopKSampling(
                 self.opt['topk'],
@@ -850,9 +947,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.text_vec is not None:
             batchsize = batch.text_vec.size(0)
             beams = [
-                self._treesearch_factory(dev).set_context(
-                    self._get_context(batch, batch_idx)
-                )
+                self._treesearch_factory(dev)
+                .set_context(self._get_context(batch, batch_idx))
+                .set_blacklist(self.beam_blacklist)
                 for batch_idx in range(batchsize)
             ]
         else:
@@ -878,7 +975,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             score = model.output(score)
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
-            score = F.log_softmax(score, dim=-1)
+            if self.temperature != 1.0:
+                score.div_(self.temperature)
+            # force to fp32 to avoid overflow issues during search calculations
+            score = F.log_softmax(score, dim=-1, dtype=torch.float32)
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -897,13 +997,45 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
 
-        # get all finilized candidates for each sample (and validate them)
+        # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+
+        if hasattr(self, '_rerank_beams'):
+            n_best_beam_preds_scores = self._rerank_beams(
+                batch, n_best_beam_preds_scores
+            )
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
+        if self.opt.get('verbose'):
+            for i, beams in enumerate(n_best_beam_preds_scores):
+                for b, (tokens, score) in enumerate(beams):
+                    gen = self._v2t(tokens)
+                    logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
+                logging.debug('-')
 
         return beam_preds_scores, beams
+
+    def _load_beam_blacklist(self) -> SearchBlacklist:
+        """
+        Load the beam blacklist.
+
+        :return: a dict mapping ngram length to different ngrams
+        """
+        blacklist = SearchBlacklist(self.dict)
+        if not self.opt.get('beam_blacklist_filename'):
+            return blacklist
+
+        blacklist_fn = self.opt['beam_blacklist_filename']
+        try:
+            with open(blacklist_fn) as f:
+                for line in f:
+                    blacklist.add(line.strip())
+        except IOError:
+            logging.error(
+                f"Could not load beam blacklist {blacklist_fn}, using empty blacklist."
+            )
+        return blacklist
 
 
 class _HypothesisTail(object):
@@ -919,9 +1051,6 @@ class _HypothesisTail(object):
         self.hypid = hypid
         self.score = score
         self.tokenid = tokenid
-
-
-TSType = TypeVar('TSType', bound='TreeSearch')
 
 
 class TreeSearch(object):
@@ -974,6 +1103,7 @@ class TreeSearch(object):
         self.pad = padding_token
         self.context = None
         self.context_block_ngram = context_block_ngram
+        self.blacklist: Optional[SearchBlacklist] = None
         self.device = device
         # recent score for each hypo in the beam
         self.scores = None
@@ -1003,6 +1133,10 @@ class TreeSearch(object):
         self.context = context.tolist()
         return self
 
+    def set_blacklist(self: TSType, blacklist: Optional[SearchBlacklist]) -> TSType:
+        self.blacklist = blacklist
+        return self
+
     def get_output_from_current_step(self):
         """
         Get the outputput at the current step.
@@ -1016,7 +1150,7 @@ class TreeSearch(object):
         return self.bookkeep[-1]
 
     @abstractmethod
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         """
         Select the next vocabulary item in these beams.
 
@@ -1026,7 +1160,8 @@ class TreeSearch(object):
         :param prior_scores:
             a (beamsize) tensor of weights with the cumulative running
             log-probability of each beam. If the first turn, it will be a (1) tensor.
-
+        :param current_length:
+            the current length in tokens
         :return:
             a (hypothesis_ids, token_id, scores) tuple, where:
 
@@ -1065,6 +1200,18 @@ class TreeSearch(object):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
+    def _block_blacklist(self, logprobs: torch.Tensor) -> torch.Tensor:
+        if self.blacklist is None:
+            return logprobs
+
+        for beam_id, hyp in enumerate(self.partial_hyps):
+            for ngram_size, bad_ngrams in self.blacklist.items():
+                prefix = hyp[-(ngram_size - 1) :]
+                for ngram in bad_ngrams:
+                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
+                        logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+        return logprobs
+
     def advance(self, logprobs):
         """
         Advance the beam one step.
@@ -1088,6 +1235,8 @@ class TreeSearch(object):
         if self.block_ngram > 0:
             logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
 
+        logprobs = self._block_blacklist(logprobs)
+
         if self.context_block_ngram > 0:
             if self.context is None:
                 raise ValueError(
@@ -1097,7 +1246,9 @@ class TreeSearch(object):
                 self.context_block_ngram, logprobs, self.context
             )
 
-        hyp_ids, tok_ids, self.scores = self.select_paths(logprobs, self.scores)
+        hyp_ids, tok_ids, self.scores = self.select_paths(
+            logprobs, self.scores, current_length
+        )
         # use clone() here to ensure that self.all_scores will not be changed
         # later due to any penalties to self.scores
         self.all_scores.append(self.scores.clone())
@@ -1112,7 +1263,7 @@ class TreeSearch(object):
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
             if self.outputs[-1][hypid] == self.eos:
-                if self.scores[hypid] == neginf(self.scores.dtype):
+                if self.scores[hypid] <= neginf(self.scores.dtype):
                     continue
                 #  this is finished hypo, adding to finished
                 eostail = _HypothesisTail(
@@ -1254,7 +1405,7 @@ class GreedySearch(TreeSearch):
         if self.beam_size != 1:
             raise ValueError('Greedy search can only be run with beam size 1.')
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         tok_scores, tok_ids = logprobs.max(1)
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
@@ -1266,7 +1417,7 @@ class BeamSearch(TreeSearch):
     Beam search.
     """
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         """
         Select the next vocabulary item in these beams.
         """
@@ -1288,6 +1439,31 @@ class BeamSearch(TreeSearch):
         return (hyp_ids, tok_ids, best_scores)
 
 
+class DelayedBeamSearch(TreeSearch):
+    """
+    DelayedBeam: Top-K sampling followed by beam search (Massarelli et al., 2019).
+
+    Samples from a truncated distribution where only the most probable K words
+    are considered at each time for the first N tokens, then switches to beam
+    after N steps.
+
+    See https://arxiv.org/abs/1911.03587 for details.
+    """
+
+    def __init__(self, k, delay, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.k = k
+        self.delay = delay
+
+    def select_paths(self, logprobs, prior_scores, current_length):
+        if current_length < self.delay:
+            return TopKSampling.select_paths(
+                self, logprobs, prior_scores, current_length
+            )
+        else:
+            return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
+
+
 class TopKSampling(TreeSearch):
     """
     Top-K sampling (Fan et al., 2018).
@@ -1304,7 +1480,7 @@ class TopKSampling(TreeSearch):
         super().__init__(*args, **kwargs)
         self.k = k
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         values, indices = logprobs.topk(self.k, dim=-1)
         probs = torch.softmax(values, dim=-1)
         choices = torch.multinomial(probs, 1)[:, 0]
@@ -1331,7 +1507,7 @@ class NucleusSampling(TreeSearch):
         super().__init__(*args, **kwargs)
         self.p = p
 
-    def select_paths(self, logprobs, prior_scores):
+    def select_paths(self, logprobs, prior_scores, current_length):
         # Unlike the other treesearch methods, we have to switch to linspace
         # for the probabilities in order to compute the CDF.
         probs = torch.softmax(logprobs, dim=-1)

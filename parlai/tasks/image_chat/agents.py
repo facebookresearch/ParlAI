@@ -6,23 +6,29 @@
 Images and Dialogues from Image-Chat dataset.
 
 202k images, 401k utterances, over 215 different personalities.
-
-An example is given as follows:
-    obs = {'text': <personality>,
-           'image': <image features if specified else image>,
-           'label': <comment/response>,
-          }
 """
-from parlai.core.teachers import FixedDialogTeacher
-from parlai.core.image_featurizers import ImageLoader
-from torch.utils.data import Dataset
-from .build import build
-
 import json
 import os
+from typing import Tuple
+
+from parlai.core.message import Message
+from parlai.core.opt import Opt
+from parlai.core.teachers import FixedDialogTeacher
+from parlai.core.image_featurizers import ImageLoader
+from parlai.utils.typing import TShared
+from .build import build
 
 
-def _path(opt):
+def _path(opt: Opt) -> Tuple[str, str, str]:
+    """
+    Return appropriate datapaths.
+
+    :param opt:
+        options
+
+    :return (data path, personalities path, image_path):
+        path to data, personalities, and images
+    """
     build(opt)
     dt = opt['datatype'].split(':')[0]
     if dt in ['train', 'valid', 'test']:
@@ -40,82 +46,6 @@ def _path(opt):
     return data_path, personalities_data_path, image_path
 
 
-class DefaultDataset(Dataset):
-    """
-    A Pytorch Dataset.
-    """
-
-    def __init__(self, opt):
-        self.opt = opt
-        opt['image_load_task'] = 'image_chat'
-        self.image_mode = opt.get('image_mode', 'no_image_model')
-        self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
-        self.include_image = opt.get('include_image')
-        self.include_personality = opt.get('include_personality')
-        self.num_cands = opt.get('num_cands')
-        data_path, personalities_data_path, self.image_path = _path(opt)
-        self.image_loader = ImageLoader(opt)
-        self._setup_data(data_path, personalities_data_path)
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        ImageChatTeacher.add_cmdline_args(argparser)
-
-    def _setup_data(self, data_path, personalities_data_path):
-        print('loading: ' + data_path)
-        with open(data_path) as f:
-            self.data = json.load(f)
-        with open(personalities_data_path) as f:
-            self.personalities = json.load(f)
-
-    def __getitem__(self, index):
-        data = self.data[index]
-        dialog = data['dialog']
-        personality = dialog[-1][0]
-        text = ''
-        if len(dialog) > 1:
-            text = '\n'.join((dialog[0][1], dialog[1][1]))
-        if self.include_personality:
-            text += personality
-        label = dialog[-1][1]
-        image = self.get_image(data['image_hash'])
-
-        ep = {
-            'text': text,
-            'episode_done': True,
-            'image': image if self.include_image else None,
-        }
-
-        if self.opt.get('extract_image', False):
-            ep['image_id'] = data['image_hash']
-            return ep
-        if not self.opt['datatype'].startswith('test'):
-            ep['labels'] = [label]
-        if not self.training:
-            ep['label_candidates'] = data['candidates'][-1][self.num_cands]
-
-        return (index, ep)
-
-    def __len__(self):
-        return self.num_episodes()
-
-    def get_image(self, image_id):
-        im_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
-        return self.image_loader.load(im_path)
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return self.num_episodes()
-
-    def num_images(self):
-        if not hasattr(self, 'num_imgs'):
-            self.num_imgs = len({d['image_num'] for d in self.data})
-        return self.num_imgs
-
-
 class ImageChatTeacher(FixedDialogTeacher):
     """
     Provides the personality in the `text` field, and response in the `labels` field.
@@ -124,14 +54,14 @@ class ImageChatTeacher(FixedDialogTeacher):
     command line argument.
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
         self.opt = opt
         self.image_mode = opt.get('image_mode', 'no_image_model')
         self.data_path, personalities_data_path, self.image_path = _path(opt)
-        self.datatype = opt.get('datatype').split(':')[0]
+        self.datatype = opt['datatype'].split(':')[0]
         self.include_personality = opt.get('include_personality')
-        self.include_image = opt.get('include_image')
+        self.include_image = opt.get('include_image') and opt.get('load_images')
         self.num_cands = opt.get('num_cands')
         if shared and 'data' in shared:
             self.data = shared['data']
@@ -140,6 +70,7 @@ class ImageChatTeacher(FixedDialogTeacher):
         else:
             self.image_loader = ImageLoader(opt)
             self._setup_data(self.data_path, personalities_data_path)
+        self.num_exs = sum(len(d['dialog']) for d in self.data)
         self.reset()
 
     @staticmethod
@@ -165,6 +96,12 @@ class ImageChatTeacher(FixedDialogTeacher):
             'via the provided download script)',
         )
         agent.add_argument(
+            '--load-images',
+            type='bool',
+            default=True,
+            help='Specify whether to load images',
+        )
+        agent.add_argument(
             '--num-cands',
             type=str,
             default='100',
@@ -172,7 +109,10 @@ class ImageChatTeacher(FixedDialogTeacher):
             help='how many candidates to provide agent',
         )
 
-    def _setup_data(self, data_path, personalities_data_path):
+    def _setup_data(self, data_path: str, personalities_data_path: str):
+        """
+        Load the data.
+        """
         print('loading: ' + data_path)
         with open(data_path) as f:
             self.data = json.load(f)
@@ -180,22 +120,25 @@ class ImageChatTeacher(FixedDialogTeacher):
             self.personalities = json.load(f)
 
     def reset(self):
+        """
+        Override to Reset self.example.
+        """
         super().reset()
         self.example = None
 
-    def num_episodes(self):
+    def num_episodes(self) -> int:
         return len(self.data)
 
-    def num_examples(self):
-        return sum(len(d['dialog']) for d in self.data)
+    def num_examples(self) -> int:
+        return self.num_exs
 
-    def submit_load_request(self, image_id):
+    def submit_load_request(self, image_id: str):  # type: ignore
         img_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
         self.data_loader.request_load(
             self.receive_data, self.image_loader.load, (img_path,)
         )
 
-    def get(self, episode_idx, entry_idx=0):
+    def get(self, episode_idx: int, entry_idx: int = 0):
         data = self.data[episode_idx]
         personality, text = data['dialog'][entry_idx]
         episode_done = entry_idx == len(data['dialog']) - 1
@@ -212,10 +155,13 @@ class ImageChatTeacher(FixedDialogTeacher):
 
         return action
 
-    def next_example(self):
+    def next_example(self) -> Tuple[Message, bool]:
         """
         Returns the next example from this dataset after starting to queue up the next
         example.
+
+        :return (example, epoch done):
+            returns the next example as well as whether the epoch is done.
         """
         ready = None
         load_image = self.image_mode != 'no_image_model' and self.include_image
@@ -226,7 +172,7 @@ class ImageChatTeacher(FixedDialogTeacher):
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
-            ready = (self.example, self.imageEpochDone)
+            ready = (self.example, self.imageEpochDone)  # type: ignore
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
         # if self.image_mode != 'none' and 'image_id' in self.example:
@@ -240,11 +186,105 @@ class ImageChatTeacher(FixedDialogTeacher):
         else:
             return ready
 
-    def share(self):
+    def share(self) -> TShared:
         shared = super().share()
         shared['data'] = self.data
         shared['image_loader'] = self.image_loader
         shared['personalities'] = self.personalities
+        return shared
+
+
+class GenerationTeacher(ImageChatTeacher):
+    """
+    GenerationTeacher - dialogues are split into two episodes, one from
+    each individual person's point of view.
+
+    Used in the #dodecaDialogue task. (see https://parl.ai/projects/dodecadialogue/)
+    """
+
+    def __init__(self, opt: Opt, shared: TShared = None):
+        if not shared:
+            self.idx_to_ep = {}
+        else:
+            self.idx_to_ep = shared['idx_to_ep']
+        self.prepend_personality = opt.get('prepend_personality', True)
+        self.include_dialogue_history = opt.get('include_dialogue_history', True)
+        super().__init__(opt, shared)
+        self.num_eps = len(self.data) + len(
+            [d for d in self.data if len(d['dialog']) > 1]
+        )
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        ImageChatTeacher.add_cmdline_args(argparser)
+        agent = argparser.add_argument_group('generation teacher arguments')
+        agent.add_argument(
+            '--prepend-personality',
+            type='bool',
+            default=True,
+            help='if true, always prepend first turn text with the personality',
+        )
+        agent.add_argument(
+            '--include-dialogue-history',
+            type='bool',
+            default=True,
+            help='if false, remove the dialogue history',
+        )
+
+    def num_episodes(self) -> int:
+        return self.num_eps
+
+    def get(self, episode_idx: int, entry_idx: int = 0):
+        entry_idx *= 2
+        first_turn = entry_idx == 0
+        if episode_idx >= len(self.data):
+            # Second time through dataset
+            data = self.data[self.idx_to_ep[episode_idx]]
+            entry_idx += 1
+        else:
+            data = self.data[episode_idx]
+
+        personality, label = data['dialog'][entry_idx]
+        if not self.include_personality:
+            personality = ''
+
+        if entry_idx > 0:
+            _, text = data['dialog'][entry_idx - 1]
+            if not self.include_dialogue_history:
+                text = ''
+            if first_turn and self.prepend_personality and self.include_personality:
+                text = '\n'.join([personality, text])
+        elif self.prepend_personality and self.include_personality:
+            text = personality
+        else:
+            text = ''
+
+        episode_done = entry_idx >= len(data['dialog']) - 2
+
+        action = {
+            'text': text,
+            'personality': personality,
+            'image_id': data['image_hash'],
+            'episode_done': episode_done,
+            'labels': [label],
+        }
+
+        if "candidates" in data:
+            action['label_candidates'] = data['candidates'][entry_idx][self.num_cands]
+
+        return action
+
+    def _setup_data(self, data_path: str, personalities_data_path: str):
+        super()._setup_data(data_path, personalities_data_path)
+        ep_idx = len(self.data)
+        for i, d in enumerate(self.data):
+            if len(d['dialog']) > 1:
+                self.idx_to_ep[ep_idx] = i
+                ep_idx += 1
+
+    def share(self):
+        shared = super().share()
+        shared['idx_to_ep'] = self.idx_to_ep
         return shared
 
 

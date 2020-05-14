@@ -94,10 +94,9 @@ def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
     if not TORCH_AVAILABLE:
         skip = True
     else:
-        version = torch.__version__.replace('+cpu', '').split('.')  # type: ignore
-        version_ = tuple(int(x) for x in version)  # type: ignore
-        if version_ < (1, 4, 0):
-            skip = True
+        from packaging import version
+
+        skip = version.parse(torch.__version__) < version.parse('1.4.0')
     return unittest.skipIf(skip, reason)(testfn)
 
 

@@ -17,11 +17,11 @@ class TestDisplayData(unittest.TestCase):
         Does display_data reach the end of the loop?
         """
         str_output, _, _ = testing_utils.display_data(
-            {'num_examples': 1, 'task': 'babi:task1k:1'}
+            {'num_examples': 1, 'task': 'babi:task1k:1', 'display_verbose': True}
         )
 
         self.assertGreater(len(str_output), 0, "Output is empty")
-        self.assertIn("[babi:task1k:1]:", str_output, "Babi task did not print")
+        self.assertIn("babi:task1k:1", str_output, "Babi task did not print")
         self.assertIn("~~", str_output, "Example output did not complete")
 
 

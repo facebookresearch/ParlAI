@@ -5,17 +5,20 @@
 # LICENSE file in the root directory of this source tree.
 
 
-from setuptools import setup, find_packages
+import datetime
 import sys
+
+from setuptools import setup, find_packages
+
+BUILD = ''  # if multiple in one day, use "dev0", "dev1", ...
+DATE = datetime.date.today().isoformat().replace('-', '')
 
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python >=3.6 is required for ParlAI.')
 
 with open('README.md', encoding="utf8") as f:
-    readme = f.read()
-
-with open('LICENSE') as f:
-    license = f.read()
+    # strip the header and badges etc
+    readme = f.read().split('--------------------')[-1]
 
 with open('requirements.txt') as f:
     reqs = f.read()
@@ -24,16 +27,22 @@ with open('requirements.txt') as f:
 if __name__ == '__main__':
     setup(
         name='parlai',
-        version='0.1.0',
-        description='Unified API for accessing dialog datasets.',
+        version=f'0.1.{DATE}{BUILD}',
+        description='Unified platform for dialogue research.',
         long_description=readme,
+        long_description_content_type='text/markdown',
         url='http://parl.ai/',
-        license=license,
         python_requires='>=3.6',
         packages=find_packages(
-            exclude=('data', 'docs', 'downloads', 'examples', 'logs', 'tests')
+            exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal',)
         ),
         install_requires=reqs.strip().split('\n'),
         include_package_data=True,
         entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
+        classifiers=[
+            "Programming Language :: Python :: 3",
+            "License :: OSI Approved :: MIT License",
+            "Topic :: Scientific/Engineering :: Artificial Intelligence",
+            "Natural Language :: English",
+        ],
     )

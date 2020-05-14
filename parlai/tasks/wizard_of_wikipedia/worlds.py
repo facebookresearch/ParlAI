@@ -15,7 +15,7 @@ from parlai.core.agents import create_agent
 from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
-from parlai.tasks.self_chat.worlds import InteractiveWorld as SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.utils.misc import warn_once
 
 from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import (
@@ -218,8 +218,8 @@ class InteractiveGeneratorWorld(InteractiveWorld):
         return act
 
 
-class InteractiveSelfchatWorld(SelfChatBaseWorld):
-    def init_contexts(self):
+class SelfChatWorld(SelfChatBaseWorld):
+    def init_contexts(self, shared=None):
         print('[ loading topics.. ]')
         # Load possible chosen topics
         topics_path = os.path.join(

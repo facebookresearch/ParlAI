@@ -22,6 +22,7 @@ except ImportError:
     # silence the error
     GIT_AVAILABLE = False
 
+import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
@@ -771,11 +772,13 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
-    def add_world_args(self, task, interactive_task):
+    def add_world_args(self, task, interactive_task, selfchat_task):
         """
         Add arguments specific to the world.
         """
-        world_class = load_world_module(task, interactive_task)
+        world_class = load_world_module(
+            task, interactive_task=interactive_task, selfchat_task=selfchat_task
+        )
         if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
             try:
                 world_class.add_cmdline_args(self)
@@ -837,7 +840,11 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # add world args, if we know a priori which world is being used
         if task is not None:
-            self.add_world_args(task, parsed.get('interactive_task', False))
+            self.add_world_args(
+                task,
+                parsed.get('interactive_task', False),
+                parsed.get('selfchat_task', False),
+            )
 
         # reset parser-level defaults over any model-level defaults
         try:
@@ -955,24 +962,17 @@ class ParlaiParser(argparse.ArgumentParser):
             self._load_opts(self.opt)
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
-        if self.opt.get('model_file') is not None:
-            self.opt['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['model_file']
-            )
-        if self.opt['override'].get('model_file') is not None:
-            # also check override
-            self.opt['override']['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['model_file']
-            )
-        if self.opt.get('dict_file') is not None:
-            self.opt['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['dict_file']
-            )
-        if self.opt['override'].get('dict_file') is not None:
-            # also check override
-            self.opt['override']['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['dict_file']
-            )
+        options_to_change = {'model_file', 'dict_file', 'bpe_vocab', 'bpe_merge'}
+        for each_key in options_to_change:
+            if self.opt.get(each_key) is not None:
+                self.opt[each_key] = modelzoo_path(
+                    self.opt.get('datapath'), self.opt[each_key]
+                )
+            if self.opt['override'].get(each_key) is not None:
+                # also check override
+                self.opt['override'][each_key] = modelzoo_path(
+                    self.opt.get('datapath'), self.opt['override'][each_key]
+                )
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
@@ -1007,7 +1007,109 @@ class ParlaiParser(argparse.ArgumentParser):
                 print_git_commit()
             print_announcements(self.opt)
 
+        if os.environ.get('PARLAI_VERBOSE'):
+            self.opt['verbose'] = True
+
+        if self.opt.get('verbose'):
+            logging.set_verbose_mode()
+
         return self.opt
+
+    def _kwargs_to_str_args(self, **kwargs):
+        """
+        Attempt to map from python-code kwargs into CLI args.
+
+        e.g. model_file -> --model-file.
+
+        Works with short options too, like t="convai2".
+        """
+
+        # we have to do this large block of repetitive code twice, the first
+        # round is basically just to become aware of anything that would have
+        # been added by add_extra_args
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            if kwname not in kwname_to_action:
+                # best guess, we need to delay it. hopefully this gets added
+                # during add_kw_Args
+                continue
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        # become aware of any extra args that might be specified if the user
+        # provides something like model="transformer/generator".
+        self.add_extra_args(string_args)
+
+        # do it again, this time knowing about ALL args.
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            # note we don't have the if kwname not in kwname_to_action here.
+            # it MUST appear, or else we legitimately should be throwing a KeyError
+            # because user has provided an unspecified option
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        return string_args
+
+    def parse_kwargs(self, **kwargs):
+        """
+        Parse kwargs, with type checking etc.
+        """
+        # hack: capture any error messages without raising a SystemExit
+        def _captured_error(msg):
+            raise ValueError(msg)
+
+        old_error = self.error
+        self.error = _captured_error
+        try:
+            string_args = self._kwargs_to_str_args(**kwargs)
+            return self.parse_args(args=string_args, print_args=False)
+        finally:
+            self.error = old_error
 
     def print_args(self):
         """
@@ -1068,6 +1170,9 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden = kwargs.pop('hidden')
             if hidden:
                 kwargs['help'] = argparse.SUPPRESS
+        if 'type' in kwargs and kwargs['type'] is bool:
+            # common error, we really want simple form
+            kwargs['type'] = 'bool'
         return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):
