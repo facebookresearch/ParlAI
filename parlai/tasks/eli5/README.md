@@ -89,12 +89,13 @@ And finally, make the train, valid and test split with:
 ```
 cd ..
 python finalize_qda.py
+cd {parlai data directory}/eli5
 rm processed_data/selected_15_1/explainlikeimfive/selected_slice_*.json
 ```
 
-Congrats, you can now start working on your very own Long-Form Question Answering systems!
+The final dataset should now be found in `{data folder}/eli5/processed_data/selected_15_1/`.
 ```
-ELI5/data_creation$ ls -lh processed_data/selected_15_1/explainlikeimfive*.json
+eli5/data_creation$ ls -lh processed_data/selected_15_1/explainlikeimfive*.json
 -rw-rw-r-- 1 username username 142M Oct 15 06:18 processed_data/selected_15_1/explainlikeimfive_test.json
 -rw-rw-r-- 1 username username 1.3G Oct 15 06:18 processed_data/selected_15_1/explainlikeimfive_train.json
 -rw-rw-r-- 1 username username  57M Oct 15 06:18 processed_data/selected_15_1/explainlikeimfive_valid.json
