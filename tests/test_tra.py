@@ -145,6 +145,26 @@ class _AbstractTRATest(unittest.TestCase):
         # correct label
         self.assertEqual(valid['hits@100'], 0)
 
+    # test train_predict by getting the output we see from training and checking
+    # that the f1, blue-4 (some of the metrics you only see with the
+    # flag set to true) are present
+    def test_train_predict(self):
+        args = self._get_args()
+        args['train_predict'] = True
+        args['candidates'] = 'inline'
+        with testing_utils.capture_output() as output:
+            valid, test = testing_utils.train_model(args)
+            out = output.getvalue()
+        valid_idx = out.index('valid:')
+        train_dict_idx = out.index('{"')
+        train_dict_end = out.index('}')
+        train_dict = out[train_dict_idx : train_dict_end + 1]
+        # Make sure dictionary we find is before valid dictionary
+        self.assertLess(train_dict_end, valid_idx)
+        self.assertIn('f1', train_dict)
+        self.assertIn('bleu-4', train_dict)
+
+
 class TestTransformerRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
