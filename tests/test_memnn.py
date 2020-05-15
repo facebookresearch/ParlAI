@@ -74,7 +74,6 @@ class TestMemnn(unittest.TestCase):
         self.assertGreater(valid['hits@1'], 0.95)
         self.assertGreater(test['hits@1'], 0.95)
 
-    @unittest.skip
     def test_backcomp(self):
         """
         Tests that the memnn model files continue to works over time.

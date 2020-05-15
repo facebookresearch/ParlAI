@@ -98,7 +98,7 @@ def skipUnlessTorchVersion(version):
 
         target = packaging.version.parse(version)
         skip = packaging.version.parse(torch.__version__) < target
-    reason = 'Test requires pytorch {version} or newer'
+    reason = f'Test requires pytorch {version} or newer'
     return unittest.skipIf(skip, reason)
 
 
@@ -111,7 +111,7 @@ def skipIfTorchVersion(version):
 
         target = packaging.version.parse(version)
         skip = packaging.version.parse(torch.__version__) >= target
-    reason = 'Test requires pytorch OLDER than {version}'
+    reason = f'Test requires pytorch OLDER than {version}'
 
     return unittest.skipIf(skip, reason)
 
