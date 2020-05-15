@@ -96,6 +96,8 @@ installtorchgpu15: &installtorchgpu15
       pip3 install --progress-bar off 'subword-nmt==0.3.7'
       pip3 install --progress-bar off pytorch-pretrained-bert
       pip3 install --progress-bar off transformers
+      pip3 install --progress-bar off 'torchtext==0.6.0'
+      pip3 install --progress-bar off 'torchvision==0.6.0'
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
