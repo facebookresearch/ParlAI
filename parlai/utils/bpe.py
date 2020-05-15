@@ -707,9 +707,7 @@ class HuggingFaceBpeHelper(BPEHelper):
             )
 
         if self.lower:
-            raise ValueError(
-                'Only use --dict-lower false with --dict-tokenizer bytelevelbpe'
-            )
+            warn_once('Are you sure you want to lower case your BPE dictionary?')
         if self.maxtokens > 0 or self.minfreq > 0:
             raise ValueError(
                 'You should not filter vocabulary with using --dict-tokenizer bytelevelbpe'

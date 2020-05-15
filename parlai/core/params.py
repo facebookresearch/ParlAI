@@ -1162,6 +1162,9 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden = kwargs.pop('hidden')
             if hidden:
                 kwargs['help'] = argparse.SUPPRESS
+        if 'type' in kwargs and kwargs['type'] is bool:
+            # common error, we really want simple form
+            kwargs['type'] = 'bool'
         return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):

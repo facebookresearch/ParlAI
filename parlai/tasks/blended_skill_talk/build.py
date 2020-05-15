@@ -29,12 +29,42 @@ RESOURCES = [
         '47cdb6cbee0516ca7400be35fa07761339b86c6c026425bf5dba00e5534e8182',
         zipped=False,
     ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__train__both_sides.json',
+        'ed_persona_topicifier__train__both_sides.json',
+        'ff2ea7c5fcb0449890d57a629cc3e8794ab95ac6db1057bf58d540c2b576e4cc',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__train__experiencer_only.json',
+        'ed_persona_topicifier__train__experiencer_only.json',
+        '751f0ba2f421a11eee2bfc896d60ab70d669093c3a5f6cb30e8d202133a90ec7',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__valid__experiencer_only.json',
+        'ed_persona_topicifier__valid__experiencer_only.json',
+        '15d5412f5990a8a9c892305009d8597a737322aafe878b03ec71143703b25ba0',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/ed_persona_topicifier__test__experiencer_only.json',
+        'ed_persona_topicifier__test__experiencer_only.json',
+        '2604e977787be0b5edc54561f7ce8a54c40758d235a3fee262fe20fe36b8cd15',
+        zipped=False,
+    ),
+    build_data.DownloadableFile(
+        'http://parl.ai/downloads/blended_skill_talk/safe_personas_2.txt',
+        'safe_personas.txt',
+        '2ee292aa0006ea002e9b23d4f7326fe9e17514ce5793d31fd8d679035d4366a7',
+        zipped=False,
+    ),
 ]
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'blended_skill_talk')
-    version = 'v1.2'
+    version = 'v1.4'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')

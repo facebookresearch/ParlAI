@@ -129,6 +129,8 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             3. When using an init model without image tokens in the embeddings.
                 This is only the case if the embs differ by 2 in dimension 0
         """
+        state_dict['encoder.dummy_image_enc'] = self.model.encoder.dummy_image_enc
+        state_dict['encoder.ones_mask'] = self.model.encoder.ones_mask
         # Case 1 -> No Image Encoder
         if 'encoder.image_encoder.0.weight' not in state_dict:
             for k, v in self.model.encoder.image_encoder.state_dict().items():
