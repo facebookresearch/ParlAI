@@ -9,19 +9,12 @@ from parlai.tasks.dream.agents import BaseMultipleChoiceTeacher
 import os
 
 
-def _path(opt):
-    # build the data if it does not exist
-    build(opt)
-
-    # set up path to data (specific to each dataset)
-    jsons_path = os.path.join(opt['datapath'], 'C3')
-    return jsons_path
-
-
 class C3Teacher(BaseMultipleChoiceTeacher):
     def __init__(self, opt, shared=None):
-        super().__init__(opt, _path, shared)
+        build(opt)
+        jsons_path = os.path.join(opt['datapath'], 'C3')
         self.id = 'c3'
+        super().__init__(opt, jsons_path, shared)
 
 
 class DefaultTeacher(C3Teacher):

@@ -10,23 +10,13 @@ import os
 import json
 
 
-def _path(opt):
-    # build the data if it does not exist
-    build(opt)
-
-    # set up path to data (specific to each dataset)
-    jsons_path = os.path.join(opt['datapath'], 'DREAM')
-    return jsons_path
-
-
 class BaseMultipleChoiceTeacher(FixedDialogTeacher):
     """
     Base class for Dream and C3 Teachers.
     """
 
-    def __init__(self, opt, path_fn, shared=None):
+    def __init__(self, opt, jsons_path, shared=None):
         super().__init__(opt, shared)
-        jsons_path = path_fn(opt)
         self.episodes = self._setup_data(jsons_path)
         self.reset()
 
@@ -73,8 +63,10 @@ class BaseMultipleChoiceTeacher(FixedDialogTeacher):
 
 class DREAMTeacher(BaseMultipleChoiceTeacher):
     def __init__(self, opt, shared=None):
-        super().__init__(opt, _path, shared)
+        build(opt)
+        jsons_path = os.path.join(opt['datapath'], 'DREAM')
         self.id = 'dream'
+        super().__init__(opt, jsons_path, shared)
 
 
 class DefaultTeacher(DREAMTeacher):
