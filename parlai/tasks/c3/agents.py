@@ -4,11 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 from parlai.tasks.dream.agents import BaseMultipleChoiceTeacher
 import os
-import json
 
 
 def _path(opt):

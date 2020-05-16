@@ -21,7 +21,7 @@ def _path(opt):
 
 class BaseMultipleChoiceTeacher(FixedDialogTeacher):
     """
-    Base class for Dream and C3 Teachers
+    Base class for Dream and C3 Teachers.
     """
 
     def __init__(self, opt, path_fn, shared=None):
