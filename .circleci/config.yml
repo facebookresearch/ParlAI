@@ -104,7 +104,7 @@ installtorchcpuosx: &installtorchcpuosx
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off torch
+      pip3 install --progress-bar off torch==1.4.0
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -147,12 +147,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200516-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpuosx
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200516-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -174,12 +174,12 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpu
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -198,12 +198,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut38-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpu
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut38-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -222,12 +222,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpu
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -253,12 +253,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v5-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchgpu13
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -284,12 +284,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v5-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchgpu14
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu14-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -315,12 +315,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v5-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200516-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchgpu14
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200516-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -342,11 +342,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v4-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -364,7 +364,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
@@ -375,7 +375,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-v4-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -395,12 +395,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v4-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -466,7 +466,6 @@ workflows:
   version: 2
   commit:
     jobs:
-      - unittests_gpu13
       - unittests_gpu14
       - unittests_38
       - unittests_37
