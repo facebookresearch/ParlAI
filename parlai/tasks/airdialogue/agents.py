@@ -25,9 +25,9 @@ class AirDialogueTeacher(FixedDialogTeacher):
     """
     AirDialogue Teacher.
 
-    This also contains other files (dev_kb.json, train_kb.json) with flight data
-    about return flights, price, connections, flight airlines, departure times,
-    and other flight information.
+    This also contains other files (dev_kb.json, train_kb.json) with flight data about
+    return flights, price, connections, flight airlines, departure times, and other
+    flight information.
     """
 
     def __init__(self, opt, shared=None):
@@ -47,19 +47,18 @@ class AirDialogueTeacher(FixedDialogTeacher):
                 for line in f:
                     if len(line) > 1:
                         self.messages.append(json.loads(line)['dialogue'])
-            self.messages = self.messages[len(self.messages)//2:]
+            self.messages = self.messages[len(self.messages) // 2 :]
         elif self.datatype.startswith('valid'):
             with open(test_valid_path) as f:
                 for line in f:
                     if len(line) > 1:
                         self.messages.append(json.loads(line)['dialogue'])
-            self.messages = self.messages[:len(self.messages)//2]
+            self.messages = self.messages[: len(self.messages) // 2]
         else:
             with open(train_path) as f:
                 for line in f:
                     if len(line) > 1:
                         self.messages.append(json.loads(line)['dialogue'])
-
 
     def num_examples(self):
         examples = 0
