@@ -1144,4 +1144,24 @@ task_list = [
             "<https://arxiv.org/abs/1911.03842>."
         ),
     },
+    {
+        "id": "DREAM",
+        "display_name": "DREAM",
+        "task": "dream",
+        "tags": ["All", "QA"],
+        "description": (
+            "A multiple-choice answering dataset based on multi-turn, multi-party dialogue."
+            "More information can be found at: <https://dataset.org/dream/>."
+        ),
+    },
+    {
+        "id": "C3",
+        "display_name": "C3",
+        "task": "c3",
+        "tags": ["All", "QA"],
+        "description": (
+            "A multiple-choice answering dataset in Chinese based on a prior passage."
+            "More information can be found at: <https://dataset.org/c3/>."
+        ),
+    },
 ]
