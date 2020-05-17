@@ -927,12 +927,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             the maximum length of the decoded sequence
 
         :return:
-            tuple (beam_pred_scores, n_best_pred_scores, beams)
+            tuple (beam_pred_scores, beams)
 
             - beam_preds_scores: list of (prediction, score) pairs for each sample in
               Batch
-            - n_best_preds_scores: list of n_best list of tuples (prediction, score)
-              for each sample from Batch
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
