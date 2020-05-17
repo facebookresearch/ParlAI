@@ -882,11 +882,10 @@ class TestImagePolyencoder(unittest.TestCase):
 
     base_args = {
         'log_every_n_secs': 5,
-        'validation_every_n_secs': 30,
         'model': 'transformer/image_polyencoder',
         'embedding_size': 32,
-        'n_heads': 2,
-        'n_layers': 2,
+        'n_heads': 1,
+        'n_layers': 1,
         'n_positions': 128,
         'truncate': 128,
         'ffn_size': 32,
@@ -895,12 +894,12 @@ class TestImagePolyencoder(unittest.TestCase):
         'candidates': 'batch',
         'eval_candidates': 'batch',  # No inline cands
         'embeddings_scale': False,
-        'gradient_clip': 1.0,
-        'learningrate': 3e-5,
-        'batchsize': 16,
+        'gradient_clip': -1.0,
+        'learningrate': 1e-4,
+        'batchsize': 8,
         'optimizer': 'adamax',
         'learn_positional_embeddings': False,
-        'reduction_type': 'first',
+        'reduction_type': 'mean',
         'num_epochs': 10,
     }
     text_args = {'task': 'integration_tests:nocandidate'}

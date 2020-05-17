@@ -88,7 +88,7 @@ class TestImageSeq2Seq(unittest.TestCase):
 
         valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'], 6.6, f'failed to train image_seq2seq on image task'
+            valid['ppl'], 8.6, f'failed to train image_seq2seq on image task'
         )
 
     @testing_utils.retry(ntries=3)
