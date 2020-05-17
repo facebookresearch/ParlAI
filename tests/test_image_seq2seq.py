@@ -21,6 +21,7 @@ BASE_ARGS = {
     'activation': 'gelu',
     'embeddings_scale': True,
     'gradient_clip': 0.1,
+    'num_epochs': 10,
     # Train args
     'learningrate': 7e-3,
     'batchsize': 16,
@@ -32,7 +33,7 @@ TEXT_ARGS = {'task': 'integration_tests:nocandidate', 'num_epochs': 4}
 
 IMAGE_ARGS = {
     'task': 'integration_tests:ImageTeacher',
-    'num_epochs': 200,
+    'num_epochs': 20,
     'image_mode': 'resnet152',
 }
 
