@@ -246,10 +246,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
@@ -277,10 +277,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
@@ -308,10 +308,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
