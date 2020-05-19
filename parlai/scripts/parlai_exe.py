@@ -20,17 +20,24 @@ def display_image():
 
 
 def Parlai():
-    if len(sys.argv) > 1:
+    # List of mappings from a command name to the script to import and class to call.
+    maps = {
+        'dd': ('parlai.scripts.display_data', 'DisplayData'),
+        'train': ('parlai.scripts.train_model', 'TrainModel'),
+        'eval': ('parlai.scripts.eval_model', 'EvalModel'),
+        'i': ('parlai.scripts.interactive', 'Interactive'),
+    }
+
+    if len(sys.argv) > 1 and sys.argv[1] != '--help':
         command = sys.argv[1]
     else:
         print("no command given")
+        print("\nMain ParlAI commands:")
+        for c in maps:
+            command = maps[c][0][maps[c][0].rfind('.') + 1 :]
+            print("  " + command + " (" + c + ")")
         exit()
 
-    # List of mappings from a command name to the script to import and class to call.
-    maps = {
-        'train': ('parlai.scripts.train_model', 'TrainModel'),
-        'eval': ('parlai.scripts.eval_model', 'EvalModel'),
-    }
     try:
         # Add user-specified script mappings from parlai_internal, if available.
         module_name = "parlai_internal.scripts.parlai_scripts"
