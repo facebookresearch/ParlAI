@@ -64,7 +64,8 @@ def dump_data(opt):
 
 
 class ConvertDataToParlaiFormat:
-    def main():
+    @classmethod
+    def main(cls, *args, **kwargs):
         random.seed(42)
         # Get command line arguments
         parser = ParlaiParser()
