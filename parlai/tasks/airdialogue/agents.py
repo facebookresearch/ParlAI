@@ -27,15 +27,20 @@ class AirDialogueTeacher(FixedDialogTeacher):
 
     This also contains other files (dev_kb.json, train_kb.json) with flight data about
     return flights, price, connections, flight airlines, departure times, and other
-    flight information.
+    flight information. More information and related paper can be found at
+    <https://github.com/google/airdialogue>.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         jsons_path = _path(opt)
         self.datatype = opt['datatype'].split(':')[0]
-        self.messages = []
-        self._setup_data(jsons_path)
+        if shared is not None:
+            self.messages = shared['messages']
+        else:
+            self.messages = []
+            self._setup_data(jsons_path)
+        # self._setup_data(jsons_path)
         self.id = 'airdialogue'
         self.reset()
 
@@ -43,22 +48,24 @@ class AirDialogueTeacher(FixedDialogTeacher):
         train_path = os.path.join(jsons_path, 'train_data.json')
         test_valid_path = os.path.join(jsons_path, 'dev_data.json')
         if self.datatype.startswith('test'):
-            with open(test_valid_path) as f:
-                for line in f:
-                    if len(line) > 1:
-                        self.messages.append(json.loads(line)['dialogue'])
+            self.save_messages_from_path(test_valid_path)
             self.messages = self.messages[len(self.messages) // 2 :]
         elif self.datatype.startswith('valid'):
-            with open(test_valid_path) as f:
-                for line in f:
-                    if len(line) > 1:
-                        self.messages.append(json.loads(line)['dialogue'])
+            self.save_messages_from_path(test_valid_path)
             self.messages = self.messages[: len(self.messages) // 2]
         else:
-            with open(train_path) as f:
-                for line in f:
-                    if len(line) > 1:
-                        self.messages.append(json.loads(line)['dialogue'])
+            self.save_messages_from_path(train_path)
+
+    def save_messages_from_path(self, json_path):
+        with open(json_path) as f:
+            for line in f:
+                if len(line) > 1:
+                    self.messages.append(json.loads(line)['dialogue'])
+
+    def share(self):
+        shared = super().share()
+        shared['messages'] = self.messages
+        return shared
 
     def num_examples(self):
         examples = 0
@@ -74,13 +81,13 @@ class AirDialogueTeacher(FixedDialogTeacher):
         entry = self.messages[episode_idx][log_idx]
         entry = entry.split(': ')[1]
         last_backnforth_idx = len(self.messages[episode_idx]) - 2
+        # sometimes the first speaker is at the end with no reply
+        if len(self.messages[episode_idx]) % 2 == 1:
+            last_backnforth_idx -= 1
         episode_done = log_idx >= last_backnforth_idx
-        if log_idx < last_backnforth_idx:
-            label_text = self.messages[episode_idx][log_idx + 1]
-            label_text = label_text.split(': ')[1]
-            labels = [label_text]
-        else:
-            labels = ['']
+        label_text = self.messages[episode_idx][log_idx + 1]
+        label_text = label_text.split(': ')[1]
+        labels = [label_text]
         action = {
             'id': self.id,
             'text': entry,
