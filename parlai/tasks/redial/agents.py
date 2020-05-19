@@ -47,7 +47,11 @@ class ReDialTeacher(FixedDialogTeacher):
         jsonl_path = _path(opt)
         self.title_id_map = {}
         self.get_title_dict(jsonl_path)
-        self._setup_data(jsonl_path)
+        if shared is not None:
+            self.episodes = shared['episodes']
+        else:
+            self.episodes = []
+            self._setup_data(jsonl_path)
         self.id = 'redial'
 
         self.reset()
@@ -60,32 +64,23 @@ class ReDialTeacher(FixedDialogTeacher):
                 self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
 
     def _setup_data(self, jsonl_path):
-        test_data = []
-        train_data = []
-        valid_data = []
         train_path = os.path.join(jsonl_path, 'train_data.jsonl')
         test_path = os.path.join(jsonl_path, 'test_data.jsonl')
         valid_split = 0.5
         if self.datatype.startswith('test'):
-            with open(test_path) as f:
-                for line in f:
-                    test_data.append(json.loads(line))
-                self.episodes = test_data
-            unmerged_episodes = self.episodes[int(valid_split * len(self.episodes)) :]
+            unmerged_episodes = self.get_data_from_file(test_path)
+            unmerged_episodes = unmerged_episodes[
+                int(valid_split * len(unmerged_episodes)) :
+            ]
         elif self.datatype.startswith('valid'):
-            with open(test_path) as f:
-                for line in f:
-                    valid_data.append(json.loads(line))
-                self.episodes = valid_data
-            unmerged_episodes = self.episodes[: int(valid_split * len(self.episodes))]
+            unmerged_episodes = self.get_data_from_file(test_path)
+            unmerged_episodes = unmerged_episodes[
+                : int(valid_split * len(unmerged_episodes))
+            ]
         else:
-            with open(train_path) as f:
-                for line in f:
-                    train_data.append(json.loads(line))
-            unmerged_episodes = train_data
+            unmerged_episodes = self.get_data_from_file(train_path)
 
         # some speakers speak multiple times in a row.
-        self.episodes = []
         for unmerged_episode in unmerged_episodes:
             episode = []
             prev_speaker = None
@@ -98,6 +93,18 @@ class ReDialTeacher(FixedDialogTeacher):
                     episode.append(text)
                     prev_speaker = curr_speaker
             self.episodes.append(episode)
+
+    def get_data_from_file(self, filepath):
+        data = []
+        with open(filepath) as f:
+            for line in f:
+                data.append(json.loads(line))
+        return data
+
+    def share(self):
+        shared = super().share()
+        shared['episodes'] = self.episodes
+        return shared
 
     def num_examples(self):
         examples = 0
@@ -112,11 +119,11 @@ class ReDialTeacher(FixedDialogTeacher):
         text_idx = entry_idx * 2
         entry = self.episodes[episode_idx][text_idx]
         final_speaker_idx = len(self.episodes[episode_idx]) - 2
+        # sometimes the first speaker is at the end with no reply
+        if len(self.episodes[episode_idx]) % 2 == 1:
+            final_speaker_idx -= 1
+        labels = [self.episodes[episode_idx][text_idx + 1]]
         episode_done = text_idx >= final_speaker_idx
-        if text_idx < final_speaker_idx:
-            labels = [self.episodes[episode_idx][text_idx + 1]]
-        else:
-            labels = ['']
         action = {
             'id': self.id,
             'text': entry,
