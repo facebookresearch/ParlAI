@@ -65,7 +65,10 @@ class HollETeacher(FixedDialogTeacher):
         holle_path = _path(opt)
         self.datatype = opt['datatype'].split(':')[0]
         self.id = 'holl_e'
-        self.episodes = self.setup_data(holle_path)
+        if shared is not None:
+            self.episodes = shared['episodes']
+        else:
+            self.episodes = self.setup_data(holle_path)
         self.reset()
 
     def setup_data(self, path):
@@ -94,6 +97,11 @@ class HollETeacher(FixedDialogTeacher):
         elif self.datatype.startswith('test'):
             episodes = episodes[len(episodes) // 2 :]
         return episodes
+
+    def share(self):
+        shared = super().share()
+        shared['episodes'] = self.episodes
+        return shared
 
     def get_knowledge(self, data):
         ktypes = self.opt['knowledge_types'].split(',')
