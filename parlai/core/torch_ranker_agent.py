@@ -24,7 +24,12 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import padded_3d
+from parlai.utils.torch import (
+    padded_3d,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
 
@@ -65,6 +70,15 @@ class TorchRankerAgent(TorchAgent):
             choices=['batch', 'inline', 'fixed', 'vocab', 'batch-all-cands'],
             help='The source of candidates during evaluation (defaults to the same'
             'value as --candidates if no flag is given)',
+        )
+        agent.add_argument(
+            '-icands',
+            '--interactive-candidates',
+            type=str,
+            default='fixed',
+            choices=['fixed', 'inline', 'vocab'],
+            help='The source of candidates during interactive mode. Since in '
+            'interactive mode, batchsize == 1, we cannot use batch candidates.',
         )
         agent.add_argument(
             '--repeat-blocking-heuristic',
@@ -165,6 +179,7 @@ class TorchRankerAgent(TorchAgent):
         # (e.g., a .dict file)
         init_model, is_finetune = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
+        self._set_candidate_variables(opt)
         super().__init__(opt, shared)
 
         states: Dict[str, Any]
@@ -175,16 +190,15 @@ class TorchRankerAgent(TorchAgent):
             # should correctly initialize to floats or ints here
             self.criterion = self.build_criterion()
             self.model = self.build_model()
+
             if self.model is None or self.criterion is None:
                 raise AttributeError(
-                    'build_model() and build_criterion() need to return the model or criterion'
+                    'build_model() and build_criterion() need to return the model '
+                    'or criterion'
                 )
-            if self.use_cuda:
-                self.model.cuda()
-                self.criterion.cuda()
-
-            print("Total parameters: {}".format(self._total_parameters()))
-            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
 
             if self.fp16:
                 self.model = self.model.half()
@@ -194,9 +208,18 @@ class TorchRankerAgent(TorchAgent):
             else:
                 states = {}
 
+            if self.use_cuda:
+                if self.model_parallel:
+                    self.model = PipelineHelper().make_parallel(self.model)
+                else:
+                    self.model.cuda()
+                if self.data_parallel:
+                    self.model = torch.nn.DataParallel(self.model)
+                self.criterion.cuda()
+
         self.rank_top_k = opt.get('rank_top_k', -1)
 
-        # Vectorize and save fixed/vocab candidates once upfront if applicable
+        # Set fixed and vocab candidates if applicable
         self.set_fixed_candidates(shared)
         self.set_vocab_candidates(shared)
 
@@ -204,7 +227,8 @@ class TorchRankerAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        else:
+        elif self._should_initialize_optimizer():
+            # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(
                 optim_params, states.get('optimizer'), states.get('optimizer_type')
@@ -212,8 +236,9 @@ class TorchRankerAgent(TorchAgent):
             self.build_lr_scheduler(states, hard_reset=is_finetune)
 
         if shared is None and is_distributed():
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
     def build_criterion(self):
@@ -227,25 +252,55 @@ class TorchRankerAgent(TorchAgent):
         else:
             return torch.nn.CrossEntropyLoss(reduction='none')
 
+    def _set_candidate_variables(self, opt):
+        """
+        Sets candidate variables from opt.
+
+        NOTE: we call this function prior to `super().__init__` so
+        that these variables are set properly during the call to the
+        `set_interactive_mode` function.
+        """
+        # candidate variables
+        self.candidates = opt['candidates']
+        self.eval_candidates = opt['eval_candidates']
+        # options
+        self.fixed_candidates_path = opt['fixed_candidates_path']
+        self.ignore_bad_candidates = opt['ignore_bad_candidates']
+        self.encode_candidate_vecs = opt['encode_candidate_vecs']
+
     def set_interactive_mode(self, mode, shared=False):
+        """
+        Set interactive mode defaults.
+
+        In interactive mode, we set `ignore_bad_candidates` to True.
+        Additionally, we change the `eval_candidates` to the option
+        specified in `--interactive-candidates`, which defaults to False.
+
+        Interactive mode possibly changes the fixed candidates path if it
+        does not exist, automatically creating a candidates file from the
+        specified task.
+        """
         super().set_interactive_mode(mode, shared)
-        self.candidates = self.opt['candidates']
-        self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
-        if mode:
-            self.eval_candidates = 'fixed'
-            self.ignore_bad_candidates = True
-            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+        if not mode:
+            # Not in interactive mode, nothing to do
+            return
+
+        # Override eval_candidates to interactive_candidates
+        self.eval_candidates = self.opt.get('interactive_candidates', 'fixed')
+        if self.eval_candidates == 'fixed':
+            # Set fixed candidates path if it does not exist
             if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
                 # Attempt to get a standard candidate set for the given task
                 path = self.get_task_candidates_path()
                 if path:
                     if not shared:
-                        print("[setting fixed_candidates path to: " + path + " ]")
+                        print(f' [ Setting fixed_candidates path to: {path} ]')
                     self.fixed_candidates_path = path
-        else:
-            self.eval_candidates = self.opt['eval_candidates']
-            self.ignore_bad_candidates = self.opt.get('ignore_bad_candidates', False)
-            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+
+        # Ignore bad candidates in interactive mode
+        self.ignore_bad_candidates = True
+
+        return
 
     def get_task_candidates_path(self):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
@@ -762,7 +817,8 @@ class TorchRankerAgent(TorchAgent):
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
-        shared['optimizer'] = self.optimizer
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         return shared
 
     def set_vocab_candidates(self, shared):

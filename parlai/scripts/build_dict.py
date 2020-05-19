@@ -52,7 +52,7 @@ def setup_args(parser=None, hidden=True):
         hidden=hidden,
     )
     dict_loop.add_argument(
-        '-ltim', '--log-every-n-secs', type=float, default=2, hidden=hidden
+        '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
     partial, _ = parser.parse_known_args(nohelp=True)
     if vars(partial).get('dict_class'):
@@ -112,7 +112,6 @@ def build_dict(opt, skip_if_built=False):
         ordered_opt['datatype'] = dt
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
-        print('[ running dictionary over data.. ]')
         log_time = TimeLogger()
         total = world_dict.num_examples()
         if opt['dict_maxexs'] >= 0:

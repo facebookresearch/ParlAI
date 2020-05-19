@@ -22,6 +22,7 @@ except ImportError:
     # silence the error
     GIT_AVAILABLE = False
 
+import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
@@ -998,7 +999,109 @@ class ParlaiParser(argparse.ArgumentParser):
                 print_git_commit()
             print_announcements(self.opt)
 
+        if os.environ.get('PARLAI_VERBOSE'):
+            self.opt['verbose'] = True
+
+        if self.opt.get('verbose'):
+            logging.set_verbose_mode()
+
         return self.opt
+
+    def _kwargs_to_str_args(self, **kwargs):
+        """
+        Attempt to map from python-code kwargs into CLI args.
+
+        e.g. model_file -> --model-file.
+
+        Works with short options too, like t="convai2".
+        """
+
+        # we have to do this large block of repetitive code twice, the first
+        # round is basically just to become aware of anything that would have
+        # been added by add_extra_args
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            if kwname not in kwname_to_action:
+                # best guess, we need to delay it. hopefully this gets added
+                # during add_kw_Args
+                continue
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        # become aware of any extra args that might be specified if the user
+        # provides something like model="transformer/generator".
+        self.add_extra_args(string_args)
+
+        # do it again, this time knowing about ALL args.
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            # note we don't have the if kwname not in kwname_to_action here.
+            # it MUST appear, or else we legitimately should be throwing a KeyError
+            # because user has provided an unspecified option
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        return string_args
+
+    def parse_kwargs(self, **kwargs):
+        """
+        Parse kwargs, with type checking etc.
+        """
+        # hack: capture any error messages without raising a SystemExit
+        def _captured_error(msg):
+            raise ValueError(msg)
+
+        old_error = self.error
+        self.error = _captured_error
+        try:
+            string_args = self._kwargs_to_str_args(**kwargs)
+            return self.parse_args(args=string_args, print_args=False)
+        finally:
+            self.error = old_error
 
     def print_args(self):
         """
@@ -1059,6 +1162,9 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden = kwargs.pop('hidden')
             if hidden:
                 kwargs['help'] = argparse.SUPPRESS
+        if 'type' in kwargs and kwargs['type'] is bool:
+            # common error, we really want simple form
+            kwargs['type'] = 'bool'
         return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):

@@ -73,6 +73,13 @@ class Metric(ABC):
         """
         return False
 
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return False
+
     @abstractmethod
     def value(self) -> float:
         """
@@ -123,6 +130,16 @@ class Metric(ABC):
         if not isinstance(other, float):
             raise TypeError('Metrics.__sub__ is intentionally limited to floats.')
         return self.value() - other
+
+    def __rsub__(self, other: Any) -> float:
+        """
+        Used heavily for assertAlmostEqual.
+
+        NOTE: This is not necessary in python 3.7+.
+        """
+        if not isinstance(other, float):
+            raise TypeError('Metrics.__rsub__ is intentionally limited to floats.')
+        return other - self.value()
 
     @classmethod
     def as_number(cls, obj: TScalar) -> Union[int, float]:
@@ -218,6 +235,13 @@ class AverageMetric(Metric):
 
     __slots__ = ('_numer', '_denom')
 
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
+
     def __init__(self, numer: TScalar, denom: TScalar = 1):
         self._numer = self.as_number(numer)
         self._denom = self.as_number(denom)
@@ -249,23 +273,21 @@ class MacroAverageMetric(Metric):
     AverageMetrics already.
     """
 
-    __slots__ = ('_values',)
+    __slots__ = '_values'
 
-    def __init__(self, metrics: List[Metric]) -> None:
+    def __init__(self, metrics: Dict[str, Metric]) -> None:
         self._values = metrics
 
     def __add__(self, other: Optional['MacroAverageMetric']) -> 'MacroAverageMetric':
         if other is None:
             return self
-        if len(self._values) != len(other._values):
-            raise AssertionError(
-                "MacroAverage keeping track of an uneven number of submetrics. "
-                "There should be exactly one per task."
-            )
-        return MacroAverageMetric([a + b for a, b in zip(self._values, other._values)])
+        output = dict(**self._values)
+        for k, v in other._values.items():
+            output[k] = output.get(k, None) + v
+        return MacroAverageMetric(output)
 
     def value(self) -> float:
-        sum_ = sum(v.value() for v in self._values)
+        sum_ = sum(v.value() for v in self._values.values())
         n = len(self._values)
         return sum_ / n
 
@@ -500,7 +522,7 @@ def aggregate_named_reports(
 
     # reporters is a list of teachers or worlds
     m: Dict[str, Metric] = {}
-    macro_averages: Dict[str, List[Metric]] = {}
+    macro_averages: Dict[str, Dict[str, Metric]] = {}
     for task_id, task_report in named_reports.items():
         for each_metric, value in task_report.items():
             if value.is_global:
@@ -510,14 +532,14 @@ def aggregate_named_reports(
             else:
                 task_metric = f'{task_id}/{each_metric}'
                 m[task_metric] = m.get(task_metric) + value
-                if micro_average or not isinstance(value, AverageMetric):
+                if micro_average or not value.macro_average:
                     # none + a => a from implementation of Metric.__add__
                     m[each_metric] = m.get(each_metric) + value
                 else:
                     # macro average
                     if each_metric not in macro_averages:
-                        macro_averages[each_metric] = []
-                    macro_averages[each_metric].append(value)
+                        macro_averages[each_metric] = {}
+                    macro_averages[each_metric][task_id] = value
     for key, values in macro_averages.items():
         m[key] = MacroAverageMetric(values)
     return m

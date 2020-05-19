@@ -24,12 +24,12 @@ class Opt(dict):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.history = {}
+        self.history = []
         self.deepcopies = []
 
     def __setitem__(self, key, val):
         loc = traceback.format_stack()[-2]
-        self.history.setdefault(key, []).append((loc, val))
+        self.history.append((key, val, loc))
         super().__setitem__(key, val)
 
     def __getstate__(self):
@@ -49,14 +49,12 @@ class Opt(dict):
         # track location of deepcopy
         loc = traceback.format_stack()[-3]
         self.deepcopies.append(loc)
-        # deepcopy the dict
-        memo = copy.deepcopy(dict(self))
-        # make into Opt object
-        memo = Opt(memo)
-        # deepcopy the history
-        memo.history = copy.deepcopy(self.history)
-        # deepcopy the deepcopy history
-        memo.deepcopies = copy.deepcopy(self.deepcopies)
+        # copy all our children
+        memo = Opt({k: copy.deepcopy(v) for k, v in self.items()})
+        # deepcopy the history. history is only tuples, so we can do it shallow
+        memo.history = copy.copy(self.history)
+        # deepcopy the list of deepcopies. also shallow bc only strings
+        memo.deepcopies = copy.copy(self.deepcopies)
         return memo
 
     def display_deepcopies(self):
@@ -64,26 +62,24 @@ class Opt(dict):
         Display all deepcopies.
         """
         if len(self.deepcopies) == 0:
-            print('No deepcopies performed on this opt.')
-            return
-        print('Deepcopies were performed at the following locations:\n')
-        for i, loc in enumerate(self.deepcopies):
-            print('{}. {}'.format(i + 1, loc))
+            return 'No deepcopies performed on this opt.'
+        return '\n'.join(f'{i}. {loc}' for i, loc in enumerate(self.deepcopies, 1))
 
     def display_history(self, key):
         """
         Display the history for an item in the dict.
         """
-        if key not in self.history:
-            print('No history for key {}.'.format(key))
-            return
-        item_hist = self.history[key]
-        for i, change in enumerate(item_hist):
-            print(
-                '{}. {} was set to {} at:\n{}\n'.format(
-                    i + 1, key, change[1], change[0]
-                )
-            )
+        changes = []
+        i = 0
+        for key_, val, loc in self.history:
+            if key != key_:
+                continue
+            i += 1
+            changes.append(f'{i}. {key} was set to {val} at:\n{loc}')
+        if changes:
+            return '\n'.join(changes)
+        else:
+            return f'No history for {key}'
 
 
 def load_opt_file(optfile: str) -> Opt:

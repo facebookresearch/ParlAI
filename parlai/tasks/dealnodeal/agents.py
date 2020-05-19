@@ -46,7 +46,8 @@ class NegotiationTeacher(Teacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.datatype = opt['datatype'].split(':')[0]
-        self.random = self.datatype == 'train'
+        self.datatype_ = opt['datatype']
+        self.random = self.datatype_ == 'train'
         build(opt)
 
         filename = 'val' if self.datatype == 'valid' else self.datatype
@@ -86,6 +87,9 @@ class NegotiationTeacher(Teacher):
         )
         return num_exs
 
+    def num_episodes(self):
+        return len(self.episodes)
+
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
@@ -108,7 +112,7 @@ class NegotiationTeacher(Teacher):
         Process observation for metrics.
         """
         if self.expected_reponse is not None:
-            self.metrics.update(observation, self.expected_reponse)
+            self.metrics.evaluate_response(observation, self.expected_reponse)
             self.expected_reponse = None
         return observation
 

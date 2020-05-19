@@ -54,11 +54,16 @@ class CandidateBaseTeacher(Teacher, ABC):
         num_test: int = NUM_TEST,
     ):
         """
-        :param int vocab_size: size of the vocabulary
-        :param int example_size: length of each example
-        :param int num_candidates: number of label_candidates generated
-        :param int num_train: size of the training set
-        :param int num_test: size of the valid/test sets
+        :param int vocab_size:
+            size of the vocabulary
+        :param int example_size:
+            length of each example
+        :param int num_candidates:
+            number of label_candidates generated
+        :param int num_train:
+            size of the training set
+        :param int num_test:
+            size of the valid/test sets
         """
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
@@ -487,20 +492,15 @@ class ImageTeacher(AbstractImageTeacher):
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
         for i, img in enumerate(imgs):
-            image = Image.new('RGB', (100, 100), color=i)
+            image = Image.new('RGB', (16, 16), color=i)
             image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
             random.seed(42)
             data = [
-                {
-                    'image_id': img,
-                    'text': ''.join(
-                        random.choice(string.ascii_uppercase) for _ in range(10)
-                    ),
-                }
-                for img in imgs
+                {'image_id': img, 'text': string.ascii_uppercase[i]}
+                for i, img in enumerate(imgs)
             ]
             with open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
                 json.dump(data, f)
@@ -525,7 +525,10 @@ class RepeatTeacher(DialogTeacher):
         opt = copy.deepcopy(opt)
         opt['datafile'] = 'unused_path'
         task = opt.get('task', 'integration_tests:RepeatTeacher:50')
-        self.data_length = int(task.split(':')[-1])
+        try:
+            self.data_length = int(task.split(':')[-1])
+        except ValueError:
+            self.data_length = 10
         super().__init__(opt, shared)
 
     def setup_data(self, unused_path):

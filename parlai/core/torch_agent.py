@@ -19,7 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from typing import Dict, Any, Union, List, Tuple
+from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import deque
@@ -52,7 +52,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
 
 
 class Batch(AttrDict):
@@ -208,6 +208,7 @@ class History(object):
         self.history_strings = []
         self.history_raw_strings = []
         self.history_vecs = []
+        self.temp_history = None
 
         # person token args
         self.add_person_tokens = opt.get('person_tokens', False)
@@ -259,9 +260,14 @@ class History(object):
         # update history vecs
         self._update_vecs(text)
 
-    def update_history(self, obs):
+    def update_history(self, obs, temp_history=None):
         """
         Update the history with the given observation.
+
+        param obs:     Observation used to update the history. param temp_history:
+        Optional temporary string. If it is not None,     this string will be appended
+        to the end of the     history. It will not be in the history on the     next
+        dialogue turn. Set to None to stop adding     to the history.
         """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -279,12 +285,18 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
+        self.temp_history = temp_history
+
     def get_history_str(self):
         """
         Return the string version of the history.
         """
         if len(self.history_strings) > 0:
-            return self.delimiter.join(self.history_strings)
+            history = self.delimiter.join(self.history_strings)
+            if self.temp_history is not None:
+                history += self.temp_history
+            return history
+
         return None
 
     def get_history_vec(self):
@@ -300,6 +312,8 @@ class History(object):
                 history.extend(vec)
                 history.extend(self.delimiter_tok)
             history.extend(self.history_vecs[-1])
+            if self.temp_history is not None:
+                history.extend(self.parse(self.temp_history))
             if self._global_end_token is not None:
                 history.extend([self._global_end_token])
         else:
@@ -309,8 +323,11 @@ class History(object):
                 history += vec
                 history += self.delimiter_tok
             history += self.history_vecs[-1]
+            if self.temp_history is not None:
+                history.extend(self.parse(self.temp_history))
             if self._global_end_token is not None:
                 history += [self._global_end_token]
+
         return history
 
     def get_history_vec_list(self):
@@ -670,6 +687,16 @@ class TorchAgent(ABC, Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+
+        # whether we're using multi-gpu, a few different ways. these are not
+        # supported by all models, but we can still keep track of the options
+        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+        self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
+        if self.data_parallel and is_distributed():
+            raise RuntimeError('Cannot combine --data-parallel and distributed mode.')
+        if self.model_parallel and self.data_parallel:
+            raise RuntimeError('Cannot combine --data-parallel and --model-parallel.')
+
         # indicate whether using fp16
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
@@ -815,6 +842,18 @@ class TorchAgent(ABC, Agent):
         """
         raise NotImplementedError('not implemented for this class')
 
+    def _should_initialize_optimizer(self) -> bool:
+        """
+        Used to indicate whether we should initialize an optimizer.
+
+        When this is off, we can save memory and use larger batches.
+        """
+        if self.opt.get('interactive_mode'):
+            return False
+        datatype = self.opt.get('datatype', '')
+        is_train = 'train' in datatype and 'evalmode' not in datatype
+        return is_train or self.opt.get('numthreads', 1) > 1
+
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
         Initialize optimizer with model parameters.
@@ -947,7 +986,7 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
-            except ValueError:
+            except (ValueError, KeyError):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
@@ -1553,6 +1592,15 @@ class TorchAgent(ABC, Agent):
 
         return batch_reply
 
+    def get_temp_history(self, observation) -> Optional[str]:
+        """
+        Return a string to temporarily insert into history.
+
+        Intentionally overrideable so more complex models can insert temporary history
+        strings, i.e. strings that are removed from the history after a single turn.
+        """
+        return None
+
     def observe(self, observation):
         """
         Process incoming message in preparation for producing a response.
@@ -1574,8 +1622,13 @@ class TorchAgent(ABC, Agent):
             self.__expecting_to_reply = True
 
         self.observation = observation
-        # update the history using the observation
-        self.history.update_history(observation)
+        # Update the history using the observation.
+        # We may also consider adding a temporary string to the history
+        # using the `get_temp_history()` function: this string will
+        # persist until it is updated.
+        self.history.update_history(
+            observation, temp_history=self.get_temp_history(observation)
+        )
         return self.vectorize(
             observation,
             self.history,
@@ -1987,6 +2040,11 @@ class TorchAgent(ABC, Agent):
                 'clip',
                 GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
             )
+        else:
+            parameters = self.model.parameters()
+            grad_norm = compute_grad_norm(parameters)
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
+
         if self.fp16:
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
@@ -2017,21 +2075,3 @@ class TorchAgent(ABC, Agent):
             return
 
         self.optimizer.zero_grad()
-
-    def _total_parameters(self):
-        """
-        Compute the total number of parameters in the model.
-
-        :return:
-            total number of parameters in the model.
-        """
-        return sum(p.numel() for p in self.model.parameters())
-
-    def _trainable_parameters(self):
-        """
-        Compute the total number of trainable parameters in the model.
-
-        :return:
-            total number of trainable parameters in the model.
-        """
-        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)

@@ -8,7 +8,7 @@ Messenger Runner.
 """
 from parlai.core.params import ParlaiParser
 from parlai.chat_service.services.messenger.messenger_manager import MessengerManager
-import parlai.chat_service.core.shared_utils as utils
+import parlai.chat_service.utils.config as config_utils
 
 
 SERVICE_NAME = 'messenger'
@@ -41,7 +41,7 @@ def run(opt):
 if __name__ == '__main__':
     opt = setup_args()
     config_path = opt.get('config_path')
-    config = utils.parse_configuration_file(config_path)
+    config = config_utils.parse_configuration_file(config_path)
     opt.update(config['world_opt'])
     opt['config'] = config
     run(opt)

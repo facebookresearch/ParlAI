@@ -33,15 +33,22 @@ class Unpickler(pickle._Unpickler):  # type: ignore
     def find_class(self, module, name):
         try:
             return super().find_class(module, name)
-        except ModuleNotFoundError:
+        except (ModuleNotFoundError, AttributeError):
             if module.startswith('apex.'):
                 # user doesn't have apex installed. We'll deal with this later.
                 return FakeAPEXClass
             else:
-                if module == 'parlai.core.utils' and name == 'Opt':
+                if (
+                    module == 'parlai.core.utils' or module == 'parlai.utils.misc'
+                ) and name == 'Opt':
                     from parlai.core.opt import Opt
 
                     return Opt
+                if module == 'parlai.core.dict' and name == '_BPEHelper':
+                    from parlai.utils.bpe import SubwordBPEHelper as _BPEHelper
+
+                    return _BPEHelper
+
                 raise
 
 

@@ -1,0 +1,29 @@
+name: "Mark Datatests"
+
+on:
+  pull_request:
+
+jobs:
+  note_datatests:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    steps:
+      - name: Get Changed Files
+        id: changed
+        uses: foodee/pr-includes-file-change@master
+        with:
+          paths: ^parlai/tasks/.*\.py
+      - name: Comment
+        id: comment
+        if: steps.changed.outputs.matched == 'true'
+        uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            Your PR contains a change to a task. Please paste the results of the following command into a comment:
+
+            ```bash
+            python tests/datatests/test_new_tasks.py
+            ```
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          allow-repeats: false

@@ -95,6 +95,8 @@ class KnowledgeRetrieverAgent(Agent):
             'eval_candidates': 'inline',
             'model': 'transformer/biencoder',
             'batchsize': 1,
+            'interactive_mode': True,
+            'interactive_candidates': 'inline',
             'override': {'model': 'transformer/biencoder', 'batchsize': 1},
         }
         for k, v in self.opt.items():

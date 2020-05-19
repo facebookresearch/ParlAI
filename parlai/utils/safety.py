@@ -8,8 +8,9 @@ Utility functions and classes for detecting offensive language.
 """
 
 from parlai.agents.transformer.transformer import TransformerClassifierAgent
-from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
+from parlai.utils.typing import TShared
 
 import os
 
@@ -23,9 +24,16 @@ class OffensiveLanguageClassifier:
     <http://parl.ai/projects/dialogue_safety/> for more information.
     """
 
-    def __init__(self):
-        self.model = self._create_safety_model()
+    def __init__(self, shared: TShared = None):
+        if not shared:
+            self.model = self._create_safety_model()
+        else:
+            self.model = create_agent_from_shared(shared['model'])
         self.classes = {OK_CLASS: False, NOT_OK_CLASS: True}
+
+    def share(self):
+        shared = {'model': self.model.share()}
+        return shared
 
     def _create_safety_model(self):
         from parlai.core.params import ParlaiParser
@@ -69,17 +77,14 @@ class OffensiveStringMatcher:
     https://github.com/LDNOOBW.
     """
 
-    def __init__(self):
+    def __init__(self, datapath: str = None):
         """
         Get data from external sources and build data representation.
         """
         import parlai.core.build_data as build_data
-        from parlai.core.params import ParlaiParser
         from parlai.core.dict import DictionaryAgent
 
         self.tokenize = DictionaryAgent.split_tokenize
-
-        parser = ParlaiParser(False, False)
 
         def _path():
             # Build the data if it doesn't exist.
@@ -106,7 +111,13 @@ class OffensiveStringMatcher:
                 # Mark the data as built.
                 build_data.mark_done(dpath, version)
 
-        self.datapath = os.path.join(parser.parlai_home, 'data')
+        if datapath is None:
+            from parlai.core.params import ParlaiParser
+
+            parser = ParlaiParser(False, False)
+            self.datapath = os.path.join(parser.parlai_home, 'data')
+        else:
+            self.datapath = datapath
         self.datafile = _path()
 
         # store a token trie: e.g.

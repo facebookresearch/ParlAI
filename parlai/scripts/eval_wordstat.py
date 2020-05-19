@@ -139,6 +139,7 @@ def eval_wordstat(opt, print_parser=None):
     log_time = TimeLogger()
 
     cnt = 0
+    max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     word_statistics = {
         'mean_wlength': [],
         'mean_clength': [],
@@ -187,7 +188,9 @@ def eval_wordstat(opt, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(), report)
+            text, report = log_time.log(
+                report['exs'], min(max_cnt, world.num_examples()), report
+            )
             print(text)
             stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])
             stat_str += ', '.join(
@@ -214,7 +217,7 @@ def eval_wordstat(opt, print_parser=None):
                     prec=2,
                 )
             )
-        if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
+        if cnt >= max_cnt:
             break
     if world.epoch_done():
         print("EPOCH DONE")

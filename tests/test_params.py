@@ -96,6 +96,70 @@ class TestParlaiParser(unittest.TestCase):
         assert 'recommended:' in latter
         assert '1337' in latter
 
+    def test_parse_kwargs(self):
+        parser = ParlaiParser(True, True)
+
+        # implied args from the model
+        opt = parser.parse_kwargs(model='transformer/generator', relu_dropout=0.3)
+        assert opt['relu_dropout'] == 0.3
+        assert opt['model'] == 'transformer/generator'
+        assert 'n_heads' in opt
+
+        # bad types
+        with self.assertRaises(ValueError):
+            parser = ParlaiParser(True, True)
+            parser.parse_kwargs(model='transformer/generator', relu_dropout='foo')
+
+        # nonexistant args without model
+        with self.assertRaises(KeyError):
+            parser = ParlaiParser(True, True)
+            parser.parse_kwargs(fake_arg='foo')
+
+        # nonexistant args with model
+        with self.assertRaises(KeyError):
+            parser = ParlaiParser(True, True)
+            parser.parse_kwargs(model='transformer/generator', fake_arg='foo')
+
+    def test_bool(self):
+        """
+        test add_argument(type=bool)
+        """
+        parser = ParlaiParser(True, True)
+        parser.add_argument('--foo', type=bool)
+        opt = parser.parse_args(['--foo', 'true'])
+        assert opt['foo'] is True
+        opt = parser.parse_args(['--foo', 'False'])
+        assert opt['foo'] is False
+        opt = parser.parse_args(['--foo', '0'])
+        assert opt['foo'] is False
+
+        group = parser.add_argument_group('foo container')
+        group.add_argument('--bar', type=bool)
+        opt = parser.parse_args(['--bar', 'true'])
+        assert opt['bar'] is True
+        opt = parser.parse_args(['--bar', 'False'])
+        assert opt['bar'] is False
+        opt = parser.parse_args(['--bar', '0'])
+        assert opt['bar'] is False
+
+        parser = ParlaiParser(True, True)
+        parser.add_argument('--foo', type='bool')
+        opt = parser.parse_args(['--foo', 'true'])
+        assert opt['foo'] is True
+        opt = parser.parse_args(['--foo', 'False'])
+        assert opt['foo'] is False
+        opt = parser.parse_args(['--foo', '0'])
+        assert opt['foo'] is False
+
+        group = parser.add_argument_group('foo container')
+        group.add_argument('--bar', type='bool')
+        opt = parser.parse_args(['--bar', 'true'])
+        assert opt['bar'] is True
+        opt = parser.parse_args(['--bar', 'False'])
+        assert opt['bar'] is False
+        opt = parser.parse_args(['--bar', '0'])
+        assert opt['bar'] is False
+
 
 if __name__ == '__main__':
     unittest.main()

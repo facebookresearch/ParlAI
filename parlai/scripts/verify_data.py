@@ -27,7 +27,7 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='train:stream')
+    parser.set_defaults(datatype='train:ordered')
     return parser
 
 
@@ -84,7 +84,7 @@ def verify(opt, printargs=None, print_parser=None):
         if not isinstance(act, Message):
             counts['did_not_return_message'] += 1
 
-        if 'text' not in act:
+        if 'text' not in act and 'image' not in act:
             warn("warning: missing text field:\n", act, opt)
             counts['missing_text'] += 1
 

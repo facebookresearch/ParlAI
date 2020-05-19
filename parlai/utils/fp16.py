@@ -6,10 +6,12 @@
 """
 Utility methods for mixed precision training.
 """
-from parlai.utils.misc import warn_once
 
-from itertools import chain
 import math
+from itertools import chain
+from typing import Optional
+
+from parlai.utils.misc import warn_once
 
 try:
     import torch
@@ -30,10 +32,16 @@ class FP16SafeCrossEntropy(torch.nn.Module):
     This avoids overflow in the softmax by doing the operation in FP32.
     """
 
-    def __init__(self, ignore_index=-100, reduction='none'):
+    def __init__(
+        self,
+        weight: Optional[torch.Tensor] = None,
+        ignore_index: int = -100,
+        reduction: str = 'none',
+    ):
         # default ignore_index=-100 mimics pytorch's default in
         # torch.nn.functional.nll_loss
         super().__init__()
+        self.register_buffer('weight', weight)  # type: ignore
         self.ignore_index = ignore_index
         self.reduction = reduction
 
@@ -41,6 +49,7 @@ class FP16SafeCrossEntropy(torch.nn.Module):
         return F.nll_loss(
             F.log_softmax(scores, 1, dtype=torch.float32),
             targets,
+            weight=self.weight,
             ignore_index=self.ignore_index,
             reduction=self.reduction,
         )
@@ -264,11 +273,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         """
         List of compatible optimizers.
         """
-        return [
-            'adam',
-            'mem_eff_adam',
-            'adafactor',
-        ]
+        return ['adam', 'mem_eff_adam', 'adafactor']
 
     @property
     def params(self):
@@ -401,8 +406,14 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         }
         for k, v in state_dict['state'].items():
             if k in id_map:
+                # make sure when we copy the original state back, we make sure
+                # that original state is on the correct device
                 param = id_map[k]
-                self.optimizer.state[param] = v
+                like_device_v = {
+                    j: w.to(param.device) if torch.is_tensor(w) else w
+                    for j, w in v.items()
+                }
+                self.optimizer.state[param] = like_device_v
 
     @property
     def loss_scale(self):
@@ -542,8 +553,10 @@ class Adafactor(torch.optim.Optimizer):
         decay_rate=-0.8,
         beta1=None,
         weight_decay=0.0,
-        scale_parameter=True,
-        relative_step=True,
+        # scale_parameter=True, TODO: enable it back. This leads lr decay to 0.
+        # Since for some schdulers, they only update lr per validation step.
+        # In such cases lr will keep decay every update.
+        # relative_step=True,
         warmup_init=False,
     ):
         defaults = dict(
@@ -553,14 +566,17 @@ class Adafactor(torch.optim.Optimizer):
             decay_rate=decay_rate,
             beta1=beta1,
             weight_decay=weight_decay,
-            scale_parameter=scale_parameter,
-            relative_step=relative_step,
+            scale_parameter=False,
+            relative_step=False,
             warmup_init=warmup_init,
         )
         super(Adafactor, self).__init__(params, defaults)
 
     def _get_lr(self, param_group, param_state):
         rel_step_sz = param_group['lr']
+        # TODO: enable it back. This leads lr decay to 0.
+        # Since for some schdulers, they only update lr per validation step.
+        # In such cases lr will keep decay every update.
         if param_group['relative_step']:
             min_step = (
                 1e-6 * param_state['step'] if param_group['warmup_init'] else 1e-2

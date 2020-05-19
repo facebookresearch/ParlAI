@@ -6,13 +6,13 @@
 
 import os
 
-NEEDLE3 = '<title>ParlAI Documentation &mdash; ParlAI  documentation</title>'
+NEEDLE3 = '&mdash; ParlAI  documentation</title>'
 REPLACEMENT3 = """
-<title>ParlAI Documentation &mdash; ParlAI  documentation</title>
+&mdash; ParlAI Documentation</title>
 <link rel="shortcut icon" type="image/png" href="/static/img/favicon-32x32.png" sizes="32x32"/>
 <link rel="shortcut icon" type="image/png" href="/static/img/favicon-16x16.png" sizes="16x16"/>
 <link rel="shortcut icon" type="image/png" href="/static/img/favicon-96x96.png" sizes="96x96"/>
-"""  # noqa: E501
+""".strip()  # noqa: E501
 
 
 if __name__ == '__main__':

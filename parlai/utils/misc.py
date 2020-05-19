@@ -18,6 +18,7 @@ import warnings
 import json
 
 from parlai.core.message import Message
+from parlai.utils.strings import colorize
 
 try:
     import torch
@@ -396,6 +397,15 @@ def float_formatter(f: Union[float, int]) -> str:
     return s
 
 
+def _line_width():
+    try:
+        # if we're in an interactive ipython notebook, hardcode a longer width
+        __IPYTHON__
+        return 128
+    except NameError:
+        return shutil.get_terminal_size((88, 24)).columns
+
+
 def nice_report(report) -> str:
     """
     Render an agent Report as a beautiful string.
@@ -433,7 +443,7 @@ def nice_report(report) -> str:
             output[k] = v
 
     if use_pandas:
-        line_width = shutil.get_terminal_size((88, 24)).columns
+        line_width = _line_width()
 
         df = pd.DataFrame([output])
         df.columns = pd.MultiIndex.from_tuples(df.columns)
@@ -710,7 +720,7 @@ def _ellipse(lst: List[str], max_display: int = 5, sep: str = '|') -> str:
     choices = list(lst)
     # insert the ellipsis if necessary
     if max_display > 0 and len(choices) > max_display:
-        ellipsis = '...and {} more'.format(len(choices) - max_display)
+        ellipsis = '... ({} of {} shown)'.format(max_display, len(choices))
         choices = choices[:max_display] + [ellipsis]
     return sep.join(str(c) for c in choices)
 
@@ -720,6 +730,7 @@ def display_messages(
     prettify: bool = False,
     ignore_fields: str = '',
     max_len: int = 1000,
+    verbose: bool = False,
 ) -> Optional[str]:
     """
     Return a string describing the set of messages provided.
@@ -755,6 +766,10 @@ def display_messages(
             # We only display the first agent (typically the teacher) if we
             # are ignoring the agent reply.
             continue
+        agent_id = msg.get('id', '[no id field]')
+        if verbose:
+            lines.append(colorize('[id]:', 'field') + ' ' + colorize(agent_id, 'id'))
+
         if msg.get('episode_done'):
             episode_done = True
         # Possibly indent the text (for the second speaker, if two).
@@ -766,27 +781,49 @@ def display_messages(
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
         for key in msg:
             if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields_:
+                field = colorize('[' + key + ']:', 'field')
                 if type(msg[key]) is list:
-                    line = '[' + key + ']:\n  ' + _ellipse(msg[key], sep='\n  ')
+                    value = _ellipse(msg[key], sep='\n  ')
                 else:
-                    line = '[' + key + ']: ' + clip_text(str(msg.get(key)), max_len)
+                    value = clip_text(str(msg.get(key)), max_len)
+                line = field + ' ' + colorize(value, 'text2')
                 lines.append(space + line)
         if type(msg.get('image')) in [str, torch.Tensor]:
             lines.append(f'[ image ]: {msg["image"]}')
         if msg.get('text', ''):
             text = clip_text(msg['text'], max_len)
-            ID = '[' + msg['id'] + ']: ' if 'id' in msg else ''
-            lines.append(space + ID + text)
+            if index == 0:
+                style = 'bold_text'
+            else:
+                style = 'labels'
+            if verbose:
+                lines.append(
+                    space + colorize('[text]:', 'field') + ' ' + colorize(text, style)
+                )
+            else:
+                lines.append(
+                    space
+                    + colorize("[" + agent_id + "]:", 'field')
+                    + ' '
+                    + colorize(text, style)
+                )
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
             if msg.get(field) and field not in ignore_fields_:
-                lines.append('{}[{}: {}]'.format(space, field, _ellipse(msg[field])))
+                string = '{}{} {}'.format(
+                    space,
+                    colorize('[' + field + ']:', 'field'),
+                    colorize(_ellipse(msg[field]), field),
+                )
+                lines.append(string)
         # Handling this separately since we need to clean up the raw output before displaying.
         token_loss_line = _token_losses_line(msg, ignore_fields_, space)
         if token_loss_line:
             lines.append(token_loss_line)
 
     if episode_done:
-        lines.append('- - - - - - - - - - - - - - - - - - - - -')
+        lines.append(
+            colorize('- - - - - - - END OF EPISODE - - - - - - - - - -', 'highlight')
+        )
 
     return '\n'.join(lines)
 

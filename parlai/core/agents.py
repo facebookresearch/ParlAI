@@ -42,6 +42,7 @@ This module also provides a utility method:
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
+from parlai.core.loader import register_agent  # noqa: F401
 from parlai.core.opt import Opt, load_opt_file
 from parlai.utils.misc import warn_once
 import copy
@@ -272,7 +273,7 @@ def create_agent_from_model_file(model_file, opt_overides=None):
     opt['model_file'] = model_file
     if opt_overides is None:
         opt_overides = {}
-    opt['overrride'] = opt_overides
+    opt['override'] = opt_overides
     return create_agent_from_opt_file(opt)
 
 
