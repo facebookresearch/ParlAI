@@ -7,19 +7,23 @@
 
 set -e -x  # error and exit on any failure; print the commands being run
 
+
 # view a task & train a model
-python examples/display_data.py -t babi:task10k:1
-python examples/train_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
-python examples/display_model.py -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
+python -m parlai.scripts.display_data -t babi:task10k:1
+python -m parlai.scripts.train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
+python -m parlai.scripts.display_model -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
 
 # train a transformer on twitter
-pip3 install emoji unidecode
-python examples/display_data.py -t twitter
-python examples/train_model.py -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True --max-train-time 20 -nl 1 --dict-tokenizer split -emb random --ffn-size 128
-python examples/eval_model.py -t twitter -bs 30 :seq2seq:0 -mf /tmp/tr_twitter --num-examples 1
-python examples/display_model.py -t twitter -mf /tmp/tr_twitter -ecands batch
+rm -rf /tmp/tr_twitter*
+python -m pip install emoji unidecode
+python -m parlai.scripts.display_data -t twitter
+python -m parlai.scripts.train_model -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 10 -vtim 3600 -cands batch -ecands batch --data-parallel True --max-train-time 20 -nl 1 --dict-tokenizer split -emb random --ffn-size 128
+python -m parlai.scripts.eval_model -t twitter -bs 30 -mf /tmp/tr_twitter --num-examples 16
+python -m parlai.scripts.display_model -t twitter -mf /tmp/tr_twitter -ecands batch
 
 # add a simple model
+rm -rf /tmp/parrot*
+rm -rf parlai/agents/parrot
 mkdir parlai/agents/parrot
 touch parlai/agents/parrot/parrot.py
 
@@ -36,6 +40,7 @@ class ParrotAgent(TorchAgent):
         return None
 EOF
 
-python examples/display_model.py -t babi:task10k:1 -m parrot
-python examples/build_dict.py -t babi:task10k:1 -df /tmp/parrot.dict
-python examples/display_model.py -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
+rm -rf /tmp/babi_memnn*
+python -m parlai.scripts.display_model -t babi:task10k:1 -m parrot
+python -m parlai.scripts.build_dict -t babi:task10k:1 -df /tmp/parrot.dict
+python -m parlai.scripts.display_model -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
