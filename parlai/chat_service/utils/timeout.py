@@ -10,6 +10,7 @@ from parlai.core.message import Message
 from parlai.core.worlds import World
 
 DEFAULT_TIMEOUT = 120
+THREAD_SLEEP = 0.1
 
 
 class TimeoutUtils(object):
@@ -53,6 +54,7 @@ class TimeoutUtils(object):
                         "quick_replies": quick_replies,
                     }
                 )
+            time.sleep(THREAD_SLEEP)  # TODO: use threading.Event() rather than polling
         return act
 
     @staticmethod
