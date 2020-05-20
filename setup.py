@@ -39,7 +39,7 @@ if __name__ == '__main__':
         ),
         install_requires=reqs.strip().split('\n'),
         include_package_data=True,
-        package_data={'': ['*.txt', '*.md'],},
+        package_data={'': ['*.txt', '*.md']},
         entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
         classifiers=[
             "Programming Language :: Python :: 3",
