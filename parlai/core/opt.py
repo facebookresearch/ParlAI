@@ -113,7 +113,7 @@ class Opt(dict):
             f.write('\n')
 
     @classmethod
-    def load_file(cls, optfile: str) -> 'Opt':
+    def load(cls, optfile: str) -> 'Opt':
         """
         Load an Opt from disk.
         """
