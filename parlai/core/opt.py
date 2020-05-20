@@ -13,9 +13,11 @@ import json
 import pickle
 import traceback
 
+from typing import List
+
 # these keys are automatically removed upon save. This is a rather blunt hammer.
 # It's preferred you indicate this at option definiton time.
-__AUTOCLEAN_KEYS = [
+__AUTOCLEAN_KEYS__: List[str] = [
     "override",
     "batchindex",
     "download_path",
@@ -102,25 +104,28 @@ class Opt(dict):
         dct = dict(self)
 
         # clean up some things we probably don't want to save
-        for key in __AUTOCLEAN_KEYS:
+        for key in __AUTOCLEAN_KEYS__:
             if key in dct:
                 del dct[key]
 
-        with open(filename, 'w', encoding='utf-8') as handle:
-            json.dump(dct, handle=f, indent=4)
-            handle.write('\n')
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(dct, fp=f, indent=4)
+            f.write('\n')
 
     @classmethod
-    def load_file(cls, optfile: str) -> Opt:
+    def load_file(cls, optfile: str) -> 'Opt':
         """
         Load an Opt from disk.
         """
         try:
             # try json first
             with open(optfile, 'r') as t_handle:
-                opt = json.load(t_handle)
+                dct = json.load(t_handle)
         except UnicodeDecodeError:
             # oops it's pickled
             with open(optfile, 'rb') as b_handle:
-                opt = pickle.load(b_handle)
-        return cls(opt)
+                dct = pickle.load(b_handle)
+        for key in __AUTOCLEAN_KEYS__:
+            if key in dct:
+                del dct[key]
+        return cls(dct)
