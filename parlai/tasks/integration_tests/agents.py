@@ -492,20 +492,15 @@ class ImageTeacher(AbstractImageTeacher):
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
         for i, img in enumerate(imgs):
-            image = Image.new('RGB', (100, 100), color=i)
+            image = Image.new('RGB', (16, 16), color=i)
             image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
             random.seed(42)
             data = [
-                {
-                    'image_id': img,
-                    'text': ''.join(
-                        random.choice(string.ascii_uppercase) for _ in range(10)
-                    ),
-                }
-                for img in imgs
+                {'image_id': img, 'text': string.ascii_uppercase[i]}
+                for i, img in enumerate(imgs)
             ]
             with open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
                 json.dump(data, f)
