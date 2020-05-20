@@ -10,7 +10,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-BUILD = '.dev0'  # test by setting to ".dev0" if multiple in one day, use ".dev1", ...
+BUILD = ''  # test by setting to ".dev0" if multiple in one day, use ".dev1", ...
 DATE = datetime.date.today().isoformat().replace('-', '')
 
 if sys.version_info < (3, 6):
