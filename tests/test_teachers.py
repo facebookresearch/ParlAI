@@ -14,6 +14,7 @@ import unittest
 from parlai.utils import testing as testing_utils
 import regex as re
 from parlai.core.teachers import DialogTeacher
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.loader import register_teacher
 
@@ -136,9 +137,30 @@ class TupleDialogTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
-        for i in range(2):
+        for i in range(3):
             for j in range(1, 4):
                 yield (str(j), str(j * 2)), j == 1
+
+
+class DictDialogTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt['datafile'] = 'mock'
+        super().__init__(opt, shared)
+
+    def setup_data(self, datafile):
+        for i in range(3):
+            for j in range(1, 4):
+                m = {'text': str(i)}
+                label = str(j * 2)
+                if i == 0:
+                    m['label'] = label
+                elif i == 1:
+                    m['labels'] = [labels]
+                elif i == 2:
+                    m['labels'] = [labels]
+                    m = Message(m)
+
+                yield m, j == 1
 
 
 class TestDialogTeacher(unittest.TestCase):
@@ -160,7 +182,14 @@ class TestDialogTeacher(unittest.TestCase):
         self._verify_act(teacher.act(), 2, 4, False)
         self._verify_act(teacher.act(), 3, 6, True)
 
+        self._verify_act(teacher.act(), 1, 2, False)
+        self._verify_act(teacher.act(), 2, 4, False)
+        self._verify_act(teacher.act(), 3, 6, True)
+
         assert teacher.epoch_done()
+
+    def test_tuple_teacher(self):
+        self._test_iterate(DictDialogTeacher)
 
     def test_tuple_teacher(self):
         self._test_iterate(TupleDialogTeacher)
