@@ -13,6 +13,17 @@ import json
 import pickle
 import traceback
 
+# these keys are automatically removed upon save. This is a rather blunt hammer.
+# It's preferred you indicate this at option definiton time.
+__AUTOCLEAN_KEYS = [
+    "override",
+    "batchindex",
+    "download_path",
+    "datapath",
+    "batchindex",
+    "interactive_mode",
+]
+
 
 class Opt(dict):
     """
@@ -80,6 +91,24 @@ class Opt(dict):
             return '\n'.join(changes)
         else:
             return f'No history for {key}'
+
+    def save(self, filename: str) -> None:
+        """
+        Save the opt to disk.
+
+        Attempts to 'clean up' any residual values automatically.
+        """
+        # start with a shallow copy
+        dct = dict(self)
+
+        # clean up some things we probably don't want to save
+        for key in __AUTOCLEAN_KEYS:
+            if key in dct:
+                del dct[key]
+
+        with open(filename, 'w', encoding='utf-8') as handle:
+            json.dump(dct, handle=f, indent=4)
+            handle.write('\n')
 
     @classmethod
     def load_file(cls, optfile: str) -> Opt:
