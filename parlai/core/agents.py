@@ -202,7 +202,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
-    init_model_opt = Opt.load_file(optfile)
+    init_model_opt = Opt.load(optfile)
 
     extra_opts = {}
     different_opts = {}
@@ -291,7 +291,7 @@ def create_agent_from_opt_file(opt: Opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        new_opt = Opt.load_file(optfile)
+        new_opt = Opt.load(optfile)
         # TODO we need a better way to say these options are never copied...
         if 'datapath' in new_opt:
             # never use the datapath from an opt dump
