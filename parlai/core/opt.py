@@ -81,17 +81,17 @@ class Opt(dict):
         else:
             return f'No history for {key}'
 
-
-def load_opt_file(optfile: str) -> Opt:
-    """
-    Load an Opt from disk.
-    """
-    try:
-        # try json first
-        with open(optfile, 'r') as t_handle:
-            opt = json.load(t_handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as b_handle:
-            opt = pickle.load(b_handle)
-    return Opt(opt)
+    @classmethod
+    def load_file(cls, optfile: str) -> Opt:
+        """
+        Load an Opt from disk.
+        """
+        try:
+            # try json first
+            with open(optfile, 'r') as t_handle:
+                opt = json.load(t_handle)
+        except UnicodeDecodeError:
+            # oops it's pickled
+            with open(optfile, 'rb') as b_handle:
+                opt = pickle.load(b_handle)
+        return cls(opt)
