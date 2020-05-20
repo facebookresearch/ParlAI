@@ -811,22 +811,45 @@ class DialogData(object):
 
         :param entry: a tuple in the form described in the class docstring.
         """
-        table = {}
-        if entry[0] is not None:
-            table['text'] = entry[0]
-        if len(entry) > 1:
-            if entry[1] is not None:
-                table['labels'] = entry[1]
-        if len(entry) > 2:
-            if entry[2] is not None:
-                table['reward'] = entry[2]
-        if len(entry) > 3:
-            if entry[3] is not None:
-                table['label_candidates'] = entry[3]
-        if len(entry) > 4 and entry[4] is not None:
-            img = self.image_loader.load(entry[4])
-            if img is not None:
-                table['image'] = img
+        if isinstance(entry, (dict, Message)):
+            # user is already provided things
+            if 'eval_labels' in entry or 'eval_label' in entry:
+                raise KeyError(
+                    'Labels are converted to eval_labels automatically. Please do not '
+                    'set them in setup_data.'
+                )
+            if 'label' in entry:
+                # for convenience, rename to the labels convention automatically
+                label = entry.pop('label')
+                entry['labels'] = [label]
+            if 'episode_done' in entry:
+                raise KeyError(
+                    "episode_done is set automatically for you. Please don't set it "
+                    "in setup_data."
+                )
+            table = entry.copy()
+        elif isinstance(entry, Tuple):
+            table = {}
+            if entry[0] is not None:
+                table['text'] = entry[0]
+            if len(entry) > 1:
+                if entry[1] is not None:
+                    table['labels'] = entry[1]
+            if len(entry) > 2:
+                if entry[2] is not None:
+                    table['reward'] = entry[2]
+            if len(entry) > 3:
+                if entry[3] is not None:
+                    table['label_candidates'] = entry[3]
+            if len(entry) > 4 and entry[4] is not None:
+                img = self.image_loader.load(entry[4])
+                if img is not None:
+                    table['image'] = img
+        else:
+            raise TypeError(
+                f"items out of setup_data should be Dict, Message, or Tuple. "
+                f"Got {type(entry)})"
+            )
 
         if table.get('labels', None) is not None and self.cands is not None:
             if self.addedCands:
@@ -846,6 +869,11 @@ class DialogData(object):
         if 'labels' in table and 'label_candidates' in table:
             if table['labels'][0] not in table['label_candidates']:
                 raise RuntimeError('true label missing from candidate labels')
+
+        # go ahead and make it a message
+        if isinstance(table, dict):
+            table = Message(table)
+
         return table
 
 
@@ -1689,7 +1717,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 image_mode_features_dict_path, map_location='cpu'
             )
         else:
-            print(f'No existing image features, attempting to build.')
+            print('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
