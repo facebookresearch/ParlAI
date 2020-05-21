@@ -12,8 +12,9 @@ import json
 
 class CommonSenseQATeacher(FixedDialogTeacher):
     """
-    CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense
-    knowlegde to predict correct answers. More information found at
+    CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense knowlegde
+    to predict correct answers. More information found at:
+
     <https://www.tau-nlp.org/commonsenseqa>.
     """
 
