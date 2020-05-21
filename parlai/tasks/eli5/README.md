@@ -1,25 +1,15 @@
 # ELI5
-**Adapted from Facebook Research's ELI5 found at https://github.com/facebookresearch/ELI5/**
 
-![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)
+This is the ParlAI adaptation of the ELI5 dataset. It has a lot of moving parts,
+most of which have been adapted from the [original repo](https://github.com/facebookresearch/ELI5/). For more information about the dataset, related paper, 
+please visit that repo.
 
-
-Read the Paper: https://arxiv.org/abs/1907.09190
-
-Read the Blog Post: https://ai.facebook.com/blog/longform-qa/
-
-Explore the Dataset: https://facebookresearch.github.io/ELI5/explore.html
 
 --------------------------------------------------------------------------------
 
 # Data creation
 
-This is a suite of scripts to download paired questions and answers from the ELI5 subreddit along with supporting documents from the CommonCrawl
-
-### FAQ: can you provide the processed data?
-
-No, we are not allowed to host processed Reddit or CommonCrawl data. While we are aware that it would make life a little easier, making your own version of the dataset following the instructions here is pretty straightforward if you have access to a SLURM cluster. If you have issues with your cluster, please visit https://github.com/facebookresearch/ELI5/. Since the creation process involves downloading, filtering and tokenizing a full CommonCrawl dump however, using a single machine is impractical.
-
+This is a suite of scripts to download paired questions and answers from the ELI5 subreddit along with supporting documents from the CommonCrawl.
 
 ## Overview of the data creation process
 
@@ -30,7 +20,7 @@ The process consists of four steps. *Steps 2 and 3 should be run in parallel.*
 3. **Downloading and tokenizing the CommonCrawl pages.** This part requires access to a cluster. We provide a sample SLURM script using 100 threads, which on our cluster finishes in under 48 hours.
 4. **Selecting passages from the downloaded pages to create the final support document.** After running steps 1 and 2, this part uses our TFIDF heuristic to create the final ~1000 words support document, and create a train/valid/test split of Question-Document-Answer triplets.
 
-If you are having trouble with any of steps 2-4, please an open an issue in the
+If you are having trouble with any of steps 2-4 or issues with SLURM clusters, please an open an issue in the
 [ELI5 Repo](https://github.com/facebookresearch/ELI5/).
 
 ## Downloading pre-computed files for support documents
@@ -95,7 +85,7 @@ rm processed_data/selected_15_1/explainlikeimfive/selected_slice_*.json
 
 The final dataset should now be found in `{data folder}/eli5/processed_data/selected_15_1/`.
 ```
-eli5/data_creation$ ls -lh processed_data/selected_15_1/explainlikeimfive*.json
+eli5$ ls -lh processed_data/selected_15_1/explainlikeimfive*.json
 -rw-rw-r-- 1 username username 142M Oct 15 06:18 processed_data/selected_15_1/explainlikeimfive_test.json
 -rw-rw-r-- 1 username username 1.3G Oct 15 06:18 processed_data/selected_15_1/explainlikeimfive_train.json
 -rw-rw-r-- 1 username username  57M Oct 15 06:18 processed_data/selected_15_1/explainlikeimfive_valid.json

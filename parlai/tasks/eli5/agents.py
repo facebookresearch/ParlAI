@@ -40,6 +40,12 @@ class ELI5Teacher(FixedDialogTeacher):
         dt = opt['datatype'].split(':')[0]
         eli_path = "eli5/processed_data/selected_15_1/explainlikeimfive_"
         fname = os.path.join(dp, eli_path + dt + ".json")
+        if not os.path.isfile(fname):
+            raise FileNotFoundError(
+                f"{fname} not found. Please follow the instructions found at "
+                "https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/eli5/README.md"
+                " to construct the dataset."
+            )
         opt['datafile'] = fname
         with open(fname) as json_file:
             data = json.load(json_file)
