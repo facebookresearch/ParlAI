@@ -36,9 +36,9 @@ class CommonSenseQATeacher(FixedDialogTeacher):
     def setup_data(self):
         jsons_path = os.path.join(self.opt['datapath'], 'CommonSenseQA')
         dtype = self.opt['datatype']
-        if dtype.startswith('valid') or dtype.startswith('test'):
+        if dtype.startswith('test'):
             dpath = os.path.join(jsons_path, 'dev.jsonl')
-        elif dtype.startswith('train'):
+        elif dtype.startswith('train') or dtype.startswith('valid'):
             dpath = os.path.join(jsons_path, 'train.jsonl')
         else:
             raise ValueError('Datatype not train, test, or valid')
@@ -46,10 +46,13 @@ class CommonSenseQATeacher(FixedDialogTeacher):
         with open(dpath) as f:
             for line in f:
                 episodes.append(json.loads(line))
+        # There are 1221 episodes in the test set. Making the valid set this
+        # large will make about an 80/10/10 split, as the paper had for splits.
+        test_set_episodes = 1221
         if dtype.startswith('valid'):
-            episodes = episodes[len(episodes) // 2 :]
-        elif dtype.startswith('test'):
-            episodes = episodes[: len(episodes) // 2]
+            episodes = episodes[: test_set_episodes]
+        elif dtype.startswith('train'):
+            episodes = episodes[test_set_episodes: ]
         return episodes
 
     def num_examples(self):
