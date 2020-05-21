@@ -660,7 +660,7 @@ class DialogData(object):
             self.image_loader = ImageLoader(opt)
             self.data = []
             self._load(data_loader, opt['datafile'])
-            self.cands = None if cands is None else set(sys.intern(c) for c in cands)
+            self.cands = None if cands is None else set(c for c in cands)
 
         self.addedCands = []
         self.copied_cands = False
@@ -693,57 +693,7 @@ class DialogData(object):
                 episode = []
                 last_cands = None
 
-            # intern all strings so we don't store them more than once
-            # TODO: clean up the if .. sys.intern else None by refactoring
-            new_entry = []
-            if len(entry) > 0:
-                # process text if available
-                if entry[0] is not None:
-                    new_entry.append(sys.intern(entry[0]))
-                else:
-                    new_entry.append(None)
-                # TODO: unindent all of these one level.
-                if len(entry) > 1:
-                    # process labels if available
-                    if entry[1] is None:
-                        new_entry.append(None)
-                    elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
-                        # TODO: this could use the abc collections
-                        # make sure iterable over labels, not single string
-                        new_entry.append(tuple(sys.intern(e) for e in entry[1]))
-                    elif isinstance(entry[1], str):
-                        new_entry.append((sys.intern(entry[1]),))
-                    else:
-                        raise TypeError(f"{entry[1]} is not list or str")
-                if len(entry) > 2:
-                    # process reward if available
-                    if entry[2] is not None:
-                        new_entry.append(entry[2])
-                    else:
-                        new_entry.append(None)
-                if len(entry) > 3:
-                    # process label candidates if available
-                    if entry[3] is None:
-                        new_entry.append(None)
-                    elif last_cands and entry[3] is last_cands:
-                        # if cands are shared, say "same" so we
-                        # don't store them again
-                        # TODO: This is bad, and it's not actually used anywhere
-                        # DEPRECATIONDAY: make this more rational
-                        new_entry.append(sys.intern('same as last time'))
-                    elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
-                        # make sure iterable over candidates, not single string
-                        last_cands = entry[3]
-                        new_entry.append(tuple(sys.intern(e) for e in entry[3]))
-                    else:
-                        raise TypeError(
-                            'Must provide iterable over label candidates, '
-                            'not a single string.'
-                        )
-                if len(entry) > 4 and entry[4] is not None:
-                    new_entry.append(sys.intern(entry[4]))
-
-            episode.append(tuple(new_entry))
+            episode.append(entry)
 
         if len(episode) > 0:
             yield tuple(episode)
@@ -818,29 +768,32 @@ class DialogData(object):
                     'Labels are converted to eval_labels automatically. Please do not '
                     'set them in setup_data.'
                 )
-            if 'label' in entry:
-                # for convenience, rename to the labels convention automatically
-                label = entry.pop('label')
-                entry['labels'] = [label]
             if 'episode_done' in entry:
                 raise KeyError(
                     "episode_done is set automatically for you. Please don't set it "
                     "in setup_data."
                 )
+            if 'label' in entry:
+                # for convenience, rename to the labels convention automatically
+                label = entry.pop('label')
+                assert isinstance(label, str)
+                entry['labels'] = (label,)
+            if 'labels' in entry and isinstance(entry['labels'], str):
+                entry['labels'] = (entry['labels'],)
             table = entry.copy()
         elif isinstance(entry, Tuple):
             table = {}
             if entry[0] is not None:
                 table['text'] = entry[0]
-            if len(entry) > 1:
-                if entry[1] is not None:
-                    table['labels'] = entry[1]
-            if len(entry) > 2:
-                if entry[2] is not None:
-                    table['reward'] = entry[2]
-            if len(entry) > 3:
-                if entry[3] is not None:
-                    table['label_candidates'] = entry[3]
+            if len(entry) > 1 and entry[1] is not None:
+                l = entry[1]
+                if isinstance(l, str):
+                    l = (l,)
+                table['labels'] = l
+            if len(entry) > 2 and entry[2] is not None:
+                table['reward'] = entry[2]
+            if len(entry) > 3 and entry[3] is not None:
+                table['label_candidates'] = entry[3]
             if len(entry) > 4 and entry[4] is not None:
                 img = self.image_loader.load(entry[4])
                 if img is not None:

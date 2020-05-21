@@ -131,68 +131,78 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     testing_utils.display_data(opt)
 
 
-class TupleDialogTeacher(DialogTeacher):
-    def __init__(self, opt, shared=None):
+class MockTeacher(DialogTeacher):
+    def __init__(self, opt, setup_data_fn):
         opt['datafile'] = 'mock'
-        super().__init__(opt, shared)
-
-    def setup_data(self, datafile):
-        for i in range(3):
-            for j in range(1, 4):
-                yield (str(j), str(j * 2)), j == 1
-
-
-class DictDialogTeacher(DialogTeacher):
-    def __init__(self, opt, shared=None):
-        opt['datafile'] = 'mock'
-        super().__init__(opt, shared)
-
-    def setup_data(self, datafile):
-        for i in range(3):
-            for j in range(1, 4):
-                m = {'text': str(i)}
-                label = str(j * 2)
-                if i == 0:
-                    m['label'] = label
-                elif i == 1:
-                    m['labels'] = [labels]
-                elif i == 2:
-                    m['labels'] = [labels]
-                    m = Message(m)
-
-                yield m, j == 1
+        self.setup_data = setup_data_fn
+        super().__init__(opt)
 
 
 class TestDialogTeacher(unittest.TestCase):
     def _verify_act(self, act, goal_text, goal_label, episode_done):
-        assert isinstance(act['labels'], tuple)
-        assert len(act['labels']) == 1
+        assert 'eval_labels' in act or 'labels' in act
+        labels = act.get('labels', act.get('eval_labels'))
+        assert isinstance(labels, tuple)
+        assert len(labels) == 1
         assert act['text'] == str(goal_text)
-        assert act['labels'][0] == str(goal_label)
+        assert labels[0] == str(goal_label)
 
-    def _test_iterate(self, teacher_class):
-        opt = Opt({'datatype': 'train:ordered', 'datapath': '/tmp', 'task': 'test'})
-        teacher = teacher_class(opt)
+    def _test_iterate(self, setup_data_fn):
+        for dt in [
+            'train:ordered',
+            'train:stream:ordered',
+            'valid',
+            'test',
+            'valid:stream',
+            'test:stream',
+        ]:
+            opt = Opt({'datatype': dt, 'datapath': '/tmp', 'task': 'test'})
+            teacher = MockTeacher(opt, setup_data_fn=setup_data_fn)
 
-        self._verify_act(teacher.act(), 1, 2, False)
-        self._verify_act(teacher.act(), 2, 4, False)
-        self._verify_act(teacher.act(), 3, 6, True)
+            self._verify_act(teacher.act(), 1, 2, False)
+            self._verify_act(teacher.act(), 2, 4, False)
+            self._verify_act(teacher.act(), 3, 6, True)
 
-        self._verify_act(teacher.act(), 1, 2, False)
-        self._verify_act(teacher.act(), 2, 4, False)
-        self._verify_act(teacher.act(), 3, 6, True)
+            self._verify_act(teacher.act(), 1, 2, False)
+            self._verify_act(teacher.act(), 2, 4, False)
+            self._verify_act(teacher.act(), 3, 6, True)
 
-        self._verify_act(teacher.act(), 1, 2, False)
-        self._verify_act(teacher.act(), 2, 4, False)
-        self._verify_act(teacher.act(), 3, 6, True)
+            self._verify_act(teacher.act(), 1, 2, False)
+            self._verify_act(teacher.act(), 2, 4, False)
+            self._verify_act(teacher.act(), 3, 6, True)
 
-        assert teacher.epoch_done()
+            assert teacher.epoch_done()
 
     def test_tuple_teacher(self):
-        self._test_iterate(DictDialogTeacher)
+        def _setup_data(_):
+            for i in range(3):
+                for j in range(1, 4):
+                    yield (str(j), str(j * 2)), j == 1
 
-    def test_tuple_teacher(self):
-        self._test_iterate(TupleDialogTeacher)
+        self._test_iterate(_setup_data)
+
+    def test_dict_teacher(self):
+        def _setup_data(_):
+            for i in range(3):
+                for j in range(1, 4):
+                    yield {'text': str(j), 'label': str(j * 2)}, j == 1
+
+        self._test_iterate(_setup_data)
+
+    def test_message_teacher(self):
+        def _setup_data(_):
+            for i in range(3):
+                for j in range(1, 4):
+                    yield Message({'text': str(j), 'label': str(j * 2)}), j == 1
+
+        self._test_iterate(_setup_data)
+
+    def test_violation_teacher(self):
+        def _setup_data_episode_done(_):
+            yield {'text': 'foo', 'episode_done': True}, True
+
+        with self.assertRaises(KeyError):
+            self._test_iterate(_setup_data_episode_done)
 
 
 if __name__ == '__main__':
