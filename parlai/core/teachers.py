@@ -781,7 +781,7 @@ class DialogData(object):
             if 'labels' in entry and isinstance(entry['labels'], str):
                 entry['labels'] = (entry['labels'],)
             table = entry.copy()
-        elif isinstance(entry, Tuple):
+        elif isinstance(entry, (Tuple, List)):
             table = {}
             if entry[0] is not None:
                 table['text'] = entry[0]
@@ -800,7 +800,7 @@ class DialogData(object):
                     table['image'] = img
         else:
             raise TypeError(
-                f"items out of setup_data should be Dict, Message, or Tuple. "
+                f"items out of setup_data should be dict, Message, list, or tuple. "
                 f"Got {type(entry)})"
             )
 
