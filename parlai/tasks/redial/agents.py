@@ -17,8 +17,8 @@ def _path(opt):
     build(opt)
 
     # set up path to data (specific to each dataset)
-    jsonl_dirpath = os.path.join(opt['datapath'], 'redial')
-    return jsonl_dirpath
+    data_path = os.path.join(opt['datapath'], 'redial')
+    return data_path
 
 
 # Turns title from format "Title (Year)" to "Title" or leaves as is if no (Year)
@@ -44,14 +44,14 @@ class ReDialTeacher(FixedDialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        jsonl_path = _path(opt)
+        data_path = _path(opt)
         self.title_id_map = {}
-        self.get_title_dict(jsonl_path)
+        self.get_title_dict(data_path)
         if shared is not None:
             self.episodes = shared['episodes']
         else:
             self.episodes = []
-            self._setup_data(jsonl_path)
+            self._setup_data(data_path)
         self.id = 'redial'
 
         self.reset()
@@ -63,22 +63,20 @@ class ReDialTeacher(FixedDialogTeacher):
             for row in reader:
                 self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
 
-    def _setup_data(self, jsonl_path):
-        train_path = os.path.join(jsonl_path, 'train_data.jsonl')
-        test_path = os.path.join(jsonl_path, 'test_data.jsonl')
-        valid_split = 0.5
+    def _setup_data(self, data_path):
+        train_path = os.path.join(data_path, 'train_data.jsonl')
+        test_path = os.path.join(data_path, 'test_data.jsonl')
+        # The test data has 1341 episodes. Making valid this size gives
+        # about 80/10/10 train/test/valid split
+        test_set_episodes = 1341
         if self.datatype.startswith('test'):
             unmerged_episodes = self.get_data_from_file(test_path)
-            unmerged_episodes = unmerged_episodes[
-                int(valid_split * len(unmerged_episodes)) :
-            ]
         elif self.datatype.startswith('valid'):
-            unmerged_episodes = self.get_data_from_file(test_path)
-            unmerged_episodes = unmerged_episodes[
-                : int(valid_split * len(unmerged_episodes))
-            ]
+            unmerged_episodes = self.get_data_from_file(train_path)
+            unmerged_episodes = unmerged_episodes[:test_set_episodes]
         else:
             unmerged_episodes = self.get_data_from_file(train_path)
+            unmerged_episodes = unmerged_episodes[test_set_episodes:]
 
         # some speakers speak multiple times in a row.
         for unmerged_episode in unmerged_episodes:
