@@ -16,7 +16,6 @@ import regex as re
 from parlai.core.teachers import DialogTeacher
 from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.loader import register_teacher
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -131,11 +130,36 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     testing_utils.display_data(opt)
 
 
-class MockTeacher(DialogTeacher):
-    def __init__(self, opt, setup_data_fn):
+class _MockTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
         opt['datafile'] = 'mock'
-        self.setup_data = setup_data_fn
         super().__init__(opt)
+
+
+class TupleTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        for _ in range(3):
+            for j in range(1, 4):
+                yield (str(j), str(j * 2)), j == 1
+
+
+class DictTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        for _ in range(3):
+            for j in range(1, 4):
+                yield {'text': str(j), 'label': str(j * 2)}, j == 1
+
+
+class MessageTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        for _ in range(3):
+            for j in range(1, 4):
+                yield Message({'text': str(j), 'label': str(j * 2)}), j == 1
+
+
+class ViolationTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        yield {'text': 'foo', 'episode_done': True}, True
 
 
 class TestDialogTeacher(unittest.TestCase):
@@ -147,7 +171,7 @@ class TestDialogTeacher(unittest.TestCase):
         assert act['text'] == str(goal_text)
         assert labels[0] == str(goal_label)
 
-    def _test_iterate(self, setup_data_fn):
+    def _test_iterate(self, teacher_class):
         for dt in [
             'train:ordered',
             'train:stream:ordered',
@@ -157,7 +181,7 @@ class TestDialogTeacher(unittest.TestCase):
             'test:stream',
         ]:
             opt = Opt({'datatype': dt, 'datapath': '/tmp', 'task': 'test'})
-            teacher = MockTeacher(opt, setup_data_fn=setup_data_fn)
+            teacher = teacher_class(opt)
 
             self._verify_act(teacher.act(), 1, 2, False)
             self._verify_act(teacher.act(), 2, 4, False)
@@ -174,35 +198,17 @@ class TestDialogTeacher(unittest.TestCase):
             assert teacher.epoch_done()
 
     def test_tuple_teacher(self):
-        def _setup_data(_):
-            for i in range(3):
-                for j in range(1, 4):
-                    yield (str(j), str(j * 2)), j == 1
-
-        self._test_iterate(_setup_data)
+        self._test_iterate(TupleTeacher)
 
     def test_dict_teacher(self):
-        def _setup_data(_):
-            for i in range(3):
-                for j in range(1, 4):
-                    yield {'text': str(j), 'label': str(j * 2)}, j == 1
-
-        self._test_iterate(_setup_data)
+        self._test_iterate(DictTeacher)
 
     def test_message_teacher(self):
-        def _setup_data(_):
-            for i in range(3):
-                for j in range(1, 4):
-                    yield Message({'text': str(j), 'label': str(j * 2)}), j == 1
-
-        self._test_iterate(_setup_data)
+        self._test_iterate(MessageTeacher)
 
     def test_violation_teacher(self):
-        def _setup_data_episode_done(_):
-            yield {'text': 'foo', 'episode_done': True}, True
-
         with self.assertRaises(KeyError):
-            self._test_iterate(_setup_data_episode_done)
+            self._test_iterate(ViolationTeacher)
 
 
 if __name__ == '__main__':

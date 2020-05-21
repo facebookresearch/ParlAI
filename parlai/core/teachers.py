@@ -49,7 +49,6 @@ from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
-import sys
 import time
 import os
 import torch
@@ -686,12 +685,10 @@ class DialogData(object):
         """
 
         episode = []
-        last_cands = None
         for entry, new in data_loader:
             if new and len(episode) > 0:
                 yield tuple(episode)
                 episode = []
-                last_cands = None
 
             episode.append(entry)
 
