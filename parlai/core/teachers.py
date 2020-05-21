@@ -29,7 +29,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -281,6 +281,7 @@ class FixedDialogTeacher(Teacher):
         super().reset()
         self.metrics.clear()
         self.lastY = None
+        self.last_act = None
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
@@ -443,8 +444,28 @@ class FixedDialogTeacher(Teacher):
         """
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
+            self.custom_evaluation(self.last_act, self.lastY, observation)
             self.lastY = None
         return observation
+
+    def custom_evaluation(
+        self, teacher_action: Message, label: Optional[str], model_response: Message
+    ) -> None:
+        """
+        A method designated for hooking custom evaluations into teachers.
+
+        Generally, a user will want to use `self.metrics.add` to record any
+        specialized metrics that only make sense for this one dataset.
+
+        :param teacher_action:
+            The message last sent from this teacher.
+        :param label:
+            The previous correct label, if there was any.
+        :param model_response:
+            The raw response from the model. Generally you want to rely on the
+            text field, but others may be necessary in specific situations.
+        """
+        pass
 
     def act(self):
         """
@@ -462,6 +483,7 @@ class FixedDialogTeacher(Teacher):
         action.force_set('id', self.getID())
 
         # remember correct answer if available
+        self.last_act = action
         self.lastY = action.get('labels', action.get('eval_labels', None))
         if (
             not self.datatype.startswith('train') or 'evalmode' in self.datatype
