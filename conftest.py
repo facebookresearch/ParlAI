@@ -14,6 +14,7 @@ We use this to split up tests into different circleci runs.
 import os
 import pathlib
 import random
+import collections
 from pytest import ExitCode
 
 
