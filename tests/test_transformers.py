@@ -302,7 +302,6 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test['ppl'], 1.50)
         self.assertGreaterEqual(test['bleu-4'], 0.90)
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch_blocking(self):
         """
         Test beamsearch blocking.
@@ -380,7 +379,6 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLess(valid_beam_block3['bleu-4'], valid['bleu-4'])
         self.assertLess(valid_beam_block3['f1'], valid['f1'])
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch_contextblocking(self):
         """
         Test beamsearch context blocking.
@@ -394,44 +392,32 @@ class TestTransformerGenerator(unittest.TestCase):
             df = os.path.join(tmpdir, 'model.dict')
             # we'll reuse these
             args = dict(
-                task='integration_tests', model_file=mf, dict_file=df, metrics='all'
+                task='integration_tests',
+                model_file='zoo:unittest/context_blocking/model',
+                dict_file='zoo:unittest/context_blocking/model.dict',
+                metrics='all',
             )
-            noblock_valid, _ = testing_utils.train_model(
-                dict(
-                    model='transformer/generator',
-                    optimizer='adamax',
-                    learningrate=7e-3,
-                    batchsize=32,
-                    num_epochs=20,
-                    n_layers=1,
-                    n_heads=1,
-                    ffn_size=32,
-                    embedding_size=32,
-                    inference='beam',
-                    beam_size=5,
-                    **args,
-                )
-            )
+            noblock_valid, _ = testing_utils.eval_model(args,)
             self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
             # first confirm all is good without blocking
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=-1, **args)
+            valid, _ = testing_utils.eval_model(
+                dict(beam_context_block_ngram=-1, **args), skip_test=True
             )
             self.assertGreaterEqual(valid['f1'], 0.95)
             self.assertGreaterEqual(valid['bleu-4'], 0.95)
 
             # there's a special case for block == 1
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=1, **args)
+            valid, _ = testing_utils.eval_model(
+                dict(beam_context_block_ngram=1, **args), skip_test=True,
             )
             # bleu and f1 should be totally wrecked.
             self.assertLess(valid['f1'], 0.01)
             self.assertLess(valid['bleu-4'], 0.01)
 
             # a couple general cases
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=2, **args)
+            valid, _ = testing_utils.eval_model(
+                dict(beam_context_block_ngram=2, **args), skip_test=True
             )
             # should take a big hit here
             self.assertLessEqual(valid['f1'], noblock_valid['f1'])
@@ -442,8 +428,8 @@ class TestTransformerGenerator(unittest.TestCase):
             self.assertLessEqual(valid['bleu-2'], 0.01)
 
             # larger blocking, we can do better now
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=3, **args)
+            valid, _ = testing_utils.eval_model(
+                dict(beam_context_block_ngram=3, **args), skip_test=True
             )
             # not as hard a hit from the larger hit
             self.assertLessEqual(valid['f1'], 0.95)
