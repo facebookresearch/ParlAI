@@ -23,6 +23,7 @@ __AUTOCLEAN_KEYS__: List[str] = [
     "download_path",
     "datapath",
     "batchindex",
+    # we don't save interactive mode, it's only decided by scripts or CLI
     "interactive_mode",
 ]
 
@@ -110,6 +111,7 @@ class Opt(dict):
 
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(dct, fp=f, indent=4)
+            # extra newline for convenience of working with jq
             f.write('\n')
 
     @classmethod
