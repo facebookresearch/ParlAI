@@ -145,7 +145,7 @@ def mark_done(path, version_string=None):
             write.write('\n' + version_string)
 
 
-def download(url, path, fname, redownload=False):
+def download(url, path, fname, redownload=False, num_retries=5):
     """
     Download file using `requests`.
 
@@ -155,12 +155,12 @@ def download(url, path, fname, redownload=False):
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
     print("[ downloading: " + url + " to " + outfile + " ]")
-    retry = 5
+    retry = num_retries
     exp_backoff = [2 ** r for r in reversed(range(retry))]
 
     pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 
-    while download and retry >= 0:
+    while download and retry > 0:
         resume_file = outfile + '.part'
         resume = os.path.isfile(resume_file)
         if resume:
@@ -210,26 +210,24 @@ def download(url, path, fname, redownload=False):
             ):
                 retry -= 1
                 pbar.clear()
-                if retry >= 0:
-                    print('Connection error, retrying. (%d retries left)' % retry)
+                if retry > 0:
+                    pl = 'y' if retry == 1 else 'ies'
+                    print(f'Connection error, retrying. ({retry} retr{pl} left)')
                     time.sleep(exp_backoff[retry])
                 else:
                     print('Retried too many times, stopped retrying.')
             finally:
                 if response:
                     response.close()
-    if retry < 0:
-        raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
+    if retry <= 0:
+        raise RuntimeError('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
         pbar.update(done - pbar.n)
         if done < total_size:
-            raise RuntimeWarning(
-                'Received less data than specified in '
-                + 'Content-Length header for '
-                + url
-                + '.'
-                + ' There may be a download problem.'
+            raise RuntimeError(
+                f'Received less data than specified in Content-Length header for '
+                f'{url}. There may be a download problem.'
             )
         move(resume_file, outfile)
 

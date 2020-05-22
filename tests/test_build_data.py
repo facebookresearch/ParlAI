@@ -6,6 +6,8 @@
 import os
 from parlai.core import build_data
 import unittest
+import unittest.mock
+import requests
 import parlai.utils.testing as testing_utils
 import multiprocessing
 from parlai.core.params import ParlaiParser
@@ -69,6 +71,16 @@ class TestBuildData(unittest.TestCase):
         self.assertIn('mnist2.tar.gz', output_filenames)
         self.assertIn(200, output_statuses, 'unexpected error code')
         self.assertIn(403, output_statuses, 'unexpected error code')
+
+    def test_connectionerror_download(self):
+        with unittest.mock.patch('requests.Session.get') as Session:
+            Session.side_effect = requests.exceptions.ConnectTimeout
+            with testing_utils.tempdir() as tmpdir:
+                with self.assertRaises(RuntimeError):
+                    build_data.download(
+                        'http://test.com/bad', tmpdir, 'foo', num_retries=3
+                    )
+            assert Session.call_count == 3
 
 
 if __name__ == '__main__':

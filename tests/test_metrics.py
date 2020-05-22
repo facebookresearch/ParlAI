@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-
 import torch
 import random
 
@@ -18,6 +17,10 @@ from parlai.core.metrics import (
     MacroAverageMetric,
     aggregate_unnamed_reports,
     aggregate_named_reports,
+)
+from parlai.core.torch_classifier_agent import (
+    ConfusionMatrixMetric,
+    WeightedF1Metric,
 )
 
 
@@ -238,15 +241,9 @@ class TestAggregators(unittest.TestCase):
         assert 'b/global_avg' not in agg
 
     def test_uneven_macro_aggrevation(self):
-        report1 = {
-            'avg': AverageMetric(1, 1),
-        }
-        report2 = {
-            'avg': AverageMetric(0, 1),
-        }
-        report3 = {
-            'avg': AverageMetric(0, 1),
-        }
+        report1 = {'avg': AverageMetric(1, 1)}
+        report2 = {'avg': AverageMetric(0, 1)}
+        report3 = {'avg': AverageMetric(0, 1)}
         agg1 = aggregate_named_reports(
             {'a': report1, 'b': report2}, micro_average=False
         )
@@ -287,6 +284,108 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/sum'] == 4
         assert agg['b/fixed'] == 4
         assert 'b/global_avg' not in agg
+
+    def test_classifier_metrics(self):
+        # We assume a batch of 16 samples, binary classification case, from 2 tasks.
+        # task 1
+        # confusion matrix expected, for class ok,
+        # TP = 2, TN = 2, FP = 2, FN = 2
+        report1 = {}
+        report2 = {}
+        task1_f1s = {}
+        task2_f1s = {}
+        classes = ['class_ok', 'class_notok']
+        task1_predictions = [
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+        ]
+        task1_gold_labels = [
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+        ]
+        for each in classes:
+            precisions, recalls, f1s = ConfusionMatrixMetric.compute_metrics(
+                task1_predictions, task1_gold_labels, each
+            )
+            report1.update(
+                {
+                    f'{each}_precision': sum(precisions, None),
+                    f'{each}_recall': sum(recalls, None),
+                    f'{each}_f1': sum(f1s, None),
+                }
+            )
+            task1_f1s[each] = f1s
+        report1['weighted_f1'] = sum(WeightedF1Metric.compute_many(task1_f1s), None)
+        # task 2, for class ok
+        # TP = 3, TN = 2, FP = 2, FN = 1
+        # for class not ok
+        # TP = 2, TN = 3, FP = 1, FN = 2
+        task2_predictions = [
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+        ]
+        task2_gold_labels = [
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+        ]
+        for each in classes:
+            precisions, recalls, f1s = ConfusionMatrixMetric.compute_metrics(
+                task2_predictions, task2_gold_labels, each
+            )
+            report2.update(
+                {
+                    f'{each}_precision': sum(precisions, None),
+                    f'{each}_recall': sum(recalls, None),
+                    f'{each}_f1': sum(f1s, None),
+                }
+            )
+            task2_f1s[each] = f1s
+        report2['weighted_f1'] = sum(WeightedF1Metric.compute_many(task2_f1s), None)
+
+        agg = aggregate_named_reports(
+            {'task1': report1, 'task2': report2}, micro_average=False
+        )
+        # task1
+        assert agg['task1/class_ok_precision'] == 0.5
+        assert agg['task1/class_ok_recall'] == 0.5
+        assert agg['task1/class_ok_f1'] == 0.5
+        # task2
+        assert agg['task2/class_ok_precision'] == 3 / 5
+        assert agg['task2/class_ok_recall'] == 3 / 4
+        assert agg['task2/class_ok_f1'] == 2 / 3
+        # task2 not ok
+        assert agg['task2/class_notok_precision'] == 2 / 3
+        assert agg['task2/class_notok_recall'] == 0.5
+        assert agg['task2/class_notok_f1'] == 4 / 7
+        # weighted f1
+        assert agg['task1/weighted_f1'] == 0.5
+        assert agg['task2/weighted_f1'] == (2 / 3) * 0.5 + (4 / 7) * 0.5
+        # all
+        assert agg['weighted_f1'] == (0.5 + (2 / 3) * 0.5 + (4 / 7) * 0.5) / 2
 
 
 if __name__ == '__main__':
