@@ -15,7 +15,7 @@ import os
 import pathlib
 import random
 import collections
-from pytest import ExitCode
+import pytest
 
 
 # TODO: rename the folders nicer so they make more sense, maybe even have
@@ -120,5 +120,5 @@ def pytest_sessionfinish(session, exitstatus):
     This can sometimes happen due to the way we distribute tests across multiple circle
     nodes.
     """
-    if exitstatus == ExitCode.NO_TESTS_COLLECTED:
-        session.exitstatus = ExitCode.OK
+    if exitstatus == pytest.ExitCode.NO_TESTS_COLLECTED:
+        session.exitstatus = pytest.ExitCode.OK
