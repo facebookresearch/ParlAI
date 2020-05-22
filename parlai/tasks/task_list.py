@@ -1145,6 +1145,16 @@ task_list = [
         ),
     },
     {
+        "id": "ReDial",
+        "display_name": "ReDial",
+        "task": "redial",
+        "tags": ["All", "ChitChat", "Goal"],
+        "description": (
+            "Annotated dataset of dialogues where users recommend movies to eachother."
+            "See https://redialdata.github.io/website/ for more information."
+        ),
+    },
+    {
         "id": "DREAM",
         "display_name": "DREAM",
         "task": "dream",
