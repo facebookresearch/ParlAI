@@ -50,9 +50,9 @@ class CommonSenseQATeacher(FixedDialogTeacher):
         # large will make about an 80/10/10 split, as the paper had for splits.
         test_set_episodes = 1221
         if dtype.startswith('valid'):
-            episodes = episodes[: test_set_episodes]
+            episodes = episodes[:test_set_episodes]
         elif dtype.startswith('train'):
-            episodes = episodes[test_set_episodes: ]
+            episodes = episodes[test_set_episodes:]
         return episodes
 
     def num_examples(self):
