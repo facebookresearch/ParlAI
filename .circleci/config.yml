@@ -6,6 +6,7 @@ version: 2
 standard_cpu38: &standard_cpu38
   docker:
     - image: circleci/python:3.8.0-buster-node
+  resourceclass: xlarge
   environment:
     PYTHONUNBUFFERED: 1
   resource_class: large
@@ -13,6 +14,7 @@ standard_cpu38: &standard_cpu38
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
+  resourceclass: xlarge
   environment:
     PYTHONUNBUFFERED: 1
   resource_class: large
@@ -20,6 +22,7 @@ standard_cpu37: &standard_cpu37
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
+  resourceclass: xlarge
   environment:
     PYTHONUNBUFFERED: 1
   resource_class: large
@@ -175,7 +178,7 @@ jobs:
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
-    parallelism: 32
+    parallelism: 16
     steps:
       - checkout
       - run:
@@ -203,7 +206,7 @@ jobs:
   unittests_38:
     <<: *standard_cpu38
     working_directory: ~/ParlAI
-    parallelism: 32
+    parallelism: 16
     steps:
       - checkout
       - <<: *fixgit
@@ -228,7 +231,7 @@ jobs:
   unittests_37:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
-    parallelism: 32
+    parallelism: 16
     steps:
       - checkout
       - <<: *fixgit
