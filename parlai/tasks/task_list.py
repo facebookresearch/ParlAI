@@ -1174,4 +1174,15 @@ task_list = [
             "More information can be found at: <https://dataset.org/c3/>."
         ),
     },
+    {
+        "id": "CommonSenseQA",
+        "display_name": "CommonSenseQA",
+        "task": "commonsenseqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense "
+            "knowlegde to predict correct answers. More information found at "
+            "<https://www.tau-nlp.org/commonsenseqa>."
+        ),
+    },
 ]
