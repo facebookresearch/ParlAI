@@ -20,5 +20,6 @@ def download(datapath):
         'memnn.tar.gz',
         'apex_v1.tar.gz',
         'test_bytelevel_bpe_v2.tar.gz',
+        'beam_blocking1.tar.gz',
     ]
-    download_models(opt, model_filenames, 'unittest', version='v5.0')
+    download_models(opt, model_filenames, 'unittest', version='v6.0')

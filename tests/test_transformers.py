@@ -308,49 +308,43 @@ class TestTransformerGenerator(unittest.TestCase):
         Test beamsearch blocking.
         """
         with testing_utils.tempdir() as tmpdir:
-            mf = os.path.join(tmpdir, 'model')
-            df = os.path.join(tmpdir, 'model.dict')
-            valid, test = testing_utils.train_model(
+            valid, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model='transformer/generator',
-                    model_file=mf,
-                    dict_file=df,
-                    optimizer='adamax',
-                    learningrate=7e-3,
-                    batchsize=32,
-                    num_epochs=20,
-                    n_layers=1,
-                    n_heads=1,
-                    ffn_size=32,
-                    embedding_size=32,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
+                    batch_size=1,
                     inference='beam',
-                    beam_size=2,
-                )
+                    beam_size=5,
+                    skip_generation=False,
+                ),
+                skip_test=True,
             )
-            valid_beam_block, test_beam_block = testing_utils.eval_model(
+            valid_beam_block, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model_file=mf,
-                    dict_file=df,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=1,
                     skip_generation=False,
-                )
+                ),
+                skip_test=True,
             )
-            valid_beam_block2, test_beam_block2 = testing_utils.eval_model(
+            valid_beam_block2, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model_file=mf,
-                    dict_file=df,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=2,
                     skip_generation=False,
-                )
+                ),
+                skip_test=True,
             )
 
             with open(os.path.join(tmpdir, 'blacklist.txt'), 'w') as f:
@@ -359,8 +353,8 @@ class TestTransformerGenerator(unittest.TestCase):
             valid_beam_block3, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model_file=mf,
-                    dict_file=df,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
@@ -373,21 +367,14 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(valid['ppl'], 1.30)
         self.assertGreaterEqual(valid['f1'], 0.80)
         self.assertGreaterEqual(valid['bleu-4'], 0.5)
-        self.assertLessEqual(test['ppl'], 1.30)
-        self.assertGreaterEqual(test['f1'], 0.80)
-        self.assertGreaterEqual(test['bleu-4'], 0.5)
 
         # Beam Block 1
         self.assertLessEqual(valid_beam_block['f1'], 0.4)
         self.assertLessEqual(valid_beam_block['bleu-4'], 1e-9)
-        self.assertLessEqual(test_beam_block['f1'], 0.4)
-        self.assertLessEqual(test_beam_block['bleu-4'], 1e-9)
 
         # Beam Block 2
         self.assertLessEqual(valid_beam_block2['f1'], 0.6)
         self.assertLessEqual(valid_beam_block2['bleu-4'], 1e-6)
-        self.assertLessEqual(test_beam_block2['f1'], 0.6)
-        self.assertLessEqual(test_beam_block2['bleu-4'], 1e-6)
 
         # Beam Block blacklist
         self.assertLess(valid_beam_block3['bleu-4'], valid['bleu-4'])
