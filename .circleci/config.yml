@@ -6,26 +6,23 @@ version: 2
 standard_cpu38: &standard_cpu38
   docker:
     - image: circleci/python:3.8.0-buster-node
-  resourceclass: xlarge
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: large
+  resource_class: xlarge
 
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
-  resourceclass: xlarge
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: large
+  resource_class: xlarge
 
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
-  resourceclass: xlarge
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: large
+  resource_class: xlarge
 
 osx_cpu37: &osx_cpu37
   macos:
