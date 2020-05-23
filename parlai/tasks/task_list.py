@@ -1155,6 +1155,7 @@ task_list = [
             "Link: https://github.com/facebookresearch/ELI5/"
         ),
     },
+    {
         "id": "ReDial",
         "display_name": "ReDial",
         "task": "redial",
