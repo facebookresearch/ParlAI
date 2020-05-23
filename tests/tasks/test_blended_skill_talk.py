@@ -5,11 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
+from unittest.mock import patch
 
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
+from parlai.tasks.blended_skill_talk.worlds import InteractiveWorld, _load_personas
 
 
 class TestBlendedSkillTalkTeacher(unittest.TestCase):
@@ -194,12 +197,10 @@ class TestBlendedSkillTalkTeacher(unittest.TestCase):
 
 class TestPersonaTopicifierTeachers(unittest.TestCase):
     """
-    Test two PersonaTopicifier teachers.
+    Test PersonaTopicifier teachers.
 
-    Check the contents of the first example of two teachers in which ConvAI2 personas
-    and WoW topics are added to contexts. We don't check
-    blended_skill_talk:EDPersonaTopicifier because, the first time that is run, it
-    requires a caching step that takes roughly an hour.
+    Check the contents of the first example of teachers in which ConvAI2 personas and
+    WoW topics are added to contexts.
     """
 
     def test_check_examples(self):
@@ -240,6 +241,22 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 },
             ),
             (
+                "blended_skill_talk:EDPersonaTopicifier",
+                {
+                    'situation': 'I remember going to the fireworks with my best friend. There was a lot of people, but it only felt like us in the world.',
+                    'emotion': 'sentimental',
+                    'prepend_ctx': None,
+                    'prepend_cand': None,
+                    'deepmoji_ctx': None,
+                    'deepmoji_cand': None,
+                    'text': 'your persona: people hate that i obsess about the poor.\nyour persona: i like to make cellphone apps that would help heal our world.\nyour persona: i like to watch people pray together.\nyour persona: people don t like me too much but i like them anyways.\nAndroid (operating system)#Applications\nI remember going to see the fireworks with my best friend. It was the first time we ever spent time alone together. Although there was a lot of people, we felt like the only people in the world.',
+                    'labels': [
+                        'Was this a friend you were in love with, or just a best friend?'
+                    ],
+                    'episode_done': False,
+                },
+            ),
+            (
                 "blended_skill_talk:WoWPersonaTopicifier",
                 {
                     'id': 'WizardDialogKnowledgeTeacher',
@@ -275,6 +292,43 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 print(key)
                 self.assertEqual(desired_message[key], actual_message[key])
             print('')
+
+
+class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
+    @patch("parlai.tasks.blended_skill_talk.worlds._load_personas")
+    def test_share(self, mock_load_personas):
+        test_personas = ['your persona:I live on a pirate\'s shoulder']
+        with testing_utils.tempdir() as data_path:
+            mock_load_personas.return_value = test_personas
+            kwargs = {
+                'task': 'blended_skill_talk',
+                'datapath': data_path,
+                'interactive_task': True,
+                'interactive_mode': True,
+            }
+            parser = setup_args()
+            parser.set_defaults(**kwargs)
+            opt = parser.parse_args([])
+            agent = RepeatLabelAgent(opt)
+            agent2 = agent.clone()
+            world = InteractiveWorld(opt=opt, agents=[agent, agent2])
+            # We should not reload personas on share
+            mock_load_personas.return_value = None
+            new_world = world.clone()
+
+            self.assertEqual(new_world.contexts_data, test_personas)
+
+    def test_safe_personas(self):
+
+        base_kwargs = Opt({'datatype': 'train', 'task': 'blended_skill_talk'})
+        safe_personas_only_to_count = {False: 4819, True: 3890}
+        for safe_personas_only, count in safe_personas_only_to_count.items():
+            full_kwargs = {**base_kwargs, 'safe_personas_only': safe_personas_only}
+            parser = setup_args()
+            parser.set_defaults(**full_kwargs)
+            opt = parser.parse_args([])
+            personas = _load_personas(opt)
+            self.assertEqual(len(personas), count)
 
 
 if __name__ == '__main__':

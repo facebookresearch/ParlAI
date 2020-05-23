@@ -6,16 +6,22 @@ version: 2
 standard_cpu38: &standard_cpu38
   docker:
     - image: circleci/python:3.8.0-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
   resource_class: large
 
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
   resource_class: large
 
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
   resource_class: large
 
 osx_cpu37: &osx_cpu37
@@ -24,11 +30,13 @@ osx_cpu37: &osx_cpu37
     xcode: "11.3.1"
   environment:
     PYTHON: 3.7.1
+    PYTHONUNBUFFERED: 1
     HOMEBREW_NO_AUTO_UPDATE: 1
 
 gpu: &gpu
   environment:
     CUDA_VERSION: "10.2"
+    PYTHONUNBUFFERED: 1
   machine:
     image: ubuntu-1604:201903-01
   resource_class: gpu.medium # tesla m60
@@ -66,9 +74,9 @@ installdeps: &installdeps
   run:
     name: Installs basic dependencies
     command: |
-      pip3 install --progress-bar off --upgrade pip setuptools
-      pip3 install --progress-bar off coverage
-      pip3 install --progress-bar off codecov
+      python -m pip install --progress-bar off --upgrade pip setuptools
+      python -m pip install --progress-bar off coverage
+      python -m pip install --progress-bar off codecov
       mkdir -p ~/ParlAI/test-results
       pip install -v -r requirements.txt
       python setup.py develop
@@ -78,12 +86,12 @@ installtorchgpu14: &installtorchgpu14
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch==1.4.0'
-      pip3 install --progress-bar off 'subword-nmt==0.3.7'
-      pip3 install --progress-bar off pytorch-pretrained-bert
-      pip3 install --progress-bar off 'torchtext==0.5.0'
-      pip3 install --progress-bar off 'torchvision==0.5.0'
-      pip3 install --progress-bar off transformers
+      python -m pip install --progress-bar off 'torch==1.4.0'
+      python -m pip install --progress-bar off 'subword-nmt==0.3.7'
+      python -m pip install --progress-bar off pytorch-pretrained-bert
+      python -m pip install --progress-bar off 'torchtext==0.5.0'
+      python -m pip install --progress-bar off 'torchvision==0.5.0'
+      python -m pip install --progress-bar off transformers
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -92,10 +100,10 @@ installtorchgpu13: &installtorchgpu13
   run:
     name: Install torch GPU and dependencies
     command: |
-      pip3 install --progress-bar off 'torch==1.3.1'
-      pip3 install --progress-bar off 'subword-nmt==0.3.7'
-      pip3 install --progress-bar off pytorch-pretrained-bert
-      pip3 install --progress-bar off transformers
+      python -m pip install --progress-bar off 'torch==1.3.1'
+      python -m pip install --progress-bar off 'subword-nmt==0.3.7'
+      python -m pip install --progress-bar off pytorch-pretrained-bert
+      python -m pip install --progress-bar off transformers
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -104,7 +112,7 @@ installtorchcpuosx: &installtorchcpuosx
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off torch
+      python -m pip install --progress-bar off torch==1.4.0
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -112,7 +120,7 @@ installtorchcpu: &installtorchcpu
   run:
     name: Install torch CPU and dependencies
     command: |
-      pip3 install --progress-bar off torch==1.4.0+cpu torchtext==0.5.0 torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+      python -m pip install --progress-bar off torch==1.4.0+cpu torchtext==0.5.0 torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -147,12 +155,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200516-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-v5-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200516-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -174,12 +182,12 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpu
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -198,12 +206,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut38-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpu
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut38-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -222,12 +230,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v5-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchcpu
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200516-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -246,19 +254,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v5-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchgpu13
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -277,19 +285,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v5-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchgpu14
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200516-gpu14-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -308,19 +316,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-v4
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-v5-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200516-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installdeps
       - <<: *installtorchgpu14
+      - <<: *installdeps
       - save_cache:
-          key: deps-v5-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200516-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -342,11 +350,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-v4-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -364,7 +372,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
@@ -375,7 +383,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-v4-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -395,12 +403,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-v4-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-v4-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200516-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -466,7 +474,6 @@ workflows:
   version: 2
   commit:
     jobs:
-      - unittests_gpu13
       - unittests_gpu14
       - unittests_38
       - unittests_37

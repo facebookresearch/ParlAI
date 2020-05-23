@@ -76,13 +76,11 @@ def interactive(opt, print_parser=None):
     world = create_task(opt, [human_agent, agent])
 
     # Show some example dialogs:
-    while True:
+    while not world.epoch_done():
         world.parley()
         if opt.get('display_examples'):
             print("---")
             print(world.display())
-        if world.epoch_done():
-            break
 
 
 class Interactive(ParlaiScript):

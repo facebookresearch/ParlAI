@@ -120,6 +120,46 @@ class TestParlaiParser(unittest.TestCase):
             parser = ParlaiParser(True, True)
             parser.parse_kwargs(model='transformer/generator', fake_arg='foo')
 
+    def test_bool(self):
+        """
+        test add_argument(type=bool)
+        """
+        parser = ParlaiParser(True, True)
+        parser.add_argument('--foo', type=bool)
+        opt = parser.parse_args(['--foo', 'true'])
+        assert opt['foo'] is True
+        opt = parser.parse_args(['--foo', 'False'])
+        assert opt['foo'] is False
+        opt = parser.parse_args(['--foo', '0'])
+        assert opt['foo'] is False
+
+        group = parser.add_argument_group('foo container')
+        group.add_argument('--bar', type=bool)
+        opt = parser.parse_args(['--bar', 'true'])
+        assert opt['bar'] is True
+        opt = parser.parse_args(['--bar', 'False'])
+        assert opt['bar'] is False
+        opt = parser.parse_args(['--bar', '0'])
+        assert opt['bar'] is False
+
+        parser = ParlaiParser(True, True)
+        parser.add_argument('--foo', type='bool')
+        opt = parser.parse_args(['--foo', 'true'])
+        assert opt['foo'] is True
+        opt = parser.parse_args(['--foo', 'False'])
+        assert opt['foo'] is False
+        opt = parser.parse_args(['--foo', '0'])
+        assert opt['foo'] is False
+
+        group = parser.add_argument_group('foo container')
+        group.add_argument('--bar', type='bool')
+        opt = parser.parse_args(['--bar', 'true'])
+        assert opt['bar'] is True
+        opt = parser.parse_args(['--bar', 'False'])
+        assert opt['bar'] is False
+        opt = parser.parse_args(['--bar', '0'])
+        assert opt['bar'] is False
+
 
 if __name__ == '__main__':
     unittest.main()
