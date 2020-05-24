@@ -442,25 +442,27 @@ class BadExampleTeacher(CandidateTeacher):
             case = newget.case
             if case == 0:
                 # empty string input
-                item['text'] = ''
+                item.force_set('text', '')
             elif case == 1:
                 # not text input
                 del item['text']
             elif case == 2:
                 # empty string label
-                item['labels'] = ['']
+                item.force_set('labels', [''])
             elif case == 3:
                 # no label
                 del item['labels']
             elif case == 4:
                 # no label candidates
-                item['label_candidates'] = []
+                item.force_set('label_candidates', [])
             elif case == 5:
                 # extra empty string in labels
-                item['label_candidates'] = list(item['label_candidates']) + ['']
+                item.force_set(
+                    'label_candidates', list(item['label_candidates']) + ['']
+                )
             elif case == 6:
                 # label candidates doesn't have the label
-                item['label_candidates'] = list(item['label_candidates'])
+                item.force_set('label_candidates', list(item['label_candidates']))
                 item['label_candidates'].remove(item['labels'][0])
             elif case == 7:
                 # no label candidates field
