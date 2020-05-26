@@ -26,7 +26,7 @@ import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.opt import Opt, load_opt_file
+from parlai.core.opt import Opt
 
 from typing import List, Optional
 
@@ -123,7 +123,7 @@ def get_model_name(opt):
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
-                new_opt = load_opt_file(optfile)
+                new_opt = Opt.load(optfile)
                 model = new_opt.get('model', None)
     return model
 
@@ -868,7 +868,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -876,7 +876,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
