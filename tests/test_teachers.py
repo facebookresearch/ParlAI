@@ -15,7 +15,6 @@ from parlai.utils import testing as testing_utils
 from parlai.core.teachers import DialogTeacher
 from parlai.core.metrics import SumMetric
 import regex as re
-from parlai.core.teachers import DialogTeacher
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 
