@@ -13,6 +13,7 @@ splits.
 
 import os
 import pandas as pd
+import hashlib
 from collections import Counter
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
@@ -60,7 +61,7 @@ class _Abstract(DialogTeacher):
         """
         Hash function.
         """
-        h = abs(hash(x)) % 10
+        h = int(hashlib.sha1(x.encode('utf-8')).hexdigest(), 16) % 10
         if h == 0:
             return 'valid'
         elif h == 1:
@@ -115,15 +116,17 @@ class _Abstract(DialogTeacher):
         labels: Optional[Tuple[str]],
         model_response: Message,
     ):
-        if 'text' not in model_response or not labels:
+        if 'metrics' in model_response and 'type' in teacher_action:
+            # keep copies of metrics across both api calls/responses
+            prefix = teacher_action['type']
+            keys = list(model_response['metrics'].keys())
+            for k in keys:
+                self.metrics.add(f'{prefix}_{k}', model_response['metrics'][k])
+
+        if 'text' not in model_response or not labels or 'type' not in teacher_action:
             return
 
         if teacher_action['type'] == 'apicall':
-            if 'metrics' in model_response:
-                keys = list(model_response['metrics'].keys())
-                # move all the metrics to be specific to the apicall
-                for k in keys:
-                    self.metrics.add(f'call_{k}', model_response['metrics'][k])
             # also count slot accuracy
             text = model_response['text']
             slot_guesses = set(
@@ -136,23 +139,21 @@ class _Abstract(DialogTeacher):
                 try:
                     slot, guess = slot_guess.split(' = ')
                 except ValueError:
-                    print("slot_guess")
                     continue
                 if teacher_action['slots'].get(slot) == guess:
-                    self.metrics.add('inform', AverageMetric(1))
+                    self.metrics.add('slot_p', AverageMetric(1))
                     correct += 1
                 else:
-                    self.metrics.add('inform', AverageMetric(0))
+                    self.metrics.add('slot_p', AverageMetric(0))
                     logging.debug(
                         f"Bad slot guess '{slot_guess}' != {teacher_action['slots']}"
                     )
-            success = int(correct == len(teacher_action['slots']))
-            self.metrics.add('success', AverageMetric(success))
+            if teacher_action['slots']:
+                self.metrics.add(
+                    'slot_r', AverageMetric(correct, len(teacher_action['slots']))
+                )
 
         elif teacher_action['type'] == 'apiresp':
-            if 'metrics' in model_response:
-                for k in model_response['metrics'].keys():
-                    self.metrics.add(f'resp_{k}', model_response['metrics'][k])
             # compute delexicalized string metrics
             delex_text = model_response['text']
             delex_label = labels[0]
@@ -205,6 +206,54 @@ class _Abstract(DialogTeacher):
                     }, first
                     first = False
         logging.debug(f"Fold {fold} domains: {domains_cnt}")
+
+
+class TextOnlyTeacher(_Abstract):
+    def _label_fold(self, chunks):
+        return chunks.conversation_id.apply(self._h)
+
+    def setup_data(self, fold):
+        domains_cnt = Counter()
+        chunks = self._load_data(fold)
+        for _, row in chunks.iterrows():
+            domains_cnt[row['domain']] += 1
+            first = True
+            utterances = row['utterances'][:]
+            if (
+                len(utterances) >= 3
+                and utterances[0]['speaker'] == 'USER'
+                and utterances[1]['speaker'] == 'ASSISTANT'
+                and utterances[2]['speaker'] == 'ASSISTANT'
+                and "help you?" in utterances[1]['text']
+            ):
+                # skip this one
+                utterances.pop(1)
+
+            user_utterances = []
+            asst_utterances = []
+            while utterances:
+                utt = utterances.pop(0)
+                if utt['speaker'] == 'USER':
+                    if asst_utterances:
+                        yield {
+                            'text': ' __BREAK__ '.join(user_utterances),
+                            'label': ' __BREAK__ '.join(asst_utterances),
+                            'domain': row['domain'],
+                        }, first
+                        first = False
+                        user_utterances = []
+                        asst_utterances = []
+                    user_utterances.append(utt['text'])
+                elif utt['speaker'] == 'ASSISTANT':
+                    asst_utterances.append(utt['text'])
+                    if not user_utterances:
+                        user_utterances.append('__SILENCE__')
+            if asst_utterances:
+                yield {
+                    'text': ' __BREAK__ '.join(user_utterances),
+                    'label': ' __BREAK__ '.join(asst_utterances),
+                    'domain': row['domain'],
+                }, first
 
 
 class FullShotTeacher(_Abstract):
