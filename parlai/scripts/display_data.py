@@ -61,10 +61,6 @@ def simple_display(opt, world, turn):
 
 
 def display_data(opt):
-    # force ordered data to prevent repeats
-    if 'ordered' not in opt['datatype']:
-        opt['datatype'] = opt['datatype'].split(':')[0] + ':ordered'
-
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
