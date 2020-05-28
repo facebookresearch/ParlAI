@@ -13,7 +13,6 @@ We use this to split up tests into different circleci runs.
 
 import os
 import pathlib
-import random
 import collections
 import pytest
 import subprocess
@@ -43,8 +42,6 @@ def get_class_name(item):
 
 
 def filter_tests_with_circleci(test_list):
-    """
-    """
     circleci_input = "\n".join(test_list).encode("utf-8")
     p = subprocess.Popen(
         [

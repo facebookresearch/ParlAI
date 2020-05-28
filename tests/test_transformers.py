@@ -387,57 +387,54 @@ class TestTransformerGenerator(unittest.TestCase):
         well. Measure how much context blocking affects performance.
         """
 
-        with testing_utils.tempdir() as tmpdir:
-            mf = os.path.join(tmpdir, 'model')
-            df = os.path.join(tmpdir, 'model.dict')
-            # we'll reuse these
-            args = dict(
-                task='integration_tests',
-                model_file='zoo:unittest/context_blocking/model',
-                dict_file='zoo:unittest/context_blocking/model.dict',
-                metrics='all',
-            )
-            noblock_valid, _ = testing_utils.eval_model(args,)
-            self.assertGreaterEqual(noblock_valid['f1'], 0.95)
+        # we'll reuse these
+        args = dict(
+            task='integration_tests',
+            model_file='zoo:unittest/context_blocking/model',
+            dict_file='zoo:unittest/context_blocking/model.dict',
+            metrics='all',
+        )
+        noblock_valid, _ = testing_utils.eval_model(args,)
+        self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
-            # first confirm all is good without blocking
-            valid, _ = testing_utils.eval_model(
-                dict(beam_context_block_ngram=-1, **args), skip_test=True
-            )
-            self.assertGreaterEqual(valid['f1'], 0.95)
-            self.assertGreaterEqual(valid['bleu-4'], 0.95)
+        # first confirm all is good without blocking
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=-1, **args), skip_test=True
+        )
+        self.assertGreaterEqual(valid['f1'], 0.95)
+        self.assertGreaterEqual(valid['bleu-4'], 0.95)
 
-            # there's a special case for block == 1
-            valid, _ = testing_utils.eval_model(
-                dict(beam_context_block_ngram=1, **args), skip_test=True,
-            )
-            # bleu and f1 should be totally wrecked.
-            self.assertLess(valid['f1'], 0.01)
-            self.assertLess(valid['bleu-4'], 0.01)
+        # there's a special case for block == 1
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=1, **args), skip_test=True,
+        )
+        # bleu and f1 should be totally wrecked.
+        self.assertLess(valid['f1'], 0.01)
+        self.assertLess(valid['bleu-4'], 0.01)
 
-            # a couple general cases
-            valid, _ = testing_utils.eval_model(
-                dict(beam_context_block_ngram=2, **args), skip_test=True
-            )
-            # should take a big hit here
-            self.assertLessEqual(valid['f1'], noblock_valid['f1'])
-            # bleu-1 should be relatively okay
-            self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
-            self.assertGreaterEqual(valid['bleu-1'], 0.45)
-            # and bleu-2 should be 0 at this point
-            self.assertLessEqual(valid['bleu-2'], 0.01)
+        # a couple general cases
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=2, **args), skip_test=True
+        )
+        # should take a big hit here
+        self.assertLessEqual(valid['f1'], noblock_valid['f1'])
+        # bleu-1 should be relatively okay
+        self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
+        self.assertGreaterEqual(valid['bleu-1'], 0.45)
+        # and bleu-2 should be 0 at this point
+        self.assertLessEqual(valid['bleu-2'], 0.01)
 
-            # larger blocking, we can do better now
-            valid, _ = testing_utils.eval_model(
-                dict(beam_context_block_ngram=3, **args), skip_test=True
-            )
-            # not as hard a hit from the larger hit
-            self.assertLessEqual(valid['f1'], 0.95)
-            # bleu-1 and bleu-2 should be relatively okay
-            self.assertGreaterEqual(valid['bleu-1'], 0.60)
-            self.assertGreaterEqual(valid['bleu-2'], 0.25)
-            # bleu-3 should be totally screwed
-            self.assertLessEqual(valid['bleu-3'], 0.01)
+        # larger blocking, we can do better now
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=3, **args), skip_test=True
+        )
+        # not as hard a hit from the larger hit
+        self.assertLessEqual(valid['f1'], 0.95)
+        # bleu-1 and bleu-2 should be relatively okay
+        self.assertGreaterEqual(valid['bleu-1'], 0.60)
+        self.assertGreaterEqual(valid['bleu-2'], 0.25)
+        # bleu-3 should be totally screwed
+        self.assertLessEqual(valid['bleu-3'], 0.01)
 
     def test_nucleus(self):
         """
