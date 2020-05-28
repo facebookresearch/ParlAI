@@ -16,9 +16,12 @@ import pandas as pd
 from collections import Counter
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
+from parlai.core.metrics import AverageMetric, F1Metric, BleuMetric
 from parlai.utils.misc import warn_once
 import json
 import parlai.utils.logging as logging
+from typing import Optional, Tuple
+from parlai.core.message import Message
 
 import parlai.tasks.taskmaster2.build as build_
 
@@ -106,6 +109,61 @@ class _Abstract(DialogTeacher):
                 slots[anno] = val
         return " ; ".join(output), slots
 
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ):
+        if 'text' not in model_response or not labels:
+            return
+
+        if teacher_action['type'] == 'apicall':
+            if 'metrics' in model_response:
+                keys = list(model_response['metrics'].keys())
+                # move all the metrics to be specific to the apicall
+                for k in keys:
+                    self.metrics.add(f'call_{k}', model_response['metrics'][k])
+            # also count slot accuracy
+            text = model_response['text']
+            slot_guesses = set(
+                text.replace("APICALL: ", "").split(' ; ')
+            )  # prevent cheating via repeated guesses
+            correct = 0
+            for slot_guess in slot_guesses:
+                if ' = ' not in slot_guess:
+                    continue
+                try:
+                    slot, guess = slot_guess.split(' = ')
+                except ValueError:
+                    print("slot_guess")
+                    continue
+                if teacher_action['slots'].get(slot) == guess:
+                    self.metrics.add('inform', AverageMetric(1))
+                    correct += 1
+                else:
+                    self.metrics.add('inform', AverageMetric(0))
+                    logging.debug(
+                        f"Bad slot guess '{slot_guess}' != {teacher_action['slots']}"
+                    )
+            success = int(correct == len(teacher_action['slots']))
+            self.metrics.add('success', AverageMetric(success))
+
+        elif teacher_action['type'] == 'apiresp':
+            if 'metrics' in model_response:
+                for k in model_response['metrics'].keys():
+                    self.metrics.add(f'resp_{k}', model_response['metrics'][k])
+            # compute delexicalized string metrics
+            delex_text = model_response['text']
+            delex_label = labels[0]
+            for slot, value in teacher_action['slots'].items():
+                delex_text = delex_text.replace(value, slot)
+                delex_label = delex_label.replace(value, slot)
+            self.metrics.add('delex_f1', F1Metric.compute(delex_text, (delex_label,)))
+            self.metrics.add(
+                'delex_bleu', BleuMetric.compute(delex_text, [delex_label])
+            )
+
     def setup_data(self, fold):
         domains_cnt = Counter()
         chunks = self._load_data(fold)
@@ -123,7 +181,8 @@ class _Abstract(DialogTeacher):
                 # skip this one
                 utterances.pop(1)
             if self.opt['include_ontology']:
-                yield {'text': f"ONTO: {row['ontology']}", 'label': ''}
+                yield {'text': f"ONTO: {row['ontology']}", 'label': ''}, True
+                first = False
             while utterances:
                 utt = utterances.pop(0)
                 segtxt, slots = self._segments2text(utt.get('segments', []))
