@@ -93,7 +93,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
         for x in xs:
             if 'your persona:' in x:
                 # Normalize the sentence appearing after 'your persona:'
-                x = x[len('your persona: '):]
+                x = x[len('your persona: ') :]
                 x = normalize_reply(x)
                 x = 'your persona: ' + x
             else:
