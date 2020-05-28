@@ -13,6 +13,9 @@ import os
 import unittest
 from parlai.utils import testing as testing_utils
 import regex as re
+from parlai.core.teachers import DialogTeacher
+from parlai.core.message import Message
+from parlai.core.opt import Opt
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -125,6 +128,87 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                 }
                 with self.assertWarnsRegex(UserWarning, "long episode"):
                     testing_utils.display_data(opt)
+
+
+class _MockTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt['datafile'] = 'mock'
+        super().__init__(opt)
+
+
+class TupleTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        for _ in range(3):
+            for j in range(1, 4):
+                yield (str(j), str(j * 2)), j == 1
+
+
+class DictTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        for _ in range(3):
+            for j in range(1, 4):
+                yield {'text': str(j), 'label': str(j * 2)}, j == 1
+
+
+class MessageTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        for _ in range(3):
+            for j in range(1, 4):
+                yield Message({'text': str(j), 'label': str(j * 2)}), j == 1
+
+
+class ViolationTeacher(_MockTeacher):
+    def setup_data(self, datafile):
+        yield {'text': 'foo', 'episode_done': True}, True
+
+
+class TestDialogTeacher(unittest.TestCase):
+    def _verify_act(self, act, goal_text, goal_label, episode_done):
+        assert 'eval_labels' in act or 'labels' in act
+        labels = act.get('labels', act.get('eval_labels'))
+        assert isinstance(labels, tuple)
+        assert len(labels) == 1
+        assert act['text'] == str(goal_text)
+        assert labels[0] == str(goal_label)
+
+    def _test_iterate(self, teacher_class):
+        for dt in [
+            'train:ordered',
+            'train:stream:ordered',
+            'valid',
+            'test',
+            'valid:stream',
+            'test:stream',
+        ]:
+            opt = Opt({'datatype': dt, 'datapath': '/tmp', 'task': 'test'})
+            teacher = teacher_class(opt)
+
+            self._verify_act(teacher.act(), 1, 2, False)
+            self._verify_act(teacher.act(), 2, 4, False)
+            self._verify_act(teacher.act(), 3, 6, True)
+
+            self._verify_act(teacher.act(), 1, 2, False)
+            self._verify_act(teacher.act(), 2, 4, False)
+            self._verify_act(teacher.act(), 3, 6, True)
+
+            self._verify_act(teacher.act(), 1, 2, False)
+            self._verify_act(teacher.act(), 2, 4, False)
+            self._verify_act(teacher.act(), 3, 6, True)
+
+            assert teacher.epoch_done()
+
+    def test_tuple_teacher(self):
+        self._test_iterate(TupleTeacher)
+
+    def test_dict_teacher(self):
+        self._test_iterate(DictTeacher)
+
+    def test_message_teacher(self):
+        self._test_iterate(MessageTeacher)
+
+    def test_violation_teacher(self):
+        with self.assertRaises(KeyError):
+            self._test_iterate(ViolationTeacher)
 
 
 if __name__ == '__main__':
