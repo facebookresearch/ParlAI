@@ -676,20 +676,29 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             loss = self.compute_loss(batch)
             self.backward(loss)
             self.update_params()
+            oom_sync = False
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
             if 'out of memory' in str(e):
+                oom_sync = True
                 print(
                     '| WARNING: ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
                 self.global_metrics.add('skipped_batches', SumMetric(1))
-                # gradients are synced on backward, now this model is going to be
-                # out of sync! catch up with the other workers
-                self._init_cuda_buffer(8, 8, True)
             else:
                 raise e
+
+        if oom_sync:
+            # moved outside of the try-except because the raised exception in scope
+            # actually prevents from the data being freed, which can sometimes cause
+            # us to OOM during our OOM handling.
+            # https://github.com/pytorch/pytorch/issues/18853#issuecomment-583779161
+
+            # gradients are synced on backward, now this model is going to be
+            # out of sync! catch up with the other workers
+            self._init_cuda_buffer(8, 8, True)
 
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
