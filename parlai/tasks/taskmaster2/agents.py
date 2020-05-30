@@ -208,9 +208,14 @@ class _Abstract(DialogTeacher):
         logging.debug(f"Fold {fold} domains: {domains_cnt}")
 
 
-class TextOnlyTeacher(_Abstract):
+class DelexTeacher(_Abstract):
     def _label_fold(self, chunks):
         return chunks.conversation_id.apply(self._h)
+
+    def _delexicalize(self, text, slots):
+        for key, value in slots.items():
+            text = text.replace(value, key)
+        return text
 
     def setup_data(self, fold):
         domains_cnt = Counter()
@@ -233,6 +238,7 @@ class TextOnlyTeacher(_Abstract):
             asst_utterances = []
             while utterances:
                 utt = utterances.pop(0)
+                _, slots = self._segments2text(utt.get('segments', []))
                 if utt['speaker'] == 'USER':
                     if asst_utterances:
                         yield {
@@ -243,9 +249,9 @@ class TextOnlyTeacher(_Abstract):
                         first = False
                         user_utterances = []
                         asst_utterances = []
-                    user_utterances.append(utt['text'])
+                    user_utterances.append(self._delexicalize(utt['text'], slots))
                 elif utt['speaker'] == 'ASSISTANT':
-                    asst_utterances.append(utt['text'])
+                    asst_utterances.append(self._delexicalize(utt['text'], slots))
                     if not user_utterances:
                         user_utterances.append('__SILENCE__')
             if asst_utterances:
@@ -254,6 +260,11 @@ class TextOnlyTeacher(_Abstract):
                     'label': ' __BREAK__ '.join(asst_utterances),
                     'domain': row['domain'],
                 }, first
+
+
+class TextOnlyTeacher(DelexTeacher):
+    def _delexicalize(self, text, slots):
+        return text
 
 
 class FullShotTeacher(_Abstract):
