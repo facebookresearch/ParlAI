@@ -114,7 +114,7 @@ class DefaultTeacher(DialogTeacher):
                     ans_list = [{"text": ""}]
                     if not qa['is_impossible']:
                         ans_list = qa['answers']
-                    answers = (a['text'] for a in ans_list)
+                    answers = tuple(a['text'] for a in ans_list)
                     context = paragraph['context']
                     yield (context + '\n' + question, answers), True
 
