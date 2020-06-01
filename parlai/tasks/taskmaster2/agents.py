@@ -33,7 +33,12 @@ SECTIONS = [
     'movies',
     'restaurant-search',
     'sports',
+    # 'music',
 ]
+
+ONTO_TOKEN = "Onto:"
+CALL_TOKEN = "Call:"
+RESP_TOKEN = "Res:"
 
 
 class _Abstract(DialogTeacher):
@@ -81,8 +86,15 @@ class _Abstract(DialogTeacher):
             o = list(o.values())[0]
             for sub in o:
                 prefix = sub['prefix']
+                parts.append(prefix + ' : ')
                 for anno in sub['annotations']:
-                    parts.append(f'{prefix}.{anno}')
+                    parts.append(
+                        f'{anno}'.replace('.', ' ')
+                        .replace('_', ' ')
+                        .replace('1', ' 1')
+                        .replace('2', ' 2')
+                        .replace('3', ' 3')
+                    )
             ontology[section] = ' ; '.join(parts)
 
         chunks = []
@@ -106,6 +118,15 @@ class _Abstract(DialogTeacher):
             val = segment['text']
             for anno_ in segment['annotations']:
                 anno = anno_['name']
+                anno = anno[anno.index('.') + 1 :]
+                anno = (
+                    anno.replace('.', ' ')
+                    .replace('_', ' ')
+                    .replace('1', ' 1')
+                    .replace('2', ' 2')
+                    .replace('3', ' 3')
+                    .replace('4', ' 4')
+                )
                 output.append(f'{anno} = {val}')
                 slots[anno] = val
         return " ; ".join(output), slots
@@ -130,7 +151,7 @@ class _Abstract(DialogTeacher):
             # also count slot accuracy
             text = model_response['text']
             slot_guesses = set(
-                text.replace("APICALL: ", "").split(' ; ')
+                text.replace(CALL_TOKEN + " ", "").split(' ; ')
             )  # prevent cheating via repeated guesses
             correct = 0
             for slot_guess in slot_guesses:
@@ -182,7 +203,7 @@ class _Abstract(DialogTeacher):
                 # skip this one
                 utterances.pop(1)
             if self.opt['include_ontology']:
-                yield {'text': f"ONTO: {row['ontology']}", 'label': ''}, True
+                yield {'text': f"{ONTO_TOKEN} {row['ontology']}", 'label': ''}, True
                 first = False
             while utterances:
                 utt = utterances.pop(0)
@@ -190,7 +211,7 @@ class _Abstract(DialogTeacher):
                 if utt['speaker'] == 'USER':
                     yield {
                         'text': utt['text'],
-                        'label': f'APICALL: {segtxt}',
+                        'label': f'{CALL_TOKEN} {segtxt}',
                         'domain': row['domain'],
                         'slots': slots,
                         'type': 'apicall',
@@ -198,7 +219,7 @@ class _Abstract(DialogTeacher):
                     first = False
                 elif utt['speaker'] == 'ASSISTANT':
                     yield {
-                        'text': f'APIRESP: {segtxt}',
+                        'text': f'{RESP_TOKEN} {segtxt}',
                         'label': utt['text'],
                         'domain': row['domain'],
                         'slots': slots,
