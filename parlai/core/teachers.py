@@ -1410,56 +1410,46 @@ class ConversationTeacher(FixedDialogTeacher):
 
     Subclasses ``FixedDialogTeacher`` for functionality and provides an
     implementation of ``setup_data()`` which iterates over datasets in the
-    "ParlAI text" format. If your data is in the format below, use this class to
+    "Conversations" format. If your data is in the format below, use this class to
     handle file parsing for you.
 
-    The way the data is set up is as follows:
+    The data should be set up so that each dialogue instance (or, episode) 
+    occupies one line of valid JSON. The way the data is set up is as follows 
+    (with line breaks for readability):
 
     ::
 
-        text:Sam went to the kitchen. <NEWL>
-        Pat gave Sam the milk. <NEWL>
-        Where is the milk? <TAB> labels:kitchen <TAB> reward:1
-        <TAB> label_candidates:hallway|kitchen|bathroom
-        text:Sam went to the hallway. <NEWL>
-        Pat went to the bathroom. <NEWL>
-        Where is the milk? <TAB> labels:hallway <TAB> reward:1
-        <TAB> label_candidates:hallway|kitchen|bathroom <TAB> episode_done:True
+        {
+            'dialogue':[
+                {'id':'modelx', 'text': 'hi'},
+                {'id':'modely', 'text': 'hi back'},
+                ...
+            ]
+        }
 
-    Lines 1-2 represent a single episode, with a different example on each line.
-    The lines contain a query and a label for getting the question
-    correct, and three label candidates.
-
-    Since both of these examples are part of the same episode, the information
-    provided in the first example is relevant to the query in the second
-    example and therefore the agent must remember the first example in order to
-    do well.
-
-    In general dialog this format can contain any speech, not just QA pairs:
+    Note that by default, dialogs are interpreted as being one-way. 
+    For example, consider this dialog:
 
     ::
 
-        text:Hi how's it going?<TAB>labels:It's going great. What's new?
-        text:Well I'm working on a new project at work.<TAB>labels:Oh me too!
-        text:Oh cool!<TAB>labels:Tell me about yours.
+        {
+            'dialogue':[
+                {'id':'modelx', 'text': X1},
+                {'id':'modely', 'text': Y1},
+                {'id':'modelx', 'text': X2},
+                {'id':'modely', 'text': Y2},
+                {'id':'modelx', 'text': X3},
+                {'id':'modely', 'text': Y3},
+            ]
+        }
 
-    etc.
-
-    Note that dialogs are interpreted as being one-way. For example, consider
-    this dialog:
-
-    ::
-
-        1 X1    Y1
-        2 X2    Y2
-        3 X3    Y3
-
-    A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated.
-    However, Y1 => X2 and Y2 => X3 are not created as separate examples by
-    default. This makes sense for some data (we don't need to train on the idea
-    that "kitchen" should be followed by "Sam went to the hallway..." above),
-    but for other datasets it may be helpful to add additional examples in the
-    reverse direction ("Oh cool!" is a response to "Oh me too!" above).
+    A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated,
+    forming one episode. However, Y1 => X2 and Y2 => X3 are not created as 
+    separate examples by default. 
+    To change this behavior, you can set opt['label_turns']. The default 
+    value is 'secondspeaker' (i.e., the second speaker's utterances are
+    used as labels), but 'firstspeaker' and 'both' are also options. In the
+    case of 'both', two episodes are generated for each conversation.
     """
 
     def __init__(self, opt, shared=None):
@@ -1527,13 +1517,11 @@ class ConversationTeacher(FixedDialogTeacher):
                             turn['text'] = xturn.get('text').strip()
                             turn['labels'] = [yturn.get('text').strip()]
                             turn['episode_done'] = False
-                            label_cands = yturn.get('label_cands')
                             eps.append(turn)
+                            self.num_exs += 1
                         if eps:
                             eps[-1]['episode_done'] = True
                             self.episodes.append(eps)
-                            self.num_exs += 1
-
 
                     # train on even turns as labels (turns w/ second speaker)
                     if self.label_turns in ['secondspeaker', 'both']:
@@ -1545,12 +1533,11 @@ class ConversationTeacher(FixedDialogTeacher):
                             turn['text'] = xturn.get('text').strip()
                             turn['labels'] = [yturn.get('text').strip()]
                             turn['episode_done'] = False
-                            label_cands = yturn.get('label_cands')
                             eps.append(turn)
+                            self.num_exs += 1
                         if eps:
                             eps[-1]['episode_done'] = True
                             self.episodes.append(eps)
-                            self.num_exs += 1
 
 
 class AbstractImageTeacher(FixedDialogTeacher):
