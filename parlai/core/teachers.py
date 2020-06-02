@@ -42,7 +42,6 @@ from parlai.core.loader import register_teacher  # noqa: F401
 from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
-from parlai.utils.conversations import Conversations
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 

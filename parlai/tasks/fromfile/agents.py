@@ -10,7 +10,11 @@
 import copy
 import os
 
-from parlai.core.teachers import ConversationTeacher, FbDialogTeacher, ParlAIDialogTeacher
+from parlai.core.teachers import (
+    ConversationTeacher,
+    FbDialogTeacher,
+    ParlAIDialogTeacher,
+)
 
 
 class FbformatTeacher(FbDialogTeacher):
@@ -125,8 +129,8 @@ class JsonTeacher(ConversationTeacher):
             help="If true, use _train.jsonl, _valid.jsonl, _test.jsonl file extensions",
         )
         agent.add_argument(
-            '--label-turns', 
-            type=str, 
+            '--label-turns',
+            type=str,
             help='which speaker to use as label',
             choices=['firstspeaker', 'secondspeaker', 'both'],
             default='secondspeaker',
