@@ -10,9 +10,10 @@ jobs:
     - uses: actions/stale@v3
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        stale-issue-message: 'This issue has not had activity in 30 days. Marking as stale.'
+        stale-issue-message: 'This issue has not had activity in 30 days. Please feel free to reopen if you have more issues. You may apply the "donotreap" tag to prevent culling.'
         days-before-stale: 30
-        stale-pr-message: 'This PR has not had activity in 30 days. Marking as stale.'
-        stale-issue-label: 'stale-issue'
-        stale-pr-label: 'stale-pr'
-        exempt-issue-labels: 'roadmap'
+        stale-pr-message: 'This PR has not had activity in 30 days. Closing due to stale.'
+        stale-issue-label: 'stale'
+        stale-pr-label: 'stale'
+        exempt-issue-labels: 'roadmap,donotreap'
+        exempt-pr-labels: 'wip,donotreap'
