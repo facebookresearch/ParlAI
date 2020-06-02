@@ -12,8 +12,9 @@ A module for testing various teacher types in ParlAI
 import os
 import unittest
 from parlai.utils import testing as testing_utils
-import regex as re
 from parlai.core.teachers import DialogTeacher
+from parlai.core.metrics import SumMetric
+import regex as re
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 
@@ -128,6 +129,33 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                 }
                 with self.assertWarnsRegex(UserWarning, "long episode"):
                     testing_utils.display_data(opt)
+
+
+class CustomEvaluationTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt['datafile'] = 'mock'
+        super().__init__(opt, shared)
+
+    def custom_evaluation(self, teacher_action, label, model_response):
+        self.metrics.add('contains1', SumMetric(int('1' in model_response['text'])))
+
+    def setup_data(self, fold):
+        yield ('1 2', '1 2'), True
+        yield ('3 4', '3 4'), True
+
+
+class TestCustomEvaluation(unittest.TestCase):
+    def test_custom_eval(self):
+        opt = {'task': 'custom', 'datatype': 'valid'}
+        teacher = CustomEvaluationTeacher(opt)
+        teacher.act()
+        teacher.observe({'text': 'a b'})
+        teacher.act()
+        teacher.observe({'text': '1 2'})
+        report = teacher.report()
+        assert 'contains1' in report
+        assert report['contains1'] == 1
+        assert report['exs'] == 2
 
 
 class _MockTeacher(DialogTeacher):
