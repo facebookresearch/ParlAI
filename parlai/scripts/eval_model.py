@@ -100,6 +100,7 @@ def _save_eval_stats(opt, report):
     with open(report_fname, 'w') as f:
         print(f'[ Saving model report to {report_fname} ... ]')
         json.dump({'opt': opt, 'report': json_serializable_report}, f, indent=4)
+        f.write("\n")  # for jq
 
 
 def _eval_single_world(opt, agent, task):

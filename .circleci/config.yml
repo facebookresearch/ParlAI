@@ -8,21 +8,21 @@ standard_cpu38: &standard_cpu38
     - image: circleci/python:3.8.0-buster-node
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: large
+  resource_class: xlarge
 
 standard_cpu37: &standard_cpu37
   docker:
     - image: circleci/python:3.7.5-buster-node
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: large
+  resource_class: xlarge
 
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: large
+  resource_class: xlarge
 
 osx_cpu37: &osx_cpu37
   macos:
@@ -166,6 +166,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (OSX)
+          no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -174,7 +175,7 @@ jobs:
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 16
     steps:
       - checkout
       - run:
@@ -193,6 +194,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py36)
+          no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -201,7 +203,7 @@ jobs:
   unittests_38:
     <<: *standard_cpu38
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 16
     steps:
       - checkout
       - <<: *fixgit
@@ -217,6 +219,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py38)
+          no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -225,7 +228,7 @@ jobs:
   unittests_37:
     <<: *standard_cpu37
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 16
     steps:
       - checkout
       - <<: *fixgit
@@ -241,6 +244,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (py37)
+          no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -249,7 +253,7 @@ jobs:
   unittests_gpu13:
     <<: *gpu
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 16
     steps:
       - checkout
       - <<: *fixgit
@@ -272,6 +276,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.3)
+          no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
@@ -280,7 +285,7 @@ jobs:
   unittests_gpu14:
     <<: *gpu
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 16
     steps:
       - checkout
       - <<: *fixgit
@@ -303,6 +308,7 @@ jobs:
             - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.4)
+          no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - store_test_results:
