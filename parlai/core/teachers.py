@@ -448,7 +448,10 @@ class FixedDialogTeacher(Teacher):
         return observation
 
     def custom_evaluation(
-        self, teacher_action: Message, label: Optional[str], model_response: Message
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
     ) -> None:
         """
         A method designated for hooking custom evaluations into teachers.
@@ -458,8 +461,8 @@ class FixedDialogTeacher(Teacher):
 
         :param teacher_action:
             The message last sent from this teacher.
-        :param label:
-            The previous correct label, if there was any.
+        :param labels:
+            The previous correct labels, if there were any.
         :param model_response:
             The raw response from the model. Generally you want to rely on the
             text field, but others may be necessary in specific situations.
