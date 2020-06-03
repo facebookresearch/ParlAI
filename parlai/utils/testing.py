@@ -275,7 +275,7 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if 'dict_file' not in opt:
             opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
         valid, test = tms.TrainModel.main(**opt)
-        
+
     return valid, test
 
 
