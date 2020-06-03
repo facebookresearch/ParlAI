@@ -242,7 +242,7 @@ class OffensiveStringMatcher:
 
     def find_all_offensive_language(self, text):
         """
-        Determine if text contains any offensive words in the filter.
+        Find all offensive words from text in the filter.
         """
         if type(text) is str:
             toks = self.tokenize(text.lower())
