@@ -353,7 +353,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 )
             )
 
-            with open(os.path.join(tmpdir, 'blacklist.txt'), 'w') as f:
+            with open(os.path.join(tmpdir, 'blocklist.txt'), 'w') as f:
                 f.write("38\n62\n")
 
             valid_beam_block3, _ = testing_utils.eval_model(
@@ -364,7 +364,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
-                    beam_blacklist_filename=os.path.join(tmpdir, 'blacklist.txt'),
+                    beam_block_list_filename=os.path.join(tmpdir, 'blocklist.txt'),
                     skip_generation=False,
                 ),
                 skip_test=True,
@@ -389,7 +389,7 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(test_beam_block2['f1'], 0.6)
         self.assertLessEqual(test_beam_block2['bleu-4'], 1e-6)
 
-        # Beam Block blacklist
+        # Beam Block block_list
         self.assertLess(valid_beam_block3['bleu-4'], valid['bleu-4'])
         self.assertLess(valid_beam_block3['f1'], valid['f1'])
 

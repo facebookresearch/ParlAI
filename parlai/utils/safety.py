@@ -168,7 +168,7 @@ class OffensiveStringMatcher:
             's',
             'y',
         ]
-        self.white_list = [
+        self.allow_list = [
             'butter',
             'buttery',
             'spicy',

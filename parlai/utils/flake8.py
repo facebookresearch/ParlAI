@@ -17,8 +17,8 @@ import docformatter
 import difflib
 
 PYTHON_SHEBANG = '#!/usr/bin/env python3'
-WHITELIST_PHRASES = ['Moscow Institute of Physics and Technology.']
-WHITELIST_FNS = ["mlb_vqa"]
+ALLOWLIST_PHRASES = ['Moscow Institute of Physics and Technology.']
+ALLOWLIST_FNS = ["mlb_vqa"]
 COPYRIGHT = [
     "Copyright (c) Facebook, Inc. and its affiliates.",
     "This source code is licensed under the MIT license found in the",
@@ -92,11 +92,11 @@ class ParlAIChecker:
         # the rest is checking copyright, but there are some exceptions
         # copyright must appear in the first 16 lines of the file.
         source = "".join(self.lines[:16])
-        if any(wl in source for wl in WHITELIST_PHRASES):
+        if any(wl in source for wl in ALLOWLIST_PHRASES):
             return
 
         for i, msg in enumerate(COPYRIGHT, 1):
-            if any(wl in self.filename for wl in WHITELIST_FNS) and i < 3:
+            if any(wl in self.filename for wl in ALLOWLIST_FNS) and i < 3:
                 continue
             if source and msg not in source:
                 yield (i, 0, f'PAI20{i} Missing copyright `{msg}`', '')

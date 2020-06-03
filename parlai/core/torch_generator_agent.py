@@ -54,9 +54,9 @@ except ImportError:
     fairseq_bleu = None
 
 
-class SearchBlacklist(object):
+class SearchBlocklist(object):
     """
-    Search blacklist facilitates blocking ngrams from being generated.
+    Search block list facilitates blocking ngrams from being generated.
     """
 
     def __init__(self, dict_agent: DictionaryAgent) -> None:
@@ -76,7 +76,7 @@ class SearchBlacklist(object):
             return
         ngram = self.dict.txt2vec(phrase_literal)
         self._phrases.add(phrase_literal)
-        logging.debug(f"Adding '{phrase_literal}' to the beam blacklist {ngram}")
+        logging.debug(f"Adding '{phrase_literal}' to the beam block_list {ngram}")
         l = len(ngram)
         if l not in self._phrase_ngrams:
             self._phrase_ngrams[l] = []
@@ -331,6 +331,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 method = 'beam'
             opt_from_disk['inference'] = method
             warn_once(f'Old model inference method inferred as {method}')
+
+        # 2020-06-03: Changing "blacklist" --> "blocklist"
+        if 'beam_blacklist_filename' in opt_from_disk:
+            opt_from_disk['beam_block_list_filename'] = opt_from_disk['beam_blacklist_filename']
+            del opt_from_disk['beam_blacklist_filename']
+
         return opt_from_disk
 
     @classmethod
@@ -396,7 +402,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             '--beam-delay', type=int, default=30, help='used in delayedbeam search'
         )
         agent.add_argument(
-            '--beam-blacklist-filename',
+            '--beam-block-list-filename',
             type=str,
             default=None,
             help='Load a text file of hard blocks for beam search to never say.',
@@ -429,20 +435,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
-        self.beam_blacklist: Optional[SearchBlacklist] = None
+        self.beam_block_list: Optional[SearchBlocklist] = None
 
         if shared:
             # set up shared properties
             states = shared.get('states', {})
-            self.beam_blacklist = shared.get('blacklist')
+            self.beam_block_list = shared.get('block_list')
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
 
-            # load the blacklist for beam search
-            self.beam_blacklist = self._load_beam_blacklist()
+            # load the block_list for beam search
+            self.beam_block_list = self._load_beam_block_list()
 
             if self.model is None or self.criterion is None:
                 raise AttributeError(
@@ -582,7 +588,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Share internal states between parent and child instances.
         """
         shared = super().share()
-        shared['beam_blacklist'] = self.beam_blacklist
+        shared['beam_block_list'] = self.beam_block_list
         if hasattr(self, 'optimizer'):
             shared['optimizer'] = self.optimizer
         if self.opt.get('numthreads', 1) > 1:
@@ -953,7 +959,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beams = [
                 self._treesearch_factory(dev)
                 .set_context(self._get_context(batch, batch_idx))
-                .set_blacklist(self.beam_blacklist)
+                .set_block_list(self.beam_block_list)
                 for batch_idx in range(batchsize)
             ]
         else:
@@ -1020,26 +1026,26 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         return beam_preds_scores, beams
 
-    def _load_beam_blacklist(self) -> SearchBlacklist:
+    def _load_beam_block_list(self) -> SearchBlocklist:
         """
-        Load the beam blacklist.
+        Load the beam block_list.
 
         :return: a dict mapping ngram length to different ngrams
         """
-        blacklist = SearchBlacklist(self.dict)
-        if not self.opt.get('beam_blacklist_filename'):
-            return blacklist
+        block_list = SearchBlocklist(self.dict)
+        if not self.opt.get('beam_block_list_filename'):
+            return block_list
 
-        blacklist_fn = self.opt['beam_blacklist_filename']
+        block_list_fn = self.opt['beam_block_list_filename']
         try:
-            with open(blacklist_fn) as f:
+            with open(block_list_fn) as f:
                 for line in f:
-                    blacklist.add(line.strip())
+                    block_list.add(line.strip())
         except IOError:
             logging.error(
-                f"Could not load beam blacklist {blacklist_fn}, using empty blacklist."
+                f"Could not load beam block_list {block_list_fn}, using empty block_list."
             )
-        return blacklist
+        return block_list
 
 
 class _HypothesisTail(object):
@@ -1107,7 +1113,7 @@ class TreeSearch(object):
         self.pad = padding_token
         self.context = None
         self.context_block_ngram = context_block_ngram
-        self.blacklist: Optional[SearchBlacklist] = None
+        self.block_list: Optional[SearchBlocklist] = None
         self.device = device
         # recent score for each hypo in the beam
         self.scores = None
@@ -1137,8 +1143,8 @@ class TreeSearch(object):
         self.context = context.tolist()
         return self
 
-    def set_blacklist(self: TSType, blacklist: Optional[SearchBlacklist]) -> TSType:
-        self.blacklist = blacklist
+    def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
+        self.block_list = block_list
         return self
 
     def get_output_from_current_step(self):
@@ -1204,12 +1210,12 @@ class TreeSearch(object):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
-    def _block_blacklist(self, logprobs: torch.Tensor) -> torch.Tensor:
-        if self.blacklist is None:
+    def _block_block_list(self, logprobs: torch.Tensor) -> torch.Tensor:
+        if self.block_list is None:
             return logprobs
 
         for beam_id, hyp in enumerate(self.partial_hyps):
-            for ngram_size, bad_ngrams in self.blacklist.items():
+            for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
                     if (ngram_size == 1) or prefix == list(ngram[:-1]):
@@ -1239,7 +1245,7 @@ class TreeSearch(object):
         if self.block_ngram > 0:
             logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
 
-        logprobs = self._block_blacklist(logprobs)
+        logprobs = self._block_block_list(logprobs)
 
         if self.context_block_ngram > 0:
             if self.context is None:
