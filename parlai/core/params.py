@@ -162,6 +162,13 @@ def str2floats(s):
     return tuple(float(f) for f in s.split(','))
 
 
+def str2multitask_weights(s):
+    if s == 'stochastic':
+        return s
+    else:
+        return str2floats(s)
+
+
 def str2class(value):
     """
     From import path string, returns the class specified.
@@ -275,6 +282,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
+        self.register('type', 'multitask_weights', str2multitask_weights)
         self.register('type', 'class', str2class)
         self.parlai_home = os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -661,10 +669,13 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-mtw',
             '--multitask-weights',
-            type='floats',
+            type='multitask_weights',
             default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
+            help=(
+                'list of floats, one for each task, specifying '
+                'the probability of drawing the task in multitask case. You may also '
+                'provide "stochastic" to simulate simple concatenation.'
+            ),
             hidden=True,
         )
         parlai.add_argument(
