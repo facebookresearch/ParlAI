@@ -334,9 +334,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         # 2020-06-03: Changing "blacklist" --> "blocklist"
         if 'beam_blacklist_filename' in opt_from_disk:
-            opt_from_disk['beam_block_list_filename'] = opt_from_disk[
-                'beam_blacklist_filename'
-            ]
+            if opt_from_disk['beam_blacklist_filename'] is not None:
+                opt_from_disk['beam_block_list_filename'] = opt_from_disk[
+                    'beam_blacklist_filename'
+                ]
             del opt_from_disk['beam_blacklist_filename']
 
         return opt_from_disk
