@@ -20,7 +20,7 @@ class Teacher1(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
-        for i in range(100):
+        for _ in range(100):
             yield (str(i), str(i)), True
 
 
@@ -32,7 +32,7 @@ class Teacher2(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
-        for i in range(10):
+        for _ in range(10):
             yield (str(i), str(i)), True
 
 
@@ -50,7 +50,7 @@ class TestMultiworld(unittest.TestCase):
         agent = create_agent(opt)
         world = create_task(opt, agent)
 
-        for i in range(1000):
+        for _ in range(1000):
             world.parley()
 
         report = world.report()
@@ -71,7 +71,7 @@ class TestMultiworld(unittest.TestCase):
         agent = create_agent(opt)
         world = create_task(opt, agent)
 
-        for i in range(1000):
+        for _ in range(1000):
             world.parley()
 
         report = world.report()
