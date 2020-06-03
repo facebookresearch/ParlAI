@@ -520,7 +520,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 no_cuda=True,
                 embedding_size=16,
                 skip_generation=True,
-                hiddensize=16,
+                ffn_size=16,
             )
         )
 
