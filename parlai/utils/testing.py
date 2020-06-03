@@ -274,19 +274,7 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
             opt['model_file'] = os.path.join(tmpdir, 'model')
         if 'dict_file' not in opt:
             opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-        parser = tms.setup_args()
-        # needed at the very least to set the overrides.
-        parser.set_params(**opt)
-        parser.set_params(log_every_n_secs=10)
-        popt = parser.parse_args([], print_args=False)
-        # in some rare cases, like for instance if the model class also
-        # overrides its default params, the params override will not
-        # be taken into account.
-        for k, v in opt.items():
-            popt[k] = v
-        tl = tms.TrainLoop(popt)
-        valid, test = tl.train()
-
+        valid, test = tms.TrainModel.main(**opt)
     return valid, test
 
 

@@ -52,7 +52,7 @@ class ParlaiScript(object):
         opt = parser.parse_kwargs(**kwargs)
         script = cls(opt)
         script.parser = parser
-        script.run()
+        return script.run()
 
     @classmethod
     def _run_args(cls, args: Optional[List[str]] = None):
@@ -63,7 +63,7 @@ class ParlaiScript(object):
         opt = parser.parse_args(args=args, print_args=False)
         script = cls(opt)
         script.parser = parser
-        script.run()
+        return script.run()
 
     @classmethod
     def main(cls, *args, **kwargs):
