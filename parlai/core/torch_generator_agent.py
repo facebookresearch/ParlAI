@@ -442,7 +442,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if shared:
             # set up shared properties
             states = shared.get('states', {})
-            self.beam_block_list = shared.get('block_list')
+            self.beam_block_list = shared.get('beam_block_list')
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()

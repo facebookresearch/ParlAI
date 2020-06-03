@@ -185,7 +185,7 @@ class OffensiveStringMatcher:
                 mod_ps += [pref + p for pref in self.word_prefixes]
                 mod_ps += [p + suff for suff in self.word_suffixes]
                 for mod_p in mod_ps:
-                    if mod_p not in self.white_list:
+                    if mod_p not in self.allow_list:
                         self.add_phrase(mod_p)
 
     def add_phrase(self, phrase):
