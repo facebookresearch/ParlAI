@@ -1145,6 +1145,17 @@ task_list = [
         ),
     },
     {
+        "id": "ELI5",
+        "display_name": "ELI5",
+        "task": "eli5",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Reddit "
+            "explainlikeimfive posts and comments."
+            "Link: https://github.com/facebookresearch/ELI5/"
+        ),
+    },
+    {
         "id": "ReDial",
         "display_name": "ReDial",
         "task": "redial",
