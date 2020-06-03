@@ -37,27 +37,21 @@ def list_to_str(lst):
 
 class HollETeacher(FixedDialogTeacher):
     """
-    This version of MNIST inherits from the core Dialog Teacher, which just requires it
-    to define an iterator over its data `setup_data` in order to inherit basic metrics,
-    a `act` function, and enables Hogwild training with shared memory with no extra
-    work.
+    Sequence of utterances and responses with background knowledge about movies.
+
+    From the Holl-E dataset. More information found at
+    https://github.com/nikitacs16/Holl-E.
     """
 
     @staticmethod
     def add_cmdline_args(argparser):
         group = argparser.add_argument_group('Holl-E Knowledge arguments')
         group.add_argument(
-            '--knowledge',
-            type='bool',
-            default=True,
-            help='Whether to include supporting document knowledge',
-        )
-        group.add_argument(
             '--knowledge-types',
             '-kt',
             type=str,
             default='full',
-            help='Either "full" (all of the following) or comma separated list of knowledge types to include. Possible types: plot, review, comments, fact_table (contains awards, taglines, and similar movies). e.g. -kt plot,review,fact_table or -kt full',
+            help='Either "full" (all of the following), "none" (knowledge not used) or comma separated list of knowledge types to include. Possible types: plot, review, comments, fact_table (contains awards, taglines, and similar movies). e.g. -kt plot,review,fact_table or -kt full',
         )
 
     def __init__(self, opt, shared=None):
@@ -107,6 +101,8 @@ class HollETeacher(FixedDialogTeacher):
         ktypes = self.opt['knowledge_types'].split(',')
         if 'full' in ktypes or len(ktypes) >= 4:
             return data['full']
+        elif 'none' in ktypes:
+            return ''
         else:
             data = data['all_documents']
             ktype_order = {'plot': 0, 'review': 1, 'comments': 2, 'fact_table': 3}
@@ -142,10 +138,11 @@ class HollETeacher(FixedDialogTeacher):
 
     def get(self, episode_idx, entry_idx=0):
         knowledge, episode = self.episodes[episode_idx]
+        # get every other entry so we don't overlap text with a response
         text_idx = entry_idx * 2
         entry = episode[text_idx]
         episode_done = text_idx >= len(episode) - 2
-        if self.opt['knowledge'] and entry_idx == 0:
+        if self.opt['knowledge_types'] != 'none' and entry_idx == 0:
             text = knowledge + '\n' + entry['query']
         else:
             text = entry['query']

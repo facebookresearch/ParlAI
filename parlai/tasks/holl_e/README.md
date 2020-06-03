@@ -4,12 +4,12 @@ Description: Sequence of utterances and responses with background knowledge abou
 
 **Command Line Arguments:**
 
-`--knowledge KNOWLEDGE` is a bool, default True, that specifies whether you should background knowledge of the following types found below.
-
-`--knowledge-types`, `-kt` is a string of only `full` or should be a comma separated list of the following categories: plot, review, comments, fact_table, for example:
+`--knowledge-types`, `-kt` is a string of only `full`, `none` or should be a comma separated list of the following categories: plot, review, comments, fact_table, for example:
  `-kt full`, `-kt plot,review`, `-kt comments`. Defaults to `full`
 
 *Category Descriptions:*
+
+none: No knowledge used
 
 full: All of the below
 
