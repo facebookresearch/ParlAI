@@ -15,9 +15,7 @@ def _path(opt):
     build(opt)
 
     # set up path to data (specific to each dataset)
-    jsons_path = os.path.join(
-        opt['datapath'], 'airdialogue', 'airdialogue_data', 'airdialogue'
-    )
+    jsons_path = os.path.join(opt['datapath'], 'airdialogue', 'airdialogue')
     return jsons_path
 
 

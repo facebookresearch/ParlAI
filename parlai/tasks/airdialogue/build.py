@@ -6,6 +6,7 @@
 
 import parlai.core.build_data as build_data
 import os
+import shutil
 from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
@@ -30,5 +31,15 @@ def build(opt):
         # Download the data.
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(dpath)
+
+        # Re-organize the directory to be less redundant
+        print('reorganizing airdialogue directory')
+        actual_data_dir = os.path.join(dpath, 'airdialogue_data', 'airdialogue')
+        resources_dir = os.path.join(dpath, 'airdialogue_data', 'resources')
+        readme = os.path.join(dpath, 'airdialogue_data', 'readme.txt')
+        shutil.move(actual_data_dir, dpath)
+        shutil.move(resources_dir, dpath)
+        shutil.move(readme, dpath)
+        os.rmdir(os.path.join(dpath, 'airdialogue_data'))
 
         build_data.mark_done(dpath, version_string=version)
