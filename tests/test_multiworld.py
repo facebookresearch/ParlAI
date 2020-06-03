@@ -20,7 +20,7 @@ class Teacher1(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
-        for _ in range(100):
+        for i in range(100):
             yield (str(i), str(i)), True
 
 
@@ -32,7 +32,7 @@ class Teacher2(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
-        for _ in range(10):
+        for i in range(10):
             yield (str(i), str(i)), True
 
 
