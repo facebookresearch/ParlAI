@@ -4,12 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-This is a simple question answering task on the MNIST dataset. In each episode, agents
-are presented with a number, which they are asked to identify.
-
-Useful for debugging and checking that one's image model is up and running.
-"""
 
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
