@@ -159,6 +159,8 @@ def str2floats(s):
     """
     Look for single float or comma-separated floats.
     """
+    if "[" in s:
+        s = s[1:-1]
     return tuple(float(f) for f in s.split(','))
 
 
