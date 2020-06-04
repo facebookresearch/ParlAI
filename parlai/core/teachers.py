@@ -1844,7 +1844,7 @@ class MultiTaskTeacher(Teacher):
         self.task_choices = range(len(self.tasks))
         weights = self.opt.get('multitask_weights', [1])
         if weights == 'stochastic':
-            weights = [t.num_examples() for t in self.tasks]
+            weights = [t.num_episodes() for t in self.tasks]
         sum = 0
         for i in self.task_choices:
             if len(weights) > i:
