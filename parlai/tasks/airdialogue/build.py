@@ -6,7 +6,6 @@
 
 import parlai.core.build_data as build_data
 import os
-import shutil
 from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
@@ -19,27 +18,17 @@ RESOURCES = [
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'airdialogue')
-    version = None
+    dpath = os.path.join(opt['datapath'])
+    airdialogue_path = os.path.join(dpath, 'airdialogue_data')
+    version = '1.0'
 
-    if not build_data.built(dpath, version_string=version):
-        print('[building data: ' + dpath + ']')
-        if build_data.built(dpath):
-            build_data.remove_dir(dpath)
-        build_data.make_dir(dpath)
+    if not build_data.built(airdialogue_path, version_string=version):
+        print('[building data: ' + airdialogue_path + ']')
+        if build_data.built(airdialogue_path):
+            build_data.remove_dir(airdialogue_path)
 
         # Download the data.
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(dpath)
 
-        # Re-organize the directory to be less redundant
-        print('reorganizing airdialogue directory')
-        actual_data_dir = os.path.join(dpath, 'airdialogue_data', 'airdialogue')
-        resources_dir = os.path.join(dpath, 'airdialogue_data', 'resources')
-        readme = os.path.join(dpath, 'airdialogue_data', 'readme.txt')
-        shutil.move(actual_data_dir, dpath)
-        shutil.move(resources_dir, dpath)
-        shutil.move(readme, dpath)
-        os.rmdir(os.path.join(dpath, 'airdialogue_data'))
-
-        build_data.mark_done(dpath, version_string=version)
+        build_data.mark_done(airdialogue_path, version_string=version)
