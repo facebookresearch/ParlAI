@@ -610,6 +610,8 @@ class MultiWorld(World):
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
         weights = self.opt.get('multitask_weights', [1])
+        if weights == 'stochastic':
+            weights = [w.num_examples() for w in self.worlds]
         sum = 0
         for i in self.task_choices:
             if len(weights) > i:
