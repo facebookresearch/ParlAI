@@ -286,7 +286,8 @@ class TestTransformerGenerator(unittest.TestCase):
                 optimizer='adamax',
                 learningrate=7e-3,
                 batchsize=32,
-                num_epochs=20,
+                num_epochs=10,
+                numthreads=1,
                 n_layers=1,
                 n_heads=1,
                 ffn_size=32,
@@ -296,74 +297,67 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.20)
-        self.assertGreaterEqual(valid['bleu-4'], 0.95)
-        self.assertLessEqual(test['ppl'], 1.20)
-        self.assertGreaterEqual(test['bleu-4'], 0.95)
+        self.assertLessEqual(valid['ppl'], 1.50)
+        self.assertGreaterEqual(valid['bleu-4'], 0.90)
+        self.assertLessEqual(test['ppl'], 1.50)
+        self.assertGreaterEqual(test['bleu-4'], 0.90)
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch_blocking(self):
         """
         Test beamsearch blocking.
         """
         with testing_utils.tempdir() as tmpdir:
-            mf = os.path.join(tmpdir, 'model')
-            df = os.path.join(tmpdir, 'model.dict')
-            valid, test = testing_utils.train_model(
+            valid, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model='transformer/generator',
-                    model_file=mf,
-                    dict_file=df,
-                    optimizer='adamax',
-                    learningrate=7e-3,
-                    batchsize=32,
-                    num_epochs=20,
-                    n_layers=1,
-                    n_heads=1,
-                    ffn_size=32,
-                    embedding_size=32,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
+                    batch_size=1,
                     inference='beam',
-                    beam_size=2,
-                )
+                    beam_size=5,
+                    skip_generation=False,
+                ),
+                skip_test=True,
             )
-            valid_beam_block, test_beam_block = testing_utils.eval_model(
+            valid_beam_block, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model_file=mf,
-                    dict_file=df,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=1,
                     skip_generation=False,
-                )
+                ),
+                skip_test=True,
             )
-            valid_beam_block2, test_beam_block2 = testing_utils.eval_model(
+            valid_beam_block2, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model_file=mf,
-                    dict_file=df,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=2,
                     skip_generation=False,
-                )
+                ),
+                skip_test=True,
             )
 
-            with open(os.path.join(tmpdir, 'blacklist.txt'), 'w') as f:
+            with open(os.path.join(tmpdir, 'blocklist.txt'), 'w') as f:
                 f.write("38\n62\n")
 
             valid_beam_block3, _ = testing_utils.eval_model(
                 dict(
                     task='integration_tests:repeat_words',
-                    model_file=mf,
-                    dict_file=df,
+                    model_file='zoo:unittest/beam_blocking/model',
+                    dict_file='zoo:unittest/beam_blocking/model.dict',
                     batch_size=1,
                     inference='beam',
                     beam_size=5,
-                    beam_blacklist_filename=os.path.join(tmpdir, 'blacklist.txt'),
+                    beam_block_list_filename=os.path.join(tmpdir, 'blocklist.txt'),
                     skip_generation=False,
                 ),
                 skip_test=True,
@@ -372,27 +366,19 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(valid['ppl'], 1.30)
         self.assertGreaterEqual(valid['f1'], 0.80)
         self.assertGreaterEqual(valid['bleu-4'], 0.5)
-        self.assertLessEqual(test['ppl'], 1.30)
-        self.assertGreaterEqual(test['f1'], 0.80)
-        self.assertGreaterEqual(test['bleu-4'], 0.5)
 
         # Beam Block 1
         self.assertLessEqual(valid_beam_block['f1'], 0.4)
         self.assertLessEqual(valid_beam_block['bleu-4'], 1e-9)
-        self.assertLessEqual(test_beam_block['f1'], 0.4)
-        self.assertLessEqual(test_beam_block['bleu-4'], 1e-9)
 
         # Beam Block 2
         self.assertLessEqual(valid_beam_block2['f1'], 0.6)
         self.assertLessEqual(valid_beam_block2['bleu-4'], 1e-6)
-        self.assertLessEqual(test_beam_block2['f1'], 0.6)
-        self.assertLessEqual(test_beam_block2['bleu-4'], 1e-6)
 
-        # Beam Block blacklist
+        # Beam Block block_list
         self.assertLess(valid_beam_block3['bleu-4'], valid['bleu-4'])
         self.assertLess(valid_beam_block3['f1'], valid['f1'])
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch_contextblocking(self):
         """
         Test beamsearch context blocking.
@@ -401,69 +387,54 @@ class TestTransformerGenerator(unittest.TestCase):
         well. Measure how much context blocking affects performance.
         """
 
-        with testing_utils.tempdir() as tmpdir:
-            mf = os.path.join(tmpdir, 'model')
-            df = os.path.join(tmpdir, 'model.dict')
-            # we'll reuse these
-            args = dict(
-                task='integration_tests', model_file=mf, dict_file=df, metrics='all'
-            )
-            noblock_valid, _ = testing_utils.train_model(
-                dict(
-                    model='transformer/generator',
-                    optimizer='adamax',
-                    learningrate=7e-3,
-                    batchsize=32,
-                    num_epochs=20,
-                    n_layers=1,
-                    n_heads=1,
-                    ffn_size=32,
-                    embedding_size=32,
-                    inference='beam',
-                    beam_size=5,
-                    **args,
-                )
-            )
-            self.assertGreaterEqual(noblock_valid['f1'], 0.95)
+        # we'll reuse these
+        args = dict(
+            task='integration_tests',
+            model_file='zoo:unittest/context_blocking/model',
+            dict_file='zoo:unittest/context_blocking/model.dict',
+            metrics='all',
+        )
+        noblock_valid, _ = testing_utils.eval_model(args,)
+        self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
-            # first confirm all is good without blocking
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=-1, **args)
-            )
-            self.assertGreaterEqual(valid['f1'], 0.95)
-            self.assertGreaterEqual(valid['bleu-4'], 0.95)
+        # first confirm all is good without blocking
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=-1, **args), skip_test=True
+        )
+        self.assertGreaterEqual(valid['f1'], 0.95)
+        self.assertGreaterEqual(valid['bleu-4'], 0.95)
 
-            # there's a special case for block == 1
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=1, **args)
-            )
-            # bleu and f1 should be totally wrecked.
-            self.assertLess(valid['f1'], 0.01)
-            self.assertLess(valid['bleu-4'], 0.01)
+        # there's a special case for block == 1
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=1, **args), skip_test=True,
+        )
+        # bleu and f1 should be totally wrecked.
+        self.assertLess(valid['f1'], 0.01)
+        self.assertLess(valid['bleu-4'], 0.01)
 
-            # a couple general cases
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=2, **args)
-            )
-            # should take a big hit here
-            self.assertLessEqual(valid['f1'], noblock_valid['f1'])
-            # bleu-1 should be relatively okay
-            self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
-            self.assertGreaterEqual(valid['bleu-1'], 0.45)
-            # and bleu-2 should be 0 at this point
-            self.assertLessEqual(valid['bleu-2'], 0.01)
+        # a couple general cases
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=2, **args), skip_test=True
+        )
+        # should take a big hit here
+        self.assertLessEqual(valid['f1'], noblock_valid['f1'])
+        # bleu-1 should be relatively okay
+        self.assertLessEqual(valid['bleu-1'], noblock_valid['bleu-1'])
+        self.assertGreaterEqual(valid['bleu-1'], 0.45)
+        # and bleu-2 should be 0 at this point
+        self.assertLessEqual(valid['bleu-2'], 0.01)
 
-            # larger blocking, we can do better now
-            valid, test = testing_utils.eval_model(
-                dict(beam_context_block_ngram=3, **args)
-            )
-            # not as hard a hit from the larger hit
-            self.assertLessEqual(valid['f1'], 0.95)
-            # bleu-1 and bleu-2 should be relatively okay
-            self.assertGreaterEqual(valid['bleu-1'], 0.60)
-            self.assertGreaterEqual(valid['bleu-2'], 0.25)
-            # bleu-3 should be totally screwed
-            self.assertLessEqual(valid['bleu-3'], 0.01)
+        # larger blocking, we can do better now
+        valid, _ = testing_utils.eval_model(
+            dict(beam_context_block_ngram=3, **args), skip_test=True
+        )
+        # not as hard a hit from the larger hit
+        self.assertLessEqual(valid['f1'], 0.95)
+        # bleu-1 and bleu-2 should be relatively okay
+        self.assertGreaterEqual(valid['bleu-1'], 0.60)
+        self.assertGreaterEqual(valid['bleu-2'], 0.25)
+        # bleu-3 should be totally screwed
+        self.assertLessEqual(valid['bleu-3'], 0.01)
 
     def test_nucleus(self):
         """
@@ -881,26 +852,25 @@ class TestImagePolyencoder(unittest.TestCase):
 
     base_args = {
         'log_every_n_secs': 5,
-        'validation_every_n_secs': 30,
         'model': 'transformer/image_polyencoder',
         'embedding_size': 32,
-        'n_heads': 2,
-        'n_layers': 2,
+        'n_heads': 1,
+        'n_layers': 1,
         'n_positions': 128,
         'truncate': 128,
-        'ffn_size': 128,
+        'ffn_size': 32,
         'variant': 'xlm',
         'activation': 'gelu',
         'candidates': 'batch',
         'eval_candidates': 'batch',  # No inline cands
         'embeddings_scale': False,
-        'gradient_clip': 0.1,
-        'learningrate': 3e-5,
-        'batchsize': 16,
+        'gradient_clip': -1.0,
+        'learningrate': 1e-4,
+        'batchsize': 8,
         'optimizer': 'adamax',
-        'learn_positional_embeddings': True,
-        'reduction_type': 'first',
-        'num_epochs': 30,
+        'learn_positional_embeddings': False,
+        'reduction_type': 'mean',
+        'num_epochs': 10,
     }
     text_args = {'task': 'integration_tests:nocandidate'}
     image_args = {
@@ -910,7 +880,7 @@ class TestImagePolyencoder(unittest.TestCase):
         'image_encoder_num_layers': 1,
         'image_combination_mode': 'prepend',
         'n_image_tokens': 1,
-        'num_epochs': 60,
+        'num_epochs': 20,
     }
     multitask_args = {
         'task': 'integration_tests:nocandidate,integration_tests:ImageTeacher',
@@ -934,7 +904,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.text_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.2
+            valid['accuracy'] > 0.1
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
@@ -950,7 +920,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.image_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.15
+            valid['accuracy'] > 0.05
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
     @testing_utils.retry(ntries=3)
@@ -966,7 +936,7 @@ class TestImagePolyencoder(unittest.TestCase):
         args = Opt({**self.base_args, **self.multitask_args})
         valid, test = testing_utils.train_model(args)
         assert (
-            valid['accuracy'] > 0.2
+            valid['accuracy'] > 0.1
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
 
 

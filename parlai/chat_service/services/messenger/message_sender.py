@@ -13,6 +13,7 @@ MAX_QUICK_REPLIES = 10
 MAX_TEXT_CHARS = 640
 MAX_QUICK_REPLY_TITLE_CHARS = 20
 MAX_POSTBACK_CHARS = 1000
+API_VERSION = 'v6.0'
 
 
 # Arbitrary attachments can be created as long as they adhere to the docs
@@ -161,7 +162,7 @@ class MessageSender:
         self.auth_args = {'access_token': secret_token}
 
     def send_sender_action(self, receiver_id, action, persona_id=None):
-        api_address = 'https://graph.facebook.com/v2.6/me/messages'
+        api_address = f'https://graph.facebook.com/{API_VERSION}/me/messages'
         message = {'recipient': {'id': receiver_id}, "sender_action": action}
         if persona_id is not None:
             message['persona_id'] = persona_id
@@ -179,7 +180,7 @@ class MessageSender:
         """
         Sends a payload to messenger, processes it if we can.
         """
-        api_address = 'https://graph.facebook.com/v2.6/me/messages'
+        api_address = f'https://graph.facebook.com/{API_VERSION}/me/messages'
         if payload['type'] == 'list':
             data = create_compact_list_message(payload['data'])
         elif payload['type'] in ['image', 'video', 'file', 'audio']:
@@ -217,7 +218,7 @@ class MessageSender:
         """
         Sends a message directly to messenger.
         """
-        api_address = 'https://graph.facebook.com/v2.6/me/messages'
+        api_address = f'https://graph.facebook.com/{API_VERSION}/me/messages'
         if quick_replies is not None:
             quick_replies = [create_reply_option(x, x) for x in quick_replies]
         ms = create_text_message(message, quick_replies)
@@ -277,7 +278,7 @@ class MessageSender:
         Uploads an attachment using the Attachment Upload API and returns an attachment
         ID.
         """
-        api_address = 'https://graph.facebook.com/v2.6/me/message_attachments'
+        api_address = f'https://graph.facebook.com/{API_VERSION}/me/message_attachments'
         assert payload['type'] in [
             'image',
             'video',

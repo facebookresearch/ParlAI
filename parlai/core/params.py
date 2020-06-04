@@ -26,7 +26,7 @@ import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.opt import Opt, load_opt_file
+from parlai.core.opt import Opt
 
 from typing import List, Optional
 
@@ -123,7 +123,7 @@ def get_model_name(opt):
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
-                new_opt = load_opt_file(optfile)
+                new_opt = Opt.load(optfile)
                 model = new_opt.get('model', None)
     return model
 
@@ -160,6 +160,13 @@ def str2floats(s):
     Look for single float or comma-separated floats.
     """
     return tuple(float(f) for f in s.split(','))
+
+
+def str2multitask_weights(s):
+    if s == 'stochastic':
+        return s
+    else:
+        return str2floats(s)
 
 
 def str2class(value):
@@ -275,6 +282,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
+        self.register('type', 'multitask_weights', str2multitask_weights)
         self.register('type', 'class', str2class)
         self.parlai_home = os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -661,10 +669,13 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-mtw',
             '--multitask-weights',
-            type='floats',
+            type='multitask_weights',
             default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
+            help=(
+                'list of floats, one for each task, specifying '
+                'the probability of drawing the task in multitask case. You may also '
+                'provide "stochastic" to simulate simple concatenation.'
+            ),
             hidden=True,
         )
         parlai.add_argument(
@@ -868,7 +879,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -876,7 +887,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
@@ -1162,6 +1173,9 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden = kwargs.pop('hidden')
             if hidden:
                 kwargs['help'] = argparse.SUPPRESS
+        if 'type' in kwargs and kwargs['type'] is bool:
+            # common error, we really want simple form
+            kwargs['type'] = 'bool'
         return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):

@@ -10,7 +10,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-BUILD = ''  # if multiple in one day, use "dev0", "dev1", ...
+BUILD = ''  # test by setting to ".dev0" if multiple in one day, use ".dev1", ...
 DATE = datetime.date.today().isoformat().replace('-', '')
 
 if sys.version_info < (3, 6):
@@ -27,17 +27,19 @@ with open('requirements.txt') as f:
 if __name__ == '__main__':
     setup(
         name='parlai',
-        version=f'0.1.{DATE}{BUILD}',
+        version='0.1.{DATE}{BUILD}'.format(DATE=DATE, BUILD=BUILD),
         description='Unified platform for dialogue research.',
         long_description=readme,
         long_description_content_type='text/markdown',
         url='http://parl.ai/',
         python_requires='>=3.6',
+        scripts=['bin/parlai'],
         packages=find_packages(
             exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal',)
         ),
         install_requires=reqs.strip().split('\n'),
         include_package_data=True,
+        package_data={'': ['*.txt', '*.md']},
         entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
         classifiers=[
             "Programming Language :: Python :: 3",

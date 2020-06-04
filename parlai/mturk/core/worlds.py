@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
+from parlai.mturk.core.agents import MTurkAgent
 
 
 class MTurkDataWorld(World):
@@ -17,19 +18,22 @@ class MTurkDataWorld(World):
         save_data = {'custom_data': custom_data, 'worker_data': {}}
 
         for agent in workers:
-            messages = agent.get_messages()
-            # filter out peer feedback
-            save_messages = [m for m in messages if m.get('text') != '[PEER_REVIEW]']
-            save_data['worker_data'][agent.worker_id] = {
-                'worker_id': agent.worker_id,
-                'agent_id': agent.id,
-                'assignment_id': agent.assignment_id,
-                'messages': save_messages,
-                'given_feedback': agent.feedback,
-            }
+            if isinstance(agent, MTurkAgent):
+                messages = agent.get_messages()
+                # filter out peer feedback
+                save_messages = [
+                    m for m in messages if m.get('text') != '[PEER_REVIEW]'
+                ]
+                save_data['worker_data'][agent.worker_id] = {
+                    'worker_id': agent.worker_id,
+                    'agent_id': agent.id,
+                    'assignment_id': agent.assignment_id,
+                    'messages': save_messages,
+                    'given_feedback': agent.feedback,
+                }
 
         # In simple pairing case, attach the feedback right here
-        if len(workers) == 2:
+        if len(workers) == 2 and all([isinstance(w, MTurkAgent) for w in workers]):
             data = save_data['worker_data']
             a_0 = workers[0]
             a_1 = workers[1]

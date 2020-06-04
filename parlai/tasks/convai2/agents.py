@@ -91,7 +91,15 @@ class NormalizedTeacher(SelfOriginalTeacher):
         xs = x.split('\n')
         xs2 = []
         for x in xs:
-            xs2.append(normalize_reply(x))
+            if 'your persona:' in x:
+                # Normalize the sentence appearing after 'your persona:'
+                x = x[len('your persona: ') :]
+                x = normalize_reply(x)
+                x = 'your persona: ' + x
+            else:
+                x = normalize_reply(x)
+
+            xs2.append(x)
         return '\n'.join(xs2)
 
     def setup_data(self, path):

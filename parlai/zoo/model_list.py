@@ -692,6 +692,399 @@ model_list = [
         ),
     },
     {
+        "title": "ImageSeq2Seq DodecaDialogue All Tasks MT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/all_tasks_mt/model",
+        "agent": "image_seq2seq",
+        "task": "#Dodeca",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": ("Image Seq2Seq model trained on all DodecaDialogue tasks"),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/all_tasks_mt/model "
+            "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how are you?\n"
+            "[ImageSeq2seq]: i ' m doing well . how are you ?\n"
+            "Enter Your Message: not much, what do you like to do?\n"
+            "[ImageSeq2seq]: i like to go to the park and play with my friends ."
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/all_tasks_mt/model -t \"#Dodeca\""
+            "--prepend-personality True --prepend-gold-knowledge True --image-mode no_image_model"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['#Dodeca'] using datatype valid ]\n"
+            "                           exs  gpu_mem  loss        lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   WizTeacher             3939          2.161           8.678      .5325\n"
+            "   all                   91526    .3371 2.807 9.375e-07 18.23      .4352               470274 2237\n"
+            "   convai2                7801          2.421           11.26      .4721\n"
+            "   cornell_movie         13905          3.088           21.93      .4172\n"
+            "   dailydialog            8069           2.47           11.82      .4745\n"
+            "   empathetic_dialogues   5738          2.414           11.18      .4505\n"
+            "   igc                     486          2.619           13.73      .4718\n"
+            "   image_chat:Generation 15000          3.195           24.42      .3724\n"
+            "   light_dialog           6623          2.944              19      .3918\n"
+            "   twitter               10405           3.61           36.98      .3656\n"
+            "   ubuntu                19560          3.148            23.3      .4035"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue ConvAI2 FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/convai2_ft/model",
+        "agent": "image_seq2seq",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on Convai2"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/convai2_ft/model -t convai2 "
+            "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "[context]: your persona: i currently work for ibm in chicago.\n"
+            "your persona: i'm not a basketball player though.\n"
+            "your persona: i am almost 7 feet tall.\n"
+            "your persona: i'd like to retire to hawaii in the next 10 years.\n"
+            "Enter Your Message: hi how's it going\n"
+            "[ImageSeq2seq]: i ' m doing well . how are you ?\n"
+            "Enter Your Message: i'm well, i am really tall\n"
+            "[ImageSeq2seq]: that ' s cool . i like simple jokes ."
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/convai2_ft/model -t convai2"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates   tpb\n"
+            "   7801    .2993 2.415 7.5e-06 11.19      .4741                15815 845.8"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Cornell Movie FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/cornell_movie_ft/model",
+        "agent": "image_seq2seq",
+        "task": "cornell_movie",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Cornell Movie task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/cornell_movie_ft/model "
+            "--inference beam --beam-size 10 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how's it going?\n"
+            "[ImageSeq2seq]: oh , it ' s great . i ' m having a great time . how are you doing ?\n"
+            "Enter Your Message: i'm doing well, what do you like to do?\n"
+            "[ImageSeq2seq]: i like to go to the movies . what about you ? do you have any hobbies ?"
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/cornell_movie_ft/model -t cornell_movie"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['cornell_movie'] using datatype valid ]\n"
+            "     exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates   tpb\n"
+            "   13905   .07094 2.967 2.5e-06 19.43      .4290                29496 15.76"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue DailyDialog FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/daily_dialog_ft/model",
+        "agent": "image_seq2seq",
+        "task": "dailydialog",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the DailyDialog task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/daily_dialog_ft/model "
+            "--inference beam --beam-size 5 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how's it going\n"
+            "[ImageSeq2seq]: i ' m doing well . how about you ?\n"
+            "Enter Your Message: not much, what do you like to do?\n"
+            "[ImageSeq2seq]: i like to go to the beach and play volleyball ."
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/daily_dialog_ft/model -t dailydialog"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['dailydialog'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates   tpb\n"
+            "   8069   .06787 2.326 7.5e-06 10.24      .5093               150959 15.67"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue ELI5 FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/eli5_ft/model",
+        "agent": "image_seq2seq",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "task": "TBD",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/eli5_ft/model "
+            "--inference beam --beam-size 10 --beam-min-length 200 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: Hi, can you tell me about quantum physics?\n"
+            "[ImageSeq2seq]: yes , i can . quantum physics is the study of how particles "
+            "interact with each other , and how they interact with other particles . "
+            "it ' s important to note that quantum mechanics is n ' t the same as "
+            "classical physics . classical physics is a study of the properties of "
+            "particles , and what they do . in classical physics , there are two "
+            "types of particles : quarks and neutrinos . quarks are made up of quarks , "
+            "neutrinos , and electrons . neutrinos are made of protons , neutrons , "
+            "electrons , and neutrons . they ' re all the same thing , but they all "
+            "have the same properties . so , if you ' re interested in quantum physics , "
+            "you might want to check out / r / askscience . there ' s a subreddit "
+            "for that sort of thing . edit : i ' m not sure what you mean by "
+            "\" quantum physics \" , but i ' ll let you know if you want to know more . "
+            "edit 2 : thanks for the gold !"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Empathetic Dialogue FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/empathetic_dialogues_ft/model",
+        "agent": "image_seq2seq",
+        "task": "empathetic_dialogues",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Empathetic Dialogue task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/empathetic_dialogues_ft/model "
+            "--inference beam --beam-size 5 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi, how's it going?\n"
+            "[ImageSeq2seq]: i ' m doing well . how are you ?\n"
+            "Enter Your Message: i'm fine, feeling a little sad\n"
+            "[ImageSeq2seq]: that ' s too bad . what ' s going on ?"
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/empathetic_dialogues_ft/model -t empathetic_dialogues"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['empathetic_dialogues'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   5738    .3278 2.405 7.5e-06 11.08      .4517                20107 1914"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Image Grounded Conversations FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/igc_ft/model",
+        "agent": "image_seq2seq",
+        "task": "igc",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Grounded Conversations task"
+        ),
+        "example": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/igc_ft/model -t igc:responseOnly"
+        ),
+        "result": (
+            "[ Finished evaluating tasks ['igc:responseOnly'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss    lr   ppl  token_acc  total_train_updates   tpb\n"
+            "    162    .0726 2.832 1e-06 16.98      .4405                10215 9.852"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Image Chat FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/image_chat_ft/model",
+        "agent": "image_seq2seq",
+        "task": "image_chat",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Chat task"
+        ),
+        "example": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/image_chat_ft/model -t image_chat:generation "
+            "--image-mode no_image_model"
+        ),
+        "result": (
+            "[ Finished evaluating tasks ['image_chat:generation'] using datatype valid ]\n"
+            "     exs  gpu_mem  loss        lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   15000    .2231 4.353 3.125e-07 77.73      .2905               321001 1653"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue LIGHT Dialogue FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/light_dialog_ft/model",
+        "agent": "image_seq2seq",
+        "task": "light_dialog",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the LIGHT Dialogue task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/light_dialog_ft/model "
+            "--inference beam --beam-size 5 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how's it going?\n"
+            "[ImageSeq2seq]: i ' m doing well . how about you ? what ' s going on in the world today ?\n"
+            "Enter Your Message: not much, wish it had some more epic battles!\n"
+            "[ImageSeq2seq]: me too . it ' s been so long since i ' ve seen a battle like this . do you have a favorite battle ?"
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/light_dialog_ft/model -t light_dialog"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['light_dialog'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates   tpb\n"
+            "   6623   .07002 2.927 7.5e-06 18.66      .3927                38068 20.81"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue pushshift.io Reddit FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/reddit_ft/model",
+        "agent": "image_seq2seq",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "task": "TBD",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the pushshift.io Reddit task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/reddit_ft/model "
+            "--inference beam --beam-size 5 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how's it going?\n"
+            "[ImageSeq2seq]: hi , i ' m doing pretty well . how are you ? : ) and yourself ? : d\n"
+            "Enter Your Message: just hanging in there, you up to anything fun?\n"
+            "[ImageSeq2seq]: not really . i just got home from work . i ' ll be back in a few hours ."
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Twitter FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/twitter_ft/model",
+        "agent": "image_seq2seq",
+        "task": "twitter",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Twitter task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/twitter_ft/model "
+            "--inference beam --beam-size 10 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how's it going?\n"
+            "[ImageSeq2seq]: it ' s going well ! how are you ? @ smiling_face_with_heart - eyes @\n"
+            "Enter Your Message: im doing well, what do you like to do\n"
+            "[ImageSeq2seq]: hi ! i ' m doing well ! i like to read , watch movies , play video games , and listen to music . how about you ?"
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/twitter_ft/model -t twitter"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['twitter'] using datatype valid ]\n"
+            "     exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   10405    .3807 3.396 7.5e-06 29.83      .3883               524029 2395"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Ubuntu V2 FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/ubuntu_ft/model",
+        "agent": "image_seq2seq",
+        "task": "ubuntu",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Ubuntu V2 task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/ubuntu_ft/model "
+            "--inference beam --beam-size 2 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
+        ),
+        "result": (
+            "Enter Your Message: hi how's it going?\n"
+            "[ImageSeq2seq]: i ' m fine . . . you ? .\n"
+            "Enter Your Message: doing ok, what do you like to do?\n"
+            "[ImageSeq2seq]: i like to read , write , and read ."
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/ubuntu_ft/model -t ubuntu"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['ubuntu'] using datatype valid ]\n"
+            "     exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   19560    .3833 2.844 2.5e-05 17.18      .4389               188076 3130"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Wizard of Wikipedia FT Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/wizard_of_wikipedia_ft/model",
+        "agent": "image_seq2seq",
+        "task": "wizard_of_wikipedia:Generator",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "description": (
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Wizard of Wikipedia task"
+        ),
+        "example": (
+            "python examples/interactive.py -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model "
+            "--inference beam --beam-size 10 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3 -t wizard_of_wikipedia"
+        ),
+        "result": (
+            "Please choose one of the following topics by typing A, B, C, ..., etc. :\n"
+            "\n"
+            "A: Denver Art Museum\n"
+            "B: Joke\n"
+            "C: Sport utility vehicle\n"
+            "D: Chocolate brownie\n"
+            "E: [NO TOPIC]\n"
+            "\n"
+            "Enter Your Message: D\n"
+            "[ Your chosen topic is: Chocolate brownie ]\n"
+            "/private/home/kshuster/ParlAI/parlai/core/torch_ranker_agent.py:670: UserWarning: [ Executing eval mode with provided inline set of candidates ]\n"
+            "  ''.format(mode)\n"
+            "[ Using chosen sentence from Wikpedia ]: A chocolate brownie (commonly referred to as simply brownie) is a square, baked, chocolate dessert.\n"
+            "[ImageSeq2seq]: i love chocolate brownies . they ' re my favorite .\n"
+            "Enter Your Message: me too! do you ever make them?\n"
+            "[ Using chosen sentence from Wikpedia ]: Brownies are typically eaten by hand, often accompanied by milk, served warm with ice cream (a la mode), topped with whipped cream, or sprinkled with powdered sugar and fudge.\n"
+            "[ImageSeq2seq]: i don ' t make them , but i would love to ."
+        ),
+        "example2": (
+            "python examples/eval_model.py -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model -t wizard_of_wikipedia:Generator --prepend-gold-knowledge true"
+        ),
+        "result2": (
+            "[ Finished evaluating tasks ['wizard_of_wikipedia:Generator'] using datatype valid ]\n"
+            "    exs  gpu_mem  loss      lr   ppl  token_acc  total_train_updates  tpb\n"
+            "   3939    .3823 2.144 7.5e-06 8.532      .5348                22908 2852"
+        ),
+    },
+    {
+        "title": "ImageSeq2Seq DodecaDialogue Base Model",
+        "id": "dodecadialogue",
+        "path": "zoo:dodecadialogue/base_model/model",
+        "agent": "image_seq2seq",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "task": "#Dodeca",
+        "description": (
+            "Image Seq2Seq base model, from which all DodecaDialogue models were trained"
+        ),
+        "example": (
+            "python examples/train_model.py -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
+        ),
+        "result": ("A trained model (logs omitted)"),
+    },
+    {
         "title": "Tutorial Transformer Generator",
         "id": "tutorial_transformer_generator",
         "path": "zoo:tutorial_transformer_generator/model",

@@ -127,6 +127,9 @@ def load_agent_module(agent_path: str):
         # this will follow the same paths but look in parlai_internal instead
         repo = 'parlai_internal'
         agent_path = agent_path[9:]
+    elif agent_path.startswith('fb:'):
+        repo = 'parlai_fb'
+        agent_path = agent_path[3:]
 
     if agent_path.startswith('legacy:'):
         # e.g. -m legacy:seq2seq:0
@@ -201,6 +204,9 @@ def _get_task_path_and_repo(taskname: str):
         # (make a directory called 'parlai_internal' with your private agents)
         repo = 'parlai_internal'
         task = task[9:]
+    elif task.startswith('fb:'):
+        repo = 'parlai_fb'
+        task = task[3:]
 
     task_path_list = task.split(':')
 
