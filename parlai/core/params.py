@@ -1007,6 +1007,15 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
+    def _value2argstr(self, value: Any) -> str:
+        """
+        Reverse-parse an opt value into one interpretable by argparse.
+        """
+        if isinstance(value, [list, tuple]):
+            return ",".join(str(v) for v in value)
+        else:
+            return str(v)
+
     def _kwargs_to_str_args(self, **kwargs):
         """
         Attempt to map from python-code kwargs into CLI args.
@@ -1043,10 +1052,10 @@ class ParlaiParser(argparse.ArgumentParser):
                 string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend([str(v) for v in value])
+                string_args.extend([self._value2argstr(value) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 

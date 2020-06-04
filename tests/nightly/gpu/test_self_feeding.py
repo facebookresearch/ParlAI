@@ -47,7 +47,7 @@ class TestSelffeeding(unittest.TestCase):
             'candidates': 'batch',
             'validation_metric': 'dia_acc',
             'optimizer': 'adamax',
-            'learning_rate': 0.0025,
+            'learningrate': 0.0025,
             'ffn_size': 32,
             'batchsize': 32,
             'embeddings_scale': False,
