@@ -1145,6 +1145,17 @@ task_list = [
         ),
     },
     {
+        "id": "HollE",
+        "display_name": "Holl-E",
+        "task": "holl_e",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Sequence of utterances and responses with background knowledge about"
+            "movies. From the Holl-E dataset. More information found at"
+            " https://github.com/nikitacs16/Holl-E."
+        ),
+    },
+    {
         "id": "ELI5",
         "display_name": "ELI5",
         "task": "eli5",
