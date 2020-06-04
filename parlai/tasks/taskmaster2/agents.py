@@ -74,6 +74,17 @@ class _Abstract(DialogTeacher):
         else:
             return 'train'
 
+    def _normalize_annotation(self, anno):
+        return anno
+        return (
+            anno
+            # .replace('.', ' ')
+            .replace('_', ' ')
+            .replace('1', ' 1')
+            .replace('2', ' 2')
+            .replace('3', ' 3')
+        )
+
     def _load_data(self, fold):
         # load up the ontology
         ontology = {}
@@ -86,15 +97,10 @@ class _Abstract(DialogTeacher):
             o = list(o.values())[0]
             for sub in o:
                 prefix = sub['prefix']
-                parts.append(prefix + ' : ')
-                for anno in sub['annotations']:
-                    parts.append(
-                        f'{anno}'.replace('.', ' ')
-                        .replace('_', ' ')
-                        .replace('1', ' 1')
-                        .replace('2', ' 2')
-                        .replace('3', ' 3')
-                    )
+                parts += [
+                    self._normalize_annotation(f'{prefix}.{a}')
+                    for a in sub['annotations']
+                ]
             ontology[section] = ' ; '.join(parts)
 
         chunks = []
@@ -118,15 +124,7 @@ class _Abstract(DialogTeacher):
             val = segment['text']
             for anno_ in segment['annotations']:
                 anno = anno_['name']
-                anno = anno[anno.index('.') + 1 :]
-                anno = (
-                    anno.replace('.', ' ')
-                    .replace('_', ' ')
-                    .replace('1', ' 1')
-                    .replace('2', ' 2')
-                    .replace('3', ' 3')
-                    .replace('4', ' 4')
-                )
+                anno = self._normalize_annotation(anno)
                 output.append(f'{anno} = {val}')
                 slots[anno] = val
         return " ; ".join(output), slots
