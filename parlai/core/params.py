@@ -1007,14 +1007,14 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
-    def _value2argstr(self, value: Any) -> str:
+    def _value2argstr(self, value) -> str:
         """
         Reverse-parse an opt value into one interpretable by argparse.
         """
-        if isinstance(value, [list, tuple]):
+        if isinstance(value, (list, tuple)):
             return ",".join(str(v) for v in value)
         else:
-            return str(v)
+            return str(value)
 
     def _kwargs_to_str_args(self, **kwargs):
         """
