@@ -19,7 +19,7 @@ latest dialogue models and further explore dialogue research.
 
 
 
-Beat the Bot is currently live: If you send a message to the page, you will be matched with a bot and another person.
+If you send a message to the page, you will be matched with a bot and another person.
 Both you and the other person will see two responses for every message you send — one from your human partner and one
 from a bot. You’ll choose which response is better and continue the conversation from there. The goal is to get your
 human speaking partner to choose your message more often than the bot’s. This allows for supervision in two senses:
