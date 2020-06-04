@@ -21,6 +21,7 @@ class Teacher1(DialogTeacher):
 
     def setup_data(self, datafile):
         for i in range(100):
+            yield (str(i), str(i)), False
             yield (str(i), str(i)), True
 
 
@@ -55,8 +56,8 @@ class TestMultiworld(unittest.TestCase):
 
         report = world.report()
         ratio = report['teacher1/exs'].value() / report['teacher2/exs'].value()
-        assert ratio > 1 / 1.2
-        assert ratio < 1.2
+        assert ratio > 1.7
+        assert ratio < 2.3
 
     @testing_utils.retry(ntries=10)
     def test_stochastic(self):
@@ -77,5 +78,5 @@ class TestMultiworld(unittest.TestCase):
         report = world.report()
         # stochastic so wide range
         ratio = report['teacher1/exs'].value() / report['teacher2/exs'].value()
-        assert ratio > 8
-        assert ratio < 12
+        assert ratio > 18
+        assert ratio < 22
