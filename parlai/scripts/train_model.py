@@ -453,7 +453,7 @@ class TrainLoop:
             self.best_valid is None
             or self.valid_optim * new_valid > self.valid_optim * self.best_valid
         ):
-            logging.info(
+            logging.success(
                 'new best {}: {:.4g}{}'.format(
                     opt['validation_metric'],
                     new_valid,
@@ -476,7 +476,7 @@ class TrainLoop:
                 return True
         else:
             self.impatience += 1
-            logging.info(
+            logging.report(
                 'did not beat best {}: {} impatience: {}'.format(
                     opt['validation_metric'], round(self.best_valid, 4), self.impatience
                 )
@@ -546,7 +546,7 @@ class TrainLoop:
 
         metrics = f'{datatype}:\n{nice_report(report)}\n'
         logging.info(f'eval completed in {timer.time():.2f}s')
-        print(metrics)
+        logging.report(metrics)
 
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():

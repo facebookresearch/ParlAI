@@ -30,6 +30,7 @@ import tqdm
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
+import parlai.utils.logging as logging
 
 
 # TODO: this may not be adequately updated after deleting pytorch data teacher

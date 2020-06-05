@@ -40,6 +40,7 @@ from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
+import parlai.utils.logging as logging
 
 from abc import ABC, abstractmethod
 
@@ -1416,10 +1417,10 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
         if len(self.episodes) == 1 and line_no > 100:
-            warn_once(
-                'The data in {path} looks like one very long episode. If this '
-                'is intentional, you may ignore this, but you MAY have a bug in '
-                'your data.'
+            logging.error(
+                f'The data in {path} looks like one very long episode. If this '
+                f'is intentional, you may ignore this, but you MAY have a bug in '
+                f'your data.'
             )
 
 

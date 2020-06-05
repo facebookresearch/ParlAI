@@ -21,6 +21,7 @@ from parlai.core.build_data import download, make_dir
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.typing import TShared
+import parlai.utils.logging as logging
 
 try:
     from subword_nmt import learn_bpe, apply_bpe

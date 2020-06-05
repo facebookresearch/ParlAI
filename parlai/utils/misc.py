@@ -14,7 +14,6 @@ import random
 import time
 import re
 import shutil
-import warnings
 import json
 
 from parlai.core.message import Message

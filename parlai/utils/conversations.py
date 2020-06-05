@@ -12,7 +12,7 @@ import os
 import random
 
 from parlai.utils.misc import AttrDict
-
+import parlai.utils.logging as logging
 
 BAR = '=' * 60
 SMALL_BAR = '-' * 60

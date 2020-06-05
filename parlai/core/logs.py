@@ -19,6 +19,7 @@ import json
 import numbers
 from parlai.core.opt import Opt
 from parlai.core.metrics import Metric
+import parlai.utils.logging as logging
 
 
 class TensorboardLogger(object):

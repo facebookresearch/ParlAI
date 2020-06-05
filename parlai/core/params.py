@@ -617,6 +617,13 @@ class ParlaiParser(argparse.ArgumentParser):
             'defaults to {parlai_dir}/downloads',
         )
         parlai.add_argument(
+            '--loglevel',
+            default='info',
+            hidden=True,
+            choices=logging.get_all_levels(),
+            help='Logging level',
+        )
+        parlai.add_argument(
             '-dt',
             '--datatype',
             default='train',
@@ -1010,11 +1017,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 print_git_commit()
             print_announcements(self.opt)
 
-        if os.environ.get('PARLAI_VERBOSE'):
-            self.opt['verbose'] = True
-
-        if self.opt.get('verbose'):
-            logging.set_verbose_mode()
+        logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         return self.opt
 

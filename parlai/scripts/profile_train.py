@@ -18,9 +18,9 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
-from .train_model import setup_args as train_args
-from .train_model import TrainLoop
-
+from parlai.scripts.train_model import setup_args as train_args
+from parlai.scripts.train_model import TrainLoop
+import parlai.utils.logging as logging
 import cProfile
 import io
 import pdb

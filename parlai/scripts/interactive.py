@@ -23,6 +23,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.scripts.script import ParlaiScript
 from parlai.agents.local_human.local_human import LocalHumanAgent
+import parlai.utils.logging as logging
 
 import random
 

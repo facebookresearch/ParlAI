@@ -16,6 +16,7 @@ from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict
 from parlai.utils.typing import TScalar
+import parlai.utils.logging as logging
 
 
 import torch

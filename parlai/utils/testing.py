@@ -17,6 +17,7 @@ import io
 import signal
 from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
+import parlai.utils.logging as logging
 
 
 try:

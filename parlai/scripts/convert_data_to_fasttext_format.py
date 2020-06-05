@@ -20,6 +20,7 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 import random
 import tempfile
+import parlai.utils.logging as logging
 
 
 def dump_data(opt):

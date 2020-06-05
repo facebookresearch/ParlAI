@@ -21,6 +21,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.scripts.script import ParlaiScript
 from parlai.utils.strings import colorize
+import parlai.utils.logging as logging
 
 import random
 

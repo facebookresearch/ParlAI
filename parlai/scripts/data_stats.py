@@ -19,6 +19,8 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.core.dict import DictionaryAgent
 
+import parlai.utils.logging as logging
+
 
 def setup_args(parser=None):
     if parser is None:

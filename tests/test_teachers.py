@@ -17,6 +17,7 @@ from parlai.core.metrics import SumMetric
 import regex as re
 from parlai.core.message import Message
 from parlai.core.opt import Opt
+import parlai.utils.logging as logging
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -111,8 +112,9 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                 for _ in range(1000):
                     f.write('id:test_file\ttext:placeholder\tlabels:placeholder\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
-            with self.assertWarnsRegex(UserWarning, "long episode"):
+            with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
                 testing_utils.display_data(opt)
+                assert any('long episode' in l for l in cm.output)
 
             # invert the logic of the assertion
             with self.assertRaises(self.failureException):
@@ -127,8 +129,9 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     'fromfile_datapath': fp,
                     'display_verbose': True,
                 }
-                with self.assertWarnsRegex(UserWarning, "long episode"):
+                with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
                     testing_utils.display_data(opt)
+                    assert any('long episode' in l for l in cm.output)
 
 
 class CustomEvaluationTeacher(DialogTeacher):

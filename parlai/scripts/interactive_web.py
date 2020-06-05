@@ -13,6 +13,7 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from typing import Dict, Any
+import parlai.utils.logging as logging
 
 import json
 

@@ -19,6 +19,7 @@ from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
+import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):

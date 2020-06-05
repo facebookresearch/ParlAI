@@ -18,6 +18,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
+import parlai.utils.logging as logging
 import random
 import tempfile
 

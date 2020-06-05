@@ -23,6 +23,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.strings import colorize
 from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 import random
 

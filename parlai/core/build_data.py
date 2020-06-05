@@ -21,6 +21,7 @@ import hashlib
 import tqdm
 import math
 import zipfile
+import parlai.utils.logging as logging
 
 try:
     from torch.multiprocessing import Pool

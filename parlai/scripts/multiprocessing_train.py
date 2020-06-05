@@ -24,6 +24,7 @@ import signal
 import torch.distributed as dist
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
+import parlai.utils.logging as logging
 
 
 def multiprocess_train(

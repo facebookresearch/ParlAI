@@ -36,6 +36,7 @@ import socket
 import subprocess
 
 import parlai.scripts.train_model as single_train
+import parlai.utils.logging as logging
 from parlai.scripts.multiprocessing_train import multiprocess_train
 
 

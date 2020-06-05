@@ -11,6 +11,7 @@ import math
 from itertools import chain
 from typing import Optional
 
+import parlai.utils.logging as logging
 from parlai.utils.misc import warn_once
 
 try:
@@ -331,7 +332,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                         'increasing the batch size.'
                     ).format(self.min_loss_scale)
                 )
-            warn_once(f'Overflow: setting loss scale to {self.scaler.loss_scale}')
+            logging.info(f'Overflow: setting loss scale to {self.scaler.loss_scale}')
             self.zero_grad()
             return -1
 

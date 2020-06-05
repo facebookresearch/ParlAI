@@ -481,7 +481,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else:
                 states = {}
 
-        if shared:
+        if shared is not None:
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():

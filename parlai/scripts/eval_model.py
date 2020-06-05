@@ -25,6 +25,7 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
 from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 import json
 import random
@@ -104,7 +105,7 @@ def _save_eval_stats(opt, report):
 
 
 def _eval_single_world(opt, agent, task):
-    logging.info('Evaluating task {task} using datatype {opt.get("datatype")}.')
+    logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
     world_logger = WorldLogger(opt) if opt['save_world_logs'] else None
 
