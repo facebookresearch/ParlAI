@@ -50,7 +50,7 @@ class TensorboardLogger(object):
             raise ImportError('Please run `pip install tensorboard tensorboardX`.')
 
         tbpath = opt['model_file'] + '.tensorboard'
-        print('[ Saving tensorboard logs to: {} ]'.format(tbpath))
+        logging.debug(f'Saving tensorboard logs to: {tbpath}')
         if not os.path.exists(tbpath):
             os.makedirs(tbpath)
         self.writer = SummaryWriter(tbpath, comment=json.dumps(opt))
@@ -72,7 +72,7 @@ class TensorboardLogger(object):
             elif isinstance(v, Metric):
                 self.writer.add_scalar(f'{k}/{setting}', v.value(), global_step=step)
             else:
-                print(f'k {k} v {v} is not a number')
+                logging.error(f'k {k} v {v} is not a number')
 
     def flush(self):
         self.writer.flush()

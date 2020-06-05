@@ -105,7 +105,7 @@ def self_chat(opt):
         _run_self_chat_episode(opt, world, logger)
         report = world.report()
         text, report = log_time.log(i + 1, opt['num_self_chats'], report)
-        print(text)
+        logging.info(text)
 
     # Save chats
     if opt['outfile'] is None:

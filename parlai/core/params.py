@@ -40,7 +40,7 @@ def print_git_commit():
     try:
         git_ = git.Git(root)
         current_commit = git_.rev_parse('HEAD')
-        print(f'[ Current ParlAI commit: {current_commit} ]')
+        logging.info(f'Current ParlAI commit: {current_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -49,7 +49,7 @@ def print_git_commit():
     try:
         git_ = git.Git(internal_root)
         internal_commit = git_.rev_parse('HEAD')
-        print(f'[ Current internal commit: {internal_commit} ]')
+        logging.info(f'Current internal commit: {internal_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:

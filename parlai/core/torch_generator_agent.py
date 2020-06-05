@@ -467,14 +467,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             sync_parameters(self.model)
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
-            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
 
             if self.fp16:
                 self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
-                print('[ Loading existing model params from {} ]' ''.format(init_model))
+                logging.info(f'Loading existing model params from {init_model}')
                 states = self.load(init_model)
             else:
                 states = {}
@@ -690,8 +692,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # catch out of memory exceptions during fwd/bck (skip batch)
             if 'out of memory' in str(e):
                 oom_sync = True
-                print(
-                    '| WARNING: ran out of memory, skipping batch. '
+                logging.error(
+                    'Ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )

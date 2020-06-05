@@ -59,7 +59,7 @@ class ImageLoader:
 
         self.use_cuda = not self.opt.get('no_cuda', False) and torch.cuda.is_available()
         if self.use_cuda:
-            print('[ Using CUDA ]')
+            logging.debug(f'Using CUDA')
             torch.cuda.set_device(self.opt.get('gpu', -1))
         self.torch = torch
         self.torchvision = torchvision
@@ -109,7 +109,7 @@ class ImageLoader:
             self.netCNN = self.nn.Sequential(*list(model.children())[:-1])
         except RuntimeError as e:
             # Perhaps specified one of the wrong model names
-            print(
+            logging.error(
                 'If you have specified one of the resnext101 wsl models, '
                 'please make sure it is one of the following: \n'
                 'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '

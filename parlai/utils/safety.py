@@ -97,7 +97,7 @@ class OffensiveStringMatcher:
             version = 'v1.0'
             dpath = os.path.join(self.datapath, 'OffensiveLanguage')
             if not build_data.built(dpath, version):
-                print('[building data: ' + dpath + ']')
+                logging.info(f'building data: {dpath}')
                 if build_data.built(dpath):
                     # An older version exists, so remove these outdated files.
                     build_data.remove_dir(dpath)

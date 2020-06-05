@@ -359,7 +359,7 @@ class SubwordBPEHelper(BPEHelper):
             # we already finalized the codecs
             return False
 
-        print('Dictionary: saving bpe codecs to {}'.format(self.codecs))
+        logging.debug(f'Saving bpe codecs to {self.codecs}')
 
         dictionary = ("{} {}".format(k, v) for k, v in frequencies.items())
 

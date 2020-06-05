@@ -77,7 +77,7 @@ def display_model(opt):
             if world.get_acts()[0]['episode_done']:
                 turn = 0
             if world.epoch_done():
-                print("EPOCH DONE")
+                logging.info("epoch done")
                 turn = 0
                 break
 

@@ -98,17 +98,13 @@ def _save_eval_stats(opt, report):
 
     # Save report
     with open(report_fname, 'w') as f:
-        print(f'[ Saving model report to {report_fname} ... ]')
+        logging.info(f'Saving model report to {report_fname}')
         json.dump({'opt': opt, 'report': json_serializable_report}, f, indent=4)
         f.write("\n")  # for jq
 
 
 def _eval_single_world(opt, agent, task):
-    print(
-        '[ Evaluating task {} using datatype {}. ] '.format(
-            task, opt.get('datatype', 'N/A')
-        )
-    )
+    logging.info('Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
     world_logger = WorldLogger(opt) if opt['save_world_logs'] else None
 
@@ -139,7 +135,7 @@ def _eval_single_world(opt, agent, task):
             text, report = log_time.log(
                 report.get('exs', 0), min(max_cnt, world.num_examples()), report
             )
-            print(text)
+            logging.info(text)
 
     report = world.report()
     world.reset()
@@ -195,10 +191,8 @@ def eval_model(opt, print_parser=None):
 
     # print announcments and report
     print_announcements(opt)
-    print(
-        '[ Finished evaluating tasks {} using datatype {} ]'.format(
-            tasks, opt.get('datatype', 'N/A')
-        )
+    logging.info(
+        f'Finished evaluating tasks {tasks} using datatype {opt.get("datatype")}'
     )
     print(nice_report(report))
     _save_eval_stats(opt, report)

@@ -258,7 +258,7 @@ if __name__ == '__main__':
     opt = setup_interactive(SHARED)
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
-    print('http://{}:{}/'.format(opt['host'], opt['port']))
+    logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
         httpd.serve_forever()

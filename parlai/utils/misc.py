@@ -19,6 +19,7 @@ import json
 
 from parlai.core.message import Message
 from parlai.utils.strings import colorize
+import parlai.utils.logging as logging
 
 try:
     import torch
@@ -686,8 +687,8 @@ class PaddingUtils(object):
 
             if random.random() > (1 - report_freq):
                 # log sometimes
-                print('TEXT: ', observations[valid_inds[i]]['text'])
-                print('PREDICTION: ', curr_pred, '\n~')
+                logging.info('TEXT: ', observations[valid_inds[i]]['text'])
+                logging.info('PREDICTION: ', curr_pred, '\n~')
         return
 
 
@@ -970,4 +971,4 @@ def warn_once(msg: str, warningtype=None) -> None:
     global _seen_warnings
     if msg not in _seen_warnings:
         _seen_warnings.add(msg)
-        warnings.warn(msg, warningtype, stacklevel=2)
+        logging.warn(msg)

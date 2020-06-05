@@ -134,7 +134,7 @@ class retry(object):
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
                     if self.log_retry:
-                        print("Retrying {}".format(testfn))
+                        logging.debug("Retrying {}".format(testfn))
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
 

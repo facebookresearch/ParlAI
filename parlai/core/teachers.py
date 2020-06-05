@@ -905,9 +905,8 @@ class StreamDialogData(DialogData):
             self.reset_data = None
             self.is_reset = True
             if opt.get('numthreads', 1) > 1:
-                print(
-                    'WARNING: multithreaded streaming will process every '
-                    'example numthreads times.'
+                logging.warn(
+                    'multithreaded streaming will process every example numthreads times.'
                 )
                 self.lock = Lock()
         self.entry_idx = 0
@@ -1196,7 +1195,7 @@ class FbDialogTeacher(DialogTeacher):
             c: ['hallway', 'kitchen', 'bathroom']
             new_episode = False (this is the second example in the episode)
         """
-        print("[loading fbdialog data:" + path + "]")
+        logging.info(f"loading fbdialog data: {path}")
         with open(path) as read:
             start = True
             x = ''
@@ -1380,7 +1379,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         return self.episodes[episode_idx][entry_idx]
 
     def _setup_data(self, path):
-        print("[loading parlAI text data:" + path + "]")
+        logging.info(f"Loading ParlAI text data: {path}")
         self.episodes = []
         self.num_exs = 0
         eps = []
@@ -1685,14 +1684,14 @@ class AbstractImageTeacher(FixedDialogTeacher):
         )
 
         if os.path.isfile(image_mode_features_dict_path):
-            print(
+            logging.info(
                 f'Loading existing image features dict for model: {self.image_mode} at: {image_mode_features_dict_path}'
             )
             self.image_features_dict = torch.load(
                 image_mode_features_dict_path, map_location='cpu'
             )
         else:
-            print('No existing image features, attempting to build.')
+            logging.warn('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
@@ -1745,7 +1744,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             num += 1
             pbar.update(1)
             if num % 1000 == 0:
-                print(f'Processing image index: {num}')
+                logging.debug(f'Processing image index: {num}')
         torch.save(image_features_dict, store_dict_path)
         return image_features_dict
 

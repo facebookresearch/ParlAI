@@ -86,7 +86,7 @@ def get_dataset_class(opt):
 
 def extract_feats(opt):
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: extract_feats should be passed opt not Parser ]')
+        logging.error('extract_feats should be passed opt not parser')
         opt = opt.parse_args()
     # Get command line arguments
     opt = copy.deepcopy(opt)
@@ -98,7 +98,7 @@ def extract_feats(opt):
     opt['num_epochs'] = 1
     opt['use_hdf5'] = False
     opt['num_load_threads'] = 20
-    print("[ Loading Images ]")
+    logging.info("Loading Images")
     # create repeat label agent and assign it to the specified task
     if opt.get('pytorch_teacher_dataset') is None:
         agent = RepeatLabelAgent(opt)
@@ -146,13 +146,13 @@ def extract_feats(opt):
             exs_seen = 0
             total_exs = world.num_examples()
             pbar = tqdm.tqdm(unit='ex', total=total_exs)
-            print('[ Computing and Saving Image Features ]')
+            logging.info('Computing and Saving Image Features')
             while exs_seen < total_exs:
                 world.parley()
                 exs_seen += bsz
                 pbar.update(bsz)
             pbar.close()
-            print('[ Feature Computation Done ]')
+            logging.info('Feature Computation Done')
             with open(images_built_file, 'w') as write:
                 write.write(str(datetime.datetime.today()))
 
@@ -175,10 +175,12 @@ def extract_feats(opt):
         image_id_to_idx_path = '{}mode_{}_id_to_idx.txt'.format(dataset.image_path, im)
         hdf5_built_file = hdf5_path + '.built'
         if os.path.isfile(hdf5_path) and os.path.isfile(hdf5_built_file):
-            print('[ Images already extracted at: {} ]'.format(hdf5_path))
+            logging.info(f'Images already extracted at: {hdf5_path}')
             return
 
-        print("[ Beginning image extraction for {} images ]".format(dt.split(':')[0]))
+        logging.info(
+            "Beginning image extraction for {} images".format(dt.split(':')[0])
+        )
         hdf5_file = h5py.File(hdf5_path, 'w')
         idx = 0
         iterator = tqdm.tqdm(
@@ -217,7 +219,7 @@ def extract_feats(opt):
         with open(hdf5_built_file, 'w') as write:
             write.write(str(datetime.datetime.today()))
 
-    print("[ Finished extracting images ]")
+    logging.info("Finished extracting images")
 
 
 if __name__ == '__main__':

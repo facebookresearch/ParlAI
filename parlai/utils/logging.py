@@ -13,8 +13,9 @@ WARN_LEVEL = logging.WARNING
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
-DEFAULT_CONSOLE_FORMAT = '%(asctime)s | %(levelname)s | %(message)s'
-DEFAULT_FILE_FORMAT = '%(asctime)s | %(levelname)s | %(message)s'
+DEFAULT_CONSOLE_FORMAT = '%(asctime)s %(levelname).4s | %(message)s'
+CONSOLE_DATE_FORMAT = '%H:%M:%S'
+DEFAULT_FILE_FORMAT = '%(asctime)s %(levelname)7s | %(message)s'
 
 
 # Some functions in this class assume that ':' will be the separator used in
@@ -62,7 +63,9 @@ class ParlaiLogger(logging.Logger):
         # Logging to stdout
         self.streamHandler = logging.StreamHandler(sys.stdout)
         # Log to stdout levels: console_level and above
-        self.consoleFormatter = logging.Formatter(console_format)
+        self.consoleFormatter = logging.Formatter(
+            console_format, datefmt=CONSOLE_DATE_FORMAT
+        )
         self.streamHandler.setFormatter(self.consoleFormatter)
         super().addHandler(self.streamHandler)
 

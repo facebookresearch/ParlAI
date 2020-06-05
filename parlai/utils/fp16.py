@@ -331,7 +331,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                         'increasing the batch size.'
                     ).format(self.min_loss_scale)
                 )
-            warn_once(f'[ Overflow: setting loss scale to {self.scaler.loss_scale} ]')
+            warn_once(f'Overflow: setting loss scale to {self.scaler.loss_scale}')
             self.zero_grad()
             return -1
 

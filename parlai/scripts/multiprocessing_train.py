@@ -75,7 +75,7 @@ def multiprocess_train(
             world_size=opt['distributed_world_size'],
             rank=rank,
         )
-        print("Distributed group initialized")
+        logging.info("Distributed group initialized")
 
         # manual_seed can be a noop without this
         torch.cuda.init()

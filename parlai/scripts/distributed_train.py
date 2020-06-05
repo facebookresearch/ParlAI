@@ -69,10 +69,9 @@ def main():
         else:
             device_id = int(os.environ['SLURM_LOCALID'])
         port = opt['port']
-        print(
-            'Initializing host {} as rank {}, main is {}'.format(
-                socket.gethostname(), distributed_rank, main_host
-            )
+        logging.info(
+            f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
+            f'main is {main_host}'
         )
         # Begin distributed training
         multiprocess_train(distributed_rank, opt, port, 0, device_id, main_host)
