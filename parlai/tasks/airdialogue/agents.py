@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.core.message import Message
 from .build import build
 import os
 import json
@@ -92,7 +93,7 @@ class AirDialogueTeacher(FixedDialogTeacher):
             'episode_done': episode_done,
             'labels': labels,
         }
-        return action
+        return Message(action)
 
 
 class DefaultTeacher(AirDialogueTeacher):
