@@ -23,6 +23,7 @@ from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 from collections import deque
 import random
+import concurrent.futures as cf
 import os
 import torch
 import parlai.utils.logging as logging
@@ -51,7 +52,13 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
+from parlai.utils.torch import (
+    argsort,
+    compute_grad_norm,
+    padded_tensor,
+    to_cpu,
+    atomic_save,
+)
 
 
 class Batch(AttrDict):
@@ -359,6 +366,9 @@ class TorchAgent(ABC, Agent):
     This agent serves as a common framework for all ParlAI models which want
     to use PyTorch.
     """
+
+    # used in train_model to reduce time between splits
+    _SUPPORTS_ASYNC_SAVE = True
 
     P1_TOKEN = '__p1__'
     P2_TOKEN = '__p2__'
@@ -1770,13 +1780,27 @@ class TorchAgent(ABC, Agent):
 
         return states
 
-    def save(self, path=None):
+    def save(
+        self, path: str = None, threadpool: Optional[cf.ThreadPoolExecutor] = None
+    ) -> Optional[cf.Future]:
         """
         Save model parameters to path (or default to model_file arg).
 
         Please try to refrain from overriding this function, and instead override
         `state_dict(self)` for more specific saving.
+
+        :param path:
+            The path to save the model file (and related files)
+        :param threadpool:
+            An optional ThreadPoolExecutor to submit to for long saves
+
+        :returns:
+            a Future if a threadpool is provided, otherwise None
         """
+        # first thing to do is freeze the state dict in cpu memory, before
+        # anything continues
+        states = to_cpu(self.state_dict())
+
         path = self.opt.get('model_file', None) if path is None else path
 
         if path:
@@ -1787,14 +1811,18 @@ class TorchAgent(ABC, Agent):
                 # TODO: Look into possibly overriding opt('dict_file') with new path
                 logging.debug(f'Saving dictionary to {model_dict_path}')
                 self.dict.save(model_dict_path, sort=False)
-            states = self.state_dict()
+                logging.debug(f'Finished saving dictionary {model_dict_path}')
+
             if states:  # anything found to save?
-                with open(path, 'wb') as write:
-                    torch.save(states, write)
                 # save opt file
                 if hasattr(self, 'model_version'):
                     self.opt['model_version'] = self.model_version()
                 self.opt.save(path + '.opt')
+                if threadpool is not None:
+                    logging.debug(f'Submitting save of {path} to threadpool')
+                    return threadpool.submit(atomic_save, states, path)
+                else:
+                    return atomic_save(states, path)
 
     def load_state_dict(self, state_dict):
         """
