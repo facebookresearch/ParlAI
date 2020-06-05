@@ -816,10 +816,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         preds = None
         if self.skip_generation:
-            warn_once(
-                "--skip-generation does not produce accurate metrics beyond ppl",
-                RuntimeWarning,
-            )
+            warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
             beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)

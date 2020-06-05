@@ -141,7 +141,7 @@ def fp16_apex_available() -> bool:
 
         return True
     except ImportError:
-        warn_once(
+        error_once(
             'You set --fp16 true with --fp16-impl apex, but fp16 '
             'with apex is unavailable. To use apex fp16, please '
             'install APEX from https://github.com/NVIDIA/apex.'

@@ -298,7 +298,7 @@ def create_agent_from_opt_file(opt: Opt):
         # only override opts specified in 'override' dict
         if opt.get('override'):
             for k, v in opt['override'].items():
-                if str(v) != str(new_opt.get(k, None)):
+                if k in new_opt and str(v) != str(new_opt.get(k)):
                     logging.warn(
                         f"overriding opt['{k}'] to {v} (previously: {new_opt.get(k)})"
                     )

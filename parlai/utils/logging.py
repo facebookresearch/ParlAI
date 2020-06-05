@@ -31,7 +31,7 @@ logging.addLevelName(SUCCESS, "SUCCESS")
 COLORED_FORMAT = '%(asctime)s | %(message)s'
 CONSOLE_FORMAT = '%(asctime)s %(levelname).4s | %(message)s'
 CONSOLE_DATE_FORMAT = '%H:%M:%S'
-LOGFILE_FORMAT = '%(asctime)s | %(levelname)8s | %(message)s'
+LOGFILE_FORMAT = '%(asctime)s %(levelname)-8s | %(message)s'
 LOGFILE_DATE_FORMAT = None
 
 COLORED_LEVEL_STYLES = {
