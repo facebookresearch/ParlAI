@@ -513,7 +513,7 @@ class Gpt2BpeHelper(BPEHelper):
         :return:
             encoder, mapping tokens to unicode reps
         """
-        with open(json_path, 'r') as f:
+        with open(json_path, 'r', encoding='utf8') as f:
             encoder = json.load(f)
         for each_token in encoder.keys():
             new_token = ''.join(

@@ -99,11 +99,11 @@ def _create_parlai_format(dpath: str):
         save_path = os.path.join(dpath, f'{datatype}.txt')
 
         print(f'Loading {load_path}.')
-        with open(load_path, 'r') as f_read:
+        with open(load_path, 'r', encoding='utf8') as f_read:
             data = json.load(f_read)
 
         print(f'Saving to {save_path}')
-        with open(save_path, 'w') as f_write:
+        with open(save_path, 'w', encoding='utf8') as f_write:
             for episode in data:
                 assert (
                     len(episode['dialog'])

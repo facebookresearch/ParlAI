@@ -1144,4 +1144,67 @@ task_list = [
             "<https://arxiv.org/abs/1911.03842>."
         ),
     },
+    {
+        "id": "HollE",
+        "display_name": "Holl-E",
+        "task": "holl_e",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Sequence of utterances and responses with background knowledge about"
+            "movies. From the Holl-E dataset. More information found at"
+            " https://github.com/nikitacs16/Holl-E."
+        ),
+    },
+    {
+        "id": "ELI5",
+        "display_name": "ELI5",
+        "task": "eli5",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Reddit "
+            "explainlikeimfive posts and comments."
+            "Link: https://github.com/facebookresearch/ELI5/"
+        ),
+    },
+    {
+        "id": "ReDial",
+        "display_name": "ReDial",
+        "task": "redial",
+        "tags": ["All", "ChitChat", "Goal"],
+        "description": (
+            "Annotated dataset of dialogues where users recommend movies to eachother."
+            "See https://redialdata.github.io/website/ for more information."
+        ),
+    },
+    {
+        "id": "DREAM",
+        "display_name": "DREAM",
+        "task": "dream",
+        "tags": ["All", "QA"],
+        "description": (
+            "A multiple-choice answering dataset based on multi-turn, multi-party dialogue."
+            "More information can be found at: <https://dataset.org/dream/>."
+        ),
+    },
+    {
+        "id": "C3",
+        "display_name": "C3",
+        "task": "c3",
+        "tags": ["All", "QA"],
+        "description": (
+            "A multiple-choice answering dataset in Chinese based on a prior passage."
+            "More information can be found at: <https://dataset.org/c3/>."
+        ),
+    },
+    {
+        "id": "CommonSenseQA",
+        "display_name": "CommonSenseQA",
+        "task": "commonsenseqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense "
+            "knowlegde to predict correct answers. More information found at "
+            "<https://www.tau-nlp.org/commonsenseqa>."
+        ),
+    },
 ]

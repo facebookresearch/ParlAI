@@ -150,4 +150,5 @@ See **Browser** above for an example implementation of a websockets-based chat s
 
 ### Adding a New Chat Service
 
-For full instructions on adding a new chat service to ParlAI, please read [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/README.md).
+For full instructions on adding a new chat service to ParlAI, please read [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/).
+
