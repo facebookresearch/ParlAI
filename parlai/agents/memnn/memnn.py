@@ -65,13 +65,6 @@ class MemnnAgent(TorchRankerAgent):
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
         return arg_group
 
-    @staticmethod
-    def model_version():
-        """
-        Return current version of this model, counting up from 0.
-        """
-        return 2
-
     def __init__(self, opt, shared=None):
         self.id = 'MemNN'
         self.memsize = opt['memsize']
