@@ -13,6 +13,20 @@ import json
 import pickle
 import traceback
 
+from typing import List
+
+# these keys are automatically removed upon save. This is a rather blunt hammer.
+# It's preferred you indicate this at option definiton time.
+__AUTOCLEAN_KEYS__: List[str] = [
+    "override",
+    "batchindex",
+    "download_path",
+    "datapath",
+    "batchindex",
+    # we don't save interactive mode, it's only decided by scripts or CLI
+    "interactive_mode",
+]
+
 
 class Opt(dict):
     """
@@ -81,17 +95,39 @@ class Opt(dict):
         else:
             return f'No history for {key}'
 
+    def save(self, filename: str) -> None:
+        """
+        Save the opt to disk.
 
-def load_opt_file(optfile: str) -> Opt:
-    """
-    Load an Opt from disk.
-    """
-    try:
-        # try json first
-        with open(optfile, 'r') as t_handle:
-            opt = json.load(t_handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as b_handle:
-            opt = pickle.load(b_handle)
-    return Opt(opt)
+        Attempts to 'clean up' any residual values automatically.
+        """
+        # start with a shallow copy
+        dct = dict(self)
+
+        # clean up some things we probably don't want to save
+        for key in __AUTOCLEAN_KEYS__:
+            if key in dct:
+                del dct[key]
+
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(dct, fp=f, indent=4)
+            # extra newline for convenience of working with jq
+            f.write('\n')
+
+    @classmethod
+    def load(cls, optfile: str) -> 'Opt':
+        """
+        Load an Opt from disk.
+        """
+        try:
+            # try json first
+            with open(optfile, 'r') as t_handle:
+                dct = json.load(t_handle)
+        except UnicodeDecodeError:
+            # oops it's pickled
+            with open(optfile, 'rb') as b_handle:
+                dct = pickle.load(b_handle)
+        for key in __AUTOCLEAN_KEYS__:
+            if key in dct:
+                del dct[key]
+        return cls(dct)

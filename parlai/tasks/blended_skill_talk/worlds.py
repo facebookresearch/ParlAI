@@ -123,7 +123,7 @@ class InteractiveWorld(InteractiveBaseWorld):
             '--safe-personas-only',
             type='bool',
             default=True,
-            help='Only use personas on a whitelist of safe personas',
+            help='Only use personas on an allowed list of safe personas',
             hidden=True,
         )
 

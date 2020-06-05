@@ -29,7 +29,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -49,7 +49,6 @@ from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
-import sys
 import time
 import os
 import torch
@@ -281,6 +280,7 @@ class FixedDialogTeacher(Teacher):
         super().reset()
         self.metrics.clear()
         self.lastY = None
+        self.last_act = None
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
@@ -443,8 +443,31 @@ class FixedDialogTeacher(Teacher):
         """
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
+            self.custom_evaluation(self.last_act, self.lastY, observation)
             self.lastY = None
         return observation
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ) -> None:
+        """
+        A method designated for hooking custom evaluations into teachers.
+
+        Generally, a user will want to use `self.metrics.add` to record any
+        specialized metrics that only make sense for this one dataset.
+
+        :param teacher_action:
+            The message last sent from this teacher.
+        :param labels:
+            The previous correct labels, if there were any.
+        :param model_response:
+            The raw response from the model. Generally you want to rely on the
+            text field, but others may be necessary in specific situations.
+        """
+        pass
 
     def act(self):
         """
@@ -462,6 +485,7 @@ class FixedDialogTeacher(Teacher):
         action.force_set('id', self.getID())
 
         # remember correct answer if available
+        self.last_act = action
         self.lastY = action.get('labels', action.get('eval_labels', None))
         if (
             not self.datatype.startswith('train') or 'evalmode' in self.datatype
@@ -660,7 +684,7 @@ class DialogData(object):
             self.image_loader = ImageLoader(opt)
             self.data = []
             self._load(data_loader, opt['datafile'])
-            self.cands = None if cands is None else set(sys.intern(c) for c in cands)
+            self.cands = None if cands is None else set(c for c in cands)
 
         self.addedCands = []
         self.copied_cands = False
@@ -686,64 +710,12 @@ class DialogData(object):
         """
 
         episode = []
-        last_cands = None
         for entry, new in data_loader:
             if new and len(episode) > 0:
                 yield tuple(episode)
                 episode = []
-                last_cands = None
 
-            # intern all strings so we don't store them more than once
-            # TODO: clean up the if .. sys.intern else None by refactoring
-            new_entry = []
-            if len(entry) > 0:
-                # process text if available
-                if entry[0] is not None:
-                    new_entry.append(sys.intern(entry[0]))
-                else:
-                    new_entry.append(None)
-                # TODO: unindent all of these one level.
-                if len(entry) > 1:
-                    # process labels if available
-                    if entry[1] is None:
-                        new_entry.append(None)
-                    elif hasattr(entry[1], '__iter__') and type(entry[1]) is not str:
-                        # TODO: this could use the abc collections
-                        # make sure iterable over labels, not single string
-                        new_entry.append(tuple(sys.intern(e) for e in entry[1]))
-                    elif isinstance(entry[1], str):
-                        new_entry.append((sys.intern(entry[1]),))
-                    else:
-                        raise TypeError(f"{entry[1]} is not list or str")
-                if len(entry) > 2:
-                    # process reward if available
-                    if entry[2] is not None:
-                        new_entry.append(entry[2])
-                    else:
-                        new_entry.append(None)
-                if len(entry) > 3:
-                    # process label candidates if available
-                    if entry[3] is None:
-                        new_entry.append(None)
-                    elif last_cands and entry[3] is last_cands:
-                        # if cands are shared, say "same" so we
-                        # don't store them again
-                        # TODO: This is bad, and it's not actually used anywhere
-                        # DEPRECATIONDAY: make this more rational
-                        new_entry.append(sys.intern('same as last time'))
-                    elif hasattr(entry[3], '__iter__') and type(entry[3]) is not str:
-                        # make sure iterable over candidates, not single string
-                        last_cands = entry[3]
-                        new_entry.append(tuple(sys.intern(e) for e in entry[3]))
-                    else:
-                        raise TypeError(
-                            'Must provide iterable over label candidates, '
-                            'not a single string.'
-                        )
-                if len(entry) > 4 and entry[4] is not None:
-                    new_entry.append(sys.intern(entry[4]))
-
-            episode.append(tuple(new_entry))
+            episode.append(entry)
 
         if len(episode) > 0:
             yield tuple(episode)
@@ -811,22 +783,48 @@ class DialogData(object):
 
         :param entry: a tuple in the form described in the class docstring.
         """
-        table = {}
-        if entry[0] is not None:
-            table['text'] = entry[0]
-        if len(entry) > 1:
-            if entry[1] is not None:
-                table['labels'] = entry[1]
-        if len(entry) > 2:
-            if entry[2] is not None:
+        if isinstance(entry, (dict, Message)):
+            # user is already provided things
+            if 'eval_labels' in entry or 'eval_label' in entry:
+                raise KeyError(
+                    'Labels are converted to eval_labels automatically. Please do not '
+                    'set them in setup_data.'
+                )
+            if 'episode_done' in entry:
+                raise KeyError(
+                    "episode_done is set automatically for you. Please don't set it "
+                    "in setup_data."
+                )
+            if 'label' in entry:
+                # for convenience, rename to the labels convention automatically
+                label = entry.pop('label')
+                assert isinstance(label, str)
+                entry['labels'] = (label,)
+            if 'labels' in entry and isinstance(entry['labels'], str):
+                entry['labels'] = (entry['labels'],)
+            table = entry.copy()
+        elif isinstance(entry, (Tuple, List)):
+            table = {}
+            if entry[0] is not None:
+                table['text'] = entry[0]
+            if len(entry) > 1 and entry[1] is not None:
+                l = entry[1]
+                if isinstance(l, str):
+                    l = (l,)
+                table['labels'] = l
+            if len(entry) > 2 and entry[2] is not None:
                 table['reward'] = entry[2]
-        if len(entry) > 3:
-            if entry[3] is not None:
+            if len(entry) > 3 and entry[3] is not None:
                 table['label_candidates'] = entry[3]
-        if len(entry) > 4 and entry[4] is not None:
-            img = self.image_loader.load(entry[4])
-            if img is not None:
-                table['image'] = img
+            if len(entry) > 4 and entry[4] is not None:
+                img = self.image_loader.load(entry[4])
+                if img is not None:
+                    table['image'] = img
+        else:
+            raise TypeError(
+                f"items out of setup_data should be dict, Message, list, or tuple. "
+                f"Got {type(entry)})"
+            )
 
         if table.get('labels', None) is not None and self.cands is not None:
             if self.addedCands:
@@ -846,6 +844,11 @@ class DialogData(object):
         if 'labels' in table and 'label_candidates' in table:
             if table['labels'][0] not in table['label_candidates']:
                 raise RuntimeError('true label missing from candidate labels')
+
+        # go ahead and make it a message
+        if isinstance(table, dict):
+            table = Message(table)
+
         return table
 
 
@@ -1689,7 +1692,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 image_mode_features_dict_path, map_location='cpu'
             )
         else:
-            print(f'No existing image features, attempting to build.')
+            print('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
@@ -1840,6 +1843,8 @@ class MultiTaskTeacher(Teacher):
         self.cum_task_weights = [1] * len(self.tasks)
         self.task_choices = range(len(self.tasks))
         weights = self.opt.get('multitask_weights', [1])
+        if weights == 'stochastic':
+            weights = [t.num_episodes() for t in self.tasks]
         sum = 0
         for i in self.task_choices:
             if len(weights) > i:

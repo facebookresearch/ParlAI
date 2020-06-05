@@ -449,9 +449,7 @@ class Gpt2BpeHelper(BPEHelper):
         """
         super().__init__(opt, shared)
         if self.lower:
-            raise ValueError(
-                'Only use --dict-lower false with --dict-tokenizer bytelevelbpe'
-            )
+            warn_once('Are you sure you want to lower case your BPE dictionary?')
 
         if self.maxtokens > 0 or self.minfreq > 0:
             raise ValueError(
@@ -515,7 +513,7 @@ class Gpt2BpeHelper(BPEHelper):
         :return:
             encoder, mapping tokens to unicode reps
         """
-        with open(json_path, 'r') as f:
+        with open(json_path, 'r', encoding='utf8') as f:
             encoder = json.load(f)
         for each_token in encoder.keys():
             new_token = ''.join(

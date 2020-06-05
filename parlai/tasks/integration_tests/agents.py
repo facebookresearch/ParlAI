@@ -442,25 +442,27 @@ class BadExampleTeacher(CandidateTeacher):
             case = newget.case
             if case == 0:
                 # empty string input
-                item['text'] = ''
+                item.force_set('text', '')
             elif case == 1:
                 # not text input
                 del item['text']
             elif case == 2:
                 # empty string label
-                item['labels'] = ['']
+                item.force_set('labels', [''])
             elif case == 3:
                 # no label
                 del item['labels']
             elif case == 4:
                 # no label candidates
-                item['label_candidates'] = []
+                item.force_set('label_candidates', [])
             elif case == 5:
                 # extra empty string in labels
-                item['label_candidates'] = list(item['label_candidates']) + ['']
+                item.force_set(
+                    'label_candidates', list(item['label_candidates']) + ['']
+                )
             elif case == 6:
                 # label candidates doesn't have the label
-                item['label_candidates'] = list(item['label_candidates'])
+                item.force_set('label_candidates', list(item['label_candidates']))
                 item['label_candidates'].remove(item['labels'][0])
             elif case == 7:
                 # no label candidates field
@@ -492,20 +494,15 @@ class ImageTeacher(AbstractImageTeacher):
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
         for i, img in enumerate(imgs):
-            image = Image.new('RGB', (100, 100), color=i)
+            image = Image.new('RGB', (16, 16), color=i)
             image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
             random.seed(42)
             data = [
-                {
-                    'image_id': img,
-                    'text': ''.join(
-                        random.choice(string.ascii_uppercase) for _ in range(10)
-                    ),
-                }
-                for img in imgs
+                {'image_id': img, 'text': string.ascii_uppercase[i]}
+                for i, img in enumerate(imgs)
             ]
             with open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
                 json.dump(data, f)

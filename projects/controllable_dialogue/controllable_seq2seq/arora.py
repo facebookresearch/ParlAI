@@ -34,9 +34,7 @@ class SentenceEmbedder(object):
     Arora et al, 2017, https://openreview.net/pdf?id=SyK00v5xx
     """
 
-    def __init__(
-        self, word2prob, arora_a, glove_name, glove_dim, first_sv, glove_cache
-    ):
+    def __init__(self, word2prob, arora_a, glove_name, glove_dim, first_sv, data_path):
         """
           Inputs:
             word2prob: dict mapping words to their unigram probs
@@ -46,14 +44,14 @@ class SentenceEmbedder(object):
             glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
             first_sv: np array shape (glove_dim). The first singular value,
               used to compute Arora sentence embeddings. Can be None.
-            glove_cache: The path to where the glove vectors are stored.
+            data_path: The data path (we will use this to download glove)
         """
         self.word2prob = word2prob
         self.arora_a = arora_a
         self.glove_name = glove_name
         self.glove_dim = glove_dim
-        self.glove_cache = glove_cache
         self.first_sv = first_sv
+        self.data_path = data_path
         if self.first_sv is not None:
             self.first_sv = torch.tensor(self.first_sv)  # convert to torch tensor
 
@@ -73,6 +71,8 @@ class SentenceEmbedder(object):
         """
         Loads torchtext GloVe embs from file and stores in self.tt_embs.
         """
+        if not hasattr(self, 'glove_cache'):
+            self.glove_cache = modelzoo_path(self.data_path, 'models:glove_vectors')
         print('Loading torchtext GloVe embs (for Arora sentence embs)...')
         self.tt_embs = vocab.GloVe(
             name=self.glove_name, dim=self.glove_dim, cache=self.glove_cache
@@ -340,7 +340,6 @@ def learn_arora(opt):
     arora_a = 0.0001
     glove_name = '840B'
     glove_dim = 300
-    glove_cache = modelzoo_path(opt['datapath'], 'models:glove_vectors')
 
     # Embed every sentence, without removing first singular value
     print('Embedding all sentences...')
@@ -350,7 +349,7 @@ def learn_arora(opt):
         glove_name,
         glove_dim,
         first_sv=None,
-        glove_cache=glove_cache,
+        data_path=opt['datapath'],
     )
     utt_embs = []
     log_timer = TimeLogger()

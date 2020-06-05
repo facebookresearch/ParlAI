@@ -21,9 +21,7 @@ See below for documentation on each specific tool.
 
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from collections import deque
-import json
 import random
 import os
 import torch
@@ -1183,7 +1181,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
-        if self.opt['embedding_type'] == 'random':
+        if (
+            self.opt['embedding_type'] == 'random'
+            or not self._should_initialize_optimizer()
+        ):
             # Random embedding means no copying of pretrained embeddings
             return
 
@@ -1788,19 +1789,10 @@ class TorchAgent(ABC, Agent):
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
-
                 # save opt file
-                with open(path + '.opt', 'w', encoding='utf-8') as handle:
-                    if hasattr(self, 'model_version'):
-                        self.opt['model_version'] = self.model_version()
-                    saved_opts = deepcopy(self.opt)
-                    if 'interactive_mode' in saved_opts:
-                        # We do not save the state of interactive mode, it is only decided
-                        # by scripts or command line.
-                        del saved_opts['interactive_mode']
-                    json.dump(saved_opts, handle, indent=4)
-                    # for convenience of working with jq, make sure there's a newline
-                    handle.write('\n')
+                if hasattr(self, 'model_version'):
+                    self.opt['model_version'] = self.model_version()
+                self.opt.save(path + '.opt')
 
     def load_state_dict(self, state_dict):
         """

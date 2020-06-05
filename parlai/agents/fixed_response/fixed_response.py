@@ -19,7 +19,7 @@ class FixedResponseAgent(Agent):
         group.add_argument(
             '-fr',
             '--fixed-response',
-            type=str,
+            type='nonestr',
             default="I don't know.",
             help='fixed response the agent always returns',
         )
