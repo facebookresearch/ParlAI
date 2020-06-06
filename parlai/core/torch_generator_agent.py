@@ -558,7 +558,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         you will need to override it to add additional fields.
         """
         text_vec = (
-            torch.arange(1, maxlen + 1).unsqueeze(0).expand_as(batch_size, max_len)
+            torch.arange(1, maxlen + 1).unsqueeze(0).expand_as(batchsize, max_len)
         )
         label_vec = torch.arange(1, 3).unsqueeze(0).expand_as(batchsize, 2)
         return Batch(
