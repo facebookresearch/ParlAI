@@ -97,13 +97,18 @@ The Twitter task is quite large, and validation is run by default after each epo
 but we want to save our model more frequently so we set validation to run once an hour with ``-vtim 3600``.
 
 This train model script evaluates the model on the valid and test sets at the end of training, but if we wanted to evaluate a saved model -
-perhaps to compare the results of our newly trained Transformer against a pretrained ``convai2`` seq2seq baseline from our `Model Zoo <http://parl.ai/docs/zoo.html>`_,
+perhaps to compare the results of our newly trained Transformer against the BlenderBot 90M baseline from our `Model Zoo <http://parl.ai/docs/zoo.html>`_,
 we could do the following:
 
 .. code-block:: bash
 
+<<<<<<< disableconavi2test
   # Evaluate seq2seq model trained on convai2 from our model zoo
   python python -m parlai.scripts.eval_model -t twitter -mf models:convai2/seq2seq/convai2_self_seq2seq_model
+=======
+  # Evaluate the tiny BlenderBot model on twitter data
+  python examples/eval_model.py -t twitter -mf zoo:blender/blender_90M/model
+>>>>>>> local
 
 
 Finally, let's print some of our transformer's predictions with the same display_model script from above.
@@ -180,5 +185,6 @@ For example, you could change the vectorizer to return numpy arrays instead of T
 Conclusion
 ----------
 
-To see more details about ParlAI's general structure, how tasks and models are set up,
-or how to use Mechanical Turk, Messenger, Tensorboard, and more--check out the other tutorials.
+To see more details about ParlAI's general structure, how tasks and models are
+set up, or how to use Mechanical Turk, Messenger, Tensorboard, and more --
+check out the other tutorials.
