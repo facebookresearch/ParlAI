@@ -259,7 +259,7 @@ class Conversations:
 
     def read_conv_idx(self, idx):
         convo = self.conversations[idx]
-        logging.debug(convo)
+        logging.info(convo)
 
     def read_rand_conv(self):
         idx = random.choice(range(len(self)))

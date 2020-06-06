@@ -112,8 +112,9 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                 for _ in range(1000):
                     f.write('id:test_file\ttext:placeholder\tlabels:placeholder\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
-            with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
+            with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
                 testing_utils.display_data(opt)
+                print("\n".join(cm.output))
                 assert any('long episode' in l for l in cm.output)
 
             # invert the logic of the assertion
@@ -129,7 +130,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     'fromfile_datapath': fp,
                     'display_verbose': True,
                 }
-                with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
+                with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
                     testing_utils.display_data(opt)
                     assert any('long episode' in l for l in cm.output)
 
