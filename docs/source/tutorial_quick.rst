@@ -102,13 +102,8 @@ we could do the following:
 
 .. code-block:: bash
 
-<<<<<<< disableconavi2test
-  # Evaluate seq2seq model trained on convai2 from our model zoo
-  python python -m parlai.scripts.eval_model -t twitter -mf models:convai2/seq2seq/convai2_self_seq2seq_model
-=======
   # Evaluate the tiny BlenderBot model on twitter data
   python examples/eval_model.py -t twitter -mf zoo:blender/blender_90M/model
->>>>>>> local
 
 
 Finally, let's print some of our transformer's predictions with the same display_model script from above.
