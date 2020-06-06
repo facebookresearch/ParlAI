@@ -574,7 +574,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 self._control_local_metrics(disabled=True)
-                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
                 self._control_local_metrics(enabled=True)
                 self._temporarily_disable_local_metrics = False
                 self.backward(loss)
