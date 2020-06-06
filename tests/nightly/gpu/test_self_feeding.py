@@ -6,6 +6,7 @@
 
 import unittest
 import parlai.utils.testing as testing_utils
+import parlai.utils.logging as logging
 
 """
 Integration tests for the Self-Feeding chatbot project.
@@ -20,18 +21,21 @@ class TestSelffeeding(unittest.TestCase):
         """
         Check the controllble dialogue data loads.
         """
-        train_output, valid_output, test_output = testing_utils.display_data(
-            {'task': 'self_feeding:all'}
-        )
+        with self.assertLogs(logging.logger) as cm:
+            train_output, valid_output, test_output = testing_utils.display_data(
+                {'task': 'self_feeding:all'}
+            )
 
-        # check valid data
-        self.assertIn("i am spending time with my 4 sisters", train_output)
-        self.assertIn('193777 episodes with a total of 193777 examples', train_output)
+            # check traindata
+            self.assertIn("i am spending time with my 4 sisters", train_output)
+            self.assertIn(
+                '193777 episodes with a total of 193777 examples', "\n".join(cm.output)
+            )
 
-        # check valid data
-        self.assertIn('3500 examples', valid_output)
-        # check test data
-        self.assertIn('7801 examples', test_output)
+            # check valid data
+            self.assertIn('3500 examples', "\n".join(cm.output))
+            # check test data
+            self.assertIn('7801 examples', "\n".join(cm.output))
 
     def test_train_model(self):
         """
