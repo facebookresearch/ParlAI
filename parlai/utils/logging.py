@@ -65,6 +65,7 @@ class ParlaiLogger(logging.Logger):
         # Logging to stdout
         self.streamHandler = logging.StreamHandler(sys.stdout)
         # Log to stdout levels: console_level and above
+        warn_colored = False
         if COLORED_LOGS and sys.stdout.isatty():
             self.formatter = coloredlogs.ColoredFormatter(
                 COLORED_FORMAT,
@@ -76,13 +77,16 @@ class ParlaiLogger(logging.Logger):
             self.formatter = logging.Formatter(
                 CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT
             )
+            warn_colored = True
         else:
             self.formatter = logging.Formatter(
                 LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT
             )
-
         self.streamHandler.setFormatter(self.formatter)
         super().addHandler(self.streamHandler)
+
+        if warn_colored:
+            self.warn("Run `pip install coloredlogs` for more friendly output")
 
         # To be used with testing_utils.capture_output()
         self.altStream = None
