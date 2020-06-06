@@ -558,9 +558,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         you will need to override it to add additional fields.
         """
         text_vec = (
-            torch.arange(1, maxlen + 1).unsqueeze(0).expand_as(batchsize, max_len)
+            torch.arange(1, maxlen + 1)  # need it as long as specified
+            .clamp(max=3)  # cap at 3 for testing with tiny dictionaries
+            .unsqueeze(0)
+            .expand(batchsize, maxlen)
+            .cuda()
         )
-        label_vec = torch.arange(1, 3).unsqueeze(0).expand_as(batchsize, 2)
+        # label vec has two tokens to make it interesting, but we we can't use the
+        # start token, it's reserved.
+        label_vec = (
+            torch.LongTensor([self.END_IDX, self.NULL_IDX])
+            .unsqueeze(0)
+            .expand(batchsize, 2)
+            .cuda()
+        )
         return Batch(
             text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
         )
