@@ -1007,12 +1007,15 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
-    def _value2argstr(self, value) -> str:
+    def _value2argstr(self, value, space=False) -> str:
         """
         Reverse-parse an opt value into one interpretable by argparse.
         """
         if isinstance(value, (list, tuple)):
-            return ",".join(str(v) for v in value)
+            if not space:
+                return ",".join(str(v) for v in value)
+            else:
+                return " ".join(str(v) for v in value)
         else:
             return str(value)
 
@@ -1052,7 +1055,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value))
+                string_args.append(self._value2argstr(value, space=True))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
                 string_args.extend([self._value2argstr(value) for v in value])
@@ -1087,7 +1090,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value))
+                string_args.append(self._value2argstr(value, space=True))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
                 string_args.extend([self._value2argstr(value) for v in value])
