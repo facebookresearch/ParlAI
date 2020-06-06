@@ -97,7 +97,7 @@ def interactive(opt, print_parser=None):
             # dump world acts to file
             world_logger.reset()  # add final acts to logs
             base_outfile = opt['report_filename'].split('.')[0]
-            outfile = base_outfile + f'_{task}_replies.jsonl'
+            outfile = f'{base_outfile}_{opt["task"]}_replies.jsonl'
             world_logger.write(outfile, world, file_format=opt['save_format'])
 
 
