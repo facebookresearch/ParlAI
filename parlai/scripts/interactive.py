@@ -82,7 +82,7 @@ def interactive(opt, print_parser=None):
         print_parser.print_args()
     human_agent = LocalHumanAgent(opt)
     # set up world logger
-    world_logger = WorldLogger(opt) if opt['save_world_logs'] else None 
+    world_logger = WorldLogger(opt) if opt['save_world_logs'] else None
     world = create_task(opt, [human_agent, agent])
 
     # Show some example dialogs:
