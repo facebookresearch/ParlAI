@@ -557,10 +557,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         If your model uses additional inputs beyond text_vec and label_vec,
         you will need to override it to add additional fields.
         """
+        text_vec = (
+            torch.arange(1, maxlen + 1).unsqueeze(0).expand_as(batch_size, max_len)
+        )
+        label_vec = torch.arange(1, 3).unsqueeze(0).expand_as(batchsize, 2)
         return Batch(
-            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
-            label_vec=torch.ones(batchsize, 2).long().cuda(),
-            text_lengths=[maxlen] * batchsize,
+            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
