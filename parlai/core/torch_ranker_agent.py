@@ -206,7 +206,7 @@ class TorchRankerAgent(TorchAgent):
             if self.fp16:
                 self.model = self.model.half()
             if init_model:
-                logging.info('Loading existing model parameters from ' + init_model)
+                logging.info(f'Loading existing model parameters from {init_model}')
                 states = self.load(init_model)
             else:
                 states = {}

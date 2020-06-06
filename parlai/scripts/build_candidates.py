@@ -44,7 +44,7 @@ def build_cands(opt):
     log_timer = TimeLogger()
 
     logging.info(f'Starting to build candidates from task.. (ex: {num_examples})')
-    logging.info('Saving output to {outfile}')
+    logging.info(f'Saving output to {outfile}')
     cands = set()
     for _ in range(num_examples):
         world.parley()

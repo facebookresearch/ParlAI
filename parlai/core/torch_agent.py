@@ -1200,7 +1200,7 @@ class TorchAgent(ABC, Agent):
         if log:
             logging.info(
                 f'Initialized embeddings for {cnt} tokens '
-                f'({cnt / len(self.dict)}.1%) from {name}.'
+                f'({cnt / len(self.dict):.1%}) from {name}.'
             )
 
     def share(self):
