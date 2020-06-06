@@ -1055,10 +1055,12 @@ class ParlaiParser(argparse.ArgumentParser):
                 string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value, space=True))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend([self._value2argstr(value) for v in value])
+                string_args.extend(
+                    [self._value2argstr(value, space=True) for v in value]
+                )
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
@@ -1090,10 +1092,11 @@ class ParlaiParser(argparse.ArgumentParser):
                 string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value, space=True))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend([self._value2argstr(value) for v in value])
+                # Special case: Labels
+                string_args.extend([str(v) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
