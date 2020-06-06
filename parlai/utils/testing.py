@@ -302,18 +302,13 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     """
     import parlai.scripts.eval_model as ems
 
-    parser = ems.setup_args()
-    parser.set_params(**opt)
-    parser.set_params(log_every_n_secs=10)
-    popt = parser.parse_args([], print_args=False)
+    if opt.get('model_file') and not opt.get('dict_file'):
+        opt['dict_file'] = opt['model_file'] + '.dict'
 
-    if popt.get('model_file') and not popt.get('dict_file'):
-        popt['dict_file'] = popt['model_file'] + '.dict'
-
-    popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
-    valid = None if skip_valid else ems.eval_model(popt)
-    popt['datatype'] = 'test'
-    test = None if skip_test else ems.eval_model(popt)
+    opt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
+    valid = None if skip_valid else ems.EvalModel.main(**opt)
+    opt['datatype'] = 'test'
+    test = None if skip_test else ems.EvalModel.main(**opt)
 
     return valid, test
 

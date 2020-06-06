@@ -1007,15 +1007,12 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
-    def _value2argstr(self, value, space=False) -> str:
+    def _value2argstr(self, value) -> str:
         """
         Reverse-parse an opt value into one interpretable by argparse.
         """
         if isinstance(value, (list, tuple)):
-            if not space:
-                return ",".join(str(v) for v in value)
-            else:
-                return " ".join(str(v) for v in value)
+            return ",".join(str(v) for v in value)
         else:
             return str(value)
 
@@ -1058,9 +1055,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend(
-                    [self._value2argstr(value, space=True) for v in value]
-                )
+                string_args.extend([self._value2argstr(value) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
