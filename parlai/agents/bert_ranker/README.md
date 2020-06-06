@@ -1,3 +1,5 @@
+# BERT Ranker
+
 This directory contains several implementations of a ranker based on a pretrained language model BERT (Devlin et al. https://arxiv.org/abs/1810.04805). It relies on the pytorch implementation provided by Hugging Face (https://github.com/huggingface/pytorch-pretrained-BERT).
 
 ## Content

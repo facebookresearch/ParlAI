@@ -282,14 +282,7 @@ class Seq2seqAgent(Agent):
             '-emb',
             '--embedding-type',
             default='random',
-            choices=[
-                'random',
-                'glove',
-                'glove-fixed',
-                'fasttext',
-                'fasttext-fixed',
-                'glove-twitter',
-            ],
+            choices=['random', 'glove', 'glove-fixed', 'fasttext', 'fasttext-fixed'],
             help='Choose between different strategies '
             'for word embeddings. Default is random, '
             'but can also preinitialize from Glove or '
@@ -455,13 +448,8 @@ class Seq2seqAgent(Agent):
                     raise ex
                 pretrained_dim = 300
                 if opt['embedding_type'].startswith('glove'):
-                    if 'twitter' in opt['embedding_type']:
-                        init = 'glove-twitter'
-                        name = 'twitter.27B'
-                        pretrained_dim = 200
-                    else:
-                        init = 'glove'
-                        name = '840B'
+                    init = 'glove'
+                    name = '840B'
                     embs = vocab.GloVe(
                         name=name,
                         dim=pretrained_dim,

@@ -9,7 +9,7 @@ import time
 import uuid
 from unittest import mock
 from parlai.mturk.core.socket_manager import Packet, SocketManager
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 
 import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.shared_utils as shared_utils

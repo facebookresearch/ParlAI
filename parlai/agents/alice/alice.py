@@ -15,13 +15,10 @@ from parlai.core.agents import Agent
 
 try:
     import aiml
+
+    IMPORT_OKAY = True
 except ImportError:
-    raise ImportError(
-        (
-            "ALICE agent needs python-aiml installed. Please run:\n "
-            "pip install git+https://github.com/paulovn/python-aiml.git"
-        )
-    )
+    IMPORT_OKAY = False
 
 
 class AliceAgent(Agent):
@@ -35,6 +32,12 @@ class AliceAgent(Agent):
         """
         Initialize this agent.
         """
+        if not IMPORT_OKAY:
+            raise ImportError(
+                "ALICE agent needs python-aiml installed. Please run:\n "
+                "`pip install git+https://github.com/paulovn/python-aiml.git`."
+            )
+
         super().__init__(opt)
         self.id = 'Alice'
         self.kern = None

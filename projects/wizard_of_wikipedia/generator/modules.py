@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Dict
+
 import numpy as np
 import torch as th
 import torch.nn as nn
@@ -50,6 +52,22 @@ class EndToEndModel(TransformerGeneratorModel):
         mask = th.index_select(mask, 0, indices)
         ckattn = th.index_select(ckattn, 0, indices)
         return enc, mask, ckattn
+
+    def reorder_decoder_incremental_state(
+        self, incremental_state: Dict[int, dict], inds: th.Tensor
+    ) -> Dict[int, dict]:
+        """
+        Reorder the decoder incremental state.
+
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+
+        Here, incremental_state is a dict whose keys are layer indices and whose values
+        are dicts containing the incremental state for that layer.
+        """
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(self.decoder.transformer.layers)
+        }
 
 
 class ContextKnowledgeEncoder(nn.Module):

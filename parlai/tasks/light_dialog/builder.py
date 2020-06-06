@@ -83,7 +83,19 @@ def gen_no_affordance_actions_for_dialogue(d):
 def write_dialog(opt, fw, d, label_type, split):
     l = len(d['speech'])
     msgs = []
-    text = '_task_' + label_type + '\n'
+    text = ''
+
+    d['which'] = []
+    for i in range(0, len(d['emote'])):
+        lab = 'none'
+        if d['emote'][i] is not None:
+            lab = 'emote'
+        if d['action'][i] is not None:
+            lab = 'action'
+        d['which'].append(lab)
+
+    if opt.get('light_use_taskname', True):
+        text = '_task_' + label_type + '\n'
     if opt['light_use_setting']:
         text += (
             '_setting_name '
@@ -143,13 +155,13 @@ def write_dialog(opt, fw, d, label_type, split):
                 if i > 0:
                     text += str(d['speech'][i - 1]) + ' '
                 text += str(d['speech'][i])
+
             label = d[label_type][i + 1]
             used_current = False
             shown = {}
             if (
-                use_feat(opt, 'light_use_current_self_output', 'all')
+                use_feat(opt, 'light_use_current_self_output', 'speech')
                 and label_type != 'speech'
-                and use_feat(opt, 'light_use_speech', 'self')
                 and d['speech'][i + 1] is not None
             ):
                 if 'remove' not in opt['light_use_current_self_output']:
@@ -221,6 +233,7 @@ def write_dialog(opt, fw, d, label_type, split):
     if len(msgs) > 0:
         msgs[-1]['episode_done'] = True
         for m in msgs:
+            m['text'] = m['text'].rstrip('\n')
             # print(m.replace('\n', '\\n'))
             fix_labels(m, opt)
             global mx
@@ -263,6 +276,8 @@ def write_alldata(opt, db, dpath, ltype, split):
 def add_negs(msg, d, ind, label_type, split, num_cands, use_affordances):
     if label_type == 'emote':
         msg['label_candidates'] = cands['emote']
+    if label_type == 'which':
+        msg['label_candidates'] = cands['which']
     if label_type == 'action':
         if use_affordances:
             msg['label_candidates'] = d['available_actions'][ind]
@@ -298,6 +313,7 @@ def write_out_candidates(db, dpath, dtype):
     cands['emote'] = []
     cands['action'] = []
     cands['speech'] = []
+    cands['which'] = ['none', 'action', 'emote']
     for d in db:
         gen_no_affordance_actions_for_dialogue(d)
         if d['split'] != dtype:
@@ -313,7 +329,7 @@ def write_out_candidates(db, dpath, dtype):
         for s in d['speech']:
             if s is not None:
                 cands['speech'].append(s)
-    for l in ['emote', 'speech', 'action']:
+    for l in ['emote', 'speech', 'action', 'which']:
         fw = io.open(os.path.join(dpath, l + "_" + dtype + "_cands.txt"), 'w')
         for k in cands[l]:
             fw.write(k + "\n")
@@ -352,9 +368,11 @@ def build_from_db(opt, db_path, data_path, fname, fname2):
         write_alldata(opt, db, data_path, 'speech', split)
         write_alldata(opt, db, data_path, 'action', split)
         write_alldata(opt, db, data_path, 'emote', split)
+        write_alldata(opt, db, data_path, 'which', split)
 
     for split in ['test_unseen']:
         write_out_candidates(db_unseen, data_path, split)
         write_alldata(opt, db_unseen, data_path, 'speech', split)
         write_alldata(opt, db_unseen, data_path, 'action', split)
         write_alldata(opt, db_unseen, data_path, 'emote', split)
+        write_alldata(opt, db_unseen, data_path, 'which', split)

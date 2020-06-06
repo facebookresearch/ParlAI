@@ -102,7 +102,7 @@ def interactive(opt, print_parser=None):
         acts[0] = agents[0].act()
         # add the persona on to the first message
         if cnt == 0:
-            acts[0]['text'] = bot_persona + acts[0].get('text', 'hi')
+            acts[0].force_set('text', bot_persona + acts[0].get('text', 'hi'))
         agents[1].observe(acts[0])
         acts[1] = agents[1].act()
         agents[0].observe(acts[1])
@@ -116,7 +116,8 @@ def interactive(opt, print_parser=None):
             print("CHAT DONE ")
             print("In case you were curious you were talking to this bot:")
             print(bot_persona.split('\n'))
-            print("\n... preparing new chat... \n")
+            if not world.epoch_done():
+                print("\n... preparing new chat... \n")
             cnt = 0
 
 

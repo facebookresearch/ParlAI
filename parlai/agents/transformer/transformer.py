@@ -7,11 +7,15 @@ Transformer Agents.
 """
 from parlai.core.agents import Agent
 from parlai.utils.torch import padded_3d
+from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
-from .modules import TransformerMemNetModel
-from .modules import TransformerGeneratorModel
+from .modules import (
+    TransformerMemNetModel,
+    TransformerGeneratorModel,
+    TransformerLinearWrapper,
+)
 
 import torch
 
@@ -72,9 +76,10 @@ def add_common_cmdline_args(argparser):
     )
     argparser.add_argument(
         '--variant',
-        choices={'aiayn', 'xlm'},
+        choices={'aiayn', 'xlm', 'prelayernorm'},
         default='aiayn',
-        help='Chooses locations of layer norms, etc.',
+        help='Chooses locations of layer norms, etc. prelayernorm '
+        'is used to match some fairseq models',
         recommended='xlm',
     )
     argparser.add_argument(
@@ -97,6 +102,26 @@ def add_common_cmdline_args(argparser):
         default=True,
         help='Share word embeddings table for candidate and context'
         'in the memory network',
+    )
+    argparser.add_argument(
+        '-nel',
+        '--n-encoder-layers',
+        type=int,
+        default=-1,
+        help='This will overide the n-layers for asymmetrical transformers',
+    )
+    argparser.add_argument(
+        '-ndl',
+        '--n-decoder-layers',
+        type=int,
+        default=-1,
+        help='This will overide the n-layers for asymmetrical transformers',
+    )
+    argparser.add_argument(
+        '--model-parallel',
+        type='bool',
+        default=False,
+        help='Shard the layers across multiple GPUs.',
     )
 
 
@@ -149,7 +174,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             type=str,
             default='sqrt',
             choices=['cosine', 'dot', 'sqrt'],
-            help='similarity for basic attention mechanism'
+            help='similarity for basic attention mechanism '
             'when using transformer to encode memories',
         )
         # model specific arguments
@@ -184,16 +209,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         return agent
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.utils.distributed import is_distributed
-
-            if is_distributed():
-                raise ValueError('Cannot combine --data-parallel and distributed mode')
-            self.model = torch.nn.DataParallel(self.model)
-
     def _score(self, output, cands):
         if cands.dim() == 2:
             return torch.matmul(output, cands.t())
@@ -212,12 +227,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
-
-    def build_criterion(self):
-        """
-        Build and return criterion, favoring average instead of sum for the loss.
-        """
-        return torch.nn.CrossEntropyLoss(reduction='mean')
 
     def batchify(self, obs_batch, sort=False):
         """
@@ -316,3 +325,71 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+
+class TransformerClassifierAgent(TorchClassifierAgent):
+    """
+    Classifier based on Transformer.
+    """
+
+    @staticmethod
+    def add_cmdline_args(parser):
+        TransformerRankerAgent.add_cmdline_args(parser)  # add transformer args
+        TorchClassifierAgent.add_cmdline_args(parser)
+        parser.add_argument(
+            '--load-from-pretrained-ranker',
+            type='bool',
+            default=False,
+            help='load model from base transformer ranking model '
+            '(used for pretraining)',
+        )
+        parser.set_defaults(reduction_type='first')
+
+    def build_model(self):
+        num_classes = len(self.class_list)
+        self.base_model = TransformerMemNetModel(self.opt, self.dict)
+        return TransformerLinearWrapper(self.base_model.context_encoder, num_classes)
+
+    def vectorize(self, *args, **kwargs):
+        """
+        Add the start and end token to the text.
+        """
+        kwargs['add_start'] = True
+        kwargs['add_end'] = True
+        obs = super().vectorize(*args, **kwargs)
+        return obs
+
+    def _set_text_vec(self, *args, **kwargs):
+        """
+        Add the start and end token to the text.
+        """
+        obs = super()._set_text_vec(*args, **kwargs)
+
+        if 'text_vec' in obs and 'added_start_end' not in obs:
+            obs.force_set(
+                'text_vec', self._add_start_end_tokens(obs['text_vec'], True, True)
+            )
+            obs['added_start_end'] = True
+
+        # check truncation after adding start end tokens
+        if obs.get('text_vec') is not None:
+            truncated_vec = self._check_truncate(
+                obs['text_vec'], self.text_truncate, True
+            )
+            obs.force_set('text_vec', torch.LongTensor(truncated_vec))
+
+        return obs
+
+    def score(self, batch):
+        return self.model(batch.text_vec)
+
+    def load_state_dict(self, state_dict):
+        """
+        Load the state dict into model.
+
+        This is easily overridable to facilitate transfer of state dicts.
+        """
+        if self.is_finetune and self.opt['load_from_pretrained_ranker']:
+            self.base_model.load_state_dict(state_dict, strict=False)
+        else:
+            self.model.load_state_dict(state_dict)

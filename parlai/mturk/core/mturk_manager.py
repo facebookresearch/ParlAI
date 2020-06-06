@@ -23,7 +23,7 @@ import requests
 #     'updating to stable may require some migration, as detailed in <link>.'
 # )
 
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager, StaticSocketManager
 from parlai.mturk.core.worker_manager import WorkerManager
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
@@ -153,7 +153,7 @@ class MTurkManager:
 
         self.required_hits = math.ceil(base_required_hits * self.hit_mult)
         self.minimum_messages = opt.get('min_messages', 0)
-        self.auto_approve_delay = opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
+        self.auto_approve_delay = opt.get('auto_approve_delay', 5 * 24 * 3600)
         self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.worker_manager = WorkerManager(self, opt)
@@ -1638,6 +1638,15 @@ class MTurkManager:
                     'ActionsGuarded': 'DiscoverPreviewAndAccept',
                 }
             )
+
+        if self.is_sandbox and not self.is_test:
+            # Qualifications are not set in sandbox mode.
+            # We still create the qualifications above (if requested) so that
+            # assigning these qualifications to users works.
+            shared_utils.print_and_log(
+                logging.WARN, 'Qualifications are not set in sandbox mode.'
+            )
+            qualifications = []
 
         self.qualifications = qualifications
         return qualifications.copy()

@@ -8,7 +8,8 @@ import unittest
 import os
 from unittest import mock
 from parlai.mturk.core.worker_manager import WorkerManager, WorkerState
-from parlai.mturk.core.agents import MTurkAgent, AssignState
+from parlai.mturk.core.agents import MTurkAgent
+from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 
@@ -43,7 +44,7 @@ class TestWorkerState(unittest.TestCase):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         argparser.add_mturk_args()
-        self.opt = argparser.parse_args(print_args=False)
+        self.opt = argparser.parse_args([], print_args=False)
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
@@ -140,7 +141,7 @@ class TestWorkerManager(unittest.TestCase):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         argparser.add_mturk_args()
-        self.opt = argparser.parse_args(print_args=False)
+        self.opt = argparser.parse_args([], print_args=False)
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']

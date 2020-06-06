@@ -13,7 +13,6 @@ except ImportError:
         'BERT rankers needs pytorch-pretrained-BERT installed. \n '
         'pip install pytorch-pretrained-bert'
     )
-
 from .helpers import VOCAB_PATH
 
 import os

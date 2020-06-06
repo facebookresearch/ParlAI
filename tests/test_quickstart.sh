@@ -3,9 +3,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-([ -z "$CIRCLE_NODE_INDEX" ] || [ $CIRCLE_NODE_INDEX != 0 ])  && echo "SKIPPED" && exit
+([ ! -z "$CIRCLE_NODE_INDEX" ] && [ "$CIRCLE_NODE_INDEX" != 2 ]) && echo "SKIPPED" && exit
 
-set -e  # error and exit on any failure
+set -e -x  # error and exit on any failure; print the commands being run
 
 # view a task & train a model
 python examples/display_data.py -t babi:task10k:1
@@ -28,8 +28,12 @@ from parlai.core.torch_agent import TorchAgent, Output
 class ParrotAgent(TorchAgent):
     def train_step(self, batch):
         pass
+
     def eval_step(self, batch):
         return Output([self.dict.vec2txt(row) for row in batch.text_vec])
+
+    def build_model(self):
+        return None
 EOF
 
 python examples/display_model.py -t babi:task10k:1 -m parrot

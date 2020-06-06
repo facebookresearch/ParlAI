@@ -3,9 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
-from parlai.core.teachers import DialogTeacher
-import parlai.core.agents as core_agents
+from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
 from .build import build
 
 import copy
@@ -125,14 +123,14 @@ class VerifiedWikipediaTeacher(WikipediaTeacher):
         super().__init__(opt, shared)
 
 
-class VerifiedTeacher(core_agents.MultiTaskTeacher):
+class VerifiedTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = 'triviaqa:VerifiedWikipedia,triviaqa:VerifiedWeb'
         super().__init__(opt, shared)
 
 
-class DefaultTeacher(core_agents.MultiTaskTeacher):
+class DefaultTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['task'] = 'triviaqa:wikipedia,triviaqa:web'

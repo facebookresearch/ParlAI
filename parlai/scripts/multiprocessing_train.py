@@ -17,13 +17,6 @@ TorchRankerAgents and TorchGeneratorAgents support this.
 """
 
 import torch
-
-try:
-    # We need to run this *very first*, but subprocesses will throw an
-    # exception when running it
-    torch.multiprocessing.set_start_method("spawn")
-except RuntimeError:
-    pass
 import random
 import copy
 import os
@@ -74,7 +67,8 @@ def multiprocess_train(
 
     with distributed_utils.override_print(suppress_output, print_prefix):
         # perform distributed setup, ensuring all hosts are ready
-        torch.cuda.set_device(opt['gpu'])
+        if opt['gpu'] != -1:
+            torch.cuda.set_device(opt['gpu'])
         dist.init_process_group(
             backend="nccl",
             init_method="tcp://{}:{}".format(hostname, port),

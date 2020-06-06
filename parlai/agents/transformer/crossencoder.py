@@ -8,7 +8,7 @@ from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from .transformer import TransformerRankerAgent
-from parlai.agents.bert_ranker.cross_encoder_ranker import concat_without_padding
+from parlai.utils.torch import concat_without_padding
 import torch
 
 
@@ -17,17 +17,6 @@ class CrossencoderAgent(TorchRankerAgent):
     Equivalent of bert_ranker/crossencoder but does not rely on an external library
     (hugging face).
     """
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.utils.distributed import is_distributed
-
-            if is_distributed():
-                raise ValueError('Cannot combine --data-parallel and distributed mode')
-            if shared is None:
-                self.model = torch.nn.DataParallel(self.model)
 
     @classmethod
     def add_cmdline_args(cls, argparser):

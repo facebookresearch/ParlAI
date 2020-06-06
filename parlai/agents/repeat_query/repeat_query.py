@@ -10,6 +10,7 @@ Useful as a baseline for metrics like F1.
 """
 
 from parlai.core.agents import Agent
+from parlai.core.message import Message
 
 
 class RepeatQueryAgent(Agent):
@@ -20,10 +21,13 @@ class RepeatQueryAgent(Agent):
     def act(self):
         obs = self.observation
         if obs is None:
-            return {'text': 'Nothing to repeat yet.'}
+            return Message({'text': 'Nothing to repeat yet.', 'episode_done': False})
         reply = {}
         reply['id'] = self.getID()
         query = obs.get('text', "I don't know")
         # Take last line if there are multiple lines.
         reply['text'] = query.split('\n')[-1]
-        return reply
+        if reply['text'] == '':
+            reply['text'] = 'Nothing to repeat yet.'
+        reply['episode_done'] = False
+        return Message(reply)

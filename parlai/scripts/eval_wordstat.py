@@ -43,7 +43,6 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'compute statistics from model predictions')
-    parser.add_pytorch_datateacher_args()
     DictionaryAgent.add_cmdline_args(parser)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
@@ -72,11 +71,11 @@ def setup_args(parser=None):
     parser.add_argument(
         '-cun',
         '--compute-unique',
-        type=bool,
+        type='bool',
         default=True,
         help='Compute %% of unique responses from the model',
     )
-    parser.set_defaults(datatype='valid', model='repeat_label')
+    parser.set_defaults(datatype='valid')
     TensorboardLogger.add_cmdline_args(parser)
     return parser
 
@@ -140,6 +139,7 @@ def eval_wordstat(opt, print_parser=None):
     log_time = TimeLogger()
 
     cnt = 0
+    max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     word_statistics = {
         'mean_wlength': [],
         'mean_clength': [],
@@ -148,11 +148,13 @@ def eval_wordstat(opt, print_parser=None):
         'pred_list': [],
         'pure_pred_list': [],
         'context_list': [],
+        'unique_words': set(),
     }
     bins = [int(i) for i in opt['freq_bins'].split(',')]
 
     def process_prediction(prediction, word_statistics):
-        word_statistics['pred_list'].append(normalize_answer(prediction))
+        normalized = normalize_answer(prediction)
+        word_statistics['pred_list'].append(normalized)
         freqs, _cnt, wlength, clength = get_word_stats(
             prediction, dictionary, bins=bins
         )
@@ -160,6 +162,7 @@ def eval_wordstat(opt, print_parser=None):
         word_statistics['mean_wlength'].append(wlength)
         word_statistics['mean_clength'].append(clength)
         word_statistics['freqs_cnt'] += Counter(freqs)
+        word_statistics['unique_words'] |= set(normalized.split(" "))
         return word_statistics
 
     while not world.epoch_done():
@@ -173,6 +176,8 @@ def eval_wordstat(opt, print_parser=None):
         else:
             for w in world.worlds:
                 try:
+                    if 'text' not in w.acts[-1]:
+                        continue
                     prediction = w.acts[-1]['text']
                     word_statistics['context_list'].append(w.acts[0]['text'])
                     word_statistics['pure_pred_list'].append(prediction)
@@ -183,7 +188,9 @@ def eval_wordstat(opt, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(), report)
+            text, report = log_time.log(
+                report['exs'], min(max_cnt, world.num_examples()), report
+            )
             print(text)
             stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])
             stat_str += ', '.join(
@@ -210,7 +217,7 @@ def eval_wordstat(opt, print_parser=None):
                     prec=2,
                 )
             )
-        if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
+        if cnt >= max_cnt:
             break
     if world.epoch_done():
         print("EPOCH DONE")
@@ -226,6 +233,7 @@ def eval_wordstat(opt, print_parser=None):
                 len(unique_list) / len(word_statistics['pred_list']) * 100, prec=2
             )
         )
+    print("Total unique tokens:", len(word_statistics['unique_words']))
 
     if opt['dump_predictions_path'] is not None:
         with open(opt['dump_predictions_path'], 'w') as f:

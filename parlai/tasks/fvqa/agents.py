@@ -4,9 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.agents import Teacher
 from parlai.core.image_featurizers import ImageLoader
-from parlai.core.metrics import Metrics
+from parlai.core.metrics import TeacherMetrics
+from parlai.core.teachers import Teacher
 from .build import build
 
 import json
@@ -56,7 +56,9 @@ class SplitTeacher(Teacher):
             if shared and shared.get('factmetrics'):
                 self.factmetrics = shared['factmetrics']
             else:
-                self.factmetrics = Metrics(opt)
+                self.factmetrics = TeacherMetrics(
+                    opt.get('numthreads', 1) > 1, opt.get('metrics', 'default')
+                )
             self.datatype = opt['datatype']
         questions_path, trainset_path, self.image_path = _path(opt)
 
@@ -105,9 +107,9 @@ class SplitTeacher(Teacher):
         """
         if self.lastY is not None:
             if self.asked_question:
-                self.metrics.update(observation, self.lastY[0])
+                self.metrics.evaluate_response(observation, self.lastY[0])
             else:
-                self.factmetrics.update(observation, self.lastY[1])
+                self.factmetrics.evaluate_response(observation, self.lastY[1])
                 self.lastY = None
         return observation
 

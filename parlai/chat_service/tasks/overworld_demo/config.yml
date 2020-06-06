@@ -17,8 +17,9 @@ tasks:
 task_name: overworld_demo
 world_module: parlai.chat_service.tasks.overworld_demo.worlds
 overworld: MessengerOverworld
-page_id: 1 # Configure Your Own Page
 max_workers: 30
 opt:
   debug: True
   password: ParlAI
+additional_args:
+  page_id: 1 # Configure Your Own Page

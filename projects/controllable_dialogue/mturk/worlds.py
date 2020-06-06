@@ -8,6 +8,7 @@ from parlai.mturk.core.legacy_2018.agents import TIMEOUT_MESSAGE
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.mturk.core.legacy_2018.worlds import MTurkOnboardWorld
 from parlai.core.message import Message
+from parlai.utils.strings import normalize_reply
 
 from joblib import Parallel, delayed
 import numpy as np
@@ -164,13 +165,6 @@ def _strip_tensors(act):
 
 def _random_delay():
     time.sleep(max(0, 4 + np.random.randn() * 0.5))
-
-
-def uppercase(string):
-    if len(string) == 0:
-        return string
-    else:
-        return string[0].upper() + string[1:]
 
 
 class PersonasGenerator(object):
@@ -341,37 +335,6 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             act = agent.act(timeout=self.max_resp_time)
         return act
 
-    def format_model_reply(self, text):
-        switch_list = [(' .', '.'), (' ,', ','), (' ?', '?'), (' !', '!'), (" ' ", "'")]
-        # add the spaces so that
-        new_text = text.lower()
-
-        # normalize in case of human:
-        for new, old in switch_list:
-            new_text = new_text.replace(old, new).replace('  ', ' ')
-
-        # split on punctuation to find sentence boundaries
-        # capitalize stuff
-        tokens = new_text.split(' ')
-        for i in range(len(tokens)):
-            if i == 0:
-                tokens[i] = uppercase(tokens[i])
-            elif tokens[i] in ('i', "i'm", "i've", "i'll", "i'd"):
-                tokens[i] = uppercase(tokens[i])
-            elif tokens[i] in '?.!' and i < len(tokens) - 1:
-                tokens[i + 1] = uppercase(tokens[i + 1])
-        new_text = ' '.join(tokens)
-        new_text = ' ' + new_text + ' '
-
-        for tup in switch_list:
-            new_text = new_text.replace(tup[0], tup[1])
-
-        # get rid of surrounding whitespace
-        new_text = new_text.strip()
-        new_text = new_text.replace('  ', ' ')
-
-        return new_text
-
     def format_personachat_text(self, text):
         new_text = text.lower()
 
@@ -439,7 +402,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 self.model_agent.observe(persona_act)
                 self.bot_seen_persona = True
                 model_act = copy.deepcopy(self.model_agent.act())
-                model_act.force_set('text', self.format_model_reply(model_act['text']))
+                model_act.force_set('text', normalize_reply(model_act['text']))
                 model_act.force_set('id', 'PERSON_2')
                 self.dialog.append((1, model_act.get('text')))
                 _random_delay()
@@ -456,7 +419,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
                 else:
                     self.dialog.append((1, act.get('text')))
                     act = copy.deepcopy(act)
-                    act.force_set('text', self.format_model_reply(act['text']))
+                    act.force_set('text', normalize_reply(act['text']))
                     self.eval_agent.observe(act)
 
         # Eval agent turn
@@ -500,7 +463,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             self.model_agent.observe(act)
         else:
             act = copy.deepcopy(act)
-            act.force_set('text', self.format_model_reply(act['text']))
+            act.force_set('text', normalize_reply(act['text']))
             self.other_agent.observe(act)
 
         # Model_agent turn
@@ -508,7 +471,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
             if self.model_agent is not None:
                 _random_delay()
                 act = _strip_tensors(copy.deepcopy(self.model_agent.act()))
-                act.force_set('text', self.format_model_reply(act['text']))
+                act.force_set('text', normalize_reply(act['text']))
                 act.force_set('id', 'PERSON_2')
                 # NOTE: your model may or may not need to observe itself here
                 # If it does, call model_observes_itself or some other specialized
@@ -525,7 +488,7 @@ class ControllableDialogEval(MultiAgentDialogWorld):
 
             self.dialog.append((1, act.get('text')))
             act = copy.deepcopy(act)
-            act.force_set('text', self.format_model_reply(act['text']))
+            act.force_set('text', normalize_reply(act['text']))
             self.eval_agent.observe(act)
 
     def _evaluate_characteristic(self, question, choices, addto):

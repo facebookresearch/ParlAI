@@ -25,8 +25,8 @@ class TestHogwild(unittest.TestCase):
         Test the trainer eval with numthreads > 1 and batchsize in [1,2,3].
         """
         opt = dict(
-            task='tasks.repeat:RepeatTeacher:{}'.format(1),
-            evaltask='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS),
+            task='integration_tests:repeat:{}'.format(1),
+            evaltask='integration_tests:repeat:{}'.format(NUM_EXS),
             model='repeat_label',
             display_examples=False,
             num_epochs=10,
@@ -36,25 +36,25 @@ class TestHogwild(unittest.TestCase):
                 opt['num_threads'] = nt
                 opt['batchsize'] = bs
 
-                stdout, valid, test = testing_utils.train_model(opt)
-                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
-                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                valid, test = testing_utils.train_model(opt)
+                self.assertEqual(valid['exs'], NUM_EXS)
+                self.assertEqual(test['exs'], NUM_EXS)
 
     def test_hogwild_eval(self):
         """
         Test eval with numthreads > 1 and batchsize in [1,2,3].
         """
         opt = dict(
-            task='tasks.repeat:RepeatTeacher:{}'.format(NUM_EXS), model='repeat_label'
+            task='integration_tests:repeat:{}'.format(NUM_EXS), model='repeat_label'
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
                 opt['num_threads'] = nt
                 opt['batchsize'] = bs
 
-                stdout, valid, test = testing_utils.eval_model(opt)
-                self.assertEqual(valid['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
-                self.assertEqual(test['exs'], NUM_EXS, 'LOG:\n{}'.format(stdout))
+                valid, test = testing_utils.eval_model(opt)
+                self.assertEqual(valid['exs'], NUM_EXS)
+                self.assertEqual(test['exs'], NUM_EXS)
 
 
 if __name__ == '__main__':

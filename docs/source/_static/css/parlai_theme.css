@@ -4,8 +4,6 @@ This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 */
 
-@import url("theme.css");
-
 body {
     font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
 }
@@ -121,4 +119,25 @@ footer p {
 
 nav .hidden-section {
     display: inherit;
+}
+
+
+/* ensure table cells wrap instead of scrolling. */
+/* used in command line args tables. */
+.wy-table-responsive table caption {
+    text-align: left !important;
+    font-size: 100% !important;
+}
+.wy-table-responsive table td {
+    white-space: normal !important;
+}
+.wy-table-responsive table td p {
+    font-size: 11pt;
+    line-height: 11pt;
+}
+.wy-table-responsive {
+    overflow: visible !important;
+}
+.wy-table-responsive table {
+    width: 100%;
 }

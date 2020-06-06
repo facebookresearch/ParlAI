@@ -9,12 +9,15 @@
 ```bash
 python examples/train_model.py -m tfidf_retriever -t personachat -mf /tmp/personachat_tfidf -dt train:ordered -eps 1
 ```
- After construction, load and evaluate that model on the Persona-Chat test set.
+
+After construction, load and evaluate that model on the Persona-Chat test set.
+
 ```bash
 python examples/eval_model.py -t personachat -mf /tmp/personachat_tfidf -dt test
 ```
 
- Alternatively, interact with a Wikipedia-based TFIDF model from the model zoo
- ```bash
- python examples/interactive.py -mf zoo:wikipedia_full/tfidf_retriever/model
- ```
+Alternatively, interact with a Wikipedia-based TFIDF model from the model zoo
+
+```bash
+python examples/interactive.py -mf zoo:wikipedia_full/tfidf_retriever/model
+```

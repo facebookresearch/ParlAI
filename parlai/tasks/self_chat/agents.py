@@ -7,7 +7,6 @@
 Model self chat.
 """
 
-from parlai.core.agents import create_task_agent_from_taskname
 from parlai.core.teachers import Teacher
 
 
@@ -16,11 +15,3 @@ class DefaultTeacher(Teacher):
         raise RuntimeError(
             '-t self_chat is a dummy helper, and not meant to be used directly.'
         )
-
-
-def create_agents(opt, task):
-    if not opt.get('interactive_task', False):
-        return create_task_agent_from_taskname(opt)
-    else:
-        # interactive task has no task agents (they are attached as user agents)
-        return []

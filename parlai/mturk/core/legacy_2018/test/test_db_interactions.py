@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 
 from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
-from parlai.mturk.core.agents import AssignState
+from parlai.mturk.core.shared_utils import AssignState
 
 import parlai.mturk.core.mturk_data_handler as DataHandlerFile
 

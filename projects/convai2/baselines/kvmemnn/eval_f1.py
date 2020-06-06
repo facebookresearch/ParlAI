@@ -8,18 +8,20 @@ Evaluate pre-trained model trained for f1 metric Key-Value Memory Net model trai
 convai2:self.
 """
 
+import os
+
 from parlai.core.build_data import download_models
 from projects.convai2.eval_f1 import setup_args, eval_f1
 
 
-def main():
+def main(args=None):
     parser = setup_args()
     parser.set_defaults(
         model='projects.personachat.kvmemnn.kvmemnn:Kvmemnn',
         model_file='models:convai2/kvmemnn/model',
-        numthreads=80,
+        numthreads=min(80, os.cpu_count()),
     )
-    opt = parser.parse_args(print_args=False)
+    opt = parser.parse_args(args=args, print_args=False)
     # build all profile memory models
     fnames = ['kvmemnn.tgz']
     opt['model_type'] = 'kvmemnn'  # for builder

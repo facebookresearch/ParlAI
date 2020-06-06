@@ -7,7 +7,6 @@
 
 import unittest
 import importlib
-import warnings
 from parlai.tasks.task_list import task_list
 
 SPECIFIC_BUILDS = {
@@ -26,28 +25,23 @@ class TestUtils(unittest.TestCase):
             for task in task_list
         )
         for task in sorted(tasks):
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore", ResourceWarning)
-                warnings.simplefilter("ignore", DeprecationWarning)
-                if task in SPECIFIC_BUILDS:
-                    for build in SPECIFIC_BUILDS[task]:
-                        mod = importlib.import_module(
-                            ('parlai.tasks.' + task + '.' + build)
-                        )
-                        for f in mod.RESOURCES:
-                            with self.subTest(f"{task}: {f.url}"):
-                                f.check_header()
-                else:
-                    try:
-                        mod = importlib.import_module(
-                            ('parlai.tasks.' + task + '.build')
-                        )
-                        file_list = mod.RESOURCES
-                    except (ModuleNotFoundError, AttributeError):
-                        continue
-                    for f in file_list:
+            if task in SPECIFIC_BUILDS:
+                for build in SPECIFIC_BUILDS[task]:
+                    mod = importlib.import_module(
+                        ('parlai.tasks.' + task + '.' + build)
+                    )
+                    for f in mod.RESOURCES:
                         with self.subTest(f"{task}: {f.url}"):
                             f.check_header()
+            else:
+                try:
+                    mod = importlib.import_module(('parlai.tasks.' + task + '.build'))
+                    file_list = mod.RESOURCES
+                except (ModuleNotFoundError, AttributeError):
+                    continue
+                for f in file_list:
+                    with self.subTest(f"{task}: {f.url}"):
+                        f.check_header()
 
 
 if __name__ == '__main__':

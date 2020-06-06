@@ -6,7 +6,7 @@
 ## LICENSE file in the root directory of this source tree.
 ##
 import random
-from parlai.core.agents import Teacher
+from parlai.core.teachers import Teacher
 from os.path import join
 from collections import defaultdict as dd
 from copy import deepcopy

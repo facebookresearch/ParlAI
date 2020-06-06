@@ -17,11 +17,8 @@ extended to any other tool like visdom.
 import os
 import json
 import numbers
-
-try:
-    from tensorboardX import SummaryWriter
-except ImportError:
-    SummaryWriter = None
+from parlai.core.opt import Opt
+from parlai.core.metrics import Metric
 
 
 class TensorboardLogger(object):
@@ -44,8 +41,12 @@ class TensorboardLogger(object):
             hidden=False,
         )
 
-    def __init__(self, opt):
-        if SummaryWriter is None:
+    def __init__(self, opt: Opt):
+        try:
+            # tensorboard is a very expensive thing to import. Wait until the
+            # last second to import it.
+            from tensorboardX import SummaryWriter
+        except ImportError:
             raise ImportError('Please run `pip install tensorboard tensorboardX`.')
 
         tbpath = opt['model_file'] + '.tensorboard'
@@ -67,6 +68,11 @@ class TensorboardLogger(object):
         """
         for k, v in report.items():
             if isinstance(v, numbers.Number):
-                self.writer.add_scalar(f'{setting}/{k}', v, global_step=step)
+                self.writer.add_scalar(f'{k}/{setting}', v, global_step=step)
+            elif isinstance(v, Metric):
+                self.writer.add_scalar(f'{k}/{setting}', v.value(), global_step=step)
             else:
                 print(f'k {k} v {v} is not a number')
+
+    def flush(self):
+        self.writer.flush()

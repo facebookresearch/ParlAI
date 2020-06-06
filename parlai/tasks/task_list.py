@@ -64,6 +64,17 @@ task_list = [
         ),
     },
     {
+        "id": "BlendedSkillTalk",
+        "display_name": "Blended Skill Talk",
+        "task": "blended_skill_talk",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "A dataset of 7k conversations explicitly designed to exhibit multiple "
+            "conversation modes: displaying personality, having empathy, and "
+            "demonstrating knowledge."
+        ),
+    },
+    {
         "id": "BookTest",
         "display_name": "BookTest",
         "task": "booktest",
@@ -132,7 +143,7 @@ task_list = [
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "Fictional conversations extracted from raw movie scripts. "
             "Danescu-Niculescu-Mizil & Lee, '11. Link: "
@@ -262,7 +273,7 @@ task_list = [
         "id": "LIGHT-Dialogue",
         "display_name": "LIGHT-Dialogue",
         "task": "light_dialog",
-        "tags": ["All", "Grounded"],
+        "tags": ["All", "Grounded", "Dodeca"],
         "description": (
             "LIGHT is a text adventure game with actions and dialogue collected."
             "The source data is collected between crowdworkers playing the game."
@@ -531,7 +542,7 @@ task_list = [
         "id": "Ubuntu",
         "display_name": "Ubuntu",
         "task": "ubuntu",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "Dialogs between an Ubuntu user and an expert trying to fix issue, "
             "we use the V2 version, which cleaned the data to some extent. "
@@ -682,7 +693,7 @@ task_list = [
         "id": "ConvAI2",
         "display_name": "ConvAI2",
         "task": "convai2",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A chit-chat dataset based on PersonaChat "
             "(https://arxiv.org/abs/1801.07243) for a NIPS 2018 competition. "
@@ -764,7 +775,7 @@ task_list = [
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No "
             "train/valid/test split was provided so 10k for valid and 10k for "
@@ -951,6 +962,13 @@ task_list = [
         ),
     },
     {
+        "id": "Image_Chat_Generation",
+        "display_name": "Image_Chat_Generation",
+        "task": "image_chat:Generation",
+        "tags": ["All", "Visual", "ChitChat", "Dodeca"],
+        "description": ("Image Chat task to train generative model"),
+    },
+    {
         "id": "TalkTheWalk",
         "display_name": "Talk the Walk",
         "task": "talkthewalk",
@@ -982,10 +1000,17 @@ task_list = [
         ),
     },
     {
+        "id": "Wizard_of_Wikipedia_Generator",
+        "display_name": "Wizard_of_Wikipedia_Generator",
+        "task": "wizard_of_wikipedia:Generator",
+        "tags": ["All", "ChitChat", "Dodeca"],
+        "description": ("Wizard of Wikipedia task to train generative models"),
+    },
+    {
         "id": "DailyDialog",
         "display_name": "Daily Dialog",
         "task": "dailydialog",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of chitchat dialogues with strong annotations for "
             "topic, emotion and utterance act. This version contains both sides "
@@ -998,13 +1023,13 @@ task_list = [
         "id": "EmpatheticDialogues",
         "display_name": "Empathetic Dialogues",
         "task": "empathetic_dialogues",
-        "tags": ["All", "ChitChat"],
+        "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of 25k conversations grounded in emotional situations "
             "to facilitate training and evaluating dialogue systems. See "
             "https://arxiv.org/abs/1811.00207 for more information. \n"
             "Dataset has been released under the CC BY-NC license. \n"
-            "EmpatheticDialogueTeacher returns examples like so: \n\n"
+            "EmpatheticDialoguesTeacher returns examples like so: \n\n"
             "  - [text]:  context line (previous utterance by 'speaker') \n"
             "  - [labels]: label line  (current utterance by 'listener') \n\n"
             "with additional task specific fields: \n\n"
@@ -1063,6 +1088,123 @@ task_list = [
             "of common grounding under continuous and partially-observable context. "
             "This code also includes reference-resolution annotation "
             "from Udagawa and Aizawa '19. Link: https://github.com/Alab-NII/onecommon"
+        ),
+    },
+    {
+        "id": "IGC",
+        "display_name": "Image Grounded Conversations",
+        "task": "igc",
+        "tags": ["All", "Visual", "ChitChat", "Dodeca"],
+        "description": (
+            "A dataset of (image, context, question, answer) tuples, comprised "
+            "of eventful images taken from Bing, Flickr, and COCO. See "
+            "https://arxiv.org/abs/1701.08251 for more information."
+        ),
+    },
+    {
+        "id": "ANLI",
+        "display_name": "Adversarial Natural Language Inference (ANLI) Corpus",
+        "task": "anli",
+        "tags": ["All", "Entailment", "NLI"],
+        "description": (
+            "The ANLI corpus (version 1.0) is a new large-scale NLI benchmark dataset,"
+            "collected via an iterative, adversarial human-and-model-in-the-loop procedure"
+            "with the labels entailment, contradiction, and neutral. A total of three rounds "
+            "of data are collected that progressively increase in difficulty and complexity."
+            "See https://github.com/facebookresearch/anli and https://arxiv.org/abs/1910.14599 "
+            "for more information."
+        ),
+    },
+    {
+        "id": "NLI",
+        "display_name": "Natural Language Inference (NLI) Corpus",
+        "task": "nli",
+        "tags": ["All", "Entailment"],
+        "description": (
+            "A collection of 3 popular Natural Language Inference(NLI) benchmark tasks: "
+            "ANLI v0.1, MultiNLI 1.0, SNLI 1.0."
+        ),
+    },
+    {
+        "id": "Funpedia",
+        "display_name": "Funpedia",
+        "task": "funpedia",
+        "tags": ["All"],
+        "description": (
+            "Task for rephrasing sentences from Wikipedia conditioned on a persona."
+        ),
+    },
+    {
+        "id": "LIGHTGenderBias",
+        "display_name": "LIGHT Gender Bias",
+        "task": "light_genderation_bias",
+        "tags": ["All"],
+        "description": (
+            "Task for debiasing the LIGHT dataset, all mitigation methods described here: "
+            "<https://arxiv.org/abs/1911.03842>."
+        ),
+    },
+    {
+        "id": "HollE",
+        "display_name": "Holl-E",
+        "task": "holl_e",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Sequence of utterances and responses with background knowledge about"
+            "movies. From the Holl-E dataset. More information found at"
+            " https://github.com/nikitacs16/Holl-E."
+        ),
+    },
+    {
+        "id": "ELI5",
+        "display_name": "ELI5",
+        "task": "eli5",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Reddit "
+            "explainlikeimfive posts and comments."
+            "Link: https://github.com/facebookresearch/ELI5/"
+        ),
+    },
+    {
+        "id": "ReDial",
+        "display_name": "ReDial",
+        "task": "redial",
+        "tags": ["All", "ChitChat", "Goal"],
+        "description": (
+            "Annotated dataset of dialogues where users recommend movies to eachother."
+            "See https://redialdata.github.io/website/ for more information."
+        ),
+    },
+    {
+        "id": "DREAM",
+        "display_name": "DREAM",
+        "task": "dream",
+        "tags": ["All", "QA"],
+        "description": (
+            "A multiple-choice answering dataset based on multi-turn, multi-party dialogue."
+            "More information can be found at: <https://dataset.org/dream/>."
+        ),
+    },
+    {
+        "id": "C3",
+        "display_name": "C3",
+        "task": "c3",
+        "tags": ["All", "QA"],
+        "description": (
+            "A multiple-choice answering dataset in Chinese based on a prior passage."
+            "More information can be found at: <https://dataset.org/c3/>."
+        ),
+    },
+    {
+        "id": "CommonSenseQA",
+        "display_name": "CommonSenseQA",
+        "task": "commonsenseqa",
+        "tags": ["All", "QA"],
+        "description": (
+            "CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense "
+            "knowlegde to predict correct answers. More information found at "
+            "<https://www.tau-nlp.org/commonsenseqa>."
         ),
     },
 ]

@@ -11,8 +11,13 @@ can learn simple behavior easily. They are useful as unit tests for the basic mo
 The corpora are all randomly, but deterministically generated
 """
 
-from parlai.core.agents import Teacher
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, AbstractImageTeacher
+from parlai.core.teachers import (
+    FixedDialogTeacher,
+    DialogTeacher,
+    AbstractImageTeacher,
+    Teacher,
+)
+from parlai.core.opt import Opt
 from torch.utils.data import Dataset
 import copy
 import random
@@ -20,7 +25,6 @@ import itertools
 import os
 from PIL import Image
 import string
-import torch
 import json
 from abc import ABC
 
@@ -41,7 +45,7 @@ class CandidateBaseTeacher(Teacher, ABC):
 
     def __init__(
         self,
-        opt: dict,
+        opt: Opt,
         shared: dict = None,
         vocab_size: int = VOCAB_SIZE,
         example_size: int = EXAMPLE_SIZE,
@@ -50,11 +54,16 @@ class CandidateBaseTeacher(Teacher, ABC):
         num_test: int = NUM_TEST,
     ):
         """
-        :param int vocab_size: size of the vocabulary
-        :param int example_size: length of each example
-        :param int num_candidates: number of label_candidates generated
-        :param int num_train: size of the training set
-        :param int num_test: size of the valid/test sets
+        :param int vocab_size:
+            size of the vocabulary
+        :param int example_size:
+            length of each example
+        :param int num_candidates:
+            number of label_candidates generated
+        :param int num_train:
+            size of the training set
+        :param int num_test:
+            size of the valid/test sets
         """
         self.opt = opt
         opt['datafile'] = opt['datatype'].split(':')[0]
@@ -180,6 +189,15 @@ class CandidateTeacher(CandidateBaseTeacher, DialogTeacher):
             yield (text, [text], 0, cands), True
 
 
+class VariableLengthTeacher(CandidateTeacher):
+    def build_corpus(self):
+        corpus = super().build_corpus()
+        for i in range(len(corpus)):
+            length = len(corpus[i]) - i % 3
+            corpus[i] = corpus[i][:length]
+        return corpus
+
+
 class CandidateTeacherDataset(Dataset):
     """
     Candidate Teacher, in Pytorch Dataset form.
@@ -284,27 +302,6 @@ class DefaultDataset(CandidateTeacherDataset):
     pass
 
 
-class MultipassTeacher(CandidateTeacher):
-    """
-    Multiturn teacher, where each episode goes:
-
-    call      response 1         1 2         1 2 3         1 2 3 4         1 2 3 4
-    """
-
-    def num_examples(self):
-        return super().num_examples() * self.example_size
-
-    def setup_data(self, fold):
-        raw = super().setup_data(fold)
-        for (t, a, _, cs), _ in raw:
-            split_t = t.split(' ')
-            ans = a[0]
-            for i, bit in enumerate(split_t):
-                label = ans[: 2 * i + 1]
-                cands = [c[: 2 * i + 1] for c in cs]
-                yield (bit, [label], 0, cands), i == 0
-
-
 class MultiturnCandidateTeacher(CandidateTeacher):
     """
     Splits inputs/targets by spaces into multiple turns.
@@ -328,6 +325,17 @@ class MultiturnCandidateTeacher(CandidateTeacher):
                     ),
                     i == 0,
                 )
+
+    def num_examples(self):
+        return self.example_size * self.num_episodes()
+
+
+class MultiturnTeacher(MultiturnCandidateTeacher):
+    """
+    Simple alias.
+    """
+
+    pass
 
 
 class NocandidateTeacher(CandidateTeacher):
@@ -380,6 +388,24 @@ class MultiturnNocandidateTeacher(MultiturnCandidateTeacher):
             yield (t, a), e
 
 
+class ClassifierTeacher(CandidateTeacher):
+    """
+    Classifier Teacher.
+
+    Good for testing simple classifier models.
+    """
+
+    def setup_data(self, fold):
+        raw = super().setup_data(fold)
+        for (t, _a, _r, _c), e in raw:
+            letters = t.split(' ')
+            # everything starts with 0 or 1
+            letters[0] = str(int(int(t[0]) % 2))
+            label = 'one' if letters[0] == '1' else 'zero'
+            text = ' '.join(letters)
+            yield (text, [label], 0, ['one', 'zero']), e
+
+
 class BadExampleTeacher(CandidateTeacher):
     """
     Teacher which produces a variety of examples that upset verify_data.py.
@@ -416,25 +442,27 @@ class BadExampleTeacher(CandidateTeacher):
             case = newget.case
             if case == 0:
                 # empty string input
-                item['text'] = ''
+                item.force_set('text', '')
             elif case == 1:
                 # not text input
                 del item['text']
             elif case == 2:
                 # empty string label
-                item['labels'] = ['']
+                item.force_set('labels', [''])
             elif case == 3:
                 # no label
                 del item['labels']
             elif case == 4:
                 # no label candidates
-                item['label_candidates'] = []
+                item.force_set('label_candidates', [])
             elif case == 5:
                 # extra empty string in labels
-                item['label_candidates'] = list(item['label_candidates']) + ['']
+                item.force_set(
+                    'label_candidates', list(item['label_candidates']) + ['']
+                )
             elif case == 6:
                 # label candidates doesn't have the label
-                item['label_candidates'] = list(item['label_candidates'])
+                item.force_set('label_candidates', list(item['label_candidates']))
                 item['label_candidates'].remove(item['labels'][0])
             elif case == 7:
                 # no label candidates field
@@ -465,23 +493,16 @@ class ImageTeacher(AbstractImageTeacher):
 
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
-        img_features_dict = {}
-        for img in imgs:
-            image = Image.new('RGB', (100, 100))
+        for i, img in enumerate(imgs):
+            image = Image.new('RGB', (16, 16), color=i)
             image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
-            img_features_dict[img] = torch.FloatTensor(opt['image_features_dim'])
-        torch.save(img_features_dict, self.image_features_path)
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
+            random.seed(42)
             data = [
-                {
-                    'image_id': img,
-                    'text': ''.join(
-                        random.choice(string.ascii_uppercase) for _ in range(10)
-                    ),
-                }
-                for img in imgs
+                {'image_id': img, 'text': string.ascii_uppercase[i]}
+                for i, img in enumerate(imgs)
             ]
             with open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
                 json.dump(data, f)
@@ -491,6 +512,36 @@ class ImageTeacher(AbstractImageTeacher):
         Return path dummy image features.
         """
         return self.image_features_path
+
+    def image_id_to_image_path(self, image_id):
+        """
+        Return path to image on disk.
+        """
+        return os.path.join(
+            self.opt['datapath'], 'ImageTeacher/images', f'{image_id}.jpg'
+        )
+
+
+class RepeatTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = 'unused_path'
+        task = opt.get('task', 'integration_tests:RepeatTeacher:50')
+        try:
+            self.data_length = int(task.split(':')[-1])
+        except ValueError:
+            self.data_length = 10
+        super().__init__(opt, shared)
+
+    def setup_data(self, unused_path):
+        for i in range(self.data_length):
+            yield ((str(i), [str(i)]), True)
+
+    def num_examples(self):
+        return self.data_length
+
+    def num_episodes(self):
+        return self.data_length
 
 
 class DefaultTeacher(CandidateTeacher):

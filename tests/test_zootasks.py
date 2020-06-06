@@ -74,7 +74,7 @@ class TestZooAndTasks(unittest.TestCase):
             task_list,
             "parlai/tasks",
             "task",
-            ignore=['fromfile', 'interactive'],
+            ignore=['fromfile', 'interactive', 'wrapper'],
         )
 
     def test_zoolist(self):
@@ -93,7 +93,7 @@ class TestZooAndTasks(unittest.TestCase):
         dirs = [d for d in dirs if os.path.dirname(d) == thing_dir]
         # just the folder names
         dirs = [os.path.basename(d) for d in dirs]
-        # skip the whitelist
+        # skip the allowlist
         dirs = [d for d in dirs if d not in ignore]
         # make it a set
         dirs = set(dirs)

@@ -32,38 +32,21 @@ class TestTransresnet(unittest.TestCase):
         """
         Set up the test by downloading the model/data.
         """
-        with testing_utils.capture_output():
-            parser = display_data.setup_args()
-            parser.set_defaults(**MODEL_OPTIONS)
-            opt = parser.parse_args(print_args=False)
-            opt['num_examples'] = 1
-            display_data.display_data(opt)
+        parser = display_data.setup_args()
+        parser.set_defaults(**MODEL_OPTIONS)
+        opt = parser.parse_args([], print_args=False)
+        opt['num_examples'] = 1
+        display_data.display_data(opt)
 
     def test_transresnet(self):
         """
         Test pretrained model.
         """
-        stdout, _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
-        self.assertEqual(
-            test['accuracy'],
-            0.4,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertEqual(
-            test['hits@5'],
-            0.9,
-            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout),
-        )
-        self.assertEqual(
-            test['hits@10'],
-            0.9,
-            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout),
-        )
-        self.assertEqual(
-            test['med_rank'],
-            2.0,
-            'test med_rank = {}\nLOG:\n{}'.format(test['med_rank'], stdout),
-        )
+        _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
+        self.assertAlmostEqual(test['accuracy'], 0.4, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.9, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.9, places=4)
+        self.assertAlmostEqual(test['med_rank'], 2.0, places=4)
 
 
 if __name__ == '__main__':

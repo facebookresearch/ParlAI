@@ -36,7 +36,12 @@ def on_message(ws, message):
     :param message: json with 'text' field to be printed
     """
     incoming_message = json.loads(message)
-    print("\033[0m\nBot: " + incoming_message['text'], "\033[44m\n")
+    print("\033[0m\n")
+    print("Bot: " + incoming_message['text'])
+    quick_replies = incoming_message.get('quick_replies')
+    if quick_replies is not None and len(quick_replies) > 0:
+        print(f"\nOptions: [{'|'.join(quick_replies)}]")
+    print("\033[44m\n")
 
 
 def on_error(ws, error):

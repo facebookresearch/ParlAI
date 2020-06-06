@@ -3,11 +3,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.agents import create_agent_from_shared
+from parlai.core.message import Message
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.mturk.core.agents import TIMEOUT_MESSAGE
 import parlai.mturk.core.mturk_utils as mutils
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 from parlai.tasks.wizard_of_wikipedia.build import build
+from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
+
 
 from joblib import Parallel, delayed
 import json
@@ -150,8 +153,9 @@ class WizardEval(MultiAgentDialogWorld):
         model_agent_opt=None,
         world_tag='',
         agent_timeout_shutdown=120,
+        knowledge_retriever_opt=None,
     ):
-
+        self.opt = opt
         # TURN CONTROL
         self.turn_idx = 0
         self.range_turn = range_turn
@@ -173,6 +177,7 @@ class WizardEval(MultiAgentDialogWorld):
         # MODEL AGENT SET UP
         if model_agent_opt is not None:
             self.model_agent = create_agent_from_shared(model_agent_opt)
+            self.knowledge_agent = create_agent_from_shared(knowledge_retriever_opt)
         else:
             # case where we test against a human
             self.model_agent = None
@@ -199,6 +204,32 @@ class WizardEval(MultiAgentDialogWorld):
         act = agent.act(timeout=self.max_resp_time)
         while self.is_msg_tooshortlong(act, agent):
             act = agent.act(timeout=self.max_resp_time)
+        return act
+
+    def _add_knowledge_to_act(self, act):
+        self.knowledge_agent.observe(act, actor_id='apprentice')
+        knowledge_act = self.knowledge_agent.act()
+        act['knowledge'] = knowledge_act['text']
+        act['checked_sentence'] = knowledge_act['checked_sentence']
+        print(
+            '[ Using chosen sentence from Wikpedia ]: {}'.format(
+                knowledge_act['checked_sentence']
+            )
+        )
+        act['title'] = knowledge_act['title']
+        if self.opt.get('prepend_gold_knowledge', False):
+            knowledge_text = ' '.join(
+                [
+                    TOKEN_KNOWLEDGE,
+                    knowledge_act['checked_sentence'],
+                    TOKEN_END_KNOWLEDGE,
+                ]
+            )
+            new_text = '\n'.join([knowledge_text, act['text']])
+            if isinstance(act, Message):
+                act.force_set('text', new_text)
+            else:
+                act['text'] = new_text
         return act
 
     def parley(self):
@@ -245,11 +276,13 @@ class WizardEval(MultiAgentDialogWorld):
                     'text': self.chosen_topic,
                     'episode_done': False,
                 }
+                chosen_act = self._add_knowledge_to_act(chosen_act)
                 self.model_agent.observe(chosen_act)
                 model_act = self.model_agent.act()
                 model_act.force_set('id', 'PERSON_2')
                 self.dialog.append((1, model_act.get('text')))
                 self.eval_agent.observe(model_act)
+                self.knowledge_agent.observe(model_act, actor_id='wizard')
             else:
                 act = self.get_human_agent_act(self.other_agent)
                 timeout = self.check_timeout(act)
@@ -286,6 +319,7 @@ class WizardEval(MultiAgentDialogWorld):
         # Add chosen topic for model to observe
         act['chosen_topic'] = self.chosen_topic
         if self.model_agent is not None:
+            act = self._add_knowledge_to_act(act)
             self.model_agent.observe(act)
         else:
             self.other_agent.observe(act)
@@ -294,6 +328,8 @@ class WizardEval(MultiAgentDialogWorld):
         if not self.other_first or self.turn_idx < self.n_turn:
             if self.model_agent is not None:
                 act = self.model_agent.act()
+                self.knowledge_agent.observe(act, actor_id='wizard')
+                text = act['text']
                 for (sb_0, sb_1) in [
                     (' .', '.'),
                     (' ,', ','),
@@ -301,7 +337,8 @@ class WizardEval(MultiAgentDialogWorld):
                     (' !', '!'),
                     ('i ', 'I '),
                 ]:
-                    act.force_set('text', act['text'].replace(sb_0, sb_1))
+                    text = text.replace(sb_0, sb_1)
+                act.force_set('text', text)
                 act.force_set('id', 'PERSON_2')
                 # NOTE: your model may or may not need to observe itself here
                 # If it does, call model_observes_itself or some other specialized
@@ -429,6 +466,7 @@ class WizardEval(MultiAgentDialogWorld):
                 'bad_workers': bad_workers,
                 'n_turn': self.n_turn,
                 'gmark_score': self.gmark_score,
+                'inference': 'nucleus',
             },
             open(filename, 'wb'),
         )

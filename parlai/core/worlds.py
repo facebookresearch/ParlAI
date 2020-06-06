@@ -42,21 +42,21 @@ All worlds are initialized with the following parameters:
 """
 
 import copy
-import importlib
 import random
 import time
 
-from functools import lru_cache
+from typing import List, Dict, Any, Union
 
 try:
     from torch.multiprocessing import Process, Value, Condition, Semaphore
 except ImportError:
     from multiprocessing import Process, Value, Semaphore, Condition  # noqa: F401
-from parlai.core.agents import (
-    create_agents_from_shared,
-    create_task_agent_from_taskname,
-)
-from parlai.core.metrics import aggregate_metrics
+
+from parlai.core.agents import create_agents_from_shared
+from parlai.core.loader import load_task_module, load_world_module
+from parlai.core.metrics import aggregate_named_reports
+from parlai.core.opt import Opt
+from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -78,7 +78,7 @@ class World(object):
     All children can override these to provide more detailed functionality.
     """
 
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
         self.id = opt['task']
         self.opt = copy.deepcopy(opt)
         if shared:
@@ -122,6 +122,7 @@ class World(object):
             ignore_fields=self.opt.get('display_ignore_fields', ''),
             prettify=self.opt.get('display_prettify', False),
             max_len=self.opt.get('max_display_len', 1000),
+            verbose=self.opt.get('display_verbose', False),
         )
 
     def episode_done(self):
@@ -149,6 +150,12 @@ class World(object):
         shared_data['agents'] = self._share_agents()
         return shared_data
 
+    def clone(self):
+        """
+        Create a duplicate of the world.
+        """
+        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
+
     def _share_agents(self):
         """
         Create shared data for agents.
@@ -170,6 +177,12 @@ class World(object):
     def get_task_agent(self):
         """
         Return task agent, if applicable.
+        """
+        raise NotImplementedError('Implement in subworld')
+
+    def get_model_agent(self):
+        """
+        Return model agent, if applicable.
         """
         raise NotImplementedError('Implement in subworld')
 
@@ -293,16 +306,16 @@ class DialogPartnerWorld(World):
     chance to speak per turn and passing that back to the other one.
     """
 
-    def __init__(self, opt, agents, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
+        if not ((agents is not None) ^ (shared is not None)):
+            raise ValueError('You must supply either agents or shared, but not both.')
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
             self.agents = create_agents_from_shared(shared['agents'])
         else:
             if len(agents) != 2:
-                raise RuntimeError(
-                    'There must be exactly two agents for this ' 'world.'
-                )
+                raise RuntimeError('There must be exactly two agents for this world.')
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
@@ -315,6 +328,12 @@ class DialogPartnerWorld(World):
         Return task agent.
         """
         return self.get_agents()[0]
+
+    def get_model_agent(self):
+        """
+        Return model agent, if applicable.
+        """
+        return self.get_agents()[1]
 
     def parley(self):
         """
@@ -349,22 +368,23 @@ class DialogPartnerWorld(World):
         """
         Report all metrics of all subagents.
         """
+        from parlai.core.metrics import Metric, LegacyMetric
 
-        # DEPRECATIONDAY: should we get rid of this option?
         metrics = {}
         for a in self.agents:
             if hasattr(a, 'report'):
                 m = a.report()
                 for k, v in m.items():
+                    if not isinstance(v, Metric):
+                        v = LegacyMetric(v)
                     if k not in metrics:
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
-        if metrics:
-            self.total_exs += metrics.get('exs', 0)
-            return metrics
+        if metrics and 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
+        return metrics
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return number of examples.
@@ -388,6 +408,19 @@ class DialogPartnerWorld(World):
         for a in self.agents:
             a.shutdown()
 
+    def update_counters(self):
+        """
+        Ensure all counters are synchronized across threads.
+        """
+        super().update_counters()
+        for a in self.agents:
+            if hasattr(a, 'update_counters'):
+                a.update_counters()
+            if hasattr(a, 'global_metrics'):
+                # torch agent has "global metrics" that might get backed up on OS X,
+                # see the SystemError exception in Metrics.
+                a.global_metrics.sync()
+
 
 class MultiAgentDialogWorld(World):
     """
@@ -396,7 +429,7 @@ class MultiAgentDialogWorld(World):
     Each agent receives as input the actions of all other agents since its last `act()`.
     """
 
-    def __init__(self, opt, agents, shared=None):
+    def __init__(self, opt: Opt, agents, shared=None):
         super().__init__(opt)
         if shared:
             # Create agents based on shared data.
@@ -426,6 +459,12 @@ class MultiAgentDialogWorld(World):
         Return task agent.
         """
         return self.get_agents()[0]
+
+    def get_model_agent(self):
+        """
+        Return model agent.
+        """
+        return self.get_agents()[1]
 
     def epoch_done(self):
         """
@@ -460,9 +499,9 @@ class MultiAgentDialogWorld(World):
                         # first agent gets priority in settings values for keys
                         # this way model can't e.g. override accuracy to 100%
                         metrics[k] = v
-        if metrics:
-            self.total_exs += metrics.get('exs', 0)
-            return metrics
+        if metrics and 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
+        return metrics
 
     def shutdown(self):
         """
@@ -480,7 +519,7 @@ class ExecutableWorld(MultiAgentDialogWorld):
     simulation can be implemented rather than just dialogue between agents.
     """
 
-    def __init__(self, opt, agents=None, shared=None):
+    def __init__(self, opt: Opt, agents=None, shared=None):
         super().__init__(opt, agents, shared)
         self.init_world()
 
@@ -544,9 +583,9 @@ class MultiWorld(World):
     agents according to the task that world represents.
     """
 
-    def __init__(self, opt, agents=None, shared=None, default_world=None):
+    def __init__(self, opt: Opt, agents=None, shared=None, default_world=None):
         super().__init__(opt)
-        self.worlds = []
+        self.worlds: List[World] = []
         for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
@@ -571,6 +610,8 @@ class MultiWorld(World):
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
         weights = self.opt.get('multitask_weights', [1])
+        if weights == 'stochastic':
+            weights = [w.num_episodes() for w in self.worlds]
         sum = 0
         for i in self.task_choices:
             if len(weights) > i:
@@ -579,6 +620,20 @@ class MultiWorld(World):
                 weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
+        task_ids: Dict[str, Teacher] = {}
+        # Having overlap in teacher ids will cause issues for metrics aggregation.
+        for each_world in self.worlds:
+            world_id = each_world.getID()
+            if world_id in task_ids:
+                raise AssertionError(
+                    '{} and {} teachers have overlap in id {}.'.format(
+                        task_ids[world_id],
+                        each_world.get_agents()[0].__class__,
+                        world_id,
+                    )
+                )
+            else:
+                task_ids[world_id] = each_world.get_task_agent()
 
     def num_examples(self):
         """
@@ -614,7 +669,13 @@ class MultiWorld(World):
         """
         Not possible/well-defined in this setting.
         """
-        raise RuntimeError('get_task_agent not defined for Multiworld')
+        return self.worlds[self.world_idx].get_task_agent()
+
+    def get_model_agent(self):
+        """
+        Not implemented.
+        """
+        return self.worlds[self.world_idx].get_model_agent()
 
     def get_acts(self):
         """
@@ -694,8 +755,12 @@ class MultiWorld(World):
         """
         Report aggregate metrics across all subworlds.
         """
-        metrics = aggregate_metrics(self.worlds)
-        self.total_exs += metrics.get('exs', 0)
+        metrics = aggregate_named_reports(
+            {w.getID(): w.report() for w in self.worlds},
+            micro_average=self.opt.get('aggregate_micro', False),
+        )
+        if 'exs' in metrics:
+            self.total_exs += metrics['exs'].value()
         return metrics
 
     def reset(self):
@@ -718,6 +783,11 @@ class MultiWorld(World):
         """
         # Assumes all worlds have same agents, picks first to save.
         self.worlds[0].save_agents()
+
+    def update_counters(self):
+        super().update_counters()
+        for w in self.worlds:
+            w.update_counters()
 
 
 def _override_opts_in_shared(table, overrides):
@@ -758,12 +828,12 @@ class BatchWorld(World):
     ``MultiWorld``.
     """
 
-    def __init__(self, opt, world):
+    def __init__(self, opt: Opt, world):
         super().__init__(opt)
         self.opt = opt
         self.random = opt.get('datatype', None) == 'train'
         self.world = world
-        self.worlds = []
+        self.worlds: List[World] = []
         for i in range(opt['batchsize']):
             # make sure that any opt dicts in shared have batchindex set to i
             # this lets all shared agents know which batchindex they have,
@@ -819,10 +889,7 @@ class BatchWorld(World):
         # Given batch observation, do update for agents[index].
         # Call update on agent
         a = self.world.get_agents()[agent_idx]
-        if hasattr(a, 'batch_act') and not (
-            hasattr(a, 'use_batch_act')  # TODO: remove use_batch_act
-            and not a.use_batch_act
-        ):
+        if hasattr(a, 'batch_act'):
             batch_actions = a.batch_act(batch_observation)
             # Store the actions locally in each world.
             for i, w in enumerate(self.worlds):
@@ -915,6 +982,12 @@ class BatchWorld(World):
         """
         return self.world.get_task_agent()
 
+    def get_model_agent(self):
+        """
+        Return model agent of the root world.
+        """
+        return self.world.get_model_agent()
+
     def episode_done(self):
         """
         Return whether the episode is done.
@@ -973,6 +1046,223 @@ class BatchWorld(World):
         self.world.shutdown()
 
 
+class DynamicBatchWorld(World):
+    def __init__(self, opt: Opt, world: Union[DialogPartnerWorld, MultiWorld]):
+        super().__init__(opt)
+        self.opt = opt
+
+        # agents is a placeholder just for super.reset
+        self.agents = []
+
+        # check some assumptions
+        if isinstance(
+            world, (ExecutableWorld, BatchWorld, HogwildWorld, MultiAgentDialogWorld)
+        ):
+            raise TypeError(
+                'World must be a DialogPartnerWorld or a '
+                'MultiWorld of DialogPartnerWorld'
+            )
+
+        if len(world.get_agents()) != 2:
+            raise AssertionError(
+                "Dynamic batch only works in a fixed dialog world with two agents."
+            )
+
+        if not hasattr(world.get_model_agent(), 'batch_act'):
+            raise TypeError("Model agent doesn't have batch_act.")
+
+        self.truncate = opt.get('text_truncate', None) or opt.get('truncate', None)
+        self.l_truncate = opt.get('label_truncate', None) or opt.get('truncate', None)
+        if self.truncate is None or self.truncate < 0:
+            raise ValueError(
+                'You must use --text-truncate or --truncate in order to use '
+                'dynamic batching.'
+            )
+
+        # size of the buffer we will use to find worlds
+        self._BUFFER_SIZE = 1021  # chosen as a prime number
+
+        if opt['dynamic_batching'] == 'full':
+            # full dynamic batching, we can grow our batchsize
+            self.max_batch_size = self._BUFFER_SIZE
+        else:
+            # simple batchsort
+            self.max_batch_size = opt['batchsize']
+
+        # TODO: check to ensure the agent has self_observe
+        self.world = world
+        # TODO: maybe generalize this
+        self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
+
+        # buffer worlds
+        self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
+
+        self.reset()
+
+    def reset(self):
+        super().reset()
+        self._obs = [None for _ in range(self._BUFFER_SIZE)]
+        self._scores = [None for _ in range(self._BUFFER_SIZE)]
+
+        self.number_parleys = 0
+        self.total_exs = 0
+        self.world.reset()
+        self.rng = random.Random(4)
+        for w in self.worlds:
+            w.reset()
+
+    def reset_metrics(self):
+        super().reset_metrics()
+        self.world.reset_metrics()
+        for w in self.worlds:
+            w.reset_metrics()
+
+    def epoch_done(self):
+        return (
+            self.world.epoch_done()
+            or all(w.epoch_done() for w in self.worlds)
+            and all(s is None for s in self._scores)
+        )
+
+    def num_examples(self):
+        return self.world.num_examples()
+
+    def num_episodes(self):
+        return self.world.num_episodes()
+
+    def _ceil(self, n):
+        """
+        Round to the nearest multiple of 8.
+
+        TensorCores only work when a tensor is a multiple of 8 in almost all
+        dimensions. This means all examples cost is related to their nearest
+        multiple of 8.
+
+        See https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for
+        more information.
+        """
+        # round up to r, all things are equal
+        from parlai.utils.torch import FP16_PAD_SIZE
+
+        return ((n + FP16_PAD_SIZE - 1) // FP16_PAD_SIZE) * FP16_PAD_SIZE
+
+    def _score(self, obs):
+        if 'text_vec' in obs:
+            # note that all examples have a cost that is based on their
+            # nearest multiple of 4. We can therefore mix-and-match
+            # anything with the same cost for increased stochasticity,
+            # while not really wasting much padding.
+            return tuple(
+                self._ceil(len(obs[key]))
+                for key in ['text_vec', 'labels_vec', 'eval_labels_vec']
+                if key in obs
+            )
+        else:
+            return None
+
+    def parley(self):
+        # first make sure that all the worlds are processed in the queue
+        indices = []
+        for i in range(self._BUFFER_SIZE):
+            if self._scores[i] is not None:
+                indices.append(i)
+                continue
+            if self.worlds[i].epoch_done():
+                continue
+
+            if hasattr(self.world, 'parley_init'):
+                self.worlds[i].parley_init()
+
+            act = self.worlds[i].get_task_agent().act()
+            obs = self.worlds[i].get_model_agent().observe(act)
+            self._obs[i] = obs
+
+            self._scores[i] = self._score(obs)
+            if self._scores[i] is not None:
+                indices.append(i)
+
+        # quick invariant checks
+        assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
+        assert not any(self._scores[i] is None for i in indices)
+
+        # sort all the indices by their score, so that we can find similarly lengthed
+        # items in O(1)
+        indices = sorted(indices, key=lambda i: self._scores[i] + (self.rng.random(),))
+
+        # now let's build the batch
+        batch = []
+
+        # start with a random item. indices_idx is the lookup into indices, but
+        # index is the actual world.
+        width = 0
+        indices_idx = random.randint(0, len(indices) - 1)
+
+        # we picked a random spot, but we can get better packing if we start at
+        # the last example with the same score, since we always move down to
+        # smaller examples.
+        while indices_idx < len(indices) - 1 and (
+            sum(self._scores[indices[indices_idx]])
+            == sum(self._scores[indices[indices_idx + 1]])
+        ):
+            indices_idx += 1
+
+        # quit early if we eat our full buffer
+        while indices:
+            index = indices[indices_idx]
+            this_width = self._ceil(sum(self._scores[index]))
+            new_width = max(width, this_width)
+            # compute the cost of the new batch
+            new_bsz = len(batch) + 1
+            new_words = new_width * new_bsz
+            if new_words <= self.max_words and new_bsz <= self.max_batch_size:
+                # cool, this one fits, let's add it
+                width = new_width
+                batch.append(index)
+                indices.pop(indices_idx)
+                indices_idx = max(indices_idx - 1, 0)
+            else:
+                # we'd overfill our buffer, give up
+                break
+
+        # Always have a batch size that's a multiple of 4, for fp16's sake.
+        while len(batch) > 4 and len(batch) % 4 != 0:
+            # pop off the shortest one. it's easiest to pack in later
+            batch.pop(-1)
+
+        # double check our assumed invariant
+        assert self._ceil(width) * len(batch) <= self.max_words
+        assert len(batch) > 0
+        assert len(batch) <= self.max_batch_size
+
+        # great, this batch is good to go! let's run it!
+        acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
+        # broadcast the results back to all the models
+        for i, act in zip(batch, acts):
+            # we need to make sure that the teachers saw the result
+            self.worlds[i].get_task_agent().observe(act)
+            # and that the agent copies saw their own voice
+            self.worlds[i].get_model_agent().self_observe(act)
+
+            # move these worlds forward
+            act = self.worlds[i].get_task_agent().act()
+            obs = self.worlds[i].get_model_agent().observe(act)
+            self._scores[i] = self._score(obs)
+            self._obs[i] = obs
+
+        # update metrics
+        self.total_parleys += 1
+        self.total_exs += len(batch)
+
+    def get_total_exs(self):
+        return self.total_exs
+
+    def get_total_epochs(self):
+        return self.total_exs / self.num_examples()
+
+    def report(self):
+        return self.world.report()
+
+
 class HogwildProcess(Process):
     """
     Process child used for ``HogwildWorld``.
@@ -980,7 +1270,7 @@ class HogwildProcess(Process):
     Each ``HogwildProcess`` contain its own unique ``World``.
     """
 
-    def __init__(self, tid, opt, shared, sync):
+    def __init__(self, tid, opt: Opt, shared, sync):
         self.numthreads = opt['numthreads']
         opt = copy.deepcopy(opt)
         opt['numthreads'] = 1  # don't let threads create more threads!
@@ -1067,12 +1357,12 @@ class HogwildWorld(World):
       once the processing is complete).
     """
 
-    def __init__(self, opt, world):
+    def __init__(self, opt: Opt, world):
         super().__init__(opt)
         self.inner_world = world
         self.numthreads = opt['numthreads']
 
-        self.sync = {  # syncronization primitives
+        self.sync: Dict[str, Any] = {  # syncronization primitives
             # semaphores for counting queued examples
             'queued_sem': Semaphore(0),  # counts num exs to be processed
             'threads_sem': Semaphore(0),  # counts threads
@@ -1085,7 +1375,7 @@ class HogwildWorld(World):
             'total_parleys': Value('l', 0),  # number of parleys in threads
         }
 
-        self.threads = []
+        self.threads: List[HogwildProcess] = []
         for i in range(self.numthreads):
             self.threads.append(HogwildProcess(i, opt, world.share(), self.sync))
             time.sleep(0.05)  # delay can help prevent deadlock in thread launches
@@ -1096,7 +1386,7 @@ class HogwildWorld(World):
             # wait for threads to launch
             # this makes sure that no threads get examples before all are set up
             # otherwise they might reset one another after processing some exs
-            self.sync['threads_sem'].acquire()
+            self.sync['threads_sem'].acquire()  # type: ignore
 
         print(f'[ {self.numthreads} threads initialized ]')
 
@@ -1138,18 +1428,28 @@ class HogwildWorld(World):
         self.sync['threads_sem'].acquire()
         self.update_counters()
 
+    def update_counters(self):
+        super().update_counters()
+        # some unix systems have a system max of how big the kernel can get. OS X
+        # has one, and so does CI. It's very easy to hit this max, so we need to
+        # flush the hogwild metrics queue every parley, to keep it from filling
+        # up and causing a deadlock.
+        self.inner_world.update_counters()
+
     def getID(self):
         """
         Return the inner world's ID.
         """
         return self.inner_world.getID()
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return the number of examples.
         """
-        return self.inner_world.num_examples()
+        if hasattr(self, '_num_examples'):
+            return self._num_examples_cache
+        self._num_examples_cache = self.inner_world.num_examples()
+        return self._num_examples_cache
 
     def num_episodes(self):
         """
@@ -1162,6 +1462,12 @@ class HogwildWorld(World):
         Return task agent of inner world.
         """
         return self.inner_world.get_task_agent()
+
+    def get_model_agent(self):
+        """
+        Return model agent of inner world.
+        """
+        return self.inner_world.get_model_agent()
 
     def get_total_exs(self):
         """
@@ -1240,14 +1546,14 @@ class HogwildWorld(World):
 
         # wait for threads to close
         for t in self.threads:
-            t.join()
+            t.terminate()
         self.inner_world.shutdown()
 
 
 ################################################################################
 # Functions for creating tasks/worlds given options.
 ################################################################################
-def _create_task_agents(opt):
+def _create_task_agents(opt: Opt):
     """
     Create task agent(s) for the given task name.
 
@@ -1256,29 +1562,15 @@ def _create_task_agents(opt):
     defined by the task name directly.  (This saves the task creator bothering to define
     the create_agents function when it is not needed.)
     """
-    sp = opt['task'].strip()
-    repo = 'parlai'
-    if sp.startswith('internal:'):
-        # To switch to local repo, useful for non-public projects
-        # (make a directory called 'parlai_internal' with your private agents)
-        repo = 'parlai_internal'
-        sp = sp[9:]
-    sp = sp.split(':')
-    if '.' in sp[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
-        # (i.e. specifying your own path directly)
-        module_name = sp[0]
-    elif sp[0] == 'pytorch_teacher':
-        module_name = 'parlai.core.pytorch_data_teacher'
-    else:
-        task = sp[0].lower()
-        module_name = "%s.tasks.%s.agents" % (repo, task)
-    my_module = importlib.import_module(module_name)
+    if opt.get('interactive_task', False) or opt.get('selfchat_task', False):
+        # do not need task agents in interactive or self chat settings
+        return []
+
     try:
         # Tries to call the create_agent function in agents.py
-        task = sp[0].lower()
-        task_agents = my_module.create_agents(opt, task)
-    except AttributeError:
+        my_module = load_task_module(opt['task'])
+        task_agents = my_module.create_agents(opt)  # type: ignore
+    except (ModuleNotFoundError, AttributeError):
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
     if type(task_agents) != list:
@@ -1286,65 +1578,25 @@ def _create_task_agents(opt):
     return task_agents
 
 
-def _get_task_world(opt, user_agents, default_world=None):
-    task_agents = _create_task_agents(opt)
-    sp = opt['task'].strip()
-    repo = 'parlai'
-    if sp.startswith('internal:'):
-        # To switch to local repo, useful for non-public projects
-        # (make a directory called 'parlai_internal' with your private agents)
-        repo = 'parlai_internal'
-        sp = sp[9:]
-    sp = sp.split(':')
-    if '.' in sp[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
-        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        if default_world is not None:
-            world_class = default_world
-        elif len(task_agents + user_agents) == 2:
-            world_class = DialogPartnerWorld
-        else:
-            world_class = MultiAgentDialogWorld
-    else:
-        task = sp[0].lower()
-        if len(sp) > 1:
-            sp[1] = sp[1][0].upper() + sp[1][1:]
-            world_name = sp[1] + "World"
-            if opt.get('interactive_task', False):
-                world_name = "Interactive" + world_name
-        else:
-            if opt.get('interactive_task', False):
-                world_name = "InteractiveWorld"
-            else:
-                world_name = "DefaultWorld"
-        module_name = "%s.tasks.%s.worlds" % (repo, task)
-        try:
-            my_module = importlib.import_module(module_name)
-            world_class = getattr(my_module, world_name)
-        except (ModuleNotFoundError, AttributeError):
-            # Defaults to this if you did not specify a world for your task.
-            if default_world is not None:
-                world_class = default_world
-            elif len(task_agents + user_agents) == 2:
-                world_class = DialogPartnerWorld
-            else:
-                world_class = MultiAgentDialogWorld
-    return world_class, task_agents
-
-
-def create_task_world(opt, user_agents, default_world=None):
+def create_task_world(opt: Opt, user_agents, default_world=None):
     """
     Instantiate a world with the supplied options and user agents.
 
     (A world factory.)
     """
-    world_class, task_agents = _get_task_world(
-        opt, user_agents, default_world=default_world
+    task_agents = _create_task_agents(opt)
+    world_class = load_world_module(
+        opt['task'],
+        interactive_task=opt.get('interactive_task', False),
+        selfchat_task=opt.get('selfchat_task', False),
+        num_agents=len(user_agents + task_agents),
+        default_world=default_world,
     )
+
     return world_class(opt, task_agents + user_agents)
 
 
-def create_task(opt, user_agents, default_world=None):
+def create_task(opt: Opt, user_agents, default_world=None):
     """
     Create a world + task_agents (aka a task).
 
@@ -1353,20 +1605,10 @@ def create_task(opt, user_agents, default_world=None):
     ``parlai/tasks/task_list.py`` for list of tasks.
     """
     task = opt.get('task')
-    pyt_task = opt.get('pytorch_teacher_task')
-    pyt_dataset = opt.get('pytorch_teacher_dataset')
-    if not (task or pyt_task or pyt_dataset):
+    if not task:
         raise RuntimeError(
             'No task specified. Please select a task with ' + '--task {task_name}.'
         )
-    # When building pytorch data, there is a point where task and pyt_task
-    # are the same; make sure we discount that case.
-    pyt_multitask = task is not None and (
-        (pyt_task is not None and pyt_task != task)
-        or (pyt_dataset is not None and pyt_dataset != task)
-    )
-    if not task:
-        opt['task'] = 'pytorch_teacher'
     if type(user_agents) != list:
         user_agents = [user_agents]
 
@@ -1374,8 +1616,6 @@ def create_task(opt, user_agents, default_world=None):
     # (e.g. "#QA" to the list of tasks that are QA tasks).
     opt = copy.deepcopy(opt)
     opt['task'] = ids_to_tasks(opt['task'])
-    if pyt_multitask and 'pytorch_teacher' not in opt['task']:
-        opt['task'] += ',pytorch_teacher'
     print('[creating task(s): ' + opt['task'] + ']')
 
     # check if single or multithreaded, and single-example or batched examples
@@ -1391,6 +1631,8 @@ def create_task(opt, user_agents, default_world=None):
         # use hogwild world if more than one thread requested
         # hogwild world will create sub batch worlds as well if bsz > 1
         world = HogwildWorld(opt, world)
+    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
+        world = DynamicBatchWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
         world = BatchWorld(opt, world)

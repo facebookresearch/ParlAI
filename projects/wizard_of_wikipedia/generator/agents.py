@@ -37,6 +37,7 @@ DEFAULT_OPTS = {
     "n_layers": 5,
     "betas": "0.9,0.98",
     "truncate": 128,
+    "add_token_knowledge": True,
     "dict_textfields": "text,labels,chosen_topic,checked_sentence,knowledge,title",
 }
 

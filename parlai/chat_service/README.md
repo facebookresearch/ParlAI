@@ -59,17 +59,33 @@ Below is the standard config format and hierarchy to be followed across all chat
 As one can notice, most of the format is the same as how it already exists for messenger with the exception of having ```additional_args:``` as a field in our config. This has been introduced to provide flexibility of parsing any additional arguments a chat service may need whilst preserving the previously existing necessary args. Note however that ```page_id``` has been shifted to this section to maintain coherence.
 
 ## Manager
-#### TO-DO
+
+To implement your own service, you will need to subclass the ```ChatServiceManager``` in ```chat_service/core/chat_service_manager.py```. The ```ChatServiceManager``` handles a lot of the abstraction for you, so you'll only need to subclass a few of the methods in there when implementing your own service.
+
+Some notable essentials below (note not all abstract methods are specified):
+
+1. ```ChatServiceMessageSender``` - The message sender is useful for wrapping requests with additional functions. E.g., in the Messenger service, the ```MessageSender``` implements ```send_read``` and ```typing_on``` functions which are called upon message sends.
+2. ```parse_additional_args``` - This is the function for parsing the additional args from the config specified above
+3. ```_complete_setup``` - Complete any additional setup items; should be called in initialization.
+4. ```_load_model``` - This function should load the model, if necessary. This varies per chat service.
+5. ```restructure_message``` - If messages in your service are not the same format as specified in *Message Format* above, please use this method to restructure the message.
+6. ```setup_server``` - sets up the chat service server.
+7. ```setup_socket``` - sets up the socket to start communicating with users.
+8. ```observe_message``` - Send a message thru the message manager to a corresponding user/agent.
+
 
 ## Manager Utils
 ### Socket
-#### TO-DO
+
+The ```ChatServiceMessageSocket``` is a wrapper around websockets to forward messages from a remote server to a ```ChatServiceManager```.
 
 ### Runner
-#### TO-DO
 
-### Sender
-#### TO-DO
+The ```ChatServiceWorldRunner``` is the actual class for handling running worlds, overworlds, etc.
 
 ## Agents
-#### TO-DO
+
+Finally, once you have implemented your ```ChatServiceManager```, you will need to implement a ```ChatServiceAgent```, which is specific for each chat service. The following are notable functions to implement in your own ```ChatServiceAgent```.
+
+1. ```observe``` - Implement this function to receive messages from the manager.
+2. ```put_data``` - Puts data into the Agent's message queue if it hasn't already been seen.

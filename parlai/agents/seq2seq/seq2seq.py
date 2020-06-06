@@ -24,6 +24,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
     search.
 
     For more information, see the following papers:
+
     - Neural Machine Translation by Jointly Learning to Align and Translate
       `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
     - Sequence to Sequence Learning with Neural Networks
@@ -205,9 +206,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='none')
         else:
-            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
     def batchify(self, *args, **kwargs):
         """

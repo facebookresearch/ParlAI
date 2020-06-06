@@ -9,7 +9,8 @@ import os
 import time
 import threading
 from unittest import mock
-from parlai.mturk.core.agents import MTurkAgent, AssignState
+from parlai.mturk.core.agents import MTurkAgent
+from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 

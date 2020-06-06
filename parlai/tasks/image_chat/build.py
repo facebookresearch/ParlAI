@@ -34,5 +34,9 @@ def build(opt):
 
         build_data.mark_done(dpath, version)
 
-    if not build_data.built(image_path, version) and not opt.get('yfcc_path'):
+    if (
+        not build_data.built(image_path, version)
+        and not opt.get('yfcc_path')
+        and opt.get('load_images')
+    ):
         download_images(opt, task='image_chat')

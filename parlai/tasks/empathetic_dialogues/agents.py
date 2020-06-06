@@ -5,25 +5,70 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from parlai.core.teachers import FixedDialogTeacher
-from .build import build
+from typing import Any, List
+
 import numpy as np
 
+from parlai.core.teachers import FixedDialogTeacher
+from .build import build
 
-class EmpatheticDialogueTeacher(FixedDialogTeacher):
+
+DEFAULT_TRAIN_EXPERIENCER_ONLY = False
+DEFAULT_REMOVE_POLITICAL_CONVOS = False
+
+
+class EmpatheticDialoguesTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.opt = opt
+        base_datatype = self.datatype.split(':')[0]
+        self.datapath = os.path.join(
+            self.opt['datapath'],
+            'empatheticdialogues',
+            'empatheticdialogues',
+            base_datatype + '.csv',
+        )
+        self.experiencer_side_only = (
+            opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
+            and base_datatype == 'train'
+        ) or base_datatype != 'train'
+        if not shared:
+            print(
+                f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
+                f'{self.experiencer_side_only}, datatype: {self.datatype}'
+            )
+        self.remove_political_convos = opt.get(
+            'remove_political_convos', DEFAULT_REMOVE_POLITICAL_CONVOS
+        )
+
         if shared:
             self.data = shared['data']
         else:
             build(opt)
-            fold = opt.get('datatype', 'train').split(':')[0]
-            self._setup_data(fold)
+            self._setup_data(base_datatype)
 
-        self.num_exs = sum([(len(d) + 1) // 2 for d in self.data])
+        self.num_exs = sum([len(d) for d in self.data])
         self.num_eps = len(self.data)
         self.reset()
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        agent = argparser.add_argument_group('EmpatheticDialogues teacher arguments')
+        agent.add_argument(
+            '--train-experiencer-only',
+            type='bool',
+            default=DEFAULT_TRAIN_EXPERIENCER_ONLY,
+            # i.e. do not include the other side of the conversation where the Listener
+            # (responder) utterance would be the text and the Speaker (experiencer)
+            # utterance would be the label
+            help='In the train set, only use Speaker (experiencer) utterances as text and Listener (responder) utterances as labels.',
+        )
+        agent.add_argument(
+            '--remove-political-convos',
+            type='bool',
+            default=DEFAULT_REMOVE_POLITICAL_CONVOS,
+            help='Remove all conversations containing an utterance marked as political',
+        )
 
     def num_episodes(self):
         return self.num_eps
@@ -31,10 +76,10 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
     def num_examples(self):
         return self.num_exs
 
-    def _setup_data(self, fold):
-        self.turns = 0
+    def _setup_data(self, base_datatype):
+
         if self.opt.get('deepmoji') is not None:
-            self.embed = np.load(self.opt['deepmoji'] + fold + ".npy")
+            self.embed = np.load(self.opt['deepmoji'] + base_datatype + ".npy")
 
         if self.opt.get('fasttextloc') is not None and self.opt.get('prepend', -1) > 0:
             try:
@@ -44,16 +89,12 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
             ftpath = self.opt['fasttextloc']
             ftmodel = fastText.FastText.load_model(ftpath)
 
-        fpath = os.path.join(
-            self.opt['datapath'],
-            'empatheticdialogues',
-            'empatheticdialogues',
-            fold + '.csv',
-        )
-        df = open(fpath).readlines()
+        df = open(self.datapath).readlines()
 
+        turn_idx = 1
+        responder_text_dialogue = []
+        experiencer_text_dialogue = []
         self.data = []
-        dialog = []
         for i in range(1, len(df)):
 
             cparts = df[i - 1].strip().split(",")
@@ -61,15 +102,24 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
 
             if cparts[0] == sparts[0]:
 
+                # Check that the turn number has incremented correctly
+                turn_idx += 1
+                assert (
+                    int(cparts[1]) + 1 == int(sparts[1]) and int(sparts[1]) == turn_idx
+                )
+
                 contextt = cparts[5].replace("_comma_", ",")
                 label = sparts[5].replace("_comma_", ",")
                 prompt = sparts[2]
                 sit = sparts[3].replace("_comma_", ",")
                 if len(sparts) == 9:
-                    inline_label_candidates = [
-                        cand.replace("_comma_", ",").replace("_pipe_", "|")
-                        for cand in sparts[8].split('|')
-                    ]
+                    if sparts[8] != '':
+                        inline_label_candidates = [
+                            cand.replace("_comma_", ",").replace("_pipe_", "|")
+                            for cand in sparts[8].split('|')
+                        ]
+                    else:
+                        inline_label_candidates = []
                 elif len(sparts) == 8:
                     inline_label_candidates = []
                 else:
@@ -94,31 +144,73 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
                     for f in gettop:
                         ft_cand = f.split("_")[-1] + " " + ft_cand
 
-                dialog.append(
-                    (
-                        contextt,
-                        label,
-                        prompt,
-                        sit,
-                        context_emb,
-                        cand_emb,
-                        ft_ctx,
-                        ft_cand,
-                        inline_label_candidates,
-                    )
-                )
+                # Check if either the text or label are marked as being political
+                is_political = '<POLITICAL>' in cparts[7] or '<POLITICAL>' in sparts[7]
+
+                dialogue_parts = [
+                    contextt,
+                    label,
+                    prompt,
+                    sit,
+                    context_emb,
+                    cand_emb,
+                    ft_ctx,
+                    ft_cand,
+                    inline_label_candidates,
+                    is_political,
+                ]
+
+                if int(sparts[1]) % 2 == 0:
+                    # experiencer is the "text" and responder is the "label"
+                    experiencer_text_dialogue.append(dialogue_parts)
+                else:
+                    # responder is the "text" and experiencer is the "label"
+                    responder_text_dialogue.append(dialogue_parts)
 
             else:
 
-                if len(dialog) > 0:
-                    self.data.append(dialog)
-                dialog = []
+                # We've finished the previous episode, so add it to the data
+                turn_idx = 1
+                self.data += self._select_dialogues_to_add(
+                    experiencer_text_dialogue, responder_text_dialogue
+                )
+                experiencer_text_dialogue = []
+                responder_text_dialogue = []
+
+        # Add in the final episode
+        self.data += self._select_dialogues_to_add(
+            experiencer_text_dialogue, responder_text_dialogue
+        )
+
+    def _select_dialogues_to_add(
+        self,
+        experiencer_text_dialogue: List[List[Any]],
+        responder_text_dialogue: List[List[Any]],
+    ) -> List[List[List[Any]]]:
+        """
+        Return conversation halves to add to self.data.
+
+        Given lists corresponding to the conversation turns from both sides of the
+        conversation, return only the list(s) that will be added to self.data.
+        Optionally filter by side of the conversation or by whether the conversation
+        contains any political language.
+        """
+        if self.remove_political_convos and any(
+            [turn[9] for turn in experiencer_text_dialogue + responder_text_dialogue]
+        ):
+            return []
+        else:
+            selected_dialogues = []
+            if len(experiencer_text_dialogue) > 0:
+                selected_dialogues.append(experiencer_text_dialogue)
+            if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
+                selected_dialogues.append(responder_text_dialogue)
+            return selected_dialogues
 
     def get(self, episode_idx, entry_idx=0):
         ep = self.data[episode_idx]
-        i = entry_idx * 2
-        ep_i = ep[i]
-        episode_done = i >= (len(ep) - 2)
+        ep_i = ep[entry_idx]
+        episode_done = entry_idx >= (len(ep) - 1)
         action = {
             'situation': ep_i[3],
             'emotion': ep_i[2],
@@ -139,68 +231,36 @@ class EmpatheticDialogueTeacher(FixedDialogTeacher):
         return shared
 
 
-class EmotionClassificationTeacher(EmpatheticDialogueTeacher):
+class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
     """
-    Class for detecting the emotion based on the utterance.
+    Class for detecting the emotion based on the situation.
     """
-
-    @staticmethod
-    def add_cmdline_args(parser):
-        parser = parser.add_argument_group('Emotion Classification Args')
-        parser.add_argument(
-            '--single-turn',
-            type='bool',
-            default=True,
-            help='Single turn classification task',
-        )
 
     def __init__(self, opt, shared=None):
+        opt['train_experiencer_only'] = True
+        # So that we only have one episode per train conversation
         super().__init__(opt, shared)
-        self.single_turn = opt['single_turn']
-        if not shared and self.single_turn:
-            self._make_single_turn()
+        if not shared:
+            self._get_situations()
 
     def num_episodes(self):
         return len(self.data)
 
     def num_examples(self):
-        if not self.single_turn:
-            return super().num_examples()
         return len(self.data)
 
-    def _make_single_turn(self):
+    def _get_situations(self):
         new_data = []
         for ep in self.data:
-            for ex in ep:
-                new_data.append(ex)
+            new_data.append(ep[0])
         self.data = new_data
 
     def get(self, episode_idx, entry_idx=0):
-        if not self.single_turn:
-            # get the specific episode from the example
-            ep = self.data[episode_idx]
-            i = entry_idx * 2
-            ex = ep[i]
-            episode_done = i >= (len(ep) - 2)
-        else:
-            # each episode is a singular example, we use both sides of the
-            # conversation
-            ex = self.data[episode_idx]
-            episode_done = True
+        ex = self.data[episode_idx]
+        episode_done = True
 
-        return {
-            'situation': ex[3],
-            'labels': [ex[2]],
-            'text': ex[0],
-            'next_utt': ex[1],
-            'prepend_ctx': ex[6],
-            'prepend_cand': ex[7],
-            'deepmoji_ctx': ex[4],
-            'deepmoji_cand': ex[5],
-            'episode_done': episode_done,
-            'label_candidates': ex[8],
-        }
+        return {'labels': [ex[2]], 'text': ex[3], 'episode_done': episode_done}
 
 
-class DefaultTeacher(EmpatheticDialogueTeacher):
+class DefaultTeacher(EmpatheticDialoguesTeacher):
     pass
