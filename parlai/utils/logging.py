@@ -46,6 +46,7 @@ COLORED_LEVEL_STYLES = {
     'critical': {'bold': True, 'color': 'red'},
 }
 
+
 # Some functions in this class assume that ':' will be the separator used in
 # the logging formats setup for this class
 class ParlaiLogger(logging.Logger):

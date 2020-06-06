@@ -7,7 +7,6 @@ import os
 import shutil
 import unittest
 
-import parlai.utils.testing as testing_utils
 from parlai.utils.conversations import Conversations
 from parlai.core.params import ParlaiParser
 import parlai.utils.logging as logging

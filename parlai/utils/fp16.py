@@ -12,7 +12,7 @@ from itertools import chain
 from typing import Optional
 
 import parlai.utils.logging as logging
-from parlai.utils.misc import warn_once
+from parlai.utils.misc import error_once
 
 try:
     import torch
