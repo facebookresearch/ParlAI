@@ -88,17 +88,17 @@ def interactive(opt, print_parser=None):
     # Show some example dialogs:
     while not world.epoch_done():
         world.parley()
-        if world_logger is not None: 
+        if world_logger is not None:
             world_logger.log(world)
         if opt.get('display_examples'):
             print("---")
             print(world.display())
-        if world_logger is not None: 
-            # dump world acts to file 
-            world_logger.reset()  # add final acts to logs 
-            base_outfile = opt['report_filename'].split('.')[0] 
-            outfile = base_outfile + f'_{task}_replies.jsonl' 
-            world_logger.write(outfile, world, file_format=opt['save_format']) 
+        if world_logger is not None:
+            # dump world acts to file
+            world_logger.reset()  # add final acts to logs
+            base_outfile = opt['report_filename'].split('.')[0]
+            outfile = base_outfile + f'_{task}_replies.jsonl'
+            world_logger.write(outfile, world, file_format=opt['save_format'])
 
 
 class Interactive(ParlaiScript):
