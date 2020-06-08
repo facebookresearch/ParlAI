@@ -1536,7 +1536,7 @@ class NucleusSampling(TreeSearch):
         sprobs, sinds = probs.sort(dim=-1, descending=True)
         # The subtraction here is to get the exclusive prefix sum,
         # to guarantee the first element is not masked
-        mask = (sprobs.cumsum(dim=-1) - sprobs[:, :]) >= self.p
+        mask = (sprobs.cumsum(dim=-1) - sprobs) >= self.p
         sprobs[mask] = 0
         sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
         choices = torch.multinomial(sprobs, 1)[:, 0]
