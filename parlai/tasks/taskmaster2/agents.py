@@ -33,12 +33,12 @@ SECTIONS = [
     'movies',
     'restaurant-search',
     'sports',
-    # 'music',
+    'music',
 ]
 
 ONTO_TOKEN = "Onto:"
 CALL_TOKEN = "Call:"
-RESP_TOKEN = "Res:"
+RESP_TOKEN = "Result:"
 
 
 class _Abstract(DialogTeacher):
