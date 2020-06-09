@@ -134,6 +134,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         super().__init__()
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
+        self.START_IDX = start_idx
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
@@ -164,6 +165,13 @@ class TorchGeneratorModel(nn.Module, ABC):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
+        if (ys[:, 0] == self.START_IDX).any():
+            raise AssertionError(
+                "The Beginning of Sentence token is automatically added to the "
+                "label in decode_forced, but you included it in the label. This means "
+                "your model will have a double BOS token, which is probably not what "
+                "you intended."
+            )
         inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
@@ -549,10 +557,23 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         If your model uses additional inputs beyond text_vec and label_vec,
         you will need to override it to add additional fields.
         """
+        text_vec = (
+            torch.arange(1, maxlen + 1)  # need it as long as specified
+            .clamp(max=3)  # cap at 3 for testing with tiny dictionaries
+            .unsqueeze(0)
+            .expand(batchsize, maxlen)
+            .cuda()
+        )
+        # label vec has two tokens to make it interesting, but we we can't use the
+        # start token, it's reserved.
+        label_vec = (
+            torch.LongTensor([self.END_IDX, self.NULL_IDX])
+            .unsqueeze(0)
+            .expand(batchsize, 2)
+            .cuda()
+        )
         return Batch(
-            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
-            label_vec=torch.ones(batchsize, 2).long().cuda(),
-            text_lengths=[maxlen] * batchsize,
+            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
@@ -564,7 +585,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 self._control_local_metrics(disabled=True)
-                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
                 self._control_local_metrics(enabled=True)
                 self._temporarily_disable_local_metrics = False
                 self.backward(loss)
