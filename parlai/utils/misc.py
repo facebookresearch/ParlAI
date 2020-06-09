@@ -686,8 +686,8 @@ class PaddingUtils(object):
 
             if random.random() > (1 - report_freq):
                 # log sometimes
-                logging.info('TEXT: ', observations[valid_inds[i]]['text'])
-                logging.info('PREDICTION: ', curr_pred, '\n~')
+                logging.info(f"TEXT: {observations[valid_inds[i]]['text']}")
+                logging.info(f"PREDICTION: {curr_pred}\n~")
         return
 
 
