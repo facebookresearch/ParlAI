@@ -1048,8 +1048,9 @@ class ParlaiParser(argparse.ArgumentParser):
                 continue
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
                 string_args.append(self._value2argstr(value))
@@ -1083,8 +1084,9 @@ class ParlaiParser(argparse.ArgumentParser):
             # because user has provided an unspecified option
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
                 string_args.append(self._value2argstr(value))

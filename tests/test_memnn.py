@@ -83,7 +83,7 @@ class TestMemnn(unittest.TestCase):
                 model='memnn',
                 model_file='zoo:unittest/memnn/model',
                 dict_file='zoo:unittest/memnn/model.dict',
-                batch_size=16,
+                batchsize=16,
             )
         )
 
