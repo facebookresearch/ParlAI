@@ -126,6 +126,15 @@ def self_chat(opt):
     return logger.get_logs()
 
 
+class SelfChat(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        self.parser.parse_args(print_args=False)
+        return self_chat(self.opt)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    self_chat(parser.parse_args(print_args=False))
+    SelfChat.main()
