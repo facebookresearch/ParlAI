@@ -17,7 +17,7 @@ RESOURCES = [
     DownloadableFile(
         'https://github.com/deepmind/narrativeqa/archive/master.zip',
         'narrative_qa.zip',
-        '9f6c484664394e0275944a4630a3de6294ba839162765d2839cc3d31a0b47a0e',
+        'd9fc92d5f53409f845ba44780e6689676d879c739589861b4805064513d1476b',
     )
 ]
 
