@@ -24,6 +24,7 @@ from parlai.core.worlds import create_task
 from parlai.scripts.script import ParlaiScript
 from parlai.utils.world_logging import WorldLogger
 from parlai.agents.local_human.local_human import LocalHumanAgent
+import parlai.utils.logging as logging
 
 import random
 
@@ -71,7 +72,7 @@ def interactive(opt, print_parser=None):
         elif print_parser is False:
             print_parser = None
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        logging.error('interactive should be passed opt not Parser')
         opt = opt.parse_args()
 
     # Create model and assign it to the specified task

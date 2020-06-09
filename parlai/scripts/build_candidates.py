@@ -18,6 +18,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
+import parlai.utils.logging as logging
 import random
 import tempfile
 
@@ -42,8 +43,8 @@ def build_cands(opt):
         num_examples = opt['num_examples']
     log_timer = TimeLogger()
 
-    print('[ starting to build candidates from task.. (ex:' + str(num_examples) + ')]')
-    print('[ saving output to {} ]'.format(outfile))
+    logging.info(f'Starting to build candidates from task.. (ex: {num_examples})')
+    logging.info(f'Saving output to {outfile}')
     cands = set()
     for _ in range(num_examples):
         world.parley()
@@ -59,9 +60,9 @@ def build_cands(opt):
                 cands.add(candidate)
         if log_timer.time() > opt['log_every_n_secs']:
             text, _log = log_timer.log(world.total_parleys, world.num_examples())
-            print(text)
+            logging.info(text)
         if world.epoch_done():
-            print('EPOCH DONE')
+            logging.info('epoch done')
             break
     fw = open(outfile, 'w')
     fw.write('\n'.join(cands))

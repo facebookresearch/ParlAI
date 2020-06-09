@@ -13,6 +13,7 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from typing import Dict, Any
+import parlai.utils.logging as logging
 
 import json
 
@@ -258,7 +259,7 @@ if __name__ == '__main__':
     opt = setup_interactive(SHARED)
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
-    print('http://{}:{}/'.format(opt['host'], opt['port']))
+    logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
         httpd.serve_forever()
