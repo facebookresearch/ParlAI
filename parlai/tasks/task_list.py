@@ -1229,4 +1229,15 @@ task_list = [
             "dataset. Used for the style-controlled generation project"
         ),
     },
+    {
+        "id": "GoogleSGD",
+        "display_name": "GoogleSGD",
+        "task": "google_sgd",
+        "tags": ["All", "Goal"],
+        "description": (
+            "The Schema-Guided Dialogue (SGD) dataset consists of over 20k "
+            "annotated multi-domain, task-oriented conversations between a "
+            "human and a virtual assistant."
+        ),
+    },
 ]
