@@ -21,6 +21,12 @@ from parlai.mturk.tasks.acute_eval.dump_task_to_acute_format import (
     setup_args as convert_task_setup_args,
 )
 from parlai.mturk.tasks.acute_eval.configs import CONFIG
+try:
+    from parlai_internal.projects.fast_acute.model_configs import CONFIG as internal_conf
+    CONFIG.update(internal_conf)
+except ImportError:
+    # No access to internal
+    pass
 
 from typing import Dict, Any, List, Tuple, Set
 from itertools import combinations
