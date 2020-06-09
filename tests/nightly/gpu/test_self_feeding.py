@@ -7,7 +7,6 @@
 import unittest
 from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
-import parlai.utils.logging as logging
 
 """
 Integration tests for the Self-Feeding chatbot project.
