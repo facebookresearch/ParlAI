@@ -293,7 +293,7 @@ def unzip(path, fname, deleteZip=True):
     :param bool deleteZip:
         If true, the archive will be deleted after extraction.
     """
-    logging.debug('unzipping {fname}')
+    logging.debug(f'unzipping {fname}')
     fullpath = os.path.join(path, fname)
     with zipfile.ZipFile(fullpath, "r") as zip_ref:
         zip_ref.extractall(path)
