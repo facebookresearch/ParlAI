@@ -324,6 +324,12 @@ class DictionaryAgent(Agent):
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
+    def is_prebuilt(self):
+        """
+        Indicates whether the dictionary is fixed, and does not require building.
+        """
+        return self.tokenizer in ['gpt2', 'bytelevelbpe']
+
     def add_token(self, word):
         """
         Add a single token to the dictionary.
