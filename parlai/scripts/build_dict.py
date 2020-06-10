@@ -145,5 +145,14 @@ def build_dict(opt, skip_if_built=False):
     return dictionary
 
 
+class BuildDict(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args(hidden=False)
+
+    def run(self):
+        return build_dict(self.opt)
+
+
 if __name__ == '__main__':
-    build_dict(setup_args(hidden=False).parse_args())
+    BuildDict.main()
