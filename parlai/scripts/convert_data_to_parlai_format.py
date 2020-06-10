@@ -105,6 +105,7 @@ class ConvertDataToParlaiFormat(ParlaiScript):
     def run(self):
         return dump_data(self.opt)
 
+
 if __name__ == '__main__':
     random.seed(42)
     ConvertDataToParlaiFormat.main()
