@@ -137,6 +137,8 @@ class _Abstract(DialogTeacher):
         if 'text' not in model_response or not labels or 'type' not in teacher_action:
             return
 
+        domain = teacher_action['domain']
+
         if teacher_action['type'] == 'apicall':
             # also count slot accuracy
             text = model_response['text']
@@ -153,9 +155,11 @@ class _Abstract(DialogTeacher):
                     continue
                 if teacher_action['slots'].get(slot) == guess:
                     self.metrics.add('slot_p', AverageMetric(1))
+                    self.metrics.add(f'{domain}_slot_p', AverageMetric(1))
                     correct += 1
                 else:
                     self.metrics.add('slot_p', AverageMetric(0))
+                    self.metrics.add(f'{domain}_slot_p', AverageMetric(0))
                     logging.debug(
                         f"Bad slot guess '{slot_guess}' != {teacher_action['slots']}"
                     )
@@ -163,9 +167,12 @@ class _Abstract(DialogTeacher):
                 self.metrics.add(
                     'slot_r', AverageMetric(correct, len(teacher_action['slots']))
                 )
+                self.metrics.add(
+                    f'{domain}_slot_r',
+                    AverageMetric(correct, len(teacher_action['slots'])),
+                )
 
         elif teacher_action['type'] == 'apiresp':
-            domain = teacher_action['domain']
             # keep track of statistics by domain
             f1_metric = F1Metric.compute(model_response['text'], labels)
             bleu_metric = BleuMetric.compute(model_response['text'], labels)
