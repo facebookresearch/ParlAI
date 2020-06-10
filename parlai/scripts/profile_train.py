@@ -18,6 +18,7 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
+from parlai.scripts.script import ParlaiScript
 from parlai.scripts.train_model import setup_args as train_args
 from parlai.scripts.train_model import TrainLoop
 import parlai.utils.logging as logging
@@ -101,5 +102,14 @@ def profile(opt):
             pdb.set_trace()
 
 
+class ProfileTrain(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return profile(self.opt)
+
+
 if __name__ == '__main__':
-    profile(setup_args().parse_args())
+    ProfileTrain.main()

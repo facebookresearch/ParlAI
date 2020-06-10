@@ -31,6 +31,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 
 
 # TODO: this may not be adequately updated after deleting pytorch data teacher
@@ -223,5 +224,14 @@ def extract_feats(opt):
     logging.info("Finished extracting images")
 
 
+class ExtractImgFeatures(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return extract_feats(self.opt)
+
+
 if __name__ == '__main__':
-    extract_feats(setup_args().parse_args())
+    ExtractImgFeatures.main()

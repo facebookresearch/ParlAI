@@ -174,9 +174,11 @@ def verify(opt, printargs=None, print_parser=None):
         pass
     return report(world, counts, log_time)
 
+
 def obtain_stats(opt, parser):
     report_text, report_log = verify(opt, print_parser=parser)
     print(report_text.replace('\\n', '\n'))
+
 
 class DataStats(ParlaiScript):
     @classmethod
@@ -185,6 +187,7 @@ class DataStats(ParlaiScript):
 
     def run(self):
         return obtain_stats(self.opt, self.parser)
+
 
 if __name__ == '__main__':
     DataStats.main()
