@@ -19,6 +19,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import msg_to_str, TimeLogger
 import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 import random
 import tempfile
 
@@ -64,41 +65,46 @@ def dump_data(opt):
     fw.close()
 
 
-class ConvertDataToParlaiFormat:
-    @classmethod
-    def main(cls, *args, **kwargs):
-        random.seed(42)
-        # Get command line arguments
-        parser = ParlaiParser()
-        parser.add_argument(
-            '-n',
-            '--num-examples',
-            default=-1,
-            type=int,
-            help='Total number of exs to convert, -1 to convert \
-                                    all examples',
-        )
-        parser.add_argument(
-            '-of',
-            '--outfile',
-            default=None,
-            type=str,
-            help='Output file where to save, by default will be \
-                                    created in /tmp',
-        )
-        parser.add_argument(
-            '-if',
-            '--ignore-fields',
-            default='id',
-            type=str,
-            help='Ignore these fields from the message (returned\
-                                    with .act() )',
-        )
-        parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-        parser.set_defaults(datatype='train:stream')
-        opt = parser.parse_args()
-        dump_data(opt)
+def setup_args():
+    # Get command line arguments
+    parser = ParlaiParser()
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert \
+                                all examples',
+    )
+    parser.add_argument(
+        '-of',
+        '--outfile',
+        default=None,
+        type=str,
+        help='Output file where to save, by default will be \
+                                created in /tmp',
+    )
+    parser.add_argument(
+        '-if',
+        '--ignore-fields',
+        default='id',
+        type=str,
+        help='Ignore these fields from the message (returned\
+                                with .act() )',
+    )
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.set_defaults(datatype='train:stream')
+    return parser
 
+
+class ConvertDataToParlaiFormat(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return dump_data(self.opt)
 
 if __name__ == '__main__':
+    random.seed(42)
     ConvertDataToParlaiFormat.main()
