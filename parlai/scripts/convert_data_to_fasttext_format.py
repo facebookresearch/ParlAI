@@ -21,6 +21,7 @@ from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 
 
 def dump_data(opt):
@@ -91,6 +92,7 @@ def setup_args(parser=None) -> ParlaiParser:
     parser.set_defaults(datatype='train:ordered')
     return parser
 
+
 class ConvertDataToFastText(ParlaiScript):
     @classmethod
     def setup_args(cls):
@@ -98,6 +100,7 @@ class ConvertDataToFastText(ParlaiScript):
 
     def run(self):
         return dump_data(self.opt)
+
 
 if __name__ == '__main__':
     random.seed(42)
