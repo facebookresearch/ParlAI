@@ -26,7 +26,7 @@ from parlai.core.message import Message
 
 import parlai.tasks.taskmaster2.build as build_
 
-SECTIONS = [
+DOMAINS = [
     'flights',
     'food-ordering',
     'hotels',
@@ -76,19 +76,11 @@ class _Abstract(DialogTeacher):
 
     def _normalize_annotation(self, anno):
         return anno
-        return (
-            anno
-            # .replace('.', ' ')
-            .replace('_', ' ')
-            .replace('1', ' 1')
-            .replace('2', ' 2')
-            .replace('3', ' 3')
-        )
 
     def _load_data(self, fold):
         # load up the ontology
         ontology = {}
-        for section in SECTIONS:
+        for section in DOMAINS:
             parts = []
             fn = os.path.join(self.dpath, section + '.onto.json')
             with open(fn, 'r') as f:
@@ -104,7 +96,7 @@ class _Abstract(DialogTeacher):
             ontology[section] = ' ; '.join(parts)
 
         chunks = []
-        for section in SECTIONS:
+        for section in DOMAINS:
             subset = pd.read_json(os.path.join(self.dpath, section + '.json'))
             subset['domain'] = section
             chunks.append(subset)
@@ -173,16 +165,25 @@ class _Abstract(DialogTeacher):
                 )
 
         elif teacher_action['type'] == 'apiresp':
-            # compute delexicalized string metrics
+            domain = teacher_action['domain']
+            # keep track of statistics by domain
+            f1_metric = F1Metric.compute(model_response['text'], labels)
+            bleu_metric = BleuMetric.compute(model_response['text'], labels)
+            self.metrics.add(f'{domain}_lex_f1', f1_metric)
+            self.metrics.add(f'{domain}_lex_bleu', bleu_metric)
+
             delex_text = model_response['text']
             delex_label = labels[0]
+            # compute delexicalized string metrics
             for slot, value in teacher_action['slots'].items():
                 delex_text = delex_text.replace(value, slot)
                 delex_label = delex_label.replace(value, slot)
-            self.metrics.add('delex_f1', F1Metric.compute(delex_text, (delex_label,)))
-            self.metrics.add(
-                'delex_bleu', BleuMetric.compute(delex_text, [delex_label])
-            )
+            f1_metric = F1Metric.compute(delex_text, (delex_label,))
+            self.metrics.add('delex_f1', f1_metric)
+            self.metrics.add(f'{domain}_delex_f1', f1_metric)
+            bleu_metric = BleuMetric.compute(delex_text, [delex_label])
+            self.metrics.add('delex_bleu', bleu_metric)
+            self.metrics.add(f'{domain}_delex_bleu', bleu_metric)
 
     def setup_data(self, fold):
         domains_cnt = Counter()
@@ -304,8 +305,8 @@ class FewShotTeacher(_Abstract):
     def add_cmdline_args(cls, argparser):
         argparser.add_argument(
             '--holdout',
-            default=SECTIONS[0],
-            choices=SECTIONS,
+            default=DOMAINS[0],
+            choices=DOMAINS,
             help='Domain which is held out from test',
         )
         argparser.add_argument(
