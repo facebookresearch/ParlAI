@@ -423,13 +423,17 @@ class TransresnetMultimodalAgent(TransresnetAgent):
         """
         Report per-dialogue round metrics.
         """
-        m = {k: {} for k in ["first_round", "second_round", "third_round+"]}
+        m = {}
         for k, v in self.metrics.items():
+            if "num_samples" not in v:
+                print(self.metrics)
+                print(k)
+                __import__("ipdb").set_trace()  # FIXME
             if v["num_samples"] > 0:
-                m[k]["hits@1/100"] = round_sigfigs(
+                m[f"{k}/hits@1/100"] = round_sigfigs(
                     v["hits@1/100"] / v["num_samples"], 4
                 )
-                m[k]["loss"] = round_sigfigs(v["loss"] / v["num_samples"], 4)
+                m[f"{k}/loss"] = round_sigfigs(v["loss"] / v["num_samples"], 4)
                 if "med_rank" in v:
-                    m[k]["med_rank"] = np.median(v["med_rank"])
+                    m[f"{k}/med_rank"] = np.median(v["med_rank"])
         return m

@@ -79,6 +79,18 @@ def is_primary_worker():
     return not is_distributed() or dist.get_rank() == 0
 
 
+def get_rank():
+    """
+    Returns the rank of the current worker.
+
+    Returns 0 if not in distributed.
+    """
+    if not is_distributed():
+        return 0
+    else:
+        return dist.get_rank()
+
+
 @contextlib.contextmanager
 def override_print(suppress=False, prefix=None):
     """

@@ -68,7 +68,8 @@ class ParlAILRScheduler(object):
         Check if we're warming up the learning rate.
         """
         return (
-            self.warmup_scheduler is not None
+            hasattr(self, 'warmup_scheduler')
+            and self.warmup_scheduler is not None
             and self._number_training_updates <= self.warmup_updates
         )
 
@@ -91,6 +92,7 @@ class ParlAILRScheduler(object):
         if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
         self._number_training_updates = states.get('number_training_updates', 0)
+        self.step(self._number_training_updates)
 
     def get_initial_number_training_updates(self):
         return self._number_training_updates
@@ -258,13 +260,18 @@ class ParlAILRScheduler(object):
         if (
             # there is already an old LR scheduler saved on disk
             states
+            # and there was a scheduler in the dump
+            and 'lr_scheduler_type' in states
             # and the old LR scheduler is different
             and states.get('lr_scheduler_type') != opt['lr_scheduler']
             # and we're not already using a fresh scheduler
             and not hard_reset
         ):
             # the LR scheduler changed, start things fresh
-            warn_once("LR scheduler is different from saved. Starting fresh!")
+            warn_once(
+                f"LR scheduler ({opt['lr_scheduler']}) is different from saved "
+                f"({states.get('lr_scheduler_type')}). Starting fresh!"
+            )
             hard_reset = True
 
         if not hard_reset:
@@ -390,11 +397,11 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
             warn_once(
                 '--lr-scheduler invsqrt requires a value for '
                 '--invsqrt-lr-decay-gamma. Defaulting to set gamma to '
-                '--warmup-updates value for backwards'
+                '--warmup-updates value for backwards compatibility.'
             )
             self.invsqrt_lr_decay_gamma = self.warmup_updates
 
-        self.decay_factor = np.sqrt(max(1, invsqrt_lr_decay_gamma))
+        self.decay_factor = np.sqrt(max(1, self.invsqrt_lr_decay_gamma))
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._invsqrt_lr)
 
     def _invsqrt_lr(self, step):

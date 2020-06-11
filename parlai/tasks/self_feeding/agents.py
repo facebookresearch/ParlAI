@@ -263,11 +263,6 @@ class SelfFeedingMTLTeacher(MultiTaskTeacher):
         # If this is reached, all tasks are done, so return sentinel
         return -1
 
-    # We get most metrics from the agents, not the teachers
-    def report(self):
-        m = {'exs': sum(t.report()['exs'] for t in self.tasks)}
-        return m
-
 
 class DialogTeacher(SelfFeedingTeacher):
     def __init__(self, opt, shared=None):

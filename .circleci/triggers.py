@@ -12,7 +12,6 @@ words into your commit messages.
 
 [gpu]: Run the nightly GPU tests
 [mturk]: Run the mturk tests
-[data]: Run the data tests
 [long] or [all]: run all above
 """
 
@@ -47,21 +46,8 @@ def detect_gpu():
     return commit_msg or test_changed
 
 
-def detect_data():
-    """
-    Check if we should run data tests.
-    """
-    commit_msg = '[data]' in testing_utils.git_commit_messages().lower()
-    test_changed = any(
-        testing_utils.is_new_task_filename(fn)
-        for fn in testing_utils.git_changed_files()
-    )
-    return commit_msg or test_changed
-
-
 MAPPING = {
     'nightly_gpu_tests': detect_gpu,
-    'datatests': detect_data,
     'unittests_osx': detect_osx,
 }
 

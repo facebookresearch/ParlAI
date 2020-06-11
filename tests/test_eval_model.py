@@ -3,8 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from examples.eval_model import setup_args
+from parlai.scripts.eval_model import setup_args
 
+import os
 import unittest
 import parlai.utils.testing as testing_utils
 
@@ -109,25 +110,24 @@ class TestEvalModel(unittest.TestCase):
         self.assertNotIn('bleu-4', valid)
         self.assertNotIn('bleu-4', test)
 
-    def test_multitasking_metrics(self):
+    def test_multitasking_metrics_macro(self):
         valid, test = testing_utils.eval_model(
             {
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
                 'num_epochs': 0.5,
-                'aggregate_micro': True,
+                'aggregate_micro': False,
             }
         )
 
-        task1_acc = valid['tasks']['integration_tests:candidate']['accuracy']
-        task2_acc = valid['tasks']['integration_tests:multiturnCandidate']['accuracy']
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
         total_acc = valid['accuracy']
         # task 2 is 4 times the size of task 1
-        self.assertAlmostEqual(
+        self.assertEqual(
             total_acc,
-            (task1_acc + 4 * task2_acc) / 5,
-            4,
+            (task1_acc.value() + task2_acc.value()) * 0.5,
             'Task accuracy is averaged incorrectly',
         )
 
@@ -140,15 +140,52 @@ class TestEvalModel(unittest.TestCase):
                 'aggregate_micro': False,
             }
         )
-        task1_acc = valid['tasks']['integration_tests:candidate']['accuracy']
-        task2_acc = valid['tasks']['integration_tests:multiturnCandidate']['accuracy']
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
         total_acc = valid['accuracy']
-        # metrics should be averaged equally across tasks
-        self.assertAlmostEqual(
+
+        # metrics are combined correctly
+        self.assertEqual(
             total_acc,
-            (task1_acc + task2_acc) / 2,
-            4,
+            (task1_acc.value() + task2_acc.value()) * 0.5,
             'Task accuracy is averaged incorrectly',
+        )
+
+    def test_multitasking_metrics_micro(self):
+        valid, test = testing_utils.eval_model(
+            {
+                'task': 'integration_tests:candidate,'
+                'integration_tests:multiturnCandidate',
+                'model': 'random_candidate',
+                'num_epochs': 0.5,
+                'aggregate_micro': True,
+            }
+        )
+
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
+        total_acc = valid['accuracy']
+        # task 2 is 4 times the size of task 1
+        self.assertEqual(
+            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly',
+        )
+
+        valid, test = testing_utils.eval_model(
+            {
+                'task': 'integration_tests:candidate,'
+                'integration_tests:multiturnCandidate',
+                'model': 'random_candidate',
+                'num_epochs': 0.5,
+                'aggregate_micro': True,
+            }
+        )
+        task1_acc = valid['integration_tests:candidate/accuracy']
+        task2_acc = valid['integration_tests:multiturnCandidate/accuracy']
+        total_acc = valid['accuracy']
+
+        # metrics are combined correctly
+        self.assertEqual(
+            total_acc, (task1_acc + task2_acc), 'Task accuracy is averaged incorrectly',
         )
 
     def test_train_evalmode(self):
@@ -173,6 +210,26 @@ class TestEvalModel(unittest.TestCase):
                     500,
                     f'train:evalmode failed with bs {bs} and teacher {teacher}',
                 )
+
+    def test_save_report(self):
+        """
+        Test that we can save report from eval model.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            save_report = os.path.join(tmpdir, 'report')
+            parser = setup_args()
+            parser.set_defaults(
+                task='integration_tests',
+                model='repeat_label',
+                datatype='valid',
+                num_examples=5,
+                display_examples=False,
+                save_world_logs=True,
+                report_filename=save_report,
+            )
+
+            opt = parser.parse_args([], print_args=False)
+            valid, test = testing_utils.eval_model(opt)
 
 
 if __name__ == '__main__':

@@ -6,12 +6,10 @@
 
 from parlai.core.opt import Opt
 from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
-from parlai.utils.torch import padded_tensor, argsort
+import parlai.utils.strings as string_utils
 from copy import deepcopy
 import time
 import unittest
-import torch
-import numpy as np
 
 
 class TestUtils(unittest.TestCase):
@@ -95,43 +93,41 @@ class TestUtils(unittest.TestCase):
         assert nt.b == 1
         assert nt.c == 1
 
-    def test_padded_tensor(self):
-        # list of lists
-        lol = [[1, 2], [3, 4, 5]]
-        output, lens = padded_tensor(lol)
-        assert np.all(output.numpy() == np.array([[1, 2, 0], [3, 4, 5]]))
-        assert lens == [2, 3]
-        output, _ = padded_tensor(lol, left_padded=True)
-        assert np.all(output.numpy() == np.array([[0, 1, 2], [3, 4, 5]]))
-        output, _ = padded_tensor(lol, pad_idx=99)
-        assert np.all(output.numpy() == np.array([[1, 2, 99], [3, 4, 5]]))
-
-    def test_argsort(self):
-        keys = [5, 4, 3, 2, 1]
-        items = ["five", "four", "three", "two", "one"]
-        items2 = ["e", "d", "c", "b", "a"]
-        torch_keys = torch.LongTensor(keys)
-        assert argsort(keys, items, items2) == [
-            list(reversed(items)),
-            list(reversed(items2)),
-        ]
-        assert argsort(keys, items, items2, descending=True) == [items, items2]
-
-        assert np.all(argsort(torch_keys, torch_keys)[0].numpy() == np.arange(1, 6))
-
     def test_opt(self):
         opt = {'x': 0}
         opt = Opt(opt)
         opt['x'] += 1
         opt['x'] = 10
-        history = opt.history['x']
-        self.assertEqual(history[0][1], 1, 'History not set properly')
-        self.assertEqual(history[1][1], 10, 'History not set properly')
+        self.assertEqual(opt.history[0][0], 'x', 'History not set properly')
+        self.assertEqual(opt.history[0][1], 1, 'History not set properly')
+        self.assertEqual(opt.history[1][0], 'x', 'History not set properly')
+        self.assertEqual(opt.history[1][1], 10, 'History not set properly')
 
         opt_copy = deepcopy(opt)
-        history = opt_copy.history['x']
-        self.assertEqual(history[0][1], 1, 'Deepcopy history not set properly')
-        self.assertEqual(history[1][1], 10, 'Deepcopy history not set properly')
+        self.assertEqual(opt_copy.history[0][1], 1, 'Deepcopy history not set properly')
+        self.assertEqual(
+            opt_copy.history[1][1], 10, 'Deepcopy history not set properly'
+        )
+
+
+class TestStrings(unittest.TestCase):
+    def test_normalize_reply_version1(self):
+        assert string_utils.normalize_reply("I ' ve a cat .") == "I've a cat."
+        assert (
+            string_utils.normalize_reply("do you think i can dance?")
+            == "Do you think I can dance?"
+        )
+        assert string_utils.normalize_reply("I ' m silly '") == "I'm silly'"
+
+    def test_normalize_reply_version2(self):
+        assert string_utils.normalize_reply("Add a period", 2) == "Add a period."
+        assert string_utils.normalize_reply("Add a period?", 2) == "Add a period?"
+        assert string_utils.normalize_reply("Add a period!", 2) == "Add a period!"
+        assert string_utils.normalize_reply('"Add a period"', 2) == '"add a period"'
+
+    def test_uppercase(self):
+        assert string_utils.uppercase("this is a test") == "This is a test"
+        assert string_utils.uppercase("tEst") == "TEst"
 
 
 if __name__ == '__main__':

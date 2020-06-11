@@ -10,7 +10,51 @@ These functions are largely for converting strings specified in opts (like for -
 to the appropriate module.
 """
 
+from typing import Callable, Dict, Type
 import importlib
+
+
+##############################################################
+### REGISTRY
+##############################################################
+# for user added agents needed in just one script, or similar
+
+AGENT_REGISTRY: Dict[str, Type] = {}
+TEACHER_REGISTRY: Dict[str, Type] = {}
+
+
+def register_agent(name: str) -> Callable[[Type], Type]:
+    """
+    Register an agent to be available in command line calls.
+
+    >>> @register_teacher("my_agent")
+    ... class MyAgent:
+    ...     pass
+    """
+
+    def _inner(cls_):
+        global AGENT_REGISTRY
+        AGENT_REGISTRY[name] = cls_
+        return cls_
+
+    return _inner
+
+
+def register_teacher(name: str) -> Callable[[Type], Type]:
+    """
+    Register a teacher to be available as a command line.
+
+    >>> @register_teacher("my_teacher")
+    ... class MyTeacher:
+    ...    pass
+    """
+
+    def _inner(cls_):
+        global TEACHER_REGISTRY
+        TEACHER_REGISTRY[name] = cls_
+        return cls_
+
+    return _inner
 
 
 ##############################################################
@@ -72,6 +116,10 @@ def load_agent_module(agent_path: str):
     :return:
         module of agent
     """
+    global AGENT_REGISTRY
+    if agent_path in AGENT_REGISTRY:
+        return AGENT_REGISTRY[agent_path]
+
     repo = 'parlai'
     if agent_path.startswith('internal:'):
         # To switch to local repo, useful for non-public projects
@@ -79,6 +127,9 @@ def load_agent_module(agent_path: str):
         # this will follow the same paths but look in parlai_internal instead
         repo = 'parlai_internal'
         agent_path = agent_path[9:]
+    elif agent_path.startswith('fb:'):
+        repo = 'parlai_fb'
+        agent_path = agent_path[3:]
 
     if agent_path.startswith('legacy:'):
         # e.g. -m legacy:seq2seq:0
@@ -153,6 +204,9 @@ def _get_task_path_and_repo(taskname: str):
         # (make a directory called 'parlai_internal' with your private agents)
         repo = 'parlai_internal'
         task = task[9:]
+    elif task.startswith('fb:'):
+        repo = 'parlai_fb'
+        task = task[3:]
 
     task_path_list = task.split(':')
 
@@ -178,8 +232,6 @@ def load_task_module(taskname: str):
 
     if '.' in task_path:
         module_name = task_path
-    elif task_path == 'pytorch_teacher':
-        module_name = 'parlai.core.pytorch_data_teacher'
     else:
         task = task_path.lower()
         module_name = "%s.tasks.%s.agents" % (repo, task)
@@ -214,6 +266,10 @@ def load_teacher_module(taskname: str):
     :return:
         teacher module
     """
+    global TEACHER_REGISTRY
+    if taskname in TEACHER_REGISTRY:
+        return TEACHER_REGISTRY[taskname]
+
     task_module = load_task_module(taskname)
     task_path_list, repo = _get_task_path_and_repo(taskname)
 
@@ -269,6 +325,7 @@ def _get_default_world(default_world=None, num_agents=None):
 def load_world_module(
     taskname: str,
     interactive_task: bool = False,
+    selfchat_task: bool = False,
     num_agents: int = None,  # a priori may not know the number of agents
     default_world=None,
 ):
@@ -307,9 +364,13 @@ def load_world_module(
         world_name = task_path_list[1] + "World"
         if interactive_task:
             world_name = "Interactive" + world_name
+        elif selfchat_task:
+            world_name = "SelfChat" + world_name
     else:
         if interactive_task:
             world_name = "InteractiveWorld"
+        elif selfchat_task:
+            world_name = "SelfChatWorld"
         else:
             world_name = "DefaultWorld"
     module_name = "%s.tasks.%s.worlds" % (repo, task)

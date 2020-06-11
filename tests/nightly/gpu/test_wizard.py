@@ -29,6 +29,7 @@ RETRIEVAL_OPTIONS = {
     'model_file': 'zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
     'datatype': 'test',
     'n_heads': 6,
+    'batchsize': 32,
     'ffn_size': 1200,
     'embeddings_scale': False,
     'delimiter': ' __SOC__ ',
@@ -50,19 +51,20 @@ class TestWizardModel(unittest.TestCase):
         parser.set_defaults(**END2END_OPTIONS)
         opt = parser.parse_args([], print_args=False)
         opt['num_examples'] = 1
+        opt['display_verbose'] = True
         display_data.display_data(opt)
 
     def test_end2end(self):
-        valid, _ = testing_utils.eval_model(END2END_OPTIONS)
-        self.assertEqual(valid['ppl'], 61.21)
-        self.assertEqual(valid['f1'], 0.1717)
-        self.assertGreaterEqual(valid['know_acc'], 0.2201)
+        valid, _ = testing_utils.eval_model(END2END_OPTIONS, skip_test=True)
+        self.assertAlmostEqual(valid['ppl'], 61.21, places=2)
+        self.assertAlmostEqual(valid['f1'], 0.1717, places=4)
+        self.assertAlmostEqual(valid['know_acc'], 0.2201, places=4)
 
     def test_retrieval(self):
-        _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS)
-        self.assertGreaterEqual(test['accuracy'], 0.86)
-        self.assertGreaterEqual(test['hits@5'], 0.98)
-        self.assertGreaterEqual(test['hits@10'], 0.99)
+        _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS, skip_valid=True)
+        self.assertAlmostEqual(test['accuracy'], 0.8631, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.9814, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.9917, places=4)
 
 
 class TestKnowledgeRetriever(unittest.TestCase):

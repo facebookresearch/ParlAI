@@ -10,8 +10,7 @@ Training script for ParlAI.
 The standard way to train a model. After training, also computes validation
 and test error.
 
-The user must provide a model (with ``--model``) and a task (with ``--task`` or
-``--pytorch-teacher-task``).
+The user must provide a model (with ``--model``) and a task (with ``--task``).
 
 Examples
 --------
@@ -29,15 +28,16 @@ import json
 import numpy as np
 import os
 import signal
+from typing import Dict
 
+from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_task_reports
+from parlai.core.metrics import aggregate_named_reports, aggregate_unnamed_reports
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
-from parlai.scripts.build_pytorch_data import get_pyt_dict_file
 from parlai.utils.distributed import (
     sync_object,
     is_primary_worker,
@@ -45,7 +45,9 @@ from parlai.utils.distributed import (
     is_distributed,
     num_workers,
 )
-from parlai.utils.misc import Timer, round_sigfigs, warn_once
+from parlai.utils.misc import Timer, nice_report
+from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -60,7 +62,6 @@ def setup_args(parser=None) -> ParlaiParser:
     """
     if parser is None:
         parser = ParlaiParser(True, True, 'Train a model')
-    parser.add_pytorch_datateacher_args()
     train = parser.add_argument_group('Training Loop Arguments')
     train.add_argument(
         '-et',
@@ -76,7 +77,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time', type=float, default=-1)
-    train.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    train.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
     train.add_argument(
         '-vtim',
         '--validation-every-n-secs',
@@ -174,14 +175,6 @@ def setup_args(parser=None) -> ParlaiParser:
         'currently defaults to False.',
     )
     train.add_argument(
-        '-micro',
-        '--aggregate-micro',
-        type='bool',
-        default=False,
-        help='If multitasking, average metrics over the number of examples. '
-        'If false, averages over the number of tasks.',
-    )
-    train.add_argument(
         '-mcs',
         '--metrics',
         type=str,
@@ -191,16 +184,18 @@ def setup_args(parser=None) -> ParlaiParser:
         'ppl,f1,accuracy,hits@1,rouge,bleu'
         'the rouge metrics will be computed as rouge-1, rouge-2 and rouge-l',
     )
+    train.add_argument(
+        '-micro',
+        '--aggregate-micro',
+        type='bool',
+        default=False,
+        help='Report micro-averaged metrics instead of macro averaged metrics.',
+        recommended=False,
+    )
     TensorboardLogger.add_cmdline_args(parser)
+
     parser = setup_dict_args(parser)
     return parser
-
-
-def _maybe_load_eval_worlds(agent, opt, datatype):
-    if not is_primary_worker():
-        # only need the validation on the main worker
-        return None
-    return load_eval_worlds(agent, opt, datatype)
 
 
 def load_eval_worlds(agent, opt, datatype):
@@ -219,15 +214,11 @@ def load_eval_worlds(agent, opt, datatype):
     :param string datatype:
         The new datatype.
     """
+
     if 'stream' in opt['datatype']:
         datatype += ':stream'
     opt = opt.copy()
     opt['datatype'] = datatype
-    if opt.get('pytorch_teacher_task'):
-        # never use pytorch teachers for evaluation
-        # but don't forget what we were normally using
-        opt['task'] = opt['pytorch_teacher_task']
-        del opt['pytorch_teacher_task']
     if opt.get('evaltask'):
         # if a different eval task is specified, use it.
         opt['task'] = opt['evaltask']
@@ -252,79 +243,6 @@ def load_eval_worlds(agent, opt, datatype):
     return worlds
 
 
-def _run_single_eval(opt, valid_world, max_exs):
-    # run evaluation on a single world
-    valid_world.reset()
-
-    cnt = 0
-    max_cnt = max_exs if max_exs > 0 else float('inf')
-    while not valid_world.epoch_done() and cnt < max_cnt:
-        valid_world.parley()
-        if cnt == 0 and opt['display_examples']:
-            print(valid_world.display() + '\n~~')
-            print(valid_world.report())
-        cnt += valid_world.opt['batchsize']
-
-    valid_report = valid_world.report()
-    valid_world.reset()  # make sure world doesn't remember valid data
-
-    return valid_report
-
-
-def run_eval(valid_worlds, opt, datatype, max_exs=-1, write_log=False):
-    """
-    Eval on validation/test data.
-
-    :param valid_world:
-        list of the pre-created validation worlds.
-    :param opt:
-        the options that specific the task, eval_task, etc
-    :param datatype:
-        the datatype to use, such as "valid" or "test"
-    :param bool write_log:
-        specifies to write metrics to file if the model_file is set
-    :param int max_exs:
-        limits the number of examples if max_exs > 0
-    """
-    if valid_worlds is None:
-        # This isn't the primary worker, so we can just skip evaluation
-        return None
-
-    print('[ running eval: ' + datatype + ' ]')
-    timer = Timer()
-    reports = []
-    for v_world in valid_worlds:
-        task_report = _run_single_eval(opt, v_world, max_exs / len(valid_worlds))
-        reports.append(task_report)
-
-    tasks = [world.getID() for world in valid_worlds]
-    report = aggregate_task_reports(
-        reports, tasks, micro=opt.get('aggregate_micro', True)
-    )
-
-    metrics = f'{datatype}:{report}'
-    print(f'[ eval completed in {timer.time():.2f}s ]')
-    print(metrics)
-
-    # write to file
-    if write_log and opt.get('model_file'):
-        # Write out metrics
-        f = open(opt['model_file'] + '.' + datatype, 'a+')
-        f.write(metrics + '\n')
-        f.close()
-
-    return report
-
-
-def _save_best_valid(model_file, best_valid):
-    """
-    Save the best validation score to disk.
-    """
-    f = open(model_file + '.best_valid', 'w')
-    f.write(str(best_valid))
-    f.close()
-
-
 class TrainLoop:
     """
     TrainLoop contains the core training loop logic.
@@ -335,10 +253,6 @@ class TrainLoop:
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
         # not produced. This line brings them back
         signal.signal(signal.SIGINT, signal.default_int_handler)
-
-        if isinstance(opt, ParlaiParser):
-            print('[ Deprecated Warning: TrainLoop should be passed opt not Parser ]')
-            opt = opt.parse_args()
         # Possibly load from checkpoint
         trainstats_suffix = '.trainstats'  # we might load training statistics from here
         if (
@@ -355,13 +269,11 @@ class TrainLoop:
                 'model_file or dict_file.'
             )
         if 'dict_file' in opt:
-            # If data built via pytorch data teacher, we need to load prebuilt dict
-            if opt.get('pytorch_teacher_task'):
-                opt['dict_file'] = get_pyt_dict_file(opt)
-            elif opt['dict_file'] is None and opt.get('model_file'):
+            if opt['dict_file'] is None and opt.get('model_file'):
                 opt['dict_file'] = opt['model_file'] + '.dict'
-            print("[ building dictionary first... ]")
+            logging.info("building dictionary first...")
             build_dict(opt, skip_if_built=True)
+
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
         self.world = create_task(opt, self.agent)
@@ -370,7 +282,7 @@ class TrainLoop:
         self.validate_time = Timer()
         self.log_time = Timer()
         self.save_time = Timer()
-        print('[ training... ]')
+
         self.parleys = 0
         self.max_num_epochs = (
             opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
@@ -407,11 +319,7 @@ class TrainLoop:
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.valid_reports = []
         self.best_valid = None
-        if opt.get('model_file') and os.path.isfile(opt['model_file'] + '.best_valid'):
-            with open(opt['model_file'] + ".best_valid", 'r') as f:
-                x = f.readline()
-                self.best_valid = float(x)
-                f.close()
+
         self.impatience = 0
         self.saved = False
         self.valid_worlds = None
@@ -426,10 +334,22 @@ class TrainLoop:
             # training stats, etc
             with open(opt['model_file'] + trainstats_suffix) as ts:
                 obj = json.load(ts)
+                self.parleys = obj.get('parleys', 0)
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
+                if 'best_valid' in obj:
+                    self.best_valid = obj['best_valid']
+                else:
+                    # old method
+                    if opt.get('model_file') and os.path.isfile(
+                        opt['model_file'] + '.best_valid'
+                    ):
+                        with open(opt['model_file'] + ".best_valid", 'r') as f:
+                            x = f.readline()
+                            self.best_valid = float(x)
+                            f.close()
 
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger = TensorboardLogger(opt)
@@ -441,6 +361,7 @@ class TrainLoop:
         if not is_primary_worker():
             # never do IO as a non-primary worker
             return
+
         if not self.opt.get('model_file'):
             # nothing to save to, just exit
             return
@@ -457,6 +378,9 @@ class TrainLoop:
             except KeyboardInterrupt:
                 pass
 
+    def _safe_report(self, report: Dict[str, Metric]):
+        return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
+
     def _save_train_stats(self, suffix=None):
         fn = self.opt['model_file']
         if suffix:
@@ -465,15 +389,18 @@ class TrainLoop:
         with open(fn, 'w') as f:
             json.dump(
                 {
+                    'parleys': self.parleys,
                     'train_time': self.train_time.time(),
                     'total_epochs': (
                         self._preempted_epochs
                         + num_workers() * self.world.get_total_epochs()
                     ),
                     'impatience': self.impatience,
-                    'valid_reports': self.valid_reports,
+                    'valid_reports': [self._safe_report(v) for v in self.valid_reports],
+                    'best_valid': self.best_valid,
                 },
                 f,
+                indent=4,
             )
 
     def validate(self):
@@ -487,25 +414,28 @@ class TrainLoop:
 
         if self.valid_worlds is None:
             # we need to load the world now
-            self.valid_worlds = _maybe_load_eval_worlds(self.agent, opt, 'valid')
+            self.valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
 
         # run evaluation on valid set
-        valid_report = sync_object(
-            run_eval(self.valid_worlds, opt, 'valid', opt['validation_max_exs'])
+        valid_report = self._run_eval(
+            self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
         v = valid_report.copy()
         v['train_time'] = self.train_time.time()
         self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
+            valid_report['total_exs'] = self._total_exs
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
+            # flush on a validation
+            self.tb_logger.flush()
         # saving
         if (
             opt.get('model_file')
             and opt.get('save_after_valid')
             and is_primary_worker()
         ):
-            print("[ saving model checkpoint: " + opt['model_file'] + ".checkpoint ]")
+            logging.info(f"saving model checkpoint: {opt['model_file']}.checkpoint")
             self.save_model('.checkpoint')
 
         # send valid metrics to agent if the agent wants them
@@ -513,26 +443,21 @@ class TrainLoop:
             self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
-        if 'tasks' in valid_report and '/' in opt['validation_metric']:
-            # if you are multitasking and want your validation metric to be
-            # a metric specific to a subtask, specify your validation metric
-            # as -vmt subtask/metric
-            subtask = opt['validation_metric'].split('/')[0]
-            validation_metric = opt['validation_metric'].split('/')[1]
-            new_valid = valid_report['tasks'][subtask][validation_metric]
-        else:
-            new_valid = valid_report[opt['validation_metric']]
+        new_valid = valid_report[opt['validation_metric']]
+
+        if isinstance(new_valid, Metric):
+            new_valid = new_valid.value()
 
         # check if this is the best validation so far
         if (
             self.best_valid is None
             or self.valid_optim * new_valid > self.valid_optim * self.best_valid
         ):
-            print(
-                '[ new best {}: {}{} ]'.format(
+            logging.success(
+                'new best {}: {:.4g}{}'.format(
                     opt['validation_metric'],
                     new_valid,
-                    ' (previous best was {})'.format(self.best_valid)
+                    ' (previous best was {:.4g})'.format(self.best_valid)
                     if self.best_valid is not None
                     else '',
                 )
@@ -540,23 +465,19 @@ class TrainLoop:
             self.best_valid = new_valid
             self.impatience = 0
             if opt.get('model_file') and is_primary_worker():
-                print("[ saving best valid model: " + opt['model_file'] + " ]")
+                logging.info(f"saving best valid model: {opt['model_file']}")
                 self.save_model()
-                print(
-                    "[ saving best valid metric: " + opt['model_file'] + ".best_valid ]"
-                )
-                _save_best_valid(opt['model_file'], self.best_valid)
                 self.saved = True
             if (
                 opt['validation_metric'] == 'accuracy'
                 and self.best_valid >= opt['validation_cutoff']
             ):
-                print('[ task solved! stopping. ]')
+                logging.info('task solved! stopping.')
                 return True
         else:
             self.impatience += 1
-            print(
-                '[ did not beat best {}: {} impatience: {} ]'.format(
+            logging.report(
+                'did not beat best {}: {} impatience: {}'.format(
                     opt['validation_metric'], round(self.best_valid, 4), self.impatience
                 )
             )
@@ -567,52 +488,76 @@ class TrainLoop:
             opt['validation_patience'] > 0
             and self.impatience >= opt['validation_patience']
         ):
-            print('[ ran out of patience! stopping training. ]')
+            logging.info('ran out of patience! stopping training.')
             return True
         return False
 
-    def _average_dicts(self, all_versions):
-        # instead of a list-of-dicts with like keys, make a dict-of-lists with
-        # keys to reduce
-        to_reduce = {}
-        for d in all_versions:
-            for k, v in d.items():
-                to_reduce.setdefault(k, []).append(v)
-        # now perform the reduction
-        finalized = {}
-        for k, values in to_reduce.items():
-            if k == 'exs' or k == 'total_skipped_batches':
-                # sum across workers
-                finalized[k] = np.sum(values)
-            elif isinstance(values[0], dict):
-                # do the same procedure recursively
-                finalized[k] = self._average_dicts(values)
-            elif isinstance(values[0], str):
-                finalized[k] = values[0]
-            else:
-                # all other cases, take the mean across the workers
-                finalized[k] = np.mean(values)
-                if all(isinstance(v, int) for v in values):
-                    finalized[k] = int(finalized[k])
-        return finalized
+    def _run_single_eval(self, opt, valid_world, max_exs):
 
-    def _cleanup_inaccurate_metrics(self, metrics):
+        # run evaluation on a single world
+        valid_world.reset()
+
+        cnt = 0
+        max_cnt = max_exs if max_exs > 0 else float('inf')
+        while not valid_world.epoch_done() and cnt < max_cnt:
+            valid_world.parley()
+            if cnt == 0 and opt['display_examples']:
+                print(valid_world.display() + '\n~~')
+                print(valid_world.report())
+            cnt = valid_world.report().get('exs') or 0
+
+        valid_report = valid_world.report()
+        valid_world.reset()  # make sure world doesn't remember valid data
+
+        return valid_report
+
+    def _run_eval(self, valid_worlds, opt, datatype, max_exs=-1, write_log=False):
         """
-        Remove inaccurate multiworld metrics.
+        Eval on validation/test data.
 
-        When training in multitask mode, agent-level metrics may be shown,
-        but are actually averages
-        not distinguished across the worlds. This method adds a warning.
-
-        Issue: https://github.com/facebookresearch/ParlAI/issues/1750
+        :param valid_world:
+            list of the pre-created validation worlds.
+        :param opt:
+            the options that specific the task, eval_task, etc
+        :param datatype:
+            the datatype to use, such as "valid" or "test"
+        :param bool write_log:
+            specifies to write metrics to file if the model_file is set
+        :param int max_exs:
+            limits the number of examples if max_exs > 0
         """
-        # TODO: fix the root issue
-        if 'tasks' in metrics:
-            metrics[
-                'warning'
-            ] = 'agent level metrics (e.g. loss, mean_loss, ppl) are averaged over tasks'
 
-    def _sync_training_metrics(self, metrics):
+        logging.info(f'running eval: {datatype}')
+        timer = Timer()
+        reports = []
+
+        max_exs_per_worker = max_exs / (len(valid_worlds) * num_workers())
+        for v_world in valid_worlds:
+            task_report = self._run_single_eval(opt, v_world, max_exs_per_worker)
+            reports.append(task_report)
+
+        tasks = [world.getID() for world in valid_worlds]
+        named_reports = dict(zip(tasks, reports))
+        report = aggregate_named_reports(
+            named_reports, micro_average=self.opt.get('aggregate_micro', False)
+        )
+        # get the results from all workers
+        report = self._sync_metrics(report)
+
+        metrics = f'{datatype}:\n{nice_report(report)}\n'
+        logging.info(f'eval completed in {timer.time():.2f}s')
+        logging.report(metrics)
+
+        # write to file
+        if write_log and opt.get('model_file') and is_primary_worker():
+            # Write out metrics
+            f = open(opt['model_file'] + '.' + datatype, 'a+')
+            f.write(f'{metrics}\n')
+            f.close()
+
+        return report
+
+    def _sync_metrics(self, metrics):
         """
         Sync training metrics across workers.
 
@@ -623,18 +568,7 @@ class TrainLoop:
             # nothing special needed
             return metrics
         all_versions = all_gather_list(metrics)
-        return self._average_dicts(all_versions)
-
-    def _nice_format(self, dictionary):
-        rounded = {}
-        for k, v in dictionary.items():
-            if isinstance(v, dict):
-                rounded[k] = self._nice_format(v)
-            elif isinstance(v, float):
-                rounded[k] = round_sigfigs(v, 4)
-            else:
-                rounded[k] = v
-        return rounded
+        return aggregate_unnamed_reports(all_versions)
 
     def _compute_eta(self, epochs_completed, time_elapsed):
         """
@@ -671,24 +605,23 @@ class TrainLoop:
         logs = []
         # get report
         train_report = self.world.report()
-        self._cleanup_inaccurate_metrics(train_report)
-        train_report = self._sync_training_metrics(train_report)
+        train_report = self._sync_metrics(train_report)
         self.world.reset_metrics()
 
         # time elapsed
-        logs.append('time:{}s'.format(np.floor(self.train_time.time())))
-        logs.append('total_exs:{}'.format(self._total_exs))
+        logs.append(f'time:{self.train_time.time():.0f}s')
+        logs.append(f'total_exs:{self._total_exs}')
 
         if self._total_epochs >= 0:
             # only if it's unbounded
-            logs.append('epochs:{}'.format(round(self._total_epochs, 2)))
+            logs.append(f'epochs:{self._total_epochs:.2f}')
 
         time_left = self._compute_eta(self._total_epochs, self.train_time.time())
         if time_left is not None:
-            logs.append('time_left:{}s'.format(max(0, np.ceil(time_left))))
+            logs.append(f'time_left:{max(0,time_left):.0f}s')
 
-        log = '[ {} ] {}'.format(' '.join(logs), self._nice_format(train_report))
-        print(log)
+        log = '{}\n{}\n'.format(' '.join(logs), nice_report(train_report))
+        logging.info(log)
         self.log_time.reset()
 
         if opt['tensorboard_log'] and is_primary_worker():
@@ -700,12 +633,7 @@ class TrainLoop:
 
         :return: tuple of reports (validation_report, test_report)
         """
-        if is_distributed():
-            warn_once(
-                "Distributed training outputs average-per-worker metrics during "
-                "training, and may be slightly distorted. Validation/test are "
-                "unadulterated."
-            )
+        logging.info('training...')
         opt = self.opt
         world = self.world
         with world:
@@ -723,13 +651,11 @@ class TrainLoop:
                 self.parleys += 1
 
                 # get the total training examples done, compute epochs
-                self._total_epochs = (
-                    self._preempted_epochs
-                    + num_workers() * self.world.get_total_epochs()
+                self._total_epochs = self._preempted_epochs + sum(
+                    all_gather_list(world.get_total_epochs())
                 )
-                exs_per_epoch = self.world.num_examples()
+                exs_per_epoch = world.num_examples()
                 self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
-
                 # and use the primary worker's timings for everything
                 train_time, log_time, validate_time = sync_object(
                     (
@@ -742,14 +668,12 @@ class TrainLoop:
                 # check counters and timers
                 if self._total_epochs >= self.max_num_epochs:
                     self.log()
-                    print(
-                        '[ num_epochs completed:{} time elapsed:{}s ]'.format(
-                            self.max_num_epochs, train_time
-                        )
+                    logging.info(
+                        f'num_epochs completed:{self.max_num_epochs} time elapsed:{train_time}s'
                     )
                     break
                 if train_time > self.max_train_time:
-                    print('[ max_train_time elapsed:{}s ]'.format(train_time))
+                    logging.info(f'max_train_time elapsed:{train_time}s')
                     break
                 if log_time > self.log_every_n_secs:
                     self.log()
@@ -759,42 +683,60 @@ class TrainLoop:
                     >= self.val_every_n_epochs
                 ):
                     try:
+                        # log before we validate
+                        self.log()
+                        world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
                         if is_distributed():
                             raise RuntimeError(
-                                "StopTrainException not "
-                                "supported for distributed mode"
+                                "StopTrainException not supported for distributed mode"
                             )
                         break
+                    # reset the log time because we logged right before validating
+                    self.log_time.reset()
                     self.last_valid_epoch = self._total_epochs
                     if stop_training:
                         break
+                    # make sure metrics are clean before we log
+                    world.reset_metrics()
                 if (
                     self.save_time.time() > self.save_every_n_secs
                     and opt.get('model_file')
                     and is_primary_worker()
                 ):
-                    print(
-                        "[ saving model checkpoint: {}.checkpoint".format(
-                            opt['model_file']
-                        )
+                    logging.info(
+                        f"saving model checkpoint: {opt['model_file']}.checkpoint"
                     )
+                    if opt['tensorboard_log'] and is_primary_worker():
+                        self.tb_logger.flush()
                     self.save_model('.checkpoint')
                     self.save_time.reset()
 
         if not self.saved and is_primary_worker():
             # save agent
             self.save_model()
-        elif opt.get('model_file'):
+
+        # there's a rare edge case where the we never saved the model, and we try
+        # # to reload it. This sync_object ensures all workers wait for the primary
+        # worker to finish flushing before loading from disk.
+        sync_object(None)
+        if opt.get('model_file'):
+            # clean up all our memory, just to make sure we don't OOM on GPU when
+            # reloading the world
+            del world
+            del self.world
+            del self.agent
+            del self.valid_worlds
             # reload best validation model
             self.agent = create_agent(opt)
 
-        valid_worlds = _maybe_load_eval_worlds(self.agent, opt, 'valid')
+        # perform final validation/testing
+        valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
-        v_report = run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
-        test_worlds = _maybe_load_eval_worlds(self.agent, opt, 'test')
-        t_report = run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
+        v_report = self._run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
+        test_worlds = load_eval_worlds(self.agent, opt, 'test')
+        t_report = self._run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
         if valid_worlds:
             for valid_world in valid_worlds:
                 valid_world.shutdown()
@@ -807,6 +749,14 @@ class TrainLoop:
         return v_report, t_report
 
 
+class TrainModel(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return TrainLoop(self.opt).train()
+
+
 if __name__ == '__main__':
-    TrainLoop(setup_args().parse_args()).train()
-    print()
+    TrainModel.main()

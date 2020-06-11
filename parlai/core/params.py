@@ -22,10 +22,11 @@ except ImportError:
     # silence the error
     GIT_AVAILABLE = False
 
+import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.opt import Opt, load_opt_file
+from parlai.core.opt import Opt
 
 from typing import List, Optional
 
@@ -39,7 +40,7 @@ def print_git_commit():
     try:
         git_ = git.Git(root)
         current_commit = git_.rev_parse('HEAD')
-        print(f'[ Current ParlAI commit: {current_commit} ]')
+        logging.info(f'Current ParlAI commit: {current_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -48,7 +49,7 @@ def print_git_commit():
     try:
         git_ = git.Git(internal_root)
         internal_commit = git_.rev_parse('HEAD')
-        print(f'[ Current internal commit: {internal_commit} ]')
+        logging.info(f'Current internal commit: {internal_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -122,9 +123,21 @@ def get_model_name(opt):
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
             if os.path.isfile(optfile):
-                new_opt = load_opt_file(optfile)
+                new_opt = Opt.load(optfile)
                 model = new_opt.get('model', None)
     return model
+
+
+def str2none(value: str):
+    """
+    If the value is a variant of `none`, return None.
+
+    Otherwise, return the original value.
+    """
+    if value.lower() == 'none':
+        return None
+    else:
+        return value
 
 
 def str2bool(value):
@@ -147,6 +160,13 @@ def str2floats(s):
     Look for single float or comma-separated floats.
     """
     return tuple(float(f) for f in s.split(','))
+
+
+def str2multitask_weights(s):
+    if s == 'stochastic':
+        return s
+    else:
+        return str2floats(s)
 
 
 def str2class(value):
@@ -259,8 +279,10 @@ class ParlaiParser(argparse.ArgumentParser):
             formatter_class=CustomHelpFormatter,
             add_help=add_parlai_args,
         )
+        self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
+        self.register('type', 'multitask_weights', str2multitask_weights)
         self.register('type', 'class', str2class)
         self.parlai_home = os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -595,6 +617,13 @@ class ParlaiParser(argparse.ArgumentParser):
             'defaults to {parlai_dir}/downloads',
         )
         parlai.add_argument(
+            '--loglevel',
+            default='info',
+            hidden=True,
+            choices=logging.get_all_levels(),
+            help='Logging level',
+        )
+        parlai.add_argument(
             '-dt',
             '--datatype',
             default='train',
@@ -647,10 +676,13 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-mtw',
             '--multitask-weights',
-            type='floats',
+            type='multitask_weights',
             default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
+            help=(
+                'list of floats, one for each task, specifying '
+                'the probability of drawing the task in multitask case. You may also '
+                'provide "stochastic" to simulate simple concatenation.'
+            ),
             hidden=True,
         )
         parlai.add_argument(
@@ -659,6 +691,14 @@ class ParlaiParser(argparse.ArgumentParser):
             default=1,
             type=int,
             help='batch size for minibatch training schemes',
+        )
+        parlai.add_argument(
+            '-dynb',
+            '--dynamic-batching',
+            default=None,
+            type='nonestr',
+            choices={None, 'full', 'batchsort'},
+            help='Use dynamic batching',
         )
         self.add_parlai_data_path(parlai)
 
@@ -678,107 +718,6 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden=True,
         )
         return grp
-
-    def add_pytorch_datateacher_args(self):
-        """
-        Add CLI args for PytorchDataTeacher.
-        """
-        pytorch = self.add_argument_group('PytorchData Arguments')
-        pytorch.add_argument(
-            '-pyt',
-            '--pytorch-teacher-task',
-            help='Use the PytorchDataTeacher for multiprocessed '
-            'data loading with a standard ParlAI task, e.g. "babi:Task1k"',
-        )
-        pytorch.add_argument(
-            '-pytd',
-            '--pytorch-teacher-dataset',
-            help='Use the PytorchDataTeacher for multiprocessed '
-            'data loading with a pytorch Dataset, e.g. "vqa_1" or "flickr30k"',
-        )
-        pytorch.add_argument(
-            '--pytorch-datapath',
-            type=str,
-            default=None,
-            help='datapath for pytorch data loader'
-            '(note: only specify if the data does not reside'
-            'in the normal ParlAI datapath)',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-nw',
-            '--numworkers',
-            type=int,
-            default=4,
-            help='how many workers the Pytorch dataloader should use',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--pytorch-preprocess',
-            type='bool',
-            default=False,
-            help='Whether the agent should preprocess the data while building'
-            'the pytorch data',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-pybsrt',
-            '--pytorch-teacher-batch-sort',
-            type='bool',
-            default=False,
-            help='Whether to construct batches of similarly sized episodes'
-            'when using the PytorchDataTeacher (either via specifying `-pyt`',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--batch-sort-cache-type',
-            type=str,
-            choices=['pop', 'index', 'none'],
-            default='pop',
-            help='how to build up the batch cache',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--batch-length-range',
-            type=int,
-            default=5,
-            help='degree of variation of size allowed in batch',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--shuffle',
-            type='bool',
-            default=False,
-            help='Whether to shuffle the data',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '--batch-sort-field',
-            type=str,
-            default='text',
-            help='What field to use when determining the length of an episode',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-pyclen',
-            '--pytorch-context-length',
-            default=-1,
-            type=int,
-            help='Number of past utterances to remember when building flattened '
-            'batches of data in multi-example episodes.'
-            '(For use with PytorchDataTeacher)',
-            hidden=True,
-        )
-        pytorch.add_argument(
-            '-pyincl',
-            '--pytorch-include-labels',
-            default=True,
-            type='bool',
-            help='Specifies whether or not to include labels as past utterances when '
-            'building flattened batches of data in multi-example episodes.'
-            '(For use with PytorchDataTeacher)',
-            hidden=True,
-        )
 
     def add_model_args(self):
         """
@@ -843,29 +782,16 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
 
-    def add_world_args(self, task, interactive_task):
+    def add_world_args(self, task, interactive_task, selfchat_task):
         """
         Add arguments specific to the world.
         """
-        world_class = load_world_module(task, interactive_task)
+        world_class = load_world_module(
+            task, interactive_task=interactive_task, selfchat_task=selfchat_task
+        )
         if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
             try:
                 world_class.add_cmdline_args(self)
-            except argparse.ArgumentError:
-                # already added
-                pass
-
-    def add_pyt_dataset_args(self, opt):
-        """
-        Add arguments specific to specified pytorch dataset.
-        """
-        from parlai.core.pytorch_data_teacher import get_dataset_classes
-
-        dataset_classes = get_dataset_classes(opt)
-        for dataset, _, _ in dataset_classes:
-            try:
-                if hasattr(dataset, 'add_cmdline_args'):
-                    dataset.add_cmdline_args(self)
             except argparse.ArgumentError:
                 # already added
                 pass
@@ -917,16 +843,6 @@ class ParlaiParser(argparse.ArgumentParser):
         if evaltask is not None:
             self.add_task_args(evaltask)
 
-        # find pytorch teacher task if specified, add its specific arguments
-        pytorch_teacher_task = parsed.get('pytorch_teacher_task', None)
-        if pytorch_teacher_task is not None:
-            self.add_task_args(pytorch_teacher_task)
-
-        # find pytorch dataset if specified, add its specific arguments
-        pytorch_teacher_dataset = parsed.get('pytorch_teacher_dataset', None)
-        if pytorch_teacher_dataset is not None:
-            self.add_pyt_dataset_args(parsed)
-
         # find which model specified if any, and add its specific arguments
         model = get_model_name(parsed)
         if model is not None:
@@ -935,7 +851,9 @@ class ParlaiParser(argparse.ArgumentParser):
         # add world args, if we know a priori which world is being used
         if task is not None:
             self.add_world_args(
-                task, parsed.get('interactive_task', False),
+                task,
+                parsed.get('interactive_task', False),
+                parsed.get('selfchat_task', False),
             )
 
         # reset parser-level defaults over any model-level defaults
@@ -968,7 +886,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -976,7 +894,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
@@ -1054,24 +972,17 @@ class ParlaiParser(argparse.ArgumentParser):
             self._load_opts(self.opt)
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
-        if self.opt.get('model_file') is not None:
-            self.opt['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['model_file']
-            )
-        if self.opt['override'].get('model_file') is not None:
-            # also check override
-            self.opt['override']['model_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['model_file']
-            )
-        if self.opt.get('dict_file') is not None:
-            self.opt['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['dict_file']
-            )
-        if self.opt['override'].get('dict_file') is not None:
-            # also check override
-            self.opt['override']['dict_file'] = modelzoo_path(
-                self.opt.get('datapath'), self.opt['override']['dict_file']
-            )
+        options_to_change = {'model_file', 'dict_file', 'bpe_vocab', 'bpe_merge'}
+        for each_key in options_to_change:
+            if self.opt.get(each_key) is not None:
+                self.opt[each_key] = modelzoo_path(
+                    self.opt.get('datapath'), self.opt[each_key]
+                )
+            if self.opt['override'].get(each_key) is not None:
+                # also check override
+                self.opt['override'][each_key] = modelzoo_path(
+                    self.opt.get('datapath'), self.opt['override'][each_key]
+                )
 
         # add start time of an experiment
         self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
@@ -1106,7 +1017,105 @@ class ParlaiParser(argparse.ArgumentParser):
                 print_git_commit()
             print_announcements(self.opt)
 
+        logging.set_log_level(self.opt.get('loglevel', 'info').upper())
+
         return self.opt
+
+    def _kwargs_to_str_args(self, **kwargs):
+        """
+        Attempt to map from python-code kwargs into CLI args.
+
+        e.g. model_file -> --model-file.
+
+        Works with short options too, like t="convai2".
+        """
+
+        # we have to do this large block of repetitive code twice, the first
+        # round is basically just to become aware of anything that would have
+        # been added by add_extra_args
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            if kwname not in kwname_to_action:
+                # best guess, we need to delay it. hopefully this gets added
+                # during add_kw_Args
+                continue
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        # become aware of any extra args that might be specified if the user
+        # provides something like model="transformer/generator".
+        self.add_extra_args(string_args)
+
+        # do it again, this time knowing about ALL args.
+        kwname_to_action = {}
+        for action in self._actions:
+            if action.dest == 'help':
+                # no help allowed
+                continue
+            for option_string in action.option_strings:
+                kwname = option_string.lstrip('-').replace('-', '_')
+                assert (kwname not in kwname_to_action) or (
+                    kwname_to_action[kwname] is action
+                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                kwname_to_action[kwname] = action
+
+        string_args = []
+        for kwname, value in kwargs.items():
+            # note we don't have the if kwname not in kwname_to_action here.
+            # it MUST appear, or else we legitimately should be throwing a KeyError
+            # because user has provided an unspecified option
+            action = kwname_to_action[kwname]
+            last_option_string = action.option_strings[-1]
+            if isinstance(action, argparse._StoreTrueAction) and bool(value):
+                string_args.append(last_option_string)
+            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                string_args.append(last_option_string)
+                string_args.append(str(value))
+            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                string_args.append(last_option_string)
+                string_args.extend([str(v) for v in value])
+            else:
+                raise TypeError(f"Don't know what to do with {action}")
+
+        return string_args
+
+    def parse_kwargs(self, **kwargs):
+        """
+        Parse kwargs, with type checking etc.
+        """
+        # hack: capture any error messages without raising a SystemExit
+        def _captured_error(msg):
+            raise ValueError(msg)
+
+        old_error = self.error
+        self.error = _captured_error
+        try:
+            string_args = self._kwargs_to_str_args(**kwargs)
+            return self.parse_args(args=string_args, print_args=False)
+        finally:
+            self.error = old_error
 
     def print_args(self):
         """
@@ -1167,6 +1176,9 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden = kwargs.pop('hidden')
             if hidden:
                 kwargs['help'] = argparse.SUPPRESS
+        if 'type' in kwargs and kwargs['type'] is bool:
+            # common error, we really want simple form
+            kwargs['type'] = 'bool'
         return kwargs, action_attr
 
     def add_argument(self, *args, **kwargs):

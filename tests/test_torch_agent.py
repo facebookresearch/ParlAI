@@ -19,7 +19,7 @@ from collections import deque
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import Output
-    from parlai.agents.test_agents.dummy_torch_agent import MockTorchAgent, MockDict
+    from parlai.agents.test_agents.test_agents import MockTorchAgent, MockDict
     import torch
 except ImportError:
     SKIP_TESTS = True
@@ -741,6 +741,14 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot. Groot! I am Groot.')
 
+        # test global_end_token, this will append a selected token to the end
+        # of history block
+        agent = get_agent(history_add_global_end_token='end')
+        agent.history.reset()
+        agent.history.update_history(obs)
+        vec = agent.history.get_history_vec()
+        self.assertEqual(vec, deque([1, 2, 3, MockDict.END_IDX]))
+
     def test_observe(self):
         """
         Make sure agent stores and returns observation.
@@ -983,7 +991,7 @@ class TestTorchAgent(unittest.TestCase):
             return {
                 'task': 'integration_tests',
                 'init_model': init_mf,
-                'model': 'parlai.agents.test_agents.dummy_torch_agent:MockTorchAgent',
+                'model': 'parlai.agents.test_agents.test_agents:MockTorchAgent',
                 'model_file': mf,
                 'num_epochs': 3,
                 'validation_every_n_epochs': 1,

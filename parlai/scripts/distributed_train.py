@@ -36,6 +36,7 @@ import socket
 import subprocess
 
 import parlai.scripts.train_model as single_train
+import parlai.utils.logging as logging
 from parlai.scripts.multiprocessing_train import multiprocess_train
 
 
@@ -61,12 +62,17 @@ def main():
         )
         main_host = hostnames.split()[0].decode('utf-8')
         distributed_rank = int(os.environ['SLURM_PROCID'])
-        device_id = int(os.environ['SLURM_LOCALID'])
+        if opt.get('model_parallel'):
+            # -1 signals to multiprocessing_train to use all GPUs available.
+            # (A value of None signals to multiprocessing_train to use the GPU
+            # corresponding to the rank.
+            device_id = -1
+        else:
+            device_id = int(os.environ['SLURM_LOCALID'])
         port = opt['port']
-        print(
-            'Initializing host {} as rank {}, main is {}'.format(
-                socket.gethostname(), distributed_rank, main_host
-            )
+        logging.info(
+            f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
+            f'main is {main_host}'
         )
         # Begin distributed training
         multiprocess_train(distributed_rank, opt, port, 0, device_id, main_host)

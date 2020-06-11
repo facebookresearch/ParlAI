@@ -76,9 +76,10 @@ def add_common_cmdline_args(argparser):
     )
     argparser.add_argument(
         '--variant',
-        choices={'aiayn', 'xlm'},
+        choices={'aiayn', 'xlm', 'prelayernorm'},
         default='aiayn',
-        help='Chooses locations of layer norms, etc.',
+        help='Chooses locations of layer norms, etc. prelayernorm '
+        'is used to match some fairseq models',
         recommended='xlm',
     )
     argparser.add_argument(
@@ -101,6 +102,26 @@ def add_common_cmdline_args(argparser):
         default=True,
         help='Share word embeddings table for candidate and context'
         'in the memory network',
+    )
+    argparser.add_argument(
+        '-nel',
+        '--n-encoder-layers',
+        type=int,
+        default=-1,
+        help='This will overide the n-layers for asymmetrical transformers',
+    )
+    argparser.add_argument(
+        '-ndl',
+        '--n-decoder-layers',
+        type=int,
+        default=-1,
+        help='This will overide the n-layers for asymmetrical transformers',
+    )
+    argparser.add_argument(
+        '--model-parallel',
+        type='bool',
+        default=False,
+        help='Shard the layers across multiple GPUs.',
     )
 
 
@@ -188,16 +209,6 @@ class TransformerRankerAgent(TorchRankerAgent):
 
         return agent
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel:
-            from parlai.utils.distributed import is_distributed
-
-            if is_distributed():
-                raise ValueError('Cannot combine --data-parallel and distributed mode')
-            self.model = torch.nn.DataParallel(self.model)
-
     def _score(self, output, cands):
         if cands.dim() == 2:
             return torch.matmul(output, cands.t())
@@ -216,12 +227,6 @@ class TransformerRankerAgent(TorchRankerAgent):
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
         return model
-
-    def build_criterion(self):
-        """
-        Build and return criterion, favoring average instead of sum for the loss.
-        """
-        return torch.nn.CrossEntropyLoss(reduction='mean')
 
     def batchify(self, obs_batch, sort=False):
         """
@@ -338,7 +343,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
             help='load model from base transformer ranking model '
             '(used for pretraining)',
         )
-        parser.set_params(reduction_type='first')
+        parser.set_defaults(reduction_type='first')
 
     def build_model(self):
         num_classes = len(self.class_list)
@@ -365,6 +370,13 @@ class TransformerClassifierAgent(TorchClassifierAgent):
                 'text_vec', self._add_start_end_tokens(obs['text_vec'], True, True)
             )
             obs['added_start_end'] = True
+
+        # check truncation after adding start end tokens
+        if obs.get('text_vec') is not None:
+            truncated_vec = self._check_truncate(
+                obs['text_vec'], self.text_truncate, True
+            )
+            obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
 

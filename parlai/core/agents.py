@@ -42,10 +42,12 @@ This module also provides a utility method:
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
-from parlai.core.opt import Opt, load_opt_file
+from parlai.core.loader import register_agent  # noqa: F401
+from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 import copy
 import os
+import parlai.utils.logging as logging
 
 
 class Agent(object):
@@ -72,13 +74,11 @@ class Agent(object):
         Return an observation/action dict based upon given observation.
         """
         if hasattr(self, 'observation') and self.observation is not None:
-            print('agent received observation:')
-            print(self.observation)
+            logging.info(f'agent received observation:\n{self.observation}')
 
         t = {}
         t['text'] = 'hello, teacher!'
-        print('agent sending message:')
-        print(t)
+        logging.info(f'agent sending message:\n{t}')
         return t
 
     def getID(self):
@@ -201,7 +201,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     optfile = opt['init_model'] + '.opt'
     if not os.path.isfile(optfile):
         return
-    init_model_opt = load_opt_file(optfile)
+    init_model_opt = Opt.load(optfile)
 
     extra_opts = {}
     different_opts = {}
@@ -238,9 +238,8 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     # print warnings
     extra_strs = ['{}: {}'.format(k, v) for k, v in extra_opts.items()]
     if extra_strs:
-        print('\n' + '*' * 75)
-        print(
-            '[ WARNING ] : your model is being loaded with opts that do not '
+        logging.warn(
+            'your model is being loaded with opts that do not '
             'exist in the model you are initializing the weights with: '
             '{}'.format(','.join(extra_strs))
         )
@@ -249,14 +248,29 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
         '--{} {}'.format(k, v).replace('_', '-') for k, v in different_opts.items()
     ]
     if different_strs:
-        print('\n' + '*' * 75)
-        print(
-            '[ WARNING ] : your model is being loaded with opts that differ '
+        logging.warn(
+            'your model is being loaded with opts that differ '
             'from the model you are initializing the weights with. Add the '
             'following args to your run command to change this: \n'
-            '\n{}'.format(' '.join(different_strs))
+            '{}'.format(' '.join(different_strs))
         )
-        print('*' * 75)
+
+
+def create_agent_from_model_file(model_file, opt_overides=None):
+    """
+    Load agent from model file if it exists.
+
+    :param opt_overrides:
+        An optional dict of option overrides can also be provided.
+    :return:
+        The agent
+    """
+    opt = {}
+    opt['model_file'] = model_file
+    if opt_overides is None:
+        opt_overides = {}
+    opt['override'] = opt_overides
+    return create_agent_from_opt_file(opt)
 
 
 def create_agent_from_opt_file(opt: Opt):
@@ -273,7 +287,7 @@ def create_agent_from_opt_file(opt: Opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
     if os.path.isfile(optfile):
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         # TODO we need a better way to say these options are never copied...
         if 'datapath' in new_opt:
             # never use the datapath from an opt dump
@@ -284,10 +298,9 @@ def create_agent_from_opt_file(opt: Opt):
         # only override opts specified in 'override' dict
         if opt.get('override'):
             for k, v in opt['override'].items():
-                if str(v) != str(new_opt.get(k, None)):
-                    print(
-                        "[ warning: overriding opt['{}'] to {} ("
-                        "previously: {} )]".format(k, v, new_opt.get(k, None))
+                if k in new_opt and str(v) != str(new_opt.get(k)):
+                    logging.warn(
+                        f"overriding opt['{k}'] to {v} (previously: {new_opt.get(k)})"
                     )
                 new_opt[k] = v
 
@@ -389,7 +402,7 @@ def create_agent(opt: Opt, requireModelExists=False):
         if model is not None:
             return model
         else:
-            print(f"[ no model with opt yet at: {opt['model_file']}(.opt) ]")
+            logging.info(f"No model with opt yet at: {opt['model_file']}(.opt)")
 
     if opt.get('model'):
         model_class = load_agent_module(opt['model'])
@@ -399,7 +412,7 @@ def create_agent(opt: Opt, requireModelExists=False):
         model = model_class(opt)
         if requireModelExists and hasattr(model, 'load') and not opt.get('model_file'):
             # double check that we didn't forget to set model_file on loadable model
-            print('WARNING: model_file unset but model has a `load` function.')
+            logging.warn('model_file unset but model has a `load` function.')
         return model
     else:
         raise RuntimeError('Need to set `model` argument to use create_agent.')

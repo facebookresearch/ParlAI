@@ -177,7 +177,7 @@ class InitTestMTurkManager(unittest.TestCase):
 
         self.assertEqual(manager.minimum_messages, opt.get('min_messages', 0))
         self.assertEqual(
-            manager.auto_approve_delay, opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
+            manager.auto_approve_delay, opt.get('auto_approve_delay', 5 * 24 * 3600)
         )
         self.assertEqual(manager.has_time_limit, opt.get('max_time', 0) > 0)
         self.assertIsInstance(manager.worker_manager, WorkerManager)

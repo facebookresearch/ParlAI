@@ -11,6 +11,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.repeat_query.repeat_query import RepeatQueryAgent
+import parlai.utils.logging as logging
 
 import random
 import cProfile
@@ -54,7 +55,7 @@ def profile_interactive(opt, print_parser=None):
         elif print_parser is False:
             print_parser = None
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        logging.error('interactive should be passed opt not Parser')
         opt = opt.parse_args()
 
     # Create model and assign it to the specified task
@@ -81,7 +82,7 @@ def profile_interactive(opt, print_parser=None):
         if cnt >= opt.get('num_examples', 100):
             break
         if world.epoch_done():
-            print("EPOCH DONE")
+            logging.info("epoch done")
             break
 
     pr.disable()

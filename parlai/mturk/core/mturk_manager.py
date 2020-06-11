@@ -153,7 +153,7 @@ class MTurkManager:
 
         self.required_hits = math.ceil(base_required_hits * self.hit_mult)
         self.minimum_messages = opt.get('min_messages', 0)
-        self.auto_approve_delay = opt.get('auto_approve_delay', 4 * 7 * 24 * 3600)
+        self.auto_approve_delay = opt.get('auto_approve_delay', 5 * 24 * 3600)
         self.has_time_limit = opt.get('max_time', 0) > 0
         self.socket_manager = None
         self.worker_manager = WorkerManager(self, opt)

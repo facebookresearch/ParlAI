@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.agents import Agent
 from parlai.core.worlds import create_task, DialogPartnerWorld, validate
+from parlai.core.message import Message
 
 
 def load_openers(opt) -> Optional[List[str]]:
@@ -47,29 +48,29 @@ def load_openers(opt) -> Optional[List[str]]:
     return list(openers)
 
 
-class SelfChatBaseWorld(DialogPartnerWorld):
+class SelfChatWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
-        self.init_contexts()
+        self.init_contexts(shared=shared)
         self.init_openers()
         self.max_turn_cnt = self.opt.get('selfchat_max_turns', 10)
         self.turn_cnt = 0
         self.episode_cnt = 0
         self._openers = None
 
-    def init_contexts(self) -> None:
+    def init_contexts(self, shared=None) -> None:
         """
         Override to load or instantiate contexts to be used to seed the self chat.
         """
         pass
 
-    def get_contexts(self, episode_num: int) -> List[str]:
+    def get_contexts(self):
         """
         Override to return a pair of contexts with which to seed the self chat episode.
 
         This function will be called before the first turn of every episode.
         """
-        return ['__SILENCE__', '']
+        return ['Hi!', '']
 
     def init_openers(self) -> None:
         """
@@ -92,8 +93,7 @@ class SelfChatBaseWorld(DialogPartnerWorld):
         return None
 
     def display(self):
-        s = ''
-        s += super().display()
+        s = super().display()
         if self.turn_cnt == 0:
             s += '\n==============================\n'
         return s
@@ -124,29 +124,22 @@ class SelfChatBaseWorld(DialogPartnerWorld):
 
         if self.turn_cnt == 0:
             self.acts = [None, None]
-            # choose speaking order:
-            if random.choice([0, 1]):
-                self.agents_ordered = [self.agents[0], self.agents[1]]
-            else:
-                self.agents_ordered = [self.agents[1], self.agents[0]]
             # get the beginning of the conversation, which can include contexts
             # and/or any number of starting messages
-            self.contexts = self.get_contexts(self.episode_cnt)
+            self.contexts = self.get_contexts()
             self.seed_utterances = self._get_seed_utt_acts(
-                self.episode_cnt, self.agents_ordered
+                self.episode_cnt, self.agents
             )
 
         if self.contexts:
             assert len(self.contexts) == 2
             # initial context
             for i in range(0, 2):
-                context = {
-                    'text': self.contexts[i],
-                    'episode_done': False,
-                    'id': 'context',
-                }
-                self.acts[1 - i] = context
-                self.agents_ordered[i].observe(validate(context))
+                context = Message(
+                    {'text': self.contexts[i], 'episode_done': False, 'id': 'context'}
+                )
+                self.acts[i] = context
+                self.agents[i].observe(validate(context))
             # clear contexts so they are only added once per episode
             self.contexts = None
         elif self.seed_utterances:
@@ -158,15 +151,15 @@ class SelfChatBaseWorld(DialogPartnerWorld):
                 # if we have a seed utterance, add it to the conversation
                 if len(utts) > i:
                     self.acts[i] = utts[i]
-                    if hasattr(self.agents_ordered[i], 'self_observe'):
-                        self.agents_ordered[i].self_observe(self.acts[i])
+                    if hasattr(self.agents[i], 'self_observe'):
+                        self.agents[i].self_observe(self.acts[i])
                 else:
-                    self.acts[i] = self.agents_ordered[i].act()
-                self.agents_ordered[1 - i].observe(validate(self.acts[i]))
+                    self.acts[i] = self.agents[i].act()
+                self.agents[1 - i].observe(validate(self.acts[i]))
         else:
             # do regular loop
             acts = self.acts
-            agents = self.agents_ordered
+            agents = self.agents
             acts[0] = agents[0].act()
             agents[1].observe(validate(acts[0]))
             acts[1] = agents[1].act()
@@ -174,7 +167,3 @@ class SelfChatBaseWorld(DialogPartnerWorld):
 
         self.update_counters()
         self.turn_cnt += 1
-
-
-class InteractiveWorld(SelfChatBaseWorld):
-    pass

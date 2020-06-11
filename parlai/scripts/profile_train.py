@@ -18,9 +18,9 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
-from .train_model import setup_args as train_args
-from .train_model import TrainLoop
-
+from parlai.scripts.train_model import setup_args as train_args
+from parlai.scripts.train_model import TrainLoop
+import parlai.utils.logging as logging
 import cProfile
 import io
 import pdb
@@ -29,13 +29,12 @@ import pstats
 try:
     import torch
 except ImportError:
-    print('Torch not found--only cProfile allowed with this tool.')
+    logging.error('Torch not found -- only cProfile allowed with this tool.')
 
 
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'cProfile a training run')
-    parser.add_pytorch_datateacher_args()
     parser = train_args(parser)
     profile = parser.add_argument_group('Profiler Arguments')
     profile.add_argument(
@@ -61,7 +60,7 @@ def setup_args(parser=None):
 
 def profile(opt):
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: profile should be passed opt not Parser ]')
+        logging.error('profile should be passed opt not Parser')
         opt = opt.parse_args()
     if opt['torch'] or opt['torch_cuda']:
         with torch.autograd.profiler.profile(use_cuda=opt['torch_cuda']) as prof:

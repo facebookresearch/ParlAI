@@ -13,11 +13,13 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from typing import Dict, Any
+import parlai.utils.logging as logging
 
 import json
 
 HOST_NAME = 'localhost'
 PORT = 8080
+
 SHARED: Dict[Any, Any] = {}
 STYLE_SHEET = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
@@ -231,6 +233,13 @@ def setup_interactive(shared):
     """
     parser = setup_args()
     parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
+    parser.add_argument(
+        '--host',
+        default=HOST_NAME,
+        type=str,
+        help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
+    )
+
     SHARED['opt'] = parser.parse_args(print_args=False)
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
@@ -249,8 +258,8 @@ def setup_interactive(shared):
 if __name__ == '__main__':
     opt = setup_interactive(SHARED)
     MyHandler.protocol_version = 'HTTP/1.0'
-    httpd = HTTPServer((HOST_NAME, opt['port']), MyHandler)
-    print('http://{}:{}/'.format(HOST_NAME, opt['port']))
+    httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
+    logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
         httpd.serve_forever()

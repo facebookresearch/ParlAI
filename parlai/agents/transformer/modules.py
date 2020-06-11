@@ -21,12 +21,13 @@ from typing import Dict, Tuple, Optional
 
 import numpy as np
 import torch
+import torch.cuda
 import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import neginf
+from parlai.utils.torch import neginf, PipelineHelper
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
@@ -44,10 +45,15 @@ def _normalize(tensor, norm_layer):
     """
     Broadcast layer norm.
     """
-    if not APEX_LAYER_NORM:
-        warn_once("Installing APEX can give a significant speed boost.")
-    size = tensor.size()
-    return norm_layer(tensor.view(-1, size[-1])).view(size)
+    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
+    if APEX_LAYER_NORM and not is_cpu:
+        # fused_layer_norm has a bug around multi-device networks.
+        # https://github.com/NVIDIA/apex/issues/770
+        # https://github.com/NVIDIA/apex/issues/371
+        with torch.cuda.device(tensor.device):
+            return norm_layer(tensor)
+    else:
+        return norm_layer(tensor)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
@@ -69,9 +75,14 @@ def _build_encoder(
     n_positions=1024,
     n_segments=0,
 ):
+    n_layers = (
+        opt['n_encoder_layers']
+        if opt.get('n_encoder_layers', -1) > 0
+        else opt['n_layers']
+    )
     return TransformerEncoder(
         n_heads=opt['n_heads'],
-        n_layers=opt['n_layers'],
+        n_layers=n_layers,
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
@@ -94,9 +105,14 @@ def _build_encoder(
 def _build_decoder(
     opt, dictionary, embedding=None, padding_idx=None, n_positions=1024, n_segments=0
 ):
+    n_layers = (
+        opt['n_decoder_layers']
+        if opt.get('n_decoder_layers', -1) > 0
+        else opt['n_layers']
+    )
     return TransformerDecoder(
         n_heads=opt['n_heads'],
-        n_layers=opt['n_layers'],
+        n_layers=n_layers,
         embedding_size=opt['embedding_size'],
         ffn_size=opt['ffn_size'],
         vocabulary_size=len(dictionary),
@@ -419,7 +435,8 @@ class TransformerEncoder(nn.Module):
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
-        self.dropout = nn.Dropout(p=dropout)
+        self.dropout_frac = dropout
+        self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = variant
         self.n_segments = n_segments
 
@@ -457,7 +474,7 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.variant == 'xlm':
+        if self.variant == 'xlm' or self.variant == 'prelayernorm':
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -524,9 +541,17 @@ class TransformerEncoder(nn.Module):
         tensor = self.dropout(tensor)
 
         tensor *= mask.unsqueeze(-1).type_as(tensor)
-        for i in range(self.n_layers):
-            tensor = self.layers[i](tensor, mask)
 
+        if getattr(self.layers, 'is_model_parallel', False):
+            # factored out for readability. It is equivalent to the other
+            # condition
+            tensor = self._apply_model_parallel(tensor, mask)
+        else:
+            for i in range(self.n_layers):
+                tensor = self.layers[i](tensor, mask)
+
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
             return tensor[:, 0, :]
@@ -537,15 +562,27 @@ class TransformerEncoder(nn.Module):
             output = tensor.sum(dim=1) / divisor
             return output
         elif self.reduction_type is None or 'none' in self.reduction_type:
-            output = tensor
-            ret = (output, mask)
-            if self.reduction_type == 'none_with_pos_embs':
-                ret = (output, mask, position_embs)
-            return ret
+            return tensor, mask
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
+
+    def _apply_model_parallel(self, tensor, mask):
+        """
+        Pipeline application of model parallelism.
+        """
+        chunks = PipelineHelper.split((tensor, mask))
+        work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
+
+        for chunk_idx, layer_nos, next_device in work_items:
+            s_tensor, s_mask = chunks[chunk_idx]
+            for layer_no in layer_nos:
+                s_tensor = self.layers[layer_no](s_tensor, s_mask)
+            chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
+
+        tensor_out, mask_out = PipelineHelper.join(chunks)
+        return tensor_out
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -586,11 +623,20 @@ class TransformerEncoderLayer(nn.Module):
         """
         Forward pass.
         """
+
+        residual = tensor
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
-        tensor = tensor + self.dropout(attended_tensor)
-        tensor = _normalize(tensor, self.norm1)
-        tensor = tensor + self.dropout(self.ffn(tensor))
-        tensor = _normalize(tensor, self.norm2)
+        tensor = residual + self.dropout(attended_tensor)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm1)
+        residual = tensor
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm2)
+        tensor = residual + self.dropout(self.ffn(tensor))
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -647,6 +693,7 @@ class TransformerDecoder(nn.Module):
         self.dim = embedding_size
         self.activation = activation
         self.variant = variant
+
         self.embeddings_scale = embeddings_scale
         self.dropout = nn.Dropout(p=dropout)  # --dropout
 
@@ -658,7 +705,7 @@ class TransformerDecoder(nn.Module):
 
         self.embeddings = embedding
 
-        if self.variant == 'xlm':
+        if self.variant == 'xlm' or self.variant == 'prelayernorm':
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -714,7 +761,7 @@ class TransformerDecoder(nn.Module):
             if positions is not None:
                 positions = positions[:, -1:]
         else:
-            incr_state = {idx: {} for idx in range(len(self.layers))}
+            incr_state = {}
 
         tensor = self.embeddings(input)
         if self.embeddings_scale:
@@ -732,15 +779,52 @@ class TransformerDecoder(nn.Module):
         tensor = self.dropout(tensor)  # --dropout
 
         new_incr_state = {}
-        for idx, layer in enumerate(self.layers):
-            tensor, new_incr_state[idx] = layer(
-                x=tensor,
-                encoder_output=encoder_output,
-                encoder_mask=encoder_mask,
-                incr_state=incr_state[idx],
+        if getattr(self.layers, 'is_model_parallel', False):
+            tensor, new_incr_state = self._apply_model_parallel(
+                tensor, encoder_output, encoder_mask, incr_state
             )
+        else:
+            for idx, layer in enumerate(self.layers):
+                tensor, new_incr_state[idx] = layer(
+                    x=tensor,
+                    encoder_output=encoder_output,
+                    encoder_mask=encoder_mask,
+                    incr_state=incr_state.get(idx),
+                )
+
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor, new_incr_state
+
+    def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
+        """
+        Pipeline application of model parallelism.
+        """
+        chunks = PipelineHelper.split(
+            (tensor, encoder_output, encoder_mask, incr_state)
+        )
+        work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
+
+        new_incr_state = [{} for _ in chunks]
+
+        for chunk_idx, layer_nos, next_device in work_items:
+            s_tensor, s_enc_out, s_enc_mask, s_incr_state = chunks[chunk_idx]
+            for layer_no in layer_nos:
+                s_tensor, new_incr_state[chunk_idx][layer_no] = self.layers[layer_no](
+                    x=s_tensor,
+                    encoder_output=s_enc_out,
+                    encoder_mask=s_enc_mask,
+                    incr_state=s_incr_state.get(layer_no),
+                )
+            chunks[chunk_idx] = PipelineHelper.chunk_to(
+                (s_tensor, s_enc_out, s_enc_mask, s_incr_state), next_device
+            )
+
+        tensor_out = PipelineHelper.join([c[0] for c in chunks])
+        new_incr_state = PipelineHelper.join(new_incr_state)
+
+        return tensor_out, new_incr_state
 
 
 class TransformerDecoderLayer(nn.Module):
@@ -800,6 +884,9 @@ class TransformerDecoderLayer(nn.Module):
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
+        if self.variant == 'prelayernorm':
+            x = _normalize(x, self.norm1)
+
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
             query=x,
@@ -809,9 +896,13 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = x + residual
-        x = _normalize(x, self.norm1)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            x = _normalize(x, self.norm1)
 
         residual = x
+        # encoder_attn_layer_norm norm 2
+        if self.variant == 'prelayernorm':
+            x = _normalize(x, self.norm2)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -822,14 +913,18 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
-        x = _normalize(x, self.norm2)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            x = _normalize(x, self.norm2)
 
         # finally the ffn
         residual = x
+        if self.variant == 'prelayernorm':
+            x = _normalize(x, self.norm3)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
-        x = _normalize(x, self.norm3)
+        if self.variant == 'aiayn' or self.variant == 'xlm':
+            x = _normalize(x, self.norm3)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
@@ -945,6 +1040,9 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         """
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)
+        # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
+        # we need to force their probability of generation to be 0.
+        output[:, :, self.start_idx] = neginf(output.dtype)
         return output
 
 
@@ -955,7 +1053,6 @@ class BasicAttention(nn.Module):
 
     def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
         super().__init__()
-        self.softmax = nn.Softmax(dim=dim)
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
         self.attn = attn
@@ -989,8 +1086,8 @@ class BasicAttention(nn.Module):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill_(attn_mask, -float('inf'))
-        l2 = self.softmax(l1)
+            l1.masked_fill(attn_mask, neginf(l1.dtype))
+        l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys
         lhs_emb = torch.bmm(l2, values)
@@ -1149,7 +1246,7 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod, dim=-1).type_as(query)
+        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
@@ -1172,7 +1269,7 @@ class MultiHeadAttention(nn.Module):
         Reorder the input incremental-state tensors.
         """
         return {
-            key: torch.index_select(val, 0, inds).contiguous()
+            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
             for key, val in incremental_state.items()
         }
 

@@ -44,42 +44,18 @@ class TestTransresnet(unittest.TestCase):
         _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
 
         # Overall
-        self.assertEqual(
-            test['accuracy'], 0.3667, 'test accuracy = {}'.format(test['accuracy']),
-        )
-        self.assertEqual(
-            test['hits@5'], 0.633, 'test hits@5 = {}'.format(test['hits@5']),
-        )
-        self.assertEqual(
-            test['hits@10'], 0.767, 'test hits@10 = {}'.format(test['hits@10']),
-        )
+        self.assertAlmostEqual(test['accuracy'], 0.3667, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.6333, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.7667, places=4)
 
         # First round
-        self.assertEqual(
-            test['first_round']['hits@1/100'],
-            0.2,
-            'test first round hits@1/100 = {}'.format(
-                test['first_round']['hits@1/100']
-            ),
-        )
+        self.assertAlmostEqual(test['first_round/hits@1/100'], 0.2, places=4)
 
         # Second round
-        self.assertEqual(
-            test['second_round']['hits@1/100'],
-            0.5,
-            'test second round hits@1/100 = {}'.format(
-                test['second_round']['hits@1/100']
-            ),
-        )
+        self.assertAlmostEqual(test['second_round/hits@1/100'], 0.5, places=4)
 
         # Third round
-        self.assertEqual(
-            test['third_round+']['hits@1/100'],
-            0.4,
-            'test third round hits@1/100 = {}'.format(
-                test['third_round+']['hits@1/100']
-            ),
-        )
+        self.assertAlmostEqual(test['third_round+/hits@1/100'], 0.4, places=4)
 
 
 if __name__ == '__main__':

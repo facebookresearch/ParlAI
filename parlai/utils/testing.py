@@ -17,6 +17,7 @@ import io
 import signal
 from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
+import parlai.utils.logging as logging
 
 
 try:
@@ -94,10 +95,9 @@ def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
     if not TORCH_AVAILABLE:
         skip = True
     else:
-        version = torch.__version__.replace('+cpu', '').split('.')  # type: ignore
-        version_ = tuple(int(x) for x in version)  # type: ignore
-        if version_ < (1, 4, 0):
-            skip = True
+        from packaging import version
+
+        skip = version.parse(torch.__version__) < version.parse('1.4.0')
     return unittest.skipIf(skip, reason)(testfn)
 
 
@@ -135,7 +135,7 @@ class retry(object):
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
                     if self.log_retry:
-                        print("Retrying {}".format(testfn))
+                        logging.debug("Retrying {}".format(testfn))
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
 

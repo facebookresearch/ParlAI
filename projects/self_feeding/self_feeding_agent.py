@@ -512,7 +512,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if label_inds is None:
             loss = None
         else:
-            loss = self.criterion(scores, label_inds)
+            loss = self.criterion(scores, label_inds).mean()
             self.update_dia_metrics(loss, ranks, label_inds, batchsize)
         return loss, preds, cand_ranked
 
@@ -546,7 +546,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
         if label_inds is None:
             loss = None
         else:
-            loss = self.criterion(scores, label_inds)
+            loss = self.criterion(scores, label_inds).mean()
             self.update_fee_metrics(loss, ranks, label_inds, batchsize)
         return loss, preds, cand_ranked
 
@@ -568,7 +568,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
             # labels will be a [batchsize] torch.LongTensor with values in {0, 1}
             labels = torch.LongTensor([int(l) == 1 for l in batch.labels]).cuda()
 
-            loss = self.satisfaction_criterion(probs, labels.float())
+            loss = self.satisfaction_criterion(probs, labels.float()).mean()
             self.update_sat_metrics(loss, preds, labels, batchsize)
 
         return loss, preds

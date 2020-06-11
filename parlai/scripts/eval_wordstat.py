@@ -43,7 +43,6 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'compute statistics from model predictions')
-    parser.add_pytorch_datateacher_args()
     DictionaryAgent.add_cmdline_args(parser)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
@@ -76,7 +75,7 @@ def setup_args(parser=None):
         default=True,
         help='Compute %% of unique responses from the model',
     )
-    parser.set_defaults(datatype='valid', model='repeat_label')
+    parser.set_defaults(datatype='valid')
     TensorboardLogger.add_cmdline_args(parser)
     return parser
 
@@ -140,6 +139,7 @@ def eval_wordstat(opt, print_parser=None):
     log_time = TimeLogger()
 
     cnt = 0
+    max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     word_statistics = {
         'mean_wlength': [],
         'mean_clength': [],
@@ -188,7 +188,9 @@ def eval_wordstat(opt, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             report = world.report()
-            text, report = log_time.log(report['exs'], world.num_examples(), report)
+            text, report = log_time.log(
+                report['exs'], min(max_cnt, world.num_examples()), report
+            )
             print(text)
             stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])
             stat_str += ', '.join(
@@ -215,7 +217,7 @@ def eval_wordstat(opt, print_parser=None):
                     prec=2,
                 )
             )
-        if opt['num_examples'] > 0 and cnt >= opt['num_examples']:
+        if cnt >= max_cnt:
             break
     if world.epoch_done():
         print("EPOCH DONE")

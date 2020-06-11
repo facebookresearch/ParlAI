@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import os
 import json
-import tqdm
-from parlai.core.build_data import download
+from parlai.core.build_data import download_multiprocess
 from parlai.core.params import ParlaiParser
 import parlai.core.build_data as build_data
 
@@ -49,11 +48,12 @@ def download_images(opt, task='personality_captions'):
     os.makedirs(image_path, exist_ok=True)
 
     print('[downloading images to {}]'.format(image_path))
-    for _, (p_hash) in enumerate(tqdm.tqdm(hashes, unit='img')):
-        image_url = '{}/{}/{}/{}.jpg'.format(
-            image_prefix, p_hash[:3], p_hash[3:6], p_hash
-        )
-        download(image_url, image_path, '{}.jpg'.format(p_hash))
+    image_urls = [
+        f"{image_prefix}/{p_hash[:3]}/{p_hash[3:6]}/{p_hash}.jpg" for p_hash in hashes
+    ]
+    download_multiprocess(
+        image_urls, image_path, dest_filenames=[f"{h}.jpg" for h in hashes]
+    )
     build_data.mark_done(image_path, version)
 
 
