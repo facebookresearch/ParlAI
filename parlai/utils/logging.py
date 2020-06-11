@@ -180,8 +180,12 @@ def set_log_level(level):
     logger.setLevel(level)
 
 
-def disable(level):
-    logging.disable(level)
+def disable():
+    logger.disabled = True
+
+
+def enable():
+    logger.disabled = False
 
 
 def info(msg):

@@ -119,7 +119,7 @@ def override_print(suppress=False, prefix=None):
             return builtin_print(*args, **kwargs)
 
     if suppress:
-        logging.disable(logging.CRITICAL)
+        logging.disable()
 
     # override the print for now
     builtins.print = new_print
@@ -128,7 +128,7 @@ def override_print(suppress=False, prefix=None):
     builtins.print = builtin_print
 
     if suppress:
-        logging.disable(logging.NOTSET)
+        logging.enable()
 
 
 def all_gather_list(data, max_size=16384):
