@@ -14,4 +14,16 @@ Conversation is between a "free" Amazon Mechanical Turk worker who can speak fre
 ## ConvAI2PersonaTopicifierTeacher, EDPersonaTopicifierTeacher, WoWPersonaTopicifierTeacher
 Versions of teachers for the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia datasets in which ConvAI2-style persona strings and Wizard-of-Wikipedia-style topic strings have been added to the start of all contexts.
 
+## Files
+The following files are downloaded when calling the BST dataset (for instance, with `python examples/display_data.py -t blended_skill_talk`):
+- `train.json`, `valid.json`, and `test.json`: Raw BST datafiles, each consisting of a list of dicts. Each dict is a conversation that includes the following fields, in addition to those listed under **BlendedSkillTalkTeacher** above:
+  - `[personas]`: The strings giving the personas of the guided and free workers
+  - `[free_turker_utterance]` and `[guided_turker_utterance]`: Two utterances that start off the conversation, displayed before the AMT workers continue the conversation from there. One utterance is given for each worker
+  - `[additional_context]`: An additional string added to the context for certain values of `[context_dataset]`. If `[context_dataset]` is `'empathetic_dialogues'`, this is a string representing a situation from the EmpatheticDialogues dataset. If `[context_dataset]` is `'wizard_of_wikipedia'`, this is a topic string from the Wizard of Wikipedia dataset
+  - `[dialog]`: Lines of dialogue given by the free worker (represented by a `0`) and the guided worker (`1`)
+- `persona_list.txt`: A list of possible personas, used when adding personas to context strings by the `WoWPersonaTopicifierTeacher` and `EDPersonaTopicifierTeacher`
+- `topic_to_persona_list.txt`: A list of WoW topics and the persona strings that they correspond to, used by the PersonaTopicifierTeachers to ensure that WoW topics are relevant given persona strings and vice versa
+- `ed_persona_topicifier__train__both_sides.json`, `ed_persona_topicifier__train__experiencer_only.json`, `ed_persona_topicifier__valid__experiencer_only.json`, and `ed_persona_topicifier__test__experiencer_only.json`: cached files of EmpatheticDialogues conversations with WoW topics and persona strings added to contexts, used by `EDPersonaTopicifierTeacher`. EmpatheticDialogues conversations consist of a Speaker describing a situation and a Listener responding empathetically: the choice of file used depends on whether we are considering conversation turns in which the previous utterance comes from either the Speaker or the Listener (`both_sides`) or from the Speaker (i.e. experiencer) only (`experiencer_only`)
+- `safe_personas.txt`: A list of safe personas, used with BlendedSkillTalk in interactive mode with `--safe-personas-only True`
+
 Tags: #BlendedSkillTalk, #All, #ChitChat
