@@ -243,7 +243,7 @@ def setup_interweb_args(shared):
     return parser
 
 
-def interactive_web(parser):
+def interactive_web(opt, parser):
     SHARED['opt'] = parser.opt
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
@@ -273,7 +273,7 @@ class InteractiveWeb(ParlaiScript):
         return setup_interweb_args(SHARED)
 
     def run(self):
-        return interactive_web(self.parser)
+        return interactive_web(self.opt, self.parser)
 
 
 if __name__ == '__main__':

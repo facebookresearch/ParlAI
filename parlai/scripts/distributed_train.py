@@ -42,14 +42,6 @@ from parlai.scripts.script import ParlaiScript
 
 
 def setup_args():
-    # double check we're using SLURM
-    node_list = os.environ.get('SLURM_JOB_NODELIST')
-    if node_list is None:
-        raise RuntimeError(
-            'Does not appear to be in a SLURM environment. '
-            'You should not call this script directly; see launch_distributed.py'
-        )
-
     parser = single_train.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
@@ -97,4 +89,11 @@ class DistributedTrain(ParlaiScript):
 
 
 if __name__ == '__main__':
+    # double check we're using SLURM
+    node_list = os.environ.get('SLURM_JOB_NODELIST')
+    if node_list is None:
+        raise RuntimeError(
+            'Does not appear to be in a SLURM environment. '
+            'You should not call this script directly; see launch_distributed.py'
+        )
     DistributedTrain.main(print_args=(os.environ['SLURM_PROCID'] == '0'))
