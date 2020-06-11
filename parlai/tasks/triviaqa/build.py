@@ -54,10 +54,15 @@ def build(opt):
                     else:
                         q2as[question] += answers
             with open(section.format("union-noevidence"), "wt") as data_file:
-                json.dump({"Data": [
-                    {"Question": question, "Answer": {"Aliases": answers}}
-                    for question, answers in q2as.items()
-                ]}, data_file)
+                json.dump(
+                    {
+                        "Data": [
+                            {"Question": question, "Answer": {"Aliases": answers}}
+                            for question, answers in q2as.items()
+                        ]
+                    },
+                    data_file,
+                )
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
