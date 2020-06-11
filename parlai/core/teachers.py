@@ -1993,14 +1993,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.set_datasettings(opt['datatype'])
 
+        self.dws = int(self.opt['distributed_world_size'])
+        self.rank = int(self.opt['rank'])
         if (
             shared is None
             and self.is_train
             and self.opt.get('distributed_world_size') is not None
         ):
-            dws = int(self.opt['distributed_world_size'])
-            rank = int(self.opt['rank'])
-            self.fold_chunks = [c for c in self.fold_chunks if c % dws == rank]
+            self.fold_chunks = [
+                c for c in self.fold_chunks if c % self.dws == self.rank
+            ]
 
         if shared is not None:
             self.is_root_teacher = False
@@ -2079,10 +2081,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     def num_episodes(self):
-        return self.num_eps
+        if self.is_train:
+            return self.num_eps
+        else:
+            return self.num_eps // self.dws + int((self.num_eps % self.dws) > self.rank)
 
     def num_examples(self):
-        return self.num_exs
+        if self.is_train:
+            return self.num_exs
+        else:
+            return self.num_exs // self.dws + int((self.num_exs % self.dws) > self.rank)
 
     def _enqueue_request(self):
         """
@@ -2099,11 +2107,15 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         data = future.result()
         if data is None:
             return
+        i = 0
         while data:
             # self.samples is a queue with maxsize
             # self.buffersize, so will block if the
             # buffer gets full
-            self.samples.put(data.pop(0))
+            sample = data.pop(0)
+            if self.is_train or i % self.dws == self.rank:
+                self.samples.put(sample)
+            i += 1
         # and start loading the next chunk
         self._enqueue_request()
 
