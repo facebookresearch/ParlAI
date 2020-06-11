@@ -22,7 +22,7 @@ RESOURCES = [
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'TriviaQA')
-    version = "2.0"
+    version = "3"  # build changes, not upstream changes
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
@@ -53,7 +53,7 @@ def build(opt):
                         q2as[question] = answers
                     else:
                         q2as[question] += answers
-            with open(section.format("union-noevidence"), "wt") as data_file:
+            with open(section.format("noevidence-union"), "wt") as data_file:
                 json.dump(
                     {
                         "Data": [

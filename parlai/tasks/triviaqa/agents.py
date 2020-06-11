@@ -26,7 +26,7 @@ class WebTeacher(DialogTeacher):
             self.prefix = ''
             self.suffix = 'train' if opt['datatype'].startswith('train') else 'dev'
 
-        if "no_evidence" not in self.__dict__:
+        if not hasattr(self, 'no_evidence'):
             self.no_evidence = False
         qa_dir, self.evidence_dir = _path(opt)
         opt['datafile'] = os.path.join(
@@ -84,7 +84,7 @@ class WikipediaTeacher(DialogTeacher):
             self.prefix = ''
             self.suffix = 'train' if opt['datatype'].startswith('train') else 'dev'
 
-        if "no_evidence" not in self.__dict__:
+        if not hasattr(self, 'no_evidence'):
             self.no_evidence = False
         qa_dir, self.evidence_dir = _path(opt)
         opt['datafile'] = os.path.join(
@@ -154,7 +154,7 @@ class NoEvidenceUnionTeacher(DialogTeacher):
 
         qa_dir, self.evidence_dir = _path(opt)
         opt['datafile'] = os.path.join(
-            qa_dir, self.prefix + 'union-noevidence-' + self.suffix + '.json'
+            qa_dir, self.prefix + 'noevidence-union-' + self.suffix + '.json'
         )
         self.id = 'triviaqa'
         super().__init__(opt, shared)
