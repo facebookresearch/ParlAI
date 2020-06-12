@@ -93,7 +93,6 @@ if __name__ == '__main__':
     node_list = os.environ.get('SLURM_JOB_NODELIST')
     if node_list is None:
         raise RuntimeError(
-            'Does not appear to be in a SLURM environment. '
-            'You should not call this script directly; see launch_distributed.py'
+            'Does not appear to be in a SLURM environment. You should not call this script directly; see launch_distributed.py'
         )
     DistributedTrain.main(print_args=(os.environ['SLURM_PROCID'] == '0'))
