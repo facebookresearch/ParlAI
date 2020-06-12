@@ -1109,7 +1109,10 @@ model_list = [
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
-        "result": None,  # TODO: add
+        "result": """10:23:53 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .7678   .7553 5482 .7902   .07928   .7678    .9728         1   .9414 .9337 .8451  2.04 19.76
+""",
     },
     {
         "title": "BlendedSkillTalk: EmpatheticDialogues single-task model",
@@ -1120,7 +1123,10 @@ model_list = [
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the EmpatheticDialogues dialogue task.",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/ed_single_task/model -t blended_skill_talk -dt test",
-        "result": None,  # TODO: add
+        "result": """10:16:47 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .6895   .6774 5482 .7219   .07928   .6895    .9509         1   .9051 1.242 .7849  2.79 19.76
+""",
     },
     {
         "title": "BlendedSkillTalk: Wizard of Wikipedia single-task model",
@@ -1142,7 +1148,10 @@ model_list = [
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",
-        "result": None,  # TODO: add
+        "result": """10:23:35 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .8010   .7872 5482 .8204   .07928   .8010    .9779         1   .9564 .8154 .8697 1.908 19.76
+""",
     },
     {
         "title": "BlendedSkillTalk: MT Single-Skills model fine-tuned on BST",
