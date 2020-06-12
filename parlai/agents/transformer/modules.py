@@ -184,7 +184,7 @@ class TransformerMemNetModel(nn.Module):
                 cand_embeddings = self.cand_embeddings
             else:
                 cand_embeddings = self.embeddings
-            self.cand_encoder = TransformerGeneratorModel.build_encoder(
+            self.cand_encoder = self.build_encoder(
                 opt,
                 dictionary,
                 cand_embeddings,
