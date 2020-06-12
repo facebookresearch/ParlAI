@@ -48,7 +48,7 @@ def setup_args():
     return parser
 
 
-def dist_train(opt):
+def dist_train(opt, node_list):
     # We can determine the init method automatically for Slurm.
     try:
         # Figure out the main host, and which rank we are.
@@ -93,7 +93,7 @@ class DistributedTrain(ParlaiScript):
                 'You should not call this script directly; '
                 'see launch_distributed.py'
             )
-        return dist_train(self.opt)
+        return dist_train(self.opt, node_list)
 
 
 if __name__ == '__main__':
