@@ -1095,7 +1095,10 @@ model_list = [
         "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
         "result": 'Results vary.',
         "example2": "python examples/eval_model.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
-        "result2": None,  # TODO: add
+        "result2": """09:51:57 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .7920   .7785 5482 .8124    .0370   .7920    .9788         1   .9542 .8251 .8636 1.866 19.76
+""",
     },
     {
         "title": "BlendedSkillTalk: ConvAI2 single-task model",
@@ -1115,8 +1118,8 @@ model_list = [
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the EmpatheticDialogues dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/ed_single_task/model -t blended_skill_talk -dt test",
         "result": None,  # TODO: add
     },
     {
@@ -1126,8 +1129,8 @@ model_list = [
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",
         "result": None,  # TODO: add
     },
     {
@@ -1137,8 +1140,8 @@ model_list = [
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",
         "result": None,  # TODO: add
     },
     {
@@ -1148,19 +1151,8 @@ model_list = [
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
-        "result": None,  # TODO: add
-    },
-    {
-        "title": "BlendedSkillTalk: classifier for MT Two-Stage model",
-        "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/two_stage_classifier/model",
-        "agent": "transformer/polyencoder",
-        "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks, and then further fine-tuned on the BlendedSkillTalk dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task_bst_tuned/model -t blended_skill_talk -dt test",
         "result": None,  # TODO: add
     },
     {
