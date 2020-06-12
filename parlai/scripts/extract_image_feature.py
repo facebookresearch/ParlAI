@@ -45,16 +45,15 @@ def setup_args(parser=None):
         '--dataset',
         type=str,
         default=None,
-        help='Pytorch Dataset; if specified, will save \
-                           the images in one hdf5 file according to how \
-                           they are returned by the specified dataset',
+        help='Pytorch Dataset; if specified, will save the images in one hdf5'
+        'file according to how they are returned by the specified dataset',
     )
     arg_group.add_argument(
         '-at',
         '--attention',
         action='store_true',
-        help='Whether to extract image features with attention \
-                           (Note - this is specifically for the mlb_vqa model)',
+        help='Whether to extract image features with attention'
+        '(Note - this is specifically for the mlb_vqa model)',
     )
     arg_group.add_argument(
         '--use-hdf5-extraction',

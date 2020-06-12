@@ -95,4 +95,4 @@ if __name__ == '__main__':
         raise RuntimeError(
             'Does not appear to be in a SLURM environment. You should not call this script directly; see launch_distributed.py'
         )
-    DistributedTrain.main(print_args=(os.environ['SLURM_PROCID'] == '0'))
+    DistributedTrain.main()

@@ -77,16 +77,14 @@ def setup_args(parser=None) -> ParlaiParser:
         '--num-examples',
         default=-1,
         type=int,
-        help='Total number of exs to convert, -1 to convert \
-                                all examples',
+        help='Total number of exs to convert, -1 to convert all examples',
     )
     parser.add_argument(
         '-of',
         '--outfile',
         default=None,
         type=str,
-        help='Output file where to save, by default will be \
-                                created in /tmp',
+        help='Output file where to save, by default will be created in /tmp',
     )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='train:ordered')

@@ -333,13 +333,17 @@ def render_convo(opt):
                 file_handle = open(fname, "w")
                 file_handle.write(html_str)
                 if extension == "pdf":
-                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp \
-                     --print-to-pdf=\"{output_file}\" {fname}"
+                    cmd = (
+                        f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp"
+                        f"--print-to-pdf=\"{output_file}\" {fname}"
+                    )
                 else:
-                    cmd = f"{CHROME_PATH} --headless --hide-scrollbars \
-                    --crash-dumps-dir=/tmp \
-                     --window-size={opt['width'] * 100},{opt['height'] * 100} \
-                      --screenshot=\"{output_file}\" {fname}"
+                    cmd = (
+                        f"{CHROME_PATH} --headless --hide-scrollbars"
+                        f"--crash-dumps-dir=/tmp --window-size"
+                        f"={opt['width'] * 100},{opt['height'] * 100}"
+                        f"--screenshot=\"{output_file}\" {fname}"
+                    )
                 subprocess.run(
                     cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
                 )
