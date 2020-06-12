@@ -1109,6 +1109,61 @@ model_list = [
         "result": None,  # TODO: add
     },
     {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": None,  # TODO: add
+    },
+    {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": None,  # TODO: add
+    },
+    {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": None,  # TODO: add
+    },
+    {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": None,  # TODO: add
+    },
+    {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": None,  # TODO: add
+    },
+    {
         "title": "Tutorial Transformer Generator",
         "id": "tutorial_transformer_generator",
         "path": "zoo:tutorial_transformer_generator/model",
