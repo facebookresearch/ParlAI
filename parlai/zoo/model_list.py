@@ -1111,7 +1111,7 @@ model_list = [
     {
         "title": "BlendedSkillTalk: EmpatheticDialogues single-task model",
         "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "path": "zoo:blended_skill_talk/ed_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
@@ -1122,7 +1122,7 @@ model_list = [
     {
         "title": "BlendedSkillTalk: Wizard of Wikipedia single-task model",
         "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "path": "zoo:blended_skill_talk/wizard_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
@@ -1133,7 +1133,7 @@ model_list = [
     {
         "title": "BlendedSkillTalk: MT Single-Skills model",
         "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "path": "zoo:blended_skill_talk/multi_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
@@ -1144,7 +1144,7 @@ model_list = [
     {
         "title": "BlendedSkillTalk: MT Single-Skills model fine-tuned on BST",
         "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "path": "zoo:blended_skill_talk/multi_task_bst_tuned/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
@@ -1155,7 +1155,7 @@ model_list = [
     {
         "title": "BlendedSkillTalk: classifier for MT Two-Stage model",
         "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "path": "zoo:blended_skill_talk/two_stage_classifier/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
