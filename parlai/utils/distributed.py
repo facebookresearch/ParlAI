@@ -118,6 +118,8 @@ def override_print(suppress=False, prefix=None):
             # default to normal print
             return builtin_print(*args, **kwargs)
 
+    if prefix:
+        logging.logger.add_format_prefix(prefix)
     if suppress:
         logging.disable()
 
