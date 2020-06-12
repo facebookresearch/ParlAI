@@ -1913,19 +1913,18 @@ class TorchAgent(ABC, Agent):
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
             is_primary = float(is_primary_worker())
-            ttpb = GlobalAverageMetric(
-                (batch.text_vec != self.NULL_IDX).sum().item(), is_primary
-            )
-            ltpb = GlobalAverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item(), is_primary
-            )
-            self.global_metrics.add('tpb_t', ttpb)
-            self.global_metrics.add('tpb_l', ltpb)
-            self.global_metrics.add('tpb', ttpb + ltpb)
+            # text tokens per batch
+            ttpb = (batch.text_vec != self.NULL_IDX).sum().item()
+            # label tokens per batch
+            ltpb = (batch.label_vec != self.NULL_IDX).sum().item()
+            # total tokens per batch
+            tpb = ttpb + ltpb
+            self.global_metrics.add('tpb_t', GlobalAverageMetric(ttpb, is_primary))
+            self.global_metrics.add('tpb_l', GlobalAverageMetric(ltpb, is_primary))
+            self.global_metrics.add('tpb', GlobalAverageMetric(tpb, is_primary))
             self.global_metrics.add(
                 'expb', GlobalAverageMetric(batch.text_vec.shape[0], is_primary)
             )
-            self.global_metrics.add('tpb', tpb)
 
         if self.is_training:
             output = self.train_step(batch)
