@@ -99,6 +99,43 @@ class TransformerMemNetModel(nn.Module):
     Model which takes context, memories, candidates and encodes them.
     """
 
+    @classmethod
+    def build_encoder(
+        cls,
+        opt,
+        dictionary,
+        embedding=None,
+        padding_idx=None,
+        reduction_type='mean',
+        n_positions=1024,
+        n_segments=0,
+    ):
+        n_layers = (
+            opt['n_encoder_layers']
+            if opt.get('n_encoder_layers', -1) > 0
+            else opt['n_layers']
+        )
+        return TransformerEncoder(
+            n_heads=opt['n_heads'],
+            n_layers=n_layers,
+            embedding_size=opt['embedding_size'],
+            ffn_size=opt['ffn_size'],
+            vocabulary_size=len(dictionary),
+            embedding=embedding,
+            dropout=opt['dropout'],
+            attention_dropout=opt['attention_dropout'],
+            relu_dropout=opt['relu_dropout'],
+            padding_idx=padding_idx,
+            learn_positional_embeddings=opt['learn_positional_embeddings'],
+            embeddings_scale=opt['embeddings_scale'],
+            reduction_type=reduction_type,
+            n_positions=n_positions,
+            n_segments=n_segments,
+            activation=opt['activation'],
+            variant=opt['variant'],
+            output_scaling=opt['output_scaling'],
+        )
+
     def __init__(self, opt, dictionary):
         super().__init__()
         self.opt = opt
@@ -128,7 +165,7 @@ class TransformerMemNetModel(nn.Module):
         self.reduction_type = opt.get('reduction_type', 'mean')
         self.n_segments = opt.get('n_segments', 0)
 
-        self.context_encoder = TransformerGeneratorModel.build_encoder(
+        self.context_encoder = self.build_encoder(
             opt,
             dictionary,
             self.embeddings,
