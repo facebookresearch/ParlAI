@@ -1912,9 +1912,18 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tpb = GlobalAverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item(),
-                float(is_primary_worker()),
+            is_primary = float(is_primary_worker())
+            ttpb = GlobalAverageMetric(
+                (batch.text_vec != self.NULL_IDX).sum().item(), is_primary
+            )
+            ltpb = GlobalAverageMetric(
+                (batch.label_vec != self.NULL_IDX).sum().item(), is_primary
+            )
+            self.global_metrics.add('tpb_t', ttpb)
+            self.global_metrics.add('tpb_l', ltpb)
+            self.global_metrics.add('tpb', ttpb + ltpb)
+            self.global_metrics.add(
+                'expb', GlobalAverageMetric(batch.text_vec.shape[0], is_primary)
             )
             self.global_metrics.add('tpb', tpb)
 
