@@ -35,6 +35,7 @@ var/
 convai2_submissions/
 parlai_internal/
 parlai_external/
+parlai_fb/
 *.egg-info/
 .installed.cfg
 *.egg

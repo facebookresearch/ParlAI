@@ -32,6 +32,7 @@ from parlai.utils.torch import (
 )
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.core.metrics import AverageMetric
+import parlai.utils.logging as logging
 
 
 class TorchRankerAgent(TorchAgent):
@@ -198,12 +199,14 @@ class TorchRankerAgent(TorchAgent):
                 )
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
-            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
 
             if self.fp16:
                 self.model = self.model.half()
             if init_model:
-                print('Loading existing model parameters from ' + init_model)
+                logging.info(f'Loading existing model parameters from {init_model}')
                 states = self.load(init_model)
             else:
                 states = {}
@@ -294,7 +297,7 @@ class TorchRankerAgent(TorchAgent):
                 path = self.get_task_candidates_path()
                 if path:
                     if not shared:
-                        print(f' [ Setting fixed_candidates path to: {path} ]')
+                        logging.info(f'Setting fixed_candidates path to: {path}')
                     self.fixed_candidates_path = path
 
         # Ignore bad candidates in interactive mode
@@ -306,7 +309,7 @@ class TorchRankerAgent(TorchAgent):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
         if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
             return path
-        print("[ *** building candidates file as they do not exist: " + path + ' *** ]')
+        logging.warn(f'Building candidates file as they do not exist: {path}')
         from parlai.scripts.build_candidates import build_cands
         from copy import deepcopy
 
@@ -452,8 +455,8 @@ class TorchRankerAgent(TorchAgent):
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
             if 'out of memory' in str(e):
-                print(
-                    '| WARNING: ran out of memory, skipping batch. '
+                logging.error(
+                    'Ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
@@ -841,8 +844,8 @@ class TorchRankerAgent(TorchAgent):
                     vecs.append(ind)
                 self.vocab_candidates = cands
                 self.vocab_candidate_vecs = torch.LongTensor(vecs).unsqueeze(1)
-                print(
-                    "[ Loaded fixed candidate set (n = {}) from vocabulary ]"
+                logging.info(
+                    "Loaded fixed candidate set (n = {}) from vocabulary"
                     "".format(len(self.vocab_candidates))
                 )
                 if self.use_cuda:
@@ -896,11 +899,11 @@ class TorchRankerAgent(TorchAgent):
                     # Attempt to get a standard candidate set for the given task
                     path = self.get_task_candidates_path()
                     if path:
-                        print("[setting fixed_candidates path to: " + path + " ]")
+                        logging.info(f"setting fixed_candidates path to: {path}")
                         self.fixed_candidates_path = path
                         cand_path = self.fixed_candidates_path
                 # Load candidates
-                print("[ Loading fixed candidate set from {} ]".format(cand_path))
+                logging.info(f"Loading fixed candidate set from {cand_path}")
                 with open(cand_path, 'r', encoding='utf-8') as f:
                     cands = [line.strip() for line in f.readlines()]
                 # Load or create candidate vectors
@@ -958,7 +961,7 @@ class TorchRankerAgent(TorchAgent):
         """
         Load fixed candidates from a path.
         """
-        print("[ Loading fixed candidate set {} from {} ]".format(cand_type, path))
+        logging.info(f"Loading fixed candidate set {cand_type} from {path}")
         return torch.load(path, map_location=lambda cpu, _: cpu)
 
     def _make_candidate_vecs(self, cands):
@@ -966,9 +969,8 @@ class TorchRankerAgent(TorchAgent):
         Prebuild cached vectors for fixed candidates.
         """
         cand_batches = [cands[i : i + 512] for i in range(0, len(cands), 512)]
-        print(
-            "[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
-            "".format(len(cand_batches))
+        logging.info(
+            f"Vectorizing fixed candidate set ({len(cand_batches)} batch(es) of up to 512)"
         )
         cand_vecs = []
         for batch in tqdm(cand_batches):
@@ -981,7 +983,7 @@ class TorchRankerAgent(TorchAgent):
         """
         Save cached vectors.
         """
-        print("[ Saving fixed candidate set {} to {} ]".format(cand_type, path))
+        logging.info(f"Saving fixed candidate set {cand_type} to {path}")
         with open(path, 'wb') as f:
             torch.save(vecs, f)
 
@@ -1012,8 +1014,8 @@ class TorchRankerAgent(TorchAgent):
         cand_encs = []
         bsz = self.opt.get('encode_candidate_vecs_batchsize', 256)
         vec_batches = [vecs[i : i + bsz] for i in range(0, len(vecs), bsz)]
-        print(
-            "[ Encoding fixed candidates set from ({} batch(es) of up to {}) ]"
+        logging.info(
+            "Encoding fixed candidates set from ({} batch(es) of up to {}) ]"
             "".format(len(vec_batches), bsz)
         )
         # Put model into eval mode when encoding candidates

@@ -6,6 +6,8 @@
 
 import unittest
 import parlai.utils.testing as testing_utils
+from parlai.core.params import ParlaiParser
+from projects.controllable_dialogue.tasks.agents import DefaultTeacher
 
 """
 Integration tests for the Controllable Dialogue project.
@@ -25,26 +27,21 @@ class TestControllableDialogue(unittest.TestCase):
         """
         Check the controllble dialogue data loads.
         """
-        train_output, valid_output, _ = testing_utils.display_data(
-            {
-                'task': 'projects.controllable_dialogue.tasks.agents',
-                'display_verbose': True,
-            }
+        opt = ParlaiParser(True, False).parse_kwargs(
+            task='projects.controllable_dialogue.tasks.agents',
+            datatype='train:ordered',
         )
+        teacher = DefaultTeacher(opt)
+        assert teacher.num_examples() == 131438
+        act = teacher.act()
+        assert 'lastuttsim' in act
+        assert "i'm getting ready to do some cheetah chasing" in act['text']
 
-        # check valid data
-        self.assertIn('[lastuttsim]', train_output)
-        self.assertIn(
-            "hi , how are you doing ? i'm getting ready to do some cheetah "
-            "chasing to stay in shape .",
-            train_output,
-        )
-        self.assertIn('131438 examples', train_output)
-
-        # check valid data
-        self.assertIn("hello what are doing today ?", valid_output)
-        self.assertIn('[lastuttsim]', valid_output)
-        self.assertIn('7801 examples', valid_output)
+        opt['datatype'] = 'valid'
+        teacher = DefaultTeacher(opt)
+        assert teacher.num_examples() == 7801
+        act = teacher.act()
+        assert 'hello what are doing today ?' in act['text']
 
     def test_train_model(self):
         """
@@ -60,6 +57,7 @@ class TestControllableDialogue(unittest.TestCase):
             batchsize=16,
             truncate=32,
             short_final_eval=True,
+            embedding_type='random',
         )
         opt = parser.parse_args([])
         tcs2s.TrainLoop(opt).train()

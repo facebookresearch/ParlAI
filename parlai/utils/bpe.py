@@ -21,6 +21,7 @@ from parlai.core.build_data import download, make_dir
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.typing import TShared
+import parlai.utils.logging as logging
 
 try:
     from subword_nmt import learn_bpe, apply_bpe
@@ -359,7 +360,7 @@ class SubwordBPEHelper(BPEHelper):
             # we already finalized the codecs
             return False
 
-        print('Dictionary: saving bpe codecs to {}'.format(self.codecs))
+        logging.debug(f'Saving bpe codecs to {self.codecs}')
 
         dictionary = ("{} {}".format(k, v) for k, v in frequencies.items())
 
@@ -449,9 +450,7 @@ class Gpt2BpeHelper(BPEHelper):
         """
         super().__init__(opt, shared)
         if self.lower:
-            raise ValueError(
-                'Only use --dict-lower false with --dict-tokenizer bytelevelbpe'
-            )
+            warn_once('Are you sure you want to lower case your BPE dictionary?')
 
         if self.maxtokens > 0 or self.minfreq > 0:
             raise ValueError(
@@ -515,7 +514,7 @@ class Gpt2BpeHelper(BPEHelper):
         :return:
             encoder, mapping tokens to unicode reps
         """
-        with open(json_path, 'r') as f:
+        with open(json_path, 'r', encoding='utf8') as f:
             encoder = json.load(f)
         for each_token in encoder.keys():
             new_token = ''.join(

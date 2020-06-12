@@ -29,8 +29,8 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3 and [Pytorch](https://pytorch.org) 1.1 or
-newer. Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
+ParlAI currently requires Python3.6 and [Pytorch](https://pytorch.org) 1.4. *It does not work with pytorch 1.5*.
+Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
 models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents)) have additional requirements.
 
 Run the following commands to clone the repository and install ParlAI:
@@ -53,7 +53,7 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if
  - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
  - [Creating a dataset/task](http://parl.ai/docs/tutorial_task.html)
  - [List of available agents](https://parl.ai/docs/agents_list.html)
- - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#)
+ - [Creating a seq2seq agent](https://parl.ai/docs/tutorial_torch_generator_agent.html)
  - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
  - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
  - [Plug into Facebook Messenger](https://parl.ai/docs/tutorial_chat_service.html)
@@ -100,7 +100,7 @@ If you have any questions, bug reports or feature requests, please don't hesitat
 ## The Team
 ParlAI is currently maintained by Emily Dinan, Dexter Ju, Margaret Li, Spencer Poff, Pratik Ringshia, Stephen Roller, Kurt Shuster, Eric Michael Smith, Jack Urbanek, Jason Weston, Mary Williamson, and Jing Xu.
 
-Former major contributors and maintainers include Alexander H. Miller, Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres, and Chao Pan.
+Former major contributors and maintainers include Alexander H. Miller, Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres, Chao Pan, and Vedant Puri.
 
 ## Citation
 

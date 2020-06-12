@@ -14,11 +14,11 @@ import random
 import time
 import re
 import shutil
-import warnings
 import json
 
 from parlai.core.message import Message
 from parlai.utils.strings import colorize
+import parlai.utils.logging as logging
 
 try:
     import torch
@@ -686,8 +686,8 @@ class PaddingUtils(object):
 
             if random.random() > (1 - report_freq):
                 # log sometimes
-                print('TEXT: ', observations[valid_inds[i]]['text'])
-                print('PREDICTION: ', curr_pred, '\n~')
+                logging.info(f"TEXT: {observations[valid_inds[i]]['text']}")
+                logging.info(f"PREDICTION: {curr_pred}\n~")
         return
 
 
@@ -957,17 +957,28 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-_seen_warnings: Set[str] = set()
+_seen_logs: Set[str] = set()
 
 
-def warn_once(msg: str, warningtype=None) -> None:
+def warn_once(msg: str) -> None:
     """
-    Raise a warning, but only once.
+    Log a warning, but only once.
 
     :param str msg: Message to display
-    :param Warning warningtype: Type of warning, e.g. DeprecationWarning
     """
-    global _seen_warnings
-    if msg not in _seen_warnings:
-        _seen_warnings.add(msg)
-        warnings.warn(msg, warningtype, stacklevel=2)
+    global _seen_logs
+    if msg not in _seen_logs:
+        _seen_logs.add(msg)
+        logging.warn(msg)
+
+
+def error_once(msg: str) -> None:
+    """
+    Log an error, but only once.
+
+    :param str msg: Message to display
+    """
+    global _seen_logs
+    if msg not in _seen_logs:
+        _seen_logs.add(msg)
+        logging.error(msg)

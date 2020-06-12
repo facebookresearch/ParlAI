@@ -21,6 +21,7 @@ import hashlib
 import tqdm
 import math
 import zipfile
+import parlai.utils.logging as logging
 
 try:
     from torch.multiprocessing import Pool
@@ -75,7 +76,7 @@ class DownloadableFile:
                     "does not match the expected checksum. Please try again. ]"
                 )
             else:
-                print("[ Checksum Successful ]")
+                logging.debug("Checksum Successful")
 
     def download_file(self, dpath):
         if self.from_google:
@@ -145,22 +146,22 @@ def mark_done(path, version_string=None):
             write.write('\n' + version_string)
 
 
-def download(url, path, fname, redownload=False):
+def download(url, path, fname, redownload=False, num_retries=5):
     """
     Download file using `requests`.
 
     If ``redownload`` is set to false, then will not download tar file again if it is
-    present (default ``True``).
+    present (default ``False``).
     """
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
-    print("[ downloading: " + url + " to " + outfile + " ]")
-    retry = 5
+    logging.info(f"Downloading {url} to {outfile}")
+    retry = num_retries
     exp_backoff = [2 ** r for r in reversed(range(retry))]
 
     pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 
-    while download and retry >= 0:
+    while download and retry > 0:
         resume_file = outfile + '.part'
         resume = os.path.isfile(resume_file)
         if resume:
@@ -210,26 +211,26 @@ def download(url, path, fname, redownload=False):
             ):
                 retry -= 1
                 pbar.clear()
-                if retry >= 0:
-                    print('Connection error, retrying. (%d retries left)' % retry)
+                if retry > 0:
+                    pl = 'y' if retry == 1 else 'ies'
+                    logging.debug(
+                        f'Connection error, retrying. ({retry} retr{pl} left)'
+                    )
                     time.sleep(exp_backoff[retry])
                 else:
-                    print('Retried too many times, stopped retrying.')
+                    logging.error('Retried too many times, stopped retrying.')
             finally:
                 if response:
                     response.close()
-    if retry < 0:
-        raise RuntimeWarning('Connection broken too many times. Stopped retrying.')
+    if retry <= 0:
+        raise RuntimeError('Connection broken too many times. Stopped retrying.')
 
     if download and retry > 0:
         pbar.update(done - pbar.n)
         if done < total_size:
-            raise RuntimeWarning(
-                'Received less data than specified in '
-                + 'Content-Length header for '
-                + url
-                + '.'
-                + ' There may be a download problem.'
+            raise RuntimeError(
+                f'Received less data than specified in Content-Length header for '
+                f'{url}. There may be a download problem.'
             )
         move(resume_file, outfile)
 
@@ -272,7 +273,7 @@ def untar(path, fname, deleteTar=True):
     :param bool deleteTar:
         If true, the archive will be deleted after extraction.
     """
-    print('unpacking ' + fname)
+    logging.debug(f'unpacking {fname}')
     fullpath = os.path.join(path, fname)
     shutil.unpack_archive(fullpath, path)
     if deleteTar:
@@ -292,7 +293,7 @@ def unzip(path, fname, deleteZip=True):
     :param bool deleteZip:
         If true, the archive will be deleted after extraction.
     """
-    print('unzipping ' + fname)
+    logging.debug(f'unzipping {fname}')
     fullpath = os.path.join(path, fname)
     with zipfile.ZipFile(fullpath, "r") as zip_ref:
         zip_ref.extractall(path)
@@ -367,7 +368,7 @@ def download_models(
 
     if not built(dpath, version):
         for fname in fnames:
-            print('[building data: ' + dpath + '/' + fname + ']')
+            logging.info(f'building data: {dpath}/{fname}')
         if built(dpath):
             # An older version exists, so remove these outdated files.
             remove_dir(dpath)
@@ -499,7 +500,7 @@ def download_multiprocess(
     remaining_items = [
         it for it in items if not os.path.isfile(os.path.join(path, it[1]))
     ]
-    print(
+    logging.info(
         f'Of {len(urls)} items, {len(urls) - len(remaining_items)} already existed; only going to download {len(remaining_items)} items.'
     )
     pbar.update(len(urls) - len(remaining_items))
@@ -509,7 +510,7 @@ def download_multiprocess(
         for i in range(0, len(remaining_items), chunk_size)
     )
     remaining_chunks_count = math.ceil(float(len(remaining_items) / chunk_size))
-    print(
+    logging.info(
         f'Going to download {remaining_chunks_count} chunks with {chunk_size} images per chunk using {num_processes} processes.'
     )
 
@@ -533,7 +534,7 @@ def download_multiprocess(
                             'error': error_msg,
                         }
                     )
-                    print(
+                    logging.error(
                         f'Bad download - chunk: {idx}, dest_file: {dest_file}, http status code: {http_status_code}, error_msg: {error_msg}'
                     )
             pbar.update(len(chunk_result))
@@ -547,14 +548,14 @@ def download_multiprocess(
 
         with open(os.path.join(error_filename), 'w+') as error_file:
             error_file.write(json.dumps(collected_errors))
-            print('Summary of errors written to %s' % error_filename)
+            logging.error(f'Summary of errors written to {error_filename}')
 
-    print(
-        'Of %s items attempted downloading, %s had errors.'
-        % (len(remaining_items), len(collected_errors))
+    logging.info(
+        f'Of {len(remaining_items)} items attempted downloading, '
+        f'{len(collected_errors)} had errors.'
     )
 
-    print('Finished downloading chunks.')
+    logging.debug('Finished downloading chunks.')
     return all_results
 
 

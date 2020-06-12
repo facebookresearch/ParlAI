@@ -59,6 +59,7 @@ from parlai.core.opt import Opt
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
+import parlai.utils.logging as logging
 
 
 def validate(observation):
@@ -610,6 +611,8 @@ class MultiWorld(World):
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
         weights = self.opt.get('multitask_weights', [1])
+        if weights == 'stochastic':
+            weights = [w.num_episodes() for w in self.worlds]
         sum = 0
         for i in self.task_choices:
             if len(weights) > i:
@@ -1386,7 +1389,7 @@ class HogwildWorld(World):
             # otherwise they might reset one another after processing some exs
             self.sync['threads_sem'].acquire()  # type: ignore
 
-        print(f'[ {self.numthreads} threads initialized ]')
+        logging.info(f'{self.numthreads} threads initialized')
 
     def display(self):
         """
@@ -1614,7 +1617,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
     # (e.g. "#QA" to the list of tasks that are QA tasks).
     opt = copy.deepcopy(opt)
     opt['task'] = ids_to_tasks(opt['task'])
-    print('[creating task(s): ' + opt['task'] + ']')
+    logging.info(f"creating task(s): {opt['task']}")
 
     # check if single or multithreaded, and single-example or batched examples
     if ',' not in opt['task']:

@@ -1,11 +1,11 @@
 ## News
+2020-04-28: [BlenderBot](https://parl.ai/projects/recipes/) has been released, including 2.7B and 9.4B parameter models. It received some attention in the media, including [Engadget](https://www.engadget.com/facebook-chatbot-ai-open-source-blender-150001320.html), [Technology Review](https://www.technologyreview.com/2020/04/29/1000795/facebook-ai-chatbot-blender-beats-google-meena/), [Fortune](https://fortune.com/2020/04/29/facebook-creates-the-most-human-chatbot-yet/), and [Wired](https://www.wired.com/story/new-chatbot-tries-artificial-empathy/).
 
+2020-02-04: [GPT2 fine-tuning for dialogue](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/hugging_face)  now supported in ParlAI!
 
-2020-2-4: [GPT2 fine-tuning for dialogue](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/hugging_face)  now supported in ParlAI!
+2020-01-17: [All-in-One Image-Grounded Conversational Agents project](https://twitter.com/parlai_parley/status/1218204771859017732) built in ParlAI 
 
-2020-1-17: [All-in-One Image-Grounded Conversational Agents project](https://twitter.com/parlai_parley/status/1218204771859017732) built in ParlAI 
-
-2020-1-15: [Seb Ruder's 10 ML & NLP Research Highlights of 2019 post](https://ruder.io/research-highlights-2019/) mentions at least two works built with ParlAI.
+2020-01-15: [Seb Ruder's 10 ML & NLP Research Highlights of 2019 post](https://ruder.io/research-highlights-2019/) mentions at least two works built with ParlAI.
 
 2019-12-19: [Amazon's TopicChat dataset uses ParlAI](https://twitter.com/parlai_parley/status/1207716855525367808).
 
@@ -13,9 +13,9 @@
 
 2019-11-10: [Dialogue unlikelihood project](https://parl.ai/projects/dialogue_unlikelihood/) for improving consistency in dialogue generation. 
 
-2019-11-9: The [Gender bias project page](https://parl.ai/projects/genderation_bias/) mitigates bias in dialogue generation.
+2019-11-09: The [Gender bias project page](https://parl.ai/projects/genderation_bias/) mitigates bias in dialogue generation.
 
-2019-11-9: The [Dodeca dialogue project page](https://parl.ai/projects/dodecadialogue/) is up with paper and leaderboard -- multi-tasking on many dialogue tasks with strong results!
+2019-11-09: The [Dodeca dialogue project page](https://parl.ai/projects/dodecadialogue/) is up with paper and leaderboard -- multi-tasking on many dialogue tasks with strong results!
 
 2019-09-16: The [Dialogue Safety project page](https://parl.ai/projects/dialogue_safety/) is updated with pretrained models, data, and an interactive demonstration.
 

@@ -21,12 +21,11 @@ See below for documentation on each specific tool.
 
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from collections import deque
-import json
 import random
 import os
 import torch
+import parlai.utils.logging as logging
 from torch import optim
 
 from parlai.core.opt import Opt
@@ -684,7 +683,7 @@ class TorchAgent(ABC, Agent):
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
             if not shared:
-                print('[ Using CUDA ]')
+                logging.info('Using CUDA')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
 
@@ -952,7 +951,7 @@ class TorchAgent(ABC, Agent):
         # will remain the behavior for the time being.
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
-            print('WARNING: not loading optim state since optim class changed.')
+            logging.warn('Not loading optim state since optim class changed.')
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
@@ -1183,7 +1182,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
-        if self.opt['embedding_type'] == 'random':
+        if (
+            self.opt['embedding_type'] == 'random'
+            or not self._should_initialize_optimizer()
+        ):
             # Random embedding means no copying of pretrained embeddings
             return
 
@@ -1196,9 +1198,9 @@ class TorchAgent(ABC, Agent):
                 cnt += 1
 
         if log:
-            print(
-                'Initialized embeddings for {} tokens ({}%) from {}.'
-                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+            logging.info(
+                f'Initialized embeddings for {cnt} tokens '
+                f'({cnt / len(self.dict):.1%}) from {name}.'
             )
 
     def share(self):
@@ -1783,24 +1785,16 @@ class TorchAgent(ABC, Agent):
                 model_dict_path
             ):  # force save dictionary
                 # TODO: Look into possibly overriding opt('dict_file') with new path
+                logging.debug(f'Saving dictionary to {model_dict_path}')
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
                 with open(path, 'wb') as write:
                     torch.save(states, write)
-
                 # save opt file
-                with open(path + '.opt', 'w', encoding='utf-8') as handle:
-                    if hasattr(self, 'model_version'):
-                        self.opt['model_version'] = self.model_version()
-                    saved_opts = deepcopy(self.opt)
-                    if 'interactive_mode' in saved_opts:
-                        # We do not save the state of interactive mode, it is only decided
-                        # by scripts or command line.
-                        del saved_opts['interactive_mode']
-                    json.dump(saved_opts, handle, indent=4)
-                    # for convenience of working with jq, make sure there's a newline
-                    handle.write('\n')
+                if hasattr(self, 'model_version'):
+                    self.opt['model_version'] = self.model_version()
+                self.opt.save(path + '.opt')
 
     def load_state_dict(self, state_dict):
         """
@@ -1973,7 +1967,7 @@ class TorchAgent(ABC, Agent):
         """
         if shared is None and mode:
             # Only print in the non-shared version.
-            print("[" + self.id + ': full interactive mode on.' + ']')
+            logging.info(f'{self.id}: full interactive mode on.')
 
     def backward(self, loss):
         """

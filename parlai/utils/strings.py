@@ -64,6 +64,15 @@ def uppercase(string: str) -> str:
         return string[0].upper() + string[1:]
 
 
+def name_to_classname(name: str) -> str:
+    words = name.split('_')
+    class_name = ''
+    for w in words:
+        # capitalize the first letter
+        class_name += w[0].upper() + w[1:]
+    return class_name
+
+
 def colorize(text, style):
     try:
         # if we're in ipython it's okay to use colors

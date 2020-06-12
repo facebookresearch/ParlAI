@@ -54,9 +54,9 @@ except ImportError:
     fairseq_bleu = None
 
 
-class SearchBlacklist(object):
+class SearchBlocklist(object):
     """
-    Search blacklist facilitates blocking ngrams from being generated.
+    Search block list facilitates blocking ngrams from being generated.
     """
 
     def __init__(self, dict_agent: DictionaryAgent) -> None:
@@ -76,7 +76,7 @@ class SearchBlacklist(object):
             return
         ngram = self.dict.txt2vec(phrase_literal)
         self._phrases.add(phrase_literal)
-        logging.debug(f"Adding '{phrase_literal}' to the beam blacklist {ngram}")
+        logging.debug(f"Adding '{phrase_literal}' to the beam block_list {ngram}")
         l = len(ngram)
         if l not in self._phrase_ngrams:
             self._phrase_ngrams[l] = []
@@ -134,6 +134,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         super().__init__()
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
+        self.START_IDX = start_idx
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
@@ -164,6 +165,13 @@ class TorchGeneratorModel(nn.Module, ABC):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
+        if (ys[:, 0] == self.START_IDX).any():
+            raise AssertionError(
+                "The Beginning of Sentence token is automatically added to the "
+                "label in decode_forced, but you included it in the label. This means "
+                "your model will have a double BOS token, which is probably not what "
+                "you intended."
+            )
         inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
@@ -331,6 +339,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 method = 'beam'
             opt_from_disk['inference'] = method
             warn_once(f'Old model inference method inferred as {method}')
+
+        # 2020-06-03: Changing "blacklist" --> "blocklist"
+        if 'beam_blacklist_filename' in opt_from_disk:
+            if opt_from_disk['beam_blacklist_filename'] is not None:
+                opt_from_disk['beam_block_list_filename'] = opt_from_disk[
+                    'beam_blacklist_filename'
+                ]
+            del opt_from_disk['beam_blacklist_filename']
+
         return opt_from_disk
 
     @classmethod
@@ -396,7 +413,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             '--beam-delay', type=int, default=30, help='used in delayedbeam search'
         )
         agent.add_argument(
-            '--beam-blacklist-filename',
+            '--beam-block-list-filename',
             type=str,
             default=None,
             help='Load a text file of hard blocks for beam search to never say.',
@@ -429,20 +446,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
-        self.beam_blacklist: Optional[SearchBlacklist] = None
+        self.beam_block_list: Optional[SearchBlocklist] = None
 
         if shared:
             # set up shared properties
             states = shared.get('states', {})
-            self.beam_blacklist = shared.get('blacklist')
+            self.beam_block_list = shared.get('beam_block_list')
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
             # ensure all distributed copies will always be in sync
             self.model = self.build_model()
 
-            # load the blacklist for beam search
-            self.beam_blacklist = self._load_beam_blacklist()
+            # load the block_list for beam search
+            self.beam_block_list = self._load_beam_block_list()
 
             if self.model is None or self.criterion is None:
                 raise AttributeError(
@@ -458,19 +475,21 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             sync_parameters(self.model)
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
-            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
 
             if self.fp16:
                 self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
-                print('[ Loading existing model params from {} ]' ''.format(init_model))
+                logging.info(f'Loading existing model params from {init_model}')
                 states = self.load(init_model)
             else:
                 states = {}
 
-        if shared:
+        if shared is not None:
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
@@ -540,10 +559,23 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         If your model uses additional inputs beyond text_vec and label_vec,
         you will need to override it to add additional fields.
         """
+        text_vec = (
+            torch.arange(1, maxlen + 1)  # need it as long as specified
+            .clamp(max=3)  # cap at 3 for testing with tiny dictionaries
+            .unsqueeze(0)
+            .expand(batchsize, maxlen)
+            .cuda()
+        )
+        # label vec has two tokens to make it interesting, but we we can't use the
+        # start token, it's reserved.
+        label_vec = (
+            torch.LongTensor([self.END_IDX, self.NULL_IDX])
+            .unsqueeze(0)
+            .expand(batchsize, 2)
+            .cuda()
+        )
         return Batch(
-            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
-            label_vec=torch.ones(batchsize, 2).long().cuda(),
-            text_lengths=[maxlen] * batchsize,
+            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
@@ -555,7 +587,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 self._control_local_metrics(disabled=True)
-                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
                 self._control_local_metrics(enabled=True)
                 self._temporarily_disable_local_metrics = False
                 self.backward(loss)
@@ -582,7 +614,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Share internal states between parent and child instances.
         """
         shared = super().share()
-        shared['beam_blacklist'] = self.beam_blacklist
+        shared['beam_block_list'] = self.beam_block_list
         if hasattr(self, 'optimizer'):
             shared['optimizer'] = self.optimizer
         if self.opt.get('numthreads', 1) > 1:
@@ -676,20 +708,29 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             loss = self.compute_loss(batch)
             self.backward(loss)
             self.update_params()
+            oom_sync = False
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
             if 'out of memory' in str(e):
-                print(
-                    '| WARNING: ran out of memory, skipping batch. '
+                oom_sync = True
+                logging.error(
+                    'Ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
                 self.global_metrics.add('skipped_batches', SumMetric(1))
-                # gradients are synced on backward, now this model is going to be
-                # out of sync! catch up with the other workers
-                self._init_cuda_buffer(8, 8, True)
             else:
                 raise e
+
+        if oom_sync:
+            # moved outside of the try-except because the raised exception in scope
+            # actually prevents from the data being freed, which can sometimes cause
+            # us to OOM during our OOM handling.
+            # https://github.com/pytorch/pytorch/issues/18853#issuecomment-583779161
+
+            # gradients are synced on backward, now this model is going to be
+            # out of sync! catch up with the other workers
+            self._init_cuda_buffer(8, 8, True)
 
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
@@ -796,10 +837,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         preds = None
         if self.skip_generation:
-            warn_once(
-                "--skip-generation does not produce accurate metrics beyond ppl",
-                RuntimeWarning,
-            )
+            warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
             beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
@@ -927,12 +965,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             the maximum length of the decoded sequence
 
         :return:
-            tuple (beam_pred_scores, n_best_pred_scores, beams)
+            tuple (beam_pred_scores, beams)
 
             - beam_preds_scores: list of (prediction, score) pairs for each sample in
               Batch
-            - n_best_preds_scores: list of n_best list of tuples (prediction, score)
-              for each sample from Batch
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
@@ -955,7 +991,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beams = [
                 self._treesearch_factory(dev)
                 .set_context(self._get_context(batch, batch_idx))
-                .set_blacklist(self.beam_blacklist)
+                .set_block_list(self.beam_block_list)
                 for batch_idx in range(batchsize)
             ]
         else:
@@ -1022,26 +1058,26 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         return beam_preds_scores, beams
 
-    def _load_beam_blacklist(self) -> SearchBlacklist:
+    def _load_beam_block_list(self) -> SearchBlocklist:
         """
-        Load the beam blacklist.
+        Load the beam block_list.
 
         :return: a dict mapping ngram length to different ngrams
         """
-        blacklist = SearchBlacklist(self.dict)
-        if not self.opt.get('beam_blacklist_filename'):
-            return blacklist
+        block_list = SearchBlocklist(self.dict)
+        if not self.opt.get('beam_block_list_filename'):
+            return block_list
 
-        blacklist_fn = self.opt['beam_blacklist_filename']
+        block_list_fn = self.opt['beam_block_list_filename']
         try:
-            with open(blacklist_fn) as f:
+            with open(block_list_fn) as f:
                 for line in f:
-                    blacklist.add(line.strip())
+                    block_list.add(line.strip())
         except IOError:
             logging.error(
-                f"Could not load beam blacklist {blacklist_fn}, using empty blacklist."
+                f"Could not load beam block_list {block_list_fn}, using empty block_list."
             )
-        return blacklist
+        return block_list
 
 
 class _HypothesisTail(object):
@@ -1109,7 +1145,7 @@ class TreeSearch(object):
         self.pad = padding_token
         self.context = None
         self.context_block_ngram = context_block_ngram
-        self.blacklist: Optional[SearchBlacklist] = None
+        self.block_list: Optional[SearchBlocklist] = None
         self.device = device
         # recent score for each hypo in the beam
         self.scores = None
@@ -1139,8 +1175,8 @@ class TreeSearch(object):
         self.context = context.tolist()
         return self
 
-    def set_blacklist(self: TSType, blacklist: Optional[SearchBlacklist]) -> TSType:
-        self.blacklist = blacklist
+    def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
+        self.block_list = block_list
         return self
 
     def get_output_from_current_step(self):
@@ -1206,12 +1242,12 @@ class TreeSearch(object):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
-    def _block_blacklist(self, logprobs: torch.Tensor) -> torch.Tensor:
-        if self.blacklist is None:
+    def _block_block_list(self, logprobs: torch.Tensor) -> torch.Tensor:
+        if self.block_list is None:
             return logprobs
 
         for beam_id, hyp in enumerate(self.partial_hyps):
-            for ngram_size, bad_ngrams in self.blacklist.items():
+            for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
                     if (ngram_size == 1) or prefix == list(ngram[:-1]):
@@ -1241,7 +1277,7 @@ class TreeSearch(object):
         if self.block_ngram > 0:
             logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
 
-        logprobs = self._block_blacklist(logprobs)
+        logprobs = self._block_block_list(logprobs)
 
         if self.context_block_ngram > 0:
             if self.context is None:
@@ -1518,10 +1554,9 @@ class NucleusSampling(TreeSearch):
         # for the probabilities in order to compute the CDF.
         probs = torch.softmax(logprobs, dim=-1)
         sprobs, sinds = probs.sort(dim=-1, descending=True)
-        # The subtraction here is so that we always include the first word to
-        # go over p. For example, if the most probable token has a prob of 0.5, and
-        # p = 0.3, then we need still need to include that first token.
-        mask = (sprobs.cumsum(dim=-1) - sprobs[:, :1]) >= self.p
+        # The subtraction here is to get the exclusive prefix sum,
+        # to guarantee the first element is not masked
+        mask = (sprobs.cumsum(dim=-1) - sprobs) >= self.p
         sprobs[mask] = 0
         sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
         choices = torch.multinomial(sprobs, 1)[:, 0]
