@@ -1137,7 +1137,10 @@ model_list = [
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",
-        "result": None,  # TODO: add
+        "result": """10:34:46 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .6742   .6616 5482 .7059   .07928   .6742    .9445         1   .8902 1.321 .7706 2.962 19.76
+""",
     },
     {
         "title": "BlendedSkillTalk: MT Single-Skills model",
@@ -1162,7 +1165,10 @@ model_list = [
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks, and then further fine-tuned on the BlendedSkillTalk dialogue task.",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task_bst_tuned/model -t blended_skill_talk -dt test",
-        "result": None,  # TODO: add
+        "result": """10:36:01 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .8378   .8230 5482 .8543   .07928   .8378    .9872         1   .9704 .5897 .8963 1.604 19.76
+""",
     },
     {
         "title": "Tutorial Transformer Generator",
