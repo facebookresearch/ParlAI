@@ -1091,11 +1091,22 @@ model_list = [
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model on the BlendedSkillTalk dialogue task.",
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the BlendedSkillTalk dialogue task.",
         "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
         "result": 'Results vary.',
         "example2": "python examples/eval_model.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
         "result2": None,  # TODO: add
+    },
+    {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": None,  # TODO: add
     },
     {
         "title": "Tutorial Transformer Generator",
