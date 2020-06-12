@@ -1109,7 +1109,7 @@ model_list = [
         "result": None,  # TODO: add
     },
     {
-        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "title": "BlendedSkillTalk: EmpatheticDialogues single-task model",
         "id": "blended_skill_talk",
         "path": "zoo:blended_skill_talk/convai2_single_task/model",
         "agent": "transformer/polyencoder",
@@ -1120,7 +1120,7 @@ model_list = [
         "result": None,  # TODO: add
     },
     {
-        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "title": "BlendedSkillTalk: Wizard of Wikipedia single-task model",
         "id": "blended_skill_talk",
         "path": "zoo:blended_skill_talk/convai2_single_task/model",
         "agent": "transformer/polyencoder",
@@ -1131,7 +1131,7 @@ model_list = [
         "result": None,  # TODO: add
     },
     {
-        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "title": "BlendedSkillTalk: MT Single-Skills model",
         "id": "blended_skill_talk",
         "path": "zoo:blended_skill_talk/convai2_single_task/model",
         "agent": "transformer/polyencoder",
@@ -1142,7 +1142,7 @@ model_list = [
         "result": None,  # TODO: add
     },
     {
-        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "title": "BlendedSkillTalk: MT Single-Skills model fine-tuned on BST",
         "id": "blended_skill_talk",
         "path": "zoo:blended_skill_talk/convai2_single_task/model",
         "agent": "transformer/polyencoder",
@@ -1153,7 +1153,7 @@ model_list = [
         "result": None,  # TODO: add
     },
     {
-        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "title": "BlendedSkillTalk: classifier for MT Two-Stage model",
         "id": "blended_skill_talk",
         "path": "zoo:blended_skill_talk/convai2_single_task/model",
         "agent": "transformer/polyencoder",
