@@ -1195,9 +1195,11 @@ model_list = [
         "path": "zoo:blended_skill_talk/bst_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model on the BlendedSkillTalk dialogue task.",
-        "project": None,  # TODO: will fill in once dataset is released
         "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
-        "result": None,  # TODO
+        "result": 'Results vary.',
+        "example2": "python examples/eval_model.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
+        "result2": None,  # TODO: add
     },
 ]
