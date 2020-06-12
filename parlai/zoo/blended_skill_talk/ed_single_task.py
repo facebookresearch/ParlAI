@@ -20,7 +20,5 @@ def download(datapath):
         fnames=fnames,
         model_folder='blended_skill_talk',
         version=version,
-        path=f'http://localhost:8000/blended_skill_talk/{model_type}',
         use_model_type=True,
     )
-    # TODO: remove `path` arg
