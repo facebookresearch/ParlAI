@@ -9,6 +9,7 @@ File for miscellaneous utility functions and constants.
 
 from collections import deque, OrderedDict
 from typing import Union, Optional, Set, Any, Dict, List, Tuple
+from datetime import timedelta
 import math
 import random
 import time
@@ -292,23 +293,24 @@ class TimeLogger:
             done = done.value()
         self.tot_time += self.timer.time()
         self.timer.reset()
-        log = {}
-        log['exs'] = done
+        report['exs'] = done
         if total > 0:
-            log['%done'] = done / total
-            if log["%done"] > 0:
-                time_left = self.tot_time / log['%done'] - self.tot_time
-                log['time_left'] = str(int(time_left)) + 's'
-            z = '%.2f' % (100 * log['%done'])
-            log['%done'] = str(z) + '%'
+            progress = done / total
+            seconds_left = max(0, self.tot_time / progress - self.tot_time)
+            eta = timedelta(seconds=int(seconds_left + 0.5))
+        else:
+            progress = 0
+            eta = "unknown"
+        elapsed = timedelta(seconds=int(self.tot_time))
 
+        text = (
+            f'{progress:.1%} complete ({done:,d} / {total:,d}), '
+            f'{elapsed} elapsed, {eta} eta'
+        )
         if report:
-            log = {**report, **log}
-
-        int_time = int(self.tot_time)
-        report_s = nice_report(log)
-        text = f'{int_time}s elapsed:\n{report_s}'
-        return text, log
+            report_s = nice_report(report)
+            text = f'{text}\n{report_s}'
+        return text, report
 
 
 class AttrDict(dict):
