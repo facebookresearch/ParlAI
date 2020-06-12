@@ -1085,6 +1085,19 @@ model_list = [
         "result": ("A trained model (logs omitted)"),
     },
     {
+        "title": "BlendedSkillTalk: BlendedSkillTalk single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/bst_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model on the BlendedSkillTalk dialogue task.",
+        "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
+        "result": 'Results vary.',
+        "example2": "python examples/eval_model.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
+        "result2": None,  # TODO: add
+    },
+    {
         "title": "Tutorial Transformer Generator",
         "id": "tutorial_transformer_generator",
         "path": "zoo:tutorial_transformer_generator/model",
@@ -1188,18 +1201,5 @@ model_list = [
             "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
         ),
         "result": ("Results vary."),
-    },
-    {
-        "title": "BlendedSkillTalk: BlendedSkillTalk single-task model",
-        "id": "blended_skill_talk",
-        "path": "zoo:blended_skill_talk/bst_single_task/model",
-        "agent": "transformer/polyencoder",
-        "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
-        "description": "Pretrained polyencoder retrieval model on the BlendedSkillTalk dialogue task.",
-        "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
-        "result": 'Results vary.',
-        "example2": "python examples/eval_model.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
-        "result2": None,  # TODO: add
     },
 ]
