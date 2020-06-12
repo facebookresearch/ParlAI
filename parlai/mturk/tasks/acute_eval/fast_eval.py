@@ -27,7 +27,7 @@ try:
         CONFIG as internal_conf,
     )
     from parlai_internal.projects.fast_acute.fast_eval import (
-        ACUTE_EVAL_TYPES as internal_types
+        ACUTE_EVAL_TYPES as internal_types,
     )
 
     CONFIG.update(internal_conf)
