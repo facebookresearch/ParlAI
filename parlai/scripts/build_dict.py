@@ -85,7 +85,9 @@ def build_dict(opt, skip_if_built=False):
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
 
-    if os.path.isfile(opt['dict_file']) or dictionary.is_prebuilt():
+    if os.path.isfile(opt['dict_file']) or (
+        hasattr(dictionary, 'is_prebuilt') and dictionary.is_prebuilt()
+    ):
         # Dictionary already built, return loaded dictionary agent
         logging.debug("dictionary already built.")
         return dictionary
