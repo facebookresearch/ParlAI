@@ -12,7 +12,7 @@ import os
 import random
 
 from parlai.utils.misc import AttrDict
-
+import parlai.utils.logging as logging
 
 BAR = '=' * 60
 SMALL_BAR = '-' * 60
@@ -92,7 +92,7 @@ class Metadata:
             metadata[k] = v
 
         metadata_path = cls._get_path(datapath)
-        print(f'[ Writing metadata to file {metadata_path} ]')
+        logging.info(f'Writing metadata to file {metadata_path}')
         with open(metadata_path, 'w') as f:
             f.write(json.dumps(metadata))
 
@@ -229,14 +229,14 @@ class Conversations:
             metadata = Metadata(datapath)
             return metadata
         except RuntimeError:
-            print('Metadata does not exist. Please double check your datapath.')
+            logging.error('Metadata does not exist. Please double check your datapath.')
             return None
 
     def read_metadata(self):
         if self.metadata is not None:
-            print(self.metadata)
+            logging.info(self.metadata)
         else:
-            print('No metadata available.')
+            logging.warn('No metadata available.')
 
     def __getitem__(self, index):
         return self.conversations[index]
@@ -259,7 +259,7 @@ class Conversations:
 
     def read_conv_idx(self, idx):
         convo = self.conversations[idx]
-        print(convo)
+        logging.info(convo)
 
     def read_rand_conv(self):
         idx = random.choice(range(len(self)))
@@ -332,7 +332,7 @@ class Conversations:
                         convo['dialog'].append(new_pair)
                 json_convo = json.dumps(convo)
                 f.write(json_convo + '\n')
-        print(f' [ Conversations saved to file: {to_save} ]')
+        logging.info(f'Conversations saved to file: {to_save}')
 
         # save metadata
         Metadata.save_metadata(

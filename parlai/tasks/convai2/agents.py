@@ -8,6 +8,7 @@ from parlai.core.teachers import FbDialogTeacher
 from parlai.utils.misc import warn_once
 from .build import build
 from parlai.utils.strings import normalize_reply
+import parlai.utils.logging as logging
 
 import copy
 import os
@@ -103,7 +104,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
         return '\n'.join(xs2)
 
     def setup_data(self, path):
-        print("[loading normalized fbdialog data:" + path + "]")
+        logging.info(f"loading normalized fbdialog data: {path}")
         with open(path) as read:
             start = True
             x = ''

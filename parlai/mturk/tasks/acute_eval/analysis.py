@@ -255,7 +255,7 @@ class AcuteAnalyzer(object):
                 continue
             for r_idx, task_data in enumerate(data['task_data']):
                 response_data = data['response']['task_data'][r_idx]
-                if response_data is None:
+                if response_data is None or not response_data:
                     continue
                 response = self._extract_response_data(
                     data, task_data, hit, response_data

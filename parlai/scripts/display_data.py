@@ -23,6 +23,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.strings import colorize
 from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 import random
 
@@ -85,15 +86,14 @@ def display_data(opt):
                 turn = 0
 
         if world.epoch_done():
-            print('EPOCH DONE')
+            logging.info('epoch done')
             break
 
     try:
         # print dataset size if available
-        print(
-            '[ loaded {} episodes with a total of {} examples ]'.format(
-                world.num_episodes(), world.num_examples()
-            )
+        logging.info(
+            f'loaded {world.num_episodes()} episodes with a '
+            f'total of {world.num_examples()} examples'
         )
     except Exception:
         pass

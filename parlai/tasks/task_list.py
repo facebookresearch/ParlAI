@@ -1145,6 +1145,39 @@ task_list = [
         ),
     },
     {
+        "id": "AirDialogue",
+        "display_name": "AirDialogue",
+        "task": "airdialogue",
+        "tags": ["All", "Goal"],
+        "description": (
+            "Task for goal-oriented dialogue using airplane booking conversations "
+            "between agents and customers. Paper and toolkits for the dataset can be"
+            " found at <https://github.com/google/airdialogue>."
+        ),
+    },
+    {
+        "id": "HollE",
+        "display_name": "Holl-E",
+        "task": "holl_e",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Sequence of utterances and responses with background knowledge about"
+            "movies. From the Holl-E dataset. More information found at"
+            " https://github.com/nikitacs16/Holl-E."
+        ),
+    },
+    {
+        "id": "ELI5",
+        "display_name": "ELI5",
+        "task": "eli5",
+        "tags": ["All", "QA"],
+        "description": (
+            "This dataset contains Question and Answer data from Reddit "
+            "explainlikeimfive posts and comments."
+            "Link: https://github.com/facebookresearch/ELI5/"
+        ),
+    },
+    {
         "id": "ReDial",
         "display_name": "ReDial",
         "task": "redial",

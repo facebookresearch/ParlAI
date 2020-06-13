@@ -11,7 +11,8 @@ import math
 from itertools import chain
 from typing import Optional
 
-from parlai.utils.misc import warn_once
+import parlai.utils.logging as logging
+from parlai.utils.misc import error_once
 
 try:
     import torch
@@ -140,7 +141,7 @@ def fp16_apex_available() -> bool:
 
         return True
     except ImportError:
-        warn_once(
+        error_once(
             'You set --fp16 true with --fp16-impl apex, but fp16 '
             'with apex is unavailable. To use apex fp16, please '
             'install APEX from https://github.com/NVIDIA/apex.'
@@ -331,7 +332,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                         'increasing the batch size.'
                     ).format(self.min_loss_scale)
                 )
-            warn_once(f'[ Overflow: setting loss scale to {self.scaler.loss_scale} ]')
+            logging.info(f'Overflow: setting loss scale to {self.scaler.loss_scale}')
             self.zero_grad()
             return -1
 

@@ -19,6 +19,8 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.core.dict import DictionaryAgent
 
+import parlai.utils.logging as logging
+
 
 def setup_args(parser=None):
     if parser is None:
@@ -72,7 +74,7 @@ def report(world, counts, log_time):
 
 def verify(opt, printargs=None, print_parser=None):
     if opt['datatype'] == 'train':
-        print("[ note: changing datatype from train to train:ordered ]")
+        logging.warn('changing datatype from train to train:ordered')
         opt['datatype'] = 'train:ordered'
 
     # create repeat label agent and assign it to the specified task
@@ -159,14 +161,13 @@ def verify(opt, printargs=None, print_parser=None):
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
             if print_parser:
-                print(text)
+                logging.info(text)
 
     try:
         # print dataset size if available
-        print(
-            '[ loaded {} episodes with a total of {} examples ]'.format(
-                world.num_episodes(), world.num_examples()
-            )
+        logging.info(
+            f'loaded {world.num_episodes()} episodes with a total '
+            f'of {world.num_examples()} examples'
         )
     except Exception:
         pass

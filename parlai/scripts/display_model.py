@@ -21,6 +21,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.scripts.script import ParlaiScript
 from parlai.utils.strings import colorize
+import parlai.utils.logging as logging
 
 import random
 
@@ -77,7 +78,7 @@ def display_model(opt):
             if world.get_acts()[0]['episode_done']:
                 turn = 0
             if world.epoch_done():
-                print("EPOCH DONE")
+                logging.info("epoch done")
                 turn = 0
                 break
 
