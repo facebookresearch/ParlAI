@@ -21,7 +21,6 @@ See below for documentation on each specific tool.
 
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
-from collections import deque
 import random
 import os
 import torch
@@ -159,11 +158,8 @@ class History(object):
         field in the observation to track over the course of the episode
         (defaults to 'text')
 
-    :param vec_type:
-        specify a 'list' or 'deque' to save the history in this object
-
     :param maxlen:
-        if `vec_type` is 'deque', this sets the maximum length of that object
+        sets the maximum number of tunrs
 
     :param p1_token:
         token indicating 'person 1'; opt must have 'person_tokens' set to True
@@ -181,7 +177,6 @@ class History(object):
         self,
         opt,
         field='text',
-        vec_type='deque',
         maxlen=None,
         size=-1,
         p1_token='__p1__',
@@ -199,9 +194,6 @@ class History(object):
             self._global_end_token = self.dict[self.dict.end_token]
 
         # set up history objects
-        if vec_type != 'deque' and vec_type != 'list':
-            raise RuntimeError('Type {} is not supported for history'.format(vec_type))
-        self.vec_type = vec_type
         self.max_len = maxlen
 
         self.history_strings = []
@@ -305,27 +297,16 @@ class History(object):
         if len(self.history_vecs) == 0:
             return None
 
-        if self.vec_type == 'deque':
-            history = deque(maxlen=self.max_len)
-            for vec in self.history_vecs[:-1]:
-                history.extend(vec)
-                history.extend(self.delimiter_tok)
-            history.extend(self.history_vecs[-1])
-            if self.temp_history is not None:
-                history.extend(self.parse(self.temp_history))
-            if self._global_end_token is not None:
-                history.extend([self._global_end_token])
-        else:
-            # vec type is a list
-            history = []
-            for vec in self.history_vecs[:-1]:
-                history += vec
-                history += self.delimiter_tok
-            history += self.history_vecs[-1]
-            if self.temp_history is not None:
-                history.extend(self.parse(self.temp_history))
-            if self._global_end_token is not None:
-                history += [self._global_end_token]
+        # vec type is a list
+        history = []
+        for vec in self.history_vecs[:-1]:
+            history += vec
+            history += self.delimiter_tok
+        history += self.history_vecs[-1]
+        if self.temp_history is not None:
+            history.extend(self.parse(self.temp_history))
+        if self._global_end_token is not None:
+            history += [self._global_end_token]
 
         return history
 
