@@ -328,7 +328,7 @@ class DictionaryAgent(Agent):
         """
         Indicates whether the dictionary is fixed, and does not require building.
         """
-        return self.tokenizer in ['gpt2', 'bytelevelbpe']
+        return self.tokenizer == 'gpt2'
 
     def add_token(self, word):
         """
