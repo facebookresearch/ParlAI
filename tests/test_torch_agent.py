@@ -747,6 +747,22 @@ class TestTorchAgent(unittest.TestCase):
         vec = agent.history.get_history_vec()
         self.assertEqual(vec, [1, 2, 3, MockDict.END_IDX])
 
+    def test_reversed_history(self):
+        agent = get_agent(history_reversed=True)
+        agent.history.reset()
+        agent.history.update_history({'text': 'hello i am stephen'})
+        agent.history.update_history({'text': 'i am bob'})
+        assert agent.history.get_history_str() == 'i am bob\nhello i am stephen'
+        agent.history.reset()
+        agent.history.update_history(
+            {'text': 'your persona: filler\nhello i am stephen'}
+        )
+        agent.history.update_history({'text': 'i am bob'})
+        assert (
+            agent.history.get_history_str()
+            == 'i am bob\nhello i am stephen\nyour persona: filler'
+        )
+
     def test_observe(self):
         """
         Make sure agent stores and returns observation.

@@ -189,6 +189,7 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self.reversed = opt.get('history_reversed', False)
         self._global_end_token = opt.get('history_add_global_end_token', None)
         if self._global_end_token is not None:
             self._global_end_token = self.dict[self.dict.end_token]
@@ -251,14 +252,17 @@ class History(object):
         # update history vecs
         self._update_vecs(text)
 
-    def update_history(self, obs, temp_history=None):
+    def update_history(self, obs: Message, temp_history: Optional[str] = None):
         """
         Update the history with the given observation.
 
-        param obs:     Observation used to update the history. param temp_history:
-        Optional temporary string. If it is not None,     this string will be appended
-        to the end of the     history. It will not be in the history on the     next
-        dialogue turn. Set to None to stop adding     to the history.
+        :param obs:
+            Observation used to update the history.
+        :param temp_history:
+            Optional temporary string. If it is not None, this string will be
+            appended to the end of the history. It will not be in the history
+            on the next dialogue turn. Set to None to stop adding to the
+            history.
         """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -271,6 +275,8 @@ class History(object):
                     text = self._add_person_tokens(
                         obs[self.field], self.p1_token, self.add_p1_after_newln
                     )
+                if self.reversed:
+                    text = '\n'.join(reversed(text.split('\n')))
                 # update history string
                 self._update_strings(text)
                 # update history vecs
@@ -282,10 +288,16 @@ class History(object):
         """
         Return the string version of the history.
         """
+        if self.temp_history and self.history_strings:
+            logging.warning('temporary history strings now include the delimiter.')
+
         if len(self.history_strings) > 0:
-            history = self.delimiter.join(self.history_strings)
+            history = self.history_strings[:]
             if self.temp_history is not None:
-                history += self.temp_history
+                history.append(self.temp_history)
+            if self.reversed:
+                history = list(reversed(history))
+            history = self.delimiter.join(history)
             return history
 
         return None
@@ -300,13 +312,18 @@ class History(object):
         # vec type is a list
         history = []
         for vec in self.history_vecs[:-1]:
-            history += vec
-            history += self.delimiter_tok
-        history += self.history_vecs[-1]
+            history += [vec]
+            history += [self.delimiter_tok]
+        history += [self.history_vecs[-1]]
         if self.temp_history is not None:
             history.extend(self.parse(self.temp_history))
         if self._global_end_token is not None:
-            history += [self._global_end_token]
+            history += [[self._global_end_token]]
+
+        if self.reversed:
+            history = reversed(history)
+
+        history = sum(history, [])
 
         return history
 
@@ -567,6 +584,12 @@ class TorchAgent(ABC, Agent):
             'to `truncate`',
         )
         agent.add_argument(
+            '--history-reversed',
+            default=False,
+            type='bool',
+            help='Reverse the history',
+        )
+        agent.add_argument(
             '-histsz',
             '--history-size',
             default=-1,
@@ -743,6 +766,7 @@ class TorchAgent(ABC, Agent):
         self.label_truncate = label_truncate if label_truncate >= 0 else None
         # stores up to hist_utt past observations within current dialog
         self.history = self.build_history()
+        self.history_reversed = opt.get('history_reversed', False)
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
@@ -1302,7 +1326,10 @@ class TorchAgent(ABC, Agent):
 
         # check truncation
         if obs.get('text_vec') is not None:
-            truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
+            truncate_left = not self.history_reversed
+            truncated_vec = self._check_truncate(
+                obs['text_vec'], truncate, truncate_left
+            )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
         return obs
 
