@@ -137,5 +137,5 @@ class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA, BiencoderAgent):
         """
         Add cmd line args.
         """
-        super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
-        super(BiencoderAgent, cls).add_cmdline_args(argparser)
+        AddLabelFixedCandsTRA.add_cmdline_args(argparser)
+        BiencoderAgent.add_cmdline_args(argparser)
