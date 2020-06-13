@@ -38,8 +38,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test output of running eval_model.
         """
-        parser = setup_args()
-        parser.set_defaults(
+        opt = dict(
             task='integration_tests',
             model='repeat_label',
             datatype='valid',
@@ -47,7 +46,6 @@ class TestEvalModel(unittest.TestCase):
             display_examples=False,
         )
 
-        opt = parser.parse_args([], print_args=False)
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
@@ -59,8 +57,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test output of running eval_model.
         """
-        parser = setup_args()
-        parser.set_defaults(
+        opt = dict(
             task='integration_tests',
             model='repeat_label',
             datatype='valid',
@@ -69,7 +66,6 @@ class TestEvalModel(unittest.TestCase):
             metrics='all',
         )
 
-        opt = parser.parse_args([], print_args=False)
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
@@ -85,8 +81,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test output of running eval_model.
         """
-        parser = setup_args()
-        parser.set_defaults(
+        opt = dict(
             task='integration_tests',
             model='repeat_label',
             datatype='valid',
@@ -95,7 +90,6 @@ class TestEvalModel(unittest.TestCase):
             metrics='accuracy,rouge',
         )
 
-        opt = parser.parse_args([], print_args=False)
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
@@ -213,8 +207,7 @@ class TestEvalModel(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             save_report = os.path.join(tmpdir, 'report')
-            parser = setup_args()
-            parser.set_defaults(
+            opt = dict(
                 task='integration_tests',
                 model='repeat_label',
                 datatype='valid',
@@ -223,8 +216,6 @@ class TestEvalModel(unittest.TestCase):
                 save_world_logs=True,
                 report_filename=save_report,
             )
-
-            opt = parser.parse_args([], print_args=False)
             valid, test = testing_utils.eval_model(opt)
 
 

@@ -826,7 +826,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
-        if parsed.get('init_opt', None) is not None:
+        if parsed.get('init_opt') is not None:
             self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
