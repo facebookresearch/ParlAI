@@ -65,31 +65,27 @@ class ParlaiLogger(logging.Logger):
         # Logging to stdout
         self.streamHandler = logging.StreamHandler(sys.stdout)
         # Log to stdout levels: console_level and above
-        warn_colored = False
+        self.prefix = None
+        self.streamHandler.setFormatter(self._build_formatter())
+        super().addHandler(self.streamHandler)
+
+    def _build_formatter(self):
+        prefix_format = f'{self.prefix} ' if self.prefix else ''
         if COLORED_LOGS and sys.stdout.isatty():
-            self.formatter = coloredlogs.ColoredFormatter(
-                COLORED_FORMAT,
+            return coloredlogs.ColoredFormatter(
+                prefix_format + COLORED_FORMAT,
                 datefmt=CONSOLE_DATE_FORMAT,
                 level_styles=COLORED_LEVEL_STYLES,
                 field_styles={},
             )
         elif sys.stdout.isatty():
-            self.formatter = logging.Formatter(
-                CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT
+            return logging.Formatter(
+                prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT,
             )
-            warn_colored = True
         else:
-            self.formatter = logging.Formatter(
-                LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT
+            return logging.Formatter(
+                prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT,
             )
-        self.streamHandler.setFormatter(self.formatter)
-        super().addHandler(self.streamHandler)
-
-        if warn_colored:
-            self.warn("Run `pip install coloredlogs` for more friendly output")
-
-        # To be used with testing_utils.capture_output()
-        self.altStream = None
 
     def log(self, msg, level=INFO):
         """
@@ -102,47 +98,15 @@ class ParlaiLogger(logging.Logger):
         Include `prefix` in all future logging statements.
         """
         # change both handler formatters to add a prefix
-        new_str = prefix + " " + '%(message)s'
-
-        prevConsoleFormat = self.consoleFormatter._fmt.split(':')[:-1]
-        # Check if there was a format before this
-        if prevConsoleFormat:
-            # If so append prefix neatly after last divider
-            prevConsoleFormat += [' ' + new_str]
-            updatedConsoleFormat = ':'.join(prevConsoleFormat)
-        else:
-            updatedConsoleFormat = new_str
-        self.streamHandler.setFormatter(logging.Formatter(updatedConsoleFormat))
-
-        if hasattr(self, 'fileHandler'):
-            prevFileFormat = self.fileFormatter._fmt.split(':')[:-1]
-            # A space before the previous divider because a format always exists
-            prevFileFormat += [' ' + new_str]
-            updatedFileFormat = ':'.join(prevFileFormat)
-            self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
-
-    def set_format(self, fmt):
-        """
-        Set format after instantiation.
-        """
-        self.streamHandler.setFormatter(logging.Formatter(fmt))
-        if hasattr(self, 'fileHandler'):
-            self.fileHandler.setFormatter(logging.Formatter(fmt))
-
-    def reset_formatters(self):
-        """
-        Resort back to initial formatting.
-        """
-        if hasattr(self, 'fileHandler'):
-            self.fileHandler.setFormatter(self.fileFormatter)
-        self.streamHandler.setFormatter(self.consoleFormatter)
+        self.prefix = prefix
+        self.streamHandler.setFormatter(self._build_formatter())
 
     def mute(self):
         """
         Stop logging to stdout.
         """
         prev_level = self.streamHandler.level
-        self.streamHandler.level = float('inf')
+        self.streamHandler.level = 9999
         return prev_level
 
     def unmute(self, level):
@@ -150,24 +114,6 @@ class ParlaiLogger(logging.Logger):
         Resume logging to stdout.
         """
         self.streamHandler.level = level
-
-    def redirect_out(self, stream):
-        """
-        Redirect all logging output to `stream`.
-        """
-        self.altStream = stream
-        self.altStreamHandler = logging.StreamHandler(self.altStream)
-        super().addHandler(self.altStreamHandler)
-
-    def stop_redirect_out(self):
-        """
-        Stop redirecting output to alternate stream.
-        """
-        if self.altStream is None:
-            raise Exception('No existing redirection.')
-        else:
-            self.altStreamHandler.flush()
-            super().removeHandler(self.altStreamHandler)
 
 
 # -----------------------------------
@@ -178,6 +124,14 @@ logger = ParlaiLogger(name=__name__)
 
 def set_log_level(level):
     logger.setLevel(level)
+
+
+def disable():
+    logger.mute()
+
+
+def enable():
+    logger.unmute()
 
 
 def info(msg):

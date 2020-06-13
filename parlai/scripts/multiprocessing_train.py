@@ -61,7 +61,7 @@ def multiprocess_train(
 
     # Suppress output of workers except the main host.
     if opt.get('verbose') or rank != 0:
-        print_prefix = '[rank:{:3d}]'.format(rank)
+        print_prefix = 'rank:{:3d} |'.format(rank)
     else:
         print_prefix = None
     suppress_output = not opt.get('verbose') and rank != 0

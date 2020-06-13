@@ -17,10 +17,7 @@ from tqdm import tqdm
 from collections import deque
 import random
 from parlai.core.teachers import create_task_agent_from_taskname
-from parlai.utils.logging import logger
-
-fmt = '%(asctime)s: [ %(message)s ]'
-logger.set_format(fmt)
+import parlai.utils.logging as logging
 
 # ------------------------------------------------------------------------------
 # Store corpus.
@@ -39,14 +36,14 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
     if os.path.isfile(save_path):
         raise RuntimeError('%s already exists! Not overwriting.' % save_path)
 
-    logger.info('Reading into database...')
+    logging.info('Reading into database...')
     conn = sqlite3.connect(save_path)
     c = conn.cursor()
     c.execute('CREATE TABLE documents (id INTEGER PRIMARY KEY, text, value);')
     if not task:
-        logger.info('No data to initialize table: just creating table.')
-        logger.info('Add more data by passing observations to the agent.')
-        logger.info('Committing...')
+        logging.info('No data to initialize table: just creating table.')
+        logging.info('Add more data by passing observations to the agent.')
+        logging.info('Committing...')
         conn.commit()
         conn.close()
         return
@@ -99,10 +96,10 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
             current.clear()
             context.clear()
 
-    logger.info(
+    logging.info(
         'Read %d examples from %d episodes.'
         % (teacher.num_examples(), teacher.num_episodes())
     )
-    logger.info('Committing...')
+    logging.info('Committing...')
     conn.commit()
     conn.close()
