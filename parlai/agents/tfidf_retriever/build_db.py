@@ -19,9 +19,6 @@ import random
 from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.utils.logging import logger
 
-fmt = '%(asctime)s: [ %(message)s ]'
-logger.set_format(fmt)
-
 # ------------------------------------------------------------------------------
 # Store corpus.
 # ------------------------------------------------------------------------------
