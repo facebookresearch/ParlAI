@@ -116,7 +116,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': False,
             }
         )
@@ -136,7 +135,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': False,
             }
         )
@@ -157,7 +155,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': True,
             }
         )
@@ -175,7 +172,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': True,
             }
         )
