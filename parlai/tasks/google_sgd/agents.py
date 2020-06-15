@@ -62,14 +62,15 @@ class Text2API2TextTeacher(DialogTeacher):
                     api_call += f"{method}.{slot_type} = {slot_value} ;"
                 assert 'service_results' in frame
 
-                # API Resp
-                # for action in frame['actions']:
-                #    slot_type = action['slot']
-                #    slot_value = action['canonical_values']
-                #    api_resp += f"{method}.{slot_type} = {slot_value} ;"
-                for result in frame['service_results']:
-                    for slot_type, slot_value in result.items():
-                        api_resp += f"{method}.{slot_type} = {slot_value} ;"
+            # API Resp
+            if 'actions' in frame:
+                for action in frame['actions']:
+                    slot_type = action['slot']
+                    slot_value = action['canonical_values']
+                    api_resp += f"{slot_type} = {slot_value} ;"
+                # for result in frame['service_results']:
+                #    for slot_type, slot_value in result.items():
+                #        api_resp += f"{method}.{slot_type} = {slot_value} ;"
         return api_call, api_resp
 
     def setup_data(self, fold):
@@ -89,14 +90,20 @@ class Text2API2TextTeacher(DialogTeacher):
                 api_call, api_results = self._get_api_call_and_results(
                     sys_turn, schema_lookup
                 )
-                if not api_call:
+                if not api_call and not api_results:
                     # input: user_turn, output: sys_turn
                     yield {
                         'text': user_turn['utterance'],
                         'label': sys_turn['utterance'],
                         'type': 'text',
                     }, is_first_turn
-                else:
+                elif not api_call and api_results:
+                    yield {
+                        'text': f"{user_turn['utterance']} api_resp = {api_results}",
+                        'label': sys_turn['utterance'],
+                        'type': 'apiresp',
+                    }, is_first_turn
+                elif api_call and api_results:
                     # input: user_turn, output: api_call
                     yield {
                         'text': user_turn['utterance'],
@@ -106,10 +113,12 @@ class Text2API2TextTeacher(DialogTeacher):
 
                     # system turn, input : api results, output : assistant turn
                     yield {
-                        'text': api_results,
+                        'text': f"api_resp = {api_results}",
                         'label': sys_turn['utterance'],
                         'type': 'apiresp',
                     }, False
+                else:
+                    assert "API call without API results !!! Check Dataset!"
 
 
 class Text2TextTeacher(Text2API2TextTeacher):
