@@ -9,10 +9,13 @@ Google The Schema-Guided Dialogue(SGD) Dataset implementation for ParlAI.
 """
 
 import os
+import json
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.misc import warn_once
-import json
+from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric, BleuMetric
+import parlai.utils.logging as logging
 
 import parlai.tasks.google_sgd.build as build_
 
@@ -50,8 +53,8 @@ class Text2API2TextTeacher(DialogTeacher):
         return schema_lookup, dialogs
 
     def _get_api_call_and_results(self, sys_turn, schema_lookup):
-        api_call = ''
-        api_resp = ''
+        api_call = {}
+        api_resp = {}
         for frame in sys_turn['frames']:
             if 'service_call' in frame:
                 # API CALL
@@ -59,7 +62,7 @@ class Text2API2TextTeacher(DialogTeacher):
                 for slot_type, slot_value in frame['service_call'][
                     'parameters'
                 ].items():
-                    api_call += f"{method}.{slot_type} = {slot_value} ;"
+                    api_call[f'{method}.{slot_type}'] = slot_value
                 assert 'service_results' in frame
 
             # API Resp
@@ -67,11 +70,49 @@ class Text2API2TextTeacher(DialogTeacher):
                 for action in frame['actions']:
                     slot_type = action['slot']
                     slot_value = action['canonical_values']
-                    api_resp += f"{slot_type} = {slot_value} ;"
-                # for result in frame['service_results']:
-                #    for slot_type, slot_value in result.items():
-                #        api_resp += f"{method}.{slot_type} = {slot_value} ;"
+                    api_resp[slot_type] = slot_value
         return api_call, api_resp
+
+    def custom_evaluation(
+        self, teacher_action: Message, labels, model_response: Message
+    ):
+        resp = model_response.get('text')
+        if not resp:
+            return
+
+        if teacher_action['type'] == 'apicall' and resp.startswith('apicall: '):
+            gold = teacher_action['slots']
+            slot_strs = resp[9:].split(' ; ')
+            parsed = {}
+            for slot_str in slot_strs:
+                if ' = ' not in slot_str:
+                    continue
+                name, value = slot_str.split(' = ')
+                parsed[name] = value
+
+            # slot precision
+            for k, v in parsed.items():
+                self.metrics.add('slot_p', AverageMetric(v == gold.get(k)))
+            # slot recall
+            for k, v in gold.items():
+                self.metrics.add('slot_r', AverageMetric(v == parsed.get(k)))
+        elif teacher_action['type'] == 'apiresp':
+            delex_resp = self._delex(resp, teacher_action['slots'])
+            delex_label = self._delex(labels[0], teacher_action['slots'])
+            self.metrics.add(
+                'delex_bleu', BleuMetric.compute(delex_resp, [delex_label])
+            )
+
+    def _delex(self, text, slots):
+        delex = text
+        for slot, values in slots.items():
+            assert isinstance(values, list)
+            for value in values:
+                delex = delex.replace(value, slot)
+        return delex
+
+    def _api_dict_to_str(self, apidict):
+        return ' ; '.join(f'{k} = {v}' for k, v in apidict.items())
 
     def setup_data(self, fold):
         schema_lookup, dialogs = self._load_data(fold)
@@ -80,16 +121,15 @@ class Text2API2TextTeacher(DialogTeacher):
             turns = dialog['turns']
             num_turns = len(turns)
             for turn_id in range(0, num_turns, 2):
-                if turn_id == 0:
-                    is_first_turn = True
-                else:
-                    is_first_turn = False
+                is_first_turn = turn_id == 0
 
                 user_turn = turns[turn_id]
                 sys_turn = turns[turn_id + 1]
                 api_call, api_results = self._get_api_call_and_results(
                     sys_turn, schema_lookup
                 )
+                call_str = self._api_dict_to_str(api_call)
+                resp_str = self._api_dict_to_str(api_results)
                 if not api_call and not api_results:
                     # input: user_turn, output: sys_turn
                     yield {
@@ -99,23 +139,26 @@ class Text2API2TextTeacher(DialogTeacher):
                     }, is_first_turn
                 elif not api_call and api_results:
                     yield {
-                        'text': f"{user_turn['utterance']} api_resp = {api_results}",
+                        'text': f"{user_turn['utterance']} api_resp: {resp_str}",
                         'label': sys_turn['utterance'],
                         'type': 'apiresp',
+                        'slots': api_results,
                     }, is_first_turn
                 elif api_call and api_results:
                     # input: user_turn, output: api_call
                     yield {
                         'text': user_turn['utterance'],
-                        'label': api_call,
+                        'label': f'apicall: {call_str}',
                         'type': 'apicall',
+                        'slots': api_call,
                     }, is_first_turn
 
                     # system turn, input : api results, output : assistant turn
                     yield {
-                        'text': f"api_resp = {api_results}",
+                        'text': f"api_resp: {resp_str}",
                         'label': sys_turn['utterance'],
                         'type': 'apiresp',
+                        'slots': api_results,
                     }, False
                 else:
                     assert "API call without API results !!! Check Dataset!"
