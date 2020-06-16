@@ -17,11 +17,6 @@ We actively welcome your pull requests.
    `python -m pytest -m data`. Copy-paste the output into a comment in your PR.
 7. If you haven't already, complete the Contributor License Agreement ("CLA").
 
-Our continuous integration suite will run only fast tests before merging. We also
-have a number of slow, more thorough tests which run nightly. You can additionally
-run these by adding `[long]` into any of your commit messages. (A full list of
-test triggers may be found in `.circleci/triggers.py`)
-
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
 to do this once to work on any of Facebook's open source projects.
