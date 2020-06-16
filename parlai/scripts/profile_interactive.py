@@ -8,6 +8,7 @@ Basic script which allows to profile interaction with a model using repeat_query
 avoid human interaction (so we can time it, only).
 """
 from parlai.core.params import ParlaiParser
+from parlai.scripts.script import ParlaiScript
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.repeat_query.repeat_query import RepeatQueryAgent
@@ -93,7 +94,15 @@ def profile_interactive(opt, print_parser=None):
     print(s.getvalue())
 
 
+class ProfileInteractive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return profile_interactive(self.opt, print_parser=self.parser)
+
+
 if __name__ == '__main__':
     random.seed(42)
-    parser = setup_args()
-    profile_interactive(parser.parse_args(print_args=False), print_parser=parser)
+    ProfileInteractive.main()

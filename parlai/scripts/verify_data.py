@@ -19,6 +19,7 @@ from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
+from parlai.scripts.script import ParlaiScript
 import parlai.utils.logging as logging
 
 
@@ -134,9 +135,21 @@ def verify(opt, printargs=None, print_parser=None):
     return report(world, counts, log_time)
 
 
-if __name__ == '__main__':
-    parser = setup_args()
+def verify_data(opt, parser):
     report_text, report_log = verify(
         parser.parse_args(print_args=False), print_parser=parser
     )
     print(report_text)
+
+
+class VerifyData(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return verify_data(self.opt, self.parser)
+
+
+if __name__ == '__main__':
+    VerifyData.main()

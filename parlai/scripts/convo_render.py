@@ -7,9 +7,10 @@
 import os
 import json
 import random
-import argparse
 import tempfile
 import subprocess
+from parlai.core.params import ParlaiParser
+from parlai.scripts.script import ParlaiScript
 
 # Constants
 END_OF_CONVO = "EOC"
@@ -207,38 +208,41 @@ def display_cli(conversations, alt_speaker, human_speaker):
             prBlueBG("%-15s: %s" % (speaker[:15], speech))
 
 
-def create_parser():
+def setup_args():
     """
     Creates a parser object with some pre-determined arguments.
     """
-    parser = argparse.ArgumentParser(
-        description="Process Conversation Rendering arguments"
+    parser = ParlaiParser(
+        add_parlai_args=True, description="Process Conversation Rendering arguments"
     )
-    parser.add_argument("input", help="Input file to read conversations from")
-    parser.add_argument(
+    conv_render = parser.add_argument_group('Conversation Rendering Arguments')
+    conv_render.add_argument(
+        "--input", "-i", help="Input file to read conversations from"
+    )
+    conv_render.add_argument(
         "--output",
         "-o",
         help="Output file to write conversations to. One of [.pdf, .png, .html] only",
     )
-    parser.add_argument(
+    conv_render.add_argument(
         "--width", "-wd", help="Width of output file", type=int, default=8
     )
-    parser.add_argument(
+    conv_render.add_argument(
         "--height", "-ht", help="Height of output file", type=int, default=10
     )
-    parser.add_argument(
+    conv_render.add_argument(
         "--user-icon",
         "-uic",
         help="Absolute Path/URL to user image icon",
         default=HUMAN_EMOJI_IMG,
     )
-    parser.add_argument(
+    conv_render.add_argument(
         "--alt-icon",
         "-aic",
         help="Absolute Path/URL to alternate image icon",
         default=ALT_EMOJI_IMG,
     )
-    parser.add_argument(
+    conv_render.add_argument(
         "--num-examples",
         "-ne",
         help="Number of conversations to render",
@@ -271,37 +275,36 @@ def check_icon_arg(src, default):
     return src
 
 
-def validate_args(args):
+def validate_args(opt):
     """
     Validate the cmdline args passed into the script.
 
-    :param args: The arguments of te parser
+    :param opt: The arguments of te parser
 
     :return: Returns extension of output file. None if no output file
     """
-    if not os.path.exists(args.input):
+    if not os.path.exists(opt['input']):
         raise IOError("Input File does not exist")
-    if args.output is None:
+    if opt['output'] is None:
         return None
-    extension = args.output.split(".")[-1]
+    extension = opt['output'].split(".")[-1]
     if extension not in ["html", "pdf", "png"]:
         raise Exception(
             "Extension not specified/supported. Specify one of '.html', '.pdf' or '.png' output files"
         )
-    args.user_icon = check_icon_arg(args.user_icon, HUMAN_EMOJI_IMG)
-    args.alt_icon = check_icon_arg(args.alt_icon, ALT_EMOJI_IMG)
+    opt['user_icon'] = check_icon_arg(opt['user_icon'], HUMAN_EMOJI_IMG)
+    opt['alt_icon'] = check_icon_arg(opt['alt_icon'], ALT_EMOJI_IMG)
     return extension
 
 
-if __name__ == "__main__":
-    parser = create_parser()
-    args = parser.parse_args()
-    extension = validate_args(args)
-    input_file, output_file = args.input, args.output
-    height, width = args.height, args.width
+def render_convo(opt):
+    # Run
+    extension = validate_args(opt)
+    input_file, output_file = opt['intput'], opt['output']
+    height, width = opt['height'], opt['width']
     alt_speaker = input_file.split('/')[-1][:-6]
 
-    dialogs = pre_process(input_file, args.num_examples, alt_speaker)
+    dialogs = pre_process(input_file, opt['num_examples'], alt_speaker)
 
     # Display on CLI
     if output_file is None:
@@ -315,8 +318,8 @@ if __name__ == "__main__":
             "Rendered HTML",
             alt_speaker,
             "human",
-            args.user_icon,
-            args.alt_icon,
+            opt['user_icon'],
+            opt['alt_icon'],
         )
         if extension == "html":
             # save to output
@@ -330,14 +333,31 @@ if __name__ == "__main__":
                 file_handle = open(fname, "w")
                 file_handle.write(html_str)
                 if extension == "pdf":
-                    cmd = f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp \
-                     --print-to-pdf=\"{output_file}\" {fname}"
+                    cmd = (
+                        f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp"
+                        f"--print-to-pdf=\"{output_file}\" {fname}"
+                    )
                 else:
-                    cmd = f"{CHROME_PATH} --headless --hide-scrollbars \
-                    --crash-dumps-dir=/tmp \
-                     --window-size={args.width * 100},{args.height * 100} \
-                      --screenshot=\"{output_file}\" {fname}"
+                    cmd = (
+                        f"{CHROME_PATH} --headless --hide-scrollbars"
+                        f"--crash-dumps-dir=/tmp --window-size"
+                        f"={opt['width'] * 100},{opt['height'] * 100}"
+                        f"--screenshot=\"{output_file}\" {fname}"
+                    )
                 subprocess.run(
                     cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
                 )
                 file_handle.close()
+
+
+class RenderConversation(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return render_convo(self.opt)
+
+
+if __name__ == '__main__':
+    RenderConversation.main()

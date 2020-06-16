@@ -39,6 +39,7 @@ from parlai.core.params import ParlaiParser
 from parlai.utils.misc import Timer, round_sigfigs, no_lock
 from parlai.utils.thread import SharedTable
 from parlai.core.worlds import create_task, World
+from parlai.scripts.script import ParlaiScript
 
 import copy
 import math
@@ -252,8 +253,14 @@ def eval_ppl(opt, build_dict=None, dict_file=None):
         )
 
 
+class EvalPPL(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return eval_ppl(self.opt, dict_file=self.opt.get('dict_file'))
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    # try with --numthreads N to go fast
-    opt = parser.parse_args()
-    eval_ppl(opt, dict_file=opt.get('dict_file'))
+    EvalPPL.main()
