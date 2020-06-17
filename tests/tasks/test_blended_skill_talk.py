@@ -331,5 +331,24 @@ class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
             self.assertEqual(len(personas), count)
 
 
+class TestBlendedSkillTalkModels(unittest.TestCase):
+    def test_accuracies(self):
+        """
+        Test accuracies of BST models in the zoo.
+        """
+        model_names_to_desired_accuracies = {'bst_single_task': 0.8154}  # TODO: add
+        for model_name, desired_accuracy in model_names_to_desired_accuracies.items():
+            valid, _ = testing_utils.eval_model(
+                opt={
+                    'batchsize': 128,
+                    'model_file': f'zoo:blended_skill_talk/{model_name}/model',
+                    'task': 'blended_skill_talk',
+                    'num_examples': 1000,
+                },
+                skip_test=True,
+            )
+            self.assertAlmostEqual(valid['acc'], desired_accuracy, places=4)
+
+
 if __name__ == '__main__':
     unittest.main()
