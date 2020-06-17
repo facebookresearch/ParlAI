@@ -482,8 +482,21 @@ class ContextGenerator:
         Get context information to be shown at the beginning of one conversation.
 
         Values in return dict:
-        - context_dataset: the dataset (ConvAI2, EmpatheticDialogues, or Wizard of Wikipedia) used to generate the context.
-        :return:
+        - context_dataset: the dataset (ConvAI2, EmpatheticDialogues, or Wizard of
+            Wikipedia) used to generate the context information.
+        - persona_1_strings, persona_2_strings: 2 persona strings each for the two
+            speakers, chosen randomly from the ConvAI2 dataset. If context_dataset ==
+            "wizard_of_wikipedia", these persona strings will be matched to the WoW
+            topic returned in the "additional_context" field.
+        - additional_context: provides additional bits of information to give context
+            for the speakers. If context_dataset == "empathetic_dialogues", this is a
+            situation from the start of an ED conversation. If context_dataset ==
+            "wizard_of_wikipedia", this is a topic from the WoW dataset that matches the
+            persona strings. If context_dataset == "convai2", this is None.
+        - person1_seed_utterance, person2_seed_utterance: two lines of a conversation
+            from the dataset specified by "context_dataset". They will be shown to the
+            speakers to "seed" the conversation, and the speakers continue from where
+            the lines left off.
         """
 
         # Determine which dataset we will show context for
@@ -652,6 +665,9 @@ class ContextGenerator:
             }
 
     def _setup_personas_to_topics(self) -> Dict[str, List[str]]:
+        """
+        Create a map from ConvAI2 personas to WoW topics that they correspond to.
+        """
 
         print('Starting to map personas to topics.')
 
@@ -672,6 +688,9 @@ class ContextGenerator:
         return persona_strings_to_topics
 
     def _setup_topics_to_episodes(self) -> Dict[str, List[int]]:
+        """
+        Create a map from WoW topics to the indices of the WoW episodes that use them.
+        """
 
         print('Starting to map topics to episodes.')
 
@@ -685,6 +704,9 @@ class ContextGenerator:
         return topics_to_episodes
 
     def _extract_personas(self, episode_idx: str) -> Tuple[List[str], List[str]]:
+        """
+        For the given ConvAI2 conversation, return strings of both speakers' personas.
+        """
         first_entry = self.convai2_teacher.get(episode_idx, entry_idx=0)
         first_text_strings = first_entry['text'].split('\n')
         persona_1_strings = []
