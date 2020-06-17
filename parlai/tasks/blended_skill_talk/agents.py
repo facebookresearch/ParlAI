@@ -440,6 +440,11 @@ class AllTeacher(MultiTaskTeacher):
         super().__init__(opt, shared)
 
 
+################################################################
+##  Generator of context for crowdsourcing BST conversations  ##
+################################################################
+
+
 class ContextGenerator:
     """
     Generates contexts shown to crowdsourced workers when collecting BST conversations.
