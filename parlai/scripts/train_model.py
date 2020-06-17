@@ -758,7 +758,7 @@ class TrainModel(ParlaiScript):
         self.train_loop = TrainLoop(self.opt)
         self.parser.opt = self.train_loop.agent.opt
         self.parser.print_args()
-        self.train_loop.train()
+        return self.train_loop.train()
 
 
 if __name__ == '__main__':
