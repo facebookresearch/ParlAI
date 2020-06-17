@@ -755,7 +755,10 @@ class TrainModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return TrainLoop(self.opt).train()
+        self.train_loop = TrainLoop(self.opt)
+        self.parser.opt = self.train_loop.agent.opt
+        self.parser.print_args()
+        self.train_loop.train()
 
 
 if __name__ == '__main__':
