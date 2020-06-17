@@ -1993,8 +1993,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.set_datasettings(opt['datatype'])
 
-        self.dws = int(self.opt['distributed_world_size'])
-        self.rank = int(self.opt['rank'])
+        self.dws = int(self.opt.get('distributed_world_size', 1))
+        self.rank = int(self.opt.get('rank', 0))
         if (
             shared is None
             and self.is_train
