@@ -298,16 +298,69 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
 
 class TestContextGenerator(unittest.TestCase):
     def test_generated_context(self):
-        datatypes_to_desired_contexts = {
-            'train': None,
-            'valid': None,
-            'tests': None,
-        }  # TODO: add in
-        for datatype, desired_context in datatypes_to_desired_contexts.items():
+        datatypes_seeds_and_desired_contexts = [
+            (
+                'train',
+                0,
+                {
+                    'context_dataset': 'wizard_of_wikipedia',
+                    'persona_1_strings': [
+                        'i am a vegetarian.',
+                        'i live on a pig farm.',
+                    ],
+                    'persona_2_strings': [
+                        "my wife hates me , she thinks i'm lazy and poor.",
+                        'i won a lottery 6 years ago but nobody knows.',
+                    ],
+                    'additional_context': 'Vegetarianism',
+                    'person1_seed_utterance': 'What reasons would a person become a vegetarian?',
+                    'person2_seed_utterance': 'religion is one, it is strongly linked with a number of religions that originated in ancient India ',
+                },
+            ),
+            (
+                'valid',
+                1,
+                {
+                    'context_dataset': 'convai2',
+                    'persona_1_strings': [
+                        'my parents were also teachers.',
+                        'for vacation i enjoy time at the beach.',
+                    ],
+                    'persona_2_strings': [
+                        'i love to go to disney world every year.',
+                        'i am in the third grade.',
+                    ],
+                    'additional_context': None,
+                    'person1_seed_utterance': "you have your whole life in front of you i am sure you'll",
+                    'person2_seed_utterance': 'maybe i will meet him at disney world ! 3',
+                },
+            ),
+            (
+                'test',
+                2,
+                {
+                    'context_dataset': 'wizard_of_wikipedia',
+                    'persona_1_strings': [
+                        'i like to dance.',
+                        'my aunt helped me escape when i was of.',
+                    ],
+                    'persona_2_strings': [
+                        'my bedroom is purple and lime green.',
+                        'i am a vegan.',
+                    ],
+                    'additional_context': 'Dance',
+                    'person1_seed_utterance': 'I love to dance too!  What kind do you do?',
+                    'person2_seed_utterance': 'I love choreography dance, Dance can be categorized and described by its choreography, by its repertoire of movements',
+                },
+            ),
+        ]
+        for datatype, seed, desired_context in datatypes_seeds_and_desired_contexts:
             argparser = ParlaiParser(False, False)
             argparser.add_parlai_data_path()
-            context_opt = argparser.parse_args()
-            context_generator = ContextGenerator(context_opt, datatype=datatype, seed=0)
+            context_opt = argparser.parse_args([])
+            context_generator = ContextGenerator(
+                context_opt, datatype=datatype, seed=seed
+            )
             actual_context = context_generator.get_context()
             self.assertEqual(desired_context, actual_context)
 
