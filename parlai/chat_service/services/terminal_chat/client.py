@@ -79,7 +79,7 @@ def _run(ws, id):
         data['text'] = x
         json_data = json.dumps(data)
         ws.send(json_data)
-        time.sleep(1)
+        time.sleep(0.1)
         if x == "[DONE]":
             break
     ws.close()

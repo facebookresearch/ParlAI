@@ -72,9 +72,15 @@ class WebsocketManager(ChatServiceManager):
         """
         if 'models' in self.opt and self.should_load_model:
             model_params = {}
+            model_info = {}
             for model in self.opt['models']:
                 model_opt = self.opt['models'][model]
+                override = model_opt.get('override', {})
+                if type(override) is list:
+                    model_opt['override'] = override[0]
                 model_params[model] = create_agent(model_opt).share()
+                model_info[model] = {'override': override}
+            self.runner_opt['model_info'] = model_info
             self.runner_opt['shared_bot_params'] = model_params
 
     def _handle_message_read(self, event):
@@ -88,7 +94,6 @@ class WebsocketManager(ChatServiceManager):
         """
         An iteration of the manager's main loop to launch worlds.
         """
-
         with self.agent_pool_change_condition:
             valid_pools = self._get_unique_pool()
             for world_type, agent_pool in valid_pools.items():
@@ -231,12 +236,12 @@ class WebsocketManager(ChatServiceManager):
         message = json.dumps(
             {'text': message.replace('\n', '<br />'), 'quick_replies': quick_replies}
         )
-
-        asyncio.set_event_loop(asyncio.new_event_loop())
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         if socket_id not in self.subs:
             self.agent_id_to_overworld_future[socket_id].cancel()
             return
-        return self.subs[socket_id].write_message(message)
+        return loop.run_until_complete(self.subs[socket_id].write_message(message))
 
     def observe_payload(self, socket_id, payload, quick_replies=None):
         """
@@ -256,11 +261,12 @@ class WebsocketManager(ChatServiceManager):
         message = {'text': '', 'payload': payload, 'quick_replies': quick_replies}
         payload = json.dumps(message)
 
-        asyncio.set_event_loop(asyncio.new_event_loop())
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         if socket_id not in self.subs:
             self.agent_id_to_overworld_future[socket_id].cancel()
             return
-        return self.subs[socket_id].write_message(message)
+        return loop.run_until_complete(self.subs[socket_id].write_message(message))
 
     def restructure_message(self, message):
         """
