@@ -10,6 +10,7 @@ from unittest.mock import patch
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
@@ -297,9 +298,18 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
 
 class TestContextGenerator(unittest.TestCase):
     def test_generated_context(self):
-        seeds_to_desired_contexts = {0: None, 1: None, 2: None}  # TODO: add in
-        for seed, desired_context in seeds_to_desired_contexts.items():
-            # {{{TODO}}}
+        datatypes_to_desired_contexts = {
+            'train': None,
+            'valid': None,
+            'tests': None,
+        }  # TODO: add in
+        for datatype, desired_context in datatypes_to_desired_contexts.items():
+            argparser = ParlaiParser(False, False)
+            argparser.add_parlai_data_path()
+            context_opt = argparser.parse_args()
+            context_generator = ContextGenerator(context_opt, datatype=datatype, seed=0)
+            actual_context = context_generator.get_context()
+            self.assertEqual(desired_context, actual_context)
 
 
 class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
