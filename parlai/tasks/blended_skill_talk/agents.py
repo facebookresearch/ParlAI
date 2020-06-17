@@ -273,12 +273,12 @@ class PersonaTopicifier:
         # Throw an exception if a persona is not found for the input WoW topic
 
         # this returns map of persona line str to WoW topic
+        self.personas_file_path = _persona_list_path(opt)
+        self.topic_to_persona_path = _topic_to_persona_path(opt)
         (
             self.wow_topics_to_persona_strings_map,
             self.persona_strings_to_wow_topics_map,
         ) = self._setup_personas_to_wow_topics()
-        self.personas_file_path = _persona_list_path(opt)
-        self.topic_to_persona_path = _topic_to_persona_path(opt)
         with open(self.personas_file_path, 'r') as f:
             self.personas = f.read().strip().split('||')
             # There's an extra line at the end of the file which is ''
