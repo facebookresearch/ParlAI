@@ -285,7 +285,7 @@ class PersonaTopicifier:
             self.personas = [p for p in self.personas if p]
 
     def _setup_personas_to_wow_topics(
-        self
+        self,
     ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
         persona_strings_to_topics = defaultdict(list)
         topics_to_persona_strings = defaultdict(list)
@@ -552,7 +552,9 @@ class ContextGenerator:
         elif context_dataset == 'empathetic_dialogues':
 
             # Select episode
-            persona_episode_idx = self.rng.randrange(self.convai2_teacher.num_episodes())
+            persona_episode_idx = self.rng.randrange(
+                self.convai2_teacher.num_episodes()
+            )
 
             # Extract personas
             persona_1_strings, persona_2_strings = self._extract_personas(
