@@ -454,12 +454,17 @@ class ContextGenerator:
     BST dataset.
     """
 
-    def __init__(self, opt, datatype: str = 'train'):
+    def __init__(self, opt, datatype: str = 'train', seed: Optional[int] = None):
         """
         Initalize the context generator.
 
         opt: only a 'datapath' key is required, to specify the ParlAI data folder
         """
+
+        if seed is not None:
+            self.rng = random.Random(seed)
+        else:
+            self.rng = random.Random()
 
         convai2_opt = Opt({'datapath': opt['datapath'], 'datatype': datatype})
         self.convai2_teacher = BothTeacher(convai2_opt)
@@ -505,7 +510,7 @@ class ContextGenerator:
         """
 
         # Determine which dataset we will show context for
-        rand_value = random.random()
+        rand_value = self.rng.random()
         if rand_value < 1 / 3:
             context_dataset = 'convai2'
         elif rand_value < 2 / 3:
@@ -516,18 +521,18 @@ class ContextGenerator:
         if context_dataset == 'convai2':
 
             # Select episode
-            episode_idx = random.randrange(self.convai2_teacher.num_episodes())
+            episode_idx = self.rng.randrange(self.convai2_teacher.num_episodes())
 
             # Extract personas
             persona_1_strings, persona_2_strings = self._extract_personas(episode_idx)
 
             # Sample persona strings
-            selected_persona_1_strings = random.sample(persona_1_strings, 2)
-            selected_persona_2_strings = random.sample(persona_2_strings, 2)
+            selected_persona_1_strings = self.rng.sample(persona_1_strings, 2)
+            selected_persona_2_strings = self.rng.sample(persona_2_strings, 2)
 
             # Select previous utterances
             num_entries = len(self.convai2_teacher.data.data[episode_idx])
-            entry_idx = random.randrange(1, num_entries)
+            entry_idx = self.rng.randrange(1, num_entries)
             # Don't select the first entry, which often doesn't include an apprentice
             # utterance
             chosen_entry = self.convai2_teacher.get(episode_idx, entry_idx=entry_idx)
@@ -547,7 +552,7 @@ class ContextGenerator:
         elif context_dataset == 'empathetic_dialogues':
 
             # Select episode
-            persona_episode_idx = random.randrange(self.convai2_teacher.num_episodes())
+            persona_episode_idx = self.rng.randrange(self.convai2_teacher.num_episodes())
 
             # Extract personas
             persona_1_strings, persona_2_strings = self._extract_personas(
@@ -555,11 +560,11 @@ class ContextGenerator:
             )
 
             # Sample persona strings
-            selected_persona_1_strings = random.sample(persona_1_strings, 2)
-            selected_persona_2_strings = random.sample(persona_2_strings, 2)
+            selected_persona_1_strings = self.rng.sample(persona_1_strings, 2)
+            selected_persona_2_strings = self.rng.sample(persona_2_strings, 2)
 
             # Select previous utterances
-            episode_idx = random.randrange(self.ed_teacher.num_episodes())
+            episode_idx = self.rng.randrange(self.ed_teacher.num_episodes())
             entry_idx = 0  # We'll only use the first pair of utterances
             entry = self.ed_teacher.get(episode_idx, entry_idx=entry_idx)
             situation = entry['situation']
@@ -586,7 +591,7 @@ class ContextGenerator:
                 num_tries += 1
 
                 # Extract a random (matched) pair of personas
-                persona_episode_idx = random.randrange(
+                persona_episode_idx = self.rng.randrange(
                     self.convai2_teacher.num_episodes()
                 )
                 all_persona_strings = dict()
@@ -610,13 +615,13 @@ class ContextGenerator:
             )
 
             # Pick out the WoW topic and matching persona string
-            matching_persona_idx, matching_persona_string_idx = random.sample(
+            matching_persona_idx, matching_persona_string_idx = self.rng.sample(
                 matching_persona_string_idxes, k=1
             )[0]
             matching_persona_string = all_persona_strings[matching_persona_idx][
                 matching_persona_string_idx
             ]
-            wow_topic = random.sample(
+            wow_topic = self.rng.sample(
                 self.persona_strings_to_wow_topics[matching_persona_string], k=1
             )[0]
 
@@ -630,12 +635,12 @@ class ContextGenerator:
                 ]
                 selected_persona_1_strings = [
                     matching_persona_string,
-                    random.sample(remaining_persona_1_strings, k=1)[0],
+                    self.rng.sample(remaining_persona_1_strings, k=1)[0],
                 ]
-                random.shuffle(selected_persona_1_strings)
-                selected_persona_2_strings = random.sample(all_persona_strings[2], 2)
+                self.rng.shuffle(selected_persona_1_strings)
+                selected_persona_2_strings = self.rng.sample(all_persona_strings[2], 2)
             else:
-                selected_persona_1_strings = random.sample(all_persona_strings[1], 2)
+                selected_persona_1_strings = self.rng.sample(all_persona_strings[1], 2)
                 remaining_persona_2_strings = [
                     str_
                     for str_ in all_persona_strings[2]
@@ -643,12 +648,12 @@ class ContextGenerator:
                 ]
                 selected_persona_2_strings = [
                     matching_persona_string,
-                    random.sample(remaining_persona_2_strings, k=1)[0],
+                    self.rng.sample(remaining_persona_2_strings, k=1)[0],
                 ]
-                random.shuffle(selected_persona_2_strings)
+                self.rng.shuffle(selected_persona_2_strings)
 
             # Sample WoW previous utterances, given the topic
-            episode_idx = random.sample(
+            episode_idx = self.rng.sample(
                 self.wow_topics_to_episode_idxes[wow_topic], k=1
             )[0]
             entry_idx = 1

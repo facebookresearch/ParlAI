@@ -12,6 +12,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
+from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 from parlai.tasks.blended_skill_talk.worlds import InteractiveWorld, _load_personas
 
 
@@ -292,6 +293,13 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 print(key)
                 self.assertEqual(desired_message[key], actual_message[key])
             print('')
+
+
+class TestContextGenerator(unittest.TestCase):
+    def test_generated_context(self):
+        seeds_to_desired_contexts = {0: None, 1: None, 2: None}  # TODO: add in
+        for seed, desired_context in seeds_to_desired_contexts.items():
+            # {{{TODO}}}
 
 
 class TestBlendedSkillTalkInteractiveWorld(unittest.TestCase):
