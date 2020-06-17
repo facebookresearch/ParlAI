@@ -425,7 +425,7 @@ class TestBlendedSkillTalkModels(unittest.TestCase):
                 },
                 skip_test=True,
             )
-            self.assertAlmostEqual(valid['accuracy'], desired_accuracy, places=4)
+            self.assertAlmostEqual(valid['accuracy'], desired_accuracy, delta=0.005)
 
 
 if __name__ == '__main__':
