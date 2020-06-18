@@ -135,10 +135,10 @@ def _eval_single_world(opt, agent, task):
     # max number of examples to evaluate
     max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     cnt = 0
-    total_cnt = sum(all_gather_list(world.num_examples()))
+    total_cnt = world.num_examples()
 
     if is_distributed():
-        logging.warning('Progress bar is approximate in distributed mode.')
+        logging.warn('Progress bar is approximate in distributed mode.')
 
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
