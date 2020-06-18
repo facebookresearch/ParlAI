@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Functions for loading modules for agents, tasks and teachers, and worlds.
+Functions for loading modules for agents, tasks and teachers, worlds, and scripts.
 
 These functions are largely for converting strings specified in opts (like for --task)
 to the appropriate module.
@@ -21,13 +21,14 @@ import importlib
 
 AGENT_REGISTRY: Dict[str, Type] = {}
 TEACHER_REGISTRY: Dict[str, Type] = {}
+SCRIPT_REGISTRY: Dict[str, Type] = {}
 
 
 def register_agent(name: str) -> Callable[[Type], Type]:
     """
     Register an agent to be available in command line calls.
 
-    >>> @register_teacher("my_agent")
+    >>> @register_agent("my_agent")
     ... class MyAgent:
     ...     pass
     """
@@ -35,6 +36,23 @@ def register_agent(name: str) -> Callable[[Type], Type]:
     def _inner(cls_):
         global AGENT_REGISTRY
         AGENT_REGISTRY[name] = cls_
+        return cls_
+
+    return _inner
+
+
+def register_script(name: str) -> Callable[[Type], Type]:
+    """
+    Register an agent to be available in command line calls.
+
+    >>> @register_script("my_script")
+    ... class MyScript:
+    ...     pass
+    """
+
+    def _inner(cls_):
+        global SCRIPT_REGISTRY
+        SCRIPT_REGISTRY[name] = cls_
         return cls_
 
     return _inner
