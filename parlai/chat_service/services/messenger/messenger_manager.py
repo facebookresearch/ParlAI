@@ -71,9 +71,15 @@ class MessengerManager(ChatServiceManager):
         """
         if 'models' in self.opt and self.should_load_model:
             model_params = {}
+            model_info = {}
             for model in self.opt['models']:
                 model_opt = self.opt['models'][model]
+                overrides = model_opt.get('overrides', {})
+                if type(overrides) is list:
+                    model_opt['overrides'] = overrides[0]
                 model_params[model] = create_agent(model_opt).share()
+                model_info[model] = {'overrides': overrides}
+            self.runner_opt['model_info'] = model_info
             self.runner_opt['shared_bot_params'] = model_params
 
     def _init_logs(self):
