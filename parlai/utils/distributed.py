@@ -13,8 +13,12 @@ distributed mode.
 """
 
 import builtins
+import copy
+import os
 import pickle
 import contextlib
+import subprocess
+import socket
 import parlai.utils.logging as logging
 
 try:
@@ -285,3 +289,108 @@ def sync_parameters(model: torch.nn.Module) -> bool:
         )
 
     return True
+
+
+@contextlib.contextmanager
+def distributed_context(
+    rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
+):
+    """
+    Subprocess which initializes distributed training, and begins training.
+
+    This should be launched n times for n GPUs; this is handled either in main
+    or via srun.
+
+    :param int rank: This process's rank - 1. (Starts at -1 ... n - 2). See comments.
+    :param opt: command line options
+    :param int port: A TCP port to use. This will need to be changed to run
+        multiple distributed training setups on the same machine.
+    :param int gpu: Which GPU to use. Defaults to using rank and local devices,
+        but must be manually specified when using many-hosts.
+    :param str hostname: Hostname of the main server.
+    """
+    # Set per-host options
+    opt = copy.deepcopy(opt)
+    # we need to manually adjust the rank differently in multiprocessing
+    # and distributed train
+    rank = rank + rank_offset
+    opt['rank'] = rank
+    if gpu is None:
+        # default assumption is local GPUs
+        gpu = rank % torch.cuda.device_count()
+    opt['gpu'] = gpu
+    # make sure we don't just use whatever GPU was saved in the model file
+    if 'override' not in opt:
+        opt['override'] = {}
+    opt['override']['gpu'] = gpu
+
+    # Suppress output of workers except the main host.
+    if opt.get('verbose') or rank != 0:
+        print_prefix = 'rank:{:3d} |'.format(rank)
+    else:
+        print_prefix = None
+    suppress_output = not opt.get('verbose') and rank != 0
+
+    with override_print(suppress_output, print_prefix):
+        # perform distributed setup, ensuring all hosts are ready
+        if opt['gpu'] != -1:
+            torch.cuda.set_device(opt['gpu'])
+        dist.init_process_group(
+            backend="nccl",
+            init_method="tcp://{}:{}".format(hostname, port),
+            world_size=opt['distributed_world_size'],
+            rank=rank,
+        )
+        logging.info("Distributed group initialized")
+
+        # manual_seed can be a noop without this
+        torch.cuda.init()
+        # make sure all parameters will be in sync
+        torch.manual_seed(42)
+        # force a sync so that no one gets ahead, and all are seeded together
+        sync_object(None)
+
+        yield opt
+
+
+@contextlib.contextmanager
+def slurm_distributed_context(opt):
+    # We can determine the init method automatically for Slurm.
+    # double check we're using SLURM
+    node_list = os.environ.get('SLURM_JOB_NODELIST')
+    if node_list is None:
+        raise RuntimeError(
+            'Does not appear to be in a SLURM environment. '
+            'You should not call this script directly; see launch_distributed.py'
+        )
+
+    try:
+        # Figure out the main host, and which rank we are.
+        hostnames = subprocess.check_output(
+            ['scontrol', 'show', 'hostnames', node_list]
+        )
+        main_host = hostnames.split()[0].decode('utf-8')
+        distributed_rank = int(os.environ['SLURM_PROCID'])
+        if opt.get('model_parallel'):
+            # -1 signals to multiprocessing_train to use all GPUs available.
+            # (A value of None signals to multiprocessing_train to use the GPU
+            # corresponding to the rank.
+            device_id = -1
+        else:
+            device_id = int(os.environ['SLURM_LOCALID'])
+        port = opt['port']
+        logging.info(
+            f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
+            f'main is {main_host}'
+        )
+        # Begin distributed training
+        with distributed_context(
+            distributed_rank, opt, port, 0, device_id, main_host
+        ) as opt:
+            yield opt
+    except subprocess.CalledProcessError as e:
+        # scontrol failed
+        raise e
+    except FileNotFoundError:
+        # Slurm is not installed
+        raise RuntimeError('SLURM does not appear to be installed.')
