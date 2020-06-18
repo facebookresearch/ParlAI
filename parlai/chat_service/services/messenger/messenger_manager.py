@@ -76,7 +76,6 @@ class MessengerManager(ChatServiceManager):
                 model_opt = self.opt['models'][model]
                 overrides = model_opt.get('overrides', {})
                 if type(overrides) is list:
-                    print("Got list overrides!")
                     model_opt['overrides'] = overrides[0]
                 model_params[model] = create_agent(model_opt).share()
                 model_info[model] = {'overrides': overrides}
