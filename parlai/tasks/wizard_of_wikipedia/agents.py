@@ -238,7 +238,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             '--chosen-topic-delimiter',
             type=str,
             default='\n',
-            help='delimiter used when including chosen topic'
+            help='delimiter used when including chosen topic',
         )
         agent.add_argument(
             '--num-topics',
@@ -292,7 +292,9 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             text = chosen_topic
         elif idx == 1:
             # first response - only have the first message
-            text = f"{chosen_topic}{self.chosen_topic_delimiter}{apprentice_entry['text']}"
+            text = (
+                f"{chosen_topic}{self.chosen_topic_delimiter}{apprentice_entry['text']}"
+            )
         else:
             text = ''
             if self.label_type == 'chosen_sent':
@@ -491,7 +493,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             '--gold-knowledge-delimiter',
             type=str,
             default='\n',
-            help='delimiter for prepending gold knowledge'
+            help='delimiter for prepending gold knowledge',
         )
 
     def getID(self):
@@ -531,7 +533,9 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
                 TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
             )
         elif self.prepend_gold_knowledge:
-            a['text'] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
+            a[
+                'text'
+            ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
         return a
 
 
