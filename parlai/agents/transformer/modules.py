@@ -1264,6 +1264,7 @@ class MultiHeadAttention(nn.Module):
           (as in encoder/decoder attention)
         :return: (final attended tensor, new incremental state)
         """
+
         batch_size, query_len, dim = query.size()
         assert (
             dim == self.dim
