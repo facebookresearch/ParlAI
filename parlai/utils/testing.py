@@ -281,7 +281,9 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     return valid, test
 
 
-def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
+def eval_model(
+    opt, skip_valid=False, skip_test=False, valid_datatype='valid', test_datatype='test'
+):
     """
     Run through an evaluation loop.
 
@@ -308,7 +310,7 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
 
     opt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
     valid = None if skip_valid else ems.EvalModel.main(**opt)
-    opt['datatype'] = 'test'
+    opt['datatype'] = 'test' if test_datatype is None else test_datatype
     test = None if skip_test else ems.EvalModel.main(**opt)
 
     return valid, test
