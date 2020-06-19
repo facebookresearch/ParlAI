@@ -474,16 +474,24 @@ class TransformerEncoder(nn.Module):
             )
         self.output_scaling = output_scaling
 
-    def forward(self, input, positions=None, segments=None):
+    def forward_embedding(
+        self,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ) -> torch.Tensor:
         """
-        Forward pass.
+        Embed tokens prior to feeding into transformer.
 
         :param LongTensor[batch,seqlen] input:
             The input IDs
-        :param BoolTensor[batch,seqlen] mask:
-            The attention mask; 1 means attend, 0 means ignore.
+        :param LongTensor[batch,seqlen] positions:
+            Positions for input IDs
         :param LongTensor[batch,seqlen]:
             If provided, additionally adds ``segments`` as extra embedding features.
+
+        :return (tensor, mask):
+            return embedded input and mask
         """
         mask = input != self.padding_idx
         if positions is None:
@@ -507,14 +515,22 @@ class TransformerEncoder(nn.Module):
                 segments = torch.zeros_like(input)
             tensor = tensor + self.segment_embeddings(segments)
 
-        if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+        return tensor, mask
 
-        # --dropout on the embeddings
-        tensor = self.dropout(tensor)
+    def forward_layers(
+        self, tensor: torch.Tensor, mask: torch.BoolTensor
+    ) -> torch.tensor:
+        """
+        Apply transformer layers to input.
 
-        tensor *= mask.unsqueeze(-1).type_as(tensor)
+        :param tensor:
+            embedded input
+        :param mask:
+            mask of input
 
+        :return tensor:
+            return embedding after applying transformer layers
+        """
         if getattr(self.layers, 'is_model_parallel', False):
             # factored out for readability. It is equivalent to the other
             # condition
@@ -523,23 +539,72 @@ class TransformerEncoder(nn.Module):
             for i in range(self.n_layers):
                 tensor = self.layers[i](tensor, mask)
 
-        if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+        return tensor
+
+    def reduce_output(
+        self, tensor: torch.Tensor, mask: torch.BoolTensor
+    ) -> Tuple[torch.tensor, Optional[torch.BoolTensor]]:
+        """
+        Reduce transformer output at end of forward pass.
+
+        :param tensor:
+            encoded input
+        :param mask:
+            mask for encoded input
+
+        :return (tensor, mask):
+            returns the reduced tensor, and mask if appropriate
+        """
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
-            return tensor[:, 0, :]
+            return tensor[:, 0, :], None
         elif self.reduction_type == 'max':
-            return tensor.max(dim=1)[0]
+            return tensor.max(dim=1)[0], None
         elif self.reduction_type == 'mean':
             divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
-            return output
+            return output, None
         elif self.reduction_type is None or 'none' in self.reduction_type:
             return tensor, mask
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
+
+    def forward(self, input, positions=None, segments=None):
+        """
+        Forward pass.
+
+        :param LongTensor[batch,seqlen] input:
+            The input IDs
+        :param LongTensor[batch,seqlen] positions:
+            Positions for input IDs
+        :param LongTensor[batch,seqlen]:
+            If provided, additionally adds ``segments`` as extra embedding features.
+        """
+        # embed input
+        tensor, mask = self.forward_embedding(input, positions, segments)
+
+        if self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+
+        # --dropout on the embeddings
+        tensor = self.dropout(tensor)
+
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
+
+        # apply transformer layers
+        tensor = self.forward_layers(tensor, mask)
+
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+
+        # reduce output
+        tensor, mask = self.reduce_output(tensor, mask)
+        if mask is not None:
+            return tensor, mask
+        else:
+            return tensor
 
     def _apply_model_parallel(self, tensor, mask):
         """
@@ -1199,7 +1264,6 @@ class MultiHeadAttention(nn.Module):
           (as in encoder/decoder attention)
         :return: (final attended tensor, new incremental state)
         """
-
         batch_size, query_len, dim = query.size()
         assert (
             dim == self.dim
