@@ -161,7 +161,7 @@ class Text2API2TextTeacher(DialogTeacher):
                         'slots': api_results,
                     }, False
                 else:
-                    assert "API call without API results !!! Check Dataset!"
+                    assert False, "API call without API results! Check Dataset!"
 
 
 class Text2TextTeacher(Text2API2TextTeacher):
