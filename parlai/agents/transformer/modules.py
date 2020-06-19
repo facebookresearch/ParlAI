@@ -479,7 +479,7 @@ class TransformerEncoder(nn.Module):
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, torch.LongTensor]:
         """
         Embed tokens prior to feeding into transformer.
 
@@ -512,14 +512,14 @@ class TransformerEncoder(nn.Module):
 
         if self.n_segments >= 1:
             if segments is None:
-                segments = torch.zeros_like(input)
+                segments = torch.zeros_like(input)  # type: ignore
             tensor = tensor + self.segment_embeddings(segments)
 
         return tensor, mask
 
     def forward_layers(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> torch.tensor:
+    ) -> torch.Tensor:
         """
         Apply transformer layers to input.
 
@@ -543,7 +543,7 @@ class TransformerEncoder(nn.Module):
 
     def reduce_output(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> Tuple[torch.tensor, Optional[torch.BoolTensor]]:
+    ) -> Tuple[torch.Tensor, Optional[torch.BoolTensor]]:
         """
         Reduce transformer output at end of forward pass.
 
@@ -1355,7 +1355,9 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float).type_as(query)
+        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float).type_as(
+            query
+        )  # type: ignore
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
