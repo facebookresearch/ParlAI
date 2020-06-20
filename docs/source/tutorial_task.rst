@@ -76,7 +76,7 @@ call as follows:
 
 	python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile-datapath /tmp/mydata --fromfile-datatype-extension true
 
-This will cause the system to add the ``_train.txt`` etc. suffixes for you.
+This will cause the system to add the ``_train.txt``, ``_valid.txt``, and ``_test.txt`` suffixes at the appropriate times during training, evaluation, etc.
 
 
 Creating a New Task: *the more complete way*
