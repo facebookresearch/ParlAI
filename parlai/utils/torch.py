@@ -7,10 +7,9 @@
 Utility methods for dealing with torch code.
 """
 
-import time
-import random
 import os
 from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
+import tempfile
 import itertools
 from collections import namedtuple
 import parlai.utils.logging as logging
@@ -45,35 +44,18 @@ def neginf(dtype: torch.dtype) -> float:
         return -NEAR_INF
 
 
-def to_cpu(obj) -> Any:
-    """
-    Move a state-dict object to CPU.
-
-    If an obj is a dict or list, recursively iterates to place onto cpu.
-    """
-    if isinstance(obj, dict):
-        return {k: to_cpu(v) for k, v in obj.items()}
-    elif isinstance(obj, tuple):
-        return tuple(to_cpu(v) for v in obj)
-    elif isinstance(obj, list):
-        return [to_cpu(v) for v in obj]
-    elif isinstance(obj, torch.Tensor):
-        return obj.cpu()
-    else:
-        return obj
-
-
 def atomic_save(state_dict: Any, path: str) -> None:
     """
-    Atomic save is a wrapper around torch.save, but does so in an atomic manner.
+    Like torch.save, but atomic.
+
+    Useful for preventing trouble coming from being pre-empted or killed while writing
+    to disk. Works by writing to a temporary file, and then renaming the file to the
+    final name.
     """
-    # atomic save is used for async writes, and it helps to yield the thread
-    time.sleep(1.0)
-    timestamp = int(time.time())
-    randint = random.randint(0, 99)
-    tmppath = path + f'.tmp.{timestamp}.{randint}'
-    torch.save(state_dict, tmppath)
-    os.rename(tmppath, path)
+    tf = tempfile.NamedTemporaryFile('wb', delete=False, dir=os.path.dirname(path))
+    torch.save(state_dict, tf)
+    tf.close()
+    os.rename(tf.name, path)
 
 
 def padded_tensor(

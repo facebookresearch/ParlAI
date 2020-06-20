@@ -51,7 +51,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
 
 
 class Batch(AttrDict):
@@ -1789,8 +1789,7 @@ class TorchAgent(ABC, Agent):
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
-                with open(path, 'wb') as write:
-                    torch.save(states, write)
+                atomic_save(states, path)
                 # save opt file
                 if hasattr(self, 'model_version'):
                     self.opt['model_version'] = self.model_version()
