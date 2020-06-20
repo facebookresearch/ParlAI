@@ -19,6 +19,8 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassifier
 from parlai.utils.misc import TimeLogger
+import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 
 import random
 
@@ -88,7 +90,7 @@ def detect(opt, printargs=None, print_parser=None):
             'total_offenses%': 100 * (stats['total_offensive'] / stats['total']),
         }
         text, log = log_time.log(report['exs'], world.num_examples(), log)
-        print(text)
+        logging.info(text)
 
     def classify(text, stats):
         offensive = False
@@ -116,19 +118,28 @@ def detect(opt, printargs=None, print_parser=None):
             for l in labels:
                 classify(l, stats)
         if len(stats['bad_words']) > 0 and opt['display_examples']:
-            print(world.display())
-            print("[Offensive words detected:]", ', '.join(stats['bad_words']))
-            print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            logging.info(world.display())
+            logging.info(
+                "Offensive words detected: {}".format(', '.join(stats['bad_words']))
+            )
         stats['bad_words_cnt'] += len(stats['bad_words'])
         if log_time.time() > log_every_n_secs:
             report(world, stats)
 
     if world.epoch_done():
-        print("EPOCH DONE")
+        logging.info("epoch done")
     report(world, stats)
     return world.report()
 
 
+class DetectOffensive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return detect(self.opt, print_parser=self.parser)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    detect(parser.parse_args(print_args=False), print_parser=parser)
+    DetectOffensive.main()

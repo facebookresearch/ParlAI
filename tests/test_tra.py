@@ -208,12 +208,15 @@ class TestPolyRanker(_AbstractTRATest):
             args['model_file'] = os.path.join(tmpdir, 'model')
             args['dict_file'] = os.path.join(tmpdir, 'model.dict')
             args['num_epochs'] = 4
+            args['add_label_to_fixed_cands'] = False
             # Train model where it has access to the candidate in labels
             valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(valid['hits@100'], 0.0)
 
             # Evaluate model where label is not in fixed candidates
             args['fixed_candidates_path'] = tmp_train_val_cands_file
+
+            del args['num_epochs']  # need this arg dropped, it was for train only
 
             # Will fail without appropriate arg set
             with self.assertRaises(RuntimeError):

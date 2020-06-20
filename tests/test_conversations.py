@@ -7,9 +7,9 @@ import os
 import shutil
 import unittest
 
-import parlai.utils.testing as testing_utils
 from parlai.utils.conversations import Conversations
 from parlai.core.params import ParlaiParser
+import parlai.utils.logging as logging
 
 
 class TestConversations(unittest.TestCase):
@@ -87,15 +87,15 @@ class TestConversations(unittest.TestCase):
         self.assertEqual({'other_info': 'Blah blah blah'}, convos.metadata.extra_data)
 
         # test reading conversations
-        with testing_utils.capture_output() as out:
+        with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
             convos.read_conv_idx(0)
-        str_version = (
-            'Emily: Hello, do you like this test?\n'
-            'Stephen: Why yes! I love this test!\n'
-            'Emily: So will you stamp this diff?\n'
-            'Stephen: Yes, I will do it right now!\n'
-        )
-        self.assertIn(str_version, out.getvalue())
+            str_version = (
+                'Emily: Hello, do you like this test?\n'
+                'Stephen: Why yes! I love this test!\n'
+                'Emily: So will you stamp this diff?\n'
+                'Stephen: Yes, I will do it right now!\n'
+            )
+            self.assertIn(str_version, "\n".join(cm.output))
 
         # test getting a specific turn
         first = convos[0]  # Conversation

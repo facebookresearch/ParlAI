@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
+from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
 
 """
@@ -13,25 +14,29 @@ Integration tests for the Self-Feeding chatbot project.
 See projects/self_feeding.
 """
 
+from parlai.tasks.self_feeding.agents import AllTeacher
+
 
 @testing_utils.skipUnlessGPU
 class TestSelffeeding(unittest.TestCase):
     def test_dataset_integrity(self):
         """
-        Check the controllble dialogue data loads.
+        Check the controllable dialogue data loads.
         """
-        train_output, valid_output, test_output = testing_utils.display_data(
-            {'task': 'self_feeding:all'}
-        )
+        pp = ParlaiParser(True, False)
+        opt = pp.parse_kwargs(task='self_feeding:all', datatype='train:ordered')
+        teacher = AllTeacher(opt)
+        assert teacher.num_examples() == 193777
+        assert teacher.num_episodes() == 193777
+        assert 'some cheetah chasing to stay in shape' in teacher.act()['text']
 
-        # check valid data
-        self.assertIn("i am spending time with my 4 sisters", train_output)
-        self.assertIn('193777 episodes with a total of 193777 examples', train_output)
+        opt['datatype'] = 'valid'
+        teacher = AllTeacher(opt)
+        assert teacher.num_examples() == 3500
 
-        # check valid data
-        self.assertIn('3500 examples', valid_output)
-        # check test data
-        self.assertIn('7801 examples', test_output)
+        opt['datatype'] = 'test'
+        teacher = AllTeacher(opt)
+        assert teacher.num_examples() == 7801
 
     def test_train_model(self):
         """
@@ -47,7 +52,7 @@ class TestSelffeeding(unittest.TestCase):
             'candidates': 'batch',
             'validation_metric': 'dia_acc',
             'optimizer': 'adamax',
-            'learning_rate': 0.0025,
+            'learningrate': 0.0025,
             'ffn_size': 32,
             'batchsize': 32,
             'embeddings_scale': False,

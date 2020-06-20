@@ -17,6 +17,7 @@ import io
 import signal
 from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
+import parlai.utils.logging as logging
 
 
 try:
@@ -134,7 +135,7 @@ class retry(object):
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
                     if self.log_retry:
-                        print("Retrying {}".format(testfn))
+                        logging.debug("Retrying {}".format(testfn))
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
 
@@ -274,18 +275,8 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
             opt['model_file'] = os.path.join(tmpdir, 'model')
         if 'dict_file' not in opt:
             opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-        parser = tms.setup_args()
-        # needed at the very least to set the overrides.
-        parser.set_params(**opt)
-        parser.set_params(log_every_n_secs=10)
-        popt = parser.parse_args([], print_args=False)
-        # in some rare cases, like for instance if the model class also
-        # overrides its default params, the params override will not
-        # be taken into account.
-        for k, v in opt.items():
-            popt[k] = v
-        tl = tms.TrainLoop(popt)
-        valid, test = tl.train()
+        # Parse verification
+        valid, test = tms.TrainModel.main(**opt)
 
     return valid, test
 
@@ -312,18 +303,13 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
     """
     import parlai.scripts.eval_model as ems
 
-    parser = ems.setup_args()
-    parser.set_params(**opt)
-    parser.set_params(log_every_n_secs=10)
-    popt = parser.parse_args([], print_args=False)
+    if opt.get('model_file') and not opt.get('dict_file'):
+        opt['dict_file'] = opt['model_file'] + '.dict'
 
-    if popt.get('model_file') and not popt.get('dict_file'):
-        popt['dict_file'] = popt['model_file'] + '.dict'
-
-    popt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
-    valid = None if skip_valid else ems.eval_model(popt)
-    popt['datatype'] = 'test'
-    test = None if skip_test else ems.eval_model(popt)
+    opt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
+    valid = None if skip_valid else ems.EvalModel.main(**opt)
+    opt['datatype'] = 'test'
+    test = None if skip_test else ems.EvalModel.main(**opt)
 
     return valid, test
 

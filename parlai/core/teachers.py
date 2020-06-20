@@ -40,6 +40,7 @@ from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
+import parlai.utils.logging as logging
 
 from abc import ABC, abstractmethod
 
@@ -905,9 +906,8 @@ class StreamDialogData(DialogData):
             self.reset_data = None
             self.is_reset = True
             if opt.get('numthreads', 1) > 1:
-                print(
-                    'WARNING: multithreaded streaming will process every '
-                    'example numthreads times.'
+                logging.warn(
+                    'multithreaded streaming will process every example numthreads times.'
                 )
                 self.lock = Lock()
         self.entry_idx = 0
@@ -1196,7 +1196,7 @@ class FbDialogTeacher(DialogTeacher):
             c: ['hallway', 'kitchen', 'bathroom']
             new_episode = False (this is the second example in the episode)
         """
-        print("[loading fbdialog data:" + path + "]")
+        logging.info(f"loading fbdialog data: {path}")
         with open(path) as read:
             start = True
             x = ''
@@ -1380,7 +1380,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         return self.episodes[episode_idx][entry_idx]
 
     def _setup_data(self, path):
-        print("[loading parlAI text data:" + path + "]")
+        logging.info(f"Loading ParlAI text data: {path}")
         self.episodes = []
         self.num_exs = 0
         eps = []
@@ -1417,10 +1417,10 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
         if len(self.episodes) == 1 and line_no > 100:
-            warn_once(
-                'The data in {path} looks like one very long episode. If this '
-                'is intentional, you may ignore this, but you MAY have a bug in '
-                'your data.'
+            logging.error(
+                f'The data in {path} looks like one very long episode. If this '
+                f'is intentional, you may ignore this, but you MAY have a bug in '
+                f'your data.'
             )
 
 
@@ -1685,14 +1685,14 @@ class AbstractImageTeacher(FixedDialogTeacher):
         )
 
         if os.path.isfile(image_mode_features_dict_path):
-            print(
+            logging.info(
                 f'Loading existing image features dict for model: {self.image_mode} at: {image_mode_features_dict_path}'
             )
             self.image_features_dict = torch.load(
                 image_mode_features_dict_path, map_location='cpu'
             )
         else:
-            print('No existing image features, attempting to build.')
+            logging.warn('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
@@ -1745,7 +1745,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             num += 1
             pbar.update(1)
             if num % 1000 == 0:
-                print(f'Processing image index: {num}')
+                logging.debug(f'Processing image index: {num}')
         torch.save(image_features_dict, store_dict_path)
         return image_features_dict
 
@@ -1993,14 +1993,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.set_datasettings(opt['datatype'])
 
+        self.dws = int(self.opt.get('distributed_world_size', 1))
+        self.rank = int(self.opt.get('rank', 0))
         if (
             shared is None
             and self.is_train
             and self.opt.get('distributed_world_size') is not None
         ):
-            dws = int(self.opt['distributed_world_size'])
-            rank = int(self.opt['rank'])
-            self.fold_chunks = [c for c in self.fold_chunks if c % dws == rank]
+            self.fold_chunks = [
+                c for c in self.fold_chunks if c % self.dws == self.rank
+            ]
 
         if shared is not None:
             self.is_root_teacher = False
@@ -2079,10 +2081,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     def num_episodes(self):
-        return self.num_eps
+        if self.is_train:
+            return self.num_eps
+        else:
+            return self.num_eps // self.dws + int((self.num_eps % self.dws) > self.rank)
 
     def num_examples(self):
-        return self.num_exs
+        if self.is_train:
+            return self.num_exs
+        else:
+            return self.num_exs // self.dws + int((self.num_exs % self.dws) > self.rank)
 
     def _enqueue_request(self):
         """
@@ -2099,11 +2107,15 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         data = future.result()
         if data is None:
             return
+        i = 0
         while data:
             # self.samples is a queue with maxsize
             # self.buffersize, so will block if the
             # buffer gets full
-            self.samples.put(data.pop(0))
+            sample = data.pop(0)
+            if self.is_train or i % self.dws == self.rank:
+                self.samples.put(sample)
+            i += 1
         # and start loading the next chunk
         self._enqueue_request()
 

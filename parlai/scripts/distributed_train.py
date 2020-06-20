@@ -36,23 +36,19 @@ import socket
 import subprocess
 
 import parlai.scripts.train_model as single_train
+import parlai.utils.logging as logging
 from parlai.scripts.multiprocessing_train import multiprocess_train
+from parlai.scripts.script import ParlaiScript
 
 
-def main():
-    # double check we're using SLURM
-    node_list = os.environ.get('SLURM_JOB_NODELIST')
-    if node_list is None:
-        raise RuntimeError(
-            'Does not appear to be in a SLURM environment. '
-            'You should not call this script directly; see launch_distributed.py'
-        )
-
+def setup_args():
     parser = single_train.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    opt = parser.parse_args(print_args=(os.environ['SLURM_PROCID'] == '0'))
+    return parser
 
+
+def dist_train(opt, node_list):
     # We can determine the init method automatically for Slurm.
     try:
         # Figure out the main host, and which rank we are.
@@ -69,10 +65,9 @@ def main():
         else:
             device_id = int(os.environ['SLURM_LOCALID'])
         port = opt['port']
-        print(
-            'Initializing host {} as rank {}, main is {}'.format(
-                socket.gethostname(), distributed_rank, main_host
-            )
+        logging.info(
+            f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
+            f'main is {main_host}'
         )
         # Begin distributed training
         multiprocess_train(distributed_rank, opt, port, 0, device_id, main_host)
@@ -84,5 +79,22 @@ def main():
         raise RuntimeError('SLURM does not appear to be installed.')
 
 
+class DistributedTrain(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        # double check we're using SLURM
+        node_list = os.environ.get('SLURM_JOB_NODELIST')
+        if node_list is None:
+            raise RuntimeError(
+                'Does not appear to be in a SLURM environment. '
+                'You should not call this script directly; '
+                'see launch_distributed.py'
+            )
+        return dist_train(self.opt, node_list)
+
+
 if __name__ == '__main__':
-    main()
+    DistributedTrain.main()

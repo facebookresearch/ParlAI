@@ -93,9 +93,10 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         """
         Override to include image feats.
         """
+        b = super()._dummy_batch(batchsize, maxlen)
         return Batch(
-            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
-            label_vec=torch.ones(batchsize, 2).long().cuda(),
+            text_vec=b.text_vec,
+            label_vec=b.label_vec,
             image=torch.ones(batchsize, self.image_features_dim).cuda(),
             personalities=torch.ones(batchsize, self.opt.get('embedding_size')).cuda(),
         )

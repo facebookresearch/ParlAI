@@ -1145,6 +1145,17 @@ task_list = [
         ),
     },
     {
+        "id": "AirDialogue",
+        "display_name": "AirDialogue",
+        "task": "airdialogue",
+        "tags": ["All", "Goal"],
+        "description": (
+            "Task for goal-oriented dialogue using airplane booking conversations "
+            "between agents and customers. Paper and toolkits for the dataset can be"
+            " found at <https://github.com/google/airdialogue>."
+        ),
+    },
+    {
         "id": "HollE",
         "display_name": "Holl-E",
         "task": "holl_e",

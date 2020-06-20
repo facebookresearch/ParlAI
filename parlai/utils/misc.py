@@ -9,16 +9,17 @@ File for miscellaneous utility functions and constants.
 
 from collections import deque, OrderedDict
 from typing import Union, Optional, Set, Any, Dict, List, Tuple
+from datetime import timedelta
 import math
 import random
 import time
 import re
 import shutil
-import warnings
 import json
 
 from parlai.core.message import Message
 from parlai.utils.strings import colorize
+import parlai.utils.logging as logging
 
 try:
     import torch
@@ -292,23 +293,24 @@ class TimeLogger:
             done = done.value()
         self.tot_time += self.timer.time()
         self.timer.reset()
-        log = {}
-        log['exs'] = done
-        if total > 0:
-            log['%done'] = done / total
-            if log["%done"] > 0:
-                time_left = self.tot_time / log['%done'] - self.tot_time
-                log['time_left'] = str(int(time_left)) + 's'
-            z = '%.2f' % (100 * log['%done'])
-            log['%done'] = str(z) + '%'
+        report['exs'] = done
+        if total > 0 and done > 0:
+            progress = done / total
+            seconds_left = max(0, self.tot_time / progress - self.tot_time)
+            eta = timedelta(seconds=int(seconds_left + 0.5))
+        else:
+            progress = 0
+            eta = "unknown"
+        elapsed = timedelta(seconds=int(self.tot_time))
 
+        text = (
+            f'{progress:.1%} complete ({done:,d} / {total:,d}), '
+            f'{elapsed} elapsed, {eta} eta'
+        )
         if report:
-            log = {**report, **log}
-
-        int_time = int(self.tot_time)
-        report_s = nice_report(log)
-        text = f'{int_time}s elapsed:\n{report_s}'
-        return text, log
+            report_s = nice_report(report)
+            text = f'{text}\n{report_s}'
+        return text, report
 
 
 class AttrDict(dict):
@@ -686,8 +688,8 @@ class PaddingUtils(object):
 
             if random.random() > (1 - report_freq):
                 # log sometimes
-                print('TEXT: ', observations[valid_inds[i]]['text'])
-                print('PREDICTION: ', curr_pred, '\n~')
+                logging.info(f"TEXT: {observations[valid_inds[i]]['text']}")
+                logging.info(f"PREDICTION: {curr_pred}\n~")
         return
 
 
@@ -957,17 +959,28 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-_seen_warnings: Set[str] = set()
+_seen_logs: Set[str] = set()
 
 
-def warn_once(msg: str, warningtype=None) -> None:
+def warn_once(msg: str) -> None:
     """
-    Raise a warning, but only once.
+    Log a warning, but only once.
 
     :param str msg: Message to display
-    :param Warning warningtype: Type of warning, e.g. DeprecationWarning
     """
-    global _seen_warnings
-    if msg not in _seen_warnings:
-        _seen_warnings.add(msg)
-        warnings.warn(msg, warningtype, stacklevel=2)
+    global _seen_logs
+    if msg not in _seen_logs:
+        _seen_logs.add(msg)
+        logging.warn(msg)
+
+
+def error_once(msg: str) -> None:
+    """
+    Log an error, but only once.
+
+    :param str msg: Message to display
+    """
+    global _seen_logs
+    if msg not in _seen_logs:
+        _seen_logs.add(msg)
+        logging.error(msg)

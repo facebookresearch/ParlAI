@@ -134,6 +134,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         super().__init__()
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
+        self.START_IDX = start_idx
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
@@ -164,6 +165,13 @@ class TorchGeneratorModel(nn.Module, ABC):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
+        if (ys[:, 0] == self.START_IDX).any():
+            raise AssertionError(
+                "The Beginning of Sentence token is automatically added to the "
+                "label in decode_forced, but you included it in the label. This means "
+                "your model will have a double BOS token, which is probably not what "
+                "you intended."
+            )
         inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
@@ -467,19 +475,21 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             sync_parameters(self.model)
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
-            print(f"Total parameters: {total_params:,d} ({train_params:,d} trainable)")
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
 
             if self.fp16:
                 self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
-                print('[ Loading existing model params from {} ]' ''.format(init_model))
+                logging.info(f'Loading existing model params from {init_model}')
                 states = self.load(init_model)
             else:
                 states = {}
 
-        if shared:
+        if shared is not None:
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
@@ -549,10 +559,23 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         If your model uses additional inputs beyond text_vec and label_vec,
         you will need to override it to add additional fields.
         """
+        text_vec = (
+            torch.arange(1, maxlen + 1)  # need it as long as specified
+            .clamp(max=3)  # cap at 3 for testing with tiny dictionaries
+            .unsqueeze(0)
+            .expand(batchsize, maxlen)
+            .cuda()
+        )
+        # label vec has two tokens to make it interesting, but we we can't use the
+        # start token, it's reserved.
+        label_vec = (
+            torch.LongTensor([self.END_IDX, self.NULL_IDX])
+            .unsqueeze(0)
+            .expand(batchsize, 2)
+            .cuda()
+        )
         return Batch(
-            text_vec=torch.ones(batchsize, maxlen).long().cuda(),
-            label_vec=torch.ones(batchsize, 2).long().cuda(),
-            text_lengths=[maxlen] * batchsize,
+            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
@@ -564,7 +587,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 self._control_local_metrics(disabled=True)
-                loss = self.compute_loss(self._dummy_batch(batchsize, maxlen))
+                loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
                 self._control_local_metrics(enabled=True)
                 self._temporarily_disable_local_metrics = False
                 self.backward(loss)
@@ -690,8 +713,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # catch out of memory exceptions during fwd/bck (skip batch)
             if 'out of memory' in str(e):
                 oom_sync = True
-                print(
-                    '| WARNING: ran out of memory, skipping batch. '
+                logging.error(
+                    'Ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
@@ -814,10 +837,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         preds = None
         if self.skip_generation:
-            warn_once(
-                "--skip-generation does not produce accurate metrics beyond ppl",
-                RuntimeWarning,
-            )
+            warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
             beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
@@ -1534,10 +1554,9 @@ class NucleusSampling(TreeSearch):
         # for the probabilities in order to compute the CDF.
         probs = torch.softmax(logprobs, dim=-1)
         sprobs, sinds = probs.sort(dim=-1, descending=True)
-        # The subtraction here is so that we always include the first word to
-        # go over p. For example, if the most probable token has a prob of 0.5, and
-        # p = 0.3, then we need still need to include that first token.
-        mask = (sprobs.cumsum(dim=-1) - sprobs[:, :1]) >= self.p
+        # The subtraction here is to get the exclusive prefix sum,
+        # to guarantee the first element is not masked
+        mask = (sprobs.cumsum(dim=-1) - sprobs) >= self.p
         sprobs[mask] = 0
         sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
         choices = torch.multinomial(sprobs, 1)[:, 0]

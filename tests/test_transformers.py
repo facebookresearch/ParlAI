@@ -141,7 +141,7 @@ class TestTransformerRanker(unittest.TestCase):
                 model='transformer/ranker',
                 model_file='zoo:unittest/transformer_ranker/model',
                 dict_file='zoo:unittest/transformer_ranker/model.dict',
-                batch_size=64,
+                batchsize=64,
             )
         )
 
@@ -312,7 +312,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     task='integration_tests:repeat_words',
                     model_file='zoo:unittest/beam_blocking/model',
                     dict_file='zoo:unittest/beam_blocking/model.dict',
-                    batch_size=1,
+                    batchsize=1,
                     inference='beam',
                     beam_size=5,
                     skip_generation=False,
@@ -324,7 +324,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     task='integration_tests:repeat_words',
                     model_file='zoo:unittest/beam_blocking/model',
                     dict_file='zoo:unittest/beam_blocking/model.dict',
-                    batch_size=1,
+                    batchsize=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=1,
@@ -337,7 +337,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     task='integration_tests:repeat_words',
                     model_file='zoo:unittest/beam_blocking/model',
                     dict_file='zoo:unittest/beam_blocking/model.dict',
-                    batch_size=1,
+                    batchsize=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_ngram=2,
@@ -354,7 +354,7 @@ class TestTransformerGenerator(unittest.TestCase):
                     task='integration_tests:repeat_words',
                     model_file='zoo:unittest/beam_blocking/model',
                     dict_file='zoo:unittest/beam_blocking/model.dict',
-                    batch_size=1,
+                    batchsize=1,
                     inference='beam',
                     beam_size=5,
                     beam_block_list_filename=os.path.join(tmpdir, 'blocklist.txt'),
@@ -496,7 +496,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 model_file='zoo:unittest/transformer_generator2/model',
                 dict_file='zoo:unittest/transformer_generator2/model.dict',
                 rank_candidates=False,
-                batch_size=64,
+                batchsize=64,
             ),
             skip_valid=True,
         )
@@ -520,7 +520,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 no_cuda=True,
                 embedding_size=16,
                 skip_generation=True,
-                hiddensize=16,
+                ffn_size=16,
             )
         )
 
