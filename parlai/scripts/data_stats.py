@@ -18,6 +18,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.core.dict import DictionaryAgent
+from parlai.scripts.script import ParlaiScript
 
 import parlai.utils.logging as logging
 
@@ -174,9 +175,19 @@ def verify(opt, printargs=None, print_parser=None):
     return report(world, counts, log_time)
 
 
-if __name__ == '__main__':
-    parser = setup_args()
-    report_text, report_log = verify(
-        parser.parse_args(print_args=False), print_parser=parser
-    )
+def obtain_stats(opt, parser):
+    report_text, report_log = verify(opt, print_parser=parser)
     print(report_text.replace('\\n', '\n'))
+
+
+class DataStats(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return obtain_stats(self.opt, self.parser)
+
+
+if __name__ == '__main__':
+    DataStats.main()

@@ -826,7 +826,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
-        if parsed.get('init_opt', None) is not None:
+        if parsed.get('init_opt') is not None:
             self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
@@ -1021,6 +1021,15 @@ class ParlaiParser(argparse.ArgumentParser):
 
         return self.opt
 
+    def _value2argstr(self, value) -> str:
+        """
+        Reverse-parse an opt value into one interpretable by argparse.
+        """
+        if isinstance(value, (list, tuple)):
+            return ",".join(str(v) for v in value)
+        else:
+            return str(value)
+
     def _kwargs_to_str_args(self, **kwargs):
         """
         Attempt to map from python-code kwargs into CLI args.
@@ -1053,14 +1062,15 @@ class ParlaiParser(argparse.ArgumentParser):
                 continue
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend([str(v) for v in value])
+                string_args.extend([self._value2argstr(value) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
@@ -1088,13 +1098,15 @@ class ParlaiParser(argparse.ArgumentParser):
             # because user has provided an unspecified option
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
+                # Special case: Labels
                 string_args.extend([str(v) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")

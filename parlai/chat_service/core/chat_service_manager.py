@@ -673,7 +673,9 @@ class ChatServiceManager(ABC):
                 log_utils.print_and_log(logging.INFO, "Next task: {}".format(next_task))
                 if next_task is None:
                     self._launch_overworld(agent.id)
-                    agent_state.set_active_agent(agent_state.get_overworld_agent())
+                    overworld_agent = agent_state.get_overworld_agent()
+                    overworld_agent.data = agent_state.data
+                    agent_state.set_active_agent(overworld_agent)
                 elif next_task == self.EXIT_STR:
                     self._remove_agent(agent.id)
                 else:

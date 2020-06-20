@@ -19,8 +19,32 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 import random
 import tempfile
+
+
+def setup_args(parser=None) -> ParlaiParser:
+    # Get command line arguments
+    if not parser:
+        parser = ParlaiParser()
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert all examples',
+    )
+    parser.add_argument(
+        '-of',
+        '--outfile',
+        default=None,
+        type=str,
+        help='Output file where to save, by default will be created in /tmp',
+    )
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.set_defaults(datatype='train:evalmode')
+    return parser
 
 
 def build_cands(opt):
@@ -69,29 +93,15 @@ def build_cands(opt):
     fw.close()
 
 
-def main():
-    random.seed(42)
-    # Get command line arguments
-    parser = ParlaiParser()
-    parser.add_argument(
-        '-n',
-        '--num-examples',
-        default=-1,
-        type=int,
-        help='Total number of exs to convert, -1 to convert all examples',
-    )
-    parser.add_argument(
-        '-of',
-        '--outfile',
-        default=None,
-        type=str,
-        help='Output file where to save, by default will be created in /tmp',
-    )
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.set_defaults(datatype='train:evalmode')
-    opt = parser.parse_args()
-    build_cands(opt)
+class BuildCandidates(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return build_cands(self.opt)
 
 
 if __name__ == '__main__':
-    main()
+    random.seed(42)
+    BuildCandidates.main()

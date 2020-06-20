@@ -21,6 +21,7 @@ from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 
 
 def dump_data(opt):
@@ -66,31 +67,39 @@ def dump_data(opt):
     fw.close()
 
 
-def main():
-    random.seed(42)
+def setup_args(parser=None) -> ParlaiParser:
     # Get command line arguments
-    parser = ParlaiParser()
+    if not parser:
+        parser = ParlaiParser()
+    # Get command line arguments
     parser.add_argument(
         '-n',
         '--num-examples',
         default=-1,
         type=int,
-        help='Total number of exs to convert, -1 to convert \
-                                all examples',
+        help='Total number of exs to convert, -1 to convert all examples',
     )
     parser.add_argument(
         '-of',
         '--outfile',
         default=None,
         type=str,
-        help='Output file where to save, by default will be \
-                                created in /tmp',
+        help='Output file where to save, by default will be created in /tmp',
     )
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.set_defaults(datatype='train:ordered')
-    opt = parser.parse_args()
-    dump_data(opt)
+    return parser
+
+
+class ConvertDataToFastText(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return dump_data(self.opt)
 
 
 if __name__ == '__main__':
-    main()
+    random.seed(42)
+    ConvertDataToFastText.main()

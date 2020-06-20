@@ -314,7 +314,7 @@ jobs:
       - store_test_results:
           path: test-results
 
-  nightly_gpu_tests:
+  long_gpu_tests:
     <<: *gpu
     working_directory: ~/ParlAI
     parallelism: 8
@@ -448,31 +448,6 @@ jobs:
             echo 'Testing docs css'
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
-  check_extra_tests:
-    <<: *standard_cpu37
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - run:
-          name: "Conditionally launching long tests..."
-          working_directory: ~/ParlAI/
-          command: |
-            pip install gitpython
-            python setup.py develop --no-deps
-            python .circleci/triggers.py | while read job; do
-              curl -s \
-                --data "build_parameters[CIRCLE_JOB]=${job}" \
-                --data "build_parameters[CIRCLE_WORKFLOW_ID]=${CIRCLE_WORKFLOW_ID}" \
-                --data "build_parameters[CIRCLE_WORKFLOW_WORKSPACE_ID]=${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
-                --data "build_parameters[CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS]=${CIRCLE_WORKFLOW_JOB_ID}" \
-                --data "revision=$CIRCLE_SHA1" \
-                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN >/dev/null
-                echo "Launching ${job}..."
-            done
-
-
 # -------------------------------------------------------------------------------------
 # Workflows
 # -------------------------------------------------------------------------------------
@@ -485,18 +460,8 @@ workflows:
       - unittests_37
       - unittests_36
       - mturk_tests
-      - unittests_osx:
-          filters:
-            branches:
-              only: master
-      - nightly_gpu_tests:
-          filters:
-            branches:
-              only: master
-      - check_extra_tests:
-          filters:
-            branches:
-              ignore: master
+      - unittests_osx
+      - long_gpu_tests
       - build_website:
           filters:
             branches:

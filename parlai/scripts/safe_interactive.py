@@ -9,6 +9,7 @@ trained model.
 """
 
 from parlai.core.params import ParlaiParser
+from parlai.scripts.script import ParlaiScript
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.safe_local_human.safe_local_human import SafeLocalHumanAgent
@@ -79,7 +80,15 @@ def safe_interactive(opt, print_parser=None):
             break
 
 
+class SafeInteractive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return safe_interactive(self.opt, print_parser=self.parser)
+
+
 if __name__ == '__main__':
     random.seed(42)
-    parser = setup_args()
-    safe_interactive(parser.parse_args(print_args=False), print_parser=parser)
+    SafeInteractive.main()
