@@ -28,7 +28,6 @@ import json
 import numpy as np
 import os
 import signal
-import concurrent.futures
 from typing import Dict
 
 from parlai.core.metrics import Metric
@@ -277,14 +276,6 @@ class TrainLoop:
 
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
-        self._async_save = (
-            hasattr(self.agent, '_SUPPORTS_ASYNC_SAVE')
-            and self.agent._SUPPORTS_ASYNC_SAVE
-        )
-        if self._async_save:
-            self._threadpool = concurrent.futures.ThreadPoolExecutor(4)
-            self._save_futures: Dict[str, concurrent.futures.Future] = {}
-
         self.world = create_task(opt, self.agent)
         # set up timers
         self.train_time = Timer()
@@ -363,12 +354,6 @@ class TrainLoop:
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger = TensorboardLogger(opt)
 
-    def _save_dispatch(self, path):
-        """
-        Helper method called asynchronously by the thread.
-        """
-        pass
-
     def save_model(self, suffix=None):
         """
         Save the model to disk, possibly with a suffix.
@@ -384,62 +369,39 @@ class TrainLoop:
         fn = self.opt['model_file']
         if suffix:
             fn += suffix
-        if self._async_save:
-            # support async save, use it to dump to disk in a background thread
-            # we support multiple save_futures in case we want to dump both model
-            # and model.checkpoint
-            if fn in self._save_futures and not self._save_futures[fn].done():
-                # wow we're training faster than we can save, so wait for it to
-                # finish up first
-                logging.info(f"Waiting on previous save of {fn} to finish...")
-                self._save_futures.result()
-                logging.info(f"Previous save of {fn} finished")
-            fut = self.agent.save(fn, self._threadpool)
-            self._save_futures[fn] = fut
-            self._save_train_stats(suffix, fut)
-        else:
-            while True:
-                # don't ever let a ctrl-c interrupt saving
-                try:
-                    self.agent.save(fn)
-                    self._save_train_stats(suffix)
-                    break
-                except KeyboardInterrupt:
-                    pass
+        while True:
+            # don't ever let a ctrl-c interrupt saving
+            try:
+                self.agent.save(fn)
+                self._save_train_stats(suffix)
+                break
+            except KeyboardInterrupt:
+                pass
 
     def _safe_report(self, report: Dict[str, Metric]):
         return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
 
-    def _save_train_stats(self, suffix=None, future=None):
+    def _save_train_stats(self, suffix=None):
         fn = self.opt['model_file']
         if suffix:
             fn += suffix
         fn += '.trainstats'
-        train_stats = {
-            'parleys': self.parleys,
-            'train_time': self.train_time.time(),
-            'total_epochs': (
-                self._preempted_epochs + num_workers() * self.world.get_total_epochs()
-            ),
-            'impatience': self.impatience,
-            'valid_reports': [self._safe_report(v) for v in self.valid_reports],
-            'best_valid': self.best_valid,
-        }
-
-        def _writer():
-            if future is not None and not future.done():
-                logging.debug('Waiting for the model file to be written')
-                future.result()
-                logging.debug('Finished writing')
-            with open(fn, 'w') as f:
-                logging.debug(f'Writing trainstats to {fn}')
-                json.dump(train_stats, f, indent=4)
-                f.write('\n')
-
-        if self._async_save:
-            self._threadpool.submit(_writer)
-        else:
-            _writer()
+        with open(fn, 'w') as f:
+            json.dump(
+                {
+                    'parleys': self.parleys,
+                    'train_time': self.train_time.time(),
+                    'total_epochs': (
+                        self._preempted_epochs
+                        + num_workers() * self.world.get_total_epochs()
+                    ),
+                    'impatience': self.impatience,
+                    'valid_reports': [self._safe_report(v) for v in self.valid_reports],
+                    'best_valid': self.best_valid,
+                },
+                f,
+                indent=4,
+            )
 
     def validate(self):
         """
@@ -754,11 +716,6 @@ class TrainLoop:
         if not self.saved and is_primary_worker():
             # save agent
             self.save_model()
-
-            # make sure all saves are finished before we continue
-            if self._async_save:
-                for f in self._save_futures:
-                    f.result()
 
         # there's a rare edge case where the we never saved the model, and we try
         # # to reload it. This sync_object ensures all workers wait for the primary
