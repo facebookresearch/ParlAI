@@ -19,6 +19,25 @@ def display_image():
     print(logo)
 
 
+def setup_script_registry():
+    """
+    Loads the scripts so that @register_script is hit for all.
+    Primary use is for argcomplete and subparsers
+    """
+    file_list = [
+        f
+        for f in os.listdir(".")
+        if f.endswith('.py') and f not in {"__init__.py", os.path.basename(__file__)}
+    ]
+    for fname in file_list:
+        try:
+            script_path = f"parlai.scripts.{fname[:-3]}"
+            module = importlib.import_module(script_path)
+        except ImportError:
+            print(f"Error Importing {script_path}. Aborting ...")
+            exit()
+
+
 def Parlai():
     # List of mappings from a command name to the script to import and class to call.
     maps = {
@@ -66,4 +85,5 @@ def Parlai():
 
 
 if __name__ == '__main__':
+    setup_script_registry()
     Parlai()
