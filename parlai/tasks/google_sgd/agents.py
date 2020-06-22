@@ -9,6 +9,7 @@ Google The Schema-Guided Dialogue(SGD) Dataset implementation for ParlAI.
 """
 
 import os
+import copy
 import json
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
@@ -18,12 +19,28 @@ from parlai.core.metrics import AverageMetric, BleuMetric
 import parlai.utils.logging as logging
 
 import parlai.tasks.google_sgd.build as build_
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.worlds import create_task, create_task_world
+
+def _load_secondary_world(opt):
+    if opt['stask'] == 'None':
+        return None
+    s_opt = copy.deepcopy(opt)
+    s_opt['task'] = s_opt['stask']
+    s_opt['datatype'] = 'train'
+    s_agent = RepeatLabelAgent(s_opt)
+    s_world = create_task_world(s_opt, [s_agent])
+    return s_world
 
 
 class Text2API2TextTeacher(DialogTeacher):
     """
     Abstract data loader.
     """
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        argparser.add_argument('-st', '--stask', type=str, default='None')
+        return argparser
 
     def __init__(self, opt: Opt, shared=None):
         self.fold = opt['datatype'].split(':')[0]
@@ -34,6 +51,7 @@ class Text2API2TextTeacher(DialogTeacher):
                 "Google SGD is a beta dataset, and format may significantly change."
             )
             build_.build(opt)
+        self._s_world = _load_secondary_world(opt)
         super().__init__(opt, shared)
 
     def _load_data(self, fold):
@@ -87,8 +105,11 @@ class Text2API2TextTeacher(DialogTeacher):
             for slot_str in slot_strs:
                 if ' = ' not in slot_str:
                     continue
-                name, value = slot_str.split(' = ')
-                parsed[name] = value
+                try:
+                    name, value = slot_str.split(' = ')
+                    parsed[name] = value
+                except:
+                    continue
 
             # slot precision
             for k, v in parsed.items():
@@ -114,7 +135,40 @@ class Text2API2TextTeacher(DialogTeacher):
     def _api_dict_to_str(self, apidict):
         return ' ; '.join(f'{k} = {v}' for k, v in apidict.items())
 
+    def _get_secondary_acts(self, max_secondary_turns=2):
+        secondary_acts = []
+        for _ in range(max_secondary_turns): 
+            self._s_world.parley()
+            acts = self._s_world.get_acts()[0]
+            input_text = acts['text']
+            output_text = acts['labels'][0]
+            secondary_act = {
+            "text" : input_text,
+            "labels": output_text,
+            "type": "text",
+                }
+            secondary_acts.append(secondary_act)
+        return secondary_acts
+
+
     def setup_data(self, fold):
+        max_primary_turns = 2
+        local_num_primary_turns = 0
+        for primary_act, is_first_turn in self._setup_data(fold):
+            if primary_act['type'] == 'apiresp' and \
+                local_num_primary_turns >= max_primary_turns and \
+                self._s_world is not None:
+                secondary_act_chunks = self._get_secondary_acts()
+                while secondary_act_chunks:
+                    secondary_act = secondary_act_chunks.pop(0)
+                    yield secondary_act, False
+                local_num_primary_turns = 0
+            else:
+                local_num_primary_turns += 1
+                yield primary_act, is_first_turn
+
+            
+    def _setup_data(self, fold):
         schema_lookup, dialogs = self._load_data(fold)
         for dialog in dialogs:
             # services = dialog['services']
