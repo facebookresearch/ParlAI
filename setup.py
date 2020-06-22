@@ -21,7 +21,15 @@ with open('README.md', encoding="utf8") as f:
     readme = f.read().split('--------------------')[-1]
 
 with open('requirements.txt') as f:
-    reqs = f.read()
+    reqs = []
+    for line in f:
+        line = line.strip()
+        if '>' in line:
+            reqs.append(line.split('>')[0])
+        elif '=' in line:
+            reqs.append(line.split('=')[0])
+        else:
+            reqs.append(line)
 
 
 if __name__ == '__main__':
@@ -36,7 +44,7 @@ if __name__ == '__main__':
         packages=find_packages(
             exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal',)
         ),
-        install_requires=reqs.strip().split('\n'),
+        install_requires=reqs,
         include_package_data=True,
         package_data={'': ['*.txt', '*.md']},
         entry_points={
