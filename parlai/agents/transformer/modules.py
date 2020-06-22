@@ -780,6 +780,41 @@ class TransformerDecoder(nn.Module):
                 )
             )
 
+    def forward_embedding(
+        self,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ):
+        """
+        Embed tokens prior to feeding into transformer.
+
+        :param LongTensor[batch, seqlen] input:
+            The target input IDs
+        :param LongTensor[batch, seqlen] positions:
+            Positions for input IDs. If None, computes defaults.
+        :param LongTensor[batch, seqlen] segements:
+            Segment IDs for extra embedding features. If None, not used.
+
+        :return (tensor, mask):
+            embeded input and mask
+        """
+        tensor = self.embeddings(input)
+        if self.embeddings_scale:
+            tensor = tensor * np.sqrt(self.dim)
+        if self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+        if positions.max().item() > self.n_positions:
+            warn_once(
+                'You are inputting a sequence of {x} length, but only have '
+                '--n-positions {y}. Set --truncate or increase --n-positions'.format(
+                    x=positions.max().item(), y=self.n_positions
+                )
+            )
+        tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+
+        return tensor
+
     def forward(self, input, encoder_state, incr_state=None):
         """
         Forward pass.
@@ -806,19 +841,8 @@ class TransformerDecoder(nn.Module):
         else:
             incr_state = {}
 
-        tensor = self.embeddings(input)
-        if self.embeddings_scale:
-            tensor = tensor * np.sqrt(self.dim)
-        if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
-        if positions.max().item() > self.n_positions:
-            warn_once(
-                'You are inputting a sequence of {x} length, but only have '
-                '--n-positions {y}. Set --truncate or increase --n-positions'.format(
-                    x=positions.max().item(), y=self.n_positions
-                )
-            )
-        tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        tensor = self.forward_embedding(input, positions)
+
         tensor = self.dropout(tensor)  # --dropout
 
         new_incr_state = {}
