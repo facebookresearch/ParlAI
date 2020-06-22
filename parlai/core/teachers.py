@@ -2163,8 +2163,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         if self.is_train:
             # randomize the samples
             random.Random().shuffle(output)
-        else:
-            random.Random(42).shuffle(output)
         return output
 
     def get(self, episode_idx, entry_idx=0):
