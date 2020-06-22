@@ -61,6 +61,23 @@ ParlAI message is tab separated with the name of the field, followed by a colon.
 E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
 be used, or you can add your own fields too if you have a special use for them.
 
+Handling Separate Train/Valid/Test data
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once you've gotten the basics of a data working above, you might want to
+separate out the data into specific train/valid/test sets, as the above
+example uses *the same data for all folds*. This is also easy to do. Simply
+separate the data into three separate files: ``mydata_train.txt``,
+``mydata_valid.txt`` and ``mydata_test.txt``. Afterwards, modify your parlai
+call as follows:
+
+
+::
+
+	python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile-datapath /tmp/mydata --fromfile-datatype-extension true
+
+This will cause the system to add the ``_train.txt``, ``_valid.txt``, and ``_test.txt`` suffixes at the appropriate times during training, evaluation, etc.
+
 
 Creating a New Task: *the more complete way*
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

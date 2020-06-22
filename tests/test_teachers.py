@@ -135,6 +135,72 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     assert any('long episode' in l for l in cm.output)
 
 
+class TestChunkTeacher(unittest.TestCase):
+    """
+    Test chunked teacher.
+    """
+
+    def test_no_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(task='integration_tests:chunky', model='repeat_label',),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_dynamic_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                datatype='valid:stream',
+                batchsize=32,
+                truncate=16,
+                dynamic_batching='full',
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_stream_only(self):
+        with self.assertRaises(ValueError):
+            valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:chunky',
+                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                    batchsize=32,
+                ),
+                valid_datatype='valid',
+            )
+
+        with self.assertRaises(ValueError):
+            valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:chunky',
+                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                    batchsize=32,
+                ),
+                valid_datatype='valid:stream',
+                test_datatype='test',
+            )
+
+
 class CustomEvaluationTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = 'mock'
