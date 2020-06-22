@@ -36,30 +36,12 @@ def save_sparse_csr(filename, matrix, metadata=None):
     np.savez(filename, **data)
 
 
-def save_sparse_tensor(filename, matrix, metadata=None):
-    data = {
-        'indices': matrix._indices(),
-        'values': matrix._values(),
-        'size': matrix.size(),
-        'metadata': metadata,
-    }
-    torch.save(data, filename)
-
-
 def load_sparse_csr(filename):
     loader = np.load(filename + '.npz', allow_pickle=True)
     matrix = sp.csr_matrix(
         (loader['data'], loader['indices'], loader['indptr']), shape=loader['shape']
     )
     return matrix, loader['metadata'].item(0) if 'metadata' in loader else None
-
-
-def load_sparse_tensor(filename):
-    loader = torch.load(filename)
-    matrix = torch.sparse.FloatTensor(
-        loader['indices'], loader['values'], loader['size']
-    )
-    return matrix, loader['metadata'] if 'metadata' in loader else None
 
 
 # ------------------------------------------------------------------------------

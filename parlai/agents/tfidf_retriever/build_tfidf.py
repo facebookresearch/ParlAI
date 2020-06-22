@@ -145,53 +145,6 @@ def count_text(ngram, hash_size, doc_id, text=None):
     return row, col, data
 
 
-def count(ngram, hash_size, doc_id):
-    """
-    Fetch the text of a document and compute hashed ngrams counts.
-    """
-    return count_text(ngram, hash_size, doc_id, text=fetch_text(doc_id))
-
-
-def get_count_matrix_t(args, db_opts):
-    """
-    Form a sparse word to document count matrix (inverted index, torch ver).
-
-    M[i, j] = # times word i appears in document j.
-    """
-    global MAX_SZ
-    with DocDB(**db_opts) as doc_db:
-        doc_ids = doc_db.get_doc_ids()
-
-    # Setup worker pool
-    tok_class = tokenizers.get_class(args.tokenizer)
-    workers = ProcessPool(
-        args.num_workers, initializer=init, initargs=(tok_class, db_opts)
-    )
-
-    # Compute the count matrix in steps (to keep in memory)
-    logging.info('Mapping...')
-    row, col, data = [], [], []
-    step = max(int(len(doc_ids) / 10), 1)
-    batches = [doc_ids[i : i + step] for i in range(0, len(doc_ids), step)]
-    _count = partial(count, args.ngram, args.hash_size)
-    for i, batch in enumerate(batches):
-        logging.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
-        for b_row, b_col, b_data in workers.imap_unordered(_count, batch):
-            row.extend(b_row)
-            col.extend(b_col)
-            data.extend(b_data)
-    workers.close()
-    workers.join()
-
-    logging.info('Creating sparse matrix...')
-    count_matrix = torch.sparse.FloatTensor(
-        torch.LongTensor([row, col]),
-        torch.FloatTensor(data),
-        torch.Size([args.hash_size, len(doc_ids) + 1]),
-    ).coalesce()
-    return count_matrix
-
-
 def get_count_matrix(args, db_opts):
     """
     Form a sparse word to document count matrix (inverted index).
@@ -241,26 +194,6 @@ def get_count_matrix(args, db_opts):
 # ------------------------------------------------------------------------------
 # Transform count matrix to different forms.
 # ------------------------------------------------------------------------------
-
-
-def get_tfidf_matrix_t(cnts):
-    """
-    Convert the word count matrix into tfidf one (torch version).
-
-    tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
-    * tf = term frequency in document
-    * N = number of documents
-    * Nt = number of occurences of term in all documents
-    """
-    Nt = get_doc_freqs_t(cnts)
-    idft = ((cnts.size(1) - Nt + 0.5) / (Nt + 0.5)).log()
-    idft[idft < 0] = 0
-    tft = sparse_log1p(cnts)
-    inds, vals = tft._indices(), tft._values()
-    for i, ind in enumerate(inds[0]):
-        vals[i] *= idft[ind]
-    tfidft = tft
-    return tfidft
 
 
 def get_tfidf_matrix(cnts):
