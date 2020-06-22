@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Union
 
 import numpy as np
 import torch
@@ -479,7 +479,7 @@ class TransformerEncoder(nn.Module):
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
-    ) -> Tuple[torch.Tensor, torch.LongTensor]:
+    ) -> Tuple[torch.Tensor, torch.BoolTensor]:
         """
         Embed tokens prior to feeding into transformer.
 
@@ -571,7 +571,12 @@ class TransformerEncoder(nn.Module):
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
 
-    def forward(self, input, positions=None, segments=None):
+    def forward(  # type: ignore
+        self,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
         """
         Forward pass.
 
@@ -600,9 +605,9 @@ class TransformerEncoder(nn.Module):
             tensor = _normalize(tensor, self.norm_embeddings)
 
         # reduce output
-        tensor, mask = self.reduce_output(tensor, mask)
-        if mask is not None:
-            return tensor, mask
+        tensor, out_mask = self.reduce_output(tensor, mask)
+        if out_mask is not None:
+            return tensor, out_mask
         else:
             return tensor
 
@@ -1355,9 +1360,9 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float).type_as(
-            query
-        )  # type: ignore
+        attn_weights = F.softmax(
+            dot_prod, dim=-1, dtype=torch.float  # type: ignore
+        ).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
