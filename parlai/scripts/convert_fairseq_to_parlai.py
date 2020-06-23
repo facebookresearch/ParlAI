@@ -7,11 +7,13 @@
 """
 A script for converting a fairseq model to ParlAI model.
 
+Specifically works for transformer-based models.
+
 Example Usage:
-py parlai_internal/projects/better_me/convert_fairseq_to_parlai.py
---input /path/to/checkpoint_best.pt
---merge /path/to/bpe-merges.txt
---vocab /path/to/bpe-vocab.json
+python parlai/scripts/convert_fairseq_to_parlai.py \
+--input /path/to/checkpoint_best.pt \
+--merge /path/to/bpe-merges.txt \
+--vocab /path/to/bpe-vocab.json \
 --output ./model.test --space True --activation gelu
 """
 
@@ -43,6 +45,7 @@ class ConversionScript(ParlaiScript):
     """
     Script to convert a transformer-based fairseq model to ParlAI Model.
     """
+
     @classmethod
     def setup_args(cls) -> ParlaiParser:
         parser = ParlaiParser()
@@ -53,17 +56,24 @@ class ConversionScript(ParlaiScript):
             help='The input fairseq model path. Specify multiple to imply a join is necessary',
         )
         parser.add_argument('--output', type=str, help='The output ParlAI model path')
-        parser.add_argument('--vocab', type=str, help='The hugging face vocab file path, if applicable')
-        parser.add_argument('--merge', type=str, help='The hugging face merge file path, if applicable')
         parser.add_argument(
-            '--add-prefix-space', type='bool', default=True, help='Add prefix space for hugging face bpe'
+            '--vocab', type=str, help='The hugging face vocab file path, if applicable'
+        )
+        parser.add_argument(
+            '--merge', type=str, help='The hugging face merge file path, if applicable'
+        )
+        parser.add_argument(
+            '--add-prefix-space',
+            type='bool',
+            default=True,
+            help='Add prefix space for hugging face bpe',
         )
         parser.add_argument(
             '--activation',
             type=str,
             help='Activation function',
             choices=['relu', 'gelu'],
-            default='relu',
+            default='gelu',
         )
         parser.add_argument(
             '--tokenizer',
@@ -73,18 +83,20 @@ class ConversionScript(ParlaiScript):
             default='bytelevelbpe',
         )
         parser.add_argument('--delimiter', type=str, default='  ', help='Delimiter')
-        parser.add_argument('--retain-bos-emb', type='bool', default=False, help='Retain the BOS embedding.')
+        parser.add_argument(
+            '--retain-bos-emb',
+            type='bool',
+            default=False,
+            help='Retain the BOS embedding.',
+        )
         parser.add_argument(
             '--model',
             type=str,
             default='transformer/generator',
-            help='Which ParlAI agent to use.'
+            help='Which ParlAI agent to use.',
         )
         parser.add_argument(
-            '--fp16',
-            type='bool',
-            default=False,
-            help='Whether to initialize with fp16'
+            '--fp16', type='bool', default=False, help='Whether to initialize with fp16'
         )
         parser.add_argument(
             '--history-add-global-end-token',
@@ -100,32 +112,22 @@ class ConversionScript(ParlaiScript):
         """
         Run Conversion.
 
-        Print Agent act
+        Print sample agent act after conversion.
         """
-        self.state = self._load_fairseq_checkpoint_to_cpu()
+        # 1. load state
+        self.state = self.load_fairseq_checkpoint()
+        # 2. get parlai options
         opt = self.get_parlai_opt()
-        opt = self._add_additional_args(opt)
+        # 3. create agent and convert model weights
         self.agent = create_agent(opt)
         converted = self.convert_model_weight(opt)
         self.agent.model.load_state_dict(converted, True)
         self.agent.save(self.opt['output'])
+        # 4. enjoy!
         self.agent.observe(
             {'text': "What's your favorite kind of ramen?", 'episode_done': False}
         )
         print(self.agent.act())
-
-    def _add_additional_args(self, opt: Opt) -> Opt:
-        """
-        Simply augment/override parsed opt with more ParlAI Args.
-        """
-        opt['fp16'] = self.opt['fp16']
-        opt['activation'] = self.opt['activation']
-        opt['delimiter'] = self.opt['delimiter']
-        opt['history_add_global_end_token'] = self.opt['history_add_global_end_token']
-        # Makes model fp16 ready for fine-tuning, means 4 extra padding tokens.
-        opt['force_fp16_tokens'] = True
-        opt['converting'] = True
-        return opt
 
     def get_parlai_opt(self) -> Opt:
         """
@@ -142,15 +144,17 @@ class ConversionScript(ParlaiScript):
 
         # 1. Map transformer params
         for each in TRANSFORMER_PARAMETER_MAPPING:
-            transformer_common_config[TRANSFORMER_PARAMETER_MAPPING[each]] = fairseq_args[
-                f'encoder_{each}'
-            ]
+            transformer_common_config[
+                TRANSFORMER_PARAMETER_MAPPING[each]
+            ] = fairseq_args[f'encoder_{each}']
         # 2. Map dropout
         for each in TRANSFORMER_DROPOUT:
             transformer_common_config[each] = fairseq_args[each]
 
         if 'activation_dropout' in fairseq_args:
-            transformer_common_config['relu_dropout'] = fairseq_args['activation_dropout']
+            transformer_common_config['relu_dropout'] = fairseq_args[
+                'activation_dropout'
+            ]
         else:
             transformer_common_config['relu_dropout'] = fairseq_args['relu_dropout']
 
@@ -165,7 +169,7 @@ class ConversionScript(ParlaiScript):
                 'dict_tokenizer': self.opt['tokenizer'],
                 'bpe_vocab': self.opt['vocab'],
                 'bpe_merge': self.opt['merge'],
-                'n_positions': fairseq_args['max_source_positions']
+                'n_positions': fairseq_args['max_source_positions'],
             }
         )
 
@@ -192,6 +196,16 @@ class ConversionScript(ParlaiScript):
         parser = ParlaiParser()
         parser.set_params(**transformer_common_config)
         opt = parser.parse_args([], print_args=False)
+
+        # 6. Augment opt with additional ParlAI options
+        opt['fp16'] = self.opt['fp16']
+        opt['activation'] = self.opt['activation']
+        opt['delimiter'] = self.opt['delimiter']
+        opt['history_add_global_end_token'] = self.opt['history_add_global_end_token']
+        # Makes model fp16 ready for fine-tuning, means 4 extra padding tokens.
+        opt['force_fp16_tokens'] = True
+        opt['converting'] = True
+
         return opt
 
     def _validate_fairseq_args(self, args: Dict[str, Any]):
@@ -199,7 +213,9 @@ class ConversionScript(ParlaiScript):
         Validate that fairseq args are compatible with ParlAI.
         """
         norm_key = 'encoder_normalize_before'
-        assert (args[norm_key] == args[norm_key]), "This asymmetrical transformer is not supported yet!"
+        assert (
+            args[norm_key] == args[norm_key]
+        ), "This asymmetrical transformer is not supported yet!"
         assert not (
             'layernorm_extra' in args and args['layernorm_extra']
         ), "Please handle layernorm extra"
@@ -209,7 +225,7 @@ class ConversionScript(ParlaiScript):
                 args[f'encoder_{k}'] == args[f'decoder_{k}']
             ), "This asymmetrical transformer is not supported yet!"
 
-    def _load_fairseq_checkpoint_justone(self, path: str) -> Dict[str, Any]:
+    def _load_single_fairseq_checkpoint(self, path: str) -> Dict[str, Any]:
         """
         Loads a fairseq model from file.
 
@@ -220,10 +236,12 @@ class ConversionScript(ParlaiScript):
             loaded fairseq state
         """
         with open(path, "rb") as f:
-            state = torch.load(f, map_location=lambda s, l: default_restore_location(s, "cpu"))
+            state = torch.load(
+                f, map_location=lambda s, l: default_restore_location(s, "cpu")
+            )
         return state
 
-    def _load_fairseq_checkpoint_to_cpu(self):
+    def load_fairseq_checkpoint(self):
         """
         Load a checkpoint to CPU (with upgrading for backward compatibility).
 
@@ -233,11 +251,11 @@ class ConversionScript(ParlaiScript):
         paths: List[str] = self.opt['input']
         if len(paths) == 1:
             # just a single checkpoint, no fancy merges necessary
-            return self._load_fairseq_checkpoint_justone(paths[0])
+            return self._load_single_fairseq_checkpoint(paths[0])
 
         # many checkpoints case
         # load all the checkpoints into memory
-        pieces = [self._load_fairseq_checkpoint_justone(p) for p in paths]
+        pieces = [self._load_single_fairseq_checkpoint(p) for p in paths]
         # store the args
         output_sd = {'args': pieces[0]['args']}
 
@@ -274,9 +292,15 @@ class ConversionScript(ParlaiScript):
 
         return output_sd
 
-    def convert_model_weight(self, opt: Opt):
+    def convert_model_weight(self, opt: Opt) -> Dict[str, Any]:
         """
         Convert state_dict between fairseq and ParlAI.
+
+        :param opt:
+            ParlAI opt
+
+        :return state_dict:
+            return a state dict to load into ParlAI model.
         """
         # deal with embeddings
         state = self.state
@@ -326,7 +350,11 @@ class ConversionScript(ParlaiScript):
                             )
                         ] = weights[2]
                 continue
-            elif 'v_proj' in mapped_key or 'k_proj' in mapped_key or 'q_proj' in mapped_key:
+            elif (
+                'v_proj' in mapped_key
+                or 'k_proj' in mapped_key
+                or 'q_proj' in mapped_key
+            ):
                 mapped_key = mapped_key.replace('v_proj', 'v_lin')
                 mapped_key = mapped_key.replace('q_proj', 'q_lin')
                 mapped_key = mapped_key.replace('k_proj', 'k_lin')
@@ -347,17 +375,27 @@ class ConversionScript(ParlaiScript):
                 mapped_key = mapped_key.replace('encoder_attention_layer_norm', 'norm2')
                 mapped_key = mapped_key.replace('final_layer_norm', 'norm3')
 
-            mapped_key = mapped_key.replace('encoder.layer_norm', 'encoder.norm_embeddings')
-            mapped_key = mapped_key.replace('encoder.layernorm_embedding', 'encoder.norm_embeddings')
-            mapped_key = mapped_key.replace('decoder.layer_norm', 'decoder.norm_embeddings')
-            mapped_key = mapped_key.replace('decoder.layernorm_embedding', 'decoder.norm_embeddings')
+            mapped_key = mapped_key.replace(
+                'encoder.layer_norm', 'encoder.norm_embeddings'
+            )
+            mapped_key = mapped_key.replace(
+                'encoder.layernorm_embedding', 'encoder.norm_embeddings'
+            )
+            mapped_key = mapped_key.replace(
+                'decoder.layer_norm', 'decoder.norm_embeddings'
+            )
+            mapped_key = mapped_key.replace(
+                'decoder.layernorm_embedding', 'decoder.norm_embeddings'
+            )
 
             weight = state_dict[each_key]
             return_dict[mapped_key] = weight
 
         # 6. Shuffle embedding matrix given dictionary.
         enc_emb_key = 'encoder.embeddings.weight'
-        bart_dict = os.path.join(opt['datapath'], 'models/bart_models/bart.large/dict.txt')
+        bart_dict = os.path.join(
+            opt['datapath'], 'models/bart_models/bart.large/dict.txt'
+        )
         with open(bart_dict) as f:
             offset_dict = {i: l.split()[0] for i, l in enumerate(f.readlines())}
         new_embs = return_dict[enc_emb_key].clone()
@@ -368,7 +406,9 @@ class ConversionScript(ParlaiScript):
                 # if idx is not an int
                 if 'madeupword' in new_idx:
                     new_idx = int(new_idx.split('madeupword')[1])
-                    new_embs[-(4-new_idx)] = return_dict['encoder.embeddings.weight'][idx + 4]
+                    new_embs[-(4 - new_idx)] = return_dict['encoder.embeddings.weight'][
+                        idx + 4
+                    ]
         return_dict['encoder.embeddings.weight'] = new_embs
 
         # 7. Swap special tokens
@@ -387,7 +427,7 @@ class ConversionScript(ParlaiScript):
         #
         size_dict = return_dict[enc_emb_key].size(0)
         if size_dict == len(agent.dict) + 1 and '<mask>' not in agent.dict:
-            return_dict[enc_emb_key] = return_dict[enc_emb_key][:size_dict-1, :]
+            return_dict[enc_emb_key] = return_dict[enc_emb_key][: size_dict - 1, :]
             size_dict -= 1
         specials, words = return_dict[enc_emb_key].split([4, size_dict - 4], 0)
         bos, pad, eos, unk = specials

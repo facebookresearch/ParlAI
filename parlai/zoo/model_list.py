@@ -1275,4 +1275,27 @@ model_list = [
         ),
         "result": ("Results vary."),
     },
+    {
+        "title": "BART",
+        "id": "bart",
+        "path": "zoo:bart/bart_large/model",
+        "agent": "bart",
+        "external_website": "https://arxiv.org/abs/1910.13461",
+        "description": (
+            "BART: Denoising Sequence-to-Sequence Pre-training for Natural "
+            "Language Generation, Translation, and Comprehension."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:bart/bart_large/model -t convai2 -bs 64"
+        ),
+        "result": ("Results vary."),
+        "example2": (
+            "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1"
+        ),
+        "result2": (
+            "valid:"
+            "accuracy  bleu-4  exs    f1  gpu_mem  loss  lr   ppl  token_acc  total_train_updates   tpb"
+            ".0001282  .01081 7801 .2066    .3493 2.449   1 11.58      .4617                 5478 321.3"
+        )
+    },
 ]

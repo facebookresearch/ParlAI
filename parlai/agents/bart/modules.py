@@ -5,8 +5,10 @@
 """
 BART Module.
 """
-from parlai.agents.transformer.modules import TransformerGeneratorModel
+import torch
 import torch.nn.functional as F
+
+from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 
 class BartModel(TransformerGeneratorModel):
@@ -14,9 +16,11 @@ class BartModel(TransformerGeneratorModel):
     BART Model.
     """
 
-    def output(self, tensor):
+    def output(self, tensor: torch.Tensor) -> torch.Tensor:
         """
         Compute output logits.
+
+        Override standard TGM output to _not_ prevent generation of BOS.
         """
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)

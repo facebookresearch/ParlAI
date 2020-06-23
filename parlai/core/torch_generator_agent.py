@@ -575,7 +575,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             .cuda()
         )
         return Batch(
-            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
+            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
@@ -965,16 +965,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         :return initial_input:
             initial input for the decoder.
         """
-        return (
-            torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
-        )
+        return torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
 
     def _generate(
         self,
         batch: Batch,
         beam_size: int,
         max_ts: int,
-        prefix_tokens: Optional[torch.LongTensor] = None
+        prefix_tokens: Optional[torch.LongTensor] = None,
     ):
         """
         Generate an output with beam search.
@@ -1045,13 +1043,19 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
             score = F.log_softmax(score, dim=-1, dtype=torch.float32)
-            if prefix_tokens is not None and _ts < prefix_tokens.size(1) and _ts < max_ts:
+            if (
+                prefix_tokens is not None
+                and _ts < prefix_tokens.size(1)
+                and _ts < max_ts
+            ):
                 prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
                 prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
                 prefix_mask = prefix_toks.ne(self.NULL_IDX)
                 score[prefix_mask] = -math.inf
                 score[prefix_mask] = score[prefix_mask].scatter_(
-                    -1, prefix_toks[prefix_mask].unsqueeze(-1), prefix_score[prefix_mask]
+                    -1,
+                    prefix_toks[prefix_mask].unsqueeze(-1),
+                    prefix_score[prefix_mask],
                 )
             for i, b in enumerate(beams):
                 if not b.is_done():

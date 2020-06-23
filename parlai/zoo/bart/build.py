@@ -46,7 +46,7 @@ BART_ARGS = {
 
 
 def download(datapath, version='v1.0'):
-    dpath = os.path.join(datapath, 'models', 'bart_models')
+    dpath = os.path.join(datapath, 'models', 'bart')
 
     if not build_data.built(dpath, version):
         print('[downloading BART models: ' + dpath + ']')
@@ -62,7 +62,7 @@ def download(datapath, version='v1.0'):
         build_data.untar(dpath, f'{model_name}.tar.gz')
         args = CONVERSION_ARGS.copy()
         args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
-        args['output'] = os.path.join(dpath, model_name, 'model')
+        args['output'] = os.path.join(dpath, model_name.replace('.', '_'), 'model')
         ConversionScript.main(**args)
 
         # Mark the data as built.

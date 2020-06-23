@@ -438,7 +438,11 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.variant == 'xlm' or self.variant == 'prelayernorm' or self.variant == 'bart':
+        if (
+            self.variant == 'xlm'
+            or self.variant == 'prelayernorm'
+            or self.variant == 'bart'
+        ):
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -738,7 +742,11 @@ class TransformerDecoder(nn.Module):
 
         self.embeddings = embedding
 
-        if self.variant == 'xlm' or self.variant == 'prelayernorm' or self.variant == 'bart':
+        if (
+            self.variant == 'xlm'
+            or self.variant == 'prelayernorm'
+            or self.variant == 'bart'
+        ):
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
             if self.variant == 'xlm':
                 warn_once(
@@ -814,7 +822,7 @@ class TransformerDecoder(nn.Module):
                 )
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
-        if self.variant == 'xlm' or self.variant == 'bart':
+        if self.variant == 'bart':
             tensor = _normalize(tensor, self.norm_embeddings)
         tensor = self.dropout(tensor)  # --dropout
 
