@@ -40,6 +40,7 @@ class Text2API2TextTeacher(DialogTeacher):
     @classmethod
     def add_cmdline_args(cls, argparser):
         argparser.add_argument('-st', '--stask', type=str, default='None')
+        argparser.add_argument('-mr', '--mratio', type=float, default=0.1)
         return argparser
 
     def __init__(self, opt: Opt, shared=None):
@@ -52,6 +53,10 @@ class Text2API2TextTeacher(DialogTeacher):
             )
             build_.build(opt)
         self._s_world = _load_secondary_world(opt)
+        self.mratio = opt['mratio']
+        self._max_secondary_turns = 3
+        assert self.mratio > 0.0 
+        self._max_primary_turns = int(self._max_secondary_turns/self.mratio - self._max_secondary_turns)
         super().__init__(opt, shared)
 
     def _load_data(self, fold):
@@ -135,9 +140,9 @@ class Text2API2TextTeacher(DialogTeacher):
     def _api_dict_to_str(self, apidict):
         return ' ; '.join(f'{k} = {v}' for k, v in apidict.items())
 
-    def _get_secondary_acts(self, max_secondary_turns=2):
+    def _get_secondary_acts(self):
         secondary_acts = []
-        for _ in range(max_secondary_turns): 
+        for _ in range(self._max_secondary_turns): 
             self._s_world.parley()
             acts = self._s_world.get_acts()[0]
             input_text = acts['text']
@@ -152,11 +157,10 @@ class Text2API2TextTeacher(DialogTeacher):
 
 
     def setup_data(self, fold):
-        max_primary_turns = 2
         local_num_primary_turns = 0
         for primary_act, is_first_turn in self._setup_data(fold):
             if primary_act['type'] == 'apiresp' and \
-                local_num_primary_turns >= max_primary_turns and \
+                local_num_primary_turns >= self._max_primary_turns and \
                 self._s_world is not None:
                 secondary_act_chunks = self._get_secondary_acts()
                 while secondary_act_chunks:
