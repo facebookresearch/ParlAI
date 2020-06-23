@@ -7,8 +7,8 @@
 """
 This downloads a pretrained language model BART (Lewis et al.
 
-https://arxiv.org/abs/1910.13461). It requires you to run
-a conversion script to map model weights (conversion script not provided publicly).
+https://arxiv.org/abs/1910.13461). It requires you to run a conversion script to map
+model weights (conversion script not provided publicly).
 """
 
 import parlai.core.build_data as build_data
@@ -42,6 +42,7 @@ BART_ARGS = {
     'dict_tokenizer': 'gpt2',
     'embeddings_scale': False,
     'history_add_global_end_token': None,
+    'learn_positional_embeddings': True,
 }
 
 

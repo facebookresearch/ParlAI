@@ -1288,14 +1288,14 @@ model_list = [
         "example": (
             "parlai eval_model -mf zoo:bart/bart_large/model -t convai2 -bs 64"
         ),
-        "result": ("Results vary."),
-        "example2": (
-            "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1"
+        "result": (
+            "Finished evaluating tasks ['convai2'] using datatype valid\n"
+            "accuracy   bleu-4  exs     f1  gpu_mem  loss   ppl  token_acc  tpb\n"
+            "0 .0004641 7801 .02084    .4878 5.041 154.6      .2042 1652"
         ),
-        "result2": (
-            "valid:"
-            "accuracy  bleu-4  exs    f1  gpu_mem  loss  lr   ppl  token_acc  total_train_updates   tpb"
-            ".0001282  .01081 7801 .2066    .3493 2.449   1 11.58      .4617                 5478 321.3"
-        )
+        "example2": (
+            "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam"
+        ),
+        "result2": ("valid:\n" "TODO"),
     },
 ]
