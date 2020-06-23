@@ -38,6 +38,7 @@ from parlai.core.loader import register_teacher  # noqa: F401
 from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
+from parlai.utils.data import is_training
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.logging as logging
@@ -243,9 +244,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'random'):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
-            self.training = (
-                self.datatype.startswith('train') and 'evalmode' not in self.datatype
-            )
+            self.training = is_training(self.datatype)
         if not hasattr(self, 'datafile'):
             self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
@@ -377,7 +376,7 @@ class FixedDialogTeacher(Teacher):
         self.episode_done = ex.get('episode_done', False)
 
         if (
-            not self.random
+            not self.training
             and self.episode_done
             and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()
         ):
@@ -488,9 +487,7 @@ class FixedDialogTeacher(Teacher):
         # remember correct answer if available
         self.last_act = action
         self.lastY = action.get('labels', action.get('eval_labels', None))
-        if (
-            not self.datatype.startswith('train') or 'evalmode' in self.datatype
-        ) and 'labels' in action:
+        if is_training(self.datatype) and 'labels' in action:
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action = action.copy()
@@ -530,9 +527,7 @@ class DialogTeacher(FixedDialogTeacher):
 
         self.startTime = time.time()
         self.datatype = opt['datatype']
-        self.training = (
-            self.datatype.startswith('train') and 'evalmode' not in self.datatype
-        )
+        self.training = is_training(self.datatype)
         self.stream = 'stream' in self.datatype
 
         # first initialize any shared objects
@@ -2065,7 +2060,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.num_exs, self.num_eps = self.get_num_samples(datatype)
         self.fold_chunks = self.get_fold_chunks(datatype)
 
-        self.is_train = 'train' in datatype and 'evalmode' not in datatype
+        self.is_train = is_training(datatype)
 
     def share(self):
         shared = super().share()
