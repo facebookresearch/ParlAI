@@ -951,7 +951,31 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return batch.text_vec[batch_idx]
 
-    def _generate(self, batch, beam_size, max_ts):
+    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: str):
+        """
+        Return initial input to the decoder.
+
+        :param bsz:
+            batchsize
+        :param beam_size:
+            beam size
+        :param dev:
+            device to send input to.
+
+        :return initial_input:
+            initial input for the decoder.
+        """
+        return (
+            torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
+        )
+
+    def _generate(
+        self,
+        batch: Batch,
+        beam_size: int,
+        max_ts: int,
+        prefix_tokens: Optional[torch.LongTensor] = None
+    ):
         """
         Generate an output with beam search.
 
@@ -963,6 +987,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             Size of each beam during the search
         :param int max_ts:
             the maximum length of the decoded sequence
+        :param prefix_tokens:
+            if given, a tensor of tokens that must begin the decoded sequence.
 
         :return:
             tuple (beam_pred_scores, beams)
@@ -998,9 +1024,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]
 
         # repeat encoder outputs and decoder inputs
-        decoder_input = (
-            torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
-        )
+        decoder_input = self._get_initial_decoder_input(bsz, beam_size, dev)
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
@@ -1021,6 +1045,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
             score = F.log_softmax(score, dim=-1, dtype=torch.float32)
+            if prefix_tokens is not None and _ts < prefix_tokens.size(1) and _ts < max_ts:
+                prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
+                prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
+                prefix_mask = prefix_toks.ne(self.NULL_IDX)
+                score[prefix_mask] = -math.inf
+                score[prefix_mask] = score[prefix_mask].scatter_(
+                    -1, prefix_toks[prefix_mask].unsqueeze(-1), prefix_score[prefix_mask]
+                )
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])

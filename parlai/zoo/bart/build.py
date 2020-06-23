@@ -23,7 +23,25 @@ CONVERSION_ARGS = {
     'retain_bos_emb': True,
     'model': 'bart',
     'fp16': True,
-    'history_add_global_end_token': 'end'
+    'history_add_global_end_token': None,
+}
+
+BART_ARGS = {
+    'embedding_size': 1024,
+    'ffn_size': 4096,
+    'dropout': 0.1,
+    'attention_dropout': 0.1,
+    'n_heads': 16,
+    'n_positions': 1024,
+    'variant': 'bart',
+    'activation': 'gelu',
+    'n_encoder_layers': 12,
+    'n_decoder_layers': 12,
+    'force_fp16_tokens': True,
+    'fp16': True,
+    'dict_tokenizer': 'gpt2',
+    'embeddings_scale': False,
+    'history_add_global_end_token': None,
 }
 
 
@@ -38,15 +56,14 @@ def download(datapath, version='v1.0'):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fnames = ['bart.large.tar.gz', 'bart.large.mnli.tar.gz', 'bart.large.cnn.tar.gz']
-        for fname in fnames:
-            url = f'http://dl.fbaipublicfiles.com/fairseq/models/{fname}'
-            build_data.download(url, dpath, fname)
-            build_data.untar(dpath, fname)
-            args = CONVERSION_ARGS.copy()
-            args['input'] = [os.path.join(dpath, fname.replace('.tar.gz', ''), 'model.pt')]
-            args['output'] = os.path.join(dpath, f"{fname.replace('.tar.gz', '')}", 'model')
-            ConversionScript.main(**args)
+        model_name = 'bart.large'
+        url = f'http://dl.fbaipublicfiles.com/fairseq/models/{model_name}.tar.gz'
+        build_data.download(url, dpath, f'{model_name}.tar.gz')
+        build_data.untar(dpath, f'{model_name}.tar.gz')
+        args = CONVERSION_ARGS.copy()
+        args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
+        args['output'] = os.path.join(dpath, model_name, 'model')
+        ConversionScript.main(**args)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)

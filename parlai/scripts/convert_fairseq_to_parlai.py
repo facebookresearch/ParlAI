@@ -111,7 +111,6 @@ class ConversionScript(ParlaiScript):
         self.agent.save(self.opt['output'])
         self.agent.observe(
             {'text': "What's your favorite kind of ramen?", 'episode_done': False}
-            # {'text': "hi there", 'episode_done': False}
         )
         print(self.agent.act())
 
@@ -184,7 +183,7 @@ class ConversionScript(ParlaiScript):
         if fairseq_args['encoder_normalize_before']:
             transformer_common_config['variant'] = 'prelayernorm'
         elif fairseq_args['layernorm_embedding']:
-            transformer_common_config['variant'] = 'xlm'
+            transformer_common_config['variant'] = 'bart'
         else:
             transformer_common_config['variant'] = 'aiayn'
 

@@ -13,14 +13,15 @@ import os
 import torch
 from typing import Optional
 
+from parlai.agents.bart.modules import BartModel
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import compare_init_model_opts
 from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.torch_agent import History
+from parlai.core.torch_agent import Batch, History
 from parlai.scripts.convert_fairseq_to_parlai import ConversionScript
 from parlai.utils.typing import TShared
-from parlai.zoo.bart.build import download, CONVERSION_ARGS
+from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
 
 class BartAgent(TransformerGeneratorAgent):
@@ -33,14 +34,59 @@ class BartAgent(TransformerGeneratorAgent):
     """
 
     def __init__(self, opt: Opt, shared: TShared = None):
-        if not opt.get('converting'):
-            download(opt['datapath'])
-            opt['init_model'] = os.path.join(opt['datapath'], 'models/bart_models/bart.large/model')
-        if opt.get('init_fairseq_model'):
-            opt = self._convert_model(opt)
-        opt = self._set_bart_args(opt)
-        compare_init_model_opts(opt, opt)
+        if not shared:
+            if not opt.get('converting'):
+                download(opt['datapath'])
+                opt['init_model'] = os.path.join(opt['datapath'], 'models/bart_models/bart.large/model')
+            if opt.get('init_fairseq_model'):
+                opt = self._convert_model(opt)
+            opt.update(BART_ARGS)
+            compare_init_model_opts(opt, opt)
         super().__init__(opt, shared)
+
+    def build_model(self, states=None):
+        """
+        Build and return model.
+        """
+        model = BartModel(self.opt, self.dict)
+        if self.opt['embedding_type'] != 'random':
+            self._copy_embeddings(
+                model.encoder.embeddings.weight, self.opt['embedding_type']
+            )
+        return model
+
+    def _get_initial_decoder_input(self, bsz, beam_size, dev):
+        """
+        Override to seed decoder with EOS token.
+        """
+        return (
+            torch.LongTensor([self.END_IDX]).expand(bsz * beam_size, 1).to(dev)
+        )
+
+    def _generate(
+        self,
+        batch: Batch,
+        beam_size: int,
+        max_ts: int,
+        prefix_tokens: Optional[torch.LongTensor] = None
+    ):
+        """
+        Override to set prefix_tokens.
+
+        For bart pretraining, a bos token was added to the input.
+        so basically the input to encoder is:
+
+        <bos> seq <eos>
+
+        input to decoder:
+        <eos> <bos> seq
+
+        target is:
+        <bos> seq <eos>
+        """
+        if batch.text_vec is not None:
+            prefix_tokens = batch.text_vec.new_zeros((len(batch.text_vec), 1)).fill_(self.START_IDX)
+        return super()._generate(batch, beam_size, max_ts, prefix_tokens)
 
     def _convert_model(self, opt: Opt) -> Opt:
         """
@@ -55,39 +101,12 @@ class BartAgent(TransformerGeneratorAgent):
         model_name = os.path.split(opt['init_fairseq_model'])[-1]
         args = CONVERSION_ARGS.copy()
         args['input'] = [opt['init_fairseq_model']]
-        args['output'] = os.path.join(opt['datapath'], 'models/bart_models/converted_models/', model_name)
+        if opt.get('model_file') and not os.path.exists(opt['model_file']):
+            args['output'] = opt['model_file']
+        else:
+            args['output'] = os.path.join(opt['datapath'], 'models/converted_fairseq_models/', model_name)
         ConversionScript.main(**args)
         opt['init_model'] = args['output']
-        return opt
-
-    def _set_bart_args(self, opt: Opt) -> Opt:
-        """
-        Set BART-specific args.
-
-        :param opt:
-            opt
-
-        :return opt:
-            return new opt with BART args.
-        """
-        opt.update(
-            {
-                'embedding_size': 1024,
-                'ffn_size': 4096,
-                'dropout': 0.1,
-                'attention_dropout': 0.1,
-                'n_heads': 16,
-                'n_positions': 1024,
-                'variant': 'xlm',
-                'activation': 'gelu',
-                'n_encoder_layers': 12,
-                'n_decoder_layers': 12,
-                'force_fp16_tokens': True,
-                'history_add_global_end_token': True,
-                'dict_tokenizer': 'gpt2',
-                'embeddings_scale': False
-            }
-        )
         return opt
 
     @classmethod
@@ -111,7 +130,7 @@ class BartAgent(TransformerGeneratorAgent):
         truncate: Optional[int],
     ) -> Message:
         """
-        Override to prepend start token.
+        Override to prepend start token and append end token.
         """
         obs = super()._set_text_vec(obs, history, truncate)
         if 'text' not in obs or 'text_vec' not in obs:
@@ -119,10 +138,16 @@ class BartAgent(TransformerGeneratorAgent):
         vec = obs['text_vec']
         if truncate is not None:
             vec = torch.LongTensor(
-                self._check_truncate(obs['text_vec'], truncate - 1, True)
+                self._check_truncate(obs['text_vec'], truncate - 2, True)
             )
         obs.force_set(
             'text_vec',
-            torch.cat([vec.new_tensor([self.dict[self.dict.start_token]]), vec], 0)
+            torch.cat(
+                [
+                    vec.new_tensor([self.dict[self.dict.start_token]]),
+                    vec,
+                    vec.new_tensor([self.dict[self.dict.end_token]])],
+                0
+            )
         )
         return obs
