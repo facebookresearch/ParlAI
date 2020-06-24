@@ -245,6 +245,8 @@ class FixedDialogTeacher(Teacher):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
             self.training = is_training(self.datatype)
+        if not hasattr(self, 'cycle'):
+            self.cycle = self.training and 'ordered' not in self.datatype
         if not hasattr(self, 'datafile'):
             self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
@@ -376,7 +378,7 @@ class FixedDialogTeacher(Teacher):
         self.episode_done = ex.get('episode_done', False)
 
         if (
-            not self.training
+            not self.cycle
             and self.episode_done
             and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()
         ):
@@ -528,6 +530,7 @@ class DialogTeacher(FixedDialogTeacher):
         self.startTime = time.time()
         self.datatype = opt['datatype']
         self.training = is_training(self.datatype)
+        self.cycle = self.training and 'ordered' not in self.datatype
         self.stream = 'stream' in self.datatype
 
         # first initialize any shared objects
@@ -536,7 +539,7 @@ class DialogTeacher(FixedDialogTeacher):
             # never cycle if "ordered" is in the datatype. this is used by
             # build_dict to enumerate through the data exactly once while still
             # marking examples as training examples.
-            {'cycle': self.training and 'ordered' not in self.datatype}
+            {'cycle': self.cycle}
             if self.stream
             else {}
         )
