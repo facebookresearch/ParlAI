@@ -24,12 +24,7 @@ with open('requirements.txt') as f:
     reqs = []
     for line in f:
         line = line.strip()
-        if '>' in line:
-            reqs.append(line.split('>')[0])
-        elif '=' in line:
-            reqs.append(line.split('=')[0])
-        else:
-            reqs.append(line)
+        reqs.append(line.split('=')[0].rstrip('=><~'))
 
 
 if __name__ == '__main__':
