@@ -487,7 +487,7 @@ class FixedDialogTeacher(Teacher):
         # remember correct answer if available
         self.last_act = action
         self.lastY = action.get('labels', action.get('eval_labels', None))
-        if is_training(self.datatype) and 'labels' in action:
+        if not is_training(self.datatype) and 'labels' in action:
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action = action.copy()
