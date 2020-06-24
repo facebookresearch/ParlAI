@@ -19,4 +19,6 @@ def is_training(datatype: str) -> bool:
         given datatype, return whether we're in a random sampling state.
     """
     assert datatype is not None, 'datatype must not be none'
-    return 'train' in datatype and 'evalmode' not in datatype
+    return (
+        'train' in datatype and 'evalmode' not in datatype and 'ordered' not in datatype
+    )
