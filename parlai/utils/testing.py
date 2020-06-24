@@ -45,6 +45,13 @@ try:
 except ImportError:
     BPE_INSTALLED = False
 
+try:
+    import fairseq  # noqa: F401
+
+    FAIRSEQ_INSTALLED = True
+except ImportError:
+    FAIRSEQ_INSTALLED = False
+
 
 def is_this_circleci():
     """
@@ -76,11 +83,18 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
-def skipUnlessBPE(testfn, reason='Test requires a GPU'):
+def skipUnlessBPE(testfn, reason='Test requires subword NMT'):
     """
     Decorate a test to skip if BPE is not installed.
     """
     return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
+
+
+def skipUnlessFairseq(testfn, reason='Test requires fairseq'):
+    """
+    Decorate a test to skip if fairseq is not installed.
+    """
+    return unittest.skipUnless(FAIRSEQ_INSTALLED, reason)(testfn)
 
 
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):

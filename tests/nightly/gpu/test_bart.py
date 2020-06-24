@@ -9,6 +9,7 @@ import parlai.utils.testing as testing_utils
 
 
 @testing_utils.skipUnlessGPU
+@testing_utils.skipUnlessFairseq
 class TestBartModel(unittest.TestCase):
     """
     Test of BART model.

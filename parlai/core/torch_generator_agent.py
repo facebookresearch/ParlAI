@@ -31,7 +31,13 @@ from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 import parlai.utils.logging as logging
-from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
+from parlai.core.metrics import (
+    Metric,
+    SumMetric,
+    AverageMetric,
+    BleuMetric,
+    FairseqBleuMetric,
+)
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.torch import (
     neginf,
@@ -761,10 +767,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             list of string predictions
         """
         all_results = []
+        label_vec = batch.label_vec
+        assert label_vec is not None, "label_vec must exist for fairseq bleu"
         for i, t in enumerate(preds):
             result = FairseqBleuMetric.compute_many(
                 t[1:],
-                batch.label_vec[i].unsqueeze(0),
+                label_vec[i].unsqueeze(0),
                 pad_idx=self.NULL_IDX,
                 end_idx=self.END_IDX,
                 unk_idx=self.dict[self.dict.unk_token],
@@ -790,9 +798,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             list of string predictions
         """
 
-        results = {}
+        results: Dict[int, List[Metric]] = {}
+        observations = batch.observations
+        assert observations is not None, 'observations must not be none in nltk bleu'
         for i, p in enumerate(texts):
-            obs = batch.observations[i]
+            obs = observations[i]
             references = []
             for lbl in obs['eval_labels']:
                 references.append(
@@ -805,7 +815,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             for k in range(1, 5):
                 b = BleuMetric.compute(p, references, k)
                 if b is None:
-                    b = 0
+                    b = BleuMetric(0)
                 if k not in results:
                     results[k] = []
                 results[k].append(b)
@@ -951,7 +961,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return batch.text_vec[batch_idx]
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: str):
+    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
         """
         Return initial input to the decoder.
 
@@ -965,7 +975,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         :return initial_input:
             initial input for the decoder.
         """
-        return torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
+        return (
+            torch.LongTensor(  # type: ignore
+                [self.START_IDX]
+            )
+            .expand(bsz * beam_size, 1)
+            .to(dev)
+        )
 
     def _generate(
         self,
@@ -1003,12 +1019,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.text_vec is not None:
             dev = batch.text_vec.device
         else:
+            assert batch.label_vec is not None, "need label_vec for _generate"
             dev = batch.label_vec.device
 
         bsz = (
             len(batch.text_lengths)
             if batch.text_lengths is not None
-            else len(batch.image)
+            else len(batch.image)  # type: ignore
         )
         if batch.text_vec is not None:
             batchsize = batch.text_vec.size(0)
@@ -1042,7 +1059,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if self.temperature != 1.0:
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
-            score = F.log_softmax(score, dim=-1, dtype=torch.float32)
+            score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
             if (
                 prefix_tokens is not None
                 and _ts < prefix_tokens.size(1)
@@ -1079,7 +1096,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
 
         if hasattr(self, '_rerank_beams'):
-            n_best_beam_preds_scores = self._rerank_beams(
+            n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
                 batch, n_best_beam_preds_scores
             )
 

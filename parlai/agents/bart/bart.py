@@ -15,7 +15,7 @@ or `-mf zoo:bart/bart_large/model` to ensure correct dictionaries are saved.
 """
 import os
 import torch
-from typing import Optional
+from typing import Optional, Any
 
 from parlai.agents.bart.modules import BartModel
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
@@ -40,8 +40,8 @@ class BartAgent(TransformerGeneratorAgent):
     to a ParlAI model.
     """
 
-    @classmethod
-    def add_cmdline_args(cls: "BartAgent", argparser: ParlaiParser):
+    @staticmethod
+    def add_cmdline_args(argparser: ParlaiParser):
         """
         Override to add init-fairseq-model arg.
         """
@@ -53,6 +53,7 @@ class BartAgent(TransformerGeneratorAgent):
             default=None,
             help='fairseq checkpoint for bart',
         )
+        argparser.set_defaults(dict_maxexs=0)  # skip building dictionary
 
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
@@ -107,7 +108,7 @@ class BartAgent(TransformerGeneratorAgent):
         opt['init_model'] = args['output']
         return opt
 
-    def build_model(self) -> BartModel:
+    def build_model(self, states: Any = None) -> BartModel:
         """
         Build and return model.
         """
@@ -129,29 +130,27 @@ class BartAgent(TransformerGeneratorAgent):
             return obs
         vec = obs['text_vec']
         if truncate is not None:
-            vec = torch.LongTensor(
+            vec = torch.LongTensor(  # type: ignore
                 self._check_truncate(obs['text_vec'], truncate - 2, True)
             )
         obs.force_set(
-            'text_vec',
-            torch.cat(
-                [
-                    vec.new_tensor([self.dict[self.dict.start_token]]),
-                    vec,
-                    vec.new_tensor([self.dict[self.dict.end_token]]),
-                ],
-                0,
-            ),
+            'text_vec', self._add_start_end_tokens(vec, add_start=True, add_end=True)
         )
         return obs
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: str):
+    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
         """
         Override to seed decoder with EOS token.
 
         See docstring for `BartAgent._generate` for more details.
         """
-        return torch.LongTensor([self.END_IDX]).expand(bsz * beam_size, 1).to(dev)
+        return (
+            torch.LongTensor(  # type: ignore
+                [self.END_IDX]
+            )
+            .expand(bsz * beam_size, 1)
+            .to(dev)
+        )
 
     def _generate(
         self,
@@ -174,8 +173,9 @@ class BartAgent(TransformerGeneratorAgent):
         target is:
         <bos> seq <eos>
         """
-        if batch.text_vec is not None:
-            prefix_tokens = batch.text_vec.new_zeros((len(batch.text_vec), 1)).fill_(
-                self.START_IDX
-            )
+        text_vec = batch.text_vec  # type: ignore
+        if text_vec is not None:
+            prefix_tokens = text_vec.new_zeros(  # type: ignore
+                (len(text_vec), 1)
+            ).fill_(self.START_IDX)
         return super()._generate(batch, beam_size, max_ts, prefix_tokens)

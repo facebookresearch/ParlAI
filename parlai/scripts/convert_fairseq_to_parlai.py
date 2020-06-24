@@ -236,9 +236,15 @@ class ConversionScript(ParlaiScript):
             loaded fairseq state
         """
         with open(path, "rb") as f:
-            state = torch.load(
-                f, map_location=lambda s, l: default_restore_location(s, "cpu")
-            )
+            try:
+                state = torch.load(
+                    f, map_location=lambda s, l: default_restore_location(s, "cpu")
+                )
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError(
+                    "Please install fairseq: https://github.com/pytorch/fairseq#requirements-and-installation"
+                )
+
         return state
 
     def load_fairseq_checkpoint(self):
@@ -405,8 +411,8 @@ class ConversionScript(ParlaiScript):
             except ValueError:
                 # if idx is not an int
                 if 'madeupword' in new_idx:
-                    new_idx = int(new_idx.split('madeupword')[1])
-                    new_embs[-(4 - new_idx)] = return_dict['encoder.embeddings.weight'][
+                    pad_idx = int(new_idx.split('madeupword')[1])
+                    new_embs[-(4 - pad_idx)] = return_dict['encoder.embeddings.weight'][
                         idx + 4
                     ]
         return_dict['encoder.embeddings.weight'] = new_embs
@@ -471,7 +477,7 @@ class ConversionScript(ParlaiScript):
             return_dict['encoder.position_embeddings.weight'] = emb[2:]
             return_dict['decoder.position_embeddings.weight'] = emb[2:]
 
-        return_dict['START'] = torch.LongTensor([1])
+        return_dict['START'] = torch.LongTensor([1])  # type: ignore
         return return_dict
 
 
