@@ -139,18 +139,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
         super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         return agent
 
-    @staticmethod
-    def model_version():
-        """
-        Return current version of this model, counting up from 0.
-
-        Models may not be backwards-compatible with older versions. Version 1 split from
-        version 0 on Aug 29, 2018. Version 2 split from version 1 on Nov 13, 2018 To use
-        version 0, use --model legacy:seq2seq:0 To use version 1, use --model
-        legacy:seq2seq:1 (legacy agent code is located in parlai/agents/legacy_agents).
-        """
-        return 2
-
     def __init__(self, opt, shared=None):
         """
         Set up model.
