@@ -424,6 +424,9 @@ def nice_report(report) -> str:
     If pandas is not available, we will use a dict with like-metrics placed
     next to each other.
     """
+    if not report:
+        return ""
+
     from parlai.core.metrics import Metric
 
     try:
