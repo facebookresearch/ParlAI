@@ -40,7 +40,7 @@ class DatatypeHelper:
             parlai datatype
 
         :return should_shuffle:
-            given datatype, return whether we should cycle
+            given datatype, return whether we should shuffle
         """
         assert datatype is not None, 'datatype must not be none'
         return (
