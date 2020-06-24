@@ -34,8 +34,12 @@ overworld: MessengerOverworld
 max_workers: 30
 opt:  # Additional model opts go here
   debug: True
-  model: transformer/generator
-  model_file: zoo:blender/blender_90M/model
+  models:
+    blender_90M:
+      model: transformer/generator
+      model_file: zoo:blender/blender_90M/model
+      interactive_mode: True
+      no_cuda: True
 additional_args:
   page_id: 1 # configure your own page
 ```
