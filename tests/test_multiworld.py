@@ -107,4 +107,3 @@ class TestMultiworld(unittest.TestCase):
                     exs = report[f'{task}/exs'].value()
                     assert exs > 0, err
                 world.reset_metrics()
-

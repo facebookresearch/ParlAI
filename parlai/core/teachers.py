@@ -389,7 +389,7 @@ class FixedDialogTeacher(Teacher):
     def next_batch(self):
         """
         Return the next batch of examples.
-        """  
+        """
         # get next batch
         with self._lock():
             self.index.value += 1

@@ -584,6 +584,7 @@ class InfiniteTrainTeacher(ChunkyTeacher):
     """
     Chunk teacher with an effectively infinite number of training examples.
     """
+
     def get_num_samples(self, datatype: str) -> Tuple[int, int]:
         if 'train' in datatype:
             return INFINITE, INFINITE
@@ -597,6 +598,7 @@ class ShortFixedTeacher(FixedDialogCandidateTeacher):
     """
     Fixed Dialog Candidate teacher with only 10 training examples.
     """
+
     def __init__(self, opt: Opt, shared: dict = None):
         super().__init__(opt, shared, num_train=10, num_test=10)
 
