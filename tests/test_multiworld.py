@@ -100,6 +100,10 @@ class TestMultiworld(unittest.TestCase):
         for i in range(100):
             world.parley()
             if i % 10 == 0 and i > 0:
+                teacher_acts, _ = world.get_acts()
+                for act in teacher_acts:
+                    act_id = act.get('id')
+                    assert 'text' in act, f'Task {act_id} acts are empty'
                 report = world.report()
                 for task in [task1, task2]:
                     err = f'Task {task} has no examples on iteration {i}'
