@@ -57,7 +57,7 @@ from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.metrics import aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
-from parlai.utils.data import is_training
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 import parlai.utils.logging as logging
@@ -608,7 +608,7 @@ class MultiWorld(World):
         self.new_world = True
         self.parleys = -1
         # Check to see if we are training
-        self.random = is_training(opt.get('datatype'))
+        self.is_training = DatatypeHelper.is_training(opt.get('datatype'))
         # Make multi-task task probabilities.
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
@@ -719,7 +719,7 @@ class MultiWorld(World):
         if self.new_world:
             self.new_world = False
             self.parleys = 0
-            if self.random:
+            if self.is_training:
                 # select random world
                 self.world_idx = random.choices(
                     self.task_choices, cum_weights=self.cum_task_weights
