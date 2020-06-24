@@ -83,7 +83,7 @@ class TestMultiworld(unittest.TestCase):
 
     def test_with_stream(self):
         """
-        Test that multi-tasking works with train:stream.
+        Test that multi-tasking works with datatype train:stream.
         """
         task1 = 'integration_tests:infinite_train'
         task2 = 'integration_tests:short_fixed'
