@@ -306,29 +306,6 @@ def create_agent_from_opt_file(opt: Opt):
 
         model_class = load_agent_module(new_opt['model'])
 
-        # check for model version
-        if hasattr(model_class, 'model_version'):
-            curr_version = new_opt.get('model_version', 0)
-            if curr_version != model_class.model_version():
-                model = new_opt['model']
-                m = (
-                    'It looks like you are trying to load an older version of'
-                    ' the selected model. Change your model argument to use '
-                    'the old version from parlai/agents/legacy_agents: for '
-                    'example: `-m legacy:{m}:{v}` or '
-                    '`--model parlai.agents.legacy_agents.{m}.{m}_v{v}:{c}`'
-                )
-                if '.' not in model:
-                    # give specific error message if it's easy
-                    raise RuntimeError(
-                        m.format(m=model, v=curr_version, c=model_class.__name__)
-                    )
-                else:
-                    # otherwise generic one
-                    raise RuntimeError(
-                        m.format(m='modelname', v=curr_version, c='ModelAgent')
-                    )
-
         if hasattr(model_class, 'upgrade_opt'):
             new_opt = model_class.upgrade_opt(new_opt)
 

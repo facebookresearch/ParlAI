@@ -45,66 +45,6 @@ There are a number of guidelines you should follow in the zoo:
 
 model_list = [
     {
-        "title": "KVMemNN ConvAI2 model",
-        "id": "convai2",
-        "path": "zoo:convai2/kvmemnn/model",
-        "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
-        "task": "convai2",
-        "description": (
-            "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
-            "competition."
-        ),
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "example": (
-            "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
-        ),
-        "result": (
-            "Enter Your Message: Hi, what do you think of peanuts?\n"
-            "there was a kid in the school system my mum works for with a severe peanut allergy"
-        ),
-    },
-    {
-        "title": "Seq2Seq ConvAI2 model",
-        "id": "convai2",
-        "path": "zoo:convai2/seq2seq/convai2_self_seq2seq_model",
-        "agent": "legacy:seq2seq:0",
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
-        ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf "
-            "zoo:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
-        ),
-        "result": (
-            "Enter Your Message: Hi, what do you think of peanuts?\n"
-            "[Seq2Seq]: i don't have any , but i do not have a favorite ."
-        ),
-    },
-    {
-        "title": "ConvAI2 Language model",
-        "id": "convai2",
-        "path": "zoo:convai2/language_model/model",
-        "agent": "language_model",
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
-        ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf "
-            "zoo:convai2/language_model/model"
-        ),
-        "result": (
-            "Enter Your Message: Hi, have you ever been on an airplane?\n"
-            "[LanguageModel]: no , i do not . i am a big fan of the walking dead ."
-        ),
-    },
-    {
         "title": "DrQA SQuAD model",
         "id": "drqa",
         "path": "zoo:drqa/squad/model",
