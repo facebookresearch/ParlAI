@@ -172,7 +172,7 @@ jobs:
       - store_test_results:
           path: test-results
 
-  testinstall_36:
+  cleaninstall_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
     parallelism: 1
@@ -471,6 +471,7 @@ workflows:
   version: 2
   commit:
     jobs:
+      - cleaninstall_36
       - unittests_gpu14
       - unittests_38
       - unittests_37
