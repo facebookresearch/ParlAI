@@ -1215,4 +1215,31 @@ model_list = [
         ),
         "result": ("Results vary."),
     },
+    {
+        "title": "Unlikelihood ConvAI2 context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodParlallAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodParlallAgent -ne 3"
+        ),
+        "result": (
+            "- - - NEW EPISODE: convai2- - -\n"
+            "your persona: i read twenty books a year.\n"
+            "your persona: i'm a stunt double as my second job.\n"
+            "your persona: i only eat kosher.\n"
+            "your persona: i was raised in a single parent household.\n""
+            "hello what are doing today ?\n"
+            "    labels: i am good , i just got off work and tired , i have two jobs .\n"
+            "     model: hi , i am reading a book , how about you ?\n"
+            "i just got done watching a horror movie\n"
+            "    labels: i rather read , i've read about 20 books this year .\n"
+            "     model: i ' m reading a book , i love horror ."
+        ),
+    },
 ]

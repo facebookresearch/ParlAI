@@ -55,6 +55,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             recommended=True,
             help='if true, include image token (or no image token) for each example',
         )
+        return group
 
     def build_dictionary(self) -> DictionaryAgent:
         """
