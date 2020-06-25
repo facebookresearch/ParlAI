@@ -14,4 +14,6 @@ VERSION = 'v1.0'
 
 
 def download(datapath):
-    build(datapath, 'vocab_alpha1e1_v1.tgz', model_type='vocab_alpha1e1', version=VERSION)
+    build(
+        datapath, 'vocab_alpha1e1_v1.tgz', model_type='vocab_alpha1e1', version=VERSION
+    )

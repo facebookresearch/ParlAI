@@ -14,4 +14,9 @@ VERSION = 'v1.0'
 
 
 def download(datapath):
-    build(datapath, 'rep_convai2_ctxt_v1.tgz', model_type='rep_convai2_ctxt', version=VERSION)
+    build(
+        datapath,
+        'rep_convai2_ctxt_v1.tgz',
+        model_type='rep_convai2_ctxt',
+        version=VERSION,
+    )

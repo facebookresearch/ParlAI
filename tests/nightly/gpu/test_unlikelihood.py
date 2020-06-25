@@ -325,7 +325,7 @@ class TestUnlikelihood(unittest.TestCase):
         else:
             self.assertAlmostEqual(valid['ppl'], 12.48, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1903, delta=0.0002)
-    
+
     def test_vocab_alpha1e3(self):
         """ Verify recorded ppl and F1 scores for released models
         """
@@ -348,6 +348,7 @@ class TestUnlikelihood(unittest.TestCase):
         else:
             self.assertAlmostEqual(valid['ppl'], 14.27, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1734, delta=0.0002)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -390,9 +390,13 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
             self.truebins = {}
             counts_file = self.opt['counts_file']
             if counts_file is None:
-                counts_file = os.path.join(os.path.dirname(self.opt['model_file']), 'counts.txt')
+                counts_file = os.path.join(
+                    os.path.dirname(self.opt['model_file']), 'counts.txt'
+                )
                 if not os.path.isfile(counts_file):
-                    raise RuntimeError('Please give a --counts-file to use vocab unlikelihood')
+                    raise RuntimeError(
+                        'Please give a --counts-file to use vocab unlikelihood'
+                    )
             with open(counts_file) as f:
                 for line in f:
                     record = json.loads(line)
@@ -419,9 +423,7 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         )
         grp.add_argument('--threshold', type=float, default=1e-3)
         grp.add_argument(
-            '--counts-file',
-            type=str,
-            default=None,
+            '--counts-file', type=str, default=None,
         )
 
     def _init_cuda_buffer(self, *args, **kwargs):
@@ -607,9 +609,7 @@ class TransformerUnlikelihoodAgent(
     pass
 
 
-class RepetitionUnlikelihoodAgent(
-    RepetitionUnlikelihoodAgentTrait, ImageSeq2seqAgent
-):
+class RepetitionUnlikelihoodAgent(RepetitionUnlikelihoodAgentTrait, ImageSeq2seqAgent):
     """
     Example usage:
 

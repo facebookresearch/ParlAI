@@ -14,4 +14,6 @@ VERSION = 'v1.0'
 
 
 def download(datapath):
-    build(datapath, 'rep_eli5_label_v1.tgz', model_type='rep_eli5_label', version=VERSION)
+    build(
+        datapath, 'rep_eli5_label_v1.tgz', model_type='rep_eli5_label', version=VERSION
+    )

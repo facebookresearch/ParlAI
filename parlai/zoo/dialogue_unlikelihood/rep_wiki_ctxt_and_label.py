@@ -14,4 +14,9 @@ VERSION = 'v1.0'
 
 
 def download(datapath):
-    build(datapath, 'rep_wiki_ctxt_and_label_v1.tgz', model_type='rep_wiki_ctxt_and_label', version=VERSION)
+    build(
+        datapath,
+        'rep_wiki_ctxt_and_label_v1.tgz',
+        model_type='rep_wiki_ctxt_and_label',
+        version=VERSION,
+    )
