@@ -176,6 +176,6 @@ class BartAgent(TransformerGeneratorAgent):
         text_vec = batch.text_vec  # type: ignore
         if text_vec is not None:
             prefix_tokens = text_vec.new_zeros(  # type: ignore
-                (len(text_vec), 1)
+                (text_vec.size(0), 1)
             ).fill_(self.START_IDX)
         return super()._generate(batch, beam_size, max_ts, prefix_tokens)
