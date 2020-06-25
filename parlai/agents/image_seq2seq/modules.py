@@ -6,7 +6,7 @@
 """
 Modules for ImageSeq2seqAgent Agent.
 """
-
+from enum import Enum
 from functools import reduce
 from typing import List, Tuple, Optional, Union
 
@@ -16,9 +16,18 @@ import torch.nn as nn
 from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     TransformerEncoder,
+    _normalize
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
+
+
+class FusionType(Enum):
+    """
+    Encoder fusion type.
+    """
+    EARLY = 'early'
+    LATE = 'late'
 
 
 class ImageSeq2seqModel(TransformerGeneratorModel):
@@ -64,6 +73,7 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['image_encoder_num_layers'],
             image_features_dim=opt['image_features_dim'],
+            fusion=opt['image_fusion_type']
         )
 
 
@@ -97,6 +107,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         image_features_dim=2048,
         image_combination_mode='append',
         n_image_tokens=1,
+        fusion='early',
     ):
         """
         Override TransformerEncoder __init__.
@@ -110,10 +121,13 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.img_dim = image_features_dim
         self.image_combination_mode = image_combination_mode
         self.n_image_tokens = n_image_tokens
+        self.fusion = FusionType(fusion)
         if self.image_combination_mode == 'add' and self.n_image_tokens > 1:
             raise ValueError(
                 'Image encoding cannot be added to context encoding if there is more than one image token!'
             )
+        if self.fusion is FusionType.EARLY:
+            assert n_segments == 2, "must use segment embeddings for early fusion"
         reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
             n_heads=n_heads,
@@ -154,8 +168,11 @@ class ContextWithImageEncoder(TransformerEncoder):
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 
-    def encode_images(
-        self, images: Union[List[object], torch.Tensor]
+    def embed_images(
+        self,
+        images: Union[List[object], torch.Tensor],
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Encode Images.
@@ -166,6 +183,10 @@ class ContextWithImageEncoder(TransformerEncoder):
         :param images:
             either a list of objects of length N, of which some maybe be None, or a
             tensor of shape (batch size, self.img_dim)
+        :param positions:
+            positions for images, of size [len(images) x images.size(1)]
+        :param segments:
+            segments for images, of size [len(images)]
 
         :return:
             a (image_encoded, image_mask) tuple, where:
@@ -174,6 +195,15 @@ class ContextWithImageEncoder(TransformerEncoder):
               self.embedding_size, representing the encoded batch of images
             - image_mask is a torch.Tensor of dim N x self.n_image_tokens
         """
+        if positions is None:
+            positions = [None for _ in range(len(images))]
+        else:
+            positions = self.position_embeddings(positions)
+        if segments is None:
+            segments = [None for _ in range(len(images))]
+        else:
+            segments = self.segment_embeddings(segments)
+
         image_masks = image_encoded = None
         valid_inds = [
             i
@@ -192,7 +222,9 @@ class ContextWithImageEncoder(TransformerEncoder):
             for i in range(len(images)):
                 if i in valid_inds:
                     image_mask_list.append(self.ones_mask)
-                    image_encoded_list.append(valid_img_enc[img_num, :])
+                    image_encoded_list.append(
+                        self._add([valid_img_enc[img_num, :], positions[i], segments[i]])
+                    )
                     img_num += 1
                 else:
                     image_mask_list.append(~self.ones_mask)
@@ -214,9 +246,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         """
         Encode images with context.
 
-        Encodes tokens (if given) and images (if given) separately.
-        Combines via either addition, prepending, or appending the image embedding to
-        the context embedding.
+        Encodes tokens (if given) and images (if given) depending on fusion setting.
 
         :param src_tokens:
             A bsz x seq_len tensor of src_tokens; possibly None
@@ -228,6 +258,70 @@ class ContextWithImageEncoder(TransformerEncoder):
             A (full_enc, full_mask) tuple, which represents the encoded context
             and the mask
         """
+        if self.fusion is FusionType.LATE:
+            return self._forward_late_fusion(src_tokens, image_features)
+        elif self.fusion is FusionType.EARLY:
+            return self._forward_early_fusion(src_tokens, image_features)
+
+    def _forward_early_fusion(
+        self,
+        src_tokens: Optional[torch.Tensor],
+        image_features: Optional[Union[List[object], torch.Tensor]],
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+        """
+        Encode images with context.
+
+        Performs early fusion, whereby image embeddings and token embeddings are computed
+        before passing into the Transformer.
+
+        Essentially overrides normal TransformerEncoder forward.
+        """
+        context_tensor = context_mask = None
+        image_tensor = image_mask = None
+        if src_tokens is not None and image_features is not None:
+            assert src_tokens.size(0) == len(image_features)
+        if src_tokens is not None:
+            context_tensor, context_mask = self.forward_embedding(
+                src_tokens, segments=torch.zeros_like(src_tokens)
+            )
+        if image_features is not None:
+            valid_img = [v for v in image_features if isinstance(v, torch.Tensor)][0]
+            image_tensor, image_mask = self.embed_images(
+                image_features, segments=torch.ones(
+                    len(image_features), dtype=torch.long, device=valid_img.device
+                )
+            )
+
+        # perform early fusion
+        tensor = self._cat([context_tensor, image_tensor])
+        mask = self._cat([context_mask, image_mask])
+
+        # Below copied from TransformerEncoder.forward
+        if self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+        # --dropout on the embeddings
+        tensor = self.dropout(tensor)
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
+        # apply transformer layers
+        tensor = self.forward_layers(tensor, mask)
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+        # reduce output
+        tensor, mask = self.reduce_output(tensor, mask)
+        return tensor, mask
+
+    def _forward_late_fusion(
+        self,
+        src_tokens: Optional[torch.Tensor],
+        image_features: Optional[Union[List[object], torch.Tensor]],
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+        """
+        Encode images with context.
+
+        Encodes tokens (if given) and images (if given) separately.
+        Combines via either addition, prepending, or appending the image embedding to
+        the context embedding.
+        """
         context_encoded = context_mask = None
         image_encoded = extra_masks = None
         if src_tokens is not None and image_features is not None:
@@ -235,7 +329,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         if src_tokens is not None:
             context_encoded, context_mask = super().forward(src_tokens)
         if image_features is not None:
-            image_encoded, extra_masks = self.encode_images(image_features)
+            image_encoded, extra_masks = self.embed_images(image_features)
 
         if all(enc is None for enc in [context_encoded, image_encoded]):
             raise RuntimeError(
