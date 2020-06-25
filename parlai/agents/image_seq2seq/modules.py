@@ -16,7 +16,7 @@ import torch.nn as nn
 from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     TransformerEncoder,
-    _normalize
+    _normalize,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -26,6 +26,7 @@ class FusionType(Enum):
     """
     Encoder fusion type.
     """
+
     EARLY = 'early'
     LATE = 'late'
 
@@ -73,7 +74,7 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['image_encoder_num_layers'],
             image_features_dim=opt['image_features_dim'],
-            fusion=opt['image_fusion_type']
+            fusion=opt['image_fusion_type'],
         )
 
 
@@ -223,7 +224,9 @@ class ContextWithImageEncoder(TransformerEncoder):
                 if i in valid_inds:
                     image_mask_list.append(self.ones_mask)
                     image_encoded_list.append(
-                        self._add([valid_img_enc[img_num, :], positions[i], segments[i]])
+                        self._add(
+                            [valid_img_enc[img_num, :], positions[i], segments[i]]
+                        )
                     )
                     img_num += 1
                 else:
@@ -287,9 +290,10 @@ class ContextWithImageEncoder(TransformerEncoder):
         if image_features is not None:
             valid_img = [v for v in image_features if isinstance(v, torch.Tensor)][0]
             image_tensor, image_mask = self.embed_images(
-                image_features, segments=torch.ones(
+                image_features,
+                segments=torch.ones(
                     len(image_features), dtype=torch.long, device=valid_img.device
-                )
+                ),
             )
 
         # perform early fusion
@@ -318,9 +322,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         """
         Encode images with context.
 
-        Encodes tokens (if given) and images (if given) separately.
-        Combines via either addition, prepending, or appending the image embedding to
-        the context embedding.
+        Encodes tokens (if given) and images (if given) separately. Combines via either
+        addition, prepending, or appending the image embedding to the context embedding.
         """
         context_encoded = context_mask = None
         image_encoded = extra_masks = None

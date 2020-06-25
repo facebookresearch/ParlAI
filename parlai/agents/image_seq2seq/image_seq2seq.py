@@ -149,8 +149,13 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
                 state_dict[f'encoder.image_encoder.{k}'] = v
 
         # case 2 -> Segment embeddings in new model
-        if self.opt.get('n_segments', 0) >= 1 and 'encoder.segment_embeddings.weight' not in state_dict:
-            state_dict['encoder.segment_embeddings.weight'] = self.model.encoder.segment_embeddings.weight
+        if (
+            self.opt.get('n_segments', 0) >= 1
+            and 'encoder.segment_embeddings.weight' not in state_dict
+        ):
+            state_dict[
+                'encoder.segment_embeddings.weight'
+            ] = self.model.encoder.segment_embeddings.weight
 
         # Case 3 -> Only an Encoder provided
         if not (any('decoder' in state_key for state_key in state_dict)):
