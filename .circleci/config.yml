@@ -172,6 +172,21 @@ jobs:
       - store_test_results:
           path: test-results
 
+  testinstall_36:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - checkout
+      - <<: *fixgit
+      - run:
+          name: Test installation instructions
+          no_output_timeout: 60m
+          command: |
+            python -m pip install --progress-bar off --upgrade pip setuptools
+            python setup.py develop
+            parlai display_data -t integration_tests
+
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
