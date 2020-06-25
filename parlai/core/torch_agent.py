@@ -275,8 +275,6 @@ class History(object):
                     text = self._add_person_tokens(
                         obs[self.field], self.p1_token, self.add_p1_after_newln
                     )
-                if self.reversed:
-                    text = '\n'.join(reversed(text.split('\n')))
                 # update history string
                 self._update_strings(text)
                 # update history vecs
@@ -295,8 +293,6 @@ class History(object):
             history = self.history_strings[:]
             if self.temp_history is not None:
                 history.append(self.temp_history)
-            if self.reversed:
-                history = list(reversed(history))
             history = self.delimiter.join(history)
             return history
 
@@ -320,10 +316,9 @@ class History(object):
         if self._global_end_token is not None:
             history += [[self._global_end_token]]
 
-        if self.reversed:
-            history = reversed(history)
-
         history = sum(history, [])
+        if self.reversed:
+            history = list(reversed(history))
 
         return history
 
