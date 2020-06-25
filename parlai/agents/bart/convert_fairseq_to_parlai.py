@@ -10,7 +10,7 @@ A script for converting a fairseq model to ParlAI model.
 Specifically works for transformer-based models.
 
 Example Usage:
-python parlai/scripts/convert_fairseq_to_parlai.py \
+python parlai/agents/bart/convert_fairseq_to_parlai.py \
 --input /path/to/checkpoint_best.pt \
 --merge /path/to/bpe-merges.txt \
 --vocab /path/to/bpe-vocab.json \
@@ -38,6 +38,13 @@ TRANSFORMER_DROPOUT = {'dropout', 'attention_dropout'}
 EMBEDDING_DICT_MAPPING = {
     'embed_tokens': 'embeddings',
     'embed_positions': 'position_embeddings',
+}
+FFN_MAPPING = {
+    'fc1': 'ffn.lin1',
+    'fc2': 'ffn.lin2',
+    'layer_norms.0': 'norm1',
+    'layer_norms.1': 'norm2',
+    'out_proj': 'out_lin',
 }
 
 
@@ -366,11 +373,8 @@ class ConversionScript(ParlaiScript):
                 mapped_key = mapped_key.replace('k_proj', 'k_lin')
 
             # 4. Replace FFN layers
-            mapped_key = mapped_key.replace('fc1', 'ffn.lin1')
-            mapped_key = mapped_key.replace('fc2', 'ffn.lin2')
-            mapped_key = mapped_key.replace('layer_norms.0', 'norm1')
-            mapped_key = mapped_key.replace('layer_norms.1', 'norm2')
-            mapped_key = mapped_key.replace('out_proj', 'out_lin')
+            for old, new in FFN_MAPPING.items():
+                mapped_key = mapped_key.replace(old, new)
 
             # 5. Fix layer norms
             if 'encoder.' in mapped_key:
@@ -381,18 +385,13 @@ class ConversionScript(ParlaiScript):
                 mapped_key = mapped_key.replace('encoder_attention_layer_norm', 'norm2')
                 mapped_key = mapped_key.replace('final_layer_norm', 'norm3')
 
-            mapped_key = mapped_key.replace(
-                'encoder.layer_norm', 'encoder.norm_embeddings'
-            )
-            mapped_key = mapped_key.replace(
-                'encoder.layernorm_embedding', 'encoder.norm_embeddings'
-            )
-            mapped_key = mapped_key.replace(
-                'decoder.layer_norm', 'decoder.norm_embeddings'
-            )
-            mapped_key = mapped_key.replace(
-                'decoder.layernorm_embedding', 'decoder.norm_embeddings'
-            )
+            for _key in ['encoder', 'decoder']:
+                mapped_key = mapped_key.replace(
+                    f'{_key}.layer_norm', f'{_key}.norm_embeddings'
+                )
+                mapped_key = mapped_key.replace(
+                    f'{_key}.layernorm_embedding', f'{_key}.norm_embeddings'
+                )
 
             weight = state_dict[each_key]
             return_dict[mapped_key] = weight

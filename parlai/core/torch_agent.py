@@ -100,6 +100,7 @@ class Batch(AttrDict):
     :param observations:
         the original observations in the batched order
     """
+
     text_vec: Optional[torch.LongTensor]
     text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]

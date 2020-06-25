@@ -1060,15 +1060,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
             score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
-            if (
-                prefix_tokens is not None
-                and _ts < prefix_tokens.size(1)
-                and _ts < max_ts
-            ):
+            if prefix_tokens is not None and _ts < prefix_tokens.size(1):
+                # generate prefix_tokens for every timestep that they exist
+                # achieve by setting score of all other tokens to be -inf
                 prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
                 prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
                 prefix_mask = prefix_toks.ne(self.NULL_IDX)
-                score[prefix_mask] = -math.inf
+                score[prefix_mask] = neginf(score.dtype)
                 score[prefix_mask] = score[prefix_mask].scatter_(
                     -1,
                     prefix_toks[prefix_mask].unsqueeze(-1),

@@ -9,7 +9,6 @@ import parlai.utils.testing as testing_utils
 
 
 @testing_utils.skipUnlessGPU
-@testing_utils.skipUnlessFairseq
 class TestBartModel(unittest.TestCase):
     """
     Test of BART model.
@@ -30,7 +29,7 @@ class TestBartModel(unittest.TestCase):
                 num_epochs=1,
             )
         )
-        self.assertAlmostEqual(test['ppl'], 1, places=2)
+        self.assertAlmostEqual(test['ppl'], 1.0, places=2)
 
 
 if __name__ == '__main__':

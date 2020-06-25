@@ -45,13 +45,6 @@ try:
 except ImportError:
     BPE_INSTALLED = False
 
-try:
-    import fairseq  # noqa: F401
-
-    FAIRSEQ_INSTALLED = True
-except ImportError:
-    FAIRSEQ_INSTALLED = False
-
 
 def is_this_circleci():
     """
@@ -88,13 +81,6 @@ def skipUnlessBPE(testfn, reason='Test requires subword NMT'):
     Decorate a test to skip if BPE is not installed.
     """
     return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
-
-
-def skipUnlessFairseq(testfn, reason='Test requires fairseq'):
-    """
-    Decorate a test to skip if fairseq is not installed.
-    """
-    return unittest.skipUnless(FAIRSEQ_INSTALLED, reason)(testfn)
 
 
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):

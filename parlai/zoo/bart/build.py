@@ -11,8 +11,8 @@ https://arxiv.org/abs/1910.13461). It requires you to run a conversion script to
 model weights (conversion script not provided publicly).
 """
 
+from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
 import parlai.core.build_data as build_data
-from parlai.scripts.convert_fairseq_to_parlai import ConversionScript
 import os
 
 CONVERSION_ARGS = {

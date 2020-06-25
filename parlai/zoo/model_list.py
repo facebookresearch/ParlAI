@@ -1231,8 +1231,8 @@ model_list = [
         ),
         "result": (
             "Finished evaluating tasks ['convai2'] using datatype valid\n"
-            "accuracy   bleu-4  exs     f1  gpu_mem  loss   ppl  token_acc  tpb\n"
-            "0 .0004641 7801 .02084    .4878 5.041 154.6      .2042 1652"
+            "accuracy   bleu-4    exs      f1  gpu_mem    loss    ppl  token_acc   tpb\n"
+            "0        .0004641   7801  .02084    .4878   5.041  154.6      .2042  1652"
         ),
         "example2": (
             "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam"
