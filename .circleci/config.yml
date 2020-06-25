@@ -371,15 +371,15 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
-        - restore_cache:
-            key: deps-20200625-mturk-{{ checksum "requirements.txt" }}
+      - restore_cache:
+          key: deps-20200625-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
-        - save_cache:
-            key: deps-20200625-mturk-{{ checksum "requirements.txt" }}
-            paths:
-              - "~/venv/bin"
-              - "~/venv/lib"
+      - save_cache:
+          key: deps-20200625-mturk-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
       - run:
           name: All mturk tests
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
