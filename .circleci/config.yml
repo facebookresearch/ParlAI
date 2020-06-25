@@ -179,6 +179,7 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
+      - <<: *setup
       - run:
           name: Test installation instructions
           no_output_timeout: 60m
