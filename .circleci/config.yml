@@ -78,7 +78,7 @@ installdeps: &installdeps
       python -m pip install --progress-bar off coverage
       python -m pip install --progress-bar off codecov
       mkdir -p ~/ParlAI/test-results
-      pip install -v -r requirements.txt
+      # pip install -v -r requirements.txt
       python setup.py develop
       python -c "import nltk; nltk.download('punkt')"
 
@@ -371,15 +371,15 @@ jobs:
     steps:
       - checkout
       - <<: *fixgit
-      - restore_cache:
-          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
+        # - restore_cache:
+        #     key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
-      - save_cache:
-          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
-          paths:
-            - "~/venv/bin"
-            - "~/venv/lib"
+        # - save_cache:
+        #     key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
+        #     paths:
+        #       - "~/venv/bin"
+        #       - "~/venv/lib"
       - run:
           name: All mturk tests
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
@@ -472,21 +472,21 @@ workflows:
   commit:
     jobs:
       - cleaninstall_36
-        # - unittests_gpu14
-        # - unittests_38
-        # - unittests_37
-        # - unittests_36
-        # - mturk_tests
-        # - unittests_osx
-        # - long_gpu_tests
-        # - build_website:
-        #     filters:
-        #       branches:
-        #         ignore: master
-        # - deploy_website:
-        #     filters:
-        #       branches:
-        #         only: master
-        # - test_website:
-        #     requires:
-        #       - deploy_website
+      - unittests_gpu14
+      - unittests_38
+      - unittests_37
+      - unittests_36
+      - mturk_tests
+      - unittests_osx
+      - long_gpu_tests
+      - build_website:
+          filters:
+            branches:
+              ignore: master
+      - deploy_website:
+          filters:
+            branches:
+              only: master
+      - test_website:
+          requires:
+            - deploy_website
