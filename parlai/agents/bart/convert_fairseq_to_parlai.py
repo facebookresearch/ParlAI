@@ -398,9 +398,7 @@ class ConversionScript(ParlaiScript):
 
         # 6. Shuffle embedding matrix given dictionary.
         enc_emb_key = 'encoder.embeddings.weight'
-        bart_dict = os.path.join(
-            opt['datapath'], 'models/bart/bart.large/dict.txt'
-        )
+        bart_dict = os.path.join(opt['datapath'], 'models/bart/bart.large/dict.txt')
         with open(bart_dict) as f:
             offset_dict = {i: l.split()[0] for i, l in enumerate(f.readlines())}
         new_embs = return_dict[enc_emb_key].clone()
