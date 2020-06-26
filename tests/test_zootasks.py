@@ -74,7 +74,7 @@ class TestZooAndTasks(unittest.TestCase):
             task_list,
             "parlai/tasks",
             "task",
-            ignore=['fromfile', 'interactive', 'wrapper'],
+            ignore=['fromfile', 'interactive', 'jsonfile', 'wrapper'],
         )
 
     def test_zoolist(self):

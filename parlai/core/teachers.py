@@ -1413,8 +1413,8 @@ class ConversationTeacher(FixedDialogTeacher):
     "Conversations" format. If your data is in the format below, use this class to
     handle file parsing for you.
 
-    The data should be set up so that each dialogue instance (or, episode) 
-    occupies one line of valid JSON. The way the data is set up is as follows 
+    The data should be set up so that each dialogue instance (or, episode)
+    occupies one line of valid JSON. The way the data is set up is as follows
     (with line breaks for readability):
 
     ::
@@ -1427,7 +1427,7 @@ class ConversationTeacher(FixedDialogTeacher):
             ]
         }
 
-    Note that by default, dialogs are interpreted as being one-way. 
+    Note that by default, dialogs are interpreted as being one-way.
     For example, consider this dialog:
 
     ::
@@ -1444,9 +1444,9 @@ class ConversationTeacher(FixedDialogTeacher):
         }
 
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated,
-    forming one episode. However, Y1 => X2 and Y2 => X3 are not created as 
-    separate examples by default. 
-    To change this behavior, you can set opt['label_turns']. The default 
+    forming one episode. However, Y1 => X2 and Y2 => X3 are not created as
+    separate examples by default.
+    To change this behavior, you can set opt['label_turns']. The default
     value is 'secondspeaker' (i.e., the second speaker's utterances are
     used as labels), but 'firstspeaker' and 'both' are also options. In the
     case of 'both', two episodes are generated for each conversation.
