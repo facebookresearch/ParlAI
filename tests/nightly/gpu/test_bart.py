@@ -23,8 +23,8 @@ class TestBartModel(unittest.TestCase):
                 task='integration_tests:nocandidate',
                 model='bart',
                 dict_file='zoo:bart/bart_large/model.dict',
-                optimizer='adam',
-                learningrate=1e-5,
+                optimizer='sgd',
+                learningrate=1,
                 batchsize=4,
                 num_epochs=1,
             )

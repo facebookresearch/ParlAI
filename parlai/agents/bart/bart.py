@@ -108,7 +108,7 @@ class BartAgent(TransformerGeneratorAgent):
         opt['init_model'] = args['output']
         return opt
 
-    def build_model(self, states: Any = None) -> BartModel:
+    def build_model(self) -> BartModel:
         """
         Build and return model.
         """

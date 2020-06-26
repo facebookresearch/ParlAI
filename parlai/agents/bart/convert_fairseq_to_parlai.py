@@ -129,6 +129,7 @@ class ConversionScript(ParlaiScript):
         self.agent = create_agent(opt)
         converted = self.convert_model_weight(opt)
         self.agent.model.load_state_dict(converted, True)
+        self.agent.opt.pop('converting', None)
         self.agent.save(self.opt['output'])
         # 4. enjoy!
         self.agent.observe(
