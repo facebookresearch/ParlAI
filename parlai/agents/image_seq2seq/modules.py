@@ -197,13 +197,17 @@ class ContextWithImageEncoder(TransformerEncoder):
             - image_mask is a torch.Tensor of dim N x self.n_image_tokens
         """
         if positions is None:
-            positions = [None for _ in range(len(images))]
+            positions = [None for _ in range(len(images))]  # type: ignore
         else:
             positions = self.position_embeddings(positions)
         if segments is None:
-            segments = [None for _ in range(len(images))]
+            segments = [None for _ in range(len(images))]  # type: ignore
         else:
             segments = self.segment_embeddings(segments)
+
+        # assertions for typing
+        assert positions is not None
+        assert segments is not None
 
         image_masks = image_encoded = None
         valid_inds = [
@@ -216,7 +220,7 @@ class ContextWithImageEncoder(TransformerEncoder):
             image_mask_list = []
             image_encoded_list = []
 
-            valid_imgs = torch.stack([images[i] for i in valid_inds])
+            valid_imgs = torch.stack([images[i] for i in valid_inds])  # type: ignore
             valid_img_enc = self.image_encoder(valid_imgs)
 
             img_num = 0
@@ -230,10 +234,10 @@ class ContextWithImageEncoder(TransformerEncoder):
                     )
                     img_num += 1
                 else:
-                    image_mask_list.append(~self.ones_mask)
-                    image_encoded_list.append(self.dummy_image_enc)
+                    image_mask_list.append(~self.ones_mask)  # type: ignore
+                    image_encoded_list.append(self.dummy_image_enc)  # type: ignore
 
-            image_masks = torch.stack(image_mask_list)
+            image_masks = torch.stack(image_mask_list)  # type: ignore
             image_encoded = torch.stack(image_encoded_list).reshape(
                 (len(images), self.n_image_tokens, self.embedding_size)
             )
@@ -241,9 +245,9 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         return image_encoded, image_masks
 
-    def forward(
+    def forward(  # type: ignore
         self,
-        src_tokens: Optional[torch.Tensor],
+        src_tokens: Optional[torch.LongTensor],
         image_features: Optional[Union[List[object], torch.Tensor]],
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
@@ -266,9 +270,11 @@ class ContextWithImageEncoder(TransformerEncoder):
         elif self.fusion is FusionType.EARLY:
             return self._forward_early_fusion(src_tokens, image_features)
 
+        raise RuntimeError(f'Unsupported fusion type: {self.fusion}')
+
     def _forward_early_fusion(
         self,
-        src_tokens: Optional[torch.Tensor],
+        src_tokens: Optional[torch.LongTensor],
         image_features: Optional[Union[List[object], torch.Tensor]],
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
@@ -285,20 +291,20 @@ class ContextWithImageEncoder(TransformerEncoder):
             assert src_tokens.size(0) == len(image_features)
         if src_tokens is not None:
             context_tensor, context_mask = self.forward_embedding(
-                src_tokens, segments=torch.zeros_like(src_tokens)
+                src_tokens, segments=torch.zeros_like(src_tokens)  # type: ignore
             )
         if image_features is not None:
             valid_img = [v for v in image_features if isinstance(v, torch.Tensor)][0]
             image_tensor, image_mask = self.embed_images(
                 image_features,
-                segments=torch.ones(
+                segments=torch.ones(  # type: ignore
                     len(image_features), dtype=torch.long, device=valid_img.device
                 ),
             )
 
         # perform early fusion
         tensor = self._cat([context_tensor, image_tensor])
-        mask = self._cat([context_mask, image_mask])
+        mask: torch.BoolTensor = self._cat([context_mask, image_mask])  # type: ignore
 
         # Below copied from TransformerEncoder.forward
         if self.variant == 'xlm':
@@ -311,12 +317,12 @@ class ContextWithImageEncoder(TransformerEncoder):
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
         # reduce output
-        tensor, mask = self.reduce_output(tensor, mask)
-        return tensor, mask
+        tensor, out_mask = self.reduce_output(tensor, mask)
+        return tensor, out_mask
 
     def _forward_late_fusion(
         self,
-        src_tokens: Optional[torch.Tensor],
+        src_tokens: Optional[torch.LongTensor],
         image_features: Optional[Union[List[object], torch.Tensor]],
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
@@ -375,8 +381,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         :return:
             The result of adding all non-null objects in tensors
         """
-        tensors = [t for t in tensors if t is not None]
-        return reduce(lambda a, b: a + b, tensors)
+        non_null_tensors: List[torch.Tensor] = [t for t in tensors if t is not None]
+        return reduce(lambda a, b: a + b, non_null_tensors)
 
     def _cat(self, tensors: List[Optional[torch.Tensor]]) -> torch.Tensor:
         """
@@ -390,8 +396,8 @@ class ContextWithImageEncoder(TransformerEncoder):
         :return:
             The result of concatenating all non-null objects in tensors
         """
-        tensors = [t for t in tensors if t is not None]
-        return torch.cat([t for t in tensors], dim=1)
+        non_null_tensors: List[torch.Tensor] = [t for t in tensors if t is not None]
+        return torch.cat([t for t in non_null_tensors], dim=1)
 
     def _fix_for_fp16(
         self, full_enc: torch.Tensor, full_mask: Optional[torch.Tensor]

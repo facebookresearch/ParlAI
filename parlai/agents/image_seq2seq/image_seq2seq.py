@@ -29,7 +29,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
     Combines a transformer generator with images.
     """
 
-    def build_model(self) -> ImageSeq2seqModel:
+    def build_model(self) -> ImageSeq2seqModel:  # type: ignore
         """
         Override to build appropriate model.
         """
@@ -84,7 +84,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         if self.opt.get('include_image_token', False):
             # `truncate` is the third arg to this function
             truncate = args[2] - 1 if args[2] is not None else None
-            vec = torch.LongTensor(
+            vec = torch.LongTensor(  # type: ignore
                 self._check_truncate(obs['text_vec'], truncate, True)
             )
             token = TOKEN_NO_IMAGE
@@ -108,7 +108,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             text_vec=b.text_vec,
             label_vec=b.label_vec,
             image=image,
-            personalities=torch.ones(batchsize, self.opt.get('embedding_size')).cuda(),
+            personalities=torch.ones(batchsize, self.opt['embedding_size']).cuda(),
         )
 
     def batchify_image_features(self, batch: Batch) -> Batch:
