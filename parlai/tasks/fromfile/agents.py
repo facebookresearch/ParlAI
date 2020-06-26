@@ -11,7 +11,6 @@ import copy
 import os
 
 from parlai.core.teachers import (
-    ConversationTeacher,
     FbDialogTeacher,
     ParlAIDialogTeacher,
 )
@@ -107,81 +106,6 @@ class Parlaiformat2Teacher(ParlAIDialogTeacher):
         if shared is None:
             self._setup_data(datafile)
         self.id = datafile
-        self.reset()
-
-
-class JsonTeacher(ConversationTeacher):
-    """
-    This module provides access to data in the Conversations format.
-
-    See core/teachers.py for more info about the format.
-    """
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
-        agent.add_argument(
-            '-ffdt',
-            '--fromfile-datatype-extension',
-            type='bool',
-            default=False,
-            help="If true, use _train.jsonl, _valid.jsonl, _test.jsonl file extensions",
-        )
-        agent.add_argument(
-            '--label-turns',
-            type=str,
-            help='which speaker to use as label',
-            choices=['firstspeaker', 'secondspeaker', 'both'],
-            default='secondspeaker',
-        )
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        opt = copy.deepcopy(opt)
-        if not opt.get('fromfile_datapath'):
-            raise RuntimeError('fromfile_datapath not specified')
-        datafile = opt['fromfile_datapath']
-        if self.opt['fromfile_datatype_extension']:
-            datafile += "_" + self.opt['datatype'].split(':')[0] + '.jsonl'
-        if shared is None:
-            self._setup_data(datafile)
-        # Truncate datafile to just the immediate enclosing folder name and file name
-        dirname, basename = os.path.split(datafile)
-        self.id = os.path.join(os.path.split(dirname)[1], basename)
-        self.reset()
-
-
-class Json2Teacher(ConversationTeacher):
-    """
-    Same as above
-    """
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('FromFile Task Arguments')
-        agent.add_argument('-dp2', '--fromfile-datapath2', type=str, help="Data file")
-        agent.add_argument(
-            '-ffdt2',
-            '--fromfile-datatype-extension2',
-            type='bool',
-            default=False,
-            help="If true, use _train.jsonl, _valid.jsonl, _test.jsonl file extensions",
-        )
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        opt = copy.deepcopy(opt)
-        if not opt.get('fromfile_datapath2'):
-            raise RuntimeError('fromfile_datapath not specified')
-        datafile = opt['fromfile_datapath2']
-        if self.opt['fromfile_datatype_extension2']:
-            datafile += "_" + self.opt['datatype'].split(':')[0] + '.jsonl'
-        if shared is None:
-            self._setup_data(datafile)
-        # Truncate datafile to just the immediate enclosing folder name and file name
-        dirname, basename = os.path.split(datafile)
-        self.id = os.path.join(os.path.split(dirname)[1], basename)
         self.reset()
 
 

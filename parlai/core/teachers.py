@@ -42,6 +42,7 @@ from parlai.core.loader import register_teacher  # noqa: F401
 from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
+from parlai.utils.conversations import Conversations
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
@@ -1491,52 +1492,50 @@ class ConversationTeacher(FixedDialogTeacher):
         """
         Get a specific example from the dataset.
         """
-        return self.episodes[episode_idx][entry_idx]
+        return Message(self.episodes[episode_idx][entry_idx])
 
     def _setup_data(self, path):
         print("[loading parlAI text data:" + path + "]")
         self.episodes = []
         self.num_exs = 0
         eps = []
-        with open(path, newline='\n') as read:
-            for line in read:
-                episode = json.loads(line.rstrip('\n'))
-                if episode:
-                    dialogue = episode.get('dialog', [])
-                    # insert extra silence turn
-                    dialogue.insert(0, {'text': '__SILENCE__'})
+        conversations = Conversations(path)
+        self.num_exs = sum(len(c) for c in conversations)
+        for conv in conversations:
+            context = conv.context
+            turns = conv.turns
+            turns.insert(0, {'text': '__SILENCE__'})
+            # train on odd turns as labels (turns w/ first speaker)
+            if self.label_turns in ['firstspeaker', 'both']:
+                eps = []
+                xturns = turns[::2]
+                yturns = turns[1::2]
+                for xturn, yturn in zip(xturns, yturns):
+                    turn = {}
+                    turn['text'] = xturn.get('text').strip()
+                    turn['labels'] = [yturn.get('text').strip()]
+                    turn['episode_done'] = False
+                    eps.append(turn)
+                    self.num_exs += 1
+                if eps:
+                    eps[-1]['episode_done'] = True
+                    self.episodes.append(eps)
 
-                    # train on odd turns as labels (turns w/ first speaker)
-                    if self.label_turns in ['firstspeaker', 'both']:
-                        eps = []
-                        xdialogue = dialogue[::2]
-                        ydialogue = dialogue[1::2]
-                        for xturn, yturn in zip(xdialogue, ydialogue):
-                            turn = {}
-                            turn['text'] = xturn.get('text').strip()
-                            turn['labels'] = [yturn.get('text').strip()]
-                            turn['episode_done'] = False
-                            eps.append(turn)
-                            self.num_exs += 1
-                        if eps:
-                            eps[-1]['episode_done'] = True
-                            self.episodes.append(eps)
-
-                    # train on even turns as labels (turns w/ second speaker)
-                    if self.label_turns in ['secondspeaker', 'both']:
-                        eps = []
-                        xdialogue = dialogue[1::2]
-                        ydialogue = dialogue[2::2]
-                        for xturn, yturn in zip(xdialogue, ydialogue):
-                            turn = {}
-                            turn['text'] = xturn.get('text').strip()
-                            turn['labels'] = [yturn.get('text').strip()]
-                            turn['episode_done'] = False
-                            eps.append(turn)
-                            self.num_exs += 1
-                        if eps:
-                            eps[-1]['episode_done'] = True
-                            self.episodes.append(eps)
+            # train on even turns as labels (turns w/ second speaker)
+            if self.label_turns in ['secondspeaker', 'both']:
+                eps = []
+                xturns = turns[1::2]
+                yturns = turns[2::2]
+                for xturn, yturn in zip(xturns, yturns):
+                    turn = {}
+                    turn['text'] = xturn.get('text').strip()
+                    turn['labels'] = [yturn.get('text').strip()]
+                    turn['episode_done'] = False
+                    eps.append(turn)
+                    self.num_exs += 1
+                if eps:
+                    eps[-1]['episode_done'] = True
+                    self.episodes.append(eps)
 
 
 class AbstractImageTeacher(FixedDialogTeacher):
