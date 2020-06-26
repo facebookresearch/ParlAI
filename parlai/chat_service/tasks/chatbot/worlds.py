@@ -31,7 +31,7 @@ class MessengerBotChatTaskWorld(World):
     """
 
     MAX_AGENTS = 1
-    MODEL_KEY = 'legacy_seq2seq'
+    MODEL_KEY = 'blender_90M'
 
     def __init__(self, opt, agent, bot):
         self.agent = agent
@@ -79,7 +79,6 @@ class MessengerBotChatTaskWorld(World):
                 print("===response====")
                 print(response)
                 print("~~~~~~~~~~~")
-                response['id'] = ''
                 self.agent.observe(response)
 
     def episode_done(self):

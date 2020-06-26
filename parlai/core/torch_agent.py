@@ -25,6 +25,7 @@ from collections import deque
 import random
 import os
 import torch
+import parlai.utils.logging as logging
 from torch import optim
 
 from parlai.core.opt import Opt
@@ -50,7 +51,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
 
 
 class Batch(AttrDict):
@@ -682,7 +683,7 @@ class TorchAgent(ABC, Agent):
         self.use_cuda = not opt['no_cuda'] and torch.cuda.is_available()
         if self.use_cuda:
             if not shared:
-                print('[ Using CUDA ]')
+                logging.info('Using CUDA')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
 
@@ -950,7 +951,7 @@ class TorchAgent(ABC, Agent):
         # will remain the behavior for the time being.
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
-            print('WARNING: not loading optim state since optim class changed.')
+            logging.warn('Not loading optim state since optim class changed.')
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
@@ -1197,9 +1198,9 @@ class TorchAgent(ABC, Agent):
                 cnt += 1
 
         if log:
-            print(
-                'Initialized embeddings for {} tokens ({}%) from {}.'
-                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+            logging.info(
+                f'Initialized embeddings for {cnt} tokens '
+                f'({cnt / len(self.dict):.1%}) from {name}.'
             )
 
     def share(self):
@@ -1756,16 +1757,11 @@ class TorchAgent(ABC, Agent):
             states['optimizer_type'] = self.opt['optimizer']
 
         # lr scheduler
-        if torch.__version__.startswith('0.'):
-            warn_once(
-                "Must upgrade to Pytorch 1.0 to save the state of your " "LR scheduler."
-            )
-        else:
-            states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler', None):
-                states['lr_scheduler'] = self.scheduler.get_state_dict()
-                states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
+        states['number_training_updates'] = self._number_training_updates
+        if getattr(self, 'scheduler', None):
+            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
 
@@ -1784,14 +1780,12 @@ class TorchAgent(ABC, Agent):
                 model_dict_path
             ):  # force save dictionary
                 # TODO: Look into possibly overriding opt('dict_file') with new path
+                logging.debug(f'Saving dictionary to {model_dict_path}')
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
-                with open(path, 'wb') as write:
-                    torch.save(states, write)
+                atomic_save(states, path)
                 # save opt file
-                if hasattr(self, 'model_version'):
-                    self.opt['model_version'] = self.model_version()
                 self.opt.save(path + '.opt')
 
     def load_state_dict(self, state_dict):
@@ -1965,7 +1959,7 @@ class TorchAgent(ABC, Agent):
         """
         if shared is None and mode:
             # Only print in the non-shared version.
-            print("[" + self.id + ': full interactive mode on.' + ']')
+            logging.info(f'{self.id}: full interactive mode on.')
 
     def backward(self, loss):
         """

@@ -259,17 +259,6 @@ class ControllableSeq2seqAgent(TorchAgent):
         ControllableSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
         return agent
 
-    @staticmethod
-    def model_version():
-        """
-        Return current version of this model, counting up from 0.
-
-        Models may not be backwards-compatible with older versions. Version 1 split from
-        version 0 on Aug 29, 2018. To use version 0, use --model legacy:seq2seq:0
-        (legacy agent code is located in parlai/agents/legacy_agents).
-        """
-        return 1
-
     def __init__(self, opt, shared=None):
         """
         Set up model.
@@ -1195,7 +1184,6 @@ class ControllableSeq2seqAgent(TorchAgent):
             # save opt file
             with open(path + '.opt', 'w') as handle:
                 # save version string
-                self.opt['model_version'] = self.model_version()
                 json.dump(self.opt, handle)
 
     def load(self, path):

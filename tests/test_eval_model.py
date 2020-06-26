@@ -3,8 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.scripts.eval_model import setup_args
-
 import os
 import unittest
 import parlai.utils.testing as testing_utils
@@ -38,8 +36,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test output of running eval_model.
         """
-        parser = setup_args()
-        parser.set_defaults(
+        opt = dict(
             task='integration_tests',
             model='repeat_label',
             datatype='valid',
@@ -47,7 +44,6 @@ class TestEvalModel(unittest.TestCase):
             display_examples=False,
         )
 
-        opt = parser.parse_args([], print_args=False)
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
@@ -59,8 +55,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test output of running eval_model.
         """
-        parser = setup_args()
-        parser.set_defaults(
+        opt = dict(
             task='integration_tests',
             model='repeat_label',
             datatype='valid',
@@ -69,7 +64,6 @@ class TestEvalModel(unittest.TestCase):
             metrics='all',
         )
 
-        opt = parser.parse_args([], print_args=False)
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
@@ -85,8 +79,7 @@ class TestEvalModel(unittest.TestCase):
         """
         Test output of running eval_model.
         """
-        parser = setup_args()
-        parser.set_defaults(
+        opt = dict(
             task='integration_tests',
             model='repeat_label',
             datatype='valid',
@@ -95,7 +88,6 @@ class TestEvalModel(unittest.TestCase):
             metrics='accuracy,rouge',
         )
 
-        opt = parser.parse_args([], print_args=False)
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
@@ -116,7 +108,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': False,
             }
         )
@@ -136,7 +127,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': False,
             }
         )
@@ -157,7 +147,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': True,
             }
         )
@@ -175,7 +164,6 @@ class TestEvalModel(unittest.TestCase):
                 'task': 'integration_tests:candidate,'
                 'integration_tests:multiturnCandidate',
                 'model': 'random_candidate',
-                'num_epochs': 0.5,
                 'aggregate_micro': True,
             }
         )
@@ -217,8 +205,7 @@ class TestEvalModel(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             save_report = os.path.join(tmpdir, 'report')
-            parser = setup_args()
-            parser.set_defaults(
+            opt = dict(
                 task='integration_tests',
                 model='repeat_label',
                 datatype='valid',
@@ -227,8 +214,6 @@ class TestEvalModel(unittest.TestCase):
                 save_world_logs=True,
                 report_filename=save_report,
             )
-
-            opt = parser.parse_args([], print_args=False)
             valid, test = testing_utils.eval_model(opt)
 
 

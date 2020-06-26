@@ -567,5 +567,5 @@ class IRFriendlyPolyencoderAgent(AddLabelFixedCandsTRA, PolyencoderAgent):
         """
         Add cmd line args.
         """
-        super(AddLabelFixedCandsTRA, cls).add_cmdline_args(argparser)
-        super(PolyencoderAgent, cls).add_cmdline_args(argparser)
+        AddLabelFixedCandsTRA.add_cmdline_args(argparser)
+        PolyencoderAgent.add_cmdline_args(argparser)

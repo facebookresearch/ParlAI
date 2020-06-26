@@ -22,10 +22,10 @@ class JsonTeacher(ConversationTeacher):
 
     @staticmethod
     def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('FromFile Task Arguments')
+        agent = argparser.add_argument_group('JsonFile Task Arguments')
         agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
         agent.add_argument(
-            '-ffdt',
+            '-jfdt',
             '--fromfile-datatype-extension',
             type='bool',
             default=False,

@@ -33,7 +33,7 @@ class TestHogwild(unittest.TestCase):
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
-                opt['num_threads'] = nt
+                opt['numthreads'] = nt
                 opt['batchsize'] = bs
 
                 valid, test = testing_utils.train_model(opt)
@@ -49,7 +49,7 @@ class TestHogwild(unittest.TestCase):
         )
         for nt in NUM_THREADS_CHOICES:
             for bs in BATCHSIZE_CHOICES:
-                opt['num_threads'] = nt
+                opt['numthreads'] = nt
                 opt['batchsize'] = bs
 
                 valid, test = testing_utils.eval_model(opt)

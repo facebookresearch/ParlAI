@@ -13,51 +13,102 @@ We use this to split up tests into different circleci runs.
 
 import os
 import pathlib
-import random
-from pytest import ExitCode
+import collections
+import pytest
+import subprocess
 
 
 # TODO: rename the folders nicer so they make more sense, maybe even have
 # a 1:1 correspondance with the circleci name
 
 
-def pytest_collection_modifyitems(config, items):
-    # handle circleci parallelism
-    if 'CIRCLE_NODE_TOTAL' in os.environ:
-        total = int(os.environ['CIRCLE_NODE_TOTAL'])
-        index = int(os.environ['CIRCLE_NODE_INDEX'])
-    else:
-        total = 1
-        index = 0
+# -----------------------------------------------------------------------
+# From https://github.com/ryanwilsonperkin/pytest-circleci-parallelized.
+# MIT licensed, Copyright Ryan Wilson-Perkin.
+# -----------------------------------------------------------------------
+def get_class_name(item):
+    class_name, module_name = None, None
+    for parent in reversed(item.listchain()):
+        if isinstance(parent, pytest.Class):
+            class_name = parent.name
+        elif isinstance(parent, pytest.Module):
+            module_name = parent.module.__name__
+            break
 
+    if class_name:
+        return "{}.{}".format(module_name, class_name)
+    else:
+        return module_name
+
+
+def filter_tests_with_circleci(test_list):
+    circleci_input = "\n".join(test_list).encode("utf-8")
+    p = subprocess.Popen(
+        [
+            "circleci",
+            "tests",
+            "split",
+            "--split-by=timings",
+            "--timings-type=classname",
+        ],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+    )
+    circleci_output, _ = p.communicate(circleci_input)
+    return [
+        line.strip() for line in circleci_output.decode("utf-8").strip().split("\n")
+    ]
+
+
+# -----------------------------------------------------------------------
+MARKER_RULES = [
+    ('parlai_internal', 'internal'),
+    ('nightly/gpu', 'nightly_gpu'),
+    ('nightly/cpu/', 'nightly_cpu'),
+    ('datatests/', 'data'),
+    ('tasks/', 'tasks'),
+    ('parlai/mturk/core/test/', 'mturk'),
+]
+
+
+def pytest_collection_modifyitems(config, items):
+    marker_expr = config.getoption('markexpr')
+
+    deselected = []
+
+    # first add all the markers, possibly filtering
     # python 3.4/3.5 compat: rootdir = pathlib.Path(str(config.rootdir))
     rootdir = pathlib.Path(config.rootdir)
-    parallels = [i % total == index for i in range(len(items))]
-    random.Random(42).shuffle(parallels)
-    deselected = []
-    for parallel, item in zip(parallels, items):
+    for item in items:
         rel_path = str(pathlib.Path(item.fspath).relative_to(rootdir))
-        if not parallel:
-            deselected.append(item)
-        elif "parlai_internal" in rel_path:
-            item.add_marker("internal")
-        elif "nightly/gpu/" in rel_path:
-            item.add_marker("nightly_gpu")
-        elif "nightly/cpu/" in rel_path:
-            item.add_marker("nightly_cpu")
-        elif "datatests/" in rel_path:
-            item.add_marker("data")
-        elif "tasks/" in rel_path:
-            item.add_marker("tasks")
-        elif "parlai/mturk/core/test/" in rel_path:
-            item.add_marker("mturk")
-        elif "/" not in rel_path[6:]:
-            item.add_marker("unit")
+        for file_pattern, marker in MARKER_RULES:
+            if file_pattern in rel_path:
+                item.add_marker(marker)
+                if marker_expr and marker != marker_expr:
+                    deselected.append(item)
+                break
         else:
-            raise ValueError(f"Couldn't categorize '{rel_path}'")
-    config.hook.pytest_deselected(items=deselected)
-    for d in deselected:
-        items.remove(d)
+            assert "/" not in rel_path[6:], f"Couldn't categorize '{rel_path}'"
+            item.add_marker("unit")
+            if marker_expr != 'unit' and marker_expr != '':
+                deselected.append(item)
+
+    # kill everything that wasn't grabbed
+    for item in deselected:
+        items.remove(item)
+
+    if 'CIRCLE_NODE_TOTAL' in os.environ:
+        # circleci, split up the parallelism by classes
+        class_mapping = collections.defaultdict(list)
+        for item in items:
+            class_name = get_class_name(item)
+            class_mapping[class_name].append(item)
+
+        filtered_tests = filter_tests_with_circleci(class_mapping.keys())
+        new_items = []
+        for name in filtered_tests:
+            new_items.extend(class_mapping[name])
+            items[:] = new_items
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -67,5 +118,5 @@ def pytest_sessionfinish(session, exitstatus):
     This can sometimes happen due to the way we distribute tests across multiple circle
     nodes.
     """
-    if exitstatus == ExitCode.NO_TESTS_COLLECTED:
-        session.exitstatus = ExitCode.OK
+    if exitstatus == pytest.ExitCode.NO_TESTS_COLLECTED:
+        session.exitstatus = pytest.ExitCode.OK

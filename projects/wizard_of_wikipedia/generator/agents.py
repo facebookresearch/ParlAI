@@ -174,7 +174,9 @@ class EndToEndAgent(_GenericWizardAgent):
 
         if 'checked_sentence' not in obs:
             # interactive time. we're totally on our own
-            obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+            obs_know = [
+                k.strip() for k in obs.get('knowledge', 'no_passages_used').split('\n')
+            ]
             obs_know = [k for k in obs_know if k]
             obs['knowledge_parsed'] = obs_know
             return obs['knowledge_parsed']
@@ -183,7 +185,9 @@ class EndToEndAgent(_GenericWizardAgent):
             obs['title'], TOKEN_KNOWLEDGE, obs['checked_sentence']
         )
         # grab all the nonempty knowledge
-        obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+        obs_know = [
+            k.strip() for k in obs.get('knowledge', 'no_passages_used').split('\n')
+        ]
         obs_know = [k for k in obs_know if k]
 
         # we want the correct knowledge to always be in index 0

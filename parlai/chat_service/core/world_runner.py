@@ -180,6 +180,7 @@ class ChatServiceWorldRunner:
                 if onboard_type:
                     onboard_id = 'onboard-{}-{}'.format(overworld_agent.id, time.time())
                     agent = self.manager._create_agent(onboard_id, overworld_agent.id)
+                    agent.data = overworld_agent.data
                     agent_state.set_active_agent(agent)
                     agent_state.assign_agent_to_task(agent, onboard_id)
                     _, onboard_data = self._run_world(task, onboard_type, [agent])

@@ -13,6 +13,8 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from typing import Dict, Any
+from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 import json
 
@@ -226,7 +228,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(response)
 
 
-def setup_interactive(shared):
+def setup_interweb_args(shared):
     """
     Build and parse CLI opts.
     """
@@ -238,8 +240,11 @@ def setup_interactive(shared):
         type=str,
         help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
     )
+    return parser
 
-    SHARED['opt'] = parser.parse_args(print_args=False)
+
+def interactive_web(opt, parser):
+    SHARED['opt'] = parser.opt
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
@@ -251,17 +256,25 @@ def setup_interactive(shared):
     # show args after loading model
     parser.opt = agent.opt
     parser.print_args()
-    return agent.opt
-
-
-if __name__ == '__main__':
-    opt = setup_interactive(SHARED)
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
-    print('http://{}:{}/'.format(opt['host'], opt['port']))
+    logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
+
+
+class InteractiveWeb(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_interweb_args(SHARED)
+
+    def run(self):
+        return interactive_web(self.opt, self.parser)
+
+
+if __name__ == '__main__':
+    InteractiveWeb.main()

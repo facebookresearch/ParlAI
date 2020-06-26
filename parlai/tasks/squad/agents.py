@@ -127,7 +127,7 @@ class DefaultTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    answers = (a['text'] for a in qa['answers'])
+                    answers = tuple(a['text'] for a in qa['answers'])
                     context = paragraph['context']
                     yield (context + '\n' + question, answers), True
 

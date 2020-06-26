@@ -30,6 +30,8 @@ import tqdm
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
+import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 
 
 # TODO: this may not be adequately updated after deleting pytorch data teacher
@@ -43,16 +45,15 @@ def setup_args(parser=None):
         '--dataset',
         type=str,
         default=None,
-        help='Pytorch Dataset; if specified, will save \
-                           the images in one hdf5 file according to how \
-                           they are returned by the specified dataset',
+        help='Pytorch Dataset; if specified, will save the images in one hdf5'
+        'file according to how they are returned by the specified dataset',
     )
     arg_group.add_argument(
         '-at',
         '--attention',
         action='store_true',
-        help='Whether to extract image features with attention \
-                           (Note - this is specifically for the mlb_vqa model)',
+        help='Whether to extract image features with attention'
+        '(Note - this is specifically for the mlb_vqa model)',
     )
     arg_group.add_argument(
         '--use-hdf5-extraction',
@@ -86,7 +87,7 @@ def get_dataset_class(opt):
 
 def extract_feats(opt):
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: extract_feats should be passed opt not Parser ]')
+        logging.error('extract_feats should be passed opt not parser')
         opt = opt.parse_args()
     # Get command line arguments
     opt = copy.deepcopy(opt)
@@ -98,7 +99,7 @@ def extract_feats(opt):
     opt['num_epochs'] = 1
     opt['use_hdf5'] = False
     opt['num_load_threads'] = 20
-    print("[ Loading Images ]")
+    logging.info("Loading Images")
     # create repeat label agent and assign it to the specified task
     if opt.get('pytorch_teacher_dataset') is None:
         agent = RepeatLabelAgent(opt)
@@ -146,13 +147,13 @@ def extract_feats(opt):
             exs_seen = 0
             total_exs = world.num_examples()
             pbar = tqdm.tqdm(unit='ex', total=total_exs)
-            print('[ Computing and Saving Image Features ]')
+            logging.info('Computing and Saving Image Features')
             while exs_seen < total_exs:
                 world.parley()
                 exs_seen += bsz
                 pbar.update(bsz)
             pbar.close()
-            print('[ Feature Computation Done ]')
+            logging.info('Feature Computation Done')
             with open(images_built_file, 'w') as write:
                 write.write(str(datetime.datetime.today()))
 
@@ -175,10 +176,12 @@ def extract_feats(opt):
         image_id_to_idx_path = '{}mode_{}_id_to_idx.txt'.format(dataset.image_path, im)
         hdf5_built_file = hdf5_path + '.built'
         if os.path.isfile(hdf5_path) and os.path.isfile(hdf5_built_file):
-            print('[ Images already extracted at: {} ]'.format(hdf5_path))
+            logging.info(f'Images already extracted at: {hdf5_path}')
             return
 
-        print("[ Beginning image extraction for {} images ]".format(dt.split(':')[0]))
+        logging.info(
+            "Beginning image extraction for {} images".format(dt.split(':')[0])
+        )
         hdf5_file = h5py.File(hdf5_path, 'w')
         idx = 0
         iterator = tqdm.tqdm(
@@ -217,8 +220,17 @@ def extract_feats(opt):
         with open(hdf5_built_file, 'w') as write:
             write.write(str(datetime.datetime.today()))
 
-    print("[ Finished extracting images ]")
+    logging.info("Finished extracting images")
+
+
+class ExtractImgFeatures(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return extract_feats(self.opt)
 
 
 if __name__ == '__main__':
-    extract_feats(setup_args().parse_args())
+    ExtractImgFeatures.main()

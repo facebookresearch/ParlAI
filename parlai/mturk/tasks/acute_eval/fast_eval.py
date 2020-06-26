@@ -22,6 +22,20 @@ from parlai.mturk.tasks.acute_eval.dump_task_to_acute_format import (
 )
 from parlai.mturk.tasks.acute_eval.configs import CONFIG
 
+try:
+    from parlai_internal.projects.fast_acute.model_configs import (
+        CONFIG as internal_conf,
+    )
+    from parlai_internal.projects.fast_acute.fast_eval import (
+        ACUTE_EVAL_TYPES as internal_types,
+    )
+
+    CONFIG.update(internal_conf)
+except ImportError:
+    # No access to internal
+    pass
+    internal_types = None
+
 from typing import Dict, Any, List, Tuple, Set
 from itertools import combinations
 
@@ -48,6 +62,10 @@ ACUTE_EVAL_TYPES = {
         's2_choice': 'I would prefer to talk to <Speaker 2>',
     },
 }
+if internal_types:
+    ACUTE_EVAL_TYPES.update(
+        {k: v for k, v in internal_types.items() if k not in ACUTE_EVAL_TYPES}
+    )
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(parlai_filepath), 'mturk/tasks/acute_eval/example'
 )
