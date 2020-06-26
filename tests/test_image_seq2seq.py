@@ -37,10 +37,7 @@ IMAGE_ARGS = {
     'image_mode': 'resnet152',
 }
 
-EARLY_FUSION_ARGS = {
-    'image_fusion_type': 'early',
-    'n_segments': 2,
-}
+EARLY_FUSION_ARGS = {'image_fusion_type': 'early', 'n_segments': 2}
 
 MULTITASK_ARGS = {
     'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),  # type: ignore
@@ -108,7 +105,7 @@ class TestImageSeq2Seq(unittest.TestCase):
 
         valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'], 5.0, 'failed to train image_seq2seq on image+text task',
+            valid['ppl'], 5.0, 'failed to train image_seq2seq on image+text task'
         )
 
     @testing_utils.retry(ntries=3)
@@ -142,7 +139,7 @@ class TestImageSeq2Seq(unittest.TestCase):
 
         valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
-            valid['ppl'], 5.0, 'failed to train image_seq2seq on image+text task',
+            valid['ppl'], 5.0, 'failed to train image_seq2seq on image+text task'
         )
 
 
