@@ -37,6 +37,11 @@ IMAGE_ARGS = {
     'image_mode': 'resnet152',
 }
 
+EARLY_FUSION_ARGS = {
+    'image_fusion_type': 'early',
+    'n_segments': 2,
+}
+
 MULTITASK_ARGS = {
     'task': ','.join([m['task'] for m in [IMAGE_ARGS, TEXT_ARGS]]),  # type: ignore
     'num_epochs': 10,
@@ -100,6 +105,40 @@ class TestImageSeq2Seq(unittest.TestCase):
         """
         args = BASE_ARGS.copy()
         args.update(MULTITASK_ARGS)
+
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'], 5.0, 'failed to train image_seq2seq on image+text task',
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessGPU
+    def test_image_task_early_fusion(self):
+        """
+        Test that model correctly handles image task.
+
+        Early Fusion
+        """
+        args = BASE_ARGS.copy()
+        args.update(IMAGE_ARGS)
+        args.update(EARLY_FUSION_ARGS)
+
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'], 8.6, 'failed to train image_seq2seq on image task'
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessGPU
+    def test_multitask_early_fusion(self):
+        """
+        Test that model can handle multiple inputs.
+
+        Early Fusion
+        """
+        args = BASE_ARGS.copy()
+        args.update(MULTITASK_ARGS)
+        args.update(EARLY_FUSION_ARGS)
 
         valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
