@@ -1233,7 +1233,7 @@ model_list = [
             "your persona: i read twenty books a year.\n"
             "your persona: i'm a stunt double as my second job.\n"
             "your persona: i only eat kosher.\n"
-            "your persona: i was raised in a single parent household.\n""
+            "your persona: i was raised in a single parent household.\n"
             "hello what are doing today ?\n"
             "    labels: i am good , i just got off work and tired , i have two jobs .\n"
             "     model: hi , i am reading a book , how about you ?\n"

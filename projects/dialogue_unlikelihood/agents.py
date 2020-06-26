@@ -594,6 +594,12 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
 class TransformerSequenceVocabUnlikelihoodAgent(
     SequenceVocabUnlikelihoodAgentTrait, TransformerGeneratorAgent
 ):
+    """
+    Example usage:
+
+        -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerSequenceVocabUnlikelihoodAgent
+    """
+
     pass
 
 
@@ -603,7 +609,7 @@ class TransformerUnlikelihoodAgent(
     """
     Example usage:
 
-        -t internal:generation_safety -m parlai_internal.projects.dontsaythat.agents:TransformerUnlikelihoodAgent
+        -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerUnlikelihoodAgent
     """
 
     pass
@@ -613,7 +619,7 @@ class RepetitionUnlikelihoodAgent(RepetitionUnlikelihoodAgentTrait, ImageSeq2seq
     """
     Example usage:
 
-        -t internal:generation_safety -m parlai_internal.projects.dontsaythat.agents:RepetitionUnlikelihoodAgent
+        -t convai2 -m parlai_internal.projects.dontsaythat.agents:RepetitionUnlikelihoodAgent
     """
 
     pass
