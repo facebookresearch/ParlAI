@@ -138,12 +138,14 @@ class TestParlAIDialogTeacher(unittest.TestCase):
 class TestConversationTeacher(unittest.TestCase):
     def test_good_fileformat(self):
         """
-        Checks that we succeed in loading a well formatted jsonl file
+        Checks that we succeed in loading a well formatted jsonl file.
         """
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.jsonl")
             with open(fp, "w") as f:
-                f.write('{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n')
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
             opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
             testing_utils.display_data(opt)
 
@@ -151,7 +153,9 @@ class TestConversationTeacher(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.txt")
             with open(fp, "w") as f:
-                f.write('{"dialog": [[{"id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n')
+                f.write(
+                    '{"dialog": [[{"id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
             opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(AttributeError):
                 testing_utils.display_data(opt)
@@ -160,7 +164,9 @@ class TestConversationTeacher(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.txt")
             with open(fp, "w") as f:
-                f.write('{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n')
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
             opt = {
                 'task': 'jsonfile',
                 'fromfile_datapath': fp,
@@ -168,8 +174,18 @@ class TestConversationTeacher(unittest.TestCase):
                 'label_turns': 'firstspeaker',
             }
             train_out, valid_out, test_out = testing_utils.display_data(opt)
-            texts = [l.split(':', 1)[-1].strip() for l in train_out.split('\n') if l in train_out if 'text' in l]
-            labels = [l.split(':', 1)[-1].strip() for l in train_out.split('\n') if l in train_out if 'labels' in l]
+            texts = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'text' in l
+            ]
+            labels = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'labels' in l
+            ]
             self.assertEqual(texts[0], '__SILENCE__')
             self.assertEqual(labels[0], 'Hi.')
 
@@ -177,7 +193,9 @@ class TestConversationTeacher(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.txt")
             with open(fp, "w") as f:
-                f.write('{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n')
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
             opt = {
                 'task': 'jsonfile',
                 'fromfile_datapath': fp,
@@ -185,16 +203,28 @@ class TestConversationTeacher(unittest.TestCase):
                 'label_turns': 'secondspeaker',
             }
             train_out, valid_out, test_out = testing_utils.display_data(opt)
-            texts = [l.split(':', 1)[-1].strip() for l in train_out.split('\n') if l in train_out if 'text' in l]
-            labels = [l.split(':', 1)[-1].strip() for l in train_out.split('\n') if l in train_out if 'labels' in l]
+            texts = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'text' in l
+            ]
+            labels = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'labels' in l
+            ]
             self.assertEqual(texts[0], 'Hi.')
             self.assertEqual(labels[0], 'Hello.')
-    
+
     def test_both_label(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.txt")
             with open(fp, "w") as f:
-                f.write('{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n')
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
             opt = {
                 'task': 'jsonfile',
                 'fromfile_datapath': fp,
@@ -202,8 +232,18 @@ class TestConversationTeacher(unittest.TestCase):
                 'label_turns': 'both',
             }
             train_out, valid_out, test_out = testing_utils.display_data(opt)
-            texts = [l.split(':', 1)[-1].strip() for l in train_out.split('\n') if l in train_out if 'text' in l]
-            labels = [l.split(':', 1)[-1].strip() for l in train_out.split('\n') if l in train_out if 'labels' in l]
+            texts = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'text' in l
+            ]
+            labels = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'labels' in l
+            ]
             num_episodes = train_out.count("END OF EPISODE")
             self.assertEqual(texts[0], '__SILENCE__')
             self.assertEqual(labels[0], 'Hi.')
