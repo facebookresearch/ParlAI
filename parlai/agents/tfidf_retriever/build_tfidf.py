@@ -24,10 +24,8 @@ from collections import Counter
 from . import utils
 from .doc_db import DocDB
 from . import tokenizers
-from parlai.utils.logging import logger
+import parlai.utils.logging as logging
 
-fmt = '%(asctime)s: [ %(message)s ]'
-logger.set_format(fmt)
 # ------------------------------------------------------------------------------
 # Multiprocessing functions
 # ------------------------------------------------------------------------------
@@ -66,7 +64,7 @@ def truncate(data, row, col):
     if len(data) > MAX_SZ:
         over = len(data) - MAX_SZ
         pct = over / len(data)
-        logger.info(
+        logging.info(
             'Data size is too large for scipy to index all of it. '
             'Throwing out {} entries ({}%% of data).'.format(over, pct)
         )
@@ -171,13 +169,13 @@ def get_count_matrix_t(args, db_opts):
     )
 
     # Compute the count matrix in steps (to keep in memory)
-    logger.info('Mapping...')
+    logging.info('Mapping...')
     row, col, data = [], [], []
     step = max(int(len(doc_ids) / 10), 1)
     batches = [doc_ids[i : i + step] for i in range(0, len(doc_ids), step)]
     _count = partial(count, args.ngram, args.hash_size)
     for i, batch in enumerate(batches):
-        logger.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
+        logging.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
         for b_row, b_col, b_data in workers.imap_unordered(_count, batch):
             row.extend(b_row)
             col.extend(b_col)
@@ -185,7 +183,7 @@ def get_count_matrix_t(args, db_opts):
     workers.close()
     workers.join()
 
-    logger.info('Creating sparse matrix...')
+    logging.info('Creating sparse matrix...')
     count_matrix = torch.sparse.FloatTensor(
         torch.LongTensor([row, col]),
         torch.FloatTensor(data),
@@ -211,13 +209,13 @@ def get_count_matrix(args, db_opts):
     )
 
     # Compute the count matrix in steps (to keep in memory)
-    logger.info('Mapping...')
+    logging.info('Mapping...')
     row, col, data = [], [], []
     step = max(int(len(doc_ids) / 10), 1)
     batches = [doc_ids[i : i + step] for i in range(0, len(doc_ids), step)]
     _count = partial(count, args.ngram, args.hash_size)
     for i, batch in enumerate(batches):
-        logger.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
+        logging.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
         for b_row, b_col, b_data in workers.imap_unordered(_count, batch):
             row.extend(b_row)
             col.extend(b_col)
@@ -225,12 +223,12 @@ def get_count_matrix(args, db_opts):
             if len(data) > MAX_SZ:
                 break
         if len(data) > MAX_SZ:
-            logger.info('Reached max indexable size, breaking.')
+            logging.info('Reached max indexable size, breaking.')
             break
     workers.close()
     workers.join()
 
-    logger.info('Creating sparse matrix...')
+    logging.info('Creating sparse matrix...')
     data, row, col = truncate(data, row, col)
 
     count_matrix = sp.csr_matrix(
@@ -309,18 +307,18 @@ def get_doc_freqs(cnts):
 
 def run(args):
     # ParlAI version of run method, modified slightly
-    logger.info('Counting words...')
+    logging.info('Counting words...')
     count_matrix = get_count_matrix(args, {'db_path': args.db_path})
 
-    logger.info('Making tfidf vectors...')
+    logging.info('Making tfidf vectors...')
     tfidf = get_tfidf_matrix(count_matrix)
 
-    logger.info('Getting word-doc frequencies...')
+    logging.info('Getting word-doc frequencies...')
     freqs = get_doc_freqs(count_matrix)
 
     filename = args.out_dir
 
-    logger.info('Saving to %s' % filename)
+    logging.info('Saving to %s' % filename)
     metadata = {
         'doc_freqs': freqs,
         'tokenizer': args.tokenizer,
@@ -369,13 +367,13 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    logger.info('Counting words...')
+    logging.info('Counting words...')
     count_matrix, doc_dict = get_count_matrix(args, {'db_path': args.db_path})
 
-    logger.info('Making tfidf vectors...')
+    logging.info('Making tfidf vectors...')
     tfidf = get_tfidf_matrix(count_matrix)
 
-    logger.info('Getting word-doc frequencies...')
+    logging.info('Getting word-doc frequencies...')
     freqs = get_doc_freqs(count_matrix)
 
     basename = os.path.splitext(os.path.basename(args.db_path))[0]
@@ -386,7 +384,7 @@ if __name__ == '__main__':
     )
     filename = os.path.join(args.out_dir, basename)
 
-    logger.info('Saving to %s.npz' % filename)
+    logging.info('Saving to %s.npz' % filename)
     metadata = {
         'doc_freqs': freqs,
         'tokenizer': args.tokenizer,

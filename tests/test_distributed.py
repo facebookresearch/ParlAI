@@ -149,6 +149,26 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(valid['exs'].value(), 98)
         self.assertEqual(test['exs'].value(), 98)
 
+    def test_chunked_dynamic_teacher(self):
+        config = copy.deepcopy(self._base_config)
+        config['datatype'] = 'train:stream'
+        config['dynamic_batching'] = 'full'
+        config['truncate'] = 16
+
+        valid, test = self._distributed_train_model(config)
+        assert valid['exs'].value() == 100
+        assert test['exs'].value() == 100
+
+    def test_chunked_teacher(self):
+        config = copy.deepcopy(self._base_config)
+        config['datatype'] = 'train:stream'
+        config['num_epochs'] = 5
+        config['dynamic_batching'] = None
+
+        valid, test = self._distributed_train_model(config)
+        assert valid['exs'].value() == 100
+        assert test['exs'].value() == 100
+
 
 if __name__ == '__main__':
     unittest.main()

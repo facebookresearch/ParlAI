@@ -33,7 +33,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -43,8 +43,10 @@ from parlai.core.message import Message
 from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.conversations import Conversations
-from parlai.utils.distributed import get_rank, num_workers, is_distributed
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.utils.distributed import get_rank, num_workers, is_distributed
+import parlai.utils.logging as logging
 
 from abc import ABC, abstractmethod
 
@@ -247,9 +249,9 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'random'):
             self.random = self.datatype == 'train'
         if not hasattr(self, 'training'):
-            self.training = (
-                self.datatype.startswith('train') and 'evalmode' not in self.datatype
-            )
+            self.training = DatatypeHelper.is_training(self.datatype)
+        if not hasattr(self, 'cycle'):
+            self.cycle = DatatypeHelper.should_cycle(self.datatype)
         if not hasattr(self, 'datafile'):
             self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
@@ -285,6 +287,7 @@ class FixedDialogTeacher(Teacher):
         super().reset()
         self.metrics.clear()
         self.lastY = None
+        self.last_act = None
         self.episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
@@ -380,7 +383,7 @@ class FixedDialogTeacher(Teacher):
         self.episode_done = ex.get('episode_done', False)
 
         if (
-            not self.random
+            not self.cycle
             and self.episode_done
             and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()
         ):
@@ -447,8 +450,31 @@ class FixedDialogTeacher(Teacher):
         """
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
+            self.custom_evaluation(self.last_act, self.lastY, observation)
             self.lastY = None
         return observation
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ) -> None:
+        """
+        A method designated for hooking custom evaluations into teachers.
+
+        Generally, a user will want to use `self.metrics.add` to record any
+        specialized metrics that only make sense for this one dataset.
+
+        :param teacher_action:
+            The message last sent from this teacher.
+        :param labels:
+            The previous correct labels, if there were any.
+        :param model_response:
+            The raw response from the model. Generally you want to rely on the
+            text field, but others may be necessary in specific situations.
+        """
+        pass
 
     def act(self):
         """
@@ -466,10 +492,9 @@ class FixedDialogTeacher(Teacher):
         action.force_set('id', self.getID())
 
         # remember correct answer if available
+        self.last_act = action
         self.lastY = action.get('labels', action.get('eval_labels', None))
-        if (
-            not self.datatype.startswith('train') or 'evalmode' in self.datatype
-        ) and 'labels' in action:
+        if not DatatypeHelper.is_training(self.datatype) and 'labels' in action:
             # move labels to eval field so not used for training
             # but this way the model can use the labels for perplexity or loss
             action = action.copy()
@@ -509,9 +534,8 @@ class DialogTeacher(FixedDialogTeacher):
 
         self.startTime = time.time()
         self.datatype = opt['datatype']
-        self.training = (
-            self.datatype.startswith('train') and 'evalmode' not in self.datatype
-        )
+        self.training = DatatypeHelper.is_training(self.datatype)
+        self.cycle = DatatypeHelper.should_cycle(self.datatype)
         self.stream = 'stream' in self.datatype
 
         # first initialize any shared objects
@@ -520,7 +544,7 @@ class DialogTeacher(FixedDialogTeacher):
             # never cycle if "ordered" is in the datatype. this is used by
             # build_dict to enumerate through the data exactly once while still
             # marking examples as training examples.
-            {'cycle': self.training and 'ordered' not in self.datatype}
+            {'cycle': self.cycle}
             if self.stream
             else {}
         )
@@ -885,9 +909,8 @@ class StreamDialogData(DialogData):
             self.reset_data = None
             self.is_reset = True
             if opt.get('numthreads', 1) > 1:
-                print(
-                    'WARNING: multithreaded streaming will process every '
-                    'example numthreads times.'
+                logging.warn(
+                    'multithreaded streaming will process every example numthreads times.'
                 )
                 self.lock = Lock()
         self.entry_idx = 0
@@ -1176,7 +1199,7 @@ class FbDialogTeacher(DialogTeacher):
             c: ['hallway', 'kitchen', 'bathroom']
             new_episode = False (this is the second example in the episode)
         """
-        print("[loading fbdialog data:" + path + "]")
+        logging.info(f"loading fbdialog data: {path}")
         with open(path) as read:
             start = True
             x = ''
@@ -1360,7 +1383,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         return self.episodes[episode_idx][entry_idx]
 
     def _setup_data(self, path):
-        print("[loading parlAI text data:" + path + "]")
+        logging.info(f"Loading ParlAI text data: {path}")
         self.episodes = []
         self.num_exs = 0
         eps = []
@@ -1397,10 +1420,10 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
             eps[-1].force_set('episode_done', True)
             self.episodes.append(eps)
         if len(self.episodes) == 1 and line_no > 100:
-            warn_once(
-                'The data in {path} looks like one very long episode. If this '
-                'is intentional, you may ignore this, but you MAY have a bug in '
-                'your data.'
+            logging.error(
+                f'The data in {path} looks like one very long episode. If this '
+                f'is intentional, you may ignore this, but you MAY have a bug in '
+                f'your data.'
             )
 
 
@@ -1799,14 +1822,14 @@ class AbstractImageTeacher(FixedDialogTeacher):
         )
 
         if os.path.isfile(image_mode_features_dict_path):
-            print(
+            logging.info(
                 f'Loading existing image features dict for model: {self.image_mode} at: {image_mode_features_dict_path}'
             )
             self.image_features_dict = torch.load(
                 image_mode_features_dict_path, map_location='cpu'
             )
         else:
-            print('No existing image features, attempting to build.')
+            logging.warn('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
@@ -1859,7 +1882,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             num += 1
             pbar.update(1)
             if num % 1000 == 0:
-                print(f'Processing image index: {num}')
+                logging.debug(f'Processing image index: {num}')
         torch.save(image_features_dict, store_dict_path)
         return image_features_dict
 
@@ -1957,6 +1980,8 @@ class MultiTaskTeacher(Teacher):
         self.cum_task_weights = [1] * len(self.tasks)
         self.task_choices = range(len(self.tasks))
         weights = self.opt.get('multitask_weights', [1])
+        if weights == 'stochastic':
+            weights = [t.num_episodes() for t in self.tasks]
         sum = 0
         for i in self.task_choices:
             if len(weights) > i:
@@ -2105,14 +2130,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.set_datasettings(opt['datatype'])
 
+        self.dws = int(self.opt.get('distributed_world_size', 1))
+        self.rank = int(self.opt.get('rank', 0))
         if (
             shared is None
             and self.is_train
             and self.opt.get('distributed_world_size') is not None
         ):
-            dws = int(self.opt['distributed_world_size'])
-            rank = int(self.opt['rank'])
-            self.fold_chunks = [c for c in self.fold_chunks if c % dws == rank]
+            self.fold_chunks = [
+                c for c in self.fold_chunks if c % self.dws == self.rank
+            ]
 
         if shared is not None:
             self.is_root_teacher = False
@@ -2175,7 +2202,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.num_exs, self.num_eps = self.get_num_samples(datatype)
         self.fold_chunks = self.get_fold_chunks(datatype)
 
-        self.is_train = 'train' in datatype and 'evalmode' not in datatype
+        self.is_train = DatatypeHelper.is_training(datatype)
 
     def share(self):
         shared = super().share()
@@ -2191,10 +2218,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     def num_episodes(self):
-        return self.num_eps
+        if self.is_train:
+            return self.num_eps
+        else:
+            return self.num_eps // self.dws + int((self.num_eps % self.dws) > self.rank)
 
     def num_examples(self):
-        return self.num_exs
+        if self.is_train:
+            return self.num_exs
+        else:
+            return self.num_exs // self.dws + int((self.num_exs % self.dws) > self.rank)
 
     def _enqueue_request(self):
         """
@@ -2211,11 +2244,15 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         data = future.result()
         if data is None:
             return
+        i = 0
         while data:
             # self.samples is a queue with maxsize
             # self.buffersize, so will block if the
             # buffer gets full
-            self.samples.put(data.pop(0))
+            sample = data.pop(0)
+            if self.is_train or i % self.dws == self.rank:
+                self.samples.put(sample)
+            i += 1
         # and start loading the next chunk
         self._enqueue_request()
 
@@ -2263,8 +2300,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         if self.is_train:
             # randomize the samples
             random.Random().shuffle(output)
-        else:
-            random.Random(42).shuffle(output)
         return output
 
     def get(self, episode_idx, entry_idx=0):

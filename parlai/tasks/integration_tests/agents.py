@@ -16,6 +16,7 @@ from parlai.core.teachers import (
     DialogTeacher,
     AbstractImageTeacher,
     Teacher,
+    ChunkTeacher,
 )
 from parlai.core.opt import Opt
 from torch.utils.data import Dataset
@@ -27,6 +28,7 @@ from PIL import Image
 import string
 import json
 from abc import ABC
+from typing import Tuple, List
 
 # default parameters
 VOCAB_SIZE = 7
@@ -34,6 +36,7 @@ EXAMPLE_SIZE = 4
 NUM_CANDIDATES = 10
 NUM_TRAIN = 500
 NUM_TEST = 100
+INFINITE = 1e20
 
 
 class CandidateBaseTeacher(Teacher, ABC):
@@ -542,6 +545,62 @@ class RepeatTeacher(DialogTeacher):
 
     def num_episodes(self):
         return self.data_length
+
+
+class ChunkyTeacher(ChunkTeacher):
+    def _get_data_folder(self):
+        return None
+
+    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+        if 'train' in datatype:
+            return NUM_TRAIN, NUM_TRAIN
+        elif 'valid' in datatype:
+            return NUM_TEST, NUM_TEST
+        elif 'test' in datatype:
+            return NUM_TEST, NUM_TEST
+
+    def get_fold_chunks(self, datatype: str) -> List[int]:
+        if 'train' in datatype:
+            return list(range(50))
+        elif 'valid' in datatype:
+            return list(range(50, 60))
+        elif 'test' in datatype:
+            return list(range(60, 70))
+
+    def load_from_chunk(self, chunk_idx: int):
+        output = []
+        for i in range(10):
+            text = " ".join([str(i)] + [str(chunk_idx)] * 5)
+            resp = " ".join([str(i)])
+            output.append((text, resp))
+        return output
+
+    def create_message(self, sample_item):
+        text, label = sample_item
+        return {'text': text, 'labels': [label], 'episode_done': True}
+
+
+class InfiniteTrainTeacher(ChunkyTeacher):
+    """
+    Chunk teacher with an effectively infinite number of training examples.
+    """
+
+    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+        if 'train' in datatype:
+            return INFINITE, INFINITE
+        elif 'valid' in datatype:
+            return NUM_TEST, NUM_TEST
+        elif 'test' in datatype:
+            return NUM_TEST, NUM_TEST
+
+
+class ShortFixedTeacher(FixedDialogCandidateTeacher):
+    """
+    Fixed Dialog Candidate teacher with only 10 training examples.
+    """
+
+    def __init__(self, opt: Opt, shared: dict = None):
+        super().__init__(opt, shared, num_train=10, num_test=10)
 
 
 class DefaultTeacher(CandidateTeacher):

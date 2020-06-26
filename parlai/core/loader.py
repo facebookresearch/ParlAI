@@ -96,15 +96,10 @@ def load_agent_module(agent_path: str):
       ``parlai.agents.seq2seq.agents:Seq2seqAgent``
     * half-shorthand: ``-m seq2seq/variant``, which will check the path
       `parlai.agents.seq2seq.variant:VariantAgent`
-    * legacy models: ``-m legacy:seq2seq:0``, which will look for the deprecated
-      model at ``parlai.agents.legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent``
 
     The base path to search when using shorthand formats can be changed from
     "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.
     "internal:seq2seq".
-
-    To use legacy agent versions, you can prepend "legacy:" to model arguments,
-    e.g. "legacy:seq2seq:0" will translate to ``legacy_agents/seq2seq/seq2seq_v0``.
 
     To use agents in projects, you can prepend "projects:" and the name of the
     project folder to model arguments, e.g. "projects:personachat:kvmemnn"
@@ -127,23 +122,11 @@ def load_agent_module(agent_path: str):
         # this will follow the same paths but look in parlai_internal instead
         repo = 'parlai_internal'
         agent_path = agent_path[9:]
+    elif agent_path.startswith('fb:'):
+        repo = 'parlai_fb'
+        agent_path = agent_path[3:]
 
-    if agent_path.startswith('legacy:'):
-        # e.g. -m legacy:seq2seq:0
-        # will check legacy_agents.seq2seq.seq2seq_v0:Seq2seqAgent
-        path_list = agent_path.split(':')
-        if len(path_list) != 3:
-            raise RuntimeError(
-                'legacy paths should follow pattern '
-                'legacy:model:version; you used {}'
-                ''.format(agent_path)
-            )
-        model_name = path_list[1]  # seq2seq
-        module_name = 'parlai.agents.legacy_agents.{m}.{m}_v{v}'.format(
-            m=model_name, v=path_list[2]
-        )
-        class_name = _name_to_agent_class(model_name)
-    elif agent_path.startswith('projects:'):
+    if agent_path.startswith('projects:'):
         # e.g. -m projects:personachat:kvmemnn
         path_list = agent_path.split(':')
         if len(path_list) != 3:
@@ -201,6 +184,9 @@ def _get_task_path_and_repo(taskname: str):
         # (make a directory called 'parlai_internal' with your private agents)
         repo = 'parlai_internal'
         task = task[9:]
+    elif task.startswith('fb:'):
+        repo = 'parlai_fb'
+        task = task[3:]
 
     task_path_list = task.split(':')
 

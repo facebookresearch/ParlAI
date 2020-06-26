@@ -65,18 +65,6 @@ class MemnnAgent(TorchRankerAgent):
         MemnnAgent.dictionary_class().add_cmdline_args(argparser)
         return arg_group
 
-    @staticmethod
-    def model_version():
-        """
-        Return current version of this model, counting up from 0.
-
-        Models may not be backwards-compatible with older versions. Version 1 split from
-        version 0 on Sep 7, 2018. To use version 0, use --model legacy:memnn:0 (legacy
-        agent code is located in parlai/agents/legacy_agents).
-        """
-        # TODO: Update date that Version 2 split and move version 1 to legacy
-        return 2
-
     def __init__(self, opt, shared=None):
         self.id = 'MemNN'
         self.memsize = opt['memsize']

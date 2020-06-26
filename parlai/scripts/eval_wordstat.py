@@ -34,6 +34,7 @@ from parlai.utils.misc import TimeLogger
 from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from collections import Counter
+from parlai.scripts.script import ParlaiScript
 
 import copy
 import numpy
@@ -278,6 +279,14 @@ def eval_wordstat(opt, print_parser=None):
     return report
 
 
+class EvalWordStat(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return eval_wordstat(self.opt, print_parser=self.parser)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    eval_wordstat(parser.parse_args(print_args=False), print_parser=parser)
+    EvalWordStat.main()

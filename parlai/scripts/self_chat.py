@@ -11,6 +11,8 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
+from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 import math
 import random
@@ -105,7 +107,7 @@ def self_chat(opt):
         _run_self_chat_episode(opt, world, logger)
         report = world.report()
         text, report = log_time.log(i + 1, opt['num_self_chats'], report)
-        print(text)
+        logging.info(text)
 
     # Save chats
     if opt['outfile'] is None:
@@ -125,6 +127,14 @@ def self_chat(opt):
     return logger.get_logs()
 
 
+class SelfChat(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return self_chat(self.opt)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    self_chat(parser.parse_args(print_args=False))
+    SelfChat.main()

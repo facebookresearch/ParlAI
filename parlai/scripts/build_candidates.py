@@ -18,8 +18,33 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
+import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 import random
 import tempfile
+
+
+def setup_args(parser=None) -> ParlaiParser:
+    # Get command line arguments
+    if not parser:
+        parser = ParlaiParser()
+    parser.add_argument(
+        '-n',
+        '--num-examples',
+        default=-1,
+        type=int,
+        help='Total number of exs to convert, -1 to convert all examples',
+    )
+    parser.add_argument(
+        '-of',
+        '--outfile',
+        default=None,
+        type=str,
+        help='Output file where to save, by default will be created in /tmp',
+    )
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.set_defaults(datatype='train:evalmode')
+    return parser
 
 
 def build_cands(opt):
@@ -42,8 +67,8 @@ def build_cands(opt):
         num_examples = opt['num_examples']
     log_timer = TimeLogger()
 
-    print('[ starting to build candidates from task.. (ex:' + str(num_examples) + ')]')
-    print('[ saving output to {} ]'.format(outfile))
+    logging.info(f'Starting to build candidates from task.. (ex: {num_examples})')
+    logging.info(f'Saving output to {outfile}')
     cands = set()
     for _ in range(num_examples):
         world.parley()
@@ -59,38 +84,24 @@ def build_cands(opt):
                 cands.add(candidate)
         if log_timer.time() > opt['log_every_n_secs']:
             text, _log = log_timer.log(world.total_parleys, world.num_examples())
-            print(text)
+            logging.info(text)
         if world.epoch_done():
-            print('EPOCH DONE')
+            logging.info('epoch done')
             break
     fw = open(outfile, 'w')
     fw.write('\n'.join(cands))
     fw.close()
 
 
-def main():
-    random.seed(42)
-    # Get command line arguments
-    parser = ParlaiParser()
-    parser.add_argument(
-        '-n',
-        '--num-examples',
-        default=-1,
-        type=int,
-        help='Total number of exs to convert, -1 to convert all examples',
-    )
-    parser.add_argument(
-        '-of',
-        '--outfile',
-        default=None,
-        type=str,
-        help='Output file where to save, by default will be created in /tmp',
-    )
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    parser.set_defaults(datatype='train:evalmode')
-    opt = parser.parse_args()
-    build_cands(opt)
+class BuildCandidates(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return build_cands(self.opt)
 
 
 if __name__ == '__main__':
-    main()
+    random.seed(42)
+    BuildCandidates.main()

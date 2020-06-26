@@ -19,6 +19,7 @@ import numpy as np
 import os
 import json
 import re
+import parlai.utils.logging as logging
 
 RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
@@ -323,6 +324,12 @@ class DictionaryAgent(Agent):
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
+    def is_prebuilt(self):
+        """
+        Indicates whether the dictionary is fixed, and does not require building.
+        """
+        return self.tokenizer == 'gpt2'
+
     def add_token(self, word):
         """
         Add a single token to the dictionary.
@@ -558,7 +565,7 @@ class DictionaryAgent(Agent):
 
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
-        print('Dictionary: loading dictionary from {}'.format(filename))
+        logging.info(f'loading dictionary from {filename}')
 
         lower_special = self.null_token == self.null_token.lower()
         SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
@@ -571,7 +578,7 @@ class DictionaryAgent(Agent):
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 self.add_token(token)
-        print('[ num words =  %d ]' % len(self))
+        logging.info(f'num words = {len(self)}')
 
     def save(self, filename=None, append=False, sort=True):
         """
@@ -601,7 +608,7 @@ class DictionaryAgent(Agent):
         elif sort:
             self.sort(trim=True)
 
-        print('Dictionary: saving dictionary to {}'.format(filename))
+        logging.info(f'Saving dictionary to {filename}')
 
         make_dir(os.path.dirname(filename))
         mode = 'a' if append else 'w'

@@ -16,6 +16,7 @@ from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict
 from parlai.utils.typing import TScalar
+import parlai.utils.logging as logging
 
 
 import torch
@@ -343,7 +344,7 @@ class TorchClassifierAgent(TorchAgent):
                     'build_model() and build_criterion() need to return the model or criterion'
                 )
             if init_model:
-                print('Loading existing model parameters from ' + init_model)
+                logging.info(f'Loading existing model parameters from {init_model}')
                 self.load(init_model)
             if self.use_cuda:
                 if self.model_parallel:

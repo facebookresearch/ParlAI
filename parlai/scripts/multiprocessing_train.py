@@ -24,6 +24,8 @@ import signal
 import torch.distributed as dist
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
+import parlai.utils.logging as logging
+from parlai.scripts.script import ParlaiScript
 
 
 def multiprocess_train(
@@ -60,7 +62,7 @@ def multiprocess_train(
 
     # Suppress output of workers except the main host.
     if opt.get('verbose') or rank != 0:
-        print_prefix = '[rank:{:3d}]'.format(rank)
+        print_prefix = 'rank:{:3d} |'.format(rank)
     else:
         print_prefix = None
     suppress_output = not opt.get('verbose') and rank != 0
@@ -75,7 +77,7 @@ def multiprocess_train(
             world_size=opt['distributed_world_size'],
             rank=rank,
         )
-        print("Distributed group initialized")
+        logging.info("Distributed group initialized")
 
         # manual_seed can be a noop without this
         torch.cuda.init()
@@ -121,11 +123,15 @@ def setup_args():
     return parser
 
 
-def main():
-    opt = setup_args().parse_args()
-    port = random.randint(32000, 48000)
-    return launch_and_train(opt, port)
+class MultiProcessTrain(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        port = random.randint(32000, 48000)
+        return launch_and_train(self.opt, port)
 
 
 if __name__ == '__main__':
-    main()
+    MultiProcessTrain.main()

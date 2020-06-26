@@ -40,7 +40,7 @@ def print_git_commit():
     try:
         git_ = git.Git(root)
         current_commit = git_.rev_parse('HEAD')
-        print(f'[ Current ParlAI commit: {current_commit} ]')
+        logging.info(f'Current ParlAI commit: {current_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -49,7 +49,7 @@ def print_git_commit():
     try:
         git_ = git.Git(internal_root)
         internal_commit = git_.rev_parse('HEAD')
-        print(f'[ Current internal commit: {internal_commit} ]')
+        logging.info(f'Current internal commit: {internal_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -160,6 +160,13 @@ def str2floats(s):
     Look for single float or comma-separated floats.
     """
     return tuple(float(f) for f in s.split(','))
+
+
+def str2multitask_weights(s):
+    if s == 'stochastic':
+        return s
+    else:
+        return str2floats(s)
 
 
 def str2class(value):
@@ -275,6 +282,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
+        self.register('type', 'multitask_weights', str2multitask_weights)
         self.register('type', 'class', str2class)
         self.parlai_home = os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -609,6 +617,13 @@ class ParlaiParser(argparse.ArgumentParser):
             'defaults to {parlai_dir}/downloads',
         )
         parlai.add_argument(
+            '--loglevel',
+            default='info',
+            hidden=True,
+            choices=logging.get_all_levels(),
+            help='Logging level',
+        )
+        parlai.add_argument(
             '-dt',
             '--datatype',
             default='train',
@@ -661,10 +676,13 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-mtw',
             '--multitask-weights',
-            type='floats',
+            type='multitask_weights',
             default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
+            help=(
+                'list of floats, one for each task, specifying '
+                'the probability of drawing the task in multitask case. You may also '
+                'provide "stochastic" to simulate simple concatenation.'
+            ),
             hidden=True,
         )
         parlai.add_argument(
@@ -808,7 +826,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
-        if parsed.get('init_opt', None) is not None:
+        if parsed.get('init_opt') is not None:
             self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
@@ -999,13 +1017,18 @@ class ParlaiParser(argparse.ArgumentParser):
                 print_git_commit()
             print_announcements(self.opt)
 
-        if os.environ.get('PARLAI_VERBOSE'):
-            self.opt['verbose'] = True
-
-        if self.opt.get('verbose'):
-            logging.set_verbose_mode()
+        logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         return self.opt
+
+    def _value2argstr(self, value) -> str:
+        """
+        Reverse-parse an opt value into one interpretable by argparse.
+        """
+        if isinstance(value, (list, tuple)):
+            return ",".join(str(v) for v in value)
+        else:
+            return str(value)
 
     def _kwargs_to_str_args(self, **kwargs):
         """
@@ -1039,14 +1062,15 @@ class ParlaiParser(argparse.ArgumentParser):
                 continue
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend([str(v) for v in value])
+                string_args.extend([self._value2argstr(value) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
@@ -1074,13 +1098,15 @@ class ParlaiParser(argparse.ArgumentParser):
             # because user has provided an unspecified option
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
+                # Special case: Labels
                 string_args.extend([str(v) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")

@@ -36,7 +36,7 @@ class TestMemnn(unittest.TestCase):
                 gradient_clip=1.0,
                 hops=1,
                 position_encoding=True,
-                use_time_features=False,
+                time_features=False,
                 memsize=0,
                 rank_candidates=True,
             )
@@ -64,7 +64,7 @@ class TestMemnn(unittest.TestCase):
                 gradient_clip=1.0,
                 hops=2,
                 position_encoding=False,
-                use_time_features=True,
+                time_features=True,
                 memsize=5,
                 rank_candidates=True,
             )
@@ -83,7 +83,7 @@ class TestMemnn(unittest.TestCase):
                 model='memnn',
                 model_file='zoo:unittest/memnn/model',
                 dict_file='zoo:unittest/memnn/model.dict',
-                batch_size=16,
+                batchsize=16,
             )
         )
 

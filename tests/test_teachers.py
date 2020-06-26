@@ -12,10 +12,12 @@ A module for testing various teacher types in ParlAI
 import os
 import unittest
 from parlai.utils import testing as testing_utils
-import regex as re
 from parlai.core.teachers import DialogTeacher
+from parlai.core.metrics import SumMetric
+import regex as re
 from parlai.core.message import Message
 from parlai.core.opt import Opt
+import parlai.utils.logging as logging
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -110,8 +112,10 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                 for _ in range(1000):
                     f.write('id:test_file\ttext:placeholder\tlabels:placeholder\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
-            with self.assertWarnsRegex(UserWarning, "long episode"):
+            with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
                 testing_utils.display_data(opt)
+                print("\n".join(cm.output))
+                assert any('long episode' in l for l in cm.output)
 
             # invert the logic of the assertion
             with self.assertRaises(self.failureException):
@@ -126,8 +130,102 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     'fromfile_datapath': fp,
                     'display_verbose': True,
                 }
-                with self.assertWarnsRegex(UserWarning, "long episode"):
+                with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
                     testing_utils.display_data(opt)
+                    assert any('long episode' in l for l in cm.output)
+
+
+class TestChunkTeacher(unittest.TestCase):
+    """
+    Test chunked teacher.
+    """
+
+    def test_no_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(task='integration_tests:chunky', model='repeat_label',),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_dynamic_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                datatype='valid:stream',
+                batchsize=32,
+                truncate=16,
+                dynamic_batching='full',
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_stream_only(self):
+        with self.assertRaises(ValueError):
+            valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:chunky',
+                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                    batchsize=32,
+                ),
+                valid_datatype='valid',
+            )
+
+        with self.assertRaises(ValueError):
+            valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:chunky',
+                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                    batchsize=32,
+                ),
+                valid_datatype='valid:stream',
+                test_datatype='test',
+            )
+
+
+class CustomEvaluationTeacher(DialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt['datafile'] = 'mock'
+        super().__init__(opt, shared)
+
+    def custom_evaluation(self, teacher_action, label, model_response):
+        self.metrics.add('contains1', SumMetric(int('1' in model_response['text'])))
+
+    def setup_data(self, fold):
+        yield ('1 2', '1 2'), True
+        yield ('3 4', '3 4'), True
+
+
+class TestCustomEvaluation(unittest.TestCase):
+    def test_custom_eval(self):
+        opt = {'task': 'custom', 'datatype': 'valid'}
+        teacher = CustomEvaluationTeacher(opt)
+        teacher.act()
+        teacher.observe({'text': 'a b'})
+        teacher.act()
+        teacher.observe({'text': '1 2'})
+        report = teacher.report()
+        assert 'contains1' in report
+        assert report['contains1'] == 1
+        assert report['exs'] == 2
 
 
 class _MockTeacher(DialogTeacher):

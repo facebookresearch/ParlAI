@@ -31,10 +31,12 @@ class _AbstractTRATest(unittest.TestCase):
         return dict(
             task='integration_tests:candidate',
             optimizer='adamax',
+            candidates='batch',
             learningrate=7e-3,
             batchsize=16,
-            embedding_size=32,
+            embedding_size=16,
             num_epochs=4,
+            gradient_clip=0.0,
         )
 
     def _get_threshold(self):
@@ -149,13 +151,7 @@ class _AbstractTRATest(unittest.TestCase):
 class TestTransformerRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
-        new_args = dict(
-            model='transformer/ranker',
-            n_layers=1,
-            n_heads=4,
-            ffn_size=64,
-            gradient_clip=0.5,
-        )
+        new_args = dict(model='transformer/ranker', n_layers=1, n_heads=4, ffn_size=32,)
         for k, v in new_args.items():
             args[k] = v
         return args
@@ -176,11 +172,7 @@ class TestPolyRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
         new_args = dict(
-            model='transformer/polyencoder',
-            n_layers=1,
-            n_heads=4,
-            ffn_size=64,
-            gradient_clip=0.5,
+            model='transformer/polyencoder', n_layers=1, n_heads=4, ffn_size=32,
         )
         for k, v in new_args.items():
             args[k] = v
@@ -216,6 +208,7 @@ class TestPolyRanker(_AbstractTRATest):
             args['model_file'] = os.path.join(tmpdir, 'model')
             args['dict_file'] = os.path.join(tmpdir, 'model.dict')
             args['num_epochs'] = 4
+            args['add_label_to_fixed_cands'] = False
             # Train model where it has access to the candidate in labels
             valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(valid['hits@100'], 0.0)
@@ -223,12 +216,14 @@ class TestPolyRanker(_AbstractTRATest):
             # Evaluate model where label is not in fixed candidates
             args['fixed_candidates_path'] = tmp_train_val_cands_file
 
+            del args['num_epochs']  # need this arg dropped, it was for train only
+
             # Will fail without appropriate arg set
             with self.assertRaises(RuntimeError):
                 testing_utils.eval_model(args, skip_valid=True)
 
             args['add_label_to_fixed_cands'] = True
-            valid, test = testing_utils.eval_model(args, skip_valid=True)
+            _, test = testing_utils.eval_model(args, skip_valid=True)
             self.assertGreaterEqual(test['hits@100'], 0.0)
 
 

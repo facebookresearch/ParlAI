@@ -19,6 +19,8 @@ from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
+from parlai.scripts.script import ParlaiScript
+import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
@@ -56,7 +58,7 @@ def warn(txt, act, opt):
 
 def verify(opt, printargs=None, print_parser=None):
     if opt['datatype'] == 'train':
-        print("[ note: changing datatype from train to train:ordered ]")
+        logging.warn("changing datatype from train to train:ordered")
         opt['datatype'] = 'train:ordered'
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
@@ -123,10 +125,9 @@ def verify(opt, printargs=None, print_parser=None):
 
     try:
         # print dataset size if available
-        print(
-            '[ loaded {} episodes with a total of {} examples ]'.format(
-                world.num_episodes(), world.num_examples()
-            )
+        logging.info(
+            f'Loaded {world.num_episodes()} episodes with a '
+            f'total of {world.num_examples()} examples'
         )
     except Exception:
         pass
@@ -134,9 +135,21 @@ def verify(opt, printargs=None, print_parser=None):
     return report(world, counts, log_time)
 
 
-if __name__ == '__main__':
-    parser = setup_args()
+def verify_data(opt, parser):
     report_text, report_log = verify(
         parser.parse_args(print_args=False), print_parser=parser
     )
     print(report_text)
+
+
+class VerifyData(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return verify_data(self.opt, self.parser)
+
+
+if __name__ == '__main__':
+    VerifyData.main()

@@ -15,6 +15,7 @@ distributed mode.
 import builtins
 import pickle
 import contextlib
+import parlai.utils.logging as logging
 
 try:
     import torch.nn
@@ -117,11 +118,19 @@ def override_print(suppress=False, prefix=None):
             # default to normal print
             return builtin_print(*args, **kwargs)
 
+    if prefix:
+        logging.logger.add_format_prefix(prefix)
+    if suppress:
+        logging.disable()
+
     # override the print for now
     builtins.print = new_print
     yield
     # bring it back at the end of the context
     builtins.print = builtin_print
+
+    if suppress:
+        logging.enable()
 
 
 def all_gather_list(data, max_size=16384):
