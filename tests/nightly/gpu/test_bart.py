@@ -25,7 +25,7 @@ class TestBartModel(unittest.TestCase):
                 dict_file='zoo:bart/bart_large/model.dict',
                 optimizer='adam',
                 learningrate=1e-5,
-                batchsize=8,
+                batchsize=4,
                 num_epochs=1,
             )
         )
