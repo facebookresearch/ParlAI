@@ -36,6 +36,7 @@ EXAMPLE_SIZE = 4
 NUM_CANDIDATES = 10
 NUM_TRAIN = 500
 NUM_TEST = 100
+INFINITE = 1e20
 
 
 class CandidateBaseTeacher(Teacher, ABC):
@@ -577,6 +578,29 @@ class ChunkyTeacher(ChunkTeacher):
     def create_message(self, sample_item):
         text, label = sample_item
         return {'text': text, 'labels': [label], 'episode_done': True}
+
+
+class InfiniteTrainTeacher(ChunkyTeacher):
+    """
+    Chunk teacher with an effectively infinite number of training examples.
+    """
+
+    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+        if 'train' in datatype:
+            return INFINITE, INFINITE
+        elif 'valid' in datatype:
+            return NUM_TEST, NUM_TEST
+        elif 'test' in datatype:
+            return NUM_TEST, NUM_TEST
+
+
+class ShortFixedTeacher(FixedDialogCandidateTeacher):
+    """
+    Fixed Dialog Candidate teacher with only 10 training examples.
+    """
+
+    def __init__(self, opt: Opt, shared: dict = None):
+        super().__init__(opt, shared, num_train=10, num_test=10)
 
 
 class DefaultTeacher(CandidateTeacher):

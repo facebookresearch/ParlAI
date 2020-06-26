@@ -155,12 +155,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200625-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-20200516-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200625-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -171,6 +171,22 @@ jobs:
       - <<: *codecov
       - store_test_results:
           path: test-results
+
+  cleaninstall_36:
+    <<: *standard_cpu36
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - checkout
+      - <<: *fixgit
+      - <<: *setup
+      - run:
+          name: Test installation instructions
+          no_output_timeout: 60m
+          command: |
+            python -m pip install --progress-bar off --upgrade pip setuptools
+            python setup.py develop
+            parlai display_data -t integration_tests
 
   unittests_36:
     <<: *standard_cpu36
@@ -183,12 +199,12 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200625-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200625-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -208,12 +224,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200625-ut38-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200625-ut38-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -233,12 +249,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200625-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200625-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -265,12 +281,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200516-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200625-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu13
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200625-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -297,12 +313,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200516-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200625-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu14
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200625-gpu14-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -329,12 +345,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200516-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200625-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu14
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200625-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -356,11 +372,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200625-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200516-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200625-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -378,7 +394,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200625-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
@@ -389,7 +405,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-20200516-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200625-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -409,12 +425,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200516-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200625-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu14
       - save_cache:
-          key: deps-20200516-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200625-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -455,6 +471,7 @@ workflows:
   version: 2
   commit:
     jobs:
+      - cleaninstall_36
       - unittests_gpu14
       - unittests_38
       - unittests_37
