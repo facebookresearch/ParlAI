@@ -1495,7 +1495,7 @@ class ConversationTeacher(FixedDialogTeacher):
         return Message(self.episodes[episode_idx][entry_idx])
 
     def _setup_data(self, path):
-        print("[loading parlAI text data:" + path + "]")
+        logging.info("[loading data from json file into task:" + path + "]")
         self.episodes = []
         self.num_exs = 0
         eps = []
