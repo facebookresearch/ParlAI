@@ -267,6 +267,7 @@ def interactive_web(opt, parser):
     httpd.server_close()
 
 
+@register_script('interactive_web')
 class InteractiveWeb(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -102,6 +102,7 @@ def interactive(opt, print_parser=None):
             world_logger.write(outfile, world, file_format=opt['save_format'])
 
 
+@register_script('interactive')
 class Interactive(ParlaiScript):
     @classmethod
     def setup_args(cls):

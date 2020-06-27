@@ -350,6 +350,7 @@ def render_convo(opt):
                 file_handle.close()
 
 
+@register_script('convo_render')
 class RenderConversation(ParlaiScript):
     @classmethod
     def setup_args(cls):

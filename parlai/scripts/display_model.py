@@ -83,6 +83,7 @@ def display_model(opt):
                 break
 
 
+@register_script('display_model')
 class DisplayModel(ParlaiScript):
     @classmethod
     def setup_args(cls):

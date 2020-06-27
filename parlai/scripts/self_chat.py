@@ -127,6 +127,7 @@ def self_chat(opt):
     return logger.get_logs()
 
 
+@register_script('self_chat')
 class SelfChat(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -180,6 +180,7 @@ def obtain_stats(opt, parser):
     print(report_text.replace('\\n', '\n'))
 
 
+@register_script('data_stats')
 class DataStats(ParlaiScript):
     @classmethod
     def setup_args(cls):

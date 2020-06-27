@@ -243,6 +243,7 @@ cNd.........................................;lOc
 )
 
 
+@register_script('party')
 class Party(ParlaiScript):
     @classmethod
     def setup_args(cls):

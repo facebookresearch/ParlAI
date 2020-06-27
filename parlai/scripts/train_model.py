@@ -749,6 +749,7 @@ class TrainLoop:
         return v_report, t_report
 
 
+@register_script('train_model')
 class TrainModel(ParlaiScript):
     @classmethod
     def setup_args(cls):

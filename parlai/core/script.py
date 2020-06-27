@@ -19,6 +19,9 @@ from typing import List, Optional, Dict, Any
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from abc import abstractmethod
+import importlib
+import pkgutil
+import parlai.scripts
 from parlai.core.loader import register_script, SCRIPT_REGISTRY
 
 
@@ -108,9 +111,15 @@ def _display_image():
     print(logo)
 
 
-class superscript_main(args=None):
+def superscript_main(args=None):
     """
     Superscript is a loader for all the other scripts.
     """
 
     setup_script_registry()
+    parser = ParlaiParser(False, False)
+
+    for script, klass in SCRIPT_REGISTRY.items():
+        print(script)
+        print(klass)
+        print()

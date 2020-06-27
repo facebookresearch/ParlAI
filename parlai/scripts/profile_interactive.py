@@ -94,6 +94,7 @@ def profile_interactive(opt, print_parser=None):
     print(s.getvalue())
 
 
+@register_script('profile_interactive')
 class ProfileInteractive(ParlaiScript):
     @classmethod
     def setup_args(cls):

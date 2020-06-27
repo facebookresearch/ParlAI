@@ -102,6 +102,7 @@ def profile(opt):
             pdb.set_trace()
 
 
+@register_script('profile_train')
 class ProfileTrain(ParlaiScript):
     @classmethod
     def setup_args(cls):

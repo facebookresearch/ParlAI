@@ -279,6 +279,7 @@ def eval_wordstat(opt, print_parser=None):
     return report
 
 
+@register_script('eval_wordstat')
 class EvalWordStat(ParlaiScript):
     @classmethod
     def setup_args(cls):

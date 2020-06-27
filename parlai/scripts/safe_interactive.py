@@ -80,6 +80,7 @@ def safe_interactive(opt, print_parser=None):
             break
 
 
+@register_script('safe_interactive')
 class SafeInteractive(ParlaiScript):
     @classmethod
     def setup_args(cls):
