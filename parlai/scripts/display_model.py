@@ -19,7 +19,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.strings import colorize
 import parlai.utils.logging as logging
 

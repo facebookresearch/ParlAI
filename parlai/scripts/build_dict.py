@@ -21,7 +21,7 @@ from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.utils.distributed import is_distributed
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 import copy
 import os

@@ -19,7 +19,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import random
 import tempfile
 
@@ -93,6 +93,7 @@ def build_cands(opt):
     fw.close()
 
 
+@register_script('build_candidates')
 class BuildCandidates(ParlaiScript):
     @classmethod
     def setup_args(cls):

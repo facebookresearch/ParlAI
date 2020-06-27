@@ -34,7 +34,7 @@ from parlai.utils.misc import TimeLogger
 from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from collections import Counter
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 import copy
 import numpy

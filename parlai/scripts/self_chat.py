@@ -11,7 +11,7 @@ from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import math

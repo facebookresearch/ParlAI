@@ -9,7 +9,7 @@ trained model.
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.safe_local_human.safe_local_human import SafeLocalHumanAgent

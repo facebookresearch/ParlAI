@@ -10,6 +10,8 @@ The general ParlAI Script interface.
 
 An abstract class to help standardize the call to ParlAI scripts, enabling them to be
 completed easily.
+
+Also contains helper classes for loading scripts, etc.
 """
 
 import io
@@ -17,6 +19,17 @@ from typing import List, Optional, Dict, Any
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from abc import abstractmethod
+from parlai.core.loader import register_script, SCRIPT_REGISTRY
+
+
+def setup_script_registry():
+    """
+    Loads the scripts so that @register_script is hit for all.
+    """
+    for module in pkgutil.iter_modules(parlai.scripts.__path__, 'parlai.scripts.'):
+        if module.name == 'parlai.scripts.parlai_exe':
+            continue
+        importlib.import_module(module.name)
 
 
 class ParlaiScript(object):
@@ -86,3 +99,18 @@ class ParlaiScript(object):
         parser.add_extra_args(parser._kwargs_to_str_args(**kwargs))
         parser.print_help(f)
         return f.getvalue()
+
+
+def _display_image():
+    if os.environ.get('PARLAI_DISPLAY_LOGO') == 'OFF':
+        return
+    logo = colorize('ParlAI - Dialogue Research Platform', 'labels')
+    print(logo)
+
+
+class superscript_main(args=None):
+    """
+    Superscript is a loader for all the other scripts.
+    """
+
+    setup_script_registry()

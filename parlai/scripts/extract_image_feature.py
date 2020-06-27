@@ -31,7 +31,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 
 # TODO: this may not be adequately updated after deleting pytorch data teacher

@@ -18,7 +18,7 @@ see a few of them:
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.scripts.train_model import setup_args as train_args
 from parlai.scripts.train_model import TrainLoop
 import parlai.utils.logging as logging

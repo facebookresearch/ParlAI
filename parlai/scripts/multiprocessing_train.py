@@ -25,7 +25,7 @@ import torch.distributed as dist
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 
 def multiprocess_train(

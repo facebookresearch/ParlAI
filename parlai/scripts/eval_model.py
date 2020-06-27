@@ -24,7 +24,7 @@ from parlai.core.metrics import aggregate_named_reports, Metric
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import json

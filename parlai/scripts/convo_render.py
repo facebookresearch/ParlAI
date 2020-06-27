@@ -10,7 +10,7 @@ import random
 import tempfile
 import subprocess
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 # Constants
 END_OF_CONVO = "EOC"

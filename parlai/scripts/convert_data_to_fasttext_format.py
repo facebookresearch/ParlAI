@@ -21,7 +21,7 @@ from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 
 def dump_data(opt):

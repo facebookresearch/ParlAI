@@ -41,7 +41,7 @@ def register_agent(name: str) -> Callable[[Type], Type]:
     return _inner
 
 
-def register_script(name: str) -> Callable[[Type], Type]:
+def register_script(name: str):
     """
     Register an agent to be available in command line calls.
 

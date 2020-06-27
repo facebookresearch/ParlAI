@@ -6,7 +6,7 @@
 
 import sys
 import time
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.params import ParlaiParser
 
 RESET = '\u001b[0m'
