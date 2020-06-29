@@ -101,6 +101,17 @@ class Batch(AttrDict):
         the original observations in the batched order
     """
 
+    text_vec: Optional[torch.LongTensor]
+    text_lengths: Optional[List[int]]
+    label_vec: Optional[torch.LongTensor]
+    label_lengths: Optional[List[int]]
+    labels: Optional[List[str]]
+    valid_indices: Optional[List[int]]
+    candidates: Optional[List[List[str]]]
+    candidate_vecs: Optional[List[List[torch.LongTensor]]]
+    image: Optional[List[Any]]
+    observations: Optional[List[Message]]
+
     def __init__(
         self,
         text_vec=None,

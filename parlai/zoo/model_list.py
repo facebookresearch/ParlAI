@@ -1215,4 +1215,32 @@ model_list = [
         ),
         "result": ("Results vary."),
     },
+    {
+        "title": "BART",
+        "id": "bart",
+        "path": "zoo:bart/bart_large/model",
+        "agent": "bart",
+        "external_website": "https://arxiv.org/abs/1910.13461",
+        "task": "wikipedia_plus_toronto_books",
+        "description": (
+            "BART: Denoising Sequence-to-Sequence Pre-training for Natural "
+            "Language Generation, Translation, and Comprehension."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:bart/bart_large/model -t convai2 -bs 64"
+        ),
+        "result": (
+            "Finished evaluating tasks ['convai2'] using datatype valid\n"
+            "accuracy   bleu-4    exs      f1  gpu_mem    loss    ppl  token_acc   tpb\n"
+            "0        .0004641   7801  .02084    .4878   5.041  154.6      .2042  1652"
+        ),
+        "example2": (
+            "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam"
+        ),
+        "result2": (
+            "valid:\n"
+            "accuracy  bleu-4  exs    f1  gpu_mem  loss    lr   ppl  token_acc  total_train_updates   tpb\n"
+            ".0001282  .01229 7801 .2035    .6361 2.386 1e-05 10.87      .4741                 5478 321.3"
+        ),
+    },
 ]

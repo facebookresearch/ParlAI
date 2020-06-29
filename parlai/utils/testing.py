@@ -76,7 +76,7 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
-def skipUnlessBPE(testfn, reason='Test requires a GPU'):
+def skipUnlessBPE(testfn, reason='Test requires subword NMT'):
     """
     Decorate a test to skip if BPE is not installed.
     """
