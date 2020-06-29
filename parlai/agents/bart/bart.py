@@ -15,7 +15,7 @@ or `-mf zoo:bart/bart_large/model` to ensure correct dictionaries are saved.
 """
 import os
 import torch
-from typing import Optional, Any
+from typing import Optional
 
 from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
 from parlai.agents.bart.modules import BartModel
