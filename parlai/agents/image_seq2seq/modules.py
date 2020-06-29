@@ -108,7 +108,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         image_features_dim=2048,
         image_combination_mode='append',
         n_image_tokens=1,
-        fusion='early',
+        fusion='late',
     ):
         """
         Override TransformerEncoder __init__.
@@ -169,7 +169,7 @@ class ContextWithImageEncoder(TransformerEncoder):
             ]
         self.image_encoder = nn.Sequential(*image_layers)
 
-    def embed_images(
+    def encode_images(
         self,
         images: Union[List[object], torch.Tensor],
         positions: Optional[torch.LongTensor] = None,
@@ -269,8 +269,8 @@ class ContextWithImageEncoder(TransformerEncoder):
             return self._forward_late_fusion(src_tokens, image_features)
         elif self.fusion is FusionType.EARLY:
             return self._forward_early_fusion(src_tokens, image_features)
-
-        raise RuntimeError(f'Unsupported fusion type: {self.fusion}')
+        else:
+            raise RuntimeError(f'Unsupported fusion type: {self.fusion}')
 
     def _forward_early_fusion(
         self,
@@ -295,7 +295,7 @@ class ContextWithImageEncoder(TransformerEncoder):
             )
         if image_features is not None:
             valid_img = [v for v in image_features if isinstance(v, torch.Tensor)][0]
-            image_tensor, image_mask = self.embed_images(
+            image_tensor, image_mask = self.encode_images(
                 image_features,
                 segments=torch.ones(  # type: ignore
                     len(image_features), dtype=torch.long, device=valid_img.device
@@ -306,7 +306,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         tensor = self._cat([context_tensor, image_tensor])
         mask: torch.BoolTensor = self._cat([context_mask, image_mask])  # type: ignore
 
-        # Below copied from TransformerEncoder.forward
+        # WARNING: Below follows the rest of TransformerEncoder.forward
         if self.variant == 'xlm':
             tensor = _normalize(tensor, self.norm_embeddings)
         # --dropout on the embeddings
@@ -338,7 +338,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         if src_tokens is not None:
             context_encoded, context_mask = super().forward(src_tokens)
         if image_features is not None:
-            image_encoded, extra_masks = self.embed_images(image_features)
+            image_encoded, extra_masks = self.encode_images(image_features)
 
         if all(enc is None for enc in [context_encoded, image_encoded]):
             raise RuntimeError(
