@@ -151,7 +151,7 @@ class TestConversationTeacher(unittest.TestCase):
 
     def test_no_text(self):
         with testing_utils.tempdir() as tmpdir:
-            fp = os.path.join(tmpdir, "badfile.txt")
+            fp = os.path.join(tmpdir, "badfile.jsonl")
             with open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
@@ -162,7 +162,7 @@ class TestConversationTeacher(unittest.TestCase):
 
     def test_firstspeaker_label(self):
         with testing_utils.tempdir() as tmpdir:
-            fp = os.path.join(tmpdir, "goodfile.txt")
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
             with open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
@@ -191,7 +191,7 @@ class TestConversationTeacher(unittest.TestCase):
 
     def test_secondspeaker_label(self):
         with testing_utils.tempdir() as tmpdir:
-            fp = os.path.join(tmpdir, "goodfile.txt")
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
             with open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
@@ -220,7 +220,7 @@ class TestConversationTeacher(unittest.TestCase):
 
     def test_both_label(self):
         with testing_utils.tempdir() as tmpdir:
-            fp = os.path.join(tmpdir, "goodfile.txt")
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
             with open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
