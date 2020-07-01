@@ -25,7 +25,7 @@ class JsonTeacher(ConversationTeacher):
         agent = argparser.add_argument_group('JsonFile Task Arguments')
         agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
         agent.add_argument(
-            '-jfdt',
+            '-ffdt',
             '--fromfile-datatype-extension',
             type='bool',
             default=False,
