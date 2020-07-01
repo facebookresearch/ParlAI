@@ -2141,7 +2141,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def create_message(self, queue_output: List[ChunkOutput], entry_idx=0) -> 'Message':
+    def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
         """
         [Abstract] Given the tuple output of the queue, return an act.
 
