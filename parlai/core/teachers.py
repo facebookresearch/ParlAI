@@ -29,7 +29,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
 import copy
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, TypeVar
 
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
@@ -56,6 +56,9 @@ import os
 import torch
 import json
 import argparse
+
+
+ChunkOutput = TypeVar('ChunkOutput')
 
 
 class DataLoader(Thread):
@@ -1989,7 +1992,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         if opt['numthreads'] > 1:
             raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
-        self.set_datasettings(opt['datatype'])
+        self.set_datasettings(opt)
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
@@ -2021,6 +2024,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._enqueue_request()
 
         self.episode_done = True
+        self.last_queue_output = None
 
     def _get_data_folder(self):
         if not self.opt.get('datafile'):
@@ -2032,7 +2036,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return self.opt['datafile']
 
     @abstractmethod
-    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+    def get_num_samples(self, opt: Opt) -> Tuple[int, int]:
         """
         [Abstract] Return the number of samples.
 
@@ -2041,7 +2045,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def get_fold_chunks(self, datatype: str) -> List[int]:  # type: ignore
+    def get_fold_chunks(self, opt: Opt) -> List[int]:  # type: ignore
         """
         [Abstract] Return a list of chunk IDs (integer).
 
@@ -2058,12 +2062,12 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         return 100000
 
-    def set_datasettings(self, datatype):
+    def set_datasettings(self, opt: Opt):
         self.folder = self._get_data_folder()
-        self.num_exs, self.num_eps = self.get_num_samples(datatype)
-        self.fold_chunks = self.get_fold_chunks(datatype)
+        self.num_exs, self.num_eps = self.get_num_samples(opt)
+        self.fold_chunks = self.get_fold_chunks(opt)
 
-        self.is_train = DatatypeHelper.is_training(datatype)
+        self.is_train = DatatypeHelper.is_training(opt['datatype'])
 
     def share(self):
         shared = super().share()
@@ -2127,7 +2131,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.chunks.put(c)
 
     @abstractmethod
-    def load_from_chunk(self, chunk_idx: int):
+    def load_from_chunk(self, chunk_idx: int) -> List[ChunkOutput]:
         """
         [Abstract] Given the chunk index, load examples from that chunk.
 
@@ -2137,9 +2141,11 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     @abstractmethod
-    def create_message(self, queue_output) -> 'Message':
+    def create_message(self, queue_output: List[ChunkOutput], entry_idx=0) -> 'Message':
         """
         [Abstract] Given the tuple output of the queue, return an act.
+
+        May depend on entry index if queue output is a multi-turn episode.
         """
         pass
 
@@ -2164,12 +2170,21 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return output
 
     def get(self, episode_idx, entry_idx=0):
-        queue_output = self.samples.get()
-        if queue_output is None:
-            return None
+        if self.episode_done:
+            # Get the next episode or example
+            queue_output = self.samples.get()
+            if queue_output is None:
+                return None
+
+            # Update the last queue output in the case
+            # of multi-turn episodes
+            self.last_queue_output = queue_output
 
         # create a Message object from the queue output
-        return self.create_message(queue_output)
+        msg = self.create_message(self.last_queue_output, entry_idx)
+        self.episode_done = msg['episode_done']
+
+        return msg
 
     def _drain(self, q):
         while not q.empty():
