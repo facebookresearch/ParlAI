@@ -64,9 +64,9 @@ class SafeLocalHumanAgent(LocalHumanAgent):
             hasattr(self, 'offensive_string_matcher')
             and text in self.offensive_string_matcher
         ):
-            return True
+            return False
         if hasattr(self, 'offensive_classifier') and text in self.offensive_classifier:
-            return True
+            return False
 
         return False
 
@@ -91,8 +91,8 @@ class SafeLocalHumanAgent(LocalHumanAgent):
             )
             msg.force_set('bot_offensive', False)
         else:
-            msg.force_set('bot_offensive', True)
-            print(OFFENSIVE_BOT_REPLY)
+            msg.force_set('bot_offensive', False)
+            # print(OFFENSIVE_BOT_REPLY)
 
     def get_reply(self):
         reply_text = input(colorize('Enter Your Message:', 'field') + ' ')

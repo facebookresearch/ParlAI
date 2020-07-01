@@ -30,7 +30,7 @@ def _load_personas(opt):
     fname = raw_data_path(opt)
     with open(fname) as json_file:
         data = json.load(json_file)
-    if opt.get('include_personas', True) and opt.get('safe_personas_only', True):
+    if opt.get('include_personas', False) and opt.get('safe_personas_only', False):
         # Filter out unsafe personas
         save_personas_path = safe_personas_path(opt)
         with open(save_personas_path, 'r') as f:
@@ -43,8 +43,8 @@ def _load_personas(opt):
     for d in data:
         context1 = []
         context2 = []
-        if opt.get('include_personas', True):
-            if opt.get('safe_personas_only', True):
+        if opt.get('include_personas', False):
+            if opt.get('safe_personas_only', False):
                 personas_are_safe = all(
                     _standardize(persona_string) in safe_persona_strings
                     for persona in d['personas']
@@ -110,7 +110,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         parser.add_argument(
             '--include-personas',
             type='bool',
-            default=True,
+            default=False,
             help='Include personas as input context, or not',
         )
         parser.add_argument(
@@ -122,9 +122,9 @@ class InteractiveWorld(InteractiveBaseWorld):
         parser.add_argument(
             '--safe-personas-only',
             type='bool',
-            default=True,
+            default=False,
             help='Only use personas on an allowed list of safe personas',
-            hidden=True,
+            hidden=False,
         )
 
     def __init__(self, opt, agents, shared=None):
