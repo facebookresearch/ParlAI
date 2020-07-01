@@ -104,7 +104,7 @@ class InteractiveWorld(InteractiveBaseWorld):
         parser.add_argument(
             '--display-partner-persona',
             type='bool',
-            default=True,
+            default=False,
             help='Display your partner persona at the end of the chat',
         )
         parser.add_argument(

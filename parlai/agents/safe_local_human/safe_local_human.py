@@ -32,7 +32,7 @@ class SafeLocalHumanAgent(LocalHumanAgent):
         agent.add_argument(
             '--safety',
             type=str,
-            default='all',
+            default='none',
             choices={'none', 'string_matcher', 'classifier', 'all'},
             help='Apply safety filtering to messages',
         )
