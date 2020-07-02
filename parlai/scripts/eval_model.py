@@ -38,7 +38,7 @@ from parlai.utils.distributed import (
     is_primary_worker,
     all_gather_list,
     is_distributed,
-    sync_object,
+    get_rank,
 )
 
 
@@ -162,7 +162,11 @@ def _eval_single_world(opt, agent, task):
         # dump world acts to file
         world_logger.reset()  # add final acts to logs
         base_outfile = opt['report_filename'].split('.')[0]
-        outfile = base_outfile + f'_{task}_replies.jsonl'
+        if is_distributed():
+            rank = get_rank()
+            outfile = base_outfile + f'_{task}_{rank}_replies.jsonl'
+        else:
+            outfile = base_outfile + f'_{task}_replies.jsonl'
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
     return report
