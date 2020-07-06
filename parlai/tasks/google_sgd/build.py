@@ -38,6 +38,7 @@ def build(opt):
             filename = 'schema.json'
             url = f'{ROOT_URL}/{split_type}/{filename}'
 
+            build_data.make_dir(outpath)
             build_data.download(url, outpath, filename)
             for file_id in range(1, DATA_LEN[split_type] + 1):
                 filename = f'dialogues_{file_id:03d}.json'

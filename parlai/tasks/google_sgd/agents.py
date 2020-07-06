@@ -15,7 +15,6 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.misc import warn_once
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, BleuMetric
-import parlai.utils.logging as logging
 
 import parlai.tasks.google_sgd.build as build_
 
@@ -161,7 +160,9 @@ class Text2API2TextTeacher(DialogTeacher):
                         'slots': api_results,
                     }, False
                 else:
-                    assert False, "API call without API results! Check Dataset!"
+                    assert (
+                        api_call and api_results
+                    ), "API call without API results! Check Dataset!"
 
 
 class Text2TextTeacher(Text2API2TextTeacher):

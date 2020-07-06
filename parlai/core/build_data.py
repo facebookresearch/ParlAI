@@ -153,7 +153,6 @@ def download(url, path, fname, redownload=False, num_retries=5):
     If ``redownload`` is set to false, then will not download tar file again if it is
     present (default ``False``).
     """
-    make_dir(path)
     outfile = os.path.join(path, fname)
     download = not os.path.isfile(outfile) or redownload
     logging.info(f"Downloading {url} to {outfile}")
