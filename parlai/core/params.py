@@ -959,10 +959,7 @@ class ParlaiParser(argparse.ArgumentParser):
                     self.overridable[option_strings_dict[args_that_override[i]]] = True
                 elif args_that_override[i] in store_false:
                     self.overridable[option_strings_dict[args_that_override[i]]] = False
-                elif (
-                    i < len(args_that_override) - 1
-                    and args_that_override[i + 1][:1] != '-'
-                ):
+                elif i < len(args_that_override) - 1:
                     key = option_strings_dict[args_that_override[i]]
                     self.overridable[key] = self.opt[key]
         self.opt['override'] = self.overridable
