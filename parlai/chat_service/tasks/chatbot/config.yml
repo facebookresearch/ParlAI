@@ -11,12 +11,10 @@ max_workers: 30
 opt:
   debug: True
   models:
-    legacy_seq2seq:
-      model: legacy:seq2seq:0
-      model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
-      override:
-        model: legacy:seq2seq:0
-        no_cuda: True
+    blender_90M:
+      model: transformer/generator
+      model_file: zoo:blender/blender_90M/model
+      interactive_mode: True
       no_cuda: True
 additional_args:
   page_id: 1 # Configure Your Own Page

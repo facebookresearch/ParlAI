@@ -64,6 +64,12 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
 
 
 class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
+    def is_prebuilt(self):
+        """
+        Indicates whether the dictionary is fixed, and does not require building.
+        """
+        return True
+
     def get_tokenizer(self, opt):
         """
         Instantiate tokenizer.

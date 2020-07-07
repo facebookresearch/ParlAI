@@ -31,7 +31,13 @@ from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 import parlai.utils.logging as logging
-from parlai.core.metrics import SumMetric, AverageMetric, BleuMetric, FairseqBleuMetric
+from parlai.core.metrics import (
+    Metric,
+    SumMetric,
+    AverageMetric,
+    BleuMetric,
+    FairseqBleuMetric,
+)
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.torch import (
     neginf,
@@ -575,7 +581,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             .cuda()
         )
         return Batch(
-            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize,
+            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize
         )
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
@@ -761,10 +767,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             list of string predictions
         """
         all_results = []
+        label_vec = batch.label_vec
+        assert label_vec is not None, "label_vec must exist for fairseq bleu"
         for i, t in enumerate(preds):
             result = FairseqBleuMetric.compute_many(
                 t[1:],
-                batch.label_vec[i].unsqueeze(0),
+                label_vec[i].unsqueeze(0),
                 pad_idx=self.NULL_IDX,
                 end_idx=self.END_IDX,
                 unk_idx=self.dict[self.dict.unk_token],
@@ -790,9 +798,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             list of string predictions
         """
 
-        results = {}
+        results: Dict[int, List[Metric]] = {}
+        observations = batch.observations
+        assert observations is not None, 'observations must not be none in nltk bleu'
         for i, p in enumerate(texts):
-            obs = batch.observations[i]
+            obs = observations[i]
             references = []
             for lbl in obs['eval_labels']:
                 references.append(
@@ -805,7 +815,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             for k in range(1, 5):
                 b = BleuMetric.compute(p, references, k)
                 if b is None:
-                    b = 0
+                    b = BleuMetric(0)
                 if k not in results:
                     results[k] = []
                 results[k].append(b)
@@ -951,7 +961,35 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return batch.text_vec[batch_idx]
 
-    def _generate(self, batch, beam_size, max_ts):
+    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
+        """
+        Return initial input to the decoder.
+
+        :param bsz:
+            batchsize
+        :param beam_size:
+            beam size
+        :param dev:
+            device to send input to.
+
+        :return initial_input:
+            initial input for the decoder.
+        """
+        return (
+            torch.LongTensor(  # type: ignore
+                [self.START_IDX]
+            )
+            .expand(bsz * beam_size, 1)
+            .to(dev)
+        )
+
+    def _generate(
+        self,
+        batch: Batch,
+        beam_size: int,
+        max_ts: int,
+        prefix_tokens: Optional[torch.LongTensor] = None,
+    ):
         """
         Generate an output with beam search.
 
@@ -963,6 +1001,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             Size of each beam during the search
         :param int max_ts:
             the maximum length of the decoded sequence
+        :param prefix_tokens:
+            if given, a tensor of tokens that must begin the decoded sequence.
 
         :return:
             tuple (beam_pred_scores, beams)
@@ -979,12 +1019,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.text_vec is not None:
             dev = batch.text_vec.device
         else:
+            assert batch.label_vec is not None, "need label_vec for _generate"
             dev = batch.label_vec.device
 
         bsz = (
             len(batch.text_lengths)
             if batch.text_lengths is not None
-            else len(batch.image)
+            else len(batch.image)  # type: ignore
         )
         if batch.text_vec is not None:
             batchsize = batch.text_vec.size(0)
@@ -998,9 +1039,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]
 
         # repeat encoder outputs and decoder inputs
-        decoder_input = (
-            torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)
-        )
+        decoder_input = self._get_initial_decoder_input(bsz, beam_size, dev)
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
@@ -1020,7 +1059,19 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if self.temperature != 1.0:
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
-            score = F.log_softmax(score, dim=-1, dtype=torch.float32)
+            score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
+            if prefix_tokens is not None and _ts < prefix_tokens.size(1):
+                # generate prefix_tokens for every timestep that they exist
+                # achieve by setting score of all other tokens to be -inf
+                prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
+                prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
+                prefix_mask = prefix_toks.ne(self.NULL_IDX)
+                score[prefix_mask] = neginf(score.dtype)
+                score[prefix_mask] = score[prefix_mask].scatter_(
+                    -1,
+                    prefix_toks[prefix_mask].unsqueeze(-1),
+                    prefix_score[prefix_mask],
+                )
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -1043,7 +1094,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
 
         if hasattr(self, '_rerank_beams'):
-            n_best_beam_preds_scores = self._rerank_beams(
+            n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
                 batch, n_best_beam_preds_scores
             )
 

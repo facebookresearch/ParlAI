@@ -51,7 +51,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
 
 
 class Batch(AttrDict):
@@ -100,6 +100,17 @@ class Batch(AttrDict):
     :param observations:
         the original observations in the batched order
     """
+
+    text_vec: Optional[torch.LongTensor]
+    text_lengths: Optional[List[int]]
+    label_vec: Optional[torch.LongTensor]
+    label_lengths: Optional[List[int]]
+    labels: Optional[List[str]]
+    valid_indices: Optional[List[int]]
+    candidates: Optional[List[List[str]]]
+    candidate_vecs: Optional[List[List[torch.LongTensor]]]
+    image: Optional[List[Any]]
+    observations: Optional[List[Message]]
 
     def __init__(
         self,
@@ -1757,16 +1768,11 @@ class TorchAgent(ABC, Agent):
             states['optimizer_type'] = self.opt['optimizer']
 
         # lr scheduler
-        if torch.__version__.startswith('0.'):
-            warn_once(
-                "Must upgrade to Pytorch 1.0 to save the state of your " "LR scheduler."
-            )
-        else:
-            states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler', None):
-                states['lr_scheduler'] = self.scheduler.get_state_dict()
-                states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
+        states['number_training_updates'] = self._number_training_updates
+        if getattr(self, 'scheduler', None):
+            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
 
@@ -1789,11 +1795,8 @@ class TorchAgent(ABC, Agent):
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
-                with open(path, 'wb') as write:
-                    torch.save(states, write)
+                atomic_save(states, path)
                 # save opt file
-                if hasattr(self, 'model_version'):
-                    self.opt['model_version'] = self.model_version()
                 self.opt.save(path + '.opt')
 
     def load_state_dict(self, state_dict):
