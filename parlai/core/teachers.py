@@ -286,7 +286,7 @@ class FixedDialogTeacher(Teacher):
         self.metrics.clear()
         self.lastY = None
         self.last_act = None
-        self.episode_done = True
+        self._episode_done = True
         self.epochDone = False
         self.data_queue = queue.Queue()
 
@@ -368,7 +368,7 @@ class FixedDialogTeacher(Teacher):
         episode. If that episode is over, gets a new episode index and returns the first
         example of that episode.
         """
-        if self.episode_done:
+        if self._episode_done:
             self.episode_idx = self.next_episode_idx()
             self.entry_idx = 0
         else:
@@ -378,11 +378,11 @@ class FixedDialogTeacher(Teacher):
             return {'episode_done': True}, True
 
         ex = self.get(self.episode_idx, self.entry_idx)
-        self.episode_done = ex.get('episode_done', False)
+        self._episode_done = ex.get('episode_done', False)
 
         if (
             not self.cycle
-            and self.episode_done
+            and self._episode_done
             and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()
         ):
             epoch_done = True
@@ -2023,7 +2023,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             # launch queue loader on the main thread
             self._enqueue_request()
 
-        self.episode_done = True
+        self._episode_done = True
         self.last_queue_output = None
 
     def _get_data_folder(self):
@@ -2170,7 +2170,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return output
 
     def get(self, episode_idx, entry_idx=0):
-        if self.episode_done:
+        if self._episode_done:
             # Get the next episode or example
             queue_output = self.samples.get()
             if queue_output is None:
@@ -2182,7 +2182,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         # create a Message object from the queue output
         msg = self.create_message(self.last_queue_output, entry_idx)
-        self.episode_done = msg['episode_done']
+        self._episode_done = msg['episode_done']
 
         return msg
 

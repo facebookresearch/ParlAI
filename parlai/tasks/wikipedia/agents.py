@@ -13,7 +13,7 @@ using 'wikipedia:summary'
 To put the article in the labels and the title in the text, specify
 ':key-value' at the end (for a title/content key-value association)
 """
-from parlai.core.teachers import DialogTeacher, ChunkTeacher
+from parlai.core.teachers import DialogTeacher, ChunkTeacher, ChunkOutput
 from parlai.core.message import Message
 from .build import build
 
@@ -153,7 +153,7 @@ class FullSplitTeacher(ChunkTeacher):
 
         return output
 
-    def create_message(self, queue_output, entry_idx=0) -> 'Message':
+    def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
         """
         Given the tuple output of the queue, return an act.
         """
