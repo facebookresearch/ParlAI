@@ -551,7 +551,8 @@ class ChunkyTeacher(ChunkTeacher):
     def _get_data_folder(self):
         return None
 
-    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        datatype = opt['datatype']
         if 'train' in datatype:
             return NUM_TRAIN, NUM_TRAIN
         elif 'valid' in datatype:
@@ -559,7 +560,8 @@ class ChunkyTeacher(ChunkTeacher):
         elif 'test' in datatype:
             return NUM_TEST, NUM_TEST
 
-    def get_fold_chunks(self, datatype: str) -> List[int]:
+    def get_fold_chunks(self, opt) -> List[int]:
+        datatype = opt['datatype']
         if 'train' in datatype:
             return list(range(50))
         elif 'valid' in datatype:
@@ -575,7 +577,7 @@ class ChunkyTeacher(ChunkTeacher):
             output.append((text, resp))
         return output
 
-    def create_message(self, sample_item):
+    def create_message(self, sample_item, entry_idx=0):
         text, label = sample_item
         return {'text': text, 'labels': [label], 'episode_done': True}
 
@@ -585,7 +587,8 @@ class InfiniteTrainTeacher(ChunkyTeacher):
     Chunk teacher with an effectively infinite number of training examples.
     """
 
-    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        datatype = opt['datatype']
         if 'train' in datatype:
             return INFINITE, INFINITE
         elif 'valid' in datatype:
