@@ -28,7 +28,7 @@ class TestBlendedSkillTalkModels(unittest.TestCase):
                     'batchsize': 64,
                     'model_file': f'zoo:blended_skill_talk/{model_name}/model',
                     'task': 'blended_skill_talk',
-                    'num_examples': 1000,
+                    'num_examples': 64,
                 },
                 skip_test=True,
             )
