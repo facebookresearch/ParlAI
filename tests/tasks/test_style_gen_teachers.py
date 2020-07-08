@@ -22,18 +22,18 @@ class TestStyleGenTeachers(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
             cases = [
-                ('LabeledBlendedSkillTalk', 'train', -1, -1),
-                ('LabeledBlendedSkillTalk', 'valid', -1, -1),
-                ('LabeledBlendedSkillTalk', 'test', -1, -1),
-                ('LabeledConvAI2PT', 'train', -1, -1),
-                ('LabeledConvAI2PT', 'valid', -1, -1),
-                ('LabeledConvAI2PT', 'test', -1, -1),
-                ('LabeledEmpatheticDialoguesPT', 'train', -1, -1),
-                ('LabeledEmpatheticDialoguesPT', 'valid', -1, -1),
-                ('LabeledEmpatheticDialoguesPT', 'test', -1, -1),
-                ('LabeledWizardOfWikipediaPT', 'train', -1, -1),
-                ('LabeledWizardOfWikipediaPT', 'valid', -1, -1),
-                ('LabeledWizardOfWikipediaPT', 'test', -1, -1),
+                ('LabeledBlendedSkillTalk', 'train', 4819, 27018),
+                ('LabeledBlendedSkillTalk', 'valid', 1009, 5651),
+                ('LabeledBlendedSkillTalk', 'test', 980, 5482),
+                ('LabeledConvAI2PT', 'train', 17878, 131438),
+                ('LabeledConvAI2PT', 'valid', 1000, 7801),
+                ('LabeledConvAI2PT', 'test', 1000, 7801),
+                ('LabeledEmpatheticDialoguesPT', 'train', 39057, 64636),
+                ('LabeledEmpatheticDialoguesPT', 'valid', 2769, 5738),
+                ('LabeledEmpatheticDialoguesPT', 'test', 2547, 5259),
+                ('LabeledWizardOfWikipediaPT', 'train', 18430, 74092),
+                ('LabeledWizardOfWikipediaPT', 'valid', 981, 3939),
+                ('LabeledWizardOfWikipediaPT', 'test', 965, 3865),
             ]
             for teacher_name, datatype, num_episodes, num_examples in cases:
                 all_kwargs = {
@@ -56,27 +56,58 @@ class TestStyleGenTeachers(unittest.TestCase):
 
             # Check the first entry for 3 sample files
             teachers_datatypes_and_examples = [
-                ('LabeledBlendedSkillTalk', 'train', {}),
+                (
+                    'LabeledBlendedSkillTalk',
+                    'train',
+                    {
+                        'id': 'internal:blended_skill_talk',
+                        'text': "your persona: i've 2 kids.\nyour persona: i love flowers.\nI love live music, that's why I try to go to concerts\nI do too. Wat do you like?\nI like acting, I hope to be an actor, what about you?",
+                        'labels': ['that is ok.  have any kids?'],
+                        'context_dataset': 'empathetic_dialogues',
+                        'free_turker_message': 'I like acting, I hope to be an actor, what about you?',
+                        'guided_turker_chosen_suggestion': ' ',
+                        'personality': 'Maternal (Mother-like)',
+                        'episode_done': False,
+                    },
+                ),
                 (
                     'LabeledConvAI2PT',
                     'valid',
                     {
+                        'id': 'internal:blended_skill_talk:ConvAI2PersonaTopicifierTeacher',
+                        'text': "your persona: i read twenty books a year.\nyour persona: i'm a stunt double as my second job.\nyour persona: i only eat kosher.\nyour persona: i was raised in a single parent household.\nAlabama\nhello what are doing today ?",
+                        'labels': [
+                            'i am good , i just got off work and tired , i have two jobs .'
+                        ],
+                        'personality': 'Lazy',
+                        'episode_done': False,
                         'label_candidates': {
                             'num_cands': 20,
-                            'first': 'FOO',
-                            'last': 'FOO',
-                        }
+                            'first': 'oh really ? i am actually in high school and i am graduating as class of 2019 !',
+                            'last': 'i am good , i just got off work and tired , i have two jobs .',
+                        },
                     },
                 ),
                 (
                     'LabeledEmpatheticDialoguesPT',
                     'test',
                     {
+                        'id': 'internal:blended_skill_talk:EDPersonaTopicifierTeacher',
+                        'text': "your persona: my mom raised me by herself and taught me to play baseball.\nyour persona: i blog about salt water aquarium ownership.\nyour persona: i still love to line dry my clothes.\nyour persona: i am allergic to peanuts.\nyour persona: i'll one day own a ferret.\nMarine aquarium\nYeah about 10 years ago I had a horrifying experience. It was 100% their fault but they hit the water barrels and survived. They had no injuries but they almost ran me off the road.",
+                        'labels': ['Did you suffer any injuries?'],
+                        'situation': "I felt guilty when I was driving home one night and a person tried to fly into my lane, and didn't see me. I honked and they swerved back into their lane, slammed on their brakes, and hit the water cones.",
+                        'emotion': 'guilty',
+                        'prepend_ctx': 'None',
+                        'prepend_cand': 'None',
+                        'deepmoji_ctx': 'None',
+                        'deepmoji_cand': 'None',
+                        'personality': 'Curious',
+                        'episode_done': False,
                         'label_candidates': {
                             'num_cands': 100,
-                            'first': 'FOO',
-                            'last': 'FOO',
-                        }
+                            'first': 'I hope it goes well! If it makes you feel any better, most of them are probably just as nervous and are looking for any excuse to relax and let their guard down, too. Good luck',
+                            'last': "I know how you feel.  I moved away from my family and friends this summer.  Do you have family nearby at all? I often feel lonely when I'm watching a movie by myself but then I remind myself that I'm loved by a lot of people.",
+                        },
                     },
                 ),
             ]
