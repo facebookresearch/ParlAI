@@ -15,17 +15,17 @@ class TestBlendedSkillTalkModels(unittest.TestCase):
         Test accuracies of BST models in the zoo.
         """
         model_names_to_desired_accuracies = {
-            'bst_single_task': 0.9219,
-            'convai2_single_task': 0.8906,
-            'ed_single_task': 0.8906,
-            'wizard_single_task': 0.7344,
-            'multi_task': 0.8906,
+            'bst_single_task': 0.8906,
+            'convai2_single_task': 0.8438,
+            'ed_single_task': 0.7656,
+            'wizard_single_task': 0.7500,
+            'multi_task': 0.9062,
             'multi_task_bst_tuned': 0.9219,
         }
         for model_name, desired_accuracy in model_names_to_desired_accuracies.items():
             valid, _ = testing_utils.eval_model(
                 opt={
-                    'batchsize': 64,
+                    'batchsize': 16,
                     'model_file': f'zoo:blended_skill_talk/{model_name}/model',
                     'task': 'blended_skill_talk',
                     'num_examples': 64,
