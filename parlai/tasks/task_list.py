@@ -1218,4 +1218,15 @@ task_list = [
             "<https://www.tau-nlp.org/commonsenseqa>."
         ),
     },
+    {
+        "id": "StyleGen",
+        "display_name": "Style-Controlled Generation",
+        "task": "style_gen",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Dialogue datasets (BlendedSkillTalk, ConvAI2, EmpatheticDialogues, and "
+            "Wizard of Wikipedia) labeled with personalities taken from the Image-Chat "
+            "dataset. Used for the style-controlled generation project"
+        ),
+    },
 ]
