@@ -290,14 +290,14 @@ def eval_model(
     :param opt:
         Any non-default options you wish to set.
     :param bool skip_valid:
-        If true skips the valid evaluation, and the second return value will be None.
+        If true skips the valid evaluation, and the first return value will be None.
     :param bool skip_test:
-        If true skips the test evaluation, and the third return value will be None.
+        If true skips the test evaluation, and the second return value will be None.
     :param str valid_datatype:
         If custom datatype required for valid, e.g. train:evalmode, specify here
 
-    :return: (stdout, valid_results, test_results)
-    :rtype: (str, dict, dict)
+    :return: (valid_results, test_results)
+    :rtype: (dict, dict)
 
     If model_file is not in opt, then this helper will create a temporary directory
     to store the model files, and clean up afterwards. You can keep the directory
