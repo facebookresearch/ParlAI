@@ -1881,7 +1881,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
             img_id = ex[self.image_id_key]
             img_path = self.image_id_to_image_path(img_id)
             image = self.image_loader.load(img_path).detach()
-            image = image[0, :, 0, 0]
+            if 'spatial' not in self.image_mode:
+                image = image[0, :, 0, 0]
             image_features_dict[img_id] = image
             num += 1
             pbar.update(1)

@@ -105,16 +105,20 @@ class ImageLoader:
         When image_mode is one of the ``resnext101_..._wsl`` varieties
         """
         try:
-            model = self.torch.hub.load('facebookresearch/WSL-Images', self.image_mode)
+            cnn_type, layer_num = self._image_mode_switcher()
+            model = self.torch.hub.load('facebookresearch/WSL-Images', cnn_type)
             # cut off layer for ImageNet classification
-            self.netCNN = self.nn.Sequential(*list(model.children())[:-1])
+            # if spatial, cut off another layer for spatial features
+            self.netCNN = self.nn.Sequential(*list(model.children())[:layer_num])
         except RuntimeError as e:
             # Perhaps specified one of the wrong model names
             logging.error(
                 'If you have specified one of the resnext101 wsl models, '
                 'please make sure it is one of the following: \n'
                 'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '
-                'resnext101_32x32d_wsl, resnext101_32x48d_wsl'
+                'resnext101_32x32d_wsl, resnext101_32x48d_wsl '
+                'resnext101_32x8d_wsl_spatial, resnext101_32x16d_wsl_spatial, '
+                'resnext101_32x32d_wsl_spatial, resnext101_32x48d_wsl_spatial'
             )
             raise e
         except AttributeError:
@@ -139,6 +143,14 @@ class ImageLoader:
             'resnet50_spatial': ['resnet50', -2],
             'resnet34_spatial': ['resnet34', -2],
             'resnet18_spatial': ['resnet18', -2],
+            'resnext101_32x8d_wsl': ['resnext101_32x8d_wsl', -1],
+            'resnext101_32x16d_wsl': ['resnext101_32x16d_wsl', -1],
+            'resnext101_32x32d_wsl': ['resnext101_32x32d_wsl', -1],
+            'resnext101_32x48d_wsl': ['resnext101_32x48d_wsl', -1],
+            'resnext101_32x8d_wsl_spatial': ['resnext101_32x8d_wsl', -2],
+            'resnext101_32x16d_wsl_spatial': ['resnext101_32x16d_wsl', -2],
+            'resnext101_32x32d_wsl_spatial': ['resnext101_32x32d_wsl', -2],
+            'resnext101_32x48d_wsl_spatial': ['resnext101_32x48d_wsl', -2],
         }
 
         if self.image_mode not in switcher:
@@ -169,6 +181,10 @@ class ImageLoader:
             'resnext101_32x16d_wsl',
             'resnext101_32x32d_wsl',
             'resnext101_32x48d_wsl',
+            'resnext101_32x8d_wsl_spatial',
+            'resnext101_32x16d_wsl_spatial',
+            'resnext101_32x32d_wsl_spatial',
+            'resnext101_32x48d_wsl_spatial',
         ]
 
     def extract(self, image, path=None):
