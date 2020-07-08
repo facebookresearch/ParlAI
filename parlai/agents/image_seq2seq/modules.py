@@ -76,7 +76,7 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             image_features_dim=opt['image_features_dim'],
             fusion=opt['image_fusion_type'],
             n_image_tokens=opt.get('n_image_tokens', 1),
-            n_image_channels=opt.get('n_image_channels', False)
+            n_image_channels=opt.get('n_image_channels', False),
         )
 
 
@@ -111,7 +111,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         image_combination_mode='append',
         n_image_tokens=1,
         fusion='late',
-        n_image_channels=1
+        n_image_channels=1,
     ):
         """
         Override TransformerEncoder __init__.
@@ -160,11 +160,11 @@ class ContextWithImageEncoder(TransformerEncoder):
         self._build_image_encoder()
         dummy_image_size = (self.full_embedding_size,)
         if n_image_channels > 1:
-            dummy_image_size = (n_image_channels, self.full_embedding_size,)
+            dummy_image_size = (n_image_channels, self.full_embedding_size)
+        self.register_buffer('dummy_image_enc', torch.zeros(dummy_image_size))
         self.register_buffer(
-            'dummy_image_enc', torch.zeros(dummy_image_size)
+            'ones_mask', torch.ones(self.n_image_tokens * self.n_image_channels).bool()
         )
-        self.register_buffer('ones_mask', torch.ones(self.n_image_tokens * self.n_image_channels).bool())
 
     def _build_image_encoder(self):
         image_layers = [nn.Linear(self.img_dim, self.full_embedding_size)]
@@ -246,7 +246,11 @@ class ContextWithImageEncoder(TransformerEncoder):
 
             image_masks = torch.stack(image_mask_list)  # type: ignore
             image_encoded = torch.stack(image_encoded_list).reshape(
-                (len(images), self.n_image_tokens * self.n_image_channels, self.embedding_size)
+                (
+                    len(images),
+                    self.n_image_tokens * self.n_image_channels,
+                    self.embedding_size,
+                )
             )
             assert image_masks.shape == image_encoded.shape[:2]
 
@@ -309,7 +313,7 @@ class ContextWithImageEncoder(TransformerEncoder):
                     segments=torch.ones(  # type: ignore
                         (len(image_features), valid_imgs[0].size(0)),
                         dtype=torch.long,
-                        device=valid_imgs[0].device
+                        device=valid_imgs[0].device,
                     ),
                 )
 

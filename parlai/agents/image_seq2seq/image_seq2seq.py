@@ -132,11 +132,15 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         """
         Format shape and type of input image-feature tensor.
 
-        Override TorchImageAgent._process_image_features to handle multi-dimensional images.
+        Override TorchImageAgent._process_image_features to handle multi-dimensional
+        images.
         """
         features = features.view(-1, self.image_features_dim)
         return torch.stack(
-            [TorchImageAgent._process_image_features(self, features[i]) for i in range(features.size(0))]
+            [
+                TorchImageAgent._process_image_features(self, features[i])
+                for i in range(features.size(0))
+            ]
         )
 
     def _model_input(self, batch: Batch) -> Tuple[torch.Tensor, List[object]]:
