@@ -25,15 +25,15 @@ class TestStyleGenTeachers(unittest.TestCase):
                 ('LabeledBlendedSkillTalk', 'train', 4819, 27018),
                 ('LabeledBlendedSkillTalk', 'valid', 1009, 5651),
                 ('LabeledBlendedSkillTalk', 'test', 980, 5482),
-                ('LabeledConvAI2PT', 'train', 17878, 131438),
-                ('LabeledConvAI2PT', 'valid', 1000, 7801),
-                ('LabeledConvAI2PT', 'test', 1000, 7801),
-                ('LabeledEmpatheticDialoguesPT', 'train', 39057, 64636),
-                ('LabeledEmpatheticDialoguesPT', 'valid', 2769, 5738),
-                ('LabeledEmpatheticDialoguesPT', 'test', 2547, 5259),
-                ('LabeledWizardOfWikipediaPT', 'train', 18430, 74092),
-                ('LabeledWizardOfWikipediaPT', 'valid', 981, 3939),
-                ('LabeledWizardOfWikipediaPT', 'test', 965, 3865),
+                ('LabeledConvAI2PersonaTopicifier', 'train', 17878, 131438),
+                ('LabeledConvAI2PersonaTopicifier', 'valid', 1000, 7801),
+                ('LabeledConvAI2PersonaTopicifier', 'test', 1000, 7801),
+                ('LabeledEDPersonaTopicifier', 'train', 39057, 64636),
+                ('LabeledEDPersonaTopicifier', 'valid', 2769, 5738),
+                ('LabeledEDPersonaTopicifier', 'test', 2547, 5259),
+                ('LabeledWoWPersonaTopicifier', 'train', 18430, 74092),
+                ('LabeledWoWPersonaTopicifier', 'valid', 981, 3939),
+                ('LabeledWoWPersonaTopicifier', 'test', 965, 3865),
             ]
             for teacher_name, datatype, num_episodes, num_examples in cases:
                 all_kwargs = {
@@ -71,7 +71,7 @@ class TestStyleGenTeachers(unittest.TestCase):
                     },
                 ),
                 (
-                    'LabeledConvAI2PT',
+                    'LabeledConvAI2PersonaTopicifier',
                     'valid',
                     {
                         'id': 'internal:blended_skill_talk:ConvAI2PersonaTopicifierTeacher',
@@ -89,7 +89,7 @@ class TestStyleGenTeachers(unittest.TestCase):
                     },
                 ),
                 (
-                    'LabeledEmpatheticDialoguesPT',
+                    'LabeledEDPersonaTopicifier',
                     'test',
                     {
                         'id': 'internal:blended_skill_talk:EDPersonaTopicifierTeacher',

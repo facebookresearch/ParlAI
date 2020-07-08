@@ -51,7 +51,7 @@ class LabeledBlendedSkillTalkTeacher(ParlaiformatTeacher):
         super().__init__(opt, shared=shared)
 
 
-class LabeledConvAI2PTTeacher(ParlaiformatTeacher):
+class LabeledConvAI2PersonaTopicifierTeacher(ParlaiformatTeacher):
     """
     Teacher for blended_skill_talk:ConvAI2PersonaTopicifier, with Image-Chat
     personalities added to examples.
@@ -64,7 +64,7 @@ class LabeledConvAI2PTTeacher(ParlaiformatTeacher):
         super().__init__(opt, shared=shared)
 
 
-class LabeledEmpatheticDialoguesPTTeacher(ParlaiformatTeacher):
+class LabeledEDPersonaTopicifierTeacher(ParlaiformatTeacher):
     """
     Teacher for blended_skill_talk:EDPersonaTopicifier, with Image-Chat
     personalities added to examples.
@@ -77,7 +77,7 @@ class LabeledEmpatheticDialoguesPTTeacher(ParlaiformatTeacher):
         super().__init__(opt, shared=shared)
 
 
-class LabeledWizardOfWikipediaPTTeacher(ParlaiformatTeacher):
+class LabeledWoWPersonaTopicifierTeacher(ParlaiformatTeacher):
     """
     Teacher for blended_skill_talk:WoWPersonaTopicifier, with Image-Chat
     personalities added to examples.
