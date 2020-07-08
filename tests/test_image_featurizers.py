@@ -15,7 +15,7 @@ BASE_IMAGE_ARGS = {
     "task": "integration_tests:ImageTeacher",
     "image_size": 256,
     "image_cropsize": 224,
-    "image_features_dim": 2048
+    "image_features_dim": 2048,
 }
 
 IMAGE_MODE_TO_DIM = {
@@ -46,7 +46,8 @@ class TestImageLoader(unittest.TestCase):
             self.assertEquals(
                 teacher_act["image"].size(),
                 dim,
-                f"dim mismatch for image mode {image_mode}")
+                f"dim mismatch for image mode {image_mode}",
+            )
 
 
 if __name__ == '__main__':
