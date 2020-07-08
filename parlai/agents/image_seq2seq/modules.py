@@ -76,7 +76,7 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             image_features_dim=opt['image_features_dim'],
             fusion=opt['image_fusion_type'],
             n_image_tokens=opt.get('n_image_tokens', 1),
-            n_image_channels=opt.get('n_image_channels', False),
+            n_image_channels=opt.get('n_image_channels', 1),
         )
 
 
