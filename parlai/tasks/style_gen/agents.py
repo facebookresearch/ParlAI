@@ -40,8 +40,8 @@ def get_personality_list_path(opt: Opt) -> str:
 
 class LabeledBlendedSkillTalkTeacher(ParlaiformatTeacher):
     """
-    Teacher for blended_skill_talk:BlendedSkillTalk, with Image-Chat
-    personalities added to examples.
+    Teacher for blended_skill_talk:BlendedSkillTalk, with Image-Chat personalities added
+    to examples.
     """
 
     def __init__(self, opt, shared=None):
@@ -66,8 +66,8 @@ class LabeledConvAI2PersonaTopicifierTeacher(ParlaiformatTeacher):
 
 class LabeledEDPersonaTopicifierTeacher(ParlaiformatTeacher):
     """
-    Teacher for blended_skill_talk:EDPersonaTopicifier, with Image-Chat
-    personalities added to examples.
+    Teacher for blended_skill_talk:EDPersonaTopicifier, with Image-Chat personalities
+    added to examples.
     """
 
     def __init__(self, opt, shared=None):
@@ -79,8 +79,8 @@ class LabeledEDPersonaTopicifierTeacher(ParlaiformatTeacher):
 
 class LabeledWoWPersonaTopicifierTeacher(ParlaiformatTeacher):
     """
-    Teacher for blended_skill_talk:WoWPersonaTopicifier, with Image-Chat
-    personalities added to examples.
+    Teacher for blended_skill_talk:WoWPersonaTopicifier, with Image-Chat personalities
+    added to examples.
     """
 
     def __init__(self, opt, shared=None):
