@@ -8,6 +8,7 @@
 import os
 
 from parlai.core import build_data
+from parlai.core.opt import Opt
 
 
 TASK_FOLDER_NAME = 'style_gen'
@@ -28,7 +29,7 @@ PERSONALITY_LIST_RESOURCES = [
 ]
 
 
-def build_style_labeled_datasets(opt):
+def build_style_labeled_datasets(opt: Opt):
     dpath = os.path.join(opt['datapath'], TASK_FOLDER_NAME)
     version = 'v1.0'
 
@@ -47,7 +48,7 @@ def build_style_labeled_datasets(opt):
         build_data.mark_done(dpath, version_string=version)
 
 
-def build_personality_list(opt):
+def build_personality_list(opt: Opt):
     dpath = os.path.join(opt['datapath'], TASK_FOLDER_NAME)
     version = 'v1.0'
 
