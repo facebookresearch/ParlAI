@@ -158,9 +158,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         # Images will be embedded to this size, and then the embedding will be folded
         # into however many tokens are needed
         self._build_image_encoder()
-        dummy_image_size = (self.full_embedding_size,)
-        if n_image_channels > 1:
-            dummy_image_size = (n_image_channels, self.full_embedding_size)
+        dummy_image_size = (n_image_channels, self.full_embedding_size)
         self.register_buffer('dummy_image_enc', torch.zeros(dummy_image_size))
         self.register_buffer(
             'ones_mask', torch.ones(self.n_image_tokens * self.n_image_channels).bool()
@@ -311,7 +309,10 @@ class ContextWithImageEncoder(TransformerEncoder):
                 image_tensor, image_mask = self.encode_images(
                     image_features,
                     segments=torch.ones(  # type: ignore
-                        (len(image_features), valid_imgs[0].size(0)),
+                        (
+                            len(image_features),
+                            self.n_image_channels * self.n_image_tokens,
+                        ),
                         dtype=torch.long,
                         device=valid_imgs[0].device,
                     ),

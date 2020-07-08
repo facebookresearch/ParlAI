@@ -23,6 +23,7 @@ BASE_ARGS = {
     'gradient_clip': 0.1,
     'num_epochs': 10,
     'skip_generation': True,
+    'n_image_channels': 1,
     # Train args
     'learningrate': 7e-3,
     'batchsize': 16,
@@ -42,7 +43,7 @@ SPATIAL_IMAGE_ARGS = {
     'task': 'integration_tests:ImageTeacher',
     'num_epochs': 5,
     'image_mode': 'resnet152_spatial',
-    'n_image_channels': 49
+    'n_image_channels': 49,
 }
 
 EARLY_FUSION_ARGS = {'image_fusion_type': 'early', 'n_segments': 2}
@@ -163,7 +164,7 @@ class TestImageSeq2Seq(unittest.TestCase):
         self.assertLessEqual(
             valid['ppl'],
             7.5,
-            'failed to train image_seq2seq on image task with spatial features'
+            'failed to train image_seq2seq on image task with spatial features',
         )
 
     @testing_utils.retry(ntries=3)
@@ -182,7 +183,7 @@ class TestImageSeq2Seq(unittest.TestCase):
         self.assertLessEqual(
             valid['ppl'],
             7.5,
-            'failed to train image_seq2seq on image task with spatial features'
+            'failed to train image_seq2seq on image task with spatial features',
         )
 
 
