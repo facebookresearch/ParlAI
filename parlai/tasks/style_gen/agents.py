@@ -11,6 +11,7 @@ from parlai.tasks.fromfile.agents import ParlaiformatTeacher
 from parlai.tasks.style_gen.build import (
     build_personality_list,
     build_style_labeled_datasets,
+    get_style_labeled_data_folder,
     TASK_FOLDER_NAME,
 )
 
@@ -23,7 +24,9 @@ def get_style_labeled_data_path(opt: Opt, base_task: str) -> str:
     build_style_labeled_datasets(opt)
     # Build the data if it doesn't exist.
     dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], TASK_FOLDER_NAME, base_task, dt + '.txt')
+    return os.path.join(
+        get_style_labeled_data_folder(opt['datapath']), base_task, dt + '.txt'
+    )
 
 
 def get_personality_list_path(opt: Opt) -> str:

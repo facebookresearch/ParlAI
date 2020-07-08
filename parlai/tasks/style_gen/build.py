@@ -16,21 +16,25 @@ STYLE_LABELED_DATASETS_RESOURCES = [
     build_data.DownloadableFile(
         'http://parl.ai/downloads/style_gen/style_labeled_datasets.tar.gz',
         'style_labeled_datasets.tar.gz',
-        'ADD THIS',
+        'c3bfee334f89ad82b67a543d65f62f12d65121e3795592dd7b67287de547ee44',
     )
 ]
 PERSONALITY_LIST_RESOURCES = [
     build_data.DownloadableFile(
         'http://parl.ai/downloads/style_gen/personality_list.txt',
         'personality_list.txt',
-        'ADD THIS',
+        'f527d9315b9d10f8e65021577a7dc4b1777940cea735588485b1c4b5c8c9032a',
         zipped=False,
     )
 ]
 
 
+def get_style_labeled_data_folder(datapath: str) -> str:
+    return os.path.join(datapath, TASK_FOLDER_NAME, 'labeled_datasets')
+
+
 def build_style_labeled_datasets(opt: Opt):
-    dpath = os.path.join(opt['datapath'], TASK_FOLDER_NAME)
+    dpath = get_style_labeled_data_folder(datapath=opt['datapath'])
     version = 'v1.0'
 
     if not build_data.built(dpath, version_string=version):
