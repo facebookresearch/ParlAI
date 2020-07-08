@@ -43,12 +43,32 @@ class TorchImageAgent(TorchAgent):
             recommended=1,
             help='Number of linear layers to encode image features with',
         )
+        agent.add_argument(
+            '--n-image-tokens',
+            type=int,
+            default=1,
+            help=(
+                'Number of tokens that the image encoding will consist of. '
+                'Specify to spread image encoding over multiple tokens'
+            ),
+        )
+        agent.add_argument(
+            '--n-image-channels',
+            type=int,
+            default=1,
+            help=(
+                'Number of channels that the image encoding will consist of. '
+                'Specify if incoming image is multidimensional'
+            ),
+        )
         return agent
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.image_features_dim = opt['image_features_dim']
         self.image_encoder_num_layers = opt['image_encoder_num_layers']
+        self.n_image_tokens = opt['n_image_tokens']
+        self.n_image_channels = opt['n_image_channels']
 
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
