@@ -82,8 +82,9 @@ class StyleAgentMixin:
     @classmethod
     def add_cmdline_args(cls, argparser):
         """
-        Add command-line arguments specifically for this agent. Does not add arguments
-        from its superclass because it's a mixin.
+        Add command-line arguments specifically for this agent.
+
+        Does not add arguments from its superclass because it's a mixin.
         """
         agent = argparser.add_argument_group('StyleAgentMixin arguments')
         agent.add_argument(
@@ -192,6 +193,7 @@ class BatchWithPersonalities(AttrDict):
     Adds a 'personalities' field to the batch in the case where personality information
     is not encoded in any other field.
     """
+
     def __init__(self, personalities=None, **kwargs):
         super().__init__(personalities=personalities, **kwargs)
 
