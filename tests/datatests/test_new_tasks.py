@@ -9,8 +9,9 @@ import traceback
 import unittest
 
 import parlai.core.teachers as teach_module
-from parlai.scripts.verify_data import verify, setup_args
 import parlai.utils.testing as testing_utils
+from parlai.scripts.verify_data import verify, setup_args
+from parlai.tasks.style_gen.agents import get_style_labeled_data_path
 
 KEYS = ['missing_text', 'missing_labels', 'empty_string_label_candidates']
 BASE_TEACHERS = dir(teach_module) + [
@@ -59,6 +60,14 @@ class TestNewTasks(unittest.TestCase):
                 parser = setup_args()
                 opt = parser.parse_args(args=['--task', subt], print_args=False)
                 opt['task'] = subt
+                if subt.split(':')[-1] == 'ParlaiformatTeacher':
+                    # NOTE: this teacher requires fromfile_datapath to be set. This is
+                    # the only teacher known to not be usable with default params; if
+                    # many more are found, we should find a more scalable way to set
+                    # these custom flags.
+                    opt['fromfile_datapath'] = get_style_labeled_data_path(
+                        opt=opt, base_task='blended_skill_talk'
+                    )
                 try:
                     with testing_utils.capture_output():
                         text, log = verify(opt, print_parser=False)
