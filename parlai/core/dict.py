@@ -216,7 +216,7 @@ class DictionaryAgent(Agent):
             type=str,
             default=None,
             hidden=True,
-            help='path to text file containing any extra special tokens'
+            help='path to text file containing any extra special tokens',
         )
         dictionary = BPEHelper.add_cmdline_args(dictionary)
         return dictionary
@@ -241,7 +241,9 @@ class DictionaryAgent(Agent):
             'dict_textfields', DictionaryAgent.default_textfields
         ).split(",")
         # load special tokens
-        if self.opt.get('special_tokens_file') is not None and os.path.isfile(self.opt['special_tokens_file']):
+        if self.opt.get('special_tokens_file') is not None and os.path.isfile(
+            self.opt['special_tokens_file']
+        ):
             with open(self.opt['special_tokens_file'], 'r') as f:
                 self.extra_special_tokens = f.read().splitlines()
         else:
@@ -348,7 +350,7 @@ class DictionaryAgent(Agent):
 
     def supports_extra_special_tokens(self):
         """
-        Indicates whether the dictionary supports additional special tokens
+        Indicates whether the dictionary supports additional special tokens.
         """
         # TODO: add to others
         return self.tokenizer == 'bytelevelbpe'
@@ -740,7 +742,10 @@ class DictionaryAgent(Agent):
             # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
             extra_tokens = 4 + len(self.extra_special_tokens)
             vector = [
-                idx + len(self.tok2ind) - extra_tokens if idx < extra_tokens else idx - extra_tokens for idx in vector
+                idx + len(self.tok2ind) - extra_tokens
+                if idx < extra_tokens
+                else idx - extra_tokens
+                for idx in vector
             ]
             tokens = [self[int(idx)] for idx in vector]
             text = self.bpe.decode(tokens, vector, delimiter)

@@ -788,7 +788,9 @@ class HuggingFaceBpeHelper(BPEHelper):
         logging.info(f'adding the following special tokens: {special_tokens}')
         self.tokenizer.add_special_tokens(special_tokens)  # add to HF
 
-        for i in range(self.tokenizer.get_vocab_size() - (4 + len(dict_agent.extra_special_tokens))):
+        for i in range(
+            self.tokenizer.get_vocab_size() - (4 + len(dict_agent.extra_special_tokens))
+        ):
             token = self.tokenizer.id_to_token(i)
             dict_agent.add_token(token)
             # We don't have access to the hugging face word frequency table,
