@@ -218,7 +218,7 @@ class ClassifierOnGeneratorAgent(ClassificationMixin, TransformerGeneratorAgent)
 
     def batch_act(self, observations):
         """
-        Overwriting RankingClassificationMixin.batch_act() in the case where the labels
+        Overwriting ClassificationMixin.batch_act() in the case where the labels
         are stored in the "personality" field.
         """
 
