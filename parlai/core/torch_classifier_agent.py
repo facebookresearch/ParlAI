@@ -511,7 +511,7 @@ class TorchClassifierAgent(TorchAgent):
 
 class ClassificationMixin(Agent):
     """
-    Mixin for adding classification metrics to ranking models in ParlAI.
+    Mixin for adding classification metrics to non-classifier models.
     """
 
     def __init__(self, opt: Opt, shared=None):
