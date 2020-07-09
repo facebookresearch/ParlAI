@@ -29,7 +29,7 @@ from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import warn_once, round_sigfigs
 
 
-class StyleControlAgent(StyleAgentMixin, TransformerGeneratorAgent):
+class StyleGenAgent(StyleAgentMixin, TransformerGeneratorAgent):
     """
     General purpose generator with a style in the history.
     """
