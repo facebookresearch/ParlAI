@@ -262,7 +262,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
         )
 
 
-def create_agent_from_model_file(model_file, opt_overides=None):
+def create_agent_from_model_file(model_file, opt_overrides=None):
     """
     Load agent from model file if it exists.
 
@@ -274,9 +274,9 @@ def create_agent_from_model_file(model_file, opt_overides=None):
     opt = {}
     add_datapath_and_model_args(opt)
     opt['model_file'] = modelzoo_path(opt.get('datapath'), model_file)
-    if opt_overides is None:
-        opt_overides = {}
-    opt['override'] = opt_overides
+    if opt_overrides is None:
+        opt_overrides = {}
+    opt['override'] = opt_overrides
     return create_agent_from_opt_file(opt)
 
 
