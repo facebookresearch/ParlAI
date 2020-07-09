@@ -273,7 +273,7 @@ def create_agent_from_model_file(model_file, opt_overides=None):
     """
     opt = {}
     add_datapath_and_model_args(opt)
-    opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
+    opt['model_file'] = modelzoo_path(opt.get('datapath'), model_file)
     if opt_overides is None:
         opt_overides = {}
     opt['override'] = opt_overides
