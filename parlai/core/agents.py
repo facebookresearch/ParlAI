@@ -328,7 +328,9 @@ def create_agent_from_opt_file(opt: Opt):
     # update dict file path
     if not opt_from_file.get('dict_file'):
         opt_from_file['dict_file'] = model_file + '.dict'
-    elif opt_from_file.get('dict_file') and not os.path.isfile(opt_from_file['dict_file']):
+    elif opt_from_file.get('dict_file') and not os.path.isfile(
+        opt_from_file['dict_file']
+    ):
         old_dict_file = opt_from_file['dict_file']
         opt_from_file['dict_file'] = model_file + '.dict'
     if not os.path.isfile(opt_from_file['dict_file']):
