@@ -90,8 +90,6 @@ class TestImageSeq2Seq(unittest.TestCase):
     def test_image_task(self):
         """
         Test that model correctly handles image task.
-
-        No training, only eval
         """
         args = BASE_ARGS.copy()
         args.update(IMAGE_ARGS)
@@ -155,7 +153,7 @@ class TestImageSeq2Seq(unittest.TestCase):
         """
         Test that model correctly handles image task.
 
-        No training, only eval
+        With spatial features.
         """
         args = BASE_ARGS.copy()
         args.update(SPATIAL_IMAGE_ARGS)
@@ -172,6 +170,8 @@ class TestImageSeq2Seq(unittest.TestCase):
     def test_image_task_spatial_features_early_fusion(self):
         """
         Test that model correctly handles image task.
+
+        With spatial features.
 
         Early Fusion
         """
