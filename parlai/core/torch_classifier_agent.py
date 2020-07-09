@@ -519,15 +519,17 @@ class ClassificationMixin(Agent):
         if shared is None:
             self.reset_metrics()
 
-    def _update_confusion_matrix(self, predictions, labels):
+    def _update_confusion_matrix(
+        self, predictions: List[Optional[str]], labels: List[Optional[List[str]]]
+    ):
         """
         Update the confusion matrix given the batch and predictions.
 
-        :param batch:
-            a Batch object (defined in torch_agent.py)
-        :param predictions:
-            (list of string of length batchsize) label predicted by the
-            classifier
+        :param predictions: List of strings of length batchsize. Each string is a label
+            predicted by the classifier. A string will be None if the corresponding
+            observation is empty.
+        :param labels: List of label fields from the observations. Fields may be Nones
+            if the observations are empty.
         """
         f1_dict = {}
         explode_labels = []
@@ -537,13 +539,25 @@ class ClassificationMixin(Agent):
             else:
                 explode_labels.append(None)
 
-        class_list = [x for x in set(predictions + explode_labels) if x is not None]
+        # Check that predictions and labels have Nones in the same places, and then
+        # filter the Nones out because we can't compute metrics with them
+        assert all(
+            [
+                (pred is None and label is None)
+                or (pred is not None and label is not None)
+                for pred, label in zip(predictions, explode_labels)
+            ]
+        )
+        filtered_predictions = [pred for pred in predictions if pred is not None]
+        filtered_labels = [label for label in explode_labels if label is not None]
+
+        class_list = set(filtered_predictions + filtered_labels)
         for class_name in class_list:
             prec_str = f'class_{class_name}_prec'
             recall_str = f'class_{class_name}_recall'
             f1_str = f'class_{class_name}_f1'
             precision, recall, f1 = ConfusionMatrixMetric.compute_metrics(
-                predictions, explode_labels, class_name
+                filtered_predictions, filtered_labels, class_name
             )
             f1_dict[class_name] = f1
             self.record_local_metric(prec_str, precision)
@@ -621,7 +635,7 @@ class ClassificationMixin(Agent):
             if len(values) != len(batch.valid_indices):
                 raise IndexError(
                     f"Batchsize mismatch on metric {k} (got {len(values)}, "
-                    f"expected {len(batch.valid_indices)}"
+                    f"expected {len(batch.valid_indices)})"
                 )
             for i, value in zip(batch.valid_indices, values):
                 if 'metrics' not in batch_reply[i]:
