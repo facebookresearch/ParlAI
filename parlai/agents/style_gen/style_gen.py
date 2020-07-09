@@ -68,7 +68,7 @@ class ClassifierOnGeneratorAgent(ClassificationMixin, TransformerGeneratorAgent)
         Add CLI args.
         """
         TransformerClassifierAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('GeneratorWithClassifierHead Arguments')
+        agent = argparser.add_argument_group('ClassifierOnGenerator Arguments')
         agent.add_argument(
             '--freeze-enc-dec-weights',
             type='bool',
@@ -232,17 +232,14 @@ class ClassifierOnGeneratorAgent(ClassificationMixin, TransformerGeneratorAgent)
 
             batch_reply = super(ClassificationMixin, self).batch_act(observations)
 
-            labels = 'personality'
-
             preds = self._get_preds(batch_reply)
-
             if preds is None:
                 return batch_reply
 
+            labels = 'personality'
             labels_lst = [[label] for label in self._get_labels(observations, labels)]
             # The label is expected to be in a list like in the "labels" or
             # "eval_labels" fields
-
             self._update_confusion_matrix(preds, labels_lst)
 
             return batch_reply

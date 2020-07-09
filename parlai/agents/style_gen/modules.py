@@ -45,7 +45,7 @@ class StyleHistoryMixin(History):
         if use_style_rand < self.use_style_frac:
             # Use the style
             self.style = obs.get('personality')
-            # This key name is dependent on ImageChat and will change for other tasks.
+            # This key name is dependent on Image-Chat and will change for other tasks.
             # If obs does not contain 'personality' (i.e. at the end of an epoch during
             # validation), there will be no style
             if self.style == '':
@@ -85,7 +85,7 @@ class StyleAgentMixin:
         Add command-line arguments specifically for this agent. Does not add arguments
         from its superclass because it's a mixin.
         """
-        agent = argparser.add_argument_group('Style arguments')
+        agent = argparser.add_argument_group('StyleAgentMixin arguments')
         agent.add_argument(
             '--use-style-frac',
             type=float,
@@ -192,7 +192,6 @@ class BatchWithPersonalities(AttrDict):
     Adds a 'personalities' field to the batch in the case where personality information
     is not encoded in any other field.
     """
-
     def __init__(self, personalities=None, **kwargs):
         super().__init__(personalities=personalities, **kwargs)
 
