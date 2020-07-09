@@ -59,7 +59,8 @@ class ClassifierOnGeneratorAgent(ClassificationMixin, TransformerGeneratorAgent)
     generator encoder/decoder weights will be frozen during classifier training.
     """
 
-    # TODO: reduce amount of code duplicated from TorchClassifierAgent
+    # TODO: perhaps reduce the amount of code duplicated from TorchClassifierAgent. This
+    #  would require modularizing several snippets of code inside TCA methods.
 
     @classmethod
     def add_cmdline_args(cls, argparser):
@@ -303,7 +304,9 @@ class ClassifierOnGeneratorAgent(ClassificationMixin, TransformerGeneratorAgent)
     def _model_input(self, batch):
         """
         Create the input (x) value for the model.
-        # TODO: explain the two cases!
+
+        If `label_vec` encodes the personalities, which are the target values, it does
+        not get passed in as a model input.
         """
         if self.personality_as_label:
             return (batch.text_vec,)

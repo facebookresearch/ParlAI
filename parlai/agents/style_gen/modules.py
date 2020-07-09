@@ -189,7 +189,8 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
 
 class BatchWithPersonalities(AttrDict):
     """
-    TODO: docstring
+    Adds a 'personalities' field to the batch in the case where personality information
+    is not encoded in any other field.
     """
 
     def __init__(self, personalities=None, **kwargs):
@@ -201,7 +202,10 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
         """
         Forward pass with the ability to pass in token-embedded inputs.
         """
-        # TODO: most of this is copied-and-pasted from TransformerDecoder.forward
+        # TODO: perhaps reduce the amount of code duplicated from TransformerDecoder.
+        #  This would require modularizing several snippets of code inside
+        #  TransformerDecoder methods.
+
         encoder_output, encoder_mask = encoder_state
 
         if input is not None:
