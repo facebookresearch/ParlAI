@@ -509,9 +509,9 @@ class TorchClassifierAgent(TorchAgent):
         raise NotImplementedError('Abstract class: user must implement score()')
 
 
-class RankingClassificationMixin(Agent):
+class ClassificationMixin(Agent):
     """
-    Ranker mixin for adding classification metrics to ranking models in ParlAI.
+    Mixin for adding classification metrics to ranking models in ParlAI.
     """
 
     def __init__(self, opt: Opt, shared=None):
