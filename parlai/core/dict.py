@@ -211,6 +211,13 @@ class DictionaryAgent(Agent):
             'Tasks with additional fields may add to this list to handle '
             'any extra vocabulary.',
         )
+        dictionary.add_argument(
+            '--special-tokens-file',
+            type=str,
+            default=None,
+            hidden=True,
+            help='path to text file containing any extra special tokens'
+        )
         dictionary = BPEHelper.add_cmdline_args(dictionary)
         return dictionary
 
@@ -233,6 +240,15 @@ class DictionaryAgent(Agent):
         self.textfields = opt.get(
             'dict_textfields', DictionaryAgent.default_textfields
         ).split(",")
+        # load special tokens
+        if self.opt.get('special_tokens_file') is not None and os.path.isfile(self.opt['special_tokens_file']):
+            with open(self.opt['special_tokens_file'], 'r') as f:
+                self.extra_special_tokens = f.read().splitlines()
+        else:
+            self.extra_special_tokens = []
+        if self.extra_special_tokens and not self.supports_extra_special_tokens():
+            raise RuntimeError('Blaghhhhh')
+            # TODO: make this more descriptive
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -264,6 +280,9 @@ class DictionaryAgent(Agent):
             if self.unk_token:
                 # set special unknown word token
                 self.add_token(self.unk_token)
+
+            for tok in self.extra_special_tokens:
+                self.add_token(tok)
 
             loaded = False
             # If data built via pytorch data teacher, we need to load prebuilt dict
@@ -321,8 +340,18 @@ class DictionaryAgent(Agent):
                 # fix count for unknown token to one billion
                 self.freq[self.unk_token] = 1000000000
 
+            for i, tok in enumerate(self.extra_special_tokens):
+                self.freq[tok] = 1000000000 + 4 + i
+
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
+
+    def supports_extra_special_tokens(self):
+        """
+        Indicates whether the dictionary supports additional special tokens
+        """
+        # TODO: add to others
+        return self.tokenizer == 'bytelevelbpe'
 
     def is_prebuilt(self):
         """
@@ -708,9 +737,10 @@ class DictionaryAgent(Agent):
             text = self.bpe.decode(tokens, vector, delimiter)
         elif self.tokenizer == 'bytelevelbpe':
             # We add special tokens in the beginning of ParlAI dict but in the
-            # end of Hugging Face dict,there is an offset of 4 between them.
+            # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
+            extra_tokens = 4 + len(self.extra_special_tokens)
             vector = [
-                idx + len(self.tok2ind) - 4 if idx < 4 else idx - 4 for idx in vector
+                idx + len(self.tok2ind) - extra_tokens if idx < extra_tokens else idx - extra_tokens for idx in vector
             ]
             tokens = [self[int(idx)] for idx in vector]
             text = self.bpe.decode(tokens, vector, delimiter)
