@@ -17,9 +17,9 @@ STYLE_LABELED_DATASETS_VERSION = 'v1.1'
 TASK_FOLDER_NAME = 'style_gen'
 STYLE_LABELED_DATASETS_RESOURCES = [
     build_data.DownloadableFile(
-        'http://parl.ai/downloads/style_gen/style_labeled_datasets.tar.gz',
+        f'http://parl.ai/downloads/style_gen/style_labeled_datasets__{STYLE_LABELED_DATASETS_VERSION}.tar.gz',
         f'style_labeled_datasets__{STYLE_LABELED_DATASETS_VERSION}.tar.gz',
-        'c3bfee334f89ad82b67a543d65f62f12d65121e3795592dd7b67287de547ee44',
+        '19995a8957cb3e847d1c0ff18e6ce0c231ed711ae19ebaa624012e1782223445',
     )
 ]
 PERSONALITY_LIST_RESOURCES = [
