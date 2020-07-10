@@ -1244,17 +1244,6 @@ model_list = [
         ),
     },
     {
-        "title": "Style-controlled generation: previous-and-current-utterance classifier",
-        "id": "style_gen",
-        "path": "zoo:style_gen/prev_curr_classifier/model",
-        "agent": "style_gen/classifier",
-        "task": "style_gen",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/style_gen',
-        "description": "Classifier trained on Image-Chat personalities with the previous and current utterances as context",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",  # TODO: revise
-        "result": """ADD THIS""",  # TODO: revise
-    },
-    {
         "title": "Style-controlled generation: C75-D+ generator",
         "id": "style_gen",
         "path": "zoo:style_gen/c75_labeled_dialogue_generator/model",
