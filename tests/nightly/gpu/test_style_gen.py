@@ -24,7 +24,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
             Opt(
                 dict(
                     task='integration_tests:classifier',
-                    model='parlai.agents.style_gen.style_gen:ClassifierOnGeneratorAgent',
+                    model='style_gen/classifier',
                     classes=['one', 'zero'],
                     optimizer='adamax',
                     truncate=8,
