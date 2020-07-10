@@ -1247,7 +1247,7 @@ model_list = [
         "title": "Style-controlled generation: previous-and-current-utterance classifier",
         "id": "style_gen",
         "path": "zoo:style_gen/prev_curr_classifier/model",
-        "agent": "transformer/polyencoder",  # TODO: revise
+        "agent": "style_gen/classifier",
         "task": "style_gen",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/style_gen',
         "description": "Classifier trained on Image-Chat personalities with the previous and current utterances as context",
@@ -1258,11 +1258,13 @@ model_list = [
         "title": "Style-controlled generation: C75-D+ generator",
         "id": "style_gen",
         "path": "zoo:style_gen/c75_labeled_dialogue_generator/model",
-        "agent": "transformer/polyencoder",  # TODO: revise
+        "agent": "style_gen",
         "task": "style_gen",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/style_gen',
         "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",  # TODO: revise
-        "result": """ADD THIS""",  # TODO: revise
+        "example": "python examples/eval_model.py --datatype test --model style_gen --model-file zoo:style_gen/c75_labeled_dialogue_generator/model --skip-generation True --task style_gen:LabeledBlendedSkillTalk --use-style-frac 1.00",
+        "result": """11:32:59 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
+    exs  gpu_mem  loss   ppl  token_acc   tpb
+   5482    .4899 2.245 9.442      .4879 19.94""",
     },
 ]
