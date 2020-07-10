@@ -102,6 +102,8 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         """
         b = super()._dummy_batch(batchsize, maxlen)
         image = torch.ones(batchsize, self.image_features_dim).cuda()
+        if self.n_image_channels > 1:
+            image = image.unsqueeze(1).repeat(1, self.n_image_channels, 1)
         if self.fp16:
             image = image.half()
         return Batch(
@@ -125,6 +127,21 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
                 images.append(img)
             batch.image = images
         return batch
+
+    def _process_image_features(self, features: torch.Tensor) -> torch.Tensor:
+        """
+        Format shape and type of input image-feature tensor.
+
+        Override TorchImageAgent._process_image_features to handle multi-dimensional
+        images.
+        """
+        features = features.view(-1, self.image_features_dim)
+        return torch.stack(
+            [
+                TorchImageAgent._process_image_features(self, features[i])
+                for i in range(features.size(0))
+            ]
+        )
 
     def _model_input(self, batch: Batch) -> Tuple[torch.Tensor, List[object]]:
         return (batch.text_vec, batch.image)
