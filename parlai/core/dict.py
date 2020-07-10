@@ -240,17 +240,9 @@ class DictionaryAgent(Agent):
         self.textfields = opt.get(
             'dict_textfields', DictionaryAgent.default_textfields
         ).split(",")
-        # load special tokens
-        if self.opt.get('special_tokens_file') is not None and os.path.isfile(
-            self.opt['special_tokens_file']
-        ):
-            with open(self.opt['special_tokens_file'], 'r') as f:
-                self.extra_special_tokens = f.read().splitlines()
-        else:
-            self.extra_special_tokens = []
-        if self.extra_special_tokens and not self.supports_extra_special_tokens():
-            raise RuntimeError('Blaghhhhh')
-            # TODO: make this more descriptive
+
+        # load extra special tokens
+        self._load_extra_special_tokens()
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -347,6 +339,20 @@ class DictionaryAgent(Agent):
 
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
+
+    def _load_extra_special_tokens(self):
+        # load special tokens
+        if self.opt.get('special_tokens_file') is not None and os.path.isfile(
+            self.opt['special_tokens_file']
+        ):
+            with open(self.opt['special_tokens_file'], 'r') as f:
+                self.extra_special_tokens = f.read().splitlines()
+        else:
+            self.extra_special_tokens = []
+        if self.extra_special_tokens and not self.supports_extra_special_tokens():
+            raise RuntimeError(
+                f'{self.tokenizer} does not currently support adding additional special tokens'
+            )
 
     def supports_extra_special_tokens(self):
         """
@@ -742,7 +748,7 @@ class DictionaryAgent(Agent):
             # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
             extra_tokens = 4 + len(self.extra_special_tokens)
             vector = [
-                idx + len(self.tok2ind) - extra_tokens
+                self.bpe.special_tok_map[idx]
                 if idx < extra_tokens
                 else idx - extra_tokens
                 for idx in vector
