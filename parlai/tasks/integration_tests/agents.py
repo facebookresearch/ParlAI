@@ -492,7 +492,9 @@ class ImageTeacher(AbstractImageTeacher):
         imagepath = os.path.join(datapath, 'images')
         os.makedirs(imagepath, exist_ok=True)
 
-        self.image_features_path = os.path.join(datapath, 'image_features')
+        self.image_features_path = os.path.join(
+            datapath, f'{opt["image_mode"]}_image_features'
+        )
 
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]

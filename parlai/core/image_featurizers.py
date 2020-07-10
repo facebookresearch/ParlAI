@@ -18,6 +18,28 @@ from zipfile import ZipFile
 _greyscale = '  .,:;crsA23hHG#98&@'
 _cache_size = 84000
 
+# Mapping from image mode to (torch_instantiation_str, layer_cutoff_idx)
+IMAGE_MODE_SWITCHER = {
+    'resnet152': ['resnet152', -1],
+    'resnet101': ['resnet101', -1],
+    'resnet50': ['resnet50', -1],
+    'resnet34': ['resnet34', -1],
+    'resnet18': ['resnet18', -1],
+    'resnet152_spatial': ['resnet152', -2],
+    'resnet101_spatial': ['resnet101', -2],
+    'resnet50_spatial': ['resnet50', -2],
+    'resnet34_spatial': ['resnet34', -2],
+    'resnet18_spatial': ['resnet18', -2],
+    'resnext101_32x8d_wsl': ['resnext101_32x8d_wsl', -1],
+    'resnext101_32x16d_wsl': ['resnext101_32x16d_wsl', -1],
+    'resnext101_32x32d_wsl': ['resnext101_32x32d_wsl', -1],
+    'resnext101_32x48d_wsl': ['resnext101_32x48d_wsl', -1],
+    'resnext101_32x8d_wsl_spatial': ['resnext101_32x8d_wsl', -2],
+    'resnext101_32x16d_wsl_spatial': ['resnext101_32x16d_wsl', -2],
+    'resnext101_32x32d_wsl_spatial': ['resnext101_32x32d_wsl', -2],
+    'resnext101_32x48d_wsl_spatial': ['resnext101_32x48d_wsl', -2],
+}
+
 
 class ImageLoader:
     """
@@ -105,16 +127,18 @@ class ImageLoader:
         When image_mode is one of the ``resnext101_..._wsl`` varieties
         """
         try:
-            model = self.torch.hub.load('facebookresearch/WSL-Images', self.image_mode)
+            cnn_type, layer_num = self._image_mode_switcher()
+            model = self.torch.hub.load('facebookresearch/WSL-Images', cnn_type)
             # cut off layer for ImageNet classification
-            self.netCNN = self.nn.Sequential(*list(model.children())[:-1])
+            # if spatial, cut off another layer for spatial features
+            self.netCNN = self.nn.Sequential(*list(model.children())[:layer_num])
         except RuntimeError as e:
             # Perhaps specified one of the wrong model names
+            model_names = [m for m in IMAGE_MODE_SWITCHER if 'resnext101' in m]
             logging.error(
                 'If you have specified one of the resnext101 wsl models, '
                 'please make sure it is one of the following: \n'
-                'resnext101_32x8d_wsl, resnext101_32x16d_wsl, '
-                'resnext101_32x32d_wsl, resnext101_32x48d_wsl'
+                f"{', '.join(model_names)}"
             )
             raise e
         except AttributeError:
@@ -128,48 +152,20 @@ class ImageLoader:
             self.netCNN.cuda()
 
     def _image_mode_switcher(self):
-        switcher = {
-            'resnet152': ['resnet152', -1],
-            'resnet101': ['resnet101', -1],
-            'resnet50': ['resnet50', -1],
-            'resnet34': ['resnet34', -1],
-            'resnet18': ['resnet18', -1],
-            'resnet152_spatial': ['resnet152', -2],
-            'resnet101_spatial': ['resnet101', -2],
-            'resnet50_spatial': ['resnet50', -2],
-            'resnet34_spatial': ['resnet34', -2],
-            'resnet18_spatial': ['resnet18', -2],
-        }
-
-        if self.image_mode not in switcher:
+        if self.image_mode not in IMAGE_MODE_SWITCHER:
             raise NotImplementedError(
                 'image preprocessing mode'
                 + '{} not supported yet'.format(self.image_mode)
             )
 
-        return switcher.get(self.image_mode)
+        return IMAGE_MODE_SWITCHER.get(self.image_mode)
 
     @classmethod
     def get_available_model_names(cls):
         """
         Get a list of the available model variants in this ImageLoader.
         """
-        return [
-            'resnet152',
-            'resnet101',
-            'resnet50',
-            'resnet34',
-            'resnet18',
-            'resnet152_spatial',
-            'resnet101_spatial',
-            'resnet50_spatial',
-            'resnet34_spatial',
-            'resnet18_spatial',
-            'resnext101_32x8d_wsl',
-            'resnext101_32x16d_wsl',
-            'resnext101_32x32d_wsl',
-            'resnext101_32x48d_wsl',
-        ]
+        return list(IMAGE_MODE_SWITCHER.keys())
 
     def extract(self, image, path=None):
         # check whether initialize CNN network.

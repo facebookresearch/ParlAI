@@ -7,20 +7,21 @@
 """
 Torch Classifier Agents classify text into a fixed set of labels.
 """
-
-
-from parlai.core.opt import Opt
-from parlai.utils.torch import PipelineHelper
-from parlai.core.torch_agent import TorchAgent, Output
-from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict
-from parlai.utils.typing import TScalar
-import parlai.utils.logging as logging
-
 
 import torch
 import torch.nn.functional as F
+
+import parlai.utils.logging as logging
+from parlai.core.agents import Agent
+from parlai.core.message import Message
+from parlai.core.opt import Opt
+from parlai.utils.distributed import is_primary_worker
+from parlai.utils.torch import PipelineHelper
+from parlai.core.torch_agent import TorchAgent, Output
+from parlai.utils.misc import round_sigfigs, warn_once
+from parlai.core.metrics import Metric, AverageMetric, GlobalAverageMetric
+from parlai.utils.typing import TScalar
 
 
 class ConfusionMatrixMetric(Metric):
@@ -506,3 +507,142 @@ class TorchClassifierAgent(TorchAgent):
             class.
         """
         raise NotImplementedError('Abstract class: user must implement score()')
+
+
+class ClassificationMixin(Agent):
+    """
+    Mixin for adding classification metrics to non-classifier models.
+    """
+
+    def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
+        if shared is None:
+            self.reset_metrics()
+
+    def _update_confusion_matrix(
+        self, predictions: List[Optional[str]], labels: List[Optional[List[str]]]
+    ):
+        """
+        Update the confusion matrix given the batch and predictions.
+
+        :param predictions: List of strings of length batchsize. Each string is a label
+            predicted by the classifier. A string will be None if the corresponding
+            observation is empty.
+        :param labels: List of label fields from the observations. Fields may be Nones
+            if the observations are empty.
+        """
+        f1_dict = {}
+        explode_labels = []
+        for x in labels:
+            if x is not None and len(x) > 0:
+                explode_labels.append(x[0])
+            else:
+                explode_labels.append(None)
+
+        # Check that predictions and labels have Nones in the same places, and then
+        # filter the Nones out because we can't compute metrics with them
+        assert all(
+            [
+                (pred is None and label is None)
+                or (pred is not None and label is not None)
+                for pred, label in zip(predictions, explode_labels)
+            ]
+        )
+        filtered_predictions = [pred for pred in predictions if pred is not None]
+        filtered_labels = [label for label in explode_labels if label is not None]
+
+        class_list = set(filtered_predictions + filtered_labels)
+        for class_name in class_list:
+            prec_str = f'class_{class_name}_prec'
+            recall_str = f'class_{class_name}_recall'
+            f1_str = f'class_{class_name}_f1'
+            precision, recall, f1 = ConfusionMatrixMetric.compute_metrics(
+                filtered_predictions, filtered_labels, class_name
+            )
+            f1_dict[class_name] = f1
+            self.record_local_metric(prec_str, precision)
+            self.record_local_metric(recall_str, recall)
+            self.record_local_metric(f1_str, f1)
+        self.record_local_metric('weighted_f1', WeightedF1Metric.compute_many(f1_dict))
+
+    def _get_preds(self, batch_reply):
+        preds = [reply.get('text') for reply in batch_reply]
+        if all(x is None for x in preds):
+            return None
+
+        return preds
+
+    def _get_labels(self, observations, labels):
+        labels = [obs.get(labels) for obs in observations]
+        return labels
+
+    def batch_act(self, observations):
+        # clear local metrics before anything else
+        self._local_metrics.clear()
+
+        # initialize a list of replies with this agent's id
+        batch_reply = [
+            Message({'id': self.getID(), 'episode_done': False}) for _ in observations
+        ]
+
+        # check if there are any labels available, if so we will train on them
+        self.is_training = any('labels' in obs for obs in observations)
+
+        # create a batch from the vectors
+        batch = self.batchify(observations)
+
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
+            # tokens per batch
+            # we divide by the binary is_primary_worker() so that the numerator is
+            # num_tokens in all workers, and the denominator is 1.
+            tpb = GlobalAverageMetric(
+                (batch.label_vec != self.NULL_IDX).sum().item(),
+                float(is_primary_worker()),
+            )
+            self.global_metrics.add('tpb', tpb)
+
+        if self.is_training:
+            output = self.train_step(batch)
+        else:
+            with torch.no_grad():
+                # save memory and compute by disabling autograd.
+                # use `with torch.enable_grad()` to gain back gradients.
+                output = self.eval_step(batch)
+
+        if output is not None:
+            # local metrics are automatically matched up
+            self.match_batch(batch_reply, batch.valid_indices, output)
+
+        preds = self._get_preds(batch_reply)
+        if 'labels' in observations[0]:
+            labels = 'labels'
+        elif 'eval_labels' in observations[0]:
+            labels = 'eval_labels'
+        else:
+            labels = None
+
+        if preds is not None and labels is not None:
+            labels_lst = self._get_labels(observations, labels)
+            self._update_confusion_matrix(preds, labels_lst)
+
+        # broadcast the metrics back
+        for k, values in self._local_metrics.items():
+            if len(values) != len(batch.valid_indices):
+                raise IndexError(
+                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"expected {len(batch.valid_indices)})"
+                )
+            for i, value in zip(batch.valid_indices, values):
+                if 'metrics' not in batch_reply[i]:
+                    batch_reply[i]['metrics'] = {}
+                batch_reply[i]['metrics'][k] = value
+
+        # Make sure we push all the metrics to main thread in hogwild/workers
+        self.global_metrics.flush()
+
+        return batch_reply
