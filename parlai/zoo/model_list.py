@@ -1244,31 +1244,25 @@ model_list = [
         ),
     },
     {
-        "title": "BlendedSkillTalk: Wizard of Wikipedia single-task model",  # TODO: revise
+        "title": "Style-controlled generation: previous-and-current-utterance classifier",
         "id": "style_gen",
-        "path": "zoo:blended_skill_talk/wizard_single_task/model",  # TODO: revise
+        "path": "zoo:style_gen/prev_curr_classifier/model",
         "agent": "transformer/polyencoder",  # TODO: revise
         "task": "style_gen",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',  # TODO: revise
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",  # TODO: revise
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/style_gen',
+        "description": "Classifier trained on Image-Chat personalities with the previous and current utterances as context",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",  # TODO: revise
-        "result": """10:34:46 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
-    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
-       .6742   .6616 5482 .7059   .07928   .6742    .9445         1   .8902 1.321 .7706 2.962 19.76
-""",  # TODO: revise
+        "result": """ADD THIS""",  # TODO: revise
     },
     {
-        "title": "BlendedSkillTalk: MT Single-Skills model",  # TODO: revise
+        "title": "Style-controlled generation: C75-D+ generator",
         "id": "style_gen",
-        "path": "zoo:blended_skill_talk/multi_task/model",  # TODO: revise
+        "path": "zoo:style_gen/c75_labeled_dialogue_generator/model",
         "agent": "transformer/polyencoder",  # TODO: revise
         "task": "style_gen",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',  # TODO: revise
-        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",  # TODO: revise
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/style_gen',
+        "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",
         "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",  # TODO: revise
-        "result": """10:23:35 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
-    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
-       .8010   .7872 5482 .8204   .07928   .8010    .9779         1   .9564 .8154 .8697 1.908 19.76
-""",  # TODO: revise
+        "result": """ADD THIS""",  # TODO: revise
     },
 ]
