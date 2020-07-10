@@ -11,11 +11,14 @@ from parlai.core import build_data
 from parlai.core.opt import Opt
 
 
+STYLE_LABELED_DATASETS_VERSION = 'v1.1'
+
+
 TASK_FOLDER_NAME = 'style_gen'
 STYLE_LABELED_DATASETS_RESOURCES = [
     build_data.DownloadableFile(
         'http://parl.ai/downloads/style_gen/style_labeled_datasets.tar.gz',
-        'style_labeled_datasets.tar.gz',
+        f'style_labeled_datasets__{STYLE_LABELED_DATASETS_VERSION}.tar.gz',
         'c3bfee334f89ad82b67a543d65f62f12d65121e3795592dd7b67287de547ee44',
     )
 ]
@@ -35,9 +38,8 @@ def get_style_labeled_data_folder(datapath: str) -> str:
 
 def build_style_labeled_datasets(opt: Opt):
     dpath = get_style_labeled_data_folder(datapath=opt['datapath'])
-    version = 'v1.0'
 
-    if not build_data.built(dpath, version_string=version):
+    if not build_data.built(dpath, version_string=STYLE_LABELED_DATASETS_VERSION):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files
@@ -49,7 +51,7 @@ def build_style_labeled_datasets(opt: Opt):
             downloadable_file.download_file(dpath)
 
         # Mark the data as built
-        build_data.mark_done(dpath, version_string=version)
+        build_data.mark_done(dpath, version_string=STYLE_LABELED_DATASETS_VERSION)
 
 
 def build_personality_list(opt: Opt):
