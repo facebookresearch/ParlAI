@@ -1243,4 +1243,32 @@ model_list = [
             ".0001282  .01229 7801 .2035    .6361 2.386 1e-05 10.87      .4741                 5478 321.3"
         ),
     },
+    {
+        "title": "BlendedSkillTalk: Wizard of Wikipedia single-task model",  # TODO: revise
+        "id": "style_gen",
+        "path": "zoo:blended_skill_talk/wizard_single_task/model",  # TODO: revise
+        "agent": "transformer/polyencoder",  # TODO: revise
+        "task": "style_gen",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',  # TODO: revise
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",  # TODO: revise
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",  # TODO: revise
+        "result": """10:34:46 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .6742   .6616 5482 .7059   .07928   .6742    .9445         1   .8902 1.321 .7706 2.962 19.76
+""",  # TODO: revise
+    },
+    {
+        "title": "BlendedSkillTalk: MT Single-Skills model",  # TODO: revise
+        "id": "style_gen",
+        "path": "zoo:blended_skill_talk/multi_task/model",  # TODO: revise
+        "agent": "transformer/polyencoder",  # TODO: revise
+        "task": "style_gen",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',  # TODO: revise
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",  # TODO: revise
+        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",  # TODO: revise
+        "result": """10:23:35 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .8010   .7872 5482 .8204   .07928   .8010    .9779         1   .9564 .8154 .8697 1.908 19.76
+""",  # TODO: revise
+    },
 ]
