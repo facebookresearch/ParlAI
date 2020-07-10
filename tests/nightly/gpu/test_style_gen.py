@@ -13,6 +13,28 @@ import parlai.utils.testing as testing_utils
 from parlai.core.opt import Opt
 
 
+class TestStyleGen(unittest.TestCase):
+    def test_perplexities(self):
+        """
+        Test perplexities of style-controlled generation models in the zoo.
+        """
+        test_cases = [('c75_labeled_dialogue_generator', 1.0, 9.442)]
+        for model_name, style_frac, desired_ppl in test_cases:
+            _, test = testing_utils.eval_model(
+                opt={
+                    'batchsize': 16,
+                    'num_examples': 64,
+                    'model_file': f'zoo:style_gen/{model_name}/model',
+                    'model': 'style_gen',
+                    'skip_generation': True,
+                    'task': 'style_gen:LabeledBlendedSkillTalk',
+                    'use_style_frac': style_frac,
+                },
+                skip_valid=True,
+            )
+            self.assertAlmostEqual(test['ppl'], desired_ppl, delta=0.005)
+
+
 class TestClassifierOnGenerator(unittest.TestCase):
     """
     Test classifier on generator.
