@@ -12,15 +12,14 @@ from parlai.core.build_data import download_models
 
 
 def download(datapath):
-    # TODO: revise below
-    model_type = 'bst_single_task'
+    model_type = 'prev_curr_classifier'
     version = 'v1.0'
     opt = {'datapath': datapath, 'model_type': model_type}
     fnames = [f'{version}.tar.gz']
     download_models(
         opt=opt,
         fnames=fnames,
-        model_folder='blended_skill_talk',
+        model_folder='style_gen',
         version=version,
         use_model_type=True,
     )
