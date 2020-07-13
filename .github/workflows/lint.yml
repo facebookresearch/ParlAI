@@ -73,7 +73,7 @@ jobs:
         id: cache
       - name: install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -q -r requirements.txt
           pip install -q mypy mypy-extensions
           pip install -q git+https://github.com/numpy/numpy-stubs.git
           pip install -q torch==1.5.1+cpu torchvision==0.6.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
