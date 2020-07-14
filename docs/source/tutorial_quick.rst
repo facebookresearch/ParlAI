@@ -31,21 +31,21 @@ Let's start by printing out the first few examples of the bAbI tasks, task 1.
 .. code-block:: bash
 
   # display examples from bAbI 10k task 1
-  python python -m parlai.scripts.display_data -t babi:task10k:1
+  python -m parlai.scripts.display_data -t babi:task10k:1
 
 Now let's try to train a model on it (even on your laptop, this should train fast).
 
 .. code-block:: bash
 
   # train MemNN using batch size 1 and 4 threads for 5 epochs
-  python python -m parlai.scripts.train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
+  python -m parlai.scripts.train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
 
 Let's print some of its predictions to make sure it's working.
 
 .. code-block:: bash
 
   # display predictions for model save at specified file on bAbI task 1
-  python python -m parlai.scripts.display_model -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
+  python -m parlai.scripts.display_model -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
 
 The "eval_labels" and "MemNN" lines should (usually) match!
 
@@ -54,7 +54,7 @@ Let's try asking the model a question ourselves.
 .. code-block:: bash
 
   # interact with saved model
-  python python -m parlai.scripts.interactive -mf /tmp/babi_memnn -ecands vocab
+  python -m parlai.scripts.interactive -mf /tmp/babi_memnn -ecands vocab
   ...
   Enter your message: John went to the hallway.\n Where is John?
 
@@ -79,14 +79,14 @@ Let's begin again by printing the first few examples.
 .. code-block:: bash
 
   # display first examples from twitter dataset
-  python python -m parlai.scripts.display_data -t twitter
+  python -m parlai.scripts.display_data -t twitter
 
 Now, we'll train the model. This will take a while to reach convergence.
 
 .. code-block:: bash
 
   # train transformer ranker
-  python python -m parlai.scripts.train_model -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 16 -vtim 3600 -cands batch -ecands batch --data-parallel True
+  python -m parlai.scripts.train_model -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 16 -vtim 3600 -cands batch -ecands batch --data-parallel True
 
 You can modify some of the command line arguments we use here -
 we set batch size to 10, run validation every 3600 seconds,
@@ -111,7 +111,7 @@ Finally, let's print some of our transformer's predictions with the same display
 .. code-block:: bash
 
   # display predictions for model saved at specific file on twitter
-  python python -m parlai.scripts.display_model -t twitter -mf /tmp/tr_twitter -ecands batch
+  python -m parlai.scripts.display_model -t twitter -mf /tmp/tr_twitter -ecands batch
 
 
 
@@ -151,7 +151,7 @@ Now let's test it out:
 
 .. code-block:: bash
 
-  python python -m parlai.scripts.display_model -t babi:task10k:1 -m parrot
+  python -m parlai.scripts.display_model -t babi:task10k:1 -m parrot
 
 You'll notice the model is always outputting the "unknown" token.
 This token is automatically selected because the dictionary doesn't recognize any tokens,
@@ -159,13 +159,13 @@ because we haven't built a dictionary yet. Let's do that now.
 
 .. code-block:: bash
 
-  python python -m parlai.scripts.build_dict -t babi:task10k:1 -df /tmp/parrot.dict
+  python -m parlai.scripts.build_dict -t babi:task10k:1 -df /tmp/parrot.dict
 
 Now let's try our Parrot agent again.
 
 .. code-block:: bash
 
-  python python -m parlai.scripts.display_model -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
+  python -m parlai.scripts.display_model -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
 
 This ParrotAgent implements ``eval_step``, one of two abstract functions in TorchAgent.
 The other is ``train_step``.

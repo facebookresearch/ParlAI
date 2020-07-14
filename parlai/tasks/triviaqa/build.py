@@ -22,7 +22,7 @@ RESOURCES = [
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'TriviaQA')
-    version = "3"  # build changes, not upstream changes
+    version = "4"  # build changes, not upstream changes
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
@@ -43,22 +43,43 @@ def build(opt):
                 for datapoint in json.load(data_file)['Data']:
                     question = datapoint['Question']
                     answers = datapoint['Answer']['Aliases']
+                    prime_answer = datapoint['Answer']['Value']
                     assert question not in q2as
-                    q2as[question] = answers
+                    q2as[question] = (prime_answer, answers)
             with open(section.format("wikipedia")) as data_file:
                 for datapoint in json.load(data_file)['Data']:
                     question = datapoint['Question']
                     answers = datapoint['Answer']['Aliases']
+                    prime_answer = datapoint['Answer']['Value']
                     if question not in q2as:
-                        q2as[question] = answers
+                        q2as[question] = (prime_answer, answers)
                     else:
-                        q2as[question] += answers
+                        old_prime_answer, old_answers = q2as[question]
+                        if old_prime_answer != prime_answer:
+                            assert (old_prime_answer, prime_answer) == (
+                                'Tony (Manero).',
+                                'Tony',
+                            )
+                        q2as[question] = (old_prime_answer, old_answers + answers)
             with open(section.format("noevidence-union"), "wt") as data_file:
                 json.dump(
                     {
                         "Data": [
-                            {"Question": question, "Answer": {"Aliases": answers}}
-                            for question, answers in q2as.items()
+                            {
+                                "Question": question,
+                                "Answer": {
+                                    "Value": prime_answer,
+                                    "Aliases": sorted(
+                                        list(
+                                            set(
+                                                a.replace(" (disambiguation)", "")
+                                                for a in answers
+                                            )
+                                        )
+                                    ),
+                                },
+                            }
+                            for question, (prime_answer, answers) in q2as.items()
                         ]
                     },
                     data_file,

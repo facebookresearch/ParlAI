@@ -76,7 +76,7 @@ def add_common_cmdline_args(argparser):
     )
     argparser.add_argument(
         '--variant',
-        choices={'aiayn', 'xlm', 'prelayernorm'},
+        choices={'aiayn', 'xlm', 'prelayernorm', 'bart'},
         default='aiayn',
         help='Chooses locations of layer norms, etc. prelayernorm '
         'is used to match some fairseq models',

@@ -41,7 +41,9 @@ class WebTeacher(DialogTeacher):
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
-            answers = datapoint['Answer']['Aliases']
+            answers = [datapoint['Answer']['Value']] + sorted(
+                list(set(datapoint['Answer']['Aliases']))
+            )
             evidence_list = datapoint['SearchResults']
 
             if self.no_evidence:
@@ -100,7 +102,9 @@ class WikipediaTeacher(DialogTeacher):
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
-            answers = datapoint['Answer']['Aliases']
+            answers = [datapoint['Answer']['Value']] + sorted(
+                list(set(datapoint['Answer']['Aliases']))
+            )
             evidence_list = datapoint['EntityPages']
 
             if self.no_evidence:
@@ -165,7 +169,9 @@ class NoEvidenceUnionTeacher(DialogTeacher):
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
-            answers = datapoint['Answer']['Aliases']
+            answers = [datapoint['Answer']['Value']] + sorted(
+                list(set(datapoint['Answer']['Aliases']))
+            )
             yield (question, answers), True
 
 

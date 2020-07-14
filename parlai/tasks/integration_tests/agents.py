@@ -36,6 +36,7 @@ EXAMPLE_SIZE = 4
 NUM_CANDIDATES = 10
 NUM_TRAIN = 500
 NUM_TEST = 100
+INFINITE = 1e20
 
 
 class CandidateBaseTeacher(Teacher, ABC):
@@ -491,7 +492,9 @@ class ImageTeacher(AbstractImageTeacher):
         imagepath = os.path.join(datapath, 'images')
         os.makedirs(imagepath, exist_ok=True)
 
-        self.image_features_path = os.path.join(datapath, 'image_features')
+        self.image_features_path = os.path.join(
+            datapath, f'{opt["image_mode"]}_image_features'
+        )
 
         # Create fake images and features
         imgs = [f'img_{i}' for i in range(10)]
@@ -550,7 +553,8 @@ class ChunkyTeacher(ChunkTeacher):
     def _get_data_folder(self):
         return None
 
-    def get_num_samples(self, datatype: str) -> Tuple[int, int]:
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        datatype = opt['datatype']
         if 'train' in datatype:
             return NUM_TRAIN, NUM_TRAIN
         elif 'valid' in datatype:
@@ -558,7 +562,8 @@ class ChunkyTeacher(ChunkTeacher):
         elif 'test' in datatype:
             return NUM_TEST, NUM_TEST
 
-    def get_fold_chunks(self, datatype: str) -> List[int]:
+    def get_fold_chunks(self, opt) -> List[int]:
+        datatype = opt['datatype']
         if 'train' in datatype:
             return list(range(50))
         elif 'valid' in datatype:
@@ -574,9 +579,33 @@ class ChunkyTeacher(ChunkTeacher):
             output.append((text, resp))
         return output
 
-    def create_message(self, sample_item):
+    def create_message(self, sample_item, entry_idx=0):
         text, label = sample_item
         return {'text': text, 'labels': [label], 'episode_done': True}
+
+
+class InfiniteTrainTeacher(ChunkyTeacher):
+    """
+    Chunk teacher with an effectively infinite number of training examples.
+    """
+
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        datatype = opt['datatype']
+        if 'train' in datatype:
+            return INFINITE, INFINITE
+        elif 'valid' in datatype:
+            return NUM_TEST, NUM_TEST
+        elif 'test' in datatype:
+            return NUM_TEST, NUM_TEST
+
+
+class ShortFixedTeacher(FixedDialogCandidateTeacher):
+    """
+    Fixed Dialog Candidate teacher with only 10 training examples.
+    """
+
+    def __init__(self, opt: Opt, shared: dict = None):
+        super().__init__(opt, shared, num_train=10, num_test=10)
 
 
 class DefaultTeacher(CandidateTeacher):

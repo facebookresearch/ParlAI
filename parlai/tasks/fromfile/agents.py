@@ -10,7 +10,10 @@
 import copy
 import os
 
-from parlai.core.teachers import FbDialogTeacher, ParlAIDialogTeacher
+from parlai.core.teachers import (
+    FbDialogTeacher,
+    ParlAIDialogTeacher,
+)
 
 
 class FbformatTeacher(FbDialogTeacher):

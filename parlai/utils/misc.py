@@ -247,7 +247,8 @@ class TimeLogger:
             done = done.value()
         self.tot_time += self.timer.time()
         self.timer.reset()
-        report['exs'] = done
+        if report:
+            report['exs'] = done
         if total > 0 and done > 0:
             progress = done / total
             seconds_left = max(0, self.tot_time / progress - self.tot_time)
