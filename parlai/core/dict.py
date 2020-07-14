@@ -359,7 +359,7 @@ class DictionaryAgent(Agent):
         Indicates whether the dictionary supports additional special tokens.
         """
         # TODO: add to others
-        return self.tokenizer == 'bytelevelbpe'
+        return self.tokenizer in ['bytelevelbpe', 'split', 'space']
 
     def is_prebuilt(self):
         """
