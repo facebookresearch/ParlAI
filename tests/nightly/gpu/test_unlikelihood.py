@@ -21,7 +21,8 @@ NUM_EXAMPLES = 512 if FAST_MODE else -1
 @testing_utils.skipUnlessGPU
 class TestUnlikelihood(unittest.TestCase):
     def test_train_model_repeat_ul(self):
-        """ Check the training script doesn't crash.
+        """
+        Check the training script doesn't crash.
         """
         opt = {
             'model': 'projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent',
@@ -36,12 +37,15 @@ class TestUnlikelihood(unittest.TestCase):
         testing_utils.train_model(opt)
 
     def test_train_model_vocab_ul(self):
-        """ Check the training script doesn't crash.
+        """
+        Check the training script doesn't crash.
         """
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "counts.txt")
             with open(fp, "w") as f:
-                f.write('{"word": "test", "word_id": 0, "count": 1, "prob": 1, "cumprob": 1, "bin": "frequent"}')
+                f.write(
+                    '{"word": "test", "word_id": 0, "count": 1, "prob": 1, "cumprob": 1, "bin": "frequent"}'
+                )
             opt = {
                 'model': 'projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent',
                 'load_from_checkpoint': False,
@@ -57,7 +61,8 @@ class TestUnlikelihood(unittest.TestCase):
             testing_utils.train_model(opt)
 
     def test_repeat_convai_contextonly(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -78,7 +83,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1937, delta=0.0002)
 
     def test_repeat_convai_labelonly(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -99,7 +105,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.2029, delta=0.0002)
 
     def test_repeat_convai_contextandlabel(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -120,7 +127,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1925, delta=0.0002)
 
     def test_repeat_eli5_contextonly(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -142,7 +150,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1628, delta=0.0002)
 
     def test_repeat_eli5_labelonly(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -164,7 +173,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1825, delta=0.0002)
 
     def test_repeat_eli5_contextandlabel(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -186,7 +196,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1843, delta=0.0002)
 
     def test_repeat_wiki_contextonly(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -209,7 +220,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.3456, delta=0.0002)
 
     def test_repeat_wiki_labelonly(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -232,7 +244,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.3714, delta=0.0002)
 
     def test_repeat_wiki_contextandlabel(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -255,7 +268,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.3582, delta=0.0002)
 
     def test_vocab_alpha1e0(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -277,7 +291,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.2004, delta=0.0002)
 
     def test_vocab_alpha1e1(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -299,7 +314,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.2009, delta=0.0002)
 
     def test_vocab_alpha1e2(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {
@@ -321,7 +337,8 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['f1'], 0.1903, delta=0.0002)
 
     def test_vocab_alpha1e3(self):
-        """ Verify recorded ppl and F1 scores for released models
+        """
+        Verify recorded ppl and F1 scores for released models.
         """
         valid, _ = testing_utils.eval_model(
             {

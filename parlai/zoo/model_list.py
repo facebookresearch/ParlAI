@@ -1283,9 +1283,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood ConvAI2 label repetition model",
@@ -1300,9 +1298,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/rep_convai2_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood ELI5 context and label repetition model",
@@ -1317,9 +1313,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t eli5 -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood ELI5 context repetition model",
@@ -1334,9 +1328,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t eli5 -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood ELI5 label repetition model",
@@ -1351,11 +1343,9 @@ model_list = [
         "example": (
             "python examples/display_model.py -t eli5 -mf zoo:dialogue_unlikelihood/rep_eli5_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
-        {
+    {
         "title": "Unlikelihood Wizard of Wikipedia context and label repetition model",
         "id": "dialogue_unlikelihood",
         "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model",
@@ -1368,9 +1358,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:GeneratorTeacher -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia context repetition model",
@@ -1385,9 +1373,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:GeneratorTeacher -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia label repetition model",
@@ -1402,9 +1388,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t wizard_of_wikipedia:GeneratorTeacher -mf zoo:dialogue_unlikelihood/rep_wiki_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood vocab alpha 1e0 model",
@@ -1419,9 +1403,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e0/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood vocab alpha 1e1 model",
@@ -1436,9 +1418,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e1/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood vocab alpha 1e2 model",
@@ -1453,9 +1433,7 @@ model_list = [
         "example": (
             "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e2/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
     {
         "title": "Unlikelihood vocab alpha 1e3 model",
@@ -1470,8 +1448,6 @@ model_list = [
         "example": (
             "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e3/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
         ),
-        "result": (
-            ""
-        ),
+        "result": (""),
     },
 ]

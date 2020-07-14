@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Label repetition unlikelihood on ConvAI2: please see <parl.ai/projects/dialogue_unlikelihood>.
+Label repetition unlikelihood on ConvAI2: please see
+<parl.ai/projects/dialogue_unlikelihood>.
 """
 
 from .build import build

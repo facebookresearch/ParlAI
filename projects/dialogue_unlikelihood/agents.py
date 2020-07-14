@@ -28,7 +28,7 @@ def div(x, y):
 
 class NGramIterator:
     """
-    N-Gram iterator for a list
+    N-Gram iterator for a list.
     """
 
     def __init__(self, lst, n):
@@ -50,6 +50,7 @@ class NGramIterator:
 class RewardUnlikelihoodAgentTrait(object):
     """
     Abstract Trait.
+
     Applies unlikelihood loss based on the presence of negative rewards in the task.
     """
 
@@ -138,8 +139,9 @@ class RewardUnlikelihoodAgentTrait(object):
 class RepetitionUnlikelihoodAgentTrait(object):
     """
     Abstract Trait.
-    Applies unliikelihood loss to repetition some proportion of train steps by generating,
-    marking repeats, and calculating loss accordingly.
+
+    Applies unliikelihood loss to repetition some proportion of train steps by
+    generating, marking repeats, and calculating loss accordingly.
     """
 
     def __init__(self, opt, shared=None):
@@ -254,7 +256,9 @@ class RepetitionUnlikelihoodAgentTrait(object):
         return total_loss
 
     def eval_step(self, batch):
-        """Evaluate a single batch of examples."""
+        """
+        Evaluate a single batch of examples.
+        """
         if batch.text_vec is None:
             return
         bsz = batch.text_vec.size(0)
@@ -376,9 +380,9 @@ class _VocabUnlikelihoodTrait(object):
 class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
     """
     Abstract Trait.
-    Applies unlikelihood loss to vocabulary distributiion by generating,
-    calculating proportion of tokens per vocabulary frequency bin, and
-    computing loss accordingly
+
+    Applies unlikelihood loss to vocabulary distributiion by generating, calculating
+    proportion of tokens per vocabulary frequency bin, and computing loss accordingly
     """
 
     def __init__(self, opt, shared=None):
@@ -597,7 +601,7 @@ class TransformerSequenceVocabUnlikelihoodAgent(
     """
     Example usage:
 
-        -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerSequenceVocabUnlikelihoodAgent
+    -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerSequenceVocabUnlikelihoodAgent
     """
 
     pass
@@ -609,7 +613,7 @@ class TransformerUnlikelihoodAgent(
     """
     Example usage:
 
-        -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerUnlikelihoodAgent
+    -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerUnlikelihoodAgent
     """
 
     pass
@@ -619,7 +623,7 @@ class RepetitionUnlikelihoodAgent(RepetitionUnlikelihoodAgentTrait, ImageSeq2seq
     """
     Example usage:
 
-        -t convai2 -m parlai_internal.projects.dontsaythat.agents:RepetitionUnlikelihoodAgent
+    -t convai2 -m parlai_internal.projects.dontsaythat.agents:RepetitionUnlikelihoodAgent
     """
 
     pass

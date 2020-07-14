@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Label repetition unlikelihood on Wizard of Wikipedia: please see <parl.ai/projects/dialogue_unlikelihood>.
+Label repetition unlikelihood on Wizard of Wikipedia: please see
+<parl.ai/projects/dialogue_unlikelihood>.
 """
 
 from .build import build
