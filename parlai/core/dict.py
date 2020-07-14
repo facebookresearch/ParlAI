@@ -742,7 +742,7 @@ class DictionaryAgent(Agent):
             extra_tokens = 4  # length of special tokens
             vector = [
                 self.bpe.special_tok_map[idx]
-                if idx < extra_tokens
+                if idx in self.bpe.special_tok_map
                 else idx - extra_tokens
                 for idx in vector
             ]
