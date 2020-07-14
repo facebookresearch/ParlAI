@@ -370,6 +370,8 @@ class PipelineHelper(object):
         if not isinstance(submodule, torch.nn.ModuleList):
             # not a ModuleList, leave it untouched
             return
+        if getattr(submodule, 'model_parallel_exempt', False):
+            return
 
         assert isinstance(submodule, torch.nn.ModuleList)  # for typechecker
         layers = submodule
@@ -396,7 +398,7 @@ class PipelineHelper(object):
             # mark a layer as going to the given element
             layer_assignments[mostfree] += 1
 
-        devices = self.devices[:]
+        devices = [d for i, d in enumerate(self.devices[:]) if layer_assignments[d] > 0]
         for layer_no, layer in enumerate(layers):
             layer_gpu = devices[0]
             assert layer_assignments[layer_gpu] > 0
