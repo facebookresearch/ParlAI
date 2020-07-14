@@ -75,6 +75,8 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
             image_encoder_num_layers=opt['image_encoder_num_layers'],
             image_features_dim=opt['image_features_dim'],
             fusion=opt['image_fusion_type'],
+            n_image_tokens=opt.get('n_image_tokens', 1),
+            n_image_channels=opt.get('n_image_channels', 1),
         )
 
 
@@ -109,6 +111,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         image_combination_mode='append',
         n_image_tokens=1,
         fusion='late',
+        n_image_channels=1,
     ):
         """
         Override TransformerEncoder __init__.
@@ -123,6 +126,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         self.image_combination_mode = image_combination_mode
         self.n_image_tokens = n_image_tokens
         self.fusion = FusionType(fusion)
+        self.n_image_channels = n_image_channels
         if self.image_combination_mode == 'add' and self.n_image_tokens > 1:
             raise ValueError(
                 'Image encoding cannot be added to context encoding if there is more than one image token!'
@@ -154,10 +158,11 @@ class ContextWithImageEncoder(TransformerEncoder):
         # Images will be embedded to this size, and then the embedding will be folded
         # into however many tokens are needed
         self._build_image_encoder()
+        dummy_image_size = (n_image_channels, self.full_embedding_size)
+        self.register_buffer('dummy_image_enc', torch.zeros(dummy_image_size))
         self.register_buffer(
-            'dummy_image_enc', torch.zeros((self.full_embedding_size,))
+            'ones_mask', torch.ones(self.n_image_tokens * self.n_image_channels).bool()
         )
-        self.register_buffer('ones_mask', torch.ones(self.n_image_tokens).bool())
 
     def _build_image_encoder(self):
         image_layers = [nn.Linear(self.img_dim, self.full_embedding_size)]
@@ -239,7 +244,11 @@ class ContextWithImageEncoder(TransformerEncoder):
 
             image_masks = torch.stack(image_mask_list)  # type: ignore
             image_encoded = torch.stack(image_encoded_list).reshape(
-                (len(images), self.n_image_tokens, self.embedding_size)
+                (
+                    len(images),
+                    self.n_image_tokens * self.n_image_channels,
+                    self.embedding_size,
+                )
             )
             assert image_masks.shape == image_encoded.shape[:2]
 
@@ -294,13 +303,20 @@ class ContextWithImageEncoder(TransformerEncoder):
                 src_tokens, segments=torch.zeros_like(src_tokens)  # type: ignore
             )
         if image_features is not None:
-            valid_img = [v for v in image_features if isinstance(v, torch.Tensor)][0]
-            image_tensor, image_mask = self.encode_images(
-                image_features,
-                segments=torch.ones(  # type: ignore
-                    len(image_features), dtype=torch.long, device=valid_img.device
-                ),
-            )
+            # sometimes can just be a list of None
+            valid_imgs = [v for v in image_features if isinstance(v, torch.Tensor)]
+            if valid_imgs:
+                image_tensor, image_mask = self.encode_images(
+                    image_features,
+                    segments=torch.ones(  # type: ignore
+                        (
+                            len(image_features),
+                            self.n_image_channels * self.n_image_tokens,
+                        ),
+                        dtype=torch.long,
+                        device=valid_imgs[0].device,
+                    ),
+                )
 
         # perform early fusion
         tensor = self._cat([context_tensor, image_tensor])
