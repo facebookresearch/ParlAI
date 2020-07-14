@@ -28,9 +28,7 @@ class BartModel(TransformerGeneratorModel):
         return output
 
     def decode_forced(
-        self,
-        encoder_states: Tuple[Any, ...],
-        ys: torch.LongTensor
+        self, encoder_states: Tuple[Any, ...], ys: torch.LongTensor
     ) -> Tuple[torch.FloatTensor, torch.LongTensor]:
         """
         Decode with a fixed, true sequence, computing loss.

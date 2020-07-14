@@ -975,7 +975,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return batch.text_vec[batch_idx]
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device) -> Tuple[torch.LongTensor, int]:
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> Tuple[torch.LongTensor, int]:
         """
         Return initial input to the decoder.
 
@@ -990,20 +992,21 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             initial input for the decoder, and how many inputs to consider.
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.START_IDX]
-            )
-            .expand(bsz * beam_size, 1)
-            .to(dev)
-        ), bsz
+            (
+                torch.LongTensor(  # type: ignore
+                    [self.START_IDX]
+                )
+                .expand(bsz * beam_size, 1)
+                .to(dev)
+            ),
+            bsz,
+        )
 
     def _get_next_decoder_input(
-        self,
-        prev_input: torch.LongTensor,
-        selection: torch.LongTensor
+        self, prev_input: torch.LongTensor, selection: torch.LongTensor
     ) -> torch.LongTensor:
         """
-        Return next decoder input
+        Return next decoder input.
         """
         decoder_input = torch.cat([prev_input, selection], dim=-1)
         return decoder_input

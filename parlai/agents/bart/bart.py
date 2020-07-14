@@ -57,7 +57,7 @@ class BartAgent(TransformerGeneratorAgent):
             '--output-conversion-path',
             type=str,
             default=None,
-            help='where to save fairseq conversion'
+            help='where to save fairseq conversion',
         )
         argparser.set_defaults(dict_tokenizer='gpt2')
 
@@ -167,20 +167,25 @@ class BartAgent(TransformerGeneratorAgent):
         )
         return obs
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device) -> Tuple[torch.LongTensor, int]:
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> Tuple[torch.LongTensor, int]:
         """
         Override to seed decoder with EOS token.
 
         See docstring for `BartAgent._generate` for more details.
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.END_IDX]
-            )
-            .detach()
-            .expand(bsz * beam_size, 1)
-            .to(dev)
-        ), bsz
+            (
+                torch.LongTensor(  # type: ignore
+                    [self.END_IDX]
+                )
+                .detach()
+                .expand(bsz * beam_size, 1)
+                .to(dev)
+            ),
+            bsz,
+        )
 
     def _generate(
         self,
