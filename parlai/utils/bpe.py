@@ -696,6 +696,7 @@ class HuggingFaceBpeHelper(BPEHelper):
     def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
         # Default true for HF
+        self.special_tok_map = {}  # map from HF
         self.add_prefix_space = opt.get('bpe_add_prefix_space', True)
         self.skip_special_tokens = opt.get('hf_skip_special_tokens', True)
         if self.add_prefix_space is None:
@@ -783,6 +784,15 @@ class HuggingFaceBpeHelper(BPEHelper):
 
         return text
 
+    def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        logging.info(f'adding the following special tokens: {special_tokens}')
+        self.tokenizer.add_special_tokens(special_tokens)  # add to HF
+
+        for tok in special_tokens:
+            parlai_key = dict_agent[tok]
+            hf_key = self.tokenizer.token_to_id(tok)
+            self.special_tok_map[parlai_key] = hf_key
+
     def sync_with_dict(self, dict_agent):
         """
         Sync the dictionary agent with Hugging Face tokenizer's BPE dict.
@@ -794,9 +804,8 @@ class HuggingFaceBpeHelper(BPEHelper):
             dict_agent.start_token,
             dict_agent.end_token,
             dict_agent.unk_token,
-        ] + dict_agent.extra_special_tokens
-        logging.info(f'adding the following special tokens: {special_tokens}')
-        self.tokenizer.add_special_tokens(special_tokens)  # add to HF
+        ]
+        self.add_special_tokens(dict_agent, special_tokens)
 
         for i in range(self.tokenizer.get_vocab_size() - len(special_tokens)):
             token = self.tokenizer.id_to_token(i)
@@ -804,14 +813,6 @@ class HuggingFaceBpeHelper(BPEHelper):
             # We don't have access to the hugging face word frequency table,
             # just set it to 1 instead
             dict_agent.freq[token] = 1
-
-        # we need this because the offset gets messed up due to the presence
-        # of FP16 tokens which are added LATER
-        self.special_tok_map = {}  # map from HF to dict agent special tokens
-        for tok in special_tokens:
-            parlai_key = dict_agent[tok]
-            hf_key = self.tokenizer.token_to_id(tok)
-            self.special_tok_map[parlai_key] = hf_key
 
     def save(self, dir_name: str, file_name: str):
         """

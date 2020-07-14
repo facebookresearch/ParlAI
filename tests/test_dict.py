@@ -384,24 +384,17 @@ class TestByteLevelBPE(unittest.TestCase):
         Add a list of special tokens to the dictionary.
         """
         special_toks_lst = ['MY', 'NAME', 'IS', 'EMILY']
-        with testing_utils.tempdir() as tmpdir:
-            # create special tokens file
-            special_tok_file = os.path.join(tmpdir, 'special_tokens.txt')
-            with open(special_tok_file, 'w') as f:
-                for word in special_toks_lst:
-                    f.write(word + '\n')
-
-            # create Dictionary Agent
-            parser = ParlaiParser()
-            parser.set_params(
-                dict_tokenizer='bytelevelbpe',
-                bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
-                bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
-                special_tokens_file=special_tok_file,
-                hf_skip_special_tokens=False,
-            )
-            opt = parser.parse_args([], print_args=False)
-            agent = DictionaryAgent(opt)
+        # create Dictionary Agent
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            hf_skip_special_tokens=False,
+        )
+        opt = parser.parse_args([], print_args=False)
+        agent = DictionaryAgent(opt)
+        agent.add_extra_special_tokens(special_toks_lst)
 
         self.assertEqual(agent.extra_special_tokens, special_toks_lst)
         phrases = ['Hi what is up EMILY', 'What IS your NAME', 'That is MY dog']
