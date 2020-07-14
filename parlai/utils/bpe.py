@@ -807,7 +807,6 @@ class HuggingFaceBpeHelper(BPEHelper):
 
         # we need this because the offset gets messed up due to the presence
         # of FP16 tokens which are added LATER
-        # TODO: check whether this messes up previous dictionaries
         self.special_tok_map = {}  # map from HF to dict agent special tokens
         for tok in special_tokens:
             parlai_key = dict_agent[tok]
