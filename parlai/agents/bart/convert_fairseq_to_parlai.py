@@ -132,10 +132,7 @@ class ConversionScript(ParlaiScript):
         self.agent.opt.pop('converting', None)
         self.agent.save(self.opt['output'])
         # 4. enjoy!
-        self.agent.observe(
-            {'text': "What's your favorite kind of ramen?", 'episode_done': False}
-        )
-        print(self.agent.act())
+        self.print_agent_act()
 
     def get_parlai_opt(self) -> Opt:
         """
@@ -477,6 +474,15 @@ class ConversionScript(ParlaiScript):
 
         return_dict['START'] = torch.LongTensor([1])  # type: ignore
         return return_dict
+
+    def print_agent_act(self):
+        """
+        Print a sample act from the converted agent.
+        """
+        self.agent.observe(
+            {'text': "What's your favorite kind of ramen?", 'episode_done': False}
+        )
+        print(self.agent.act())
 
 
 if __name__ == '__main__':
