@@ -5,7 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Context repetition unlikelihood on Wizard of Wikipedia: please see
+Context repetition unlikelihood on Wizard of Wikipedia: please see.
+
 <parl.ai/projects/dialogue_unlikelihood>.
 """
 
