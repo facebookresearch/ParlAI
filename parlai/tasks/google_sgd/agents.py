@@ -172,6 +172,7 @@ class Text2TextTeacher(Text2API2TextTeacher):
     """
     Text-only teacher (with no API calls or slots)
     """
+
     def setup_data(self, fold):
         schema_lookup, dialogs = self._load_data(fold)
         for dialog in dialogs:
