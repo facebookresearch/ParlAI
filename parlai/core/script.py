@@ -112,6 +112,15 @@ def _display_image():
     print(logo)
 
 
+class _SupercommandParser(ParlaiParser):
+    def add_extra_args(self, args):
+        sa = [a for a in self._actions if isinstance(a, argparse._SubParsersAction)]
+        assert len(sa) == 1
+        sa = sa[0]
+        for _, v in sa.choices.items():
+            v.add_extra_args(args)
+
+
 class _SubcommandParser(ParlaiParser):
     """
     ParlaiParser which always sets add_parlai_args and add_model_args to False.
@@ -125,6 +134,11 @@ class _SubcommandParser(ParlaiParser):
         if 'description' not in kwargs:
             kwargs['description'] = None
         return super().__init__(**kwargs)
+
+    def parse_known_args(self, args=None, namespace=None, nohelp=False):
+        if not nohelp:
+            self.add_extra_args(args)
+        return super().parse_known_args(args, namespace, nohelp)
 
 
 def _CustomHelpFormatter(**kwargs):
@@ -140,7 +154,7 @@ def superscript_main(args=None):
 
     setup_script_registry()
 
-    parser = ParlaiParser(False, False, formatter_class=_CustomHelpFormatter)
+    parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
     subparsers = parser.add_subparsers(
         dest='super_command',
         parser_class=_SubcommandParser,

@@ -4,6 +4,48 @@ Tips and Tricks
 Here we list other miscellaneous useful tips of things you can do in ParlAI not listed elsewhere.
 
 
+Command line tool
+#################
+
+ParlAI comes with a "super" command, that has all the other commands built in:
+
+.. code-block:: bash
+
+  usage: parlai [-h] COMMAND ...
+
+  optional arguments:
+  -h, --help               show this help message and exit
+
+  Commands:
+
+  detect_offensive         Check task for offensive language
+  display_data (dd)        Display data from a task
+  display_model (dm)       Display model predictions.
+  train_model (tm, train)  Train a model
+  eval_model (em, eval)    Evaluate a model
+  eval_wordstat            Compute statistics from model predictions
+  interactive (i)          Interactive chat with a model on the command line
+  interactive_web (iweb)   Interactive chat with a model in a web browser
+  safe_interactive         Like interactive, but adds a safety filter
+  self_chat                Generate self-chats of a model
+  verify_data              Check tasks for common errors
+
+This is often more convenient than running the scripts from the examples directory.
+
+This command also supports autocompletion of commands and options in your bash
+prompt.  You can enable this by running
+
+.. code-block:: bash
+
+   python -m pip install argcomplete
+
+and then adding the following line to your .bashrc or equivalent:
+
+.. code-block:: bash
+
+  eval "$(register-python-argcomplete parlai)"
+
+
 
 Multi-tasking with weighted tasks
 #################################
