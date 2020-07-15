@@ -12,8 +12,9 @@ from parlai.utils.logging import logging
 
 class TransformerGeneratorAgent(SpecialTokenMixin, Base):
     """
-    TransformerGeneratorAgent with special tokens added
+    TransformerGeneratorAgent with special tokens added.
     """
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         argparser = add_common_args(argparser)
@@ -37,9 +38,7 @@ class TransformerGeneratorAgent(SpecialTokenMixin, Base):
         ]:
             # get new_embs
             old_embs = state_dict[emb_weights]
-            new_embs = recursive_getattr(self.model, emb_weights).to(
-                old_embs.device
-            )
+            new_embs = recursive_getattr(self.model, emb_weights).to(old_embs.device)
             # copy over old weights
             new_embs.data[:orig_size, :] = old_embs.data[:orig_size, :]
             # reset in state dict

@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.utils.logging import logging
 
 import functools
@@ -16,8 +15,9 @@ SPECIAL_TOKS = 'PARTY,PARROT'
 
 def recursive_getattr(obj, attr, *args):
     """
-    Recursive call to getattr for nested attributes
+    Recursive call to getattr for nested attributes.
     """
+
     def _getattr(obj, attr):
         return getattr(obj, attr, *args)
 
@@ -26,13 +26,13 @@ def recursive_getattr(obj, attr, *args):
 
 def add_common_args(argparser):
     """
-    Add cmdline args
+    Add cmdline args.
     """
     argparser.add_argument(
         '--special-tok-lst',
         type=str,
         default=SPECIAL_TOKS,
-        help='Comma separated list of special tokens'
+        help='Comma separated list of special tokens',
     )
 
     return argparser
@@ -42,6 +42,7 @@ class SpecialTokenMixin:
     """
     Mixin adding special tokens to the dictionary.
     """
+
     def _get_special_tokens(self) -> List[str]:
         """
         Return list of special tokens.
@@ -64,7 +65,7 @@ class SpecialTokenMixin:
 
     def _resize_token_embeddings(self):
         """
-        Must define this for your agent
+        Must define this for your agent.
 
         Must make a call to resize the token embeddings and load the model state dict.
         """
