@@ -163,9 +163,16 @@ def superscript_main(args=None):
         for action in script_parser._actions:
             subparser._add_action(action)
 
+    try:
+        import argcomplete
+
+        argcomplete.autocomplete(parser)
+    except ModuleNotFoundError:
+        pass
+
     opt = parser.parse_args(args, print_args=False)
     cmd = opt.pop('super_command')
-    if cmd is None or cmd == 'help' or cmd == 'h':
+    if cmd == 'help' or cmd == 'h' or cmd is None:
         parser.print_help()
-        return
-    SCRIPT_REGISTRY[cmd].klass(opt).run()
+    elif cmd is not None:
+        SCRIPT_REGISTRY[cmd].klass(opt).run()
