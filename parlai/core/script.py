@@ -31,8 +31,6 @@ def setup_script_registry():
     Loads the scripts so that @register_script is hit for all.
     """
     for module in pkgutil.iter_modules(parlai.scripts.__path__, 'parlai.scripts.'):
-        if module.name == 'parlai.scripts.parlai_exe':
-            continue
         importlib.import_module(module.name)
 
 
