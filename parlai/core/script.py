@@ -111,15 +111,41 @@ def _display_image():
     print(logo)
 
 
+class _SubcommandParser(ParlaiParser):
+    """
+    ParlaiParser which always sets add_parlai_args and add_model_args to False.
+
+    Used in the superscript to initialize just the args for that command.
+    """
+
+    def __init__(self, **kwargs):
+        kwargs['add_parlai_args'] = False
+        kwargs['add_model_args'] = False
+        if 'description' not in kwargs:
+            kwargs['description'] = None
+        return super().__init__(**kwargs)
+
+
 def superscript_main(args=None):
     """
     Superscript is a loader for all the other scripts.
     """
 
     setup_script_registry()
-    parser = ParlaiParser(False, False)
+    parser = ParlaiParser(False, False, description='ParlAI Root launcher')
+    subparsers = parser.add_subparsers(
+        dest='cmd',
+        help='ParlAI Commands',
+        required=True,
+        parser_class=_SubcommandParser,
+    )
 
-    for script, klass in SCRIPT_REGISTRY.items():
-        print(script)
-        print(klass)
-        print()
+    for script_name, klass in SCRIPT_REGISTRY.items():
+        script_parser = klass.setup_args()
+        subparser = subparsers.add_parser(script_name, help=script_parser.description)
+        for action in script_parser._actions:
+            subparser._add_action(action)
+
+    opt = parser.parse_args(args)
+    cmd = opt.pop('cmd')
+    SCRIPT_REGISTRY[cmd](opt).run()

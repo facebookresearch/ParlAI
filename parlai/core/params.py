@@ -267,7 +267,7 @@ class ParlaiParser(argparse.ArgumentParser):
     """
 
     def __init__(
-        self, add_parlai_args=True, add_model_args=False, description='ParlAI parser'
+        self, add_parlai_args=True, add_model_args=False, description=None, **kwargs
     ):
         """
         Initialize the ParlAI argparser.
@@ -277,7 +277,8 @@ class ParlaiParser(argparse.ArgumentParser):
             allow_abbrev=False,
             conflict_handler='resolve',
             formatter_class=CustomHelpFormatter,
-            add_help=add_parlai_args,
+            add_help=True,
+            **kwargs,
         )
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
