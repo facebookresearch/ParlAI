@@ -325,29 +325,32 @@ class DictionaryAgent(Agent):
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
-    def add_extra_special_tokens(self, extra_special_tokens: List[str]):
+    def add_additional_special_tokens(self, additional_special_tokens: List[str]):
         """
-        TODO: more details
+        Add additional special tokens to the dictionary.
 
         Should only be called after initialization of the existing dictionary.
         """
-        self.extra_special_tokens = extra_special_tokens
+        self.additional_special_tokens = additional_special_tokens
 
-        if self.extra_special_tokens and not self.supports_extra_special_tokens():
+        if (
+            self.additional_special_tokens
+            and not self.supports_additional_special_tokens()
+        ):
             raise RuntimeError(
                 f'{self.tokenizer} does not currently support adding additional special tokens'
             )
 
-        for tok in self.extra_special_tokens:
+        for tok in self.additional_special_tokens:
             self.add_token(tok)
 
-        for i, tok in enumerate(self.extra_special_tokens):
+        for i, tok in enumerate(self.additional_special_tokens):
             self.freq[tok] = 1000000000 + 4 + i
 
         if self.tokenizer == 'bytelevelbpe':
-            self.bpe.add_special_tokens(self, self.extra_special_tokens)
+            self.bpe.add_special_tokens(self, self.additional_special_tokens)
 
-    def supports_extra_special_tokens(self):
+    def supports_additional_special_tokens(self):
         """
         Indicates whether the dictionary supports additional special tokens.
         """

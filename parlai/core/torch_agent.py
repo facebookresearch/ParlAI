@@ -809,7 +809,7 @@ class TorchAgent(ABC, Agent):
         d = self.dictionary_class()(self.opt)
         self.special_toks = self._get_special_tokens()
         if self.special_toks:
-            d.add_extra_special_tokens(self.special_toks)
+            d.add_additional_special_tokens(self.special_toks)
 
         if self.opt.get('person_tokens'):
             d[self.P1_TOKEN] = 999_999_999

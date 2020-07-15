@@ -394,9 +394,9 @@ class TestByteLevelBPE(unittest.TestCase):
         )
         opt = parser.parse_args([], print_args=False)
         agent = DictionaryAgent(opt)
-        agent.add_extra_special_tokens(special_toks_lst)
+        agent.add_additional_special_tokens(special_toks_lst)
 
-        self.assertEqual(agent.extra_special_tokens, special_toks_lst)
+        self.assertEqual(agent.additional_special_tokens, special_toks_lst)
         phrases = ['Hi what is up EMILY', 'What IS your NAME', 'That is MY dog']
         for phrase in phrases:
             vec = agent.txt2vec(phrase)
