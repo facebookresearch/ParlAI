@@ -15,6 +15,7 @@ Also contains helper classes for loading scripts, etc.
 """
 
 import io
+import argparse
 from typing import List, Optional, Dict, Any
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, CustomHelpFormatter
@@ -138,7 +139,6 @@ def superscript_main(args=None):
     """
 
     setup_script_registry()
-    import argparse
 
     parser = ParlaiParser(False, False, formatter_class=_CustomHelpFormatter)
     subparsers = parser.add_subparsers(
@@ -147,6 +147,7 @@ def superscript_main(args=None):
         title="Commands",
         metavar="COMMAND",
     )
+    subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
 
     for script_name, registration in SCRIPT_REGISTRY.items():
         script_parser = registration.klass.setup_args()
@@ -164,7 +165,7 @@ def superscript_main(args=None):
 
     opt = parser.parse_args(args, print_args=False)
     cmd = opt.pop('super_command')
-    if cmd is None:
+    if cmd is None or cmd == 'help' or cmd == 'h':
         parser.print_help()
         return
     SCRIPT_REGISTRY[cmd].klass(opt).run()

@@ -638,6 +638,7 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-dt',
             '--datatype',
+            metavar='DATATYPE',
             default='train',
             choices=[
                 'train',
@@ -657,7 +658,7 @@ class ParlaiParser(argparse.ArgumentParser):
             ],
             help='choose from: train, train:ordered, valid, test. to stream '
             'data add ":stream" to any option (e.g., train:stream). '
-            'by default: train is random with replacement, '
+            'by default train is random with replacement, '
             'valid is ordered, test is ordered.',
         )
         parlai.add_argument(
