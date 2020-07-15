@@ -85,6 +85,9 @@ class Text2API2TextTeacher(DialogTeacher):
             parsed = {}
             for slot_str in slot_strs:
                 if ' = ' not in slot_str:
+                    if slot_str != '':
+                        # syntactically invalid generations should count against us
+                        self.metrics.add('slot_p', AverageMetric(0))
                     continue
                 name, value = slot_str.split(' = ')
                 parsed[name] = value
