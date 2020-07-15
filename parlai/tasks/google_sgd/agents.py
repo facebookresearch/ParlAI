@@ -21,7 +21,7 @@ import parlai.tasks.google_sgd.build as build_
 
 class Text2API2TextTeacher(DialogTeacher):
     """
-    Abstract data loader.
+    Teacher which produces both API calls and NLG responses.
     """
 
     def __init__(self, opt: Opt, shared=None):
