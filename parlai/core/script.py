@@ -17,7 +17,7 @@ Also contains helper classes for loading scripts, etc.
 import io
 from typing import List, Optional, Dict, Any
 from parlai.core.opt import Opt
-from parlai.core.params import ParlaiParser
+from parlai.core.params import ParlaiParser, CustomHelpFormatter
 from abc import abstractmethod
 import importlib
 import pkgutil
@@ -126,26 +126,45 @@ class _SubcommandParser(ParlaiParser):
         return super().__init__(**kwargs)
 
 
+def _CustomHelpFormatter(**kwargs):
+    kwargs['width'] = None
+    kwargs['max_help_position'] = 9999
+    return CustomHelpFormatter(**kwargs)
+
+
 def superscript_main(args=None):
     """
     Superscript is a loader for all the other scripts.
     """
 
     setup_script_registry()
-    parser = ParlaiParser(False, False, description='ParlAI Root launcher')
+    import argparse
+
+    parser = ParlaiParser(False, False, formatter_class=_CustomHelpFormatter)
     subparsers = parser.add_subparsers(
-        dest='cmd',
-        help='ParlAI Commands',
-        required=True,
+        dest='super_command',
         parser_class=_SubcommandParser,
+        title="Commands",
+        metavar="COMMAND",
     )
 
-    for script_name, klass in SCRIPT_REGISTRY.items():
-        script_parser = klass.setup_args()
-        subparser = subparsers.add_parser(script_name, help=script_parser.description)
+    for script_name, registration in SCRIPT_REGISTRY.items():
+        script_parser = registration.klass.setup_args()
+        is_hidden = registration.hidden
+        is_hidden = is_hidden or script_parser.description == None
+        help_ = argparse.SUPPRESS if is_hidden else script_parser.description
+        subparser = subparsers.add_parser(
+            script_name,
+            aliases=registration.aliases,
+            help=help_,
+            formatter_class=CustomHelpFormatter,
+        )
         for action in script_parser._actions:
             subparser._add_action(action)
 
-    opt = parser.parse_args(args)
-    cmd = opt.pop('cmd')
-    SCRIPT_REGISTRY[cmd](opt).run()
+    opt = parser.parse_args(args, print_args=False)
+    cmd = opt.pop('super_command')
+    if cmd is None:
+        parser.print_help()
+        return
+    SCRIPT_REGISTRY[cmd].klass(opt).run()

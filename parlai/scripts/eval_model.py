@@ -200,7 +200,7 @@ def eval_model(opt, print_parser=None):
     return report
 
 
-@register_script('eval_model')
+@register_script('eval_model', aliases=['em', 'eval'])
 class EvalModel(ParlaiScript):
     @classmethod
     def setup_args(cls):

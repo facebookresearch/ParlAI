@@ -219,11 +219,21 @@ class CustomHelpFormatter(argparse.HelpFormatter):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_help_position'] = 6
-        kwargs['width'] = 80
+        if 'max_help_position' not in kwargs:
+            kwargs['max_help_position'] = 8
+        if 'width' not in kwargs:
+            kwargs['width'] = 80
         super().__init__(*args, **kwargs)
 
+    def _iter_indented_subactions(self, action):
+        retval = super()._iter_indented_subactions(action)
+        if isinstance(action, argparse._SubParsersAction):
+            retval = [x for x in retval if x.help != argparse.SUPPRESS]
+        return retval
+
     def _format_action_invocation(self, action):
+        if isinstance(action, argparse._SubParsersAction):
+            return ""
         if not action.option_strings or action.nargs == 0:
             return super()._format_action_invocation(action)
         default = self._get_default_metavar_for_optional(action)
@@ -272,11 +282,13 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Initialize the ParlAI argparser.
         """
+        if 'formatter_class' not in kwargs:
+            kwargs['formatter_class'] = CustomHelpFormatter
+
         super().__init__(
             description=description,
             allow_abbrev=False,
             conflict_handler='resolve',
-            formatter_class=CustomHelpFormatter,
             add_help=True,
             **kwargs,
         )
@@ -602,7 +614,6 @@ class ParlaiParser(argparse.ArgumentParser):
             'Note: Further Command-line arguments override file-based options.',
         )
         parlai.add_argument(
-            '-v',
             '--show-advanced-args',
             action='store_true',
             help='Show hidden command line options (advanced users only)',

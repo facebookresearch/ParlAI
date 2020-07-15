@@ -148,7 +148,7 @@ def build_dict(opt, skip_if_built=False):
     return dictionary
 
 
-@register_script('build_dict')
+@register_script('build_dict', hidden=True)
 class BuildDict(ParlaiScript):
     @classmethod
     def setup_args(cls):

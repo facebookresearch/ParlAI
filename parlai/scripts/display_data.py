@@ -99,7 +99,7 @@ def display_data(opt):
         pass
 
 
-@register_script('display_data')
+@register_script('display_data', aliases=['dd'])
 class DisplayData(ParlaiScript):
     @classmethod
     def setup_args(cls):

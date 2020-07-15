@@ -25,7 +25,7 @@ import parlai.utils.logging as logging
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, False, 'Lint for ParlAI tasks')
+        parser = ParlaiParser(True, False, 'Compute data statistics')
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -180,7 +180,7 @@ def obtain_stats(opt, parser):
     print(report_text.replace('\\n', '\n'))
 
 
-@register_script('data_stats')
+@register_script('data_stats', hidden=True)
 class DataStats(ParlaiScript):
     @classmethod
     def setup_args(cls):

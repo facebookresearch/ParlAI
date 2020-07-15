@@ -223,7 +223,7 @@ def extract_feats(opt):
     logging.info("Finished extracting images")
 
 
-@register_script('extract_image_feature')
+@register_script('extract_image_feature', hidden=True)
 class ExtractImgFeatures(ParlaiScript):
     @classmethod
     def setup_args(cls):

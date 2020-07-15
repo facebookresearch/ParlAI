@@ -20,7 +20,7 @@ import random
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Self chat with a model')
+        parser = ParlaiParser(True, True, 'Generate self-chats of a model')
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument(
