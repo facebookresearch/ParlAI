@@ -6,7 +6,6 @@
 
 import os
 import unittest
-from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
 
 """

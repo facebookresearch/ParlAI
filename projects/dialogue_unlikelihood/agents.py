@@ -4,19 +4,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import json
 import math
+import os
 import torch
 import torch.nn.functional as F
-import json
-import os
 from collections import defaultdict, Counter
 from nltk import ngrams
 
-from parlai.utils.misc import round_sigfigs
-from parlai.agents.transformer.transformer import TransformerGeneratorAgent
-from parlai.core.torch_agent import Output
-from parlai.core.metrics import AverageMetric, SumMetric, GlobalAverageMetric
 from parlai.agents.image_seq2seq.image_seq2seq import ImageSeq2seqAgent
+from parlai.agents.transformer.transformer import TransformerGeneratorAgent
+from parlai.core.metrics import AverageMetric, SumMetric, GlobalAverageMetric
+from parlai.core.torch_agent import Output
+from parlai.utils.misc import round_sigfigs
+from parlai.utils.torch import padded_tensor
 
 
 def div(x, y):
@@ -120,7 +121,7 @@ class RewardUnlikelihoodAgentTrait(object):
         ul_scores = scores_view[range_, targets_view]
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
         ul_loss = (
-            -torch.log((1 - ul_scores.exp()).clamp_(1e-6)) * ul_notnull.view(-1).float()
+            -torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)) * ul_notnull.view(-1).float()
         ).sum()
         self.record_local_metric(
             'ul_loss', AverageMetric.many(ul_loss.sum(dim=-1), ul_target_tokens)
@@ -161,14 +162,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         pass
 
-    def _get_length(self, token_lst):
-        try:
-            length = token_lst.index(self.END_IDX)
-        except ValueError:
-            # End index doesn't appear
-            length = 100000
-        return length
-
     def _count_n_grams(self, token_lst, n):
         n_grams = defaultdict(int)
         for n_gram in NGramIterator(token_lst, n):
@@ -201,7 +194,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
         crep_mask = torch.zeros_like(pred_toks).type_as(logits)
         lrep_mask = torch.zeros_like(pred_toks).type_as(logits)
 
-        mask_len = []
         for i, gen in enumerate(generations):
             gen_i = gen.tolist()
 
@@ -212,12 +204,7 @@ class RepetitionUnlikelihoodAgentTrait(object):
             # Get corresponding label
             label_i = batch.label_vec[i].tolist()
 
-            # Get lengths
-            len_human_label = self._get_length(label_i)
-            len_model_label = self._get_length(gen_i)
-
             seen_n_grams = defaultdict(int)
-            seen_n_grams_count = 0
 
             # penalize if there is a context repeat
             for j, n_gram in enumerate(NGramIterator(gen_i, n)):
@@ -307,7 +294,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
 
     def _ngram_metrics(self, batch, preds):
         text_vecs_cpu = batch.text_vec.cpu()
-        label_vecs_cpu = batch.label_vec.cpu()
         lrep, crep = 0, 0
         total_pred_ngs = 0
         n = self.opt['seq_ul_n']
@@ -574,8 +560,10 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         almost_scores = F.log_softmax(scores[ul_mask], dim=-1)
         ul_scores = almost_scores[torch.arange(len(downweight)), downweight]
 
+        clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
+
         ul_loss = (
-            (-torch.log((1 - ul_scores.exp()).clamp_(1e-20))) * ul_weights[ul_mask]
+            (-torch.log(torch.clamp(1 - ul_scores.exp(), min=clamp_min))) * ul_weights[ul_mask]
         ).sum()
         num_ul = ul_mask.sum()
 
