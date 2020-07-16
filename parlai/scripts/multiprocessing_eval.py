@@ -6,13 +6,13 @@
 
 
 """
-Main launch script for single-host, multi-GPU training.
+Main launch script for single-host, multi-GPU evaluation.
 
-This is a drop-in replacement for train_model.py.  This script will launch N
-subprocess, each which runs the full training loop independently.
+This is a drop-in replacement for eval_model.py.  This script will launch N
+subprocess, each which runs the full eval loop independently.
 
 Uses torch.nn.parallel.DistributedDataParallel for its main uses.  Agents must
-specifically implement the wrapper of DistributedDatParallel, but all
+specifically implement the wrapper of DistributedDataParallel, but all
 TorchRankerAgents and TorchGeneratorAgents support this.
 """
 
@@ -27,6 +27,11 @@ import parlai.scripts.eval_model as eval_model
 def multiprocess_eval(
     rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
 ):
+    """
+    Run a multiprocessing evaluation.
+
+    Invoked by launch_and_eval, not instantiated directly.
+    """
     with distributed_utils.distributed_context(
         rank, opt, port, rank_offset, gpu, hostname
     ) as opt:
