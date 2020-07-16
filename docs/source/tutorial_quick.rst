@@ -20,6 +20,8 @@ First, make sure you have Python 3. Now open up terminal and run the following.
 
     cd ~/ParlAI; python setup.py develop
 
+This will add the `parlai` command to your system.
+
 3. Several models have additional requirements, such as `PyTorch <http://pytorch.org/>`_.
 
 
@@ -103,7 +105,7 @@ we could do the following:
 .. code-block:: bash
 
   # Evaluate the tiny BlenderBot model on twitter data
-  python examples/eval_model.py -t twitter -mf zoo:blender/blender_90M/model
+  parlai eval_model -t twitter -mf zoo:blender/blender_90M/model
 
 
 Finally, let's print some of our transformer's predictions with the same display_model script from above.
