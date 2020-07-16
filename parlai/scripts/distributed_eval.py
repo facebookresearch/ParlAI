@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Distributed training script. NOT MEANT TO BE CALLED DIRECTLY BY USER.
+Distributed evaluation script. NOT MEANT TO BE CALLED DIRECTLY BY USER.
 
 This script is meant to be in conjunction with
 `SLURM <https://slurm.schedmd.com/>`, which provides environmental variables
@@ -27,31 +27,25 @@ An example sbatch script is below, for a 2-host, 8-GPU setup (16 total gpus):
   #SBATCH --ntasks-per-node=8
   #SBATCH --mem=64G
   #SBATCH --cpus-per-task=10
-  srun python -u -m parlai.scripts.distributed_train \
+  srun python -u -m parlai.scripts.distributed_eval \
     -m seq2seq -t convai2 --dict-file /path/to/dict-file
 """
 
-import parlai.scripts.train_model as single_train
-from parlai.scripts.script import ParlaiScript
+import os
+
+import parlai.scripts.eval_model as eval_model
 import parlai.utils.distributed as distributed_utils
 
 
-def setup_args():
-    parser = single_train.setup_args()
+def main():
+    parser = eval_model.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    return parser
+    opt = parser.parse_args(print_args=(os.environ['SLURM_PROCID'] == '0'))
 
-
-class DistributedTrain(ParlaiScript):
-    @classmethod
-    def setup_args(cls):
-        return setup_args()
-
-    def run(self):
-        with distributed_utils.slurm_distributed_context(self.opt) as opt:
-            return single_train.TrainLoop(opt).train_model()
+    with distributed_utils.slurm_distributed_context(opt) as opt:
+        return eval_model.eval_model(opt)
 
 
 if __name__ == '__main__':
-    DistributedTrain.main()
+    main()

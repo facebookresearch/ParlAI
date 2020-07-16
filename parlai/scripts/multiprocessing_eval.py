@@ -6,13 +6,13 @@
 
 
 """
-Main launch script for single-host, multi-GPU training.
+Main launch script for single-host, multi-GPU evaluation.
 
-This is a drop-in replacement for train_model.py.  This script will launch N
-subprocess, each which runs the full training loop independently.
+This is a drop-in replacement for eval_model.py.  This script will launch N
+subprocess, each which runs the full eval loop independently.
 
 Uses torch.nn.parallel.DistributedDataParallel for its main uses.  Agents must
-specifically implement the wrapper of DistributedDatParallel, but all
+specifically implement the wrapper of DistributedDataParallel, but all
 TorchRankerAgents and TorchGeneratorAgents support this.
 """
 
@@ -20,28 +20,31 @@ import torch
 import random
 import os
 import signal
-import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
-from parlai.scripts.script import ParlaiScript
+import parlai.scripts.eval_model as eval_model
 
 
-def multiprocess_train(
+def multiprocess_eval(
     rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
 ):
+    """
+    Run a multiprocessing evaluation.
+
+    Invoked by launch_and_eval, not instantiated directly.
+    """
     with distributed_utils.distributed_context(
         rank, opt, port, rank_offset, gpu, hostname
     ) as opt:
-        # Run the actual training
-        return single_train.TrainLoop(opt).train()
+        return eval_model.eval_model(opt)
 
 
-def launch_and_train(opt, port):
+def launch_and_eval(opt, port):
     """
     Perform a fork() to many processes.
     """
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.spawn(
-        multiprocess_train,
+        multiprocess_eval,
         # need to give rank offset as 1 to cover the fact that the main
         # process is rank 0, but that spawn() doesn't let you control rank
         (opt, port, 1),
@@ -50,7 +53,7 @@ def launch_and_train(opt, port):
     )
 
     try:
-        retval = multiprocess_train(0, opt, port)
+        retval = multiprocess_eval(0, opt, port)
         spawncontext.join()
         return retval
     except KeyboardInterrupt:
@@ -62,21 +65,17 @@ def launch_and_train(opt, port):
 
 
 def setup_args():
-    parser = single_train.setup_args()
+    parser = eval_model.setup_args()
     parser.add_distributed_training_args()
     parser.set_defaults(distributed_world_size=torch.cuda.device_count())
     return parser
 
 
-class MultiProcessTrain(ParlaiScript):
-    @classmethod
-    def setup_args(cls):
-        return setup_args()
-
-    def run(self):
-        port = random.randint(32000, 48000)
-        return launch_and_train(self.opt, port)
+def main():
+    opt = setup_args().parse_args()
+    port = random.randint(32000, 48000)
+    return launch_and_eval(opt, port)
 
 
 if __name__ == '__main__':
-    MultiProcessTrain.main()
+    main()
