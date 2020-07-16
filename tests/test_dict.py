@@ -393,6 +393,7 @@ class TestByteLevelBPE(unittest.TestCase):
             hf_skip_special_tokens=False,
         )
         opt = parser.parse_args([], print_args=False)
+
         agent = DictionaryAgent(opt)
         agent.add_additional_special_tokens(special_toks_lst)
 

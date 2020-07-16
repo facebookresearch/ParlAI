@@ -823,7 +823,7 @@ class TorchAgent(ABC, Agent):
         Must make a call to resize the token embeddings and load the model state dict
         with the resized token embeddings.
         """
-        raise RuntimeError(
+        raise NotImplementedError(
             'If you are intending to add special tokens to an already pretrained model, '
             'you must write the function `_resize_token_embeddings` for your specific '
             'agent.'
@@ -911,7 +911,7 @@ class TorchAgent(ABC, Agent):
             type of optimizer being loaded, if changed will skip loading
             optimizer states
         """
-        if hasattr(self, 'resized') and self.resized:
+        if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
             logging.warn('Not loading optimizer due to resize in token embeddings')
 
@@ -1850,7 +1850,7 @@ class TorchAgent(ABC, Agent):
                 if hasattr(self, 'special_toks') and len(self.special_toks) > 0:
                     state_dict = self._resize_token_embeddings(state_dict, msg_)
                     self.model.load_state_dict(state_dict)
-                    self.resized = True  # make note that we resized here
+                    self.resized_embeddings = True  # make note that we resized here
                 else:
                     raise RuntimeError(
                         f'{msg_}\n'
