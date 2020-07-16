@@ -121,7 +121,8 @@ class RewardUnlikelihoodAgentTrait(object):
         ul_scores = scores_view[range_, targets_view]
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
         ul_loss = (
-            -torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)) * ul_notnull.view(-1).float()
+            -torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min))
+            * ul_notnull.view(-1).float()
         ).sum()
         self.record_local_metric(
             'ul_loss', AverageMetric.many(ul_loss.sum(dim=-1), ul_target_tokens)
@@ -200,9 +201,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
             # Collect context ngrams
             context_i = batch.text_vec[i].tolist()
             context_n_grams = self._count_n_grams(context_i, n)
-
-            # Get corresponding label
-            label_i = batch.label_vec[i].tolist()
 
             seen_n_grams = defaultdict(int)
 
@@ -563,7 +561,8 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
 
         ul_loss = (
-            (-torch.log(torch.clamp(1 - ul_scores.exp(), min=clamp_min))) * ul_weights[ul_mask]
+            -torch.log(torch.clamp(1 - ul_scores.exp(), min=clamp_min))
+            * ul_weights[ul_mask]
         ).sum()
         num_ul = ul_mask.sum()
 
