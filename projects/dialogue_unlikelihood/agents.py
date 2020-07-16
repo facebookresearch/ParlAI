@@ -15,9 +15,7 @@ from nltk import ngrams
 from parlai.agents.image_seq2seq.image_seq2seq import ImageSeq2seqAgent
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.metrics import AverageMetric, SumMetric, GlobalAverageMetric
-from parlai.core.torch_agent import Output
 from parlai.utils.misc import round_sigfigs
-from parlai.utils.torch import padded_tensor
 
 
 def div(x, y):
@@ -240,55 +238,8 @@ class RepetitionUnlikelihoodAgentTrait(object):
             return total_loss, model_output
         return total_loss
 
-    def eval_step(self, batch):
-        """
-        Evaluate a single batch of examples.
-        """
-        if batch.text_vec is None:
-            return
-        bsz = batch.text_vec.size(0)
-        self.model.eval()
-        cand_scores = None
-
-        if batch.label_vec is not None:
-            # calculate loss on targets with teacher forcing
-            _ = self.compute_loss(batch)  # noqa: F841  we need the side effects
-
-        maxlen = self.label_truncate or 256
-        beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
-        preds, scores = zip(*beam_preds_scores)
-
+    def _add_generation_metrics(self, batch, preds):
         self._ngram_metrics(batch, preds)
-
-        cand_choices = None
-        # TODO: abstract out the scoring here?
-        if self.rank_candidates:
-            # compute roughly ppl to rank candidates
-            cand_choices = []
-            encoder_states = self.model.encoder(*self._model_input(batch))
-            for i in range(bsz):
-                num_cands = len(batch.candidate_vecs[i])
-                enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-                cands, _ = padded_tensor(
-                    batch.candidate_vecs[i], self.NULL_IDX, self.use_cuda
-                )
-                scores, _ = self.model.decode_forced(enc, cands)
-                cand_losses = F.cross_entropy(
-                    scores.view(num_cands * cands.size(1), -1),
-                    cands.view(-1),
-                    reduction='none',
-                ).view(num_cands, cands.size(1))
-                # now cand_losses is cands x seqlen size, but we still need to
-                # check padding and such
-                mask = (cands != self.NULL_IDX).float()
-                cand_scores = div(
-                    (cand_losses * mask).sum(dim=1), (mask.sum(dim=1) + 1e-9)
-                )
-                _, ordering = cand_scores.sort()
-                cand_choices.append([batch.candidates[i][o] for o in ordering])
-
-        text = [self._v2t(p) for p in preds] if preds is not None else None
-        return Output(text, cand_choices)
 
     def _ngram_metrics(self, batch, preds):
         text_vecs_cpu = batch.text_vec.cpu()

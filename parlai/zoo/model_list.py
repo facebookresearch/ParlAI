@@ -1310,10 +1310,7 @@ model_list = [
         "example": (
             "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (
-            "Enter Your Message: Hi.\n"
-            "[RepetitionUnlikelihood]: hi ."
-        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
     },
     {
         "title": "Unlikelihood ELI5 context repetition model",
@@ -1328,10 +1325,7 @@ model_list = [
         "example": (
             "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (
-            "Enter Your Message: Hi.\n"
-            "[RepetitionUnlikelihood]: hi ."
-        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
     },
     {
         "title": "Unlikelihood ELI5 label repetition model",
@@ -1346,10 +1340,7 @@ model_list = [
         "example": (
             "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (
-            "Enter Your Message: Hi.\n"
-            "[RepetitionUnlikelihood]: hi ."
-        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia context and label repetition model",
@@ -1364,10 +1355,7 @@ model_list = [
         "example": (
             "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (
-            "Enter Your Message: Hi.\n"
-            "[RepetitionUnlikelihood]: hi ."
-        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia context repetition model",
@@ -1382,10 +1370,7 @@ model_list = [
         "example": (
             "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (
-            "Enter Your Message: Hi.\n"
-            "[RepetitionUnlikelihood]: hi ."
-        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia label repetition model",
@@ -1400,10 +1385,7 @@ model_list = [
         "example": (
             "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (
-            "Enter Your Message: Hi.\n"
-            "[RepetitionUnlikelihood]: hi ."
-        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
     },
     {
         "title": "Unlikelihood vocab alpha 1e0 model",
