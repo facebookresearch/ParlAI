@@ -6,7 +6,7 @@
 """
 Agent does gets the local keyboard input in the act() function.
 
-Example: python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
+Example: parlai eval_model -m local_human -t babi:Task1k:1 -dt valid
 """
 
 from parlai.core.agents import Agent

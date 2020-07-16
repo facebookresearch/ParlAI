@@ -266,7 +266,7 @@ To access this data, we can now use the ``display_data.py`` file in the ``exampl
 
 .. code-block:: bash
 
-    python examples/display_data.py -t twitter
+    parlai display_data -t twitter
 
 
 DialogTeacher

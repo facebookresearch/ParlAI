@@ -17,7 +17,7 @@ To extract the image feature of COCO images:
 
 .. code-block:: shell
 
-  python examples/extract_image_feature.py -t vqa_v1 -im resnet152
+  parlai extract_image_feature -t vqa_v1 -im resnet152
 """
 import importlib
 import h5py

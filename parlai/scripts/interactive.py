@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python examples/interactive.py -m drqa -mf "models:drqa/squad/model"
+  parlai interactive -m drqa -mf "models:drqa/squad/model"
 
 When prompted, enter something like: ``Bob is Blue.\\nWhat is Bob?``
 

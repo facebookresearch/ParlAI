@@ -161,7 +161,7 @@ task_list = [
             "comment on the answer from the teacher. The aim is to find learning "
             "models that use the comments to improve. From Weston '16. Link: "
             "https://arxiv.org/abs/1604.06045. Tasks can be accessed with a "
-            "format like: 'python examples/display_data.py -t "
+            "format like: 'parlai display_data -t "
             "dbll_babi:task:2_p0.5' which specifies task 2, and policy with 0.5 "
             "answers correct, see the paper for more details of the tasks."
         ),

@@ -14,7 +14,7 @@ automatically, e.g.:
 
 ... code-block:
 
-   python examples/interactive.py --model-file
+   parlai interactive --model-file
        "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
 
 
@@ -125,7 +125,7 @@ model_list = [
         "task": "wizard_of_wikipedia:generator",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia:generator "
+            "parlai display_model -t wizard_of_wikipedia:generator "
             "-mf zoo:wizard_of_wikipedia/end2end_generator/model -n 1 "
             "--display-ignore-fields knowledge_parsed"
         ),
@@ -168,7 +168,7 @@ model_list = [
             "[WizardRetrievalInteractiveAgent]: I think I'll try some Lipton, I love their green tea!"
         ),
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia "
+            "parlai display_model -t wizard_of_wikipedia "
             "-mf zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
             "-m projects:wizard_of_wikipedia:wizard_transformer_ranker "
             "--n-heads 6 --ffn-size 1200 --embeddings-scale False "
@@ -204,7 +204,7 @@ model_list = [
         "task": "light_dialog",
         "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
         "example": (
-            "python examples/eval_model.py -t light_dialog "
+            "parlai eval_model -t light_dialog "
             "-mf zoo:light/biranker_dialogue/model"
         ),
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
@@ -242,7 +242,7 @@ model_list = [
             "Transresnet Model pretrained on the Personality-Captions task"
         ),
         "example": (
-            "python examples/eval_model.py -t personality_captions "
+            "parlai eval_model -t personality_captions "
             "-mf zoo:personality_captions/transresnet/model --num-test-labels 5 -dt test"
         ),
         "result": (
@@ -474,7 +474,7 @@ model_list = [
             "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits @ 1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
         ),
         "example": (
-            "python examples/interactive.py -mf "
+            "parlai interactive -mf "
             "zoo:pretrained_transformers/model_poly/model -t convai2"
         ),
         "result": (
@@ -486,7 +486,7 @@ model_list = [
             "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:pretrained_transformers/model_poly/model -t convai2 --eval-candidates inline"
+            "parlai eval_model -mf zoo:pretrained_transformers/model_poly/model -t convai2 --eval-candidates inline"
         ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
@@ -504,7 +504,7 @@ model_list = [
             "Bi-encoder pretrained on Reddit and fine-tuned on ConvAI2 scoring ~87 hits @ 1/20."
         ),
         "example": (
-            "python examples/interactive.py -mf "
+            "parlai interactive -mf "
             "zoo:pretrained_transformers/model_bi/model -t convai2"
         ),
         "result": (
@@ -516,7 +516,7 @@ model_list = [
             "[Biencoder]: like meat mostly , me and my dogs love them , do you like dogs ?\n"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:pretrained_transformers/model_bi/model -t convai2 --eval-candidates inline"
+            "parlai eval_model -mf zoo:pretrained_transformers/model_bi/model -t convai2 --eval-candidates inline"
         ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
@@ -534,7 +534,7 @@ model_list = [
             "Transresnet Multimodal Model pretrained on the Image-Chat task"
         ),
         "example": (
-            "python examples/eval_model.py -t image_chat "
+            "parlai eval_model -t image_chat "
             "-mf zoo:image_chat/transresnet_multimodal/model -dt test"
         ),
         "result": "{'exs': 29991, 'accuracy': 0.4032, 'f1': 0.4432, 'hits@1': 0.403, 'hits@5': 0.672, 'hits@10': 0.779, 'hits@100': 1.0, 'bleu': 0.3923,"  # noqa: E501
@@ -570,7 +570,7 @@ model_list = [
             "liven on my farm in kansas ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf "
+            "parlai eval_model -mf "
             "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all"
         ),
         "result2": (
@@ -591,7 +591,7 @@ model_list = [
             "Classifier trained on both the standard and adversarial safety tasks in addition to Wikipedia Toxic Comments."
         ),
         "example": (
-            "python examples/eval_model.py -t dialogue_safety:adversarial "
+            "parlai eval_model -t dialogue_safety:adversarial "
             "--round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40"
         ),
         "result": (
@@ -609,7 +609,7 @@ model_list = [
             "Classifier trained on the multi-turn adversarial safety task in addition to both the single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
         ),
         "example": (
-            "python examples/eval_model.py -t dialogue_safety:multiturn -dt test -mf zoo:dialogue_safety/multi_turn/model --split-lines True -bs 40"
+            "parlai eval_model -t dialogue_safety:multiturn -dt test -mf zoo:dialogue_safety/multi_turn/model --split-lines True -bs 40"
         ),
         "result": (
             "{'exs': 3000, 'accuracy': 0.9317, 'f1': 0.9317, 'bleu': 9.317e-10, 'lr': 5e-09, 'total_train_updates': 0, 'examples': 3000, 'mean_loss': 0.008921, 'class___notok___recall': 0.7067, 'class___notok___prec': 0.6444, 'class___notok___f1': 0.6741, 'class___ok___recall': 0.9567, 'class___ok___prec': 0.9671, 'class___ok___f1': 0.9618, 'weighted_f1': 0.9331}"
@@ -624,7 +624,7 @@ model_list = [
             "Model files used to check backwards compatibility and code coverage of important standard models."
         ),
         "example": (
-            "python examples/eval_model.py -mf zoo:unittest/transformer_generator2/model -t integration_tests:multiturn_candidate -m transformer/generator"
+            "parlai eval_model -mf zoo:unittest/transformer_generator2/model -t integration_tests:multiturn_candidate -m transformer/generator"
         ),
         "external_website": '',
         "result": (
@@ -640,7 +640,7 @@ model_list = [
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
         "description": ("Image Seq2Seq model trained on all DodecaDialogue tasks"),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/all_tasks_mt/model "
+            "parlai interactive -mf zoo:dodecadialogue/all_tasks_mt/model "
             "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -650,7 +650,7 @@ model_list = [
             "[ImageSeq2seq]: i like to go to the park and play with my friends ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/all_tasks_mt/model -t \"#Dodeca\""
+            "parlai eval_model -mf zoo:dodecadialogue/all_tasks_mt/model -t \"#Dodeca\""
             "--prepend-personality True --prepend-gold-knowledge True --image-mode no_image_model"
         ),
         "result2": (
@@ -680,7 +680,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on Convai2"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/convai2_ft/model -t convai2 "
+            "parlai interactive -mf zoo:dodecadialogue/convai2_ft/model -t convai2 "
             "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -694,7 +694,7 @@ model_list = [
             "[ImageSeq2seq]: that ' s cool . i like simple jokes ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/convai2_ft/model -t convai2"
+            "parlai eval_model -mf zoo:dodecadialogue/convai2_ft/model -t convai2"
         ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
@@ -713,7 +713,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Cornell Movie task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/cornell_movie_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/cornell_movie_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -723,7 +723,7 @@ model_list = [
             "[ImageSeq2seq]: i like to go to the movies . what about you ? do you have any hobbies ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/cornell_movie_ft/model -t cornell_movie"
+            "parlai eval_model -mf zoo:dodecadialogue/cornell_movie_ft/model -t cornell_movie"
         ),
         "result2": (
             "[ Finished evaluating tasks ['cornell_movie'] using datatype valid ]\n"
@@ -742,7 +742,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the DailyDialog task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/daily_dialog_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/daily_dialog_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -752,7 +752,7 @@ model_list = [
             "[ImageSeq2seq]: i like to go to the beach and play volleyball ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/daily_dialog_ft/model -t dailydialog"
+            "parlai eval_model -mf zoo:dodecadialogue/daily_dialog_ft/model -t dailydialog"
         ),
         "result2": (
             "[ Finished evaluating tasks ['dailydialog'] using datatype valid ]\n"
@@ -771,7 +771,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/eli5_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/eli5_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 200 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -802,7 +802,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Empathetic Dialogue task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/empathetic_dialogues_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/empathetic_dialogues_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -812,7 +812,7 @@ model_list = [
             "[ImageSeq2seq]: that ' s too bad . what ' s going on ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/empathetic_dialogues_ft/model -t empathetic_dialogues"
+            "parlai eval_model -mf zoo:dodecadialogue/empathetic_dialogues_ft/model -t empathetic_dialogues"
         ),
         "result2": (
             "[ Finished evaluating tasks ['empathetic_dialogues'] using datatype valid ]\n"
@@ -831,7 +831,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Grounded Conversations task"
         ),
         "example": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/igc_ft/model -t igc:responseOnly"
+            "parlai eval_model -mf zoo:dodecadialogue/igc_ft/model -t igc:responseOnly"
         ),
         "result": (
             "[ Finished evaluating tasks ['igc:responseOnly'] using datatype valid ]\n"
@@ -850,7 +850,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Chat task"
         ),
         "example": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/image_chat_ft/model -t image_chat:generation "
+            "parlai eval_model -mf zoo:dodecadialogue/image_chat_ft/model -t image_chat:generation "
             "--image-mode no_image_model"
         ),
         "result": (
@@ -870,7 +870,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the LIGHT Dialogue task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/light_dialog_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/light_dialog_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -880,7 +880,7 @@ model_list = [
             "[ImageSeq2seq]: me too . it ' s been so long since i ' ve seen a battle like this . do you have a favorite battle ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/light_dialog_ft/model -t light_dialog"
+            "parlai eval_model -mf zoo:dodecadialogue/light_dialog_ft/model -t light_dialog"
         ),
         "result2": (
             "[ Finished evaluating tasks ['light_dialog'] using datatype valid ]\n"
@@ -899,7 +899,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the pushshift.io Reddit task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/reddit_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/reddit_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -920,7 +920,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Twitter task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/twitter_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/twitter_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -930,7 +930,7 @@ model_list = [
             "[ImageSeq2seq]: hi ! i ' m doing well ! i like to read , watch movies , play video games , and listen to music . how about you ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/twitter_ft/model -t twitter"
+            "parlai eval_model -mf zoo:dodecadialogue/twitter_ft/model -t twitter"
         ),
         "result2": (
             "[ Finished evaluating tasks ['twitter'] using datatype valid ]\n"
@@ -949,7 +949,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Ubuntu V2 task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/ubuntu_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/ubuntu_ft/model "
             "--inference beam --beam-size 2 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -959,7 +959,7 @@ model_list = [
             "[ImageSeq2seq]: i like to read , write , and read ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/ubuntu_ft/model -t ubuntu"
+            "parlai eval_model -mf zoo:dodecadialogue/ubuntu_ft/model -t ubuntu"
         ),
         "result2": (
             "[ Finished evaluating tasks ['ubuntu'] using datatype valid ]\n"
@@ -978,7 +978,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Wizard of Wikipedia task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3 -t wizard_of_wikipedia"
         ),
         "result": (
@@ -1001,7 +1001,7 @@ model_list = [
             "[ImageSeq2seq]: i don ' t make them , but i would love to ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model -t wizard_of_wikipedia:Generator --prepend-gold-knowledge true"
+            "parlai eval_model -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model -t wizard_of_wikipedia:Generator --prepend-gold-knowledge true"
         ),
         "result2": (
             "[ Finished evaluating tasks ['wizard_of_wikipedia:Generator'] using datatype valid ]\n"
@@ -1020,7 +1020,7 @@ model_list = [
             "Image Seq2Seq base model, from which all DodecaDialogue models were trained"
         ),
         "example": (
-            "python examples/train_model.py -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
+            "parlai train_model -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
         ),
         "result": ("A trained model (logs omitted)"),
     },
@@ -1032,9 +1032,9 @@ model_list = [
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the BlendedSkillTalk dialogue task.",
-        "example": "python examples/interactive.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
+        "example": "parlai interactive -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
         "result": 'Results vary.',
-        "example2": "python examples/eval_model.py -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
+        "example2": "parlai eval_model -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
         "result2": """09:51:57 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
     accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
        .7920   .7785 5482 .8124    .0370   .7920    .9788         1   .9542 .8251 .8636 1.866 19.76
@@ -1048,7 +1048,7 @@ model_list = [
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
         "result": """10:23:53 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
     accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
        .7678   .7553 5482 .7902   .07928   .7678    .9728         1   .9414 .9337 .8451  2.04 19.76
@@ -1062,7 +1062,7 @@ model_list = [
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the EmpatheticDialogues dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/ed_single_task/model -t blended_skill_talk -dt test",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/ed_single_task/model -t blended_skill_talk -dt test",
         "result": """10:16:47 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
     accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
        .6895   .6774 5482 .7219   .07928   .6895    .9509         1   .9051 1.242 .7849  2.79 19.76
@@ -1076,7 +1076,7 @@ model_list = [
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",
         "result": """10:34:46 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
     accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
        .6742   .6616 5482 .7059   .07928   .6742    .9445         1   .8902 1.321 .7706 2.962 19.76
@@ -1090,7 +1090,7 @@ model_list = [
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",
         "result": """10:23:35 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
     accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
        .8010   .7872 5482 .8204   .07928   .8010    .9779         1   .9564 .8154 .8697 1.908 19.76
@@ -1104,7 +1104,7 @@ model_list = [
         "task": "blended_skill_talk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks, and then further fine-tuned on the BlendedSkillTalk dialogue task.",
-        "example": "python examples/eval_model.py -mf zoo:blended_skill_talk/multi_task_bst_tuned/model -t blended_skill_talk -dt test",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/multi_task_bst_tuned/model -t blended_skill_talk -dt test",
         "result": """10:36:01 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
     accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
        .8378   .8230 5482 .8543   .07928   .8378    .9872         1   .9704 .5897 .8963 1.604 19.76
@@ -1196,7 +1196,7 @@ model_list = [
             "2.7B parameter generative model finetuned on blended_skill_talk tasks."
         ),
         "example": (
-            "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
         ),
         "result": ("Results vary."),
     },
@@ -1211,7 +1211,7 @@ model_list = [
             "9.4B parameter generative model finetuned on blended_skill_talk tasks."
         ),
         "example": (
-            "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
         ),
         "result": ("Results vary."),
     },

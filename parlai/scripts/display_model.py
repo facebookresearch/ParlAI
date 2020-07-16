@@ -12,8 +12,8 @@ Examples
 
 .. code-block:: shell
 
-  python examples/display_model.py -t babi:task1k:1 -m "repeat_label"
-  python examples/display_model.py -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
+  parlai display_model -t babi:task1k:1 -m "repeat_label"
+  parlai display_model -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
 """  # noqa: E501
 
 from parlai.core.params import ParlaiParser
