@@ -711,7 +711,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 bpe_add_prefix_space=False,
                 model_file=model_file,
                 save_after_valid=True,
-                special_tok_lst='PARTY,PARROT'
+                special_tok_lst='PARTY,PARROT',
             )
             agent = create_agent(opt)
             # assert that the embeddings were resized
