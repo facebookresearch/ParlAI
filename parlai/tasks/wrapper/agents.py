@@ -28,7 +28,6 @@ class AbstractWrapperTeacher(Teacher):
     Abstract teacher working as base for wrapper teachers.
     """
 
-    @abstractmethod
     def __init__(self, opt: Opt, shared=None):
         pass
 
