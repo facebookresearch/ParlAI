@@ -1254,20 +1254,11 @@ model_list = [
             "Dialogue model finetuned on ConvAI2 with context and label repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
         "result": (
-            "- - - NEW EPISODE: convai2- - -\n"
-            "your persona: i read twenty books a year.\n"
-            "your persona: i'm a stunt double as my second job.\n"
-            "your persona: i only eat kosher.\n"
-            "your persona: i was raised in a single parent household.\n"
-            "hello what are doing today ?\n"
-            "    labels: i am good , i just got off work and tired , i have two jobs .\n"
-            "     model: hi , i am reading a book , how about you ?\n"
-            "i just got done watching a horror movie\n"
-            "    labels: i rather read , i've read about 20 books this year .\n"
-            "     model: i ' m reading a book , i love horror ."
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
         ),
     },
     {
@@ -1281,9 +1272,12 @@ model_list = [
             "Dialogue model finetuned on ConvAI2 with context repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
     },
     {
         "title": "Unlikelihood ConvAI2 label repetition model",
@@ -1296,9 +1290,12 @@ model_list = [
             "Dialogue model finetuned on ConvAI2 with label repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/rep_convai2_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
     },
     {
         "title": "Unlikelihood ELI5 context and label repetition model",
@@ -1311,9 +1308,12 @@ model_list = [
             "Dialogue model finetuned on ELI5 with context and label repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t eli5 -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi ."
+        ),
     },
     {
         "title": "Unlikelihood ELI5 context repetition model",
@@ -1326,9 +1326,12 @@ model_list = [
             "Dialogue model finetuned on ELI5 with context repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t eli5 -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi ."
+        ),
     },
     {
         "title": "Unlikelihood ELI5 label repetition model",
@@ -1341,9 +1344,12 @@ model_list = [
             "Dialogue model finetuned on ELI5 with label repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t eli5 -mf zoo:dialogue_unlikelihood/rep_eli5_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi ."
+        ),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia context and label repetition model",
@@ -1356,9 +1362,12 @@ model_list = [
             "Dialogue model finetuned on Wizard of Wikipedia with context and label repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia:GeneratorTeacher -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi ."
+        ),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia context repetition model",
@@ -1371,9 +1380,12 @@ model_list = [
             "Dialogue model finetuned on Wizard of Wikipedia with context repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia:GeneratorTeacher -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi ."
+        ),
     },
     {
         "title": "Unlikelihood Wizard of Wikipedia label repetition model",
@@ -1386,9 +1398,12 @@ model_list = [
             "Dialogue model finetuned on Wizard of Wikipedia with label repetition unlikelihood"
         ),
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia:GeneratorTeacher -mf zoo:dialogue_unlikelihood/rep_wiki_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi ."
+        ),
     },
     {
         "title": "Unlikelihood vocab alpha 1e0 model",
@@ -1401,9 +1416,12 @@ model_list = [
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e0"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e0/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e0/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi there ! how are you ?"
+        ),
     },
     {
         "title": "Unlikelihood vocab alpha 1e1 model",
@@ -1416,9 +1434,12 @@ model_list = [
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e1"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e1/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e1/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi how are you today"
+        ),
     },
     {
         "title": "Unlikelihood vocab alpha 1e2 model",
@@ -1431,9 +1452,12 @@ model_list = [
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e2"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e2/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e2/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hello , how are you ?"
+        ),
     },
     {
         "title": "Unlikelihood vocab alpha 1e3 model",
@@ -1446,8 +1470,11 @@ model_list = [
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e3"
         ),
         "example": (
-            "python examples/display_model.py -t convai2 -mf zoo:dialogue_unlikelihood/vocab_alpha1e3/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent -ne 3"
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e3/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
         ),
-        "result": (""),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi there !"
+        ),
     },
 ]
