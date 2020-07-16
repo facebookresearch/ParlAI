@@ -825,8 +825,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _add_generation_metrics(self, batch, preds):
         """
-        Can be overridden to allow for some metrics on the generations 
-        calculated at eval.
+        Can be overridden to allow for some metrics on the generations calculated at
+        eval.
         """
         pass
 
