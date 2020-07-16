@@ -76,10 +76,10 @@ def num_workers():
 
 def is_primary_worker():
     """
-    Determine if we are the primary (master) worker.
+    Determine if we are the primary (rank 0)  worker.
 
-    Returns False if we are a secondary worker. Returns True if we are either (1) not in
-    distributed mode (2) or are the primary (rank 0) worker.
+    Returns False if we are a secondary worker. Returns True if we are either
+    (1) not in distributed mode (2) or are the primary (rank 0) worker.
     """
     return not is_distributed() or dist.get_rank() == 0
 
@@ -99,8 +99,10 @@ def get_rank():
 @contextlib.contextmanager
 def override_print(suppress=False, prefix=None):
     """
-    Context manager to override the print to suppress or modify output. Recommended
-    usage is to call this with suppress=True for all non-primary workers, or call with a
+    Context manager to override the print to suppress or modify output.
+
+    Recommended usage is to call this with suppress=True for all non-primary
+    workers, or call with a
     prefix of rank on all workers.
 
     >>> with override_print(prefix="rank{}".format(rank)):
@@ -296,18 +298,27 @@ def distributed_context(
     rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
 ):
     """
-    Subprocess which initializes distributed training, and begins training.
+    A context which wraps initialization of a distributed/multiprocessing run.
 
-    This should be launched n times for n GPUs; this is handled either in main
-    or via srun.
+    Every process in the distributed run should launch with this. In true
+    distributed setting you may wish to use slurm_distributed_context instead.
 
-    :param int rank: This process's rank - 1. (Starts at -1 ... n - 2). See comments.
-    :param opt: command line options
-    :param int port: A TCP port to use. This will need to be changed to run
-        multiple distributed training setups on the same machine.
-    :param int gpu: Which GPU to use. Defaults to using rank and local devices,
-        but must be manually specified when using many-hosts.
-    :param str hostname: Hostname of the main server.
+    :param int rank:
+        This process's rank, less rank_offset.
+    :param int rank_offset:
+        Used as an offset of rank. Used between multiprocessing vs true distributed,
+        and a hack around torch.multiprocessing.spawn being only used for the
+        non-primary workers.
+    :param opt:
+        command line options
+    :param int port:
+        A TCP port to use. This will need to be changed to run multiple
+        distributed training setups on the same machine.
+    :param int gpu:
+        Which GPU to use. Defaults to using rank and local devices, but must be
+        manually specified when using many-hosts.
+    :param str hostname:
+        Hostname of the main server.
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
@@ -355,6 +366,15 @@ def distributed_context(
 
 @contextlib.contextmanager
 def slurm_distributed_context(opt):
+    """
+    Initialize a distributed context, using the SLURM environment.
+
+    Does some work to read the environment to find a list of participating nodes
+    and the main node.
+
+    :param opt:
+        Command line options.
+    """
     # We can determine the init method automatically for Slurm.
     # double check we're using SLURM
     node_list = os.environ.get('SLURM_JOB_NODELIST')
