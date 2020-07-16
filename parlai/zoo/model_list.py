@@ -53,7 +53,7 @@ model_list = [
         "description": "DrQA Reader trained on SQuAD",
         "external_website": "https://github.com/facebookresearch/DrQA",
         "example": (
-            "python -m parlai.scripts.eval_model -mf zoo:drqa/squad/model -t squad "
+            "parlai eval_model -mf zoo:drqa/squad/model -t squad "
             "-dt test"
         ),
         "result": (
@@ -69,7 +69,7 @@ model_list = [
         "external_website": "https://github.com/facebookresearch/DrQA",
         "task": "wikipedia:full",
         "example": (
-            "python -m parlai.scripts.interactive --model tfidf_retriever "
+            "parlai interactive --model tfidf_retriever "
             "-mf zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
         ),
         "result": (
@@ -100,7 +100,7 @@ model_list = [
             "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
         ),
         "example": (
-            "python -m parlai.scripts.interactive --model tfidf_retriever -mf "
+            "parlai interactive --model tfidf_retriever -mf "
             "zoo:wikipedia_full/tfidf_retriever/model"
         ),
         "result": (
@@ -219,7 +219,7 @@ model_list = [
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
         "example": (
-            "python -m parlai.scripts.eval_model --model "
+            "parlai eval_model --model "
             "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:"
             "ControllableSeq2seqAgent --task "
             "projects.controllable_dialogue.tasks.agents "
@@ -1119,7 +1119,7 @@ model_list = [
             "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
         ),
         "example": (
-            "python -m parlai.scripts.interactive -mf zoo:tutorial_transformer_generator/model"
+            "parlai interactive -mf zoo:tutorial_transformer_generator/model"
         ),
         "external_website": '',
         "result": (
