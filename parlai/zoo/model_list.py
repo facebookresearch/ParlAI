@@ -52,10 +52,7 @@ model_list = [
         "task": "squad",
         "description": "DrQA Reader trained on SQuAD",
         "external_website": "https://github.com/facebookresearch/DrQA",
-        "example": (
-            "parlai eval_model -mf zoo:drqa/squad/model -t squad "
-            "-dt test"
-        ),
+        "example": ("parlai eval_model -mf zoo:drqa/squad/model -t squad " "-dt test"),
         "result": (
             # TODO: this differs slightly from the actual results as of 2019-07-23
             "{'exs': 10570, 'accuracy': 0.6886, 'f1': 0.7821, 'hits@1': 0.689, 'hits@5': 0.689, 'hits@10': 0.689, 'hits@100': 0.689, 'bleu': 0.1364, 'train_loss': 0}"  # noqa: E501
@@ -204,8 +201,7 @@ model_list = [
         "task": "light_dialog",
         "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
         "example": (
-            "parlai eval_model -t light_dialog "
-            "-mf zoo:light/biranker_dialogue/model"
+            "parlai eval_model -t light_dialog " "-mf zoo:light/biranker_dialogue/model"
         ),
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
         "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'total_train_updates': 15050,"  # noqa: E501
@@ -1118,9 +1114,7 @@ model_list = [
         "description": (
             "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
         ),
-        "example": (
-            "parlai interactive -mf zoo:tutorial_transformer_generator/model"
-        ),
+        "example": ("parlai interactive -mf zoo:tutorial_transformer_generator/model"),
         "external_website": '',
         "result": (
             "Enter Your Message: hi, how are you today?\n"
