@@ -677,8 +677,8 @@ class TestTransformerGenerator(unittest.TestCase):
         )
 
     def test_resize_embeddings(self):
+        # train original model
         with testing_utils.tempdir() as tmpdir:
-            # train original model
             model_file = os.path.join(tmpdir, 'model_file')
             _, _ = testing_utils.train_model(
                 dict(
@@ -699,7 +699,7 @@ class TestTransformerGenerator(unittest.TestCase):
 
             # now create agent with special tokens
             parser = ParlaiParser()
-            opt = parser.parse_kwargs(
+            parser.set_params(
                 model='transformer/generator',
                 task='integration_tests:short_fixed',
                 n_layers=1,
@@ -713,6 +713,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 save_after_valid=True,
                 special_tok_lst='PARTY,PARROT',
             )
+            opt = parser.parse_args([], print_args=False)
             agent = create_agent(opt)
             # assert that the embeddings were resized
             assert agent.resized_embeddings
