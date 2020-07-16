@@ -785,6 +785,9 @@ class HuggingFaceBpeHelper(BPEHelper):
         return text
 
     def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        """
+        Add special tokens to the tokenizer and dict_agent.
+        """
         logging.info(f'adding the following special tokens: {special_tokens}')
         self.tokenizer.add_special_tokens(special_tokens)  # add to HF
 
