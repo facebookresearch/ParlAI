@@ -352,7 +352,3 @@ class AllTeacher(SelfFeedingMTLTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         SelfFeedingTeacher.add_cmdline_args(argparser)
-
-
-class DefaultTeacher(AllTeacher):
-    pass
