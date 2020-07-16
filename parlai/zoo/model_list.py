@@ -52,7 +52,7 @@ model_list = [
         "task": "squad",
         "description": "DrQA Reader trained on SQuAD",
         "external_website": "https://github.com/facebookresearch/DrQA",
-        "example": ("parlai eval_model -mf zoo:drqa/squad/model -t squad " "-dt test"),
+        "example": "parlai eval_model -mf zoo:drqa/squad/model -t squad -dt test",
         "result": (
             # TODO: this differs slightly from the actual results as of 2019-07-23
             "{'exs': 10570, 'accuracy': 0.6886, 'f1': 0.7821, 'hits@1': 0.689, 'hits@5': 0.689, 'hits@10': 0.689, 'hits@100': 0.689, 'bleu': 0.1364, 'train_loss': 0}"  # noqa: E501
@@ -94,7 +94,7 @@ model_list = [
         "task": "wikipedia:full",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
+            "Retrieval over Wikipedia dump, used for DrQA on the open squad dataset."
         ),
         "example": (
             "parlai interactive --model tfidf_retriever -mf "
@@ -118,7 +118,7 @@ model_list = [
         "title": "Wizard of Wikipedia (End to end Generator)",
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/end2end_generator/model",
-        "description": ("End2End Generative model for Wizard of Wikipedia"),
+        "description": "End2End Generative model for Wizard of Wikipedia",
         "task": "wizard_of_wikipedia:generator",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "example": (
@@ -151,7 +151,7 @@ model_list = [
         "title": "Wizard of Wikipedia (Full Dialogue Retrieval Model)",
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
-        "description": ("Full Dialogue Retrieval Model for Wizard of Wikipedia"),
+        "description": "Full Dialogue Retrieval Model for Wizard of Wikipedia",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
         "example2": "examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
@@ -199,9 +199,9 @@ model_list = [
         "agent": "bert_ranker/bi_encoder_ranker",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/light",
         "task": "light_dialog",
-        "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
+        "description": "LIGHT Dialogue task, replicating the numbers from the paper.",
         "example": (
-            "parlai eval_model -t light_dialog " "-mf zoo:light/biranker_dialogue/model"
+            "parlai eval_model -t light_dialog -mf zoo:light/biranker_dialogue/model"
         ),
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
         "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'total_train_updates': 15050,"  # noqa: E501
@@ -225,7 +225,7 @@ model_list = [
             "{'exs': 7801, 'accuracy': 0.0006409, 'f1': 0.1702, 'bleu': 0.005205, "
             "'token_acc': 0.3949, 'loss': 3.129, 'ppl': 22.86}"
         ),
-        "description": ("Seq2Seq model with control trained on ConvAI2"),
+        "description": "Seq2Seq model with control trained on ConvAI2",
     },
     {
         "title": "TransResNet (ResNet 152) Personality-Captions model",
@@ -634,7 +634,7 @@ model_list = [
         "agent": "image_seq2seq",
         "task": "#Dodeca",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
-        "description": ("Image Seq2Seq model trained on all DodecaDialogue tasks"),
+        "description": "Image Seq2Seq model trained on all DodecaDialogue tasks",
         "example": (
             "parlai interactive -mf zoo:dodecadialogue/all_tasks_mt/model "
             "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
@@ -1018,7 +1018,7 @@ model_list = [
         "example": (
             "parlai train_model -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
         ),
-        "result": ("A trained model (logs omitted)"),
+        "result": "A trained model (logs omitted)",
     },
     {
         "title": "BlendedSkillTalk: BlendedSkillTalk single-task model",
@@ -1114,7 +1114,7 @@ model_list = [
         "description": (
             "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
         ),
-        "example": ("parlai interactive -mf zoo:tutorial_transformer_generator/model"),
+        "example": "parlai interactive -mf zoo:tutorial_transformer_generator/model",
         "external_website": '',
         "result": (
             "Enter Your Message: hi, how are you today?\n"
@@ -1192,7 +1192,7 @@ model_list = [
         "example": (
             "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
         ),
-        "result": ("Results vary."),
+        "result": "Results vary.",
     },
     {
         "title": "Reddit 9.4B",
@@ -1207,7 +1207,7 @@ model_list = [
         "example": (
             "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
         ),
-        "result": ("Results vary."),
+        "result": "Results vary.",
     },
     {
         "title": "BART",
