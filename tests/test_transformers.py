@@ -13,6 +13,8 @@ import unittest
 import parlai.utils.testing as testing_utils
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
+from tests.test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
+from parlai.core.params import ParlaiParser
 
 
 class TestTransformerRanker(unittest.TestCase):
@@ -673,6 +675,50 @@ class TestTransformerGenerator(unittest.TestCase):
                 temperature=0.99,
             )
         )
+
+    def test_resize_embeddings(self):
+        # train original model
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model_file')
+            _, _ = testing_utils.train_model(
+                dict(
+                    model='transformer/generator',
+                    task='integration_tests:short_fixed',
+                    n_layers=1,
+                    n_encoder_layers=2,
+                    n_decoder_layers=4,
+                    num_epochs=1,
+                    dict_tokenizer='bytelevelbpe',
+                    bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                    bpe_add_prefix_space=False,
+                    model_file=model_file,
+                    save_after_valid=True,
+                )
+            )
+
+            # now create agent with special tokens
+            parser = ParlaiParser()
+            parser.set_params(
+                model='transformer/generator',
+                task='integration_tests:short_fixed',
+                n_layers=1,
+                n_encoder_layers=2,
+                n_decoder_layers=4,
+                dict_tokenizer='bytelevelbpe',
+                bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                bpe_add_prefix_space=False,
+                model_file=model_file,
+                save_after_valid=True,
+                special_tok_lst='PARTY,PARROT',
+            )
+            opt = parser.parse_args([], print_args=False)
+            agent = create_agent(opt)
+            # assert that the embeddings were resized
+            assert agent.resized_embeddings
+            # assert model has special tokens
+            self.assertEqual(agent.special_toks, ['PARTY', 'PARROT'])
 
 
 class TestClassifier(unittest.TestCase):

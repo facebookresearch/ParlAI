@@ -10,6 +10,7 @@ File for miscellaneous utility functions and constants.
 from collections import deque, OrderedDict
 from typing import Union, Optional, Set, Any, Dict, List, Tuple
 from datetime import timedelta
+import functools
 import math
 import time
 import re
@@ -752,3 +753,14 @@ def error_once(msg: str) -> None:
     if msg not in _seen_logs:
         _seen_logs.add(msg)
         logging.error(msg)
+
+
+def recursive_getattr(obj, attr, *args):
+    """
+    Recursive call to getattr for nested attributes.
+    """
+
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+
+    return functools.reduce(_getattr, [obj] + attr.split('.'))
