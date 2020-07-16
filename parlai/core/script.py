@@ -14,6 +14,7 @@ completed easily.
 Also contains helper classes for loading scripts, etc.
 """
 
+import os
 import io
 import argparse
 from typing import List, Optional, Dict, Any
@@ -23,7 +24,7 @@ from abc import abstractmethod
 import importlib
 import pkgutil
 import parlai.scripts
-from parlai.core.loader import register_script, SCRIPT_REGISTRY
+from parlai.core.loader import register_script, SCRIPT_REGISTRY  # noqa: F401
 
 
 def setup_script_registry():
@@ -106,6 +107,8 @@ class ParlaiScript(object):
 def _display_image():
     if os.environ.get('PARLAI_DISPLAY_LOGO') == 'OFF':
         return
+    from parlai.utils.strings import colorize
+
     logo = colorize('ParlAI - Dialogue Research Platform', 'labels')
     print(logo)
 
@@ -154,17 +157,14 @@ def superscript_main(args=None):
 
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
     subparsers = parser.add_subparsers(
-        dest='super_command',
-        parser_class=_SubcommandParser,
-        title="Commands",
-        metavar="COMMAND",
+        parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
     )
     subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
 
     for script_name, registration in SCRIPT_REGISTRY.items():
         script_parser = registration.klass.setup_args()
         is_hidden = registration.hidden
-        is_hidden = is_hidden or script_parser.description == None
+        is_hidden = is_hidden or script_parser.description is None
         help_ = argparse.SUPPRESS if is_hidden else script_parser.description
         subparser = subparsers.add_parser(
             script_name,
@@ -172,6 +172,7 @@ def superscript_main(args=None):
             help=help_,
             formatter_class=CustomHelpFormatter,
         )
+        subparser.set_defaults(super_command=script_name)
         for action in script_parser._actions:
             subparser._add_action(action)
 
@@ -184,7 +185,8 @@ def superscript_main(args=None):
 
     opt = parser.parse_args(args, print_args=False)
     cmd = opt.pop('super_command')
-    if cmd == 'help' or cmd == 'h' or cmd is None:
+    if cmd == 'help' or cmd is None:
+        _display_image()
         parser.print_help()
     elif cmd is not None:
         SCRIPT_REGISTRY[cmd].klass(opt).run()
