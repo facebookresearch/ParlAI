@@ -126,6 +126,7 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 11.85, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1925, delta=0.0002)
 
+    @unittest.skip
     def test_repeat_eli5_contextonly(self):
         """
         Verify recorded ppl and F1 scores for released models.
@@ -149,6 +150,7 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 21.37, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1628, delta=0.0002)
 
+    @unittest.skip
     def test_repeat_eli5_labelonly(self):
         """
         Verify recorded ppl and F1 scores for released models.
@@ -172,6 +174,7 @@ class TestUnlikelihood(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 21.39, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1825, delta=0.0002)
 
+    @unittest.skip
     def test_repeat_eli5_contextandlabel(self):
         """
         Verify recorded ppl and F1 scores for released models.

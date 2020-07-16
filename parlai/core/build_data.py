@@ -383,7 +383,7 @@ def download_models(
                     url += model_type + '/'
                 url += fname
             else:
-                url = path + '/' + model_folder + '/' + fname
+                url = path + '/' + fname
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
                 untar(dpath, fname)
