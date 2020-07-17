@@ -243,7 +243,7 @@ cNd.........................................;lOc
 )
 
 
-@register_script('party')
+@register_script('party', hidden=True, aliases=['parrot'])
 class Party(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -94,7 +94,7 @@ def setup_args():
     return parser
 
 
-@register_script('convert_to_parlai')
+@register_script('convert_to_parlai', hidden=True)
 class ConvertDataToParlaiFormat(ParlaiScript):
     @classmethod
     def setup_args(cls):

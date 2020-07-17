@@ -91,7 +91,7 @@ def setup_args(parser=None) -> ParlaiParser:
     return parser
 
 
-@register_script('convert_to_fasttext')
+@register_script('convert_to_fasttext', hidden=True)
 class ConvertDataToFastText(ParlaiScript):
     @classmethod
     def setup_args(cls):

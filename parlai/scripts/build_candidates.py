@@ -93,7 +93,7 @@ def build_cands(opt):
     fw.close()
 
 
-@register_script('build_candidates')
+@register_script('build_candidates', hidden=True)
 class BuildCandidates(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -24,7 +24,11 @@ except ImportError:
 
 import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
-from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
+from parlai.core.loader import (
+    load_teacher_module,
+    load_agent_module,
+    load_world_module,
+)
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt
 

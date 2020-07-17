@@ -169,18 +169,24 @@ def superscript_main(args=None):
     setup_script_registry()
 
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
+    parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
         parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
     )
-    subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h']).set_defaults(
-        super_command='help'
-    )
+    hparser = subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
+    hparser.set_defaults(super_command='help')
 
+    # build the supercommand
     for script_name, registration in SCRIPT_REGISTRY.items():
+        logging.verbose(f"Discovered command {script_name}")
         script_parser = registration.klass.setup_args()
-        is_hidden = registration.hidden
-        is_hidden = is_hidden or script_parser.description is None
-        help_ = argparse.SUPPRESS if is_hidden else script_parser.description
+        if script_parser is None:
+            # user didn't bother defining command line args. let's just fill
+            # in for them
+            script_parser = ParlaiParser(False, False)
+        help_ = (
+            argparse.SUPPRESS if registration.is_hidden else script_parser.description
+        )
         subparser = subparsers.add_parser(
             script_name,
             aliases=registration.aliases,
