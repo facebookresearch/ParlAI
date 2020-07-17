@@ -172,10 +172,7 @@ def superscript_main(args=None):
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
     parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
-        parser_class=_SubcommandParser,
-        title="Commands",
-        metavar="COMMAND",
-        required=False,
+        parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
     )
     hparser = subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
     hparser.set_defaults(super_command='help')
