@@ -37,10 +37,9 @@ def setup_script_registry():
 
 class ParlaiScript(object):
     """
-    A ParlAI script is a standardized form of command line args.
+    A ParlAI script is a standardized form of access.
     """
 
-    description: str = "Default Script Description"
     parser: ParlaiParser
 
     @classmethod
@@ -57,7 +56,10 @@ class ParlaiScript(object):
 
     @abstractmethod
     def run(self):
-        pass
+        """
+        The main method. Must be implemented by the script writer.
+        """
+        raise NotImplementedError()
 
     @classmethod
     def _run_kwargs(cls, kwargs: Dict[str, Any]):
@@ -66,9 +68,7 @@ class ParlaiScript(object):
         """
         parser = cls.setup_args()
         opt = parser.parse_kwargs(**kwargs)
-        script = cls(opt)
-        script.parser = parser
-        return script.run()
+        return cls._run_from_parser_and_opt(opt, parser)
 
     @classmethod
     def _run_args(cls, args: Optional[List[str]] = None):
@@ -77,6 +77,10 @@ class ParlaiScript(object):
         """
         parser = cls.setup_args()
         opt = parser.parse_args(args=args, print_args=False)
+        return cls._run_from_parser_and_opt(opt, parser)
+
+    @classmethod
+    def _run_from_parser_and_opt(cls, opt: Opt, parser: ParlaiParser):
         script = cls(opt)
         script.parser = parser
         return script.run()
@@ -84,7 +88,15 @@ class ParlaiScript(object):
     @classmethod
     def main(cls, *args, **kwargs):
         """
-        Run the program.
+        Run the program, possibly with some given args.
+
+        You may provide command line args in the form of strings, or
+        options. For example:
+
+        >>> MyScript.main(['--task', 'convai2'])
+        >>> MyScript.main(task='convai2')
+
+        You may not combine both args and kwargs.
         """
         assert not (bool(args) and bool(kwargs))
         if args:
@@ -152,7 +164,6 @@ def superscript_main(args=None):
     """
     Superscript is a loader for all the other scripts.
     """
-
     setup_script_registry()
 
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
@@ -189,4 +200,4 @@ def superscript_main(args=None):
         _display_image()
         parser.print_help()
     elif cmd is not None:
-        SCRIPT_REGISTRY[cmd].klass(opt).run()
+        SCRIPT_REGISTRY[cmd].klass._run_from_parser_and_opt(opt, parser)
