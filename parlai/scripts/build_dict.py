@@ -31,7 +31,6 @@ import tqdm
 def setup_args(parser=None, hidden=True):
     if parser is None:
         parser = ParlaiParser(True, True, 'Build a dictionary.')
-        DictionaryAgent.add_cmdline_args(parser)
     dict_loop = parser.add_argument_group('Dictionary Loop Arguments')
     dict_loop.add_argument(
         '--dict-maxexs',
@@ -57,6 +56,7 @@ def setup_args(parser=None, hidden=True):
     dict_loop.add_argument(
         '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
+    DictionaryAgent.add_cmdline_args(parser)
     return parser
 
 
