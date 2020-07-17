@@ -7,6 +7,10 @@
 
 set -e -x  # error and exit on any failure; print the commands being run
 
+# test installation & help commands
+parlai
+parlai help > /dev/null
+parlai train --help | grep -- --task > /dev/null
 
 # view a task & train a model
 parlai display_data -t babi:task10k:1
