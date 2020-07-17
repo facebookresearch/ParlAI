@@ -57,7 +57,9 @@ class ParlaiScript(object):
     @abstractmethod
     def run(self):
         """
-        The main method. Must be implemented by the script writer.
+        The main method.
+
+        Must be implemented by the script writer.
         """
         raise NotImplementedError()
 
