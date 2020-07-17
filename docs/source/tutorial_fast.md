@@ -32,8 +32,8 @@ same.
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
         --embedding-size 250 --ffn-size 1000 --num-layers 8 -opt adam -lr 1e-3
 
-On my computer using a 16gb V100, this takes about Xs. Xs is spend in training,
-and another Xs is spent in evaluation.
+On my computer using a 16gb V100, this takes about 550s. 500s is spend in training,
+and another 50s is spent in evaluation.
 
 We will continuously modify this training command in this tutorial, but you are
 free to mix and match options.
@@ -49,7 +49,7 @@ speedup by turning off this generation step, with `--skip-generation true`.
         --embedding-size 250 --ffn-size 1000 --num-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true
 
-This brings evaluation time down to Xs, but doesn't affect training time.  Just
+This brings evaluation time down to 16s, but doesn't affect training time.  Just
 remember you will need to _turn `--skip-generation` back off_ if you want
 statistics like BLEU or F1. Also, `--skip-generation` is only an option in
 generative models. Ranking models have similar options like `-cands batch`.
@@ -79,23 +79,27 @@ This actually has an advantage, since you can more easily find your maximum
 batchsize.  To get the full benefits of dynamic batching, make sure to use the
 largest batchsize you can.
 
-_WARNING_: You will probably perplexity is quite a bit worse than without
-dynamic batching.  This is because we use larger batches, and take fewer steps.
-You can usually increase your learning rate pretty substantially when using
-dynamic batching.
+Overall, this results in a large increase in speed: about 2x, bringing training
+down to 250s and evaluation to 11s.
+
+_WARNING_: You may find perplexity is quite a bit worse than without dynamic
+batching. This is because we use larger batches, and take fewer steps.  You can
+usually increase your learning rate pretty substantially when using dynamic
+batching, to compensate for the fewer steps.
 
 ## FP16
 
-If you have access to an NVIDIA GPU with FP16 CUDA Cores (V100, GTX 2080, etc), then
-you can get large speedups by switching on the option `--fp16 true`. The default
-version of FP16 requires that you install [APEX](https://github.com/NVIDIA/apex), but
-you can use a simplified version (which doesn't depend on APEX) with
-`--fp16 true --fp16-impl mem_efficienet`.
+If you have access to an NVIDIA GPU with FP16 CUDA Cores (V100, GTX 2080, etc),
+then you can get large speedups by switching on the option `--fp16 true`. The
+default version of FP16 requires that you install
+[APEX](https://github.com/NVIDIA/apex), but you can use a simplified version
+(which doesn't depend on APEX) with `--fp16 true --fp16-impl mem_efficienet`.
 
-Note that in order to get the full benefit of fp16, we need to make sure all our
-hidden dimensions are _multiples of 8_, otherwise the hardware won't use CUDA cores. We
-will slightly adjust the size of the network to support this. Since the default is
-an embedding size and ffn size of 300, we'll update it to 304.
+Note that in order to get the full benefit of fp16, we need to make sure all
+our hidden dimensions are _multiples of 8_, otherwise the hardware won't use
+CUDA cores. We will slightly adjust the size of the network to support this.
+We'll slightly adjust the network parameters (--embedding-size and --ffn-size)
+to conform to this.
 
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
         --embedding-size 256 --ffn-size 1024 --num-layers 8 -opt adam -lr 1e-3 \
@@ -123,8 +127,8 @@ With the increased batch size, this can often be brought to 2.5x faster.
 ## Use multiple GPUs
 
 If you have multiple GPUs, you can utilize them by switching from `train` to
-`multiprocessing_train`. If you have 4 GPUs, you'll find training should be roughly 4x
-faster. The arguments for the training are left otherwise the same.
+`multiprocessing_train`. If you have 4 GPUs, you'll find training should be
+roughly 3.5x faster. The arguments for the training are left otherwise the same.
 
     parlai multiprocessing_train \
         -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
@@ -134,14 +138,14 @@ faster. The arguments for the training are left otherwise the same.
         --dynamic-batching true \
         --fp16 true
 
-Note that we leave batchsize the same: we use the batchsize PER GPU. In my system, I have
-2 GPUs, so things are about twice as fast.
+Note that we leave batchsize the same: we use the batchsize PER GPU. In my
+system, I have 4 GPUs, so things are a little under 4x faster.
 
-_Warning_: This should never be mixed with options like `--model-parallel true` or
-`--data-parallel true`, as those options use different GPUs without multiprocessing.
-The BlenderBot3B and BlenderBot9B models both use those options, so this should be
-used with care.
+_Warning_: This should never be mixed with options like `--model-parallel true`
+or `--data-parallel true`, as those options use different GPUs without
+multiprocessing.  The BlenderBot3B and BlenderBot9B models both use those
+options, so this should be used with care.
 
-Similarly, we also have the `multiprocessing_eval` command, for using multiple GPUs in
-evaluation.
+Similarly, we also have the `multiprocessing_eval` command, for using multiple
+GPUs in evaluation.
 
