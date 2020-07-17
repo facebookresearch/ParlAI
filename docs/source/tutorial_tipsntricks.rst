@@ -11,24 +11,22 @@ ParlAI comes with a "super" command, that has all the other commands built in:
 
 .. code-block:: bash
 
+  $ parlai help
+  ParlAI - Dialogue Research Platform
   usage: parlai [-h] COMMAND ...
 
   optional arguments:
-  -h, --help               show this help message and exit
+    -h, --help               show this help message and exit
 
   Commands:
 
-  detect_offensive         Check task for offensive language
-  display_data (dd)        Display data from a task
-  display_model (dm)       Display model predictions.
-  train_model (tm, train)  Train a model
-  eval_model (em, eval)    Evaluate a model
-  eval_wordstat            Compute statistics from model predictions
-  interactive (i)          Interactive chat with a model on the command line
-  interactive_web (iweb)   Interactive chat with a model in a web browser
-  safe_interactive         Like interactive, but adds a safety filter
-  self_chat                Generate self-chats of a model
-  verify_data              Check tasks for common errors
+    display_data (dd)        Display data from a task
+    display_model (dm)       Display model predictions.
+    eval_model (em, eval)    Evaluate a model
+    train_model (tm, train)  Train a model
+    interactive (i)          Interactive chat with a model on the command line
+    safe_interactive         Like interactive, but adds a safety filter
+    self_chat                Generate self-chats of a model
 
 This is often more convenient than running the scripts from the examples directory.
 
