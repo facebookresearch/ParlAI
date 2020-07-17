@@ -119,7 +119,6 @@ significantly increasing the batchsize (and eval batchsize).
         --dynamic-batching true \
         --fp16 true -bs 128
 
-
 In this example, we see about a 25% speedup. Generally you can expect a larger
 speedup with larger models, with models of >300M often getting a ~50% speedup.
 With the increased batch size, this can often be brought to 2.5x faster.
