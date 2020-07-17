@@ -25,7 +25,11 @@ import importlib
 import pkgutil
 import parlai.scripts
 import parlai.utils.logging as logging
-from parlai.core.loader import register_script, SCRIPT_REGISTRY  # noqa: F401
+from parlai.core.loader import (  # noqa: F401
+    register_script,
+    SCRIPT_REGISTRY,
+    magic_importer,
+)
 
 
 def setup_script_registry():
@@ -54,6 +58,7 @@ class ParlaiScript(object):
 
     def __init__(self, opt: Opt):
         self.opt = opt
+        magic_importer()
 
     @abstractmethod
     def run(self):
@@ -168,6 +173,8 @@ def superscript_main(args=None):
     Superscript is a loader for all the other scripts.
     """
     setup_script_registry()
+    # capture any user supplied teachers or scripts
+    magic_importer()
 
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
     parser.set_defaults(super_command=None)

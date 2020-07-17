@@ -11,6 +11,8 @@ to the appropriate module.
 """
 
 from typing import Callable, Dict, Type
+import sys
+import os
 import importlib
 
 from collections import namedtuple
@@ -79,6 +81,40 @@ def register_teacher(name: str) -> Callable[[Type], Type]:
         return cls_
 
     return _inner
+
+
+##############################################################
+### MAGIC_IMPORT
+##############################################################
+def magic_importer() -> None:
+    """
+    Magic importer is used to catch all user-defined imports.
+
+    This is used to capture any user-supplied calls to @register_task,
+    @register_agent, or @register_script.
+
+    As a user, you may use this by setting PARLAI_IMPORT=foobar as
+    an environmental variable
+    """
+    import parlai.utils.logging as logging
+
+    if 'PARLAI_IMPORT' not in os.environ:
+        return
+
+    for name in os.environ['PARLAI_IMPORT'].split(','):
+        if not name:
+            continue
+        if name in sys.modules:
+            logging.debug(f"Already imported module '{name}'")
+            continue
+        try:
+            sys.path.insert(0, ".")
+            importlib.import_module(name)
+            logging.debug(f"Imported user module '{name}'")
+        except ModuleNotFoundError:
+            logging.debug(f"Failed to import '{name}'")
+        finally:
+            sys.path.pop(0)
 
 
 ##############################################################
