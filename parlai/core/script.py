@@ -172,7 +172,9 @@ def superscript_main(args=None):
     subparsers = parser.add_subparsers(
         parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
     )
-    subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
+    subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h']).set_defaults(
+        super_command='help'
+    )
 
     for script_name, registration in SCRIPT_REGISTRY.items():
         script_parser = registration.klass.setup_args()

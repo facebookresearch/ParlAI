@@ -142,7 +142,7 @@ def verify_data(opt, parser):
     print(report_text)
 
 
-@register_script('verify_data')
+@register_script('verify_data', hidden=True)
 class VerifyData(ParlaiScript):
     @classmethod
     def setup_args(cls):

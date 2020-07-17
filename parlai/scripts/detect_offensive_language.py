@@ -132,7 +132,7 @@ def detect(opt, printargs=None, print_parser=None):
     return world.report()
 
 
-@register_script('detect_offensive')
+@register_script('detect_offensive', hidden=True)
 class DetectOffensive(ParlaiScript):
     @classmethod
     def setup_args(cls):
