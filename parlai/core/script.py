@@ -195,6 +195,8 @@ def superscript_main(args=None):
         subparser.set_defaults(super_command=script_name)
         for action in script_parser._actions:
             subparser._add_action(action)
+        for action_group in script_parser._action_groups:
+            subparser._action_groups.append(action_group)
 
     try:
         import argcomplete
