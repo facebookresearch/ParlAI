@@ -24,6 +24,7 @@ from abc import abstractmethod
 import importlib
 import pkgutil
 import parlai.scripts
+import parlai.utils.logging as logging
 from parlai.core.loader import register_script, SCRIPT_REGISTRY  # noqa: F401
 
 
@@ -171,7 +172,10 @@ def superscript_main(args=None):
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
     parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
-        parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
+        parser_class=_SubcommandParser,
+        title="Commands",
+        metavar="COMMAND",
+        required=False,
     )
     hparser = subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
     hparser.set_defaults(super_command='help')
@@ -184,9 +188,7 @@ def superscript_main(args=None):
             # user didn't bother defining command line args. let's just fill
             # in for them
             script_parser = ParlaiParser(False, False)
-        help_ = (
-            argparse.SUPPRESS if registration.is_hidden else script_parser.description
-        )
+        help_ = argparse.SUPPRESS if registration.hidden else script_parser.description
         subparser = subparsers.add_parser(
             script_name,
             aliases=registration.aliases,
