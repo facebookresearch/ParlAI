@@ -14,7 +14,7 @@ from parlai.utils.misc import TimeLogger, nice_report
 import parlai.utils.logging as logging
 
 
-class TokenizeStats(ParlaiScript):
+class TokenStats(ParlaiScript):
     @classmethod
     def setup_args(cls):
         parser = ParlaiParser(True, True, description='Compute tokenized stats.')
@@ -96,4 +96,4 @@ class TokenizeStats(ParlaiScript):
 
 
 if __name__ == '__main__':
-    TokenizeStats.main()
+    TokenStats.main()
