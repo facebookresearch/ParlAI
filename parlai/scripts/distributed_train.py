@@ -50,7 +50,11 @@ class DistributedTrain(ParlaiScript):
 
     def run(self):
         with distributed_utils.slurm_distributed_context(self.opt) as opt:
-            return single_train.TrainLoop(opt).train_model()
+            self.train_loop = single_train.TrainLoop(opt)
+            self.parser = self.parser
+            self.parser.opt = self.train_loop.agent.opt
+            self.parser.print_args()
+            return self.train_loop.train()
 
 
 if __name__ == '__main__':
