@@ -145,7 +145,7 @@ class _SupercommandParser(ParlaiParser):
     def add_subparsers(self, **kwargs):
         return super().add_subparsers(**kwargs)
 
-    def _unsuppress(self):
+    def _unsuppress_hidden(self):
         """
         Restore the help messages of hidden commands.
         """
@@ -159,7 +159,7 @@ class _SupercommandParser(ParlaiParser):
                 choices_action.help = spa.choices[dest].description
 
     def print_helpall(self):
-        self._unsuppress()
+        self._unsuppress_hidden()
         self.print_help()
 
 
@@ -196,16 +196,26 @@ def superscript_main(args=None):
     setup_script_registry()
 
     parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
+    parser.add_argument(
+        '--helpall',
+        action='helpall',
+        help='show all commands, including advanced ones.',
+    )
     parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
         parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
     )
     hparser = subparsers.add_parser(
-        'help', help="List the main commands", aliases=['h']
+        'help',
+        aliases=['h'],
+        help=argparse.SUPPRESS,
+        description="List the main commands",
     )
     hparser.set_defaults(super_command='help')
     hparser = subparsers.add_parser(
-        'helpall', help="List all commands, including advanced ones.", aliases=['ha'],
+        'helpall',
+        help=argparse.SUPPRESS,
+        description="List all commands, including advanced ones.",
     )
     hparser.set_defaults(super_command='helpall')
 
