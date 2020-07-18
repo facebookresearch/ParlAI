@@ -215,6 +215,13 @@ def fix_underscores(args):
     return args
 
 
+class _HelpAllAction(argparse._HelpAction):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if hasattr(parser, '_unsuppress_hidden'):
+            parser._unsuppress_hidden()
+        super().__call__(parser, namespace, values, option_string=option_string)
+
+
 class CustomHelpFormatter(argparse.HelpFormatter):
     """
     Produce a custom-formatted `--help` option.
@@ -225,8 +232,6 @@ class CustomHelpFormatter(argparse.HelpFormatter):
     def __init__(self, *args, **kwargs):
         if 'max_help_position' not in kwargs:
             kwargs['max_help_position'] = 8
-        if 'width' not in kwargs:
-            kwargs['width'] = 80
         super().__init__(*args, **kwargs)
 
     def _iter_indented_subactions(self, action):
@@ -245,12 +250,20 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         return ', '.join(action.option_strings) + ' ' + args_string
 
     def _get_help_string(self, action):
+        """
+        Help string that (almost) always inserts %(default)s.
+        """
         help = action.help
-        if '%(default)' not in action.help:
-            if action.default is not argparse.SUPPRESS:
-                defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
-                if action.option_strings or action.nargs in defaulting_nargs:
-                    help += ' (default: %(default)s)'
+        if (
+            '%(default)' in action.help
+            or not isinstance(action, argparse._StoreAction)
+            or action.default is argparse.SUPPRESS
+        ):
+            return help
+
+        defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+        if action.option_strings or action.nargs in defaulting_nargs:
+            help += ' (default: %(default)s)'
         if (
             hasattr(action, 'recommended')
             and action.recommended
@@ -296,6 +309,7 @@ class ParlaiParser(argparse.ArgumentParser):
             add_help=True,
             **kwargs,
         )
+        self.register('action', 'helpall', _HelpAllAction)
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
@@ -609,6 +623,11 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add common ParlAI args across all scripts.
         """
+        self.add_argument(
+            '--helpall',
+            action='helpall',
+            help='Show usage, including advanced arguments.',
+        )
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
             '-o',
@@ -616,11 +635,6 @@ class ParlaiParser(argparse.ArgumentParser):
             default=None,
             help='Path to json file of options. '
             'Note: Further Command-line arguments override file-based options.',
-        )
-        parlai.add_argument(
-            '--show-advanced-args',
-            action='store_true',
-            help='Show hidden command line options (advanced users only)',
         )
         parlai.add_argument(
             '-t', '--task', help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"'
@@ -893,7 +907,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if nohelp:
             # ignore help
-            args = [a for a in args if a != '-h' and a != '--help']
+            args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
@@ -1176,19 +1190,10 @@ class ParlaiParser(argparse.ArgumentParser):
         for k, v in kwargs.items():
             self.overridable[k] = v
 
-    @property
-    def show_advanced_args(self):
-        """
-        Check if we should show arguments marked as hidden.
-        """
-        if hasattr(self, '_show_advanced_args'):
-            return self._show_advanced_args
-        known_args, _ = self.parse_known_args(nohelp=True)
-        if hasattr(known_args, 'show_advanced_args'):
-            self._show_advanced_args = known_args.show_advanced_args
-        else:
-            self._show_advanced_args = True
-        return self._show_advanced_args
+    def _unsuppress_hidden(self):
+        for action in self._actions:
+            if hasattr(action, 'real_help'):
+                action.help = action.real_help
 
     def _handle_custom_options(self, kwargs):
         """
@@ -1201,10 +1206,11 @@ class ParlaiParser(argparse.ArgumentParser):
             rec = kwargs.pop('recommended')
             action_attr['recommended'] = rec
         action_attr['hidden'] = kwargs.get('hidden', False)
+        action_attr['real_help'] = kwargs.get('help', None)
         if 'hidden' in kwargs:
-            hidden = kwargs.pop('hidden')
-            if hidden and not self.show_advanced_args:
+            if kwargs.pop('hidden'):
                 kwargs['help'] = argparse.SUPPRESS
+
         if 'type' in kwargs and kwargs['type'] is bool:
             # common error, we really want simple form
             kwargs['type'] = 'bool'

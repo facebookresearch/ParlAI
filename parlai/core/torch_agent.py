@@ -503,9 +503,12 @@ class TorchAgent(ABC, Agent):
             '-opt',
             '--optimizer',
             default='sgd',
+            metavar='OPTIMIZER',
             choices=cls.optim_opts(),
-            help='Choose between pytorch optimizers. Any member of torch.optim'
-            ' should be valid.',
+            help=(
+                f'Optimizer choice. Possible values: '
+                f'{", ".join(cls.optim_opts().keys())}.'
+            ),
         )
         optim_group.add_argument(
             '-lr', '--learningrate', type=float, default=1, help='Learning rate'
