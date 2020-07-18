@@ -9,6 +9,12 @@ from parlai.core.torch_agent import TorchAgent, Output
 
 
 class NullAgent(TorchAgent):
+    """
+    A agent without train/eval_step.
+
+    Useful if you only want preprocessing.
+    """
+
     def __init__(self, opt, shared=None):
         self.model = self.build_model()
         self.criterion = self.build_criterion()
