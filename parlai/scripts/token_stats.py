@@ -79,10 +79,6 @@ class TokenStats(ParlaiScript):
                 not self.opt['final_only'] or act.get('episode_done')
             ):
                 cnt += 1
-                if False:
-                    print(processed['text'])
-                    text = agent.dict.vec2txt(text_vec).replace("\n", "\\n")
-                    print(" ".join(agent.dict[t.item()] for t in text_vec))
                 lengths.append(float(len(text_vec)))
             agent.self_observe({})
 
