@@ -247,7 +247,7 @@ cNd.........................................;lOc
 class Party(ParlaiScript):
     @classmethod
     def setup_args(cls):
-        return ParlaiParser(False, False)
+        return ParlaiParser(False, False, 'Throw a party!')
 
     def run(self):
         i = 0

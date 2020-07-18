@@ -67,7 +67,7 @@ def dump_data(opt):
 
 def setup_args():
     # Get command line arguments
-    parser = ParlaiParser()
+    parser = ParlaiParser(description='Dump a task to a standardized format')
     parser.add_argument(
         '-n',
         '--num-examples',

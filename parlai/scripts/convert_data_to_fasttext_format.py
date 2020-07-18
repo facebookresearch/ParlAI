@@ -70,7 +70,7 @@ def dump_data(opt):
 def setup_args(parser=None) -> ParlaiParser:
     # Get command line arguments
     if not parser:
-        parser = ParlaiParser()
+        parser = ParlaiParser(description='Convert data for ingestion in fastText')
     # Get command line arguments
     parser.add_argument(
         '-n',

@@ -129,12 +129,38 @@ def _display_image():
 
 
 class _SupercommandParser(ParlaiParser):
+    """
+    Specialty ParlAI parser used for the supercommand.
+
+    Contains some special behavior.
+    """
+
     def add_extra_args(self, args):
         sa = [a for a in self._actions if isinstance(a, argparse._SubParsersAction)]
         assert len(sa) == 1
         sa = sa[0]
         for _, v in sa.choices.items():
             v.add_extra_args(args)
+
+    def add_subparsers(self, **kwargs):
+        return super().add_subparsers(**kwargs)
+
+    def _unsuppress(self):
+        """
+        Restore the help messages of hidden commands.
+        """
+
+        spa = [a for a in self._actions if isinstance(a, argparse._SubParsersAction)]
+        assert len(spa) == 1
+        spa = spa[0]
+        for choices_action in spa._choices_actions:
+            dest = choices_action.dest
+            if choices_action.help == argparse.SUPPRESS:
+                choices_action.help = spa.choices[dest].description
+
+    def print_helpall(self):
+        self._unsuppress()
+        self.print_help()
 
 
 class _SubcommandParser(ParlaiParser):
@@ -158,7 +184,7 @@ class _SubcommandParser(ParlaiParser):
 
 
 def _CustomHelpFormatter(**kwargs):
-    kwargs['width'] = None
+    kwargs['width'] = 100
     kwargs['max_help_position'] = 9999
     return CustomHelpFormatter(**kwargs)
 
@@ -174,8 +200,14 @@ def superscript_main(args=None):
     subparsers = parser.add_subparsers(
         parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
     )
-    hparser = subparsers.add_parser('help', help=argparse.SUPPRESS, aliases=['h'])
+    hparser = subparsers.add_parser(
+        'help', help="List the main commands", aliases=['h']
+    )
     hparser.set_defaults(super_command='help')
+    hparser = subparsers.add_parser(
+        'helpall', help="List all commands, including advanced ones.", aliases=['ha'],
+    )
+    hparser.set_defaults(super_command='helpall')
 
     # build the supercommand
     for script_name, registration in SCRIPT_REGISTRY.items():
@@ -190,6 +222,7 @@ def superscript_main(args=None):
             script_name,
             aliases=registration.aliases,
             help=help_,
+            description=script_parser.description,
             formatter_class=CustomHelpFormatter,
         )
         subparser.set_defaults(super_command=script_name)
@@ -207,7 +240,9 @@ def superscript_main(args=None):
 
     opt = parser.parse_args(args, print_args=False)
     cmd = opt.pop('super_command')
-    if cmd == 'help' or cmd is None:
+    if cmd == 'helpall':
+        parser.print_helpall()
+    elif cmd == 'help' or cmd is None:
         _display_image()
         parser.print_help()
     elif cmd is not None:

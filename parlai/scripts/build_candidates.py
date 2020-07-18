@@ -27,7 +27,9 @@ import tempfile
 def setup_args(parser=None) -> ParlaiParser:
     # Get command line arguments
     if not parser:
-        parser = ParlaiParser()
+        parser = ParlaiParser(
+            description='Build the candidate responses for a retrieval model'
+        )
     parser.add_argument(
         '-n',
         '--num-examples',
