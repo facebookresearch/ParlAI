@@ -26,11 +26,14 @@ class DefaultTeacher(FixedDialogTeacher):
             self._setup_data()
         self.reset()
 
+        self.num_ex = sum([len(x) for x in self.data])
+        self.num_ep = len(self.data)
+
     def num_episodes(self):
-        return len(self.data)
+        return self.num_ep
 
     def num_examples(self):
-        return sum([len(x) for x in self.data])
+        return self.num_ex
 
     def _setup_data(self):
         self.existing_keys = [
