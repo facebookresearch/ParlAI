@@ -14,3 +14,14 @@ class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
 
 class TestNormalizedTeacher(unittest.TestCase, AutoTeacherTest):
     task = 'convai2:normalized'
+
+
+class TestBothTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'convai2:both'
+
+
+class TestNoneTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'convai2:none'
+
+class TestSelfRevisedTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'convai2:self_revised'
