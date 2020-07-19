@@ -9,8 +9,8 @@ import unittest
 
 
 class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
-    task = 'dbll_movies'
+    task = 'dbll_movie'
 
 
 class TestKBTeacher(unittest.TestCase, AutoTeacherTest):
-    task = 'dbll_KB'
+    task = 'dbll_movie:KB'
