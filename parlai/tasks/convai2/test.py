@@ -23,5 +23,6 @@ class TestBothTeacher(unittest.TestCase, AutoTeacherTest):
 class TestNoneTeacher(unittest.TestCase, AutoTeacherTest):
     task = 'convai2:none'
 
+
 class TestSelfRevisedTeacher(unittest.TestCase, AutoTeacherTest):
     task = 'convai2:self_revised'
