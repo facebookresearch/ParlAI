@@ -17,6 +17,13 @@ standard_cpu37: &standard_cpu37
     PYTHONUNBUFFERED: 1
   resource_class: xlarge
 
+small_cpu37: &standard_cpu37
+  docker:
+    - image: circleci/python:3.7.5-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
+  resource_class: medium
+
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
@@ -368,7 +375,7 @@ jobs:
           path: test-results
 
   teacher_tests:
-    <<: *standard_cpu37
+    <<: *small_cpu37
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
