@@ -153,7 +153,7 @@ def verify(opt, printargs=None, print_parser=None):
             f'loaded {world.num_episodes()} episodes with a total '
             f'of {world.num_examples()} examples'
         )
-    except Exception:
+    except AttributeError:
         pass
 
     retval = _report(world, counts)
