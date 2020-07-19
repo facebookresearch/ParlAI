@@ -8,5 +8,9 @@ from parlai.utils.testing import AutoTeacherTest  # noqa: F401
 import unittest
 
 
-class TestTeacher(unittest.TestCase, AutoTeacherTest):
-    pass
+class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'ubuntu'
+
+
+class TestMultiturnTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'ubuntu:multiturn'

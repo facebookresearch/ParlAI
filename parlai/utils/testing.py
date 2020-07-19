@@ -367,23 +367,12 @@ def display_model(opt) -> Tuple[str, str, str]:
 
 
 class AutoTeacherTest:
-    @property
-    def task(self):
-        modulename = str(type(self).__module__)
-        assert modulename.startswith("parlai.tasks.")
-        assert modulename.endswith(".test")
-        path = modulename[13:-5]
-        return path
-
     def _run_display_data(self, datatype, **kwargs):
         import parlai.scripts.display_data as dd
 
-        with capture_output() as output:
-            dd.DisplayData.main(
-                task=self.task, datatype=datatype, display_verbose=True, **kwargs
-            )
-        value = output.getvalue()
-        assert value
+        dd.DisplayData.main(
+            task=self.task, datatype=datatype, display_verbose=True, **kwargs
+        )
 
     def test_train(self):
         """Test --datatype train"""
