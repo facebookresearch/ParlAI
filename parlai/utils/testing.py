@@ -375,57 +375,85 @@ class AutoTeacherTest:
         )
 
     def test_train(self):
-        """Test --datatype train"""
+        """
+        Test --datatype train.
+        """
         return self._run_display_data('train')
 
     def test_train_stream(self):
-        """Test --datatype train:stream"""
+        """
+        Test --datatype train:stream.
+        """
         return self._run_display_data('train:stream')
 
     def test_train_stream_ordered(self):
-        """Test --datatype train:stream:ordered"""
+        """
+        Test --datatype train:stream:ordered.
+        """
         return self._run_display_data('train:stream:ordered')
 
     def test_valid(self):
-        """Test --datatype valid"""
+        """
+        Test --datatype valid.
+        """
         return self._run_display_data('valid')
 
     def test_valid_stream(self):
-        """Test --datatype valid:stream"""
+        """
+        Test --datatype valid:stream.
+        """
         return self._run_display_data('valid:stream')
 
     def test_test(self):
-        """Test --datatype test"""
+        """
+        Test --datatype test.
+        """
         return self._run_display_data('test')
 
-    def test_valid(self):
-        """Test --datatype test:stream"""
+    def test_test_stream(self):
+        """
+        Test --datatype test:stream.
+        """
         return self._run_display_data('test:stream')
 
     def test_bs2_train(self):
-        """Test --datatype train"""
+        """
+        Test --datatype train.
+        """
         return self._run_display_data('train', batchsize=2)
 
     def test_bs2_train_stream(self):
-        """Test --datatype train:stream"""
+        """
+        Test --datatype train:stream.
+        """
         return self._run_display_data('train:stream', batchsize=2)
 
     def test_bs2_train_stream_ordered(self):
-        """Test --datatype train:stream:ordered"""
+        """
+        Test --datatype train:stream:ordered.
+        """
         return self._run_display_data('train:stream:ordered', batchsize=2)
 
     def test_bs2_valid(self):
-        """Test --datatype valid"""
+        """
+        Test --datatype valid.
+        """
         return self._run_display_data('valid', batchsize=2)
 
     def test_bs2_valid_stream(self):
-        """Test --datatype valid:stream"""
+        """
+        Test --datatype valid:stream.
+        """
         return self._run_display_data('valid:stream', batchsize=2)
 
     def test_bs2_test(self):
-        """Test --datatype test"""
+        """
+        Test --datatype test.
+        """
         return self._run_display_data('test', batchsize=2)
 
-    def test_bs2_valid(self):
-        """Test --datatype test:stream"""
+    def test_bs2_test_stream(self):
+        """
+        Test --datatype test:stream.
+        """
         return self._run_display_data('test:stream', batchsize=2)
