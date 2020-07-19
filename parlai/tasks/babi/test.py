@@ -10,3 +10,11 @@ import unittest
 
 class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
     task = 'babi'
+
+
+class TestAll1kTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'babi:all1k'
+
+
+class TestAll10kTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'babi:all10k'
