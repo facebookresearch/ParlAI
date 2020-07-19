@@ -22,7 +22,7 @@ small_cpu37: &small_cpu37
     - image: circleci/python:3.7.5-buster-node
   environment:
     PYTHONUNBUFFERED: 1
-  resource_class: medium
+  resource_class: large
 
 standard_cpu36: &standard_cpu36
   docker:
