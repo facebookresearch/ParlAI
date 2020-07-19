@@ -10,3 +10,7 @@ import unittest
 
 class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
     task = 'dailydialog'
+
+
+class TestNoStartTeacher(unittest.TestCase, AutoTeacherTest):
+    task = 'dailydialog:no_start'
