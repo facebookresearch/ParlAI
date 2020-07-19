@@ -76,7 +76,7 @@ def skipUnlessGPU(testfn, reason='Test requires a GPU'):
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
-def skipUnlessBPE(testfn, reason='Test requires a GPU'):
+def skipUnlessBPE(testfn, reason='Test requires subword NMT'):
     """
     Decorate a test to skip if BPE is not installed.
     """
@@ -281,21 +281,23 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     return valid, test
 
 
-def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
+def eval_model(
+    opt, skip_valid=False, skip_test=False, valid_datatype='valid', test_datatype='test'
+):
     """
     Run through an evaluation loop.
 
     :param opt:
         Any non-default options you wish to set.
     :param bool skip_valid:
-        If true skips the valid evaluation, and the second return value will be None.
+        If true skips the valid evaluation, and the first return value will be None.
     :param bool skip_test:
-        If true skips the test evaluation, and the third return value will be None.
+        If true skips the test evaluation, and the second return value will be None.
     :param str valid_datatype:
         If custom datatype required for valid, e.g. train:evalmode, specify here
 
-    :return: (stdout, valid_results, test_results)
-    :rtype: (str, dict, dict)
+    :return: (valid_results, test_results)
+    :rtype: (dict, dict)
 
     If model_file is not in opt, then this helper will create a temporary directory
     to store the model files, and clean up afterwards. You can keep the directory
@@ -308,7 +310,7 @@ def eval_model(opt, skip_valid=False, skip_test=False, valid_datatype=None):
 
     opt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
     valid = None if skip_valid else ems.EvalModel.main(**opt)
-    opt['datatype'] = 'test'
+    opt['datatype'] = 'test' if test_datatype is None else test_datatype
     test = None if skip_test else ems.EvalModel.main(**opt)
 
     return valid, test

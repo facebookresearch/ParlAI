@@ -11,7 +11,7 @@ from typing import Dict, List, Tuple
 
 import torch
 
-from .modules import ImageSeq2seqModel
+from .modules import ImageSeq2seqModel, FusionType
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.torch_agent import Batch
@@ -29,7 +29,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
     Combines a transformer generator with images.
     """
 
-    def build_model(self) -> ImageSeq2seqModel:
+    def build_model(self) -> ImageSeq2seqModel:  # type: ignore
         """
         Override to build appropriate model.
         """
@@ -55,6 +55,13 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             recommended=True,
             help='if true, include image token (or no image token) for each example',
         )
+        group.add_argument(
+            '--image-fusion-type',
+            type=str,
+            default='late',
+            choices=[f.value for f in FusionType],
+            help='which fusion type to use',
+        )
 
     def build_dictionary(self) -> DictionaryAgent:
         """
@@ -77,7 +84,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         if self.opt.get('include_image_token', False):
             # `truncate` is the third arg to this function
             truncate = args[2] - 1 if args[2] is not None else None
-            vec = torch.LongTensor(
+            vec = torch.LongTensor(  # type: ignore
                 self._check_truncate(obs['text_vec'], truncate, True)
             )
             token = TOKEN_NO_IMAGE
@@ -94,11 +101,16 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         Override to include image feats.
         """
         b = super()._dummy_batch(batchsize, maxlen)
+        image = torch.ones(batchsize, self.image_features_dim).cuda()
+        if self.n_image_channels > 1:
+            image = image.unsqueeze(1).repeat(1, self.n_image_channels, 1)
+        if self.fp16:
+            image = image.half()
         return Batch(
             text_vec=b.text_vec,
             label_vec=b.label_vec,
-            image=torch.ones(batchsize, self.image_features_dim).cuda(),
-            personalities=torch.ones(batchsize, self.opt.get('embedding_size')).cuda(),
+            image=image,
+            personalities=torch.ones(batchsize, self.opt['embedding_size']).cuda(),
         )
 
     def batchify_image_features(self, batch: Batch) -> Batch:
@@ -116,6 +128,21 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             batch.image = images
         return batch
 
+    def _process_image_features(self, features: torch.Tensor) -> torch.Tensor:
+        """
+        Format shape and type of input image-feature tensor.
+
+        Override TorchImageAgent._process_image_features to handle multi-dimensional
+        images.
+        """
+        features = features.view(-1, self.image_features_dim)
+        return torch.stack(
+            [
+                TorchImageAgent._process_image_features(self, features[i])
+                for i in range(features.size(0))
+            ]
+        )
+
     def _model_input(self, batch: Batch) -> Tuple[torch.Tensor, List[object]]:
         return (batch.text_vec, batch.image)
 
@@ -123,11 +150,12 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         """
         Override for custom loading.
 
-        Three reasons:
+        Reasons:
             1. When using an init model without an image encoder
-            2. When using an init model with only an encoder provided
+            2. We decide to add segment embeddings after the fact.
+            3. When using an init model with only an encoder provided
                 In this case, we may need to add the START token to the state_dict
-            3. When using an init model without image tokens in the embeddings.
+            4. When using an init model without image tokens in the embeddings.
                 This is only the case if the embs differ by 2 in dimension 0
         """
         state_dict['encoder.dummy_image_enc'] = self.model.encoder.dummy_image_enc
@@ -137,7 +165,16 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             for k, v in self.model.encoder.image_encoder.state_dict().items():
                 state_dict[f'encoder.image_encoder.{k}'] = v
 
-        # Case 2 -> Only an Encoder provided
+        # case 2 -> Segment embeddings in new model
+        if (
+            self.opt.get('n_segments', 0) >= 1
+            and 'encoder.segment_embeddings.weight' not in state_dict
+        ):
+            state_dict[
+                'encoder.segment_embeddings.weight'
+            ] = self.model.encoder.segment_embeddings.weight
+
+        # Case 3 -> Only an Encoder provided
         if not (any('decoder' in state_key for state_key in state_dict)):
             for k, v in self.model.decoder.state_dict().items():
                 state_dict[f'decoder.{k}'] = v
@@ -150,7 +187,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
                 self.model.load_state_dict(state_dict)
                 return
             except RuntimeError as e:
-                # Case 3 --> Check for Embedding Diffs. Make sure dims match up
+                # Case 4 --> Check for Embedding Diffs. Make sure dims match up
                 embs = state_dict['embeddings.weight']
                 enc_embs = state_dict['encoder.embeddings.weight']
                 dec_embs = state_dict['decoder.embeddings.weight']

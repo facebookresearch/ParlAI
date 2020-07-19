@@ -51,7 +51,7 @@ from parlai.core.metrics import (
     GlobalFixedMetric,
 )
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
 
 
 class Batch(AttrDict):
@@ -100,6 +100,17 @@ class Batch(AttrDict):
     :param observations:
         the original observations in the batched order
     """
+
+    text_vec: Optional[torch.LongTensor]
+    text_lengths: Optional[List[int]]
+    label_vec: Optional[torch.LongTensor]
+    label_lengths: Optional[List[int]]
+    labels: Optional[List[str]]
+    valid_indices: Optional[List[int]]
+    candidates: Optional[List[List[str]]]
+    candidate_vecs: Optional[List[List[torch.LongTensor]]]
+    image: Optional[List[Any]]
+    observations: Optional[List[Message]]
 
     def __init__(
         self,
@@ -642,6 +653,12 @@ class TorchAgent(ABC, Agent):
             choices=[None, 'end'],
             help='Add special token to the end of history encoding.',
         )
+        agent.add_argument(
+            '--special-tok-lst',
+            type=str,
+            default=None,
+            help='Comma separated list of special tokens',
+        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
@@ -790,10 +807,27 @@ class TorchAgent(ABC, Agent):
         place to do it.
         """
         d = self.dictionary_class()(self.opt)
+        self.special_toks = self._get_special_tokens()
+        if self.special_toks:
+            d.add_additional_special_tokens(self.special_toks)
+
         if self.opt.get('person_tokens'):
             d[self.P1_TOKEN] = 999_999_999
             d[self.P2_TOKEN] = 999_999_998
         return d
+
+    def _resize_token_embeddings(self, state_dict, msg=None):
+        """
+        Must define this for your agent if you wish to add additional special tokens.
+
+        Must make a call to resize the token embeddings and load the model state dict
+        with the resized token embeddings.
+        """
+        raise NotImplementedError(
+            'If you are intending to add special tokens to an already pretrained model, '
+            'you must write the function `_resize_token_embeddings` for your specific '
+            'agent.'
+        )
 
     def _get_init_model(self, opt: Opt, shared):
         """
@@ -834,6 +868,16 @@ class TorchAgent(ABC, Agent):
 
         return init_model, is_finetune
 
+    def _get_special_tokens(self) -> List[str]:
+        """
+        Return list of special tokens.
+
+        Made easily overridable for special cases.
+        """
+        if self.opt.get('special_tok_lst') is not None:
+            return self.opt['special_tok_lst'].split(',')
+        return []
+
     @abstractmethod
     def build_model(self):
         """
@@ -867,6 +911,10 @@ class TorchAgent(ABC, Agent):
             type of optimizer being loaded, if changed will skip loading
             optimizer states
         """
+        if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
+            optim_states = None
+            logging.warn('Not loading optimizer due to resize in token embeddings')
+
         opt = self.opt
 
         # set up optimizer args
@@ -1757,16 +1805,11 @@ class TorchAgent(ABC, Agent):
             states['optimizer_type'] = self.opt['optimizer']
 
         # lr scheduler
-        if torch.__version__.startswith('0.'):
-            warn_once(
-                "Must upgrade to Pytorch 1.0 to save the state of your " "LR scheduler."
-            )
-        else:
-            states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler', None):
-                states['lr_scheduler'] = self.scheduler.get_state_dict()
-                states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
+        states['number_training_updates'] = self._number_training_updates
+        if getattr(self, 'scheduler', None):
+            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
 
@@ -1789,11 +1832,8 @@ class TorchAgent(ABC, Agent):
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
-                with open(path, 'wb') as write:
-                    torch.save(states, write)
+                atomic_save(states, path)
                 # save opt file
-                if hasattr(self, 'model_version'):
-                    self.opt['model_version'] = self.model_version()
                 self.opt.save(path + '.opt')
 
     def load_state_dict(self, state_dict):
@@ -1807,14 +1847,19 @@ class TorchAgent(ABC, Agent):
         except RuntimeError as msg:
             msg_ = str(msg)
             if 'size mismatch' in msg_ and 'embedding' in msg_:
-                raise RuntimeError(
-                    f'{msg_}\n'
-                    '-----------------\n'
-                    'Could not load the model due to a size mismatch in the '
-                    'embeddings. A common reason for this is trying to load '
-                    'a model trained with fp16 but loaded without fp16. Try '
-                    'adding --fp16 true or --force-fp16-tokens true.'
-                )
+                if hasattr(self, 'special_toks') and len(self.special_toks) > 0:
+                    state_dict = self._resize_token_embeddings(state_dict, msg_)
+                    self.model.load_state_dict(state_dict)
+                    self.resized_embeddings = True  # make note that we resized here
+                else:
+                    raise RuntimeError(
+                        f'{msg_}\n'
+                        '-----------------\n'
+                        'Could not load the model due to a size mismatch in the '
+                        'embeddings. A common reason for this is trying to load '
+                        'a model trained with fp16 but loaded without fp16. Try '
+                        'adding --fp16 true or --force-fp16-tokens true.'
+                    )
             else:
                 raise
 

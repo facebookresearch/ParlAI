@@ -1218,4 +1218,26 @@ task_list = [
             "<https://www.tau-nlp.org/commonsenseqa>."
         ),
     },
+    {
+        "id": "StyleGen",
+        "display_name": "Style-Controlled Generation",
+        "task": "style_gen",
+        "tags": ["All", "ChitChat"],
+        "description": (
+            "Dialogue datasets (BlendedSkillTalk, ConvAI2, EmpatheticDialogues, and "
+            "Wizard of Wikipedia) labeled with personalities taken from the Image-Chat "
+            "dataset. Used for the style-controlled generation project"
+        ),
+    },
+    {
+        "id": "GoogleSGD",
+        "display_name": "GoogleSGD",
+        "task": "google_sgd",
+        "tags": ["All", "Goal"],
+        "description": (
+            "The Schema-Guided Dialogue (SGD) dataset consists of over 20k "
+            "annotated multi-domain, task-oriented conversations between a "
+            "human and a virtual assistant."
+        ),
+    },
 ]

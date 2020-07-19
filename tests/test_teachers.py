@@ -135,6 +135,189 @@ class TestParlAIDialogTeacher(unittest.TestCase):
                     assert any('long episode' in l for l in cm.output)
 
 
+class TestConversationTeacher(unittest.TestCase):
+    def test_good_fileformat(self):
+        """
+        Checks that we succeed in loading a well formatted jsonl file.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
+            with open(fp, "w") as f:
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
+            opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            testing_utils.display_data(opt)
+
+    def test_no_text(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "badfile.jsonl")
+            with open(fp, "w") as f:
+                f.write(
+                    '{"dialog": [[{"id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
+            opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            with self.assertRaises(AttributeError):
+                testing_utils.display_data(opt)
+
+    def test_firstspeaker_label(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
+            with open(fp, "w") as f:
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
+            opt = {
+                'task': 'jsonfile',
+                'fromfile_datapath': fp,
+                'display_verbose': True,
+                'label_turns': 'firstspeaker',
+            }
+            train_out, valid_out, test_out = testing_utils.display_data(opt)
+            texts = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'text' in l
+            ]
+            labels = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'labels' in l
+            ]
+            self.assertEqual(texts[0], '__SILENCE__')
+            self.assertEqual(labels[0], 'Hi.')
+
+    def test_secondspeaker_label(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
+            with open(fp, "w") as f:
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
+            opt = {
+                'task': 'jsonfile',
+                'fromfile_datapath': fp,
+                'display_verbose': True,
+                'label_turns': 'secondspeaker',
+            }
+            train_out, valid_out, test_out = testing_utils.display_data(opt)
+            texts = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'text' in l
+            ]
+            labels = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'labels' in l
+            ]
+            self.assertEqual(texts[0], 'Hi.')
+            self.assertEqual(labels[0], 'Hello.')
+
+    def test_both_label(self):
+        with testing_utils.tempdir() as tmpdir:
+            fp = os.path.join(tmpdir, "goodfile.jsonl")
+            with open(fp, "w") as f:
+                f.write(
+                    '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
+                )
+            opt = {
+                'task': 'jsonfile',
+                'fromfile_datapath': fp,
+                'display_verbose': True,
+                'label_turns': 'both',
+            }
+            train_out, valid_out, test_out = testing_utils.display_data(opt)
+            texts = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'text' in l
+            ]
+            labels = [
+                l.split(':', 1)[-1].strip()
+                for l in train_out.split('\n')
+                if l in train_out
+                if 'labels' in l
+            ]
+            num_episodes = train_out.count("END OF EPISODE")
+            self.assertEqual(texts[0], '__SILENCE__')
+            self.assertEqual(labels[0], 'Hi.')
+            self.assertEqual(texts[1], 'Hi.')
+            self.assertEqual(labels[1], 'Hello.')
+            self.assertEqual(num_episodes, 2)
+
+
+class TestChunkTeacher(unittest.TestCase):
+    """
+    Test chunked teacher.
+    """
+
+    def test_no_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(task='integration_tests:chunky', model='repeat_label',),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_dynamic_batched(self):
+        valid, test = testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                datatype='valid:stream',
+                batchsize=32,
+                truncate=16,
+                dynamic_batching='full',
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+        assert valid['exs'] == 100
+        assert test['exs'] == 100
+
+    def test_stream_only(self):
+        with self.assertRaises(ValueError):
+            valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:chunky',
+                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                    batchsize=32,
+                ),
+                valid_datatype='valid',
+            )
+
+        with self.assertRaises(ValueError):
+            valid, test = testing_utils.eval_model(
+                dict(
+                    task='integration_tests:chunky',
+                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                    batchsize=32,
+                ),
+                valid_datatype='valid:stream',
+                test_datatype='test',
+            )
+
+
 class CustomEvaluationTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = 'mock'

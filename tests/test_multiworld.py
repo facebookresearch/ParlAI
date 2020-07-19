@@ -80,3 +80,34 @@ class TestMultiworld(unittest.TestCase):
         ratio = report['teacher1/exs'].value() / report['teacher2/exs'].value()
         assert ratio > 18
         assert ratio < 22
+
+    def test_with_stream(self):
+        """
+        Test that multi-tasking works with datatype train:stream.
+        """
+        task1 = 'integration_tests:infinite_train'
+        task2 = 'integration_tests:short_fixed'
+        opt = ParlaiParser(True, True).parse_kwargs(
+            task=f'{task1},{task2}',
+            model='fixed_response',
+            fixed_response='Hello!',
+            datatype='train:stream',
+            batchsize=16,
+        )
+        agent = create_agent(opt)
+        world = create_task(opt, agent)
+
+        for i in range(100):
+            world.parley()
+            if i % 10 == 0 and i > 0:
+                teacher_acts, _ = world.get_acts()
+                for act in teacher_acts:
+                    act_id = act.get('id')
+                    assert 'text' in act, f'Task {act_id} acts are empty'
+                report = world.report()
+                for task in [task1, task2]:
+                    err = f'Task {task} has no examples on iteration {i}'
+                    assert f'{task}/exs' in report, err
+                    exs = report[f'{task}/exs'].value()
+                    assert exs > 0, err
+                world.reset_metrics()

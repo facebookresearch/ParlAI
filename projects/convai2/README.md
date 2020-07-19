@@ -1,7 +1,19 @@
 # ConvAI2 Competition for NIPS 2018
 
-This directory contains code and examples for the ConvAI2 competition.
+We previously sponsored the ConvAI2 competition.
 See the [website](http://convai.io/) for more details.
+
+We've opted to archive the code at this time, and won't be maintaining future versions
+of it. You can still use the old code by switching to the `convai2archive` tag of
+ParlAI:
+
+```bash
+$ git checkout convai2archive
+```
+
+The old README is kept below for convenience of future readers.
+
+-------
 
 The ConvAI2 dataset is in ParlAI in parlai/agents/tasks/convai2 and is accessible by using the command line parameter `--task convai2`.
 

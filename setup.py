@@ -21,7 +21,10 @@ with open('README.md', encoding="utf8") as f:
     readme = f.read().split('--------------------')[-1]
 
 with open('requirements.txt') as f:
-    reqs = f.read()
+    reqs = []
+    for line in f:
+        line = line.strip()
+        reqs.append(line.split('==')[0])
 
 
 if __name__ == '__main__':
@@ -33,14 +36,16 @@ if __name__ == '__main__':
         long_description_content_type='text/markdown',
         url='http://parl.ai/',
         python_requires='>=3.6',
-        scripts=['bin/parlai'],
         packages=find_packages(
             exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal',)
         ),
-        install_requires=reqs.strip().split('\n'),
+        install_requires=reqs,
         include_package_data=True,
         package_data={'': ['*.txt', '*.md']},
-        entry_points={"flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"]},
+        entry_points={
+            "flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"],
+            "console_scripts": ["parlai=parlai.__main__:main"],
+        },
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",

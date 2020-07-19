@@ -133,7 +133,7 @@ class SelfChat(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return self_chat(self.opt, print_args=False)
+        return self_chat(self.opt)
 
 
 if __name__ == '__main__':

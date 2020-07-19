@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Union
 
 import numpy as np
 import torch
@@ -64,15 +64,6 @@ def _create_embeddings(dictionary, embedding_size, padding_idx):
     nn.init.normal_(e.weight, mean=0, std=embedding_size ** -0.5)
     nn.init.constant_(e.weight[padding_idx], 0)
     return e
-
-
-def gelu(tensor):
-    """
-    Compute gelu function.
-
-    c.f. https://arxiv.org/abs/1606.08415
-    """
-    return 0.5 * tensor * (1.0 + torch.erf(tensor / math.sqrt(2.0)))
 
 
 def get_n_positions_from_options(opt):
@@ -447,7 +438,11 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
 
         # embedding normalization
-        if self.variant == 'xlm' or self.variant == 'prelayernorm':
+        if (
+            self.variant == 'xlm'
+            or self.variant == 'prelayernorm'
+            or self.variant == 'bart'
+        ):
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
@@ -474,16 +469,24 @@ class TransformerEncoder(nn.Module):
             )
         self.output_scaling = output_scaling
 
-    def forward(self, input, positions=None, segments=None):
+    def forward_embedding(
+        self,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ) -> Tuple[torch.Tensor, torch.BoolTensor]:
         """
-        Forward pass.
+        Embed tokens prior to feeding into transformer.
 
         :param LongTensor[batch,seqlen] input:
             The input IDs
-        :param BoolTensor[batch,seqlen] mask:
-            The attention mask; 1 means attend, 0 means ignore.
+        :param LongTensor[batch,seqlen] positions:
+            Positions for input IDs
         :param LongTensor[batch,seqlen]:
             If provided, additionally adds ``segments`` as extra embedding features.
+
+        :return (tensor, mask):
+            return embedded input and mask
         """
         mask = input != self.padding_idx
         if positions is None:
@@ -504,17 +507,25 @@ class TransformerEncoder(nn.Module):
 
         if self.n_segments >= 1:
             if segments is None:
-                segments = torch.zeros_like(input)
+                segments = torch.zeros_like(input)  # type: ignore
             tensor = tensor + self.segment_embeddings(segments)
 
-        if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+        return tensor, mask
 
-        # --dropout on the embeddings
-        tensor = self.dropout(tensor)
+    def forward_layers(
+        self, tensor: torch.Tensor, mask: torch.BoolTensor
+    ) -> torch.Tensor:
+        """
+        Apply transformer layers to input.
 
-        tensor *= mask.unsqueeze(-1).type_as(tensor)
+        :param tensor:
+            embedded input
+        :param mask:
+            mask of input
 
+        :return tensor:
+            return embedding after applying transformer layers
+        """
         if getattr(self.layers, 'is_model_parallel', False):
             # factored out for readability. It is equivalent to the other
             # condition
@@ -523,23 +534,77 @@ class TransformerEncoder(nn.Module):
             for i in range(self.n_layers):
                 tensor = self.layers[i](tensor, mask)
 
-        if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+        return tensor
+
+    def reduce_output(
+        self, tensor: torch.Tensor, mask: torch.BoolTensor
+    ) -> Tuple[torch.Tensor, Optional[torch.BoolTensor]]:
+        """
+        Reduce transformer output at end of forward pass.
+
+        :param tensor:
+            encoded input
+        :param mask:
+            mask for encoded input
+
+        :return (tensor, mask):
+            returns the reduced tensor, and mask if appropriate
+        """
         tensor *= self.output_scaling
         if self.reduction_type == 'first':
-            return tensor[:, 0, :]
+            return tensor[:, 0, :], None
         elif self.reduction_type == 'max':
-            return tensor.max(dim=1)[0]
+            return tensor.max(dim=1)[0], None
         elif self.reduction_type == 'mean':
             divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
             output = tensor.sum(dim=1) / divisor
-            return output
+            return output, None
         elif self.reduction_type is None or 'none' in self.reduction_type:
             return tensor, mask
         else:
             raise ValueError(
                 "Can't handle --reduction-type {}".format(self.reduction_type)
             )
+
+    def forward(  # type: ignore
+        self,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
+        """
+        Forward pass.
+
+        :param LongTensor[batch,seqlen] input:
+            The input IDs
+        :param LongTensor[batch,seqlen] positions:
+            Positions for input IDs
+        :param LongTensor[batch,seqlen]:
+            If provided, additionally adds ``segments`` as extra embedding features.
+        """
+        # embed input
+        tensor, mask = self.forward_embedding(input, positions, segments)
+
+        if self.variant == 'xlm' or self.variant == 'bart':
+            tensor = _normalize(tensor, self.norm_embeddings)
+
+        # --dropout on the embeddings
+        tensor = self.dropout(tensor)
+
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
+
+        # apply transformer layers
+        tensor = self.forward_layers(tensor, mask)
+
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+
+        # reduce output
+        tensor, out_mask = self.reduce_output(tensor, mask)
+        if out_mask is not None:
+            return tensor, out_mask
+        else:
+            return tensor
 
     def _apply_model_parallel(self, tensor, mask):
         """
@@ -596,19 +661,18 @@ class TransformerEncoderLayer(nn.Module):
         """
         Forward pass.
         """
-
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm1)
         attended_tensor, _ = self.attention(tensor, mask=mask)
         tensor = residual + self.dropout(attended_tensor)
-        if self.variant == 'aiayn' or self.variant == 'xlm':
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm1)
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm2)
         tensor = residual + self.dropout(self.ffn(tensor))
-        if self.variant == 'aiayn' or self.variant == 'xlm':
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
@@ -678,8 +742,17 @@ class TransformerDecoder(nn.Module):
 
         self.embeddings = embedding
 
-        if self.variant == 'xlm' or self.variant == 'prelayernorm':
+        if (
+            self.variant == 'xlm'
+            or self.variant == 'prelayernorm'
+            or self.variant == 'bart'
+        ):
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            if self.variant == 'xlm':
+                warn_once(
+                    'DEPRECATED: XLM should only be used for backwards compatibility, '
+                    'as it involves a less-stable layernorm operation.'
+                )
         elif self.variant == 'aiayn':
             pass
         else:
@@ -710,6 +783,43 @@ class TransformerDecoder(nn.Module):
                 )
             )
 
+    def forward_embedding(
+        self,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ):
+        """
+        Embed tokens prior to feeding into transformer.
+
+        :param LongTensor[batch, seqlen] input:
+            The target input IDs
+        :param LongTensor[batch, seqlen] positions:
+            Positions for input IDs. If None, computes defaults.
+        :param LongTensor[batch, seqlen] segements:
+            Segment IDs for extra embedding features. If None, not used.
+
+        :return (tensor, mask):
+            embeded input and mask
+        """
+        tensor = self.embeddings(input)
+        if self.embeddings_scale:
+            tensor = tensor * np.sqrt(self.dim)
+        if self.variant == 'xlm':
+            tensor = _normalize(tensor, self.norm_embeddings)
+        if positions.max().item() > self.n_positions:
+            warn_once(
+                'You are inputting a sequence of {x} length, but only have '
+                '--n-positions {y}. Set --truncate or increase --n-positions'.format(
+                    x=positions.max().item(), y=self.n_positions
+                )
+            )
+        tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        if self.variant == 'bart':
+            tensor = _normalize(tensor, self.norm_embeddings)
+
+        return tensor
+
     def forward(self, input, encoder_state, incr_state=None):
         """
         Forward pass.
@@ -736,19 +846,8 @@ class TransformerDecoder(nn.Module):
         else:
             incr_state = {}
 
-        tensor = self.embeddings(input)
-        if self.embeddings_scale:
-            tensor = tensor * np.sqrt(self.dim)
-        if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
-        if positions.max().item() > self.n_positions:
-            warn_once(
-                'You are inputting a sequence of {x} length, but only have '
-                '--n-positions {y}. Set --truncate or increase --n-positions'.format(
-                    x=positions.max().item(), y=self.n_positions
-                )
-            )
-        tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+        tensor = self.forward_embedding(input, positions)
+
         tensor = self.dropout(tensor)  # --dropout
 
         new_incr_state = {}
@@ -869,7 +968,7 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = x + residual
-        if self.variant == 'aiayn' or self.variant == 'xlm':
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             x = _normalize(x, self.norm1)
 
         residual = x
@@ -886,7 +985,7 @@ class TransformerDecoderLayer(nn.Module):
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
-        if self.variant == 'aiayn' or self.variant == 'xlm':
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             x = _normalize(x, self.norm2)
 
         # finally the ffn
@@ -896,7 +995,7 @@ class TransformerDecoderLayer(nn.Module):
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
-        if self.variant == 'aiayn' or self.variant == 'xlm':
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             x = _normalize(x, self.norm3)
 
         new_incr_state = {
@@ -1290,7 +1389,9 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(dot_prod, dim=-1, dtype=torch.float).type_as(query)
+        attn_weights = F.softmax(
+            dot_prod, dim=-1, dtype=torch.float  # type: ignore
+        ).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
@@ -1329,7 +1430,7 @@ class TransformerFFN(nn.Module):
         if activation == 'relu':
             self.nonlinear = F.relu
         elif activation == 'gelu':
-            self.nonlinear = gelu
+            self.nonlinear = F.gelu
         else:
             raise ValueError(
                 "Don't know how to handle --activation {}".format(activation)
