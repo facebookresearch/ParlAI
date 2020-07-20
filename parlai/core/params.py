@@ -234,13 +234,20 @@ class CustomHelpFormatter(argparse.HelpFormatter):
             kwargs['max_help_position'] = 8
         super().__init__(*args, **kwargs)
 
+    def _fill_text(self, text, width, indent):
+        # used to ensure that argparse doesn't word-wrap our descriptions of
+        # commands. mostly useful for the logo in the supercommand.
+        return ''.join(indent + line for line in text.splitlines(keepends=True))
+
     def _iter_indented_subactions(self, action):
+        # used in superscript parser to hide "hidden" commands.
         retval = super()._iter_indented_subactions(action)
         if isinstance(action, argparse._SubParsersAction):
             retval = [x for x in retval if x.help != argparse.SUPPRESS]
         return retval
 
     def _format_action_invocation(self, action):
+        # used to suppress one utterance in the super parser.
         if isinstance(action, argparse._SubParsersAction):
             return ""
         if not action.option_strings or action.nargs == 0:

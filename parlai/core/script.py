@@ -119,21 +119,27 @@ class ParlaiScript(object):
         return f.getvalue()
 
 
-def _display_image():
-    if os.environ.get('PARLAI_DISPLAY_LOGO') == 'OFF':
-        return
-    from parlai.utils.strings import colorize
-
-    logo = colorize('ParlAI - Dialogue Research Platform', 'labels')
-    print(logo)
-
-
 class _SupercommandParser(ParlaiParser):
     """
     Specialty ParlAI parser used for the supercommand.
 
     Contains some special behavior.
     """
+
+    def __init__(self, *args, **kwargs):
+        from parlai.utils.strings import colorize
+
+        logo = ""
+        logo += colorize('       _', 'red') + "\n"
+        logo += colorize('      /', 'red') + colorize('"', 'brightblack')
+        logo += colorize(")", "yellow") + "\n"
+        logo += colorize('     //', 'red') + colorize(')', 'blue') + '\n'
+        logo += colorize('  ==', 'green')
+        logo += colorize("//", 'red') + colorize("'", 'yellow')
+        logo += colorize("===", 'green') + " ParlAI\n"
+        logo += colorize("   /", 'red')
+        kwargs['description'] = logo
+        return super().__init__(*args, **kwargs)
 
     def add_extra_args(self, args):
         sa = [a for a in self._actions if isinstance(a, argparse._SubParsersAction)]
@@ -183,9 +189,10 @@ class _SubcommandParser(ParlaiParser):
         return super().parse_known_args(args, namespace, nohelp)
 
 
-def _CustomHelpFormatter(**kwargs):
+def _SuperscriptHelpFormatter(**kwargs):
     kwargs['width'] = 100
     kwargs['max_help_position'] = 9999
+
     return CustomHelpFormatter(**kwargs)
 
 
@@ -195,7 +202,9 @@ def superscript_main(args=None):
     """
     setup_script_registry()
 
-    parser = _SupercommandParser(False, False, formatter_class=_CustomHelpFormatter)
+    parser = _SupercommandParser(
+        False, False, formatter_class=_SuperscriptHelpFormatter
+    )
     parser.add_argument(
         '--helpall',
         action='helpall',
@@ -253,7 +262,6 @@ def superscript_main(args=None):
     if cmd == 'helpall':
         parser.print_helpall()
     elif cmd == 'help' or cmd is None:
-        _display_image()
         parser.print_help()
     elif cmd is not None:
         SCRIPT_REGISTRY[cmd].klass._run_from_parser_and_opt(opt, parser)
