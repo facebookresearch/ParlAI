@@ -133,11 +133,11 @@ class _SupercommandParser(ParlaiParser):
         logo += colorize('       _', 'red') + "\n"
         logo += colorize('      /', 'red') + colorize('"', 'brightblack')
         logo += colorize(")", "yellow") + "\n"
-        logo += colorize('     //', 'red') + colorize(')', 'blue') + '\n'
+        logo += colorize('     //', 'red') + colorize(')', 'yellow') + '\n'
         logo += colorize('  ==', 'green')
-        logo += colorize("//", 'red') + colorize("'", 'yellow')
+        logo += colorize("/", 'blue') + colorize('/', 'red') + colorize("'", 'yellow')
         logo += colorize("===", 'green') + " ParlAI\n"
-        logo += colorize("   /", 'red')
+        logo += colorize("   /", 'blue')
         kwargs['description'] = logo
         return super().__init__(*args, **kwargs)
 
