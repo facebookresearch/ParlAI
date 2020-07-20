@@ -8,16 +8,16 @@ used with others.
 
 A summary of the speedups is in this table:
 
-    +------------------+-------+------+-------+---------+
-    | Method           | Train | Eval | Total | Speedup |
-    +------------------+-------+------+-------+---------+
-    | Baseline         |  504s |  48s |  552s |    1.0x |
-    | Skip generation  |  504s |  16s |  520s |    1.1x |
-    | Dynamic batches  |  254s |  11s |  265s |    2.1x |
-    | FP16             |  197s |   8s |  205s |    2.7x |
-    | Larger BS (FP16) |  151s |   7s |  158s |    3.5x |
-    | Using 4 GPUs     |   47s |   3s |   50s |   11.0x |
-    +------------------+-------+------+-------+---------+
+    +-------------------------+-------+------+-------+---------+
+    | Method                  | Train | Eval | Total | Speedup |
+    +-------------------------+-------+------+-------+---------+
+    | Baseline                |  504s |  48s |  552s |    1.0x |
+    | Skip generation         |  504s |  16s |  520s |    1.1x |
+    | Dynamic batches         |  254s |  11s |  265s |    2.1x |
+    | FP16                    |  197s |   8s |  205s |    2.7x |
+    | Larger batchsize (FP16) |  151s |   7s |  158s |    3.5x |
+    | Using 4 GPUs            |   47s |   3s |   50s |   11.0x |
+    +-------------------------+-------+------+-------+---------+
 
 ## Setting a baseline
 
@@ -30,7 +30,7 @@ same.
     mkdir fastmodels
     parlai build_dict -t convai2 -df dictfile
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
-        --embedding-size 250 --ffn-size 1000 --num-layers 8 -opt adam -lr 1e-3
+        --embedding-size 250 --ffn-size 1000 --n-layers 8 -opt adam -lr 1e-3
 
 On my computer using a 16gb V100, this takes about 550s. 500s is spend in training,
 and another 50s is spent in evaluation.
@@ -46,7 +46,7 @@ generation through the model, including beam search. You can get a massive
 speedup by turning off this generation step, with `--skip-generation true`.
 
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
-        --embedding-size 250 --ffn-size 1000 --num-layers 8 -opt adam -lr 1e-3 \
+        --embedding-size 250 --ffn-size 1000 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true
 
 This brings evaluation time down to 16s, but doesn't affect training time.  Just
@@ -69,7 +69,7 @@ We'll use 256, since that is longer than almost all the conversations in our
 data.
 
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
-        --embedding-size 250 --ffn-size 1000 --num-layers 8 -opt adam -lr 1e-3 \
+        --embedding-size 250 --ffn-size 1000 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 128 \
         --dynamic-batching true --truncate 256
@@ -102,7 +102,7 @@ We'll slightly adjust the network parameters (--embedding-size and --ffn-size)
 to conform to this.
 
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
-        --embedding-size 256 --ffn-size 1024 --num-layers 8 -opt adam -lr 1e-3 \
+        --embedding-size 256 --ffn-size 1024 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 128 \
         --dynamic-batching true \
@@ -113,7 +113,7 @@ and activations (almost by a factor of 2). This means you can usually get away w
 significantly increasing the batchsize (and eval batchsize).
 
     parlai train -df dictfile -m transformer/generator -t convai2 -eps 1.0 \
-        --embedding-size 256 --ffn-size 1024 --num-layers 8 -opt adam -lr 1e-3 \
+        --embedding-size 256 --ffn-size 1024 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 256 \
         --dynamic-batching true \
@@ -131,10 +131,10 @@ roughly 3.5x faster. The arguments for the training are left otherwise the same.
 
     parlai multiprocessing_train \
         -df dictfile -m transformer/generator -t convai2 -eps 1.0 -bs 64 \
-        --embedding-size 256 --ffn-size 1024 --num-layers 8 -opt adam -lr 1e-3 \
+        --embedding-size 256 --ffn-size 1024 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 128 \
-        --dynamic-batching true \
+        --dynamic-batching trufull \
         --fp16 true
 
 Note that we leave batchsize the same: we use the batchsize PER GPU. In my
