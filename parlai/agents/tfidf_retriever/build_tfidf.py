@@ -145,6 +145,13 @@ def count_text(ngram, hash_size, doc_id, text=None):
     return row, col, data
 
 
+def count(ngram, hash_size, doc_id):
+    """
+    Fetch the text of a document and compute hashed ngrams counts.
+    """
+    return count_text(ngram, hash_size, doc_id, text=fetch_text(doc_id))
+
+
 def get_count_matrix(args, db_opts):
     """
     Form a sparse word to document count matrix (inverted index).
