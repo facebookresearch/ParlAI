@@ -13,7 +13,7 @@ A summary of the speedups is in this table:
     +-------------------------+-------+------+-------+---------+
     | Baseline                |  504s |  48s |  552s |    1.0x |
     | Skip generation         |  504s |  16s |  520s |    1.1x |
-    | Dynamic batches         |  254s |  11s |  265s |    2.1x |
+    | Dynamic batching        |  254s |  11s |  265s |    2.1x |
     | FP16                    |  197s |   8s |  205s |    2.7x |
     | Larger batchsize (FP16) |  151s |   7s |  158s |    3.5x |
     | Using 4 GPUs            |   47s |   3s |   50s |   11.0x |
@@ -72,7 +72,7 @@ data.
         --embedding-size 250 --ffn-size 1000 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 128 \
-        --dynamic-batching true --truncate 256
+        --dynamic-batching full --truncate 256
 
 You should notice that your memory utilization is much higher in this mode.
 This actually has an advantage, since you can more easily find your maximum
@@ -105,7 +105,7 @@ to conform to this.
         --embedding-size 256 --ffn-size 1024 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 128 \
-        --dynamic-batching true \
+        --dynamic-batching full \
         --fp16 true --fp16-impl mem_efficient
 
 Further notice that FP16 often significantly lowers the memory size of your model
@@ -116,7 +116,7 @@ significantly increasing the batchsize (and eval batchsize).
         --embedding-size 256 --ffn-size 1024 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 256 \
-        --dynamic-batching true \
+        --dynamic-batching full \
         --fp16 true -bs 128
 
 In this example, we see about a 25% speedup. Generally you can expect a larger
@@ -134,7 +134,7 @@ roughly 3.5x faster. The arguments for the training are left otherwise the same.
         --embedding-size 256 --ffn-size 1024 --n-layers 8 -opt adam -lr 1e-3 \
         --skip-generation true \
         --eval-batchsize 128 \
-        --dynamic-batching trufull \
+        --dynamic-batching full \
         --fp16 true
 
 Note that we leave batchsize the same: we use the batchsize PER GPU. In my
