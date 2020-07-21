@@ -13,7 +13,6 @@ Examples
 .. code-block:: shell
 
   parlai party
-
 """
 
 import sys

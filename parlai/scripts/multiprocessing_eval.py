@@ -21,7 +21,6 @@ Examples
 .. code-block:: shell
 
   parlai multiprocessing_eval -mf "zoo:tutorial_transformer_generator/model" -bs 16 -t convai2
-
 """
 
 import torch

@@ -12,7 +12,6 @@ Examples
 .. code-block:: shell
 
   parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
-
 """
 
 

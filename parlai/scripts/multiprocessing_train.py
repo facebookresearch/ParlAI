@@ -21,7 +21,6 @@ Examples
 .. code-block:: shell
 
   parlai multiprocessing_train -m transformer/generator -bs 16 -t convai2 -mf /tmp/mymodel
-
 """
 
 import torch
