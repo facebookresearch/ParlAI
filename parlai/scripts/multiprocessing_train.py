@@ -22,7 +22,7 @@ import os
 import signal
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 
 def multiprocess_train(
@@ -68,6 +68,7 @@ def setup_args():
     return parser
 
 
+@register_script("multiprocessing_train", aliases=["mp_train"], hidden=True)
 class MultiProcessTrain(ParlaiScript):
     @classmethod
     def setup_args(cls):

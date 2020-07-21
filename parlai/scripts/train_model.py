@@ -46,7 +46,7 @@ from parlai.utils.distributed import (
     num_workers,
 )
 from parlai.utils.misc import Timer, nice_report
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 
@@ -749,6 +749,7 @@ class TrainLoop:
         return v_report, t_report
 
 
+@register_script('train_model', aliases=['tm', 'train'])
 class TrainModel(ParlaiScript):
     @classmethod
     def setup_args(cls):

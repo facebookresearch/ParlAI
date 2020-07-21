@@ -21,7 +21,7 @@ Input is often model or task specific, but in drqa, it is always
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.world_logging import WorldLogger
 from parlai.agents.local_human.local_human import LocalHumanAgent
 import parlai.utils.logging as logging
@@ -31,7 +31,9 @@ import random
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Interactive chat with a model')
+        parser = ParlaiParser(
+            True, True, 'Interactive chat with a model on the command line'
+        )
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument(
         '--display-prettify',
@@ -102,6 +104,7 @@ def interactive(opt, print_parser=None):
             world_logger.write(outfile, world, file_format=opt['save_format'])
 
 
+@register_script('interactive', aliases=['i'])
 class Interactive(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -19,7 +19,7 @@ Examples
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.strings import colorize
 import parlai.utils.logging as logging
 
@@ -83,6 +83,7 @@ def display_model(opt):
                 break
 
 
+@register_script('display_model', aliases=['dm'])
 class DisplayModel(ParlaiScript):
     @classmethod
     def setup_args(cls):

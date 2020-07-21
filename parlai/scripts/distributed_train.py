@@ -32,7 +32,7 @@ An example sbatch script is below, for a 2-host, 8-GPU setup (16 total gpus):
 """
 
 import parlai.scripts.train_model as single_train
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript
 import parlai.utils.distributed as distributed_utils
 
 

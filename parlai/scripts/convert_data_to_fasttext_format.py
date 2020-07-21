@@ -21,7 +21,7 @@ from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 
 def dump_data(opt):
@@ -70,7 +70,7 @@ def dump_data(opt):
 def setup_args(parser=None) -> ParlaiParser:
     # Get command line arguments
     if not parser:
-        parser = ParlaiParser()
+        parser = ParlaiParser(description='Convert data for ingestion in fastText')
     # Get command line arguments
     parser.add_argument(
         '-n',
@@ -91,6 +91,7 @@ def setup_args(parser=None) -> ParlaiParser:
     return parser
 
 
+@register_script('convert_to_fasttext', hidden=True)
 class ConvertDataToFastText(ParlaiScript):
     @classmethod
     def setup_args(cls):

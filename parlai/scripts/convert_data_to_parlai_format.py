@@ -19,7 +19,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import msg_to_str, TimeLogger
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import random
 import tempfile
 
@@ -67,7 +67,7 @@ def dump_data(opt):
 
 def setup_args():
     # Get command line arguments
-    parser = ParlaiParser()
+    parser = ParlaiParser(description='Dump a task to a standardized format')
     parser.add_argument(
         '-n',
         '--num-examples',
@@ -94,6 +94,7 @@ def setup_args():
     return parser
 
 
+@register_script('convert_to_parlai', hidden=True)
 class ConvertDataToParlaiFormat(ParlaiScript):
     @classmethod
     def setup_args(cls):

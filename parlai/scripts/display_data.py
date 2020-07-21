@@ -22,7 +22,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.strings import colorize
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import random
@@ -99,6 +99,7 @@ def display_data(opt):
         pass
 
 
+@register_script('display_data', aliases=['dd'])
 class DisplayData(ParlaiScript):
     @classmethod
     def setup_args(cls):

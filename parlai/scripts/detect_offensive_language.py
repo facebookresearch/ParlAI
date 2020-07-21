@@ -20,7 +20,7 @@ from parlai.core.worlds import create_task
 from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassifier
 from parlai.utils.misc import TimeLogger
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 import random
 
@@ -132,6 +132,7 @@ def detect(opt, printargs=None, print_parser=None):
     return world.report()
 
 
+@register_script('detect_offensive', hidden=True)
 class DetectOffensive(ParlaiScript):
     @classmethod
     def setup_args(cls):

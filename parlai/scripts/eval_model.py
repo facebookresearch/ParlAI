@@ -28,7 +28,7 @@ from parlai.core.metrics import (
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import json
@@ -222,6 +222,7 @@ def eval_model(opt, print_parser=None):
     return report
 
 
+@register_script('eval_model', aliases=['em', 'eval'])
 class EvalModel(ParlaiScript):
     @classmethod
     def setup_args(cls):
