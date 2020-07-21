@@ -4,6 +4,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Throw a party.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  parlai party
+
+"""
+
 import sys
 import time
 from parlai.core.script import ParlaiScript, register_script

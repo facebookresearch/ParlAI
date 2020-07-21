@@ -15,7 +15,7 @@ Examples
 
 .. code-block:: shell
 
-  python display_data.py -t babi:task1k:1
+  parlai display_data -t babi:task1k:1
 """
 
 from parlai.core.params import ParlaiParser

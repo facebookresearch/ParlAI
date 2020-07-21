@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python parlai/scripts/data_stats.py -t convai2 -dt train:ordered
+  parlai data_stats -t convai2 -dt train:ordered
 """
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent

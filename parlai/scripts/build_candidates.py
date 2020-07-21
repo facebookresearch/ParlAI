@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python build_candidates.py -t convai2 --outfile /tmp/cands.txt
+  parlai build_candidates -t convai2 --outfile /tmp/cands.txt
 """
 
 from parlai.core.params import ParlaiParser

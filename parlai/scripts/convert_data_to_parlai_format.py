@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python convert_data_to_parlai_format.py -t babi:task1k:1 --outfile /tmp/dump
+  parlai convert_data_to_parlai_format -t babi:task1k:1 --outfile /tmp/dump
 """
 
 from parlai.core.params import ParlaiParser

@@ -14,7 +14,7 @@ see a few of them:
 
 .. code-block:: shell
 
-  parlai profile -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+  parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
 """
 
 from parlai.core.params import ParlaiParser

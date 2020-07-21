@@ -13,8 +13,8 @@ Examples
 
 .. code-block:: shell
 
-  python eval_model.py -t "babi:Task1k:2" -m "repeat_label"
-  python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+  parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
+  parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
 """
 
 from parlai.core.params import ParlaiParser, print_announcements
