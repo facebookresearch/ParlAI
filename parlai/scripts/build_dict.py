@@ -79,9 +79,6 @@ def build_dict(opt, skip_if_built=False):
         logging.debug("dictionary already built.")
         return None
 
-    if is_distributed():
-        raise ValueError('Dictionaries should be pre-built before distributed train.')
-
     if opt.get('dict_class'):
         # Custom dictionary class
         dictionary = str2class(opt['dict_class'])(opt)
@@ -89,10 +86,15 @@ def build_dict(opt, skip_if_built=False):
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
 
-    if os.path.isfile(opt['dict_file']):
+    if os.path.isfile(opt['dict_file']) or (
+        hasattr(dictionary, 'is_prebuilt') and dictionary.is_prebuilt()
+    ):
         # Dictionary already built, return loaded dictionary agent
         logging.debug("dictionary already built.")
         return dictionary
+
+    if is_distributed():
+        raise ValueError('Dictionaries should be pre-built before distributed train.')
 
     ordered_opt = copy.deepcopy(opt)
     cnt = 0

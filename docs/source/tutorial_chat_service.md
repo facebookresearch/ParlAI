@@ -34,10 +34,12 @@ overworld: MessengerOverworld
 max_workers: 30
 opt:  # Additional model opts go here
   debug: True
-  model: legacy:seq2seq:0
-  model_file: models:convai2/seq2seq/convai2_self_seq2seq_model
-  override:
-    model: legacy:seq2seq:0
+  models:
+    blender_90M:
+      model: transformer/generator
+      model_file: zoo:blender/blender_90M/model
+      interactive_mode: True
+      no_cuda: True
 additional_args:
   page_id: 1 # configure your own page
 ```

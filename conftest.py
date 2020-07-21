@@ -62,7 +62,7 @@ def filter_tests_with_circleci(test_list):
 
 # -----------------------------------------------------------------------
 MARKER_RULES = [
-    ('parlai_internal', 'test'),
+    ('parlai_internal', 'internal'),
     ('nightly/gpu', 'nightly_gpu'),
     ('nightly/cpu/', 'nightly_cpu'),
     ('datatests/', 'data'),

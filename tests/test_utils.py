@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.opt import Opt
-from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults
+from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults, nice_report
 import parlai.utils.strings as string_utils
 from copy import deepcopy
 import time
@@ -13,6 +13,15 @@ import unittest
 
 
 class TestUtils(unittest.TestCase):
+    def test_report_render(self):
+        """
+        Test rendering of nice reports.
+        """
+        report_s = nice_report({'foo': 3})
+        assert "foo" in report_s
+        assert "3" in report_s
+        assert nice_report({}) == ""
+
     def test_round_sigfigs(self):
         x = 0
         y = 0

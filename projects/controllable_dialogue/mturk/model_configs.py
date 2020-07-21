@@ -7,15 +7,6 @@ from typing import Dict, Any
 
 human_eval: Dict[str, Any] = {}
 
-test_model: Dict[str, Any] = {
-    'no_cuda': True,
-    'model': 'legacy:seq2seq:0',
-    'model_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model',
-    'dict_file': 'models:convai2/seq2seq/convai2_self_seq2seq_model.dict',
-    'dict_lower': True,
-    'batchsize': 1,
-}
-
 # (2)
 baseline_model: Dict[str, Any] = {
     'no_cuda': True,

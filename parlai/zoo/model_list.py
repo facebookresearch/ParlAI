@@ -45,66 +45,6 @@ There are a number of guidelines you should follow in the zoo:
 
 model_list = [
     {
-        "title": "KVMemNN ConvAI2 model",
-        "id": "convai2",
-        "path": "zoo:convai2/kvmemnn/model",
-        "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
-        "task": "convai2",
-        "description": (
-            "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
-            "competition."
-        ),
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "example": (
-            "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
-        ),
-        "result": (
-            "Enter Your Message: Hi, what do you think of peanuts?\n"
-            "there was a kid in the school system my mum works for with a severe peanut allergy"
-        ),
-    },
-    {
-        "title": "Seq2Seq ConvAI2 model",
-        "id": "convai2",
-        "path": "zoo:convai2/seq2seq/convai2_self_seq2seq_model",
-        "agent": "legacy:seq2seq:0",
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
-        ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf "
-            "zoo:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
-        ),
-        "result": (
-            "Enter Your Message: Hi, what do you think of peanuts?\n"
-            "[Seq2Seq]: i don't have any , but i do not have a favorite ."
-        ),
-    },
-    {
-        "title": "ConvAI2 Language model",
-        "id": "convai2",
-        "path": "zoo:convai2/language_model/model",
-        "agent": "language_model",
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
-        ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf "
-            "zoo:convai2/language_model/model"
-        ),
-        "result": (
-            "Enter Your Message: Hi, have you ever been on an airplane?\n"
-            "[LanguageModel]: no , i do not . i am a big fan of the walking dead ."
-        ),
-    },
-    {
         "title": "DrQA SQuAD model",
         "id": "drqa",
         "path": "zoo:drqa/squad/model",
@@ -1274,5 +1214,249 @@ model_list = [
             "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
         ),
         "result": ("Results vary."),
+    },
+    {
+        "title": "BART",
+        "id": "bart",
+        "path": "zoo:bart/bart_large/model",
+        "agent": "bart",
+        "external_website": "https://arxiv.org/abs/1910.13461",
+        "task": "wikipedia_plus_toronto_books",
+        "description": (
+            "BART: Denoising Sequence-to-Sequence Pre-training for Natural "
+            "Language Generation, Translation, and Comprehension."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:bart/bart_large/model -t convai2 -bs 64"
+        ),
+        "result": (
+            "Finished evaluating tasks ['convai2'] using datatype valid\n"
+            "accuracy   bleu-4    exs      f1  gpu_mem    loss    ppl  token_acc   tpb\n"
+            "0        .0004641   7801  .02084    .4878   5.041  154.6      .2042  1652"
+        ),
+        "example2": (
+            "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam"
+        ),
+        "result2": (
+            "valid:\n"
+            "accuracy  bleu-4  exs    f1  gpu_mem  loss    lr   ppl  token_acc  total_train_updates   tpb\n"
+            ".0001282  .01229 7801 .2035    .6361 2.386 1e-05 10.87      .4741                 5478 321.3"
+        ),
+    },
+    {
+        "title": "Unlikelihood ConvAI2 context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood ConvAI2 context repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with context repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood ConvAI2 label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood ELI5 context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "eli5",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ELI5 with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood ELI5 context repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_celi5_ctxt/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "eli5",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ELI5 with context repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood ELI5 label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_eli5_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "eli5",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ELI5 with label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood Wizard of Wikipedia context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "wizard_of_wikipedia:GeneratorTeacher",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on Wizard of Wikipedia with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood Wizard of Wikipedia context repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "wizard_of_wikipedia:GeneratorTeacher",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on Wizard of Wikipedia with context repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood Wizard of Wikipedia label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_wiki_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "wizard_of_wikipedia:GeneratorTeacher",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on Wizard of Wikipedia with label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e0 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e0/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e0"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e0/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi there ! how are you ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e1 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e1/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e1"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e1/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi how are you today"
+        ),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e2 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e2/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e2"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e2/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hello , how are you ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e3 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e3/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e3"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e3/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi there !"
+        ),
     },
 ]
