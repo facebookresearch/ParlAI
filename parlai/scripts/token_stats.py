@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import numpy as np
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript
 from parlai.core.agents import create_agent
 from parlai.core.torch_agent import TorchAgent
 from parlai.core.worlds import create_task
