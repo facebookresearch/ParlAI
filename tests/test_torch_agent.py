@@ -752,7 +752,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.reset()
         agent.history.update_history({'text': 'hello i am stephen'})
         agent.history.update_history({'text': 'i am bob'})
-        assert agent.history.get_history_str() == 'i am bob\nhello i am stephen'
+        assert agent.history.get_history_str() == 'hello i am stephen\ni am bob'
         agent.history.reset()
         agent.history.update_history(
             {'text': 'your persona: filler\nhello i am stephen'}
@@ -760,7 +760,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.update_history({'text': 'i am bob'})
         assert (
             agent.history.get_history_str()
-            == 'i am bob\nhello i am stephen\nyour persona: filler'
+            == 'your persona: filler\nhello i am stephen\ni am bob'
         )
 
     def test_observe(self):
