@@ -154,6 +154,10 @@ def log(*args, **kwargs):
     return logger.log(*args, **kwargs)
 
 
+def verbose(msg):
+    return logger.log(msg, level=VERBOSE)
+
+
 def debug(*args, **kwargs):
     return logger.debug(*args, **kwargs)
 

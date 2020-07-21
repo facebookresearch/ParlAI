@@ -6,7 +6,7 @@
 #
 # Accessing the tasks can be done with something like:
 #
-#   python examples/display_data.py -t dbll_babi:task:2_p0.5
+#   parlai display_data -t dbll_babi:task:2_p0.5
 #
 # which specifies task 2, and policy with 0.5 answers correct, see the paper
 # for more details: https://arxiv.org/abs/1604.06045

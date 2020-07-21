@@ -12,8 +12,8 @@ Examples
 .. code-block:: shell
 
   # learn the vocabulary from one task, then train on another task.
-  python -m parlai.scripts.build_dict -t convai2 --dict-file premade.dict
-  python -m parlai.scripts.train_model -t squad --dict-file premade.dict -m seq2seq
+  parlai build_dict -t convai2 --dict-file premade.dict
+  parlai train_model -t squad --dict-file premade.dict -m seq2seq
 """
 
 from parlai.core.dict import DictionaryAgent
@@ -21,7 +21,7 @@ from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.utils.distributed import is_distributed
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 import copy
 import os
@@ -56,11 +56,7 @@ def setup_args(parser=None, hidden=True):
     dict_loop.add_argument(
         '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
-    partial, _ = parser.parse_known_args(nohelp=True)
-    if vars(partial).get('dict_class'):
-        str2class(vars(partial).get('dict_class')).add_cmdline_args(parser)
-    else:
-        DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser)
     return parser
 
 
@@ -148,6 +144,7 @@ def build_dict(opt, skip_if_built=False):
     return dictionary
 
 
+@register_script('build_dict', hidden=True)
 class BuildDict(ParlaiScript):
     @classmethod
     def setup_args(cls):

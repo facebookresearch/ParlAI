@@ -19,13 +19,13 @@ from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Lint for ParlAI tasks')
+        parser = ParlaiParser(True, True, 'Check tasks for common errors')
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
@@ -142,6 +142,7 @@ def verify_data(opt, parser):
     print(report_text)
 
 
+@register_script('verify_data', hidden=True)
 class VerifyData(ParlaiScript):
     @classmethod
     def setup_args(cls):

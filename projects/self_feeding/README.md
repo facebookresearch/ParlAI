@@ -69,13 +69,13 @@ On a P100 GPU, these training commands take approximately 10 minutes to converge
 Here is a minimal command for training on the DIALOGUE task using Human-Human (HH) examples:
 
 ```
-python examples/train_model.py -t self_feeding:dialog --model projects.self_feeding.self_feeding_agent:SelfFeedingAgent --model-file /tmp/mymodel1 -bs 128
+parlai train_model -t self_feeding:dialog --model projects.self_feeding.self_feeding_agent:SelfFeedingAgent --model-file /tmp/mymodel1 -bs 128
 ```
 
 Or to recreate the results in the paper for training on 131k HH examples with the same hyperparameters that we used, run the following:
 
 ```
-python examples/train_model.py -t self_feeding:dialog --model-file /tmp/mymodel2 -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+parlai train_model -t self_feeding:dialog --model-file /tmp/mymodel2 -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + DIALOGUE (HB) examples
@@ -95,19 +95,19 @@ To train on more than one task (such as DIALOGUE and FEEDBACK), modify the comma
 Putting this all together, the command to recreate the 131k HH + 60k FB result from the paper is as follows (as reported in Table 9 in the paper, this setting had the same optimal hyperparameter settings as 131k HH):
 
 ```
-python examples/train_model.py -t self_feeding:diafee --model-file /tmp/mymodel3 -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
+parlai train_model -t self_feeding:diafee --model-file /tmp/mymodel3 -ltim 5 -vtim 10 -vp 10 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 100 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 -vmt dia_acc -vmm max
 ```
 
 ### Train on DIALOGUE (HH) + DIALOGUE (HB) + FEEDBACK (FB) + SATISFACTION (ST) examples
 You can train on all three tasks at once with the command below.
 ```
-python examples/train_model.py -t self_feeding:all --model-file /tmp/mymodel4 -ltim 5 -vtim 10 -vp 50 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train_hh131k_hb60k.txt -vmt dia_acc -vmm max
+parlai train_model -t self_feeding:all --model-file /tmp/mymodel4 -ltim 5 -vtim 10 -vp 50 -m projects.self_feeding.self_feeding_agent:SelfFeedingAgent -cands batch --eval-candidates inline -histsz 2 --embedding-type fasttext_cc --embedding-size 300 --dict-maxtokens 250000 --num-epochs 500 --optimizer adamax --embeddings-scale false -bs 128 --relu-dropout 0 --attention-dropout 0 --n-heads 2 --n-layers 2 -lr 0.0025 --ffn-size 32 --lr-scheduler invsqrt --warmup-updates 500 --dia-train train_hh131k_hb60k.txt -vmt dia_acc -vmm max
 ```
 
 ### Evaluate a trained model
 To evaluate a model, use the following command, which specifies which teacher to use (the one with all three tasks), which splits to test on (`test` or `valid`), and what batch size to use (larger will evaluate faster):
 ```
-python examples/eval_model.py -mf /tmp/mymodel1 -t self_feeding:all --datatype test -bs 20
+parlai eval_model -mf /tmp/mymodel1 -t self_feeding:all --datatype test -bs 20
 ```
 
 
@@ -122,7 +122,7 @@ corpus, or even chat with it live!
 You can
 
 ```
-python examples/eval_model.py -mf zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all --datatype test -bs 20
+parlai eval_model -mf zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all --datatype test -bs 20
 ```
 
 ### Chat with a pretrained model

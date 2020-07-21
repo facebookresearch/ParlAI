@@ -21,7 +21,6 @@ See below for documentation on each specific tool.
 
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
-from collections import deque
 import random
 import os
 import torch
@@ -170,11 +169,8 @@ class History(object):
         field in the observation to track over the course of the episode
         (defaults to 'text')
 
-    :param vec_type:
-        specify a 'list' or 'deque' to save the history in this object
-
     :param maxlen:
-        if `vec_type` is 'deque', this sets the maximum length of that object
+        sets the maximum number of tunrs
 
     :param p1_token:
         token indicating 'person 1'; opt must have 'person_tokens' set to True
@@ -192,7 +188,6 @@ class History(object):
         self,
         opt,
         field='text',
-        vec_type='deque',
         maxlen=None,
         size=-1,
         p1_token='__p1__',
@@ -205,14 +200,12 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self.reversed = opt.get('history_reversed', False)
         self._global_end_token = opt.get('history_add_global_end_token', None)
         if self._global_end_token is not None:
             self._global_end_token = self.dict[self.dict.end_token]
 
         # set up history objects
-        if vec_type != 'deque' and vec_type != 'list':
-            raise RuntimeError('Type {} is not supported for history'.format(vec_type))
-        self.vec_type = vec_type
         self.max_len = maxlen
 
         self.history_strings = []
@@ -270,14 +263,17 @@ class History(object):
         # update history vecs
         self._update_vecs(text)
 
-    def update_history(self, obs, temp_history=None):
+    def update_history(self, obs: Message, temp_history: Optional[str] = None):
         """
         Update the history with the given observation.
 
-        param obs:     Observation used to update the history. param temp_history:
-        Optional temporary string. If it is not None,     this string will be appended
-        to the end of the     history. It will not be in the history on the     next
-        dialogue turn. Set to None to stop adding     to the history.
+        :param obs:
+            Observation used to update the history.
+        :param temp_history:
+            Optional temporary string. If it is not None, this string will be
+            appended to the end of the history. It will not be in the history
+            on the next dialogue turn. Set to None to stop adding to the
+            history.
         """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -301,10 +297,14 @@ class History(object):
         """
         Return the string version of the history.
         """
+        if self.temp_history and self.history_strings:
+            logging.warning('temporary history strings now include the delimiter.')
+
         if len(self.history_strings) > 0:
-            history = self.delimiter.join(self.history_strings)
+            history = self.history_strings[:]
             if self.temp_history is not None:
-                history += self.temp_history
+                history.append(self.temp_history)
+            history = self.delimiter.join(history)
             return history
 
         return None
@@ -316,27 +316,20 @@ class History(object):
         if len(self.history_vecs) == 0:
             return None
 
-        if self.vec_type == 'deque':
-            history = deque(maxlen=self.max_len)
-            for vec in self.history_vecs[:-1]:
-                history.extend(vec)
-                history.extend(self.delimiter_tok)
-            history.extend(self.history_vecs[-1])
-            if self.temp_history is not None:
-                history.extend(self.parse(self.temp_history))
-            if self._global_end_token is not None:
-                history.extend([self._global_end_token])
-        else:
-            # vec type is a list
-            history = []
-            for vec in self.history_vecs[:-1]:
-                history += vec
-                history += self.delimiter_tok
-            history += self.history_vecs[-1]
-            if self.temp_history is not None:
-                history.extend(self.parse(self.temp_history))
-            if self._global_end_token is not None:
-                history += [self._global_end_token]
+        # vec type is a list
+        history = []
+        for vec in self.history_vecs[:-1]:
+            history += [vec]
+            history += [self.delimiter_tok]
+        history += [self.history_vecs[-1]]
+        if self.temp_history is not None:
+            history.extend(self.parse(self.temp_history))
+        if self._global_end_token is not None:
+            history += [[self._global_end_token]]
+
+        history = sum(history, [])
+        if self.reversed:
+            history = list(reversed(history))
 
         return history
 
@@ -503,9 +496,12 @@ class TorchAgent(ABC, Agent):
             '-opt',
             '--optimizer',
             default='sgd',
+            metavar='OPTIMIZER',
             choices=cls.optim_opts(),
-            help='Choose between pytorch optimizers. Any member of torch.optim'
-            ' should be valid.',
+            help=(
+                f'Optimizer choice. Possible values: '
+                f'{", ".join(cls.optim_opts().keys())}.'
+            ),
         )
         optim_group.add_argument(
             '-lr', '--learningrate', type=float, default=1, help='Learning rate'
@@ -595,6 +591,12 @@ class TorchAgent(ABC, Agent):
             type=int,
             help='Label truncation length: if not specified, this will default '
             'to `truncate`',
+        )
+        agent.add_argument(
+            '--history-reversed',
+            default=False,
+            type='bool',
+            help='Reverse the history',
         )
         agent.add_argument(
             '-histsz',
@@ -779,6 +781,7 @@ class TorchAgent(ABC, Agent):
         self.label_truncate = label_truncate if label_truncate >= 0 else None
         # stores up to hist_utt past observations within current dialog
         self.history = self.build_history()
+        self.history_reversed = opt.get('history_reversed', False)
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
@@ -1369,7 +1372,10 @@ class TorchAgent(ABC, Agent):
 
         # check truncation
         if obs.get('text_vec') is not None:
-            truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
+            truncate_left = not self.history_reversed
+            truncated_vec = self._check_truncate(
+                obs['text_vec'], truncate, truncate_left
+            )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
         return obs
 

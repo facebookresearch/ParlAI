@@ -6,5 +6,5 @@ This is an agent which simply repeats the query for debugging purposes or as a b
 
 Evaluate on bAbi, displaying the answers.
 ```bash
-python examples/display_model.py -m repeat_query -t babi
+parlai display_model -m repeat_query -t babi
 ```

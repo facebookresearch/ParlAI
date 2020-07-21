@@ -318,10 +318,10 @@ displaying data with the existing script
 .. code-block:: python
 
    #Display 10 random examples from task 1 of the "1k training examples" bAbI task:
-   python examples/display_data.py -t babi:task1k:1
+   parlai display_data -t babi:task1k:1
 
    #Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
-   python examples/display_data.py -t babi:task1k:1,squad -n 100
+   parlai display_data -t babi:task1k:1,squad -n 100
 
 
 In the last section, we mentioned that labels are hidden at validation and test time.
@@ -354,22 +354,22 @@ Here are some examples:
 .. code-block:: python
 
    # Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
-   python examples/train_model.py -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
+   parlai train_model -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
 
    # Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
-   python examples/train_model.py -m drqa -t squad -bs 32 -mf /tmp/model_drqa
+   parlai train_model -m drqa -t squad -bs 32 -mf /tmp/model_drqa
 
    # Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
-   python examples/eval_model.py -t squad -mf "zoo:drqa/squad/model"
+   parlai eval_model -t squad -mf "zoo:drqa/squad/model"
 
    # Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
-   python examples/eval_model.py -m local_human -t babi:Task1k:1 -dt valid
+   parlai eval_model -m local_human -t babi:Task1k:1 -dt valid
 
    # Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
-   python examples/eval_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+   parlai eval_model -m ir_baseline -t "#moviedd-reddit" -dt valid
 
    # Display the predictions of that same IR baseline model:
-   python examples/display_model.py -m ir_baseline -t "#moviedd-reddit" -dt valid
+   parlai display_model -m ir_baseline -t "#moviedd-reddit" -dt valid
 
 
 The main flags are:
@@ -392,10 +392,10 @@ One can also talk to your models! Here are examples of talking to models already
 .. code-block:: python
 
    # Interact with a Poly-Encoder model on ConvAI2
-   python examples/interactive.py -mf zoo:pretrained_transformers/model_poly/model -t convai2
+   parlai interactive -mf zoo:pretrained_transformers/model_poly/model -t convai2
 
    # Interact with a Wizard Of Wikipedia (Full Dialogue Retrieval Model).
-   python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+   parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
 
 
 **Model Zoo**
