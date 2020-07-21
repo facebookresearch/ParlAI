@@ -12,7 +12,7 @@ Examples
 
 .. code-block:: shell
 
-  python -m parlai.scripts.detect_offensive_language -t "convai_chitchat" --display-examples True
+  parlai detect_offensive_language -t "convai_chitchat" --display-examples True
 """  # noqa: E501
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent

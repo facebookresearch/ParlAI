@@ -24,7 +24,7 @@ If you are having trouble with any of steps 2-4 or issues with SLURM clusters, p
 [ELI5 Repo](https://github.com/facebookresearch/ELI5/).
 
 ## Downloading pre-computed files for support documents
-Running `python examples/display_data.py -t eli5` to run ELI5's `build.py` file
+Running `parlai display_data.py -t eli5` to run ELI5's `build` file
 will create the directory structure and download pre-computed files such as the list of CommonCrawl IDs for supporting documents needed for the dataset. Unlike a normal `build.py` file, this will not download the ELI5 datset, and instead tell you to follow these instructions.
 
 ## Downloading the Reddit Data

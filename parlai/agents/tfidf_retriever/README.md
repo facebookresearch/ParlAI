@@ -7,17 +7,17 @@
  ## Basic Examples
  Construct a TFIDF matrix for use in retrieval for the personachat task
 ```bash
-python examples/train_model.py -m tfidf_retriever -t personachat -mf /tmp/personachat_tfidf -dt train:ordered -eps 1
+parlai train_model -m tfidf_retriever -t personachat -mf /tmp/personachat_tfidf -dt train:ordered -eps 1
 ```
 
 After construction, load and evaluate that model on the Persona-Chat test set.
 
 ```bash
-python examples/eval_model.py -t personachat -mf /tmp/personachat_tfidf -dt test
+parlai eval_model -t personachat -mf /tmp/personachat_tfidf -dt test
 ```
 
 Alternatively, interact with a Wikipedia-based TFIDF model from the model zoo
 
 ```bash
-python examples/interactive.py -mf zoo:wikipedia_full/tfidf_retriever/model
+parlai interactive -mf zoo:wikipedia_full/tfidf_retriever/model
 ```

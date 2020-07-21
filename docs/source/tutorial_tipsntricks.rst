@@ -52,14 +52,14 @@ If you want to train/eval/display with multiple tasks you can just use for examp
 
 .. code-block:: bash
 
-  python examples/display_data.py -t personachat,squad -dt train
+  parlai display_data -t personachat,squad -dt train
 
 However, this will sample episodes equally from the two tasks (personachat and squad).
 To sample squad 10x more often you can do:
 
 .. code-block:: bash
 
-  python examples/display_data.py -t personachat,squad --multitask_weights 1,10 -dt train
+  parlai display_data -t personachat,squad --multitask_weights 1,10 -dt train
 
 
 Tasks with Parameters
@@ -73,7 +73,7 @@ This can be done on the command line in the following way:
 
 .. code-block:: bash
 
-  python examples/display_data.py -t light_dialog:light_label_type=speech,light_dialog:light_label_type=emote -dt train
+  parlai display_data -t light_dialog:light_label_type=speech,light_dialog:light_label_type=emote -dt train
 
 That is, by adding a colon ":" followed by the flag name, an equals sign, and the value.
 You can add multiple flags, all separated by ":".

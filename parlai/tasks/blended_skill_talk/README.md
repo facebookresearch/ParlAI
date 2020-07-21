@@ -15,7 +15,7 @@ Conversation is between a "free" Amazon Mechanical Turk worker who can speak fre
 Versions of teachers for the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia datasets in which ConvAI2-style persona strings and Wizard-of-Wikipedia-style topic strings have been added to the start of all contexts.
 
 ## Files
-The following files are downloaded when calling the BST dataset (for instance, with `python examples/display_data.py -t blended_skill_talk`):
+The following files are downloaded when calling the BST dataset (for instance, with `parlai display_data -t blended_skill_talk`):
 - `train.json`, `valid.json`, and `test.json`: Raw BST datafiles, each consisting of a list of dicts. Each dict is a conversation that includes the following fields, in addition to those listed under **BlendedSkillTalkTeacher** above:
   - `[personas]`: The strings giving the personas of the guided and free workers
   - `[free_turker_utterance]` and `[guided_turker_utterance]`: Two utterances that start off the conversation, displayed before the AMT workers continue the conversation from there. One utterance is given for each worker

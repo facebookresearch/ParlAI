@@ -14,7 +14,7 @@ generative models trained on the ConvAI2 dataset you can see that project folder
 
 Look at the PersonaChat data:
 ```bash
-python examples/display_data.py --task personachat --datatype train
+parlai display_data --task personachat --datatype train
 ```
 
 Interact with a pre-trained Key-Value Memory Net model trained on Persona-Chat

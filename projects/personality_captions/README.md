@@ -39,7 +39,7 @@ ShotTell, ResNeXt-IG-3.5B            | [Shuster et al. (2019)](https://arxiv.org
 
 We provide our best model trained with ResNet152 image features. To evaluate the model, specify the following command:
 
-      python examples/eval_model.py \
+      parlai eval_model \
           -bs 128 -t personality_captions
           -mf models:personality_captions/transresnet/model
           --num-test-labels 5 -dt test

@@ -9,7 +9,7 @@ This directory contains:
 
 Run this command: (assumes your model zoo is in the default ./data/models)
 ```
-python examples/interactive.py -m transformer/polyencoder \
+parlai interactive -m transformer/polyencoder \
     -mf zoo:pretrained_transformers/model_poly/model \
     --encode-candidate-vecs true \
     --eval-candidates fixed  \
