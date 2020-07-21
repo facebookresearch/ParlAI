@@ -93,7 +93,7 @@ If you have access to an NVIDIA GPU with FP16 CUDA Cores (V100, GTX 2080, etc),
 then you can get large speedups by switching on the option `--fp16 true`. The
 default version of FP16 requires that you install
 [APEX](https://github.com/NVIDIA/apex), but you can use a simplified version
-(which doesn't depend on APEX) with `--fp16 true --fp16-impl mem_efficienet`.
+(which doesn't depend on APEX) with `--fp16 true --fp16-impl mem_efficient`.
 
 Note that in order to get the full benefit of fp16, we need to make sure all
 our hidden dimensions are _multiples of 8_, otherwise the hardware won't use
