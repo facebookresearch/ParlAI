@@ -5,6 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 """
 Talk with a model using a web UI.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
 """
 
 

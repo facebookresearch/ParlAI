@@ -154,7 +154,7 @@ model_list = [
         "description": "Full Dialogue Retrieval Model for Wizard of Wikipedia",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
-        "example2": "examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
+        "example2": "parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
         "result2": (
             "[ Your chosen topic is: Teapot ]\n"
             "Enter Your Message: do you like tea?\n"
@@ -259,7 +259,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/poly_model_huge_reddit/model "
             "-t convai2 "
             "--model transformer/polyencoder --batchsize 256 --eval-batchsize 10 "
@@ -294,7 +294,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/poly_model_huge_wikito/model "
             "-t convai2 "
             "--model transformer/polyencoder --batchsize 256 --eval-batchsize 10 "
@@ -329,7 +329,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/bi_model_huge_reddit/model "
             "--batchsize 512 -t convai2 "
             "--model transformer/biencoder --eval-batchsize 6 "
@@ -366,7 +366,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/bi_model_huge_wikito/model "
             "--batchsize 512 -t convai2 "
             "--model transformer/biencoder --eval-batchsize 6 "
@@ -403,7 +403,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/cross_model_huge_reddit/model "
             "-t convai2 "
             "--model transformer/crossencoder --batchsize 16 --eval-batchsize 10 "
@@ -437,7 +437,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/cross_model_huge_wikito/model "
             "-t convai2 "
             "--model transformer/crossencoder --batchsize 16 --eval-batchsize 10 "

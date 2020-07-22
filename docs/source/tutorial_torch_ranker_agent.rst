@@ -17,7 +17,7 @@ Train a Bag-of-words Ranker model on ConvAI2:
 
 .. code-block:: bash
 
-    python  examples/train_model.py -m examples/tra  -t convai2 -mf /tmp/test -bs 32
+    parlai train_model -m examples/tra  -t convai2 -mf /tmp/test -bs 32
 
 Train a Transformer Ranker model on ConvAI2:
 

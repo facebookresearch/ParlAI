@@ -23,7 +23,7 @@ Examples
 
 .. code-block:: shell
 
-  eval_wordstat.py -mf data/model -t convai2:self --freq-bins 10,100,1000
+  parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
 """
 
 from parlai.core.params import ParlaiParser

@@ -14,6 +14,13 @@ subprocess, each which runs the full training loop independently.
 Uses torch.nn.parallel.DistributedDataParallel for its main uses.  Agents must
 specifically implement the wrapper of DistributedDatParallel, but all
 TorchRankerAgents and TorchGeneratorAgents support this.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  parlai multiprocessing_train -m transformer/generator -bs 16 -t convai2 -mf /tmp/mymodel
 """
 
 import torch

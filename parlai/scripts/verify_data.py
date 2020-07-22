@@ -12,7 +12,7 @@ Examples
 
 .. code-block:: shell
 
-  python parlai/scripts/verify_data.py -t convai2 -dt train:ordered
+  parlai verify_data -t convai2 -dt train:ordered
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
