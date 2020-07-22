@@ -511,8 +511,14 @@ workflows:
       - unittests_36
       - mturk_tests
       - unittests_osx
-      - long_gpu_tests
       - teacher_tests
+      - long_gpu_tests
+          requires:
+            - cleaninstall_36
+            - unittests_gpu14
+            - unittests_38
+            - unittests_37
+            - unittests_36
       - build_website:
           filters:
             branches:
