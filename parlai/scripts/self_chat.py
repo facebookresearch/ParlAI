@@ -99,11 +99,11 @@ def _run_self_chat_episode(opt, world, world_logger):
 def self_chat(opt):
     random.seed(opt['seed'])
     partner = opt['partner_model_file']
-    partner_opt_file = opt['partner_opt_file']
+    partner_opt_file = opt.get('partner_opt_file')
 
     # Create agents
     agent1 = create_agent(opt, requireModelExists=True)
-    if not partner:
+    if partner is not None:
         # Self chat with same model
         agent2 = agent1.clone()
     else:
@@ -112,11 +112,12 @@ def self_chat(opt):
             print(f"WARNING: Loading override opts from: {partner_opt_file}")
             with open(partner_opt_file) as f:
                 partner_opt = json.load(f)
-
+        else:
+            partner_opt = {}
+        partner_opt['interactive_mode'] = opt.get('interactive_mode', True)
         print(
-            f"WARNING: Setting partner interactive mode to: {opt['interactive_mode']}"
+            f"WARNING: Setting partner interactive mode to: {partner_opt['interactive_mode']}"
         )
-        partner_opt['interactive_mode'] = opt['interactive_mode']
         agent2 = create_agent_from_model_file(partner, partner_opt)
 
     # Set IDs
