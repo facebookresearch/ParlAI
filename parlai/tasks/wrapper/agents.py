@@ -18,19 +18,43 @@ teacher for each of the original teachers.
 
 import copy
 
+from abc import ABC, abstractmethod
 from parlai.core.agents import create_agent_from_shared
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname, Teacher
 
 
-class AbstractWrapperTeacher(Teacher):
+class AbstractWrapperTeacher(Teacher, ABC):
     """
-    Abstract teacher working as base for wrapper teachers.
+    Abstract teacher that will wrap around another teacher and allow for manipulating
+    the fields returned by the inner teacher.
     """
+
+    @classmethod
+    def add_cmdline_args(cls, parser):
+        parser = parser.add_argument_group('AbstractWrapper args')
+        parser.add_argument(
+            '-wt',
+            '--wrapper-task',
+            type=str,
+            help='The task which fields will be manipulated.',
+        )
 
     def __init__(self, opt: Opt, shared=None):
-        pass
+        if ',' in opt['task']:
+            raise ValueError(
+                'AbstractWrapperTeacher cannot be used with multiple tasks!'
+            )
+        self.id = opt['task']
+        self.opt = opt
+        if shared:
+            self.task = create_agent_from_shared(shared['task'])
+        else:
+            opt_singletask = copy.deepcopy(opt)
+            opt_singletask['task'] = opt['wrapper_task']
+            self.task = create_task_agent_from_taskname(opt_singletask)[0]
 
+    @abstractmethod
     def act(self):
         """
         Act on the previous observation.
@@ -110,35 +134,14 @@ class AbstractWrapperTeacher(Teacher):
 class LabelToTextTeacher(AbstractWrapperTeacher):
     """
     Teacher that will shift message['labels'][0] into message['text'] for whatever task
-    is specified with --label-to-text-task.
+    is specified with --wrapper-task.
 
     Because the dialogue history is effectively overwritten by this action, all episodes
     will be flattened into one example each.
     """
 
-    @classmethod
-    def add_cmdline_args(cls, argparser):
-        # Teacher has no args
-        parser = argparser.add_argument_group('LabelToText args')
-        parser.add_argument(
-            '-l2tt',
-            '--label-to-text-task',
-            type=str,
-            help='The task whose labels will get shifted into the text field',
-        )
-
     def __init__(self, opt: Opt, shared=None):
-        if ',' in opt['task']:
-            raise ValueError('LabelToTextTeacher cannot be used with multiple tasks!')
-        self.id = opt['task']
-        self.opt = opt
-        if shared and 'task' in shared:
-            self.task = create_agent_from_shared(shared['task'])
-        else:
-            opt_singletask = copy.deepcopy(opt)
-            opt_singletask['task'] = opt['label_to_text_task']
-            self.task = create_task_agent_from_taskname(opt_singletask)[0]
-
+        super().__init__(opt, shared)
 
     def act(self):
         """
@@ -146,16 +149,12 @@ class LabelToTextTeacher(AbstractWrapperTeacher):
         """
         act = self.task.act()
         new_act = copy.deepcopy(act)
-        if 'labels' in act:
-            labels = act['labels']
+        if 'labels' in act or 'eval_labels' in act:
+            labels = act['labels'] if 'labels' in act else act['eval_labels']
+            labels_type = 'labels' if 'labels' in act else 'eval_labels'
             assert len(labels) == 1
             new_act.force_set('text', labels[0])
-            new_act.force_set('labels', [''])
-        elif 'eval_labels' in act:
-            labels = act['eval_labels']
-            assert len(labels) == 1
-            new_act.force_set('text', labels[0])
-            new_act.force_set('eval_labels', [''])
+            new_act.force_set(labels_type, [''])
         else:
             assert 'text' not in act and act['episode_done'] is True
         new_act.force_set('episode_done', True)  # Clear the dialogue history
