@@ -32,13 +32,15 @@ class AbstractWrapperTeacher(Teacher, ABC):
 
     @classmethod
     def add_cmdline_args(cls, parser):
-        parser = parser.add_argument_group('AbstractWrapper args')
-        parser.add_argument(
+        agent = parser.add_argument_group('AbstractWrapper args')
+        agent.add_argument(
             '-wt',
             '--wrapper-task',
             type=str,
             help='The task whose fields will be manipulated.',
         )
+        known_args, _ = parser.parse_known_args(nohelp=True)
+        parser.add_task_args(known_args.wrapper_task)
 
     def __init__(self, opt: Opt, shared=None):
         if ',' in opt['task']:
