@@ -17,7 +17,8 @@ def build(opt):
     dpath = os.path.join(opt['datapath'], FOLDER_NAME)
     # version 1.0: initial release
     # version 1.1: add evaluation logs
-    version = '1.1'
+    # version 1.2: add reproducible evaluation logs
+    version = '1.2'
 
     if not build_data.built(dpath, version_string=version):
         if build_data.built(dpath):
@@ -37,6 +38,12 @@ def build(opt):
 
         # next download the evaluation logs
         fname_evallogs = 'evaluationlogs_v1.tar.gz'
+        build_data.download(URL_ROOT + fname_evallogs, dpath, fname_evallogs)
+        build_data.untar(dpath, fname_evallogs)
+
+        # and the reproducible logs.
+        # for more info see https://github.com/facebookresearch/ParlAI/issues/2855
+        fname_evallogs = 'evaluation_logs_reproducible_v1.tar.gz'
         build_data.download(URL_ROOT + fname_evallogs, dpath, fname_evallogs)
         build_data.untar(dpath, fname_evallogs)
 
