@@ -37,7 +37,7 @@ class AbstractWrapperTeacher(Teacher, ABC):
             '-wt',
             '--wrapper-task',
             type=str,
-            help='The task which fields will be manipulated.',
+            help='The task whose fields will be manipulated.',
         )
 
     def __init__(self, opt: Opt, shared=None):
@@ -150,8 +150,8 @@ class LabelToTextTeacher(AbstractWrapperTeacher):
         act = self.task.act()
         new_act = copy.deepcopy(act)
         if 'labels' in act or 'eval_labels' in act:
-            labels = act['labels'] if 'labels' in act else act['eval_labels']
             labels_type = 'labels' if 'labels' in act else 'eval_labels'
+            labels = act[labels_type]
             assert len(labels) == 1
             new_act.force_set('text', labels[0])
             new_act.force_set(labels_type, [''])
