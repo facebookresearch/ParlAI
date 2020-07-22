@@ -512,7 +512,7 @@ workflows:
       - mturk_tests
       - unittests_osx
       - teacher_tests
-      - long_gpu_tests
+      - long_gpu_tests:
           requires:
             - cleaninstall_36
             - unittests_gpu14
