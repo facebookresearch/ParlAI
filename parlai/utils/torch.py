@@ -370,6 +370,8 @@ class PipelineHelper(object):
         if not isinstance(submodule, torch.nn.ModuleList):
             # not a ModuleList, leave it untouched
             return
+        if getattr(submodule, 'model_parallel_exempt', False):
+            return
 
         assert isinstance(submodule, torch.nn.ModuleList)  # for typechecker
         layers = submodule
@@ -396,7 +398,7 @@ class PipelineHelper(object):
             # mark a layer as going to the given element
             layer_assignments[mostfree] += 1
 
-        devices = self.devices[:]
+        devices = [d for i, d in enumerate(self.devices[:]) if layer_assignments[d] > 0]
         for layer_no, layer in enumerate(layers):
             layer_gpu = devices[0]
             assert layer_assignments[layer_gpu] > 0
@@ -502,7 +504,9 @@ class PipelineHelper(object):
             # base case
             return torch.cat(items, dim=dim)  # type: ignore
         elif isinstance(item0, tuple):
-            return tuple(PipelineHelper.join(x, dim=dim) for x in zip(*items))  # type: ignore
+            return tuple(
+                PipelineHelper.join(x, dim=dim) for x in zip(*items)
+            )  # type: ignore
         elif isinstance(item0, dict):
             keys = item0.keys()
             return {  # type: ignore
@@ -522,9 +526,13 @@ class PipelineHelper(object):
         if isinstance(chunk, torch.Tensor):
             return chunk.to(device)  # type: ignore
         elif isinstance(chunk, tuple):
-            return tuple(PipelineHelper.chunk_to(c, device) for c in chunk)  # type: ignore
+            return tuple(
+                PipelineHelper.chunk_to(c, device) for c in chunk
+            )  # type: ignore
         elif isinstance(chunk, dict):
-            return {k: PipelineHelper.chunk_to(v, device) for k, v in chunk.items()}  # type: ignore
+            return {
+                k: PipelineHelper.chunk_to(v, device) for k, v in chunk.items()
+            }  # type: ignore
         else:
             raise TypeError('chunk_to only compatible with tensors, tuples or dicts.')
 
