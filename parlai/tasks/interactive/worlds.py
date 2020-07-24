@@ -74,8 +74,12 @@ class InteractiveWorld(DialogPartnerWorld):
                 {'id': 'context', 'text': self.p2, 'episode_done': False}
             )
             agents[1].observe(validate(context_act))
+        import time
+        start = time.time()
         agents[1].observe(validate(act))
         acts[1] = agents[1].act()
+        end = time.time()
+        print(f'Elapsed time: {end-start}')
         agents[0].observe(validate(acts[1]))
         self.update_counters()
         self.turn_cnt += 1
