@@ -1,0 +1,208 @@
+{% extends "core.html" %}
+{% block main_pane %}
+<div>
+    <div id="main-pane"
+        style="width: 100%; height: {{frame_height}}px; background-color: #dff0d8; padding: 30px; overflow:scroll;">
+        <!-- <span id="task-description" style="font-size: 16px"></span> -->
+        <span>
+            <h3>Task Description</h3>
+            <div>To first learn about the labeling task, please evaluate the "THEM"
+                speaker in the conversation below, choosing the correct checkboxes.</div>
+            <br><br>
+            <div id="onboarding-pane" style="width: 850px;margin: 0px auto;border: 1px solid
+        #dcdcdc;padding:5px">
+                Loading sample conversation...
+                <div style='clear:both'></div>
+            </div>
+        </span>
+        <hr style="border-top: 1px solid #555" />
+        <div>
+            <div id="response-type-text-input" class="response-type-module"
+                style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left;">
+                <div style="height: 50px; width: 100%; display: block; float: left;">
+                    <button class="btn btn-primary" style="width: 230px; height: 100%;
+            font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_submit_onboarding_answers">Submit
+                        Answers</button>
+                    <button class="btn btn-primary" style="width: 230px; height: 100%;
+            font-size: 16px; float: left; margin-left: 10px; padding: 0px; display:none;" id="id_send_msg_button"
+                        disabled>Continue to HIT</button>
+                </div>
+            </div>
+            <div id="response-type-waiting" class="response-type-module"
+                style="height: 50px; width: 100%; display: block; float: left; ">
+                <span id="waiting"
+                    style="font-size: 16pt; padding-top: 30px; padding-left: 30px; margin-right: 15px">Now
+                    waiting for another worker to join the chat...</span>
+            </div>
+        </div>
+    </div>
+    <div id="bottom-pane" style="width: 100%; background-color: #eee;">
+        <div id="response-type-idle" class="response-type-module" style="display:none">
+        </div>
+        <div id="response-type-done" class="response-type-module"
+            style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+            <span id="disconnect" style="font-size: 14pt;margin-right: 15px"></span>
+            <button id="done-button" type="button" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+            </button>
+        </div>
+        <div id="response-type-inactive" class="response-type-module"
+            style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left">
+            <span id="inactive" style="font-size: 16px"></span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+    // This is in both the main chat html and here, b/c it doesn't seem to copy
+    // over a .js file (terrible)
+    var CHECKBOX_DESCRIPTIONS = {
+        contradiction: { name: 'Contradiction', description: 'this response either contradicts itself, a known fact, or something the speaker said previously.' },
+        not_fluent: { name: 'Improper English', description: 'this response has poor use of the English language, uses nonstandard phrasing, or contains made-up words. Please ignore punctuation and capitalization issues, they are ok.' },
+        repetitive: { name: 'Repetitive', description: 'this response either repeats itself, or is a repeat or rephrasing of something the speaker already said.' },
+        off_topic: { name: 'Unrelated', description: 'this response makes sense, but does not seem related to what we were talking about previously.' },
+        non_sensical: { name: 'Non-Sensical', description: 'this response doesn’t really make any sense, especially in context with the previous conversation.' },
+        none_all_good: { name: 'None (All Good)', description: 'this response seems fine to me.' }
+    }
+    var onboarding_task_data = null;
+    var count_incorrect_attempts = 0;
+    var ONBOARD_FAIL = '[ONBOARD_FAIL]';
+    var ONBOARD_TRY_AGAIN = '[ONBOARD_TRY_AGAIN]';
+    var ONBOARD_SUBMIT = '[ONBOARD_SUBMIT]';
+
+    var displayCheckboxDescription = function (m_idx, evt) {
+        if ($(evt.target).is(":checked")) {
+            var checkbox_name = $(evt.target).attr('id');
+            for (var key in CHECKBOX_DESCRIPTIONS) {
+                if (checkbox_name.indexOf(key) > -1) {
+                    var checkboxPrettyName = CHECKBOX_DESCRIPTIONS[key]['name'];
+                    var checkboxDescription = CHECKBOX_DESCRIPTIONS[key]['description'];
+                    $("#explanation_" + m_idx).html('You labeled this as <b>' + checkboxPrettyName + '</b>, meaning that: ' + checkboxDescription);
+                }
+            }
+        } else {
+            $("#explanation_" + m_idx).html('');
+        }
+    };
+
+    var setupOnboardingTask = function (msg) {
+        $("#onboarding-pane").html(msg['onboarding_html']);
+        // Has the answers but we don't use them anymore on the frontend
+        // Checking is done on the backend
+        onboarding_task_data = msg['onboarding_data'];
+        console.log('Found ' + $('input[name^="checkbox_group_"]').length + ' checkboxes.');
+        var all_onboarding_checkbox_groups = [$('input[name="checkbox_group_1"]'), $('input[name="checkbox_group_3"]'), $('input[name="checkbox_group_5"]'), $('input[name="checkbox_group_7"]'), $('input[name="checkbox_group_9"]')];
+        for (var i = 0; i < all_onboarding_checkbox_groups.length; i++) {
+            var cg = all_onboarding_checkbox_groups[i];
+            var cg_name = cg.attr('name');
+            var message_idx = parseInt(cg_name[cg_name.length - 1]);
+            cg.click(displayCheckboxDescription.bind(this, message_idx));
+        }
+    };
+
+    var renderOnboardingFail = function () {
+        // Show the chat panel in case it isn't already shown
+        // is_init_page = false;
+        // init_chat_panel();
+
+        // Update the UI
+        $("button#id_submit_onboarding_answers").css("display", "none");
+
+        alert('Sorry, you\'ve exceeded the maximum amount of tries to label the sample conversation correctly, and thus we don\'t believe you can complete the task correctly. Please return the HIT.')
+
+        // For some reason it seems like this HTML message does not show up for 
+        // some turkers? (Got email saying the button disappeared - so they 
+        // failed - but they could still see their answers, so were confused.)
+        $("#main-pane").html('<div style="text-align:center;font-size:2em;margin-top:10%;padding:50px;">Sorry, you\'ve exceeded the maximum amount of tries to label the sample conversation correctly, and thus we don\'t believe you can complete the task correctly. Please return the HIT.</div>')
+
+        // Redraw UI
+        $(window).resize();
+
+        // Need to wait to close the socket otherwise the backend won't 
+        // received the failed message to soft ban the worker
+        // window.setTimeout(close_socket, 10000);
+    }
+
+    var old_msg_function = handle_new_message
+    handle_new_message = function (new_message_id, message) {
+        console.log('Onboarding received message in handle_new_message: ' + JSON.stringify(message));
+        if (message.text === undefined) {
+            console.log('Got message with text undefined. Going to display the waiting message.');
+            $("div#response-type-waiting").css("display", "");
+            return
+        }
+        old_msg_function.apply(old_msg_function, [new_message_id, message])
+        console.log(message);
+        if ('onboarding_html' in message) {
+            // Initial message, need to render the onboarding task
+            setupOnboardingTask(message);
+        } else if (message.text == ONBOARD_TRY_AGAIN) {
+            alert('You did not label the sample conversation well enough. Please try one more time!');
+            $('button#id_submit_onboarding_answers').removeClass("disabled");
+            $('button#id_submit_onboarding_answers').prop("disabled", false);
+        } else if (message.text == ONBOARD_FAIL) {
+            // Tell user to return the HIT
+            renderOnboardingFail();
+        } else {
+            console.log('Received unknown message type: ' + JSON.stringify(message));
+        }
+
+        // var agent_id = message.id;
+        var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        // $("span#task-persona").html(message_text);
+        // window.setTimeout(function () { $('#id_send_msg_button').focus() }, 1000);
+    }
+    // Using evt.preventDefault() did not seem to prevent the send msg button from getting clicked and it advanced the page to the HIT
+    $('#id_submit_onboarding_answers').click(function () {
+        console.log('Submitting onboarding answers...');
+        $('button#id_submit_onboarding_answers').addClass("disabled");
+        $('button#id_submit_onboarding_answers').prop("disabled", true);
+        var checkbox_keys = ['contradiction', 'not_fluent', 'repetitive', 'off_topic', 'non_sensical', 'none_all_good'];
+        var all_onboarding_checkbox_groups = [$('input[name="checkbox_group_1"]'), $('input[name="checkbox_group_3"]'), $('input[name="checkbox_group_5"]'), $('input[name="checkbox_group_7"]'), $('input[name="checkbox_group_9"]')];
+        var user_answers = {};
+        // Get the answers that the user clicked from the checkboxes
+        for (var i = 0; i < all_onboarding_checkbox_groups.length; i++) {
+            var cg = all_onboarding_checkbox_groups[i];
+            var cg_name = cg.attr('name');
+            var message_idx = parseInt(cg_name[cg_name.length - 1]);
+            var answers_for_idx = []
+            checkbox_keys.map(function (k) {
+                var is_checked = $('#checkbox_' + k + '_' + message_idx + ':checked').val();
+                if (is_checked == 'on') {
+                    answers_for_idx.push(k)
+                }
+            });
+            // dictionary so keys will be 1,3,5,7,9
+            user_answers[message_idx] = answers_for_idx;
+        }
+
+        new_message_id = uuidv4();
+        send_packet(
+            TYPE_MESSAGE,
+            {
+                text: '[ONBOARD_SUBMIT]',
+                id: cur_agent_id,
+                message_id: new_message_id,
+                onboard_submission: user_answers,
+                episode_done: false,
+            },
+            true,
+            true,
+            null
+        );
+    });
+
+    function window_resize() {
+    }
+    $(window).resize(window_resize);
+    function scroll_conversation_to_bottom() { }
+    function scroll_conversation_to_bottom() {
+        $('div#main-pane').animate({
+            scrollTop: 0
+            // scrollTop: $('div#main-pane').get(0).scrollHeight
+        }, 500);
+    }
+</script>
+{% endblock %}
