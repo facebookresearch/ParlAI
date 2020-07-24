@@ -85,7 +85,7 @@ def run_task(override_opt):
     opt['task'] = os.path.basename(directory_path)
 
     opt['left_pane_text'] = LEFT_PANE_TEXT
-    opt['task_config'] = TASK_CONFIG
+    opt.update(TASK_CONFIG)
 
     # To double to 14 turns, num_turns should be 13, and put 14 on the frontend
     # in Person1_index.html (search for HACK: it's tough to pass variables to
@@ -127,7 +127,9 @@ def run_task(override_opt):
     # Create the models before it launches Heroku backend b/c takes a while
     models_needed = list(opt['conversations_needed'].keys())
     active_models = [m for m in models_needed if opt['conversations_needed'][m] > 0]
-    shared_bot_agents = TurkLikeAgent.get_bot_agents(opt, active_models, datapath=opt['datapath'])
+    shared_bot_agents = TurkLikeAgent.get_bot_agents(
+        opt, active_models, datapath=opt['datapath']
+    )
 
     mturk_agent_ids = [AGENT_0]
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
