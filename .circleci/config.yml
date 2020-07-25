@@ -104,14 +104,16 @@ installtorchgpu14: &installtorchgpu14
       python -m torch.utils.collect_env
 
 
-installtorchgpu13: &installtorchgpu13
+installtorchgpu15: &installtorchgpu15
   run:
     name: Install torch GPU and dependencies
     command: |
-      python -m pip install --progress-bar off 'torch==1.3.1'
+      python -m pip install --progress-bar off 'torch==1.5.1'
       python -m pip install --progress-bar off 'subword-nmt==0.3.7'
       python -m pip install --progress-bar off pytorch-pretrained-bert
       python -m pip install --progress-bar off transformers
+      python -m pip install --progress-bar off 'torchtext==0.6.0'
+      python -m pip install --progress-bar off 'torchvision==0.6.0'
       python -m pip install --progress-bar off fairseq
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
@@ -275,7 +277,7 @@ jobs:
       - store_test_results:
           path: test-results
 
-  unittests_gpu13:
+  unittests_gpu15:
     <<: *gpu
     working_directory: ~/ParlAI
     parallelism: 16
@@ -290,17 +292,17 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200625-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200625-gpu15-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installtorchgpu13
+      - <<: *installtorchgpu15
       - <<: *installdeps
       - save_cache:
-          key: deps-20200625-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200625-gpu15-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - run:
-          name: Unit tests (GPU; pytorch 1.3)
+          name: Unit tests (GPU; pytorch 1.5)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
@@ -506,6 +508,7 @@ workflows:
     jobs:
       - cleaninstall_36
       - unittests_gpu14
+      - unittests_gpu15
       - unittests_38
       - unittests_37
       - unittests_36
