@@ -46,7 +46,6 @@ from parlai.core.metrics import (
     Metrics,
     Metric,
     GlobalAverageMetric,
-    GlobalSumMetric,
     GlobalFixedMetric,
     TimerMetric,
 )
