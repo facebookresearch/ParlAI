@@ -47,7 +47,7 @@ from parlai.core.metrics import (
     Metric,
     GlobalAverageMetric,
     GlobalFixedMetric,
-    TimerMetric,
+    GlobalTimerMetric,
 )
 from parlai.utils.distributed import is_primary_worker
 from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
@@ -1954,7 +1954,7 @@ class TorchAgent(ABC, Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
-        self.global_metrics.add('exps', TimerMetric(batch.batchsize))
+        self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (
             'label_vec' in batch
@@ -1967,19 +1967,21 @@ class TorchAgent(ABC, Agent):
             # num_tokens in all workers, and the denominator is 1.
             lt = (batch.label_vec != self.NULL_IDX).sum().item()
             ltpb = GlobalAverageMetric(lt, float(is_primary_worker()))
-            self.global_metrics.add('tpb_lab', ltpb)
-            self.global_metrics.add('tps_lab', TimerMetric(lt))
+            self.global_metrics.add('ltpb', ltpb)
+            self.global_metrics.add('ltps', GlobalTimerMetric(lt))
 
             ct = (batch.text_vec != self.NULL_IDX).sum().item()
             ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
-            self.global_metrics.add('tpb_ctx', ctpb)
-            self.global_metrics.add('tps_ctx', TimerMetric(ct))
+            self.global_metrics.add('ctpb', ctpb)
+            self.global_metrics.add('ctps', GlobalTimerMetric(ct))
 
             ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
-            self.global_metrics.add('tpb_tot', ttpb)
-            self.global_metrics.add('tps_tot', TimerMetric(ct + lt))
+            self.global_metrics.add('tpb', ttpb)
+            self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
 
         if self.is_training:
+            # register the start of updates for later counting when they occur
+            self.global_metrics.add('ups', GlobalTimerMetric(0))
             output = self.train_step(batch)
         else:
             with torch.no_grad():
@@ -2002,6 +2004,19 @@ class TorchAgent(ABC, Agent):
                 if 'metrics' not in batch_reply[i]:
                     batch_reply[i]['metrics'] = {}
                 batch_reply[i]['metrics'][k] = value
+
+        # register the end of timers
+        endtimer = GlobalTimerMetric(0)
+        self.global_metrics.add('exps', endtimer)
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
+            self.global_metrics.add('ltps', GlobalTimerMetric(0))
+            self.global_metrics.add('ctps', GlobalTimerMetric(0))
+            self.global_metrics.add('tps', GlobalTimerMetric(0))
 
         # Make sure we push all the metrics to main thread in hogwild/workers
         self.global_metrics.flush()
@@ -2113,7 +2128,7 @@ class TorchAgent(ABC, Agent):
         # in distributed mode, all workers step together, but we need to only
         # count it once. Only the primary worker gets to make the count
         if is_primary_worker():
-            self.global_metrics.add('ups', TimerMetric(1))
+            self.global_metrics.add('ups', GlobalTimerMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)
