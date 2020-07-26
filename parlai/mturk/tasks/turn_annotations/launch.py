@@ -33,7 +33,7 @@ def launch():
         'num_turns': 6,
         'conversations_needed': models_needed_dict,
     }
-    for k, v in override_opt.items():
+    for k, _ in override_opt.items():
         if 'TODO_FIXME' in str(override_opt[k]):
             raise Exception(f'Please customize the option: {k} for this task to run.')
     run_task(override_opt)

@@ -103,7 +103,7 @@ LEFT_PANE_TEXT = '''
 <br>
 <b><h4>Task Description</h4></b>
 <br>
-Dummy Left Pane Task Description. 
+Dummy Left Pane Task Description.
 
 Lorem ipsum.
 '''

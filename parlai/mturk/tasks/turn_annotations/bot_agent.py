@@ -41,10 +41,10 @@ class TurkLikeAgent:
         annotations_html = """<br><br><span style="font-style:italic;">Does this comment from your partner have any problems? (Check all that apply)<br>"""
         for a in ANNOTATIONS_CONFIG:
             annotations_html += f"""<input type="checkbox"
-            id="checkbox_{a["value"]}_{turn_idx}" 
-            name="checkbox_group_{turn_idx}" 
-            ta-description="{a["description"]}" 
-            ta-pretty-name="{a["name"]}" /><span 
+            id="checkbox_{a["value"]}_{turn_idx}"
+            name="checkbox_group_{turn_idx}"
+            ta-description="{a["description"]}"
+            ta-pretty-name="{a["name"]}" /><span
             style={css_style}>{a["name"]}</span>"""
         annotations_html += f'<br><br><div id="explanation_{turn_idx}"></div>'
         return annotations_html

@@ -9,7 +9,6 @@ import os
 import json
 import datetime
 from joblib import Parallel, delayed
-from typing import List, Optional
 
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.mturk.core.agents import (
@@ -309,13 +308,17 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             return
 
         """Otherwise, we proceed accordingly"""
-        print(f'{self.__class__.__name__}:{self.tag}: About to act with task turn idx: {self.task_turn_idx}')
+        print(
+            f'{self.__class__.__name__}:{self.tag}: About to act with task turn idx: {self.task_turn_idx}'
+        )
         acts = [None, None]
         for idx, agent in enumerate(self.agents):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
                 acts[idx] = Compatibility.maybe_fix_act(acts[idx])
-                print(f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.')
+                print(
+                    f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
+                )
 
             if self.check_timeout(acts[idx]):
                 return

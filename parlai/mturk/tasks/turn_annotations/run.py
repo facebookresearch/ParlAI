@@ -55,7 +55,7 @@ def run_task(override_opt):
         '--base-save-folder',
         default=None,
         type=str,
-        help='base folder for saving all results',
+        help='base folder for saving all crowdsourcing results',
     )
     argparser.add_argument(
         '--base-model-folder',
