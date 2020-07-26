@@ -88,8 +88,8 @@ class TurkLikeAgent:
 
     def observe(self, observation):
         """
-        Need to protect the observe also with a semaphore for composed models
-        where an act() may be called within an observe()
+        Need to protect the observe also with a semaphore for composed models where an
+        act() may be called within an observe()
         """
         print(
             f'{self.__class__.__name__}: In observe() before semaphore, self.turn_idx is {self.turn_idx} and observation is {observation}'

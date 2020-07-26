@@ -23,8 +23,8 @@ from bot_agent import TurkLikeAgent
 
 def run_task(override_opt):
     """
-    This task consists of an MTurk worker talking to a model and MTurker also
-    evaluates each utterance of the bot for various buckets (see constants).
+    This task consists of an MTurk worker talking to a model and MTurker also evaluates
+    each utterance of the bot for various buckets (see constants).
     """
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()

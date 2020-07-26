@@ -34,13 +34,13 @@ from utils import Compatibility
 
 class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
     """
-    This onboarding world displays a sample conversation with checkboxes of the
-    same annotations as in the real HIT, but it is not a live conversation (all
-    utterances are displayed at once).
+    This onboarding world displays a sample conversation with checkboxes of the same
+    annotations as in the real HIT, but it is not a live conversation (all utterances
+    are displayed at once).
 
     constants.py has the task data with correct answers in json form
-    (ONBOARD_TASK_DATA). User gets to try again onboard_failures_max_allowed
-    times and is soft banned if they fail more than that.
+    (ONBOARD_TASK_DATA). User gets to try again onboard_failures_max_allowed times and
+    is soft banned if they fail more than that.
     """
 
     def __init__(self, opt, mturk_agent):

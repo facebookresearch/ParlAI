@@ -11,7 +11,7 @@ from parlai.core.params import ParlaiParser
 
 def launch():
     """
-    Convenience function to avoid launching from the command line all the time
+    Convenience function to avoid launching from the command line all the time.
     """
 
     argparser = ParlaiParser(False, False)
