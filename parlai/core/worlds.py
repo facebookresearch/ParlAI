@@ -212,6 +212,12 @@ class World(object):
         """
         return self.total_epochs
 
+    def get_total_parleys(self):
+        """
+        Return total number of parleys.
+        """
+        return self.total_parleys
+
     def __enter__(self):
         """
         Empty enter provided for use with ``with`` statement.
