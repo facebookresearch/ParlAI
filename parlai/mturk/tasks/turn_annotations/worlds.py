@@ -27,6 +27,7 @@ from constants import (
     ONBOARD_FAIL,
     ONBOARD_SUBMIT,
     ONBOARD_SUCCESS,
+    ANNOTATIONS_CONFIG,
 )
 from bot_agent import TurkLikeAgent
 from utils import Compatibility
@@ -50,7 +51,10 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         self.max_incorrect = 3
         self.onboard_failure_count = 0
         self.onboard_failures_max_allowed = 1
-        self.worker_answer_file = os.path.join(opt['onboard_worker_answer_folder'], 'worker_answers.json')
+        self.worker_answer_file = os.path.join(
+            opt['onboard_worker_answer_folder'], 'worker_answers.json'
+        )
+        os.makedirs(opt['onboard_worker_answer_folder'], exist_ok=True)
         super().__init__(opt, mturk_agent)
 
     def _is_worker_disconnected(self, act):
@@ -97,13 +101,16 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         print(
             f'Worker {worker_id} got {number_correct} annotations correct and {number_incorrect} incorrect in onboarding.'
         )
-        if number_correct >= self.min_correct and number_incorrect <= self.max_incorrect:
+        if (
+            number_correct >= self.min_correct
+            and number_incorrect <= self.max_incorrect
+        ):
             return True
         return False
 
     def parley(self):
         print(
-            f'{self.world_tag}: starting parley for worker_id: {self.mturk_agent.worker_id}'
+            f'{self.__class__.__name__}: starting parley for worker_id: {self.mturk_agent.worker_id}'
         )
 
         onboarding_task_html = ''
@@ -114,36 +121,45 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
                 # human
                 onboarding_task_html += f"""<div class="alert alert-info" style="float: right; display:table;"><span class="onboarding-text"><b>YOU:</b> {utt["text"]}</span></div>"""
             else:
-                checkboxes_html = TurkLikeAgent.construct_checkbox_html(idx)
-                onboarding_task_html += f"""<div class="alert alert-warning" style="float: left; display:table; margin-top:30px"><span class="onboarding-text"><b>THEM:</b> {utt["text"]}{checkboxes_html}</span></div>"""
+                annotations_html = TurkLikeAgent.construct_annotations_html(idx)
+                onboarding_task_html += f"""<div class="alert alert-warning" style="float: left; display:table; margin-top:30px"><span class="onboarding-text"><b>THEM:</b> {utt["text"]}{annotations_html}</span></div>"""
         onboarding_task_html += '<div style="clear:both;"></div>'
 
         self.mturk_agent.observe(
-            {'id': 'SYSTEM', 'text': '', 'onboarding_html': onboarding_task_html}
+            {
+                'id': 'SYSTEM',
+                'text': '',
+                'onboarding_html': onboarding_task_html,
+                'annotations_config': ANNOTATIONS_CONFIG,
+            }
         )
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
         return self._handle_act(act)
 
     def _handle_act(self, act):
         print(
-            f'{self.world_tag}: got act: {act} for worker_id: {self.mturk_agent.worker_id}'
+            f'{self.__class__.__name__}: got act: {act} for worker_id: {self.mturk_agent.worker_id}'
         )
 
         # disconnect
         if 'text' in act and act['text'] == MTURK_DISCONNECT_MESSAGE:
-            print(f'{self.world_tag}: User disconnected {self.mturk_agent.worker_id}')
+            print(
+                f'{self.__class__.__name__}: User disconnected {self.mturk_agent.worker_id}'
+            )
             self.episodeDone = True
             return MTURK_DISCONNECT_MESSAGE
 
         # timeout
         if 'text' in act and act['text'] == TIMEOUT_MESSAGE:
-            print(f'{self.world_tag}: User timed out {self.mturk_agent.worker_id}')
+            print(
+                f'{self.__class__.__name__}: User timed out {self.mturk_agent.worker_id}'
+            )
             self.episodeDone = True
             return TIMEOUT_MESSAGE
 
         if 'text' in act and act['text'] == ONBOARD_SUBMIT:
             print(
-                f'{self.world_tag}: Got first onboarding task submission for worker {self.mturk_agent.worker_id}.'
+                f'{self.__class__.__name__}: Got first onboarding task submission for worker {self.mturk_agent.worker_id}.'
             )
             worker_answers = act['onboard_submission']
             self.write_worker_answers_to_file(worker_answers)
@@ -160,7 +176,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
             elif self.onboard_failure_count < self.onboard_failures_max_allowed:
                 # User failed but give the option to try again
                 print(
-                    f'{self.world_tag}: Worker {self.mturk_agent.worker_id} failed onboarding but failure count is less than max times allowed, so will try again. (failure count is: {self.onboard_failure_count} of max allowed {self.onboard_failures_max_allowed}). submission is: {act["onboard_submission"]}'
+                    f'{self.__class__.__name__}: Worker {self.mturk_agent.worker_id} failed onboarding but failure count is less than max times allowed, so will try again. (failure count is: {self.onboard_failure_count} of max allowed {self.onboard_failures_max_allowed}). submission is: {act["onboard_submission"]}'
                 )
                 self.onboard_failure_count += 1
                 self.mturk_agent.observe({'id': 'System', 'text': ONBOARD_TRY_AGAIN})
@@ -169,7 +185,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
             else:
                 # User has now failed too many times - soft ban them
                 print(
-                    f'{self.world_tag}: Worker FAILED onboarding too many times...Soft blocking {self.mturk_agent.worker_id}. Submission was: {act["onboard_submission"]}'
+                    f'{self.__class__.__name__}: Worker FAILED onboarding too many times...Soft blocking {self.mturk_agent.worker_id}. Submission was: {act["onboard_submission"]}'
                 )
                 self.mturk_agent.mturk_manager.soft_block_worker(
                     self.mturk_agent.worker_id
@@ -185,7 +201,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
                     self.mturk_agent.observe({'id': 'System', 'text': ONBOARD_FAIL})
                     after_block_act = self.mturk_agent.act()
                 print(
-                    f'{self.world_tag}: Failed onboarding worker {self.mturk_agent.worker_id} did disconnect or return HIT. Ending onboarding.'
+                    f'{self.__class__.__name__}: Failed onboarding worker {self.mturk_agent.worker_id} did disconnect or return HIT. Ending onboarding.'
                 )
                 self.episodeDone = True
                 return ONBOARD_FAIL
@@ -195,7 +211,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
             # onboarding successfully and clicked Continue to HIT button (which
             # only appears after they successfully complete the onboarding)
             print(
-                f'{self.world_tag}: No text in act from onboarding. Marking episode done; act was: {act}'
+                f'{self.__class__.__name__}: No text in act from onboarding. Marking episode done; act was: {act}'
             )
             control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
             self.mturk_agent.observe(validate(control_msg))
@@ -210,83 +226,69 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         agents=None,
         shared=None,
         num_turns=6,
+        tag=None,
         max_resp_time=120,
-        world_tag='NONE',
         agent_timeout_shutdown=120,
-        checkbox_options: dict = None,
+        annotations_config: dict = None,
     ):
         # 6 turns for a single side (so 12 total), and really it appears to be
         # 14 total b/c of the "Hi!" and first bot utterance
-        print(f'Creating {self.world_tag} with {num_turns} turns.')
+
         self.agents = agents
         self.task_turn_idx = 0
         self.num_turns = num_turns
 
         self.dialog = []
+        self.tag = tag
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
-        self.world_tag = world_tag
-        self.checkbox_options = checkbox_options
+        self.annotations_config = annotations_config
 
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
         self.agent_timeout_shutdown = agent_timeout_shutdown
+        print(
+            f'Creating {self.__class__.__name__} for tag {tag} with {num_turns} turns.'
+        )
         super().__init__(opt, agents, shared)
 
     def __add_problem_data_to_utterance(self, p):
         # Human has just responded. Problem data received
         # now will be from bot's prior utterance (turn_idx
         # is a also present to be safe that data matches)
-        is_fake_utterance = (
-            'fake_start' in self.dialog[p['turn_idx']]
-            and self.dialog[p['turn_idx']]['fake_start']
-        )
-        assert (
-            any(
-                [
-                    p['contradiction'],
-                    p['not_fluent'],
-                    p['repetitive'],
-                    p['off_topic'],
-                    p['non_sensical'],
-                    p['none_all_good'],
-                ]
-            )
-            or is_fake_utterance
-        )
-        # print(f'problem_data for final utterance in DONE: {p}')
+        annotations = []
+        for a in ANNOTATIONS_CONFIG:
+            annotations.append(p[a['value']])
+        assert any(annotations)
         self.dialog[p['turn_idx']]['problem_data'] = p
 
     def parley(self):
-        self.task_turn_idx += 1
-
-        control_msg = {'episode_done': False}
-        control_msg['id'] = 'SYSTEM'
+        control_msg = {
+            'episode_done': False,
+            'config': {
+                'min_num_turns': self.num_turns,
+                'annotations_config': ANNOTATIONS_CONFIG,
+            },
+            'left_pane_text': self.opt['left_pane_text'],
+        }
 
         print(
-            f'{self.world_tag} is at turn {self.task_turn_idx} of {self.num_turns}...'
+            f'{self.__class__.__name__}:{self.tag}: is at turn {self.task_turn_idx} of {self.num_turns}...'
         )
 
-        if self.task_turn_idx == 1:
-            for agent_idx, agent in enumerate(self.agents):
-                control_msg['left_pane_text'] = self.opt['left_pane_text']
-                control_msg['text'] = ''
-                if agent_idx == 1:
-                    control_msg['text'] = 'TODO FIXME'
-                    agent.observe(validate(control_msg))
-                    if agent_idx == 0:
-                        time.sleep(3)
-                else:
-                    agent.observe(validate(control_msg))
-
+        if self.task_turn_idx == 0:
             print('[Displaying "Hi!" only as per Meena task.]')
             human_first_msg = {
+                'left_pane_text': self.opt['left_pane_text'],
                 'episode_done': False,
                 'id': self.agents[0].id,
                 'text': 'Hi!',
                 'fake_start': True,
                 'agent_idx': 0,
             }
+            for k, v in control_msg.items():
+                human_first_msg[k] = v
+
             self.dialog.append(human_first_msg)
             self.agents[0].observe(validate(human_first_msg))
             self.agents[1].observe(validate(human_first_msg))
@@ -298,25 +300,25 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
 
             bot_utterance_data = {
                 'agent_idx': 1,
-                # Get rid of checkboxes HTML from bot response
+                # Get rid of annotations HTML from bot response
                 'text': first_bot_act['text'].split('<br>')[0],
                 'id': first_bot_act['id'],
             }
             self.dialog.append(bot_utterance_data)
+            self.task_turn_idx += 1
+            return
 
         """Otherwise, we proceed accordingly"""
+        print(f'{self.__class__.__name__}:{self.tag}: About to act with task turn idx: {self.task_turn_idx}')
         acts = [None, None]
         for idx, agent in enumerate(self.agents):
-
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
                 acts[idx] = Compatibility.maybe_fix_act(acts[idx])
+                print(f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.')
 
             if self.check_timeout(acts[idx]):
                 return
-
-            acts[idx] = agent.act()
-            acts[idx] = Compatibility.maybe_fix_act(acts[idx])
 
             if acts[idx]['episode_done']:
                 self.chat_done = True
@@ -336,10 +338,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 if self.task_turn_idx > self.num_turns:
                     for ag in self.agents:
                         if idx == 0:
-                            # Human; had to comment this observe b/c
-                            # self_observe no longer allows two observes without
-                            # an act() in between
-                            # ag.observe(validate(acts[idx]))
                             print('One of you ended the chat utterance coming.')
                             control_msg['text'] = (
                                 'One of you ended the chat. Thanks for your '
@@ -353,13 +351,12 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                             # is a also present to be safe that data matches)
                             p = acts[idx]['problem_data_for_prior_message']
                             self.__add_problem_data_to_utterance(p)
-                            # print(f'After last act self.dialog is: {self.dialog}')
                 return
 
             else:
                 utterance_data = {
                     'agent_idx': idx,
-                    # Get rid of checkboxes HTML if it's the bot response
+                    # Get rid of annotations HTML if it's the bot response
                     'text': acts[idx]['text'].split('<br>')[0],
                     'id': acts[idx]['id']
                     if 'id' in acts[idx]
@@ -380,6 +377,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 print(
                     f'[agent {idx}] self.task_turn_idx: {self.task_turn_idx}, self.dialog is: {self.dialog}'
                 )
+                self.task_turn_idx += 1
 
     def shutdown(self):
         global shutdown_agent
@@ -432,7 +430,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 'hit_ids': [ag.hit_id for ag in self.agents],
                 'assignment_ids': [ag.assignment_id for ag in self.agents],
                 'task_description': {
-                    'checkbox_options': self.checkbox_options,
+                    'annotations_config': self.annotations_config,
                     'had_onboarding': False,
                     'model_nickname': self.agents[1].worker_id,
                     'model_file': self.agents[1].model_agent.opt['model_file'],
@@ -442,7 +440,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             data_str = json.dumps(data)
             f_json.write(data_str)
         print(
-            f'{self.world_tag}: Data successfully saved at {filename} for model: {self.agents[1].worker_id}.'
+            f'{self.__class__.__name__}:{self.tag}: Data successfully saved at {filename} for model: {self.agents[1].worker_id}.'
         )
         return (
             self.agents[1].worker_id,
@@ -453,7 +451,9 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         if act['text'] == '[TIMEOUT]' and act['episode_done']:
             control_msg = {'episode_done': True}
             control_msg['id'] = 'SYSTEM'
-            control_msg['text'] = 'HIT has timed out. Please click the "Done with this HIT" button below to exit this HIT. No rejections.'
+            control_msg[
+                'text'
+            ] = 'HIT has timed out. Please click the "Done with this HIT" button below to exit this HIT. No rejections.'
             for ag in self.agents:
                 if ag.id != act['id']:
                     if ag.id != AGENT_1:

@@ -13,7 +13,7 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 from constants import (
     AGENT_0,
-    CHECKBOXES_CONFIG,
+    ANNOTATIONS_CONFIG,
     TASK_CONFIG,
     LEFT_PANE_TEXT,
 )
@@ -40,15 +40,13 @@ def run_task(override_opt):
         help='how long to wait for auto approval',
     )
     argparser.add_argument(
-        '-mx_rsp_time',
-        '--max_resp_time',
+        '--max-resp-time',
         type=int,
         default=180,
         help='time limit for entering a dialog message',
     )
     argparser.add_argument(
-        '-mx_onb_time',
-        '--max_onboard_time',
+        '--max-onboard-time',
         type=int,
         default=300,
         help='time limit accepting onboarding',
@@ -71,12 +69,6 @@ def run_task(override_opt):
         type=str,
         help='base folder for saving all worker answer results during onboarding',
     )
-    argparser.add_argument(
-        '--first-turn-version',
-        default='v1',
-        type=str,
-        help='If v2, persona strings will be prepended to the opennning of the dialogue in the first turn.',
-    )
 
     argparser.set_params(**override_opt)
     opt = argparser.parse_args()
@@ -86,11 +78,6 @@ def run_task(override_opt):
 
     opt['left_pane_text'] = LEFT_PANE_TEXT
     opt.update(TASK_CONFIG)
-
-    # To double to 14 turns, num_turns should be 13, and put 14 on the frontend
-    # in Person1_index.html (search for HACK: it's tough to pass variables to
-    # the frontend template)
-    opt['num_turns'] = 6
 
     # NOTE: you have to set all three of these opts to enforce the
     # max_hits_per_worker. If unique_qual_name not set, MTurkManager creates a
@@ -188,10 +175,11 @@ def run_task(override_opt):
                 agents=workers_including_bot,
                 num_turns=opt['num_turns'],
                 max_resp_time=opt['max_resp_time'],
-                world_tag='conversation t_{}'.format(conv_idx),
-                checkbox_options=CHECKBOXES_CONFIG,
+                tag='conversation t_{}'.format(conv_idx),
+                annotations_config=ANNOTATIONS_CONFIG,
             )
             while not world.episode_done():
+                print('About to parley')
                 world.parley()
             model_nickname, convo_finished = world.save_data()
 

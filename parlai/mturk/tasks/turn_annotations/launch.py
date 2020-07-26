@@ -17,8 +17,8 @@ def launch():
     argparser = ParlaiParser(False, False)
     datapath = os.path.join(argparser.parlai_home, 'data')
     task_folder = 'turn_annotations'
-    # models_needed_dict = {'TODO_MODEL_NAME': 110}
-    models_needed_dict = {'generative2.7B_bst_0331': 110}
+    # models_needed_dict = {'TODO_FIXME_MODEL_NAME': 110}
+    models_needed_dict = {'generative_bst': 110}
     override_opt = {
         'block_qualification': 'block_qualification_name',
         'base_save_folder': os.path.join(datapath, task_folder),
@@ -26,11 +26,16 @@ def launch():
             datapath, task_folder, 'onboard_answers'
         ),
         'base_model_folder': '/checkpoint/parlai/zoo/q_function/',
+        # 'base_model_folder': 'TODO_FIXME_BASE_MODEL_FOLDER',
         'num_conversations': 110,
         'is_sandbox': True,
         'reward': 3,
+        'num_turns': 6,
         'conversations_needed': models_needed_dict,
     }
+    for k, v in override_opt.items():
+        if 'TODO_FIXME' in str(override_opt[k]):
+            raise Exception(f'Please customize the option: {k} for this task to run.')
     run_task(override_opt)
 
 

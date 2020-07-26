@@ -9,12 +9,32 @@ AGENT_1 = 'Person2'
 
 WAITING_MSG = 'Please wait while we match you with another worker...'
 
-CHECKBOXES_CONFIG = [
-    {'value': 'bucket_0', 'name': 'Bucket 0'},
-    {'value': 'bucket_1', 'name': 'Bucket 1'},
-    {'value': 'bucket_2', 'name': 'Bucket 2'},
-    {'value': 'bucket_3', 'name': 'Bucket 3'},
-    {'value': 'bucket_4', 'name': 'Bucket 4'},
+ANNOTATIONS_CONFIG = [
+    {
+        'value': 'bucket_0',
+        'name': 'Bucket 0',
+        'description': 'this response implies something...0',
+    },
+    {
+        'value': 'bucket_1',
+        'name': 'Bucket 1',
+        'description': 'this response implies something...1',
+    },
+    {
+        'value': 'bucket_2',
+        'name': 'Bucket 2',
+        'description': 'this response implies something...2',
+    },
+    {
+        'value': 'bucket_3',
+        'name': 'Bucket 3',
+        'description': 'this response implies something...3',
+    },
+    {
+        'value': 'bucket_4',
+        'name': 'Bucket 4',
+        'description': 'this response implies something...4',
+    },
 ]
 
 ONBOARD_SUBMIT = '[ONBOARD_SUBMIT]'
@@ -23,16 +43,36 @@ ONBOARD_FAIL = '[ONBOARD_FAIL]'
 ONBOARD_SUCCESS = '[ONBOARD_SUCCESS]'
 
 ONBOARD_TASK_DATA = [
-    {'text': 'Lorem Ipsum', 'agent_idx': 0},
-    {'text': 'Lorem Ipsum', 'agent_idx': 1, 'answers': ['bucket_0']},
-    {'text': 'Lorem Ipsum', 'agent_idx': 0},
-    {'text': 'Lorem Ipsum', 'agent_idx': 1, 'answers': ['bucket_1']},
-    {'text': 'Lorem Ipsum', 'agent_idx': 0},
-    {'text': 'Lorem Ipsum', 'agent_idx': 1, 'answers': ['bucket_2']},
-    {'text': 'Lorem Ipsum', 'agent_idx': 0},
-    {'text': 'Lorem Ipsum', 'agent_idx': 1, 'answers': ['bucket_3']},
-    {'text': 'Lorem Ipsum', 'agent_idx': 0,},
-    {'text': 'Lorem Ipsum.', 'agent_idx': 1, 'answers': ['bucket_4']},
+    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
+    {
+        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'agent_idx': 1,
+        'answers': ['bucket_0'],
+    },
+    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
+    {
+        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'agent_idx': 1,
+        'answers': ['bucket_1'],
+    },
+    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
+    {
+        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'agent_idx': 1,
+        'answers': ['bucket_2'],
+    },
+    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
+    {
+        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'agent_idx': 1,
+        'answers': ['bucket_3'],
+    },
+    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
+    {
+        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'agent_idx': 1,
+        'answers': ['bucket_4'],
+    },
 ]
 
 

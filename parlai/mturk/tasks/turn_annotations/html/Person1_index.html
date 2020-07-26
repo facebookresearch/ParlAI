@@ -84,17 +84,21 @@
 
 {% block additional_scripts %}
 <script type="text/javascript">
+  MIN_NUM_TURNS = null;
+  ANNOTATIONS_CONFIG = null;
 
   // Adds a message to the thread
-  function add_message_to_conversation(agent_id, message_text, is_self, message_idx, exceed_min_turns) {
+  function add_message_to_conversation(agent_id, message_text, is_self, message_idx, exceedMinTurns) {
     // Select the right display style given if the message is from self
+    console.log('add_message_to_conversation: agent_id: ' + agent_id + ', is_self: ' + is_self + ', message_idx: '  + message_idx); 
     var float_loc = 'left';
     var alert_class = 'alert-warning';
     var friendly_id = 'THEM';
     if (is_self) {
       float_loc = 'right';
       alert_class = 'alert-info';
-      turns_remaining = 7 - message_idx / 2; // HACK
+      // +1 is due to the "Hi!"
+      turns_remaining = (MIN_NUM_TURNS + 1) - message_idx / 2;
       friendly_id = '[' + turns_remaining + ' LEFT] YOU'
     }
 
@@ -105,8 +109,8 @@
       '</div>' +
       '</div>'
     );
-    var shouldActionButtonsBeEnabled_ = function (m_idx) {
-      var aCheckboxIsChecked = $('input[name="checkbox_group_' + m_idx + '"]').is(':checked');
+    var shouldActionButtonsBeEnabled_ = function (mIdx) {
+      var aCheckboxIsChecked = $('input[name="checkbox_group_' + mIdx + '"]').is(':checked');
       var hasRadioButtons = $('input[name="radio_final_rating_group"]').length > 0
       var radioButtonsChecked = $('input[name="radio_final_rating_group"]').is(':checked');
       if ((aCheckboxIsChecked && !hasRadioButtons) || (aCheckboxIsChecked && (hasRadioButtons && radioButtonsChecked))) {
@@ -114,9 +118,9 @@
       }
       return false;
     };
-    var checkEnableActionButtons = function (m_idx) {
-      console.log('checkEnableActionButtons for message idx: ' + m_idx);
-      var enableButtons = shouldActionButtonsBeEnabled_(m_idx);
+    var checkEnableActionButtons = function (mIdx) {
+      console.log('checkEnableActionButtons for message idx: ' + mIdx);
+      var enableButtons = shouldActionButtonsBeEnabled_(mIdx);
       if (enableButtons) {
         $("button#id_send_msg_button").removeClass("disabled");
         $("button#id_send_msg_button").prop("disabled", false);
@@ -130,40 +134,25 @@
         $("button#id_done_button").addClass("disabled");
         $("button#id_done_button").prop("disabled", true);
       }
-      if (exceed_min_turns) {
+      if (exceedMinTurns) {
         $("button#id_send_msg_button").hide();
       }
     };
 
-    // This is in both the onboarding and here, b/c it doesn't seem to copy
-    // over a .js file (terrible)
-    var CHECKBOX_DESCRIPTIONS = {
-        contradiction: { name: 'Contradiction', description: 'this response either contradicts itself, a known fact, or something the speaker said previously.' },
-        not_fluent: { name: 'Improper English', description: 'this response has poor use of the English language, uses nonstandard phrasing, or contains made-up words. Please ignore punctuation and capitalization issues, they are ok.' },
-        repetitive: { name: 'Repetitive', description: 'this response either repeats itself, or is a repeat or rephrasing of something the speaker already said.' },
-        off_topic: { name: 'Unrelated', description: 'this response makes sense, but does not seem related to what we were talking about previously.' },
-        non_sensical: { name: 'Non-Sensical', description: 'this response doesn’t really make any sense, especially in context with the previous conversation.' },
-        none_all_good: { name: 'None (All Good)', description: 'this response seems fine to me.' }
-    }
-
-    var displayCheckboxDescription = function (m_idx, evt) {
+    var displayCheckboxDescription = function (mIdx, evt) {
       if ($(evt.target).is(":checked")) {
-        var checkbox_name = $(evt.target).attr('id');
-        for (var key in CHECKBOX_DESCRIPTIONS) {
-          if (checkbox_name.indexOf(key) > -1) {
-            var checkboxPrettyName = CHECKBOX_DESCRIPTIONS[key]['name'];
-            var checkboxDescription = CHECKBOX_DESCRIPTIONS[key]['description'];
-            $("#explanation_" + m_idx).html('You labeled this as <b>' + checkboxPrettyName + '</b> meaning that: ' + checkboxDescription);
-          }
-        }
+        var checkboxId = $(evt.target).attr('id');
+        var description = $(evt.target).attr('ta-description');
+        var prettyName = $(evt.target).attr('ta-pretty-name');
+        $("#explanation_" + mIdx).html('You labeled this as <b>' + prettyName + '</b>, meaning that: ' + description);
       } else {
-        $("#explanation_" + m_idx).html('');
+        $("#explanation_" + mIdx).html('');
       }
     };
 
-    var handleCheckboxClick_ = function (m_idx, evt) {
-      displayCheckboxDescription(m_idx, evt);
-      return checkEnableActionButtons(m_idx);
+    var handleCheckboxClick_ = function (mIdx, evt) {
+      displayCheckboxDescription(mIdx, evt);
+      return checkEnableActionButtons(mIdx);
     };
     if (!is_self) {
       // Should disable them at the beginning
@@ -183,9 +172,11 @@
   var get_annotation_data = function (prior_msg_idx) {
     // Not sure why -2 here; may be b/c of the first instructions message
     console.log('prior_msg_idx is: ' + prior_msg_idx);
-    var checkbox_keys = ['contradiction', 'not_fluent', 'repetitive', 'off_topic', 'non_sensical', 'none_all_good'];
+    var annotationBuckets = ANNOTATIONS_CONFIG.map(function (a) {
+      return a['value'];
+    });
     var data = { 'turn_idx': prior_msg_idx };
-    checkbox_keys.map(function (k) {
+    annotationBuckets.map(function (k) {
       var is_checked = $('#checkbox_' + k + '_' + prior_msg_idx + ':checked').val();
       data[k] = (is_checked == 'on' ? true : false);
     });
@@ -196,11 +187,12 @@
     return data;
   }
 
-  var exceed_min_turns = false;
+  var exceedMinTurns = false;
   function handle_new_message(new_message_id, message) {
     var agent_id = message.id;
-    var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
-    exceed_min_turns = "exceed_min_turns" in message && message.exceed_min_turns;
+    // var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    var message_text = message.text;
+    exceedMinTurns = 'exceed_min_turns' in message && message.exceed_min_turns;
     if (displayed_messages.indexOf(new_message_id) !== -1) {
       // This message has already been seen and put up into the chat
       log(new_message_id + ' was a repeat message', 1);
@@ -211,17 +203,26 @@
     if ("left_pane_text" in message) {
       $("span#left-pane-text").html(message.left_pane_text);
     }
+    if ("config" in message) {
+      MIN_NUM_TURNS = parseInt(message['config']['min_num_turns']);
+      if (isNaN(MIN_NUM_TURNS) || MIN_NUM_TURNS <= 0) {
+        alert('Must have minimum number of turns set to an integer greater than zero! HIT will not be able to be submitted. Please contact requester.');
+        return;
+      }
+      ANNOTATIONS_CONFIG = message['config']['annotations_config'];
+    }
     if (message_text != '') {
+      var messageIdx = displayed_messages.length - 1;
       if (agent_id !== cur_agent_id) {
-        add_message_to_conversation(agent_id, message_text, false, displayed_messages.length - 2, exceed_min_turns);
+        add_message_to_conversation(agent_id, message_text, false, messageIdx, exceedMinTurns);
       } else {
-        add_message_to_conversation(agent_id, message_text, true, displayed_messages.length - 2, exceed_min_turns);
+        add_message_to_conversation(agent_id, message_text, true, messageIdx, exceedMinTurns);
       }
     } else {
       console.log('Warning: got empty message; not adding to the thread.');
     }
 
-    if (exceed_min_turns) {
+    if (exceedMinTurns) {
       $("button#id_done_button").css("disabled", false);
       $("button#id_done_button").css("display", "");
       $("input#id_text_input").css("width", "40%");
@@ -242,7 +243,7 @@
 
       // Need to disable prior message's checkboxes so user can't change them 
       // after sending the next message (they only get sent server-side once)
-      var prior_msg_idx = displayed_messages.length - 2;
+      var prior_msg_idx = displayed_messages.length - 1;
       $('input[name="checkbox_group_' + prior_msg_idx + '"]').addClass("disabled");
       $('input[name="checkbox_group_' + prior_msg_idx + '"]').prop("disabled", true);
       var annotation_data = get_annotation_data(prior_msg_idx);
@@ -279,9 +280,7 @@
       $("button#id_done_button").css("disabled", true);
       new_message_id = uuidv4();
 
-      // Super weird, but I think -3 matches b/c there's an extra
-      // utterance saying "N turns finished! You can now click done."
-      var prior_msg_idx = displayed_messages.length - 2;
+      var prior_msg_idx = displayed_messages.length - 1;
       var problem_data = get_annotation_data(prior_msg_idx);
       // Disable the last group of checkboxes after the Done button is hit
       $('input[name="checkbox_group_' + prior_msg_idx + '"]').addClass("disabled");
@@ -314,7 +313,7 @@
     // Set the text input width to match the bottom width minus space
     // for the done button
     $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
-    if (exceed_min_turns == true) {
+    if (exceedMinTurns == true) {
       $("input#id_text_input").width($("input#id_text_input").width() - 100);
     }
     // Set the chat window height to be the remainder after removing the

@@ -10,11 +10,8 @@ from parlai.core.agents import create_agent
 from parlai.utils.strings import normalize_reply
 
 # from model_override_configs import MODEL_OVERRIDE_CONFIGS
-from parlai_internal.mturk.tasks.q_function.original.constants import (
-    AGENT_1,
-    CHECKBOXES_CONFIG,
-)
-from parlai_internal.mturk.tasks.q_function.original.utils import Compatibility
+from parlai.mturk.tasks.turn_annotations.constants import AGENT_1, ANNOTATIONS_CONFIG
+from parlai.mturk.tasks.turn_annotations.utils import Compatibility
 
 
 class TurkLikeAgent:
@@ -39,13 +36,18 @@ class TurkLikeAgent:
         self.hit_is_expired = False
 
     @staticmethod
-    def construct_checkbox_html(turn_idx):
+    def construct_annotations_html(turn_idx):
         css_style = 'margin-right:15px;'
-        checkboxes_html = """<br><br><span style="font-style:italic;">Does this comment from your partner have any problems? (Check all that apply)<br>"""
-        for c in CHECKBOXES_CONFIG:
-            checkboxes_html += f"""<input type="checkbox" id="checkbox_{c["value"]}_{turn_idx}" name="checkbox_group_{turn_idx}" /><span style={css_style}>{c["name"]}</span>"""
-        checkboxes_html += f'<br><br><div id="explanation_{turn_idx}"></div>'
-        return checkboxes_html
+        annotations_html = """<br><br><span style="font-style:italic;">Does this comment from your partner have any problems? (Check all that apply)<br>"""
+        for a in ANNOTATIONS_CONFIG:
+            annotations_html += f"""<input type="checkbox"
+            id="checkbox_{a["value"]}_{turn_idx}" 
+            name="checkbox_group_{turn_idx}" 
+            ta-description="{a["description"]}" 
+            ta-pretty-name="{a["name"]}" /><span 
+            style={css_style}>{a["name"]}</span>"""
+        annotations_html += f'<br><br><div id="explanation_{turn_idx}"></div>'
+        return annotations_html
 
     def act(self, timeout=None):
         _ = timeout  # The model doesn't care about the timeout
@@ -55,14 +57,14 @@ class TurkLikeAgent:
         else:
             act_out = self.model_agent.act()
 
-        checkboxes_html = TurkLikeAgent.construct_checkbox_html(self.turn_idx)
+        annotations_html = TurkLikeAgent.construct_annotations_html(self.turn_idx)
 
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
             final_message_text = act_out['text']
         else:
             normalized_act_text = normalize_reply(act_out['text'])
-            final_message_text = normalized_act_text + checkboxes_html
+            final_message_text = normalized_act_text + annotations_html
 
         if self.turn_idx >= self.num_turns * 2:
             radio_css_style = 'margin-left:5px;margin-right:15px;'
@@ -86,46 +88,23 @@ class TurkLikeAgent:
 
     def observe(self, observation):
         """
-        Need to protect the observe also with a semaphore b/c of retnref where the
-        retriever act() actually happens in the agent's observe()
-
-        ALso to make sure history vec during bot-human chat collection is consistent with
-        that of model training and interative mode from interative.py, a new flag first_turn_version is added:
-        if first_turn_version = v1 (default) model_agent.observe is called twice in worlds.py when self.task_turn_idx ==1
-            1st call: model_agent.observe({persona_utterance})
-            2nd call: model_agent.observe({the actual conversation openning such as Hi! from Meena})
-
-        if first_turn_version = v2: model_agent will only observe concatenated string (persona+text) when self.task_turn_idx ==1
-            1st call: SKIP in worlds.py
-            2nd call: model_agent.observe(): model_agent.observe({persona_utterance+'\n'+first_human_message})
+        Need to protect the observe also with a semaphore for composed models
+        where an act() may be called within an observe()
         """
         print(
-            f'OBSERVE self.turn_idx is {self.turn_idx} and observation is: {observation}'
+            f'{self.__class__.__name__}: In observe() before semaphore, self.turn_idx is {self.turn_idx} and observation is {observation}'
         )
         new_ob = copy.deepcopy(observation)
-        # if first_turn_version = v2: concatenate persona_text and text if persona_text is not None
-        if (
-            observation.get('first_turn_version', 'v1') == 'v2'
-            and observation.get('persona_text', None) is not None
-            and observation.get('text', None) is not None
-        ):
-            new_ob['text'] = '\n'.join([new_ob['persona_text'], new_ob['text']])
-
         if self.semaphore:
             with self.semaphore:
                 self.model_agent.observe(new_ob)
         else:
             self.model_agent.observe(new_ob)
         print(
-            f'in observe - self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
+            f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
         )
 
-        if observation['id'] != 'SYSTEM':
-            # The first utterance for the bot is not seen. It includes a control
-            # message for the left pane and the persona utterance + WoW topic
-            # (unless opt["include_persona"] is False), so don't want
-            # to increment the turn_idx there; human speaks first and says Hi!
-            self.turn_idx += 1
+        self.turn_idx += 1
 
     def shutdown(self):
         pass
@@ -139,7 +118,7 @@ class TurkLikeAgent:
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands
             'interactive_mode': True,
-            'model_parallel': True
+            'model_parallel': True,
         }
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU
