@@ -48,6 +48,7 @@ from parlai.core.metrics import (
     GlobalAverageMetric,
     GlobalSumMetric,
     GlobalFixedMetric,
+    TimerMetric,
 )
 from parlai.utils.distributed import is_primary_worker
 from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
@@ -100,6 +101,7 @@ class Batch(AttrDict):
         the original observations in the batched order
     """
 
+    batchsize: int
     text_vec: Optional[torch.LongTensor]
     text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]
@@ -1150,9 +1152,8 @@ class TorchAgent(ABC, Agent):
         for dev in devices:
             props = torch.cuda.get_device_properties(dev)
             memory_avail += props.total_memory
-            memory_used += torch.cuda.memory_allocated(dev) + torch.cuda.memory_cached(
-                dev
-            )
+            memory_used += torch.cuda.max_memory_allocated(dev)
+            torch.cuda.reset_max_memory_allocated(dev)
         return memory_used / memory_avail
 
     def receive_metrics(self, metrics_dict):
@@ -1544,12 +1545,12 @@ class TorchAgent(ABC, Agent):
             vectors if available, otherwise uses the label vectors if available.
         """
         if len(obs_batch) == 0:
-            return Batch()
+            return Batch(batchsize=0)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch()
+            return Batch(batchsize=0)
 
         valid_inds, exs = zip(*valid_obs)
 
@@ -1595,6 +1596,7 @@ class TorchAgent(ABC, Agent):
             imgs = [ex.get('image', None) for ex in exs]
 
         return Batch(
+            batchsize=len(valid_inds),
             text_vec=xs,
             text_lengths=x_lens,
             label_vec=ys,
@@ -1953,6 +1955,7 @@ class TorchAgent(ABC, Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
+        self.global_metrics.add('exps', TimerMetric(batch.batchsize))
 
         if (
             'label_vec' in batch
@@ -1963,11 +1966,19 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tpb = GlobalAverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item(),
-                float(is_primary_worker()),
-            )
-            self.global_metrics.add('tpb', tpb)
+            lt = (batch.label_vec != self.NULL_IDX).sum().item()
+            ltpb = GlobalAverageMetric(lt, float(is_primary_worker()))
+            self.global_metrics.add('tpb_lab', ltpb)
+            self.global_metrics.add('tps_lab', TimerMetric(lt))
+
+            ct = (batch.text_vec != self.NULL_IDX).sum().item()
+            ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
+            self.global_metrics.add('tpb_ctx', ctpb)
+            self.global_metrics.add('tps_ctx', TimerMetric(ct))
+
+            ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
+            self.global_metrics.add('tpb_tot', ttpb)
+            self.global_metrics.add('tps_tot', TimerMetric(ct + lt))
 
         if self.is_training:
             output = self.train_step(batch)
@@ -2103,7 +2114,7 @@ class TorchAgent(ABC, Agent):
         # in distributed mode, all workers step together, but we need to only
         # count it once. Only the primary worker gets to make the count
         if is_primary_worker():
-            self.global_metrics.add('updates', GlobalSumMetric(1))
+            self.global_metrics.add('ups', TimerMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)
