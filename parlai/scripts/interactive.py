@@ -56,14 +56,22 @@ def setup_args(parser=None):
         help='Create interactive version of task',
     )
     parser.add_argument(
-        '--save-world-logs',
-        type='bool',
-        default=False,
+        '--outfile',
+        type=str,
+        default='',
         help='Saves a jsonl file containing all of the task examples and '
-        'model replies. Must also specify --report-filename.',
+        'model replies. Set to the empty string to not save at all',
+    )
+    parser.add_argument(
+        '--save-format',
+        type=str,
+        default='conversations',
+        choices=['conversations', 'parlai'],
+        help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
     )
     parser.set_defaults(interactive_mode=True, task='interactive')
     LocalHumanAgent.add_cmdline_args(parser)
+    WorldLogger.add_cmdline_args(parser)
     return parser
 
 
@@ -85,7 +93,7 @@ def interactive(opt, print_parser=None):
         print_parser.print_args()
     human_agent = LocalHumanAgent(opt)
     # set up world logger
-    world_logger = WorldLogger(opt) if opt['save_world_logs'] else None
+    world_logger = WorldLogger(opt) if opt.get('outfile') else None
     world = create_task(opt, [human_agent, agent])
 
     # Show some example dialogs:
@@ -99,9 +107,7 @@ def interactive(opt, print_parser=None):
         if world_logger is not None:
             # dump world acts to file
             world_logger.reset()  # add final acts to logs
-            base_outfile = opt['report_filename'].split('.')[0]
-            outfile = f'{base_outfile}_{opt["task"]}_replies.jsonl'
-            world_logger.write(outfile, world, file_format=opt['save_format'])
+            world_logger.write(opt['outfile'], world, file_format=opt['save_format'])
 
 
 @register_script('interactive', aliases=['i'])
