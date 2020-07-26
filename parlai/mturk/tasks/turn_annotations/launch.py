@@ -17,16 +17,14 @@ def launch():
     argparser = ParlaiParser(False, False)
     datapath = os.path.join(argparser.parlai_home, 'data')
     task_folder = 'turn_annotations'
-    # models_needed_dict = {'TODO_FIXME_MODEL_NAME': 110}
-    models_needed_dict = {'generative_bst': 110}
+    models_needed_dict = {'TODO_FIXME_MODEL_NAME': 110}
     override_opt = {
         'block_qualification': 'block_qualification_name',
         'base_save_folder': os.path.join(datapath, task_folder),
         'onboard_worker_answer_folder': os.path.join(
             datapath, task_folder, 'onboard_answers'
         ),
-        'base_model_folder': '/checkpoint/parlai/zoo/q_function/',
-        # 'base_model_folder': 'TODO_FIXME_BASE_MODEL_FOLDER',
+        'base_model_folder': 'TODO_FIXME_BASE_MODEL_FOLDER',
         'num_conversations': 110,
         'is_sandbox': True,
         'reward': 3,
