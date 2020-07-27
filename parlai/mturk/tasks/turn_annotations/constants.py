@@ -45,7 +45,7 @@ ONBOARD_FAIL = '[ONBOARD_FAIL]'
 ONBOARD_SUCCESS = '[ONBOARD_SUCCESS]'
 
 """
-The utterances and answers for the onboarding task. 
+The utterances and answers for the onboarding task.
 """
 
 ONBOARD_TASK_DATA = [
