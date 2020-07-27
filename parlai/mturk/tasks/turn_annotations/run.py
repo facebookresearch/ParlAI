@@ -33,6 +33,12 @@ def run_task(override_opt):
         '-num_t', '--num_turns', default=6, type=int, help='minimum number of turns'
     )
     argparser.add_argument(
+        '--task-model-parallel',
+        default=True,
+        type=bool,
+        help='Whether to load models to be used with model_parallel True.',
+    )
+    argparser.add_argument(
         '--auto-approve-delay',
         dest='auto_approve_delay',
         type=int,

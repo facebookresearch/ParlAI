@@ -22,6 +22,7 @@ from constants import (
     AGENT_1,
     WAITING_MSG,
     ONBOARD_TASK_DATA,
+    ONBOARD_CONFIG,
     ONBOARD_TRY_AGAIN,
     ONBOARD_FAIL,
     ONBOARD_SUBMIT,
@@ -46,10 +47,12 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.max_onboard_time = opt['max_onboard_time']
-        self.min_correct = 4
-        self.max_incorrect = 3
+        self.min_correct = ONBOARD_CONFIG['min_correct']
+        self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
+        self.onboard_failures_max_allowed = ONBOARD_CONFIG[
+            'onboard_failures_max_allowed'
+        ]
         self.onboard_failure_count = 0
-        self.onboard_failures_max_allowed = 1
         self.worker_answer_file = os.path.join(
             opt['onboard_worker_answer_folder'], 'worker_answers.json'
         )

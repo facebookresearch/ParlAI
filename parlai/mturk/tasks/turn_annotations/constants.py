@@ -81,6 +81,11 @@ ONBOARD_TASK_DATA = [
     },
 ]
 
+ONBOARD_CONFIG = {
+    'min_correct': 4,
+    'max_incorrect': 3,
+    'onboard_failures_max_allowed': 1,
+}
 
 """
 Task Instructions

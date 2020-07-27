@@ -121,7 +121,7 @@ class TurkLikeAgent:
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands
             'interactive_mode': True,
-            'model_parallel': True,
+            'model_parallel': opt['task_model_parallel'],
         }
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU

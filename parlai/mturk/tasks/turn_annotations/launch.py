@@ -17,9 +17,9 @@ def launch():
     argparser = ParlaiParser(False, False)
     datapath = os.path.join(argparser.parlai_home, 'data')
     task_folder = 'turn_annotations'
-    # keys of models_needed_dict will be used as unique names in the output files
-    # this says we want 110 conversations from this model.
-    {`TODO_FIXME_MODEL_UNIQUE_NAME`: 110}
+    # keys of models_needed_dict will be used as unique names in the output
+    # files this says we want 110 conversations from this model.
+    models_needed_dict = {'TODO_FIXME_MODEL_UNIQUE_NAME': 110}
     override_opt = {
         'block_qualification': 'block_qualification_name',
         'base_save_folder': os.path.join(datapath, task_folder),
