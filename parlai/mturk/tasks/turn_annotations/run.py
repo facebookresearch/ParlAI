@@ -79,18 +79,21 @@ def run_task(override_opt):
     opt['left_pane_text'] = LEFT_PANE_TEXT
     opt.update(TASK_CONFIG)
 
-    # NOTE: you have to set all three of these opts to enforce the
-    # max_hits_per_worker. If unique_qual_name not set, MTurkManager creates a
-    # different qualification for each run (so a worker could do N hits per run)
-    # allowed_conversations is like max concurrent conversations. Also, the
-    # worker has to get to N HITs in at least one run or they won't be given
-    # the qualification. allowed_conversations needs to be 1 or the actual max
-    # would be N + allowed_conversations. Worker gets notified via frontend
-    # message that they aren't eligible (second description screen), UNLESS the
-    # frontend overwrites that functionality. There's also still a race
-    # condition where the worker might be able to open 1 extra task.
-    # opt['unique_qual_name'] = 'q_function_max_submissions'
-    # opt['max_hits_per_worker'] = 10
+    # NOTE: you have to set all three of these opts to enforce the MTurk core
+    # param max_hits_per_worker.
+    #  - Without unique_qual_name, MTurkManager creates different qualification
+    #    for each run (so a worker could do N hits per run) Also, the
+    #    worker has to get to N HITs in at least one run or they won't be given
+    #    the qualification.
+    #  - allowed_conversations is like max concurrent conversations
+    #    allowed_conversations needs to be 1 or the actual max would be N +
+    #    allowed_conversations. Worker gets notified via frontend message that
+    #    they aren't eligible (second description screen), UNLESS the frontend
+    #    overwrites that functionality.
+    # There's also still a race condition where the worker might be able to open
+    # 1 extra task
+    opt['unique_qual_name'] = 'turn_annotations_max_submissions'
+    opt['max_hits_per_worker'] = 10
     opt['allowed_conversations'] = 3
 
     # Limits the number of models that can generate at once

@@ -9,6 +9,8 @@ AGENT_1 = 'Person2'
 
 WAITING_MSG = 'Please wait while we match you with another worker...'
 
+ANNOTATIONS_INTRO = """<br><br><span style="font-style:italic;">Does this comment from your partner have any of the following attributes? (Check all that apply)<br>"""
+
 ANNOTATIONS_CONFIG = [
     {
         'value': 'bucket_0',
@@ -42,34 +44,38 @@ ONBOARD_TRY_AGAIN = '[ONBOARD_TRY_AGAIN]'
 ONBOARD_FAIL = '[ONBOARD_FAIL]'
 ONBOARD_SUCCESS = '[ONBOARD_SUCCESS]'
 
+"""
+The utterances and answers for the onboarding task. 
+"""
+
 ONBOARD_TASK_DATA = [
     {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
     {
-        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'text': 'Model utterance where user should select bucket_0.',
         'agent_idx': 1,
         'answers': ['bucket_0'],
     },
     {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
     {
-        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'text': 'Model utterance where user should select bucket_1.',
         'agent_idx': 1,
         'answers': ['bucket_1'],
     },
     {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
     {
-        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'text': 'Model utterance where user should select bucket_2.',
         'agent_idx': 1,
         'answers': ['bucket_2'],
     },
     {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
     {
-        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'text': 'Model utterance where user should select bucket_3.',
         'agent_idx': 1,
         'answers': ['bucket_3'],
     },
     {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
     {
-        'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro',
+        'text': 'Model utterance where user should select bucket_4.',
         'agent_idx': 1,
         'answers': ['bucket_4'],
     },

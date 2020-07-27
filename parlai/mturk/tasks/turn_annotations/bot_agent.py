@@ -6,11 +6,14 @@
 
 import copy
 import os
+import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.utils.strings import normalize_reply
-
-# from model_override_configs import MODEL_OVERRIDE_CONFIGS
-from parlai.mturk.tasks.turn_annotations.constants import AGENT_1, ANNOTATIONS_CONFIG
+from parlai.mturk.tasks.turn_annotations.constants import (
+    AGENT_1,
+    ANNOTATIONS_CONFIG,
+    ANNOTATIONS_INTRO,
+)
 from parlai.mturk.tasks.turn_annotations.utils import Compatibility
 
 
@@ -38,7 +41,7 @@ class TurkLikeAgent:
     @staticmethod
     def construct_annotations_html(turn_idx):
         css_style = 'margin-right:15px;'
-        annotations_html = """<br><br><span style="font-style:italic;">Does this comment from your partner have any problems? (Check all that apply)<br>"""
+        annotations_html = ANNOTATIONS_INTRO
         for a in ANNOTATIONS_CONFIG:
             annotations_html += f"""<input type="checkbox"
             id="checkbox_{a["value"]}_{turn_idx}"
@@ -124,7 +127,7 @@ class TurkLikeAgent:
             # If we load many models at once, we have to keep it on CPU
             model_overrides['no_cuda'] = no_cuda
         else:
-            print(
+            logging.warn(
                 'WARNING: MTurk task has no_cuda FALSE. Models will run on GPU. Will not work if loading many models at once.'
             )
 

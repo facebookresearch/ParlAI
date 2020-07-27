@@ -25,7 +25,7 @@ def launch():
             datapath, task_folder, 'onboard_answers'
         ),
         'base_model_folder': 'TODO_FIXME_BASE_MODEL_FOLDER',
-        'num_conversations': 110,
+        'num_conversations': sum(models_needed_dict.values()),
         'is_sandbox': True,
         'reward': 3,
         'num_turns': 6,

@@ -170,8 +170,6 @@
   }
 
   var get_annotation_data = function (prior_msg_idx) {
-    // Not sure why -2 here; may be b/c of the first instructions message
-    console.log('prior_msg_idx is: ' + prior_msg_idx);
     var annotationBuckets = ANNOTATIONS_CONFIG.map(function (a) {
       return a['value'];
     });
