@@ -103,7 +103,7 @@ def self_chat(opt):
 
     # Create agents
     agent1 = create_agent(opt, requireModelExists=True)
-    if partner is not None:
+    if partner is None:
         # Self chat with same model
         agent2 = agent1.clone()
     else:
