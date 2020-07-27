@@ -38,7 +38,7 @@ class BartModel(TransformerGeneratorModel):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
-        inputs = torch.cat([self.START.detach().expand(bsz, 1).to(inputs), inputs], 1)
+        inputs = torch.cat([torch.LongTensor([self.END_IDX]).detach().expand(bsz, 1).to(inputs), inputs], 1)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
