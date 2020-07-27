@@ -299,7 +299,7 @@ class History(object):
         Return the string version of the history.
         """
         if self.temp_history and self.history_strings:
-            logging.warning('temporary history strings now include the delimiter.')
+            logging.warn('temporary history strings now include the delimiter.')
 
         if len(self.history_strings) > 0:
             history = self.history_strings[:]
