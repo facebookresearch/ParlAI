@@ -154,7 +154,8 @@ class LabelToTextTeacher(AbstractWrapperTeacher):
         if 'labels' in act or 'eval_labels' in act:
             labels_type = 'labels' if 'labels' in act else 'eval_labels'
             labels = act[labels_type]
-            assert len(labels) == 1
+            if len(labels) != 1:
+                raise ValueError('LabelToTextTeacher can only be used with one label!')
             new_act.force_set('text', labels[0])
             new_act.force_set(labels_type, [''])
         else:
