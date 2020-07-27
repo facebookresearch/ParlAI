@@ -170,6 +170,10 @@ def warn(*args, **kwargs):
     return logger.warn(*args, **kwargs)
 
 
+def warning(*args, **kwargs):
+    return logger.warn(*args, **kwargs)
+
+
 def get_all_levels():
     levels = set(logging._nameToLevel.keys())
     levels.remove('WARNING')
