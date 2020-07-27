@@ -11,14 +11,17 @@ import threading
 from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
-from constants import (
+from parlai.mturk.tasks.turn_annotations.constants import (
     AGENT_0,
     ANNOTATIONS_CONFIG,
     TASK_CONFIG,
     LEFT_PANE_TEXT,
     FINAL_RATING_QUESTION,
 )
-from parlai.mturk.tasks.turn_annotations.worlds import TurnAnnotationsOnboardWorld, TurnAnnotationsChatWorld
+from parlai.mturk.tasks.turn_annotations.worlds import (
+    TurnAnnotationsOnboardWorld,
+    TurnAnnotationsChatWorld,
+)
 from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 
 
