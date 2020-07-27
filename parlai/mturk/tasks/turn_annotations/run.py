@@ -16,6 +16,7 @@ from constants import (
     ANNOTATIONS_CONFIG,
     TASK_CONFIG,
     LEFT_PANE_TEXT,
+    FINAL_RATING_QUESTION,
 )
 from worlds import TurnAnnotationsOnboardWorld, TurnAnnotationsChatWorld
 from bot_agent import TurkLikeAgent
@@ -83,6 +84,7 @@ def run_task(override_opt):
     opt['task'] = os.path.basename(directory_path)
 
     opt['left_pane_text'] = LEFT_PANE_TEXT
+    opt['final_rating_question'] = FINAL_RATING_QUESTION
     opt.update(TASK_CONFIG)
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core

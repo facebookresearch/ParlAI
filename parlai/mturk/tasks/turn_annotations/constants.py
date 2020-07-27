@@ -8,6 +8,7 @@ AGENT_0 = 'Person1'
 AGENT_1 = 'Person2'
 
 WAITING_MSG = 'Please wait while we match you with another worker...'
+FINAL_RATING_QUESTION = 'Please rate your partner on a scale of 1-5 (1: not at all, 5: a lot)'
 
 ANNOTATIONS_INTRO = """<br><br><span style="font-style:italic;">Does this comment from your partner have any of the following attributes? (Check all that apply)<br>"""
 
