@@ -18,8 +18,8 @@ from constants import (
     LEFT_PANE_TEXT,
     FINAL_RATING_QUESTION,
 )
-from worlds import TurnAnnotationsOnboardWorld, TurnAnnotationsChatWorld
-from bot_agent import TurkLikeAgent
+from parlai.mturk.tasks.turn_annotations.worlds import TurnAnnotationsOnboardWorld, TurnAnnotationsChatWorld
+from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 
 
 def run_task(override_opt):
