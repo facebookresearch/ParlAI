@@ -748,7 +748,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(vec, [1, 2, 3, MockDict.END_IDX])
 
         # test temp history
-        agent = get_agent(history_size=-1, include_temp_history=True, delimiter='__delim__')
+        agent = get_agent(
+            history_size=-1, include_temp_history=True, delimiter='__delim__'
+        )
         agent.history.reset()
         agent.history.update_history(obs, temp_history=' temp history')
         text = agent.history.get_history_str()

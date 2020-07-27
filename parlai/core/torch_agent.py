@@ -591,10 +591,7 @@ class TorchAgent(ABC, Agent):
             'to `truncate`',
         )
         agent.add_argument(
-            '--history-reversed',
-            default=False,
-            type='bool',
-            help='Reverse the history',
+            '--history-reversed', default=False, type='bool', help='Reverse the history'
         )
         agent.add_argument(
             '-histsz',
