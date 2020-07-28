@@ -45,7 +45,7 @@ def compare_opts(opt_path_1: str, opt_path_2: str):
                     or inner_key not in opt2[key]
                     or opt1[key][inner_key] != opt2[key][inner_key]
                 ):
-                    print(f'\t{key}:')
+                    print(f'\t{inner_key}:')
                     print(f'\t\tIn opt 1: {opt1[key].get(inner_key, "<MISSING>")}')
                     print(f'\t\tIn opt 2: {opt2[key].get(inner_key, "<MISSING>")}')
         else:
