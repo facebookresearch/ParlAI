@@ -243,7 +243,12 @@ def superscript_main(args=None):
             description=script_parser.description,
             formatter_class=CustomHelpFormatter,
         )
-        subparser.set_defaults(super_command=script_name, _subparser=subparser)
+        subparser.set_defaults(
+            # carries the name of the full command so we know what to execute
+            super_command=script_name,
+            # used in ParlAI parser to find CLI options set by user
+            _subparser=subparser,
+        )
         for action in script_parser._actions:
             subparser._add_action(action)
         for action_group in script_parser._action_groups:

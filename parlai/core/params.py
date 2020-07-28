@@ -970,7 +970,10 @@ class ParlaiParser(argparse.ArgumentParser):
     def _process_args_to_opts(self, args_that_override: Optional[List[str]] = None):
         self.opt = Opt(vars(self.args))
         extra_ag = []
+
         if '_subparser' in self.opt:
+            # if using the super command, we need to be aware of the subcommand's
+            # arguments when identifying things manually set by the user
             extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
