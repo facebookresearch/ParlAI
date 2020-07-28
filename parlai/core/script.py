@@ -244,6 +244,7 @@ def superscript_main(args=None):
             formatter_class=CustomHelpFormatter,
         )
         subparser.set_defaults(super_command=script_name)
+        subparser.set_defaults(**script_parser._defaults)
         for action in script_parser._actions:
             subparser._add_action(action)
         for action_group in script_parser._action_groups:
