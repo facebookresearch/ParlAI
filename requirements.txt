@@ -13,7 +13,7 @@ nltk==3.4.5
 numpy==1.17.5
 pytest==5.3.2
 pexpect==4.7.0
-Pillow==7.1.0
+Pillow==7.2.0
 py-gfm==0.1.4
 py-rouge==1.1
 pyyaml==5.3.1
