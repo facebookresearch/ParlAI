@@ -11,7 +11,7 @@ from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.utils.misc import recursive_getattr
-from parlai.utils.logging import logging
+import parlai.utils.logging as logging
 
 from .modules import (
     TransformerMemNetModel,
@@ -82,7 +82,7 @@ def add_common_cmdline_args(argparser):
         default='aiayn',
         help='Chooses locations of layer norms, etc. prelayernorm '
         'is used to match some fairseq models',
-        recommended='xlm',
+        recommended='prelayernorm',
     )
     argparser.add_argument(
         '--activation',
@@ -316,6 +316,19 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
 
         super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
         return agent
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        if (
+            shared is None
+            and self._should_initialize_optimizer()
+            and self.opt['variant'] == 'xlm'
+        ):
+            logging.warn(
+                'DEPRECATED: --variant xlm should only be used for backwards '
+                'compatibility, as it involves a less-stable layernorm operation. '
+                'Consider using --variant prelayernorm or --variant bart instead.'
+            )
 
     def build_model(self, states=None):
         """

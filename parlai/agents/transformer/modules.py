@@ -748,11 +748,6 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'bart'
         ):
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
-            if self.variant == 'xlm':
-                warn_once(
-                    'DEPRECATED: XLM should only be used for backwards compatibility, '
-                    'as it involves a less-stable layernorm operation.'
-                )
         elif self.variant == 'aiayn':
             pass
         else:
