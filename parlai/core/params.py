@@ -969,6 +969,12 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _process_args_to_opts(self, args_that_override: Optional[List[str]] = None):
         self.opt = Opt(vars(self.args))
+        extra_ag = []
+
+        if '_subparser' in self.opt:
+            # if using the super command, we need to be aware of the subcommand's
+            # arguments when identifying things manually set by the user
+            extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
@@ -978,14 +984,14 @@ class ParlaiParser(argparse.ArgumentParser):
         option_strings_dict = {}
         store_true = []
         store_false = []
-        for group in self._action_groups:
+        for group in self._action_groups + extra_ag:
             for a in group._group_actions:
                 if hasattr(a, 'option_strings'):
                     for option in a.option_strings:
                         option_strings_dict[option] = a.dest
-                        if '_StoreTrueAction' in str(type(a)):
+                        if isinstance(a, argparse._StoreTrueAction):
                             store_true.append(option)
-                        elif '_StoreFalseAction' in str(type(a)):
+                        elif isinstance(a, argparse._StoreFalseAction):
                             store_false.append(option)
 
         if args_that_override is None:
@@ -1056,6 +1062,8 @@ class ParlaiParser(argparse.ArgumentParser):
             print_announcements(self.opt)
 
         logging.set_log_level(self.opt.get('loglevel', 'info').upper())
+
+        assert '_subparser' not in self.opt
 
         return self.opt
 
