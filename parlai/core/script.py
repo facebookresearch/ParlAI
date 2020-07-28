@@ -249,6 +249,7 @@ def superscript_main(args=None):
             # used in ParlAI parser to find CLI options set by user
             _subparser=subparser,
         )
+        subparser.set_defaults(**script_parser._defaults)
         for action in script_parser._actions:
             subparser._add_action(action)
         for action_group in script_parser._action_groups:
