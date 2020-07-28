@@ -317,6 +317,7 @@ class TrainLoop:
 
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
+        self.train_reports = []
         self.valid_reports = []
         self.best_valid = None
 
@@ -339,6 +340,7 @@ class TrainLoop:
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
+                self.train_reports = obj.get('train_reports', [])
                 if 'best_valid' in obj:
                     self.best_valid = obj['best_valid']
                 else:
@@ -391,12 +393,9 @@ class TrainLoop:
                 {
                     'parleys': self.parleys,
                     'train_time': self.train_time.time(),
-                    'total_epochs': (
-                        self._preempted_epochs
-                        + num_workers() * self.world.get_total_epochs()
-                    ),
-                    'impatience': self.impatience,
-                    'valid_reports': [self._safe_report(v) for v in self.valid_reports],
+                    'total_epochs': self._total_epochs,
+                    'train_reports': self.train_reports,
+                    'valid_reports': self.valid_reports,
                     'best_valid': self.best_valid,
                 },
                 f,
@@ -420,8 +419,11 @@ class TrainLoop:
         valid_report = self._run_eval(
             self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
-        v = valid_report.copy()
+        v = self._safe_report(valid_report.copy())
         v['train_time'] = self.train_time.time()
+        v['parleys'] = self.parleys
+        v['total_exs'] = self._total_exs
+        v['total_epochs'] = self._total_epochs
         self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
@@ -607,6 +609,13 @@ class TrainLoop:
         train_report = self.world.report()
         train_report = self._sync_metrics(train_report)
         self.world.reset_metrics()
+
+        train_report_trainstats = self._safe_report(train_report)
+        train_report_trainstats['total_epochs'] = self._total_epochs
+        train_report_trainstats['total_exs'] = self._total_exs
+        train_report_trainstats['parleys'] = self.parleys
+        train_report_trainstats['train_time'] = self.train_time.time()
+        self.train_reports.append(train_report_trainstats)
 
         # time elapsed
         logs.append(f'time:{self.train_time.time():.0f}s')

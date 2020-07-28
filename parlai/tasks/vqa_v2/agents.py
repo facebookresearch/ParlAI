@@ -6,7 +6,6 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
-from parlai.tasks.vqa_v1.agents import VQADataset
 from .build import build
 from parlai.tasks.coco_caption.build_2014 import buildImage as buildImage_2014
 from parlai.tasks.coco_caption.build_2015 import buildImage as buildImage_2015
@@ -51,10 +50,6 @@ def _path(opt):
     )
 
     return data_path, annotation_path, image_path
-
-
-class DefaultDataset(VQADataset):
-    pass
 
 
 class OeTeacher(FixedDialogTeacher):
