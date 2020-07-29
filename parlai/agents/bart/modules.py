@@ -33,8 +33,8 @@ class BartModel(TransformerGeneratorModel):
         """
         Decode with a fixed, true sequence, computing loss.
 
-        Override to bypass assertion that BOS is not present, and additionally insert
-        EOS as first token
+        Overriding `TGM.decode_forced` to bypass assertion that BOS is not present, and
+        additionally insert EOS as first token
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
