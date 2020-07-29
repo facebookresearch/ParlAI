@@ -161,7 +161,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '-lfc',
         '--load-from-checkpoint',
         type='bool',
-        default=False,
+        default=True,
         hidden=True,
         help='load model from checkpoint if available',
     )
