@@ -180,7 +180,6 @@ class BartAgent(TransformerGeneratorAgent):
                 torch.LongTensor(  # type: ignore
                     [self.END_IDX]
                 )
-                .detach()
                 .expand(bsz * beam_size, 1)
                 .to(dev)
             ),
