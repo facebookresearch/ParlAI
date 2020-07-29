@@ -985,7 +985,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _get_initial_decoder_input(
         self, bsz: int, beam_size: int, dev: torch.device
-    ) -> Tuple[torch.LongTensor, int]:
+    ) -> torch.LongTensor:
         """
         Return initial input to the decoder.
 
@@ -996,26 +996,37 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         :param dev:
             device to send input to.
 
-        :return (initial_input, num_inputs):
-            initial input for the decoder, and how many inputs to consider.
+        :return initial_input:
+            initial input for the decoder
         """
         return (
-            (
-                torch.LongTensor(  # type: ignore
-                    [self.START_IDX]
-                )
-                .expand(bsz * beam_size, 1)
-                .to(dev)
-            ),
-            bsz,
+            torch.LongTensor(  # type: ignore
+                [self.START_IDX]
+            )
+            .expand(bsz * beam_size, 1)
+            .to(dev)
         )
 
     def _get_next_decoder_input(
-        self, prev_input: torch.LongTensor, selection: torch.LongTensor
+        self,
+        prev_input: torch.LongTensor,
+        selection: torch.LongTensor,
+        incr_state_inds: torch.LongTensor,
     ) -> torch.LongTensor:
         """
         Return next decoder input.
+
+        :param prev_input:
+            previous input to decoder
+        :param selection:
+            token selections for current timestep
+        :param inds:
+            incremental state indices
+
+        :return decoder input:
+            return decoder input for next timestep
         """
+        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
         decoder_input = torch.cat([prev_input, selection], dim=-1)
         return decoder_input
 
@@ -1075,9 +1086,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]
 
         # repeat encoder outputs and decoder inputs
-        decoder_input, inds_sz = self._get_initial_decoder_input(bsz, beam_size, dev)
+        decoder_input = self._get_initial_decoder_input(bsz, beam_size, dev)
 
-        inds = torch.arange(inds_sz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
+        inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
 
@@ -1120,11 +1131,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             incr_state = model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
-            decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]
             ).unsqueeze(-1)
-            decoder_input = self._get_next_decoder_input(decoder_input, selection)
+            decoder_input = self._get_next_decoder_input(
+                decoder_input, selection, incr_state_inds
+            )
 
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]

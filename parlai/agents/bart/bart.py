@@ -15,7 +15,7 @@ or `-mf zoo:bart/bart_large/model` to ensure correct dictionaries are saved.
 """
 import os
 import torch
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any
 
 from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
 from parlai.agents.bart.modules import BartModel
@@ -169,21 +169,18 @@ class BartAgent(TransformerGeneratorAgent):
 
     def _get_initial_decoder_input(
         self, bsz: int, beam_size: int, dev: torch.device
-    ) -> Tuple[torch.LongTensor, int]:
+    ) -> torch.LongTensor:
         """
         Override to seed decoder with EOS token.
 
         See docstring for `BartAgent._generate` for more details.
         """
         return (
-            (
-                torch.LongTensor(  # type: ignore
-                    [self.END_IDX]
-                )
-                .expand(bsz * beam_size, 1)
-                .to(dev)
-            ),
-            bsz,
+            torch.LongTensor(  # type: ignore
+                [self.END_IDX]
+            )
+            .expand(bsz * beam_size, 1)
+            .to(dev)
         )
 
     def _generate(
