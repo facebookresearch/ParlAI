@@ -25,7 +25,7 @@ class TestWrapper(unittest.TestCase):
         # Set up label-to-text teacher
         kwargs = {
             'task': 'wrapper:labelToTextTeacher',
-            'label_to_text_task': 'integration_tests:multiturn',
+            'wrapper_task': 'integration_tests:multiturn',
         }
         parser = setup_args()
         parser.set_defaults(**kwargs)

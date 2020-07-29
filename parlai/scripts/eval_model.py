@@ -13,22 +13,33 @@ Examples
 
 .. code-block:: shell
 
-  python eval_model.py -t "babi:Task1k:2" -m "repeat_label"
-  python eval_model.py -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+  parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
+  parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
 """
 
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_named_reports, Metric
+from parlai.core.metrics import (
+    aggregate_named_reports,
+    aggregate_unnamed_reports,
+    Metric,
+)
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import json
 import random
+
+from parlai.utils.distributed import (
+    is_primary_worker,
+    all_gather_list,
+    is_distributed,
+    get_rank,
+)
 
 
 def setup_args(parser=None):
@@ -85,6 +96,8 @@ def setup_args(parser=None):
 
 
 def _save_eval_stats(opt, report):
+    if not is_primary_worker:
+        return
     report_fname = opt['report_filename']
     if report_fname == '':
         return
@@ -122,6 +135,10 @@ def _eval_single_world(opt, agent, task):
     # max number of examples to evaluate
     max_cnt = opt['num_examples'] if opt['num_examples'] > 0 else float('inf')
     cnt = 0
+    total_cnt = world.num_examples()
+
+    if is_distributed():
+        logging.warn('Progress bar is approximate in distributed mode.')
 
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
@@ -134,18 +151,22 @@ def _eval_single_world(opt, agent, task):
         if log_time.time() > log_every_n_secs:
             report = world.report()
             text, report = log_time.log(
-                report.get('exs', 0), min(max_cnt, world.num_examples()), report
+                report.get('exs', 0), min(max_cnt, total_cnt), report
             )
             logging.info(text)
 
-    report = world.report()
+    report = aggregate_unnamed_reports(all_gather_list(world.report()))
     world.reset()
 
     if world_logger is not None:
         # dump world acts to file
         world_logger.reset()  # add final acts to logs
         base_outfile = opt['report_filename'].split('.')[0]
-        outfile = base_outfile + f'_{task}_replies.jsonl'
+        if is_distributed():
+            rank = get_rank()
+            outfile = base_outfile + f'_{task}_{rank}_replies.jsonl'
+        else:
+            outfile = base_outfile + f'_{task}_replies.jsonl'
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
     return report
@@ -195,18 +216,20 @@ def eval_model(opt, print_parser=None):
     logging.info(
         f'Finished evaluating tasks {tasks} using datatype {opt.get("datatype")}'
     )
+
     print(nice_report(report))
     _save_eval_stats(opt, report)
     return report
 
 
+@register_script('eval_model', aliases=['em', 'eval'])
 class EvalModel(ParlaiScript):
     @classmethod
     def setup_args(cls):
         return setup_args()
 
     def run(self):
-        return eval_model(self.opt)
+        return eval_model(self.opt, print_parser=self.parser)
 
 
 if __name__ == '__main__':

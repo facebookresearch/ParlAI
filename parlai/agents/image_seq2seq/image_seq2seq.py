@@ -62,6 +62,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             choices=[f.value for f in FusionType],
             help='which fusion type to use',
         )
+        return group
 
     def build_dictionary(self) -> DictionaryAgent:
         """

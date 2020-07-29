@@ -26,7 +26,7 @@ from typing import Any, Dict, List
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript
 
 TRANSFORMER_PARAMETER_MAPPING = {
     'attention_heads': 'n_heads',

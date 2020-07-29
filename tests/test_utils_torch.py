@@ -252,3 +252,27 @@ class TestPipelineHelper(unittest.TestCase):
         assert work_items[5].layer_nos == [6, 7] and work_items[5].chunk_idx == 0
         assert work_items[6].layer_nos == [4, 5] and work_items[6].chunk_idx == 1
         assert work_items[7].layer_nos == [6, 7] and work_items[7].chunk_idx == 1
+
+    def test_model_parallel_exempt(self):
+        # Test that we ignore module lists explicitly marked as exempt.
+        def _get_model():
+            model = torch.nn.Module()
+            model.layers = torch.nn.ModuleList([IdentityLayer() for _ in range(8)])
+            return model
+
+        def _exempt_mp(submodule):
+            submodule.model_parallel_exempt = True
+
+        pipeline = PipelineHelper()
+        pipeline.num_devices = 8
+        pipeline.devices = [f'cuda:{i}' for i in range(8)]
+        pipeline._PipelineHelper__device_allocations = {d: 0 for d in pipeline.devices}
+
+        model1 = _get_model()
+        model1 = pipeline.make_parallel(model1)
+        assert getattr(model1.layers, 'is_model_parallel', False)
+
+        model2 = _get_model()
+        model2.apply(_exempt_mp)
+        model2 = pipeline.make_parallel(model2)
+        assert not getattr(model2.layers, 'is_model_parallel', False)

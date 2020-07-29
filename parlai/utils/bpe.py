@@ -122,6 +122,13 @@ class BPEHelper(ABC):
             hidden=True,
             help='add prefix space before encoding',
         )
+        parser.add_argument(
+            '--hf-skip-special-tokens',
+            hidden=True,
+            type='bool',
+            default=True,
+            help='do not decode special tokens with bytelevelbpe',
+        )
         return parser
 
     @final
@@ -689,7 +696,9 @@ class HuggingFaceBpeHelper(BPEHelper):
     def __init__(self, opt: Opt, shared: TShared = None):
         super().__init__(opt, shared)
         # Default true for HF
+        self.special_tok_map = {}  # map from HF
         self.add_prefix_space = opt.get('bpe_add_prefix_space', True)
+        self.skip_special_tokens = opt.get('hf_skip_special_tokens', True)
         if self.add_prefix_space is None:
             self.add_prefix_space = True
         if opt.get('dict_loaded'):
@@ -769,8 +778,23 @@ class HuggingFaceBpeHelper(BPEHelper):
         :return text:
             decoded text
         """
-        text = self.tokenizer.decode(token_ids)
+        text = self.tokenizer.decode(
+            token_ids, skip_special_tokens=self.skip_special_tokens
+        )
+
         return text
+
+    def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        """
+        Add special tokens to the tokenizer and dict_agent.
+        """
+        logging.debug(f'adding the following special tokens: {special_tokens}')
+        self.tokenizer.add_special_tokens(special_tokens)  # add to HF
+
+        for tok in special_tokens:
+            parlai_key = dict_agent[tok]
+            hf_key = self.tokenizer.token_to_id(tok)
+            self.special_tok_map[parlai_key] = hf_key
 
     def sync_with_dict(self, dict_agent):
         """
@@ -784,8 +808,9 @@ class HuggingFaceBpeHelper(BPEHelper):
             dict_agent.end_token,
             dict_agent.unk_token,
         ]
-        self.tokenizer.add_special_tokens(special_tokens)
-        for i in range(self.tokenizer.get_vocab_size() - 4):
+        self.add_special_tokens(dict_agent, special_tokens)
+
+        for i in range(self.tokenizer.get_vocab_size() - len(special_tokens)):
             token = self.tokenizer.id_to_token(i)
             dict_agent.add_token(token)
             # We don't have access to the hugging face word frequency table,

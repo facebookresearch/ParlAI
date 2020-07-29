@@ -11,21 +11,21 @@ Examples
 
 .. code-block:: shell
 
-  python parlai/scripts/data_stats.py -t convai2 -dt train:ordered
+  parlai data_stats -t convai2 -dt train:ordered
 """
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.core.dict import DictionaryAgent
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, False, 'Lint for ParlAI tasks')
+        parser = ParlaiParser(True, False, 'Compute data statistics')
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -180,6 +180,7 @@ def obtain_stats(opt, parser):
     print(report_text.replace('\\n', '\n'))
 
 
+@register_script('data_stats', hidden=True)
 class DataStats(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -30,7 +30,7 @@ class MemnnFeedbackAgent(Agent):
     feedback and reward for the current example immediatly follow the query
     (add ':feedback' argument when specifying task name).
 
-    python examples/train_model.py --setting 'FP'
+    parlai train_model --setting 'FP'
     -m "projects.memnn_feedback.agent.memnn_feedback:MemnnFeedbackAgent"
     -t "projects.memnn_feedback.tasks.dbll_babi.agents:taskTeacher:3_p0.5:feedback"
     """

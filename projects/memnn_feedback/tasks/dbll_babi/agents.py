@@ -6,7 +6,7 @@
 #
 # Accessing the tasks can be done with something like:
 #
-#   python examples/display_data.py -t "projects.memnn_feedback.tasks.dbll_babi.agents:taskTeacher:3_p0.5:feedback"
+#   parlai display_data -t "projects.memnn_feedback.tasks.dbll_babi.agents:taskTeacher:3_p0.5:feedback"
 #
 # which specifies task 2, and policy with 0.5 answers correct, see the paper
 # for more details: https://arxiv.org/abs/1604.06045
@@ -84,9 +84,9 @@ class TaskTeacher(FbDialogTeacher):
         [labels: garden]
 
         To append feedback to the current example, modify the task name like this:
-          python examples/display_data.py -t dbll_babi:task:2_p0.5:f
+          parlai display_data -t dbll_babi:task:2_p0.5:f
         Default setup:
-          python examples/display_data.py -t dbll_babi:task:2_p0.5
+          parlai display_data -t dbll_babi:task:2_p0.5
         """
         print("[loading fbdialog data:" + path + "]")
         with open(path) as read:

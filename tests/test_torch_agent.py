@@ -14,8 +14,6 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.utils.testing import tempdir
 from parlai.utils.misc import Message
 
-from collections import deque
-
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import Output
@@ -720,7 +718,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.reset()
         agent.history.update_history(obs)
         vec = agent.history.get_history_vec()
-        self.assertEqual(vec, deque([2001, 1, 2, 3]))
+        self.assertEqual(vec, [2001, 1, 2, 3])
 
         # test history vec list
         agent.history.update_history(obs)
@@ -747,7 +745,23 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.reset()
         agent.history.update_history(obs)
         vec = agent.history.get_history_vec()
-        self.assertEqual(vec, deque([1, 2, 3, MockDict.END_IDX]))
+        self.assertEqual(vec, [1, 2, 3, MockDict.END_IDX])
+
+    def test_reversed_history(self):
+        agent = get_agent(history_reversed=True)
+        agent.history.reset()
+        agent.history.update_history({'text': 'hello i am stephen'})
+        agent.history.update_history({'text': 'i am bob'})
+        assert agent.history.get_history_str() == 'hello i am stephen\ni am bob'
+        agent.history.reset()
+        agent.history.update_history(
+            {'text': 'your persona: filler\nhello i am stephen'}
+        )
+        agent.history.update_history({'text': 'i am bob'})
+        assert (
+            agent.history.get_history_str()
+            == 'your persona: filler\nhello i am stephen\ni am bob'
+        )
 
     def test_observe(self):
         """
