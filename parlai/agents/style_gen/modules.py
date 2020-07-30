@@ -66,10 +66,7 @@ class StyleHistoryMixin(History):
         if history is not None and self.style is not None:
             style = STYLE_SEP_TOKEN + self.style
             style_tok = self.parse(style)
-            if self.vec_type == 'deque':
-                history.extend(style_tok)
-            else:
-                history += style_tok
+            history += style_tok
 
         return history
 
