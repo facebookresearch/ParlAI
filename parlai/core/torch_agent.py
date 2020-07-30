@@ -298,14 +298,11 @@ class History(object):
         """
         Return the string version of the history.
         """
-        if self.temp_history and self.history_strings:
-            logging.warn('temporary history strings now include the delimiter.')
-
         if len(self.history_strings) > 0:
             history = self.history_strings[:]
-            if self.temp_history is not None:
-                history.append(self.temp_history)
             history = self.delimiter.join(history)
+            if self.temp_history is not None:
+                history += self.temp_history
             return history
 
         return None
@@ -324,7 +321,7 @@ class History(object):
             history += [self.delimiter_tok]
         history += [self.history_vecs[-1]]
         if self.temp_history is not None:
-            history.extend(self.parse(self.temp_history))
+            history.extend([self.parse(self.temp_history)])
         if self._global_end_token is not None:
             history += [[self._global_end_token]]
 
@@ -594,10 +591,7 @@ class TorchAgent(ABC, Agent):
             'to `truncate`',
         )
         agent.add_argument(
-            '--history-reversed',
-            default=False,
-            type='bool',
-            help='Reverse the history',
+            '--history-reversed', default=False, type='bool', help='Reverse the history'
         )
         agent.add_argument(
             '-histsz',
