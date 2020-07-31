@@ -112,7 +112,8 @@ class DefaultTeacher(ParlAIDialogTeacher):
             '--light_percent_train_exs',
             type=float,
             default=1.0,
-            help='Float in range [0, 1] indicating proportion of train set to use')
+            help='Float in range [0, 1] indicating proportion of train set to use',
+        )
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -130,7 +131,9 @@ class DefaultTeacher(ParlAIDialogTeacher):
         super()._setup_data(path)
         if self.training and self.pct_train_exs <= 1.0:
             random.seed(42)
-            self.episodes = random.sample(self.episodes, int(self.num_episodes() * self.pct_train_exs))
+            self.episodes = random.sample(
+                self.episodes, int(self.num_episodes() * self.pct_train_exs)
+            )
             self.num_exs = sum(len(e) for e in self.episodes)
 
 
