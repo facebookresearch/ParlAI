@@ -9,7 +9,7 @@ trained model.
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.safe_local_human.safe_local_human import SafeLocalHumanAgent
@@ -19,7 +19,7 @@ import random
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Interactive chat with a model')
+        parser = ParlaiParser(True, True, 'Like interactive, but adds a safety filter')
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument(
         '--display-prettify',
@@ -80,6 +80,7 @@ def safe_interactive(opt, print_parser=None):
             break
 
 
+@register_script('safe_interactive')
 class SafeInteractive(ParlaiScript):
     @classmethod
     def setup_args(cls):

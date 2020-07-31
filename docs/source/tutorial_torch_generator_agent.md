@@ -9,7 +9,7 @@
 Two major models in ParlAI inherit from `TorchGeneratorAgent`: seq2seq and transformer. You can try the transformer with the example below:
 
 ```bash
-python examples/train_model -m transformer/generator \
+parlai train_model -m transformer/generator \
   -t convai2 -mf /tmp/testtransformer \
   --beam-size 5 -bs 16
 ```
@@ -148,7 +148,7 @@ class Decoder(nn.Module):
 The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
 
 ```bash
-python examples/train_model.py -m examples/seq2seq \
+parlai train_model -m examples/seq2seq \
     -mf /tmp/example_model \
     -t convai2 -bs 32 -eps 2 --truncate 128
 ```

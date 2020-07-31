@@ -69,14 +69,14 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.cache/pip
-          key: pip-torch131cpu-v1-${{ hashFiles('**/requirements.txt') }}
+          key: pip-20200712--${{ hashFiles('**/requirements.txt') }}
         id: cache
       - name: install dependencies
         run: |
           pip install -q -r requirements.txt
           pip install -q mypy mypy-extensions
           pip install -q git+https://github.com/numpy/numpy-stubs.git
-          pip install -q torch==1.3.1+cpu torchvision==0.4.2+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install -q torch==1.5.1+cpu torchvision==0.6.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
       - name: mypy
         run: |
           set -eux

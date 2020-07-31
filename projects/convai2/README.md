@@ -19,7 +19,7 @@ The ConvAI2 dataset is in ParlAI in parlai/agents/tasks/convai2 and is accessibl
 
 For example, to see the training data, try:
 ```
-python ~/ParlAI/examples/display_data.py -t convai2 -dt train
+parlai display_data -t convai2 -dt train
 ```
 
 

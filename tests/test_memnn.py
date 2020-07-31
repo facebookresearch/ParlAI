@@ -13,6 +13,7 @@ NUM_EPOCHS = 3
 LR = 1
 
 
+@unittest.skip
 class TestMemnn(unittest.TestCase):
     """
     Checks that seq2seq can learn some very basic tasks.

@@ -4,6 +4,46 @@ Tips and Tricks
 Here we list other miscellaneous useful tips of things you can do in ParlAI not listed elsewhere.
 
 
+Command line tool
+#################
+
+ParlAI comes with a "super" command, that has all the other commands built in:
+
+.. code-block:: bash
+
+  $ parlai help
+  ParlAI - Dialogue Research Platform
+  usage: parlai [-h] COMMAND ...
+
+  optional arguments:
+    -h, --help               show this help message and exit
+
+  Commands:
+
+    display_data (dd)        Display data from a task
+    display_model (dm)       Display model predictions.
+    eval_model (em, eval)    Evaluate a model
+    train_model (tm, train)  Train a model
+    interactive (i)          Interactive chat with a model on the command line
+    safe_interactive         Like interactive, but adds a safety filter
+    self_chat                Generate self-chats of a model
+
+This is often more convenient than running the scripts from the examples directory.
+
+This command also supports autocompletion of commands and options in your bash
+prompt.  You can enable this by running
+
+.. code-block:: bash
+
+   python -m pip install argcomplete
+
+and then adding the following line to your .bashrc or equivalent:
+
+.. code-block:: bash
+
+  eval "$(register-python-argcomplete parlai)"
+
+
 
 Multi-tasking with weighted tasks
 #################################
@@ -12,14 +52,14 @@ If you want to train/eval/display with multiple tasks you can just use for examp
 
 .. code-block:: bash
 
-  python examples/display_data.py -t personachat,squad -dt train
+  parlai display_data -t personachat,squad -dt train
 
 However, this will sample episodes equally from the two tasks (personachat and squad).
 To sample squad 10x more often you can do:
 
 .. code-block:: bash
 
-  python examples/display_data.py -t personachat,squad --multitask_weights 1,10 -dt train
+  parlai display_data -t personachat,squad --multitask_weights 1,10 -dt train
 
 
 Tasks with Parameters
@@ -33,7 +73,7 @@ This can be done on the command line in the following way:
 
 .. code-block:: bash
 
-  python examples/display_data.py -t light_dialog:light_label_type=speech,light_dialog:light_label_type=emote -dt train
+  parlai display_data -t light_dialog:light_label_type=speech,light_dialog:light_label_type=emote -dt train
 
 That is, by adding a colon ":" followed by the flag name, an equals sign, and the value.
 You can add multiple flags, all separated by ":".

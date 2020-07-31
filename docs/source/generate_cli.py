@@ -53,7 +53,7 @@ def main():
         fout.write('.. code-block:: text\n\n')  # literal block
         capture = io.StringIO()
         parser = module.setup_args()
-        parser.prog = 'python -m parlai.scripts.{}'.format(script_name)
+        parser.prog = 'parlai {}'.format(script_name)
         parser.print_help(capture)
         fout.write(indent(capture.getvalue()))
         fout.write('\n\n')

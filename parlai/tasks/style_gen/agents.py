@@ -7,7 +7,7 @@
 import os
 
 from parlai.core.opt import Opt
-from parlai.tasks.fromfile.agents import ParlaiformatTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.tasks.style_gen.build import (
     build_personality_list,
     build_style_labeled_datasets,
@@ -38,53 +38,53 @@ def get_personality_list_path(opt: Opt) -> str:
     return os.path.join(opt['datapath'], TASK_FOLDER_NAME, 'personality_list.txt')
 
 
-class LabeledBlendedSkillTalkTeacher(ParlaiformatTeacher):
+class LabeledBlendedSkillTalkTeacher(ParlAIDialogTeacher):
     """
     Teacher for blended_skill_talk:BlendedSkillTalk, with Image-Chat personalities added
     to examples.
     """
 
     def __init__(self, opt, shared=None):
-        opt['fromfile_datapath'] = get_style_labeled_data_path(
+        opt['parlaidialogteacher_datafile'] = get_style_labeled_data_path(
             opt=opt, base_task='blended_skill_talk'
         )
         super().__init__(opt, shared=shared)
 
 
-class LabeledConvAI2PersonaTopicifierTeacher(ParlaiformatTeacher):
+class LabeledConvAI2PersonaTopicifierTeacher(ParlAIDialogTeacher):
     """
     Teacher for blended_skill_talk:ConvAI2PersonaTopicifier, with Image-Chat
     personalities added to examples.
     """
 
     def __init__(self, opt, shared=None):
-        opt['fromfile_datapath'] = get_style_labeled_data_path(
+        opt['parlaidialogteacher_datafile'] = get_style_labeled_data_path(
             opt=opt, base_task='blended_skill_talk:ConvAI2PersonaTopicifierTeacher'
         )
         super().__init__(opt, shared=shared)
 
 
-class LabeledEDPersonaTopicifierTeacher(ParlaiformatTeacher):
+class LabeledEDPersonaTopicifierTeacher(ParlAIDialogTeacher):
     """
     Teacher for blended_skill_talk:EDPersonaTopicifier, with Image-Chat personalities
     added to examples.
     """
 
     def __init__(self, opt, shared=None):
-        opt['fromfile_datapath'] = get_style_labeled_data_path(
+        opt['parlaidialogteacher_datafile'] = get_style_labeled_data_path(
             opt=opt, base_task='blended_skill_talk:EDPersonaTopicifierTeacher'
         )
         super().__init__(opt, shared=shared)
 
 
-class LabeledWoWPersonaTopicifierTeacher(ParlaiformatTeacher):
+class LabeledWoWPersonaTopicifierTeacher(ParlAIDialogTeacher):
     """
     Teacher for blended_skill_talk:WoWPersonaTopicifier, with Image-Chat personalities
     added to examples.
     """
 
     def __init__(self, opt, shared=None):
-        opt['fromfile_datapath'] = get_style_labeled_data_path(
+        opt['parlaidialogteacher_datafile'] = get_style_labeled_data_path(
             opt=opt, base_task='blended_skill_talk:WoWPersonaTopicifierTeacher'
         )
         super().__init__(opt, shared=shared)

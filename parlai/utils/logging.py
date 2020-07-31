@@ -105,15 +105,15 @@ class ParlaiLogger(logging.Logger):
         """
         Stop logging to stdout.
         """
-        prev_level = self.streamHandler.level
-        self.streamHandler.level = 9999
-        return prev_level
+        self.prev_level = self.streamHandler.level
+        self.streamHandler.level = ERROR
+        return self.prev_level
 
-    def unmute(self, level):
+    def unmute(self):
         """
         Resume logging to stdout.
         """
-        self.streamHandler.level = level
+        self.streamHandler.level = self.prev_level
 
 
 # -----------------------------------
@@ -154,6 +154,10 @@ def log(*args, **kwargs):
     return logger.log(*args, **kwargs)
 
 
+def verbose(msg):
+    return logger.log(msg, level=VERBOSE)
+
+
 def debug(*args, **kwargs):
     return logger.debug(*args, **kwargs)
 
@@ -163,6 +167,10 @@ def error(*args, **kwargs):
 
 
 def warn(*args, **kwargs):
+    return logger.warn(*args, **kwargs)
+
+
+def warning(*args, **kwargs):
     return logger.warn(*args, **kwargs)
 
 
