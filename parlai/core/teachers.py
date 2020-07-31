@@ -45,7 +45,7 @@ from parlai.core.opt import Opt
 from parlai.utils.conversations import Conversations
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
-from parlai.utils.distributed import get_rank, num_workers, is_distributed
+from parlai.utils.distributed import get_rank, num_workers
 import parlai.utils.logging as logging
 
 from abc import ABC, abstractmethod
@@ -676,9 +676,6 @@ class DialogData(object):
         # in case we need to shard the dataset
         self.rank = get_rank()
         self.num_workers = num_workers()
-        self.is_distributed_and_is_eval = is_distributed() and any(
-            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
-        )
 
         # self.data is a list of episodes
         # each episode is a tuple of entries
@@ -687,6 +684,9 @@ class DialogData(object):
             self.image_loader = shared.get('image_loader', None)
             self.data = shared.get('data', [])
             self.cands = shared.get('cands', None)
+            if 'num_examples_cache' in shared:
+                self._number_examples_cache = shared['num_examples_cache']
+                self._number_episodes_cache = shared['num_episodes_cache']
         else:
             self.image_loader = ImageLoader(opt)
             self.data = []
@@ -705,6 +705,9 @@ class DialogData(object):
             'cands': self.cands,
             'image_loader': self.image_loader,
         }
+        if hasattr(self, '_num_examples_cache'):
+            shared['num_examples_cache'] = (self._num_examples_cache,)
+            shared['num_episodes_cache'] = (self._num_episodes_cache,)
         return shared
 
     def _read_episode(self, data_loader):
@@ -736,14 +739,23 @@ class DialogData(object):
             class docstring.
         :param str datafile:
         """
+        # when we load the data into memory, go ahead and count the size of it,
+        # as it's convenient. we also can count the size without having to worry
+        # about the stratifications we're doing.
+        self._num_examples_cache = 0
+        self._num_episodes_cache = 0
         for i, episode in enumerate(self._read_episode(data_loader(datafile))):
-            if not self.is_distributed_and_is_eval or i % self.num_workers == self.rank:
+            self._num_episodes_cache += 1
+            self._num_examples_cache += len(episode)
+            if i % self.num_workers == self.rank:
                 self.data.append(episode)
 
     def num_episodes(self):
         """
         Return number of episodes in the dataset.
         """
+        if hasattr(self, '_num_episodes_cache'):
+            return self._num_episodes_cache
         return len(self.data)
 
     def num_examples(self):
@@ -923,9 +935,6 @@ class StreamDialogData(DialogData):
 
         self.rank = get_rank()
         self.num_workers = num_workers()
-        self.is_distributed_and_is_eval = self.num_workers > 1 and any(
-            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
-        )
 
     def share(self):
         """
@@ -958,9 +967,7 @@ class StreamDialogData(DialogData):
             for episode in self._read_episode(data_loader(datafile)):
                 # We only shard the data set at evaluation time, as training is
                 # done using sampling-with-replacement.
-                if not self.is_distributed_and_is_eval or (
-                    idx % self.num_workers == self.rank
-                ):
+                if idx % self.num_workers == self.rank
                     yield episode
                 idx += 1
             while not self.cycle:
@@ -2139,14 +2146,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
-        if (
-            shared is None
-            and self.is_train
-            and self.opt.get('distributed_world_size') is not None
-        ):
-            self.fold_chunks = [
-                c for c in self.fold_chunks if c % self.dws == self.rank
-            ]
 
         if shared is not None:
             self.is_root_teacher = False

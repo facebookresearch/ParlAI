@@ -1110,7 +1110,8 @@ class DynamicBatchWorld(World):
         self.number_parleys = 0
         self.total_exs = 0
         self.world.reset()
-        self.rng = random.Random(4)
+        self.rng = random.Random(4 + self.opt.get('rank', 0))
+        self.rng2 = random.Random(3)
         for w in self.worlds:
             w.reset()
 
@@ -1198,7 +1199,7 @@ class DynamicBatchWorld(World):
         # start with a random item. indices_idx is the lookup into indices, but
         # index is the actual world.
         width = 0
-        indices_idx = random.randint(0, len(indices) - 1)
+        indices_idx = self.rng2.randint(0, len(indices) - 1)
 
         # we picked a random spot, but we can get better packing if we start at
         # the last example with the same score, since we always move down to
