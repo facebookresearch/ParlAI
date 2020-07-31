@@ -24,7 +24,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
             Opt(
                 dict(
                     task='integration_tests:classifier',
-                    model='projects.style_gen.style_gen.StyleGen',
+                    model='projects.style_gen.classifier:ClassifierAgent',
                     classes=['one', 'zero'],
                     optimizer='adamax',
                     truncate=8,
