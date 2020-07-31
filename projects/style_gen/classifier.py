@@ -246,7 +246,7 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
 
     def eval_step(self, batch):
         """
-        Train on a single batch of examples.
+        Evaluate a single batch of examples.
         """
         if batch.text_vec is None:
             return
