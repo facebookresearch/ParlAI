@@ -12,10 +12,6 @@ from itertools import chain
 import torch
 from torch.nn import functional as F
 
-from parlai.agents.style_gen.modules import (
-    BatchWithPersonalities,
-    ClassifierOnGeneratorModel,
-)
 from parlai.agents.transformer.transformer import (
     TransformerClassifierAgent,
     TransformerGeneratorAgent,
@@ -25,6 +21,10 @@ from parlai.core.torch_agent import Output
 from parlai.core.torch_classifier_agent import ClassificationMixin
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import warn_once, round_sigfigs
+from projects.style_gen.modules import (
+    BatchWithPersonalities,
+    ClassifierOnGeneratorModel,
+)
 
 
 class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):

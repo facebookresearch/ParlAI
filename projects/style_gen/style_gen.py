@@ -7,8 +7,8 @@
 Agent for style-controlled generation.
 """
 
-from parlai.agents.style_gen.modules import StyleAgentMixin, StyleHistory
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
+from projects.style_gen.modules import StyleAgentMixin, StyleHistory
 
 
 class StyleGenAgent(StyleAgentMixin, TransformerGeneratorAgent):
