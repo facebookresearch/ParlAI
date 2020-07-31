@@ -68,7 +68,7 @@ Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/a
 
 You can view the standard training set with:
 
-    python examples/display_data.py -t wizard_of_wikipedia -dt train
+    parlai display_data -t wizard_of_wikipedia -dt train
 
 The knowledge returned from a standard IR system appears in the knowledge field (but you can also use your own knowledge system, accessing Wikipedia yourself, we use the dump in "-t wikipedia".
 The field 'checked_sentence' indicates the gold knowledge the annotator labeled.
@@ -79,7 +79,7 @@ The field 'checked_sentence' indicates the gold knowledge the annotator labeled.
 
 You can evaluate the pretrained End-to-end generative models via:
 
-    python examples/eval_model.py \
+    parlai eval_model \
         -bs 64 -t wizard_of_wikipedia:generator:random_split \
         -mf models:wizard_of_wikipedia/end2end_generator/model
 
@@ -93,7 +93,7 @@ from scratch for public release.
 
 You can also evaluate the model on the unseen topic split too:
 
-    python examples/eval_model.py \
+    parlai eval_model \
         -bs 64 -t wizard_of_wikipedia:generator:topic_split \
         -mf models:wizard_of_wikipedia/end2end_generator/model
 
@@ -103,7 +103,7 @@ This will produce:
 
 You can also interact with the model with:
 
-    python examples/interactive.py -mf models:wizard_of_wikipedia/end2end_generator/model -t wizard_of_wikipedia
+    parlai interactive -mf models:wizard_of_wikipedia/end2end_generator/model -t wizard_of_wikipedia
 
 ## Retrieval Model
 

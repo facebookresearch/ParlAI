@@ -23,7 +23,7 @@ Examples
 
 .. code-block:: shell
 
-  eval_wordstat.py -mf data/model -t convai2:self --freq-bins 10,100,1000
+  parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
 """
 
 from parlai.core.params import ParlaiParser
@@ -34,7 +34,7 @@ from parlai.utils.misc import TimeLogger
 from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from collections import Counter
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 import copy
 import numpy
@@ -43,7 +43,7 @@ import random
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'compute statistics from model predictions')
+        parser = ParlaiParser(True, True, 'Compute statistics from model predictions')
     DictionaryAgent.add_cmdline_args(parser)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
@@ -279,6 +279,7 @@ def eval_wordstat(opt, print_parser=None):
     return report
 
 
+@register_script('eval_wordstat', hidden=True)
 class EvalWordStat(ParlaiScript):
     @classmethod
     def setup_args(cls):

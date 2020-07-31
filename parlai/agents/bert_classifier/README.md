@@ -8,5 +8,5 @@ It relies on the pytorch implementation provided by Hugging Face (https://github
 
 Train a classifier on the SNLI tas.
 ```bash
-python examples/train_model.py -m bert_classifier -t snli --classes 'entailment' 'contradiction' 'neutral' -mf /tmp/BERT_snli -bs 20
+parlai train_model -m bert_classifier -t snli --classes 'entailment' 'contradiction' 'neutral' -mf /tmp/BERT_snli -bs 20
 ```

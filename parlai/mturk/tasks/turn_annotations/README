@@ -1,0 +1,21 @@
+### Turn Annotations MTurk Task
+
+This task allows one to collect model-human conversations with annotations of
+customized characteristics via checkboxes on  the model turns.
+
+Modify constants.py with HTML for the task description (shown when the worker
+first enters the task) and the left pane (shown on the left during the
+conversation).
+
+Customize ONBOARD_TASK_DATA in constants.py to provide your own onboarding
+conversation and answers.
+
+Customize the buckets you want to collect per turn in constants.py as well.
+
+Using launch.py, you can customize various aspects including: the models to run,
+where to save data, where to find models to run, and others.
+
+Modify worlds.py -> TurnAnnotationsOnboardWorld -> check_onboarding_answers() to
+change worker selection criteria.
+
+Warnings: Code is somewhat rough around the edges, and it uses the legacy version of the ParlAI MTurk integration

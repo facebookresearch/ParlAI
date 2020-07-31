@@ -17,25 +17,25 @@ Train a Bag-of-words Ranker model on ConvAI2:
 
 .. code-block:: bash
 
-    python  examples/train_model.py -m examples/tra  -t convai2 -mf /tmp/test -bs 32
+    parlai train_model -m examples/tra  -t convai2 -mf /tmp/test -bs 32
 
 Train a Transformer Ranker model on ConvAI2:
 
 .. code-block:: bash
 
-    python examples/train_model.py -m transformer/ranker -t convai2 -mf /tmp/tr_convai2_test
+    parlai train_model -m transformer/ranker -t convai2 -mf /tmp/tr_convai2_test
 
 Train a Memory Network model on Daily Dialog:
 
 .. code-block:: bash
 
-    python examples/train_model.py -m memnn -t dailydialog -mf /tmp/memnn_dd_test -bs 20 -cands batch -ecands batch
+    parlai train_model -m memnn -t dailydialog -mf /tmp/memnn_dd_test -bs 20 -cands batch -ecands batch
 
 Train a BERT-based Bi-Encoder ranker model on Twitter:
 
 .. code-block:: bash
 
-    python examples/train_model.py -m bert_ranker/bi_encoder_ranker -t twitter -mf /tmp/bert_twitter_test -bs 10 -cands batch -ecands batch --data-parallel True
+    parlai train_model -m bert_ranker/bi_encoder_ranker -t twitter -mf /tmp/bert_twitter_test -bs 10 -cands batch -ecands batch --data-parallel True
 
 
 Creating a Model

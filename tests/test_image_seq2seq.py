@@ -22,6 +22,8 @@ BASE_ARGS = {
     'embeddings_scale': True,
     'gradient_clip': 0.1,
     'num_epochs': 10,
+    'skip_generation': True,
+    'n_image_channels': 1,
     # Train args
     'learningrate': 7e-3,
     'batchsize': 16,
@@ -35,6 +37,13 @@ IMAGE_ARGS = {
     'task': 'integration_tests:ImageTeacher',
     'num_epochs': 20,
     'image_mode': 'resnet152',
+}
+
+SPATIAL_IMAGE_ARGS = {
+    'task': 'integration_tests:ImageTeacher',
+    'num_epochs': 5,
+    'image_mode': 'resnet152_spatial',
+    'n_image_channels': 49,
 }
 
 EARLY_FUSION_ARGS = {'image_fusion_type': 'early', 'n_segments': 2}
@@ -77,13 +86,10 @@ class TestImageSeq2Seq(unittest.TestCase):
         )
 
     @testing_utils.retry(ntries=3)
-    @testing_utils.skipUnlessTorch
     @testing_utils.skipUnlessGPU
     def test_image_task(self):
         """
         Test that model correctly handles image task.
-
-        No training, only eval
         """
         args = BASE_ARGS.copy()
         args.update(IMAGE_ARGS)
@@ -94,7 +100,6 @@ class TestImageSeq2Seq(unittest.TestCase):
         )
 
     @testing_utils.retry(ntries=3)
-    @testing_utils.skipUnlessTorch
     @testing_utils.skipUnlessGPU
     def test_multitask(self):
         """
@@ -140,6 +145,45 @@ class TestImageSeq2Seq(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         self.assertLessEqual(
             valid['ppl'], 5.0, 'failed to train image_seq2seq on image+text task'
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessGPU
+    def test_image_task_spatial_features(self):
+        """
+        Test that model correctly handles image task.
+
+        With spatial features.
+        """
+        args = BASE_ARGS.copy()
+        args.update(SPATIAL_IMAGE_ARGS)
+
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'],
+            7.5,
+            'failed to train image_seq2seq on image task with spatial features',
+        )
+
+    @testing_utils.retry(ntries=3)
+    @testing_utils.skipUnlessGPU
+    def test_image_task_spatial_features_early_fusion(self):
+        """
+        Test that model correctly handles image task.
+
+        With spatial features.
+
+        Early Fusion
+        """
+        args = BASE_ARGS.copy()
+        args.update(SPATIAL_IMAGE_ARGS)
+        args.update(EARLY_FUSION_ARGS)
+
+        valid, test = testing_utils.train_model(args)
+        self.assertLessEqual(
+            valid['ppl'],
+            7.5,
+            'failed to train image_seq2seq on image task with spatial features',
         )
 
 

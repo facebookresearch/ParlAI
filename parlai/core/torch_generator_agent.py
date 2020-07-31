@@ -823,6 +823,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         for k in range(1, 5):
             self.record_local_metric(f'nltk_bleu{k}', results[k])
 
+    def _add_generation_metrics(self, batch, preds):
+        """
+        Can be overridden to allow for some metrics on the generations calculated at
+        eval.
+        """
+        pass
+
     def eval_step(self, batch):
         """
         Evaluate a single batch of examples.
@@ -852,6 +859,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             maxlen = self.label_truncate or 256
             beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
             preds, scores = zip(*beam_preds_scores)
+            self._add_generation_metrics(batch, preds)
 
         cand_choices = None
         # TODO: abstract out the scoring here

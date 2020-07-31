@@ -161,7 +161,7 @@ Here is an example of using the ascii image mode:
 
 .. code-block:: bash
 
-    python examples/display_data.py -t mnist_qa --image-mode ascii
+    parlai display_data -t mnist_qa --image-mode ascii
 
 .. code-block:: python
 

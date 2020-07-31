@@ -4,9 +4,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Throw a party.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  parlai party
+"""
+
 import sys
 import time
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.params import ParlaiParser
 
 RESET = '\u001b[0m'
@@ -243,10 +254,11 @@ cNd.........................................;lOc
 )
 
 
+@register_script('party', hidden=True, aliases=['parrot'])
 class Party(ParlaiScript):
     @classmethod
     def setup_args(cls):
-        return ParlaiParser(False, False)
+        return ParlaiParser(False, False, 'Throw a party!')
 
     def run(self):
         i = 0
