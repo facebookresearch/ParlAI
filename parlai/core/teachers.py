@@ -967,7 +967,7 @@ class StreamDialogData(DialogData):
             for episode in self._read_episode(data_loader(datafile)):
                 # We only shard the data set at evaluation time, as training is
                 # done using sampling-with-replacement.
-                if idx % self.num_workers == self.rank
+                if idx % self.num_workers == self.rank:
                     yield episode
                 idx += 1
             while not self.cycle:
