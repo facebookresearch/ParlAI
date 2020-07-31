@@ -303,9 +303,6 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         Essentially overrides normal TransformerEncoder forward.
         """
-        import ipdb
-
-        ipdb.set_trace()
         context_tensor = context_mask = None
         image_tensor = image_mask = None
         if src_tokens is not None and image_features is not None:
