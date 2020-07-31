@@ -17,7 +17,7 @@ NUM_EXS = 110877
 
 class TestLightTeacher(unittest.TestCase):
     """
-    Tests for the LIGHT Dialogue Teacher
+    Tests for the LIGHT Dialogue Teacher.
     """
 
     def test_counts(self):
@@ -29,7 +29,7 @@ class TestLightTeacher(unittest.TestCase):
                     'datatype': 'train',
                     'task': 'light_dialog',
                     'datapath': tmpdir,
-                    'light_percent_train_exs': proportion
+                    'light_percent_train_exs': proportion,
                 }
                 parser = setup_args()
                 parser.set_defaults(**all_kwargs)
@@ -38,6 +38,7 @@ class TestLightTeacher(unittest.TestCase):
                 teacher = create_task(opt, agent).get_task_agent()
                 self.assertEqual(teacher.num_episodes(), int(NUM_EPS * proportion))
                 self.assertEqual(teacher.num_examples(), int(NUM_EXS * proportion))
+
 
 if __name__ == '__main__':
     unittest.main()
