@@ -19,6 +19,7 @@ Contains the following utilities:
 
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
+import time
 import math
 from operator import attrgetter
 
@@ -1020,6 +1021,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.
         """
+        print(f'1: {time.time}')
         model = self.model
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
@@ -1029,6 +1031,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             assert batch.label_vec is not None, "need label_vec for _generate"
             dev = batch.label_vec.device
+        print(f'2: {time.time}')
 
         bsz = (
             len(batch.text_lengths)
@@ -1045,29 +1048,36 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             ]
         else:
             beams = [self._treesearch_factory(dev) for _ in range(bsz)]
+        print(f'3: {time.time}')
 
         # repeat encoder outputs and decoder inputs
         decoder_input = self._get_initial_decoder_input(bsz, beam_size, dev)
+        print(f'4: {time.time}')
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
+        print(f'5: {time.time}')
 
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):
                 # exit early if possible
                 break
 
+            print(f'L1: {time.time}')
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
+            print(f'L2: {time.time}')
             score = score[:, -1:, :]
             score = model.output(score)
+            print(f'L3: {time.time}')
             # score contains softmax scores for bsz * beam_size samples
             score = score.view(bsz, beam_size, -1)
             if self.temperature != 1.0:
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
             score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
+            print(f'L4: {time.time}')
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
@@ -1080,6 +1090,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     prefix_toks[prefix_mask].unsqueeze(-1),
                     prefix_score[prefix_mask],
                 )
+            print(f'L5: {time.time}')
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -1092,19 +1103,27 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             incr_state = model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
+            print(f'L6: {time.time}')
             decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]
             ).unsqueeze(-1)
             decoder_input = torch.cat([decoder_input, selection], dim=-1)
+            print(f'L7: {time.time}')
+
+        print(f'6: {time.time}')
 
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+
+        print(f'7: {time.time}')
 
         if hasattr(self, '_rerank_beams'):
             n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
                 batch, n_best_beam_preds_scores
             )
+
+        print(f'8: {time.time}')
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
@@ -1114,6 +1133,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     gen = self._v2t(tokens)
                     logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
                 logging.debug('-')
+
+        print(f'9: {time.time}')
 
         return beam_preds_scores, beams
 
