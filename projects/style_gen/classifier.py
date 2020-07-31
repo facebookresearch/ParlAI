@@ -31,8 +31,8 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
     """
     Agent that uses a generator model with a classifier head.
 
-    Useful for performing classification with a pretrained generator model. Note that
-    generator encoder/decoder weights will be frozen during classifier training.
+    Useful for performing classification with a pretrained generator model. The
+    generator encoder/decoder weights can be frozen during classifier training.
     """
 
     # TODO: perhaps reduce the amount of code duplicated from TorchClassifierAgent. This
