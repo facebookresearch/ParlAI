@@ -38,8 +38,8 @@ class TestClassifierOnGenerator(unittest.TestCase):
                 )
             )
         )
-        assert valid['accuracy'] > 0.97
-        assert test['accuracy'] > 0.97
+        self.assertEqual(valid['accuracy'], 1.0)
+        self.assertEqual(test['accuracy'], 1.0)
 
 
 if __name__ == '__main__':
