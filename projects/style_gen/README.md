@@ -8,9 +8,9 @@ Agent for training and evaluating generative models conditioned on a style token
 
 Evaluating a style-controlled generation model on the BlendedSkillTalk dataset, labeled with personalities from Image-Chat:
 ```
-python examples/eval_model.py \
+parlai eval_model \
 --model-file zoo:style_gen/c75_labeled_dialogue_generator/model \
---model projects.style_gen \
+--model projects.style_gen.style_gen:StyleGenAgent \
 --skip-generation True \
 --task style_gen:LabeledBlendedSkillTalk \
 --datatype test \
