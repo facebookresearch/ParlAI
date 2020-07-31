@@ -253,7 +253,11 @@ class ContextWithImageEncoder(TransformerEncoder):
         else:
             image_encoded = torch.stack(
                 [self.dummy_image_enc for _ in range(len(images))]
-            ).reshape(len(images), self.n_image_tokens * self.n_image_channels, self.embedding_size)
+            ).reshape(
+                len(images),
+                self.n_image_tokens * self.n_image_channels,
+                self.embedding_size,
+            )
             image_masks = torch.stack([~self.ones_mask for _ in range(len(images))])
             assert image_masks.shape == image_encoded.shape[:2]
 
@@ -299,7 +303,9 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         Essentially overrides normal TransformerEncoder forward.
         """
-        import ipdb; ipdb.set_trace()
+        import ipdb
+
+        ipdb.set_trace()
         context_tensor = context_mask = None
         image_tensor = image_mask = None
         if src_tokens is not None and image_features is not None:
@@ -313,12 +319,19 @@ class ContextWithImageEncoder(TransformerEncoder):
             valid_imgs = [v for v in image_features if isinstance(v, torch.Tensor)]
             segments: Optional[torch.LongTensor] = None
             if valid_imgs:
-                segments = torch.ones(  # type: ignore
-                    (len(image_features), self.n_image_channels * self.n_image_tokens),
-                    dtype=torch.long,
-                    device=valid_imgs[0].device,
-                ),
-            image_tensor, image_mask = self.encode_images(image_features, segments=segments)
+                segments = (
+                    torch.ones(  # type: ignore
+                        (
+                            len(image_features),
+                            self.n_image_channels * self.n_image_tokens,
+                        ),
+                        dtype=torch.long,
+                        device=valid_imgs[0].device,
+                    ),
+                )
+            image_tensor, image_mask = self.encode_images(
+                image_features, segments=segments
+            )
 
         # perform early fusion
         tensor = self._cat([context_tensor, image_tensor])
