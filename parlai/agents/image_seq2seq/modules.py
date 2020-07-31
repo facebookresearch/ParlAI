@@ -249,18 +249,15 @@ class ContextWithImageEncoder(TransformerEncoder):
                     self.embedding_size,
                 )
             )
-            assert image_masks.shape == image_encoded.shape[:2]
         else:
-            image_encoded = torch.stack(
-                [self.dummy_image_enc for _ in range(len(images))]
-            ).reshape(
+            image_encoded = torch.stack([self.dummy_image_enc] * len(images)).reshape(
                 len(images),
                 self.n_image_tokens * self.n_image_channels,
                 self.embedding_size,
             )
-            image_masks = torch.stack([~self.ones_mask for _ in range(len(images))])
-            assert image_masks.shape == image_encoded.shape[:2]
+            image_masks = torch.stack([~self.ones_mask] * len(images))
 
+        assert image_masks.shape == image_encoded.shape[:2]
         return image_encoded, image_masks
 
     def forward(  # type: ignore

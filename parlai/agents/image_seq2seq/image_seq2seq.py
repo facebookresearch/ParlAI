@@ -128,7 +128,7 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
                 images.append(img)
             batch.image = images
         else:
-            images = [None for _ in range(len(batch.valid_indices))]
+            images = [None] * len(batch.valid_indices)
             batch.image = images
         return batch
 
