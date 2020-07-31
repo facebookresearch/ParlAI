@@ -10,7 +10,6 @@ Test agents used with style-controlled generation.
 import unittest
 
 import parlai.utils.testing as testing_utils
-from parlai.core.opt import Opt
 
 
 class TestStyleGen(unittest.TestCase):
