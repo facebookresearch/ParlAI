@@ -11,14 +11,18 @@ import threading
 from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
-from constants import (
+from parlai.mturk.tasks.turn_annotations.constants import (
     AGENT_0,
     ANNOTATIONS_CONFIG,
     TASK_CONFIG,
     LEFT_PANE_TEXT,
+    FINAL_RATING_QUESTION,
 )
-from worlds import TurnAnnotationsOnboardWorld, TurnAnnotationsChatWorld
-from bot_agent import TurkLikeAgent
+from parlai.mturk.tasks.turn_annotations.worlds import (
+    TurnAnnotationsOnboardWorld,
+    TurnAnnotationsChatWorld,
+)
+from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 
 
 def run_task(override_opt):
@@ -83,6 +87,7 @@ def run_task(override_opt):
     opt['task'] = os.path.basename(directory_path)
 
     opt['left_pane_text'] = LEFT_PANE_TEXT
+    opt['final_rating_question'] = FINAL_RATING_QUESTION
     opt.update(TASK_CONFIG)
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core

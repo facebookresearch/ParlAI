@@ -74,7 +74,8 @@ class TurkLikeAgent:
             radio_buttons_html = ''
             for i in range(1, 6):
                 radio_buttons_html += f"""<input type="radio" id="radio_rating_{i}" name="radio_final_rating_group" value="{i}" /><span style={radio_css_style}>{i}</span>"""
-            exceeds_min_turns = f"""<br><br><div>{self.num_turns} chat turns finished! Please rate your partner on a scale of 1-5, how much would you enjoy talking to this partner over the course of a long conversation? (1: not at all, 5: a lot)</div>
+            final_scoring_question = self.opt['final_rating_question']
+            exceeds_min_turns = f"""<br><br><div>{self.num_turns} chat turns finished! {final_scoring_question}</div>
             {radio_buttons_html}
             <br>Then, please click the "Done" button to end the chat."""
             final_message_text += exceeds_min_turns
