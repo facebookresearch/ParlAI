@@ -164,6 +164,9 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
 
         if self.personality_as_label:
             # All tokens go into the encoder and classification is learned from that.
+            # This is useful in the standard case where we have a fixed utterance that
+            # doesn't need to be generated, and we can just stick it all in the encoder
+            # to be classified.
             assert len(xs) == 1
             # Only one input allowed
             bsz = xs[0].size(0)
@@ -175,7 +178,8 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
             scores = self.classifier_head(latent.squeeze(dim=1))
         else:
             # Tokens are split between the encoder and decoder and classification is
-            # learned from both.
+            # learned from both. This is useful when we want to classify a partially
+            # generated utterance, along with its context in the encoder.
             text_vec, label_vec = xs
             encoder_states = self.encoder(text_vec)
             latent, _ = self.decoder(label_vec, encoder_states)
