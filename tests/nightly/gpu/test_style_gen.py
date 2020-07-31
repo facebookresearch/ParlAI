@@ -25,7 +25,7 @@ class TestStyleGen(unittest.TestCase):
                     'batchsize': 16,
                     'num_examples': 64,
                     'model_file': f'zoo:style_gen/{model_name}/model',
-                    'model': 'projects.style_gen',
+                    'model': 'projects.style_gen.style_gen:StyleGenAgent',
                     'skip_generation': True,
                     'task': 'style_gen:LabeledBlendedSkillTalk',
                     'use_style_frac': style_frac,
