@@ -731,7 +731,7 @@ class DialogData(object):
         # about the stratifications we're doing.
         self._num_examples_cache = 0
         self._num_episodes_cache = 0
-        for i, episode in enumerate(self._read_episode(data_loader(datafile))):
+        for episode in self._read_episode(data_loader(datafile)):
             self._num_episodes_cache += 1
             self._num_examples_cache += len(episode)
             self.data.append(episode)
