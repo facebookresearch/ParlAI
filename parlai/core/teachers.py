@@ -277,6 +277,9 @@ class FixedDialogTeacher(Teacher):
         # set up batching
         self.bsz = opt.get('batchsize', 1)
 
+        self.dws = int(self.opt.get('distributed_world_size', 1))
+        self.rank = int(self.opt.get('rank', 0))
+
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
             return self.index.get_lock()
@@ -356,10 +359,16 @@ class FixedDialogTeacher(Teacher):
         if loop is None:
             loop = self.training
         if self.random:
-            new_idx = random.randrange(num_eps)
+            new_idx = (
+                random.randrange(
+                    num_eps // self.dws + int(num_eps % self.dws > self.rank)
+                )
+                * self.dws
+                + self.rank
+            )
         else:
             with self._lock():
-                self.index.value += 1
+                self.index.value += self.dws
                 if loop:
                     self.index.value %= num_eps
                 new_idx = self.index.value
@@ -395,29 +404,6 @@ class FixedDialogTeacher(Teacher):
             epoch_done = False
 
         return ex, epoch_done
-
-    def next_batch(self):
-        """
-        Return the next batch of examples.
-        """
-        # get next batch
-        with self._lock():
-            self.index.value += 1
-            if self.training:
-                self.index.value %= len(self.batches)
-            batch_idx = self.index.value
-
-            if batch_idx + 1 >= len(self.batches):
-                if self.random:
-                    random.shuffle(self.batches)
-                self.epochDone = True
-            else:
-                self.epochDone = False
-
-        if batch_idx >= len(self.batches):
-            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
-
-        return self.batches[batch_idx]
 
     def num_episodes(self) -> int:
         """
@@ -695,6 +681,7 @@ class DialogData(object):
 
         self.addedCands = []
         self.copied_cands = False
+        self.dws = opt.get('distributed_world_size', 1)
 
     def share(self):
         """
@@ -747,8 +734,7 @@ class DialogData(object):
         for i, episode in enumerate(self._read_episode(data_loader(datafile))):
             self._num_episodes_cache += 1
             self._num_examples_cache += len(episode)
-            if i % self.num_workers == self.rank:
-                self.data.append(episode)
+            self.data.append(episode)
 
     def num_episodes(self):
         """
@@ -781,7 +767,7 @@ class DialogData(object):
         """
         if episode_idx >= len(self.data):
             return {'episode_done': True}, True
-        next_episode_idx_for_rank = episode_idx + 1
+        next_episode_idx_for_rank = episode_idx + self.dws
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
@@ -965,10 +951,7 @@ class StreamDialogData(DialogData):
         idx = 0
         while True:
             for episode in self._read_episode(data_loader(datafile)):
-                # We only shard the data set at evaluation time, as training is
-                # done using sampling-with-replacement.
-                if idx % self.num_workers == self.rank:
-                    yield episode
+                yield episode
                 idx += 1
             while not self.cycle:
                 yield self._END_OF_EPOCH
@@ -2225,16 +2208,10 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         pass
 
     def num_episodes(self):
-        if self.is_train:
-            return self.num_eps
-        else:
-            return self.num_eps // self.dws + int((self.num_eps % self.dws) > self.rank)
+        return self.num_eps
 
     def num_examples(self):
-        if self.is_train:
-            return self.num_exs
-        else:
-            return self.num_exs // self.dws + int((self.num_exs % self.dws) > self.rank)
+        return self.num_exs
 
     def _enqueue_request(self):
         """
