@@ -951,7 +951,8 @@ class StreamDialogData(DialogData):
         idx = 0
         while True:
             for episode in self._read_episode(data_loader(datafile)):
-                yield episode
+                if idx % self.dws == self.rank:
+                    yield episode
                 idx += 1
             while not self.cycle:
                 yield self._END_OF_EPOCH
