@@ -29,7 +29,6 @@ from torch import optim
 
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
-from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
@@ -740,7 +739,7 @@ class TorchAgent(ABC, Agent):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
             # global_metrics keeps track of batch-level or global-level metrics
-            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1, shared=None)
+            self.global_metrics = Metrics(shared=None)
             # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
         else:
@@ -750,12 +749,7 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            self.global_metrics = Metrics(
-                opt.get('numthreads', 1) > 1, shared=shared['global_metrics']
-            )
-
-        if opt.get('numthreads', 1) > 1:
-            torch.set_num_threads(1)
+            self.global_metrics = Metrics(shared=shared['global_metrics'])
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -899,7 +893,7 @@ class TorchAgent(ABC, Agent):
             return False
         datatype = self.opt.get('datatype', '')
         is_train = 'train' in datatype and 'evalmode' not in datatype
-        return is_train or self.opt.get('numthreads', 1) > 1
+        return is_train
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
@@ -1261,14 +1255,8 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
-
-        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
-            # move metrics and model to shared memory
-            self.metrics = SharedTable(self.metrics)
-            self.model.share_memory()
         shared['metrics'] = self.metrics
         shared['global_metrics'] = self.global_metrics.share()
-
         shared['dict'] = self.dict
         shared['model'] = self.model
         shared['criterion'] = self.criterion
@@ -2017,9 +2005,6 @@ class TorchAgent(ABC, Agent):
             self.global_metrics.add('ltps', GlobalTimerMetric(0))
             self.global_metrics.add('ctps', GlobalTimerMetric(0))
             self.global_metrics.add('tps', GlobalTimerMetric(0))
-
-        # Make sure we push all the metrics to main thread in hogwild/workers
-        self.global_metrics.flush()
 
         return batch_reply
 

@@ -30,7 +30,6 @@ class TestMemnn(unittest.TestCase):
                 lr=LR,
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
-                numthreads=1,
                 no_cuda=True,
                 embedding_size=32,
                 gradient_clip=1.0,
@@ -45,7 +44,6 @@ class TestMemnn(unittest.TestCase):
         self.assertGreater(valid['hits@1'], 0.95)
         self.assertGreater(test['hits@1'], 0.95)
 
-    @testing_utils.skipIfGPU
     @testing_utils.retry()
     def test_labelcands_multi(self):
         """
@@ -58,7 +56,6 @@ class TestMemnn(unittest.TestCase):
                 lr=LR,
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
-                numthreads=min(4, os.cpu_count()),
                 no_cuda=True,
                 embedding_size=32,
                 gradient_clip=1.0,

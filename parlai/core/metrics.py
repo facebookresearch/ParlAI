@@ -4,16 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Provides standard metric evaluations for dialog.
-
-Uses locking and shared memory when ``numthreads`` is set to >1 to share metrics between
-processes.
+Provides standard metric evaluations for dialog, as well as an aggregator.
 """
 
 import re
 from abc import ABC, abstractmethod
 from collections import Counter
-import queue
 import functools
 import datetime
 from typing import Union, List, Optional, Tuple, Set, Any, Dict
@@ -23,12 +19,6 @@ import torch
 from parlai.core.message import Message
 from parlai.utils.misc import warn_once
 from parlai.utils.typing import TScalar, TVector
-
-try:
-    import torch.multiprocessing as multiprocessing
-except ImportError:
-    import multiprocessing  # type: ignore
-
 
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
@@ -604,34 +594,18 @@ def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]) -> Dict[str, Met
 
 class Metrics(object):
     """
-    Threadsafe metrics container focused on aggregation.
+    Metrics aggregator.
     """
 
     def __init__(self, threadsafe=False, shared=None):
-        self._threadsafe = threadsafe
-        if self._threadsafe and shared is None:
-            # Threadsafe metrics tracking works by keeping a queue that workers can
-            # push updates to. the main worker works through the queue at report
-            # time. We could add some buffering to improve performance, but we
-            # are deprioritizing hogwild performance at this time.
-            self._buffer = None
-            self._queue = multiprocessing.SimpleQueue()
-            self._worker = False
-            self._data = {}
-        elif shared and 'queue' in shared:
-            # This is a clone, in threadsafe mode
-            self._buffer = {}
-            self._queue = shared['queue']
-            self._worker = True
-            self._data = None
-        elif shared and 'data' in shared:
-            # This is a clone, in non-threadsafe mode
+        if shared and 'data' in shared:
+            # This is a clone
             self._buffer = None
             self._queue = None
             self._worker = False
             self._data = shared['data']
         else:
-            # The original in non-threadsafe mode
+            # The original
             self._buffer = None
             self._queue = None
             self._worker = False
@@ -647,64 +621,22 @@ class Metrics(object):
         """
         Record an accumulation to a metric.
         """
-        if self._threadsafe and self._worker:
-            self._buffer[key] = self._buffer.get(key) + value
-        else:
-            self._data[key] = self._data.get(key) + value
-
-    def flush(self):
-        """
-        Clear the local buffer and push it on.
-        """
-        if self._threadsafe and self._buffer:
-            self._queue.put(self._buffer)
-            self._buffer.clear()
+        self._data[key] = self._data.get(key) + value
 
     def report(self):
         """
         Report the metrics over all data seen so far.
         """
-        self.sync()
         return {k: v for k, v in self._data.items()}
-
-    def sync(self):
-        """
-        Process all items on the queue to ensure it is up to date.
-        """
-        if self._worker:
-            self.flush()
-        elif self._threadsafe and not self._worker:
-            for buffer_ in self._drain_queue():
-                for key, value in buffer_.items():
-                    self._data[key] = self._data.get(key) + value
-
-    def _drain_queue(self):
-        """
-        Drain the queue, yielding all items in it.
-        """
-        while not self._queue.empty():
-            try:
-                yield self._queue.get()
-            except queue.Empty:
-                break
 
     def clear(self):
         """
         Clear all the metrics.
         """
-        if self._worker:
-            self._buffer.clear()
-        elif self._threadsafe and not self._worker:
-            for _ in self._drain_queue():
-                pass
-        if self._data:
-            self._data.clear()
+        self._data.clear()
 
     def share(self):
-        if self._threadsafe:
-            return {'queue': self._queue}
-        else:
-            return {'data': self._data}
+        return {'data': self._data}
 
 
 class TeacherMetrics(Metrics):
@@ -713,12 +645,9 @@ class TeacherMetrics(Metrics):
     """
 
     def __init__(
-        self,
-        threadsafe: bool = False,
-        metrics_list: str = "default",
-        shared: Dict[str, Any] = None,
+        self, metrics_list: str = "default", shared: Dict[str, Any] = None,
     ) -> None:
-        super().__init__(threadsafe=threadsafe, shared=shared)
+        super().__init__(shared=shared)
         self._metrics_list = self._infer_metrics(metrics_list)
         self.eval_pr = [1, 5, 10, 100]
 

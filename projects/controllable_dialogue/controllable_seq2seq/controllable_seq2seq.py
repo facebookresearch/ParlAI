@@ -617,16 +617,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         """
         shared = super().share()
         shared['model'] = self.model
-        if self.opt.get('numthreads', 1) > 1:
-            # we're doing hogwild so share the model too
-            if isinstance(self.metrics, dict):
-                # move metrics and model to shared memory
-                self.metrics = SharedTable(self.metrics)
-                self.model.share_memory()
-            shared['states'] = {  # don't share optimizer states
-                'optimizer_type': self.opt['optimizer']
-            }
-        shared['metrics'] = self.metrics  # do after numthreads check
+        shared['metrics'] = self.metrics
         if self.beam_dot_log is True:
             shared['beam_dot_dir'] = self.beam_dot_dir
         return shared
