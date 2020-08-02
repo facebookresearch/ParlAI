@@ -51,8 +51,6 @@ import parlai.utils.logging as logging
 from abc import ABC, abstractmethod
 
 import concurrent.futures
-import multiprocessing
-from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
@@ -124,7 +122,6 @@ class Teacher(Agent):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
             self.metrics = TeacherMetrics(
-                threadsafe=(opt.get('numthreads', 1) > 1),
                 metrics_list=opt.get('metrics', 'default'),
                 shared=shared['metrics'] if shared is not None else None,
             )
@@ -333,11 +330,6 @@ class FixedDialogTeacher(Teacher):
         if hasattr(self, 'data_loader'):
             shared['data_loader'] = self.data_loader
 
-        if self.opt.get('numthreads', 1) > 1:
-            if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
-                # for multithreading need to move index into threadsafe memory
-                self.index = Value('l', -1)
-
         shared['index'] = self.index
 
         return shared
@@ -516,9 +508,6 @@ class DialogTeacher(FixedDialogTeacher):
 
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
-
-    If you have ``opt.numthreads > 1``, this also activates a shared memory
-    array for the data and lock-protected shared-memory metrics.
 
     In order to subclass this class, you must implement ``setup_data()`` in
     your class (or subclass another class which does, like
@@ -911,11 +900,6 @@ class StreamDialogData(DialogData):
             self.datafile = opt['datafile']
             self.reset_data = None
             self.is_reset = True
-            if opt.get('numthreads', 1) > 1:
-                logging.warn(
-                    'multithreaded streaming will process every example numthreads times.'
-                )
-                self.lock = Lock()
         self.entry_idx = 0
         self.cur_episode = self._FIRST_PASS
         self.num_eps = None
@@ -2132,8 +2116,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         if 'stream' not in opt['datatype']:
             raise ValueError('Chunk teacher should be used with streaming. ')
-        if opt['numthreads'] > 1:
-            raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
         self.set_datasettings(opt)
 

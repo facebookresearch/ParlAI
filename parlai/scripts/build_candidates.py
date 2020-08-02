@@ -51,9 +51,6 @@ def setup_args(parser=None) -> ParlaiParser:
 
 def build_cands(opt):
     # create repeat label agent and assign it to the specified task
-    if opt['numthreads'] > 1:
-        # Broken in hogwild mode. Just fall back to single processing mode
-        opt['numthreads'] = 1
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
     if opt['outfile'] is None:
