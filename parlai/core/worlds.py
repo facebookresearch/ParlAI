@@ -702,13 +702,6 @@ class MultiWorld(World):
         for w in self.worlds:
             w.reset_metrics()
 
-    def save_agents(self):
-        """
-        Save agents in all subworlds.
-        """
-        # Assumes all worlds have same agents, picks first to save.
-        self.worlds[0].save_agents()
-
     def update_counters(self):
         super().update_counters()
         for w in self.worlds:
@@ -952,14 +945,6 @@ class BatchWorld(World):
         Reset metrics in the root world.
         """
         self.world.reset_metrics()
-
-    def save_agents(self):
-        """
-        Save the agents in the root world.
-        """
-        # Because all worlds share the same parameters through sharing, saving
-        # one copy would suffice
-        self.world.save_agents()
 
     def shutdown(self):
         """

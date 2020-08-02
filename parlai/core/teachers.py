@@ -2067,13 +2067,6 @@ class MultiTaskTeacher(Teacher):
         for t in self.tasks:
             t.reset_metrics()
 
-    def save(self):
-        """
-        Save each subtask.
-        """
-        for t in self.tasks:
-            t.save()
-
     def share(self):
         """
         Shares this teacher by sharing each subtask.
@@ -2083,6 +2076,13 @@ class MultiTaskTeacher(Teacher):
         shared['opt'] = self.opt
         shared['tasks'] = [t.share() for t in self.tasks]
         return shared
+
+    def shutdown(self):
+        """
+        Shutdown each agent.
+        """
+        for t in self.tasks:
+            t.shutdown()
 
 
 class ChunkTeacher(FixedDialogTeacher, ABC):
