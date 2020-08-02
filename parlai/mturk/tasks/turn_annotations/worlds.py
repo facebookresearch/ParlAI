@@ -18,7 +18,7 @@ from parlai.mturk.core.agents import (
 )
 from parlai.mturk.core.worlds import MTurkOnboardWorld
 
-from constants import (
+from parlai.mturk.tasks.turn_annotations.constants import (
     AGENT_1,
     WAITING_MSG,
     ONBOARD_TASK_DATA,
@@ -29,8 +29,8 @@ from constants import (
     ONBOARD_SUCCESS,
     ANNOTATIONS_CONFIG,
 )
-from bot_agent import TurkLikeAgent
-from utils import Compatibility
+from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
+from parlai.mturk.tasks.turn_annotations.utils import Compatibility
 
 
 class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
