@@ -969,16 +969,6 @@ task_list = [
         "description": ("Image Chat task to train generative model"),
     },
     {
-        "id": "TalkTheWalk",
-        "display_name": "Talk the Walk",
-        "task": "talkthewalk",
-        "tags": ["All", "Visual"],
-        "description": (
-            "Talk the walk dataset."
-            "See https://arxiv.org/abs/1807.03367 for more information."
-        ),
-    },
-    {
         "id": "Wizard_of_Wikipedia",
         "display_name": "Wizard_of_Wikipedia",
         "task": "wizard_of_wikipedia",
