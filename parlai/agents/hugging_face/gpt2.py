@@ -35,7 +35,17 @@ class GPT2Decoder(torch.nn.Module):
         self.transformer = self._init_from_pretrained(opt)
         # add special tokens
         if opt["add_special_tokens"]:
+            size_before = self.transformer.wte.weight.size(0)
             self.transformer.resize_token_embeddings(len(dict.tokenizer))
+            size_after = self.transformer.wte.weight.size(0)
+            with torch.no_grad():
+                # first reduce the random jitter of the initialization
+                self.transformer.wte.weight[size_before:] *= 0.1
+                # next center it on the endoftext token
+                self.transformer.wte.weight[
+                    size_before:
+                ] += self.transformer.wte.weight[size_before - 1].unsqueeze(0)
+
         self.add_start_token = opt["add_start_token"]
         self.START_IDX = dict.start_idx
         self.NULL_IDX = dict.null_idx
