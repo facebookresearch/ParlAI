@@ -83,10 +83,10 @@ _Task & models for chitchat with a given persona._
 - **LIGHT** [[project]](http://parl.ai/projects/light/)
 _A large-scale text adventure game research platform for agents that speak and act._
 
-- **Mastering the Dungeon** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon).
+- **Mastering the Dungeon** (Archived) [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon).
 _Task & models for training grounded agents in a text adventure game via MTurk._
 
-- **Talk The Walk** [[paper]](https://arxiv.org/abs/1807.03367).
+- **Talk The Walk** (Archived) [[paper]](https://arxiv.org/abs/1807.03367).
 _Task & models for grounded dialogue for the task of navigating New York City streets._
 
 ## QA

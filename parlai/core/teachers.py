@@ -2084,17 +2084,6 @@ class MultiTaskTeacher(Teacher):
         shared['tasks'] = [t.share() for t in self.tasks]
         return shared
 
-    def shutdown(self):
-        """
-        Shutdown each agent.
-        """
-        for t in self.tasks:
-            t.shutdown()
-
-    def update_counters(self):
-        for t in self.tasks:
-            t.update_counters()
-
 
 class ChunkTeacher(FixedDialogTeacher, ABC):
     """
