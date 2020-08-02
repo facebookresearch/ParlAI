@@ -39,8 +39,8 @@ Now let's try to train a model on it (even on your laptop, this should train fas
 
 .. code-block:: bash
 
-  # train MemNN using batch size 1 and 4 threads for 5 epochs
-  parlai train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
+  # train MemNN using batch size 8 for 5 epochs, without using a GPU
+  parlai train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 8 -eps 5 -m memnn --no-cuda
 
 Let's print some of its predictions to make sure it's working.
 

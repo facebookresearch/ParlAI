@@ -84,7 +84,8 @@ class SplitTeacher(Teacher):
 
     def report(self):
         r = super().report()
-        r['factmetrics'] = self.factmetrics.report()
+        for k, v in self.factmetrics.report().items():
+            r[f'factmetrics_{k}'] = v
         return r
 
     def reset(self):
