@@ -26,7 +26,6 @@ class TestSeq2Seq(unittest.TestCase):
                 learningrate=LR,
                 batchsize=BATCH_SIZE,
                 num_epochs=3,
-                numthreads=1,
                 embeddingsize=16,
                 hiddensize=16,
                 rnn_class='gru',
@@ -90,41 +89,11 @@ class TestSeq2Seq(unittest.TestCase):
                 batchsize=10,
                 datatype='train:ordered:stream',
                 num_epochs=1,
-                numthreads=1,
                 embeddingsize=16,
                 hiddensize=16,
                 inference='greedy',
             )
         )
-
-
-class TestHogwildSeq2seq(unittest.TestCase):
-    @testing_utils.skipIfGPU
-    def test_generation_multi(self):
-        """
-        This test uses a multi-turn task and multithreading.
-        """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:multiturn_nocandidate',
-                model='seq2seq',
-                learningrate=LR,
-                batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS * 2,
-                numthreads=2,
-                no_cuda=True,
-                embeddingsize=16,
-                hiddensize=16,
-                rnn_class='gru',
-                attention='general',
-                gradient_clip=1.0,
-                dropout=0.0,
-                lookuptable='all',
-            )
-        )
-
-        self.assertLess(valid['ppl'], 1.2)
-        self.assertLess(test['ppl'], 1.2)
 
 
 class TestBackwardsCompatibility(unittest.TestCase):

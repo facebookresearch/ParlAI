@@ -734,6 +734,3 @@ class TeacherMetrics(Metrics):
                     v = AverageMetric(v)
                 assert isinstance(v, Metric)
                 self.add(uk, v)
-
-        # always flush at the end of processing this response
-        self.flush()
