@@ -52,7 +52,6 @@ ParlAI is a one-stop-shop for dialog research.
    params
    teachers
    worlds
-   utils
 
 
 .. toctree::
