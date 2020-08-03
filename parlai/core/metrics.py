@@ -788,7 +788,7 @@ class TeacherMetrics(Metrics):
                 if 'rouge-2' in self._metrics_list:
                     self.add('rouge-2', r2)
                 if 'rouge-L' in self._metrics_list:
-                    self.add('rouge-L', rL)
+                    self.add('rouge_L', rL)
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)
