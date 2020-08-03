@@ -9,7 +9,6 @@ Utility methods for dealing with torch code.
 
 import os
 from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
-import tempfile
 import itertools
 from collections import namedtuple
 import parlai.utils.logging as logging
@@ -52,10 +51,8 @@ def atomic_save(state_dict: Any, path: str) -> None:
     to disk. Works by writing to a temporary file, and then renaming the file to the
     final name.
     """
-    tf = tempfile.NamedTemporaryFile('wb', delete=False, dir=os.path.dirname(path))
-    torch.save(state_dict, tf)
-    tf.close()
-    os.rename(tf.name, path)
+    torch.save(state_dict, path + ".tmp")
+    os.rename(path + ".tmp", path)
 
 
 def padded_tensor(

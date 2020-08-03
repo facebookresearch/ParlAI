@@ -488,5 +488,5 @@ class LinearLRScheduler(ParlAILRScheduler):
             raise StopTrainException('End of Linear LR Schedule')
         self.scheduler.step(epoch=scheduler_steps)
 
-    def valid_step(self):
+    def valid_step(self, metrics_dict):
         pass
