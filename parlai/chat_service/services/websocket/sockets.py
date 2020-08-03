@@ -35,10 +35,7 @@ class MessageSocketHandler(WebSocketHandler):
         `subs` variable.
         """
         if self.sid not in self.subs.values():
-            self.subs[self.sid] = self
             self.set_nodelay(True)
-            logging.info(f"Opened new socket from ip: {self.request.remote_ip}")
-            logging.info(f"Current subscribers: {self.subs}")
 
     def on_close(self):
         """
@@ -59,6 +56,11 @@ class MessageSocketHandler(WebSocketHandler):
         """
         logging.info('websocket message from client: {}'.format(message_text))
         message = json.loads(message_text)
+
+        self.sid = message.get('user_id')
+        self.subs[self.sid] = self
+        print(f"Current subscribers:", self.subs)
+        print("Changed sid to " + self.sid)
         message = {
             'text': message.get('text', ''),
             'payload': message.get('payload'),
