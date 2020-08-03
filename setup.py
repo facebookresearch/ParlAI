@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 
-import datetime
 import sys
 
 from setuptools import setup, find_packages
