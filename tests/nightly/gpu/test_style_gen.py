@@ -17,11 +17,11 @@ class TestStyleGen(unittest.TestCase):
         """
         Test perplexities of style-controlled generation models in the zoo.
         """
-        test_cases = [('c75_labeled_dialogue_generator', 1.0, 9.665)]
+        test_cases = [('c75_labeled_dialogue_generator', 1.0, 7.664)]
         for model_name, style_frac, desired_ppl in test_cases:
             _, test = testing_utils.eval_model(
                 opt={
-                    'batchsize': 16,
+                    'batchsize': 4,
                     'fp16': False,
                     'num_examples': 16,
                     'model_file': f'zoo:style_gen/{model_name}/model',
