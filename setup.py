@@ -10,6 +10,8 @@ import sys
 
 from setuptools import setup, find_packages
 
+VERSION = '0.8.0'  # if you update, update parlai/__init__.py too!
+
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python >=3.6 is required for ParlAI.')
 
@@ -27,7 +29,7 @@ with open('requirements.txt') as f:
 if __name__ == '__main__':
     setup(
         name='parlai',
-        version='0.6.0',
+        version=VERSION,
         description='Unified platform for dialogue research.',
         long_description=readme,
         long_description_content_type='text/markdown',
