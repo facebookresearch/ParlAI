@@ -313,15 +313,10 @@ class ContextWithImageEncoder(TransformerEncoder):
             valid_imgs = [v for v in image_features if isinstance(v, torch.Tensor)]
             segments: Optional[torch.LongTensor] = None
             if valid_imgs:
-                segments = (
-                    torch.ones(  # type: ignore
-                        (
-                            len(image_features),
-                            self.n_image_channels * self.n_image_tokens,
-                        ),
-                        dtype=torch.long,
-                        device=valid_imgs[0].device,
-                    ),
+                segments = torch.ones(  # type: ignore
+                    (len(image_features), self.n_image_channels * self.n_image_tokens),
+                    dtype=torch.long,
+                    device=valid_imgs[0].device,
                 )
             image_tensor, image_mask = self.encode_images(
                 image_features, segments=segments
