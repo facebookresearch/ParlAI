@@ -70,16 +70,18 @@ class MessengerBotChatTaskWorld(World):
         if a is not None:
             if '[DONE]' in a['text']:
                 self.episodeDone = True
-            else:
-                print("===act====")
-                print(a)
-                print("~~~~~~~~~~~")
-                self.model.observe(a)
-                response = self.model.act()
-                print("===response====")
-                print(response)
-                print("~~~~~~~~~~~")
-                self.agent.observe(response)
+                return
+            if a['text'].startswith('your persona:'):
+                a['id'] = 'context'
+            print("===act====")
+            print(a)
+            print("~~~~~~~~~~~")
+            self.model.observe(a)
+            response = self.model.act()
+            print("===response====")
+            print(response)
+            print("~~~~~~~~~~~")
+            self.agent.observe(response)
 
     def episode_done(self):
         return self.episodeDone
