@@ -12,7 +12,6 @@ from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
 
 NUM_EPS = 17075
-NUM_EXS = 110877
 
 
 class TestLightTeacher(unittest.TestCase):
@@ -37,7 +36,6 @@ class TestLightTeacher(unittest.TestCase):
                 agent = RepeatLabelAgent(opt)
                 teacher = create_task(opt, agent).get_task_agent()
                 self.assertEqual(teacher.num_episodes(), int(NUM_EPS * proportion))
-                self.assertEqual(teacher.num_examples(), int(NUM_EXS * proportion))
 
 
 if __name__ == '__main__':
