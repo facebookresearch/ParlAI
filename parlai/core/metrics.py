@@ -784,11 +784,11 @@ class TeacherMetrics(Metrics):
             if self._metrics_list & ROUGE_METRICS:
                 r1, r2, rL = RougeMetric.compute_many(prediction, labels)
                 if 'rouge-1' in self._metrics_list:
-                    self.add('rouge-1', r1)
+                    self.add('rouge_1', r1)
                 if 'rouge-2' in self._metrics_list:
-                    self.add('rouge-2', r2)
+                    self.add('rouge_2', r2)
                 if 'rouge-L' in self._metrics_list:
-                    self.add('rouge-L', rL)
+                    self.add('rouge_L', rL)
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)
