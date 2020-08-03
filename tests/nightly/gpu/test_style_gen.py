@@ -22,6 +22,7 @@ class TestStyleGen(unittest.TestCase):
             _, test = testing_utils.eval_model(
                 opt={
                     'batchsize': 16,
+                    'fp16': False,
                     'num_examples': 64,
                     'model_file': f'zoo:style_gen/{model_name}/model',
                     'model': 'projects.style_gen.style_gen:StyleGenAgent',
@@ -31,6 +32,7 @@ class TestStyleGen(unittest.TestCase):
                 },
                 skip_valid=True,
             )
+            # We turn off FP16 because emulation of this is likely slow on the CI GPUs
             self.assertAlmostEqual(test['ppl'], desired_ppl, delta=0.005)
 
 
