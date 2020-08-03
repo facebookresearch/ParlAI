@@ -13,7 +13,6 @@ from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
 
-@unittest.skip
 class TestUpgradeOpt(unittest.TestCase):
     """
     Test upgrade_opt behavior.
