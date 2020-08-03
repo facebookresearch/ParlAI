@@ -11,6 +11,7 @@ import random
 from typing import Optional
 
 from parlai.core.message import Message
+from parlai.core.opt import Opt
 
 
 STYLE_SEP_TOKEN = ' STYLE '
@@ -37,8 +38,8 @@ class StyleAgentMixin:
         )
         return agent
 
-    def __init__(self, opt, **kwargs):
-        super().__init__(opt, **kwargs)
+    def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
         self.use_style_frac = opt['use_style_frac']
 
     def get_temp_history(self, observation: Message) -> Optional[str]:
