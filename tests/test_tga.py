@@ -6,14 +6,14 @@
 """
 Test TorchGeneratorAgent.
 """
-
+import torch
 import unittest
 from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
-
+@unittest.skip
 class TestUpgradeOpt(unittest.TestCase):
     """
     Test upgrade_opt behavior.
@@ -77,6 +77,46 @@ class TestUpgradeOpt(unittest.TestCase):
         )
         agent = create_agent(opt, True)
         self.assertEqual(agent.opt['inference'], 'beam')
+
+
+class TestTreeSearch(unittest.TestCase):
+    """
+    Tests various Tree Search functionalities.
+
+    NOTE: Currently incomplete.
+    """
+
+    def test_full_context_block(self):
+        pp = ParlaiParser(True, True)
+        opt = pp.parse_args(
+            [
+                '--model-file', 'zoo:unittest/transformer_generator2/model',
+                '--inference', 'beam',
+                '--truncate', '1024'
+            ]
+        )
+        agent = create_agent(opt, True)
+        obs = {'text': '1 2 3 4 ' * 256, 'episode_done': False}
+        agent.observe(obs)
+        batch = agent.batchify([agent.observation])
+        self.assertEqual(agent._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256)
+
+        # observe 1 more obs, context is the same (truncation)
+        agent.observe(obs)
+        batch = agent.batchify([agent.observation])
+        self.assertEqual(agent._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256)
+
+        # Now, set agent's beam_block_full_context
+        opt['beam_block_full_context'] = True
+        agent2 = create_agent(opt, True)
+        agent2.observe(obs)
+        batch = agent2.batchify([agent2.observation])
+        self.assertEqual(agent2._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256)
+
+        # observe 1 more obs, context is larger now
+        agent2.observe(obs)
+        batch = agent2.batchify([agent2.observation])
+        self.assertEqual(agent2._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256 + [3] + [5, 4, 6, 7] * 256)  # 3 is end token.
 
 
 if __name__ == '__main__':

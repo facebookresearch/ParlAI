@@ -390,6 +390,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             help='Size n-grams to block in beam search. val <= 0 implies no blocking',
         )
         agent.add_argument(
+            '--beam-block-full-context',
+            type='bool',
+            default=False,
+            help='Block n-grams from the *full* history context. Default False blocks '
+            'up to m tokens in the past, where m is truncation parameter for agent'
+        )
+        agent.add_argument(
             '--beam-length-penalty',
             type=float,
             default=0.65,
@@ -448,6 +455,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
         self.beam_context_block_ngram = opt.get('beam_context_block_ngram', -1)
+        self.beam_block_full_context = opt.get('beam_block_full_context', False)
         self.temperature = opt.get('temperature', 1.0)
         assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
@@ -967,7 +975,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         Intentionally overridable for more complex model histories.
         """
-        return batch.text_vec[batch_idx]
+        ctxt = batch.text_vec[batch_idx]
+        if self.beam_block_full_context:
+            full_ctxt = batch.observations[batch_idx].get('full_text_vec', ctxt)
+            if not isinstance(full_ctxt, torch.Tensor):
+                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt)
+            ctxt = full_ctxt
+        return ctxt
 
     def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
         """
