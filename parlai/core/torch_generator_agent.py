@@ -394,7 +394,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             type='bool',
             default=False,
             help='Block n-grams from the *full* history context. Default False blocks '
-            'up to m tokens in the past, where m is truncation parameter for agent'
+            'up to m tokens in the past, where m is truncation parameter for agent',
         )
         agent.add_argument(
             '--beam-length-penalty',

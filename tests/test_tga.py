@@ -6,12 +6,12 @@
 """
 Test TorchGeneratorAgent.
 """
-import torch
 import unittest
 from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+
 
 @unittest.skip
 class TestUpgradeOpt(unittest.TestCase):
@@ -90,9 +90,12 @@ class TestTreeSearch(unittest.TestCase):
         pp = ParlaiParser(True, True)
         opt = pp.parse_args(
             [
-                '--model-file', 'zoo:unittest/transformer_generator2/model',
-                '--inference', 'beam',
-                '--truncate', '1024'
+                '--model-file',
+                'zoo:unittest/transformer_generator2/model',
+                '--inference',
+                'beam',
+                '--truncate',
+                '1024',
             ]
         )
         agent = create_agent(opt, True)
@@ -116,7 +119,10 @@ class TestTreeSearch(unittest.TestCase):
         # observe 1 more obs, context is larger now
         agent2.observe(obs)
         batch = agent2.batchify([agent2.observation])
-        self.assertEqual(agent2._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256 + [3] + [5, 4, 6, 7] * 256)  # 3 is end token.
+        self.assertEqual(
+            agent2._get_context(batch, 0).tolist(),
+            [5, 4, 6, 7] * 256 + [3] + [5, 4, 6, 7] * 256,
+        )  # 3 is end token.
 
 
 if __name__ == '__main__':
