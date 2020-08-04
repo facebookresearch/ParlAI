@@ -3,6 +3,15 @@ ParlAI Quick-start
 
 **Authors**: Alexander Holden Miller, Margaret Li
 
+Colab Tutorial
+--------------
+
+As an alternative to this quick start tutorial, you may also consider our
+[Google Colab tutorial](https://colab.research.google.com/drive/1bRMvN0lGXaTF5fuTidgvlAl-Lb41F7AD#scrollTo=KtVz5dCUmFkN),
+which takes you through fine-tuning the small version of
+[BlenderBot](https://parl.ai/projects/recipes/) (90M).
+
+
 Install
 -------
 
@@ -11,13 +20,13 @@ following.
 
 1.  Clone ParlAI Repository:
 
-``` {.sourceCode .bash}
+```bash
 git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
 ```
 
 2.  Install ParlAI:
 
-``` {.sourceCode .bash}
+```bash
 cd ~/ParlAI; python setup.py develop
 ```
 
@@ -32,7 +41,7 @@ View a task & train a model
 Let's start by printing out the first few examples of the bAbI tasks,
 task 1.
 
-``` {.sourceCode .bash}
+```bash
 # display examples from bAbI 10k task 1
 parlai display_data -t babi:task10k:1
 ```
@@ -40,14 +49,14 @@ parlai display_data -t babi:task10k:1
 Now let's try to train a model on it (even on your laptop, this should
 train fast).
 
-``` {.sourceCode .bash}
+```bash
 # train MemNN using batch size 1 and 4 threads for 5 epochs
 parlai train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
 ```
 
 Let's print some of its predictions to make sure it's working.
 
-``` {.sourceCode .bash}
+```bash
 # display predictions for model save at specified file on bAbI task 1
 parlai display_model -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
 ```
@@ -56,7 +65,7 @@ The "eval\_labels" and "MemNN" lines should (usually) match!
 
 Let's try asking the model a question ourselves.
 
-``` {.sourceCode .bash}
+```bash
 # interact with saved model
 parlai interactive -mf /tmp/babi_memnn -ecands vocab
 ...
@@ -80,14 +89,14 @@ on specifying arguments for training and evaluation (like the
 
 Let's begin again by printing the first few examples.
 
-``` {.sourceCode .bash}
+```bash
 # display first examples from twitter dataset
 parlai display_data -t twitter
 ```
 
 Now, we'll train the model. This will take a while to reach convergence.
 
-``` {.sourceCode .bash}
+```bash
 # train transformer ranker
 parlai train_model -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 16 -vtim 3600 -cands batch -ecands batch --data-parallel True
 ```
@@ -108,7 +117,7 @@ at the end of training, but if we wanted to evaluate a saved model
 the BlenderBot 90M baseline from our [Model
 Zoo](http://parl.ai/docs/zoo.html), we could do the following:
 
-``` {.sourceCode .bash}
+```bash
 # Evaluate the tiny BlenderBot model on twitter data
 parlai eval_model -t twitter -mf zoo:blender/blender_90M/model
 ```
@@ -116,7 +125,7 @@ parlai eval_model -t twitter -mf zoo:blender/blender_90M/model
 Finally, let's print some of our transformer's predictions with the same
 display\_model script from above.
 
-``` {.sourceCode .bash}
+```bash
 # display predictions for model saved at specific file on twitter
 parlai display_model -t twitter -mf /tmp/tr_twitter -ecands batch
 ```
@@ -129,7 +138,7 @@ version of what is said to it.
 
 First let's set it up.
 
-``` {.sourceCode .bash}
+```bash
 mkdir parlai/agents/parrot
 touch parlai/agents/parrot/parrot.py
 ```
@@ -137,7 +146,7 @@ touch parlai/agents/parrot/parrot.py
 We'll inherit the TorchAgent parsing code so we don't have to write it
 ourselves. Open parrot.py and copy the following:
 
-``` {.sourceCode .python}
+```python
 from parlai.core.torch_agent import TorchAgent, Output
 
 class ParrotAgent(TorchAgent):
@@ -156,7 +165,7 @@ class ParrotAgent(TorchAgent):
 
 Now let's test it out:
 
-``` {.sourceCode .bash}
+```bash
 parlai display_model -t babi:task10k:1 -m parrot
 ```
 
@@ -165,13 +174,13 @@ token is automatically selected because the dictionary doesn't recognize
 any tokens, because we haven't built a dictionary yet. Let's do that
 now.
 
-``` {.sourceCode .bash}
+```bash
 parlai build_dict -t babi:task10k:1 -df /tmp/parrot.dict
 ```
 
 Now let's try our Parrot agent again.
 
-``` {.sourceCode .bash}
+```bash
 parlai display_model -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
 ```
 
