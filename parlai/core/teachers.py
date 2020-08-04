@@ -2260,7 +2260,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             sample = data.pop(0)
             if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
                 self.samples.put(sample)
-            tot_samples_loaded += 1
+            self.tot_samples_loaded += 1
         # and start loading the next chunk
         self._enqueue_request()
 
