@@ -2164,6 +2164,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 self.rng = random.Random(42)
             self._enqueue_chunks()
             # launch queue loader on the main thread
+            self.tot_samples_loaded = 0
             self._enqueue_request()
 
         self._episode_done = True
@@ -2252,15 +2253,14 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         data = future.result()
         if data is None:
             return
-        i = 0
         while data:
             # self.samples is a queue with maxsize
             # self.buffersize, so will block if the
             # buffer gets full
             sample = data.pop(0)
-            if self.is_train or i % self.dws == self.rank:
+            if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
                 self.samples.put(sample)
-            i += 1
+            self.tot_samples_loaded += 1
         # and start loading the next chunk
         self._enqueue_request()
 
@@ -2344,6 +2344,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
+            self.tot_samples_loaded = 0  # reset the count of samples loaded
             self._enqueue_request()
 
 
