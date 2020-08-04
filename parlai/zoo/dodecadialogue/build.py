@@ -6,7 +6,8 @@
 """
 Pretrained models from The Dialogue Dodecathlon.
 
-The dodecadialogue_v2.tgz file contains a README.md and the dict for all models.
+The dodecadialogue_v2.tgz file is always downloaded,
+and contains 1) a README.md and 2) the dict for all models.
 
 https://arxiv.org/abs/1911.03768
 """
@@ -16,15 +17,16 @@ import os.path
 
 
 def download(datapath, model_name):
-    mdir = os.path.join(get_model_dir(datapath), 'dodecadialogue')
+    ddir = os.path.join(get_model_dir(datapath), 'dodecadialogue')
     dodeca_version = 'v2.0'
-    if not built(mdir, dodeca_version):
+    if not built(ddir, dodeca_version):
         opt = {'datapath': datapath}
         fnames = ['dodecadialogue_v2.tgz']
         download_models(
             opt, fnames, 'dodecadialogue', version=dodeca_version, use_model_type=False
         )
     model_version = 'v1.0'
+    mdir = os.path.join(ddir, model_name)
     if not built(mdir, model_version):
         opt = {'datapath': datapath, 'model_type': model_name}
         fnames = [f'{model_name}.tgz']
