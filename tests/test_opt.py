@@ -72,17 +72,16 @@ key3: b
 
 Args that are different in both opts:
 key1:
-    In opt 1: 0
-    In opt 2: 1
+\tIn opt 1: 0
+\tIn opt 2: 1
 key4 (printing only non-matching values in each dict):
-    inner_key1:
-        In opt 1: True
-        In opt 2: False
-    inner_key2:
-        In opt 1: yes
-        In opt 2: <MISSING>
-    inner_key3:
-        In opt 1: <MISSING>
-        In opt 2: no
-"""
+\tinner_key1:
+\t\tIn opt 1: True
+\t\tIn opt 2: False
+\tinner_key2:
+\t\tIn opt 1: yes
+\t\tIn opt 2: <MISSING>
+\tinner_key3:
+\t\tIn opt 1: <MISSING>
+\t\tIn opt 2: no"""
             self.assertEqual(output, desired_output)
