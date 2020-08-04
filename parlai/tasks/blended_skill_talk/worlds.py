@@ -67,6 +67,8 @@ def _load_personas(opt):
         c1 = '\n'.join(context1)
         c2 = '\n'.join(context2)
         contexts.append([c1, c2])
+    #contexts = [['', 'your persona: i love apples \n your persona: my name is sarah \n your persona: i like airplanes \n your persona: i like photography']]
+    contexts = [['', '']]
     return contexts
 
 
