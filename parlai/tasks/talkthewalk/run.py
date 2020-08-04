@@ -89,4 +89,4 @@ def run(opt):
 
 if __name__ == '__main__':
     parser = setup_args()
-    run(parser.parse_args(print_args=False))
+    run(parser.parse_args())

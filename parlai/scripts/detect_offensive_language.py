@@ -22,8 +22,6 @@ from parlai.utils.misc import TimeLogger
 import parlai.utils.logging as logging
 from parlai.core.script import ParlaiScript, register_script
 
-import random
-
 
 def setup_args(parser=None):
     if parser is None:

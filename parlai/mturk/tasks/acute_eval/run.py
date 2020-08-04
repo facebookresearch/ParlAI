@@ -97,9 +97,9 @@ def add_args(from_argv=False):
     )
     argparser.set_defaults(allowed_conversation=1)
     if from_argv:
-        return argparser.parse_args(print_args=print_args)
+        return argparser.parse_args()
     else:
-        return argparser.parse_args(args=[], print_args=print_args)
+        return argparser.parse_args(args=[])
 
 
 class AcuteEvaluator(object):

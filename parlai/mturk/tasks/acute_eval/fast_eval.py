@@ -579,7 +579,7 @@ class ParlAIQuickAcute(object):
         """
         self._load_pairings_file()
 
-        self.acute_args = acute_add_args(print_args=False)
+        self.acute_args = acute_add_args()
         self.acute_args.update(ACUTE_DEFAULT_ARGS)
         total_convos = self.opt['matchups_per_pair'] * len(self.combos)
         self.acute_args.update(
@@ -632,7 +632,7 @@ class ParlAIQuickAcute(object):
 
 if __name__ == '__main__':
     parser = setup_args()
-    runner = ParlAIQuickAcute(parser.parse_args(print_args=False))
+    runner = ParlAIQuickAcute(parser.parse_args())
 
     # Compile Chat Logs
     runner.compile_chat_logs()

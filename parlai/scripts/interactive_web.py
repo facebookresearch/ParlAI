@@ -252,13 +252,13 @@ def setup_interweb_args(shared):
 
 
 def interactive_web(opt):
-    SHARED['opt'] = parser.opt
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
     # Create model and assign it to the specified task
     agent = create_agent(SHARED.get('opt'), requireModelExists=True)
     agent.opt.log()
+    SHARED['opt'] = agent.opt
     SHARED['agent'] = agent
     SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
 
