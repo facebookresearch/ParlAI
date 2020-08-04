@@ -1456,4 +1456,17 @@ model_list = [
             "[TransformerSequenceVocabUnlikelihood]: hi there !"
         ),
     },
+    {
+        "title": "Style-controlled generation: C75-D+ generator",
+        "id": "style_gen",
+        "path": "zoo:style_gen/c75_labeled_dialogue_generator/model",
+        "agent": "projects.style_gen.style_gen:StyleGenAgent",
+        "task": "style_gen:BlendedSkillTalk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen',
+        "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",
+        "example": "parlai eval_model --datatype test --model projects.style_gen.style_gen:StyleGenAgent --model-file zoo:style_gen/c75_labeled_dialogue_generator/model --skip-generation True --task style_gen:LabeledBlendedSkillTalk --use-style-frac 1.00",
+        "result": """16:56:52 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
+    ctpb  ctps  exps  exs  gpu_mem  loss  ltpb  ltps   ppl  token_acc   tpb  tps
+     120  1855 15.46 5482    .1635 2.248 19.94 308.2 9.468      .4872 139.9 2163""",
+    },
 ]
