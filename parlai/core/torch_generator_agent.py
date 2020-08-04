@@ -359,6 +359,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         # from generating ngrams from model's context, which is limited
         # by truncation parameters. Now, we block on full dialogue history.
         if 'beam_block_full_context' not in opt_from_disk:
+            warn_once('Loading model with `--beam-block-full-context false`')
             opt_from_disk['beam_block_full_context'] = False
 
         return opt_from_disk
