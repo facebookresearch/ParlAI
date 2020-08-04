@@ -3,4 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from .build import download  # noqa: F401
+from .build import download as download_dodeca
+
+
+def download(datapath):
+    download_dodeca(datapath, 'empathetic_dialogues_ft')
