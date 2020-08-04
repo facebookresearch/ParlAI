@@ -354,6 +354,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 ]
             del opt_from_disk['beam_blacklist_filename']
 
+        # 2020-08-04: Introduce full context beam blocking
+        # Previous, specifying --beam-context-block-ngram > 1 would block
+        # from generating ngrams from model's context, which is limited
+        # by truncation parameters. Now, we block on full dialogue history.
+        if 'beam_block_full_context' not in opt_from_disk:
+            opt_from_disk['beam_block_full_context'] = False
+
         return opt_from_disk
 
     @classmethod
@@ -392,8 +399,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         agent.add_argument(
             '--beam-block-full-context',
             type='bool',
-            default=False,
-            help='Block n-grams from the *full* history context. Default False blocks '
+            default=True,
+            help='Block n-grams from the *full* history context. Specify False to block '
             'up to m tokens in the past, where m is truncation parameter for agent',
         )
         agent.add_argument(

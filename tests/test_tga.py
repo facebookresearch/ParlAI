@@ -77,6 +77,26 @@ class TestUpgradeOpt(unittest.TestCase):
         agent = create_agent(opt, True)
         self.assertEqual(agent.opt['inference'], 'beam')
 
+    def test_block_full_context(self):
+        """
+        Test --beam-block-full-context with older model files.
+        """
+        # old model file == beam block full context false
+        pp = ParlaiParser(True, True)
+        opt = pp.parse_args(
+            ['--model-file', 'zoo:unittest/transformer_generator2/model']
+        )
+        agent = create_agent(opt, True)
+        self.assertEqual(agent.opt['beam_block_full_context'], False)
+        self.assertEqual(agent.beam_block_full_context, False)
+
+        # brand new model == beam block full context true
+        pp = ParlaiParser(True, True)
+        opt = pp.parse_args(['--model', 'transformer/generator'])
+        agent = create_agent(opt, True)
+        self.assertEqual(agent.opt['beam_block_full_context'], True)
+        self.assertEqual(agent.beam_block_full_context, True)
+
 
 class TestTreeSearch(unittest.TestCase):
     """
@@ -86,18 +106,16 @@ class TestTreeSearch(unittest.TestCase):
     """
 
     def test_full_context_block(self):
+        args = [
+            '--model-file',
+            'zoo:unittest/transformer_generator2/model',
+            '--inference',
+            'beam',
+            '--truncate',
+            '1024',
+        ]
         pp = ParlaiParser(True, True)
-        opt = pp.parse_args(
-            [
-                '--model-file',
-                'zoo:unittest/transformer_generator2/model',
-                '--inference',
-                'beam',
-                '--truncate',
-                '1024',
-            ]
-        )
-        agent = create_agent(opt, True)
+        agent = create_agent(pp.parse_args(args), True)
         obs = {'text': '1 2 3 4 ' * 256, 'episode_done': False}
         agent.observe(obs)
         batch = agent.batchify([agent.observation])
@@ -109,8 +127,8 @@ class TestTreeSearch(unittest.TestCase):
         self.assertEqual(agent._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256)
 
         # Now, set agent's beam_block_full_context
-        opt['beam_block_full_context'] = True
-        agent2 = create_agent(opt, True)
+        args += ['--beam-block-full-context', 'true']
+        agent2 = create_agent(pp.parse_args(args), True)
         agent2.observe(obs)
         batch = agent2.batchify([agent2.observation])
         self.assertEqual(agent2._get_context(batch, 0).tolist(), [5, 4, 6, 7] * 256)
