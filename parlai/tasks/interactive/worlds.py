@@ -23,6 +23,8 @@ class InteractiveWorld(DialogPartnerWorld):
         super().__init__(opt, agents, shared)
         self.init_contexts(shared=shared)
         self.turn_cnt = 0
+        self.first_time = True
+        self.episodeDone = False
 
     def init_contexts(self, shared=None):
         """
@@ -40,6 +42,7 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def finalize_episode(self):
         print("CHAT DONE ")
+        self.episodeDone = True
         if not self.epoch_done():
             print("\n... preparing new chat... \n")
 
@@ -49,11 +52,25 @@ class InteractiveWorld(DialogPartnerWorld):
 
         Alternate between the two agents.
         """
+        
         if self.turn_cnt == 0:
             self.p1, self.p2 = self.get_contexts()
 
         acts = self.acts
         agents = self.agents
+
+        if self.first_time:
+            agents[0].observe(
+                {
+                    'id': 'World',
+                    'text': 'Welcome to the AIDA chatbot. '
+                    'You are now paired with a bot — feel free to send a message. '
+                    'Type /done to finish the chat.',
+                }
+            )
+            self.first_time = False
+            return
+
         if self.turn_cnt == 0 and self.p1 != '':
             # add the context on to the first message to agent 0
             context_act = Message(
@@ -67,22 +84,33 @@ class InteractiveWorld(DialogPartnerWorld):
             self.finalize_episode()
             self.turn_cnt = 0
             return
+
+        if not act:
+            return
+
+        act_text = act.get('text', None)
         acts[0] = act
-        if acts[0]['text'].startswith('your persona:'):
-            context_act = Message({'id': 'context', 'text': acts[0]['text'],
+        if act_text and '[DONE]' in act_text:
+            agents[0].observe(validate(Message({'text': 'Goodbye!', 'episode_done': True})))
+            self.reset()
+            self.shutdown()
+            self.finalize_episode()
+            self.turn_cnt = 0
+            return
+
+        if act_text and act_text.startswith('your persona:'):
+            context_act = Message({'id': 'context', 'text': act_text,
                                    'episode_done': False})
             agents[1].observe(validate(context_act))
-            agents[0].observe(validate(context_act))            
         elif self.turn_cnt == 0 and self.p2 != '':
             # add the context on to the first message to agent 1
             context_act = Message(
                 {'id': 'context', 'text': self.p2, 'episode_done': False}
             )
             agents[1].observe(validate(context_act))
-            agents[0].observe(validate(context_act))
         else:
             agents[1].observe(validate(act))
-            agents[0].observe(validate(act))
+
         acts[1] = agents[1].act()
         agents[0].observe(validate(acts[1]))
         self.update_counters()
@@ -91,3 +119,9 @@ class InteractiveWorld(DialogPartnerWorld):
         if act['episode_done']:
             self.finalize_episode()
             self.turn_cnt = 0
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def epoch_done(self):
+        return self.episodeDone

@@ -10,7 +10,7 @@ import random
 from parlai.tasks.blended_skill_talk.agents import raw_data_path, safe_personas_path
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
-
+from parlai.core.agents import create_agent
 
 def get_contexts_data(opt, shared=None):
     if shared and 'contexts_data' in shared:
@@ -67,7 +67,8 @@ def _load_personas(opt):
         c1 = '\n'.join(context1)
         c2 = '\n'.join(context2)
         contexts.append([c1, c2])
-    #contexts = [['', 'your persona: i love apples \n your persona: my name is sarah \n your persona: i like airplanes \n your persona: i like photography']]
+
+    # No contexts, because user will set them manually
     contexts = [['', '']]
     return contexts
 
@@ -100,6 +101,17 @@ def _standardize(orig: str) -> str:
 
 
 class InteractiveWorld(InteractiveBaseWorld):
+    @staticmethod
+    def generate_world(opt, agents):
+        agent = create_agent(opt, requireModelExists=True)
+        agents.append(agent)
+        if opt['models'] is None:
+            raise RuntimeError("Model must be specified")
+        return InteractiveWorld(
+            opt,
+            agents
+        )
+
     @staticmethod
     def add_cmdline_args(argparser):
         parser = argparser.add_argument_group('BST Interactive World')
@@ -183,3 +195,79 @@ class SelfChatWorld(SelfChatBaseWorld):
         shared_data = super().share()
         shared_data['contexts_data'] = self.contexts_data
         return shared_data
+
+
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+#
+# py parlai/chat_service/tasks/overworld_demo/run.py --debug --verbose
+
+from parlai.core.worlds import World
+from parlai.chat_service.services.messenger.worlds import OnboardWorld
+from parlai.core.agents import create_agent_from_shared
+
+
+# ---------- Chatbot demo ---------- #
+class MessengerBotChatOnboardWorld(OnboardWorld):
+    """
+    Example messenger onboarding world for Chatbot Model.
+    """
+
+    @staticmethod
+    def generate_world(opt, agents):
+        return MessengerBotChatOnboardWorld(opt=opt, agent=agents[0])
+
+    def parley(self):
+        self.episodeDone = True
+
+
+# ---------- Overworld -------- #
+class MessengerOverworld(World):
+    """
+    World to handle moving agents to their proper places.
+    """
+
+    def __init__(self, opt, agent):
+        self.agent = agent
+        self.opt = opt
+        self.first_time = True
+        self.episodeDone = False
+
+    @staticmethod
+    def generate_world(opt, agents):
+        return MessengerOverworld(opt, agents[0])
+
+    @staticmethod
+    def assign_roles(agents):
+        for a in agents:
+            a.disp_id = 'Agent'
+
+    def episode_done(self):
+        return self.episodeDone
+
+    def parley(self):
+        if self.first_time:
+            self.agent.observe(
+                {
+                    'id': 'Overworld',
+                    'text': 'Welcome to the AIDA '
+                    'chatbot. Please type /start to start.',
+                    'quick_replies': [],
+                }
+            )
+            self.first_time = False
+        a = self.agent.act()
+        if a is not None and a['text'].lower() == 'begin':
+            self.episodeDone = True
+            return 'default'
+        elif a is not None:
+            self.agent.observe(
+                {
+                    'id': 'Overworld',
+                    'text': 'Invalid option. Please type /start.',
+                    'quick_replies': [],
+                }
+            )

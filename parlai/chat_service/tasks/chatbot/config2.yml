@@ -16,7 +16,13 @@ opt:
       model_file: zoo:blender/blender_90M/model
       interactive_mode: True
       no_cuda: True
-  include_personas: True
+  include_personas: False
   safety: None
+  model: transformer/generator
+  model_file: zoo:blender/blender_90M/model
+  interactive_mode: True
+  no_cuda: True
+  datatype: valid
+  display_partner_persona: True
 additional_args:
   page_id: 1 # Configure Your Own Page
