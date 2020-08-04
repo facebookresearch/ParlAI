@@ -50,6 +50,8 @@ class ParlaiAPI:
             response = json.loads(response)
             print(response)
 
+            response['user_id'] = user_id
+
             return response
 
 
@@ -89,8 +91,6 @@ def start_conversation():
     user_id = data.get('user_id', None)
 
     result = loop.run_until_complete(ParlaiAPI.send_message(user_id, 'begin'))
-    result['user_id'] = user_id
-
     return result
 
 
