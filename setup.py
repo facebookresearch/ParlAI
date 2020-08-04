@@ -5,13 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 
-import datetime
 import sys
 
 from setuptools import setup, find_packages
 
-BUILD = ''  # test by setting to ".dev0" if multiple in one day, use ".dev1", ...
-DATE = datetime.date.today().isoformat().replace('-', '')
+VERSION = '0.8.0'  # if you update, update parlai/__init__.py too!
 
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python >=3.6 is required for ParlAI.')
@@ -30,7 +28,7 @@ with open('requirements.txt') as f:
 if __name__ == '__main__':
     setup(
         name='parlai',
-        version='0.1.{DATE}{BUILD}'.format(DATE=DATE, BUILD=BUILD),
+        version=VERSION,
         description='Unified platform for dialogue research.',
         long_description=readme,
         long_description_content_type='text/markdown',
