@@ -764,7 +764,10 @@ model_list = [
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
         "task": "TBD",
         "description": (
-            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task"
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task. "
+            "The ELI5 model in the zoo is the one that scored the highest ROUGE scores; "
+            "it may have slightly lower f1, bleu, and slightly higher ppl than the numbers "
+            "reported in the dodeca paper."
         ),
         "example": (
             "parlai interactive -mf zoo:dodecadialogue/eli5_ft/model "
