@@ -21,9 +21,13 @@ def download(datapath, model_name):
     if not built(mdir, dodeca_version):
         opt = {'datapath': datapath}
         fnames = ['dodecadialogue_v2.tgz']
-        download_models(opt, fnames, 'dodecadialogue', version=dodeca_version, use_model_type=False)
+        download_models(
+            opt, fnames, 'dodecadialogue', version=dodeca_version, use_model_type=False
+        )
     model_version = 'v1.0'
     if not built(mdir, model_version):
         opt = {'datapath': datapath, 'model_type': model_name}
         fnames = [f'{model_name}.tgz']
-        download_models(opt, fnames, 'dodecadialogue', version=model_version, use_model_type=True)
+        download_models(
+            opt, fnames, 'dodecadialogue', version=model_version, use_model_type=True
+        )
