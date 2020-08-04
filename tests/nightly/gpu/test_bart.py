@@ -28,11 +28,11 @@ class TestBartModel(unittest.TestCase):
                 batchsize=4,
                 num_epochs=1,
                 short_final_eval=True,
-                validation_max_exs=12
+                validation_max_exs=12,
             )
         )
-        self.assertLessEqual(valid['ppl'], 10.0)
-        self.assertAlmostEqual(test['ppl'], 10.0)
+        self.assertLessEqual(valid['ppl'], 11.0)
+        self.assertAlmostEqual(test['ppl'], 11.0)
 
 
 if __name__ == '__main__':
