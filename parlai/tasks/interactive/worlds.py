@@ -24,7 +24,6 @@ class InteractiveWorld(DialogPartnerWorld):
         self.init_contexts(shared=shared)
         self.turn_cnt = 0
         self.first_time = True
-        self.episodeDone = False
 
     def init_contexts(self, shared=None):
         """
@@ -42,7 +41,6 @@ class InteractiveWorld(DialogPartnerWorld):
 
     def finalize_episode(self):
         print("CHAT DONE ")
-        self.episodeDone = True
         if not self.epoch_done():
             print("\n... preparing new chat... \n")
 
@@ -93,9 +91,6 @@ class InteractiveWorld(DialogPartnerWorld):
         if act_text and '[DONE]' in act_text:
             agents[0].observe(validate(Message({'text': 'Goodbye!', 'episode_done': True})))
             self.reset()
-            self.shutdown()
-            self.finalize_episode()
-            self.turn_cnt = 0
             return
 
         if act_text and act_text.startswith('your persona:'):
@@ -119,9 +114,3 @@ class InteractiveWorld(DialogPartnerWorld):
         if act['episode_done']:
             self.finalize_episode()
             self.turn_cnt = 0
-
-    def episode_done(self):
-        return self.episodeDone
-
-    def epoch_done(self):
-        return self.episodeDone
