@@ -8,9 +8,11 @@ import argparse
 import json
 
 
-def compare_opts(opt_path_1: str, opt_path_2: str):
+def compare_opts(opt_path_1: str, opt_path_2: str) -> str:
     """
     Super simple script to compare the contents of two .opt files.
+
+    Return the formatted text comparing the two .opts, for printing.
     """
 
     # Loading opt files
@@ -19,23 +21,25 @@ def compare_opts(opt_path_1: str, opt_path_2: str):
     with open(opt_path_2) as f2:
         opt2 = json.load(f2)
 
-    print('\nArgs only found in opt 1:')
+    outputs = list()
+
+    outputs.append('\nArgs only found in opt 1:')
     opt1_only_keys = sorted([k for k in opt1.keys() if k not in opt2.keys()])
     for key in opt1_only_keys:
-        print(f'{key}: {opt1[key]}')
+        outputs.append(f'{key}: {opt1[key]}')
 
-    print('\nArgs only found in opt 2:')
+    outputs.append('\nArgs only found in opt 2:')
     opt2_only_keys = sorted([k for k in opt2.keys() if k not in opt1.keys()])
     for key in opt2_only_keys:
-        print(f'{key}: {opt2[key]}')
+        outputs.append(f'{key}: {opt2[key]}')
 
-    print('\nArgs that are different in both opts:')
+    outputs.append('\nArgs that are different in both opts:')
     keys_with_conflicting_values = sorted(
         [k for k, v in opt1.items() if k in opt2.keys() and v != opt2[k]]
     )
     for key in keys_with_conflicting_values:
         if isinstance(opt1[key], dict) and isinstance(opt2[key], dict):
-            print(f'{key} (printing only non-matching values in each dict):')
+            outputs.append(f'{key} (printing only non-matching values in each dict):')
             all_inner_keys = sorted(
                 list(set(opt1[key].keys()).union(set(opt2[key].keys())))
             )
@@ -45,13 +49,19 @@ def compare_opts(opt_path_1: str, opt_path_2: str):
                     or inner_key not in opt2[key]
                     or opt1[key][inner_key] != opt2[key][inner_key]
                 ):
-                    print(f'\t{inner_key}:')
-                    print(f'\t\tIn opt 1: {opt1[key].get(inner_key, "<MISSING>")}')
-                    print(f'\t\tIn opt 2: {opt2[key].get(inner_key, "<MISSING>")}')
+                    outputs.append(f'\t{inner_key}:')
+                    outputs.append(
+                        f'\t\tIn opt 1: {opt1[key].get(inner_key, "<MISSING>")}'
+                    )
+                    outputs.append(
+                        f'\t\tIn opt 2: {opt2[key].get(inner_key, "<MISSING>")}'
+                    )
         else:
-            print(f'{key}:')
-            print(f'\tIn opt 1: {opt1[key]}')
-            print(f'\tIn opt 2: {opt2[key]}')
+            outputs.append(f'{key}:')
+            outputs.append(f'\tIn opt 1: {opt1[key]}')
+            outputs.append(f'\tIn opt 2: {opt2[key]}')
+
+    return '\n'.join(outputs)
 
 
 if __name__ == '__main__':
@@ -61,4 +71,5 @@ if __name__ == '__main__':
     parser.add_argument('opt_path_2', type=str, help="Path to the second .opt file")
     args = parser.parse_args()
 
-    compare_opts(opt_path_1=args.opt_path_1, opt_path_2=args.opt_path_2)
+    output = compare_opts(opt_path_1=args.opt_path_1, opt_path_2=args.opt_path_2)
+    print(output)
