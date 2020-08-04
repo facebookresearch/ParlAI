@@ -144,6 +144,20 @@ class TorchGeneratorModel(nn.Module, ABC):
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
+    def _get_initial_forced_decoder_input(self, bsz: int, inputs: torch.LongTensor):
+        """
+        Return initial input to the decoder.
+
+        :param bsz:
+            batchsize
+        :param inputs:
+            inputs to decode
+
+        :return initial_input:
+            initial input for the decoder.
+        """
+        return torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
+
     def decode_forced(self, encoder_states, ys):
         """
         Decode with a fixed, true sequence, computing loss.
@@ -178,7 +192,7 @@ class TorchGeneratorModel(nn.Module, ABC):
                 "your model will have a double BOS token, which is probably not what "
                 "you intended."
             )
-        inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
+        inputs = self._get_initial_forced_decoder_input(bsz, inputs)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
@@ -969,7 +983,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return batch.text_vec[batch_idx]
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> torch.LongTensor:
         """
         Return initial input to the decoder.
 
@@ -981,7 +997,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             device to send input to.
 
         :return initial_input:
-            initial input for the decoder.
+            initial input for the decoder
         """
         return (
             torch.LongTensor(  # type: ignore
@@ -990,6 +1006,29 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             .expand(bsz * beam_size, 1)
             .to(dev)
         )
+
+    def _get_next_decoder_input(
+        self,
+        prev_input: torch.LongTensor,
+        selection: torch.LongTensor,
+        incr_state_inds: torch.LongTensor,
+    ) -> torch.LongTensor:
+        """
+        Return next decoder input.
+
+        :param prev_input:
+            previous input to decoder
+        :param selection:
+            token selections for current timestep
+        :param inds:
+            incremental state indices
+
+        :return decoder input:
+            return decoder input for next timestep
+        """
+        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
+        decoder_input = torch.cat([prev_input, selection], dim=-1)
+        return decoder_input
 
     def _generate(
         self,
@@ -1092,11 +1131,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             incr_state = model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
-            decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]
             ).unsqueeze(-1)
-            decoder_input = torch.cat([decoder_input, selection], dim=-1)
+            decoder_input = self._get_next_decoder_input(
+                decoder_input, selection, incr_state_inds
+            )
 
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
