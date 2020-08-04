@@ -47,6 +47,7 @@ def extract_feats(opt):
     opt['gpu'] = 0
     opt['num_epochs'] = 1
     opt['num_load_threads'] = 20
+    opt.log()
     logging.info("Loading Images")
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)

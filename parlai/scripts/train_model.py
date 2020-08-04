@@ -276,6 +276,7 @@ class TrainLoop:
 
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
+        self.agent.opt.log()
         self.world = create_task(opt, self.agent)
         # set up timers
         self.train_time = Timer()
@@ -766,8 +767,6 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
-        self.parser.opt = self.train_loop.agent.opt
-        self.parser.print_args()
         return self.train_loop.train()
 
 

@@ -49,7 +49,7 @@ class TestWizardModel(unittest.TestCase):
         # go ahead and download things here
         parser = display_data.setup_args()
         parser.set_defaults(**END2END_OPTIONS)
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         opt['num_examples'] = 1
         opt['display_verbose'] = True
         display_data.display_data(opt)
@@ -81,7 +81,7 @@ class TestKnowledgeRetriever(unittest.TestCase):
             model='projects:wizard_of_wikipedia:knowledge_retriever',
             add_token_knowledge=True,
         )
-        knowledge_opt = parser.parse_args([], print_args=False)
+        knowledge_opt = parser.parse_args([])
         knowledge_agent = create_agent(knowledge_opt)
 
         knowledge_agent.observe(

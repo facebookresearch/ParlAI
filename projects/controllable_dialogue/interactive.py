@@ -21,4 +21,4 @@ if __name__ == '__main__':
     )
     print('*' * 80 + '\n')
 
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    interactive(parser.parse_args())

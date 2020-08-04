@@ -17,4 +17,4 @@ if __name__ == '__main__':
         reader_model_file='models:drqa/squad/model',
     )
     opt = parser.parse_args(print_args=False)
-    eval_model(opt, print_parser=parser)
+    eval_model(opt)

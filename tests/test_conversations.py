@@ -18,7 +18,7 @@ class TestConversations(unittest.TestCase):
     """
 
     def setUp(self):
-        self.datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
+        self.datapath = ParlaiParser().parse_args([])['datapath']
         self.datapath = os.path.join(self.datapath, 'tmp_conversations')
         os.makedirs(self.datapath, exist_ok=True)
 

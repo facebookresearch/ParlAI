@@ -1043,7 +1043,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self._process_args_to_opts(args)
         return self.opt, unknowns
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
+    def parse_args(self, args=None, namespace=None):
         """
         Parse the provided arguments and returns a dictionary of the ``args``.
 
@@ -1054,13 +1054,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.args = super().parse_args(args=args)
 
         self._process_args_to_opts(args)
-
-        if print_args:
-            self.print_args()
-            if GIT_AVAILABLE:
-                print_git_commit()
-            print_announcements(self.opt)
-
+        print_announcements(self.opt)
         logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         assert '_subparser' not in self.opt
@@ -1171,7 +1165,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.error = _captured_error
         try:
             string_args = self._kwargs_to_str_args(**kwargs)
-            return self.parse_args(args=string_args, print_args=False)
+            return self.parse_args(args=string_args)
         finally:
             self.error = old_error
 

@@ -41,7 +41,7 @@ def main():
     parser = eval_model.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    opt = parser.parse_args(print_args=(os.environ['SLURM_PROCID'] == '0'))
+    opt = parser.parse_args()
 
     with distributed_utils.slurm_distributed_context(opt) as opt:
         return eval_model.eval_model(opt)

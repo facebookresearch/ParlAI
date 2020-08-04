@@ -105,19 +105,18 @@ def get_word_stats(text, agent_dict, bins=(0, 100, 1000, 100000)):
     return freqs, len(pred_freq), wlength, clength
 
 
-def eval_wordstat(opt, print_parser=None):
+def eval_wordstat(opt):
     """
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param print_parser: if provided, prints the options that are set within the
-        model after loading the model
     """
     random.seed(42)
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
+    agent.opt.log()
 
     if opt.get('external_dict'):
         print('[ Using external dictionary from: {} ]'.format(opt['external_dict']))
@@ -130,10 +129,6 @@ def eval_wordstat(opt, print_parser=None):
 
     batch_size = opt['batchsize']
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
@@ -286,7 +281,7 @@ class EvalWordStat(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return eval_wordstat(self.opt, print_parser=self.parser)
+        return eval_wordstat(self.opt)
 
 
 if __name__ == '__main__':

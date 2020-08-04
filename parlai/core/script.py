@@ -78,7 +78,7 @@ class ParlaiScript(object):
         Construct and run the script using args, defaulting to getting from CLI.
         """
         parser = cls.setup_args()
-        opt = parser.parse_args(args=args, print_args=False)
+        opt = parser.parse_args(args=args)
         return cls._run_from_parser_and_opt(opt, parser)
 
     @classmethod
@@ -262,7 +262,7 @@ def superscript_main(args=None):
     except ModuleNotFoundError:
         pass
 
-    opt = parser.parse_args(args, print_args=False)
+    opt = parser.parse_args(args)
     cmd = opt.pop('super_command')
     if cmd == 'helpall':
         parser.print_helpall()

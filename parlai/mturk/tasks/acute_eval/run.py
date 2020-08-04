@@ -25,7 +25,7 @@ DEFAULT_TASK_CONFIG = {
 AGENT_DISPLAY_NAME = 'RatingWorker'
 
 
-def add_args(from_argv=False, print_args=True):
+def add_args(from_argv=False):
     """
     Add arguments to parser and either parse from commandline or initialize to defaults
     (for overriding in scripts)

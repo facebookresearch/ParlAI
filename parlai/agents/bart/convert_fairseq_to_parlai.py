@@ -203,7 +203,7 @@ class ConversionScript(ParlaiScript):
             transformer_common_config['bpe_add_prefix_space'] = True
         parser = ParlaiParser()
         parser.set_params(**transformer_common_config)
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
 
         # 6. Augment opt with additional ParlAI options
         opt['fp16'] = self.opt['fp16']
