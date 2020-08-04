@@ -32,7 +32,7 @@ class TestBartModel(unittest.TestCase):
             )
         )
         self.assertLessEqual(valid['ppl'], 11.0)
-        self.assertAlmostEqual(test['ppl'], 11.0)
+        self.assertLessEqual(test['ppl'], 11.0)
 
 
 if __name__ == '__main__':
