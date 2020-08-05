@@ -5,6 +5,7 @@ import json
 import websockets
 import uuid
 import asyncio
+import re
 from flask import Flask, request, jsonify
 
 parser = argparse.ArgumentParser(description="Simple API for ParlAI chat bot")
@@ -26,6 +27,21 @@ blueprint = flask.Blueprint('parlai_api', __name__, template_folder='templates')
 connections = {}
 websocket_uri = f"ws://{hostname}:{port}/websocket"
 
+
+def format_message(message):
+    while match := re.search("\s'\s", message):
+        print(match)
+        message = message[:match.start()] + "'" + message[match.end():]
+        
+    while match := re.search('\s[.?!,;:\']', message):
+        message = message[:match.start()] + message[match.end() - 1:]
+
+    while match := re.search('[.?!]\s[a-z]', message):
+        message = message[:match.end() - 1] + message[match.end() - 1].capitalize() + message[match.end():]
+
+    message = message[0].capitalize() + message[1:]
+
+    return message
 
 class ParlaiAPI:
     @staticmethod
@@ -51,6 +67,11 @@ class ParlaiAPI:
             print(response)
 
             response['user_id'] = user_id
+
+            try:
+                response['text'] = format_message(response['text'])
+            except Exception as e:
+                print(e)
 
             return response
 
