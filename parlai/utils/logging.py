@@ -39,7 +39,7 @@ COLORED_LEVEL_STYLES = {
     'debug': {'faint': True},
     'verbose': {'color': 'blue'},
     'error': {'color': 'red'},
-    'info': {'faint': True},
+    'info': {},
     'report': {'bold': True},
     'success': {'bold': True, 'color': 'green'},
     'warning': {'color': 'yellow'},
