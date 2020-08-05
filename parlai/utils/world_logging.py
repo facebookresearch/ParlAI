@@ -81,7 +81,9 @@ class WorldLogger:
         self._logs.append(episode)
 
     def _is_batch_world(self, world):
-        return (isinstance(world, BatchWorld) or isinstance (world, DynamicBatchWorld)) and len(world.worlds) > 1
+        return (
+            isinstance(world, BatchWorld) or isinstance(world, DynamicBatchWorld)
+        ) and len(world.worlds) > 1
 
     def _log_batch(self, world):
         batch_act = world.get_acts()
