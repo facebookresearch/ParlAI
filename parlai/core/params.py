@@ -997,6 +997,8 @@ class ParlaiParser(argparse.ArgumentParser):
         if args_that_override is None:
             args_that_override = _sys.argv[1:]
 
+        args_that_override = fix_underscores(args_that_override)
+
         for i in range(len(args_that_override)):
             if args_that_override[i] in option_strings_dict:
                 if args_that_override[i] in store_true:
