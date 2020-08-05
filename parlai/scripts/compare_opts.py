@@ -7,8 +7,10 @@
 import argparse
 import json
 
+from parlai.core.opt import Opt
 
-def compare_opts(opt_path_1: str, opt_path_2: str) -> str:
+
+def compare_opts(opt_path_1: str, opt_path_2: str, load_raw: bool = False) -> str:
     """
     Super simple script to compare the contents of two .opt files.
 
@@ -16,10 +18,14 @@ def compare_opts(opt_path_1: str, opt_path_2: str) -> str:
     """
 
     # Loading opt files
-    with open(opt_path_1) as f1:
-        opt1 = json.load(f1)
-    with open(opt_path_2) as f2:
-        opt2 = json.load(f2)
+    if load_raw:
+        with open(opt_path_1) as f1:
+            opt1 = json.load(f1)
+        with open(opt_path_2) as f2:
+            opt2 = json.load(f2)
+    else:
+        opt1 = Opt.load(opt_path_1)
+        opt2 = Opt.load(opt_path_2)
 
     outputs = list()
 
@@ -69,7 +75,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('opt_path_1', type=str, help="Path to the first .opt file")
     parser.add_argument('opt_path_2', type=str, help="Path to the second .opt file")
+    parser.add_argument(
+        '-r',
+        '--load-raw',
+        action='store_true',
+        help='Load using JSON instead of with Opt.load()',
+    )
     args = parser.parse_args()
 
-    output = compare_opts(opt_path_1=args.opt_path_1, opt_path_2=args.opt_path_2)
+    output = compare_opts(
+        opt_path_1=args.opt_path_1, opt_path_2=args.opt_path_2, load_raw=args.load_raw
+    )
     print(output)
