@@ -1186,6 +1186,7 @@ class DynamicBatchWorld(World):
 
             act = self.worlds[i].get_task_agent().act()
             self._task_acts[i] = act
+            self._task_acts[i]['dyn_batch_idx'] = i
             obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
 
@@ -1255,9 +1256,10 @@ class DynamicBatchWorld(World):
             self.worlds[i].get_task_agent().observe(act)
             # and that the agent copies saw their own voice
             self.worlds[i].get_model_agent().self_observe(act)
-
             # move these worlds forward
             act = self.worlds[i].get_task_agent().act()
+            self._task_acts[i] = act
+            self._task_acts[i]['dyn_batch_idx'] = i
             obs = self.worlds[i].get_model_agent().observe(act)
             self._scores[i] = self._score(obs)
             self._obs[i] = obs

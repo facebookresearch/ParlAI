@@ -89,9 +89,10 @@ class WorldLogger:
         batch_act = world.get_acts()
         parleys = zip(*batch_act)
         for i, parley in enumerate(parleys):
-            self._add_msgs(parley, idx=i)
+            idx = parley[0]['dyn_batch_idx'] if 'dyn_batch_idx' in parley[0] else i
+            self._add_msgs(parley, idx=idx)
             if world.worlds[i].episode_done():
-                self.reset_world(idx=i)
+                self.reset_world(idx=idx)
 
     def log(self, world):
         """
