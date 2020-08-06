@@ -102,16 +102,21 @@ class TestDynamicBatching(unittest.TestCase):
     def test_world_logging(self):
         with testing_utils.tempdir() as tmpdir:
             save_report = os.path.join(tmpdir, 'report')
-            testing_utils.eval_model(dict(
-                model_file='zoo:unittest/transformer_generator2/model',
-                task='integration_tests:multiturn_candidate',
-                save_world_logs=True,
-                report_filename=save_report,
-                truncate=1024,
-                dynamic_batching='full',
-                batchsize=4,
-            ))
-            convo_fle = str(save_report) + '_integration_tests:multiturn_candidate_replies.jsonl'
+            testing_utils.eval_model(
+                dict(
+                    model_file='zoo:unittest/transformer_generator2/model',
+                    task='integration_tests:multiturn_candidate',
+                    save_world_logs=True,
+                    report_filename=save_report,
+                    truncate=1024,
+                    dynamic_batching='full',
+                    batchsize=4,
+                )
+            )
+            convo_fle = (
+                str(save_report)
+                + '_integration_tests:multiturn_candidate_replies.jsonl'
+            )
             convos = Conversations(convo_fle)
             for convo in convos:
                 self.assertEquals(len(convo), 2 * 4)  # each episode is 4 turns
