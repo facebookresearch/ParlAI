@@ -1185,8 +1185,12 @@ class DynamicBatchWorld(World):
                 self.worlds[i].parley_init()
 
             act = self.worlds[i].get_task_agent().act()
-            self._task_acts[i] = act
+
+            # we log the task act and the index of the act
+            # in the buffer for world logging purposes
+            self._task_acts[i] = act  # for world logging
             self._task_acts[i]['dyn_batch_idx'] = i
+
             obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
 
@@ -1258,8 +1262,11 @@ class DynamicBatchWorld(World):
             self.worlds[i].get_model_agent().self_observe(act)
             # move these worlds forward
             act = self.worlds[i].get_task_agent().act()
+            # we log the task act and the index of the act
+            # in the buffer for world logging purposes
             self._task_acts[i] = act
             self._task_acts[i]['dyn_batch_idx'] = i
+            # save the observations to form a batch
             obs = self.worlds[i].get_model_agent().observe(act)
             self._scores[i] = self._score(obs)
             self._obs[i] = obs

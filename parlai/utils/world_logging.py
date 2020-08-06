@@ -143,6 +143,7 @@ class WorldLogger:
                 fw.write('\n')
 
     def write_conversations_format(self, outfile, world):
+        logging.info(f'Saving log to {outfile} in Conversations format')
         Conversations.save_conversations(
             self._logs,
             outfile,
