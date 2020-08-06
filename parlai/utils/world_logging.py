@@ -89,6 +89,9 @@ class WorldLogger:
         batch_act = world.get_acts()
         parleys = zip(*batch_act)
         for i, parley in enumerate(parleys):
+            # in dynamic batching, we only return `batchsize` acts, but the
+            # 'dyn_batch_idx' key in the task act corresponds the episode index
+            # in the buffer
             idx = parley[0]['dyn_batch_idx'] if 'dyn_batch_idx' in parley[0] else i
             self._add_msgs(parley, idx=idx)
             if world.worlds[i].episode_done():
