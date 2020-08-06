@@ -12,6 +12,10 @@ from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseW
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.core.agents import create_agent
 
+
+cache = {}
+
+
 def get_contexts_data(opt, shared=None):
     if shared and 'contexts_data' in shared:
         return shared['contexts_data']
@@ -103,7 +107,12 @@ def _standardize(orig: str) -> str:
 class InteractiveWorld(InteractiveBaseWorld):
     @staticmethod
     def generate_world(opt, agents):
-        agent = create_agent(opt, requireModelExists=True)
+        if 'agent' in cache:
+            agent = cache['agent'].clone()
+        else:
+            agent = create_agent(opt, requireModelExists=True)
+            cache['agent'] = agent
+
         agents.append(agent)
         if opt['models'] is None:
             raise RuntimeError("Model must be specified")
