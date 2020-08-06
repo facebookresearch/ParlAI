@@ -53,7 +53,6 @@ class TestNoApex(unittest.TestCase):
                 '--optimizer',
                 'adam',
             ],
-            print_args=False,
         )
         create_agent(opt, requireModelExists=True)
 

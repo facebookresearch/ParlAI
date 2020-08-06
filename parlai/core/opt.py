@@ -12,6 +12,7 @@ import copy
 import json
 import pickle
 import traceback
+import parlai.utils.logging as logging
 
 from typing import List
 
@@ -131,3 +132,15 @@ class Opt(dict):
             if key in dct:
                 del dct[key]
         return cls(dct)
+
+    def log(self, header="Opt"):
+        from parlai.core.params import print_git_commit
+
+        logging.info(header + ":")
+        for key in sorted(self.keys()):
+            valstr = str(self[key])
+            if valstr.replace(" ", "").replace("\n", "") != valstr:
+                # show newlines as escaped keys, whitespace with quotes, etc
+                valstr = repr(valstr)
+            logging.info(f"    {key}: {valstr}")
+        print_git_commit()

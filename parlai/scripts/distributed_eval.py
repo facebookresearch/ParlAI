@@ -31,8 +31,6 @@ An example sbatch script is below, for a 2-host, 8-GPU setup (16 total gpus):
     -m seq2seq -t convai2 --dict-file /path/to/dict-file
 """
 
-import os
-
 import parlai.scripts.eval_model as eval_model
 import parlai.utils.distributed as distributed_utils
 
@@ -41,7 +39,7 @@ def main():
     parser = eval_model.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    opt = parser.parse_args(print_args=(os.environ['SLURM_PROCID'] == '0'))
+    opt = parser.parse_args()
 
     with distributed_utils.slurm_distributed_context(opt) as opt:
         return eval_model.eval_model(opt)

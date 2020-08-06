@@ -71,8 +71,7 @@ class TestUpgradeOpt(unittest.TestCase):
                 'zoo:unittest/transformer_generator2/model',
                 '--beam-size',
                 '5',
-            ],
-            print_args=False,
+            ]
         )
         agent = create_agent(opt, True)
         self.assertEqual(agent.opt['inference'], 'beam')

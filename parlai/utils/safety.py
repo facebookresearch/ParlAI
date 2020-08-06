@@ -45,7 +45,7 @@ class OffensiveLanguageClassifier:
             model_file='zoo:dialogue_safety/single_turn/model',
             print_scores=True,
         )
-        safety_opt = parser.parse_args([], print_args=False)
+        safety_opt = parser.parse_args([])
         return create_agent(safety_opt)
 
     def contains_offensive_language(self, text):

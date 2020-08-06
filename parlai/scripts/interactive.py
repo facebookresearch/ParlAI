@@ -75,22 +75,14 @@ def setup_args(parser=None):
     return parser
 
 
-def interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
+def interactive(opt):
     if isinstance(opt, ParlaiParser):
         logging.error('interactive should be passed opt not Parser')
         opt = opt.parse_args()
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
     human_agent = LocalHumanAgent(opt)
     # set up world logger
     world_logger = WorldLogger(opt) if opt.get('outfile') else None
@@ -123,7 +115,7 @@ class Interactive(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return interactive(self.opt, print_parser=self.parser)
+        return interactive(self.opt)
 
 
 if __name__ == '__main__':
