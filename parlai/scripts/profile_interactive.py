@@ -49,25 +49,12 @@ def setup_args(parser=None):
     return parser
 
 
-def profile_interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(opt, ParlaiParser):
-        logging.error('interactive should be passed opt not Parser')
-        opt = opt.parse_args()
-
+def profile_interactive(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     human_agent = RepeatQueryAgent(opt)
     world = create_task(opt, [human_agent, agent])
-
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
 
     pr = cProfile.Profile()
     pr.enable()
@@ -101,7 +88,7 @@ class ProfileInteractive(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return profile_interactive(self.opt, print_parser=self.parser)
+        return profile_interactive(self.opt)
 
 
 if __name__ == '__main__':

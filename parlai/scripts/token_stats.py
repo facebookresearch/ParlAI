@@ -51,6 +51,7 @@ class TokenStats(ParlaiScript):
         if 'ordered' not in self.opt['datatype'] and 'train' in self.opt['datatype']:
             self.opt['datatype'] = self.opt['datatype'] + ':ordered'
         agent = create_agent(self.opt)
+        agent.opt.log()
         num_examples = self.opt['num_examples']
         field = self.opt['field'] + '_vec'
         if num_examples < 0:
