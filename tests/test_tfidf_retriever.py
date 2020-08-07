@@ -4,14 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
-from parlai.core.worlds import create_task
-from parlai.utils.logging import logger, ERROR
-
-import os
 import unittest
-
 import parlai.utils.testing as testing_utils
 
 
@@ -33,7 +26,9 @@ class TestTfidfRetriever(unittest.TestCase):
         )
 
     def test_ptb_tok(self):
-        """Tests with the PTB tokenizer."""
+        """
+        Tests with the PTB tokenizer.
+        """
         testing_utils.train_model(
             dict(
                 model='tfidf_retriever',
@@ -47,7 +42,9 @@ class TestTfidfRetriever(unittest.TestCase):
         )
 
     def test_simple_tok(self):
-        """Tests with the simple tokenizer."""
+        """
+        Tests with the simple tokenizer.
+        """
         testing_utils.train_model(
             dict(
                 model='tfidf_retriever',
