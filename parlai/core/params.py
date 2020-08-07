@@ -974,6 +974,7 @@ class ParlaiParser(argparse.ArgumentParser):
         if '_subparser' in self.opt:
             # if using the super command, we need to be aware of the subcommand's
             # arguments when identifying things manually set by the user
+            self.overridable.update(self.opt['_subparser'].overridable)
             extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
