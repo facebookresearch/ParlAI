@@ -163,6 +163,7 @@ jobs:
       - <<: *fixgit
       - restore_cache:
           key: deps-20200625-fcr
+      - <<: *setup
       - run:
           name: Finalize coverage report
           command: |
