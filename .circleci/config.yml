@@ -524,28 +524,41 @@ workflows:
   version: 2
   commit:
     jobs:
-        # - cleaninstall_36
-        # - unittests_gpu14
-        # - unittests_38
+      - cleaninstall_36
+      - unittests_gpu14
+      - unittests_38
       - unittests_37
       - unittests_36
-      - finalize_coverage_report:
+      - mturk_tests
+      - unittests_osx
+      - long_gpu_tests:
           requires:
+            - cleaninstall_36
+            - unittests_38
             - unittests_37
             - unittests_36
-
-        # - mturk_tests
-        # - unittests_osx
-        # - long_gpu_tests
-        # - teacher_tests
-        # - build_website:
-        #     filters:
-        #       branches:
-        #         ignore: master
-        # - deploy_website:
-        #     filters:
-        #       branches:
-        #         only: master
-        # - test_website:
-        #     requires:
-        #       - deploy_website
+            - unittests_osx
+            - mturk_tests
+      - teacher_tests:
+          requires:
+            - cleaninstall_36
+            - unittests_38
+            - unittests_37
+            - unittests_36
+            - unittests_osx
+            - mturk_tests
+      - finalize_coverage_report:
+          requires:
+            - teacher_tests
+            - long_gpu_tests
+      - build_website:
+          filters:
+            branches:
+              ignore: master
+      - deploy_website:
+          filters:
+            branches:
+              only: master
+      - test_website:
+          requires:
+            - deploy_website
