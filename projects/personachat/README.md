@@ -1,8 +1,8 @@
 # PersonaChat
 
 This project was archived on 2020-08-01. The models and scripts have not been tested
-in a long time, but the data still works. If you need to use the model or scripts,
-please rewind to the
+in a long time. You may continue to use the data without issue (`--task personachat`).
+If you need to use the model or scripts, please rewind to the
 [`personachat`](https://github.com/facebookresearch/ParlAI/tree/personachat/projects/personachat)
 tag.
 
