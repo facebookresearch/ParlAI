@@ -503,13 +503,15 @@ jobs:
       - restore_cache:
           key: deps-20200625-fcr
       - run:
-         mkdir -p ~/venv
-         virtualenv --python=python3 ~/venv
-         echo ". ~/venv/bin/activate" >> $BASH_ENV
-         . ~/venv/bin/activate
-         python --version
-         pip install coveralls
-         coveralls --finish
+          name: Finalize coverage report
+          command:
+            mkdir -p ~/venv
+            virtualenv --python=python3 ~/venv
+            echo ". ~/venv/bin/activate" >> $BASH_ENV
+            . ~/venv/bin/activate
+            python --version
+            pip install coveralls
+            coveralls --finish
       - save_cache:
           key: deps-20200625-fcr
           paths:
