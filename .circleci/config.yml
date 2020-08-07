@@ -71,11 +71,11 @@ setup: &setup
       python --version
 
 
-codecov: &codecov
+coveralls: &coveralls
   run:
     name: Coverage report
     command: |
-      python -m codecov --flags $CIRCLE_JOB
+      coveralls
 
 installdeps: &installdeps
   run:
@@ -83,7 +83,7 @@ installdeps: &installdeps
     command: |
       python -m pip install --progress-bar off --upgrade pip setuptools
       python -m pip install --progress-bar off coverage
-      python -m pip install --progress-bar off codecov
+      python -m pip install --progress-bar off coveralls
       mkdir -p ~/ParlAI/test-results
       pip install -v -r requirements.txt
       python setup.py develop
@@ -177,7 +177,7 @@ jobs:
           name: Unit tests (OSX)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -221,7 +221,7 @@ jobs:
           name: Unit tests (py36)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -246,7 +246,7 @@ jobs:
           name: Unit tests (py38)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -271,7 +271,7 @@ jobs:
           name: Unit tests (py37)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -303,7 +303,7 @@ jobs:
           name: Unit tests (GPU; pytorch 1.3)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -335,7 +335,7 @@ jobs:
           name: Unit tests (GPU; pytorch 1.4)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -370,7 +370,7 @@ jobs:
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -394,7 +394,7 @@ jobs:
           name: All data tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m tasks parlai/tasks/*/test.py -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -416,7 +416,7 @@ jobs:
       - run:
           name: All mturk tests
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -504,23 +504,23 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_36
-      - unittests_gpu14
-      - unittests_38
+        # - cleaninstall_36
+        # - unittests_gpu14
+        # - unittests_38
       - unittests_37
       - unittests_36
-      - mturk_tests
-      - unittests_osx
-      - long_gpu_tests
-      - teacher_tests
-      - build_website:
-          filters:
-            branches:
-              ignore: master
-      - deploy_website:
-          filters:
-            branches:
-              only: master
-      - test_website:
-          requires:
-            - deploy_website
+        # - mturk_tests
+        # - unittests_osx
+        # - long_gpu_tests
+        # - teacher_tests
+        # - build_website:
+        #     filters:
+        #       branches:
+        #         ignore: master
+        # - deploy_website:
+        #     filters:
+        #       branches:
+        #         only: master
+        # - test_website:
+        #     requires:
+        #       - deploy_website
