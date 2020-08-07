@@ -502,15 +502,21 @@ jobs:
     steps:
       - restore_cache:
           key: deps-20200625-fcr
-      - <<: *setup
-      - <<: *installdeps
+      - run:
+         mkdir -p ~/venv
+         virtualenv --python=python3 ~/venv
+         echo ". ~/venv/bin/activate" >> $BASH_ENV
+         . ~/venv/bin/activate
+         python --version
+         pip install coveralls
+         coveralls --finish
       - save_cache:
           key: deps-20200625-fcr
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
-      - run:
-         coveralls --finish
+
+
 
 # -------------------------------------------------------------------------------------
 # Workflows
