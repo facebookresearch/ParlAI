@@ -75,7 +75,7 @@ coveralls: &coveralls
   run:
     name: Coverage report
     command: |
-      coveralls
+      coveralls -v
 
 installdeps: &installdeps
   run:
@@ -156,6 +156,25 @@ buildwebsite: &buildwebsite
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
+  finalize_coverage_report:
+    <<: *standard_cpu37
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: deps-20200625-fcr
+      - run:
+          name: Finalize coverage report
+          command: |
+            pip install coveralls
+            coveralls -v --finish
+      - save_cache:
+          key: deps-20200625-fcr
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+
+
   unittests_osx:
     <<: *osx_cpu37
     working_directory: ~/ParlAI
@@ -496,28 +515,6 @@ jobs:
             echo
             echo 'Testing docs css'
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
-
-  finalize_coverage_report:
-    <<: *standard_cpu37
-    steps:
-      - restore_cache:
-          key: deps-20200625-fcr
-      - run:
-          name: Finalize coverage report
-          command: |
-            mkdir -p ~/venv
-            virtualenv --python=python3 ~/venv
-            echo ". ~/venv/bin/activate" >> $BASH_ENV
-            . ~/venv/bin/activate
-            python --version
-            pip install coveralls
-            coveralls --finish
-      - save_cache:
-          key: deps-20200625-fcr
-          paths:
-            - "~/venv/bin"
-            - "~/venv/lib"
-
 
 
 # -------------------------------------------------------------------------------------
