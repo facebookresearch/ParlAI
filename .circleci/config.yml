@@ -497,6 +497,13 @@ jobs:
             echo 'Testing docs css'
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
+  finalize_coverage_report:
+    <<: *standard_cpu37
+    steps:
+      - <<: *installdeps
+      - run:
+         coveralls --finish
+
 # -------------------------------------------------------------------------------------
 # Workflows
 # -------------------------------------------------------------------------------------
@@ -509,6 +516,11 @@ workflows:
         # - unittests_38
       - unittests_37
       - unittests_36
+      - finalize_coverage_report:
+          requires:
+            - unittests_37
+            - unittests_36
+
         # - mturk_tests
         # - unittests_osx
         # - long_gpu_tests
