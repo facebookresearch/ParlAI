@@ -500,7 +500,15 @@ jobs:
   finalize_coverage_report:
     <<: *standard_cpu37
     steps:
+      - restore_cache:
+          key: deps-20200625-fcr
+      - <<: *setup
       - <<: *installdeps
+      - save_cache:
+          key: deps-20200625-fcr
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
       - run:
          coveralls --finish
 
