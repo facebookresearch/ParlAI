@@ -75,7 +75,8 @@ coveralls: &coveralls
   run:
     name: Coverage report
     command: |
-      coveralls -v
+      export CIRCLE_BUILD_NUM=$CIRCLE_WORKFLOW_ID
+      coveralls
 
 installdeps: &installdeps
   run:
@@ -167,7 +168,7 @@ jobs:
       - run:
           name: Finalize coverage report
           command: |
-            curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
+            curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
       - save_cache:
           key: deps-20200625-fcr
           paths:
