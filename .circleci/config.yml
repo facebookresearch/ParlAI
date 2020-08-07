@@ -504,7 +504,7 @@ jobs:
           key: deps-20200625-fcr
       - run:
           name: Finalize coverage report
-          command:
+          command: |
             mkdir -p ~/venv
             virtualenv --python=python3 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
