@@ -44,9 +44,7 @@ class OffensiveLanguageClassifier:
         if custom_model_file:
             model_file = custom_model_file
         parser.set_params(
-            model='transformer/classifier',
-            model_file=model_file,
-            print_scores=True,
+            model='transformer/classifier', model_file=model_file, print_scores=True,
         )
         safety_opt = parser.parse_args([], print_args=False)
         return create_agent(safety_opt)
