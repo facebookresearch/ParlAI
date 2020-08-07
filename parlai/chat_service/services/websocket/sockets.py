@@ -57,7 +57,7 @@ class MessageSocketHandler(WebSocketHandler):
         logging.info('websocket message from client: {}'.format(message_text))
         message = json.loads(message_text)
 
-        self.sid = message.get('user_id')
+        self.sid = 0
         self.subs[self.sid] = self
         print(f"Current subscribers:", self.subs)
         print("Changed sid to " + self.sid)
