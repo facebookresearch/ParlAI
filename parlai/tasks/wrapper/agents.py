@@ -93,7 +93,7 @@ class AbstractWrapperTeacher(Teacher, ABC):
         """
         Report metrics for the subtask.
         """
-        self.task.report()
+        return self.task.report()
 
     def reset(self):
         """

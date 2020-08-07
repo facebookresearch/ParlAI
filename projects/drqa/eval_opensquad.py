@@ -16,5 +16,5 @@ if __name__ == '__main__':
         retriever_model_file='models:wikipedia_full/tfidf_retriever/model',
         reader_model_file='models:drqa/squad/model',
     )
-    opt = parser.parse_args(print_args=False)
-    eval_model(opt, print_parser=parser)
+    opt = parser.parse_args()
+    eval_model(opt)

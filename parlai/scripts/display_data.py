@@ -67,6 +67,7 @@ def display_data(opt):
         opt['datatype'] = f"{opt['datatype']}:ordered"
 
     # create repeat label agent and assign it to the specified task
+    opt.log()
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
 

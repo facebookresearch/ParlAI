@@ -50,6 +50,7 @@ def setup_args(parser=None) -> ParlaiParser:
 
 
 def build_cands(opt):
+    opt.log()
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)

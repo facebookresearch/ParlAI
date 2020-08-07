@@ -172,13 +172,11 @@ def _eval_single_world(opt, agent, task):
     return report
 
 
-def eval_model(opt, print_parser=None):
+def eval_model(opt):
     """
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param bool print_parser: if provided, prints the options that are set within the
-        model after loading the model
     :return: the final result of calling report()
     """
     random.seed(42)
@@ -196,10 +194,7 @@ def eval_model(opt, print_parser=None):
 
     # load model and possibly print opt
     agent = create_agent(opt, requireModelExists=True)
-    if print_parser:
-        # show args after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
 
     tasks = opt['task'].split(',')
     reports = []
@@ -229,7 +224,7 @@ class EvalModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return eval_model(self.opt, print_parser=self.parser)
+        return eval_model(self.opt)
 
 
 if __name__ == '__main__':

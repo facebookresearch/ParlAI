@@ -117,13 +117,11 @@ def update_sent_attr_stats(sent_attrs, history, prediction):
     return sent_attrs
 
 
-def eval_wordstat(opt, print_parser=None):
+def eval_wordstat(opt):
     """
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param print_parser: if provided, prints the options that are set within the
-        model after loading the model
     """
     random.seed(42)
 
@@ -145,10 +143,6 @@ def eval_wordstat(opt, print_parser=None):
 
     batch_size = opt['batchsize']
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
@@ -298,4 +292,4 @@ def eval_wordstat(opt, print_parser=None):
 
 if __name__ == '__main__':
     parser = setup_args()
-    eval_wordstat(parser.parse_args(print_args=False), print_parser=parser)
+    eval_wordstat(parser.parse_args())

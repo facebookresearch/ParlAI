@@ -297,6 +297,7 @@ def validate_args(opt):
 
 def render_convo(opt):
     # Run
+    opt.log()
     extension = validate_args(opt)
     input_file, output_file = opt['intput'], opt['output']
     height, width = opt['height'], opt['width']

@@ -31,16 +31,7 @@ def setup_args(parser=None):
     return parser
 
 
-def interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
-        opt = opt.parse_args()
-
+def interactive(opt):
     opt['task'] = 'self_feeding'
     build(opt)
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
@@ -71,11 +62,6 @@ def interactive(opt, print_parser=None):
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
-
     # Show some example dialogs:
     while True:
         world.parley()
@@ -87,4 +73,4 @@ def interactive(opt, print_parser=None):
 if __name__ == '__main__':
     random.seed(42)
     parser = setup_args()
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    interactive(parser.parse_args())

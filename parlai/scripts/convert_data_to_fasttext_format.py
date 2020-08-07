@@ -28,6 +28,7 @@ def dump_data(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
+    opt.log()
     if opt['outfile'] is None:
         outfile = tempfile.mkstemp(
             prefix='{}_{}_'.format(opt['task'], opt['datatype']), suffix='.txt'
