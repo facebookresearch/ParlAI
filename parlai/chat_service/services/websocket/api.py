@@ -45,7 +45,7 @@ def format_message(message):
 
 class ParlaiAPI:
     @staticmethod
-    async def send_message(user_id, user_message, persona=False):
+    async def send_message(user_message, message_history, persona=False):
         if persona:
             message = "your persona: "
         else:
@@ -53,7 +53,7 @@ class ParlaiAPI:
 
         message += user_message
 
-        request_dict = {"text": message, "user_id": str(user_id)}
+        request_dict = {"text": message, "message_history": message_history}
         request_string = json.dumps(request_dict)
         request_bytes = bytes(request_string, encoding="UTF-8")
         print(request_bytes)
@@ -65,8 +65,6 @@ class ParlaiAPI:
 
             response = json.loads(response)
             print(response)
-
-            response['user_id'] = user_id
 
             try:
                 response['text'] = format_message(response['text'])
@@ -83,9 +81,9 @@ def send_message():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    message_text, user_id = data.get('message_text', None), data.get('user_id', None)
+    message_text, message_history = data.get('message_text', None), data.get('message_history', [])
 
-    result = loop.run_until_complete(ParlaiAPI.send_message(user_id, message_text))
+    result = loop.run_until_complete(ParlaiAPI.send_message(message_text, message_history))
     return result
 
 
@@ -96,9 +94,9 @@ def send_person_message():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    message_text, user_id = data.get('message_text', None), data.get('user_id', None)
+    message_text, message_history = data.get('message_text', None), data.get('message_history', [])
 
-    result = loop.run_until_complete(ParlaiAPI.send_message(user_id, message_text, persona=True))
+    result = loop.run_until_complete(ParlaiAPI.send_message(message_text, message_history, persona=True))
     return result
 
 
@@ -109,9 +107,7 @@ def start_conversation():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    user_id = data.get('user_id', None)
-
-    result = loop.run_until_complete(ParlaiAPI.send_message(user_id, 'begin'))
+    result = loop.run_until_complete(ParlaiAPI.send_message('begin'))
     return result
 
 
@@ -121,8 +117,6 @@ def end_conversation():
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-
-    user_id = data.get('user_id', None)
 
     result = loop.run_until_complete(ParlaiAPI.send_message(user_id, '[DONE]'))
     return result

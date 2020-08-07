@@ -39,10 +39,11 @@ class WebsocketAgent(ChatServiceAgent):
         """
         logging.info(f"Sending new message: {act}")
         quick_replies = act.get('quick_replies', None)
+        message_history = act.get('message_history', [])
         if act.get('payload', None):
-            self.manager.observe_payload(self.id, act['payload'], quick_replies)
+            self.manager.observe_payload(self.id, act['payload'], quick_replies, message_history)
         else:
-            self.manager.observe_message(self.id, act['text'], quick_replies)
+            self.manager.observe_message(self.id, act['text'], quick_replies, message_history)
 
     def put_data(self, message):
         """
@@ -56,6 +57,7 @@ class WebsocketAgent(ChatServiceAgent):
         action = {
             'episode_done': False,
             'text': message.get('text', ''),
+            'message_history': message.get('message_history', []),
             'payload': message.get('payload'),
         }
 

@@ -56,13 +56,15 @@ class MessageSocketHandler(WebSocketHandler):
         """
         logging.info('websocket message from client: {}'.format(message_text))
         message = json.loads(message_text)
+        message_history = message.get('message_history', [])
 
-        self.sid = 0
+        self.sid = '1'
         self.subs[self.sid] = self
         print(f"Current subscribers:", self.subs)
         print("Changed sid to " + self.sid)
         message = {
             'text': message.get('text', ''),
+            'message_history': message_history,
             'payload': message.get('payload'),
             'sender': {'id': self.sid},
             'recipient': {'id': 0},
