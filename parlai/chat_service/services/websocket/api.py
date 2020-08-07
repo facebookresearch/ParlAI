@@ -5,6 +5,7 @@ import json
 import websockets
 import uuid
 import asyncio
+import logging
 import re
 from flask import Flask, request, jsonify
 
@@ -27,10 +28,11 @@ blueprint = flask.Blueprint('parlai_api', __name__, template_folder='templates')
 connections = {}
 websocket_uri = f"ws://{hostname}:{port}/websocket"
 
+running = False
+
 
 def format_message(message):
     while match := re.search("\s'\s", message):
-        print(match)
         message = message[:match.start()] + "'" + message[match.end():]
         
     while match := re.search('\s[.?!,;:\']', message):
@@ -57,25 +59,33 @@ class ParlaiAPI:
         request_string = json.dumps(request_dict)
         request_bytes = bytes(request_string, encoding="UTF-8")
         print(request_bytes)
+        
+        try:
+            async with websockets.connect(websocket_uri) as ws:
+                await ws.send(request_bytes)
 
-        async with websockets.connect(websocket_uri) as ws:
-            await ws.send(request_bytes)
+                response = await ws.recv()
 
-            response = await ws.recv()
+                response = json.loads(response)
+                print(response)
 
-            response = json.loads(response)
-            print(response)
+                try:
+                    response['text'] = format_message(response['text'])
+                except Exception as e:
+                    print(e)
 
-            try:
-                response['text'] = format_message(response['text'])
-            except Exception as e:
-                print(e)
-
-            return response
+                return response
+        except Exception as e:
+            return {'text': str(e)}
+         
 
 
 @blueprint.route('/api/send_message', methods=["POST"])
 def send_message():
+    global running
+    while running:
+        pass
+    running = True
     data = request.get_json()
 
     loop = asyncio.new_event_loop()
@@ -84,6 +94,7 @@ def send_message():
     message_text, message_history = data.get('message_text', None), data.get('message_history', [])
 
     result = loop.run_until_complete(ParlaiAPI.send_message(message_text, message_history))
+    running = False
     return result
 
 
