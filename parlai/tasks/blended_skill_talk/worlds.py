@@ -107,18 +107,16 @@ def _standardize(orig: str) -> str:
 class InteractiveWorld(InteractiveBaseWorld):
     @staticmethod
     def generate_world(opt, agents):
-        if 'agent' in cache:
-            agent = cache['agent'].clone()
-        else:
+        if 'agent' not in cache:
             agent = create_agent(opt, requireModelExists=True)
             cache['agent'] = agent
 
-        agents.append(agent)
         if opt['models'] is None:
             raise RuntimeError("Model must be specified")
+
         return InteractiveWorld(
             opt,
-            agents
+            [agents[0], cache['agent'].clone()]
         )
 
     @staticmethod
