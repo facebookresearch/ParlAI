@@ -47,7 +47,7 @@ def format_message(message):
 
 class ParlaiAPI:
     @staticmethod
-    async def send_message(user_message, message_history, persona=False):
+    async def send_message(user_message, message_history=[], persona=False):
         if persona:
             message = "your persona: "
         else:
@@ -100,6 +100,10 @@ def send_message():
 
 @blueprint.route('/api/send_person_message', methods=["POST"])
 def send_person_message():
+    global running
+    while running:
+        pass
+    running = True
     data = request.get_json()
 
     loop = asyncio.new_event_loop()
@@ -108,6 +112,7 @@ def send_person_message():
     message_text, message_history = data.get('message_text', None), data.get('message_history', [])
 
     result = loop.run_until_complete(ParlaiAPI.send_message(message_text, message_history, persona=True))
+    running = False
     return result
 
 
@@ -119,10 +124,10 @@ def start_conversation():
     asyncio.set_event_loop(loop)
 
     result = loop.run_until_complete(ParlaiAPI.send_message('begin'))
-    return result
+    return {'status': 'OK'}
 
 
-@blueprint.route('/api/end_conversation', methods=["POST"])
+@blueprint.route('/api/end_conversation', methods=["GET", "POST"])
 def end_conversation():
     data = request.get_json()
 
@@ -130,7 +135,7 @@ def end_conversation():
     asyncio.set_event_loop(loop)
 
     result = loop.run_until_complete(ParlaiAPI.send_message(user_id, '[DONE]'))
-    return result
+    return {'status': 'OK'}
 
 
 async def main():
