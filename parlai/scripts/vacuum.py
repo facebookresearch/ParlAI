@@ -24,13 +24,26 @@ import parlai.utils.logging as logging
 class Vacuum(ParlaiScript):
     @classmethod
     def setup_args(cls):
-        parser = ParlaiParser(False, False)
-        parser.add_argument('path', help="Path to model file.")
+        parser = ParlaiParser(
+            False, False, description='Shrink a model file for release.'
+        )
+        parser.add_argument(
+            # dest is intentionally not model_file so the parlai parser doesn't
+            # add extra opts to it
+            '-mf',
+            '--model-file',
+            dest='path',
+            help="Path to model file.",
+        )
         return parser
 
     def run(self):
         self.opt.log()
         model_file = self.opt['path']
+        if not model_file:
+            raise RuntimeError('--model-file argument is required')
+        if not os.path.isfile(model_file):
+            raise RuntimeError(f"'{model_file}' does not exist")
         logging.info(f"Loading {model_file}")
         states = torch.load(
             model_file,
