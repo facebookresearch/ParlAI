@@ -7,7 +7,10 @@ import uuid
 import asyncio
 import logging
 import re
+import threading
 from flask import Flask, request, jsonify
+
+logging.basicConfig(filename='api.log', level=30)
 
 parser = argparse.ArgumentParser(description="Simple API for ParlAI chat bot")
 parser.add_argument('--hostname', default="localhost", help="ParlAI web server hostname.")
@@ -18,7 +21,7 @@ parser.add_argument('--serving_port', type=int, default=8080, help="API web serv
 args = parser.parse_args()
 
 hostname = args.hostname
-port = args.port
+port = args.port	
 serving_hostname = args.serving_hostname
 serving_port = args.serving_port
 
@@ -29,6 +32,13 @@ connections = {}
 websocket_uri = f"ws://{hostname}:{port}/websocket"
 
 running = False
+
+requests = []
+responses = {}
+
+
+def get_random_id():
+    return str(uuid.uuid4())
 
 
 def format_message(message):
@@ -46,6 +56,18 @@ def format_message(message):
     return message
 
 class ParlaiAPI:
+    @staticmethod
+    def parse():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        while True:
+            if not requests:
+                continue
+            request = requests.pop(0)
+            result = loop.run_until_complete(request[1]())
+            responses[request[0]] = result
+    
     @staticmethod
     async def send_message(user_message, message_history=[], persona=False):
         if persona:
@@ -77,15 +99,11 @@ class ParlaiAPI:
                 return response
         except Exception as e:
             return {'text': str(e)}
-         
 
 
 @blueprint.route('/api/send_message', methods=["POST"])
 def send_message():
-    global running
-    while running:
-        pass
-    running = True
+    request_id = get_random_id()
     data = request.get_json()
 
     loop = asyncio.new_event_loop()
@@ -93,26 +111,32 @@ def send_message():
 
     message_text, message_history = data.get('message_text', None), data.get('message_history', [])
 
-    result = loop.run_until_complete(ParlaiAPI.send_message(message_text, message_history))
-    running = False
+    requests.append([request_id,
+                     lambda: ParlaiAPI.send_message(message_text, message_history)])
+    logging.warning(str(requests))
+    while request_id not in responses:
+        pass
+
+    result = responses[request_id]
+    del responses[request_id]
     return result
 
 
 @blueprint.route('/api/send_person_message', methods=["POST"])
 def send_person_message():
-    global running
-    while running:
-        pass
-    running = True
     data = request.get_json()
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    message_text, message_history = data.get('message_text', None), data.get('message_history', [])
+    requests.append([request_id,
+                     lambda: ParlaiAPI.send_message(message_text, message_history, persona=True)])
+    
+    while request_id not in responses:
+        pass
 
-    result = loop.run_until_complete(ParlaiAPI.send_message(message_text, message_history, persona=True))
-    running = False
+    result = responses[request_id]
+    del responses[request_id]
     return result
 
 
@@ -123,22 +147,40 @@ def start_conversation():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    result = loop.run_until_complete(ParlaiAPI.send_message('begin'))
+    requests.append([request_id,
+                     lambda: ParlaiAPI.send_message('begin')])
+ 
+    while request_id not in responses:
+        pass
+
+    result = responses[request_id]
+    del responses[request_id]
     return {'status': 'OK'}
 
 
 @blueprint.route('/api/end_conversation', methods=["GET", "POST"])
 def end_conversation():
+    # DEPRECATED
+
     data = request.get_json()
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    result = loop.run_until_complete(ParlaiAPI.send_message(user_id, '[DONE]'))
+    requests.append([request_id,
+                     lambda: ParlaiAPI.send_message('[DONE]')])
+ 
+    while request_id not in responses:
+        pass
+
+    result = responses[request_id]
+    del responses[request_id]
     return {'status': 'OK'}
 
 
 async def main():
+    thread = threading.Thread(target=ParlaiAPI.parse)
+    thread.start()
     app.register_blueprint(blueprint)
     app.run(host=serving_hostname, port=serving_port)
 
