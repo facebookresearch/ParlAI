@@ -45,6 +45,12 @@ This is the recommended installation procedure, as it provides ready access to t
 
 All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if requested will be downloaded to `~/ParlAI/downloads`. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
+In case you still want to install ParlAI using pip (less recommended), you can install it as follows:
+```bash
+pip install parlai
+```
+Though pip install command is easier, it would not give you access to the ready examples and the data present in the repository.
+
 ## Documentation
 
  - [Quick Start](https://parl.ai/docs/tutorial_quick.html)
