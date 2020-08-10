@@ -8,7 +8,7 @@
 Useful utilities for logging actions/observations in a world.
 """
 
-from parlai.core.worlds import BatchWorld
+from parlai.core.worlds import BatchWorld, DynamicBatchWorld
 from parlai.utils.misc import msg_to_str
 from parlai.utils.conversations import Conversations
 import parlai.utils.logging as logging
@@ -81,15 +81,21 @@ class WorldLogger:
         self._logs.append(episode)
 
     def _is_batch_world(self, world):
-        return isinstance(world, BatchWorld) and len(world.worlds) > 1
+        return (
+            isinstance(world, BatchWorld) or isinstance(world, DynamicBatchWorld)
+        ) and len(world.worlds) > 1
 
     def _log_batch(self, world):
         batch_act = world.get_acts()
         parleys = zip(*batch_act)
         for i, parley in enumerate(parleys):
-            self._add_msgs(parley, idx=i)
-            if world.worlds[i].episode_done():
-                self.reset_world(idx=i)
+            # in dynamic batching, we only return `batchsize` acts, but the
+            # 'dyn_batch_idx' key in the task act corresponds the episode index
+            # in the buffer
+            idx = parley[0]['dyn_batch_idx'] if 'dyn_batch_idx' in parley[0] else i
+            self._add_msgs(parley, idx=idx)
+            if world.worlds[idx].episode_done():
+                self.reset_world(idx=idx)
 
     def log(self, world):
         """
@@ -140,6 +146,7 @@ class WorldLogger:
                 fw.write('\n')
 
     def write_conversations_format(self, outfile, world):
+        logging.info(f'Saving log to {outfile} in Conversations format')
         Conversations.save_conversations(
             self._logs,
             outfile,

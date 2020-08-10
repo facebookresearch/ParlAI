@@ -266,7 +266,7 @@ def setup_interactive():
     Set up the interactive script.
     """
     parser = setup_args()
-    opt = parser.parse_args(print_args=True)
+    opt = parser.parse_args()
     if not opt.get('model_file'):
         raise RuntimeError('Please specify a model file')
     if opt.get('fixed_cands_path') is None:

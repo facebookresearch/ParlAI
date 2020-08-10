@@ -49,7 +49,7 @@ class OffensiveLanguageClassifier:
             model_file=custom_model_file,
             print_scores=True,
         )
-        safety_opt = parser.parse_args([], print_args=False)
+        safety_opt = parser.parse_args([])
         return create_agent(safety_opt, requireModelExists=True)
 
     def contains_offensive_language(self, text):

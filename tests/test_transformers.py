@@ -713,7 +713,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 save_after_valid=True,
                 special_tok_lst='PARTY,PARROT',
             )
-            opt = parser.parse_args([], print_args=False)
+            opt = parser.parse_args([])
             agent = create_agent(opt)
             # assert that the embeddings were resized
             assert agent.resized_embeddings

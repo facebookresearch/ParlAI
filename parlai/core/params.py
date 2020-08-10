@@ -1045,24 +1045,24 @@ class ParlaiParser(argparse.ArgumentParser):
         self._process_args_to_opts(args)
         return self.opt, unknowns
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
+    def parse_args(self, args=None, namespace=None, **kwargs):
         """
         Parse the provided arguments and returns a dictionary of the ``args``.
 
         We specifically remove items with ``None`` as values in order to support the
         style ``opt.get(key, default)``, which would otherwise return ``None``.
         """
+        if 'print_args' in kwargs:
+            logging.error(
+                "You gave the print_args flag to parser.parse_args, but this is "
+                "no longer supported. Use opt.log() to print the arguments"
+            )
+            del kwargs['print_args']
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
 
         self._process_args_to_opts(args)
-
-        if print_args:
-            self.print_args()
-            if GIT_AVAILABLE:
-                print_git_commit()
-            print_announcements(self.opt)
-
+        print_announcements(self.opt)
         logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         assert '_subparser' not in self.opt
@@ -1173,31 +1173,9 @@ class ParlaiParser(argparse.ArgumentParser):
         self.error = _captured_error
         try:
             string_args = self._kwargs_to_str_args(**kwargs)
-            return self.parse_args(args=string_args, print_args=False)
+            return self.parse_args(args=string_args)
         finally:
             self.error = old_error
-
-    def print_args(self):
-        """
-        Print out all the arguments in this parser.
-        """
-        if not self.opt:
-            self.parse_args(print_args=False)
-        values = {}
-        for key, value in self.opt.items():
-            values[str(key)] = str(value)
-        for group in self._action_groups:
-            group_dict = {
-                a.dest: getattr(self.args, a.dest, None) for a in group._group_actions
-            }
-            namespace = argparse.Namespace(**group_dict)
-            count = 0
-            for key in sorted(namespace.__dict__):
-                if key in values:
-                    if count == 0:
-                        print('[ ' + group.title + ': ] ')
-                    count += 1
-                    print('[  ' + key + ': ' + values[key] + ' ]')
 
     def set_params(self, **kwargs):
         """

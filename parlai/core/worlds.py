@@ -1110,8 +1110,10 @@ class DynamicBatchWorld(World):
 
     def reset(self):
         super().reset()
+        self._task_acts = [None for _ in range(self._BUFFER_SIZE)]
         self._obs = [None for _ in range(self._BUFFER_SIZE)]
         self._scores = [None for _ in range(self._BUFFER_SIZE)]
+        self.acts = [None, None]
 
         self.number_parleys = 0
         self.total_exs = 0
@@ -1183,6 +1185,12 @@ class DynamicBatchWorld(World):
                 self.worlds[i].parley_init()
 
             act = self.worlds[i].get_task_agent().act()
+
+            # we log the task act and the index of the act
+            # in the buffer for world logging purposes
+            self._task_acts[i] = act  # for world logging
+            self._task_acts[i]['dyn_batch_idx'] = i
+
             obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
 
@@ -1245,15 +1253,20 @@ class DynamicBatchWorld(World):
 
         # great, this batch is good to go! let's run it!
         acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
+        self.acts = [[self._task_acts[i] for i in batch], acts]
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
             # we need to make sure that the teachers saw the result
             self.worlds[i].get_task_agent().observe(act)
             # and that the agent copies saw their own voice
             self.worlds[i].get_model_agent().self_observe(act)
-
             # move these worlds forward
             act = self.worlds[i].get_task_agent().act()
+            # we log the task act and the index of the act
+            # in the buffer for world logging purposes
+            self._task_acts[i] = act
+            self._task_acts[i]['dyn_batch_idx'] = i
+            # save the observations to form a batch
             obs = self.worlds[i].get_model_agent().observe(act)
             self._scores[i] = self._score(obs)
             self._obs[i] = obs
