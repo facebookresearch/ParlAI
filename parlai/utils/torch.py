@@ -337,8 +337,8 @@ class PipelineHelper(object):
         """
         Check compatibility for opts.
 
-        Really just used to raise an error message if the user mixes
-        multiprocessing and model parallelism.
+        Really just used to raise an error message if the user mixes multiprocessing and
+        model parallelism.
         """
         if opt.get('multiprocessing') and not os.environ.get('PARLAI_FORCE_MP'):
             raise RuntimeError(

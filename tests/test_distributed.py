@@ -171,7 +171,8 @@ class TestDistributed(unittest.TestCase):
 
     def test_no_model_parallel(self):
         """
-        Checks that we throw an error when combining mp_train with
+        Checks that we throw an error when combining mp_train with.
+
         --model-parallel true.
         """
         config = copy.deepcopy(self._base_config)
