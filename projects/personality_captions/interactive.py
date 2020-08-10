@@ -275,8 +275,6 @@ def setup_interactive():
         )
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     opt['image_mode'] = 'resnet152'
-    opt['no_cuda'] = True
-    opt['override']['no_cuda'] = True
     SHARED['opt'] = opt
     SHARED['image_loader'] = ImageLoader(opt)
 
