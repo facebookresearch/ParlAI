@@ -30,6 +30,7 @@ def load_openers(opt) -> Optional[List[str]]:
     if 'train' in datatype and 'evalmode' not in datatype:
         task_opt['datatype'] = f'{datatype}:evalmode'
     task_opt['interactive_task'] = False
+    task_opt['selfchat_task'] = False
     task_agent = RepeatLabelAgent(task_opt)
     task_world = create_task(task_opt, task_agent)
 
