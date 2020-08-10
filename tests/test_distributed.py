@@ -169,6 +169,22 @@ class TestDistributed(unittest.TestCase):
         assert valid['exs'].value() == 100
         assert test['exs'].value() == 100
 
+    def test_no_model_parallel(self):
+        """
+        Checks that we throw an error when combining mp_train with
+        --model-parallel true.
+        """
+        config = copy.deepcopy(self._base_config)
+        config['model_parallel'] = True
+        for m in [
+            'transformer/generator',
+            'transformer/ranker',
+            'transformer/classifier',
+        ]:
+            config['model'] = m
+            with self.assertRaises(RuntimeError):
+                _ = self._distributed_train_model(config)
+
 
 if __name__ == '__main__':
     unittest.main()
