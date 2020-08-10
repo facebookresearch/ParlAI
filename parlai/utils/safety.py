@@ -24,7 +24,11 @@ class OffensiveLanguageClassifier:
     <http://parl.ai/projects/dialogue_safety/> for more information.
     """
 
-    def __init__(self, shared: TShared = None, custom_model_file=None):
+    def __init__(
+        self,
+        shared: TShared = None,
+        custom_model_file='zoo:dialogue_safety/single_turn/model',
+    ):
         if not shared:
             self.model = self._create_safety_model(custom_model_file)
         else:
@@ -40,14 +44,13 @@ class OffensiveLanguageClassifier:
 
         parser = ParlaiParser(False, False)
         TransformerClassifierAgent.add_cmdline_args(parser)
-        model_file = 'zoo:dialogue_safety/single_turn/model'
-        if custom_model_file:
-            model_file = custom_model_file
         parser.set_params(
-            model='transformer/classifier', model_file=model_file, print_scores=True,
+            model='transformer/classifier',
+            model_file=custom_model_file,
+            print_scores=True,
         )
         safety_opt = parser.parse_args([], print_args=False)
-        return create_agent(safety_opt)
+        return create_agent(safety_opt, requireModelExists=True)
 
     def contains_offensive_language(self, text):
         """
