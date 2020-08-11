@@ -53,11 +53,11 @@ class SelfChatWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.init_contexts(shared=shared)
+        self._openers = None
         self.init_openers()
         self.max_turn_cnt = self.opt.get('selfchat_max_turns', 10)
         self.turn_cnt = 0
         self.episode_cnt = 0
-        self._openers = None
 
     def init_contexts(self, shared=None) -> None:
         """
