@@ -49,7 +49,7 @@ ParlAI is a one-stop-shop for dialog research.
    torch_agent
    build_data
    dict
-   metrics
+   metrics_api
    params
    teachers
    worlds
