@@ -1,5 +1,10 @@
-messages
-============
+parlai.core.message
+===================================
+
+.. automodule:: parlai.core.message
+  :members:
+
+
 
 .. image:: _static/img/act-obs-dict.png
     :width: 60 %

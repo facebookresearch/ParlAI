@@ -26,6 +26,10 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
     background-color: #fff;
 }
 
+th > p {
+    margin-bottom: 0px !important;
+}
+
 @media screen and (min-width: 1400px) {
     .wy-nav-content-wrap {
         background-color: rgba(0, 0, 0, 0.0470588);

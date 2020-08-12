@@ -1,4 +1,4 @@
-core.torch_agent
+parlai.core.torch_agent
 ===================================
 
 Torch Agent implements much of the boilerplate necessary for creating
@@ -21,13 +21,26 @@ Torch Agent
   :members:
 
 
+Torch Generator Agent
+-----------------------------------
+.. automodule:: parlai.core.torch_generator_agent
+  :members:
+
+
 Torch Ranker Agent
 -----------------------------------
 .. automodule:: parlai.core.torch_ranker_agent
   :members:
 
 
-Torch Generator Agent
+Torch Classifier Agent
 -----------------------------------
-.. automodule:: parlai.core.torch_generator_agent
+.. automodule:: parlai.core.torch_classifier_agent
+  :members:
+
+
+
+Torch Image Agent
+-----------------------------------
+.. automodule:: parlai.core.torch_image_agent
   :members:

@@ -22,7 +22,7 @@ class Metadata:
     """
     Utility class for conversation metadata.
 
-    Metadata should be saved at <datapath>.metadata.
+    Metadata should be saved at ``<datapath>.metadata``.
     """
 
     def __init__(self, datapath):
@@ -169,24 +169,27 @@ class Conversations:
 
     Conversations should be saved in JSONL format, where each line is
     a JSON of the following form:
-    {
-        'possible_conversation_level_info': True,
-        'dialog':
-            [   [
-                    {
-                        'id': 'speaker_1',
-                        'text': <first utterance>,
-                    },
-                    {
-                        'id': 'speaker_2',
-                        'text': <second utterance>,
-                    },
+
+    .. code-block:
+
+        {
+            'possible_conversation_level_info': True,
+            'dialog':
+                [   [
+                        {
+                            'id': 'speaker_1',
+                            'text': <first utterance>,
+                        },
+                        {
+                            'id': 'speaker_2',
+                            'text': <second utterance>,
+                        },
+                        ...
+                    ],
                     ...
-                ],
-                ...
-            ]
-        ...
-    }
+                ]
+            ...
+        }
     """
 
     def __init__(self, datapath):

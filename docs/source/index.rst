@@ -42,16 +42,18 @@ ParlAI is a one-stop-shop for dialog research.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Core Library API
+   :caption: API Reference
 
-   messages
    agents
    torch_agent
-   build_data
+   messages
    dict
+   build_data
    metrics_api
    params
    teachers
+   loader
+   script
    worlds
    utils
 
