@@ -39,6 +39,8 @@ def print_git_commit():
     """
     Print the current git commit of ParlAI and parlai_internal.
     """
+    if not GIT_AVAILABLE:
+        return
     root = os.path.dirname(os.path.dirname(parlai.__file__))
     internal_root = os.path.join(root, 'parlai_internal')
     try:
@@ -974,6 +976,7 @@ class ParlaiParser(argparse.ArgumentParser):
         if '_subparser' in self.opt:
             # if using the super command, we need to be aware of the subcommand's
             # arguments when identifying things manually set by the user
+            self.overridable.update(self.opt['_subparser'].overridable)
             extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
