@@ -30,6 +30,10 @@ th > p {
     margin-bottom: 0px !important;
 }
 
+.text-align\:right {
+    text-align: right;
+}
+
 @media screen and (min-width: 1400px) {
     .wy-nav-content-wrap {
         background-color: rgba(0, 0, 0, 0.0470588);
