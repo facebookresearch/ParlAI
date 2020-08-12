@@ -84,6 +84,7 @@ class OffensiveStringMatcher:
     def __init__(self, datapath: str = None):
         """
         Get data from external sources and build data representation.
+
         If datapath ends in '.txt' it is assumed a custom model file is already given.
         """
         import parlai.core.build_data as build_data
