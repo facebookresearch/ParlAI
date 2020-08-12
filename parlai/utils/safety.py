@@ -116,7 +116,7 @@ class OffensiveStringMatcher:
                 # Mark the data as built.
                 build_data.mark_done(dpath, version)
 
-        if datapath.endswith('.txt'):
+        if datapath is not None and datapath.endswith('.txt'):
             # Load custom file.
             self.datafile = datapath
         else:
@@ -126,12 +126,10 @@ class OffensiveStringMatcher:
                 from parlai.core.params import ParlaiParser
 
                 parser = ParlaiParser(False, False)
-                datapath = os.path.join(parser.parlai_home, 'data')
-                self.datafile = _path(datapath)
-            elif datapath.endswith('.txt'):
-                self.datafile = datapath
+                self.datapath = os.path.join(parser.parlai_home, 'data')
             else:
-                self.datafile = _path(datapath)
+                self.datapath = datapath
+            self.datafile = _path()
 
         # store a token trie: e.g.
         # {'2': {'girls': {'1': {'cup': {'__END__': True}}}}
