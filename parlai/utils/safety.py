@@ -84,6 +84,7 @@ class OffensiveStringMatcher:
     def __init__(self, datapath: str = None):
         """
         Get data from external sources and build data representation.
+        If datapath ends in '.txt' it is assumed a custom model file is already given.
         """
         import parlai.core.build_data as build_data
         from parlai.core.dict import DictionaryAgent
@@ -115,14 +116,22 @@ class OffensiveStringMatcher:
                 # Mark the data as built.
                 build_data.mark_done(dpath, version)
 
-        if datapath is None:
-            from parlai.core.params import ParlaiParser
-
-            parser = ParlaiParser(False, False)
-            self.datapath = os.path.join(parser.parlai_home, 'data')
+        if datapath.endswith('.txt'):
+            # Load custom file.
+            self.datafile = datapath
         else:
-            self.datapath = datapath
-        self.datafile = _path()
+            # Build data from zoo, and place in given datapath.
+            if datapath is None:
+                # Build data from zoo.
+                from parlai.core.params import ParlaiParser
+
+                parser = ParlaiParser(False, False)
+                datapath = os.path.join(parser.parlai_home, 'data')
+                self.datafile = _path(datapath)
+            elif datapath.endswith('.txt'):
+                self.datafile = datapath
+            else:
+                self.datafile = _path(datapath)
 
         # store a token trie: e.g.
         # {'2': {'girls': {'1': {'cup': {'__END__': True}}}}
