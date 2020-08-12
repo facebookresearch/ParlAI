@@ -12,8 +12,6 @@ import os
 import pkgutil
 import importlib
 import inspect
-import io
-import csv
 
 
 """
@@ -73,7 +71,7 @@ def _make_argparse_table(class_):
         readme.append("| Argument | Description |\n")
         readme.append("|----------|----------|\n")
         for row in actions:
-            text = ("| " + " | ".join(row) + " |")
+            text = "| " + " | ".join(row) + " |"
             text = text.replace("\n", "<br>")
             readme.append(f"{text}\n")
         readme.append("\n\n")
