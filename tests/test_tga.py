@@ -8,10 +8,12 @@ Test TorchGeneratorAgent.
 """
 
 import unittest
+
 from parlai.core.agents import create_agent
-import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+import parlai.utils.logging as logging
+import parlai.utils.testing as testing_utils
 
 
 class TestUpgradeOpt(unittest.TestCase):
@@ -77,6 +79,26 @@ class TestUpgradeOpt(unittest.TestCase):
         )
         agent = create_agent(opt, True)
         self.assertEqual(agent.opt['inference'], 'beam')
+
+
+class TestInferenceTime(unittest.TestCase):
+    """
+    Test printing the (variable) inference time and the (known) number of passes through
+    the decoder for a trivial generation.
+    """
+
+    def test_inference_time(self):
+        opt = {
+            'model': 'transformer/generator',
+            'model_file': 'zoo:unittest/transformer_generator2/model',
+            'task': 'integration_tests:multiturn_candidate',
+            'num_examples': 1,
+        }
+        with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
+            testing_utils.display_data(opt)
+            assert any('Total encoder + decoder time:' in l for l in cm.output) and any(
+                'Num decoder forward passes: 2' in l for l in cm.output
+            )
 
 
 if __name__ == '__main__':
