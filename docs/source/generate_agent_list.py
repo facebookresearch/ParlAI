@@ -77,18 +77,6 @@ def _make_argparse_table(class_):
             text = text.replace("\n", "<br>")
             readme.append(f"{text}\n")
         readme.append("\n\n")
-
-        # render the table
-        # readme.append(f"```eval_rst\n")
-        # readme.append(f".. csv-table:: {ag.title}\n")
-        # readme.append(f'   :widths: 35, 65\n\n')
-        # cout = io.StringIO()
-        # csvw = csv.writer(cout, csv.unix_dialect, delimiter=",")
-        # for row in actions:
-        #     cout.write("   ")
-        #     csvw.writerow(row)
-        # readme.append(cout.getvalue())
-        # readme.append("```\n\n")
     return readme
 
 

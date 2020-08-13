@@ -80,7 +80,7 @@ th p, td div.line-block {
 
 /* Use our red for literals (it's very similar to the original color) */
 .rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
-    color: #222;
+    color: #333;
 }
 
 .rst-content tt.xref, a .rst-content tt, .rst-content tt.xref,
