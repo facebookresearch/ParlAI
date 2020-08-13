@@ -13,6 +13,11 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
     font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
 }
 
+p { margin-bottom: 16px; }
+h1 { size: 250%; }
+h2 { size: 200%; }
+h3 { size: 150%; }
+
 .wy-menu.wy-menu-vertical p.caption {
     color: #fcfcfc;
 }
@@ -26,8 +31,8 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
     background-color: #fff;
 }
 
-th > p {
-    margin-bottom: 0px !important;
+th p, td div.line-block {
+    margin-bottom: 0px;
 }
 
 .text-align\:right {
@@ -148,4 +153,13 @@ nav .hidden-section {
 }
 .wy-table-responsive table {
     width: 100%;
+}
+
+.section {
+}
+.section .section {
+    margin-bottom: 5em;
+}
+.section .section .section {
+    margin-bottom: 2em;
 }
