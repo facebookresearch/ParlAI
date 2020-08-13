@@ -7,6 +7,7 @@
 import argparse
 import parlai.core.script as pcs
 
+
 def render_script(fout, key, registration):
     script_parser = registration.klass.setup_args()
     description = script_parser.description
@@ -83,7 +84,6 @@ def render_script(fout, key, registration):
             fout.write(fstr.format(aval, line))
         fout.write("+" + "-" * action_width + "+" + "-" * desc_width + "+\n")
     fout.write('\n\n')
-
 
 
 def main():

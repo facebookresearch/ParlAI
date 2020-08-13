@@ -52,14 +52,13 @@ We could look at that data using the usual display data script:
 	EPOCH DONE
 	[ loaded 1 episodes with a total of 2 examples ]
 
-The text file data format is called ParlAI Dialog format, and is described
-in the :doc:`teachers documentation <core/teachers>` (parlai.core.teachers.ParlAIDialogTeacher)
-and
-in the `core/teachers.py file <parlai.core.teachers.ParlAIDialogTeacher>`_.
-Essentially, there is one training example every line, and each field in a
-ParlAI message is tab separated with the name of the field, followed by a colon.
-E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
-be used, or you can add your own fields too if you have a special use for them.
+The text file data format is called ParlAI Dialog format, and is described in
+the :doc:`teachers documentation <core/teachers>` and
+:py:class:`parlai.core.teachers.ParlAIDialogTeacher`.  Essentially, there is one
+training example every line, and each field in a ParlAI message is tab
+separated with the name of the field, followed by a colon.  E.g. the usual
+fields like 'text', 'labels', 'label_candidates' etc. can all be used, or you
+can add your own fields too if you have a special use for them.
 
 Handling Separate Train/Valid/Test data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
