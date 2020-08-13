@@ -64,6 +64,7 @@ def display_model(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
+    agent.opt.log()
 
     # Show some example dialogs.
     turn = 0

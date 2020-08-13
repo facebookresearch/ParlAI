@@ -1,0 +1,324 @@
+{% extends "core.html" %}
+
+{% block left_pane %}
+<div id="left-pane" class="col-xs-4" style="height: {{frame_height}}px; background-color: #dff0d8;">
+  <h1>Live Chat</h1>
+  <hr style="border-top: 1px solid #555" />
+  <span id="left-pane-text" style="font-size: 14px">
+  </span>
+</div>
+{% endblock %}
+{% block right_pane %}
+<div id="right-pane" style="min-height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+  <div id="right-top-pane"
+    style="width: 100%; height: 570px; padding-top: 60px; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; overflow:scroll; ">
+    <div id="message_thread" style="width: 100%">
+    </div>
+    <div id="waiting-for-message" class="row" style="margin-left: 0; margin-right: 0; display: none">
+      <div class="alert alert-warning" role="alert" style="float: left; display:table; background-color: #fff">
+        <div id="hourglass" style="margin-top: -1px; margin-right: 5px; display: inline; float: left;">
+          <?xml version="1.0" encoding="utf-8"?><svg width='25px' height='25px' xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-hourglass">
+            <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+            <g>
+              <path fill="none" stroke="#007282" stroke-width="5" stroke-miterlimit="10"
+                d="M58.4,51.7c-0.9-0.9-1.4-2-1.4-2.3s0.5-0.4,1.4-1.4 C70.8,43.8,79.8,30.5,80,15.5H70H30H20c0.2,15,9.2,28.1,21.6,32.3c0.9,0.9,1.4,1.2,1.4,1.5s-0.5,1.6-1.4,2.5 C29.2,56.1,20.2,69.5,20,85.5h10h40h10C79.8,69.5,70.8,55.9,58.4,51.7z"
+                class="glass"></path>
+              <clipPath id="uil-hourglass-clip1">
+                <rect x="15" y="20" width="70" height="25" class="clip">
+                  <animate attributeName="height" from="25" to="0" dur="1.5s" repeatCount="indefinite" values="25;0;0"
+                    keyTimes="0;0.5;1"></animate>
+                  <animate attributeName="y" from="20" to="45" dur="1.5s" repeatCount="indefinite" values="20;45;45"
+                    keyTimes="0;0.5;1"></animate>
+                </rect>
+              </clipPath>
+              <clipPath id="uil-hourglass-clip2">
+                <rect x="15" y="55" width="70" height="25" class="clip">
+                  <animate attributeName="height" from="0" to="25" dur="1.5s" repeatCount="indefinite" values="0;25;25"
+                    keyTimes="0;0.5;1"></animate>
+                  <animate attributeName="y" from="80" to="55" dur="1.5s" repeatCount="indefinite" values="80;55;55"
+                    keyTimes="0;0.5;1"></animate>
+                </rect>
+              </clipPath>
+              <path d="M29,23c3.1,11.4,11.3,19.5,21,19.5S67.9,34.4,71,23H29z" clip-path="url(#uil-hourglass-clip1)"
+                fill="#ffab00" class="sand"></path>
+              <path d="M71.6,78c-3-11.6-11.5-20-21.5-20s-18.5,8.4-21.5,20H71.6z" clip-path="url(#uil-hourglass-clip2)"
+                fill="#ffab00" class="sand"></path>
+              <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="180 50 50"
+                repeatCount="indefinite" dur="1.5s" values="0 50 50;0 50 50;180 50 50" keyTimes="0;0.7;1">
+              </animateTransform>
+            </g>
+          </svg>
+        </div>
+        <span style="font-size: 16px">Waiting for the next person to speak...</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="right-bottom-pane" style="width: 100%; background-color: #eee">
+    <div id="response-type-idle" class="response-type-module" style="display:none">
+    </div>
+    <div id="response-type-text-input" class="response-type-module"
+      style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+      <div style="height: 50px; width: 100%; display: block; float: left; ">
+        <input id="id_text_input" type="text" style="width: 70%; height: 100%; float: left; font-size: 16px"
+          class="form-control" value="" placeholder="Please enter here...">
+        <button class="btn btn-success"
+          style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px; disabled: true; display:none"
+          id="id_done_button">Done</button>
+        <button class="btn btn-primary"
+          style="width: 88px; height: 100%; font-size: 16px; float: left; margin-left: 15px; padding: 0px;"
+          id="id_send_msg_button">Send</button>
+      </div>
+    </div>
+    <div id="response-type-done" class="response-type-module"
+      style="padding-left: 35px; padding-top: 30px; padding-bottom: 30px; padding-right: 35px; float: left; display:none">
+      <span id="inactive" style="font-size: 14pt;margin-right: 15px"></span>
+      <button id="done-button" type="button" class="btn btn-primary btn-lg">
+        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Done with this HIT
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+<script type="text/javascript">
+  MIN_NUM_TURNS = null;
+  ANNOTATIONS_CONFIG = null;
+
+  // Adds a message to the thread
+  function add_message_to_conversation(agent_id, message_text, is_self, message_idx, exceedMinTurns) {
+    // Select the right display style given if the message is from self
+    console.log('add_message_to_conversation: agent_id: ' + agent_id + ', is_self: ' + is_self + ', message_idx: '  + message_idx); 
+    var float_loc = 'left';
+    var alert_class = 'alert-warning';
+    var friendly_id = 'THEM';
+    if (is_self) {
+      float_loc = 'right';
+      alert_class = 'alert-info';
+      // +1 is due to the "Hi!"
+      turns_remaining = (MIN_NUM_TURNS + 1) - message_idx / 2;
+      friendly_id = '[' + turns_remaining + ' LEFT] YOU'
+    }
+
+    $('div#message_thread').append(
+      '<div class="row" style="margin-left: 0; margin-right: 0">' +
+      '<div class="alert ' + alert_class + '" role="alert" style="float: ' + float_loc + '; display:table">' +
+      '<span style="font-size: 16px"><b>' + friendly_id + '</b>: ' + message_text + '</span>' +
+      '</div>' +
+      '</div>'
+    );
+    var shouldActionButtonsBeEnabled_ = function (mIdx) {
+      var aCheckboxIsChecked = $('input[name="checkbox_group_' + mIdx + '"]').is(':checked');
+      var hasRadioButtons = $('input[name="radio_final_rating_group"]').length > 0
+      var radioButtonsChecked = $('input[name="radio_final_rating_group"]').is(':checked');
+      if ((aCheckboxIsChecked && !hasRadioButtons) || (aCheckboxIsChecked && (hasRadioButtons && radioButtonsChecked))) {
+        return true;
+      }
+      return false;
+    };
+    var checkEnableActionButtons = function (mIdx) {
+      console.log('checkEnableActionButtons for message idx: ' + mIdx);
+      var enableButtons = shouldActionButtonsBeEnabled_(mIdx);
+      if (enableButtons) {
+        $("button#id_send_msg_button").removeClass("disabled");
+        $("button#id_send_msg_button").prop("disabled", false);
+        $("button#id_done_button").removeClass("disabled");
+        $("button#id_done_button").prop("disabled", false);
+      } else {
+        // If we click and then unclick a button then 
+        // it should re-disable the buttons
+        $("button#id_send_msg_button").addClass("disabled");
+        $("button#id_send_msg_button").prop("disabled", true);
+        $("button#id_done_button").addClass("disabled");
+        $("button#id_done_button").prop("disabled", true);
+      }
+      if (exceedMinTurns) {
+        $("button#id_send_msg_button").hide();
+      }
+    };
+
+    var displayCheckboxDescription = function (mIdx, evt) {
+      if ($(evt.target).is(":checked")) {
+        var checkboxId = $(evt.target).attr('id');
+        var description = $(evt.target).attr('ta-description');
+        var prettyName = $(evt.target).attr('ta-pretty-name');
+        $("#explanation_" + mIdx).html('You labeled this as <b>' + prettyName + '</b>, meaning that: ' + description);
+      } else {
+        $("#explanation_" + mIdx).html('');
+      }
+    };
+
+    var handleCheckboxClick_ = function (mIdx, evt) {
+      displayCheckboxDescription(mIdx, evt);
+      return checkEnableActionButtons(mIdx);
+    };
+    if (!is_self) {
+      // Should disable them at the beginning
+      checkEnableActionButtons(message_idx);
+      $('input[name="checkbox_group_' + message_idx + '"]').click(handleCheckboxClick_.bind(this, message_idx));
+      if ($('input[name="radio_final_rating_group"]').length > 0) {
+        $('input[name="radio_final_rating_group"]').click(checkEnableActionButtons.bind(this, message_idx));
+      }
+    }
+
+    $("div#message_thread").css("display", "");
+    scroll_conversation_to_bottom();
+    $("div#waiting-for-message").css("display", "");
+
+  }
+
+  var get_annotation_data = function (prior_msg_idx) {
+    var annotationBuckets = ANNOTATIONS_CONFIG.map(function (a) {
+      return a['value'];
+    });
+    var data = { 'turn_idx': prior_msg_idx };
+    annotationBuckets.map(function (k) {
+      var is_checked = $('#checkbox_' + k + '_' + prior_msg_idx + ':checked').val();
+      data[k] = (is_checked == 'on' ? true : false);
+    });
+    if ($('input[name="radio_final_rating_group"]').length > 0) {
+      data['final_rating'] = $('input[name="radio_final_rating_group"]:checked').val();
+    }
+    console.log('annotation data for prior_msg_idx: ' + prior_msg_idx + ', data: ' + JSON.stringify(data));
+    return data;
+  }
+
+  var exceedMinTurns = false;
+  function handle_new_message(new_message_id, message) {
+    var agent_id = message.id;
+    // var message_text = message.text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    var message_text = message.text;
+    exceedMinTurns = 'exceed_min_turns' in message && message.exceed_min_turns;
+    if (displayed_messages.indexOf(new_message_id) !== -1) {
+      // This message has already been seen and put up into the chat
+      log(new_message_id + ' was a repeat message', 1);
+      return;
+    }
+    log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
+    displayed_messages.push(new_message_id);
+    if ("left_pane_text" in message) {
+      $("span#left-pane-text").html(message.left_pane_text);
+    }
+    if ("config" in message) {
+      MIN_NUM_TURNS = parseInt(message['config']['min_num_turns']);
+      if (isNaN(MIN_NUM_TURNS) || MIN_NUM_TURNS <= 0) {
+        alert('Must have minimum number of turns set to an integer greater than zero! HIT will not be able to be submitted. Please contact requester.');
+        return;
+      }
+      ANNOTATIONS_CONFIG = message['config']['annotations_config'];
+    }
+    if (message_text != '') {
+      var messageIdx = displayed_messages.length - 1;
+      if (agent_id !== cur_agent_id) {
+        add_message_to_conversation(agent_id, message_text, false, messageIdx, exceedMinTurns);
+      } else {
+        add_message_to_conversation(agent_id, message_text, true, messageIdx, exceedMinTurns);
+      }
+    } else {
+      console.log('Warning: got empty message; not adding to the thread.');
+    }
+
+    if (exceedMinTurns) {
+      $("button#id_done_button").css("disabled", false);
+      $("button#id_done_button").css("display", "");
+      $("input#id_text_input").css("width", "40%");
+      $(window).resize(window_resize);
+    }
+  }
+
+  $("button#id_send_msg_button").off('click');
+  // Handle submitting a message
+  $("button#id_send_msg_button").on('click', function () {
+    console.log('SEND MSG BUTTON HIT.')
+    var text = $("input#id_text_input").val();
+    if (!(text == '')) {
+      // Disable the send button
+      $("button#id_send_msg_button").addClass("disabled");
+      $("button#id_send_msg_button").prop("disabled", true);
+      new_message_id = uuidv4();
+
+      // Need to disable prior message's checkboxes so user can't change them 
+      // after sending the next message (they only get sent server-side once)
+      var prior_msg_idx = displayed_messages.length - 1;
+      $('input[name="checkbox_group_' + prior_msg_idx + '"]').addClass("disabled");
+      $('input[name="checkbox_group_' + prior_msg_idx + '"]').prop("disabled", true);
+      var annotation_data = get_annotation_data(prior_msg_idx);
+
+      send_packet(
+        TYPE_MESSAGE,
+        {
+          text: text,
+          id: cur_agent_id,
+          message_id: new_message_id,
+          problem_data_for_prior_message: annotation_data,
+          episode_done: false
+        },
+        true,
+        true,
+        function (msg) {
+          // On callback enable the button and clear the text field
+          $("button#id_send_msg_button").removeClass("disabled");
+          $("button#id_send_msg_button").prop("disabled", false);
+          $("input#id_text_input").val("");
+          $("div#response-type-text-input").css("display", "none");
+          // push the message into the conversation
+          handle_new_message(new_message_id, msg.data);
+          after_send_packet();
+        }
+      );
+    }
+  });
+
+  $("button#id_done_button").on('click', function () {
+    var text = "I am done with the chat and clicked the 'Done' button, thank you!";
+    console.log('DONE BUTTON HIT');
+    if (!(text == '')) {
+      $("button#id_done_button").css("disabled", true);
+      new_message_id = uuidv4();
+
+      var prior_msg_idx = displayed_messages.length - 1;
+      var problem_data = get_annotation_data(prior_msg_idx);
+      // Disable the last group of checkboxes after the Done button is hit
+      $('input[name="checkbox_group_' + prior_msg_idx + '"]').addClass("disabled");
+      $('input[name="checkbox_group_' + prior_msg_idx + '"]').prop("disabled", true);
+
+      send_packet(
+        TYPE_MESSAGE,
+        {
+          text: text,
+          id: cur_agent_id,
+          message_id: new_message_id,
+          episode_done: true,
+          problem_data_for_prior_message: problem_data
+        },
+        true,
+        true,
+        function (msg) {
+          $("button#id_done_button").css("disabled", false);
+          $("input#id_text_input").val("");
+          $("div#response-type-text-input").css("display", "none");
+          handle_new_message(new_message_id, msg.data);
+        }
+      );
+    }
+  });
+
+  // On window resize, ensure that the UI is properly displayed
+  function window_resize() {
+    log("The window was resized", 4);
+    // Set the text input width to match the bottom width minus space
+    // for the done button
+    $("input#id_text_input").width($("div#right-bottom-pane").width() - 210);
+    if (exceedMinTurns == true) {
+      $("input#id_text_input").width($("input#id_text_input").width() - 100);
+    }
+    // Set the chat window height to be the remainder after removing the
+    // height of the text pane
+    var left_height = $("div#left-pane").height();
+    var text_height = $("div#right-bottom-pane").outerHeight()
+    $("div#right-top-pane").height((left_height - text_height) - 40);
+  }
+</script>
+{% endblock %}

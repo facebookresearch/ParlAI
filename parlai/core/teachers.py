@@ -981,10 +981,10 @@ class StreamDialogData(DialogData):
             for episode in self._read_episode(self.data_loader(self.datafile)):
                 num_eps += 1
                 num_exs += len(episode)
-            with open(length_file, 'w') as f:
+            with open(length_file, 'w', encoding="utf-8") as f:
                 f.write("{}\n{}".format(num_eps, num_exs))
         else:
-            with open(length_file, 'r') as f:
+            with open(length_file, 'r', encoding="utf-8") as f:
                 num_eps, num_exs = f.readlines()
         return int(num_eps), int(num_exs)
 
@@ -1148,7 +1148,7 @@ class FbDialogTeacher(DialogTeacher):
         lines_have_ids = False
         cands_are_replies = False
         cnt = 0
-        with open(path) as read:
+        with open(path, encoding="utf-8") as read:
             for line in read:
                 line = line.strip().replace('\\n', '\n')
                 if len(line) > 0:
@@ -1203,7 +1203,7 @@ class FbDialogTeacher(DialogTeacher):
             new_episode = False (this is the second example in the episode)
         """
         logging.info(f"loading fbdialog data: {path}")
-        with open(path) as read:
+        with open(path, encoding="utf-8") as read:
             start = True
             x = ''
             reward = 0
@@ -1390,7 +1390,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.episodes = []
         self.num_exs = 0
         eps = []
-        with open(path, newline='\n') as read:
+        with open(path, newline='\n', encoding="utf-8") as read:
             for line_no, line in enumerate(read, 1):
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg and 'eval_labels' in msg:
@@ -1796,7 +1796,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         data_file = os.path.join(self.data_path, '%s.json' % dt)
 
         # Load the text data and image number indexes
-        with open(data_file) as f:
+        with open(data_file, encoding="utf-8") as f:
             self.data = json.load(f)
 
         if len(self.data) > 0 and self.image_id_key not in self.data[0]:
@@ -2164,6 +2164,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 self.rng = random.Random(42)
             self._enqueue_chunks()
             # launch queue loader on the main thread
+            self.tot_samples_loaded = 0
             self._enqueue_request()
 
         self._episode_done = True
@@ -2252,15 +2253,14 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         data = future.result()
         if data is None:
             return
-        i = 0
         while data:
             # self.samples is a queue with maxsize
             # self.buffersize, so will block if the
             # buffer gets full
             sample = data.pop(0)
-            if self.is_train or i % self.dws == self.rank:
+            if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
                 self.samples.put(sample)
-            i += 1
+            self.tot_samples_loaded += 1
         # and start loading the next chunk
         self._enqueue_request()
 
@@ -2344,6 +2344,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
+            self.tot_samples_loaded = 0  # reset the count of samples loaded
             self._enqueue_request()
 
 

@@ -235,14 +235,15 @@ we only have to initialize the class and set a few option parameters, as shown b
 
     class DefaultTeacher(ParlAIDialogTeacher):
         def __init__(self, opt, shared=None):
-            super().__init__(opt, shared)
             opt = copy.deepcopy(opt)
 
             # get datafile
-            opt['datafile'] = _path(opt, '')
+            opt['parlaidialogteacher_datafile'] = _path(opt, '')
+
+            super().__init__(opt, shared)
 
 We can notice there was a call to a ``_path()`` method, which returns the path to the correct datafile.
-The path to the file is then stored in the options dictionary under the ``datafile`` key.
+The path to the file is then stored in the options dictionary under the ``parlaidialogteacher_datafile`` key.
 This item is passed to ``setup_data()`` so that subclasses can just override the path instead of the function.
 We still need to implement this ``_path()`` method. The version for this example is presented below.
 It first ensures the data is built by calling the ``build()`` method described in Part 1.

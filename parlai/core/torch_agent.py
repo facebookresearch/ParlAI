@@ -46,8 +46,8 @@ from parlai.core.metrics import (
     Metrics,
     Metric,
     GlobalAverageMetric,
-    GlobalSumMetric,
     GlobalFixedMetric,
+    GlobalTimerMetric,
 )
 from parlai.utils.distributed import is_primary_worker
 from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
@@ -100,6 +100,7 @@ class Batch(AttrDict):
         the original observations in the batched order
     """
 
+    batchsize: int
     text_vec: Optional[torch.LongTensor]
     text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]
@@ -297,14 +298,11 @@ class History(object):
         """
         Return the string version of the history.
         """
-        if self.temp_history and self.history_strings:
-            logging.warning('temporary history strings now include the delimiter.')
-
         if len(self.history_strings) > 0:
             history = self.history_strings[:]
-            if self.temp_history is not None:
-                history.append(self.temp_history)
             history = self.delimiter.join(history)
+            if self.temp_history is not None:
+                history += self.temp_history
             return history
 
         return None
@@ -323,7 +321,7 @@ class History(object):
             history += [self.delimiter_tok]
         history += [self.history_vecs[-1]]
         if self.temp_history is not None:
-            history.extend(self.parse(self.temp_history))
+            history.extend([self.parse(self.temp_history)])
         if self._global_end_token is not None:
             history += [[self._global_end_token]]
 
@@ -593,10 +591,7 @@ class TorchAgent(ABC, Agent):
             'to `truncate`',
         )
         agent.add_argument(
-            '--history-reversed',
-            default=False,
-            type='bool',
-            help='Reverse the history',
+            '--history-reversed', default=False, type='bool', help='Reverse the history'
         )
         agent.add_argument(
             '-histsz',
@@ -1150,9 +1145,8 @@ class TorchAgent(ABC, Agent):
         for dev in devices:
             props = torch.cuda.get_device_properties(dev)
             memory_avail += props.total_memory
-            memory_used += torch.cuda.memory_allocated(dev) + torch.cuda.memory_cached(
-                dev
-            )
+            memory_used += torch.cuda.max_memory_allocated(dev)
+            torch.cuda.reset_max_memory_allocated(dev)
         return memory_used / memory_avail
 
     def receive_metrics(self, metrics_dict):
@@ -1369,6 +1363,7 @@ class TorchAgent(ABC, Agent):
             obs['full_text'] = history_string
             if history_string:
                 obs['text_vec'] = history.get_history_vec()
+                obs['full_text_vec'] = history.get_history_vec()
 
         # check truncation
         if obs.get('text_vec') is not None:
@@ -1544,12 +1539,12 @@ class TorchAgent(ABC, Agent):
             vectors if available, otherwise uses the label vectors if available.
         """
         if len(obs_batch) == 0:
-            return Batch()
+            return Batch(batchsize=0)
 
         valid_obs = [(i, ex) for i, ex in enumerate(obs_batch) if self.is_valid(ex)]
 
         if len(valid_obs) == 0:
-            return Batch()
+            return Batch(batchsize=0)
 
         valid_inds, exs = zip(*valid_obs)
 
@@ -1595,6 +1590,7 @@ class TorchAgent(ABC, Agent):
             imgs = [ex.get('image', None) for ex in exs]
 
         return Batch(
+            batchsize=len(valid_inds),
             text_vec=xs,
             text_lengths=x_lens,
             label_vec=ys,
@@ -1953,6 +1949,7 @@ class TorchAgent(ABC, Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
+        self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (
             'label_vec' in batch
@@ -1963,13 +1960,23 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tpb = GlobalAverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item(),
-                float(is_primary_worker()),
-            )
-            self.global_metrics.add('tpb', tpb)
+            lt = (batch.label_vec != self.NULL_IDX).sum().item()
+            ltpb = GlobalAverageMetric(lt, float(is_primary_worker()))
+            self.global_metrics.add('ltpb', ltpb)
+            self.global_metrics.add('ltps', GlobalTimerMetric(lt))
+
+            ct = (batch.text_vec != self.NULL_IDX).sum().item()
+            ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
+            self.global_metrics.add('ctpb', ctpb)
+            self.global_metrics.add('ctps', GlobalTimerMetric(ct))
+
+            ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
+            self.global_metrics.add('tpb', ttpb)
+            self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
 
         if self.is_training:
+            # register the start of updates for later counting when they occur
+            self.global_metrics.add('ups', GlobalTimerMetric(0))
             output = self.train_step(batch)
         else:
             with torch.no_grad():
@@ -1992,6 +1999,19 @@ class TorchAgent(ABC, Agent):
                 if 'metrics' not in batch_reply[i]:
                     batch_reply[i]['metrics'] = {}
                 batch_reply[i]['metrics'][k] = value
+
+        # register the end of timers
+        endtimer = GlobalTimerMetric(0)
+        self.global_metrics.add('exps', endtimer)
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
+            self.global_metrics.add('ltps', GlobalTimerMetric(0))
+            self.global_metrics.add('ctps', GlobalTimerMetric(0))
+            self.global_metrics.add('tps', GlobalTimerMetric(0))
 
         # Make sure we push all the metrics to main thread in hogwild/workers
         self.global_metrics.flush()
@@ -2103,7 +2123,7 @@ class TorchAgent(ABC, Agent):
         # in distributed mode, all workers step together, but we need to only
         # count it once. Only the primary worker gets to make the count
         if is_primary_worker():
-            self.global_metrics.add('updates', GlobalSumMetric(1))
+            self.global_metrics.add('ups', GlobalTimerMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)

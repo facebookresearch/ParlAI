@@ -102,6 +102,8 @@ def build_dict(opt, skip_if_built=False):
     # instantiated while building the dict
     ordered_opt['image_mode'] = 'no_image_model'
 
+    ordered_opt.log()
+
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):
         datatypes.append('valid:stream')

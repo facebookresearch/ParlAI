@@ -15,6 +15,7 @@ from parlai.core.metrics import (
     Metrics,
     GlobalAverageMetric,
     MacroAverageMetric,
+    TimerMetric,
     aggregate_unnamed_reports,
     aggregate_named_reports,
 )
@@ -256,6 +257,17 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/avg'] == 0.0
         assert agg['c/avg'] == 0.0
         assert agg['avg'] == 1.0 / 3
+
+    def test_time_metric(self):
+        metric = TimerMetric(10, 0, 1)
+        assert metric.value() == 10
+        metric = TimerMetric(10, 0, 2)
+        assert metric.value() == 5
+        metric2 = TimerMetric(10, 4, 5)
+        # final start time 0
+        # final end time 5
+        # total processed = 20
+        assert (metric + metric2).value() == 4
 
     def test_micro_aggregation(self):
         report1 = {
