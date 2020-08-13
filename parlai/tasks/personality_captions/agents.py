@@ -15,7 +15,6 @@ An example is given as follows:
 """
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
-from torch.utils.data import Dataset
 from .build import build
 
 import json
@@ -40,99 +39,6 @@ def _path(opt):
         image_path = os.path.join(opt['datapath'], 'yfcc_images')
 
     return data_path, personalities_data_path, image_path
-
-
-class DefaultDataset(Dataset):
-    """
-    A Pytorch Dataset.
-    """
-
-    def __init__(self, opt):
-        self.opt = opt
-        opt['image_load_task'] = 'personality_captions'
-        self.image_mode = opt.get('image_mode', 'no_image_model')
-        self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
-        self.include_image = opt.get('include_image')
-        self.include_personality = opt.get('include_personality')
-        self.num_test_labels = opt.get('num_test_labels', 1)
-        data_path, personalities_data_path, self.image_path = _path(opt)
-        self.image_loader = ImageLoader(opt)
-        self._setup_data(data_path, personalities_data_path)
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        """
-        Add command line args.
-        """
-        PersonalityCaptionsTeacher.add_cmdline_args(argparser)
-
-    def _setup_data(self, data_path, personalities_data_path):
-        print('loading: ' + data_path)
-        with open(data_path) as f:
-            self.data = json.load(f)
-        with open(personalities_data_path) as f:
-            self.personalities = json.load(f)
-
-    def __getitem__(self, index):
-        data = self.data[index]
-        image = self.get_image(data['image_hash'])
-
-        ep = {
-            'text': data['personality'] if self.include_personality else '',
-            'episode_done': True,
-            'image': image if self.include_image else None,
-        }
-
-        if self.opt.get('extract_image', False):
-            ep['image_id'] = data['image_hash']
-            return ep
-        ep['labels'] = [data['comment']]
-        if self.num_test_labels == 5 and 'test' in self.datatype:
-            ep['labels'] += data['additional_comments']
-        if not self.training:
-            if self.num_test_labels == 5 and 'test' in self.datatype:
-                ep['label_candidates'] = data['500_candidates']
-            else:
-                ep['label_candidates'] = data['candidates']
-
-        return (index, ep)
-
-    def __len__(self):
-        return self.num_episodes()
-
-    def get_image(self, image_id):
-        """
-        Get image.
-
-        :param image_id:
-            id of the image
-
-        :return:
-            image from the image loader
-        """
-        im_path = os.path.join(self.image_path, '{}.jpg'.format(image_id))
-        return self.image_loader.load(im_path)
-
-    def num_episodes(self):
-        """
-        Return number of episodes.
-        """
-        return len(self.data)
-
-    def num_examples(self):
-        """
-        Return number of examples.
-        """
-        return self.num_episodes()
-
-    def num_images(self):
-        """
-        Return number of images.
-        """
-        if not hasattr(self, 'num_imgs'):
-            self.num_imgs = len({d['image_num'] for d in self.data})
-        return self.num_imgs
 
 
 class PersonalityCaptionsTeacher(FixedDialogTeacher):

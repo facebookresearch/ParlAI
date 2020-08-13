@@ -251,7 +251,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
         )
 
     different_strs = [
-        '--{} {}'.format(k, v).replace('_', '-') for k, v in different_opts.items()
+        '--{} {}'.format(k.replace('_', '-'), v) for k, v in different_opts.items()
     ]
     if different_strs:
         logging.warn(
@@ -357,7 +357,7 @@ def add_datapath_and_model_args(opt: Opt):
     model = get_model_name(opt)
     if model is not None:
         parser.add_model_subargs(model)
-    opt_parser = parser.parse_args("", print_args=False)
+    opt_parser = parser.parse_args("")
     for k, v in opt_parser.items():
         if k not in opt:
             opt[k] = v

@@ -56,10 +56,11 @@ def warn(txt, act, opt):
         warn_once(txt)
 
 
-def verify(opt, printargs=None, print_parser=None):
+def verify(opt):
     if opt['datatype'] == 'train':
         logging.warn("changing datatype from train to train:ordered")
         opt['datatype'] = 'train:ordered'
+    opt.log()
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -120,8 +121,7 @@ def verify(opt, printargs=None, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
-            if print_parser:
-                print(text)
+            print(text)
 
     try:
         # print dataset size if available
@@ -136,9 +136,7 @@ def verify(opt, printargs=None, print_parser=None):
 
 
 def verify_data(opt, parser):
-    report_text, report_log = verify(
-        parser.parse_args(print_args=False), print_parser=parser
-    )
+    report_text, report_log = verify(parser.parse_args())
     print(report_text)
 
 

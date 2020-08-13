@@ -57,5 +57,5 @@ def make_path(opt, fname):
 
 
 if __name__ == '__main__':
-    opt = params.ParlaiParser().parse_args(print_args=False)
+    opt = params.ParlaiParser().parse_args()
     build(opt)

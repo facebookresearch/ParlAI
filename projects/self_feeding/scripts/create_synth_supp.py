@@ -78,8 +78,6 @@ def create_supp(opt):
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param bool print_parser: if provided, prints the options that are set within the
-        model after loading the model
     :return: the final result of calling report()
     """
     # Create model and assign it to the specified task

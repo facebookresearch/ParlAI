@@ -48,8 +48,8 @@ class TestEvalModel(unittest.TestCase):
 
         self.assertEqual(valid['accuracy'], 1)
         self.assertEqual(test['accuracy'], 1)
-        self.assertNotIn('rouge-L', valid)
-        self.assertNotIn('rouge-L', test)
+        self.assertNotIn('rouge_L', valid)
+        self.assertNotIn('rouge_L', test)
 
     def test_metrics_all(self):
         """
@@ -67,13 +67,13 @@ class TestEvalModel(unittest.TestCase):
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
-        self.assertEqual(valid['rouge-L'], 1)
-        self.assertEqual(valid['rouge-1'], 1)
-        self.assertEqual(valid['rouge-2'], 1)
+        self.assertEqual(valid['rouge_L'], 1)
+        self.assertEqual(valid['rouge_1'], 1)
+        self.assertEqual(valid['rouge_2'], 1)
         self.assertEqual(test['accuracy'], 1)
-        self.assertEqual(test['rouge-L'], 1)
-        self.assertEqual(test['rouge-1'], 1)
-        self.assertEqual(test['rouge-2'], 1)
+        self.assertEqual(test['rouge_L'], 1)
+        self.assertEqual(test['rouge_1'], 1)
+        self.assertEqual(test['rouge_2'], 1)
 
     def test_metrics_select(self):
         """
@@ -91,13 +91,13 @@ class TestEvalModel(unittest.TestCase):
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
-        self.assertEqual(valid['rouge-L'], 1)
-        self.assertEqual(valid['rouge-1'], 1)
-        self.assertEqual(valid['rouge-2'], 1)
+        self.assertEqual(valid['rouge_L'], 1)
+        self.assertEqual(valid['rouge_1'], 1)
+        self.assertEqual(valid['rouge_2'], 1)
         self.assertEqual(test['accuracy'], 1)
-        self.assertEqual(test['rouge-L'], 1)
-        self.assertEqual(test['rouge-1'], 1)
-        self.assertEqual(test['rouge-2'], 1)
+        self.assertEqual(test['rouge_L'], 1)
+        self.assertEqual(test['rouge_1'], 1)
+        self.assertEqual(test['rouge_2'], 1)
 
         self.assertNotIn('bleu-4', valid)
         self.assertNotIn('bleu-4', test)

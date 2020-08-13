@@ -37,7 +37,7 @@ class TestImageLoader(unittest.TestCase):
         """
         Test that model correctly handles text task.
         """
-        opt = ParlaiParser().parse_args([], print_args=False)
+        opt = ParlaiParser().parse_args([])
         opt.update(BASE_IMAGE_ARGS)
         for image_mode, dim in IMAGE_MODE_TO_DIM.items():
             opt["image_mode"] = image_mode

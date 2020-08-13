@@ -8,13 +8,6 @@ from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build
 
-try:
-    import torch  # noqa: F401
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
-from torch.utils.data import Dataset
-from parlai.core.dict import DictionaryAgent
-
 import os
 import json
 import random
@@ -31,78 +24,6 @@ def _path(opt):
     image_path = os.path.join(opt['datapath'], 'Flickr30k', 'flickr30k_images')
 
     return data_path, image_path
-
-
-class FlickrDataset(Dataset):
-    """
-    A Pytorch Dataset utilizing streaming.
-    """
-
-    def __init__(self, opt, shared=None):
-        self.opt = opt
-        self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
-        self.num_epochs = self.opt.get('num_epochs', 0)
-        self.image_loader = ImageLoader(opt)
-        data_path, self.image_path = _path(opt)
-        self._setup_data(data_path, opt.get('unittest', False))
-        self.dict_agent = DictionaryAgent(opt)
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        DefaultTeacher.add_cmdline_args(argparser)
-
-    def __getitem__(self, index):
-        cap = self.data[index]
-        image_id = int(cap['filename'].replace('.jpg', ''))
-        ep = {'text': QUESTION, 'image': self.get_image(image_id), 'episode_done': True}
-        if self.opt.get('extract_image', False):
-            ep['image_id'] = image_id
-            return ep
-
-        ep['labels'] = [s['raw'] for s in cap['sentences']]
-        ep['valid'] = True
-        if 'train' not in self.datatype:
-            ep['label_candidates'] = self.cands
-        return (index, ep)
-
-    def __len__(self):
-        return self.num_episodes()
-
-    def _setup_data(self, data_path, unittest):
-        with open(data_path) as data_file:
-            raw_data = json.load(data_file)['images']
-            if 'train' in self.datatype:
-                self.data = [d for d in raw_data if d['split'] == 'train']
-            elif 'valid' in self.datatype:
-                self.data = [d for d in raw_data if d['split'] == 'val']
-                self.cands = [
-                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
-                ]
-            else:
-                self.data = [d for d in raw_data if d['split'] == 'test']
-                self.cands = [
-                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
-                ]
-        if unittest:
-            self.caption = self.caption[:10]
-
-    def get_image(self, image_id):
-        im_path = os.path.join(self.image_path, '%d.jpg' % (image_id))
-        return self.image_loader.load(im_path)
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return self.num_episodes()
-
-    def num_images(self):
-        return self.num_episodes()
-
-
-class DefaultDataset(FlickrDataset):
-    pass
 
 
 class DefaultTeacher(FixedDialogTeacher):
