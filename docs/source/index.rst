@@ -50,17 +50,7 @@ ParlAI is a one-stop-shop for dialog research.
    :maxdepth: 2
    :caption: API Reference
 
-   agents
-   torch_agent
-   messages
-   dict
-   build_data
-   metrics_api
-   params
-   teachers
-   loader
-   script
-   worlds
+   core
    utils
 
 

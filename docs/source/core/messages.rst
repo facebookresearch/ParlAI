@@ -6,7 +6,7 @@ parlai.core.message
 
 
 
-.. image:: _static/img/act-obs-dict.png
+.. image:: /_static/img/act-obs-dict.png
     :width: 60 %
 
 The primary medium for information flow (messages between agents and the environment)
