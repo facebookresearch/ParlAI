@@ -25,18 +25,22 @@ def render_script(fout, key, registration):
         if hasattr(action, 'hidden') and action.hidden:
             # some options are marked hidden
             continue
-        action_strings = ",  ".join(f'``{a}``' for a in action.option_strings)
-        description = []
         if action.dest == argparse.SUPPRESS:
             continue
+        action_strings = ",  ".join(f'``{a}``' for a in action.option_strings)
+        if not action_strings:
+            continue
+        description = []
+        if action.help:
+            h = action.help
+            if not h[0].isupper():
+                h = h[0].upper() + h[1:]
+            description += [h]
         # list choices if there are any
         if action.choices:
             description += [
                 "Choices: " + ", ".join(f'``{c}``' for c in action.choices) + "."
             ]
-        # list default and recommended values.
-        if hasattr(action, 'hidden') and action.hidden:
-            continue
         default_value = ""
         if action.default and action.default != argparse.SUPPRESS:
             default_value += f"Default: ``{action.default}``.  "
@@ -51,6 +55,8 @@ def render_script(fout, key, registration):
         # escape for the fact that we're inserting this inside a table
         if len(description) > 1:
             description = [' | ' + d for d in description]
+        if len(description) == 0:
+            description = [""]
         actions.append((action_strings, description))
 
     if not actions:

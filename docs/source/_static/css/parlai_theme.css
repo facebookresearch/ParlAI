@@ -32,7 +32,7 @@ h3 { size: 150%; }
 }
 
 th p, td div.line-block {
-    margin-bottom: 0px;
+    margin-bottom: 0px !important;
 }
 
 .text-align\:right {
