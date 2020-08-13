@@ -1124,10 +1124,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
                 logging.debug('-')
 
-        print(
+        logging.debug(
             f'Total encoder + decoder time: {encoder_elapsed_time + total_decoder_elapsed_time}'
         )
-        print(f'Num decoder forward passes: {num_decoder_forwards}')
+        logging.debug(f'Num decoder forward passes: {num_decoder_forwards}')
 
         return beam_preds_scores, beams
 
