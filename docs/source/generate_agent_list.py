@@ -42,6 +42,7 @@ def _make_argparse_table(class_):
                 h = action.help
                 if not h[0].isupper():
                     h = h[0].upper() + h[1:]
+                h = h.replace("%(default)s", str(action.default))
                 description += [h]
             # list choices if there are any
             if action.choices:

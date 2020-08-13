@@ -35,6 +35,7 @@ def render_script(fout, key, registration):
             h = action.help
             if not h[0].isupper():
                 h = h[0].upper() + h[1:]
+            h = h.replace("%(default)s", f'``{action.default}``')
             description += [h]
         # list choices if there are any
         if action.choices:
