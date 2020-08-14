@@ -158,7 +158,7 @@ class TestInferenceTime(unittest.TestCase):
             'model_file': 'zoo:unittest/transformer_generator2/model',
             'task': 'integration_tests:multiturn_candidate',
             'num_examples': 1,
-            'loglevel': LOGLEVEL,
+            'log_generation_time': True,
         }
         with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
             testing_utils.display_model(opt)

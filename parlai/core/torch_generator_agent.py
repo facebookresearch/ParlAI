@@ -17,11 +17,12 @@ Contains the following utilities:
 * Beam class which provides some generic beam functionality for classes to use
 """
 
-from abc import ABC, abstractmethod
-from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
+import os
 import timeit
+from abc import ABC, abstractmethod
 from operator import attrgetter
+from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 
 import torch
 import torch.nn as nn
@@ -432,6 +433,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             hidden=True,
             help='Skip beam search. Useful for speeding up training, '
             'if perplexity is the validation metric.',
+        )
+        agent.add_argument(
+            '--log-generation-time',
+            type='bool',
+            default=False,
+            help='Log the total time for all forward passes through the encoder and decoder during generation.',
         )
         agent.add_argument(
             '--inference',
@@ -1186,10 +1193,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
                 logging.debug('-')
 
-        logging.debug(
-            f'Total encoder + decoder time: {encoder_elapsed_time + total_decoder_elapsed_time}'
-        )
-        logging.debug(f'Num decoder forward passes: {num_decoder_forwards}')
+        if self.opt.get('log_generation_time', False):
+            if os.environ.get('CUDA_LAUNCH_BLOCKING', 0) != 1:
+                warn_once(
+                    'Without using CUDA_LAUNCH_BLOCKING, inference times may be '
+                    'underestimated due to asynchronous GPU operations!'
+                )
+            logging.info(
+                f'Total encoder + decoder time: '
+                f'{encoder_elapsed_time + total_decoder_elapsed_time:0.3f}'
+            )
+            logging.info(f'Num decoder forward passes: {num_decoder_forwards:d}')
 
         return beam_preds_scores, beams
 
