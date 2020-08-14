@@ -14,8 +14,6 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 import parlai.utils.logging as logging
 import parlai.utils.testing as testing_utils
 
-LOGLEVEL = 'DEBUG'
-
 
 class TestUpgradeOpt(unittest.TestCase):
     """
@@ -54,7 +52,6 @@ class TestUpgradeOpt(unittest.TestCase):
                 model_file='zoo:unittest/transformer_generator2/model',
                 beam_size=5,
                 inference='beam',
-                loglevel=LOGLEVEL,
             )
         )
 
