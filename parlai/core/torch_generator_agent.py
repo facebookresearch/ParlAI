@@ -19,8 +19,8 @@ Contains the following utilities:
 
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
-import time
 import math
+import timeit
 from operator import attrgetter
 
 import torch
@@ -1085,9 +1085,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model = self.model
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
-        encoder_start_time = time.time()
+        encoder_start_time = timeit.default_timer()
         encoder_states = model.encoder(*self._encoder_input(batch))
-        encoder_elapsed_time = time.time() - encoder_start_time
+        encoder_elapsed_time = timeit.default_timer() - encoder_start_time
         if batch.text_vec is not None:
             dev = batch.text_vec.device
         else:
@@ -1124,12 +1124,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 # exit early if possible
                 break
 
-            decoder_start_time = time.time()
+            decoder_start_time = timeit.default_timer()
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
             score = model.output(score)
-            decoder_elapsed_time = time.time() - decoder_start_time
+            decoder_elapsed_time = timeit.default_timer() - decoder_start_time
             total_decoder_elapsed_time += decoder_elapsed_time
             num_decoder_forwards += 1
             # score contains softmax scores for bsz * beam_size samples
