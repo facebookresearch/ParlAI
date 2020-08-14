@@ -1194,7 +1194,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 logging.debug('-')
 
         if self.opt.get('log_generation_time', False):
-            if os.environ.get('CUDA_LAUNCH_BLOCKING', 0) != 1:
+            if os.environ.get('CUDA_LAUNCH_BLOCKING') != '1':
                 warn_once(
                     'Without using CUDA_LAUNCH_BLOCKING, inference times may be '
                     'underestimated due to asynchronous GPU operations!'
