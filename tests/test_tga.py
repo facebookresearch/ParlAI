@@ -14,6 +14,8 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 import parlai.utils.logging as logging
 import parlai.utils.testing as testing_utils
 
+LOGLEVEL = 'DEBUG'
+
 
 class TestUpgradeOpt(unittest.TestCase):
     """
@@ -52,6 +54,7 @@ class TestUpgradeOpt(unittest.TestCase):
                 model_file='zoo:unittest/transformer_generator2/model',
                 beam_size=5,
                 inference='beam',
+                loglevel=LOGLEVEL,
             )
         )
 
@@ -155,9 +158,10 @@ class TestInferenceTime(unittest.TestCase):
             'model_file': 'zoo:unittest/transformer_generator2/model',
             'task': 'integration_tests:multiturn_candidate',
             'num_examples': 1,
+            'loglevel': LOGLEVEL,
         }
         with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
-            testing_utils.display_data(opt)
+            testing_utils.display_model(opt)
             assert any('Total encoder + decoder time:' in l for l in cm.output) and any(
                 'Num decoder forward passes: 2' in l for l in cm.output
             )
