@@ -186,7 +186,7 @@ __What is AverageMetric?__
 Wait, what is this
 [AverageMetric](parlai.core.metrics.AverageMetric)? All metrics
 you want to create in ParlAI should be a
-[Metric](Metric) object. Metric objects
+[Metric](parlai.core.metrics.Metric) object. Metric objects
 define a way of instantiating the metric, a way of combining it with a
 like-metric, and a way of rendering it as a single float value. For an
 AverageMetric, this means we need to define a numerator and a denominator; the
@@ -209,7 +209,7 @@ In addition to AverageMetric, there is also
 [SumMetric](parlai.core.metrics.SumMetric), which keeps a running
 sum. SumMetric and AverageMetric are the most common ways to construct custom
 metrics, but others exist as well. For a full list (and views into advanced
-cases), please see the [metrics API documentation](metrics_api).
+cases), please see the [metrics API documentation](core/metrics_api).
 
 ## Agent (model) level metrics
 
@@ -312,8 +312,8 @@ where we often want to instrument specific behavior.
 
 Let's look at an example. We'll add a metric inside the `batchify` function,
 which is called from within `batch_act`, and is used to convert from a list of
-[Messages](messages) objects to a
-[Batch](torch_agent.html#parlai.core.torch_agent.Batch) object. It is where we do things like
+[Messages](core/messages) objects to a
+[Batch](parlai.core.torch_agent.Batch) object. It is where we do things like
 padding, etc. We'll do something slightly different than our previous runs.
 In this case, we'll count the number of _tokens_ which are the word "hello".
 
