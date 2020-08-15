@@ -3,7 +3,7 @@
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/v/parlai?color=blue&label=release)](https://pypi.org/project/parlai/) [![CircleCI](https://img.shields.io/circleci/build/github/facebookresearch/ParlAI/master)](https://circleci.com/gh/facebookresearch/ParlAI/tree/master) [![Coverage](https://img.shields.io/codecov/c/github/facebookresearch/ParlAI)](https://codecov.io/gh/facebookresearch/ParlAI) ![GitHub contributors](https://img.shields.io/github/contributors/facebookresearch/ParlAI) [![Twitter](https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social)](https://twitter.com/parlai_parley)
 --------------------------------------------------------------------------------
 
-[ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
+[ParlAI](http://parl.ai) (pronounced “par-lay”) is a Python framework for
 sharing, training and testing dialogue models, from open-domain chitchat to
 VQA (Visual Question Answering).
 
@@ -28,7 +28,7 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3.6 and [Pytorch](https://pytorch.org) 1.4. *It does not work with pytorch 1.5*.
+ParlAI currently requires Python 3.6 and [PyTorch](https://pytorch.org) 1.4. *It does not work with PyTorch 1.5 or above*.
 Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
 models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents)) have additional requirements.
 
@@ -69,18 +69,18 @@ Though pip install command is easier, it would not give you access to the ready 
 A large set of scripts can be found in [`parlai/scripts`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/scripts). Here are a few of them.
 Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
 
-Display 10 random examples from the SQuAD task
+Display 10 random examples from the [SQuAD task](https://rajpurkar.github.io/SQuAD-explorer/)
 ```bash
 parlai display_data -t squad
 ```
 
-Evaluate an IR baseline model on the validation set of the Personachat task:
+Evaluate an IR baseline model on the validation set of the PersonaChat task:
 ```bash
 parlai eval_model -m ir_baseline -t personachat -dt valid
 ```
 
 Train a single layer transformer on PersonaChat (requires pytorch and torchtext).
-Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
+Detail: embedding size 300, 4 attention heads, 2 epochs using batch size 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
 ```bash
 parlai train_model -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
