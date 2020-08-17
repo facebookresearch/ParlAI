@@ -36,8 +36,8 @@ class Compatibility(object):
     def serialize_bot_message(bot_message):
         if 'metrics' in bot_message:
             metric_report = bot_message['metrics']
-            bot_message['metrics'] = {
+            bot_message = Compatibility.backward_compatible_force_set(bot_message, 'metrics', {
                 k: v.value() if isinstance(v, Metric) else v
                 for k, v in metric_report.items()
-            }
+            })
         return bot_message

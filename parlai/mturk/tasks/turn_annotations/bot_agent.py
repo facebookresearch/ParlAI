@@ -60,7 +60,7 @@ class TurkLikeAgent:
         else:
             act_out = self.model_agent.act()
 
-        annotations_html = TurkLikeAgent.construct_annotations_html(self.turn_idx)
+        annotations_html = self.construct_annotations_html(self.turn_idx)
 
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
