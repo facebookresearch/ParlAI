@@ -56,3 +56,4 @@ def build(opt):
         build_data.make_dir(dpath)
         _download_with_gsutil(dpath)
         _untar_dataset_files(dpath)
+        build_data.mark_done(dpath, version_string=version)
