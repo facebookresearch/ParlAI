@@ -14,6 +14,16 @@ import uuid
 import errno
 import requests
 
+from parlai.mturk.core.shared_utils import AssignState
+from parlai.mturk.core.socket_manager import Packet, SocketManager, StaticSocketManager
+from parlai.mturk.core.worker_manager import WorkerManager
+from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
+from parlai.core.params import print_announcements
+import parlai.mturk.core.data_model as data_model
+import parlai.mturk.core.mturk_utils as mturk_utils
+import parlai.mturk.core.server_utils as server_utils
+import parlai.mturk.core.shared_utils as shared_utils
+
 print(
     '\n\33[5m\33[101m'
     "WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING"
@@ -33,16 +43,6 @@ print(
     "WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING"
     '\33[0m\n\n'
 )
-
-from parlai.mturk.core.shared_utils import AssignState
-from parlai.mturk.core.socket_manager import Packet, SocketManager, StaticSocketManager
-from parlai.mturk.core.worker_manager import WorkerManager
-from parlai.mturk.core.mturk_data_handler import MTurkDataHandler
-from parlai.core.params import print_announcements
-import parlai.mturk.core.data_model as data_model
-import parlai.mturk.core.mturk_utils as mturk_utils
-import parlai.mturk.core.server_utils as server_utils
-import parlai.mturk.core.shared_utils as shared_utils
 
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11
