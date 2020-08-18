@@ -191,7 +191,6 @@ class StarspaceAgent(Agent):
         self.history = {}
         self.debugMode = False
         if shared:
-            torch.set_num_threads(1)
             # set up shared properties
             self.dict = shared['dict']
             self.model = shared['model']

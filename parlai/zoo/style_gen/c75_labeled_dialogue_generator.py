@@ -13,7 +13,8 @@ from parlai.core.build_data import download_models
 
 def download(datapath):
     model_type = 'c75_labeled_dialogue_generator'
-    version = 'v1.0'
+    # v1.1 vacuumed the model file to be smaller
+    version = 'v1.1'
     opt = {'datapath': datapath, 'model_type': model_type}
     fnames = [f'{version}.tar.gz']
     download_models(

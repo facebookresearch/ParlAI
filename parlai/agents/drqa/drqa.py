@@ -113,8 +113,6 @@ class DrqaAgent(Agent):
         return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
-        if opt.get('numthreads', 1) > 1:
-            raise RuntimeError("numthreads > 1 not supported for this model.")
         super().__init__(opt, shared)
 
         # All agents keep track of the episode (for multiple questions)

@@ -51,8 +51,6 @@ import parlai.utils.logging as logging
 from abc import ABC, abstractmethod
 
 import concurrent.futures
-import multiprocessing
-from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random
@@ -124,7 +122,6 @@ class Teacher(Agent):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
             self.metrics = TeacherMetrics(
-                threadsafe=(opt.get('numthreads', 1) > 1),
                 metrics_list=opt.get('metrics', 'default'),
                 shared=shared['metrics'] if shared is not None else None,
             )
@@ -189,12 +186,6 @@ class Teacher(Agent):
         shared = super().share()
         shared['metrics'] = self.metrics.share()
         return shared
-
-    def update_counters(self):
-        """
-        Ensure counters are synchronized.
-        """
-        self.metrics.sync()
 
 
 class FixedDialogTeacher(Teacher):
@@ -332,11 +323,6 @@ class FixedDialogTeacher(Teacher):
 
         if hasattr(self, 'data_loader'):
             shared['data_loader'] = self.data_loader
-
-        if self.opt.get('numthreads', 1) > 1:
-            if type(self.index) is not multiprocessing.sharedctypes.Synchronized:
-                # for multithreading need to move index into threadsafe memory
-                self.index = Value('l', -1)
 
         shared['index'] = self.index
 
@@ -516,9 +502,6 @@ class DialogTeacher(FixedDialogTeacher):
 
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
-
-    If you have ``opt.numthreads > 1``, this also activates a shared memory
-    array for the data and lock-protected shared-memory metrics.
 
     In order to subclass this class, you must implement ``setup_data()`` in
     your class (or subclass another class which does, like
@@ -911,11 +894,6 @@ class StreamDialogData(DialogData):
             self.datafile = opt['datafile']
             self.reset_data = None
             self.is_reset = True
-            if opt.get('numthreads', 1) > 1:
-                logging.warn(
-                    'multithreaded streaming will process every example numthreads times.'
-                )
-                self.lock = Lock()
         self.entry_idx = 0
         self.cur_episode = self._FIRST_PASS
         self.num_eps = None
@@ -981,10 +959,10 @@ class StreamDialogData(DialogData):
             for episode in self._read_episode(self.data_loader(self.datafile)):
                 num_eps += 1
                 num_exs += len(episode)
-            with open(length_file, 'w') as f:
+            with open(length_file, 'w', encoding="utf-8") as f:
                 f.write("{}\n{}".format(num_eps, num_exs))
         else:
-            with open(length_file, 'r') as f:
+            with open(length_file, 'r', encoding="utf-8") as f:
                 num_eps, num_exs = f.readlines()
         return int(num_eps), int(num_exs)
 
@@ -1148,7 +1126,7 @@ class FbDialogTeacher(DialogTeacher):
         lines_have_ids = False
         cands_are_replies = False
         cnt = 0
-        with open(path) as read:
+        with open(path, encoding="utf-8") as read:
             for line in read:
                 line = line.strip().replace('\\n', '\n')
                 if len(line) > 0:
@@ -1203,7 +1181,7 @@ class FbDialogTeacher(DialogTeacher):
             new_episode = False (this is the second example in the episode)
         """
         logging.info(f"loading fbdialog data: {path}")
-        with open(path) as read:
+        with open(path, encoding="utf-8") as read:
             start = True
             x = ''
             reward = 0
@@ -1390,7 +1368,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.episodes = []
         self.num_exs = 0
         eps = []
-        with open(path, newline='\n') as read:
+        with open(path, newline='\n', encoding="utf-8") as read:
             for line_no, line in enumerate(read, 1):
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg and 'eval_labels' in msg:
@@ -1796,7 +1774,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         data_file = os.path.join(self.data_path, '%s.json' % dt)
 
         # Load the text data and image number indexes
-        with open(data_file) as f:
+        with open(data_file, encoding="utf-8") as f:
             self.data = json.load(f)
 
         if len(self.data) > 0 and self.image_id_key not in self.data[0]:
@@ -2089,13 +2067,6 @@ class MultiTaskTeacher(Teacher):
         for t in self.tasks:
             t.reset_metrics()
 
-    def save(self):
-        """
-        Save each subtask.
-        """
-        for t in self.tasks:
-            t.save()
-
     def share(self):
         """
         Shares this teacher by sharing each subtask.
@@ -2113,10 +2084,6 @@ class MultiTaskTeacher(Teacher):
         for t in self.tasks:
             t.shutdown()
 
-    def update_counters(self):
-        for t in self.tasks:
-            t.update_counters()
-
 
 class ChunkTeacher(FixedDialogTeacher, ABC):
     """
@@ -2132,8 +2099,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         if 'stream' not in opt['datatype']:
             raise ValueError('Chunk teacher should be used with streaming. ')
-        if opt['numthreads'] > 1:
-            raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
         self.set_datasettings(opt)
 

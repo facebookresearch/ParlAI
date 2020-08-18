@@ -399,9 +399,9 @@ class TransresnetModel(nn.Module):
         for img_index in range(len(context_encoded)):
             context_encoding = context_encoded[img_index : img_index + 1, :]
             scores = torch.mm(
-                candidates_encoded[img_index]
+                candidates_encoded[img_index].to(context_encoding)
                 if not one_cand_set
-                else candidates_encoded,
+                else candidates_encoded.to(context_encoding),
                 context_encoding.transpose(0, 1),
             )
             if k >= 1:
