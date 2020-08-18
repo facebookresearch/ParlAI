@@ -1,6 +1,17 @@
 Using Mechanical Turk
 =====================
+
+ParlAI's MTurk functionality has expanded out of this project to become `Mephisto <https://github.com/facebookresearch/Mephisto>`__. The instructions for hosting a ParlAI-Chat style task can be found `here <https://github.com/facebookresearch/Mephisto/tree/master/examples/parlai_chat_task_demo>`__, and regular collection tasks can be found `here <https://github.com/facebookresearch/Mephisto/tree/master/examples/static_react_task>`__.
+
+We will be moving some of our common tasks out of the Mephisto repo into the ParlAI repo soon, alongside better documentation and tooling for those common tasks.
+
+The original guide for using the ``parlai.mturk.core`` module to collect data on MTurk is preserved below for those who are still running tasks on the old framework. 
+
+Using Mechanical Turk <deprecated>
+==================================
 **Authors**: Jack Urbanek, Emily Dinan, Will Feng
+
+**NOTE**: ParlAI's internal MTurk implementation (in the ``parlai.mturk.core``) module is pending deprecation, and we will no longer be supporting new tasks or functionality.
 
 In ParlAI, you can use Amazon Mechanical Turk for **data collection**, **training**, or **evaluation** of your dialog model.
 
