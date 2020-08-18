@@ -59,7 +59,6 @@ def setup_title_to_passage(opt):
     ordered_opt = opt.copy()
     ordered_opt['datatype'] = 'train:ordered:stream'
     ordered_opt['batchsize'] = 1
-    ordered_opt['numthreads'] = 1
     ordered_opt['task'] = 'wikipedia:full:key-value'
     teacher = create_task_agent_from_taskname(ordered_opt)[0]
     title_to_passage = {}

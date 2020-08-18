@@ -698,14 +698,6 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden=True,
         )
         parlai.add_argument(
-            '-nt',
-            '--numthreads',
-            default=1,
-            type=int,
-            help='number of threads. Used for hogwild if batchsize is 1, else '
-            'for number of threads in threadpool loading,',
-        )
-        parlai.add_argument(
             '--hide-labels',
             default=False,
             type='bool',

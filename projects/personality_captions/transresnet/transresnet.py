@@ -65,13 +65,6 @@ class TransresnetAgent(Agent):
         return arg_group
 
     def __init__(self, opt, shared=None):
-        if opt.get('numthreads', 1) > 1:
-            raise RuntimeError(
-                'Warning: You cannot use multithreading with '
-                'this agent, as the current metrics do not '
-                'support sharing of lists (for median rank '
-                'calculation). Please set --numthreads to 1'
-            )
         self.metrics = {
             'hits@1/100': 0.0,
             'loss': 0.0,
