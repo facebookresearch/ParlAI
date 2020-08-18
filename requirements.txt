@@ -28,7 +28,7 @@ sh==1.12.14
 sphinx_rtd_theme==0.4.3
 sphinx-autodoc-typehints==1.10.3
 Sphinx==2.2.0
-tokenizers==0.4.2
+tokenizers==0.8.0
 tqdm==4.36.1
 typing-extensions==3.7.4.1
 Unidecode==1.1.1
