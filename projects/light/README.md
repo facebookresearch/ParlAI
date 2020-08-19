@@ -56,7 +56,7 @@ character interactions (talking and acting).
 You can view the data or train your own ParlAI agent on the LIGHT tasks with
 `-t light_dialog`. See the [ParlAI quickstart for help](http://parl.ai/docs/tutorial_quick.html).
 
-An additional WILD dataset featuring 41,131 training episodes of dialogue from [deploying as a game](https://arxiv.org/abs/1911.03842)
+An additional WILD dataset featuring 41,131 training episodes of dialogue from [deploying as a game](https://arxiv.org/abs/2008.08076)
 is available, using:
 `-t light_dialog_wild`. 
 
