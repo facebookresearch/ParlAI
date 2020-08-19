@@ -281,6 +281,19 @@ task_list = [
         ),
     },
     {
+        "id": "LIGHT-Dialogue-Wild",
+        "display_name": "LIGHT-Dialogue-Wild",
+        "task": "light_dialog_wild",
+        "tags": ["All", "Grounded", "LIGHT"],
+        "description": (
+            " LIGHT is a text adventure game with actions and dialogue."
+            "The WILD dataset here features 41,131+ training episodes of dialogue "
+            "collected from deploying a game as described in "
+            "https://arxiv.org/abs/2008.08076"
+            "Link: http://parl.ai/projects/light"
+        ),
+    },
+    {
         "id": "MutualFriends",
         "display_name": "MutualFriends",
         "task": "mutualfriends",
