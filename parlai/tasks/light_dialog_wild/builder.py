@@ -612,6 +612,10 @@ def format_chats_june_2020(chats):
         c['is_complete'] = c['choice'] is not None
         c['did_continue'] = c['choice'] is not None and c['choice']['text'] != 'EXIT'
 
+        for t in c['dialogue']:
+            if len(t['text'].strip()) == 0:
+                t['text'] = '__SILENCE__'
+
     return chats
 
 
