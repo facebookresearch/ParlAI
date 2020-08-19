@@ -2130,7 +2130,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._enqueue_chunks()
             # launch queue loader on the main thread
             self.tot_samples_loaded = 0
-            self._enqueue_request()
+            if not opt.get("no_auto_enqueues", False):
+                self._enqueue_request()
 
         self._episode_done = True
         self.last_queue_output = None
