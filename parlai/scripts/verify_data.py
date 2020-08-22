@@ -12,20 +12,20 @@ Examples
 
 .. code-block:: shell
 
-  python parlai/scripts/verify_data.py -t convai2 -dt train:ordered
+  parlai verify_data -t convai2 -dt train:ordered
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Lint for ParlAI tasks')
+        parser = ParlaiParser(True, True, 'Check tasks for common errors')
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
@@ -56,10 +56,11 @@ def warn(txt, act, opt):
         warn_once(txt)
 
 
-def verify(opt, printargs=None, print_parser=None):
+def verify(opt):
     if opt['datatype'] == 'train':
         logging.warn("changing datatype from train to train:ordered")
         opt['datatype'] = 'train:ordered'
+    opt.log()
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -120,8 +121,7 @@ def verify(opt, printargs=None, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
-            if print_parser:
-                print(text)
+            print(text)
 
     try:
         # print dataset size if available
@@ -136,12 +136,11 @@ def verify(opt, printargs=None, print_parser=None):
 
 
 def verify_data(opt, parser):
-    report_text, report_log = verify(
-        parser.parse_args(print_args=False), print_parser=parser
-    )
+    report_text, report_log = verify(parser.parse_args())
     print(report_text)
 
 
+@register_script('verify_data', hidden=True)
 class VerifyData(ParlaiScript):
     @classmethod
     def setup_args(cls):

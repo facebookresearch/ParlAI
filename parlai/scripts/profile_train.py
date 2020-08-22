@@ -14,11 +14,11 @@ see a few of them:
 
 .. code-block:: shell
 
-  python examples/profile.py -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+  parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.scripts.train_model import setup_args as train_args
 from parlai.scripts.train_model import TrainLoop
 import parlai.utils.logging as logging
@@ -60,9 +60,6 @@ def setup_args(parser=None):
 
 
 def profile(opt):
-    if isinstance(opt, ParlaiParser):
-        logging.error('profile should be passed opt not Parser')
-        opt = opt.parse_args()
     if opt['torch'] or opt['torch_cuda']:
         with torch.autograd.profiler.profile(use_cuda=opt['torch_cuda']) as prof:
             TrainLoop(opt).train()
@@ -102,6 +99,7 @@ def profile(opt):
             pdb.set_trace()
 
 
+@register_script('profile_train', hidden=True)
 class ProfileTrain(ParlaiScript):
     @classmethod
     def setup_args(cls):

@@ -17,6 +17,13 @@ standard_cpu37: &standard_cpu37
     PYTHONUNBUFFERED: 1
   resource_class: xlarge
 
+small_cpu37: &small_cpu37
+  docker:
+    - image: circleci/python:3.7.5-buster-node
+  environment:
+    PYTHONUNBUFFERED: 1
+  resource_class: large
+
 standard_cpu36: &standard_cpu36
   docker:
     - image: circleci/python:3.6.9-buster-node
@@ -359,10 +366,34 @@ jobs:
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
-          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
+      - <<: *codecov
+      - store_test_results:
+          path: test-results
+
+  teacher_tests:
+    <<: *small_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 8
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: deps-20200625-teacher-{{ checksum "requirements.txt" }}
+      - <<: *setup
+      - <<: *installdeps
+      - save_cache:
+          key: deps-20200625-teacher-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - run:
+          name: All data tests
+          no_output_timeout: 60m
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m tasks parlai/tasks/*/test.py -v
       - <<: *codecov
       - store_test_results:
           path: test-results
@@ -481,6 +512,7 @@ workflows:
       - mturk_tests
       - unittests_osx
       - long_gpu_tests
+      - teacher_tests
       - build_website:
           filters:
             branches:

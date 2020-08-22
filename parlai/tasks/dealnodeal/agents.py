@@ -54,7 +54,7 @@ class NegotiationTeacher(Teacher):
         data_path = os.path.join(
             opt['datapath'],
             'negotiation',
-            'end-to-end-negotiator-master',
+            'end-to-end-negotiator-bbb93bbf00f69fced75d5c0d22e855bda07c9b78',
             'src',
             'data',
             'negotiate',

@@ -10,7 +10,7 @@ import random
 import tempfile
 import subprocess
 from parlai.core.params import ParlaiParser
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 # Constants
 END_OF_CONVO = "EOC"
@@ -212,9 +212,7 @@ def setup_args():
     """
     Creates a parser object with some pre-determined arguments.
     """
-    parser = ParlaiParser(
-        add_parlai_args=True, description="Process Conversation Rendering arguments"
-    )
+    parser = ParlaiParser(add_parlai_args=True, description="Render data as HTML")
     conv_render = parser.add_argument_group('Conversation Rendering Arguments')
     conv_render.add_argument(
         "--input", "-i", help="Input file to read conversations from"
@@ -299,6 +297,7 @@ def validate_args(opt):
 
 def render_convo(opt):
     # Run
+    opt.log()
     extension = validate_args(opt)
     input_file, output_file = opt['intput'], opt['output']
     height, width = opt['height'], opt['width']
@@ -350,6 +349,7 @@ def render_convo(opt):
                 file_handle.close()
 
 
+@register_script('convo_render', hidden=True)
 class RenderConversation(ParlaiScript):
     @classmethod
     def setup_args(cls):

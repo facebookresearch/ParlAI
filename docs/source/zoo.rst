@@ -22,7 +22,7 @@ Example invocation:
 
 .. code-block:: shell
 
-  python -m parlai.scripts.train_model -t convai2 -m seq2seq -emb fasttext_cc
+  parlai train_model -t convai2 -m seq2seq -emb fasttext_cc
 
 Adding '-fixed' to the name e.g. 'twitter-fixed' means backprop will not go through this
 (i.e. they will remain unchanged).
@@ -37,7 +37,7 @@ Example invocation:
 
 .. code-block:: shell
 
-  python -m parlai.scripts.train_model -t convai2 -m bert_ranker/bi_encoder_ranker
+  parlai train_model -t convai2 -m bert_ranker/bi_encoder_ranker
 
 
 

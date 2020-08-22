@@ -5,6 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 """
 Talk with a model using a web UI.
+
+Examples
+--------
+
+.. code-block:: shell
+
+  parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
 """
 
 
@@ -13,7 +20,7 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from typing import Dict, Any
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import json
@@ -233,6 +240,7 @@ def setup_interweb_args(shared):
     Build and parse CLI opts.
     """
     parser = setup_args()
+    parser.description = 'Interactive chat with a model in a web browser'
     parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
     parser.add_argument(
         '--host',
@@ -243,19 +251,17 @@ def setup_interweb_args(shared):
     return parser
 
 
-def interactive_web(opt, parser):
-    SHARED['opt'] = parser.opt
+def interactive_web(opt):
 
     SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
     # Create model and assign it to the specified task
     agent = create_agent(SHARED.get('opt'), requireModelExists=True)
+    agent.opt.log()
+    SHARED['opt'] = agent.opt
     SHARED['agent'] = agent
     SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
 
-    # show args after loading model
-    parser.opt = agent.opt
-    parser.print_args()
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
     logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
@@ -267,13 +273,14 @@ def interactive_web(opt, parser):
     httpd.server_close()
 
 
+@register_script('interactive_web', aliases=['iweb'], hidden=True)
 class InteractiveWeb(ParlaiScript):
     @classmethod
     def setup_args(cls):
         return setup_interweb_args(SHARED)
 
     def run(self):
-        return interactive_web(self.opt, self.parser)
+        return interactive_web(self.opt)
 
 
 if __name__ == '__main__':

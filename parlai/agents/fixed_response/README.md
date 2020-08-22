@@ -7,5 +7,5 @@ Good for debugging purposes or as a baseline, e.g. if always predicting a given 
 
 Evaluate on the dialogue safety task, always predicting __notok__
 ```bash
-python examples/eval_model.py  -t dialogue_safety -dt valid -m fixed_response -fr __notok__
+parlai eval_model  -t dialogue_safety -dt valid -m fixed_response -fr __notok__
 ```

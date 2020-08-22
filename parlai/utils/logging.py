@@ -39,7 +39,7 @@ COLORED_LEVEL_STYLES = {
     'debug': {'faint': True},
     'verbose': {'color': 'blue'},
     'error': {'color': 'red'},
-    'info': {'faint': True},
+    'info': {},
     'report': {'bold': True},
     'success': {'bold': True, 'color': 'green'},
     'warning': {'color': 'yellow'},
@@ -154,6 +154,10 @@ def log(*args, **kwargs):
     return logger.log(*args, **kwargs)
 
 
+def verbose(msg):
+    return logger.log(msg, level=VERBOSE)
+
+
 def debug(*args, **kwargs):
     return logger.debug(*args, **kwargs)
 
@@ -163,6 +167,10 @@ def error(*args, **kwargs):
 
 
 def warn(*args, **kwargs):
+    return logger.warn(*args, **kwargs)
+
+
+def warning(*args, **kwargs):
     return logger.warn(*args, **kwargs)
 
 

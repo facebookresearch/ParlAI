@@ -25,7 +25,7 @@ DEFAULT_TASK_CONFIG = {
 AGENT_DISPLAY_NAME = 'RatingWorker'
 
 
-def add_args(from_argv=False, print_args=True):
+def add_args(from_argv=False):
     """
     Add arguments to parser and either parse from commandline or initialize to defaults
     (for overriding in scripts)
@@ -97,9 +97,9 @@ def add_args(from_argv=False, print_args=True):
     )
     argparser.set_defaults(allowed_conversation=1)
     if from_argv:
-        return argparser.parse_args(print_args=print_args)
+        return argparser.parse_args()
     else:
-        return argparser.parse_args(args=[], print_args=print_args)
+        return argparser.parse_args(args=[])
 
 
 class AcuteEvaluator(object):

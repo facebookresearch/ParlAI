@@ -289,7 +289,6 @@ class TestTransformerGenerator(unittest.TestCase):
                 learningrate=7e-3,
                 batchsize=32,
                 num_epochs=10,
-                numthreads=1,
                 n_layers=1,
                 n_heads=1,
                 ffn_size=32,
@@ -518,7 +517,6 @@ class TestTransformerGenerator(unittest.TestCase):
                 batchsize=10,
                 datatype='train:ordered:stream',
                 num_epochs=1,
-                numthreads=1,
                 no_cuda=True,
                 embedding_size=16,
                 skip_generation=True,
@@ -713,7 +711,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 save_after_valid=True,
                 special_tok_lst='PARTY,PARROT',
             )
-            opt = parser.parse_args([], print_args=False)
+            opt = parser.parse_args([])
             agent = create_agent(opt)
             # assert that the embeddings were resized
             assert agent.resized_embeddings
