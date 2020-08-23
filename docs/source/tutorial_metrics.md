@@ -36,8 +36,8 @@ We see that we got 0.01239% accuracy, 0.26% BLEU-4 score, and 11.63% F1 across
 If you don't see the BLEU-4 score, you may need to install NLTK with
 `pip install nltk`.
 
-We can also measure ROUGE. Note that we need to `pip install py-rouge` for this
-functionality:
+We can also measure [ROUGE](https://en.wikipedia.org/wiki/ROUGE_%28metric%29). Note
+that we need to `pip install py-rouge` for this functionality:
 
 ```
 $ parlai eval_model -m fixed_response -t dailydialog --fixed-response "how may i help you ?" --metrics rouge
@@ -46,6 +46,12 @@ $ parlai eval_model -m fixed_response -t dailydialog --fixed-response "how may i
     accuracy  exs    f1  rouge_1  rouge_2  rouge_L
     .0001239 8069 .1163   .09887  .007285   .09525
 ```
+
+One nice thing about metrics is that they are automatically logged to the
+`.trainstats` file, and within Tensorboard (when enabled with
+`--tensorboard-log true`. As such, metrics are more reliable than adding print
+statements into your code.
+
 
 ### Agent-specific metrics
 
@@ -67,7 +73,13 @@ $ parlai eval_model --task dailydialog -mf zoo:blender/blender_90M/model -bs 32
            0 .002097 14202 442.5 6.446 8069 .1345    .0384 2.979 7.5e-06  3242   101 19.67      .4133               339012 17445 543.5
 ```
 
-Here we see a number of extra metrics, each of which we explain below:
+Here we see a number of extra metrics, each of which we explain below. They may be
+roughly divided into diagnostic/performance metrics, and modeling metrics. The
+modeling metrics are:
+- `ppl` and `token_acc`: the perplexity and per-token accuracy. these are generative
+  performance metrics.
+
+The diagnostic metrics are:
 - `tpb`, `ctpb`, `ltpb`: stand for tokens per batch, context-tokens per batch,
   and label-tokens per batch. These are useful for measuring how dense the
   batches are, and are helpful when experimenting with [dynamic
@@ -79,8 +91,6 @@ Here we see a number of extra metrics, each of which we explain below:
   is only approximate. This is useful for determining if you can possibly increase
   the model size or the batch size.
 - `loss`: the loss metric
-- `ppl` and `token_acc`: the perplexity and per-token accuracy. these are generative
-  performance metrics.
 - `total_train_updates`: the number of SGD updates this model was trained for.
   You will see this increase during training, but not during evaluation.
 
@@ -96,13 +106,20 @@ location:
 - __Teacher metrics__: This is the best spot for computing metrics that depend
   on a specific dataset. These metrics will only be available when evaluating
   on this dataset. They have the advantage of being easy to compute and
-  understand.
-- __Global metrics__: Global metrics are computed by the model, and are globally
-  tracked. These metrics are easy to understand and track, but work poorly
-  when doing multitasking.
-- __Local metrics__: Local metrics are the model-analogue of teacher metrics.
-  They are computed and recorded on a per-example basis, and so they work well
-  when multitasking. They can be extremely complicated for some models, however.
+  understand. An example of a modeling metric is `slot_p`, which is part of
+  some of our Task Oriented Datasets, such as
+  [`google_sgd`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/google_sgd/agents.py)
+- __Global metrics__ (model metric): Global metrics are computed by the model,
+  and are globally tracked. These metrics are easy to understand and track, but
+  work poorly when doing multitasking. One example of a global metric includes
+  `gpu_mem`, which depends on a system-wide memory usage, and cannot be tied to
+  a specific task.
+- __Local metrics__ (model metric): Local metrics are the model-analogue of
+  teacher metrics.  They are computed and recorded on a per-example basis, and
+  so they work well when multitasking. They can be extremely complicated for
+  some models, however. An example of a local metric includes perplexity, which
+  should be computed on a per-example basis, but must be computed by the model,
+  and therefore cannot be a teacher metric.
 
 We will take you through writing each of these methods in turn, and demonstrate
 examples of how to add these metrics in your setup.
@@ -217,10 +234,10 @@ In the above example, we worked on a metric defined by a Teacher. However,
 sometimes our models will have special metrics that only they want to compute,
 which we call an Agent-level metric. Perplexity is one example.
 
-To compute model-level metrics, we can define either a global metric, or a
-local metric. Global metrics can be computed anywhere, and are easy to use,
-but cannot distinguish between different teachers when multitasking. We'll
-look at another example, counting the number of times the teacher says "hello".
+To compute model-level metrics, we can define either a _Global_ metric, or a
+_Local metric_. Global metrics can be computed anywhere, and are easy to use,
+but cannot distinguish between different teachers when multitasking. We'll look
+at another example, counting the number of times the teacher says "hello".
 
 ### Global metrics
 
