@@ -86,6 +86,7 @@ docs/_build/
 docs/source/task_list.inc
 docs/source/zoo_list.inc
 docs/source/cli_usage.inc
+docs/source/cli_advanced.inc
 docs/source/agent_refs
 
 # PyBuilder

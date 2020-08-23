@@ -65,7 +65,7 @@ These observations and actions are the primary way agents in ParlAI communicate 
 The Message object is a subclass of a python dict, whose key function is to prevent users from editing
 fields in an action or observation unintentionally.
 
-The :doc:`messages <messages>` documentation goes into more detail about
+The :doc:`messages <core/messages>` documentation goes into more detail about
 each field, but the following table shows the basics.
 
 

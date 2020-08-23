@@ -52,14 +52,13 @@ We could look at that data using the usual display data script:
 	EPOCH DONE
 	[ loaded 1 episodes with a total of 2 examples ]
 
-The text file data format is called ParlAI Dialog format, and is described
-in the :doc:`teachers documentation <teachers>` (parlai.core.teachers.ParlAIDialogTeacher)
-and
-in the `core/teachers.py file <https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1098>`_.
-Essentially, there is one training example every line, and each field in a
-ParlAI message is tab separated with the name of the field, followed by a colon.
-E.g. the usual fields like 'text', 'labels', 'label_candidates' etc. can all
-be used, or you can add your own fields too if you have a special use for them.
+The text file data format is called ParlAI Dialog format, and is described in
+the :doc:`teachers documentation <core/teachers>` and
+:py:class:`parlai.core.teachers.ParlAIDialogTeacher`.  Essentially, there is one
+training example every line, and each field in a ParlAI message is tab
+separated with the name of the field, followed by a colon.  E.g. the usual
+fields like 'text', 'labels', 'label_candidates' etc. can all be used, or you
+can add your own fields too if you have a special use for them.
 
 Handling Separate Train/Valid/Test data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -214,7 +213,7 @@ In this section we will illustrate the process of using the ``ParlAIDialogTeache
 class by adding the Twitter dataset.
 This task has data in textual form and has been formatted to follow the ParlAI Dialog format.
 It is thus very simple to implement it using ``ParlAIDialogTeacher``.
-More information on this class and the dialog format can be found in the :doc:`teachers documentation <teachers>`.
+More information on this class and the dialog format can be found in the :doc:`teachers documentation <core/teachers>`.
 
 In this task, the agent is presented with questions about movies that are answerable from Wikipedia.
 A sample dialog is demonstrated below.
@@ -386,7 +385,7 @@ The second is a boolean flag ``new_episode?`` which indicates if the current
 query starts a new episode or not.
 
 More information on this format can be found in the documentation under ``DialogData``
-in the :doc:`teachers documentation <teachers>`
+in the :doc:`teachers documentation <core/teachers>`
 (``setup_data`` is provided as a data_loader to ``DialogData``).
 
 The sample ``setup_data`` method for our task is presented below.

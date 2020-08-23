@@ -39,12 +39,11 @@ import sys
 import git
 import sphinx_rtd_theme
 import parlai
-from recommonmark.transform import AutoStructify
 
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.githubpages',
-    'recommonmark',
+    'myst_parser',
     'sphinx.ext.linkcode',
 ]
 
@@ -207,11 +206,3 @@ def linkcode_resolve(domain, info):
         return "https://github.com/facebookresearch/ParlAI/blob/%s/%s" % (tag, filename)
     except Exception:
         return None
-
-
-# At the bottom of conf.py
-def setup(app):
-    app.add_config_value(
-        'recommonmark_config', {'auto_toc_tree_section': 'Contents'}, True
-    )
-    app.add_transform(AutoStructify)

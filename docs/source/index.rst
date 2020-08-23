@@ -12,7 +12,7 @@ ParlAI is a one-stop-shop for dialog research.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Tutorials
+   :caption: Tutorials & Explanations
 
    tutorial_quick
    tutorial_basic
@@ -21,9 +21,9 @@ ParlAI is a one-stop-shop for dialog research.
    tutorial_torch_generator_agent
    tutorial_torch_ranker_agent
    tutorial_fast
-   tutorial_tipsntricks
    tutorial_mturk
    tutorial_chat_service
+   tutorial_tipsntricks
 
 .. toctree::
    :maxdepth: 1
@@ -40,25 +40,19 @@ ParlAI is a one-stop-shop for dialog research.
   agents_list
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Core Library API
+   :maxdepth: 2
+   :caption: Scripts & CLI
 
-   messages
-   agents
-   torch_agent
-   build_data
-   dict
-   metrics
-   params
-   teachers
-   worlds
-
+   cli_usage
+   cli_advanced
 
 .. toctree::
    :maxdepth: 2
-   :caption: Scripts
+   :caption: API Reference
 
-   cli_usage
+   core
+   utils
+
 
 
 Indices and tables

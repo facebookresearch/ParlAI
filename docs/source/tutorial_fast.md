@@ -8,16 +8,14 @@ used with others.
 
 A summary of the speedups is in this table:
 
-    +-------------------------+-------+------+-------+---------+
-    | Method                  | Train | Eval | Total | Speedup |
-    +-------------------------+-------+------+-------+---------+
-    | Baseline                |  504s |  48s |  552s |    1.0x |
-    | Skip generation         |  504s |  16s |  520s |    1.1x |
-    | Dynamic batching        |  254s |  11s |  265s |    2.1x |
-    | FP16                    |  197s |   8s |  205s |    2.7x |
-    | Larger batchsize (FP16) |  151s |   7s |  158s |    3.5x |
-    | Using 4 GPUs            |   47s |   3s |   50s |   11.0x |
-    +-------------------------+-------+------+-------+---------+
+| Method                  | Train | Eval | Total | Speedup |
+| ----------------------- | ----: | ---: | ----: | ------: |
+| Baseline                |  504s |  48s |  552s |    1.0x |
+| Skip generation         |  504s |  16s |  520s |    1.1x |
+| Dynamic batching        |  254s |  11s |  265s |    2.1x |
+| FP16                    |  197s |   8s |  205s |    2.7x |
+| Larger batchsize (FP16) |  151s |   7s |  158s |    3.5x |
+| Using 4 GPUs            |   47s |   3s |   50s |   11.0x |
 
 ## Setting a baseline
 
