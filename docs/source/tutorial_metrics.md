@@ -76,10 +76,12 @@ $ parlai eval_model --task dailydialog -mf zoo:blender/blender_90M/model -bs 32
 Here we see a number of extra metrics, each of which we explain below. They may be
 roughly divided into diagnostic/performance metrics, and modeling metrics. The
 modeling metrics are:
+
 - `ppl` and `token_acc`: the perplexity and per-token accuracy. these are generative
   performance metrics.
 
 The diagnostic metrics are:
+
 - `tpb`, `ctpb`, `ltpb`: stand for tokens per batch, context-tokens per batch,
   and label-tokens per batch. These are useful for measuring how dense the
   batches are, and are helpful when experimenting with [dynamic
@@ -153,7 +155,7 @@ The signature for this method is as follows:
    may have sent.
 
 Let's take an actual example. We will add a custom metric which calculates
-how often the model says the word "hello", and call it `hello_avg`.
+how often the __model__ says the word "hello", and call it `hello_avg`.
 
 We will add a [custom teacher](tutorial_task). For this example, we will use
 the `@register` syntax you may have seen in our [quickstart
@@ -283,10 +285,21 @@ if __name__ == '__main__':
     )
 ```
 
-Running the script, we see that our new metric appears. Note that it is
-different than the metric in the first half of the tutorial: that is because
-previously we were counting the number of times the model said hello (a lot),
-but now we are counting how often the dataset says hello.
+__Note that this is very different than the Teacher metric we implemented in the
+first half of the tutorial__. In the teacher metric, we were counting the number
+of times the _model_ said hello. Here, we are counting the number of times the
+_teacher_ said hello.
+
+:::{admonition,tip} How to determine where to implement your custom metric:
+
+- If you want your metric to be _model_-agnostic, then it should be implemented
+  in the Teacher.
+- If you want your metric to be _dataset_-agnostic, then it should be
+  implemented in the Model agent.
+:::
+
+Running the script, we see that our new metric appears. As discussed above, the
+value differs slightly because of the difference in semantics.
 
 ```
 21:57:50 | Finished evaluating tasks ['dailydialog'] using datatype valid
