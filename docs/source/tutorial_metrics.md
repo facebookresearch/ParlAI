@@ -296,6 +296,10 @@ _teacher_ said hello.
   in the Teacher.
 - If you want your metric to be _dataset_-agnostic, then it should be
   implemented in the Model agent.
+- If you need your metric to be both model and dataset agnostic, then you
+  should do it within the Model, using a
+  [mixin](https://www.residentmar.io/2019/07/07/python-mixins.html) or abstract
+  class.
 :::
 
 Running the script, we see that our new metric appears. As discussed above, the
@@ -361,8 +365,6 @@ class LocalHelloCounterAgent(TransformerGeneratorAgent):
             num_hello = ["hello" in o['text'] for o in observations]
             self.record_local_metric(
                 'local_hello',
-                # AverageMetric.many(seq1) is shorthand for
-                # [AverageMetric(item) for item in seq)
                 AverageMetric.many(num_hello),
             )
         return batch
