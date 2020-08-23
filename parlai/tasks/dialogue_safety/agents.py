@@ -34,10 +34,10 @@ class StandardTeacher(_BaseSafetyTeacher):
     (<https://arxiv.org/abs/1908.06083>)
 
     To see data from rounds 1, 2, and 3, try running:
-    `python examples/display_data.py -t dialogue_safety:standard --round 3`
+    `parlai display_data -t dialogue_safety:standard --round 3`
 
     To see data from round 2 only, try running:
-    `python examples/display_data.py -t dialogue_safety:standard --round 2
+    `parlai display_data -t dialogue_safety:standard --round 2
      --round-only True`
     """
 
@@ -54,10 +54,10 @@ class AdversarialTeacher(_BaseSafetyTeacher):
     (<https://arxiv.org/abs/1908.06083>)
 
     To see data from rounds 1, 2, and 3, try running:
-    `python examples/display_data.py -t dialogue_safety:adversarial --round 3`
+    `parlai display_data -t dialogue_safety:adversarial --round 3`
 
     To see data from round 2 only, try running:
-    `python examples/display_data.py -t dialogue_safety:adversarial --round 2
+    `parlai display_data -t dialogue_safety:adversarial --round 2
      --round-only True`
     """
 
@@ -74,7 +74,7 @@ class MultiturnTeacher(FixedDialogTeacher):
     (<https://arxiv.org/abs/1908.06083>)
 
     To see data containing multi-turn conversations, try running
-    `python examples/display_data.py -t dialogue_safety:multiturn`.
+    `parlai display_data -t dialogue_safety:multiturn`.
 
     Run the above command with the flag `--single-turn True` to only see the
     single turn data.

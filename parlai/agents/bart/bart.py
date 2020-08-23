@@ -15,7 +15,7 @@ or `-mf zoo:bart/bart_large/model` to ensure correct dictionaries are saved.
 """
 import os
 import torch
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
 from parlai.agents.bart.modules import BartModel
@@ -24,7 +24,7 @@ from parlai.core.agents import compare_init_model_opts
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch, History
+from parlai.core.torch_agent import Batch, History, TorchAgent
 from parlai.utils.typing import TShared
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
@@ -52,6 +52,12 @@ class BartAgent(TransformerGeneratorAgent):
             type=str,
             default=None,
             help='fairseq checkpoint for bart',
+        )
+        group.add_argument(
+            '--output-conversion-path',
+            type=str,
+            default=None,
+            help='where to save fairseq conversion',
         )
         argparser.set_defaults(dict_tokenizer='gpt2')
 
@@ -83,6 +89,31 @@ class BartAgent(TransformerGeneratorAgent):
         compare_init_model_opts(opt, opt)
         return opt
 
+    def _get_conversion_args(self, opt: Opt) -> Dict[str, Any]:
+        """
+        Get args for fairseq model conversion.
+
+        :param opt:
+            ParlAI Opt
+
+        :return args:
+            returns dictionary of args to send to conversion script.
+        """
+        model_name = os.path.split(opt['init_fairseq_model'])[-1]
+        args = CONVERSION_ARGS.copy()
+
+        args['input'] = [opt['init_fairseq_model']]
+        if opt.get('model_file') and not os.path.exists(opt['model_file']):
+            args['output'] = opt['model_file']
+        elif opt.get('output_conversion_path'):
+            args['output'] = opt['output_conversion_path']
+        else:
+            args['output'] = os.path.join(
+                opt['datapath'], 'models/converted_fairseq_models/', model_name
+            )
+
+        return args
+
     def _convert_model(self, opt: Opt) -> Opt:
         """
         Convert fairseq init model to ParlAI Model.
@@ -93,17 +124,7 @@ class BartAgent(TransformerGeneratorAgent):
         :return opt:
             return opt with new init_model path
         """
-        model_name = os.path.split(opt['init_fairseq_model'])[-1]
-        args = CONVERSION_ARGS.copy()
-
-        args['input'] = [opt['init_fairseq_model']]
-        if opt.get('model_file') and not os.path.exists(opt['model_file']):
-            args['output'] = opt['model_file']
-        else:
-            args['output'] = os.path.join(
-                opt['datapath'], 'models/converted_fairseq_models/', model_name
-            )
-
+        args = self._get_conversion_args(opt)
         ConversionScript.main(**args)
         opt['init_model'] = args['output']
         return opt
@@ -118,6 +139,14 @@ class BartAgent(TransformerGeneratorAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+    def vectorize(self, *args, **kwargs):
+        """
+        Override vectorize for generative models.
+        """
+        kwargs['add_start'] = True  # need start token for BART
+        kwargs['add_end'] = True
+        return TorchAgent.vectorize(self, *args, **kwargs)
 
     def _set_text_vec(
         self, obs: Message, history: History, truncate: Optional[int]
@@ -138,7 +167,9 @@ class BartAgent(TransformerGeneratorAgent):
         )
         return obs
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> torch.LongTensor:
         """
         Override to seed decoder with EOS token.
 

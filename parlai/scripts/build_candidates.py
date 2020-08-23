@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python build_candidates.py -t convai2 --outfile /tmp/cands.txt
+  parlai build_candidates -t convai2 --outfile /tmp/cands.txt
 """
 
 from parlai.core.params import ParlaiParser
@@ -19,7 +19,7 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import random
 import tempfile
 
@@ -27,7 +27,9 @@ import tempfile
 def setup_args(parser=None) -> ParlaiParser:
     # Get command line arguments
     if not parser:
-        parser = ParlaiParser()
+        parser = ParlaiParser(
+            description='Build the candidate responses for a retrieval model'
+        )
     parser.add_argument(
         '-n',
         '--num-examples',
@@ -48,10 +50,8 @@ def setup_args(parser=None) -> ParlaiParser:
 
 
 def build_cands(opt):
+    opt.log()
     # create repeat label agent and assign it to the specified task
-    if opt['numthreads'] > 1:
-        # Broken in hogwild mode. Just fall back to single processing mode
-        opt['numthreads'] = 1
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
     if opt['outfile'] is None:
@@ -93,6 +93,7 @@ def build_cands(opt):
     fw.close()
 
 
+@register_script('build_candidates', hidden=True)
 class BuildCandidates(ParlaiScript):
     @classmethod
     def setup_args(cls):

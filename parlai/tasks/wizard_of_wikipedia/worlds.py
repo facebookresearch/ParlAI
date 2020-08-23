@@ -69,7 +69,7 @@ class InteractiveWorld(DialogPartnerWorld):
             model='projects:wizard_of_wikipedia:knowledge_retriever',
             add_token_knowledge=add_token_knowledge,
         )
-        knowledge_opt = parser.parse_args([], print_args=False)
+        knowledge_opt = parser.parse_args([])
         self.knowledge_agent = create_agent(knowledge_opt)
 
     def _load_topics(self, opt):

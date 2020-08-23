@@ -1,7 +1,6 @@
 <p align="center"><img width="70%" src="docs/source/\_static/img/parlai.png" /></p>
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE) [![CircleCI](https://circleci.com/gh/facebookresearch/ParlAI.svg?style=shield)](https://circleci.com/gh/facebookresearch/ParlAI/tree/master) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/facebookresearch/ParlAI/blob/master/CONTRIBUTING.md) [![Twitter](https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social)](https://twitter.com/parlai_parley)
-
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/v/parlai?color=blue&label=release)](https://pypi.org/project/parlai/) [![CircleCI](https://img.shields.io/circleci/build/github/facebookresearch/ParlAI/master)](https://circleci.com/gh/facebookresearch/ParlAI/tree/master) [![Coverage](https://img.shields.io/codecov/c/github/facebookresearch/ParlAI)](https://codecov.io/gh/facebookresearch/ParlAI) ![GitHub contributors](https://img.shields.io/github/contributors/facebookresearch/ParlAI) [![Twitter](https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social)](https://twitter.com/parlai_parley)
 --------------------------------------------------------------------------------
 
 [ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
@@ -46,6 +45,12 @@ This is the recommended installation procedure, as it provides ready access to t
 
 All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if requested will be downloaded to `~/ParlAI/downloads`. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
+In case you still want to install ParlAI using pip (less recommended), you can install it as follows:
+```bash
+pip install parlai
+```
+Though pip install command is easier, it would not give you access to the ready examples and the data present in the repository.
+
 ## Documentation
 
  - [Quick Start](https://parl.ai/docs/tutorial_quick.html)
@@ -66,18 +71,18 @@ Note: If any of these examples fail, check the [requirements section](#requireme
 
 Display 10 random examples from the SQuAD task
 ```bash
-python -m parlai.scripts.display_data -t squad
+parlai display_data -t squad
 ```
 
 Evaluate an IR baseline model on the validation set of the Personachat task:
 ```bash
-python -m parlai.scripts.eval_model -m ir_baseline -t personachat -dt valid
+parlai eval_model -m ir_baseline -t personachat -dt valid
 ```
 
 Train a single layer transformer on PersonaChat (requires pytorch and torchtext).
 Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
 ```bash
-python -m parlai.scripts.train_model -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
+parlai train_model -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
 
 
@@ -116,4 +121,4 @@ Please cite the [arXiv paper](https://arxiv.org/abs/1705.06476) if you use ParlA
 ```
 
 ## License
-ParlAI is MIT licensed. See the LICENSE file for details.
+ParlAI is MIT licensed. See the **[LICENSE](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE)** file for details.

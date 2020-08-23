@@ -14,8 +14,6 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.utils.testing import tempdir
 from parlai.utils.misc import Message
 
-from collections import deque
-
 SKIP_TESTS = False
 try:
     from parlai.core.torch_agent import Output
@@ -38,7 +36,7 @@ def get_agent(**kwargs):
     parser = ParlaiParser()
     MockTorchAgent.add_cmdline_args(parser)
     parser.set_params(**kwargs)
-    opt = parser.parse_args([], print_args=False)
+    opt = parser.parse_args([])
     return MockTorchAgent(opt)
 
 
@@ -720,7 +718,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.reset()
         agent.history.update_history(obs)
         vec = agent.history.get_history_vec()
-        self.assertEqual(vec, deque([2001, 1, 2, 3]))
+        self.assertEqual(vec, [2001, 1, 2, 3])
 
         # test history vec list
         agent.history.update_history(obs)
@@ -747,7 +745,42 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.reset()
         agent.history.update_history(obs)
         vec = agent.history.get_history_vec()
-        self.assertEqual(vec, deque([1, 2, 3, MockDict.END_IDX]))
+        self.assertEqual(vec, [1, 2, 3, MockDict.END_IDX])
+
+        # test temp history
+        agent = get_agent(
+            history_size=-1, include_temp_history=True, delimiter='__delim__'
+        )
+        agent.history.reset()
+        agent.history.update_history(obs, temp_history=' temp history')
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot. temp history')
+        vec = agent.history.get_history_vec()
+        self.assertEqual(vec, [1, 2, 3, 1, 2])
+
+        agent.history.update_history(obs, temp_history=' temp history')
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.__delim__I am Groot. temp history')
+        vecs = agent.history.get_history_vec_list()
+        self.assertEqual(vecs, [[1, 2, 3], [1, 2, 3]])
+        vec = agent.history.get_history_vec()
+        self.assertEqual(vec, [1, 2, 3, 1, 1, 2, 3, 1, 2])
+
+    def test_reversed_history(self):
+        agent = get_agent(history_reversed=True)
+        agent.history.reset()
+        agent.history.update_history({'text': 'hello i am stephen'})
+        agent.history.update_history({'text': 'i am bob'})
+        assert agent.history.get_history_str() == 'hello i am stephen\ni am bob'
+        agent.history.reset()
+        agent.history.update_history(
+            {'text': 'your persona: filler\nhello i am stephen'}
+        )
+        agent.history.update_history({'text': 'i am bob'})
+        assert (
+            agent.history.get_history_str()
+            == 'your persona: filler\nhello i am stephen\ni am bob'
+        )
 
     def test_observe(self):
         """
@@ -982,7 +1015,7 @@ class TestTorchAgent(unittest.TestCase):
         def get_popt_and_tl(opt):
             parser = tms.setup_args()
             parser.set_params(**opt)
-            popt = parser.parse_args([], print_args=False)
+            popt = parser.parse_args([])
             for k, v in opt.items():
                 popt[k] = v
             return popt, tms.TrainLoop(popt)

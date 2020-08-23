@@ -1,7 +1,6 @@
-Data Handling, Batching, and Hogwild
-====================================
+Data Handling and Batching
+==========================
 **Authors**: Alexander Holden Miller, Kurt Shuster
-
 
 .. note::
     If you are unfamiliar with the basics of displaying data or
@@ -13,13 +12,7 @@ Data Handling, Batching, and Hogwild
 Introduction
 ^^^^^^^^^^^^
 
-This tutorial will cover the details of:
-
-1) `hogwild (multiprocessing) <#id1>`_;
-
-2) `batched data <#batching>`_; and
-
-3) `handling large datasets using PyTorch Data Loaders <#multiprocessed-pytorch-dataloader>`_
+This tutorial will cover the details of batched data, and why we use Shared Worlds.
 
 With relatively small modifications to a basic agent, it will be able to support
 multithreading and batching. If you need extra speed or are using a very large
@@ -35,19 +28,13 @@ The teacher generates a message, which is shown to the agent.
 The agent generates a reply, which is seen by the teacher.
 
 
-Expanding to batching / hogwild using share()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Expanding to batching using share()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For all tasks one might make,
-there's one function we need to support for both hogwild and batching: ``share()``.
+there's one function we need to support for batching: ``share()``.
 This function should provide whatever is needed to set up a "copy" of the original
-instance of the agent for either each row of a batch or each thread in hogwild.
-
-The same function is used for both batching and hogwild, since most agents only
-use one or the other. However, an agent may check the ``numthreads`` and/or
-``batchsize`` options to adjust its behavior if it wants to support both, and
-we do support doing both batching and hogwild at the same time if the agent
-desires.
+instance of the agent for either each row of a batch.
 
 We create shared agents by instantiating them in the following way:
 
@@ -61,89 +48,7 @@ We create shared agents by instantiating them in the following way:
 
 .. image:: _static/img/world_share.png
 
-
-Hogwild (multiprocessing)
-^^^^^^^^^^^^^^^^^^^^^^^^^
-Hogwild is initialized in the following way:
-
-1. We set up a starting instance of the world: that is, we use ``create_task``
-   to set up a base world with the appropriate agents and tasks.
-2. We pass this world to a ``HogwildWorld``, which sets up a number of
-   synchronization primitives
-3. We launch ``numthreads`` threads, each initialized from a ``share()``'d
-   version of the world and the agents therein.
-4. Once these threads and their world copies are all launched, we return control back
-
-.. image:: _static/img/world_hogwild.png
-
-Now that this world is set up, every time we call parley on it, it will release
-one of its threads to do a parley with its copy of the original base world.
-
-There's some added complexity in the implementation of the class to manage
-synchronization primitives, but the Hogwild world should generally behave just
-like a regular World, so you shouldn't need to worry about it. If you do want
-to check out the implementation, look for HogwildWorld in the `core/worlds.py file
-<https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/worlds.py>`_.
-
-Sharing needs to be implemented properly within all these agents and worlds so
-all the proper information is shared and synced between the threads. We'll take
-a look at the common setup needs for each of those.
-
-
-Hogwild Teachers
-~~~~~~~~~~~~~~~~
-The default setup for teachers include creating a Metrics object to track
-different metrics, including the number of examples shown, accuracy, and f1.
-The default ``share()`` method automatically sets up a thread-safe version of
-these metrics if needed--children can go ahead and access these metrics as normal.
-
-Teachers using dynamic data can most likely proceed as normal, without syncing
-any information outside of the metrics class. However, fixed datasets need
-mechanisms built in to make sure that they don't do validation or testing
-examples more or less than once to ensure consistent results.
-
-Fortunately, the FixedDialogTeacher has this all built in already,
-so merely extending that class provides all the needed functionality.
-
-
-Hogwild Models
-~~~~~~~~~~~~~~
-For models using hogwild training, the primary concern is to share a thread-safe
-version of the model. This process will vary based on which framework you're
-using, but we'll include a few tips for PyTorch here.
-
-First, check out the best practices here:
-http://pytorch.org/docs/master/notes/multiprocessing.html
-
-The primary things to remember are
-1. call ``model.share_memory()`` and include your model in the ``share()`` function
-2. make sure to switch the multiprocessing start method if CUDA is enabled
-
-You can see an example of this in the `Starspace model
-<https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/starspace/starspace.py>`_.
-This model uses multiple CPU threads for faster training, and does not use GPUs at all.
-
-Showing only the code relevant to model sharing, we see:
-
-.. code-block:: python
-
-    def __init__(self, opt, shared=None):
-        if shared:
-            torch.set_num_threads(1)  # otherwise torch uses multiple cores for computation
-            self.model = shared['model']  # don't set up model again yourself
-        else:
-            self.model = Starspace(opt, len(self.dict), self.dict)
-            self.model.share_memory()
-
-    def share(self):
-        shared = super().share()
-        shared['model'] = self.model
-        return shared
-
-
-Batching
-^^^^^^^^
-Batching is set up in the following way (the first step is the same as Hogwild):
+That is, the executed are:
 
 1. We set up a starting instance of the world: that is, we use ``create_task``
    to set up a base world with the appropriate agents and tasks.
@@ -151,9 +56,8 @@ Batching is set up in the following way (the first step is the same as Hogwild):
 3. We create ``batchsize`` worlds, each initialized from a ``share()``'d
    version of the world and the agents therein.
 
-Now, every time we call ``parley`` on this BatchWorld, we will complete ``batchsize`` examples.
-Note that this is different than the behavior of HogwildWorld, where only a
-single example is executed for each call to parley.
+Now, every time we call ``parley`` on this BatchWorld, we will complete
+``batchsize`` examples.
 
 .. image::  _static/img/world_batchbasic.png
 

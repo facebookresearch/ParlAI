@@ -52,7 +52,6 @@ def main(opt):
     opt['task'] = teacher_name
     assert 'personas_path' in opt, 'Must specify personas path'
     opt['datatype'] = 'train:ordered:stream'
-    opt['numthreads'] = 1
     opt['batchsize'] = 1
     extract_and_save(opt)
 

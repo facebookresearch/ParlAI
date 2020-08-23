@@ -788,7 +788,7 @@ class HuggingFaceBpeHelper(BPEHelper):
         """
         Add special tokens to the tokenizer and dict_agent.
         """
-        logging.info(f'adding the following special tokens: {special_tokens}')
+        logging.debug(f'adding the following special tokens: {special_tokens}')
         self.tokenizer.add_special_tokens(special_tokens)  # add to HF
 
         for tok in special_tokens:
@@ -826,7 +826,7 @@ class HuggingFaceBpeHelper(BPEHelper):
         :param file_name:
             file to save.
         """
-        self.tokenizer.save(dir_name, file_name)
+        self.tokenizer.save_model(dir_name, file_name)
 
 
 class SlowBytelevelBPE(Gpt2BpeHelper):

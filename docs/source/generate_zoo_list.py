@@ -40,7 +40,7 @@ def model_text(model_dict, fout):
     if 'example' in model:
         example = model['example']
     else:
-        example = "python -m parlai.scripts.eval_model --model {} --task {} -mf {}".format(
+        example = "parlai eval_model --model {} --task {} -mf {}".format(
             model['agent'], model['task'], model['path']
         )
     result = model.get('result', '').strip().split("\n")

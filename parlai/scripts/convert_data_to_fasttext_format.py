@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python convert_data_to_fasttext_format.py -t babi:task1k:1 --outfile /tmp/dump
+  parlai convert_data_to_fasttext_format -t babi:task1k:1 --outfile /tmp/dump
 """
 
 from parlai.core.params import ParlaiParser
@@ -21,13 +21,14 @@ from parlai.utils.misc import TimeLogger
 import random
 import tempfile
 import parlai.utils.logging as logging
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 
 def dump_data(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
+    opt.log()
     if opt['outfile'] is None:
         outfile = tempfile.mkstemp(
             prefix='{}_{}_'.format(opt['task'], opt['datatype']), suffix='.txt'
@@ -70,7 +71,7 @@ def dump_data(opt):
 def setup_args(parser=None) -> ParlaiParser:
     # Get command line arguments
     if not parser:
-        parser = ParlaiParser()
+        parser = ParlaiParser(description='Convert data for ingestion in fastText')
     # Get command line arguments
     parser.add_argument(
         '-n',
@@ -91,6 +92,7 @@ def setup_args(parser=None) -> ParlaiParser:
     return parser
 
 
+@register_script('convert_to_fasttext', hidden=True)
 class ConvertDataToFastText(ParlaiScript):
     @classmethod
     def setup_args(cls):

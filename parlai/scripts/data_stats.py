@@ -11,7 +11,7 @@ Examples
 
 .. code-block:: shell
 
-  python parlai/scripts/data_stats.py -t convai2 -dt train:ordered
+  parlai data_stats -t convai2 -dt train:ordered
 """
 from parlai.core.params import ParlaiParser
 from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
@@ -19,14 +19,14 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.core.metrics import AverageMetric
 from parlai.core.dict import DictionaryAgent
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 
 import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, False, 'Lint for ParlAI tasks')
+        parser = ParlaiParser(True, False, 'Compute data statistics')
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
@@ -62,7 +62,7 @@ def _report(world, counts):
     return report
 
 
-def verify(opt, printargs=None, print_parser=None):
+def verify(opt):
     if opt['datatype'] == 'train':
         logging.warn('changing datatype from train to train:ordered')
         opt['datatype'] = 'train:ordered'
@@ -71,6 +71,7 @@ def verify(opt, printargs=None, print_parser=None):
     opt['fixed_response'] = None
     agent = FixedResponseAgent(opt)
     world = create_task(opt, agent)
+    opt.log()
 
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
@@ -161,19 +162,20 @@ def verify(opt, printargs=None, print_parser=None):
     return retval
 
 
-def obtain_stats(opt, parser):
-    report = verify(opt, print_parser=parser)
+def obtain_stats(opt):
+    report = verify(opt)
     print(nice_report(report))
     return report
 
 
+@register_script('data_stats', hidden=True)
 class DataStats(ParlaiScript):
     @classmethod
     def setup_args(cls):
         return setup_args()
 
     def run(self):
-        return obtain_stats(self.opt, self.parser)
+        return obtain_stats(self.opt)
 
 
 if __name__ == '__main__':

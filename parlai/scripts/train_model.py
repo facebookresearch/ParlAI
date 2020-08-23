@@ -16,9 +16,9 @@ Examples
 --------
 .. code-block:: shell
 
-  python -m parlai.scripts.train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-  python -m parlai.scripts.train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-  python -m parlai.scripts.train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+  parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+  parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+  parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
 """  # noqa: E501
 
 # TODO List:
@@ -46,7 +46,7 @@ from parlai.utils.distributed import (
     num_workers,
 )
 from parlai.utils.misc import Timer, nice_report
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 
@@ -161,7 +161,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '-lfc',
         '--load-from-checkpoint',
         type='bool',
-        default=False,
+        default=True,
         hidden=True,
         help='load model from checkpoint if available',
     )
@@ -276,6 +276,7 @@ class TrainLoop:
 
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
+        self.agent.opt.log()
         self.world = create_task(opt, self.agent)
         # set up timers
         self.train_time = Timer()
@@ -317,6 +318,7 @@ class TrainLoop:
 
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
+        self.train_reports = []
         self.valid_reports = []
         self.best_valid = None
 
@@ -339,6 +341,7 @@ class TrainLoop:
                 self.train_time.total = obj.get('train_time', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
+                self.train_reports = obj.get('train_reports', [])
                 if 'best_valid' in obj:
                     self.best_valid = obj['best_valid']
                 else:
@@ -391,12 +394,9 @@ class TrainLoop:
                 {
                     'parleys': self.parleys,
                     'train_time': self.train_time.time(),
-                    'total_epochs': (
-                        self._preempted_epochs
-                        + num_workers() * self.world.get_total_epochs()
-                    ),
-                    'impatience': self.impatience,
-                    'valid_reports': [self._safe_report(v) for v in self.valid_reports],
+                    'total_epochs': self._total_epochs,
+                    'train_reports': self.train_reports,
+                    'valid_reports': self.valid_reports,
                     'best_valid': self.best_valid,
                 },
                 f,
@@ -420,8 +420,11 @@ class TrainLoop:
         valid_report = self._run_eval(
             self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
-        v = valid_report.copy()
+        v = self._safe_report(valid_report.copy())
         v['train_time'] = self.train_time.time()
+        v['parleys'] = self.parleys
+        v['total_exs'] = self._total_exs
+        v['total_epochs'] = self._total_epochs
         self.valid_reports.append(v)
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
@@ -608,6 +611,13 @@ class TrainLoop:
         train_report = self._sync_metrics(train_report)
         self.world.reset_metrics()
 
+        train_report_trainstats = self._safe_report(train_report)
+        train_report_trainstats['total_epochs'] = self._total_epochs
+        train_report_trainstats['total_exs'] = self._total_exs
+        train_report_trainstats['parleys'] = self.parleys
+        train_report_trainstats['train_time'] = self.train_time.time()
+        self.train_reports.append(train_report_trainstats)
+
         # time elapsed
         logs.append(f'time:{self.train_time.time():.0f}s')
         logs.append(f'total_exs:{self._total_exs}')
@@ -749,6 +759,7 @@ class TrainLoop:
         return v_report, t_report
 
 
+@register_script('train_model', aliases=['tm', 'train'])
 class TrainModel(ParlaiScript):
     @classmethod
     def setup_args(cls):
@@ -756,8 +767,6 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
-        self.parser.opt = self.train_loop.agent.opt
-        self.parser.print_args()
         return self.train_loop.train()
 
 

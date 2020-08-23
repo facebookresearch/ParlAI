@@ -52,7 +52,6 @@ def store_contents(opt, task, save_path, context_length=-1, include_labels=True)
     dt = opt.get('datatype', '').split(':')
     ordered_opt['datatype'] = ':'.join([dt[0], 'ordered'] + dt[1:])
     ordered_opt['batchsize'] = 1
-    ordered_opt['numthreads'] = 1
     ordered_opt['task'] = task
     teacher = create_task_agent_from_taskname(ordered_opt)[0]
 

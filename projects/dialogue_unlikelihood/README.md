@@ -20,8 +20,12 @@ We demonstrate the efficacy of our approach across several dialogue tasks.
 
 ## Code
 
-To be released soon.
+Code for the unlikelihood agents is released in `agents.py`
 
-## Models
+## Pretrained Models
 
-To be released soon.
+We release 13 models via the [ParlAI Model Zoo](https://www.parl.ai/docs/zoo.html). 
+
+- Nine models are trained with repetition unlikelihood to reduce repeats. For each of the three datasets ConvAI2, Wizard of Wikipedia, and ELI5, we release one model each whicih targets context repeats, label repeats, and both.
+- Four models are trained with vocab unlikelihood on the ConvAI2 dataset with alpha values 1e0, 1e1, 1e2, and 1e3.
+

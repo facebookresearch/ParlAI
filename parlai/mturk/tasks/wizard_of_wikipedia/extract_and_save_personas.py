@@ -56,7 +56,6 @@ def main(opt):
         )
         opt['personas_path'] = personas_path
     opt['datatype'] = 'train:ordered:stream'
-    opt['numthreads'] = 1
     opt['batchsize'] = 1
     personas = extract_and_save(opt)
     return personas

@@ -12,14 +12,14 @@ Examples
 
 .. code-block:: shell
 
-  python examples/display_model.py -t babi:task1k:1 -m "repeat_label"
-  python examples/display_model.py -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
+  parlai display_model -t babi:task1k:1 -m "repeat_label"
+  parlai display_model -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
 """  # noqa: E501
 
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.strings import colorize
 import parlai.utils.logging as logging
 
@@ -64,6 +64,7 @@ def display_model(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
+    agent.opt.log()
 
     # Show some example dialogs.
     turn = 0
@@ -83,6 +84,7 @@ def display_model(opt):
                 break
 
 
+@register_script('display_model', aliases=['dm'])
 class DisplayModel(ParlaiScript):
     @classmethod
     def setup_args(cls):
