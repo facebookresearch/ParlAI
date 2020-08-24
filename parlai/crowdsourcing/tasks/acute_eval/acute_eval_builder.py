@@ -19,16 +19,17 @@ FRONTEND_BUILD_DIR = os.path.join(FRONTEND_SOURCE_DIR, "build")
 
 class AcuteEvalBuilder(TaskBuilder):
     """
-    Builder for a static task, pulls the appropriate html,
-    builds the frontend (if a build doesn't already exist),
-    then puts the file into the server directory
+    Builder for a static task, pulls the appropriate html, builds the frontend (if a
+    build doesn't already exist), then puts the file into the server directory.
     """
 
     BUILT_FILE = "done.built"
     BUILT_MESSAGE = "built!"
 
     def rebuild_core(self):
-        """Rebuild the frontend for this task"""
+        """
+        Rebuild the frontend for this task.
+        """
         return_dir = os.getcwd()
         os.chdir(FRONTEND_SOURCE_DIR)
         if os.path.exists(FRONTEND_BUILD_DIR):
@@ -48,7 +49,9 @@ class AcuteEvalBuilder(TaskBuilder):
         os.chdir(return_dir)
 
     def build_in_dir(self, build_dir: str):
-        """Build the frontend if it doesn't exist, then copy into the server directory"""
+        """
+        Build the frontend if it doesn't exist, then copy into the server directory.
+        """
         # Only build this task if it hasn't already been built
         if True:  # not os.path.exists(FRONTEND_BUILD_DIR):
             self.rebuild_core()
@@ -72,5 +75,7 @@ class AcuteEvalBuilder(TaskBuilder):
     # TODO(#97) update test validation
     @staticmethod
     def task_dir_is_valid(task_dir: str) -> bool:
-        """Acute eval is always valid, we don't have any special resources"""
+        """
+        Acute eval is always valid, we don't have any special resources.
+        """
         return True

@@ -40,8 +40,7 @@ class AcuteEvalAgentState(StaticAgentState):
 
     def update_data(self, packet: "Packet") -> None:
         """
-        Process the incoming data packet, and handle
-        updating the state
+        Process the incoming data packet, and handle updating the state.
         """
         assert (
             packet.data.get("MEPHISTO_is_submit") is True

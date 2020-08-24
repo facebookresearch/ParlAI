@@ -37,7 +37,7 @@ UnitID = str
 # unfinished tasks remain.
 class AcuteEvalRunner(TaskRunner):
     """
-    Managing class for the acute evaluator process
+    Managing class for the acute evaluator process.
 
     Relevant args are parsed in the `setup_args` function above.
     """
@@ -439,7 +439,7 @@ class AcuteEvalRunner(TaskRunner):
 
     def get_init_data_for_agent(self, agent: "Agent") -> List[PairingsDict]:
         """
-        Return the data for an agent already assigned to a particular unit
+        Return the data for an agent already assigned to a particular unit.
         """
         init_state = agent.state.get_init_state()
         if init_state is not None:
@@ -454,8 +454,8 @@ class AcuteEvalRunner(TaskRunner):
 
     def run_unit(self, unit: "Unit", agent: "Agent") -> None:
         """
-        Static runners will get the task data, send it to the user, then
-        wait for the agent to act (the data to be completed)
+        Static runners will get the task data, send it to the user, then wait for the
+        agent to act (the data to be completed)
         """
         # Frontend implicitly asks for the initialization data, so we just need
         # to wait for a response
@@ -467,8 +467,8 @@ class AcuteEvalRunner(TaskRunner):
 
     def cleanup_unit(self, unit: "Unit") -> None:
         """
-        An incomplete task needs to have the contents of that task requeued
-        into the overall task queue.
+        An incomplete task needs to have the contents of that task requeued into the
+        overall task queue.
         """
         logger.info(f"Cleaning up unit {unit.db_id}")
         if unit.db_id not in self.unit_agent_map:

@@ -29,7 +29,7 @@ BLUEPRINT_TYPE = "acute_eval"
 @register_mephisto_abstraction()
 class AcuteEvalBlueprint(Blueprint):
     """
-    Blueprint for a task that asks humans to compare conversational outputs
+    Blueprint for a task that asks humans to compare conversational outputs.
     """
 
     AgentStateClass: ClassVar[Type["AgentState"]] = AcuteEvalAgentState
@@ -40,7 +40,9 @@ class AcuteEvalBlueprint(Blueprint):
 
     @classmethod
     def assert_task_args(cls, opts: Any) -> None:
-        """Ensure that the data can be properly loaded"""
+        """
+        Ensure that the data can be properly loaded.
+        """
         if opts.get("pairings_filepath") is not None:
             pairings_filepath = os.path.expanduser(opts["pairings_filepath"])
             assert os.path.exists(
@@ -166,8 +168,8 @@ class AcuteEvalBlueprint(Blueprint):
 
     def get_frontend_args(self) -> Dict[str, Any]:
         """
-        Specifies what options within a task_config should be forwarded
-        to the client for use by the task's frontend
+        Specifies what options within a task_config should be forwarded to the client
+        for use by the task's frontend.
         """
         return {
             "task_description": "Placeholder Task Description - Javascript failed to load",
@@ -181,7 +183,7 @@ class AcuteEvalBlueprint(Blueprint):
 
     def get_initialization_data(self) -> Iterable["InitializationData"]:
         """
-        Return the InitializationData retrieved from the specified stream
+        Return the InitializationData retrieved from the specified stream.
         """
         # TODO(#99) once we can release HITs over time, configure this to
         # release as many as needed thusfar and top off when
