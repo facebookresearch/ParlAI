@@ -85,6 +85,12 @@ def run_task(override_opt):
         type=str,
         help='Path to a list of IDs of workers to soft-block, separated by newlines',
     )
+    argparser.add_argument(
+        '--check-acceptability',
+        default=False,
+        type=bool,
+        help="Check worker's responses against several metrics of acceptability",
+    )
 
     argparser.set_params(**override_opt)
     opt = argparser.parse_args()
@@ -216,6 +222,7 @@ def run_task(override_opt):
                 max_resp_time=opt['max_resp_time'],
                 tag='conversation t_{}'.format(conv_idx),
                 annotations_config=ANNOTATIONS_CONFIG,
+                check_acceptability=opt['check_acceptability'],
             )
             while not world.episode_done():
                 print('About to parley')

@@ -234,6 +234,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         max_resp_time=120,
         agent_timeout_shutdown=120,
         annotations_config: dict = None,
+        check_acceptability: bool = False,
     ):
         # 6 turns for a single side (so 12 total), and really it appears to be
         # 14 total b/c of the "Hi!" and first bot utterance
@@ -247,6 +248,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
         self.annotations_config = annotations_config
+        self.check_acceptability = check_acceptability
         self.acceptability_checker = AcceptabilityChecker()
 
         # below are timeout protocols
