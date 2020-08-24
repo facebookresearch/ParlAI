@@ -347,9 +347,9 @@ test data is ordered by default).
 
 We maintain a complete task list in the [code
 here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/task_list.py)
-or in this [documentation here](tasks.html). The set of tasks in ParlAI
+or in this [documentation here](tasks). The set of tasks in ParlAI
 is continually growing from contributors. See [this
-tutorial](tutorial_task.html) for making your own tasks.
+tutorial](tutorial_task) for making your own tasks.
 
 ### Training and Evaluating Existing Agents
 
@@ -385,7 +385,7 @@ The main flags are:
 1\) -m (-model) which sets the agent type that will be trained. The
 agents available in parlAI [are
 here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents).
-See [this tutorial](tutorial_task.html) for making your own agents.
+See [this tutorial](tutorial_task) for making your own agents.
 
 2)  -mf (--modelfile) points to the file name of where to save your
     model.
