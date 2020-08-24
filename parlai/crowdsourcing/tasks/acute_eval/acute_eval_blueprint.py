@@ -77,7 +77,7 @@ class AcuteEvalBlueprint(Blueprint):
             AcuteEvalBlueprint: Tasks launched from acute eval blueprints
             require sets of pairings for workers to be able to compare to.
 
-            These pairings can be provided as a csv or by passing a 
+            These pairings can be provided as a csv or by passing a
             pairings_task_data dict into extra_args.
         """
         group.add_argument(

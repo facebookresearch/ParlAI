@@ -19,8 +19,9 @@ DATA_FILE = "agent_data.json"
 
 class AcuteEvalAgentState(StaticAgentState):
     """
-    Agent state for acute eval tasks - equivalent to StaticAgentState but 
-    doesn't have file IO
+    Agent state for acute eval tasks.
+
+    Equivalent to StaticAgentState but doesn't have file IO.
     """
 
     def get_parsed_data(self) -> List[Dict[str, Any]]:
