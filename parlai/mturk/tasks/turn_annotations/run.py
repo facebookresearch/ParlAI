@@ -140,6 +140,23 @@ def run_task(override_opt):
         mturk_manager.start_new_run()
         mturk_manager.create_hits()
 
+        # TODO: revise below
+        if not opt['is_sandbox']:
+            # Soft-block all chosen workers
+            if not opt['skip_block_list']:
+                print('About to run blocking for q-function task.')
+                for w in set(all_blocks):
+                    try:
+                        print('Soft Blocking {}\n'.format(w))
+                        mturk_manager.soft_block_worker(w)
+                    except Exception as e:
+                        print(f'Did not soft block worker {w}: {e}')
+                    time.sleep(0.1)
+            else:
+                print(
+                    'WARNING: We are in live mode but specified to not do problematic worker blocking. Only do this if blocking has already been run!'
+                )
+
         def run_onboard(worker):
             world = TurnAnnotationsOnboardWorld(opt, worker)
             status = world.parley()
