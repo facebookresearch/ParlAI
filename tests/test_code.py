@@ -21,9 +21,8 @@ class TestInit(unittest.TestCase):
     def test_init_everywhere(self):
         for folder_path in testing_utils.git_ls_dirs('parlai'):
             excluded_folders = ['mturk', 'webapp']
-            for folder_name in excluded_folders:
-                if folder_name in folder_path:
-                    continue
+            if any(folder_name in folder_path for folder_name in excluded_folders):
+                continue
             self.assertIn(
                 '__init__.py',
                 os.listdir(folder_path),
