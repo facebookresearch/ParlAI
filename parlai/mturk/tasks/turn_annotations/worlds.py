@@ -11,9 +11,7 @@ import datetime
 from joblib import Parallel, delayed
 
 from parlai.core.worlds import validate, MultiAgentDialogWorld
-from parlai_internal.mturk.tasks.q_function.original.acceptability import (
-    AcceptabilityChecker,
-)
+from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.mturk.core.agents import (
     TIMEOUT_MESSAGE,
     MTURK_DISCONNECT_MESSAGE,
@@ -421,8 +419,8 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             human_texts = [
                 message['text'] for message in self.dialog if message['agent_idx'] == 0
             ]
-            acceptability_violations_agent_0 = self.acceptability_checker.check_messages(
-                human_texts, is_worker_0=False
+            violations_agent_0 = self.acceptability_checker.check_messages(
+                messages=human_texts, is_worker_0=False, penalize_greetings=False
             )
 
         time_string = time.strftime('%Y%m%d_%H%M%S')
@@ -457,7 +455,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 },
             }
             if self.check_acceptability:
-                data['acceptability_violations'] = (acceptability_violations_agent_0,)
+                data['acceptability_violations'] = (violations_agent_0,)
                 # Make a tuple for compatibility with a human/human conversation in
                 # which we check both sides for acceptability
             data_str = json.dumps(data)
@@ -467,15 +465,8 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             f'{filename} for model: {self.agents[1].worker_id}.'
         )
         if self.check_acceptability:
-            print(
-                f'Acceptability violations for agent 0: '
-                f'{acceptability_violations_agent_0}'
-            )
-            return (
-                self.agents[1].worker_id,
-                acceptability_violations_agent_0 != '',
-                convo_finished,
-            )
+            print(f'Acceptability violations for agent 0: ' f'{violations_agent_0}')
+            return (self.agents[1].worker_id, violations_agent_0 != '', convo_finished)
         else:
             return self.agents[1].worker_id, False, convo_finished
 
