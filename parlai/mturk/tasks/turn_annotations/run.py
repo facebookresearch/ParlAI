@@ -220,9 +220,12 @@ def run_task(override_opt):
             while not world.episode_done():
                 print('About to parley')
                 world.parley()
-            model_nickname, convo_finished = world.save_data()
-
-            if convo_finished:
+            model_nickname, worker_is_unacceptable, convo_finished = world.save_data()
+            if worker_is_unacceptable:
+                print(f'Soft-blocking worker {workers[0].worker_id}')
+                mturk_manager.soft_block_worker(workers[0].worker_id)
+                time.sleep(0.1)
+            if not worker_is_unacceptable and convo_finished:
                 run_statistics[model_nickname] += 1
 
             world.shutdown()
