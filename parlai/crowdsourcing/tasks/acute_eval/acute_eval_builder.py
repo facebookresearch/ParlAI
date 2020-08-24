@@ -10,8 +10,6 @@ import os
 import shutil
 import subprocess
 
-from typing import TYPE_CHECKING
-
 ACUTE_TASK_DIR = os.path.dirname(__file__)
 FRONTEND_SOURCE_DIR = os.path.join(ACUTE_TASK_DIR, "webapp")
 FRONTEND_BUILD_DIR = os.path.join(FRONTEND_SOURCE_DIR, "build")

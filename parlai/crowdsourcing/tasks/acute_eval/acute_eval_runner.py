@@ -459,7 +459,7 @@ class AcuteEvalRunner(TaskRunner):
         """
         # Frontend implicitly asks for the initialization data, so we just need
         # to wait for a response
-        agent_act = agent.act(timeout=self.assignment_duration_in_seconds)
+        _ = agent.act(timeout=self.assignment_duration_in_seconds)
         if self.opts["block_on_onboarding_fail"]:
             # check whether workers failed onboarding
             self.check_and_update_worker_approval(agent)
