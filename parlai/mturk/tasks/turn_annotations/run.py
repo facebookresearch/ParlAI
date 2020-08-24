@@ -79,6 +79,12 @@ def run_task(override_opt):
         type=str,
         help='base folder for saving all worker answer results during onboarding',
     )
+    argparser.add_argument(
+        '--block-list-path',
+        default=None,
+        type=str,
+        help='Path to a list of IDs of workers to soft-block, separated by newlines',
+    )
 
     argparser.set_params(**override_opt)
     opt = argparser.parse_args()
@@ -140,12 +146,13 @@ def run_task(override_opt):
         mturk_manager.start_new_run()
         mturk_manager.create_hits()
 
-        # TODO: revise below
         if not opt['is_sandbox']:
             # Soft-block all chosen workers
-            if not opt['skip_block_list']:
-                print('About to run blocking for q-function task.')
-                for w in set(all_blocks):
+            if opt['block_list_path'] is not None and len(opt['block_list_path']) > 0:
+                print('About to soft-block workers in the input list.')
+                with open(opt['block_list_path']) as f:
+                    workers_to_block = f.read().strip().split('\n')
+                for w in set(workers_to_block):
                     try:
                         print('Soft Blocking {}\n'.format(w))
                         mturk_manager.soft_block_worker(w)
@@ -154,7 +161,8 @@ def run_task(override_opt):
                     time.sleep(0.1)
             else:
                 print(
-                    'WARNING: We are in live mode but specified to not do problematic worker blocking. Only do this if blocking has already been run!'
+                    'WARNING: We are in live mode, but a list of workers to soft-block '
+                    'has not been passed in.'
                 )
 
         def run_onboard(worker):
