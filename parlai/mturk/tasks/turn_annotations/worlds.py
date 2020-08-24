@@ -11,13 +11,15 @@ import datetime
 from joblib import Parallel, delayed
 
 from parlai.core.worlds import validate, MultiAgentDialogWorld
+from parlai_internal.mturk.tasks.q_function.original.acceptability import (
+    AcceptabilityChecker,
+)
 from parlai.mturk.core.agents import (
     TIMEOUT_MESSAGE,
     MTURK_DISCONNECT_MESSAGE,
     RETURN_MESSAGE,
 )
 from parlai.mturk.core.worlds import MTurkOnboardWorld
-
 from parlai.mturk.tasks.turn_annotations.constants import (
     AGENT_1,
     WAITING_MSG,
@@ -245,6 +247,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
         self.annotations_config = annotations_config
+        self.acceptability_checker = AcceptabilityChecker()
 
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
@@ -412,6 +415,14 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 convo_finished = False
                 ag.not_approve = True
 
+        if self.check_acceptability:
+            human_texts = [
+                message['text'] for message in self.dialog if message['agent_idx'] == 0
+            ]
+            acceptability_violations_agent_0 = self.acceptability_checker.check_messages(
+                human_texts, is_worker_0=False
+            )
+
         time_string = time.strftime('%Y%m%d_%H%M%S')
         data_path = self.opt['save_folder']
         if convo_finished:
@@ -443,15 +454,28 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     'model_opt': self.agents[1].model_agent.opt,
                 },
             }
+            if self.check_acceptability:
+                data['acceptability_violations'] = (acceptability_violations_agent_0,)
+                # Make a tuple for compatibility with a human/human conversation in
+                # which we check both sides for acceptability
             data_str = json.dumps(data)
             f_json.write(data_str)
         print(
-            f'{self.__class__.__name__}:{self.tag}: Data successfully saved at {filename} for model: {self.agents[1].worker_id}.'
+            f'{self.__class__.__name__}:{self.tag}: Data successfully saved at '
+            f'{filename} for model: {self.agents[1].worker_id}.'
         )
-        return (
-            self.agents[1].worker_id,
-            convo_finished,
-        )
+        if self.check_acceptability:
+            print(
+                f'Acceptability violations for agent 0: '
+                f'{acceptability_violations_agent_0}'
+            )
+            return (
+                self.agents[1].worker_id,
+                acceptability_violations_agent_0 != '',
+                convo_finished,
+            )
+        else:
+            return self.agents[1].worker_id, False, convo_finished
 
     def check_timeout(self, act):
         if act['text'] == '[TIMEOUT]' and act['episode_done']:
