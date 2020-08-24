@@ -1,8 +1,5 @@
 # ACUTE-Eval
 
-## NOTE this README is partially out of date and needs updates
-#### TODO update
-
 ## Paper information
 
 Margaret Li, Jason Weston, Stephen Roller.
@@ -22,9 +19,9 @@ following BibTex entry:
     }
 
 # Code Instructions
-Once you have [installed ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai),
-follow the instructions below.
+Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
+#### TODO update readme from here
 The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
     python parlai/mturk/tasks/acute_eval/run.py --pairings-filepath parlai/mturk/tasks/acute_eval/example/pairings.jsonl
