@@ -93,9 +93,13 @@ Dataset-specific fields are available in some cases in order to support
 reproducing paper results. For example, SQuAD has an `answer_starts`
 field, which is available in the "squad:index" task.
 
-__Note__: during validation and testing, the `labels` field is renamed
+
+:::{admonition,note} Automatic Processing
+During validation and testing, the `labels` field is renamed
 `eval_labels`--this way, the model won't accidentally train on the
 labels, but they are still available for calculating model-side loss.
+:::
+
 Models can check if they are training on a supervised task in the
 following manner:
 
