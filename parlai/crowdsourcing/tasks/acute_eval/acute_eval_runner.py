@@ -6,18 +6,16 @@
 
 from mephisto.data_model.blueprint import TaskRunner
 
-import os
 import time
-import threading
 import random
 import queue
 import json
 
-from typing import ClassVar, List, Type, Any, Dict, Tuple, Set, TYPE_CHECKING
+from typing import List, Any, Dict, Tuple, Set, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
-    from mephisto.data_model.assignment import Unit, InitializationData
+    from mephisto.data_model.assignment import Unit
     from mephisto.data_model.agent import Agent
 from mephisto.core.logger_core import get_logger
 
@@ -474,7 +472,9 @@ class AcuteEvalRunner(TaskRunner):
         """
         logger.info(f"Cleaning up unit {unit.db_id}")
         if unit.db_id not in self.unit_agent_map:
-            return logger.warn(f"Unit {unit.db_id} already appears to have been cleaned up")
+            return logger.warn(
+                f"Unit {unit.db_id} already appears to have been cleaned up"
+            )
         worker_id, task_data = self.unit_agent_map[unit.db_id]
         del self.unit_agent_map[unit.db_id]
         self.requeue_task_data(worker_id, task_data)

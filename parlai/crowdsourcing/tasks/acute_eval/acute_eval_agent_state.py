@@ -4,16 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import List, Dict, Optional, Any, TYPE_CHECKING
+from typing import List, Dict, Any, TYPE_CHECKING
 from mephisto.server.blueprints.abstract.static_task.static_agent_state import (
     StaticAgentState,
 )
-import os
 import time
-import json
 
 if TYPE_CHECKING:
-    from mephisto.data_model.agent import Agent
     from mephisto.data_model.packet import Packet
 
 

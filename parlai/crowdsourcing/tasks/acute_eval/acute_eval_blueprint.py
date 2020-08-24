@@ -13,17 +13,13 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_runner import AcuteEvalRun
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_builder import AcuteEvalBuilder
 from mephisto.core.registry import register_mephisto_abstraction
 
-import random
 import os
-import time
 import math
 
 from typing import ClassVar, List, Type, Any, Dict, Iterable, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from mephisto.data_model.task import TaskRun
     from mephisto.data_model.blueprint import AgentState, TaskRunner, TaskBuilder
-    from mephisto.data_model.assignment import Assignment
     from argparse import _ArgumentGroup as ArgumentGroup
 
 BLUEPRINT_TYPE = "acute_eval"

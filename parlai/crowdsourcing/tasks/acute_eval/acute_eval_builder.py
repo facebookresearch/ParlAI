@@ -6,18 +6,11 @@
 
 from mephisto.data_model.blueprint import TaskBuilder
 
-from distutils.dir_util import copy_tree
 import os
-import time
-import sh
 import shutil
 import subprocess
 
-from typing import ClassVar, List, Type, Any, Dict, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from mephisto.data_model.task import TaskRun
-    from mephisto.data_model.assignment import Assignment
+from typing import TYPE_CHECKING
 
 ACUTE_TASK_DIR = os.path.dirname(__file__)
 FRONTEND_SOURCE_DIR = os.path.join(ACUTE_TASK_DIR, "webapp")

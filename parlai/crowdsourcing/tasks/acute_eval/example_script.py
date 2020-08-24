@@ -7,7 +7,6 @@ import os
 import time
 import shlex
 from mephisto.core.operator import Operator
-from mephisto.core.utils import get_root_dir
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
 from mephisto.utils.scripts import MephistoRunScriptParser
 
