@@ -249,6 +249,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         self.tag = tag
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
+        self.context_info = context_info
         self.annotations_config = annotations_config
         self.check_acceptability = check_acceptability
         self.acceptability_checker = AcceptabilityChecker()
@@ -457,6 +458,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     'model_file': self.agents[1].model_agent.opt['model_file'],
                     'model_opt': self.agents[1].model_agent.opt,
                 },
+                'context_info': self.context_info,
             }
             if self.check_acceptability:
                 data['acceptability_violations'] = (violations_agent_0,)
