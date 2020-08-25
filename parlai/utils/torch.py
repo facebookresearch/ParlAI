@@ -333,6 +333,24 @@ class PipelineHelper(object):
             self.devices.append(d)
             self.__device_allocations[d] = 0
 
+    def check_compatibility(self, opt):
+        """
+        Check compatibility for opts.
+
+        Really just used to raise an error message if the user mixes multiprocessing and
+        model parallelism.
+        """
+        if opt.get('multiprocessing') and not os.environ.get('PARLAI_FORCE_MP'):
+            raise RuntimeError(
+                "It looks like you are trying to mix multiprocessing data "
+                "parallelism (multiprocessing_train or multiprocessing_eval) "
+                "with --model-parallel true. This is almost certainly a user "
+                "error, and is going to result in hanging as the two methods "
+                "fight for resources. Use simple `train_model` instead of "
+                "`mp_train`, or add `--model-parallel false`. For more info, "
+                "see https://github.com/facebookresearch/ParlAI/issues/2962."
+            )
+
     def make_parallel(self, model: torch.nn.Module) -> torch.nn.Module:
         """
         Allocate specific layers in a model to be ModelParallel.
