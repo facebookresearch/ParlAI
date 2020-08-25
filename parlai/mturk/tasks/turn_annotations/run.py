@@ -93,10 +93,17 @@ def run_task(override_opt):
         help="Check worker's responses against several metrics of acceptability",
     )
     argparser.add_argument(
-        '--use-bst-context',
+        '--include-persona',
         default=False,
         type=bool,
-        help="Use context info from dialogue datasets as in BlendedSkillTalk",
+        help="Show personas to the human and bot",
+    )
+    argparser.add_argument(
+        '--conversation-start-mode',
+        default='hi',
+        type=str,
+        choices=['hi', 'bst'],
+        help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
 
     argparser.set_params(**override_opt)
@@ -155,7 +162,7 @@ def run_task(override_opt):
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server(task_directory_path=directory_path)
 
-    if opt['use_bst_context']:
+    if opt['include_personas'] or opt['conversation_start_mode'] == 'bst':
         context_generator = ContextGenerator(opt, datatype='test')
         # We pull from the test set so that the model can't regurgitate
         # memorized conversations
