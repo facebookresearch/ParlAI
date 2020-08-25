@@ -81,7 +81,7 @@ def run_task(override_opt):
         help='base folder for saving all worker answer results during onboarding',
     )
     argparser.add_argument(
-        '--block-list-path',
+        '--blocklist-path',
         default=None,
         type=str,
         help='Path to a list of IDs of workers to soft-block, separated by newlines',
@@ -175,9 +175,9 @@ def run_task(override_opt):
 
         if not opt['is_sandbox']:
             # Soft-block all chosen workers
-            if opt['block_list_path'] is not None and len(opt['block_list_path']) > 0:
+            if opt['blocklist_path'] is not None and len(opt['blocklist_path']) > 0:
                 print('About to soft-block workers in the input list.')
-                with open(opt['block_list_path']) as f:
+                with open(opt['blocklist_path']) as f:
                     workers_to_block = f.read().strip().split('\n')
                 for w in set(workers_to_block):
                     try:

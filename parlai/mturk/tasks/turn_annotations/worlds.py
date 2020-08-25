@@ -265,10 +265,14 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         # Human has just responded. Problem data received
         # now will be from bot's prior utterance (turn_idx
         # is a also present to be safe that data matches)
+        is_fake_utterance = (
+            'fake_start' in self.dialog[p['turn_idx']]
+            and self.dialog[p['turn_idx']]['fake_start']
+        )
         annotations = []
         for a in ANNOTATIONS_CONFIG:
             annotations.append(p[a['value']])
-        assert any(annotations)
+        assert any(annotations) or is_fake_utterance
         self.dialog[p['turn_idx']]['problem_data'] = p
 
     def parley(self):
@@ -286,34 +290,47 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         )
 
         if self.task_turn_idx == 0:
-            print('[Displaying "Hi!" only as per Meena task.]')
-            human_first_msg = {
-                'left_pane_text': self.opt['left_pane_text'],
-                'episode_done': False,
-                'id': self.agents[0].id,
-                'text': 'Hi!',
-                'fake_start': True,
-                'agent_idx': 0,
-            }
-            for k, v in control_msg.items():
-                human_first_msg[k] = v
 
-            self.dialog.append(human_first_msg)
-            self.agents[0].observe(validate(human_first_msg))
-            self.agents[1].observe(validate(human_first_msg))
+            if self.opt['conversation_start_mode'] == 'bst':
 
-            first_bot_act = self.agents[1].act()
-            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+                raise NotImplementedError('Do this')
+                # TODO
 
-            self.agents[0].observe(validate(first_bot_act))
+            elif self.opt['conversation_start_mode'] == 'hi':
 
-            bot_utterance_data = {
-                'agent_idx': 1,
-                # Get rid of annotations HTML from bot response
-                'text': first_bot_act['text'].split('<br>')[0],
-                'id': first_bot_act['id'],
-            }
-            self.dialog.append(bot_utterance_data)
+                print('[Displaying "Hi!" only as per Meena task.]')
+                human_first_msg = {
+                    'episode_done': False,
+                    'id': self.agents[0].id,
+                    'text': 'Hi!',
+                    'fake_start': True,
+                    'agent_idx': 0,
+                }
+
+                self.dialog.append(human_first_msg)
+                self.agents[0].observe(validate(human_first_msg))
+                self.agents[1].observe(validate(human_first_msg))
+
+                first_bot_act = self.agents[1].act()
+                first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+
+                self.agents[0].observe(validate(first_bot_act))
+
+                bot_utterance_data = {
+                    'agent_idx': 1,
+                    # Get rid of annotations HTML from bot response
+                    'text': first_bot_act['text'].split('<br>')[0],
+                    'id': first_bot_act['id'],
+                }
+                self.dialog.append(bot_utterance_data)
+
+            else:
+
+                raise ValueError(
+                    f"Conversation start mode {self.opt['conversation_start_mode']} "
+                    f"not recognized!"
+                )
+
             self.task_turn_idx += 1
             return
 
