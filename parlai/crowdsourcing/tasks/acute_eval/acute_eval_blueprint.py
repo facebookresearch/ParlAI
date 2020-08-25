@@ -94,13 +94,6 @@ class AcuteEvalBlueprint(Blueprint):
             default=None,
             help="path to the file containing the task dictionaries",
         )
-        # group.add_argument(
-        #     '--task-config',
-        #     type=dict,
-        #     default=DEFAULT_TASK_CONFIG,
-        #     help='dict with keys "hit_title", "hit_description", "hit_keywords", '
-        #     'determining how task is displayed on MTurk site',
-        # )
         group.add_argument(
             "--s1-choice",
             dest="s1_choice",
@@ -150,13 +143,6 @@ class AcuteEvalBlueprint(Blueprint):
             default=42,
             help="seed for random",
         )
-        # group.add_argument(
-        #     '--softblock-list-path',
-        #     dest="softblock_list_path",
-        #     type=str,
-        #     default=None,
-        #     help='Path to list of workers to softblock, separated by line breaks',
-        # )
         group.add_argument(
             "--additional-task-description",
             dest="additional_task_description",

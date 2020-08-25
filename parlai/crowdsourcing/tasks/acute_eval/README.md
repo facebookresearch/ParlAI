@@ -21,7 +21,7 @@ following BibTex entry:
 # Code Instructions
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
-The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
+The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
 
     python parlai/crowdsourcing/tasks/acute_eval/example_script.py \
     --pairings-filepath parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl

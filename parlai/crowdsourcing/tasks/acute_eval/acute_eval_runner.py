@@ -416,27 +416,6 @@ class AcuteEvalRunner(TaskRunner):
         worker.grant_qualification(self.block_qualification, 1)
         self.failed_onboard.add(worker_id)
 
-    # TODO(#98) this should be a util in a provider, not here
-    def softblock_workers(self):
-        """
-        Softblock workers if necessary.
-        """
-        if not self.opts["is_sandbox"] and self.opts["softblock_list_path"] is not None:
-            softblock_list = set()
-            with open(self.opts["softblock_list_path"]) as f:
-                for line in f:
-                    softblock_list.add(line.strip())
-            logger.info(f"Will softblock {len(softblock_list):d} workers.")
-            for w in softblock_list:
-                try:
-                    logger.info(f"Soft Blocking {w}\n")
-                    self.manager.soft_block_worker(w)
-                except Exception as e:
-                    logger.exception(
-                        f"Did not soft block worker {w}: {e}", exc_info=True
-                    )
-                time.sleep(0.1)
-
     def get_init_data_for_agent(self, agent: "Agent") -> List[PairingsDict]:
         """
         Return the data for an agent already assigned to a particular unit.
