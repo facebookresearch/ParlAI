@@ -264,7 +264,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
     def __add_problem_data_to_utterance(self, p):
         # Human has just responded. Problem data received
         # now will be from bot's prior utterance (turn_idx
-        # is a also present to be safe that data matches)
+        # is also present to be safe that data matches)
         is_fake_utterance = (
             'fake_start' in self.dialog[p['turn_idx']]
             and self.dialog[p['turn_idx']]['fake_start']
@@ -291,10 +291,39 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
 
         if self.task_turn_idx == 0:
 
+            # {{{TODO: show personas}}}
+
             if self.opt['conversation_start_mode'] == 'bst':
 
-                raise NotImplementedError('Do this')
-                # TODO
+                print('[Displaying first utterances as per BST task.]')
+                # Display the previous two utterances
+                human_first_msg = {
+                    'episode_done': False,
+                    'id': self.agents[0].id,
+                    'text': self.context_info['person1_seed_utterance'],
+                    'fake_start': True,
+                    'agent_idx': 0,
+                }
+                bot_first_msg = {
+                    'episode_done': False,
+                    'id': self.agents[1].id,
+                    'text': self.context_info['person2_seed_utterance'],
+                    'fake_start': True,
+                    'agent_idx': 1,
+                }
+                print(
+                    f'human_first_msg: {human_first_msg}, bot_first_msg: {bot_first_msg}'
+                )
+
+                self.dialog.append(human_first_msg)
+                self.dialog.append(bot_first_msg)
+                # We already incremented above, but need to do it once more b/c
+                # we are adding two turns
+                self.task_turn_idx += 1
+
+                for agent in self.agents:
+                    agent.observe(validate(human_first_msg))
+                    agent.observe(validate(bot_first_msg))
 
             elif self.opt['conversation_start_mode'] == 'hi':
 
