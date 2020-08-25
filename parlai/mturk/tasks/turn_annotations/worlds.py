@@ -3,12 +3,15 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-import numpy as np
+
 import time
 import os
 import json
 import datetime
 from joblib import Parallel, delayed
+from typing import Optional
+
+import numpy as np
 
 from parlai.core.worlds import validate, MultiAgentDialogWorld
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
@@ -231,8 +234,9 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         tag=None,
         max_resp_time=120,
         agent_timeout_shutdown=120,
-        annotations_config: dict = None,
+        annotations_config: Optional[dict] = None,
         check_acceptability: bool = False,
+        context_info: Optional[dict] = None,
     ):
         # 6 turns for a single side (so 12 total), and really it appears to be
         # 14 total b/c of the "Hi!" and first bot utterance
@@ -466,7 +470,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         )
         if self.check_acceptability:
             print(f'Acceptability violations for agent 0: ' f'{violations_agent_0}')
-            return (self.agents[1].worker_id, violations_agent_0 != '', convo_finished)
+            return self.agents[1].worker_id, violations_agent_0 != '', convo_finished
         else:
             return self.agents[1].worker_id, False, convo_finished
 

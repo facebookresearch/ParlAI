@@ -23,6 +23,7 @@ from parlai.mturk.tasks.turn_annotations.worlds import (
     TurnAnnotationsChatWorld,
 )
 from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
+from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 
 def run_task(override_opt):
@@ -91,6 +92,12 @@ def run_task(override_opt):
         type=bool,
         help="Check worker's responses against several metrics of acceptability",
     )
+    argparser.add_argument(
+        '--use-bst-context',
+        default=False,
+        type=bool,
+        help="Use context info from dialogue datasets as in BlendedSkillTalk",
+    )
 
     argparser.set_params(**override_opt)
     opt = argparser.parse_args()
@@ -147,6 +154,13 @@ def run_task(override_opt):
     mturk_agent_ids = [AGENT_0]
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server(task_directory_path=directory_path)
+
+    if opt['use_bst_context']:
+        context_generator = ContextGenerator(opt, datatype='test')
+        # We pull from the test set so that the model can't regurgitate
+        # memorized conversations
+    else:
+        context_generator = None
 
     try:
         mturk_manager.start_new_run()
@@ -214,6 +228,12 @@ def run_task(override_opt):
 
             assert len(workers_including_bot) == 2
 
+            # Get context: personas, previous utterances, etc.
+            if context_generator is not None:
+                context_info = context_generator.get_context()
+            else:
+                context_info = None
+
             conv_idx = mturk_manager.conversation_index
             world = TurnAnnotationsChatWorld(
                 opt=opt,
@@ -223,6 +243,7 @@ def run_task(override_opt):
                 tag='conversation t_{}'.format(conv_idx),
                 annotations_config=ANNOTATIONS_CONFIG,
                 check_acceptability=opt['check_acceptability'],
+                context_info=context_info,
             )
             while not world.episode_done():
                 print('About to parley')
