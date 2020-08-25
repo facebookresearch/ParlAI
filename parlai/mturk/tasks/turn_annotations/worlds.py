@@ -542,8 +542,13 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             human_texts = [
                 message['text'] for message in self.dialog if message['agent_idx'] == 0
             ]
+            penalize_greetings = self.opt['conversation_start_mode'] == 'bst'
+            # The BST mode starts the conversation with two previous utterances, so
+            # there should be no new greeting
             violations_agent_0 = self.acceptability_checker.check_messages(
-                messages=human_texts, is_worker_0=False, penalize_greetings=False
+                messages=human_texts,
+                is_worker_0=False,
+                penalize_greetings=penalize_greetings,
             )
 
         time_string = time.strftime('%Y%m%d_%H%M%S')
