@@ -35,8 +35,9 @@ class DialoGPTDecoder(GPT2Decoder):
 
 class DialoGPTModel(HFGPT2Model):
     """
-    Hugging Face DialoGPT Model
+    Hugging Face DialoGPT Model.
     """
+
     def _get_decoder(self, opt, dict):
         return DialoGPTDecoder(opt, dict)
 
@@ -98,4 +99,3 @@ class DialogptAgent(Gpt2Agent):
         Build and return model.
         """
         return DialoGPTModel(self.opt, self.dict)
-

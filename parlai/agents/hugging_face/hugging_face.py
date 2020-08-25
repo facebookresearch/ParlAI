@@ -7,8 +7,9 @@
 """
 Integration with Hugging Face Transformers.
 
-Please see <https://huggingface.co/transformers/>. Currently, the only implementations iare
-GPT2 and DialoGPT. To use these models, run with `-m hugging_face/gpt2` or `-m hugging_face/dialogpt`.
+Please see <https://huggingface.co/transformers/>. Currently, the only implementations
+iare GPT2 and DialoGPT. To use these models, run with `-m hugging_face/gpt2` or `-m
+hugging_face/dialogpt`.
 """
 try:
     import transformers  # noqa: F401
