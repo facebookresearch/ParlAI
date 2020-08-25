@@ -9,7 +9,7 @@ import os
 import json
 import datetime
 from joblib import Parallel, delayed
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 
@@ -291,7 +291,32 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
 
         if self.task_turn_idx == 0:
 
-            # {{{TODO: show personas}}}
+            for agent_idx, agent in enumerate(self.agents):
+                personas = [
+                    self.context_info['persona_1_strings'],
+                    self.context_info['persona_2_strings'],
+                ]
+                persona_strings = [s.strip() for s in personas[agent_idx]]
+                if agent_idx == 1 and self.opt['include_persona']:
+                    print('Including persona for the bot.')
+                    # The Bot agent
+                    # We add the personas and 1/3 of the time WoW topic as the
+                    # first utterance in the history.
+                    # Previously for BST task, we also had a big first utterance
+                    # that gave instructions. Removing that for this task.
+                    persona_utterance = self._get_persona_utterance(
+                        persona_strings=persona_strings,
+                        context_dataset=self.context_info['context_dataset'],
+                        additional_context=self.context_info['additional_context'],
+                        is_bot=(agent_idx == 1),
+                    )
+                    control_msg['text'] = persona_utterance
+                    agent.observe(validate(control_msg))
+                    if agent_idx == 0:
+                        time.sleep(3)
+                else:
+                    control_msg['text'] = ''
+                    agent.observe(validate(control_msg))
 
             if self.opt['conversation_start_mode'] == 'bst':
 
@@ -450,6 +475,54 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
 
     def episode_done(self):
         return self.chat_done
+
+    def _get_persona_utterance(
+        self,
+        persona_strings: Optional[List[str]] = None,
+        context_dataset: Optional[str] = None,
+        additional_context: Optional[str] = None,
+        is_bot: bool = False,
+    ):
+        if is_bot:
+            # Pass back the original context
+            persona_pieces = [f"your persona: {str_}" for str_ in persona_strings]
+            if context_dataset == 'wizard_of_wikipedia':
+                additional_context_pieces = [additional_context]
+            else:
+                additional_context_pieces = []
+            full_context = '\n'.join(persona_pieces + additional_context_pieces)
+            print(f'FULL CONTEXT: {full_context}')
+            return full_context
+        else:
+            if context_dataset == 'convai2':
+                last_sentence = 'Pretend that the conversation has already begun.'
+            elif context_dataset == 'empathetic_dialogues':
+                last_sentence = (
+                    f'Pretend that the conversation has already begun, and that you '
+                    f'had been talking about the following situation: '
+                    f'<b>"{additional_context}"</b>'
+                )
+            elif context_dataset == 'wizard_of_wikipedia':
+                last_sentence = (
+                    f'Pretend that the conversation has already begun, and that you '
+                    f'had been talking about <b>{additional_context}</b>.'
+                )
+            else:
+                raise ValueError('Context dataset unrecognized!')
+            joined_personas = '\n'.join(persona_strings)
+            return (
+                f'\nSuccessfully matched with another user! Now let\'s get to know '
+                f'each other through the chat. You need to finish at least '
+                f'<b>{self.num_turns} chat turns</b>, and after that you can click the '
+                f'"Done" button to end the chat.\n\n'
+                f'<b>Your character description is:\n<span style="color:blue">{joined_personas}</span></b> '
+                '\n\n<b>Remember that you can get to know each '
+                'other as your characters, talk about any topic, or talk about a '
+                'situation that might have happened to your character.</b>'
+                '\n<b>Do not trivially copy the '
+                'character descriptions into the message.</b><br><br>'
+                f'{last_sentence}'
+            )
 
     def save_data(self):
         convo_finished = True
