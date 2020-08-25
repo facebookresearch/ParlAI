@@ -292,11 +292,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         if self.task_turn_idx == 0:
 
             for agent_idx, agent in enumerate(self.agents):
-                personas = [
-                    self.context_info['persona_1_strings'],
-                    self.context_info['persona_2_strings'],
-                ]
-                persona_strings = [s.strip() for s in personas[agent_idx]]
                 if agent_idx == 1 and self.opt['include_persona']:
                     print('Including persona for the bot.')
                     # The Bot agent
@@ -304,6 +299,11 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     # first utterance in the history.
                     # Previously for BST task, we also had a big first utterance
                     # that gave instructions. Removing that for this task.
+                    personas = [
+                        self.context_info['persona_1_strings'],
+                        self.context_info['persona_2_strings'],
+                    ]
+                    persona_strings = [s.strip() for s in personas[agent_idx]]
                     persona_utterance = self._get_persona_utterance(
                         persona_strings=persona_strings,
                         context_dataset=self.context_info['context_dataset'],
