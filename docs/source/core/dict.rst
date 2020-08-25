@@ -1,4 +1,5 @@
-parlai.core.dict
-===================================
+## parlai.core.dict
+```{eval-rst}
 .. automodule:: parlai.core.dict
   :members:
+```
