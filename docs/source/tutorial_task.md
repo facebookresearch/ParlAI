@@ -61,6 +61,12 @@ usual fields like 'text', 'labels', 'label\_candidates' etc. can all be
 used, or you can add your own fields too if you have a special use for
 them.
 
+:::{danger} Data folds
+Data folds are _not_ automatically generated. Using fromfile as above will
+result in the same data used for train, validation and test. See the next
+section on how to have separate folds.
+:::
+
 ### Handling Separate Train/Valid/Test data
 
 Once you've gotten the basics of a data working above, you might want to
