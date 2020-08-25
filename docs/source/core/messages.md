@@ -1,4 +1,4 @@
-## parlai.core.message
+# parlai.core.message
 
 ```{eval-rst}
 .. automodule:: parlai.core.message
@@ -29,20 +29,20 @@ unintentionally edit the fields within observations and actions. In order to edi
 the field of a `Message` object, one must call `message.force_set(key, new_value)`.
 
 
-### text
+## text
 
 This is the most standard field of the observation dict.
 This contains a `string` with the text being sent from one agent to others.
 
 
-### id
+## id
 
 This field can contain the self-identification `string` of the sender.
 For example, we have tasks specify their task name using this field
 ("--task squad" will send messages with the id "squad").
 
 
-### labels
+## labels
 
 When available (ie when doing supervised learning), this field will contain
 any appropriate labels. For many tasks, this will be only a single response.
@@ -50,7 +50,7 @@ However, some datasets do support multiple correct answers, so this field
 should be an `iterable` (e.g. a list, a tuple).
 
 
-### eval_labels
+## eval_labels
 
 During validation and testing, the "labels" field is moved to "eval_labels" in
 order to help prevent accidentaly training on evaluation data.
@@ -59,7 +59,7 @@ However, by providing this field, models can still compute model-side metrics
 such as perplexity.
 
 
-### label_candidates
+## label_candidates
 
 For tasks that support ranking, this field is an `iterable` of
 possible answers the dataset is suggesting the agent could choose from.
@@ -72,7 +72,7 @@ def label_candidates(self):
 ```
 
 
-### text_candidates
+## text_candidates
 
 This is the partner field to "label_candidates". In response to received
 candidates for the label, the model can choose to return an `iterable`
@@ -82,7 +82,7 @@ This allows the teacher to grade the model's entire ordering, giving the option
 to compute metrics like `hits@10` or `MRR`.
 
 
-### episode_done
+## episode_done
 
 The "episode_done" flag is used to mark the end of an episode.
 Conversations in ParlAI don't necesarily have more than one exchange, but

@@ -14,33 +14,33 @@ large-scale candidate prediction. Torch Generator Agent assumes your model
 generates utterances auto-regressively, and provides generic implementations of
 beam search.
 
-### Torch Agent
+## Torch Agent
 ```{eval-rst}
 .. automodule:: parlai.core.torch_agent
   :members:
 ```
 
-### Torch Generator Agent
+## Torch Generator Agent
 ```{eval-rst}
 .. automodule:: parlai.core.torch_generator_agent
   :members:
 ```
 
 
-### Torch Ranker Agent
+## Torch Ranker Agent
 ```{eval-rst}
 .. automodule:: parlai.core.torch_ranker_agent
   :members:
 ```
 
-### Torch Classifier Agent
+## Torch Classifier Agent
 ```{eval-rst}
 .. automodule:: parlai.core.torch_classifier_agent
   :members:
 ```
 
 
-### Torch Image Agent
+## Torch Image Agent
 ```{eval-rst}
 .. automodule:: parlai.core.torch_image_agent
   :members:
