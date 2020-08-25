@@ -6,7 +6,6 @@
 
 from mephisto.data_model.blueprint import TaskRunner
 
-import time
 import random
 import queue
 import json
