@@ -96,7 +96,7 @@ def run_task(override_opt):
         '--include-persona',
         default=False,
         type=bool,
-        help="Show personas to the human and bot",
+        help="Show personas to the bot",
     )
     argparser.add_argument(
         '--conversation-start-mode',
