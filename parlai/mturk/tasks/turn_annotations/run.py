@@ -249,7 +249,6 @@ def run_task(override_opt):
                 max_resp_time=opt['max_resp_time'],
                 tag='conversation t_{}'.format(conv_idx),
                 annotations_config=ANNOTATIONS_CONFIG,
-                check_acceptability=opt['check_acceptability'],
                 context_info=context_info,
             )
             while not world.episode_done():

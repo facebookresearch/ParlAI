@@ -235,7 +235,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         max_resp_time=120,
         agent_timeout_shutdown=120,
         annotations_config: Optional[dict] = None,
-        check_acceptability: bool = False,
         context_info: Optional[dict] = None,
     ):
         # 6 turns for a single side (so 12 total), and really it appears to be
@@ -251,7 +250,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         self.chat_done = False
         self.context_info = context_info
         self.annotations_config = annotations_config
-        self.check_acceptability = check_acceptability
+        self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
 
         # below are timeout protocols
