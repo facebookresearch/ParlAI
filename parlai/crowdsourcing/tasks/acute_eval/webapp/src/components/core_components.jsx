@@ -9,6 +9,7 @@
 import React from "react";
 import {
   Button,
+  Checkbox,
   Col,
   ControlLabel,
   Form,
@@ -194,11 +195,30 @@ class ChatPane extends React.Component {
   }
 }
 
+const SPEAKER_REASONS = [
+  "Contradicts themselves less",
+  "Better English",
+  "Repeats themselves less",
+  "More on-topic",
+  "Makes more sense",
+  "More detailed / less vague",
+  "More knowledgeable",
+  "Better listener / more inquisitive",
+  "More entertaining/witty/thoughtful",
+  "Other",
+];
+
 class EvalResponse extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       speakerChoice: "",
+      speakerReasons: SPEAKER_REASONS.reduce(
+        (reasons, reason) => ({
+          ...reasons,
+          [reason]: false
+        }), {}
+      ),
       textReason: "",
       taskData: [],
       subtaskIndexSeen: 0,
@@ -226,6 +246,7 @@ class EvalResponse extends React.Component {
         subtaskIndexSeen: nextProps.current_subtask_index,
         textReason: "",
         speakerChoice: "",
+        speakerReasons: {},
       };
     }
     return {};
@@ -234,9 +255,10 @@ class EvalResponse extends React.Component {
   checkValidData() {
     let response_data = {
       speakerChoice: this.state.speakerChoice,
+      speakerReasons: this.state.speakerReasons,
       textReason: this.state.textReason,
     };
-    if (this.state.speakerChoice !== "" && this.state.textReason.length > 4) {
+    if (this.state.speakerChoice !== "" && this.state.textReason.length > 4 && (Object.values(this.state.speakerReasons).some((reason) => reason))) {
       this.props.onValidDataChange(true, response_data);
       return;
     }
@@ -260,6 +282,34 @@ class EvalResponse extends React.Component {
     }
   }
 
+  handleCheckboxChange = changeEvent => {
+    let target = changeEvent.target;
+    let speakerReason = target.name;
+
+    this.setState(prevState => ({
+      ...prevState,
+      speakerReasons: {
+        ...prevState.speakerReasons,
+        [speakerReason]: !prevState.speakerReasons[speakerReason]
+      }
+    }), this.checkValidData);
+  };
+
+  createCheckbox = reason => (
+    <Col sm={4} style={{ padding: "0px" }}>
+      <Checkbox
+        name={reason}
+        style={{ width: "100%" }}
+        checked={this.state.speakerReasons[reason]}
+        onChange={this.handleCheckboxChange}
+      >
+        {reason}
+      </Checkbox>
+    </Col>
+  );
+
+  createCheckboxes = () => SPEAKER_REASONS.map(this.createCheckbox);
+
   render() {
     console.log("Eval props", this.props);
     if (
@@ -278,7 +328,7 @@ class EvalResponse extends React.Component {
     let s2_name = this.props.task_data.task_specs.model_right.name;
     let form_question = this.props.task_data.task_specs.question;
     let text_question =
-      "Please provide a brief justification for your choice (a few words or a sentence)";
+      "Please provide further justification for your choice (a few words or a sentence)";
     let text_reason = (
       <div>
         <ControlLabel>{text_question}</ControlLabel>
@@ -369,6 +419,10 @@ class EvalResponse extends React.Component {
                   {choice2}
                 </Radio>
               </Col>
+            </FormGroup>
+            <ControlLabel> Why did you choose this Speaker? (Please select at least one) </ControlLabel>
+            <FormGroup>
+              {this.createCheckboxes()}
             </FormGroup>
             {text_reason}
           </div>
@@ -577,7 +631,7 @@ class TaskDescription extends React.Component {
         <br />
         You will judge <div style={speaker1_style}>Speaker 1</div> and&nbsp;
         <div style={speaker2_style}>Speaker 2</div> on this:&nbsp;
-        <b>{question}</b> You should&nbsp; also provide a very brief
+        <b>{question}</b> You should&nbsp; also select at least one reason for your choice and provide a very brief
         justification. Failure to do so could result&nbsp; in your hits being
         rejected.
         <br />
@@ -623,7 +677,7 @@ class TaskDescription extends React.Component {
           <br />
           You will judge <div style={speaker1_style}>Speaker 1</div> and&nbsp;
           <div style={speaker2_style}>Speaker 2</div> on this:&nbsp;
-          <b>{question}</b> You should&nbsp; also provide a very brief
+          <b>{question}</b> You should&nbsp; also select at least one reason for your choice and provide a very brief
           justification. Failure to do so could result&nbsp; in your hits being
           rejected.
           <br />
