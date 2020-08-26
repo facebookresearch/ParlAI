@@ -63,10 +63,11 @@ def clip_grad_norm(params, max_norm):
     params = list(params)
     if len(params) == 1:
         p = params[0]
-        grad_norm = torch.norm(p)
+        grads = p.grad.detach()
+        grad_norm = torch.norm(grads)
         if grad_norm > max_norm > 0:
             clip_coef = max_norm / (grad_norm + 1e-6)
-            p.mul_(clip_coef)
+            grads.mul_(clip_coef)
         return grad_norm
     elif max_norm > 0:
         return torch.nn.utils.clip_grad_norm_(params, max_norm)
