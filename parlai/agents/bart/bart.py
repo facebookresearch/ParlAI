@@ -140,14 +140,6 @@ class BartAgent(TransformerGeneratorAgent):
             )
         return model
 
-    def vectorize(self, *args, **kwargs):
-        """
-        Override vectorize for generative models.
-        """
-        kwargs['add_start'] = True  # need start token for BART
-        kwargs['add_end'] = True
-        return TorchAgent.vectorize(self, *args, **kwargs)
-
     def _set_text_vec(
         self, obs: Message, history: History, truncate: Optional[int]
     ) -> Message:
