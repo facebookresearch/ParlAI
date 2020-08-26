@@ -26,7 +26,7 @@ parlai train_model -m hugging_face/gpt2 --add-special-tokens True --add-start-to
 
 ## DialoGPT
 
-To use GPT2, run your command with the flag: `-m hugging_face/dialogpt`.
+To use DialoGPT, run your command with the flag: `-m hugging_face/dialogpt`.
 
 ### Examples
 **Talk to DialoGPT large in interactive mode, with beam size 10, 3-gram beam blocking, and minimum beam length 25:**
@@ -38,7 +38,7 @@ _Note:_ In the above command, we must have the flag `--add-special-tokens False`
 Here is example output from the above command:
 ```
 Enter Your Message: What do you think of parrots?
-[Gpt2]:  I love parrots. They are the best. I love them so much. I wish I had a pet parrot.
+[Dialogpt]:  I love parrots. They are the best. I love them so much. I wish I had a pet parrot.
 ```
 
 
