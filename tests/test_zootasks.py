@@ -130,6 +130,11 @@ class TestZooAndTasks(unittest.TestCase):
                     self.assertIsNot(
                         value, [], "{} {} must have some tags".format(listname, name)
                     )
+                elif key == 'links':
+                    self.assertIsInstance(value, dict)
+                    for k_, v_ in value.items():
+                        self.assertIsInstance(k_, str)
+                        self.assertIsInstance(v_, str)
                 else:
                     self.assertIsInstance(
                         value,

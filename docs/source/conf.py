@@ -126,7 +126,7 @@ html_logo = '_static/img/parlai.png'
 # myst options
 myst_admonition_enable = True
 # myst_amsmath_enable = True
-# myst_html_img_enable = True
+myst_html_img_enable = True
 # myst_dmath_enable = True
 
 
