@@ -22,9 +22,9 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.utils.distributed import is_distributed
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 import copy
-import os
 import tqdm
 
 
@@ -70,7 +70,7 @@ def build_dict(opt, skip_if_built=False):
             'this param so the dictionary can be saved.'
         )
         return
-    if skip_if_built and os.path.isfile(opt['dict_file']):
+    if skip_if_built and PathManager.exists(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
         logging.debug("dictionary already built.")
         return None
@@ -82,7 +82,7 @@ def build_dict(opt, skip_if_built=False):
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
 
-    if os.path.isfile(opt['dict_file']) or (
+    if PathManager.exists(opt['dict_file']) or (
         hasattr(dictionary, 'is_prebuilt') and dictionary.is_prebuilt()
     ):
         # Dictionary already built, return loaded dictionary agent

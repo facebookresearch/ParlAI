@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import os
@@ -43,7 +44,7 @@ def _path(opt):
 def setup_data(path):
     print('loading: ' + path)
 
-    with open(path, 'r') as data_file:
+    with PathManager.open(path, 'r') as data_file:
         for line in data_file:
             question = json.loads(line)
             question_text = question[AQUA_QUESTION_KEY]

@@ -17,6 +17,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -135,7 +136,7 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 
     def _setup_data(self):
         print('loading: ' + self.data_path)
-        with open(self.data_path) as f:
+        with PathManager.open(self.data_path) as f:
             self.data = json.load(f)
 
     def num_episodes(self):

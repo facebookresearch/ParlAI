@@ -19,6 +19,7 @@ import json
 
 from parlai.core.message import Message
 from parlai.utils.strings import colorize
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 try:
@@ -128,7 +129,7 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
         return None
     cands = []
     cnt = 0
-    with open(path) as read:
+    with PathManager.open(path) as read:
         for line in read:
             line = line.strip().replace('\\n', '\n')
             if len(line) > 0:
@@ -444,7 +445,7 @@ def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
     try:
         if x_ == 0:
             return 0
-        return round(x_, -math.floor(math.log10(abs(x_)) - sigfigs + 1))
+        return round(x_, -(math.floor(math.log10(abs(x_)) - sigfigs + 1)))
     except (ValueError, OverflowError) as ex:
         if x_ in [float('inf'), float('-inf')] or x_ != x_:  # inf or nan
             return x_

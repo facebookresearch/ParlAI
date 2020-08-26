@@ -30,6 +30,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 from parlai.core.metrics import (
     Metric,
@@ -1189,7 +1190,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         block_list_fn = self.opt['beam_block_list_filename']
         try:
-            with open(block_list_fn) as f:
+            with PathManager.open(block_list_fn) as f:
                 for line in f:
                     block_list.add(line.strip())
         except IOError:

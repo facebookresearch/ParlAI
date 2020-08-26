@@ -6,6 +6,7 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
+from parlai.utils.io import PathManager
 from .build_2014 import build as build_2014
 from .build_2014 import buildImage as buildImage_2014
 from .build_2017 import build as build_2017
@@ -306,7 +307,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def _setup_data(self, test_info_path, annotation_path, opt):
         if self.version == '2014':
-            with open(annotation_path) as data_file:
+            with PathManager.open(annotation_path) as data_file:
                 raw_data = json.load(data_file)['images']
             if 'train' in self.datatype:
                 self.annotation = [d for d in raw_data if d['split'] == 'train']
@@ -333,11 +334,11 @@ class DefaultTeacher(FixedDialogTeacher):
         else:
             if not self.datatype.startswith('test'):
                 print('loading: ' + annotation_path)
-                with open(annotation_path) as data_file:
+                with PathManager.open(annotation_path) as data_file:
                     self.annotation = json.load(data_file)['annotations']
             else:
                 print('loading: ' + test_info_path)
-                with open(test_info_path) as data_file:
+                with PathManager.open(test_info_path) as data_file:
                     self.test_info = json.load(data_file)
             if not self.datatype.startswith('train'):
                 self.cands = load_candidates(

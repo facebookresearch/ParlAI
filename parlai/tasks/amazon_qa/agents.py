@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build, RESOURCES
 import os
 import json
@@ -82,7 +83,7 @@ class DefaultTeacher(FixedDialogTeacher):
             json_file = f.file_name[:-3]
             file_path = os.path.join(fpath, json_file)
 
-            with open(file_path, 'r') as infile:
+            with PathManager.open(file_path, 'r') as infile:
                 data = infile.read()
                 new_data = data.replace('}\n{', '},\n{')
                 json_data = json.loads(f'[{new_data}]')

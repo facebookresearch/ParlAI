@@ -14,6 +14,7 @@ except ImportError:
 import parlai.core.build_data as build_data
 import os
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -112,7 +113,7 @@ def build(opt):
             file_content = bytes.decode(f.read())
         data = file_content.split('\n')[2:]
         create_fb_format(data, dpath)
-        os.remove(outzipfile)
+        PathManager.rm(outzipfile)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)

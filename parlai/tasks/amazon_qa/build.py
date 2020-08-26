@@ -10,6 +10,7 @@ import os
 import gzip
 import json
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -263,7 +264,7 @@ def build(opt):
             f = open(dpath + '/' + new_filename, 'w')
             for l in parse_gzip(dpath + '/' + downloadable_file.file_name):
                 f.write(l + '\n')
-            os.remove(dpath + '/' + downloadable_file.file_name)
+            PathManager.rm(dpath + '/' + downloadable_file.file_name)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

@@ -6,6 +6,7 @@
 
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from . import tm_utils
 import json
 
@@ -39,7 +40,7 @@ class SelfDialogueTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.convos = json.load(data_file)
         # Pre-processing
         convos_update = []
@@ -144,7 +145,7 @@ class WozDialogueTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.convos = json.load(data_file)
         # Pre-processing
         convos_update = []
@@ -277,7 +278,7 @@ class SelfDialogueSegmentTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.convos = json.load(data_file)
 
         # Filter out instances which do not have "segment" in them

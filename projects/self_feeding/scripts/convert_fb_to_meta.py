@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 import json
 
 from parlai.projects.self_feeding.utils import extract_fb_episodes, episode_to_examples
+from parlai.utils.io import PathManager
 
 
 def setup_args():
@@ -37,7 +38,7 @@ def main(config):
     for episode in extract_fb_episodes(config['infile']):
         examples.extend(episode_to_examples(episode, config['history_size']))
 
-    with open(config['outfile'], 'w') as outfile:
+    with PathManager.open(config['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 

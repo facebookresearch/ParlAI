@@ -13,13 +13,13 @@ from parlai.utils.bpe import bpe_factory, BPEHelper
 from .agents import Agent
 from .build_data import make_dir
 from collections import defaultdict
-import codecs
 import copy
 import numpy as np
 import os
 import json
 import re
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 from typing import List
 
 RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
@@ -270,7 +270,7 @@ class DictionaryAgent(Agent):
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('dict_file'):
                 opt['dict_file'] = modelzoo_path(opt.get('datapath'), opt['dict_file'])
-                if os.path.isfile(opt['dict_file']):
+                if PathManager.exists(opt['dict_file']):
                     # load pre-existing dictionary
                     self.load(opt['dict_file'])
                     loaded = True
@@ -602,7 +602,7 @@ class DictionaryAgent(Agent):
 
         lower_special = self.null_token == self.null_token.lower()
         SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
-        with codecs.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
+        with PathManager.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
@@ -645,14 +645,14 @@ class DictionaryAgent(Agent):
 
         make_dir(os.path.dirname(filename))
         mode = 'a' if append else 'w'
-        with open(filename, mode, encoding='utf-8') as write:
+        with PathManager.open(filename, mode, encoding='utf-8') as write:
             for i in self.ind2tok.keys():
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
         # save opt file
-        with open(filename + '.opt', 'w', encoding='utf-8') as handle:
+        with PathManager.open(filename + '.opt', 'w', encoding='utf-8') as handle:
             json.dump(self.opt, handle, indent=4)
         # save the byte level bpe model file as well
         if self.tokenizer == 'bytelevelbpe':

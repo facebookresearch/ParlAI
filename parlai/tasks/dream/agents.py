@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -40,7 +41,7 @@ class DREAMTeacher(FixedDialogTeacher):
         else:
             raise ValueError('Datatype not train, test, or valid')
         episodes = []
-        with open(dpath) as f:
+        with PathManager.open(dpath) as f:
             data = json.load(f)
             for dialogue in data:
                 context = '\n'.join(dialogue[0])

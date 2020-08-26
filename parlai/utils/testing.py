@@ -18,6 +18,7 @@ import signal
 from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 try:
@@ -148,7 +149,7 @@ def git_ls_files(root=None, skip_nonexisting=True):
     """
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 
@@ -173,7 +174,7 @@ def git_changed_files(skip_nonexisting=True):
     fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 

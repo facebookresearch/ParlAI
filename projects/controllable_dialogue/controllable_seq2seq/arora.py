@@ -16,6 +16,7 @@ from parlai.core.build_data import modelzoo_path
 import torchtext.vocab as vocab
 from parlai.utils.misc import TimeLogger
 from collections import Counter, deque
+from parlai.utils.io import PathManager
 import numpy as np
 import os
 import pickle
@@ -381,7 +382,7 @@ def learn_arora(opt):
     # Save unigram distribution, first singular value, hyperparameter value for a,
     # info about GloVe vectors used, and full dict of utt->emb to file
     print("Saving Arora embedding info to %s..." % arora_file)
-    with open(arora_file, "wb") as f:
+    with PathManager.open(arora_file, "wb") as f:
         pickle.dump(
             {
                 'word2prob': word2prob,  # dict: string to float between 0 and 1
@@ -401,7 +402,7 @@ def load_arora(opt):
     """
     arora_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'arora.pkl')
     print("Loading Arora embedding info from %s..." % arora_fp)
-    with open(arora_fp, "rb") as f:
+    with PathManager.open(arora_fp, "rb") as f:
         data = pickle.load(f)
     print("Done loading arora info.")
     return data

@@ -33,6 +33,7 @@ import random
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.build_data import modelzoo_path
+from parlai.utils.io import PathManager
 from . import config
 from .utils import build_feature_dict, vectorize, batchify, normalize_text
 from .model import DocReaderModel
@@ -73,7 +74,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
             self.opt['embedding_file'] = modelzoo_path(
                 self.opt.get('datapath'), self.opt['embedding_file']
             )
-            with open(self.opt['embedding_file']) as f:
+            with PathManager.open(self.opt['embedding_file']) as f:
                 for line in f:
                     w = normalize_text(line.rstrip().split(' ')[0])
                     self.embedding_words.add(w)
@@ -128,7 +129,7 @@ class DrqaAgent(Agent):
         else:
             # set up model
             self.word_dict = DrqaAgent.dictionary_class()(opt)
-            if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if self.opt.get('model_file') and PathManager.exists(opt['model_file']):
                 self._init_from_saved(opt['model_file'])
             else:
                 if self.opt.get('init_model'):
@@ -274,7 +275,7 @@ class DrqaAgent(Agent):
             self.opt['trained'] = True
             self.model.save(fname)
             # save opt file
-            with open(fname + '.opt', 'w') as handle:
+            with PathManager.open(fname + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
     # --------------------------------------------------------------------------

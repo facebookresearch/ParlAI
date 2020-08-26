@@ -10,6 +10,7 @@ import parlai.core.build_data as build_data
 import os
 import hashlib
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -85,7 +86,9 @@ def build(opt):
             dt = data_type[i]
             urls_fname = os.path.join(dpath, f.file_name)
             split_fname = os.path.join(dpath, dt + '.txt')
-            with open(urls_fname) as urls_file, open(split_fname, 'a') as split_file:
+            with PathManager.open(urls_fname) as urls_file, PathManager.open(
+                split_fname, 'a'
+            ) as split_file:
                 for url in urls_file:
                     file_name = hashlib.sha1(url.strip().encode('utf-8')).hexdigest()
                     split_file.write("cnn/stories/{}.story\n".format(file_name))
@@ -94,7 +97,9 @@ def build(opt):
             dt = data_type[i]
             urls_fname = os.path.join(dpath, f.file_name)
             split_fname = os.path.join(dpath, dt + '.txt')
-            with open(urls_fname) as urls_file, open(split_fname, 'a') as split_file:
+            with PathManager.open(urls_fname) as urls_file, PathManager.open(
+                split_fname, 'a'
+            ) as split_file:
                 for url in urls_file:
                     file_name = hashlib.sha1(url.strip().encode('utf-8')).hexdigest()
                     split_file.write("dailymail/stories/{}.story\n".format(file_name))

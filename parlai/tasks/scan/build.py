@@ -8,6 +8,7 @@
 import parlai.core.build_data as build_data
 import os
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -20,8 +21,8 @@ RESOURCES = [
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
-        with open(inpath) as f:
+    with PathManager.open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
+        with PathManager.open(inpath) as f:
             lines = [line.strip('\n') for line in f]
             for i in range(len(lines)):
                 use = True

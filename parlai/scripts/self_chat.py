@@ -13,6 +13,7 @@ from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 import math
 import json
@@ -111,7 +112,7 @@ def self_chat(opt):
         # Self chat with different models
         if partner_opt_file:
             print(f"WARNING: Loading override opts from: {partner_opt_file}")
-            with open(partner_opt_file) as f:
+            with PathManager.open(partner_opt_file) as f:
                 partner_opt = json.load(f)
         else:
             partner_opt = {}

@@ -35,6 +35,7 @@ from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from collections import Counter
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 
 import copy
 import numpy
@@ -232,7 +233,7 @@ def eval_wordstat(opt):
     print("Total unique tokens:", len(word_statistics['unique_words']))
 
     if opt['dump_predictions_path'] is not None:
-        with open(opt['dump_predictions_path'], 'w') as f:
+        with PathManager.open(opt['dump_predictions_path'], 'w') as f:
             f.writelines(
                 [
                     'CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p)
@@ -243,7 +244,7 @@ def eval_wordstat(opt):
                 ]
             )
         if opt['compute_unique'] is True:
-            with open(opt['dump_predictions_path'] + '_unique', 'w') as f:
+            with PathManager.open(opt['dump_predictions_path'] + '_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
     stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])

@@ -11,6 +11,7 @@ from parlai.projects.self_feeding.utils import (
     extract_parlai_episodes,
     add_person_tokens,
 )
+from parlai.utils.io import PathManager
 
 # Initial prompts vary due to the random nouns, but all will start this way
 INITIAL_PROMPT = "start a conversation"
@@ -155,7 +156,7 @@ def main(opt):
                     )
                 examples.append(example)
 
-    with open(opt['outfile'], 'w') as outfile:
+    with PathManager.open(opt['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
