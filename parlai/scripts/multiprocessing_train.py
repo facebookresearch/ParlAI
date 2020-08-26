@@ -8,19 +8,19 @@
 """
 Main launch script for single-host, multi-GPU training.
 
-This is a drop-in replacement for train_model.py.  This script will launch N
-subprocess, each which runs the full training loop independently.
+This is a drop-in replacement for train\_model.py. This script will
+launch N subprocess, each which runs the full training loop
+independently.
 
-Uses torch.nn.parallel.DistributedDataParallel for its main uses.  Agents must
-specifically implement the wrapper of DistributedDatParallel, but all
-TorchRankerAgents and TorchGeneratorAgents support this.
+Uses torch.nn.parallel.DistributedDataParallel for its main uses. Agents
+must specifically implement the wrapper of DistributedDatParallel, but
+all TorchRankerAgents and TorchGeneratorAgents support this.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai multiprocessing_train -m transformer/generator -bs 16 -t convai2 -mf /tmp/mymodel
+```shell
+parlai multiprocessing_train -m transformer/generator -bs 16 -t convai2 -mf /tmp/mymodel
+```
 """
 
 import torch

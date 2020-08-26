@@ -4,15 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Verify data doesn't have basic mistakes, like empty text fields or empty label
-candidates.
+Verify data doesn't have basic mistakes, like empty text fields or empty
+label candidates.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai verify_data -t convai2 -dt train:ordered
+```shell
+parlai verify_data -t convai2 -dt train:ordered
+```
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message

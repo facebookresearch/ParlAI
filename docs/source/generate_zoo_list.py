@@ -24,7 +24,7 @@ def example_to_code(example, result):
     result = [r.strip() for r in result]
     # make sure we indent for markdown though
     result = "\n".join(result)
-    return f'```\n{example}\n\n{result}\n```'
+    return f'```none\n{example}\n\n{result}\n```'
 
 
 def model_text(model_dict, fout):

@@ -6,14 +6,13 @@
 """
 Generates a dictionary file from the training data.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  # learn the vocabulary from one task, then train on another task.
-  parlai build_dict -t convai2 --dict-file premade.dict
-  parlai train_model -t squad --dict-file premade.dict -m seq2seq
+```bash
+# learn the vocabulary from one task, then train on another task.
+parlai build_dict -t convai2 --dict-file premade.dict
+parlai train_model -t squad --dict-file premade.dict -m seq2seq
+```
 """
 
 from parlai.core.dict import DictionaryAgent
