@@ -108,12 +108,15 @@ def build(opt):
 
         concat = io.BytesIO()
 
-        data = []
         for fn in [file1, file2]:
-            with PathManager.open(fn, 'b') as rawf:
+            with PathManager.open(fn, 'rb') as rawf:
                 concat.write(rawf.read())
 
-        with gzip.open(fileobj=concat) as f:
+        with gzip.GzipFile(fileobj=io.BytesIO(concat.getvalue())) as f:
             file_content = bytes.decode(f.read())
-            data += file_content.split('\n')[2:]
+            data = file_content.split('\n')[2:]
+
         create_fb_format(data, dpath)
+
+        PathManager.rm(file1)
+        PathManager.rm(file2)
