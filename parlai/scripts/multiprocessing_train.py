@@ -8,7 +8,7 @@
 """
 Main launch script for single-host, multi-GPU training.
 
-This is a drop-in replacement for train\_model.py. This script will
+This is a drop-in replacement for [train_model]. This script will
 launch N subprocess, each which runs the full training loop
 independently.
 

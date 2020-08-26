@@ -3,7 +3,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import textwrap
 from parlai.tasks.task_list import task_list
 
 MASTER = "https://github.com/facebookresearch/ParlAI/tree/master"

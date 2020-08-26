@@ -4,12 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-This helper script can be used alone with modelfile and task: the output
-will contain the word statistics of the model outputs. One can also use
-the function defined here in other places in order to get such statistic
-for any agent given the agent object (with corr. dict) and a sequence.
+This helper script can be used alone with modelfile and task: the output will contain
+the word statistics of the model outputs. One can also use the function defined here in
+other places in order to get such statistic for any agent given the agent object (with
+corr. dict) and a sequence.
 
-Additionally provides function get\_word\_stats that can be used in
+Additionally provides function `get_word_stats` that can be used in
 other parts of runtime code since it depends only on the agent object.
 For example:
 

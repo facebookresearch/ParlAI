@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import importlib
 import inspect
 import argparse
@@ -91,16 +90,12 @@ def main():
         for i, (key, registration) in enumerate(first):
             if i != 0:
                 fout.write("\n----------\n")
-            script_parser = registration.klass.setup_args()
-            description = script_parser.description
             render_script(fout, key, registration)
 
     with open("cli_advanced.inc", "w") as fout:
         for i, (key, registration) in enumerate(second):
             if i != 0:
                 fout.write("\n----------\n")
-            script_parser = registration.klass.setup_args()
-            description = script_parser.description
             render_script(fout, key, registration)
 
 

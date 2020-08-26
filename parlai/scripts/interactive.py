@@ -4,8 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Basic script which allows local human keyboard input to talk to a
-trained model.
+Basic script which allows local human keyboard input to talk to a trained model.
 
 ## Examples
 

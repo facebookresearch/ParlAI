@@ -8,7 +8,7 @@
 """
 Main launch script for single-host, multi-GPU evaluation.
 
-This is a drop-in replacement for eval\_model. This script will launch N
+This is a drop-in replacement for [eval_model]. This script will launch N
 subprocess, each which runs the full eval loop independently.
 
 Uses torch.nn.parallel.DistributedDataParallel for its main uses. Agents
