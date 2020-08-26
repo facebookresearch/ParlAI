@@ -24,7 +24,7 @@ from parlai.core.agents import compare_init_model_opts
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch, History, TorchAgent
+from parlai.core.torch_agent import History
 from parlai.utils.typing import TShared
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 

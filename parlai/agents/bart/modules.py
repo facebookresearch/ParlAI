@@ -25,4 +25,3 @@ class BartModel(TransformerGeneratorModel):
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)
         return output
-
