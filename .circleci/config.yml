@@ -444,6 +444,13 @@ jobs:
             - "~/venv/lib"
       - <<: *buildwebsite
       - run:
+          name: zip up the website
+          working_directory: ~/ParlAI/website/build/
+          command: |
+            zip -r ~/ParlAI/website.zip *
+      - store_artifacts:
+          path: website.zip
+      - run:
           name: check for bad links
           working_directory: ~/ParlAI/
           command: |
