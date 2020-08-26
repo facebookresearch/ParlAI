@@ -32,7 +32,12 @@ class GPT2Decoder(torch.nn.Module):
         super().__init__()
         # load model
         model_sz = opt['gpt2_size']
-        fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
+        if model_sz == 'small':
+            fle_key = 'gpt2'
+        elif model_sz == 'distilgpt2':
+            fle_key = 'distilgpt2'
+        else:
+            fle_key = f'gpt2-{model_sz}'
         self.transformer = GPT2Model.from_pretrained(fle_key)
         # add special tokens
         self.start_idx = dict.start_idx
@@ -191,7 +196,7 @@ class Gpt2Agent(TorchGeneratorAgent):
     Read more about this model here
     <https://huggingface.co/transformers/model_doc/gpt2.html>.
 
-    GPT2 comes in four sizes: small, medium, large, and XL. Use the
+    GPT2 comes in five sizes: distilgpt2, small, medium, large, XL. Use the
     flag `--gpt2-size` to choose the size.
 
     If you are finetuning the Gpt2 agent as a dialogue agent, be sure
@@ -207,7 +212,7 @@ class Gpt2Agent(TorchGeneratorAgent):
             '--gpt2-size',
             type=str,
             default='small',
-            choices=['small', 'medium', 'large', 'xl'],
+            choices=['small', 'medium', 'large', 'xl', 'distilgpt2'],
             help='Which size model to initialize.',
         )
         agent.add_argument(

@@ -39,6 +39,7 @@ def multiprocess_train(
         rank, opt, port, rank_offset, gpu, hostname
     ) as opt:
         # Run the actual training
+        opt['multiprocessing'] = True
         return single_train.TrainLoop(opt).train()
 
 

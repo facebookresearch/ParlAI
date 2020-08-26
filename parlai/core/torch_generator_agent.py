@@ -503,7 +503,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
             if self.use_cuda:
                 if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
+                    ph = PipelineHelper()
+                    ph.check_compatibility(self.opt)
+                    self.model = ph.make_parallel(self.model)
                 else:
                     self.model.cuda()
                 self.criterion.cuda()
@@ -653,10 +655,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         shared['beam_block_list'] = self.beam_block_list
         if hasattr(self, 'optimizer'):
             shared['optimizer'] = self.optimizer
-        if self.opt.get('numthreads', 1) > 1:
-            shared['states'] = {  # don't share optimizer states
-                'optimizer_type': self.opt['optimizer']
-            }
         return shared
 
     def vectorize(self, *args, **kwargs):

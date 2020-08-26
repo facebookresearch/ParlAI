@@ -43,6 +43,7 @@ def multiprocess_eval(
     with distributed_utils.distributed_context(
         rank, opt, port, rank_offset, gpu, hostname
     ) as opt:
+        opt['multiprocessing'] = True
         return eval_model.eval_model(opt)
 
 

@@ -123,15 +123,6 @@ class AbstractWrapperTeacher(Teacher, ABC):
         shared['task'] = self.task.share()
         return shared
 
-    def shutdown(self):
-        """
-        Shutdown the subtask.
-        """
-        self.task.shutdown()
-
-    def update_counters(self):
-        self.task.update_counters()
-
 
 class LabelToTextTeacher(AbstractWrapperTeacher):
     """

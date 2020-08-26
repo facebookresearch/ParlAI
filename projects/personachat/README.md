@@ -1,3 +1,14 @@
+# PersonaChat
+
+This project was archived on 2020-08-01. The models and scripts have not been tested
+in a long time. You may continue to use the data without issue (`--task personachat`).
+If you need to use the model or scripts, please rewind to the
+[`personachat`](https://github.com/facebookresearch/ParlAI/tree/personachat/projects/personachat)
+tag.
+
+# Old README
+
+
 This directory contains example training and interactive scripts for some of
 the models used in the paper [Personalizing Dialogue Agents: I have a dog, do
 you have pets too?](https://arxiv.org/pdf/1801.07243.pdf). If you are interested in

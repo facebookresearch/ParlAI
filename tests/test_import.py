@@ -26,11 +26,6 @@ class TestImport(unittest.TestCase):
 
         assert World
 
-    def test_import_threadutils(self):
-        from parlai.utils.thread import SharedTable
-
-        assert SharedTable
-
     def test_import_dialog(self):
         from parlai.core.teachers import DialogTeacher
 

@@ -227,12 +227,10 @@ class TfidfRetrieverAgent(Agent):
         if (
             'ordered' not in self.opt.get('datatype', 'train:ordered')
             or self.opt.get('batchsize', 1) != 1
-            or self.opt.get('numthreads', 1) != 1
             or self.opt.get('num_epochs', 1) != 1
         ):
             raise RuntimeError(
-                'Need to set --batchsize 1, --numthreads 1, \
-            --datatype train:ordered, --num_epochs 1'
+                'Need to set --batchsize 1, --datatype train:ordered, --num_epochs 1'
             )
         obs = self.observation
         self.current.append(obs)
@@ -319,6 +317,7 @@ class TfidfRetrieverAgent(Agent):
                 # could pick single choice based on probability scores?
                 # pick = int(choice(doc_ids, p=doc_probs))
                 reply['text'] = pick
+                reply['candidate_ids'] = doc_ids
             else:
                 # no cands and nothing found, return generic response
                 reply['text'] = choice(
