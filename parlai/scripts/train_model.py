@@ -652,10 +652,6 @@ class TrainLoop:
                 try:
                     world.parley()
                 except StopTrainException:
-                    if is_distributed():
-                        raise RuntimeError(
-                            "StopTrainException not supported for " "distributed mode"
-                        )
                     break
 
                 self.parleys += 1
@@ -698,10 +694,6 @@ class TrainLoop:
                         world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
-                        if is_distributed():
-                            raise RuntimeError(
-                                "StopTrainException not supported for distributed mode"
-                            )
                         break
                     # reset the log time because we logged right before validating
                     self.log_time.reset()
