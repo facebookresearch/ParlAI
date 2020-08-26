@@ -50,8 +50,6 @@ class HredModel(TorchGeneratorModel):
         rnn_class = nn.LSTM
         embedding_size = embeddingsize
         hidden_size = hiddensize
-        # has to be set for super().reorder_encoder_states
-        self.attn_type = "none"
 
         self.encoder = HredEncoder(
             num_features=num_features,
@@ -100,10 +98,6 @@ class HredModel(TorchGeneratorModel):
         else:
             cell = cell.index_select(1, indices)
             hidden = (hid, cell)
-
-        if self.attn_type != "none":
-            enc_out = enc_out.index_select(0, indices)
-            attn_mask = attn_mask.index_select(0, indices)
 
         # and bring it back to multigpu friendliness
         hidden = _transpose_hidden_state(hidden)
@@ -179,7 +173,7 @@ class HredEncoder(RNNEncoder):
         sorted_context_vec = context_vec[sorted_idx]
         (_, (sorted_hidden_state, _), _) = super().forward(sorted_context_vec)
         sorted_final_hidden_states = sorted_hidden_state[:, -1, :]
-        
+
         ### reshape and pad hidden states to bsz x max_hist_len x hidden_size using hist_lens
         original_order_final_hidden = torch.zeros_like(
             sorted_final_hidden_states
