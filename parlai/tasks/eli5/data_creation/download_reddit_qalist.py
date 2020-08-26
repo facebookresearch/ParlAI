@@ -14,7 +14,6 @@ import bz2
 import io
 import json
 import lzma
-import os
 import re
 import requests
 import subprocess

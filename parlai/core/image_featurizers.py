@@ -199,7 +199,7 @@ class ImageLoader:
         assert '.zip' in path
         sep = path.index('.zip') + 4
         zipname = path[:sep]
-        file_name = path[sep + 1:]
+        file_name = path[sep + 1 :]
         return zipname, file_name
 
     def _get_prepath(self, path):

@@ -17,7 +17,6 @@ from parlai.utils.io import PathManager
 import torch
 from torch import optim
 import random
-import os
 import numpy as np
 import tqdm
 from collections import deque

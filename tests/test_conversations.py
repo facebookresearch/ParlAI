@@ -8,7 +8,6 @@ import shutil
 import unittest
 
 from parlai.utils.conversations import Conversations
-from parlai.core.params import ParlaiParser
 import parlai.utils.logging as logging
 import tempfile
 

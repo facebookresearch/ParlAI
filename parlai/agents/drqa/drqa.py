@@ -25,7 +25,6 @@ except ImportError:
     raise ImportError('Need to install pytorch: go to pytorch.org')
 
 import bisect
-import os
 import numpy as np
 import json
 import random

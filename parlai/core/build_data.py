@@ -296,7 +296,7 @@ def _untar(path, fname, delete=True):
 
 def _unzip(path, fname, delete=True):
     """
-    Unpack the given zip file to the same directory
+    Unpack the given zip file to the same directory.
 
     :param str path:
         The folder containing the archive. Will contain the contents.
