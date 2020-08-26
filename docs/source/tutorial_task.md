@@ -28,7 +28,7 @@ Here's an example dataset with a single episode with 2 examples:
 
 Suppose that data is in the file /tmp/data.txt
 
-:::{admonition,note}
+:::{note} File format
 There are tabs between each field above which are rendered in the
 browser as four spaces. Be sure to change them to tabs for the command
 below to work.

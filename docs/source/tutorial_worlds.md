@@ -3,7 +3,7 @@ Data Handling and Batching
 
 __Authors__: Alexander Holden Miller, Kurt Shuster
 
-:::{admonition,tip}
+:::{tip} Before you begin
 If you are unfamiliar with the basics of displaying data or calling train or
 evaluate on a model, please first see the [getting started](tutorial_basic)
 section. If you are interested in creating a task, please see
@@ -119,7 +119,7 @@ Now, the agent can process the entire batch at once. This is especially
 helpful for GPU-based models, which prefer to process more examples at a
 time.
 
-:::{admonition,tip} Implementing batch\_act and act
+:::{tip} Implementing batch\_act and act
 
 Tip: if you implement `batch_act()`, your `act()` method can just call
 `batchact()` and pass the observation it is supposed to process in a

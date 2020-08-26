@@ -94,7 +94,7 @@ reproducing paper results. For example, SQuAD has an `answer_starts`
 field, which is available in the "squad:index" task.
 
 
-:::{admonition,note} Automatic Processing
+:::{note} Automatic Processing
 During validation and testing, the `labels` field is renamed
 `eval_labels`--this way, the model won't accidentally train on the
 labels, but they are still available for calculating model-side loss.
