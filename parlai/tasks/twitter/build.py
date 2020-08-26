@@ -11,6 +11,8 @@ try:
 except ImportError:
     raise ImportError('Please `pip install emoji unidecode` for the twitter task.')
 
+import io
+import gzip
 import parlai.core.build_data as build_data
 import os
 from parlai.core.build_data import DownloadableFile
@@ -103,17 +105,15 @@ def build(opt):
 
         file1 = os.path.join(dpath, RESOURCES[0].file_name)
         file2 = os.path.join(dpath, RESOURCES[1].file_name)
-        file3 = "twitter_en_big.txt.gz"
-        outzipfile = os.path.join(dpath, file3)
-        build_data.cat(file1, file2, outzipfile)
 
-        import gzip
+        concat = io.BytesIO()
 
-        with gzip.open(outzipfile, 'r') as f:
+        data = []
+        for fn in [file1, file2]:
+            with PathManager.open(fn, 'b') as rawf:
+                concat.write(rawf.read())
+
+        with gzip.open(fileobj=concat) as f:
             file_content = bytes.decode(f.read())
-        data = file_content.split('\n')[2:]
+            data += file_content.split('\n')[2:]
         create_fb_format(data, dpath)
-        PathManager.rm(outzipfile)
-
-        # Mark the data as built.
-        build_data.mark_done(dpath, version)
