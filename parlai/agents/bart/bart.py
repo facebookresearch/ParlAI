@@ -182,31 +182,3 @@ class BartAgent(TransformerGeneratorAgent):
             .expand(bsz * beam_size, 1)
             .to(dev)
         )
-
-    def _generate(
-        self,
-        batch: Batch,
-        beam_size: int,
-        max_ts: int,
-        prefix_tokens: Optional[torch.LongTensor] = None,
-    ):
-        """
-        Override to set prefix_tokens.
-
-        For bart pretraining, a bos token was added to the input.
-
-        input to encoder:
-        <bos> seq <eos>
-
-        input to decoder:
-        <eos> <bos> seq
-
-        target is:
-        <bos> seq <eos>
-        """
-        text_vec = batch.text_vec  # type: ignore
-        if text_vec is not None:
-            prefix_tokens = text_vec.new_zeros(  # type: ignore
-                (text_vec.size(0), 1)
-            ).fill_(self.START_IDX)
-        return super()._generate(batch, beam_size, max_ts, prefix_tokens)
