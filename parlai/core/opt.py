@@ -128,7 +128,7 @@ class Opt(dict):
                 dct = json.load(t_handle)
         except UnicodeDecodeError:
             # oops it's pickled
-            with PathManager.open(optfile, 'rb', encoding='utf-8') as b_handle:
+            with PathManager.open(optfile, 'rb') as b_handle:
                 dct = pickle.load(b_handle)
         for key in __AUTOCLEAN_KEYS__:
             if key in dct:
