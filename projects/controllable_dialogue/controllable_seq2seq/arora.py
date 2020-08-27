@@ -37,15 +37,15 @@ class SentenceEmbedder(object):
 
     def __init__(self, word2prob, arora_a, glove_name, glove_dim, first_sv, data_path):
         """
-          Inputs:
-            word2prob: dict mapping words to their unigram probs
-            arora_a: a float. Is the constant (called "a" in the paper)
-              used to compute Arora sentence embeddings.
-            glove_name: the version of GloVe to use, e.g. '840B'
-            glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
-            first_sv: np array shape (glove_dim). The first singular value,
-              used to compute Arora sentence embeddings. Can be None.
-            data_path: The data path (we will use this to download glove)
+        Inputs:
+          word2prob: dict mapping words to their unigram probs
+          arora_a: a float. Is the constant (called "a" in the paper)
+            used to compute Arora sentence embeddings.
+          glove_name: the version of GloVe to use, e.g. '840B'
+          glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
+          first_sv: np array shape (glove_dim). The first singular value,
+            used to compute Arora sentence embeddings. Can be None.
+          data_path: The data path (we will use this to download glove)
         """
         self.word2prob = word2prob
         self.arora_a = arora_a

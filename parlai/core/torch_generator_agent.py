@@ -1021,9 +1021,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             initial input for the decoder
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.START_IDX]
-            )
+            torch.LongTensor([self.START_IDX])  # type: ignore
             .expand(bsz * beam_size, 1)
             .to(dev)
         )
