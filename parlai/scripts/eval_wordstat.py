@@ -9,21 +9,20 @@ the word statistics of the model outputs. One can also use the function defined 
 other places in order to get such statistic for any agent given the agent object (with
 corr. dict) and a sequence.
 
-Additionally provides function get_word_stats that can be used in other parts
-of runtime code since it depends only on the agent object. For example:
+Additionally provides function `get_word_stats` that can be used in
+other parts of runtime code since it depends only on the agent object.
+For example:
 
-::
+```python
+from parlai.scripts.eval_wordstat import get_word_stats
+reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+```
 
-  from parlai.scripts.eval_wordstat import get_word_stats
-  reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+## Examples
 
-
-Examples
---------
-
-.. code-block:: shell
-
-  parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+```shell
+parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+```
 """
 
 from parlai.core.params import ParlaiParser

@@ -8,16 +8,15 @@
 Basic example which iterates through the tasks specified and load/extract the image
 features.
 
-For more options, check ``parlai.core.image_featurizers``
+For more options, check `parlai.core.image_featurizers`
 
-Examples
---------
+## Examples
 
 To extract the image feature of COCO images:
 
-.. code-block:: shell
-
-  parlai extract_image_feature -t vqa_v1 -im resnet152
+```shell
+parlai extract_image_feature -t vqa_v1 -im resnet152
+```
 """
 import copy
 import tqdm
