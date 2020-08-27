@@ -25,6 +25,10 @@ from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import History
+from parlai.core.torch_generator_agent import PPLMetric
+from parlai.core.metrics import (
+    AverageMetric,
+)
 from parlai.utils.typing import TShared
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
@@ -174,3 +178,35 @@ class BartAgent(TransformerGeneratorAgent):
             .expand(bsz * beam_size, 2)
             .to(dev)
         )
+
+    def compute_loss(self, batch, return_output=False):
+        if batch.label_vec is None:
+            raise ValueError('Cannot compute loss without a label.')
+        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        scores, preds, *_ = model_output
+        score_view = scores.view(-1, scores.size(-1))
+        bsz = batch.label_vec.size(0)
+        label_vec = torch.cat(
+            [torch.LongTensor([self.START_IDX]).to(batch.label_vec).detach().expand(bsz, 1), batch.label_vec],
+            1
+        )
+        batch.label_vec = label_vec
+        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        loss = loss.view(scores.shape[:-1]).sum(dim=1)
+        # save loss to metrics
+        notnull = batch.label_vec.ne(self.NULL_IDX)
+        target_tokens = notnull.long().sum(dim=-1)
+        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
+
+        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        self.record_local_metric(
+            'token_acc', AverageMetric.many(correct, target_tokens)
+        )
+        # actually do backwards loss
+        loss = loss.sum()
+        loss /= target_tokens.sum()  # average loss per token
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss

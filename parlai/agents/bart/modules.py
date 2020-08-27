@@ -39,7 +39,8 @@ class BartModel(TransformerGeneratorModel):
         :return initial_input:
             initial input for the decoder.
         """
-        return torch.cat([torch.LongTensor([self.END_IDX]).to(inputs).detach().expand(bsz, 1), inputs], 1)
+        tens = torch.LongTensor([self.END_IDX, self.START_IDX]).to(inputs).detach().expand(bsz, 2)
+        return torch.cat([tens, inputs], 1)
 
     def reorder_decoder_incremental_state(
         self,
