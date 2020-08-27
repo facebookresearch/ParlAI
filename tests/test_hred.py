@@ -9,13 +9,32 @@ import unittest
 import parlai.utils.testing as testing_utils
 
 
+BATCH_SIZE = 8
+
+
 class TestHred(unittest.TestCase):
     """
     Checks that Hred can learn some very basic tasks.
     """
 
-    @testing_utils.retry(ntries=3)
     def test_generation(self):
+        valid, test = testing_utils.train_model(
+            dict(
+                task="integration_tests:multiturn_candidate",
+                model="hred",
+                batchsize=BATCH_SIZE,
+                num_epochs=10,
+                embeddingsize=16,
+                hiddensize=32,
+                numlayers=1,
+                dropout=0.0,
+                skip_generation=True,
+            )
+        )
+        self.assertLess(valid["ppl"], 2)
+
+    @testing_utils.retry(ntries=3)
+    def test_greedy(self):
         """
         Test a simple multiturn task.
         """
@@ -30,7 +49,7 @@ class TestHred(unittest.TestCase):
                 numlayers=1,
                 embeddingsize=16,
                 hiddensize=32,
-                batchsize=8,
+                batchsize=BATCH_SIZE,
             )
         )
 
@@ -69,11 +88,11 @@ class TestHred(unittest.TestCase):
                 task="integration_tests:bad_example",
                 model="hred",
                 learningrate=1,
-                batchsize=10,
-                datatype="train:ordered:stream",
+                batchsize=BATCH_SIZE,
+                numlayers=1,
                 num_epochs=1,
                 embeddingsize=16,
-                hiddensize=16,
+                hiddensize=32,
                 inference="greedy",
             )
         )
