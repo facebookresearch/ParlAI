@@ -646,7 +646,6 @@ class TorchAgent(ABC, Agent):
             type='nonestr',
             default=None,
             hidden=True,
-            choices=[None, 'end'],
             help='Add special token to the end of history encoding.',
         )
         agent.add_argument(
@@ -1360,6 +1359,7 @@ class TorchAgent(ABC, Agent):
                 obs['text_vec'], truncate, truncate_left
             )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
+
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):

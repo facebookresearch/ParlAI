@@ -19,13 +19,14 @@ class TestInit(unittest.TestCase):
     """
 
     def test_init_everywhere(self):
-        for folder in testing_utils.git_ls_dirs('parlai'):
-            if 'mturk' in folder:
+        for folder_path in testing_utils.git_ls_dirs('parlai'):
+            excluded_folders = ['mturk', 'webapp']
+            if any(folder_name in folder_path for folder_name in excluded_folders):
                 continue
             self.assertIn(
                 '__init__.py',
-                os.listdir(folder),
-                '{} does not contain __init__.py'.format(folder),
+                os.listdir(folder_path),
+                '{} does not contain __init__.py'.format(folder_path),
             )
 
 

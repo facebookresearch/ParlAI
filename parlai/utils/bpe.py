@@ -826,7 +826,7 @@ class HuggingFaceBpeHelper(BPEHelper):
         :param file_name:
             file to save.
         """
-        self.tokenizer.save(dir_name, file_name)
+        self.tokenizer.save_model(dir_name, file_name)
 
 
 class SlowBytelevelBPE(Gpt2BpeHelper):

@@ -75,7 +75,12 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         Instantiate tokenizer.
         """
         model_sz = opt['gpt2_size']
-        fle_key = 'gpt2' if model_sz == 'small' else f'gpt2-{model_sz}'
+        if model_sz == 'small':
+            fle_key = 'gpt2'
+        elif model_sz == 'distilgpt2':
+            fle_key = 'distilgpt2'
+        else:
+            fle_key = f'gpt2-{model_sz}'
         return GPT2Tokenizer.from_pretrained(fle_key)
 
     def _define_special_tokens(self, opt):
@@ -106,3 +111,13 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         self.ind2tok[self.end_idx] = self.end_token
         self.ind2tok[self.start_idx] = self.start_token
         self.ind2tok[self.null_idx] = self.null_token
+
+
+class DialoGPTDictionaryAgent(Gpt2DictionaryAgent):
+    def get_tokenizer(self, opt):
+        """
+        Instantiate tokenizer.
+        """
+        model_sz = opt['gpt2_size']
+        fle_key = f'microsoft/DialoGPT-{model_sz}'
+        return GPT2Tokenizer.from_pretrained(fle_key)

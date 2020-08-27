@@ -221,12 +221,16 @@ def load_task_module(taskname: str):
     """
     Get the module containing all teacher agents for the task specified by `--task`.
 
-    :param taskname: path to task class in one of the following formats:
-        * full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
-        * shorthand: ``-t babi``, which will check
-            ``parlai.tasks.babi.agents:DefaultTeacher``
-        * shorthand specific: ``-t babi:task10k``, which will check
-            ``parlai.tasks.babi.agents:Task10kTeacher``
+    :param taskname:
+        path to task class in one of the formats
+
+    The valid formats for taskname are:
+
+      - full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
+      - shorthand: ``-t babi``, which will check
+        ``parlai.tasks.babi.agents:DefaultTeacher``
+      - shorthand specific: ``-t babi:task10k``, which will check
+        ``parlai.tasks.babi.agents:Task10kTeacher``
 
     :return:
         module containing all teacher agents for a task
@@ -253,9 +257,9 @@ def load_teacher_module(taskname: str):
 
     * full: ``-t parlai.tasks.babi.agents:DefaultTeacher``
     * shorthand: ``-t babi``, which will check
-        ``parlai.tasks.babi.agents:DefaultTeacher``
+      ``parlai.tasks.babi.agents:DefaultTeacher``
     * shorthand specific: ``-t babi:task10k``, which will check
-        ``parlai.tasks.babi.agents:Task10kTeacher``
+      ``parlai.tasks.babi.agents:Task10kTeacher``
 
     The base path to search when using shorthand formats can be changed from
     "parlai" to "parlai_internal" by prepending "internal:" to the path, e.g.

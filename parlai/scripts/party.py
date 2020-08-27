@@ -7,12 +7,11 @@
 """
 Throw a party.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai party
+```shell
+parlai party
+```
 """
 
 import sys

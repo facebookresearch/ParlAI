@@ -4,59 +4,99 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
-import parlai.scripts
-import io
 import importlib
+import inspect
+import argparse
+import parlai.core.script as pcs
 
 
-def indent(rawstr, indentstr='    '):
-    lines = rawstr.split('\n')
-    indented = [(indentstr + l) for l in lines]
-    return '\n'.join(indented).replace('\\', '\\\\').rstrip()
+def render_script(fout, key, registration):
+    script_parser = registration.klass.setup_args()
+    description = script_parser.description
+    fout.write(f"## {key}\n\n")
+    if description:
+        fout.write(f"__Short description:__ {description}\n\n")
+    if registration.aliases:
+        aliases = ", ".join(f'`{a}`' for a in registration.aliases)
+        fout.write(f"__Aliases:__ {aliases}\n")
 
+    mod = importlib.import_module(registration.klass.__module__)
+    doc = inspect.getdoc(mod)
+    if doc:
+        doc = doc.replace("## Examples", "### Examples")
+        fout.write(doc)
+        fout.write("\n")
 
-def get_scripts():
-    pathname = os.path.dirname(parlai.scripts.__file__)
-    for fn in os.listdir(pathname):
-        if fn.endswith('.py') and not fn.startswith('__'):
-            yield os.path.join(pathname, fn)
+    actions = []
+    for action in script_parser._actions:
+        if hasattr(action, 'hidden') and action.hidden:
+            # some options are marked hidden
+            continue
+        if action.dest == argparse.SUPPRESS:
+            continue
+        if action.dest == 'help' or action.dest == 'helpall':
+            continue
+        action_strings = ",  ".join(f'`{a}`' for a in action.option_strings)
+        if not action_strings:
+            continue
+        description = []
+        if action.help:
+            h = action.help
+            if not h[0].isupper():
+                h = h[0].upper() + h[1:]
+            h = h.replace("%(default)s", f'`{action.default}`')
+            description += [h]
+        # list choices if there are any
+        if action.choices:
+            description += ["Choices: " + ", ".join(f'`{c}`' for c in action.choices)]
+        default_value = ""
+        if action.default and action.default != argparse.SUPPRESS:
+            default_value += f"Default: `{action.default}`.  "
+        if hasattr(action, 'recommended') and action.recommended:
+            default_value += f"Recommended: `{action.recommended}`. "
+
+        # special escape for a few args which use a literal newline as their default
+        if default_value:
+            default_value = default_value.replace("\n", "\\n")
+            description.append(default_value)
+
+        # escape for the fact that we're inserting this inside a table
+        description = " <BR> ".join(description)
+        actions.append((action_strings, description))
+
+    if not actions:
+        return
+
+    fout.write("### CLI Arguments\n\n")
+    fout.write("| Argument | Description |\n")
+    fout.write("| ------- | --------- |\n")
+    for action, description in actions:
+        fout.write(f"| {action} | {description} |\n")
+    fout.write('\n\n')
 
 
 def main():
-    fout = open('cli_usage.inc', 'w')
+    pcs.setup_script_registry()
 
-    for script_path in get_scripts():
-        script_name = os.path.basename(script_path).replace(".py", "")
-        try:
-            module = importlib.import_module("parlai.scripts." + script_name)
-        except ModuleNotFoundError:
-            continue
-        if not hasattr(module, 'setup_args'):
-            continue
-        # header
-        fout.write(script_name)
-        fout.write('\n')
-        fout.write('-' * len(script_name))
-        fout.write('\n')
+    first = []
+    second = []
+    for key, registration in sorted(pcs.SCRIPT_REGISTRY.items()):
+        if not registration.hidden:
+            first.append((key, registration))
+        else:
+            second.append((key, registration))
 
-        # docs from the module
-        fout.write('.. automodule:: parlai.scripts.{}\n'.format(script_name))
+    with open("cli_usage.inc", "w") as fout:
+        for i, (key, registration) in enumerate(first):
+            if i != 0:
+                fout.write("\n----------\n")
+            render_script(fout, key, registration)
 
-        # fout.write('   :members:\n')
-        # fout.write('   :exclude-members: setup_args\n')
-        fout.write('\n')
-        fout.write('CLI help\n')
-        fout.write('~~~~~~~~\n\n\n')
-
-        # output the --help
-        fout.write('.. code-block:: text\n\n')  # literal block
-        capture = io.StringIO()
-        parser = module.setup_args()
-        parser.prog = 'parlai {}'.format(script_name)
-        parser.print_help(capture)
-        fout.write(indent(capture.getvalue()))
-        fout.write('\n\n')
+    with open("cli_advanced.inc", "w") as fout:
+        for i, (key, registration) in enumerate(second):
+            if i != 0:
+                fout.write("\n----------\n")
+            render_script(fout, key, registration)
 
 
 if __name__ == '__main__':

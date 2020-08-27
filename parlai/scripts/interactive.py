@@ -6,17 +6,16 @@
 """
 Basic script which allows local human keyboard input to talk to a trained model.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
+```shell
+parlai interactive -m drqa -mf "models:drqa/squad/model"
+```
 
-  parlai interactive -m drqa -mf "models:drqa/squad/model"
-
-When prompted, enter something like: ``Bob is Blue.\\nWhat is Bob?``
+When prompted, enter something like: `Bob is Blue.\\nWhat is Bob?`
 
 Input is often model or task specific, but in drqa, it is always
-``context '\\n' question``.
+`context '\\n' question`.
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent

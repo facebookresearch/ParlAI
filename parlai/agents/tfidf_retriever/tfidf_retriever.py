@@ -317,6 +317,7 @@ class TfidfRetrieverAgent(Agent):
                 # could pick single choice based on probability scores?
                 # pick = int(choice(doc_ids, p=doc_probs))
                 reply['text'] = pick
+                reply['candidate_ids'] = doc_ids
             else:
                 # no cands and nothing found, return generic response
                 reply['text'] = choice(

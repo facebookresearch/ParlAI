@@ -6,12 +6,11 @@
 """
 Talk with a model using a web UI.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
+```shell
+parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
+```
 """
 
 
