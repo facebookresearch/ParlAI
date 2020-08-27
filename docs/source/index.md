@@ -12,6 +12,7 @@ tutorial_task
 tutorial_worlds
 tutorial_torch_generator_agent
 tutorial_torch_ranker_agent
+tutorial_metrics
 tutorial_fast
 tutorial_mturk
 tutorial_chat_service
