@@ -24,7 +24,7 @@ from parlai.core.agents import compare_init_model_opts
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch, History, TorchAgent
+from parlai.core.torch_agent import History
 from parlai.utils.typing import TShared
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
@@ -140,14 +140,6 @@ class BartAgent(TransformerGeneratorAgent):
             )
         return model
 
-    def vectorize(self, *args, **kwargs):
-        """
-        Override vectorize for generative models.
-        """
-        kwargs['add_start'] = True  # need start token for BART
-        kwargs['add_end'] = True
-        return TorchAgent.vectorize(self, *args, **kwargs)
-
     def _set_text_vec(
         self, obs: Message, history: History, truncate: Optional[int]
     ) -> Message:
@@ -177,36 +169,8 @@ class BartAgent(TransformerGeneratorAgent):
         """
         return (
             torch.LongTensor(  # type: ignore
-                [self.END_IDX]
+                [self.END_IDX, self.START_IDX]
             )
-            .expand(bsz * beam_size, 1)
+            .expand(bsz * beam_size, 2)
             .to(dev)
         )
-
-    def _generate(
-        self,
-        batch: Batch,
-        beam_size: int,
-        max_ts: int,
-        prefix_tokens: Optional[torch.LongTensor] = None,
-    ):
-        """
-        Override to set prefix_tokens.
-
-        For bart pretraining, a bos token was added to the input.
-
-        input to encoder:
-        <bos> seq <eos>
-
-        input to decoder:
-        <eos> <bos> seq
-
-        target is:
-        <bos> seq <eos>
-        """
-        text_vec = batch.text_vec  # type: ignore
-        if text_vec is not None:
-            prefix_tokens = text_vec.new_zeros(  # type: ignore
-                (text_vec.size(0), 1)
-            ).fill_(self.START_IDX)
-        return super()._generate(batch, beam_size, max_ts, prefix_tokens)
