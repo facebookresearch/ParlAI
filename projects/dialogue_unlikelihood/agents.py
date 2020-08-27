@@ -12,6 +12,7 @@ import torch.nn.functional as F
 from collections import defaultdict, Counter
 from nltk import ngrams
 
+from parlai.core.torch_generator_agent import PPLMetric
 from parlai.agents.image_seq2seq.image_seq2seq import ImageSeq2seqAgent
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.metrics import AverageMetric, SumMetric, GlobalAverageMetric
@@ -93,16 +94,24 @@ class RewardUnlikelihoodAgentTrait(object):
         mle_loss = (
             F.nll_loss(
                 scores_view, targets_view, ignore_index=self.NULL_IDX, reduction='none'
-            )
-            * mle_notnull.view(-1).float()
-        ).sum()
+            ).view_as(mle_notnull)
+            * mle_notnull.float()
+        ).sum(dim=-1)
 
         # limit loss to only the positive rewards
-        mle_target_tokens = mle_notnull.long().sum().item()
-        correct = ((targets == preds) * mle_notnull).sum().item()
-        self.record_local_metric('correct_tokens', SumMetric(correct))
-        self.record_local_metric('nll_loss', SumMetric(mle_loss.item()))
-        self.record_local_metric('num_tokens', SumMetric(mle_target_tokens))
+        mle_target_tokens = mle_notnull.long().sum(dim=-1)
+        correct = ((targets == preds) * mle_notnull).sum(-1)
+        token_acc_metrics = AverageMetric.many(correct, mle_target_tokens)
+        token_acc_metrics = [None if am._denom == 0 else am for am in token_acc_metrics]
+        mle_loss_metrics = AverageMetric.many(mle_loss, mle_target_tokens)
+        mle_loss_metrics = [None if am._denom == 0 else am for am in mle_loss_metrics]
+        ppl_metrics = PPLMetric.many(mle_loss, mle_target_tokens)
+        ppl_loss_metrics = [None if am._denom == 0 else am for am in ppl_metrics]
+        self.record_local_metric('token_acc', token_acc_metrics)
+        self.record_local_metric('nll_loss', mle_loss_metrics)
+        self.record_local_metric('ppl', ppl_loss_metrics)
+        mle_loss = mle_loss.sum()
+        mle_target_tokens = mle_target_tokens.sum()
         if mle_target_tokens > 0:
             mle_loss /= mle_target_tokens  # average loss per token
 
@@ -114,17 +123,21 @@ class RewardUnlikelihoodAgentTrait(object):
 
         # and now we want the unlikelihood loss on the negative examples
         ul_notnull = notnull & (batch.rewards < 0).unsqueeze(1).expand_as(notnull)
-        ul_target_tokens = ul_notnull.long().sum().item()
+        ul_target_tokens = ul_notnull.long().sum(dim=-1)
         range_ = torch.arange(targets_view.size(0)).to(batch.label_vec.device)
         ul_scores = scores_view[range_, targets_view]
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
         ul_loss = (
-            -torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min))
-            * ul_notnull.view(-1).float()
-        ).sum()
-        self.record_local_metric(
-            'ul_loss', AverageMetric.many(ul_loss.sum(dim=-1), ul_target_tokens)
-        )
+            -torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)).view_as(
+                ul_notnull
+            )
+            * ul_notnull.float()
+        ).sum(dim=-1)
+        ul_loss_metrics = AverageMetric.many(ul_loss, ul_target_tokens)
+        ul_loss_metrics = [None if am._denom == 0 else am for am in ul_loss_metrics]
+        self.record_local_metric('ul_loss', ul_loss_metrics)
+        ul_loss = ul_loss.sum()
+        ul_target_tokens = ul_target_tokens.sum()
         if ul_target_tokens > 0:
             ul_loss /= ul_target_tokens
 
