@@ -120,6 +120,7 @@ class HredAgent(TorchGeneratorAgent):
     def batchify(self, obs_batch, sort=True):
         """
         Add action and attribute supervision for batches.
+
         Store history vec as context_vec.
         """
         batch = super().batchify(obs_batch, sort)
@@ -150,7 +151,9 @@ class HredAgent(TorchGeneratorAgent):
     def _set_text_vec(self, obs, history, truncate):
         """
         Set the 'text_vec' field in the observation.
-        Overridden to include both local utterance (text_vec) and full history (context_vec)
+
+        Overridden to include both local utterance (text_vec) and full history
+        (context_vec)
         """
         if "text" not in obs:
             return obs

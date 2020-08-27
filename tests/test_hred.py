@@ -23,7 +23,7 @@ class TestHred(unittest.TestCase):
                 task="integration_tests:multiturn_candidate",
                 model="hred",
                 batchsize=BATCH_SIZE,
-                num_epochs=12,
+                num_epochs=10,
                 embeddingsize=16,
                 hiddensize=32,
                 numlayers=1,
@@ -79,25 +79,6 @@ class TestHred(unittest.TestCase):
         self.assertGreater(valid["accuracy"], 0.95)
         self.assertGreater(test["accuracy"], 0.95)
 
-    def test_badinput(self):
-        """
-        Ensures model doesn't crash on malformed inputs.
-        """
-        testing_utils.train_model(
-            dict(
-                task="integration_tests:bad_example",
-                model="hred",
-                learningrate=1,
-                batchsize=BATCH_SIZE,
-                numlayers=1,
-                num_epochs=1,
-                embeddingsize=16,
-                hiddensize=32,
-                inference="greedy",
-            )
-        )
-
 
 if __name__ == "__main__":
     unittest.main()
-

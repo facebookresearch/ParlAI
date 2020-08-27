@@ -26,7 +26,7 @@ def download(datapath):
         'test_bytelevel_bpe_v2.tar.gz',
         'beam_blocking1.tar.gz',
         'context_blocking1.tar.gz',
-	'hred_model_v1.tar.gz'
-]
+        'hred_model_v1.tar.gz',
+    ]
     if not built(mdir, version):
         download_models(opt, model_filenames, model_name, version=version)

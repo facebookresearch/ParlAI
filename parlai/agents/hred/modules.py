@@ -122,7 +122,9 @@ class HredModel(TorchGeneratorModel):
 
 class HredEncoder(RNNEncoder):
     """
-    RNN Encoder. Modified to encode history vector in context lstm.
+    RNN Encoder.
+
+    Modified to encode history vector in context lstm.
     """
 
     def __init__(
@@ -270,6 +272,7 @@ class HredDecoder(nn.Module):
     def forward(self, xs, encoder_output, incremental_state=None):
         """
         Decode from input tokens.
+
         :param xs: (bsz x seqlen) LongTensor of input token indices
         :param encoder_output: output from HredEncoder. Tuple containing
             (enc_out, enc_hidden, attn_mask, context_hidden) tuple.
@@ -300,4 +303,3 @@ class HredDecoder(nn.Module):
         output, new_hidden = self.rnn(xes, None)
 
         return output, _transpose_hidden_state(new_hidden)
-
