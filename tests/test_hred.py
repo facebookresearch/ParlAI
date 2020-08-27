@@ -23,7 +23,7 @@ class TestHred(unittest.TestCase):
                 task="integration_tests:multiturn_candidate",
                 model="hred",
                 batchsize=BATCH_SIZE,
-                num_epochs=10,
+                num_epochs=12,
                 embeddingsize=16,
                 hiddensize=32,
                 numlayers=1,
