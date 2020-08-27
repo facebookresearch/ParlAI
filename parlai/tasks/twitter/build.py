@@ -120,3 +120,6 @@ def build(opt):
 
         PathManager.rm(file1)
         PathManager.rm(file2)
+
+        # Mark the data as built.
+        build_data.mark_done(dpath, version)
