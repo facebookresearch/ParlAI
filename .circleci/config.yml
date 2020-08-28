@@ -140,7 +140,7 @@ setupcuda: &setupcuda
     command: |
       # download and install nvidia drivers, cuda, etc
       wget --quiet --no-clobber -P ~/nvidia-downloads 'https://us.download.nvidia.com/XFree86/Linux-x86_64/340.108/NVIDIA-Linux-x86_64-340.108.run'
-      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-*.run --no-drm -q --ui=none
+      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-*.run --ui=none
       echo "Done installing NVIDIA drivers."
       pyenv versions
       nvidia-smi
