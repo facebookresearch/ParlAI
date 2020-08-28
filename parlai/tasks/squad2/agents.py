@@ -90,6 +90,7 @@ class DefaultTeacher(DialogTeacher):
 
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('Squad2 teacher arguments')
