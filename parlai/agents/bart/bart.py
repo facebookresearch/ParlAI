@@ -165,9 +165,7 @@ class BartAgent(TransformerGeneratorAgent):
         self, bsz: int, beam_size: int, dev: torch.device
     ) -> torch.LongTensor:
         """
-        Override to seed decoder with EOS token.
-
-        See docstring for `BartAgent._generate` for more details.
+        Override to seed decoder with EOS BOS token.
         """
         return (
             torch.LongTensor(  # type: ignore

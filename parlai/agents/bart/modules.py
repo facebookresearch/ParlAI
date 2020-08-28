@@ -30,6 +30,8 @@ class BartModel(TransformerGeneratorModel):
         """
         Return initial input to the decoder.
 
+        Override TGA._get_initial_forced_decoder_input to seed EOS BOS.
+
         :param bsz:
             batchsize
         :param inputs:
@@ -52,7 +54,8 @@ class BartModel(TransformerGeneratorModel):
         inds: Union[List[int], torch.LongTensor],
     ) -> Optional[Dict[str, Any]]:
         """
-        Incremental state is too hard with all the docs and what not.
+        Incremental state is weird to handle when we seed decoder with two inputs
+        initially.
 
         We leave as a future exercise.
         """
