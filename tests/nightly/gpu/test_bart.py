@@ -41,15 +41,17 @@ class TestBartModel(unittest.TestCase):
 
         self.assertEqual(act['text'], text)
 
-    # @unittest.skip
     @testing_utils.retry(ntries=3, log_retry=True)
     def test_bart_ft(self):
+        """
+        FT BART on a "reverse" task (the opposite of what it was trained to do)
+        """
         with tempdir() as tmpdir:
             # test finetuning
             mf = os.path.join(tmpdir, 'model')
             valid, test = testing_utils.train_model(
                 dict(
-                    task='integration_tests',
+                    task='integration_tests:reverse',
                     model='bart',
                     dict_file='zoo:bart/bart_large/model.dict',
                     optimizer='adam',
@@ -71,7 +73,7 @@ class TestBartModel(unittest.TestCase):
             obs = {'text': text, 'episode_done': True}
             bart.observe(obs)
             act = bart.act()
-            self.assertEqual(act['text'], text)
+            self.assertEqual(act['text'], text[::-1])
 
 
 if __name__ == '__main__':
