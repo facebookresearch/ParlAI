@@ -47,6 +47,7 @@ from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 from abc import ABC, abstractmethod
 
@@ -953,16 +954,16 @@ class StreamDialogData(DialogData):
         """
         datafiles = self.datafile if type(self.datafile) is tuple else [self.datafile]
         length_file = datafiles[0] + ".lengths"
-        if not os.path.isfile(length_file):
+        if not PathManager.exists(length_file):
             num_eps = 0
             num_exs = 0
             for episode in self._read_episode(self.data_loader(self.datafile)):
                 num_eps += 1
                 num_exs += len(episode)
-            with open(length_file, 'w', encoding="utf-8") as f:
+            with PathManager.open(length_file, 'w', encoding="utf-8") as f:
                 f.write("{}\n{}".format(num_eps, num_exs))
         else:
-            with open(length_file, 'r', encoding="utf-8") as f:
+            with PathManager.open(length_file, 'r', encoding='utf-8') as f:
                 num_eps, num_exs = f.readlines()
         return int(num_eps), int(num_exs)
 
@@ -1126,7 +1127,7 @@ class FbDialogTeacher(DialogTeacher):
         lines_have_ids = False
         cands_are_replies = False
         cnt = 0
-        with open(path, encoding="utf-8") as read:
+        with PathManager.open(path, encoding='utf-8') as read:
             for line in read:
                 line = line.strip().replace('\\n', '\n')
                 if len(line) > 0:
@@ -1181,7 +1182,7 @@ class FbDialogTeacher(DialogTeacher):
             new_episode = False (this is the second example in the episode)
         """
         logging.info(f"loading fbdialog data: {path}")
-        with open(path, encoding="utf-8") as read:
+        with PathManager.open(path, encoding='utf-8') as read:
             start = True
             x = ''
             reward = 0
@@ -1368,7 +1369,7 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         self.episodes = []
         self.num_exs = 0
         eps = []
-        with open(path, newline='\n', encoding="utf-8") as read:
+        with PathManager.open(path, newline='\n', encoding='utf-8') as read:
             for line_no, line in enumerate(read, 1):
                 msg = str_to_msg(line.rstrip('\n'))
                 if msg and 'eval_labels' in msg:
@@ -1734,8 +1735,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         # In default implementation, self.data_path already has task name added
         image_features_path = os.path.join(self.data_path, 'image_features')
 
-        if not os.path.isdir(image_features_path):
-            os.makedirs(image_features_path)
+        PathManager.mkdirs(image_features_path)
 
         return os.path.join(
             image_features_path, '%s_%s_%s_features_dict' % (task, image_model_name, dt)
@@ -1774,7 +1774,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         data_file = os.path.join(self.data_path, '%s.json' % dt)
 
         # Load the text data and image number indexes
-        with open(data_file, encoding="utf-8") as f:
+        with PathManager.open(data_file, encoding='utf-8') as f:
             self.data = json.load(f)
 
         if len(self.data) > 0 and self.image_id_key not in self.data[0]:
@@ -1803,7 +1803,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             self.task, self.image_mode, self.datatype
         )
 
-        if os.path.isfile(image_mode_features_dict_path):
+        if PathManager.exists(image_mode_features_dict_path):
             logging.info(
                 f'Loading existing image features dict for model: {self.image_mode} at: {image_mode_features_dict_path}'
             )

@@ -645,7 +645,7 @@ class TeacherMetrics(Metrics):
     """
 
     def __init__(
-        self, metrics_list: str = "default", shared: Dict[str, Any] = None,
+        self, metrics_list: str = "default", shared: Dict[str, Any] = None
     ) -> None:
         super().__init__(shared=shared)
         self._metrics_list = self._infer_metrics(metrics_list)
@@ -712,11 +712,11 @@ class TeacherMetrics(Metrics):
             # if any of the rouges are in the list
             if self._metrics_list & ROUGE_METRICS:
                 r1, r2, rL = RougeMetric.compute_many(prediction, labels)
-                if 'rouge-1' in self._metrics_list:
+                if 'rouge-1' in self._metrics_list and r1:
                     self.add('rouge_1', r1)
-                if 'rouge-2' in self._metrics_list:
+                if 'rouge-2' in self._metrics_list and r2:
                     self.add('rouge_2', r2)
-                if 'rouge-L' in self._metrics_list:
+                if 'rouge-L' in self._metrics_list and rL:
                     self.add('rouge_L', rL)
 
         # Ranking metrics.

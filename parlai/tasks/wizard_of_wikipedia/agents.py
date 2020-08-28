@@ -17,6 +17,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -135,7 +136,7 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 
     def _setup_data(self):
         print('loading: ' + self.data_path)
-        with open(self.data_path) as f:
+        with PathManager.open(self.data_path) as f:
             self.data = json.load(f)
 
     def num_episodes(self):
@@ -177,23 +178,23 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 
 class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
-        Teacher that returns the following action dict:
-        {
-            'text': chosen_topic\n # if first ex in ep
-                    last_apprentice_message\n # if possible
-                    wizard_message # if --label-type is chosen_sent
+    Teacher that returns the following action dict:
+    {
+        'text': chosen_topic\n # if first ex in ep
+                last_apprentice_message\n # if possible
+                wizard_message # if --label-type is chosen_sent
 
-            'knowledge': title_1 sentence_1\n
-                                .
-                                .
-                                .
-                         title_m sentence_n # all knowledge available to wizard
-            'labels': [title_checked sentence_checked] # default
-                                        OR
-                      [wizard_response] # if --label-type set to 'response'
+        'knowledge': title_1 sentence_1\n
+                            .
+                            .
+                            .
+                     title_m sentence_n # all knowledge available to wizard
+        'labels': [title_checked sentence_checked] # default
+                                    OR
+                  [wizard_response] # if --label-type set to 'response'
 
-            'label_candidates': knowledge + [no_passages_used no_passages_used]
-        }
+        'label_candidates': knowledge + [no_passages_used no_passages_used]
+    }
     """
 
     def __init__(self, opt, shared=None):

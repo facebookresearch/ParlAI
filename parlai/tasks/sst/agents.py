@@ -7,6 +7,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 
@@ -40,7 +41,7 @@ class SSTTeacher(DialogTeacher):
     def setup_data(self, path):
         print('loading: ' + path)
 
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.all_lines = [
                 l.strip().split(',', 1) for l in data_file.read().split("\n")[1:-1]
             ]

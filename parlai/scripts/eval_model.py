@@ -28,6 +28,7 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 import json
@@ -110,7 +111,7 @@ def _save_eval_stats(opt, report):
         json_serializable_report[k] = v
 
     # Save report
-    with open(report_fname, 'w') as f:
+    with PathManager.open(report_fname, 'w') as f:
         logging.info(f'Saving model report to {report_fname}')
         json.dump({'opt': opt, 'report': json_serializable_report}, f, indent=4)
         f.write("\n")  # for jq

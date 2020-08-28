@@ -8,8 +8,8 @@ import shutil
 import unittest
 
 from parlai.utils.conversations import Conversations
-from parlai.core.params import ParlaiParser
 import parlai.utils.logging as logging
+import tempfile
 
 
 class TestConversations(unittest.TestCase):
@@ -18,9 +18,7 @@ class TestConversations(unittest.TestCase):
     """
 
     def setUp(self):
-        self.datapath = ParlaiParser().parse_args([])['datapath']
-        self.datapath = os.path.join(self.datapath, 'tmp_conversations')
-        os.makedirs(self.datapath, exist_ok=True)
+        self.datapath = tempfile.mkdtemp()
 
     def test_conversations(self):
         act_list = [
@@ -51,11 +49,7 @@ class TestConversations(unittest.TestCase):
                 ],
             ],
         ]
-        self.opt = {
-            'A': 'B',
-            'C': 'D',
-            'E': 'F',
-        }
+        self.opt = {'A': 'B', 'C': 'D', 'E': 'F'}
 
         self.convo_datapath = os.path.join(self.datapath, 'convo1')
         Conversations.save_conversations(
@@ -79,9 +73,7 @@ class TestConversations(unittest.TestCase):
 
         # test opt saved
         for x in ['A', 'C', 'E']:
-            self.assertEqual(
-                self.opt[x], convos.metadata.opt[x],
-            )
+            self.assertEqual(self.opt[x], convos.metadata.opt[x])
 
         # test kwargs
         self.assertEqual({'other_info': 'Blah blah blah'}, convos.metadata.extra_data)

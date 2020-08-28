@@ -8,6 +8,7 @@ Test TorchRankerAgent.
 """
 
 import os
+import pytest
 import unittest
 
 import parlai.utils.testing as testing_utils
@@ -64,6 +65,7 @@ class _AbstractTRATest(unittest.TestCase):
         self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test train fixed
+    @pytest.mark.nofbcode
     @testing_utils.retry(ntries=3)
     def test_train_fixed(self):
         args = self._get_args()
@@ -151,7 +153,7 @@ class _AbstractTRATest(unittest.TestCase):
 class TestTransformerRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
-        new_args = dict(model='transformer/ranker', n_layers=1, n_heads=4, ffn_size=32,)
+        new_args = dict(model='transformer/ranker', n_layers=1, n_heads=4, ffn_size=32)
         for k, v in new_args.items():
             args[k] = v
         return args
@@ -168,11 +170,12 @@ class TestMemNN(_AbstractTRATest):
         return 0.5
 
 
+@pytest.mark.nofbcode
 class TestPolyRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
         new_args = dict(
-            model='transformer/polyencoder', n_layers=1, n_heads=4, ffn_size=32,
+            model='transformer/polyencoder', n_layers=1, n_heads=4, ffn_size=32
         )
         for k, v in new_args.items():
             args[k] = v

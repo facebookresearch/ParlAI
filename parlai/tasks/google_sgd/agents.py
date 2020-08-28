@@ -15,6 +15,7 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.misc import warn_once
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, BleuMetric
+from parlai.utils.io import PathManager
 
 import parlai.tasks.google_sgd.build as build_
 
@@ -39,7 +40,7 @@ class Text2API2TextTeacher(DialogTeacher):
         dataset_fold = 'dev' if fold == 'valid' else fold
         fold_path = os.path.join(self.dpath, dataset_fold)
         schema_file = os.path.join(fold_path, 'schema.json')
-        with open(schema_file, 'r') as f:
+        with PathManager.open(schema_file, 'r') as f:
             schema_lookup = {}
             for schema in json.load(f):
                 schema_lookup[schema['service_name']] = schema
@@ -47,7 +48,7 @@ class Text2API2TextTeacher(DialogTeacher):
         dialogs = []
         for file_id in range(1, build_.fold_size(dataset_fold) + 1):
             filename = os.path.join(fold_path, f'dialogues_{file_id:03d}.json')
-            with open(filename, 'r') as f:
+            with PathManager.open(filename, 'r') as f:
                 dialogs += json.load(f)
         return schema_lookup, dialogs
 

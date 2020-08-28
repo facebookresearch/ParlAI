@@ -66,7 +66,7 @@ class TestDistributed(unittest.TestCase):
             parser = build_dict.setup_args()
             build_dict.build_dict(popt)
 
-            valid, test = mp_train.launch_and_train(popt, 31337)
+            valid, test = mp_train.launch_and_train(popt, 31338)
 
         return (valid, test)
 

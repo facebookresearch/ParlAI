@@ -11,6 +11,7 @@ import gzip
 import os
 
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 import parlai.core.build_data as build_data
 
 
@@ -38,7 +39,7 @@ class ParseInsuranceQA(object):
     @classmethod
     def read_vocab(cls, vocab_path):
         d_vocab = {}
-        with open(vocab_path, "r") as f:
+        with PathManager.open(vocab_path, "r") as f:
             for line in f:
                 fields = line.rstrip('\n').split("\t")
                 if len(fields) != 2:

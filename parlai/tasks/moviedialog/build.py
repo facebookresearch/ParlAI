@@ -7,6 +7,7 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.utils.io import PathManager
 from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
@@ -51,7 +52,9 @@ def build(opt):
                     head = 'task4_reddit_'
                     tail = f[len(head) :]
                     write_fn = os.path.join(root, head + 'pipeless_' + tail)
-                    with open(read_fn) as read, open(write_fn, 'w') as write:
+                    with PathManager.open(read_fn) as read, PathManager.open(
+                        write_fn, 'w'
+                    ) as write:
                         for line in read:
                             write.write(line.replace('|', ' __PIPE__ ') + '\n')
 

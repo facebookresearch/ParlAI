@@ -8,6 +8,7 @@ import json
 from parlai.core.build_data import download_multiprocess
 from parlai.core.params import ParlaiParser
 import parlai.core.build_data as build_data
+from parlai.utils.io import PathManager
 
 
 def download_images(opt, task='personality_captions'):
@@ -42,10 +43,10 @@ def download_images(opt, task='personality_captions'):
     if task == 'image_chat':
         dts[1] = 'valid'
     for dt in dts:
-        with open(os.path.join(dpath, '{}.json'.format(dt))) as f:
+        with PathManager.open(os.path.join(dpath, '{}.json'.format(dt))) as f:
             data = json.load(f)
             hashes += [d['image_hash'] for d in data]
-    os.makedirs(image_path, exist_ok=True)
+    PathManager.mkdirs(image_path)
 
     print('[downloading images to {}]'.format(image_path))
     image_urls = [

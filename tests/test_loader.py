@@ -6,6 +6,7 @@
 import os
 import shutil
 import unittest
+import pytest
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 import parlai.tasks.convai2.agents as c2agents
@@ -19,10 +20,7 @@ from parlai.core.loader import (
 from parlai.core.worlds import DialogPartnerWorld
 import parlai.utils.testing as testing_utils
 
-OPTIONS = {
-    'task': 'convai2:selfRevised',
-    'agent': 'repeat_label',
-}
+OPTIONS = {'task': 'convai2:selfRevised', 'agent': 'repeat_label'}
 
 
 class TestLoader(unittest.TestCase):
@@ -44,7 +42,7 @@ class TestLoader(unittest.TestCase):
 
     def test_load_interactive_world(self):
         world_module = load_world_module(
-            OPTIONS['task'].split(':')[0], interactive_task=True,
+            OPTIONS['task'].split(':')[0], interactive_task=True
         )
         self.assertEqual(world_module, c2interactive)
 
@@ -63,7 +61,7 @@ class TestZoo(unittest.TestCase):
     def test_zoo_no_exists(self):
         with self.assertRaises(ImportError):
             testing_utils.display_model(
-                {'model_file': 'zoo:unittests/fake', 'task': 'integration_tests',}
+                {'model_file': 'zoo:unittests/fake', 'task': 'integration_tests'}
             )
         with self.assertRaises(ImportError):
             testing_utils.display_model(
@@ -71,6 +69,7 @@ class TestZoo(unittest.TestCase):
             )
 
 
+@pytest.mark.nofbcode
 class TestLoadParlAIInternal(unittest.TestCase):
     """
     Make sure we can load an agent from internal.

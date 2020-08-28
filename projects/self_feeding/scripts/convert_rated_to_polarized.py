@@ -16,6 +16,7 @@ from parlai.mturk.tasks.self_feeding.rating.worlds import (
     NEW_TOPIC_REQUEST,
     SUGGESTION_REQUEST,
 )
+from parlai.utils.io import PathManager
 
 # Initial prompts vary due to the random nouns, but all will start this way
 INITIAL_PROMPT = "start a conversation"
@@ -116,7 +117,7 @@ def main(config):
                 example = Parley(context, label)
                 examples.append(example)
 
-    with open(config['outfile'], 'w') as outfile:
+    with PathManager.open(config['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 

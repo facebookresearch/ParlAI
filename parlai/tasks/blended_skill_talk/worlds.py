@@ -10,6 +10,7 @@ import random
 from parlai.tasks.blended_skill_talk.agents import raw_data_path, safe_personas_path
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
+from parlai.utils.io import PathManager
 
 
 def get_contexts_data(opt, shared=None):
@@ -28,12 +29,12 @@ def _load_personas(opt):
             + '         You can also turn personas off with --include-personas False]\n'
         )
     fname = raw_data_path(opt)
-    with open(fname) as json_file:
+    with PathManager.open(fname) as json_file:
         data = json.load(json_file)
     if opt.get('include_personas', True) and opt.get('safe_personas_only', True):
         # Filter out unsafe personas
         save_personas_path = safe_personas_path(opt)
-        with open(save_personas_path, 'r') as f:
+        with PathManager.open(save_personas_path, 'r') as f:
             raw_safe_persona_groups = [line.strip() for line in f.readlines()]
         safe_persona_strings = set()
         for group in raw_safe_persona_groups:
