@@ -6,12 +6,11 @@
 """
 Count and display statistics of the data.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai data_stats -t convai2 -dt train:ordered
+```shell
+parlai data_stats -t convai2 -dt train:ordered
+```
 """
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent

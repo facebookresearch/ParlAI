@@ -7,18 +7,19 @@
 """
 Training script for ParlAI.
 
-The standard way to train a model. After training, also computes validation
-and test error.
+The standard way to train a model. After training, also computes
+validation and test error.
 
-The user must provide a model (with ``--model``) and a task (with ``--task``).
+The user must provide a model (with `--model`) and a task (with
+`--task`).
 
-Examples
---------
-.. code-block:: shell
+## Examples
 
-  parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-  parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-  parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+```shell
+parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+```
 """  # noqa: E501
 
 # TODO List:

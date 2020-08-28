@@ -8,13 +8,12 @@
 Basic example which iterates through the tasks specified and evaluates the given model
 on them.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
-  parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+```shell
+parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
+parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+```
 """
 
 from parlai.core.params import ParlaiParser, print_announcements

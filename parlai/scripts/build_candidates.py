@@ -6,12 +6,11 @@
 """
 Build the candidate responses for a retrieval model.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai build_candidates -t convai2 --outfile /tmp/cands.txt
+```bash
+parlai build_candidates -t convai2 --outfile /tmp/cands.txt
+```
 """
 
 from parlai.core.params import ParlaiParser
