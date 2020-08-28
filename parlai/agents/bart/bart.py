@@ -184,13 +184,10 @@ class BartAgent(TransformerGeneratorAgent):
             raise ValueError('Cannot compute loss without a label.')
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
-        score_view = scores.view(-1, scores.size(-1))
-        bsz = batch.label_vec.size(0)
-        label_vec = torch.cat(
-            [torch.LongTensor([self.START_IDX]).to(batch.label_vec).detach().expand(bsz, 1), batch.label_vec],
-            1
-        )
-        batch.label_vec = label_vec
+        if scores.size(1) != batch.label_vec.size(1):
+            scores = scores[:, 1:, :]
+            preds = preds[:, 1:]
+        score_view = scores.reshape(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))
         loss = loss.view(scores.shape[:-1]).sum(dim=1)
         # save loss to metrics
@@ -210,3 +207,9 @@ class BartAgent(TransformerGeneratorAgent):
             return (loss, model_output)
         else:
             return loss
+
+    def _construct_token_losses(self, labels, model_output):
+        # Get non-aggregated losses
+        scores, _, _ = model_output
+        scores = scores[:, 1:, :]
+        return super()._construct_token_losses(labels, (scores, model_output[1], model_output[2]))
