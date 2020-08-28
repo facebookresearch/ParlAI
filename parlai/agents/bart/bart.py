@@ -180,13 +180,19 @@ class BartAgent(TransformerGeneratorAgent):
         )
 
     def compute_loss(self, batch, return_output=False):
+        """
+        Override TGA.compute_loss to ignore start token.
+        """
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
+
         if scores.size(1) != batch.label_vec.size(1):
+            # ignore start
             scores = scores[:, 1:, :]
             preds = preds[:, 1:]
+
         score_view = scores.reshape(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))
         loss = loss.view(scores.shape[:-1]).sum(dim=1)
@@ -209,9 +215,12 @@ class BartAgent(TransformerGeneratorAgent):
             return loss
 
     def _construct_token_losses(self, labels, model_output):
+        """
+        Override TGA._construct_token_losses to ignore start token
+        """
         # Get non-aggregated losses
         scores, _, _ = model_output
-        scores = scores[:, 1:, :]
+        scores = scores[:, 1:, :]  # ignore start token
         score_view = scores.reshape(-1, scores.size(-1))
         losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
 
