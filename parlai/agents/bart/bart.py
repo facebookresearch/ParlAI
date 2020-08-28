@@ -212,4 +212,18 @@ class BartAgent(TransformerGeneratorAgent):
         # Get non-aggregated losses
         scores, _, _ = model_output
         scores = scores[:, 1:, :]
-        return super()._construct_token_losses(labels, (scores, model_output[1], model_output[2]))
+        score_view = scores.reshape(-1, scores.size(-1))
+        losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
+
+        # Zip decoded tokens with losses
+        token_losses = []
+        for i, label in enumerate(labels):
+            token_losses.append(
+                list(
+                    zip(
+                        [self.dict[token] for token in label.tolist()],
+                        losses[i].tolist(),
+                    )
+                )
+            )
+        return token_losses
