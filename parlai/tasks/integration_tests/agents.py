@@ -308,15 +308,14 @@ class ReverseTeacher(CandidateTeacher):
     """
     Reverse Teacher.
 
-    Label is opposite of text; good for testing more complex
-    generative models.
+    Label is opposite of text; good for testing more complex generative models.
     """
 
     def setup_data(self, fold):
         raw = super().setup_data(fold)
         for (t, a, r, c), e in raw:
             label = a[0][::-1]
-            yield (t, [label], r, c+[label]), e
+            yield (t, [label], r, c + [label]), e
 
 
 class BadExampleTeacher(CandidateTeacher):
