@@ -275,7 +275,7 @@ jobs:
       - store_test_results:
           path: test-results
 
-  unittests_gpu13:
+  unittests_gpu15:
     <<: *gpu
     working_directory: ~/ParlAI
     parallelism: 16
@@ -292,7 +292,7 @@ jobs:
       - restore_cache:
           key: deps-20200828test1-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
-      - <<: *installtorchgpu13
+      - <<: *installtorchgpu15
       - <<: *installdeps
       - save_cache:
           key: deps-20200828test1-gpu13-{{ checksum "requirements.txt" }}
@@ -307,7 +307,7 @@ jobs:
       - store_test_results:
           path: test-results
 
-  unittests_gpu14:
+  unittests_gpu16:
     <<: *gpu
     working_directory: ~/ParlAI
     parallelism: 16
@@ -322,17 +322,17 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test1-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200828test1-gpu16-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200828test1-gpu16-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - run:
-          name: Unit tests (GPU; pytorch 1.4)
+          name: Unit tests (GPU; pytorch 1.6)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
@@ -505,7 +505,7 @@ workflows:
   commit:
     jobs:
       - cleaninstall_36
-      - unittests_gpu14
+      - unittests_gpu16
       - unittests_38
       - unittests_37
       - unittests_36
