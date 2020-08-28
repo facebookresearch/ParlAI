@@ -139,38 +139,3 @@ class BartAgent(TransformerGeneratorAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
-
-    def _set_text_vec(
-        self, obs: Message, history: History, truncate: Optional[int]
-    ) -> Message:
-        """
-        Override to prepend start token and append end token.
-        """
-        obs = super()._set_text_vec(obs, history, truncate)
-        if 'text' not in obs or 'text_vec' not in obs:
-            return obs
-        vec = obs['text_vec']
-        if truncate is not None:
-            vec = torch.LongTensor(  # type: ignore
-                self._check_truncate(obs['text_vec'], truncate - 2, True)
-            )
-        obs.force_set(
-            'text_vec', self._add_start_end_tokens(vec, add_start=True, add_end=True)
-        )
-        return obs
-
-    def _get_initial_decoder_input(
-        self, bsz: int, beam_size: int, dev: torch.device
-    ) -> torch.LongTensor:
-        """
-        Override to seed decoder with EOS token.
-
-        See docstring for `BartAgent._generate` for more details.
-        """
-        return (
-            torch.LongTensor(  # type: ignore
-                [self.END_IDX]
-            )
-            .expand(bsz * beam_size, 1)
-            .to(dev)
-        )
