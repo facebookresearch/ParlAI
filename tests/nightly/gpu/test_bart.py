@@ -56,7 +56,7 @@ class TestBartModel(unittest.TestCase):
                     dict_file='zoo:bart/bart_large/model.dict',
                     optimizer='adam',
                     learningrate=3e-5,
-                    batchsize=4,
+                    batchsize=1,
                     num_epochs=1,
                     short_final_eval=True,
                     validation_max_exs=12,
