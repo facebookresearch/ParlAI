@@ -9,21 +9,20 @@ the word statistics of the model outputs. One can also use the function defined 
 other places in order to get such statistic for any agent given the agent object (with
 corr. dict) and a sequence.
 
-Additionally provides function get_word_stats that can be used in other parts
-of runtime code since it depends only on the agent object. For example:
+Additionally provides function `get_word_stats` that can be used in
+other parts of runtime code since it depends only on the agent object.
+For example:
 
-::
+```python
+from parlai.scripts.eval_wordstat import get_word_stats
+reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+```
 
-  from parlai.scripts.eval_wordstat import get_word_stats
-  reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+## Examples
 
-
-Examples
---------
-
-.. code-block:: shell
-
-  parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+```shell
+parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+```
 """
 
 from parlai.core.params import ParlaiParser
@@ -35,6 +34,7 @@ from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from collections import Counter
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 
 import copy
 import numpy
@@ -232,7 +232,7 @@ def eval_wordstat(opt):
     print("Total unique tokens:", len(word_statistics['unique_words']))
 
     if opt['dump_predictions_path'] is not None:
-        with open(opt['dump_predictions_path'], 'w') as f:
+        with PathManager.open(opt['dump_predictions_path'], 'w') as f:
             f.writelines(
                 [
                     'CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p)
@@ -243,7 +243,7 @@ def eval_wordstat(opt):
                 ]
             )
         if opt['compute_unique'] is True:
-            with open(opt['dump_predictions_path'] + '_unique', 'w') as f:
+            with PathManager.open(opt['dump_predictions_path'] + '_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
     stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])

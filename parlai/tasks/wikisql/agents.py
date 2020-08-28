@@ -7,6 +7,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -72,11 +73,11 @@ class WikiSQLTeacher(DialogTeacher):
             input_path, 'data', '{}.tables.jsonl'.format(self.dt)
         )
         qa_file_path = os.path.join(input_path, 'data', '{}.jsonl'.format(self.dt))
-        with open(table_file_path) as table_file:
+        with PathManager.open(table_file_path) as table_file:
             table_data = [json.loads(jline) for jline in table_file]
             table_data = {table['id']: table for table in table_data}
 
-        with open(qa_file_path) as qa_file:
+        with PathManager.open(qa_file_path) as qa_file:
             qa_data = [json.loads(jline) for jline in qa_file]
 
         def parse_into_sql(table, query):

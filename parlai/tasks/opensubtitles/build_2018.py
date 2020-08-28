@@ -16,6 +16,7 @@ import time
 import tqdm
 import xml.etree.ElementTree as ET
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -91,7 +92,7 @@ def get_list_of_files(top_path):
         for filename in files:
             if filename.endswith('.xml'):
                 full_filename = os.path.realpath(os.path.join(path, filename))
-                assert os.path.isfile(full_filename), 'Bad file ' + full_filename
+                assert PathManager.exists(full_filename), 'Bad file ' + full_filename
                 movie_id = get_movie_id(full_filename)
                 if movie_id not in result:
                     result[movie_id] = []

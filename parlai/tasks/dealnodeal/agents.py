@@ -6,6 +6,7 @@
 
 from parlai.core.teachers import Teacher
 from .build import build
+from parlai.utils.io import PathManager
 
 import os
 import random
@@ -104,7 +105,7 @@ class NegotiationTeacher(Teacher):
 
     def _setup_data(self, data_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.episodes = data_file.readlines()
 
     def observe(self, observation):

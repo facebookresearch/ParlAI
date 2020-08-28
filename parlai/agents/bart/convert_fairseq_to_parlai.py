@@ -27,6 +27,8 @@ from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
+from parlai.utils.io import PathManager
+
 
 TRANSFORMER_PARAMETER_MAPPING = {
     'attention_heads': 'n_heads',
@@ -240,7 +242,7 @@ class ConversionScript(ParlaiScript):
         :return state:
             loaded fairseq state
         """
-        with open(path, "rb") as f:
+        with PathManager.open(path, "rb") as f:
             try:
                 state = torch.load(
                     f, map_location=lambda s, l: default_restore_location(s, "cpu")
@@ -397,7 +399,7 @@ class ConversionScript(ParlaiScript):
         # 6. Shuffle embedding matrix given dictionary.
         enc_emb_key = 'encoder.embeddings.weight'
         bart_dict = os.path.join(opt['datapath'], 'models/bart/bart.large/dict.txt')
-        with open(bart_dict) as f:
+        with PathManager.open(bart_dict) as f:
             offset_dict = {i: l.split()[0] for i, l in enumerate(f.readlines())}
         new_embs = return_dict[enc_emb_key].clone()
         for idx, new_idx in offset_dict.items():

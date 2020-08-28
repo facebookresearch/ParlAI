@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher, FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import csv
@@ -29,7 +30,7 @@ class UbuntuTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path, 'r', newline='') as read:
+        with PathManager.open(path, 'r', newline='') as read:
             csv_read = csv.reader(read)
             next(csv_read)  # eat header
 
@@ -79,7 +80,7 @@ class MultiturnTeacher(FixedDialogTeacher):
         self.data = []
         fpath = os.path.join(self.opt['datapath'], 'Ubuntu', fold + '.csv')
         print('loading: ' + fpath)
-        with open(fpath, 'r', newline='') as read:
+        with PathManager.open(fpath, 'r', newline='') as read:
             csv_read = csv.reader(read)
             next(csv_read)  # eat header
 

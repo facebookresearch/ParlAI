@@ -6,6 +6,7 @@
 # Download and build the data if it does not exist.
 
 import parlai.core.build_data as build_data
+from parlai.utils.io import PathManager
 import os
 
 from parlai.core.build_data import DownloadableFile
@@ -22,13 +23,13 @@ RESOURCES = [
 def create_fb_format(outpath, dtype, inpath, inpath2):
     print('building fbformat:' + dtype)
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
-    with open(inpath + '.tsv') as f:
+    with PathManager.open(inpath + '.tsv') as f:
         lines = [line.strip('\n') for line in f]
     if inpath2 is None:
         fname_ans = inpath + '.ans'
     else:
         fname_ans = inpath2
-    with open(fname_ans) as f:
+    with PathManager.open(fname_ans) as f:
         ans = [line.strip('\n') for line in f]
     for i in range(len(lines)):
         l = lines[i].split('\t')

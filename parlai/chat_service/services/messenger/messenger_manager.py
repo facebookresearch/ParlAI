@@ -15,6 +15,7 @@ import os
 from parlai.core.agents import create_agent
 import parlai.chat_service.utils.logging as log_utils
 import parlai.chat_service.utils.server as server_utils
+from parlai.utils.io import PathManager
 from parlai.chat_service.services.messenger.agents import MessengerAgent
 from parlai.chat_service.core.socket import ChatServiceMessageSocket
 from parlai.chat_service.services.messenger.message_sender import MessageSender
@@ -222,7 +223,7 @@ class MessengerManager(ChatServiceManager):
         """
         if not self.opt.get('force_page_token'):
             if not os.path.exists(os.path.expanduser('~/.parlai/')):
-                os.makedirs(os.path.expanduser('~/.parlai/'))
+                PathManager.mkdirs(os.path.expanduser('~/.parlai/'))
             access_token_file_path = '~/.parlai/messenger_token'
             expanded_file_path = os.path.expanduser(access_token_file_path)
             if os.path.exists(expanded_file_path):

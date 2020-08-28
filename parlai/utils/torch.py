@@ -12,6 +12,7 @@ from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
 import itertools
 from collections import namedtuple
 import parlai.utils.logging as logging
+import parlai.utils.io as io_util
 
 
 try:
@@ -51,8 +52,14 @@ def atomic_save(state_dict: Any, path: str) -> None:
     to disk. Works by writing to a temporary file, and then renaming the file to the
     final name.
     """
-    torch.save(state_dict, path + ".tmp")
-    os.rename(path + ".tmp", path)
+
+    if io_util.USE_ATOMIC_TORCH_SAVE:
+        with open(path + ".tmp", "wb") as f:
+            torch.save(state_dict, f)
+        os.rename(path + ".tmp", path)
+    else:
+        # PathManager deosn't support os.rename. See T71772714
+        torch.save(state_dict, path)
 
 
 def padded_tensor(

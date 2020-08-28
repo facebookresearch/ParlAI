@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import copy
@@ -38,7 +39,7 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         source, target = path
-        with open(source) as src, open(target) as tgt:
+        with PathManager.open(source) as src, PathManager.open(target) as tgt:
             for s in src:
                 s = _format(s)
                 t = _format(tgt.readline())

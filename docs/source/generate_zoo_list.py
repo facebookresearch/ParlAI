@@ -16,20 +16,29 @@ for model_dict in model_list:
     category_zoo_list[task].append(model_dict)
 
 
+def example_to_code(example, result):
+    if not result:
+        return f'```none\nexample\n```'
+    result = result.strip().split("\n")
+    # strip leading whitespace from results
+    result = [r.strip() for r in result]
+    # make sure we indent for markdown though
+    result = "\n".join(result)
+    return f'```none\n{example}\n\n{result}\n```'
+
+
 def model_text(model_dict, fout):
     name = model_dict.get('title').title()
-    fout.write(name)
-    fout.write('\n')
-    fout.write('~' * len(name))
+    fout.write(f'### {name}')
     fout.write('\n')
 
     links = ''
     if 'project' in model and model['project']:
         link = model['project']
-        links += '`[related project] <' + link + '/>`__ '
+        links += f'[[related project]]({link})'
     if 'external_website' in model and model['external_website']:
         link = model['external_website']
-        links += '`[external website] <' + link + '/>`__ '
+        links += f'[[external website]]({link})'
     if links != "":
         fout.write(links + "\n")
 
@@ -43,35 +52,25 @@ def model_text(model_dict, fout):
         example = "parlai eval_model --model {} --task {} -mf {}".format(
             model['agent'], model['task'], model['path']
         )
-    result = model.get('result', '').strip().split("\n")
-    # strip leading whitespace from results
-    result = [r.strip() for r in result]
-    # make sure we indent for markdown though
-    result = ["   " + r for r in result]
-    result = "\n".join(result)
-    fout.write('.. code-block:: none\n\n   {}\n   \n{}\n'.format(example, result))
-    fout.write('\n')
+    fout.write(example_to_code(example, model.get('result')))
+    fout.write('\n\n')
 
     if 'example2' in model:
-        example = model['example2']
-        result = model.get('result2', '').strip().split("\n")
-        # strip leading whitespace from results
-        result = [r.strip() for r in result]
-        # make sure we indent for markdown though
-        result = ["   " + r for r in result]
-        result = "\n".join(result)
-        fout.write('.. code-block:: none\n\n   {}\n   \n{}\n'.format(example, result))
-        fout.write('\n')
+        fout.write(example_to_code(model['example2'], model.get('result2')))
+        fout.write('\n\n')
 
 
 fout = open('zoo_list.inc', 'w')
 
 for task_name in category_zoo_list:
-    s = task_name.title().replace('_', ' ') + ' models\n'
-    fout.write(s)
-    fout.write('-' * len(s) + '\n\n')
+    s = task_name.replace('_', ' ')
+    if s[0] == s[0].lower():
+        s = s.title()
+    fout.write(f'## {s} models\n')
 
     for model in category_zoo_list[task_name]:
         model_text(model, fout)
+
+    fout.write('\n\n---------\n\n')
 
 fout.close()

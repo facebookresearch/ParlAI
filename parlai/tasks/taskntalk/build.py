@@ -10,6 +10,7 @@ import os
 import random
 
 import parlai.core.build_data as build_data
+from parlai.utils.io import PathManager
 
 
 def build(opt):
@@ -54,13 +55,17 @@ def build(opt):
         split_data['train'] = [s for s in data_verbose if s not in split_data['valid']]
 
         to_save['data'] = split_data['train']
-        with open(os.path.join(dpath, 'small', 'train.json'), 'w') as outfile:
+        with PathManager.open(
+            os.path.join(dpath, 'small', 'train.json'), 'w'
+        ) as outfile:
             json.dump(
                 to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True
             )
 
         to_save['data'] = split_data['valid']
-        with open(os.path.join(dpath, 'small', 'valid.json'), 'w') as outfile:
+        with PathManager.open(
+            os.path.join(dpath, 'small', 'valid.json'), 'w'
+        ) as outfile:
             json.dump(
                 to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True
             )
@@ -106,13 +111,17 @@ def build(opt):
         split_data['train'] = [s for s in data_verbose if s not in split_data['valid']]
 
         to_save['data'] = split_data['train']
-        with open(os.path.join(dpath, 'large', 'train.json'), 'w') as outfile:
+        with PathManager.open(
+            os.path.join(dpath, 'large', 'train.json'), 'w'
+        ) as outfile:
             json.dump(
                 to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True
             )
 
         to_save['data'] = split_data['valid']
-        with open(os.path.join(dpath, 'large', 'valid.json'), 'w') as outfile:
+        with PathManager.open(
+            os.path.join(dpath, 'large', 'valid.json'), 'w'
+        ) as outfile:
             json.dump(
                 to_save, outfile, indent=4, separators=(',', ': '), sort_keys=True
             )

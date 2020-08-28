@@ -13,6 +13,7 @@ import os
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 from parlai.tasks.multinli.agents import convert_to_dialogData
+from parlai.utils.io import PathManager
 
 ENTRY_FIELDS = [
     'id',
@@ -92,7 +93,7 @@ class DialogueNliTeacher(FixedDialogTeacher):
         self.reset()
 
     def _setup_data(self, path):
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             if 'extra' in path and 'train' in path:
                 line = data_file.readline()
 

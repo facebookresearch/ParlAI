@@ -15,6 +15,7 @@ import os
 import re
 from collections import Counter
 from typing import Counter as TCounter
+from parlai.utils.io import PathManager
 
 BADSENT = r'\.(\w)'
 
@@ -85,7 +86,7 @@ f_emotions = open(os.path.join(FOLD, "dialogues_emotion_" + FOLD + ".txt"))
 f_texts = open(os.path.join(FOLD, "dialogues_" + FOLD + ".txt"))
 
 topic_map = {}
-with open('topicmap') as f_tm:
+with PathManager.open('topicmap') as f_tm:
     for line in f_tm:
         text, topic = line.strip().split("\t")
         topic_map[text] = TOPICS[int(topic)]

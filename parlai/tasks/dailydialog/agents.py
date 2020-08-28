@@ -22,6 +22,7 @@ once acting as Speaker 2.
 import os
 import json
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -54,7 +55,7 @@ class Convai2Teacher(FixedDialogTeacher):
     def _setup_data(self, fold):
         self.data = []
         fpath = os.path.join(self.opt['datapath'], 'dailydialog', fold + '.json')
-        with open(fpath) as f:
+        with PathManager.open(fpath) as f:
             for line in f:
                 self.data.append(json.loads(line))
 

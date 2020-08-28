@@ -28,6 +28,7 @@ import torch
 
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.utils.io import PathManager
 
 
 class MaxPriorityQueue(Sequence):
@@ -330,9 +331,9 @@ class IrBaselineAgent(Agent):
             self.dictionary.save(path + '.dict')
             data = {}
             data['opt'] = self.opt
-            with open(path, 'wb') as handle:
+            with PathManager.open(path, 'wb') as handle:
                 torch.save(data, handle)
-            with open(path + '.opt', 'w') as handle:
+            with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
     def load(self, fname):

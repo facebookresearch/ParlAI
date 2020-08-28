@@ -10,6 +10,7 @@ Dialogue safety related datasets and teachers.
 import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 
 from .base_agent import _BaseSafetyTeacher
 from .build import build
@@ -42,7 +43,7 @@ class StandardTeacher(_BaseSafetyTeacher):
     """
 
     def _load_data_dump(self):
-        with open(self.data_path, 'rb') as f:
+        with PathManager.open(self.data_path, 'rb') as f:
             dump = json.load(f)
         return dump['standard']
 
@@ -62,7 +63,7 @@ class AdversarialTeacher(_BaseSafetyTeacher):
     """
 
     def _load_data_dump(self):
-        with open(self.data_path, 'rb') as f:
+        with PathManager.open(self.data_path, 'rb') as f:
             dump = json.load(f)
         return dump['adversarial']
 
@@ -212,8 +213,8 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
         stars += RESET
 
         if not os.path.exists(self.data_path):
-            os.makedirs(self.data_path)
-        if not os.path.isfile(os.path.join(self.data_path, 'train.csv')):
+            PathManager.mkdirs(self.data_path)
+        if not PathManager.exists(os.path.join(self.data_path, 'train.csv')):
             raise RuntimeError(
                 f'\n\n{stars}\nThis data must be downloaded from '
                 '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>. '
@@ -226,7 +227,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
     def data_to_json(self, pd, file_name):
         response = pd.to_dict('records')
-        with open(os.path.join(self.data_path, file_name), 'w') as f:
+        with PathManager.open(os.path.join(self.data_path, file_name), 'w') as f:
             f.write(json.dumps(response, indent=4))
 
     def build(self, opt):
@@ -354,7 +355,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             dp = os.path.join(self.data_path, 'wiki-toxic-comments-default.json')
 
         print('loading: ' + dp)
-        with open(dp, 'r') as f:
+        with PathManager.open(dp, 'r') as f:
             self.total_data = json.loads(f.read())
             if 'train' in datatype:
                 self.data = [x for x in self.total_data if x['data_type'] == 'train']

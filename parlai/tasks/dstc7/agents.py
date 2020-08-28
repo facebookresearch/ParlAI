@@ -8,6 +8,7 @@ The Ubuntu dataset used for dstc 7.
 """
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -37,13 +38,13 @@ class DSTC7Teacher(FixedDialogTeacher):
         if shared is not None:
             self.data = shared['data']
         else:
-            with open(filepath, 'r') as f:
+            with PathManager.open(filepath, 'r') as f:
                 self.data = json.loads(f.read())
 
             # special case of test set
             if self.split == "test":
                 id_to_res = {}
-                with open(
+                with PathManager.open(
                     os.path.join(basedir, "ubuntu_responses_subtask_1.tsv"), 'r'
                 ) as f:
                     for line in f:

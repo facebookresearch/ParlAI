@@ -28,6 +28,7 @@ import string
 import json
 from abc import ABC
 from typing import Tuple, List
+from parlai.utils.io import PathManager
 
 # default parameters
 VOCAB_SIZE = 7
@@ -385,7 +386,7 @@ class ImageTeacher(AbstractImageTeacher):
     def _setup_test_data(self, opt):
         datapath = os.path.join(opt['datapath'], 'ImageTeacher')
         imagepath = os.path.join(datapath, 'images')
-        os.makedirs(imagepath, exist_ok=True)
+        PathManager.mkdirs(imagepath)
 
         self.image_features_path = os.path.join(
             datapath, f'{opt["image_mode"]}_image_features'
@@ -395,7 +396,8 @@ class ImageTeacher(AbstractImageTeacher):
         imgs = [f'img_{i}' for i in range(10)]
         for i, img in enumerate(imgs):
             image = Image.new('RGB', (16, 16), color=i)
-            image.save(os.path.join(imagepath, f'{img}.jpg'), 'JPEG')
+            with PathManager.open(os.path.join(imagepath, f'{img}.jpg'), 'wb') as fp:
+                image.save(fp, 'JPEG')
 
         # write out fake data
         for dt in ['train', 'valid', 'test']:
@@ -404,7 +406,7 @@ class ImageTeacher(AbstractImageTeacher):
                 {'image_id': img, 'text': string.ascii_uppercase[i]}
                 for i, img in enumerate(imgs)
             ]
-            with open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
+            with PathManager.open(os.path.join(datapath, f'{dt}.json'), 'w') as f:
                 json.dump(data, f)
 
     def get_image_features_path(self, task, image_model_name, dt):
