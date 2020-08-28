@@ -93,11 +93,10 @@ installtorchgpu16: &installtorchgpu16
   run:
     name: Install torch GPU and dependencies
     command: |
-      python -m pip install --progress-bar off 'torch==1.6.0'
+        python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
       python -m pip install --progress-bar off 'subword-nmt==0.3.7'
       python -m pip install --progress-bar off pytorch-pretrained-bert
       python -m pip install --progress-bar off 'torchtext==0.7.0'
-      python -m pip install --progress-bar off 'torchvision==0.7.0'
       python -m pip install --progress-bar off transformers
       python -m pip install --progress-bar off fairseq
       python -c 'import torch; print("Torch version:", torch.__version__)'
@@ -139,8 +138,8 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://us.download.nvidia.com/XFree86/Linux-x86_64/340.108/NVIDIA-Linux-x86_64-340.108.run'
-      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-*.run -a --ui=none || cat /var/log/nvidia-installer.log
+      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
+      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
       echo "Done installing NVIDIA drivers."
       pyenv versions
       nvidia-smi
@@ -164,12 +163,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-20200828test1-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -208,12 +207,12 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -233,12 +232,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-ut38-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-ut38-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -258,12 +257,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -283,19 +282,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-20200828-test1
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-20200828-test1
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test1-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu15
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -315,19 +314,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-20200828-test1
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-20200828-test1
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test1-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-gpu16-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-gpu16-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -347,19 +346,19 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-20200828-test1
+          key: nvidia-downloads-20200516
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-20200828-test1
+          key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test1-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -382,11 +381,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-teacher-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-teacher-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-teacher-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-teacher-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -405,11 +404,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test1-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -427,7 +426,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu16
@@ -438,7 +437,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-20200828test1-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -458,12 +457,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test1-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu16
       - save_cache:
-          key: deps-20200828test1-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test2-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
