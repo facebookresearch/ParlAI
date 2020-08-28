@@ -11,6 +11,22 @@ import os
 import json
 
 
+EXISTING_KEYS = [
+    'question',
+    'answer',
+    'asin',
+    'questionType',
+    'questionTime',
+    'askerID',
+    'answerType',
+    'answerTime',
+    'unixTime',
+    'answererID',
+    'helpful',
+    'answerScore',
+]
+
+
 class DefaultTeacher(FixedDialogTeacher):
     def __init__(self, opt, shared=None):
         # store datatype
@@ -22,38 +38,27 @@ class DefaultTeacher(FixedDialogTeacher):
 
         if shared:
             self.data = shared['data']
+            self.num_ex = shared['num_ex']
+            self.num_ep = shared['num_ep']
         else:
             build(opt)
             self._setup_data()
+            self.num_ex = sum([len(x) for x in self.data])
+            self.num_ep = len(self.data)
         self.reset()
 
     def num_episodes(self):
-        return len(self.data)
+        return self.num_ep
 
     def num_examples(self):
-        return sum([len(x) for x in self.data])
+        return self.num_ex
 
     def _setup_data(self):
-        self.existing_keys = [
-            'question',
-            'answer',
-            'asin',
-            'questionType',
-            'questionTime',
-            'askerID',
-            'answerType',
-            'answerTime',
-            'unixTime',
-            'answererID',
-            'helpful',
-            'answerScore',
-        ]
-
         self.data = []
 
         def create_entry_single(episode):
             entry = []
-            for key in self.existing_keys:
+            for key in EXISTING_KEYS:
                 if key in episode:
                     entry.append(str(episode[key]))
                 else:
@@ -100,7 +105,7 @@ class DefaultTeacher(FixedDialogTeacher):
         entry = ep[entry_idx]
         action = dict()
         action['id'] = episode_idx
-        for i, key in enumerate(self.existing_keys):
+        for i, key in enumerate(EXISTING_KEYS):
             if i < 2:
                 continue
             action[key] = entry[i]
@@ -113,4 +118,6 @@ class DefaultTeacher(FixedDialogTeacher):
     def share(self):
         shared = super().share()
         shared['data'] = self.data
+        shared['num_ex'] = self.num_ex
+        shared['num_ep'] = self.num_ep
         return shared
