@@ -27,20 +27,23 @@ class BartModel(TransformerGeneratorModel):
         output = F.linear(tensor, self.embeddings.weight)
         return output
 
-    def _get_initial_forced_decoder_input(self, bsz: int, inputs: torch.LongTensor):
-        """
-        Return initial input to the decoder.
-
-        :param bsz:
-            batchsize
-        :param inputs:
-            inputs to decode
-
-        :return initial_input:
-            initial input for the decoder.
-        """
-        tens = torch.LongTensor([self.END_IDX, self.START_IDX]).to(inputs).detach().expand(bsz, 2)
-        return torch.cat([tens, inputs], 1)
+    def decode_forced(
+        self, encoder_states: Tuple[Any, ...], ys: torch.LongTensor
+    ) -> Tuple[torch.FloatTensor, torch.LongTensor]:
+        bsz = ys.size(0)
+        seqlen = ys.size(1)
+        inputs = ys.narrow(1, 0, seqlen - 1)
+        inputs = torch.cat(
+            [
+                torch.LongTensor([self.END_IDX]).detach().expand(bsz, 1).to(inputs),
+                inputs,
+            ],
+            1,
+        )
+        latent, _ = self.decoder(inputs, encoder_states)
+        logits = self.output(latent)
+        _, preds = logits.max(dim=2)
+        return logits, preds
 
     def reorder_decoder_incremental_state(
         self,
