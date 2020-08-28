@@ -90,6 +90,15 @@ class DefaultTeacher(DialogTeacher):
 
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        agent = argparser.add_argument_group('Squad2 teacher arguments')
+        agent.add_argument(
+            '--impossible-answer-string',
+            type=str,
+            default='',
+            help='Set the label for impossible answers; defaults to an empty string, but one might try something like "I do not know"',
+        )
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
@@ -112,7 +121,7 @@ class DefaultTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_list = [{"text": ""}]
+                    ans_list = [{"text": self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_list = qa['answers']
                     answers = tuple(a['text'] for a in ans_list)
