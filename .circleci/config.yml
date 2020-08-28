@@ -139,8 +139,8 @@ setupcuda: &setupcuda
     working_directory: ~/
     command: |
       # download and install nvidia drivers, cuda, etc
-      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
+      wget --quiet --no-clobber -P ~/nvidia-downloads 'https://us.download.nvidia.com/XFree86/Linux-x86_64/340.108/NVIDIA-Linux-x86_64-340.108.run'
+      time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-*.run --no-drm -q --ui=none
       echo "Done installing NVIDIA drivers."
       pyenv versions
       nvidia-smi
@@ -283,10 +283,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-20200516
+          key: nvidia-20200828-test1
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-20200516
+          key: nvidia-20200828-test1
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
@@ -315,10 +315,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-20200516
+          key: nvidia-20200828-test1
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-20200516
+          key: nvidia-20200828-test1
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
@@ -347,10 +347,10 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: nvidia-downloads-20200516
+          key: nvidia-20200828-test1
       - <<: *setupcuda
       - save_cache:
-          key: nvidia-downloads-20200516
+          key: nvidia-20200828-test1
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
