@@ -26,9 +26,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import History
 from parlai.core.torch_generator_agent import PPLMetric
-from parlai.core.metrics import (
-    AverageMetric,
-)
+from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
@@ -216,7 +214,7 @@ class BartAgent(TransformerGeneratorAgent):
 
     def _construct_token_losses(self, labels, model_output):
         """
-        Override TGA._construct_token_losses to ignore start token
+        Override TGA._construct_token_losses to ignore start token.
         """
         # Get non-aggregated losses
         scores, _, _ = model_output

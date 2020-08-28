@@ -24,10 +24,7 @@ class TestBartModel(unittest.TestCase):
         Test out-of-the-box BART on repeat task.
         """
         valid, _ = testing_utils.eval_model(
-            dict(
-                task='integration_tests',
-                model='bart'
-            )
+            dict(task='integration_tests', model='bart')
         )
         self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)
 
@@ -61,7 +58,7 @@ class TestBartModel(unittest.TestCase):
                     num_epochs=1,
                     short_final_eval=True,
                     validation_max_exs=12,
-                    model_file=mf
+                    model_file=mf,
                 )
             )
             self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)

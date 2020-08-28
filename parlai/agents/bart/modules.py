@@ -7,8 +7,7 @@ BART Module.
 """
 import torch
 import torch.nn.functional as F
-from typing import Tuple, Any, Dict, Union, List, Optional
-
+from typing import Any, Dict, Union, List, Optional
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 
@@ -39,7 +38,12 @@ class BartModel(TransformerGeneratorModel):
         :return initial_input:
             initial input for the decoder.
         """
-        tens = torch.LongTensor([self.END_IDX, self.START_IDX]).to(inputs).detach().expand(bsz, 2)
+        tens = (
+            torch.LongTensor([self.END_IDX, self.START_IDX])
+            .to(inputs)
+            .detach()
+            .expand(bsz, 2)
+        )
         return torch.cat([tens, inputs], 1)
 
     def reorder_decoder_incremental_state(
