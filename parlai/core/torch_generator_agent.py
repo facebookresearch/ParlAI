@@ -998,8 +998,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         ctxt = batch.text_vec[batch_idx]
         if self.beam_block_full_context:
             full_ctxt = batch.observations[batch_idx].get('full_text_vec', ctxt)
-            if not isinstance(full_ctxt, torch.LongTensor):
-                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt)
+            if not isinstance(full_ctxt, torch.Tensor):
+                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
             ctxt = full_ctxt
         return ctxt
 
