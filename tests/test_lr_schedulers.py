@@ -22,7 +22,7 @@ class TestLRSchedulers(unittest.TestCase):
         output = []
         for step in range(total_steps):
             scheduler.step(step)
-            output.append(scheduler.get_lr())
+            output.append(scheduler.get_last_lr())
         for step, o in enumerate(output):  # noqa: B007
             assert o <= max_lr
             assert o > 0 or step == total_steps - 1

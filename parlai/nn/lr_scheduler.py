@@ -63,12 +63,14 @@ class ParlAILRScheduler(object):
         else:
             self.warmup_scheduler = None
 
-    def get_lr(self):
-        if self._is_lr_warming_up():
-            s = self.warmup_scheduler.get_last_lr()[0]
-        else:
-            s = self.scheduler.get_last_lr()[0]
-        return s.get_last_lr()
+    def get_last_lr(self):
+        s = self.warmup_scheduler if self._is_lr_warming_up() else self.scheduler
+        try:
+            # pytorch 1.5 or newer
+            return s.get_last_lr()[0]
+        except AttributeError:
+            # pytorch 1.4 or older
+            return s.optimizer.param_groups[0]['lr']
 
     def _is_lr_warming_up(self):
         """
