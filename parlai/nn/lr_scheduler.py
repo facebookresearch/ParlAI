@@ -48,7 +48,7 @@ class ParlAILRScheduler(object):
             Starting multiplier for warmup scheduler.
         """
         self._number_training_updates = 0
-        self.warmup_updates = warmup_updates
+        self.warmup_updates = max(0, warmup_updates)
         self.warmup_rate = warmup_rate
         self.hard_reset = hard_reset
 
@@ -62,6 +62,13 @@ class ParlAILRScheduler(object):
             )
         else:
             self.warmup_scheduler = None
+
+    def get_lr(self):
+        if self._is_lr_warming_up():
+            s = self.warmup_scheduler.get_last_lr()[0]
+        else:
+            s = self.scheduler.get_last_lr()[0]
+        return s.get_last_lr()
 
     def _is_lr_warming_up(self):
         """
@@ -92,7 +99,10 @@ class ParlAILRScheduler(object):
         if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
         self._number_training_updates = states.get('number_training_updates', 0)
-        self.step(self._number_training_updates)
+
+        self.scheduler.last_epoch = max(
+            0, self._number_training_updates - max(self.warmup_updates, 0)
+        )
 
     def get_initial_number_training_updates(self):
         return self._number_training_updates
@@ -292,7 +302,7 @@ class ParlAILRScheduler(object):
         """
         self._number_training_updates = num_steps
         if self._is_lr_warming_up():
-            self.warmup_scheduler.step(epoch=num_steps)
+            self.warmup_scheduler.step()
         else:
             scheduler_steps = num_steps - self.warmup_updates
             self.train_step(scheduler_steps)
@@ -408,7 +418,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         return self.decay_factor / np.sqrt(max(1, self.invsqrt_lr_decay_gamma + step))
 
     def train_step(self, scheduler_steps):
-        self.scheduler.step(epoch=scheduler_steps)
+        self.scheduler.step()
 
     def valid_step(self, metrics_dict):
         # this is a training step lr scheduler, nothing to adjust in validation
@@ -445,7 +455,7 @@ class CosineLRScheduler(ParlAILRScheduler):
     def train_step(self, scheduler_steps):
         if scheduler_steps >= self.max_lr_steps:
             raise StopTrainException('End of Cosine LR Schedule')
-        self.scheduler.step(epoch=scheduler_steps)
+        self.scheduler.step()
 
     def valid_step(self, metrics_dict):
         pass
@@ -480,13 +490,13 @@ class LinearLRScheduler(ParlAILRScheduler):
     def _linear_lr(self, step):
         # this multiplicative factor ensures linear decay rate
         # lr_mult = float(self.max_lr_steps - step - 1) / float(self.max_lr_steps - step)
-        lr_mult = max(0.0, 1.0 - step / self.max_lr_steps)
+        lr_mult = max(0.0, 1e-6 + (1.0 - step / self.max_lr_steps) * (1 - 1e-6))
         return lr_mult
 
     def train_step(self, scheduler_steps):
         if scheduler_steps >= self.max_lr_steps:
             raise StopTrainException('End of Linear LR Schedule')
-        self.scheduler.step(epoch=scheduler_steps)
+        self.scheduler.step()
 
     def valid_step(self, metrics_dict):
         pass

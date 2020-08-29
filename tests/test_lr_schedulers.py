@@ -22,10 +22,10 @@ class TestLRSchedulers(unittest.TestCase):
         output = []
         for step in range(total_steps):
             scheduler.step(step)
-            output.append(optimizer.param_groups[0]['lr'])
+            output.append(scheduler.get_lr())
         for step, o in enumerate(output):  # noqa: B007
             assert o <= max_lr
-            assert o > 0
+            assert o > 0 or step == total_steps - 1
         warmup_updates = args.get('warmup_updates', 0)
         if warmup_updates > 0:
             assert output[warmup_updates] == max_lr

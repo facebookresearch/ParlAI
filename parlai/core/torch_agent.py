@@ -1101,7 +1101,7 @@ class TorchAgent(ABC, Agent):
 
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            report['lr'] = GlobalAverageMetric(self.optimizer.param_groups[0]['lr'])
+            report['lr'] = GlobalAverageMetric(self.scheduler.get_last_lr())
 
         if self.use_cuda:
             report['gpu_mem'] = GlobalAverageMetric(self._gpu_usage())

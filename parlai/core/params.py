@@ -310,7 +310,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         super().__init__(
             description=description,
-            allow_abbrev=False,
+            allow_abbrev=True,
             conflict_handler='resolve',
             add_help=True,
             **kwargs,
