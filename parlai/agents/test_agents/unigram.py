@@ -20,7 +20,7 @@ class UnigramEncoder(nn.Module):
 
 class UnigramDecoder(nn.Module):
     def forward(self, x, encoder_state, incr_state=None):
-        return x, None
+        return x.unsqueeze(-1), None
 
 
 class UnigramModel(TorchGeneratorModel):
@@ -29,11 +29,12 @@ class UnigramModel(TorchGeneratorModel):
         self.encoder = UnigramEncoder()
         self.decoder = UnigramDecoder()
         self.v = len(dictionary)
-        self.p = nn.Parameter(torch.randn(self.v))
+        self.p = nn.Parameter(torch.zeros(self.v))
 
     def output(self, do):
-        desired = tuple(list(do.shape) + [self.v])
-        return self.p.unsqueeze(0).unsqueeze(0).expand(desired)
+        desired = list(do.shape)[:2] + [self.v]
+        x = self.p.unsqueeze(0).unsqueeze(0)
+        return x.expand(desired)
 
     def reorder_encoder_states(self, *args):
         return None
