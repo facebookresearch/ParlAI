@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 
 """
 UnigramAgent always predictions the same vocabulary distribution.
 
-It is a full TorchGeneratorAgent model, so it can be used heavily in testing,
-while being very quick to optimize.
+It is a full TorchGeneratorAgent model, so it can be used heavily in testing, while
+being very quick to optimize.
 """
 
 import torch

@@ -35,7 +35,7 @@ class TestLRSchedulers(unittest.TestCase):
             # LR is always linear
             for step in range(warmup_updates - 1):
                 self.assertAlmostEqual(
-                    output[step + 1] - output[step], max_lr / warmup_updates, places=3,
+                    output[step + 1] - output[step], max_lr / warmup_updates, places=3
                 )
         return output
 
@@ -59,7 +59,7 @@ class TestLRSchedulers(unittest.TestCase):
                 'warmup_scheduler': scheduler.get_warmup_state_dict(),
             }
             scheduler2 = lr_scheduler.ParlAILRScheduler.lr_scheduler_factory(
-                args, optimizer2, sd, False,
+                args, optimizer2, sd, False
             )
             assert scheduler.get_last_lr() == scheduler2.get_last_lr(), step
             scheduler.step(step)
