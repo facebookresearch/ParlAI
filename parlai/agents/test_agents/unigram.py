@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+
+
+"""
+UnigramAgent always predictions the same vocabulary distribution.
+
+It is a full TorchGeneratorAgent model, so it can be used heavily in testing,
+while being very quick to optimize.
+"""
+
+import torch
+import torch.nn as nn
+from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
+
+
+class UnigramEncoder(nn.Module):
+    def forward(self, x):
+        return None
+
+
+class UnigramDecoder(nn.Module):
+    def forward(self, x, encoder_state, incr_state=None):
+        return x, None
+
+
+class UnigramModel(TorchGeneratorModel):
+    def __init__(self, dictionary):
+        super().__init__()
+        self.encoder = UnigramEncoder()
+        self.decoder = UnigramDecoder()
+        self.v = len(dictionary)
+        self.p = nn.Parameter(torch.randn(self.v))
+
+    def output(self, do):
+        desired = tuple(list(do.shape) + [self.v])
+        return self.p.unsqueeze(0).unsqueeze(0).expand(desired)
+
+    def reorder_encoder_states(self, *args):
+        return None
+
+    def reorder_decoder_incremental_state(self, *args):
+        return None
+
+
+class UnigramAgent(TorchGeneratorAgent):
+    def build_model(self):
+        return UnigramModel(self.dict)
