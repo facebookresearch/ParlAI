@@ -797,6 +797,7 @@ class TestLearningRateScheduler(unittest.TestCase):
                     init_model=os.path.join(tmpdir, 'model'),
                     model_file=os.path.join(tmpdir, 'newmodel2'),
                     lr_scheduler='reduceonplateau',
+                    log_every_n_secs=0.001,
                     **args,
                 )
             )

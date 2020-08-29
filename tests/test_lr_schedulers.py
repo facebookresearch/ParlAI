@@ -96,7 +96,7 @@ class TestLRSchedulers(unittest.TestCase):
         steps = self._run_pass(
             lr_scheduler='invsqrt', warmup_updates=50, invsqrt_lr_decay_gamma=1
         )
-        self.assertAlmostEquals(steps[-1], 0.0324272)
+        self.assertAlmostEquals(steps[-1], 0.0324443)
 
         # decay very slowly
         steps = self._run_pass(
