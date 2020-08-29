@@ -47,6 +47,14 @@ COLORED_LEVEL_STYLES = {
 }
 
 
+def _is_color_friendly():
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return sys.stdout.isatty()
+
+
 # Some functions in this class assume that ':' will be the separator used in
 # the logging formats setup for this class
 class ParlaiLogger(logging.Logger):
