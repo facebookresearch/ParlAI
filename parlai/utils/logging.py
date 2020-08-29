@@ -47,7 +47,7 @@ COLORED_LEVEL_STYLES = {
 }
 
 
-def _is_color_friendly():
+def _is_interactive():
     try:
         __IPYTHON__
         return True
@@ -79,14 +79,14 @@ class ParlaiLogger(logging.Logger):
 
     def _build_formatter(self):
         prefix_format = f'{self.prefix} ' if self.prefix else ''
-        if COLORED_LOGS and sys.stdout.isatty():
+        if COLORED_LOGS and _is_interactive():
             return coloredlogs.ColoredFormatter(
                 prefix_format + COLORED_FORMAT,
                 datefmt=CONSOLE_DATE_FORMAT,
                 level_styles=COLORED_LEVEL_STYLES,
                 field_styles={},
             )
-        elif sys.stdout.isatty():
+        elif _is_interactive():
             return logging.Formatter(
                 prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT,
             )
