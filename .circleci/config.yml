@@ -163,12 +163,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-20200828test2-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -207,12 +207,12 @@ jobs:
           command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -232,12 +232,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-ut38-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-ut38-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -257,12 +257,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -289,12 +289,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test2-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-gpu13-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu15
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-gpu13-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-gpu13-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -321,12 +321,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test2-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-gpu16-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-gpu16-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -353,12 +353,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828test2-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -381,11 +381,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-teacher-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-teacher-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-teacher-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-teacher-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -404,11 +404,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828test2-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -426,7 +426,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu16
@@ -437,7 +437,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-20200828test2-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -457,12 +457,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828test2-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchgpu16
       - save_cache:
-          key: deps-20200828test2-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200828test3-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
