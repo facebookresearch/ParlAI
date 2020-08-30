@@ -357,7 +357,7 @@ def add_datapath_and_model_args(opt: Opt):
     if model is not None:
         parser.add_model_subargs(model)
     opt_parser = parser.parse_args([])
-    return opt.fork(**{k: v in opt_parser.items() if k not in opt})
+    return opt.fork(**{k: v for k, v in opt_parser.items() if k not in opt})
 
 
 def create_agent(opt: Opt, requireModelExists=False):

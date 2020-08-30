@@ -1016,16 +1016,15 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
         options_to_change = {'model_file', 'dict_file', 'bpe_vocab', 'bpe_merge'}
-        for each_key in options_to_change:
-            if self.opt.get(each_key) is not None:
-                self.opt = self.opt.fork(
-                    each_key=modelzoo_path(self.opt.get('datapath'), self.opt[each_key])
-                )
-            if self.opt['override'].get(each_key) is not None:
-                # also check override
-                self.opt['override'][each_key] = modelzoo_path(
-                    self.opt.get('datapath'), self.opt['override'][each_key]
-                )
+        new_values = {
+            k: modelzoo_path(self.opt.get('datapath'), self.opt[k])
+            for k in options_to_change
+        }
+        self.opt = self.opt.fork(**new_values)
+        for k, v in new_values.items():
+            # also check override
+            if self.opt['override'].get(k) is not None:
+                self.opt['override'][k] = v
 
     def parse_and_process_known_args(self, args=None):
         """
