@@ -113,6 +113,7 @@ installtorchgpu14: &installtorchgpu14
   run:
     name: Install torch GPU and dependencies
     command: |
+      python -m pip install --progress-bar off 'numpy'
       python -m pip install --progress-bar off 'torch==1.4.0'
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
