@@ -94,11 +94,9 @@ installtorchgpu16: &installtorchgpu16
     name: Install torch GPU and dependencies
     command: |
       python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
-      python -m pip install --progress-bar off 'subword-nmt==0.3.7'
-      python -m pip install --progress-bar off pytorch-pretrained-bert
       python -m pip install --progress-bar off 'torchtext==0.7.0'
+      python -m pip install --progress-bar off pytorch-pretrained-bert
       python -m pip install --progress-bar off transformers
-      python -m pip install --progress-bar off fairseq
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -108,7 +106,6 @@ installtorchgpu15: &installtorchgpu15
     name: Install torch GPU and dependencies
     command: |
       python -m pip install --progress-bar off 'torch==1.5.1'
-      python -m pip install --progress-bar off 'subword-nmt==0.3.7'
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -117,7 +114,6 @@ installtorchgpu14: &installtorchgpu14
     name: Install torch GPU and dependencies
     command: |
       python -m pip install --progress-bar off 'torch==1.4.0'
-      python -m pip install --progress-bar off 'subword-nmt==0.3.7'
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
@@ -295,16 +291,16 @@ jobs:
           key: nvidia-downloads-20200516
           paths:
             - "~/nvidia-downloads/"
-      - restore_cache:
-          key: deps-20200828test4-gpu14-{{ checksum "requirements.txt" }}
+              # - restore_cache:
+              #     key: deps-20200828test4-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu14
       - <<: *installdeps
-      - save_cache:
-          key: deps-20200828test4-gpu14-{{ checksum "requirements.txt" }}
-          paths:
-            - "~/venv/bin"
-            - "~/venv/lib"
+        # - save_cache:
+        #     key: deps-20200828test4-gpu14-{{ checksum "requirements.txt" }}
+        #     paths:
+        #       - "~/venv/bin"
+        #       - "~/venv/lib"
       - run:
           name: Unit tests (GPU; pytorch 1.4)
           no_output_timeout: 60m
