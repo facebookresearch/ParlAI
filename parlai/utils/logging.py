@@ -58,9 +58,7 @@ def _is_interactive():
 # Some functions in this class assume that ':' will be the separator used in
 # the logging formats setup for this class
 class ParlaiLogger(logging.Logger):
-    def __init__(
-        self, name, console_level=INFO,
-    ):
+    def __init__(self, name, console_level=INFO):
         """
         Initialize the logger object.
 
@@ -88,11 +86,11 @@ class ParlaiLogger(logging.Logger):
             )
         elif _is_interactive():
             return logging.Formatter(
-                prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT,
+                prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT
             )
         else:
             return logging.Formatter(
-                prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT,
+                prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT
             )
 
     def log(self, msg, level=INFO):
