@@ -1019,6 +1019,7 @@ class ParlaiParser(argparse.ArgumentParser):
         new_values = {
             k: modelzoo_path(self.opt.get('datapath'), self.opt[k])
             for k in options_to_change
+            if k in self.opt
         }
         self.opt = self.opt.fork(**new_values)
         for k, v in new_values.items():

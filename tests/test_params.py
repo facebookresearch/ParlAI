@@ -26,8 +26,7 @@ class _ExampleUpgradeOptAgent(agents.Agent):
     def upgrade_opt(cls, opt):
         opt = super(_ExampleUpgradeOptAgent, cls).upgrade_opt(opt)
         assert 'is_upgraded' not in opt
-        opt['is_upgraded'] = True
-        return opt
+        return opt.fork(is_upgraded=True)
 
 
 class TestParlaiParser(unittest.TestCase):
