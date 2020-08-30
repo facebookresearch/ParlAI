@@ -9,12 +9,10 @@ A script to build the tf-idf document matrices for retrieval.
 Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 """
 
-import torch
 import numpy as np
 import scipy.sparse as sp
 import math
 
-from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
 from functools import partial
 from collections import Counter
