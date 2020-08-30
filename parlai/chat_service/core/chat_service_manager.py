@@ -185,9 +185,9 @@ class ChatServiceManager(ABC):
         self.world_module = utils.get_world_module(self.world_path)
         self.task_configs = self.config['configs']
         self.max_workers = self.config['max_workers']
-        self.opt['task'] = self.config['task_name']
+        self.opt = self.opt.fork(task=self.config['task_name'])
         # Deepcopy the opts so the manager opts aren't changed by the world runner
-        self.runner_opt = copy.deepcopy(opt)
+        self.runner_opt = opt
         self.world_runner = ChatServiceWorldRunner(
             self.runner_opt, self.world_path, self.max_workers, self, opt['is_debug']
         )  # Replace with base runner

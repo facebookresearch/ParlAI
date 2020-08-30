@@ -276,7 +276,7 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if 'model_file' not in opt:
             opt = opt.fork(model_file=os.path.join(tmpdir, 'model'))
         if 'dict_file' not in opt:
-            opt = opt.fork(model_file=os.path.join(tmpdir, 'model.dict'))
+            opt = opt.fork(dict_file=os.path.join(tmpdir, 'model.dict'))
         # Parse verification
         valid, test = tms.TrainModel.main(**opt)
 
@@ -333,14 +333,11 @@ def display_data(opt):
     popt = parser.parse_args([])
 
     with capture_output() as train_output:
-        popt['datatype'] = 'train:stream'
-        dd.display_data(popt)
+        dd.display_data(popt.fork(datatype='train:stream'))
     with capture_output() as valid_output:
-        popt['datatype'] = 'valid:stream'
-        dd.display_data(popt)
+        dd.display_data(popt.fork(datatype='valid:stream'))
     with capture_output() as test_output:
-        popt['datatype'] = 'test:stream'
-        dd.display_data(popt)
+        dd.display_data(popt.fork(datatype='test:stream'))
 
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
@@ -358,14 +355,11 @@ def display_model(opt) -> Tuple[str, str, str]:
     popt = parser.parse_args([])
     with capture_output() as train_output:
         # evalmode so that we don't hit train_step
-        popt['datatype'] = 'train:evalmode:stream'
-        dm.display_model(popt)
+        dm.display_model(popt.fork(datatype='train:evalmode:stream'))
     with capture_output() as valid_output:
-        popt['datatype'] = 'valid:stream'
-        dm.display_model(popt)
+        dm.display_model(popt.fork(datatype='valid:stream'))
     with capture_output() as test_output:
-        popt['datatype'] = 'test:stream'
-        dm.display_model(popt)
+        dm.display_model(popt.fork(datatype='test:stream'))
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 

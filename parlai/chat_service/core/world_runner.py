@@ -23,7 +23,7 @@ class ChatServiceWorldRunner:
         self.executor = futures.ThreadPoolExecutor(max_workers=max_workers)
         self.debug = is_debug
         self._log("Found world module: {}".format(self._world_module))
-        opt["is_debug"] = is_debug
+        opt = opt.fork(is_debug=is_debug)
         self.manager = manager
         self.system_done = False
         self.opt = opt

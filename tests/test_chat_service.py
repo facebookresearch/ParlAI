@@ -53,8 +53,7 @@ class TestChatServiceAgent(unittest.TestCase):
         Test to make sure that assigning the `data` attribute of a MessengerAgent does
         not overwrite values already in `data`.
         """
-        opt = self._get_args()
-        opt.update(OPT)
+        opt = self._get_args().fork(**OPT)
         manager = MessengerManager(opt)
         agent = MessengerAgent(opt, manager, AGENT_ID, TASK_ID, PAGE_ID)
 

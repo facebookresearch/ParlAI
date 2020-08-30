@@ -957,10 +957,7 @@ class TorchAgent(ABC, Agent):
             # we trained with apex, but the user doesn't have apex installed.
             saved_optim_type = 'adam'
 
-        if (
-            self.opt['optimizer'] == 'fused_adam'
-            and 'fused_adam' not in self.optim_opts()
-        ):
+        if opt['optimizer'] == 'fused_adam' and 'fused_adam' not in self.optim_opts():
             raise ImportError(
                 'You are using --optimizer fused_adam, but you do not have APEX '
                 'installed. Please install APEX (https://github.com/NVIDIA/apex) or '
@@ -1880,7 +1877,7 @@ class TorchAgent(ABC, Agent):
             # the dict with the special fp16 tokens (https://git.io/Jvm7N), IF the
             # dict was built the same time as the model. We set this to tell the
             # model it MUST add the fp16 tokens, even if it's not fp16 mode now.
-            opt_from_disk['force_fp16_tokens'] = True
+            opt_from_disk = opt_from_disk.fork(force_fp16_tokens=True)
 
         return opt_from_disk
 
