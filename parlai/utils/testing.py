@@ -276,7 +276,7 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if 'model_file' not in opt:
             opt = opt.fork(model_file=os.path.join(tmpdir, 'model'))
         if 'dict_file' not in opt:
-            opt = opt.fork(dict_file=os.path.join(tmpdir, 'model.dict'))
+            opt = opt.fork(dict_file=opt['model_file'] + '.dict')
         # Parse verification
         valid, test = tms.TrainModel.main(**opt)
 

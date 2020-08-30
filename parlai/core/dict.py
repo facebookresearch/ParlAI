@@ -220,6 +220,7 @@ class DictionaryAgent(Agent):
         Initialize DictionaryAgent.
         """
         self.opt = opt
+        self.requires_save = True
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
         self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
         self.end_token = opt.get('dict_endtoken', DictionaryAgent.default_end)
@@ -373,6 +374,7 @@ class DictionaryAgent(Agent):
         Add a single token to the dictionary.
         """
         if word not in self.tok2ind:
+            self._requires_save = True
             index = len(self.tok2ind)
             self.tok2ind[word] = index
             self.ind2tok[index] = word
@@ -591,6 +593,7 @@ class DictionaryAgent(Agent):
         Trims the dictionary to the maximum number of tokens.
         """
         if maxtokens >= 0 and len(self.tok2ind) > maxtokens:
+            self._requires_save = True
             for k in range(maxtokens, len(self.ind2tok)):
                 v = self.ind2tok[k]
                 del self.ind2tok[k]
@@ -616,6 +619,7 @@ class DictionaryAgent(Agent):
                 cnt = int(split[1]) if len(split) > 1 else 0
                 self.freq[token] = cnt
                 self.add_token(token)
+        self._requires_save = False
         logging.info(f'num words = {len(self)}')
 
     def save(self, filename=None, append=False, sort=True):
@@ -631,6 +635,8 @@ class DictionaryAgent(Agent):
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
         filename = self.opt['dict_file'] if filename is None else filename
+        if PathManager.exists(filename) and not self._requires_save:
+            return
 
         if self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
             needs_removal = self.bpe.finalize(
@@ -665,6 +671,8 @@ class DictionaryAgent(Agent):
             # hugging face tokenizer does
             self.bpe.save(os.path.dirname(filename), os.path.basename(filename))
 
+        self._requires_save = False
+
     def sort(self, trim=True):
         """
         Sort the dictionary.
@@ -684,6 +692,7 @@ class DictionaryAgent(Agent):
                 "You should not trim the dictionary when using bytelevelbpe."
             )
         # sort first by count, then alphabetically
+        self._requires_save = True
         if trim:
             self.remove_tail(self.minfreq)
         sorted_pairs = sorted(self.freq.items(), key=lambda x: (-x[1], x[0]))

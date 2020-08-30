@@ -719,7 +719,6 @@ class TorchAgent(ABC, Agent):
         if shared is None:
             # intitialize any important structures from scratch
             self.dict = self.build_dictionary()
-
             if opt.get('fp16') or opt.get('force_fp16_tokens'):
                 # Volta cores revert to FP32 hardware if tensors are not multiples
                 # of 8 in all dimensions. This INCLUDES the embeddings layer! As
@@ -1811,11 +1810,8 @@ class TorchAgent(ABC, Agent):
 
         if path:
             model_dict_path = path + '.dict'
-            if hasattr(self, 'dict') and not PathManager.exists(
-                model_dict_path
-            ):  # force save dictionary
+            if hasattr(self, 'dict'):
                 # TODO: Look into possibly overriding opt('dict_file') with new path
-                logging.debug(f'Saving dictionary to {model_dict_path}')
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
