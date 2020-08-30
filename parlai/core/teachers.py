@@ -1955,7 +1955,7 @@ class MultiTaskTeacher(Teacher):
             for k in tasks:
                 k = k.strip()
                 if k:
-                    opt_single_task = opt.fork(task=k)
+                    opt_singletask = opt.fork(task=k)
                     self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True

@@ -60,9 +60,6 @@ def setup_args(parser=None, hidden=True):
 
 
 def build_dict(opt, skip_if_built=False):
-    if isinstance(opt, ParlaiParser):
-        logging.error('Should be passed opt not Parser')
-        opt = opt.parse_args()
     if not opt.get('dict_file'):
         logging.error(
             'Tried to build dictionary but `--dict-file` is not set. Set '

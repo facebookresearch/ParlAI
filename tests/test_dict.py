@@ -87,7 +87,7 @@ class TestDictionary(unittest.TestCase):
     """
 
     def test_gpt2_bpe_tokenize(self):
-        datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
+        datapath = ParlaiParser().parse_args([])['datapath']
         opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': datapath})
         agent = DictionaryAgent(opt)
         self.assertEqual(
@@ -201,7 +201,7 @@ class TestDictionary(unittest.TestCase):
         import parlai.scripts.train_model as tms
 
         parser = tms.setup_args()
-        parser.set_params(task='babi:task1k:1', model='seq2seq')
+        parser.set_defaults(task='babi:task1k:1', model='seq2seq')
         popt = parser.parse_args([])
         with self.assertRaises(RuntimeError):
             tms.TrainLoop(popt)
@@ -218,7 +218,7 @@ class TestByteLevelBPE(unittest.TestCase):
         Tests a bytelevel bpe tokenizer inside ParlAI.
         """
         parser = ParlaiParser()
-        parser.set_params(
+        parser.set_defaults(
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
@@ -245,7 +245,7 @@ class TestByteLevelBPE(unittest.TestCase):
         Tests a bytelevel bpe tokenizer inside ParlAI.
         """
         parser = ParlaiParser()
-        parser.set_params(
+        parser.set_defaults(
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
@@ -400,7 +400,7 @@ class TestByteLevelBPE(unittest.TestCase):
         special_toks_lst = ['MY', 'NAME', 'IS', 'EMILY']
         # create Dictionary Agent
         parser = ParlaiParser()
-        parser.set_params(
+        parser.set_defaults(
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
@@ -427,9 +427,7 @@ class TestBuildDict(unittest.TestCase):
             pp.set_defaults(**opt)
             pp.set_defaults(task='babi')
             popt = pp.parse_args([])
-            popt['dict_file'] = dict_file
-            for k, v in opt.items():
-                popt[k] = v
+            popt = popt.fork(dict_file=dict_file, **opt)
 
     def test_build_space(self):
         self._run_test({'dict_tokenizer': 'space'})
@@ -451,7 +449,7 @@ class TestGpt2HFInterop(unittest.TestCase):
 
     def _get_dict_opt(self, tokenizer: str):
         parser = ParlaiParser()
-        parser.set_params(
+        parser.set_defaults(
             dict_tokenizer=tokenizer,
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
@@ -508,20 +506,22 @@ class TestGpt2HFInterop(unittest.TestCase):
             pp = build_dict.setup_args()
             pp.set_defaults(**hf_bpe_opt)
             pp.set_defaults(task='babi')
-            popt = pp.parse_args([])
-            popt['dict_file'] = dict_file
+            popt = pp.parse_args([]).fork(dict_file=dict_file)
             build_dict.build_dict(popt)
 
-            hf_bpe_opt['dict_file'] = dict_file
-            hf_bpe = DictionaryAgent(hf_bpe_opt)
+            hf_bpe = DictionaryAgent(hf_bpe_opt.fork(dict_file=dict_file))
 
-            slow_bytelevel_bpe_opt['dict_file'] = dict_file
-            slow_bytelevel_bpe = DictionaryAgent(slow_bytelevel_bpe_opt)
+            slow_bytelevel_bpe = DictionaryAgent(
+                slow_bytelevel_bpe_opt.fork(dict_file=dict_file)
+            )
 
             self._run_test(slow_bytelevel_bpe, hf_bpe)
 
-            slow_bytelevel_bpe_opt['bpe_add_prefix_space'] = True
-            slow_bytelevel_bpe = DictionaryAgent(slow_bytelevel_bpe_opt)
+            slow_bytelevel_bpe = DictionaryAgent(
+                slow_bytelevel_bpe_opt.fork(
+                    dict_file=dict_file, bpe_add_prefix_space=True
+                )
+            )
             self._run_prefix_space_test(slow_bytelevel_bpe)
 
     def _run_prefix_space_test(self, agent):

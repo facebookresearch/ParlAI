@@ -726,10 +726,9 @@ class HuggingFaceBpeHelper(BPEHelper):
             dfname = opt['dict_file']
             if PathManager.exists(f'{dfname}-merges.txt'):
                 opt = opt.fork(bpe_merge=f'{dfname}-merges.txt')
-                self.opt = opt
             if PathManager.exists(f'{dfname}-vocab.json'):
                 opt = opt.fork(bpe_vocab=f'{dfname}-vocab.json')
-                self.opt = opt
+        self.opt = opt
         try:
             from tokenizers import ByteLevelBPETokenizer
         except ImportError:

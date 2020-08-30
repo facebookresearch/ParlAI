@@ -48,8 +48,10 @@ class Task1kTeacher(FbDialogTeacher):
         task = opt.get('task', f'babi:Task1k:{default}')
         self.task_num = task.split(':')[2] if len(task.split(':')) >= 3 else default
         # Default to self.task_num == '1' if not specified
-        opt['datafile'] = _path('', self.task_num, opt)
-        opt['cands_datafile'] = _path('', self.task_num, opt, 'train')
+        opt = opt.fork(
+            datafile=_path('', self.task_num, opt),
+            cands_datafile=_path('', self.task_num, opt, 'train'),
+        )
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -68,8 +70,10 @@ class Task10kTeacher(FbDialogTeacher):
         task = opt.get('task', f'babi:Task10k:{default}')
         self.task_num = task.split(':')[2] if len(task.split(':')) >= 3 else default
         # Default to self.task_num == '1' if not specified
-        opt['datafile'] = _path('-10k', self.task_num, opt)
-        opt['cands_datafile'] = _path('-10k', self.task_num, opt, 'train')
+        opt = opt.fork(
+            datafile=_path('-10k', self.task_num, opt),
+            cands_datafile=_path('-10k', self.task_num, opt, 'train'),
+        )
         super().__init__(opt, shared)
 
     def setup_data(self, path):
@@ -84,17 +88,19 @@ class Task10kTeacher(FbDialogTeacher):
 # By default train on all tasks at once.
 class All1kTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
-        opt = copy.deepcopy(opt)
-        opt['task'] = ','.join('babi:Task1k:%d' % (i + 1) for i in range(20))
-        super().__init__(opt, shared)
+        super().__init__(
+            opt.fork(task=','.join('babi:Task1k:%d' % (i + 1) for i in range(20))),
+            shared,
+        )
 
 
 # By default train on all tasks at once.
 class All10kTeacher(MultiTaskTeacher):
     def __init__(self, opt, shared=None):
-        opt = copy.deepcopy(opt)
-        opt['task'] = ','.join('babi:Task10k:%d' % (i + 1) for i in range(20))
-        super().__init__(opt, shared)
+        super().__init__(
+            opt.fork(task=','.join('babi:Task10k:%d' % (i + 1) for i in range(20))),
+            shared,
+        )
 
 
 # By default train on all tasks at once.

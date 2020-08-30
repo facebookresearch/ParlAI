@@ -287,6 +287,7 @@ class DictionaryAgent(Agent):
                 # don't check isfile first, should fail if file not found
                 self.load(opt['dict_initpath'])
             opt = opt.fork(dict_loaded=loaded)
+            self.opt = opt
 
         # cache unk token for later
         self._unk_token_idx = self.tok2ind.get(self.unk_token)
