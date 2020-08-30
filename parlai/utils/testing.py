@@ -31,7 +31,7 @@ except ImportError:
     GPU_AVAILABLE = False
 
 try:
-    import torchvision
+    import torchvision  # noqa: F401
 
     VISION_AVAILABLE = True
 except ImportError:
