@@ -8,8 +8,6 @@
 Base tokenizer/tokens classes and utilities.
 """
 
-import copy
-
 
 class Tokens(object):
     """

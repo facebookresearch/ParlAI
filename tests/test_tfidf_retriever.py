@@ -4,10 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent_from_model_file
-from parlai.core.worlds import create_task
-from parlai.utils.logging import logger, ERROR
 import parlai.utils.testing as testing_utils
 
 import os
