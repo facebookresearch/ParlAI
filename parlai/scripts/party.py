@@ -14,13 +14,12 @@ parlai party
 ```
 """
 
-DELAY = 75 / 1000
-
 import sys
 import time
 from parlai.core.script import ParlaiScript, register_script
 from parlai.core.params import ParlaiParser
 
+DELAY = 75 / 1000
 RESET = '\u001b[0m'
 CLEAR_SCREEN = "\u001b[2J\u001b[H"
 COLORS = [

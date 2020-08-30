@@ -104,7 +104,7 @@ class TestVacuum(unittest.TestCase):
             assert size_after < size_before
             assert os.path.exists(model_file + '.unvacuumed')
             valid2, test2 = testing_utils.eval_model(
-                {'task': 'integration_tests', 'model_file': model_file, 'batchsize': 8,}
+                {'task': 'integration_tests', 'model_file': model_file, 'batchsize': 8}
             )
             for key in ['loss', 'exs', 'ppl', 'token_acc']:
                 assert valid2[key] == valid[key], f"{key} score doesn't match"
