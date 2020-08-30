@@ -122,8 +122,7 @@ def _eval_single_world(opt, agent, task):
     # set up world logger
     world_logger = WorldLogger(opt) if opt['save_world_logs'] else None
 
-    task_opt = opt.copy()  # copy opt since we're editing the task
-    task_opt['task'] = task
+    task_opt = opt.fork(task=task)
     world = create_task(task_opt, agent)  # create worlds for tasks
 
     # set up logging

@@ -180,7 +180,7 @@ class TorchRankerAgent(TorchAgent):
         # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
         init_model, is_finetune = self._get_init_model(opt, shared)
-        opt['rank_candidates'] = True
+        opt = opt.fork(rank_candidates=True)
         self._set_candidate_variables(opt)
         super().__init__(opt, shared)
 
@@ -314,13 +314,10 @@ class TorchRankerAgent(TorchAgent):
             return path
         logging.warn(f'Building candidates file as they do not exist: {path}')
         from parlai.scripts.build_candidates import build_cands
-        from copy import deepcopy
 
-        opt = deepcopy(self.opt)
-        opt['outfile'] = path
-        opt['datatype'] = 'train:evalmode'
-        opt['interactive_task'] = False
-        opt['batchsize'] = 1
+        opt = self.fork(
+            outfile=path, datatype='train:evalmode', interactive_task=False, batchsize=1
+        )
         build_cands(opt)
         return path
 

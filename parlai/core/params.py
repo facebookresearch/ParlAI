@@ -853,7 +853,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add more args depending on how known args are set.
         """
-        parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        parsed = Opt(vars(self.parse_known_args(args, nohelp=True)[0]))
         # Also load extra args options if a file is given.
         if parsed.get('init_opt') is not None:
             self._load_known_opts(parsed.get('init_opt'), parsed)
@@ -960,9 +960,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 DEFAULT_DATAPATH = os.path.join(self.parlai_home, 'data')
             os.environ['PARLAI_DATAPATH'] = DEFAULT_DATAPATH
 
-        opt['datapath'] = os.environ['PARLAI_DATAPATH']
-
-        return opt
+        return opt.fork(datapath=os.environ['PARLAI_DATAPATH'])
 
     def _process_args_to_opts(self, args_that_override: Optional[List[str]] = None):
         self.opt = Opt(vars(self.args))
@@ -975,7 +973,7 @@ class ParlaiParser(argparse.ArgumentParser):
             extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
-        self.opt['parlai_home'] = self.parlai_home
+        self.opt = self.opt.fork(parlai_home=self.parlai_home)
         self.opt = self._infer_datapath(self.opt)
 
         # set all arguments specified in command line as overridable
@@ -1009,7 +1007,8 @@ class ParlaiParser(argparse.ArgumentParser):
                 ):
                     key = option_strings_dict[args_that_override[i]]
                     self.overridable[key] = self.opt[key]
-        self.opt['override'] = self.overridable
+
+        self.opt = self.opt.fork(override=self.overridable)
 
         # load opts if a file is provided.
         if self.opt.get('init_opt', None) is not None:
@@ -1019,17 +1018,14 @@ class ParlaiParser(argparse.ArgumentParser):
         options_to_change = {'model_file', 'dict_file', 'bpe_vocab', 'bpe_merge'}
         for each_key in options_to_change:
             if self.opt.get(each_key) is not None:
-                self.opt[each_key] = modelzoo_path(
-                    self.opt.get('datapath'), self.opt[each_key]
+                self.opt = self.opt.fork(
+                    each_key=modelzoo_path(self.opt.get('datapath'), self.opt[each_key])
                 )
             if self.opt['override'].get(each_key) is not None:
                 # also check override
                 self.opt['override'][each_key] = modelzoo_path(
                     self.opt.get('datapath'), self.opt['override'][each_key]
                 )
-
-        # add start time of an experiment
-        self.opt['starttime'] = datetime.datetime.today().strftime('%b%d_%H-%M')
 
     def parse_and_process_known_args(self, args=None):
         """

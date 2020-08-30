@@ -219,7 +219,7 @@ class DictionaryAgent(Agent):
         """
         Initialize DictionaryAgent.
         """
-        self.opt = copy.deepcopy(opt)
+        self.opt = opt
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
         self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
         self.end_token = opt.get('dict_endtoken', DictionaryAgent.default_end)
@@ -269,7 +269,9 @@ class DictionaryAgent(Agent):
             loaded = False
             # If data built via pytorch data teacher, we need to load prebuilt dict
             if opt.get('dict_file'):
-                opt['dict_file'] = modelzoo_path(opt.get('datapath'), opt['dict_file'])
+                opt = opt.fork(
+                    dict_file=modelzoo_path(opt.get('datapath'), opt['dict_file'])
+                )
                 if PathManager.exists(opt['dict_file']):
                     # load pre-existing dictionary
                     self.load(opt['dict_file'])
@@ -277,12 +279,14 @@ class DictionaryAgent(Agent):
 
             if not loaded and opt.get('dict_initpath'):
                 # load seed dictionary
-                opt['dict_initpath'] = modelzoo_path(
-                    opt.get('datapath'), opt['dict_initpath']
+                opt = opt.fork(
+                    dict_initpath=modelzoo_path(
+                        opt.get('datapath'), opt['dict_initpath']
+                    )
                 )
                 # don't check isfile first, should fail if file not found
                 self.load(opt['dict_initpath'])
-            opt['dict_loaded'] = loaded
+            opt = opt.fork(dict_loaded=loaded)
 
         # cache unk token for later
         self._unk_token_idx = self.tok2ind.get(self.unk_token)

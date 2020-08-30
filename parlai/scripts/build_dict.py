@@ -91,14 +91,12 @@ def build_dict(opt, skip_if_built=False):
     if is_distributed():
         raise ValueError('Dictionaries should be pre-built before distributed train.')
 
-    ordered_opt = copy.deepcopy(opt)
     cnt = 0
     # we use train set to build dictionary
+    ordered_opt = opt.fork(batchsize=1, image_mode='no_image_model')
 
-    ordered_opt['batchsize'] = 1
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
-    ordered_opt['image_mode'] = 'no_image_model'
 
     ordered_opt.log()
 
@@ -109,7 +107,7 @@ def build_dict(opt, skip_if_built=False):
         datatypes.append('test:stream')
     cnt = 0
     for dt in datatypes:
-        ordered_opt['datatype'] = dt
+        ordered_opt = ordered_opt.fork(datatype=dt)
         world_dict = create_task(ordered_opt, dictionary)
         # pass examples to dictionary
         log_time = TimeLogger()

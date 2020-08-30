@@ -126,3 +126,16 @@ override (printing only non-matching values in each dict):
 \t\tIn opt 1: <MISSING>
 \t\tIn opt 2: no"""
             self.assertEqual(output, desired_output)
+
+    def test_noset(self):
+        o = Opt(test1='foo')
+        with self.assertRaises(RuntimeError):
+            o['test2'] = 'bar'
+
+    def test_fork(self):
+        o = Opt(test1='foo')
+        o2 = o.fork(test2='bar')
+        assert 'bar' not in o
+        assert o['test1'] == 'foo'
+        assert o2['test1'] == 'foo'
+        assert o2['test2'] == 'bar'

@@ -271,11 +271,12 @@ def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     import parlai.scripts.train_model as tms
 
+    opt = Opt(opt)
     with tempdir() as tmpdir:
         if 'model_file' not in opt:
-            opt['model_file'] = os.path.join(tmpdir, 'model')
+            opt = opt.fork(model_file=os.path.join(tmpdir, 'model'))
         if 'dict_file' not in opt:
-            opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+            opt = opt.fork(model_file=os.path.join(tmpdir, 'model.dict'))
         # Parse verification
         valid, test = tms.TrainModel.main(**opt)
 
@@ -306,12 +307,13 @@ def eval_model(
     """
     import parlai.scripts.eval_model as ems
 
+    opt = Opt(opt)
     if opt.get('model_file') and not opt.get('dict_file'):
-        opt['dict_file'] = opt['model_file'] + '.dict'
+        opt = opt.fork(dict_file=opt['model_file'] + '.dict')
 
-    opt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
+    opt = opt.fork(datatype='valid' if valid_datatype is None else valid_datatype)
     valid = None if skip_valid else ems.EvalModel.main(**opt)
-    opt['datatype'] = 'test' if test_datatype is None else test_datatype
+    opt = opt.fork(datatype='test' if valid_datatype is None else valid_datatype)
     test = None if skip_test else ems.EvalModel.main(**opt)
 
     return valid, test

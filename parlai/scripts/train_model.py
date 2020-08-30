@@ -218,14 +218,13 @@ def load_eval_worlds(agent, opt, datatype):
 
     if 'stream' in opt['datatype']:
         datatype += ':stream'
-    opt = opt.copy()
-    opt['datatype'] = datatype
+    opt = opt.fork(datatype=datatype)
     if opt.get('evaltask'):
         # if a different eval task is specified, use it.
-        opt['task'] = opt['evaltask']
+        opt = opt.fork(task=opt['devaltask'])
     if opt.get('eval_batchsize'):
         # override eval time batchsize
-        opt['batchsize'] = opt['eval_batchsize']
+        opt = opt.fork(batchsize=opt['eval_batchsize'])
 
     tasks = opt['task'].split(',')
     worlds = []
@@ -236,8 +235,7 @@ def load_eval_worlds(agent, opt, datatype):
         valid_agent = agent
     # create worlds
     for task in tasks:
-        task_opt = opt.copy()  # copy opt since we edit the task
-        task_opt['task'] = task
+        task_opt = opt.fork(task=task)
         valid_world = create_task(task_opt, valid_agent)
         worlds.append(valid_world)
 
@@ -311,11 +309,11 @@ class TrainLoop:
 
         # smart defaults for --validation-metric-mode
         if opt['validation_metric'] in {'loss', 'ppl', 'mean_rank'}:
-            opt['validation_metric_mode'] = 'min'
+            opt = opt.fork(validation_metric_mode='min')
         elif opt['validation_metric'] in {'accuracy', 'hits@1', 'hits@5', 'f1', 'bleu'}:
-            opt['validation_metric_mode'] = 'max'
+            opt = opt.fork(validation_metric_mode='max')
         if opt.get('validation_metric_mode') is None:
-            opt['validation_metric_mode'] = 'max'
+            opt = opt.fork(validation_metric_mode='max')
 
         self.last_valid_epoch = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1

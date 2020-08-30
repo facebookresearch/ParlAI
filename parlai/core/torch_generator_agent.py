@@ -358,15 +358,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 method = 'greedy'
             else:
                 method = 'beam'
-            opt_from_disk['inference'] = method
+            opt_from_disk = opt_from_disk.fork(inference=method)
             warn_once(f'Old model inference method inferred as {method}')
 
         # 2020-06-03: Changing "blacklist" --> "blocklist"
         if 'beam_blacklist_filename' in opt_from_disk:
             if opt_from_disk['beam_blacklist_filename'] is not None:
-                opt_from_disk['beam_block_list_filename'] = opt_from_disk[
-                    'beam_blacklist_filename'
-                ]
+                opt_from_disk = opt_from_disk.fork(
+                    beam_block_list_filename=opt_from_disk['beam_blacklist_filename']
+                )
             del opt_from_disk['beam_blacklist_filename']
 
         # 2020-08-04: Introduce full context beam blocking
@@ -375,7 +375,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         # by truncation parameters. Now, we block on full dialogue history.
         if 'beam_block_full_context' not in opt_from_disk:
             warn_once('Loading model with `--beam-block-full-context false`')
-            opt_from_disk['beam_block_full_context'] = False
+            opt_from_disk = opt_from_disk.fork(beam_block_full_context=False)
 
         return opt_from_disk
 

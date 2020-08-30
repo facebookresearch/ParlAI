@@ -40,8 +40,6 @@ This module also provides a utility method:
     ``MultiTaskTeacher``.
 """
 
-import copy
-
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
 from parlai.core.loader import register_agent  # noqa: F401
@@ -66,7 +64,7 @@ class Agent(object):
         if not hasattr(self, 'id'):
             self.id = 'agent'
         if not hasattr(self, 'opt'):
-            self.opt = copy.deepcopy(opt)
+            self.opt = opt
         self.observation = None
 
     def observe(self, observation):
@@ -272,12 +270,12 @@ def create_agent_from_model_file(model_file, opt_overrides=None):
     :return:
         The agent
     """
-    opt = {}
-    add_datapath_and_model_args(opt)
-    opt['model_file'] = modelzoo_path(opt.get('datapath'), model_file)
+    opt = Opt()
+    opt = add_datapath_and_model_args(opt)
+    opt = opt.fork(model_file=modelzoo_path(opt.get('datapath'), model_file))
     if opt_overrides is None:
         opt_overrides = {}
-    opt['override'] = opt_overrides
+    opt = opt.fork(override=opt_overrides)
     return create_agent_from_opt_file(opt)
 
 
@@ -306,13 +304,15 @@ def create_agent_from_opt_file(opt: Opt):
             del opt_from_file[arg]
 
     # only override opts specified in 'override' dict
+    to_override = {}
     if opt.get('override'):
         for k, v in opt['override'].items():
             if k in opt_from_file and str(v) != str(opt_from_file.get(k)):
+                to_override[k] = v
                 logging.warn(
                     f'Overriding opt["{k}"] to {v} (previously: {opt_from_file.get(k)})'
                 )
-            opt_from_file[k] = v
+    opt_from_file = opt_from_file.fork(**to_override)
 
     model_class = load_agent_module(opt_from_file['model'])
 
@@ -320,20 +320,18 @@ def create_agent_from_opt_file(opt: Opt):
         opt_from_file = model_class.upgrade_opt(opt_from_file)
 
     # add model arguments to opt_from_file if they aren't in opt_from_file already
-    for k, v in opt.items():
-        if k not in opt_from_file:
-            opt_from_file[k] = v
-
-    opt_from_file['model_file'] = model_file  # update model file path
+    to_update = {k: v for k, v in opt.items() if k not in opt_from_file}
+    to_update['model_file'] = model_file  # update model file path
+    opt_from_file = opt_from_file.fork(**to_update)
 
     # update dict file path
     if not opt_from_file.get('dict_file'):
-        opt_from_file['dict_file'] = model_file + '.dict'
+        opt_from_file = opt_from_file.fork(dict_file=model_file + '.dict')
     elif opt_from_file.get('dict_file') and not PathManager.exists(
         opt_from_file['dict_file']
     ):
         old_dict_file = opt_from_file['dict_file']
-        opt_from_file['dict_file'] = model_file + '.dict'
+        opt_from_file = opt_from_file.fork(dict_file=model_file + '.dict')
     if not PathManager.exists(opt_from_file['dict_file']):
         warn_once(
             'WARNING: Neither the specified dict file ({}) nor the '
@@ -358,10 +356,8 @@ def add_datapath_and_model_args(opt: Opt):
     model = get_model_name(opt)
     if model is not None:
         parser.add_model_subargs(model)
-    opt_parser = parser.parse_args("")
-    for k, v in opt_parser.items():
-        if k not in opt:
-            opt[k] = v
+    opt_parser = parser.parse_args([])
+    return opt.fork(**{k: v in opt_parser.items() if k not in opt})
 
 
 def create_agent(opt: Opt, requireModelExists=False):
@@ -381,10 +377,10 @@ def create_agent(opt: Opt, requireModelExists=False):
     containing the model's options).
     """
     if opt.get('datapath', None) is None:
-        add_datapath_and_model_args(opt)
+        opt = add_datapath_and_model_args(opt)
 
     if opt.get('model_file'):
-        opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
+        opt = opt.fork(model_file=modelzoo_path(opt.get('datapath'), opt['model_file']))
         if requireModelExists and not PathManager.exists(opt['model_file']):
             raise RuntimeError(
                 'WARNING: Model file does not exist, check to make '
@@ -422,8 +418,7 @@ def create_agent_from_shared(shared_agent):
         should include an `opt` dictionary and agent `class`, along with
         whatever other parameters the agent needs to instantiate.
     """
-    opt = copy.deepcopy(shared_agent['opt'])
-    a = shared_agent['class'](opt, shared_agent)
+    a = shared_agent['class'](shared_agent['opt'], shared_agent)
     return a
 
 

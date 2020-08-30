@@ -42,45 +42,53 @@ class Opt(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.history = []
-        self.deepcopies = []
 
     def __setitem__(self, key, val):
-        loc = traceback.format_stack()[-2]
-        self.history.append((key, val, loc))
-        super().__setitem__(key, val)
+        raise RuntimeError(
+            'Setting values in opt is no longer allowed. '
+            'Use opt = opt.fork(key=newvalue).'
+        )
+
+    def update(self, *args, **kwargs):
+        raise RuntimeError(
+            'Setting values in opt is no longer allowed. '
+            'Use opt = opt.fork(key=newvalue).'
+        )
+
+    def todo__del__(self, key):
+        pass
 
     def __getstate__(self):
-        return (self.history, self.deepcopies, dict(self))
+        return self.history, dict(self)
 
     def __setstate__(self, state):
-        self.history, self.deepcopies, data = state
-        self.update(data)
+        self.history, data = state
+        super().update(data)
 
     def __reduce__(self):
         return (Opt, (), self.__getstate__())
+
+    def fork(self, **newvalues):
+        loc = traceback.format_stack(limit=2)[-2]
+        copied = dict(self)
+        newhistory = copy.copy(self.history)
+        for key, value in newvalues.items():
+            copied[key] = value
+            newhistory.append((key, value, loc))
+        retval = Opt(copied)
+        retval.history = newhistory
+        return retval
 
     def __deepcopy__(self, memo):
         """
         Override deepcopy so that history is copied over to new object.
         """
         # track location of deepcopy
-        loc = traceback.format_stack()[-3]
-        self.deepcopies.append(loc)
         # copy all our children
         memo = Opt({k: copy.deepcopy(v) for k, v in self.items()})
         # deepcopy the history. history is only tuples, so we can do it shallow
-        memo.history = copy.copy(self.history)
-        # deepcopy the list of deepcopies. also shallow bc only strings
-        memo.deepcopies = copy.copy(self.deepcopies)
+        memo.history = self.history[:]
         return memo
-
-    def display_deepcopies(self):
-        """
-        Display all deepcopies.
-        """
-        if len(self.deepcopies) == 0:
-            return 'No deepcopies performed on this opt.'
-        return '\n'.join(f'{i}. {loc}' for i, loc in enumerate(self.deepcopies, 1))
 
     def display_history(self, key):
         """

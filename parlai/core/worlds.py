@@ -71,7 +71,7 @@ class World(object):
 
     def __init__(self, opt: Opt, agents=None, shared=None):
         self.id = opt['task']
-        self.opt = copy.deepcopy(opt)
+        self.opt = opt
         if shared:
             # Create agents based on shared data.
             self.agents = create_agents_from_shared(shared['agents'])
@@ -145,7 +145,7 @@ class World(object):
         """
         Create a duplicate of the world.
         """
-        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
+        return type(self)(opt=self.opt, agents=None, shared=self.share())
 
     def _share_agents(self):
         """
@@ -519,8 +519,7 @@ class MultiWorld(World):
         for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
-                opt_singletask = copy.deepcopy(opt)
-                opt_singletask['task'] = k
+                opt_singletask = opt.fork(task=k)
                 if shared:
                     # Create worlds based on shared data.
                     s = shared['worlds'][index]
@@ -1253,8 +1252,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
 
     # Convert any hashtag task labels to task directory path names.
     # (e.g. "#QA" to the list of tasks that are QA tasks).
-    opt = copy.deepcopy(opt)
-    opt['task'] = ids_to_tasks(opt['task'])
+    opt = opt.fork(task=ids_to_tasks(opt['task']))
     logging.info(f"creating task(s): {opt['task']}")
 
     if ',' not in opt['task']:

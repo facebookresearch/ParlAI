@@ -32,7 +32,6 @@ This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
-import copy
 from typing import List, Tuple, Optional, TypeVar
 
 from parlai.core.agents import Agent, create_agent_from_shared
@@ -118,7 +117,7 @@ class Teacher(Agent):
 
     def __init__(self, opt: Opt, shared=None):
         if not hasattr(self, 'opt'):
-            self.opt = copy.deepcopy(opt)
+            self.opt = opt
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
@@ -1816,13 +1815,14 @@ class AbstractImageTeacher(FixedDialogTeacher):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
                 # TODO: will refactor this at some point soon most likely
-                image_loader_opt = self.opt.copy()
-                image_loader_opt['image_mode'] = (
-                    self.image_mode if self.include_image else 'no_image_model'
+                image_loader_opt = self.opt.fork(
+                    image_mode=(
+                        self.image_mode if self.include_image else 'no_image_model'
+                    ),
+                    image_size=256,
+                    image_cropsize=224,
                 )
 
-                image_loader_opt['image_size'] = 256
-                image_loader_opt['image_cropsize'] = 224
                 self.image_loader = ImageLoader(image_loader_opt)
 
                 # try to build with ImageLoader (i.e. resenet/resnext variants)
@@ -1955,8 +1955,7 @@ class MultiTaskTeacher(Teacher):
             for k in tasks:
                 k = k.strip()
                 if k:
-                    opt_singletask = copy.deepcopy(opt)
-                    opt_singletask['task'] = k
+                    opt_single_task = opt.fork(task=k)
                     self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
@@ -2342,10 +2341,11 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
                     except ValueError:
                         value = raw_value  # type: ignore
 
-            opt[key] = value
+            opt = opt.fork(key=value)
         else:
             task.append(f)
-    opt['task'] = ':'.join(task)
+
+    return opt.fork(task=':'.join(task))
 
 
 def create_task_agent_from_taskname(opt: Opt):
@@ -2364,7 +2364,7 @@ def create_task_agent_from_taskname(opt: Opt):
     if ',' not in opt['task']:
         # Single task
         teacher_class = load_teacher_module(opt['task'])
-        _add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
+        opt = _add_task_flags_to_agent_opt(teacher_class, opt, opt['task'])
         task_agents = teacher_class(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]

@@ -855,7 +855,7 @@ class TorchAgent(ABC, Agent):
             if init_model is not None:
                 # if we are loading a model, should load its dict too
                 if PathManager.exists(init_model + '.dict') or opt['dict_file'] is None:
-                    opt['dict_file'] = init_model + '.dict'
+                    opt = opt.fork(dict_file=init_model + '.dict')
 
         return init_model, is_finetune
 
@@ -928,7 +928,7 @@ class TorchAgent(ABC, Agent):
             kwargs['amsgrad'] = True
             if self.fp16 and self.fp16_impl == 'mem_efficient':
                 # grab this implementation instead
-                opt['optimizer'] = 'mem_eff_adam'
+                opt = opt.fork(optimizer='mem_eff_adam')
         elif opt['optimizer'] == 'qhadam':
             # set nus for qhadam
             kwargs['nus'] = opt.get('nus', (0.7, 1.0))

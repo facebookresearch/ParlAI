@@ -68,9 +68,9 @@ class CandidateBaseTeacher(Teacher, ABC):
         :param int num_test:
             size of the valid/test sets
         """
-        self.opt = opt
-        opt['datafile'] = opt['datatype'].split(':')[0]
+        opt = opt.fork(datafile=opt['datatype'].split(':')[0])
         self.datafile = opt['datafile']
+        self.opt = opt
 
         self.vocab_size = vocab_size
         self.example_size = example_size
@@ -426,8 +426,7 @@ class ImageTeacher(AbstractImageTeacher):
 
 class RepeatTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-        opt = copy.deepcopy(opt)
-        opt['datafile'] = 'unused_path'
+        opt = opt.fork(datafile='unused_path')
         task = opt.get('task', 'integration_tests:RepeatTeacher:50')
         try:
             self.data_length = int(task.split(':')[-1])
