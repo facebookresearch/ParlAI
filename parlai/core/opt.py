@@ -46,13 +46,13 @@ class Opt(dict):
     def __setitem__(self, key, val):
         raise RuntimeError(
             'Setting values in opt is no longer allowed. '
-            'Use opt = opt.fork(key=newvalue).'
+            'Use opt = opt.fork(key=newvalue), or file a GitHub issue.'
         )
 
     def update(self, *args, **kwargs):
         raise RuntimeError(
             'Setting values in opt is no longer allowed. '
-            'Use opt = opt.fork(key=newvalue).'
+            'Use opt = opt.fork(key=newvalue), or file a GitHub issue.'
         )
 
     def todo__del__(self, key):
@@ -71,12 +71,12 @@ class Opt(dict):
     def fork(self, **newvalues):
         loc = traceback.format_stack(limit=2)[-2]
         copied = dict(self)
-        newhistory = copy.copy(self.history)
+        newhistory = []
         for key, value in newvalues.items():
             copied[key] = value
             newhistory.append((key, value, loc))
         retval = Opt(copied)
-        retval.history = newhistory
+        retval.history = self.history + newhistory
         return retval
 
     def __deepcopy__(self, memo):

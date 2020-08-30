@@ -713,32 +713,6 @@ class MultiWorld(World):
             w.update_counters()
 
 
-def _override_opts_in_shared(table, overrides):
-    """
-    Override all shared dicts.
-
-    Looks recursively for ``opt`` dictionaries within shared dict and overrides any key-
-    value pairs with pairs from the overrides dict.
-    """
-    if 'opt' in table:
-        # change values if an 'opt' dict is available
-        for k, v in overrides.items():
-            table['opt'][k] = v
-    for k, v in table.items():
-        # look for sub-dictionaries which also might contain an 'opt' dict
-        if type(v) == dict and k != 'opt' and 'opt' in v:
-            _override_opts_in_shared(v, overrides)
-        elif type(v) == list:
-            for item in v:
-                if type(item) == dict and 'opt' in item:
-                    # if this is a list of agent shared dicts, we want to iterate
-                    _override_opts_in_shared(item, overrides)
-                else:
-                    # if this is e.g. list of candidate strings, stop right away
-                    break
-    return table
-
-
 class BatchWorld(World):
     """
     BatchWorld contains many copies of the same world.
@@ -764,9 +738,11 @@ class BatchWorld(World):
             shared['batchindex'] = i
             for agent_shared in shared.get('agents', ''):
                 agent_shared['batchindex'] = i
-            # TODO: deprecate override_opts
-            _override_opts_in_shared(shared, {'batchindex': i})
-            self.worlds.append(shared['world_class'](opt, None, shared))
+                if 'opt' in agent_shared:
+                    agent_shared['opt'] = agent_shared['opt'].fork(batchindex=i)
+            self.worlds.append(
+                shared['world_class'](opt.fork(batchindex=i), None, shared)
+            )
         self.batch_observations = [None] * len(self.world.get_agents())
         self.first_batch = None
         self.acts = [None] * len(self.world.get_agents())

@@ -259,7 +259,7 @@ class TrainLoop:
             and opt.get('model_file')
             and PathManager.exists(opt['model_file'] + '.checkpoint')
         ):
-            opt['init_model'] = opt['model_file'] + '.checkpoint'
+            opt = opt.fork(init_model=opt['model_file'] + '.checkpoint')
             trainstats_suffix = '.checkpoint.trainstats'
         # Possibly build a dictionary (not all models do this).
         if not (opt.get('dict_file') or opt.get('model_file')):
@@ -269,7 +269,7 @@ class TrainLoop:
             )
         if 'dict_file' in opt:
             if opt['dict_file'] is None and opt.get('model_file'):
-                opt['dict_file'] = opt['model_file'] + '.dict'
+                opt = opt.fork(dict_file=opt['model_file'] + '.dict')
             logging.info("building dictionary first...")
             build_dict(opt, skip_if_built=True)
 
