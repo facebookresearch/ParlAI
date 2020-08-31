@@ -1,5 +1,6 @@
 boto3==1.9.246
 botocore==1.12.246
+coloredlogs==14.0
 docutils<0.16
 emoji==0.5.4
 docformatter==1.3.0
