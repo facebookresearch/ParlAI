@@ -132,13 +132,16 @@ class TfidfRetrieverAgent(Agent):
         )
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
         self.id = 'SparseTfidfRetrieverAgent'
         if not opt.get('model_file') or opt['model_file'] == '':
             raise RuntimeError('Must set --model_file')
 
-        opt['retriever_dbpath'] = opt['model_file'] + '.db'
-        opt['retriever_tfidfpath'] = opt['model_file'] + '.tfidf'
+        opt = opt.fork(
+            retriever_dbpath=opt['model_file'] + '.db',
+            retriever_tfidfpath=opt['model_file'] + '.tfidf',
+        )
+
+        super().__init__(opt, shared)
 
         self.db_path = opt['retriever_dbpath']
         self.tfidf_path = opt['retriever_tfidfpath']

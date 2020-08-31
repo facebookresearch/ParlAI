@@ -103,10 +103,9 @@ class TestUtils(unittest.TestCase):
         assert nt.c == 1
 
     def test_opt(self):
-        opt = {'x': 0}
-        opt = Opt(opt)
-        opt['x'] += 1
-        opt['x'] = 10
+        opt = Opt(x=0)
+        opt = opt.fork(x=1)
+        opt = opt.fork(x=10)
         self.assertEqual(opt.history[0][0], 'x', 'History not set properly')
         self.assertEqual(opt.history[0][1], 1, 'History not set properly')
         self.assertEqual(opt.history[1][0], 'x', 'History not set properly')
