@@ -277,7 +277,7 @@ class AcuteEvalRunner(TaskRunner):
             worker_data["conversations_seen"].extend(
                 self._get_dialogue_ids(self.desired_tasks[t])
             )
-            task_data.extend(self.desired_tasks[t])
+            task_data.append(self.desired_tasks[t])
 
         return task_data
 
