@@ -8,7 +8,7 @@ flake8==3.7.8
 fvcore==0.1.1.post20200716
 gitdb2==2.0.5
 GitPython==3.0.3
-torch
+torch>=1.4.0
 joblib==0.14.1
 nltk==3.4.5
 numpy==1.17.5
