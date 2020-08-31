@@ -115,7 +115,7 @@ def self_chat(opt):
             with PathManager.open(partner_opt_file) as f:
                 partner_opt = json.load(f)
         else:
-            partner_opt = {}
+            partner_opt = Opt()
         partner_opt['interactive_mode'] = opt.get('interactive_mode', True)
         print(
             f"WARNING: Setting partner interactive mode to: {partner_opt['interactive_mode']}"

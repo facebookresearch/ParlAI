@@ -4,10 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
+import parlai.utils.logging as logging
 
 import random
 
@@ -19,15 +21,14 @@ def get_personas(opt, shared=None):
 
 
 def _load_personas(opt):
-    print('[ loading personas.. ]')
     # Create ConvAI2 data so we can assign personas.
-    convai2_opt = opt.copy()
-    convai2_opt['task'] = 'convai2:both'
+    logging.info('loading personas...')
+    convai2_opt = opt.fork(
+        task='convai2:both', interactive_task=False, selfchat_task=False
+    )
     if convai2_opt['datatype'].startswith('train'):
-        convai2_opt['datatype'] = 'train:evalmode'
-    convai2_opt['interactive_task'] = False
-    convai2_opt['selfchat_task'] = False
-    convai2_agent = FixedResponseAgent({'fixed_response': None})
+        convai2_opt = convai2_opt.fork(datatype='train:evalmode')
+    convai2_agent = FixedResponseAgent(Opt(fixed_response=None))
     convai2_world = create_task(convai2_opt, convai2_agent)
     personas = set()
     while not convai2_world.epoch_done():
@@ -47,7 +48,7 @@ def _load_personas(opt):
                     a2_persona.append(t)
             personas.add('\n'.join(a1_persona))
             personas.add('\n'.join(a2_persona))
-    print('[ loaded ' + str(len(personas)) + ' personas ]')
+    logging.info(f'loaded {len(personas)} personas')
     return list(personas)
 
 

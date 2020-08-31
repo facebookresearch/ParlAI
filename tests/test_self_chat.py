@@ -10,22 +10,12 @@ import parlai.scripts.self_chat as self_chat
 
 class TestSelfChat(unittest.TestCase):
     def test_vanilla(self):
-        pp = self_chat.setup_args()
-        opt = pp.parse_args(['-m', 'fixed_response', '--fixed-response', 'hi'])
-        self_chat.self_chat(opt)
+        self_chat.SelfChat.main(model='fixed_response', fixed_response='hi')
 
     def test_convai2(self):
-        pp = self_chat.setup_args()
-        opt = pp.parse_args(
-            [
-                '-m',
-                'fixed_response',
-                '--fixed-response',
-                'hi',
-                '-t',
-                'convai2',
-                '-dt',
-                'valid',
-            ]
+        self_chat.SelfChat.main(
+            model='fixed_response',
+            fixed_response='hi',
+            task='convai2',
+            datatype='valid',
         )
-        self_chat.self_chat(opt)
