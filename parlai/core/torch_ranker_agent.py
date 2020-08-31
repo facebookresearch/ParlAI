@@ -315,7 +315,7 @@ class TorchRankerAgent(TorchAgent):
         logging.warn(f'Building candidates file as they do not exist: {path}')
         from parlai.scripts.build_candidates import build_cands
 
-        opt = opt.fork(
+        opt = self.opt.fork(
             outfile=path, datatype='train:evalmode', interactive_task=False, batchsize=1
         )
         build_cands(opt)
