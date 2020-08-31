@@ -55,7 +55,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         self._test_display_output('no_image_model')
 
-    @testing_utils.skipUnlessTorch14
+    @testing_utils.skipUnlessVision
     @testing_utils.skipUnlessGPU
     def test_display_data_resnet(self):
         """
