@@ -56,11 +56,12 @@ class TestBartModel(unittest.TestCase):
                     dict_file='zoo:bart/bart_large/model.dict',
                     optimizer='adam',
                     learningrate=3e-5,
-                    batchsize=1,
+                    batchsize=4,
                     num_epochs=1,
                     short_final_eval=True,
                     validation_max_exs=12,
                     model_file=mf,
+                    model_parallel=True
                 )
             )
             self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)
