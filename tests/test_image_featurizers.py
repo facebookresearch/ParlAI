@@ -40,7 +40,7 @@ class TestImageLoader(unittest.TestCase):
         opt = ParlaiParser().parse_args([])
         opt.update(BASE_IMAGE_ARGS)
         for image_mode, dim in IMAGE_MODE_TO_DIM.items():
-            opt["image_mode"] = image_mode
+            opt = opt.fork(image_mode=image_mode)
             teacher = create_task_agent_from_taskname(opt)[0]
             teacher_act = teacher.get(0)
             self.assertEquals(

@@ -40,7 +40,8 @@ class AbstractWrapperTeacher(Teacher, ABC):
             help='The task whose fields will be manipulated.',
         )
         known_args, _ = parser.parse_known_args(nohelp=True)
-        parser.add_task_args(known_args.wrapper_task)
+        if known_args.wrapper_task:
+            parser.add_task_args(known_args.wrapper_task)
 
     def __init__(self, opt: Opt, shared=None):
         if ',' in opt['task']:
@@ -52,8 +53,7 @@ class AbstractWrapperTeacher(Teacher, ABC):
         if shared:
             self.task = create_agent_from_shared(shared['task'])
         else:
-            opt_singletask = copy.deepcopy(opt)
-            opt_singletask['task'] = opt['wrapper_task']
+            opt_singletask = opt.fork(task=opt['wrapper_task'])
             self.task = create_task_agent_from_taskname(opt_singletask)[0]
 
     @abstractmethod

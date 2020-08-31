@@ -23,13 +23,10 @@ class TestWrapper(unittest.TestCase):
         regular_world = create_task(opt, agent)
 
         # Set up label-to-text teacher
-        kwargs = {
-            'task': 'wrapper:labelToTextTeacher',
-            'wrapper_task': 'integration_tests:multiturn',
-        }
-        parser = setup_args()
-        parser.set_defaults(**kwargs)
-        opt = parser.parse_args([])
+        opt = setup_args().parse_kwargs(
+            task='wrapper:labelToTextTeacher',
+            wrapper_task='integration_tests:multiturn',
+        )
         agent = RepeatLabelAgent(opt)
         label_to_text_world = create_task(opt, agent)
 

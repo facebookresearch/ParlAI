@@ -311,9 +311,14 @@ def eval_model(
     if opt.get('model_file') and not opt.get('dict_file'):
         opt = opt.fork(dict_file=opt['model_file'] + '.dict')
 
-    opt = opt.fork(datatype='valid' if valid_datatype is None else valid_datatype)
+    if valid_datatype is None:
+        valid_datatype = 'valid'
+    if test_datatype is None:
+        test_datatype = 'test'
+
+    opt = opt.fork(datatype=valid_datatype)
     valid = None if skip_valid else ems.EvalModel.main(**opt)
-    opt = opt.fork(datatype='test' if valid_datatype is None else valid_datatype)
+    opt = opt.fork(datatype=test_datatype)
     test = None if skip_test else ems.EvalModel.main(**opt)
 
     return valid, test
