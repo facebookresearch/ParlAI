@@ -51,7 +51,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         self.START_IDX = self.dict.start_idx
         self.END_IDX = self.dict.end_idx
         # default one does not average
-        self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
+        self.rank_loss = torch.nn.CrossEntropyLoss(reduction='mean')
 
     def build_model(self):
         return BiEncoderModule(self.opt)

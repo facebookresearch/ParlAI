@@ -271,7 +271,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         # dialog/feedback tasks use self.rank_loss from TorchRankerAgent
         # Don't do BCEWithLogitsLoss since we need the probs from the sigmoid anyway
-        self.satisfaction_criterion = nn.BCELoss(reduce=True, size_average=False)
+        self.satisfaction_criterion = nn.BCELoss(reduction='mean')
 
         # Set rating classifier
         if opt['regex']:

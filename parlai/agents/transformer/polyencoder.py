@@ -117,7 +117,7 @@ class PolyencoderAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.rank_loss = torch.nn.CrossEntropyLoss(reduce=True, size_average=True)
+        self.rank_loss = torch.nn.CrossEntropyLoss(reduction='mean')
         if self.use_cuda:
             self.rank_loss.cuda()
 
