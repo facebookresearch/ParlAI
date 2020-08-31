@@ -5,10 +5,21 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
 import os
+
+
+def add_common_cmdline_args(argparser):
+    agent = argparser.add_argument_group('Squad2 teacher arguments')
+    agent.add_argument(
+        '--impossible-answer-string',
+        type=str,
+        default='',
+        help='Set the label for impossible answers; defaults to an empty string, but one might try something like "I do not know"',
+    )
 
 
 class IndexTeacher(FixedDialogTeacher):
@@ -21,6 +32,10 @@ class IndexTeacher(FixedDialogTeacher):
     This teacher also provides access to the "answer_start" indices that specify the
     location of the answer in the context.
     """
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        add_common_cmdline_args(argparser)
 
     def __init__(self, opt, shared=None):
         build(opt)
@@ -54,6 +69,8 @@ class IndexTeacher(FixedDialogTeacher):
             for a in qa['answers']:
                 answers.append(a['text'])
                 answer_starts.append(a['answer_start'])
+        else:
+            answers = [self.opt['impossible_answer_string']]
         context = paragraph['context']
         plausible = qa.get("plausible_answers", [])
 
@@ -68,7 +85,7 @@ class IndexTeacher(FixedDialogTeacher):
         return action
 
     def _setup_data(self, path):
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         self.examples = []
 
@@ -90,6 +107,10 @@ class DefaultTeacher(DialogTeacher):
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
 
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        add_common_cmdline_args(argparser)
+
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         build(opt)
@@ -103,7 +124,7 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             # each paragraph is a context for the attached questions
@@ -111,7 +132,7 @@ class DefaultTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_list = [{"text": ""}]
+                    ans_list = [{"text": self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_list = qa['answers']
                     answers = tuple(a['text'] for a in ans_list)
@@ -128,6 +149,10 @@ class OpenSquadTeacher(DialogTeacher):
     Note: This teacher omits the context paragraph
     """
 
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        add_common_cmdline_args(argparser)
+
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         build(opt)
@@ -141,7 +166,7 @@ class OpenSquadTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             # each paragraph is a context for the attached questions
@@ -149,10 +174,10 @@ class OpenSquadTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_iter = [{"text": ''}]
+                    ans_iter = [{"text": self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_iter = qa['answers']
-                    answers = (a['text'] for a in ans_iter)
+                    answers = [a['text'] for a in ans_iter]
                     yield (question, answers), True
 
 
@@ -177,7 +202,7 @@ class TitleTeacher(DefaultTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             title = article['title']
@@ -186,10 +211,10 @@ class TitleTeacher(DefaultTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_iter = [{"text": ""}]
+                    ans_iter = [{'text': self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_iter = qa['answers']
-                    answers = (a['text'] for a in ans_iter)
+                    answers = [a['text'] for a in ans_iter]
                     context = paragraph['context']
                     yield ('\n'.join([title, context, question]), answers), True
 
@@ -259,6 +284,8 @@ class SentenceIndexTeacher(IndexTeacher):
         plausible = []
         if qa['is_impossible']:
             plausible = qa['plausible_answers']
+            labels = [self.opt['impossible_answer_string']]
+
         action = {
             'id': 'squad',
             'text': context + '\n' + question,
@@ -315,6 +342,8 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
         plausible = []
         if qa['is_impossible']:
             plausible = qa['plausible_answers']
+            labels = [self.opt['impossible_answer_string']]
+
         action = {
             'id': 'squad',
             'text': context + '\n' + question,
@@ -381,6 +410,7 @@ class SentenceLabelsTeacher(IndexTeacher):
         plausible = []
         if qa['is_impossible']:
             plausible = qa['plausible_answers']
+            labels = [self.opt['impossible_answer_string']]
         action = {
             'id': 'SquadSentenceLabels',
             'text': question,

@@ -8,6 +8,7 @@ import copy
 import json
 import os
 
+from parlai.utils.io import PathManager
 from parlai.core.teachers import DialogTeacher
 
 from .build import build
@@ -67,7 +68,7 @@ def setup_data(path, dialog_format=False, binary_classes=False):
     """
     print('loading: ' + path)
 
-    with open(path, 'r') as data_file:
+    with PathManager.open(path, 'r') as data_file:
         for pair_line in data_file:
             pair = json.loads(pair_line)
             if pair[MULTINLI_ANSWER_KEY] == '-':

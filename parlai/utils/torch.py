@@ -12,6 +12,7 @@ from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
 import itertools
 from collections import namedtuple
 import parlai.utils.logging as logging
+import parlai.utils.io as io_util
 
 
 try:
@@ -51,8 +52,14 @@ def atomic_save(state_dict: Any, path: str) -> None:
     to disk. Works by writing to a temporary file, and then renaming the file to the
     final name.
     """
-    torch.save(state_dict, path + ".tmp")
-    os.rename(path + ".tmp", path)
+
+    if io_util.USE_ATOMIC_TORCH_SAVE:
+        with open(path + ".tmp", "wb") as f:
+            torch.save(state_dict, f)
+        os.rename(path + ".tmp", path)
+    else:
+        # PathManager deosn't support os.rename. See T71772714
+        torch.save(state_dict, path)
 
 
 def padded_tensor(
@@ -332,6 +339,24 @@ class PipelineHelper(object):
             d = f'cuda:{i}'
             self.devices.append(d)
             self.__device_allocations[d] = 0
+
+    def check_compatibility(self, opt):
+        """
+        Check compatibility for opts.
+
+        Really just used to raise an error message if the user mixes multiprocessing and
+        model parallelism.
+        """
+        if opt.get('multiprocessing') and not os.environ.get('PARLAI_FORCE_MP'):
+            raise RuntimeError(
+                "It looks like you are trying to mix multiprocessing data "
+                "parallelism (multiprocessing_train or multiprocessing_eval) "
+                "with --model-parallel true. This is almost certainly a user "
+                "error, and is going to result in hanging as the two methods "
+                "fight for resources. Use simple `train_model` instead of "
+                "`mp_train`, or add `--model-parallel false`. For more info, "
+                "see https://github.com/facebookresearch/ParlAI/issues/2962."
+            )
 
     def make_parallel(self, model: torch.nn.Module) -> torch.nn.Module:
         """

@@ -14,6 +14,7 @@ To put the article in the labels and the title in the text, specify
 ':key-value' at the end (for a title/content key-value association)
 """
 from parlai.core.teachers import DialogTeacher, ChunkTeacher, ChunkOutput
+from parlai.utils.io import PathManager
 from parlai.core.message import Message
 from .build import build
 
@@ -46,7 +47,7 @@ class FullTeacher(DialogTeacher):
             subdir_path = os.path.join(path, subdir)
             for wiki_file in os.listdir(subdir_path):
                 wiki_file_path = os.path.join(subdir_path, wiki_file)
-                with open(wiki_file_path) as wf:
+                with PathManager.open(wiki_file_path) as wf:
                     for article_json in wf:
                         article = json.loads(article_json)
                         title = article['title']
@@ -144,7 +145,7 @@ class FullSplitTeacher(ChunkTeacher):
         chunk_path = os.path.join(self.folder, self.chunk_idx_to_file[chunk_idx])
         for wiki_file in os.listdir(chunk_path):
             wiki_file_path = os.path.join(chunk_path, wiki_file)
-            with open(wiki_file_path) as wf:
+            with PathManager.open(wiki_file_path) as wf:
                 for article_json in wf:
                     article = json.loads(article_json)
                     title = article['title']
@@ -185,7 +186,7 @@ class SummaryTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as wf:
+        with PathManager.open(path) as wf:
             for article_json in wf:
                 article = json.loads(article_json)
                 title = article['title']

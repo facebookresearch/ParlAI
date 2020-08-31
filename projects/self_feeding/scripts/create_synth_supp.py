@@ -34,6 +34,7 @@ import random
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
+from parlai.utils.io import PathManager
 
 from parlai.projects.self_feeding.utils import Parley
 
@@ -143,7 +144,7 @@ def create_supp(opt):
         f"({num_supp_correct}/{num_supp})"
     )
 
-    with open(opt['outfile'], 'w') as outfile:
+    with PathManager.open(opt['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 

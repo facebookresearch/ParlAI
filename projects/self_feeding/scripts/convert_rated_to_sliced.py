@@ -10,6 +10,7 @@ from parlai.mturk.tasks.self_feeding.rating.worlds import (
     NEW_TOPIC_REQUEST,
     SUGGESTION_REQUEST,
 )
+from parlai.utils.io import PathManager
 
 # Initial prompts vary due to the random nouns, but all will start this way
 INITIAL_PROMPT = "start a conversation"
@@ -47,7 +48,7 @@ def main(config):
                 new_episodes.append(new_episode)
 
     # Create parlai dialog file for easy viewing
-    with open(config['outfile'], 'w') as f:
+    with PathManager.open(config['outfile'], 'w') as f:
         for episode in new_episodes:
             num_parleys = len(episode)
             for i, parley in enumerate(episode):

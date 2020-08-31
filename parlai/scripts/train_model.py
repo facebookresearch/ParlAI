@@ -7,18 +7,19 @@
 """
 Training script for ParlAI.
 
-The standard way to train a model. After training, also computes validation
-and test error.
+The standard way to train a model. After training, also computes
+validation and test error.
 
-The user must provide a model (with ``--model``) and a task (with ``--task``).
+The user must provide a model (with `--model`) and a task (with
+`--task`).
 
-Examples
---------
-.. code-block:: shell
+## Examples
 
-  parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-  parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-  parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+```shell
+parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+```
 """  # noqa: E501
 
 # TODO List:
@@ -26,7 +27,6 @@ Examples
 
 import json
 import numpy as np
-import os
 import signal
 from typing import Dict
 
@@ -48,6 +48,7 @@ from parlai.utils.distributed import (
 from parlai.utils.misc import Timer, nice_report
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -258,7 +259,7 @@ class TrainLoop:
         if (
             opt['load_from_checkpoint']
             and opt.get('model_file')
-            and os.path.isfile(opt['model_file'] + '.checkpoint')
+            and PathManager.exists(opt['model_file'] + '.checkpoint')
         ):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
@@ -329,12 +330,12 @@ class TrainLoop:
 
         # we may have been preempted, make sure we note that amount
         self._preempted_epochs = 0.0
-        if opt.get('model_file') and os.path.isfile(
+        if opt.get('model_file') and PathManager.exists(
             opt['model_file'] + trainstats_suffix
         ):
             # looks like we were preempted. make sure we load up our total
             # training stats, etc
-            with open(opt['model_file'] + trainstats_suffix) as ts:
+            with PathManager.open(opt['model_file'] + trainstats_suffix) as ts:
                 obj = json.load(ts)
                 self.parleys = obj.get('parleys', 0)
                 self._preempted_epochs = obj.get('total_epochs', 0)
@@ -346,10 +347,12 @@ class TrainLoop:
                     self.best_valid = obj['best_valid']
                 else:
                     # old method
-                    if opt.get('model_file') and os.path.isfile(
+                    if opt.get('model_file') and PathManager.exists(
                         opt['model_file'] + '.best_valid'
                     ):
-                        with open(opt['model_file'] + ".best_valid", 'r') as f:
+                        with PathManager.open(
+                            opt['model_file'] + ".best_valid", 'r'
+                        ) as f:
                             x = f.readline()
                             self.best_valid = float(x)
                             f.close()
@@ -389,7 +392,7 @@ class TrainLoop:
         if suffix:
             fn += suffix
         fn += '.trainstats'
-        with open(fn, 'w') as f:
+        with PathManager.open(fn, 'w') as f:
             json.dump(
                 {
                     'parleys': self.parleys,
@@ -554,9 +557,8 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            f = open(opt['model_file'] + '.' + datatype, 'a+')
-            f.write(f'{metrics}\n')
-            f.close()
+            with PathManager.open(opt['model_file'] + '.' + datatype, 'a+') as f:
+                f.write(f'{metrics}\n')
 
         return report
 
@@ -652,10 +654,6 @@ class TrainLoop:
                 try:
                     world.parley()
                 except StopTrainException:
-                    if is_distributed():
-                        raise RuntimeError(
-                            "StopTrainException not supported for " "distributed mode"
-                        )
                     break
 
                 self.parleys += 1
@@ -698,10 +696,6 @@ class TrainLoop:
                         world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
-                        if is_distributed():
-                            raise RuntimeError(
-                                "StopTrainException not supported for distributed mode"
-                            )
                         break
                     # reset the log time because we logged right before validating
                     self.log_time.reset()

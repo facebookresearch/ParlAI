@@ -24,5 +24,26 @@ Enter Your Message: Parrots are
 parlai train_model -m hugging_face/gpt2 --add-special-tokens True --add-start-token True --gpt2-size medium -t convai2 -bs 2 -mf <modelfile>
 ```
 
-## Other models
-_Other models are coming soon -- stay tuned!_
+## DialoGPT
+
+To use DialoGPT, run your command with the flag: `-m hugging_face/dialogpt`.
+
+### Examples
+**Talk to DialoGPT large in interactive mode, with beam size 10, 3-gram beam blocking, and minimum beam length 25:**
+```bash
+parlai interactive -m hugging_face/dialogpt --add-special-tokens False --gpt2-size large --inference beam --beam-size 10 --beam-context-block-ngram 3 --beam-block-ngram 3 --beam-min-length 25
+```
+_Note:_ In the above command, we must have the flag `--add-special-tokens False` if we want to use the model _without_ finetuning it.
+
+Here is example output from the above command:
+```
+Enter Your Message: What do you think of parrots?
+[Dialogpt]:  I love parrots. They are the best. I love them so much. I wish I had a pet parrot.
+```
+
+
+**Fine-tune DialoGPT medium on the ConvAI2 task:**
+```bash
+parlai train_model -m hugging_face/dialogpt --add-special-tokens True --delimiter '\n' --add-start-token True --gpt2-size medium -t convai2 -bs 2 -mf <modelfile>
+```
+_Note:_ In the above command, we change the default delimiter from `--delimiter '<|endoftext|>'`, as a personal choice.

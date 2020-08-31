@@ -6,9 +6,10 @@
 # Download and build the data if it does not exist.
 
 
+import os
 from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
-import os
+import parlai.utils.logging as logging
 
 RESOURCES = [
     DownloadableFile(
@@ -19,16 +20,12 @@ RESOURCES = [
 ]
 
 
-def build_fb_format():
-    pass
-
-
 def build(opt):
     version = 'v5.0'
     dpath = os.path.join(opt['datapath'], 'ConvAI2')
 
     if not build_data.built(dpath, version):
-        print('[building data: ' + dpath + ']')
+        logging.info('building data: ' + dpath)
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)

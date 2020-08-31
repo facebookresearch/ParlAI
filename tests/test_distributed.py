@@ -66,7 +66,7 @@ class TestDistributed(unittest.TestCase):
             parser = build_dict.setup_args()
             build_dict.build_dict(popt)
 
-            valid, test = mp_train.launch_and_train(popt, 31337)
+            valid, test = mp_train.launch_and_train(popt, 31338)
 
         return (valid, test)
 
@@ -168,6 +168,23 @@ class TestDistributed(unittest.TestCase):
         valid, test = self._distributed_train_model(config)
         assert valid['exs'].value() == 100
         assert test['exs'].value() == 100
+
+    def test_no_model_parallel(self):
+        """
+        Checks that we throw an error when combining mp_train with.
+
+        --model-parallel true.
+        """
+        config = copy.deepcopy(self._base_config)
+        config['model_parallel'] = True
+        for m in [
+            'transformer/generator',
+            'transformer/ranker',
+            'transformer/classifier',
+        ]:
+            config['model'] = m
+            with self.assertRaises(RuntimeError):
+                _ = self._distributed_train_model(config)
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ Mostly just ensures the docs will output nicely.
 
 import os
 import unittest
+import pytest
 import parlai.utils.testing as testing_utils
 from parlai.zoo.model_list import model_list
 from parlai.tasks.task_list import task_list
@@ -65,6 +66,7 @@ class TestZooAndTasks(unittest.TestCase):
         """
         self._check_types(task_list, 'Task')
 
+    @pytest.mark.nofbcode
     def test_tasklist(self):
         """
         Check the task list for issues.
@@ -77,6 +79,7 @@ class TestZooAndTasks(unittest.TestCase):
             ignore=['fromfile', 'interactive', 'jsonfile', 'wrapper'],
         )
 
+    @pytest.mark.nofbcode
     def test_zoolist(self):
         """
         Check the zoo list for issues.
@@ -130,6 +133,11 @@ class TestZooAndTasks(unittest.TestCase):
                     self.assertIsNot(
                         value, [], "{} {} must have some tags".format(listname, name)
                     )
+                elif key == 'links':
+                    self.assertIsInstance(value, dict)
+                    for k_, v_ in value.items():
+                        self.assertIsInstance(k_, str)
+                        self.assertIsInstance(v_, str)
                 else:
                     self.assertIsInstance(
                         value,

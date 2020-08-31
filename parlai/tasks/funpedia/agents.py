@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FbDialogTeacher, FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import copy
@@ -37,7 +38,7 @@ def _strip_reader(filename):
     """
     Reads a file, stripping line endings.
     """
-    with open(filename) as f:
+    with PathManager.open(filename) as f:
         for line in f:
             yield line.rstrip()
 

@@ -20,8 +20,8 @@ import shutil
 import hashlib
 import tqdm
 import math
-import zipfile
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 try:
     from torch.multiprocessing import Pool
@@ -66,14 +66,14 @@ class DownloadableFile:
         :param dpath: path to the downloaded file.
         """
         sha256_hash = hashlib.sha256()
-        with open(os.path.join(dpath, self.file_name), "rb") as f:
+        with PathManager.open(os.path.join(dpath, self.file_name), "rb") as f:
             for byte_block in iter(lambda: f.read(65536), b""):
                 sha256_hash.update(byte_block)
             if sha256_hash.hexdigest() != self.hashcode:
                 # remove_dir(dpath)
                 raise AssertionError(
-                    f"[ Checksum for {self.file_name} from \n{self.url}\n"
-                    "does not match the expected checksum. Please try again. ]"
+                    f"Checksum for {self.file_name} from \n{self.url}\n"
+                    "does not match the expected checksum. Please try again."
                 )
             else:
                 logging.debug("Checksum Successful")
@@ -117,14 +117,14 @@ def built(path, version_string=None):
     """
     if version_string:
         fname = os.path.join(path, '.built')
-        if not os.path.isfile(fname):
+        if not PathManager.exists(fname):
             return False
         else:
-            with open(fname, 'r') as read:
+            with PathManager.open(fname, 'r') as read:
                 text = read.read().split('\n')
             return len(text) > 1 and text[1] == version_string
     else:
-        return os.path.isfile(os.path.join(path, '.built'))
+        return PathManager.exists(os.path.join(path, '.built'))
 
 
 def mark_done(path, version_string=None):
@@ -140,7 +140,7 @@ def mark_done(path, version_string=None):
     :param str version_string:
         The version of this dataset.
     """
-    with open(os.path.join(path, '.built'), 'w') as write:
+    with PathManager.open(os.path.join(path, '.built'), 'w') as write:
         write.write(str(datetime.datetime.today()))
         if version_string:
             write.write('\n' + version_string)
@@ -154,7 +154,7 @@ def download(url, path, fname, redownload=False, num_retries=5):
     present (default ``False``).
     """
     outfile = os.path.join(path, fname)
-    download = not os.path.isfile(outfile) or redownload
+    download = not PathManager.exists(outfile) or redownload
     logging.info(f"Downloading {url} to {outfile}")
     retry = num_retries
     exp_backoff = [2 ** r for r in reversed(range(retry))]
@@ -162,38 +162,20 @@ def download(url, path, fname, redownload=False, num_retries=5):
     pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 
     while download and retry > 0:
-        resume_file = outfile + '.part'
-        resume = os.path.isfile(resume_file)
-        if resume:
-            resume_pos = os.path.getsize(resume_file)
-            mode = 'ab'
-        else:
-            resume_pos = 0
-            mode = 'wb'
         response = None
 
         with requests.Session() as session:
             try:
-                header = (
-                    {'Range': 'bytes=%d-' % resume_pos, 'Accept-Encoding': 'identity'}
-                    if resume
-                    else {}
-                )
-                response = session.get(url, stream=True, timeout=5, headers=header)
+                response = session.get(url, stream=True, timeout=5)
 
                 # negative reply could be 'none' or just missing
-                if resume and response.headers.get('Accept-Ranges', 'none') == 'none':
-                    resume_pos = 0
-                    mode = 'wb'
-
                 CHUNK_SIZE = 32768
                 total_size = int(response.headers.get('Content-Length', -1))
                 # server returns remaining size if resuming, so adjust total
-                total_size += resume_pos
                 pbar.total = total_size
-                done = resume_pos
+                done = 0
 
-                with open(resume_file, mode) as f:
+                with PathManager.open(outfile, 'wb') as f:
                     for chunk in response.iter_content(CHUNK_SIZE):
                         if chunk:  # filter out keep-alive new chunks
                             f.write(chunk)
@@ -232,7 +214,6 @@ def download(url, path, fname, redownload=False, num_retries=5):
                 f'Received less data than specified in Content-Length header for '
                 f'{url}. There may be a download problem.'
             )
-        move(resume_file, outfile)
 
     pbar.close()
 
@@ -243,14 +224,7 @@ def make_dir(path):
     """
     # the current working directory is a fine path
     if path != '':
-        os.makedirs(path, exist_ok=True)
-
-
-def move(path1, path2):
-    """
-    Rename the given file.
-    """
-    shutil.move(path1, path2)
+        PathManager.mkdirs(path)
 
 
 def remove_dir(path):
@@ -260,7 +234,7 @@ def remove_dir(path):
     shutil.rmtree(path, ignore_errors=True)
 
 
-def untar(path, fname, deleteTar=True):
+def untar(path, fname, delete=True):
     """
     Unpack the given archive file to the same directory.
 
@@ -270,19 +244,18 @@ def untar(path, fname, deleteTar=True):
     :param str fname:
         The filename of the archive file.
 
-    :param bool deleteTar:
+    :param bool delete:
         If true, the archive will be deleted after extraction.
     """
-    logging.debug(f'unpacking {fname}')
-    fullpath = os.path.join(path, fname)
-    shutil.unpack_archive(fullpath, path)
-    if deleteTar:
-        os.remove(fullpath)
+    if ".zip" in fname:
+        return _unzip(path, fname, delete=delete)
+    else:
+        return _untar(path, fname, delete=delete)
 
 
-def unzip(path, fname, deleteZip=True):
+def _untar(path, fname, delete=True):
     """
-    Unzip the given archive file to the same directory.
+    Unpack the given archive file to the same directory.
 
     :param str path:
         The folder containing the archive. Will contain the contents.
@@ -290,29 +263,66 @@ def unzip(path, fname, deleteZip=True):
     :param str fname:
         The filename of the archive file.
 
-    :param bool deleteZip:
+    :param bool delete:
         If true, the archive will be deleted after extraction.
     """
-    logging.debug(f'unzipping {fname}')
+    import tarfile
+
+    logging.debug(f'unpacking {fname}')
     fullpath = os.path.join(path, fname)
-    with zipfile.ZipFile(fullpath, "r") as zip_ref:
-        zip_ref.extractall(path)
-    if deleteZip:
-        os.remove(fullpath)
+    # very painfully manually extract files so that we can use PathManger.open
+    # instead, lest we are using fb internal file services
+
+    with tarfile.open(fileobj=PathManager.open(fullpath, 'rb')) as tf:
+        for item in tf:
+            item_name = item.name
+            while item_name.startswith("./"):
+                # internal file systems will actually create a literal "."
+                # directory, so we gotta watch out for that
+                item_name = item_name[2:]
+            fn = os.path.join(path, item_name)
+            logging.debug(f"Extracting to {fn}")
+            if item.isdir():
+                PathManager.mkdirs(fn)
+            elif item.isfile():
+                with PathManager.open(fn, 'wb') as wf, tf.extractfile(item.name) as rf:
+                    tarfile.copyfileobj(rf, wf)
+            else:
+                raise NotImplementedError("No support for symlinks etc. right now.")
+
+    if delete:
+        PathManager.rm(fullpath)
 
 
-def cat(file1, file2, outfile, deleteFiles=True):
+def _unzip(path, fname, delete=True):
     """
-    Concatenate two files to an outfile, possibly deleting the originals.
+    Unpack the given zip file to the same directory.
+
+    :param str path:
+        The folder containing the archive. Will contain the contents.
+
+    :param str fname:
+        The filename of the archive file.
+
+    :param bool delete:
+        If true, the archive will be deleted after extraction.
     """
-    with open(outfile, 'wb') as wfd:
-        for f in [file1, file2]:
-            with open(f, 'rb') as fd:
-                shutil.copyfileobj(fd, wfd, 1024 * 1024 * 10)
-                # 10MB per writing chunk to avoid reading big file into memory.
-    if deleteFiles:
-        os.remove(file1)
-        os.remove(file2)
+    import zipfile
+
+    logging.debug(f'unpacking {fname}')
+    fullpath = os.path.join(path, fname)
+    with zipfile.ZipFile(PathManager.open(fullpath, 'rb'), 'r') as zf:
+        for member in zf.namelist():
+            outpath = os.path.join(path, member)
+            if zf.getinfo(member).is_dir():
+                logging.debug(f"Making directory {outpath}")
+                PathManager.mkdirs(outpath)
+                continue
+            logging.debug(f"Extracting to {outpath}")
+            with zf.open(member, 'r') as inf, PathManager.open(outpath, 'wb') as outf:
+                shutil.copyfileobj(inf, outf)
+    if delete:
+        PathManager.rm(fullpath)
 
 
 def _get_confirm_token(response):
@@ -338,7 +348,7 @@ def download_from_google_drive(gd_id, destination):
             response = session.get(URL, params=params, stream=True)
 
         CHUNK_SIZE = 32768
-        with open(destination, 'wb') as f:
+        with PathManager.open(destination, 'wb') as f:
             for chunk in response.iter_content(CHUNK_SIZE):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
@@ -442,14 +452,14 @@ def modelzoo_path(datapath, path):
         # parlai_internal/.internal_zoo_path
         # TODO: test the internal zoo.
         zoo_path = 'parlai_internal/zoo/.internal_zoo_path'
-        if not os.path.isfile('parlai_internal/zoo/.internal_zoo_path'):
+        if not PathManager.exists('parlai_internal/zoo/.internal_zoo_path'):
             raise RuntimeError(
                 'Please specify the path to your internal zoo in the '
                 'file parlai_internal/zoo/.internal_zoo_path in your '
                 'internal repository.'
             )
         else:
-            with open(zoo_path, 'r') as f:
+            with PathManager.open(zoo_path, 'r') as f:
                 zoo = f.read().split('\n')[0]
             return os.path.join(zoo, path[5:])
 
@@ -498,7 +508,7 @@ def download_multiprocess(
 
     items = zip(urls, dest_filenames)
     remaining_items = [
-        it for it in items if not os.path.isfile(os.path.join(path, it[1]))
+        it for it in items if not PathManager.exists(os.path.join(path, it[1]))
     ]
     logging.info(
         f'Of {len(urls)} items, {len(urls) - len(remaining_items)} already existed; only going to download {len(remaining_items)} items.'
@@ -546,7 +556,7 @@ def download_multiprocess(
             error_path, 'parlai_download_multiprocess_errors_%s.log' % now
         )
 
-        with open(os.path.join(error_filename), 'w+') as error_file:
+        with PathManager.open(os.path.join(error_filename), 'w+') as error_file:
             error_file.write(json.dumps(collected_errors))
             logging.error(f'Summary of errors written to {error_filename}')
 
@@ -609,7 +619,7 @@ def _download_multiprocess_single(url, path, dest_fname):
 
     if response.ok:
         try:
-            with open(os.path.join(path, dest_fname), 'wb+') as out_file:
+            with PathManager.open(os.path.join(path, dest_fname), 'wb+') as out_file:
                 # Some sites respond with gzip transport encoding
                 response.raw.decode_content = True
                 out_file.write(response.content)

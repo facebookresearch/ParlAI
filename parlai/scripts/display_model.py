@@ -7,13 +7,12 @@
 Basic example which iterates through the tasks specified and runs the given model on
 them.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai display_model -t babi:task1k:1 -m "repeat_label"
-  parlai display_model -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
+```shell
+parlai display_model -t babi:task1k:1 -m "repeat_label"
+parlai display_model -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
+```
 """  # noqa: E501
 
 from parlai.core.params import ParlaiParser

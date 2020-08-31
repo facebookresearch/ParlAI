@@ -9,6 +9,7 @@ import parlai.core.build_data as build_data
 import os
 import json
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -43,7 +44,7 @@ def build(opt):
         print('processing unpacked files')
         # Use 1000 examples from training set as validation.
         json1 = os.path.join(dpath, RESOURCES[0].file_name.rsplit('.', 1)[0] + '.json')
-        with open(json1) as t_json:
+        with PathManager.open(json1) as t_json:
             train_data = json.load(t_json)
 
         valid_data = train_data.copy()
@@ -60,10 +61,12 @@ def build(opt):
 
         train_json = json1.rsplit('.', 1)[0] + '_train.json'
         valid_json = json1.rsplit('.', 1)[0] + '_valid.json'
-        with open(train_json, 'w') as t_out, open(valid_json, 'w') as v_out:
+        with PathManager.open(train_json, 'w') as t_out, PathManager.open(
+            valid_json, 'w'
+        ) as v_out:
             json.dump(train_data, t_out)
             json.dump(valid_data, v_out)
-        os.remove(json1)
+        PathManager.rm(json1)
 
         # Use validation data as test.
         json2 = os.path.join(dpath, RESOURCES[1].file_name.rsplit('.', 1)[0] + '.json')

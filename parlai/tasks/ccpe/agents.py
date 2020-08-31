@@ -4,6 +4,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -36,7 +37,7 @@ class CCPEAllTeacher(FixedDialogTeacher):
 
         fpath = os.path.join(self.opt['datapath'], 'CCPE', 'ccpe.json')
 
-        with open(fpath, 'r') as infile:
+        with PathManager.open(fpath, 'r') as infile:
             data = infile.read()
             new_data = data.replace('}\n{', '},{')
             json_data = json.loads(f'[{new_data}]')

@@ -18,6 +18,7 @@ import signal
 from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 try:
@@ -28,6 +29,13 @@ try:
 except ImportError:
     TORCH_AVAILABLE = False
     GPU_AVAILABLE = False
+
+try:
+    import torchvision  # noqa: F401
+
+    VISION_AVAILABLE = True
+except ImportError:
+    VISION_AVAILABLE = False
 
 try:
     import git
@@ -90,15 +98,11 @@ def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
-def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
-    skip = False
-    if not TORCH_AVAILABLE:
-        skip = True
-    else:
-        from packaging import version
-
-        skip = version.parse(torch.__version__) < version.parse('1.4.0')
-    return unittest.skipIf(skip, reason)(testfn)
+def skipUnlessVision(testfn, reason='torchvision not installed'):
+    """
+    Decorate a test to skip unless torchvision is installed.
+    """
+    return unittest.skipUnless(VISION_AVAILABLE, reason)(testfn)
 
 
 class retry(object):
@@ -148,7 +152,7 @@ def git_ls_files(root=None, skip_nonexisting=True):
     """
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 
@@ -173,7 +177,7 @@ def git_changed_files(skip_nonexisting=True):
     fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 

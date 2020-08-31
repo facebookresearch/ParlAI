@@ -8,6 +8,7 @@ import json
 import os
 
 from parlai.core.teachers import DialogTeacher, FbDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -39,7 +40,7 @@ class DefaultTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             for jline in data_file:
                 d_example = json.loads(jline)
                 context = [d['passage_text'] for d in d_example['passages']]
