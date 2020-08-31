@@ -5,29 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-import copy
 import unittest
 import torch.distributed as dist
+from parlai.core.opt import Opt
 import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
 import parlai.scripts.multiprocessing_train as mp_train
 
 
-def _forced_parse(parser, opt):
-    parser.set_params(**opt)
-    parser.set_params(log_every_n_sec=10)
-    popt = parser.parse_args([])
-    # in some rare cases, like for instance if the model class also
-    # overrides its default params, the params override will not
-    # be taken into account.
-    for k, v in opt.items():
-        popt[k] = v
-    return popt
-
-
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
-    _base_config = dict(
+    _base_config = Opt(
         task='integration_tests:nocandidate',
         model='transformer/generator',
         optimizer='adamax',
@@ -40,7 +28,6 @@ class TestDistributed(unittest.TestCase):
         n_heads=1,
         ffn_size=32,
         embedding_size=32,
-        beam_size=1,
         verbose=True,
     )
 
@@ -55,20 +42,19 @@ class TestDistributed(unittest.TestCase):
     def _distributed_train_model(self, opt):
         with testing_utils.tempdir() as tmpdir:
             if 'model_file' not in opt:
-                opt['model_file'] = os.path.join(tmpdir, 'model')
+                opt = opt.fork(model_file=os.path.join(tmpdir, 'model'))
             if 'dict_file' not in opt:
-                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-
-            parser = mp_train.setup_args()
-            popt = _forced_parse(parser, opt)
+                opt = opt.fork(dict_file=opt['model_file'] + '.dict')
 
             # we need a prebuilt dictionary
-            parser = build_dict.setup_args()
-            build_dict.build_dict(popt)
+            build_dict.BuildDict.main(
+                task=opt['task'],
+                dict_file=opt['dict_file'],
+                model_file=opt['model_file'],
+            )
+            valid, test = mp_train.MultiProcessTrain.main(**opt)
 
-            valid, test = mp_train.launch_and_train(popt, 31338)
-
-        return (valid, test)
+        return valid, test
 
     def test_generator_distributed(self):
         valid, test = self._distributed_train_model(self._base_config)
@@ -85,10 +71,10 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 100)
 
     def test_multitask_distributed(self):
-        config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests:nocandidate,integration_tests:multiturn'
-        config['dynb'] = 'full'
-        config['skip_generation'] = 'true'
+        config = self._base_config.fork(
+            task='integration_tests:nocandidate,integration_tests:multiturn',
+            skip_generation='true',
+        )
         valid, test = self._distributed_train_model(config)
 
         self.assertLessEqual(valid['ppl'], 1.20)
@@ -101,9 +87,7 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 500)
 
     def test_distributed_eval_max_exs(self):
-        config = copy.deepcopy(self._base_config)
-        config['validation_max_exs'] = 90
-        config['short_final_eval'] = True
+        config = self._base_config.fork(validation_max_exs=90, short_final_eval=True)
         valid, test = self._distributed_train_model(config)
 
         # Tests that DialogData.get() is doing the right thing
@@ -119,8 +103,7 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 98)
 
     def test_distributed_eval_stream_mode(self):
-        config = copy.deepcopy(self._base_config)
-        config['datatype'] = 'train:stream'
+        config = self._base_config.fork(datatype='train:stream')
         valid, test = self._distributed_train_model(config)
 
         # Tests that StreamDialogData.get() is doing the right thing
@@ -130,10 +113,9 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 100)
 
     def test_distributed_eval_stream_mode_max_exs(self):
-        config = copy.deepcopy(self._base_config)
-        config['datatype'] = 'train:stream'
-        config['validation_max_exs'] = 90
-        config['short_final_eval'] = True
+        config = self._base_config.fork(
+            datatype='train:stream', validation_max_exs=90, short_final_eval=True
+        )
 
         valid, test = self._distributed_train_model(config)
 
@@ -150,20 +132,18 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 98)
 
     def test_chunked_dynamic_teacher(self):
-        config = copy.deepcopy(self._base_config)
-        config['datatype'] = 'train:stream'
-        config['dynamic_batching'] = 'full'
-        config['truncate'] = 16
+        config = self._base_config.fork(
+            datatype='train:stream', dynamic_batching='full', truncate=16,
+        )
 
         valid, test = self._distributed_train_model(config)
         assert valid['exs'].value() == 100
         assert test['exs'].value() == 100
 
     def test_chunked_teacher(self):
-        config = copy.deepcopy(self._base_config)
-        config['datatype'] = 'train:stream'
-        config['num_epochs'] = 5
-        config['dynamic_batching'] = None
+        config = self._base_config.fork(
+            datatype='train:stream', num_epochs=5, dynamic_batching=None,
+        )
 
         valid, test = self._distributed_train_model(config)
         assert valid['exs'].value() == 100
@@ -175,16 +155,14 @@ class TestDistributed(unittest.TestCase):
 
         --model-parallel true.
         """
-        config = copy.deepcopy(self._base_config)
-        config['model_parallel'] = True
+        config = self._base_config.fork(model_parallel=True)
         for m in [
             'transformer/generator',
             'transformer/ranker',
             'transformer/classifier',
         ]:
-            config['model'] = m
             with self.assertRaises(RuntimeError):
-                _ = self._distributed_train_model(config)
+                self._distributed_train_model(config.fork(model=m))
 
 
 if __name__ == '__main__':

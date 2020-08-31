@@ -13,7 +13,6 @@ distributed mode.
 """
 
 import builtins
-import copy
 import os
 import pickle
 import contextlib
@@ -294,19 +293,16 @@ def distributed_context(
     :param str hostname:
         Hostname of the main server.
     """
-    # Set per-host options
-    opt = copy.deepcopy(opt)
     # we need to manually adjust the rank differently in multiprocessing
     # and distributed train
     rank = rank + rank_offset
-    opt['rank'] = rank
     if gpu is None:
         # default assumption is local GPUs
         gpu = rank % torch.cuda.device_count()
-    opt['gpu'] = gpu
+    opt = opt.fork(rank=rank, gpu=gpu)
     # make sure we don't just use whatever GPU was saved in the model file
     if 'override' not in opt:
-        opt['override'] = {}
+        opt = opt.fork(override={})
     opt['override']['gpu'] = gpu
 
     # Suppress output of workers except the main host.

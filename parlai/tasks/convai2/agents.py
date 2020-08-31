@@ -37,13 +37,13 @@ def _path(opt, persona, use_cands):
 
 class BothTeacher(FbDialogTeacher):
     def __init__(self, opt, shared=None):
-        opt = copy.deepcopy(opt)
         try:
             cands = opt['task'].split(":")[2]
             use_cands = False if cands == 'no_cands' else True
-        except Exception:
+        except IndexError:
             use_cands = True
-        opt['datafile'] = _path(opt, 'both_original', use_cands)
+        if shared is None:
+            opt = opt.fork(datafile=_path(opt, 'both_original', use_cands))
         super().__init__(opt, shared)
 
 
@@ -53,9 +53,10 @@ class NoneTeacher(FbDialogTeacher):
         try:
             cands = opt['task'].split(":")[2]
             use_cands = False if cands == 'no_cands' else True
-        except Exception:
+        except IndexError:
             use_cands = True
-        opt['datafile'] = _path(opt, 'none_original', use_cands)
+        if shared is None:
+            opt = opt.fork(datafile=_path(opt, 'none_original', use_cands))
         super().__init__(opt, shared)
 
 
@@ -65,9 +66,10 @@ class SelfOriginalTeacher(FbDialogTeacher):
         try:
             cands = opt['task'].split(":")[2]
             use_cands = False if cands == 'no_cands' else True
-        except Exception:
+        except IndexError:
             use_cands = True
-        opt['datafile'] = _path(opt, 'self_original', use_cands)
+        if shared is None:
+            opt = opt.fork(datafile=_path(opt, 'self_original', use_cands))
         super().__init__(opt, shared)
 
 
@@ -81,9 +83,10 @@ class SelfRevisedTeacher(FbDialogTeacher):
         try:
             cands = opt['task'].split(":")[2]
             use_cands = False if cands == 'no_cands' else True
-        except Exception:
+        except IndexError:
             use_cands = True
-        opt['datafile'] = _path(opt, 'self_revised', use_cands)
+        if shared is None:
+            opt = opt.fork(datafile=_path(opt, 'self_revised', use_cands))
         super().__init__(opt, shared)
 
 
