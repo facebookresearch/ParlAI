@@ -1,5 +1,5 @@
 <p align="center">
- <img width="70%" src="./docs/source/_static/img/parlai.png" />
+ <img width="70%" src="docs/source/_static/img/parlai.png" />
 </p>
 
 <p align="center">
