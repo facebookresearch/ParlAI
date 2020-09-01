@@ -327,7 +327,6 @@ def create_agent_from_opt_file(opt: Opt):
     opt_from_file['model_file'] = model_file  # update model file path
 
     # update dict file path
-    import pdb; pdb.set_trace()
     if not opt_from_file.get('dict_file'):
         old_dict_file = None
         opt_from_file['dict_file'] = model_file + '.dict'
