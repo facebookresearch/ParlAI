@@ -9,36 +9,6 @@ AGENT_1 = 'Person2'
 
 WAITING_MSG = 'Please wait while we match you with another worker...'
 
-FINAL_RATING_QUESTION = 'Please rate your partner on a scale of 1-5.'
-
-ANNOTATIONS_CONFIG = [
-    {
-        'value': 'bucket_0',
-        'name': 'Bucket 0',
-        'description': 'this response implies something...0',
-    },
-    {
-        'value': 'bucket_1',
-        'name': 'Bucket 1',
-        'description': 'this response implies something...1',
-    },
-    {
-        'value': 'bucket_2',
-        'name': 'Bucket 2',
-        'description': 'this response implies something...2',
-    },
-    {
-        'value': 'bucket_3',
-        'name': 'Bucket 3',
-        'description': 'this response implies something...3',
-    },
-    {
-        'value': 'bucket_4',
-        'name': 'Bucket 4',
-        'description': 'this response implies something...4',
-    },
-]
-
 ONBOARD_SUBMIT = '[ONBOARD_SUBMIT]'
 ONBOARD_TRY_AGAIN = '[ONBOARD_TRY_AGAIN]'
 ONBOARD_FAIL = '[ONBOARD_FAIL]'

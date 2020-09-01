@@ -9,7 +9,7 @@ import os
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.utils.strings import normalize_reply
-from parlai.mturk.tasks.turn_annotations.constants import AGENT_1, ANNOTATIONS_CONFIG
+from parlai.mturk.tasks.turn_annotations.constants import AGENT_1
 from parlai.mturk.tasks.turn_annotations.utils import Compatibility
 
 
@@ -37,7 +37,7 @@ class TurkLikeAgent:
     def construct_annotations_html(self, turn_idx: int):
         css_style = 'margin-right:15px;'
         annotations_html = f"""<br><br><span style="font-style:italic;">{self.opt['annotations_intro']}<br>"""
-        for a in ANNOTATIONS_CONFIG:
+        for a in self.opt['annotations_config']:
             annotations_html += f"""<input type="checkbox"
             id="checkbox_{a["value"]}_{turn_idx}"
             name="checkbox_group_{turn_idx}"

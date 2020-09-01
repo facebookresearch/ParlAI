@@ -30,7 +30,6 @@ from parlai.mturk.tasks.turn_annotations.constants import (
     ONBOARD_FAIL,
     ONBOARD_SUBMIT,
     ONBOARD_SUCCESS,
-    ANNOTATIONS_CONFIG,
 )
 from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 from parlai.mturk.tasks.turn_annotations.utils import Compatibility
@@ -135,7 +134,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
                 'id': 'SYSTEM',
                 'text': '',
                 'onboarding_html': onboarding_task_html,
-                'annotations_config': ANNOTATIONS_CONFIG,
+                'annotations_config': self.opt['annotations_config'],
             }
         )
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
@@ -270,7 +269,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             and self.dialog[p['turn_idx']]['fake_start']
         )
         annotations = []
-        for a in ANNOTATIONS_CONFIG:
+        for a in self.opt['annotations_config']:
             annotations.append(p[a['value']])
         assert any(annotations) or is_fake_utterance
         self.dialog[p['turn_idx']]['problem_data'] = p
@@ -280,7 +279,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             'episode_done': False,
             'config': {
                 'min_num_turns': self.num_turns,
-                'annotations_config': ANNOTATIONS_CONFIG,
+                'annotations_config': self.opt['annotations_config'],
             },
             'left_pane_text': self.opt['left_pane_text'],
         }

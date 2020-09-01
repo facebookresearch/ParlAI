@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import copy
+import json
 import os
 import threading
 import time
@@ -15,10 +16,8 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.turn_annotations.constants import (
     AGENT_0,
-    ANNOTATIONS_CONFIG,
     TASK_CONFIG,
     LEFT_PANE_TEXT,
-    FINAL_RATING_QUESTION,
 )
 from parlai.mturk.tasks.turn_annotations.worlds import (
     TurnAnnotationsOnboardWorld,
@@ -112,6 +111,12 @@ def run_task(override_opt: Optional[dict] = None):
         help='Text shown to worker before they fill out annotation form',
     )
     argparser.add_argument(
+        '--annotations-config-path',
+        default=None,
+        type=str,
+        help='Path to JSON of annotation categories',
+    )
+    argparser.add_argument(
         '--left-pane-text',
         default=LEFT_PANE_TEXT,
         type=str,
@@ -119,7 +124,7 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--final-rating-question',
-        default=FINAL_RATING_QUESTION,
+        default='Please rate your partner on a scale of 1-5.',
         type=str,
         help='Text to show when asking worker to make their final rating',
     )
@@ -129,6 +134,11 @@ def run_task(override_opt: Optional[dict] = None):
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     opt.update(TASK_CONFIG)
+
+    # Read in and define text shown to users
+    if opt.get('annotations_config') is None:
+        with open(opt['annotations_config_path']) as f:
+            opt['annotations_config'] = json.load(f)
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core
     # param max_hits_per_worker.
@@ -264,7 +274,7 @@ def run_task(override_opt: Optional[dict] = None):
                 num_turns=opt['num_turns'],
                 max_resp_time=opt['max_resp_time'],
                 tag='conversation t_{}'.format(conv_idx),
-                annotations_config=ANNOTATIONS_CONFIG,
+                annotations_config=opt['annotations_config'],
                 context_info=context_info,
             )
             while not world.episode_done():
