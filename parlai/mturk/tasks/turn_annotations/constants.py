@@ -14,52 +14,11 @@ ONBOARD_TRY_AGAIN = '[ONBOARD_TRY_AGAIN]'
 ONBOARD_FAIL = '[ONBOARD_FAIL]'
 ONBOARD_SUCCESS = '[ONBOARD_SUCCESS]'
 
-"""
-The utterances and answers for the onboarding task.
-"""
-
-ONBOARD_TASK_DATA = [
-    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
-    {
-        'text': 'Model utterance where user should select bucket_0.',
-        'agent_idx': 1,
-        'answers': ['bucket_0'],
-    },
-    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
-    {
-        'text': 'Model utterance where user should select bucket_1.',
-        'agent_idx': 1,
-        'answers': ['bucket_1'],
-    },
-    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
-    {
-        'text': 'Model utterance where user should select bucket_2.',
-        'agent_idx': 1,
-        'answers': ['bucket_2'],
-    },
-    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
-    {
-        'text': 'Model utterance where user should select bucket_3.',
-        'agent_idx': 1,
-        'answers': ['bucket_3'],
-    },
-    {'text': 'Lorem ipsum dolor sit amet, unum dolor lobortis ad pro', 'agent_idx': 0},
-    {
-        'text': 'Model utterance where user should select bucket_4.',
-        'agent_idx': 1,
-        'answers': ['bucket_4'],
-    },
-]
-
 ONBOARD_CONFIG = {
     'min_correct': 4,
     'max_incorrect': 3,
     'onboard_failures_max_allowed': 1,
 }
-
-"""
-Task Instructions
-"""
 
 TASK_CONFIG = {}
 TASK_CONFIG['hit_title'] = 'Chat with a fellow conversationalist!'

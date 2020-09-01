@@ -117,6 +117,12 @@ def run_task(override_opt: Optional[dict] = None):
         help='Path to JSON of annotation categories',
     )
     argparser.add_argument(
+        '--onboard-task-data-path',
+        default=None,
+        type=str,
+        help='Path to JSON containing settings for running onboarding',
+    )
+    argparser.add_argument(
         '--left-pane-text',
         default=LEFT_PANE_TEXT,
         type=str,
@@ -139,6 +145,9 @@ def run_task(override_opt: Optional[dict] = None):
     if opt.get('annotations_config') is None:
         with open(opt['annotations_config_path']) as f:
             opt['annotations_config'] = json.load(f)
+    if opt.get('onboard_task_data') is None:
+        with open(opt['onboard_task_data_path']) as f:
+            opt['onboard_task_data'] = json.load(f)
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core
     # param max_hits_per_worker.
