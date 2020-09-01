@@ -4,10 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import copy
-import time
+import os
 import threading
+import time
+from typing import Optional
+
 from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
@@ -26,11 +28,12 @@ from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 
-def run_task(override_opt):
+def run_task(override_opt: Optional[dict] = None):
     """
     This task consists of an MTurk worker talking to a model and MTurker also evaluates
     each utterance of the bot for various buckets (see constants).
     """
+
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
@@ -81,10 +84,10 @@ def run_task(override_opt):
         help='base folder for saving all worker answer results during onboarding',
     )
     argparser.add_argument(
-        '--blocklist-path',
+        '--blocklist-paths',
         default=None,
         type=str,
-        help='Path to a list of IDs of workers to soft-block, separated by newlines',
+        help='Path(s) to a list of IDs of workers to soft-block, separated by newlines. Use commas to indicate multiple lists',
     )
     argparser.add_argument(
         '--check-acceptability',
@@ -93,10 +96,7 @@ def run_task(override_opt):
         help="Check worker's responses against several metrics of acceptability",
     )
     argparser.add_argument(
-        '--include-persona',
-        default=False,
-        type=bool,
-        help="Show personas to the bot",
+        '--include-persona', default=False, type=bool, help="Show personas to the bot"
     )
     argparser.add_argument(
         '--conversation-start-mode',
@@ -105,8 +105,8 @@ def run_task(override_opt):
         choices=['hi', 'bst'],
         help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
-
-    argparser.set_params(**override_opt)
+    if override_opt is not None:
+        argparser.set_params(**override_opt)
     opt = argparser.parse_args()
 
     directory_path = os.path.dirname(os.path.abspath(__file__))
@@ -175,17 +175,19 @@ def run_task(override_opt):
 
         if not opt['is_sandbox']:
             # Soft-block all chosen workers
-            if opt['blocklist_path'] is not None and len(opt['blocklist_path']) > 0:
-                print('About to soft-block workers in the input list.')
-                with open(opt['blocklist_path']) as f:
-                    workers_to_block = f.read().strip().split('\n')
-                for w in set(workers_to_block):
-                    try:
-                        print('Soft Blocking {}\n'.format(w))
-                        mturk_manager.soft_block_worker(w)
-                    except Exception as e:
-                        print(f'Did not soft block worker {w}: {e}')
-                    time.sleep(0.1)
+            if opt['blocklist_paths'] is not None and len(opt['blocklist_paths']) > 0:
+                print('About to soft-block workers in the input list(s).')
+                blocklist_paths = opt['blocklist_paths'].split(',')
+                for path in blocklist_paths:
+                    with open(path) as f:
+                        workers_to_block = f.read().strip().split('\n')
+                    for w in set(workers_to_block):
+                        try:
+                            print('Soft Blocking {}\n'.format(w))
+                            mturk_manager.soft_block_worker(w)
+                        except Exception as e:
+                            print(f'Did not soft block worker {w}: {e}')
+                        time.sleep(0.1)
             else:
                 print(
                     'WARNING: We are in live mode, but a list of workers to soft-block '
@@ -276,3 +278,7 @@ def run_task(override_opt):
     finally:
         mturk_manager.expire_all_unassigned_hits()
         mturk_manager.shutdown()
+
+
+if __name__ == '__main__':
+    run_task()
