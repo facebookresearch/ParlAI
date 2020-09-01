@@ -96,22 +96,14 @@ class RewardUnlikelihoodAgentTrait(object):
                 scores_view, targets_view, ignore_index=self.NULL_IDX, reduction='none'
             ).view_as(mle_notnull)
             * mle_notnull.float()
-        ).sum(dim=-1)
+        ).sum()
 
         # limit loss to only the positive rewards
-        mle_target_tokens = mle_notnull.long().sum(dim=-1)
-        correct = ((targets == preds) * mle_notnull).sum(-1)
-        token_acc_metrics = AverageMetric.many(correct, mle_target_tokens)
-        # token_acc_metrics = [None if am._denom == 0 else am for am in token_acc_metrics]
-        mle_loss_metrics = AverageMetric.many(mle_loss, mle_target_tokens)
-        # mle_loss_metrics = [None if am._denom == 0 else am for am in mle_loss_metrics]
-        ppl_metrics = PPLMetric.many(mle_loss, mle_target_tokens)
-        # ppl_metrics = [None if am._denom == 0 else am for am in ppl_metrics]
-        self.record_local_metric('token_acc', token_acc_metrics)
-        self.record_local_metric('nll_loss', mle_loss_metrics)
-        self.record_local_metric('ppl', ppl_metrics)
-        mle_loss = mle_loss.sum()
-        mle_target_tokens = mle_target_tokens.sum()
+        mle_target_tokens = mle_notnull.long().sum()
+        correct = ((targets == preds) * mle_notnull).sum()
+        self.global_metrics.add('token_acc', AverageMetric(correct, mle_target_tokens))
+        self.global_metrics.add('nll_loss', AverageMetric(mle_loss, mle_target_tokens))
+        self.global_metrics.add('ppl', PPLMetric(mle_loss, mle_target_tokens))
         if mle_target_tokens > 0:
             mle_loss /= mle_target_tokens  # average loss per token
 
@@ -123,7 +115,7 @@ class RewardUnlikelihoodAgentTrait(object):
 
         # and now we want the unlikelihood loss on the negative examples
         ul_notnull = notnull & (batch.rewards < 0).unsqueeze(1).expand_as(notnull)
-        ul_target_tokens = ul_notnull.long().sum(dim=-1)
+        ul_target_tokens = ul_notnull.long().sum()
         range_ = torch.arange(targets_view.size(0)).to(batch.label_vec.device)
         ul_scores = scores_view[range_, targets_view]
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
@@ -132,12 +124,8 @@ class RewardUnlikelihoodAgentTrait(object):
                 ul_notnull
             )
             * ul_notnull.float()
-        ).sum(dim=-1)
-        ul_loss_metrics = AverageMetric.many(ul_loss, ul_target_tokens)
-        # ul_loss_metrics = [None if am._denom == 0 else am for am in ul_loss_metrics]
-        self.record_local_metric('ul_loss', ul_loss_metrics)
-        ul_loss = ul_loss.sum()
-        ul_target_tokens = ul_target_tokens.sum()
+        ).sum()
+        self.global_metrics.add('ul_loss', AverageMetric(ul_loss, ul_target_tokens))
         if ul_target_tokens > 0:
             ul_loss /= ul_target_tokens
 
