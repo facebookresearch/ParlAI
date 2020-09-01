@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -40,7 +41,7 @@ class DefaultTeacher(DialogTeacher):
         Load json data of conversations.
         """
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.loaded_data = json.load(data_file)
         for ex in self.loaded_data:
             if len(ex['events']) > 0:

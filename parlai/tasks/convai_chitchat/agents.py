@@ -6,6 +6,7 @@
 
 from .build import build
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 
 import json
 import os
@@ -95,7 +96,7 @@ class DefaultTeacher(DialogTeacher):
         if path is None:
             return iter(())
 
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             dialogs = json.load(data_file)
 
         return DefaultTeacher._data_generator(dialogs)

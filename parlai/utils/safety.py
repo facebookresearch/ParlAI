@@ -11,6 +11,7 @@ from parlai.agents.transformer.transformer import TransformerClassifierAgent
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
 from parlai.utils.typing import TShared
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 import os
 
@@ -127,7 +128,7 @@ class OffensiveStringMatcher:
                 from parlai.core.params import ParlaiParser
 
                 parser = ParlaiParser(False, False)
-                self.datapath = os.path.join(parser.parlai_home, 'data')
+                self.datapath = parser.parse_args([])['datapath']
             else:
                 self.datapath = datapath
             self.datafile = _path()
@@ -191,7 +192,7 @@ class OffensiveStringMatcher:
             'twinkies',
         ]
 
-        with open(self.datafile, 'r') as f:
+        with PathManager.open(self.datafile, 'r') as f:
             for p in f.read().splitlines():
                 mod_ps = [p]
                 mod_ps += [pref + p for pref in self.word_prefixes]

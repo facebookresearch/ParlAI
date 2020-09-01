@@ -8,11 +8,13 @@
 Unit tests for general checks of code quality.
 """
 
+import pytest
 import unittest
 import os
 import parlai.utils.testing as testing_utils
 
 
+@pytest.mark.nofbcode
 class TestInit(unittest.TestCase):
     """
     Make sure all python packages have init files.

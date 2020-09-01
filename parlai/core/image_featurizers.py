@@ -10,6 +10,7 @@ Provide functionality for loading images.
 
 import parlai.core.build_data as build_data
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 import os
 from PIL import Image
@@ -82,7 +83,7 @@ class ImageLoader:
 
         self.use_cuda = not self.opt.get('no_cuda', False) and torch.cuda.is_available()
         if self.use_cuda:
-            logging.debug(f'Using CUDA')
+            logging.debug('Using CUDA')
             torch.cuda.set_device(self.opt.get('gpu', -1))
         self.torch = torch
         self.torchvision = torchvision
@@ -182,8 +183,7 @@ class ImageLoader:
             self.torch.save(feature.cpu(), path)
         return feature
 
-    def _img_to_ascii(self, path):
-        im = Image.open(path)
+    def _img_to_ascii(self, im):
         im.thumbnail((60, 40), Image.BICUBIC)
         im = im.convert('L')
         asc = []
@@ -194,42 +194,61 @@ class ImageLoader:
             asc.append('\n')
         return ''.join(asc)
 
+    def _breakup_zip_filename(self, path):
+        # assume format path/to/file.zip/image_name.jpg
+        assert '.zip' in path
+        sep = path.index('.zip') + 4
+        zipname = path[:sep]
+        file_name = path[sep + 1 :]
+        return zipname, file_name
+
+    def _get_prepath(self, path):
+        if '.zip' in path:
+            zipname, file_name = self._breakup_zip_filename(path)
+            task = self.opt['task']
+            prepath = os.path.join(self.opt['datapath'], task)
+            imagefn = ''.join(zipname.strip('.zip').split('/')[-2:]) + path.name
+            return prepath, imagefn
+        else:
+            prepath, imagefn = os.path.split(path)
+            return prepath, imagefn
+
+    def _load_image(self, path):
+        """
+        Return the loaded image in the path.
+        """
+        if '.zip' in path:
+            zipname, file_name = self._breakup_zip_filename(path)
+            with ZipFile(PathManager.open(zipname, 'rb')) as zipf:
+                with zipf.open(file_name) as fh:
+                    return Image.open(fh).convert('RGB')
+        else:
+            # raw just returns RGB values
+            with PathManager.open(path, 'rb') as f:
+                return Image.open(f).convert('RGB')
+
     def load(self, path):
         """
         Load from a given path.
         """
-        opt = self.opt
-        mode = opt.get('image_mode', 'raw')
-        is_zip = False
+        mode = self.opt.get('image_mode', 'raw')
         if mode is None or mode == 'no_image_model':
             # don't need to load images
             return None
-        elif '.zip' in path:
-            # assume format path/to/file.zip/image_name.jpg
-            is_zip = True
-            sep = path.index('.zip') + 4
-            zipname = path[:sep]
-            file_name = path[sep + 1 :]
-            path = ZipFile(zipname, 'r').open(file_name)
-            task = opt['task']
-            prepath = os.path.join(opt['datapath'], task)
-            imagefn = ''.join(zipname.strip('.zip').split('/')[-2:]) + path.name
-        if mode == 'raw':
-            # raw just returns RGB values
-            return Image.open(path).convert('RGB')
+        elif mode == 'raw':
+            return self._load_image(path)
         elif mode == 'ascii':
             # convert images to ascii ¯\_(ツ)_/¯
-            return self._img_to_ascii(path)
+            return self._img_to_ascii(self._load_image(path))
+
+        # otherwise, looks for preprocessed version under 'mode' directory
+        prepath, imagefn = self._get_prepath(path)
+        dpath = os.path.join(prepath, mode)
+        if not PathManager.exists(dpath):
+            build_data.make_dir(dpath)
+        imagefn = imagefn.split('.')[0]
+        new_path = os.path.join(prepath, mode, imagefn)
+        if not PathManager.exists(new_path):
+            return self.extract(self._load_image(path), new_path)
         else:
-            # otherwise, looks for preprocessed version under 'mode' directory
-            if not is_zip:
-                prepath, imagefn = os.path.split(path)
-            dpath = os.path.join(prepath, mode)
-            if not os.path.exists(dpath):
-                build_data.make_dir(dpath)
-            imagefn = imagefn.split('.')[0]
-            new_path = os.path.join(prepath, mode, imagefn)
-            if not os.path.isfile(new_path):
-                return self.extract(Image.open(path).convert('RGB'), new_path)
-            else:
-                return self.torch.load(new_path)
+            return self.torch.load(new_path)

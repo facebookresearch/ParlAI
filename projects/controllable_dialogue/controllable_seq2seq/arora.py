@@ -16,6 +16,7 @@ from parlai.core.build_data import modelzoo_path
 import torchtext.vocab as vocab
 from parlai.utils.misc import TimeLogger
 from collections import Counter, deque
+from parlai.utils.io import PathManager
 import numpy as np
 import os
 import pickle
@@ -36,15 +37,15 @@ class SentenceEmbedder(object):
 
     def __init__(self, word2prob, arora_a, glove_name, glove_dim, first_sv, data_path):
         """
-          Inputs:
-            word2prob: dict mapping words to their unigram probs
-            arora_a: a float. Is the constant (called "a" in the paper)
-              used to compute Arora sentence embeddings.
-            glove_name: the version of GloVe to use, e.g. '840B'
-            glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
-            first_sv: np array shape (glove_dim). The first singular value,
-              used to compute Arora sentence embeddings. Can be None.
-            data_path: The data path (we will use this to download glove)
+        Inputs:
+          word2prob: dict mapping words to their unigram probs
+          arora_a: a float. Is the constant (called "a" in the paper)
+            used to compute Arora sentence embeddings.
+          glove_name: the version of GloVe to use, e.g. '840B'
+          glove_dim: the dimension of the GloVe embeddings to use, e.g. 300
+          first_sv: np array shape (glove_dim). The first singular value,
+            used to compute Arora sentence embeddings. Can be None.
+          data_path: The data path (we will use this to download glove)
         """
         self.word2prob = word2prob
         self.arora_a = arora_a
@@ -381,7 +382,7 @@ def learn_arora(opt):
     # Save unigram distribution, first singular value, hyperparameter value for a,
     # info about GloVe vectors used, and full dict of utt->emb to file
     print("Saving Arora embedding info to %s..." % arora_file)
-    with open(arora_file, "wb") as f:
+    with PathManager.open(arora_file, "wb") as f:
         pickle.dump(
             {
                 'word2prob': word2prob,  # dict: string to float between 0 and 1
@@ -401,7 +402,7 @@ def load_arora(opt):
     """
     arora_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'arora.pkl')
     print("Loading Arora embedding info from %s..." % arora_fp)
-    with open(arora_fp, "rb") as f:
+    with PathManager.open(arora_fp, "rb") as f:
         data = pickle.load(f)
     print("Done loading arora info.")
     return data

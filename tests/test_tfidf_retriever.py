@@ -8,6 +8,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.logging import logger, ERROR
+import parlai.utils.testing as testing_utils
 
 import os
 import unittest
@@ -28,12 +29,10 @@ class TestTfidfRetriever(unittest.TestCase):
 
     @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
     def test_sparse_tfidf_retriever(self):
-        MODEL_FILE = '/tmp/tmp_test_babi'
-        DB_PATH = '/tmp/tmp_test_babi.db'
-        TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
-        # keep things quiet
-        logger.setLevel(ERROR)
-        try:
+        with testing_utils.tempdir() as tmpdir:
+            MODEL_FILE = os.path.join(tmpdir, 'tmp_test_babi')
+            # keep things quiet
+            logger.setLevel(ERROR)
             parser = ParlaiParser(True, True)
             parser.set_defaults(
                 model='tfidf_retriever',
@@ -78,12 +77,6 @@ class TestTfidfRetriever(unittest.TestCase):
             agent.observe(new_example)
             reply = agent.act()
             assert reply['text'] == ANS
-        finally:
-            # clean up files
-            if os.path.exists(DB_PATH):
-                os.remove(DB_PATH)
-            if os.path.exists(TFIDF_PATH + '.npz'):
-                os.remove(TFIDF_PATH + '.npz')
 
 
 if __name__ == '__main__':

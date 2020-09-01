@@ -26,6 +26,7 @@ from parlai.tasks.convai2.agents import (
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -207,14 +208,14 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
             warn_once(f'Compiling data file for {self.data_path}.')
             self.persona_topic_data = self._compile_data()
             warn_once(f'Saving data to {self.data_path}.')
-            with open(self.data_path, 'w') as f_write:
+            with PathManager.open(self.data_path, 'w') as f_write:
                 json.dump(self.persona_topic_data, f_write)
         else:
             self.data_path = _cached_data_path(
                 opt=self.opt, experiencer_side_only=self.experiencer_side_only
             )
             warn_once(f'Loading cached data from {self.data_path}.')
-            with open(self.data_path, 'r') as f_read:
+            with PathManager.open(self.data_path, 'r') as f_read:
                 self.persona_topic_data = json.load(f_read)
 
     def _compile_data(self) -> List[List[dict]]:
@@ -279,7 +280,7 @@ class PersonaTopicifier:
             self.wow_topics_to_persona_strings_map,
             self.persona_strings_to_wow_topics_map,
         ) = self._setup_personas_to_wow_topics()
-        with open(self.personas_file_path, 'r') as f:
+        with PathManager.open(self.personas_file_path, 'r') as f:
             self.personas = f.read().strip().split('||')
             # There's an extra line at the end of the file which is ''
             self.personas = [p for p in self.personas if p]
@@ -289,7 +290,7 @@ class PersonaTopicifier:
     ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
         persona_strings_to_topics = defaultdict(list)
         topics_to_persona_strings = defaultdict(list)
-        with open(self.topic_to_persona_path, 'r') as f:
+        with PathManager.open(self.topic_to_persona_path, 'r') as f:
             for line in f:
                 match = re.fullmatch(r'([^[]+): (\[.+\])\n', line)
                 topic = match.group(1)
@@ -684,7 +685,7 @@ class ContextGenerator:
         print('Starting to map personas to topics.')
 
         persona_strings_to_topics = defaultdict(list)
-        with open(self.topic_to_persona_path, 'r') as f:
+        with PathManager.open(self.topic_to_persona_path, 'r') as f:
             for line in f:
                 match = re.fullmatch(r'([^[]+): (\[.+\])\n', line)
                 topic = match.group(1)

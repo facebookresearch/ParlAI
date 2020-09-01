@@ -8,6 +8,7 @@ import copy
 import json
 import os
 
+from parlai.utils.io import PathManager
 from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
 from parlai.tasks.multinli.agents import (
     convert_to_dialogData,
@@ -104,7 +105,7 @@ class RoundBaseTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path, 'r') as data_file:
+        with PathManager.open(path, 'r') as data_file:
             for pair_line in data_file:
                 pair = json.loads(pair_line)
                 if pair[ANLI_ANSWER_KEY] == '-':

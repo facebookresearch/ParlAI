@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -50,25 +51,25 @@ class MultiWozTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, jsons_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.messages = json.load(data_file)
 
         test_path = os.path.join(jsons_path, 'testListFile.json')
         valid_path = os.path.join(jsons_path, 'valListFile.json')
         if self.datatype.startswith('test'):
-            with open(test_path) as f:
+            with PathManager.open(test_path) as f:
                 test_data = {line.strip(): self.messages[line.strip()] for line in f}
                 self.messages = test_data
         elif self.datatype.startswith('valid'):
-            with open(valid_path) as f:
+            with PathManager.open(valid_path) as f:
                 valid_data = {line.strip(): self.messages[line.strip()] for line in f}
                 self.messages = valid_data
         else:
-            with open(test_path) as f:
+            with PathManager.open(test_path) as f:
                 for line in f:
                     if line.strip() in self.messages:
                         del self.messages[line.strip()]
-            with open(valid_path) as f:
+            with PathManager.open(valid_path) as f:
                 for line in f:
                     if line.strip() in self.messages:
                         del self.messages[line.strip()]

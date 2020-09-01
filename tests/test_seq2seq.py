@@ -72,6 +72,7 @@ class TestSeq2Seq(unittest.TestCase):
                 skip_generation=False,
                 inference='beam',
                 beam_size=5,
+                num_examples=16,
             )
         )
         self.assertGreater(valid['accuracy'], 0.95)

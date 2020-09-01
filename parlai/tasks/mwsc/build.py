@@ -10,6 +10,7 @@ import parlai.core.build_data as build_data
 import os
 import json
 import re
+from parlai.utils.io import PathManager
 from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
@@ -54,7 +55,9 @@ def build(opt):
             return results
 
         schemas = []
-        with open(os.path.join(dpath, RESOURCES[0].file_name)) as schema_file:
+        with PathManager.open(
+            os.path.join(dpath, RESOURCES[0].file_name)
+        ) as schema_file:
             schema = []
             for line in schema_file:
                 if len(line.split()) == 0:
@@ -85,7 +88,7 @@ def build(opt):
         splits = ['train', 'validation', 'test']
         for split, examples in zip(splits, [train, dev, test]):
             split_fname = '{}.json'.format(split)
-            with open(os.path.join(dpath, split_fname), 'a') as split_file:
+            with PathManager.open(os.path.join(dpath, split_fname), 'a') as split_file:
                 for ex in examples:
                     split_file.write(json.dumps(ex) + '\n')
 

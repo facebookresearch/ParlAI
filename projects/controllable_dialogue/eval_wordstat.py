@@ -25,6 +25,7 @@ from controllable_seq2seq.controls import (
 )
 from controllable_seq2seq.util import ConvAI2History
 from collections import Counter
+from parlai.utils.io import PathManager
 
 import copy
 import random
@@ -286,7 +287,7 @@ def eval_wordstat(opt):
 
     # Write data to outfile
     print("Writing to %s..." % outfile)
-    with open(outfile, 'w') as f:
+    with PathManager.open(outfile, 'w') as f:
         json.dump(data, f)
 
 

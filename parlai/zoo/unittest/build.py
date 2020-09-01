@@ -16,7 +16,7 @@ def download(datapath):
     opt = {'datapath': datapath}
     model_name = 'unittest'
     mdir = os.path.join(get_model_dir(datapath), model_name)
-    version = 'v6.1'
+    version = 'v7.1'
     model_filenames = [
         'seq2seq.tar.gz',
         'transformer_ranker.tar.gz',
@@ -26,6 +26,7 @@ def download(datapath):
         'test_bytelevel_bpe_v2.tar.gz',
         'beam_blocking1.tar.gz',
         'context_blocking1.tar.gz',
+        'hred_model_v1.tar.gz',
     ]
     if not built(mdir, version):
         download_models(opt, model_filenames, model_name, version=version)

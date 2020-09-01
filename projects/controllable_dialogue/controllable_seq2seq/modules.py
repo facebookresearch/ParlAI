@@ -553,7 +553,7 @@ class RNNEncoder(nn.Module):
         xes = self.dropout(self.lt(xs))
         attn_mask = xs.ne(0)
         try:
-            x_lens = torch.sum(attn_mask.int(), dim=1)
+            x_lens = torch.sum(attn_mask.int(), dim=1).cpu()
             xes = pack_padded_sequence(xes, x_lens, batch_first=True)
             packed = True
         except ValueError:

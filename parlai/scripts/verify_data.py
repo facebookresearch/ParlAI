@@ -7,12 +7,11 @@
 Verify data doesn't have basic mistakes, like empty text fields or empty label
 candidates.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai verify_data -t convai2 -dt train:ordered
+```shell
+parlai verify_data -t convai2 -dt train:ordered
+```
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message

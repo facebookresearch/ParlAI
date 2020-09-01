@@ -24,13 +24,10 @@ except ImportError:
 
 import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
-from parlai.core.loader import (
-    load_teacher_module,
-    load_agent_module,
-    load_world_module,
-)
+from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt
+from parlai.utils.io import PathManager
 
 from typing import List, Optional
 
@@ -72,7 +69,7 @@ def print_announcements(opt):
     return
 
     noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
-    if os.path.exists(noannounce_file):
+    if PathManager.exists(noannounce_file):
         # user has suppressed announcements, don't do anything
         return
 
@@ -128,7 +125,7 @@ def get_model_name(opt):
         if model_file is not None:
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
-            if os.path.isfile(optfile):
+            if PathManager.exists(optfile):
                 new_opt = Opt.load(optfile)
                 model = new_opt.get('model', None)
     return model
@@ -947,16 +944,22 @@ class ParlaiParser(argparse.ArgumentParser):
         # set environment variables
         # Priority for setting the datapath (same applies for download_path):
         # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
-        if opt.get('download_path'):
-            os.environ['PARLAI_DOWNPATH'] = opt['download_path']
-        elif os.environ.get('PARLAI_DOWNPATH') is None:
-            os.environ['PARLAI_DOWNPATH'] = os.path.join(self.parlai_home, 'downloads')
         if opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = opt['datapath']
         elif os.environ.get('PARLAI_DATAPATH') is None:
-            os.environ['PARLAI_DATAPATH'] = os.path.join(self.parlai_home, 'data')
+            DEFAULT_DATAPATH = None
+            try:
+                # internal fbcode-wide default
+                import parlai_fb
 
-        opt['download_path'] = os.environ['PARLAI_DOWNPATH']
+                DEFAULT_DATAPATH = parlai_fb.DEFAULT_DATAPATH
+            except ImportError:
+                pass
+            if not DEFAULT_DATAPATH:
+                # TODO: switch to ~/.parlai/
+                DEFAULT_DATAPATH = os.path.join(self.parlai_home, 'data')
+            os.environ['PARLAI_DATAPATH'] = DEFAULT_DATAPATH
+
         opt['datapath'] = os.environ['PARLAI_DATAPATH']
 
         return opt

@@ -9,6 +9,7 @@ import os
 import random
 
 from parlai.projects.self_feeding.utils import extract_fb_episodes, episode_to_examples
+from parlai.utils.io import PathManager
 
 FAMILY = [
     "wife",
@@ -152,11 +153,11 @@ def main(opt):
     unit_prefix = opt['min_unit'][:3]
     topic_prefix = TOPIC_NAME[:3]
     on_topic_filename = f"{outfile_base}_{unit_prefix}_{topic_prefix}{outfile_ext}"
-    with open(on_topic_filename, 'w') as outfile:
+    with PathManager.open(on_topic_filename, 'w') as outfile:
         for ex in on_topic_exs:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
     off_topic_filename = f"{outfile_base}_{unit_prefix}_no{topic_prefix}{outfile_ext}"
-    with open(off_topic_filename, 'w') as outfile:
+    with PathManager.open(off_topic_filename, 'w') as outfile:
         for ex in off_topic_exs:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 

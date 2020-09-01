@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import os
@@ -169,7 +170,7 @@ class OneCommonTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             raw_data = data_file.readlines()
 
         self.episodes = []

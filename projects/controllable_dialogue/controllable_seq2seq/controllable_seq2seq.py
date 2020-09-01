@@ -21,6 +21,7 @@ for the paper, we have kept this file mostly the same.
 from parlai.core.torch_agent import TorchAgent, Output, Batch
 from parlai.utils.misc import round_sigfigs
 from parlai.utils.torch import padded_tensor, argsort, neginf
+from parlai.utils.io import PathManager
 from .modules import Seq2seq, opt_to_kwargs
 from .util import ConvAI2History, show_beam_cands, reorder_extrep2gram_qn
 from .controls import (
@@ -266,16 +267,16 @@ class ControllableSeq2seqAgent(TorchAgent):
         if not shared:  # only do this on first setup
             initialize_control_information(opt)
             # first check load path in case we need to override paths
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+            if opt.get('init_model') and PathManager.exists(opt['init_model']):
                 # check first for 'init_model' for loading model from file
                 init_model = opt['init_model']
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if opt.get('model_file') and PathManager.exists(opt['model_file']):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
+                if PathManager.exists(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
         super().__init__(opt, shared)
         opt = self.opt
@@ -1168,11 +1169,11 @@ class ControllableSeq2seqAgent(TorchAgent):
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
 
-            with open(path, 'wb') as write:
+            with PathManager.open(path, 'wb') as write:
                 torch.save(model, write)
 
             # save opt file
-            with open(path + '.opt', 'w') as handle:
+            with PathManager.open(path + '.opt', 'w') as handle:
                 # save version string
                 json.dump(self.opt, handle)
 
@@ -1183,7 +1184,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         states = torch.load(path, map_location=lambda cpu, _: cpu)
 
         # check opt file for multigpu
-        with open(path + ".opt", 'r') as handle:
+        with PathManager.open(path + ".opt", 'r') as handle:
             saved_opt = json.load(handle)
         if saved_opt.get('multigpu'):
             # create new OrderedDict that does not contain `module.`
@@ -1331,7 +1332,7 @@ class Beam(object):
         self.scores = best_scores
         self.all_scores.append(self.scores)
         # get the backtracking hypothesis id as a multiple of full voc_sizes
-        hyp_ids = best_idxs / voc_size
+        hyp_ids = best_idxs // voc_size
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
 

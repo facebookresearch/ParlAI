@@ -6,15 +6,14 @@
 """
 Run the python or pytorch profiler and prints the results.
 
-Examples
---------
+## Examples
 
-To make sure that bAbI task 1 (1k exs) loads one can run and to
-see a few of them:
+To make sure that bAbI task 1 (1k exs) loads one can run and to see a
+few of them:
 
-.. code-block:: shell
-
-  parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+```shell
+parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+```
 """
 
 from parlai.core.params import ParlaiParser
