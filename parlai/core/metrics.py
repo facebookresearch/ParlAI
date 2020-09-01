@@ -729,9 +729,8 @@ class TeacherMetrics(Metrics):
                     # don't let the user override our metrics
                     uk = f'USER_{uk}'
                 assert isinstance(uk, str), type(k)
-                if v is not None and not isinstance(v, Metric):
+                if not isinstance(v, Metric):
                     warn_once(f'Metric {uk} is assumed to be averaged per example.')
                     v = AverageMetric(v)
-                if v is not None:
-                    assert isinstance(v, Metric)
-                    self.add(uk, v)
+                assert isinstance(v, Metric)
+                self.add(uk, v)

@@ -102,14 +102,14 @@ class RewardUnlikelihoodAgentTrait(object):
         mle_target_tokens = mle_notnull.long().sum(dim=-1)
         correct = ((targets == preds) * mle_notnull).sum(-1)
         token_acc_metrics = AverageMetric.many(correct, mle_target_tokens)
-        token_acc_metrics = [None if am._denom == 0 else am for am in token_acc_metrics]
+        # token_acc_metrics = [None if am._denom == 0 else am for am in token_acc_metrics]
         mle_loss_metrics = AverageMetric.many(mle_loss, mle_target_tokens)
-        mle_loss_metrics = [None if am._denom == 0 else am for am in mle_loss_metrics]
+        # mle_loss_metrics = [None if am._denom == 0 else am for am in mle_loss_metrics]
         ppl_metrics = PPLMetric.many(mle_loss, mle_target_tokens)
-        ppl_loss_metrics = [None if am._denom == 0 else am for am in ppl_metrics]
+        # ppl_metrics = [None if am._denom == 0 else am for am in ppl_metrics]
         self.record_local_metric('token_acc', token_acc_metrics)
         self.record_local_metric('nll_loss', mle_loss_metrics)
-        self.record_local_metric('ppl', ppl_loss_metrics)
+        self.record_local_metric('ppl', ppl_metrics)
         mle_loss = mle_loss.sum()
         mle_target_tokens = mle_target_tokens.sum()
         if mle_target_tokens > 0:
@@ -134,7 +134,7 @@ class RewardUnlikelihoodAgentTrait(object):
             * ul_notnull.float()
         ).sum(dim=-1)
         ul_loss_metrics = AverageMetric.many(ul_loss, ul_target_tokens)
-        ul_loss_metrics = [None if am._denom == 0 else am for am in ul_loss_metrics]
+        # ul_loss_metrics = [None if am._denom == 0 else am for am in ul_loss_metrics]
         self.record_local_metric('ul_loss', ul_loss_metrics)
         ul_loss = ul_loss.sum()
         ul_target_tokens = ul_target_tokens.sum()
