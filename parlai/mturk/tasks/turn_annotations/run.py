@@ -105,6 +105,12 @@ def run_task(override_opt: Optional[dict] = None):
         choices=['hi', 'bst'],
         help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
+    argparser.add_argument(
+        '--annotations-intro',
+        default='Does this comment from your partner have any of the following attributes? (Check all that apply)',
+        type='str',
+        help='Text shown to worker before they fill out annotation form',
+    )
     if override_opt is not None:
         argparser.set_params(**override_opt)
     opt = argparser.parse_args()

@@ -11,8 +11,6 @@ WAITING_MSG = 'Please wait while we match you with another worker...'
 
 FINAL_RATING_QUESTION = 'Please rate your partner on a scale of 1-5.'
 
-ANNOTATIONS_INTRO = """<br><br><span style="font-style:italic;">Does this comment from your partner have any of the following attributes? (Check all that apply)<br>"""
-
 ANNOTATIONS_CONFIG = [
     {
         'value': 'bucket_0',
