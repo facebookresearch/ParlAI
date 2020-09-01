@@ -108,18 +108,26 @@ def run_task(override_opt: Optional[dict] = None):
     argparser.add_argument(
         '--annotations-intro',
         default='Does this comment from your partner have any of the following attributes? (Check all that apply)',
-        type='str',
+        type=str,
         help='Text shown to worker before they fill out annotation form',
+    )
+    argparser.add_argument(
+        '--left-pane-text',
+        default=LEFT_PANE_TEXT,
+        type=str,
+        help='Text to show in the left-hand pane of the chat window',
+    )
+    argparser.add_argument(
+        '--final-rating-question',
+        default=FINAL_RATING_QUESTION,
+        type=str,
+        help='Text to show when asking worker to make their final rating',
     )
     if override_opt is not None:
         argparser.set_params(**override_opt)
     opt = argparser.parse_args()
-
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
-
-    opt['left_pane_text'] = LEFT_PANE_TEXT
-    opt['final_rating_question'] = FINAL_RATING_QUESTION
     opt.update(TASK_CONFIG)
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core
