@@ -16,6 +16,7 @@ from parlai.agents.image_seq2seq.image_seq2seq import ImageSeq2seqAgent
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.metrics import AverageMetric, SumMetric, GlobalAverageMetric
 from parlai.utils.misc import round_sigfigs
+from parlai.utils.io import PathManager
 
 
 def div(x, y):
@@ -119,7 +120,7 @@ class RewardUnlikelihoodAgentTrait(object):
         ul_scores = scores_view[range_, targets_view]
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
         ul_loss = (
-            -torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min))
+            -(torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)))
             * ul_notnull.view(-1).float()
         ).sum()
         self.record_local_metric(
@@ -224,7 +225,7 @@ class RepetitionUnlikelihoodAgentTrait(object):
             self.opt['ctxt_beta'] * crep_mask
         )
 
-        ul_loss = -torch.log(one_minus_probs) * mask
+        ul_loss = -(torch.log(one_minus_probs)) * mask
         total_loss = div(ul_loss.sum(), mask.sum())
         self.record_local_metric(
             'ul_loss', AverageMetric.many(ul_loss.sum(dim=-1), mask.sum(dim=-1))
@@ -332,11 +333,11 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
                 counts_file = os.path.join(
                     os.path.dirname(self.opt['model_file']), 'counts.txt'
                 )
-                if not os.path.isfile(counts_file):
+                if not PathManager.exists(counts_file):
                     raise RuntimeError(
                         'Please give a --counts-file to use vocab unlikelihood'
                     )
-            with open(counts_file) as f:
+            with PathManager.open(counts_file) as f:
                 for line in f:
                     record = json.loads(line)
                     self.truebins[record['word_id']] = record['bin']
@@ -361,9 +362,7 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
             '--weighting', choices={'uniform', 'logdiff', 'kldiv'}, default='uniform'
         )
         grp.add_argument('--threshold', type=float, default=1e-3)
-        grp.add_argument(
-            '--counts-file', type=str, default=None,
-        )
+        grp.add_argument('--counts-file', type=str, default=None)
 
     def _init_cuda_buffer(self, *args, **kwargs):
         pass
@@ -512,7 +511,7 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
 
         ul_loss = (
-            -torch.log(torch.clamp(1 - ul_scores.exp(), min=clamp_min))
+            -(torch.log(torch.clamp(1 - ul_scores.exp(), min=clamp_min)))
             * ul_weights[ul_mask]
         ).sum()
         num_ul = ul_mask.sum()

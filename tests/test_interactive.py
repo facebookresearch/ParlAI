@@ -49,7 +49,7 @@ class TestInteractive(unittest.TestCase):
 
     def test_repeat(self):
         pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query'], print_args=False)
+        opt = pp.parse_args(['-m', 'repeat_query'])
         interactive.interactive(opt)
 
 
@@ -62,9 +62,7 @@ class TestInteractiveConvai2(unittest.TestCase):
 
     def test_repeat(self):
         pp = interactive.setup_args()
-        opt = pp.parse_args(
-            ['-m', 'repeat_query', '-t', 'convai2', '-dt', 'valid'], print_args=False
-        )
+        opt = pp.parse_args(['-m', 'repeat_query', '-t', 'convai2', '-dt', 'valid'])
         interactive.interactive(opt)
 
 
@@ -79,9 +77,7 @@ class TestInteractiveLogging(unittest.TestCase):
     def _run_test_repeat(self, tmpdir: str, fake_input: FakeInput):
         outfile = os.path.join(tmpdir, 'log.jsonl')
         pp = interactive.setup_args()
-        opt = pp.parse_args(
-            ['-m', 'repeat_query', '--outfile', outfile], print_args=False
-        )
+        opt = pp.parse_args(['-m', 'repeat_query', '--outfile', outfile])
         interactive.interactive(opt)
 
         log = conversations.Conversations(outfile)

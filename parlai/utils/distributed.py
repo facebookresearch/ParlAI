@@ -31,32 +31,6 @@ except ImportError:
     TORCH_AVAILABLE = False
 
 
-def validate_params(opt):
-    """
-    Ensure sane combinations of command line parameters for distributed training.
-
-    Raises exceptions if anything is wrong, otherwise returns None.
-    """
-    if torch.version.__version__.startswith('0.'):
-        raise ImportError(
-            "Please upgrade to PyTorch >=1.0; "
-            "visit https://pytorch.org for instructions."
-        )
-
-    if opt.get('no_cuda', False):
-        raise ValueError('Distributed mode only makes sense when using GPUs.')
-
-    if opt.get('numthreads', 1) != 1:
-        raise ValueError('--numthreads must be 1 for distributed training.')
-
-    if 'train:stream' in opt['datatype'] or 'ordered' in opt['datatype']:
-        raise ValueError(
-            "You should not combine ordered streaming with distributed training "
-            "because all workers will have exactly the same minibatches, "
-            "defeating the purpose."
-        )
-
-
 def is_distributed():
     """
     Return if we are in distributed mode.

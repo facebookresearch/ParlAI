@@ -9,6 +9,7 @@ from parlai.core.teachers import FixedDialogTeacher
 
 from parlai.tasks.light_dialog.agents import DefaultTeacher as OrigLightTeacher
 from parlai.tasks.light_genderation_bias.build import build
+from parlai.utils.io import PathManager
 
 from collections import deque
 from copy import deepcopy
@@ -91,7 +92,7 @@ def read_gender_tsv(path, remove_verbs=True):
     Load TSV of gendered word lists and return a dict.
     """
     gender_dct = {}
-    with open(path) as tsvfile:
+    with PathManager.open(path) as tsvfile:
         reader = list(csv.reader(tsvfile, delimiter='\t'))
         title_lst = reader[0]
         title_dict = {}
@@ -304,7 +305,7 @@ class LightGenderTeacher(FixedDialogTeacher):
         """
         dt = opt['datatype'].split(':')[0]
         if dt == 'train':
-            with open(os.path.join(_path(opt), NEW_DATA), 'r') as f:
+            with PathManager.open(os.path.join(_path(opt), NEW_DATA), 'r') as f:
                 data = json.load(f)
             new_data = []
             for ep in data:
@@ -335,12 +336,12 @@ class LightGenderTeacher(FixedDialogTeacher):
         flat_episodes = []
         for ep in orig_episodes:
             # flatten the episode into 1-example episodes with context
-            flattened_ep = flatten(ep, -1, include_labels=True, delimiter='\n',)
+            flattened_ep = flatten(ep, -1, include_labels=True, delimiter='\n')
             flat_episodes += flattened_ep
 
         # Counterfactual?
         if self.add_counterfactual and dt != 'test':
-            with open(os.path.join(_path(opt), COUNTERFACTUALS), 'rb') as f:
+            with PathManager.open(os.path.join(_path(opt), COUNTERFACTUALS), 'rb') as f:
                 self.swap_dct = json.load(f)
 
             new_episodes = []

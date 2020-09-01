@@ -9,21 +9,20 @@ the word statistics of the model outputs. One can also use the function defined 
 other places in order to get such statistic for any agent given the agent object (with
 corr. dict) and a sequence.
 
-Additionally provides function get_word_stats that can be used in other parts
-of runtime code since it depends only on the agent object. For example:
+Additionally provides function `get_word_stats` that can be used in
+other parts of runtime code since it depends only on the agent object.
+For example:
 
-::
+```python
+from parlai.scripts.eval_wordstat import get_word_stats
+reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+```
 
-  from parlai.scripts.eval_wordstat import get_word_stats
-  reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
+## Examples
 
-
-Examples
---------
-
-.. code-block:: shell
-
-  parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+```shell
+parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+```
 """
 
 from parlai.core.params import ParlaiParser
@@ -35,6 +34,7 @@ from parlai.core.metrics import normalize_answer
 from parlai.core.logs import TensorboardLogger
 from collections import Counter
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 
 import copy
 import numpy
@@ -105,19 +105,18 @@ def get_word_stats(text, agent_dict, bins=(0, 100, 1000, 100000)):
     return freqs, len(pred_freq), wlength, clength
 
 
-def eval_wordstat(opt, print_parser=None):
+def eval_wordstat(opt):
     """
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param print_parser: if provided, prints the options that are set within the
-        model after loading the model
     """
     random.seed(42)
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
+    agent.opt.log()
 
     if opt.get('external_dict'):
         print('[ Using external dictionary from: {} ]'.format(opt['external_dict']))
@@ -130,10 +129,6 @@ def eval_wordstat(opt, print_parser=None):
 
     batch_size = opt['batchsize']
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
@@ -237,7 +232,7 @@ def eval_wordstat(opt, print_parser=None):
     print("Total unique tokens:", len(word_statistics['unique_words']))
 
     if opt['dump_predictions_path'] is not None:
-        with open(opt['dump_predictions_path'], 'w') as f:
+        with PathManager.open(opt['dump_predictions_path'], 'w') as f:
             f.writelines(
                 [
                     'CONTEXT: {}\nPREDICTION:{}\n\n'.format(c, p)
@@ -248,7 +243,7 @@ def eval_wordstat(opt, print_parser=None):
                 ]
             )
         if opt['compute_unique'] is True:
-            with open(opt['dump_predictions_path'] + '_unique', 'w') as f:
+            with PathManager.open(opt['dump_predictions_path'] + '_unique', 'w') as f:
                 f.writelines(['{}\n'.format(i) for i in unique_list])
 
     stat_str = 'total_words: {}, '.format(word_statistics['word_cnt'])
@@ -286,7 +281,7 @@ class EvalWordStat(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return eval_wordstat(self.opt, print_parser=self.parser)
+        return eval_wordstat(self.opt)
 
 
 if __name__ == '__main__':

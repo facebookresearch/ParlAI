@@ -13,6 +13,7 @@ from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 import math
 import json
@@ -103,6 +104,7 @@ def self_chat(opt):
 
     # Create agents
     agent1 = create_agent(opt, requireModelExists=True)
+    agent1.opt.log("Agent 1 Opt")
     if partner is None:
         # Self chat with same model
         agent2 = agent1.clone()
@@ -110,7 +112,7 @@ def self_chat(opt):
         # Self chat with different models
         if partner_opt_file:
             print(f"WARNING: Loading override opts from: {partner_opt_file}")
-            with open(partner_opt_file) as f:
+            with PathManager.open(partner_opt_file) as f:
                 partner_opt = json.load(f)
         else:
             partner_opt = {}
@@ -119,6 +121,7 @@ def self_chat(opt):
             f"WARNING: Setting partner interactive mode to: {partner_opt['interactive_mode']}"
         )
         agent2 = create_agent_from_model_file(partner, partner_opt)
+        agent2.opt.log("Agent 2 Opt")
 
     # Set IDs
     agent1.id = agent1.id + "_1"

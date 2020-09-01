@@ -20,6 +20,7 @@ import re
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from itertools import islice
+from parlai.utils.io import PathManager
 
 
 class UnigramAgent(Agent):
@@ -109,10 +110,10 @@ class UnigramAgent(Agent):
         if not path:
             return
 
-        with open(path, 'w') as f:
+        with PathManager.open(path, 'w') as f:
             f.write(self.get_prediction() + '\n')
 
-        with open(path + '.opt', 'w') as f:
+        with PathManager.open(path + '.opt', 'w') as f:
             json.dump(self.opt, f)
 
     def load(self, path):

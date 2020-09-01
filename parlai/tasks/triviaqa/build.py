@@ -10,6 +10,7 @@ import parlai.core.build_data as build_data
 import json
 import os
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -39,14 +40,14 @@ def build(opt):
         for section in ["verified-{}-dev.json", "{}-train.json", "{}-dev.json"]:
             section = os.path.join(dpath, "qa", section)
             q2as = {}
-            with open(section.format("web")) as data_file:
+            with PathManager.open(section.format("web")) as data_file:
                 for datapoint in json.load(data_file)['Data']:
                     question = datapoint['Question']
                     answers = datapoint['Answer']['Aliases']
                     prime_answer = datapoint['Answer']['Value']
                     assert question not in q2as
                     q2as[question] = (prime_answer, answers)
-            with open(section.format("wikipedia")) as data_file:
+            with PathManager.open(section.format("wikipedia")) as data_file:
                 for datapoint in json.load(data_file)['Data']:
                     question = datapoint['Question']
                     answers = datapoint['Answer']['Aliases']
@@ -61,7 +62,9 @@ def build(opt):
                                 'Tony',
                             )
                         q2as[question] = (old_prime_answer, old_answers + answers)
-            with open(section.format("noevidence-union"), "wt") as data_file:
+            with PathManager.open(
+                section.format("noevidence-union"), "wt"
+            ) as data_file:
                 json.dump(
                     {
                         "Data": [

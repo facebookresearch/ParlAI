@@ -10,10 +10,11 @@ Test many variants of transformers.
 
 import os
 import unittest
+import pytest
 import parlai.utils.testing as testing_utils
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
-from tests.test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
+from .test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
 from parlai.core.params import ParlaiParser
 
 
@@ -249,61 +250,56 @@ class TestTransformerGenerator(unittest.TestCase):
     Checks that the generative transformer can learn basic tasks.
     """
 
-    @testing_utils.retry(ntries=3)
     def test_greedysearch(self):
         """
         Test greedy search.
         """
-        valid, test = testing_utils.train_model(
+        valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=4,
                 inference='greedy',
+                metrics='bleu',
                 beam_size=1,
+                num_examples=20,
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.30)
-        self.assertGreaterEqual(valid['bleu-4'], 0.90)
-        self.assertLessEqual(test['ppl'], 1.30)
-        self.assertGreaterEqual(test['bleu-4'], 0.90)
+        self.assertLessEqual(valid['ppl'], 1.05)
+        # 0.75 because some of the turns contain fewer than 2 words
+        self.assertAlmostEqual(valid['bleu-2'], 0.60, delta=0.001)
+        self.assertAlmostEqual(valid['bleu-3'], 0.40, delta=0.001)
+        self.assertLessEqual(test['ppl'], 1.05)
+        self.assertAlmostEqual(test['bleu-2'], 0.60, delta=0.001)
+        self.assertAlmostEqual(test['bleu-3'], 0.40, delta=0.001)
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         """
         Test beamsearch.
         """
-        valid, test = testing_utils.train_model(
+        valid, test = testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:multiturn_candidate',
                 model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=32,
-                num_epochs=10,
-                numthreads=1,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
+                model_file='zoo:unittest/transformer_generator2/model',
+                batchsize=4,
+                metrics='bleu',
                 inference='beam',
                 beam_size=5,
+                num_examples=20,
             )
         )
 
-        self.assertLessEqual(valid['ppl'], 1.50)
-        self.assertGreaterEqual(valid['bleu-4'], 0.90)
-        self.assertLessEqual(test['ppl'], 1.50)
-        self.assertGreaterEqual(test['bleu-4'], 0.90)
+        self.assertLessEqual(valid['ppl'], 1.05)
+        self.assertAlmostEqual(valid['bleu-2'], 0.60, delta=0.001)
+        self.assertAlmostEqual(valid['bleu-3'], 0.40, delta=0.001)
+        self.assertLessEqual(test['ppl'], 1.05)
+        self.assertAlmostEqual(test['bleu-2'], 0.60, delta=0.001)
+        self.assertAlmostEqual(test['bleu-3'], 0.40, delta=0.001)
 
+    @pytest.mark.nofbcode
     def test_beamsearch_blocking(self):
         """
         Test beamsearch blocking.
@@ -381,6 +377,7 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLess(valid_beam_block3['bleu-4'], valid['bleu-4'])
         self.assertLess(valid_beam_block3['f1'], valid['f1'])
 
+    @pytest.mark.nofbcode
     def test_beamsearch_contextblocking(self):
         """
         Test beamsearch context blocking.
@@ -396,7 +393,7 @@ class TestTransformerGenerator(unittest.TestCase):
             dict_file='zoo:unittest/context_blocking/model.dict',
             metrics='all',
         )
-        noblock_valid, _ = testing_utils.eval_model(args,)
+        noblock_valid, _ = testing_utils.eval_model(args)
         self.assertGreaterEqual(noblock_valid['f1'], 0.95)
 
         # first confirm all is good without blocking
@@ -408,7 +405,7 @@ class TestTransformerGenerator(unittest.TestCase):
 
         # there's a special case for block == 1
         valid, _ = testing_utils.eval_model(
-            dict(beam_context_block_ngram=1, **args), skip_test=True,
+            dict(beam_context_block_ngram=1, **args), skip_test=True
         )
         # bleu and f1 should be totally wrecked.
         self.assertLess(valid['f1'], 0.01)
@@ -518,7 +515,6 @@ class TestTransformerGenerator(unittest.TestCase):
                 batchsize=10,
                 datatype='train:ordered:stream',
                 num_epochs=1,
-                numthreads=1,
                 no_cuda=True,
                 embedding_size=16,
                 skip_generation=True,
@@ -584,6 +580,7 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertLessEqual(valid['ppl'], 1.30)
         self.assertLessEqual(test['ppl'], 1.30)
 
+    @pytest.mark.nofbcode
     def test_compute_tokenized_bleu(self):
         """
         Test that the model outputs self-computed bleu correctly.
@@ -608,7 +605,7 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
         try:
-            import fairseq  # noqa: F401
+            import fairseq  # @manual # noqa: F401
 
             assert valid['fairseq_bleu1'] > 0.9
         except ImportError:
@@ -676,6 +673,7 @@ class TestTransformerGenerator(unittest.TestCase):
             )
         )
 
+    @pytest.mark.nofbcode
     def test_resize_embeddings(self):
         # train original model
         with testing_utils.tempdir() as tmpdir:
@@ -713,7 +711,7 @@ class TestTransformerGenerator(unittest.TestCase):
                 save_after_valid=True,
                 special_tok_lst='PARTY,PARROT',
             )
-            opt = parser.parse_args([], print_args=False)
+            opt = parser.parse_args([])
             agent = create_agent(opt)
             # assert that the embeddings were resized
             assert agent.resized_embeddings

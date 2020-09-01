@@ -27,6 +27,8 @@ from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
+from parlai.utils.io import PathManager
+
 
 TRANSFORMER_PARAMETER_MAPPING = {
     'attention_heads': 'n_heads',
@@ -132,10 +134,7 @@ class ConversionScript(ParlaiScript):
         self.agent.opt.pop('converting', None)
         self.agent.save(self.opt['output'])
         # 4. enjoy!
-        self.agent.observe(
-            {'text': "What's your favorite kind of ramen?", 'episode_done': False}
-        )
-        print(self.agent.act())
+        self.print_agent_act()
 
     def get_parlai_opt(self) -> Opt:
         """
@@ -203,7 +202,7 @@ class ConversionScript(ParlaiScript):
             transformer_common_config['bpe_add_prefix_space'] = True
         parser = ParlaiParser()
         parser.set_params(**transformer_common_config)
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
 
         # 6. Augment opt with additional ParlAI options
         opt['fp16'] = self.opt['fp16']
@@ -243,7 +242,7 @@ class ConversionScript(ParlaiScript):
         :return state:
             loaded fairseq state
         """
-        with open(path, "rb") as f:
+        with PathManager.open(path, "rb") as f:
             try:
                 state = torch.load(
                     f, map_location=lambda s, l: default_restore_location(s, "cpu")
@@ -400,7 +399,7 @@ class ConversionScript(ParlaiScript):
         # 6. Shuffle embedding matrix given dictionary.
         enc_emb_key = 'encoder.embeddings.weight'
         bart_dict = os.path.join(opt['datapath'], 'models/bart/bart.large/dict.txt')
-        with open(bart_dict) as f:
+        with PathManager.open(bart_dict) as f:
             offset_dict = {i: l.split()[0] for i, l in enumerate(f.readlines())}
         new_embs = return_dict[enc_emb_key].clone()
         for idx, new_idx in offset_dict.items():
@@ -477,6 +476,15 @@ class ConversionScript(ParlaiScript):
 
         return_dict['START'] = torch.LongTensor([1])  # type: ignore
         return return_dict
+
+    def print_agent_act(self):
+        """
+        Print a sample act from the converted agent.
+        """
+        self.agent.observe(
+            {'text': "What's your favorite kind of ramen?", 'episode_done': False}
+        )
+        print(self.agent.act())
 
 
 if __name__ == '__main__':

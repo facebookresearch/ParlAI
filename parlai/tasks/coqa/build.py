@@ -6,6 +6,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 import parlai.core.build_data as build_data
 import os
 import json
@@ -29,7 +30,7 @@ RESOURCES = [
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
-    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
+    with PathManager.open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
         for each in data:
             output = []
             story = each['story'].replace('\n', '\\n')
@@ -67,11 +68,11 @@ def build(opt):
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(dpath)
 
-        with open(os.path.join(dpath, 'coqa-train-v1.0.json')) as f:
+        with PathManager.open(os.path.join(dpath, 'coqa-train-v1.0.json')) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, 'coqa-dev-v1.0.json')) as f:
+        with PathManager.open(os.path.join(dpath, 'coqa-dev-v1.0.json')) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'valid', data)
 

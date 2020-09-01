@@ -7,6 +7,7 @@ import torch
 import unicodedata
 from collections import Counter
 
+from parlai.utils.io import PathManager
 from parlai.core.build_data import modelzoo_path
 
 
@@ -29,7 +30,7 @@ def load_embeddings(opt, word_dict):
     # Fill in embeddings
     if not opt.get('embedding_file'):
         raise RuntimeError('Tried to load embeddings with no embedding file.')
-    with open(opt['embedding_file']) as f:
+    with PathManager.open(opt['embedding_file']) as f:
         for line in f:
             parsed = line.rstrip().split(' ')
             if len(parsed) > 2:

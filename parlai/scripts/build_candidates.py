@@ -6,12 +6,11 @@
 """
 Build the candidate responses for a retrieval model.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai build_candidates -t convai2 --outfile /tmp/cands.txt
+```bash
+parlai build_candidates -t convai2 --outfile /tmp/cands.txt
+```
 """
 
 from parlai.core.params import ParlaiParser
@@ -50,10 +49,8 @@ def setup_args(parser=None) -> ParlaiParser:
 
 
 def build_cands(opt):
+    opt.log()
     # create repeat label agent and assign it to the specified task
-    if opt['numthreads'] > 1:
-        # Broken in hogwild mode. Just fall back to single processing mode
-        opt['numthreads'] = 1
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
     if opt['outfile'] is None:

@@ -12,6 +12,7 @@ Useful for debugging and checking that one's image model is up and running.
 """
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -60,7 +61,7 @@ class MnistQATeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as labels_file:
+        with PathManager.open(path) as labels_file:
             self.labels = json.load(labels_file)
 
         self.question = 'Which number is in the image?'

@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import Teacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -54,7 +55,7 @@ class TaskNTalkTeacher(Teacher):
         Read the json file and store images and task definitions.
         """
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             json_data = json.load(data_file)
             self.data = json_data['data']
             self.task_defn = json_data['task_defn']

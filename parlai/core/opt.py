@@ -12,8 +12,11 @@ import copy
 import json
 import pickle
 import traceback
+import parlai.utils.logging as logging
 
 from typing import List
+
+from parlai.utils.io import PathManager
 
 # these keys are automatically removed upon save. This is a rather blunt hammer.
 # It's preferred you indicate this at option definiton time.
@@ -109,7 +112,7 @@ class Opt(dict):
             if key in dct:
                 del dct[key]
 
-        with open(filename, 'w', encoding='utf-8') as f:
+        with PathManager.open(filename, 'w', encoding='utf-8') as f:
             json.dump(dct, fp=f, indent=4)
             # extra newline for convenience of working with jq
             f.write('\n')
@@ -121,13 +124,25 @@ class Opt(dict):
         """
         try:
             # try json first
-            with open(optfile, 'r') as t_handle:
+            with PathManager.open(optfile, 'r', encoding='utf-8') as t_handle:
                 dct = json.load(t_handle)
         except UnicodeDecodeError:
             # oops it's pickled
-            with open(optfile, 'rb') as b_handle:
+            with PathManager.open(optfile, 'rb') as b_handle:
                 dct = pickle.load(b_handle)
         for key in __AUTOCLEAN_KEYS__:
             if key in dct:
                 del dct[key]
         return cls(dct)
+
+    def log(self, header="Opt"):
+        from parlai.core.params import print_git_commit
+
+        logging.info(header + ":")
+        for key in sorted(self.keys()):
+            valstr = str(self[key])
+            if valstr.replace(" ", "").replace("\n", "") != valstr:
+                # show newlines as escaped keys, whitespace with quotes, etc
+                valstr = repr(valstr)
+            logging.info(f"    {key}: {valstr}")
+        print_git_commit()

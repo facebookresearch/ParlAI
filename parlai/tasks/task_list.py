@@ -14,10 +14,10 @@ task_list = [
         "display_name": "AmazonQA",
         "task": "amazon_qa",
         "tags": ["All", "QA"],
+        "links": {"website": "http://jmcauley.ucsd.edu/data/amazon/qa/"},
         "description": (
             "This dataset contains Question and Answer data from Amazon, "
             "totaling around 1.4 million answered questions."
-            "Link: http://jmcauley.ucsd.edu/data/amazon/qa/"
         ),
     },
     {
@@ -25,10 +25,10 @@ task_list = [
         "display_name": "AQuA",
         "task": "aqua",
         "tags": ["All", "QA"],
+        "links": {"arXiv": "https://arxiv.org/abs/1705.04146"},
         "description": (
             "Dataset containing algebraic word problems with rationales for "
-            "their answers. From Ling et. al. 2017, Link: "
-            "https://arxiv.org/pdf/1705.04146.pdf"
+            "their answers."
         ),
     },
     {
@@ -39,9 +39,9 @@ task_list = [
         "description": (
             "20 synthetic tasks that each test a unique aspect of text and "
             "reasoning, and hence test different capabilities of learning "
-            "models. From Weston et al. '16. Link: "
-            "http://arxiv.org/abs/1502.05698 "
+            "models."
         ),
+        "links": {"arXiv": "http://arxiv.org/abs/1502.05698"},
         "notes": (
             "You can access just one of the bAbI tasks with e.g. "
             "'babi:Task1k:3' for task 3."
@@ -55,9 +55,9 @@ task_list = [
         "description": (
             "20 synthetic tasks that each test a unique aspect of text and "
             "reasoning, and hence test different capabilities of learning "
-            "models. From Weston et al. '16. Link: "
-            "http://arxiv.org/abs/1502.05698"
+            "models."
         ),
+        "links": {"arXiv": "http://arxiv.org/abs/1502.05698"},
         "notes": (
             "You can access just one of the bAbI tasks with e.g. 'babi:Task10k:3' "
             "for task 3."
@@ -81,9 +81,9 @@ task_list = [
         "tags": ["All", "Cloze"],
         "description": (
             "Sentence completion given a few sentences as context from a book. "
-            "A larger version of CBT. From Bajgar et al., 16. Link: "
-            "https://arxiv.org/abs/1610.00956"
+            "A larger version of CBT."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1610.00956"},
     },
     {
         "id": "CBT",
@@ -92,9 +92,9 @@ task_list = [
         "tags": ["All", "Cloze"],
         "description": (
             "Sentence completion given a few sentences as context from a "
-            "children's book. From Hill et al., '16. Link: "
-            "https://arxiv.org/abs/1511.02301"
+            "children's book."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1511.02301"},
     },
     {
         "id": "CCPE",
@@ -107,9 +107,11 @@ task_list = [
             "preferences in natural language. It was collected using a "
             "Wizard-of-Oz methodology between two paid crowd-workers, "
             "where one worker plays the role of an 'assistant', while "
-            "the other plays the role of a 'user'. From Google, '19. Link: "
-            "https://ai.google/tools/datasets/coached-conversational-preference-elicitation"
+            "the other plays the role of a 'user'."
         ),
+        "links": {
+            "website": "https://ai.google/tools/datasets/coached-conversational-preference-elicitation"
+        },
     },
     {
         "id": "COPA",
@@ -120,10 +122,9 @@ task_list = [
             "The Choice Of Plausible Alternatives (COPA) evaluation provides "
             "researchers with a tool for assessing progress in open-domain "
             "commonsense causal reasoning. COPA consists of 1000 questions, "
-            "split equally into development and test sets of 500 questions "
-            "each. See http://people.ict.usc.edu/~gordon/copa.html for more "
-            "information"
+            "split equally into development and test sets of 500 questions each."
         ),
+        "links": {"website": "http://people.ict.usc.edu/~gordon/copa.html"},
     },
     {
         "id": "COQA",
@@ -135,20 +136,17 @@ task_list = [
             "Question Answering systems. The goal of the CoQA challenge "
             "is to measure the ability of machines to understand a text "
             "passage and answer a series of interconnected questions that "
-            "appear in a conversation. CoQA is pronounced as coca . See "
-            "https://arxiv.org/abs/1808.07042"
+            "appear in a conversation. CoQA is pronounced as coca."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1808.07042"},
     },
     {
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
         "tags": ["All", "ChitChat", "Dodeca"],
-        "description": (
-            "Fictional conversations extracted from raw movie scripts. "
-            "Danescu-Niculescu-Mizil & Lee, '11. Link: "
-            "https://arxiv.org/abs/1106.3077"
-        ),
+        "description": ("Fictional conversations extracted from raw movie scripts."),
+        "links": {"arXiv": "https://arxiv.org/abs/1106.3077"},
     },
     {
         "id": "DBLL-bAbI",
@@ -159,8 +157,11 @@ task_list = [
             "Short dialogs based on the bAbI tasks, but in the form of a "
             "question from a teacher, the answer from the student, and finally a "
             "comment on the answer from the teacher. The aim is to find learning "
-            "models that use the comments to improve. From Weston '16. Link: "
-            "https://arxiv.org/abs/1604.06045. Tasks can be accessed with a "
+            "models that use the comments to improve."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/1604.06045"},
+        "notes": (
+            "Tasks can be accessed with a "
             "format like: 'parlai display_data -t "
             "dbll_babi:task:2_p0.5' which specifies task 2, and policy with 0.5 "
             "answers correct, see the paper for more details of the tasks."
@@ -175,19 +176,17 @@ task_list = [
             "Short dialogs based on WikiMovies, but in the form of a question "
             "from a teacher, the answer from the student, and finally a comment "
             "on the answer from the teacher. The aim is to find learning models "
-            "that use the comments to improve. From Weston '16. Link: "
-            "https://arxiv.org/abs/1604.06045"
+            "that use the comments to improve."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1604.06045"},
     },
     {
         "id": "dialog-bAbI",
         "display_name": "Dialog bAbI",
         "task": "dialog_babi",
         "tags": ["All", "Goal"],
-        "description": (
-            "Simulated dialogs of restaurant booking, from Bordes et al. '16. "
-            "Link: https://arxiv.org/abs/1605.07683"
-        ),
+        "description": "Simulated dialogs of restaurant booking",
+        "links": {"arXiv": "https://arxiv.org/abs/1605.07683"},
     },
     {
         "id": "dialog-bAbI-plus",
@@ -199,10 +198,15 @@ task_list = [
             "incremental dialogue phenomena (hesitations, restarts, and "
             "corrections) which model the disfluencies and communication "
             "problems in everyday spoken interaction in real-world environments. "
-            "See https://www.researchgate.net/publication/319128941_Challenging_Neural_"
-            "Dialogue_Models_with_Natural_Data_Memory_Networks_Fail_on_"
-            "Incremental_Phenomena,http://aclweb.org/anthology/D17-1235"
         ),
+        "links": {
+            "website": (
+                "https://www.researchgate.net/publication/"
+                "319128941_Challenging_Neural_Dialogue_Models_with_Natural_"
+                "Data_Memory_Networks_Fail_on_Incremental_Phenomena"
+            ),
+            "paper": "http://aclweb.org/anthology/D17-1235",
+        },
     },
     {
         "id": "dialogue-nli",
@@ -211,9 +215,12 @@ task_list = [
         "tags": ["All", "ChitChat", "NLI"],
         "description": (
             "Dialogue NLI is a dataset that addresses the issue of consistency in "
-            "dialogue models. "
-            "See: https://wellecks.github.io/dialogue_nli/"
+            "dialogue models."
         ),
+        "links": {
+            "website": "https://wellecks.github.io/dialogue_nli/",
+            "arXiv": "https://arxiv.org/abs/1811.00671",
+        },
     },
     {
         "id": "dstc7",
@@ -223,9 +230,9 @@ task_list = [
         "description": (
             "DSTC7 is a competition which provided a dataset of dialogs very "
             "similar to the ubuntu dataset. In particular, the subtrack 1 "
-            "consists in predicting the next utterance. "
-            "See: https://arxiv.org/pdf/1901.03461.pdf"
+            "consists in predicting the next utterance."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1901.03461"},
     },
     {
         "id": "FVQA",
@@ -238,9 +245,9 @@ task_list = [
             "dataset, which contains image-question-answer triplets, through "
             "additional image-question-answer-supporting fact tuples. The "
             "supporting fact is represented as a structural triplet, such as "
-            "<Cat,CapableOf,ClimbingTrees>.  Link: "
-            "https://arxiv.org/abs/1606.05433"
+            "<Cat,CapableOf,ClimbingTrees>."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1606.05433"},
     },
     {
         "id": "DealNoDeal",
@@ -250,9 +257,9 @@ task_list = [
         "description": (
             "End-to-end negotiation task which requires two agents to agree on "
             "how to divide a set of items, with each agent assigning different "
-            "values to each item. From Lewis et al. '17. Link: "
-            "https://arxiv.org/abs/1706.05125"
+            "values to each item."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1706.05125"},
     },
     {
         "id": "HotpotQA",
@@ -266,8 +273,8 @@ task_list = [
             "a QA system answers the question by extracting a span of text"
             "from the context. It is necessary to perform multi-hop reasoning"
             "to correctly answer the question."
-            "Link: https://arxiv.org/pdf/1809.09600.pdf"
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1809.09600"},
     },
     {
         "id": "LIGHT-Dialogue",
@@ -277,8 +284,26 @@ task_list = [
         "description": (
             "LIGHT is a text adventure game with actions and dialogue collected."
             "The source data is collected between crowdworkers playing the game."
-            "Link: http://parl.ai/projects/light"
         ),
+        "links": {
+            "website": "http://parl.ai/projects/light",
+            "arXiv": "https://arxiv.org/abs/1903.03094",
+        },
+    },
+    {
+        "id": "LIGHT-Dialogue-Wild",
+        "display_name": "LIGHT-Dialogue-Wild",
+        "task": "light_dialog_wild",
+        "tags": ["All", "Grounded", "LIGHT"],
+        "description": (
+            " LIGHT is a text adventure game with actions and dialogue."
+            "The WILD dataset here features 41,131+ training episodes of dialogue "
+            "collected from deploying a game as described in "
+        ),
+        "links": {
+            "arXiv": "https://arxiv.org/abs/2008.08076",
+            "website": "http://parl.ai/projects/light",
+        },
     },
     {
         "id": "MutualFriends",
@@ -287,20 +312,22 @@ task_list = [
         "tags": ["All", "Goal"],
         "description": (
             "Task where two agents must discover which friend of theirs is "
-            "mutual based on the friends's attributes. From He He et al. '17. "
-            "Link: https://stanfordnlp.github.io/cocoa/"
+            "mutual based on the friends's attributes."
         ),
+        "links": {"website": "https://stanfordnlp.github.io/cocoa/"},
     },
     {
         "id": "MCTest",
         "display_name": "MCTest",
         "task": "mctest",
         "tags": ["All", "QA"],
-        "description": (
-            "Questions about short children's stories, from Richardson et al. "
-            "'13. Link: https://www.microsoft.com/en-us/research/publication/"
-            "mctest-challenge-dataset-open-domain-machine-comprehension-text/"
-        ),
+        "description": ("Questions about short children's stories."),
+        "links": {
+            "website": (
+                "https://www.microsoft.com/en-us/research/publication/"
+                "mctest-challenge-dataset-open-domain-machine-comprehension-text/"
+            )
+        },
     },
     {
         "id": "MovieDD-QA",
@@ -309,9 +336,9 @@ task_list = [
         "tags": ["All", "QA", "MovieDD"],
         "description": (
             "Closed-domain QA dataset asking templated questions about movies, "
-            "answerable from Wikipedia, similar to WikiMovies. From Dodge et al. "
-            "'15. Link: https://arxiv.org/abs/1511.06931"
+            "answerable from Wikipedia, similar to WikiMovies."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1511.06931"},
     },
     {
         "id": "MovieDD-QARecs",
@@ -319,20 +346,17 @@ task_list = [
         "task": "moviedialog:Task:3",
         "tags": ["All", "Goal", "MovieDD"],
         "description": (
-            "Dialogs discussing questions about movies as well as "
-            "recommendations. From Dodge et al. '15. Link: "
-            "https://arxiv.org/abs/1511.06931"
+            "Dialogs discussing questions about movies as well as recommendations."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1511.06931"},
     },
     {
         "id": "MovieDD-Recs",
         "display_name": "Movie Dialog Recommendations",
         "task": "moviedialog:Task:2",
         "tags": ["All", "QA", "MovieDD"],
-        "description": (
-            "Questions asking for movie recommendations. From Dodge et al. '15. "
-            "Link: https://arxiv.org/abs/1511.06931"
-        ),
+        "description": ("Questions asking for movie recommendations."),
+        "links": {"arXiv": "https://arxiv.org/abs/1511.06931"},
     },
     {
         "id": "MovieDD-Reddit",
@@ -340,9 +364,9 @@ task_list = [
         "task": "moviedialog:Task:4",
         "tags": ["All", "ChitChat", "MovieDD"],
         "description": (
-            "Dialogs discussing Movies from Reddit (the Movies SubReddit). From "
-            "Dodge et al. '15. Link: https://arxiv.org/abs/1511.06931"
+            "Dialogs discussing Movies from Reddit (the Movies SubReddit)."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1511.06931"},
     },
     {
         "id": "MTurkWikiMovies",
@@ -351,9 +375,9 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "Closed-domain QA dataset asking MTurk-derived questions about "
-            "movies, answerable from Wikipedia. From Li et al. '16. Link: "
-            "https://arxiv.org/abs/1611.09823"
+            "movies, answerable from Wikipedia."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1611.09823"},
     },
     {
         "id": "MultiNLI",
@@ -365,9 +389,9 @@ task_list = [
             "machine learning models for sentence understanding. Each example "
             "contains a premise and hypothesis. Model has to predict whether "
             "premise and hypothesis entail, contradict or are neutral to each "
-            "other. From Williams et al. '17. Link: "
-            "https://arxiv.org/abs/1704.05426"
+            "other."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1704.05426"},
     },
     {
         "id": "NarrativeQA",
@@ -377,8 +401,8 @@ task_list = [
         "description": (
             "A dataset and set of tasks in which the reader must answer "
             "questions about stories by reading entire books or movie scripts. "
-            "From Kočiský et. al. '17. Link: https://arxiv.org/abs/1712.07040'"
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1712.07040"},
         "notes": (
             "You can access summaries only task for NarrativeQA by using task "
             "'narrative_qa:summaries'. By default, only stories are provided."
@@ -389,13 +413,12 @@ task_list = [
         "display_name": "Open Subtitles",
         "task": "opensubtitles",
         "tags": ["All", "ChitChat"],
-        "description": (
-            "Dataset of dialogs from movie scripts. Version 2018: "
-            "http://opus.lingfil.uu.se/OpenSubtitles2018.php, version 2009: "
-            "http://opus.lingfil.uu.se/OpenSubtitles.php. A variant of the "
-            "dataset used in Vinyals & Le '15, "
-            "https://arxiv.org/abs/1506.05869."
-        ),
+        "description": "Dataset of dialogs from movie scripts.",
+        "links": {
+            "version 2018 website": "http://opus.lingfil.uu.se/OpenSubtitles2018.php",
+            "version 2009 website": "http://opus.lingfil.uu.se/OpenSubtitles.php",
+            "related work (arXiv)": "https://arxiv.org/abs/1506.05869",
+        },
     },
     {
         "id": "personalized-dialog-full",
@@ -404,9 +427,9 @@ task_list = [
         "tags": ["All", "Goal", "Personalization"],
         "description": (
             "Simulated dataset of restaurant booking focused on personalization "
-            "based on user profiles. From Joshi et al. '17. Link: "
-            "https://arxiv.org/abs/1706.07503"
+            "based on user profiles."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1706.07503"},
     },
     {
         "id": "personalized-dialog-small",
@@ -415,9 +438,9 @@ task_list = [
         "tags": ["All", "Goal", "Personalization"],
         "description": (
             "Simulated dataset of restaurant booking focused on personalization "
-            "based on user profiles. From Joshi et al. '17. Link: "
-            "https://arxiv.org/abs/1706.07503"
+            "based on user profiles."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1706.07503"},
     },
     {
         "id": "QACNN",
@@ -426,9 +449,9 @@ task_list = [
         "tags": ["All", "Cloze"],
         "description": (
             "Cloze dataset based on a missing (anonymized) entity phrase from a "
-            "CNN article, Hermann et al. '15. Link: "
-            "https://arxiv.org/abs/1506.03340"
+            "CNN article"
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1506.03340"},
     },
     {
         "id": "QADailyMail",
@@ -437,9 +460,9 @@ task_list = [
         "tags": ["All", "Cloze"],
         "description": (
             "Cloze dataset based on a missing (anonymized) entity phrase from a "
-            "Daily Mail article, Hermann et al. '15. Link: "
-            "https://arxiv.org/abs/1506.03340"
+            "Daily Mail article."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1506.03340"},
     },
     {
         "id": "QuAC",
@@ -455,9 +478,9 @@ task_list = [
             "answers the questions by providing short excerpts (spans) from the text. "
             "QuAC introduces challenges not found in existing machine comprehension "
             "datasets: its questions are often more open-ended, unanswerable, "
-            "or only meaningful within the dialog context. link: "
-            "https://arxiv.org/abs/1808.07036"
+            "or only meaningful within the dialog context."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1808.07036"},
     },
     {
         "id": "SelfFeedingChatbot",
@@ -466,20 +489,17 @@ task_list = [
         "tags": ["diaexp", "diasen", "All"],
         "description": (
             "Learning from Dialogue after Deployment. Leveraging user textual "
-            "feedback to improve the chatbot's abilities. "
-            "From Hancock et al. 2019, Link: "
-            "https://arxiv.org/abs/1901.05415"
+            "feedback to improve the chatbot's abilities."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1901.05415"},
     },
     {
         "id": "SimpleQuestions",
         "display_name": "Simple Questions",
         "task": "simplequestions",
         "tags": ["All", "QA"],
-        "description": (
-            "Open-domain QA dataset based on Freebase triples from Bordes et "
-            "al. '15. Link: https://arxiv.org/abs/1506.02075"
-        ),
+        "description": ("Open-domain QA dataset based on Freebase triples."),
+        "links": {"arXiv": "https://arxiv.org/abs/1506.02075"},
     },
     {
         "id": "SNLI",
@@ -491,9 +511,9 @@ task_list = [
             "human-written English sentence pairs manually labeled for balanced "
             "classification with the labels entailment, contradiction, and "
             "neutral, supporting the task of natural language inference (NLI), "
-            "also known as recognizing textual entailment (RTE). See "
-            "https://nlp.stanford.edu/projects/snli/"
+            "also known as recognizing textual entailment (RTE)"
         ),
+        "links": {"website": "https://nlp.stanford.edu/projects/snli/"},
     },
     {
         "id": "SQuAD2",
@@ -502,9 +522,9 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "Open-domain QA dataset answerable from a given paragraph from "
-            "Wikipedia, from Rajpurkar & Jia et al. '18. Link: "
-            "http://arxiv.org/abs/1806.03822"
+            "Wikipedia."
         ),
+        "links": {"arXiv": "http://arxiv.org/abs/1806.03822"},
     },
     {
         "id": "SQuAD",
@@ -513,9 +533,9 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "Open-domain QA dataset answerable from a given paragraph from "
-            "Wikipedia, from Rajpurkar et al. '16. Link: "
-            "https://arxiv.org/abs/1606.05250"
+            "Wikipedia."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1606.05250"},
     },
     {
         "id": "TriviaQA",
@@ -523,9 +543,9 @@ task_list = [
         "task": "triviaqa",
         "tags": ["All", "QA"],
         "description": (
-            "Open-domain QA dataset with question-answer-evidence triples, from "
-            "Joshi et al. '17. Link: https://arxiv.org/abs/1705.03551"
+            "Open-domain QA dataset with question-answer-evidence triples."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1705.03551"},
     },
     {
         "id": "TaskNTalk",
@@ -534,9 +554,9 @@ task_list = [
         "tags": ["All", "Goal"],
         "description": (
             "Dataset of synthetic shapes described by attributes, for agents to "
-            "play a cooperative QA game, from Kottur et al. '17. Link: "
-            "https://arxiv.org/abs/1706.08502"
+            "play a cooperative QA game."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1706.08502"},
     },
     {
         "id": "Ubuntu",
@@ -546,18 +566,16 @@ task_list = [
         "description": (
             "Dialogs between an Ubuntu user and an expert trying to fix issue, "
             "we use the V2 version, which cleaned the data to some extent. "
-            "From Lowe et al. '15. Link: https://arxiv.org/abs/1506.08909."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1506.08909."},
     },
     {
         "id": "WebQuestions",
         "display_name": "Web Questions",
         "task": "webquestions",
         "tags": ["All", "QA"],
-        "description": (
-            "Open-domain QA dataset from Web queries from Berant et al. '13. "
-            "Link: http://www.aclweb.org/anthology/D13-1160"
-        ),
+        "description": ("Open-domain QA dataset from Web queries."),
+        "links": {"paper": "http://www.aclweb.org/anthology/D13-1160"},
     },
     {
         "id": "WikiMovies",
@@ -566,40 +584,38 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "Closed-domain QA dataset asking templated questions about movies, "
-            "answerable from Wikipedia. From Miller et al. '16. Link: "
-            "https://arxiv.org/abs/1606.03126"
+            "answerable from Wikipedia."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1606.03126"},
     },
     {
         "id": "WikiQA",
         "display_name": "WikiQA",
         "task": "wikiqa",
         "tags": ["All", "QA"],
-        "description": (
-            "Open domain QA from Wikipedia dataset from Yang et al. '15. Link: "
-            "https://www.microsoft.com/en-us/research/publication/wikiqa-a-"
-            "challenge-dataset-for-open-domain-question-answering/"
-        ),
+        "description": ("Open domain QA from Wikipedia dataset"),
+        "links": {
+            "website": (
+                "https://www.microsoft.com/en-us/research/publication/wikiqa-a-"
+                "challenge-dataset-for-open-domain-question-answering/"
+            )
+        },
     },
     {
         "id": "VQAv1",
         "display_name": "VQAv1",
         "task": "vqa_v1",
         "tags": ["All", "Visual"],
-        "description": (
-            "Open-ended question answering about visual content. From Agrawal "
-            "et al. '15. Link: https://arxiv.org/abs/1505.00468"
-        ),
+        "description": ("Open-ended question answering about visual content."),
+        "links": {"arXiv": "https://arxiv.org/abs/1505.00468"},
     },
     {
         "id": "VQAv2",
         "display_name": "VQAv2",
         "task": "vqa_v2",
         "tags": ["All", "Visual"],
-        "description": (
-            "Bigger, more balanced version of the original VQA dataset. From "
-            "Goyal et al. '16. Link: https://arxiv.org/abs/1612.00837"
-        ),
+        "description": ("Bigger, more balanced version of the original VQA dataset."),
+        "links": {"arXiv": "https://arxiv.org/abs/1612.00837"},
     },
     {
         "id": "VisDial",
@@ -608,9 +624,9 @@ task_list = [
         "tags": ["All", "Visual"],
         "description": (
             "Task which requires agents to hold a meaningful dialog about "
-            "visual content. From Das et al. '16. Link: "
-            "https://arxiv.org/abs/1611.08669"
+            "visual content."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1611.08669"},
     },
     {
         "id": "MNIST_QA",
@@ -629,9 +645,9 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "Task which requires agents to identify high quality answers "
-            "composed by professionals with deep domain knowledge. From Feng et "
-            "al. '15. Link: https://arxiv.org/abs/1508.01585"
+            "composed by professionals with deep domain knowledge."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1508.01585"},
     },
     {
         "id": "MS_MARCO",
@@ -641,9 +657,9 @@ task_list = [
         "description": (
             "A large scale Machine Reading Comprehension Dataset with questions "
             "sampled from real anonymized user queries and contexts from web "
-            "documents. From Nguyen et al. '16. Link: "
-            "https://arxiv.org/abs/1611.09268"
+            "documents."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1611.09268"},
     },
     {
         "id": "CLEVR",
@@ -653,9 +669,9 @@ task_list = [
         "description": (
             "A visual reasoning dataset that tests abilities such as attribute "
             "identification, counting, comparison, spatial relationships, and "
-            "logical operations. From Johnson et al. '16. Link: "
-            "https://arxiv.org/abs/1612.06890"
+            "logical operations."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1612.06890"},
     },
     {
         "id": "nlvr",
@@ -665,9 +681,9 @@ task_list = [
         "description": (
             "Cornell Natural Language Visual Reasoning (NLVR) is a language "
             "grounding dataset based on  pairs of natural language statements "
-            "grounded in synthetic images. From Suhr et al. '17. Link: "
-            "http://lic.nlp.cornell.edu/nlvr/"
+            "grounded in synthetic images."
         ),
+        "links": {"website": "http://lic.nlp.cornell.edu/nlvr/"},
     },
     {
         "id": "WMT",
@@ -685,9 +701,9 @@ task_list = [
         "tags": ["All", "MT", "decanlp"],
         "description": (
             "2014 International Workshop on Spoken Language task, currently "
-            "only includes en_de and de_en. From Cettolo et al. '12. Link: "
-            "wit3.fbk.eu"
+            "only includes en_de and de_en."
         ),
+        "links": {"website": "https://wit3.fbk.eu"},
     },
     {
         "id": "ConvAI2",
@@ -695,10 +711,12 @@ task_list = [
         "task": "convai2",
         "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
-            "A chit-chat dataset based on PersonaChat "
-            "(https://arxiv.org/abs/1801.07243) for a NIPS 2018 competition. "
-            "Link: http://convai.io/."
+            "A chit-chat dataset based on PersonaChat for a NIPS 2018 competition. "
         ),
+        "links": {
+            "arXiv": "https://arxiv.org/abs/1801.07243",
+            "website": "http://convai.io/",
+        },
     },
     {
         "id": "ConvAI_ChitChat",
@@ -707,8 +725,9 @@ task_list = [
         "tags": ["All", "ChitChat", "decanlp"],
         "description": (
             "Human-bot dialogues containing free discussions of randomly chosen "
-            "paragraphs from SQuAD. Link to dataset: http://convai.io/data/"
+            "paragraphs from SQuAD."
         ),
+        "links": {"website": "http://convai.io/data/"},
     },
     {
         "id": "Dialogue_QE",
@@ -718,7 +737,7 @@ task_list = [
         "description": (
             "Human-bot dialogues labelled for quality at the level of "
             "dialogues. Can be used to train dialogue-level metric for dialogue "
-            "systems. Link to dataset: http://convai.io/data/"
+            "systems."
         ),
     },
     {
@@ -729,8 +748,9 @@ task_list = [
         "description": (
             "Reading Comprehension with Multiple Hop. Including two datasets: "
             "WIKIHOP built on on wikipedia, MEDHOP built on paper abstracts from "
-            "PubMed. Link to dataset: http://qangaroo.cs.ucl.ac.uk/"
+            "PubMed."
         ),
+        "links": {"website": "http://qangaroo.cs.ucl.ac.uk/"},
     },
     {
         "id": "SCAN",
@@ -742,9 +762,12 @@ task_list = [
             "studying compositional learning and zero-shot generalization. The "
             "SCAN tasks were inspired by the CommAI environment, which is the "
             "origin of the acronym (Simplified versions of the CommAI Navigation "
-            "tasks). See the paper: https://arxiv.org/abs/1711.00350 or data: "
-            "https://github.com/brendenlake/SCAN"
+            "tasks)."
         ),
+        "links": {
+            "arXiv": "https://arxiv.org/abs/1711.00350",
+            "website": "https://github.com/brendenlake/SCAN",
+        },
     },
     {
         "id": "Persona-Chat",
@@ -753,9 +776,9 @@ task_list = [
         "tags": ["ChitChat", "All"],
         "description": (
             "A chit-chat dataset where paired Turkers are given assigned "
-            "personas and chat to try to get to know each other. See the paper: "
-            "https://arxiv.org/abs/1801.07243"
+            "personas and chat to try to get to know each other."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1801.07243"},
     },
     {
         "id": "TaskMaster",
@@ -766,10 +789,11 @@ task_list = [
             "A chit-chat dataset by GoogleAI providing high quality goal-oriented conversations"
             "The dataset hopes to provoke interest in written vs spoken language"
             "Both the datasets consists of two-person dialogs:"
-            "Spoken: Created using Wizard of Oz methodology.(woz-dialogs.json)"
-            "Written: Created by crowdsourced workers who were asked to write the full conversation themselves playing roles of both the user and assistant. (self-dialogs.json)"
-            "Link: https://ai.google/tools/datasets/taskmaster-1"
+            "Spoken: Created using Wizard of Oz methodology."
+            "Written: Created by crowdsourced workers who were asked to write the "
+            "full conversation themselves playing roles of both the user and assistant."
         ),
+        "links": {"website": "https://ai.google/tools/datasets/taskmaster-1"},
     },
     {
         "id": "Twitter",
@@ -777,10 +801,11 @@ task_list = [
         "task": "twitter",
         "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
-            "Twitter data from: https://github.com/Marsan-Ma/chat_corpus/. No "
+            "Twitter data found on GitHub. No "
             "train/valid/test split was provided so 10k for valid and 10k for "
             "test was chosen at random."
         ),
+        "links": {"website": "https://github.com/Marsan-Ma/chat_corpus/"},
     },
     {
         "id": "Wikipedia",
@@ -801,12 +826,12 @@ task_list = [
         "display_name": "Flickr30k",
         "task": "flickr30k",
         "tags": ["All", "Visual"],
-        "description": (
-            "30k captioned images pulled from Flickr compiled by UIUC: "
-            "http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/. Based "
-            "off of these papers: https://arxiv.org/abs/1505.04870v2, "
-            "http://aclweb.org/anthology/Q14-1006"
-        ),
+        "description": ("30k captioned images pulled from Flickr compiled by UIUC. "),
+        "links": {
+            "website": "http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/",
+            "paper1": "https://arxiv.org/abs/1505.04870v2",
+            "paper2": "http://aclweb.org/anthology/Q14-1006",
+        },
     },
     {
         "id": "COCO_Captions",
@@ -815,8 +840,8 @@ task_list = [
         "tags": ["All", "Visual"],
         "description": (
             "COCO annotations derived from the 2015 COCO Caption Competition. "
-            "Link to dataset: http://cocodataset.org/#download"
         ),
+        "links": {"website": "http://cocodataset.org/"},
     },
     {
         "id": "integration_tests",
@@ -832,9 +857,10 @@ task_list = [
         "tags": ["All", "ChitChat"],
         "description": (
             "Dataset collected during the wild evaluation of ConvaAI2 participants "
-            "bots (http://convai.io). 60% train, 20% valid and 20% test is chosen at "
+            "bots. 60% train, 20% valid and 20% test is chosen at "
             "random from the whole dataset."
         ),
+        "links": {"website": "http://convai.io"},
     },
     {
         "id": "sst",
@@ -843,11 +869,12 @@ task_list = [
         "tags": ["All", "decanlp"],
         "description": (
             "Dataset containing sentiment trees of movie reviews. We use the modified "
-            "binary sentence analysis subtask given by the DecaNLP paper here, "
-            "originally from Radford, et. al "
-            "https://nlp.stanford.edu/sentiment/index.html "
-            "https://github.com/openai/generating-reviews-discovering-sentiment/"
+            "binary sentence analysis subtask given by the DecaNLP paper here."
         ),
+        "links": {
+            "website": "https://nlp.stanford.edu/sentiment/index.html",
+            "website2": "https://github.com/openai/generating-reviews-discovering-sentiment/",
+        },
     },
     {
         "id": "cnn_dm",
@@ -856,19 +883,17 @@ task_list = [
         "tags": ["All", "decanlp"],
         "description": (
             "Dataset collected from CNN and the Daily Mail with summaries as labels, "
-            "Implemented as part of the DecaNLP task"
-            "Downloaded from https://cs.nyu.edu/~kcho/DMQA/"
+            "Implemented as part of the DecaNLP task."
         ),
+        "links": {"website": "https://cs.nyu.edu/~kcho/DMQA/"},
     },
     {
         "id": "qasrl",
         "display_name": "QA-SRL Semantic Role Labeling",
         "task": "qasrl",
         "tags": ["All", "decanlp"],
-        "description": (
-            "QA dataset implemented as part of the DecaNLP task. More info on the"
-            "dataset can be found here: https://dada.cs.washington.edu/qasrl/"
-        ),
+        "description": ("QA dataset implemented as part of the DecaNLP task."),
+        "links": {"website": "https://dada.cs.washington.edu/qasrl/"},
     },
     {
         "id": "qazre",
@@ -877,9 +902,9 @@ task_list = [
         "tags": ["All", "decanlp"],
         "description": (
             "Zero Shot relation extraction task implemented as part of the DecaNLP "
-            "task. More info on the dataset can be found here:"
-            "http://nlp.cs.washington.edu/zeroshot/"
+            "task."
         ),
+        "links": {"website": "http://nlp.cs.washington.edu/zeroshot/"},
     },
     {
         "id": "woz",
@@ -889,9 +914,9 @@ task_list = [
         "description": (
             "Dataset containing dialogues dengotiating a resturant reservation. "
             "Implemented as part of the DecaNLP task, focused on the change "
-            "in the dialogue state. Original paper: "
-            "https://arxiv.org/abs/1604.04562"
+            "in the dialogue state."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1604.04562"},
     },
     {
         "id": "wikisql",
@@ -900,17 +925,21 @@ task_list = [
         "tags": ["All", "decanlp"],
         "description": (
             "Dataset for parsing sentences to SQL code, given a table. "
-            "Implemented as part of the DecaNLP task. More info can be found here:"
-            "https://github.com/salesforce/WikiSQL"
+            "Implemented as part of the DecaNLP task."
         ),
+        "links": {"website": "https://github.com/salesforce/WikiSQL"},
     },
     {
         "id": "mwsc",
         "display_name": "MWSC pronoun resolution",
         "task": "mwsc",
         "tags": ["All", "decanlp"],
-        "description": "Resolving possible ambiguous pronouns. Implemented as part of the DecaNLP"
-        "task, and can be found on the decaNLP github",
+        "description": (
+            "Resolving possible ambiguous pronouns. "
+            "Implemented as part of the DecaNLP "
+            "task, and can be found on the decaNLP github."
+        ),
+        "links": {"website": "https://github.com/salesforce/decaNLP"},
     },
     {
         "id": "decanlp",
@@ -922,9 +951,11 @@ task_list = [
             "QA‑ZRE, WOZ, WikiSQL and MWSC) designed to challenge a model with a range "
             "of different tasks. Note that we use IWSLT 2014 instead of "
             "2016/2013test/2014test for train/dev/test as given in the DecaNLP paper. "
-            "See paper https://arxiv.org/abs/1806.08730 for more information and "
-            "github: https://github.com/salesforce/decaNLP for data sources"
         ),
+        "links": {
+            "arXiv": "https://arxiv.org/abs/1806.08730",
+            "github": "https://github.com/salesforce/decaNLP",
+        },
     },
     {
         "id": "Personality_Captions",
@@ -933,10 +964,12 @@ task_list = [
         "tags": ["All", "Visual"],
         "description": (
             "200k images from the YFCC100m dataset "
-            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/), "
-            "with captions conditioned on one of 215 personalities. See "
-            "https://arxiv.org/abs/1810.10665 for more information."
+            "with captions conditioned on one of 215 personalities."
         ),
+        "links": {
+            "website": "https://multimediacommons.wordpress.com/yfcc100m-core-dataset/",
+            "arXiv": "https://arxiv.org/abs/1810.10665",
+        },
         "notes": (
             "If you have already downloaded the images, please specify with "
             "the `--yfcc-path` flag, as the image download script takes a "
@@ -950,11 +983,13 @@ task_list = [
         "tags": ["All", "Visual", "ChitChat"],
         "description": (
             "202k dialogues and 401k utterances over 202k images from "
-            "the YFCC100m dataset"
-            "(https://multimediacommons.wordpress.com/yfcc100m-core-dataset/)"
+            "the YFCC100m dataset "
             "using 215 possible personality traits"
-            "see https://klshuster.github.io/image_chat/ for more information."
         ),
+        "links": {
+            "website": "https://klshuster.github.io/image_chat/",
+            "website2": "https://multimediacommons.wordpress.com/yfcc100m-core-dataset/",
+        },
         "notes": (
             "If you have already downloaded the images, please specify with "
             "the `--yfcc-path` flag, as the image download script takes a "
@@ -969,16 +1004,6 @@ task_list = [
         "description": ("Image Chat task to train generative model"),
     },
     {
-        "id": "TalkTheWalk",
-        "display_name": "Talk the Walk",
-        "task": "talkthewalk",
-        "tags": ["All", "Visual"],
-        "description": (
-            "Talk the walk dataset."
-            "See https://arxiv.org/abs/1807.03367 for more information."
-        ),
-    },
-    {
         "id": "Wizard_of_Wikipedia",
         "display_name": "Wizard_of_Wikipedia",
         "task": "wizard_of_wikipedia",
@@ -990,8 +1015,8 @@ task_list = [
             "test, and valid sets. The test and valid sets are split "
             "into two sets each: one with overlapping topics with the train "
             "set, and one with unseen topics."
-            "See https://arxiv.org/abs/1811.01241 for more information."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1811.01241"},
         "notes": (
             "To access the different valid/test splits (unseen/seen), specify "
             "the corresponding split (`random_split` for seen, `topic_split` "
@@ -1015,9 +1040,9 @@ task_list = [
             "A dataset of chitchat dialogues with strong annotations for "
             "topic, emotion and utterance act. This version contains both sides "
             "of every conversation, and uses the official train/valid/test splits "
-            "from the original authors. See https://arxiv.org/abs/1710.03957 "
-            "for more information."
+            "from the original authors."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1710.03957"},
     },
     {
         "id": "EmpatheticDialogues",
@@ -1026,9 +1051,11 @@ task_list = [
         "tags": ["All", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of 25k conversations grounded in emotional situations "
-            "to facilitate training and evaluating dialogue systems. See "
-            "https://arxiv.org/abs/1811.00207 for more information. \n"
-            "Dataset has been released under the CC BY-NC license. \n"
+            "to facilitate training and evaluating dialogue systems."
+            "Dataset has been released under the CC BY-NC license."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/1811.00207"},
+        "notes": (
             "EmpatheticDialoguesTeacher returns examples like so: \n\n"
             "  - [text]:  context line (previous utterance by 'speaker') \n"
             "  - [labels]: label line  (current utterance by 'listener') \n\n"
@@ -1049,11 +1076,11 @@ task_list = [
         "tags": ["All"],
         "description": (
             "Several datasets described in the paper Built it Break it Fix it "
-            "for Dialogue Safety: Robustness from Adversarial Human Attack "
-            "(see https://arxiv.org/abs/1908.06083 for more information). \n"
+            "for Dialogue Safety: Robustness from Adversarial Human Attack. "
             "All datasets are classification tasks in which the goal is to "
-            "determine if the text is offensive or \'safe\'."
+            "determine if the text is offensive or 'safe'."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1908.06083"},
     },
     {
         "id": "MultiWOZ",
@@ -1063,20 +1090,15 @@ task_list = [
         "description": (
             "A fully labeled collection of human-written conversations spanning"
             "over multiple domains and topics."
-            "(see http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"
-            " for more information). "
         ),
+        "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
     },
     {
         "id": "SelfChat",
         "display_name": "SelfChat",
         "task": "self_chat",
         "tags": [],
-        "description": (
-            "Not a dataset, but a generic world for model self-chats. "
-            "(see parlai/scripts/self_chat.py"
-            " for more information). "
-        ),
+        "description": "Not a dataset, but a generic world for model self-chats.",
     },
     {
         "id": "OneCommon",
@@ -1086,9 +1108,9 @@ task_list = [
         "description": (
             "A collaborative referring task which requires advanced skills "
             "of common grounding under continuous and partially-observable context. "
-            "This code also includes reference-resolution annotation "
-            "from Udagawa and Aizawa '19. Link: https://github.com/Alab-NII/onecommon"
+            "This code also includes reference-resolution annotation."
         ),
+        "links": {"website": "https://github.com/Alab-NII/onecommon"},
     },
     {
         "id": "IGC",
@@ -1097,9 +1119,9 @@ task_list = [
         "tags": ["All", "Visual", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of (image, context, question, answer) tuples, comprised "
-            "of eventful images taken from Bing, Flickr, and COCO. See "
-            "https://arxiv.org/abs/1701.08251 for more information."
+            "of eventful images taken from Bing, Flickr, and COCO."
         ),
+        "links": {"arXiv": "https://arxiv.org/abs/1701.08251"},
     },
     {
         "id": "ANLI",
@@ -1111,9 +1133,11 @@ task_list = [
             "collected via an iterative, adversarial human-and-model-in-the-loop procedure"
             "with the labels entailment, contradiction, and neutral. A total of three rounds "
             "of data are collected that progressively increase in difficulty and complexity."
-            "See https://github.com/facebookresearch/anli and https://arxiv.org/abs/1910.14599 "
-            "for more information."
         ),
+        "links": {
+            "github": "https://github.com/facebookresearch/anli",
+            "arXiv": "https://arxiv.org/abs/1910.14599",
+        },
     },
     {
         "id": "NLI",
@@ -1139,10 +1163,8 @@ task_list = [
         "display_name": "LIGHT Gender Bias",
         "task": "light_genderation_bias",
         "tags": ["All"],
-        "description": (
-            "Task for debiasing the LIGHT dataset, all mitigation methods described here: "
-            "<https://arxiv.org/abs/1911.03842>."
-        ),
+        "description": ("Task for debiasing the LIGHT dataset."),
+        "links": {"arXiv": "https://arxiv.org/abs/1911.03842"},
     },
     {
         "id": "AirDialogue",
@@ -1151,9 +1173,9 @@ task_list = [
         "tags": ["All", "Goal"],
         "description": (
             "Task for goal-oriented dialogue using airplane booking conversations "
-            "between agents and customers. Paper and toolkits for the dataset can be"
-            " found at <https://github.com/google/airdialogue>."
+            "between agents and customers."
         ),
+        "links": {"website": "https://github.com/google/airdialogue"},
     },
     {
         "id": "HollE",
@@ -1162,9 +1184,9 @@ task_list = [
         "tags": ["All", "ChitChat"],
         "description": (
             "Sequence of utterances and responses with background knowledge about"
-            "movies. From the Holl-E dataset. More information found at"
-            " https://github.com/nikitacs16/Holl-E."
+            "movies. From the Holl-E dataset."
         ),
+        "links": {"website": "https://github.com/nikitacs16/Holl-E"},
     },
     {
         "id": "ELI5",
@@ -1174,8 +1196,8 @@ task_list = [
         "description": (
             "This dataset contains Question and Answer data from Reddit "
             "explainlikeimfive posts and comments."
-            "Link: https://github.com/facebookresearch/ELI5/"
         ),
+        "links": {"website": "https://github.com/facebookresearch/ELI5/"},
     },
     {
         "id": "ReDial",
@@ -1183,9 +1205,9 @@ task_list = [
         "task": "redial",
         "tags": ["All", "ChitChat", "Goal"],
         "description": (
-            "Annotated dataset of dialogues where users recommend movies to eachother."
-            "See https://redialdata.github.io/website/ for more information."
+            "Annotated dataset of dialogues where users recommend movies to each other."
         ),
+        "links": {"website": "https://redialdata.github.io/website/"},
     },
     {
         "id": "DREAM",
@@ -1194,8 +1216,8 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "A multiple-choice answering dataset based on multi-turn, multi-party dialogue."
-            "More information can be found at: <https://dataset.org/dream/>."
         ),
+        "links": {"website": "https://dataset.org/dream/"},
     },
     {
         "id": "C3",
@@ -1204,8 +1226,8 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "A multiple-choice answering dataset in Chinese based on a prior passage."
-            "More information can be found at: <https://dataset.org/c3/>."
         ),
+        "links": {"website": "https://dataset.org/c3/"},
     },
     {
         "id": "CommonSenseQA",
@@ -1214,9 +1236,9 @@ task_list = [
         "tags": ["All", "QA"],
         "description": (
             "CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense "
-            "knowlegde to predict correct answers. More information found at "
-            "<https://www.tau-nlp.org/commonsenseqa>."
+            "knowlegde to predict correct answers."
         ),
+        "links": {"wesite": "https://www.tau-nlp.org/commonsenseqa"},
     },
     {
         "id": "StyleGen",

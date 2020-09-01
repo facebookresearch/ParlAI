@@ -93,7 +93,7 @@ class AbstractWrapperTeacher(Teacher, ABC):
         """
         Report metrics for the subtask.
         """
-        self.task.report()
+        return self.task.report()
 
     def reset(self):
         """
@@ -122,15 +122,6 @@ class AbstractWrapperTeacher(Teacher, ABC):
         shared['opt'] = self.opt
         shared['task'] = self.task.share()
         return shared
-
-    def shutdown(self):
-        """
-        Shutdown the subtask.
-        """
-        self.task.shutdown()
-
-    def update_counters(self):
-        self.task.update_counters()
 
 
 class LabelToTextTeacher(AbstractWrapperTeacher):

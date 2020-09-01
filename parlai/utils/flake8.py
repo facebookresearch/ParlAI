@@ -85,7 +85,7 @@ class ParlAIChecker:
                     yield (
                         line_no,
                         1,
-                        f'PAI101 autoformat.sh would reformat the docstring',
+                        'PAI101 autoformat.sh would reformat the docstring',
                         '',
                     )
 

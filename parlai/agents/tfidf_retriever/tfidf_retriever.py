@@ -17,6 +17,7 @@ except ImportError:
     )
 
 from parlai.core.agents import Agent
+from parlai.utils.io import PathManager
 from parlai.utils.misc import AttrDict
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
@@ -218,21 +219,19 @@ class TfidfRetrieverAgent(Agent):
 
     def save(self, path=None):
         self.rebuild()
-        with open(self.opt['model_file'] + '.opt', 'w') as handle:
+        with PathManager.open(self.opt['model_file'] + '.opt', 'w') as handle:
             json.dump(self.opt, handle)
-        with open(self.opt['model_file'], 'w') as f:
+        with PathManager.open(self.opt['model_file'], 'w') as f:
             f.write('\n')
 
     def train_act(self):
         if (
             'ordered' not in self.opt.get('datatype', 'train:ordered')
             or self.opt.get('batchsize', 1) != 1
-            or self.opt.get('numthreads', 1) != 1
             or self.opt.get('num_epochs', 1) != 1
         ):
             raise RuntimeError(
-                'Need to set --batchsize 1, --numthreads 1, \
-            --datatype train:ordered, --num_epochs 1'
+                'Need to set --batchsize 1, --datatype train:ordered, --num_epochs 1'
             )
         obs = self.observation
         self.current.append(obs)
@@ -319,6 +318,7 @@ class TfidfRetrieverAgent(Agent):
                 # could pick single choice based on probability scores?
                 # pick = int(choice(doc_ids, p=doc_probs))
                 reply['text'] = pick
+                reply['candidate_ids'] = doc_ids
             else:
                 # no cands and nothing found, return generic response
                 reply['text'] = choice(

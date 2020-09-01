@@ -16,6 +16,7 @@ from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from parlai.utils.typing import TShared
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -114,9 +115,9 @@ class ImageChatTeacher(FixedDialogTeacher):
         Load the data.
         """
         print('loading: ' + data_path)
-        with open(data_path) as f:
+        with PathManager.open(data_path) as f:
             self.data = json.load(f)
-        with open(personalities_data_path) as f:
+        with PathManager.open(personalities_data_path) as f:
             self.personalities = json.load(f)
 
     def reset(self):

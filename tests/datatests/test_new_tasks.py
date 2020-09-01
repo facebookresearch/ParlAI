@@ -25,7 +25,7 @@ class TestNewTasks(unittest.TestCase):
 
     def test_verify_data(self):
         parser = setup_args()
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         changed_task_files = [
             fn
             for fn in testing_utils.git_changed_files()
@@ -57,11 +57,11 @@ class TestNewTasks(unittest.TestCase):
 
             for subt in subtasks:
                 parser = setup_args()
-                opt = parser.parse_args(args=['--task', subt], print_args=False)
+                opt = parser.parse_args(args=['--task', subt])
                 opt['task'] = subt
                 try:
                     with testing_utils.capture_output():
-                        text, log = verify(opt, print_parser=False)
+                        text, log = verify(opt)
                 except Exception:
                     found_errors = True
                     traceback.print_exc()

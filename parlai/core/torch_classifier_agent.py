@@ -16,6 +16,7 @@ from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict
 from parlai.utils.typing import TScalar
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 
@@ -301,7 +302,7 @@ class TorchClassifierAgent(TorchAgent):
             )
         if not shared:
             if opt['classes_from_file'] is not None:
-                with open(opt['classes_from_file']) as f:
+                with PathManager.open(opt['classes_from_file']) as f:
                     self.class_list = f.read().splitlines()
             else:
                 self.class_list = opt['classes']
@@ -348,7 +349,9 @@ class TorchClassifierAgent(TorchAgent):
                 self.load(init_model)
             if self.use_cuda:
                 if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
+                    ph = PipelineHelper()
+                    ph.check_compatibility(self.opt)
+                    self.model = ph.make_parallel(self.model)
                 else:
                     self.model.cuda()
                 if self.data_parallel:

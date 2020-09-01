@@ -6,14 +6,13 @@
 """
 Generates a dictionary file from the training data.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  # learn the vocabulary from one task, then train on another task.
-  parlai build_dict -t convai2 --dict-file premade.dict
-  parlai train_model -t squad --dict-file premade.dict -m seq2seq
+```bash
+# learn the vocabulary from one task, then train on another task.
+parlai build_dict -t convai2 --dict-file premade.dict
+parlai train_model -t squad --dict-file premade.dict -m seq2seq
+```
 """
 
 from parlai.core.dict import DictionaryAgent
@@ -22,9 +21,9 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.utils.distributed import is_distributed
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 import copy
-import os
 import tqdm
 
 
@@ -70,7 +69,7 @@ def build_dict(opt, skip_if_built=False):
             'this param so the dictionary can be saved.'
         )
         return
-    if skip_if_built and os.path.isfile(opt['dict_file']):
+    if skip_if_built and PathManager.exists(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
         logging.debug("dictionary already built.")
         return None
@@ -82,7 +81,7 @@ def build_dict(opt, skip_if_built=False):
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
 
-    if os.path.isfile(opt['dict_file']) or (
+    if PathManager.exists(opt['dict_file']) or (
         hasattr(dictionary, 'is_prebuilt') and dictionary.is_prebuilt()
     ):
         # Dictionary already built, return loaded dictionary agent
@@ -96,11 +95,12 @@ def build_dict(opt, skip_if_built=False):
     cnt = 0
     # we use train set to build dictionary
 
-    ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
     ordered_opt['image_mode'] = 'no_image_model'
+
+    ordered_opt.log()
 
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):

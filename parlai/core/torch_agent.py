@@ -22,19 +22,18 @@ See below for documentation on each specific tool.
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
-import os
 import torch
 import parlai.utils.logging as logging
 from torch import optim
 
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
-from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
+from parlai.utils.io import PathManager
 from parlai.utils.fp16 import (
     fp16_apex_available,
     fp16_optimizer_wrapper,
@@ -366,7 +365,7 @@ class TorchAgent(ABC, Agent):
     P2_TOKEN = '__p2__'
 
     @classmethod
-    def optim_opts(self):
+    def optim_opts(cls):
         """
         Fetch optimizer selection.
 
@@ -647,7 +646,6 @@ class TorchAgent(ABC, Agent):
             type='nonestr',
             default=None,
             hidden=True,
-            choices=[None, 'end'],
             help='Add special token to the end of history encoding.',
         )
         agent.add_argument(
@@ -734,7 +732,7 @@ class TorchAgent(ABC, Agent):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
             # global_metrics keeps track of batch-level or global-level metrics
-            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1, shared=None)
+            self.global_metrics = Metrics(shared=None)
             # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
         else:
@@ -744,12 +742,7 @@ class TorchAgent(ABC, Agent):
             self.model = shared['model']
             self.criterion = shared['criterion']
             self.metrics = shared['metrics']
-            self.global_metrics = Metrics(
-                opt.get('numthreads', 1) > 1, shared=shared['global_metrics']
-            )
-
-        if opt.get('numthreads', 1) > 1:
-            torch.set_num_threads(1)
+            self.global_metrics = Metrics(shared=shared['global_metrics'])
 
         # Default to the class name, sans "Agent". child can override
         self.id = type(self).__name__.replace("Agent", "")
@@ -841,11 +834,11 @@ class TorchAgent(ABC, Agent):
         is_finetune = False
         if not shared:  # only do this on first setup
             # first check load path in case we need to override paths
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+            if opt.get('init_model') and PathManager.exists(opt['init_model']):
                 # check first for 'init_model' for loading model from file
                 init_model = opt['init_model']
                 is_finetune = True
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if opt.get('model_file') and PathManager.exists(opt['model_file']):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
                 is_finetune = False
@@ -861,7 +854,7 @@ class TorchAgent(ABC, Agent):
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
+                if PathManager.exists(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
 
         return init_model, is_finetune
@@ -893,7 +886,7 @@ class TorchAgent(ABC, Agent):
             return False
         datatype = self.opt.get('datatype', '')
         is_train = 'train' in datatype and 'evalmode' not in datatype
-        return is_train or self.opt.get('numthreads', 1) > 1
+        return is_train
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
@@ -1255,14 +1248,8 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
-
-        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
-            # move metrics and model to shared memory
-            self.metrics = SharedTable(self.metrics)
-            self.model.share_memory()
         shared['metrics'] = self.metrics
         shared['global_metrics'] = self.global_metrics.share()
-
         shared['dict'] = self.dict
         shared['model'] = self.model
         shared['criterion'] = self.criterion
@@ -1363,6 +1350,7 @@ class TorchAgent(ABC, Agent):
             obs['full_text'] = history_string
             if history_string:
                 obs['text_vec'] = history.get_history_vec()
+                obs['full_text_vec'] = history.get_history_vec()
 
         # check truncation
         if obs.get('text_vec') is not None:
@@ -1371,6 +1359,7 @@ class TorchAgent(ABC, Agent):
                 obs['text_vec'], truncate, truncate_left
             )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
+
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
@@ -1825,7 +1814,7 @@ class TorchAgent(ABC, Agent):
 
         if path:
             model_dict_path = path + '.dict'
-            if hasattr(self, 'dict') and not os.path.exists(
+            if hasattr(self, 'dict') and not PathManager.exists(
                 model_dict_path
             ):  # force save dictionary
                 # TODO: Look into possibly overriding opt('dict_file') with new path
@@ -2011,9 +2000,6 @@ class TorchAgent(ABC, Agent):
             self.global_metrics.add('ltps', GlobalTimerMetric(0))
             self.global_metrics.add('ctps', GlobalTimerMetric(0))
             self.global_metrics.add('tps', GlobalTimerMetric(0))
-
-        # Make sure we push all the metrics to main thread in hogwild/workers
-        self.global_metrics.flush()
 
         return batch_reply
 

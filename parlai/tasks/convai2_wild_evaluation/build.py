@@ -7,6 +7,7 @@
 import os
 import json
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 import parlai.core.build_data as build_data
 
 RESOURCES = [
@@ -44,13 +45,13 @@ def make_parlai_format(data: list, dpath: str):
     path_valid = os.path.join(dpath, 'valid.txt')
     path_test = os.path.join(dpath, 'test.txt')
 
-    with open(path_train, 'w') as f_train:
+    with PathManager.open(path_train, 'w') as f_train:
         f_train.write(data_train_txt)
 
-    with open(path_valid, 'w') as f_valid:
+    with PathManager.open(path_valid, 'w') as f_valid:
         f_valid.write(data_valid_txt)
 
-    with open(path_test, 'w') as f_test:
+    with PathManager.open(path_test, 'w') as f_test:
         f_test.write(data_test_txt)
 
 
@@ -73,11 +74,11 @@ def build(opt):
         output_fname = 'convai2_wild_evaluation.json'
         output_path = os.path.join(dpath, output_fname)
 
-        with open(output_path, 'r') as data_f:
+        with PathManager.open(output_path, 'r') as data_f:
             data = json.load(data_f)
 
         make_parlai_format(data, dpath)
-        os.remove(output_path)
+        PathManager.rm(output_path)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)

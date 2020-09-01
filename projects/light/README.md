@@ -41,17 +41,24 @@ _Addressing gender bias concerns in LIGHT_:
 - **[Queens are Powerful too: Mitigating Gender Bias in Dialogue Generation](https://arxiv.org/abs/1911.03842)**
 Emily Dinan, Angela Fan, Adina Williams, Jack Urbanek, Douwe Kiela, Jason Weston.
 
+_Deploying the LIGHT game for lifelong learning of models_:
 
+- **[Deploying Lifelong Open-Domain Dialogue Learning](https://arxiv.org/abs/2008.08076)**
+Kurt Shuster, Jack Urbanek, Emily Dinan, Arthur Szlam, Jason Weston.
 
 
 ## Datasets
 
-LIGHT currently features 663 locations, 3462 objects and 1755 character types,
-described entirely in natural language. Within that game world, we collect 11,000 episodes of 
+The original LIGHT dataset features 663 locations, 3462 objects and 1755 character types,
+described entirely in natural language. Within that game world, we collected 11,000 episodes of 
 character interactions (talking and acting).
 
 You can view the data or train your own ParlAI agent on the LIGHT tasks with
 `-t light_dialog`. See the [ParlAI quickstart for help](http://parl.ai/docs/tutorial_quick.html).
+
+An additional WILD dataset featuring 41,131 training episodes of dialogue from [deploying as a game](https://arxiv.org/abs/2008.08076)
+is available, using:
+`-t light_dialog_wild`. 
 
 ## Pretrained Models
 

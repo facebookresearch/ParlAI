@@ -6,6 +6,7 @@
 
 from parlai.core.teachers import DialogTeacher
 from .build import build
+from parlai.utils.io import PathManager
 from parlai.tasks.coco_caption.build_2014 import buildImage
 
 from PIL import Image
@@ -65,7 +66,7 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.visdial = json.load(data_file)
 
         self.questions = self.visdial['data']['questions']

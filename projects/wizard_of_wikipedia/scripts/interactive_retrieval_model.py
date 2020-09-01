@@ -29,5 +29,5 @@ if __name__ == '__main__':
         eval_candidates='fixed',
         interactive_mode=True,
     )
-    opt = parser.parse_args(print_args=False)
-    interactive(opt, print_parser=parser)
+    opt = parser.parse_args()
+    interactive(opt)

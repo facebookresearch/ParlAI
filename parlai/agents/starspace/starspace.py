@@ -12,6 +12,7 @@ from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import maintain_dialog_history, load_cands
 from parlai.core.torch_agent import TorchAgent
+from parlai.utils.io import PathManager
 from .modules import Starspace
 
 import torch
@@ -20,7 +21,6 @@ import torch.nn as nn
 from collections import deque
 
 import copy
-import os
 import random
 import json
 
@@ -191,7 +191,6 @@ class StarspaceAgent(Agent):
         self.history = {}
         self.debugMode = False
         if shared:
-            torch.set_num_threads(1)
             # set up shared properties
             self.dict = shared['dict']
             self.model = shared['model']
@@ -199,7 +198,7 @@ class StarspaceAgent(Agent):
             print("[ creating StarspaceAgent ]")
             # this is not a shared instance of this class, so do full init
             if opt.get('model_file') and (
-                os.path.isfile(opt.get('model_file') + '.dict')
+                PathManager.exists(opt.get('model_file') + '.dict')
                 or (opt['dict_file'] is None)
             ):
                 # set default dict-file if not set
@@ -208,7 +207,7 @@ class StarspaceAgent(Agent):
             self.dict = DictionaryAgent(opt)
 
             self.model = Starspace(opt, len(self.dict), self.dict)
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if opt.get('model_file') and PathManager.exists(opt['model_file']):
                 self.load(opt['model_file'])
             else:
                 self._init_embeddings()
@@ -435,7 +434,7 @@ class StarspaceAgent(Agent):
                     for c in negs:
                         print("neg: " + self.v2t(c.squeeze()))
                     print("---")
-                y = -torch.ones(xe.size(0))
+                y = -(torch.ones(xe.size(0)))
                 y[0] = 1
                 loss = self.criterion(xe, ye, y)
                 loss.backward()
@@ -586,9 +585,9 @@ class StarspaceAgent(Agent):
             data['model'] = self.model.state_dict()
             data['optimizer'] = self.optimizer.state_dict()
             data['opt'] = self.opt
-            with open(path, 'wb') as handle:
+            with PathManager.open(path, 'wb') as handle:
                 torch.save(data, handle)
-            with open(path + '.opt', 'w') as handle:
+            with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
     def load(self, path):

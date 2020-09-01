@@ -24,13 +24,10 @@ except ImportError:
 
 import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
-from parlai.core.loader import (
-    load_teacher_module,
-    load_agent_module,
-    load_world_module,
-)
+from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.core.opt import Opt
+from parlai.utils.io import PathManager
 
 from typing import List, Optional
 
@@ -39,6 +36,8 @@ def print_git_commit():
     """
     Print the current git commit of ParlAI and parlai_internal.
     """
+    if not GIT_AVAILABLE:
+        return
     root = os.path.dirname(os.path.dirname(parlai.__file__))
     internal_root = os.path.join(root, 'parlai_internal')
     try:
@@ -70,7 +69,7 @@ def print_announcements(opt):
     return
 
     noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
-    if os.path.exists(noannounce_file):
+    if PathManager.exists(noannounce_file):
         # user has suppressed announcements, don't do anything
         return
 
@@ -126,7 +125,7 @@ def get_model_name(opt):
         if model_file is not None:
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
-            if os.path.isfile(optfile):
+            if PathManager.exists(optfile):
                 new_opt = Opt.load(optfile)
                 model = new_opt.get('model', None)
     return model
@@ -696,14 +695,6 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden=True,
         )
         parlai.add_argument(
-            '-nt',
-            '--numthreads',
-            default=1,
-            type=int,
-            help='number of threads. Used for hogwild if batchsize is 1, else '
-            'for number of threads in threadpool loading,',
-        )
-        parlai.add_argument(
             '--hide-labels',
             default=False,
             type='bool',
@@ -953,16 +944,22 @@ class ParlaiParser(argparse.ArgumentParser):
         # set environment variables
         # Priority for setting the datapath (same applies for download_path):
         # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
-        if opt.get('download_path'):
-            os.environ['PARLAI_DOWNPATH'] = opt['download_path']
-        elif os.environ.get('PARLAI_DOWNPATH') is None:
-            os.environ['PARLAI_DOWNPATH'] = os.path.join(self.parlai_home, 'downloads')
         if opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = opt['datapath']
         elif os.environ.get('PARLAI_DATAPATH') is None:
-            os.environ['PARLAI_DATAPATH'] = os.path.join(self.parlai_home, 'data')
+            DEFAULT_DATAPATH = None
+            try:
+                # internal fbcode-wide default
+                import parlai_fb
 
-        opt['download_path'] = os.environ['PARLAI_DOWNPATH']
+                DEFAULT_DATAPATH = parlai_fb.DEFAULT_DATAPATH
+            except ImportError:
+                pass
+            if not DEFAULT_DATAPATH:
+                # TODO: switch to ~/.parlai/
+                DEFAULT_DATAPATH = os.path.join(self.parlai_home, 'data')
+            os.environ['PARLAI_DATAPATH'] = DEFAULT_DATAPATH
+
         opt['datapath'] = os.environ['PARLAI_DATAPATH']
 
         return opt
@@ -974,6 +971,7 @@ class ParlaiParser(argparse.ArgumentParser):
         if '_subparser' in self.opt:
             # if using the super command, we need to be aware of the subcommand's
             # arguments when identifying things manually set by the user
+            self.overridable.update(self.opt['_subparser'].overridable)
             extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
@@ -996,6 +994,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if args_that_override is None:
             args_that_override = _sys.argv[1:]
+
+        args_that_override = fix_underscores(args_that_override)
 
         for i in range(len(args_that_override)):
             if args_that_override[i] in option_strings_dict:
@@ -1043,24 +1043,24 @@ class ParlaiParser(argparse.ArgumentParser):
         self._process_args_to_opts(args)
         return self.opt, unknowns
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
+    def parse_args(self, args=None, namespace=None, **kwargs):
         """
         Parse the provided arguments and returns a dictionary of the ``args``.
 
         We specifically remove items with ``None`` as values in order to support the
         style ``opt.get(key, default)``, which would otherwise return ``None``.
         """
+        if 'print_args' in kwargs:
+            logging.error(
+                "You gave the print_args flag to parser.parse_args, but this is "
+                "no longer supported. Use opt.log() to print the arguments"
+            )
+            del kwargs['print_args']
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
 
         self._process_args_to_opts(args)
-
-        if print_args:
-            self.print_args()
-            if GIT_AVAILABLE:
-                print_git_commit()
-            print_announcements(self.opt)
-
+        print_announcements(self.opt)
         logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         assert '_subparser' not in self.opt
@@ -1171,31 +1171,9 @@ class ParlaiParser(argparse.ArgumentParser):
         self.error = _captured_error
         try:
             string_args = self._kwargs_to_str_args(**kwargs)
-            return self.parse_args(args=string_args, print_args=False)
+            return self.parse_args(args=string_args)
         finally:
             self.error = old_error
-
-    def print_args(self):
-        """
-        Print out all the arguments in this parser.
-        """
-        if not self.opt:
-            self.parse_args(print_args=False)
-        values = {}
-        for key, value in self.opt.items():
-            values[str(key)] = str(value)
-        for group in self._action_groups:
-            group_dict = {
-                a.dest: getattr(self.args, a.dest, None) for a in group._group_actions
-            }
-            namespace = argparse.Namespace(**group_dict)
-            count = 0
-            for key in sorted(namespace.__dict__):
-                if key in values:
-                    if count == 0:
-                        print('[ ' + group.title + ': ] ')
-                    count += 1
-                    print('[  ' + key + ': ' + values[key] + ' ]')
 
     def set_params(self, **kwargs):
         """

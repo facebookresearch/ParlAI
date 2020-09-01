@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.utils.io import PathManager
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from .build import build
@@ -140,12 +141,12 @@ class OeTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, annotation_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.ques = json.load(data_file)
 
         if not self.datatype.startswith('test'):
             print('loading: ' + annotation_path)
-            with open(annotation_path) as data_file:
+            with PathManager.open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
 
 

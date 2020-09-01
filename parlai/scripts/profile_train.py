@@ -6,15 +6,14 @@
 """
 Run the python or pytorch profiler and prints the results.
 
-Examples
---------
+## Examples
 
-To make sure that bAbI task 1 (1k exs) loads one can run and to
-see a few of them:
+To make sure that bAbI task 1 (1k exs) loads one can run and to see a
+few of them:
 
-.. code-block:: shell
-
-  parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+```shell
+parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+```
 """
 
 from parlai.core.params import ParlaiParser
@@ -60,9 +59,6 @@ def setup_args(parser=None):
 
 
 def profile(opt):
-    if isinstance(opt, ParlaiParser):
-        logging.error('profile should be passed opt not Parser')
-        opt = opt.parse_args()
     if opt['torch'] or opt['torch_cuda']:
         with torch.autograd.profiler.profile(use_cuda=opt['torch_cuda']) as prof:
             TrainLoop(opt).train()

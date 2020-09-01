@@ -9,6 +9,7 @@ from typing import Any, List
 
 import numpy as np
 
+from parlai.utils.io import PathManager
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
@@ -89,7 +90,8 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             ftpath = self.opt['fasttextloc']
             ftmodel = fastText.FastText.load_model(ftpath)
 
-        df = open(self.datapath).readlines()
+        with PathManager.open(self.datapath) as f:
+            df = f.readlines()
 
         turn_idx = 1
         responder_text_dialogue = []

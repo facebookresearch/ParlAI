@@ -30,6 +30,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 from parlai.core.metrics import (
     Metric,
@@ -144,6 +145,20 @@ class TorchGeneratorModel(nn.Module, ABC):
         self.register_buffer('START', torch.LongTensor([start_idx]))
         self.longest_label = longest_label
 
+    def _get_initial_forced_decoder_input(self, bsz: int, inputs: torch.LongTensor):
+        """
+        Return initial input to the decoder.
+
+        :param bsz:
+            batchsize
+        :param inputs:
+            inputs to decode
+
+        :return initial_input:
+            initial input for the decoder.
+        """
+        return torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
+
     def decode_forced(self, encoder_states, ys):
         """
         Decode with a fixed, true sequence, computing loss.
@@ -178,7 +193,7 @@ class TorchGeneratorModel(nn.Module, ABC):
                 "your model will have a double BOS token, which is probably not what "
                 "you intended."
             )
-        inputs = torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
+        inputs = self._get_initial_forced_decoder_input(bsz, inputs)
         latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
@@ -354,6 +369,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 ]
             del opt_from_disk['beam_blacklist_filename']
 
+        # 2020-08-04: Introduce full context beam blocking
+        # Previous, specifying --beam-context-block-ngram > 1 would block
+        # from generating ngrams from model's context, which is limited
+        # by truncation parameters. Now, we block on full dialogue history.
+        if 'beam_block_full_context' not in opt_from_disk:
+            warn_once('Loading model with `--beam-block-full-context false`')
+            opt_from_disk['beam_block_full_context'] = False
+
         return opt_from_disk
 
     @classmethod
@@ -388,6 +411,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             type=int,
             default=-1,
             help='Size n-grams to block in beam search. val <= 0 implies no blocking',
+        )
+        agent.add_argument(
+            '--beam-block-full-context',
+            type='bool',
+            default=True,
+            help='Block n-grams from the *full* history context. Specify False to block '
+            'up to m tokens in the past, where m is truncation parameter for agent',
         )
         agent.add_argument(
             '--beam-length-penalty',
@@ -448,6 +478,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_min_length = opt.get('beam_min_length', 1)
         self.beam_block_ngram = opt.get('beam_block_ngram', -1)
         self.beam_context_block_ngram = opt.get('beam_context_block_ngram', -1)
+        self.beam_block_full_context = opt.get('beam_block_full_context', False)
         self.temperature = opt.get('temperature', 1.0)
         assert self.temperature > 0, '--temperature must be greater than 0'
         self.output_token_losses = opt.get('verbose', False)
@@ -473,7 +504,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
             if self.use_cuda:
                 if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
+                    ph = PipelineHelper()
+                    ph.check_compatibility(self.opt)
+                    self.model = ph.make_parallel(self.model)
                 else:
                     self.model.cuda()
                 self.criterion.cuda()
@@ -623,10 +656,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         shared['beam_block_list'] = self.beam_block_list
         if hasattr(self, 'optimizer'):
             shared['optimizer'] = self.optimizer
-        if self.opt.get('numthreads', 1) > 1:
-            shared['states'] = {  # don't share optimizer states
-                'optimizer_type': self.opt['optimizer']
-            }
         return shared
 
     def vectorize(self, *args, **kwargs):
@@ -967,9 +996,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         Intentionally overridable for more complex model histories.
         """
-        return batch.text_vec[batch_idx]
+        ctxt = batch.text_vec[batch_idx]
+        if self.beam_block_full_context:
+            full_ctxt = batch.observations[batch_idx].get('full_text_vec', ctxt)
+            if not isinstance(full_ctxt, torch.Tensor):
+                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
+            ctxt = full_ctxt
+        return ctxt
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int, dev: torch.device):
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> torch.LongTensor:
         """
         Return initial input to the decoder.
 
@@ -981,15 +1018,36 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             device to send input to.
 
         :return initial_input:
-            initial input for the decoder.
+            initial input for the decoder
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.START_IDX]
-            )
+            torch.LongTensor([self.START_IDX])  # type: ignore
             .expand(bsz * beam_size, 1)
             .to(dev)
         )
+
+    def _get_next_decoder_input(
+        self,
+        prev_input: torch.LongTensor,
+        selection: torch.LongTensor,
+        incr_state_inds: torch.LongTensor,
+    ) -> torch.LongTensor:
+        """
+        Return next decoder input.
+
+        :param prev_input:
+            previous input to decoder
+        :param selection:
+            token selections for current timestep
+        :param inds:
+            incremental state indices
+
+        :return decoder input:
+            return decoder input for next timestep
+        """
+        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
+        decoder_input = torch.cat([prev_input, selection], dim=-1)
+        return decoder_input
 
     def _generate(
         self,
@@ -1092,11 +1150,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             incr_state = model.reorder_decoder_incremental_state(
                 incr_state, incr_state_inds
             )
-            decoder_input = torch.index_select(decoder_input, 0, incr_state_inds)
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]
             ).unsqueeze(-1)
-            decoder_input = torch.cat([decoder_input, selection], dim=-1)
+            decoder_input = self._get_next_decoder_input(
+                decoder_input, selection, incr_state_inds
+            )
 
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
@@ -1129,7 +1188,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         block_list_fn = self.opt['beam_block_list_filename']
         try:
-            with open(block_list_fn) as f:
+            with PathManager.open(block_list_fn) as f:
                 for line in f:
                     block_list.add(line.strip())
         except IOError:
