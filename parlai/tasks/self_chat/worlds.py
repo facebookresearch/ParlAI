@@ -42,7 +42,8 @@ def load_openers(opt) -> Optional[List[str]]:
         msg = task_world.get_acts()[0]
         # add only the first message in the episode
         if is_first_turn and msg.get('text'):
-            openers.add(msg['text'])
+            # in some datasets, openers are prepended with additional context
+            openers.add(msg['text'].split('\n')[-1])
         is_first_turn = msg.get('episode_done', False)
 
     print(f'[ loaded {len(openers)} openers ]')
