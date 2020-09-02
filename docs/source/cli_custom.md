@@ -12,11 +12,11 @@ The [`ParlaiScript`](parlai.core.script.ParlaiScript) class is the abstract clas
 
 #### `setup_args`
 
-The `setup_args` function returns a ParlaiParser with relevant command line args specified. As an example, the [`TrainModel`](parlai.scripts.train_model.TrainModel) adds several arguments required for training a model (number of train epochs, validation statistics, etc.).
+The `setup_args` function returns a ParlaiParser with relevant command line args specified. As an example, the [`TrainModel`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/train_model.py) script adds several arguments required for training a model (number of train epochs, validation statistics, etc.).
 
 #### `run`
 
-This is where you run whatever it is you're attempting to run in your script. In this script you'll have access to `self.opt`, which is an [`Opt`](parlai.core.opt.Opt) dictionary with the appropriate options filled in from `setup_args`.
+This is where you run whatever it is you're attempting to run in your script. In this function you'll have access to `self.opt`, which is an [`Opt`](parlai.core.opt.Opt) dictionary with the appropriate options filled in from `setup_args`.
 
 Suppose we want to write a script that loads a file and prints its length. We may start with the following signature:
 
@@ -45,9 +45,9 @@ class LengthScript(ParlaiScript):
 
 ```
 
-### Registering your Script
+### Registering a Script
 
-After writing your script, you can "register" your script to be picked up by the `parlai` global command. This can be achieved via importing the [`register_script`](parlai.core.script.register_script) function, and wrapping your script with the decorator, e.g. in the following way:
+After writing your script, you can "register" your script to be picked up by the `parlai` global command. This can be achieved via importing the `register_script` function, and wrapping your script with the decorator, e.g. in the following way:
 
 ```python
 from parlai.core.script import ParlaiScript, register_script
@@ -59,7 +59,7 @@ class LengthScript(ParlaiScript):
 
 ```
 
-### Running your script
+### Running a script
 
 Now that you've written and registered your script, it's time to run it!
 
