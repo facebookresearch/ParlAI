@@ -110,7 +110,11 @@ Additional flags can be used for self-chat.
 - `--num-self-chats`: the number of self-chats to generate (1 by default).
 - `--selfchat-max-turns`: the number of self-chat turns (6 by default), including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia topics) in addition to the model utterances. 
 - `--selfchat-task`: whether to create a self-chat version of the task. If True (by default), it creates a [SelfChatWorld](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/self_chat/worlds.py#L52) that allows for loading contexts (see [])and openers that seed the self-chat.
-- `--seed-messages-from-task`: whether to seed the self-chat with first utterances from the task dataset with specified datatype (`train:evalmode` by default). 
+- `--seed-messages-from-task`: whether to seed the self-chat with first utterances from the task dataset with specified datatype (`train:evalmode` by default).
+- `--outfile` specify file to save self chat logs.
+- `--save-format` specify the format to save self-chat logs in. Use `conversations` for jsonl format, or `parlai` for text format (default: conversations).
+- `--partner-model-file` allows self chat to be performed between two different models. If so, set this flag to one model and `-mf` and for the second one.
+- `--partner-opt-file` (optional) use this to define an opt file containing args to override for `--partner_model_file`. 
 
 :::{warning} WARNING
 To initialize a list of openers to seed the selfchat, the default method of [init_openers](https://github.com/facebookresearch/ParlAI/blob/dbae75bcbe9fd15691d2d724c5107d7489cac000/parlai/tasks/self_chat/worlds.py#L76-L82) skim through each episode of the task dataset and extract the first dialogue turn, which might itself contain context information, such as persona, in addition to the first dialogue messages. When using the `--seed-messages-from-task`, override the [load_openers](https://github.com/facebookresearch/ParlAI/blob/dbae75bcbe9fd15691d2d724c5107d7489cac000/parlai/tasks/self_chat/worlds.py#L17) in seed with the desired
@@ -133,8 +137,12 @@ This handy script can prettify the display of json file of chats
 
 ```bash
 # Display conversation in HTML format.
-python parlai/scripts/convo_render.py projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html 
+python parlai/scripts/convo_render.py -i projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html 
 ```
+
+Additional flags can be used for convo-render.
+
+- `--num-examples` the number of conversations to render from the json file (10 by default).
 
 Internal Agents, Tasks and More
 -------------------------------
