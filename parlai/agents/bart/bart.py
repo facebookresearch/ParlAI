@@ -24,7 +24,9 @@ from parlai.core.agents import compare_init_model_opts
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch, History, TorchAgent
+from parlai.core.torch_agent import History
+from parlai.core.torch_generator_agent import PPLMetric
+from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
@@ -140,14 +142,6 @@ class BartAgent(TransformerGeneratorAgent):
             )
         return model
 
-    def vectorize(self, *args, **kwargs):
-        """
-        Override vectorize for generative models.
-        """
-        kwargs['add_start'] = True  # need start token for BART
-        kwargs['add_end'] = True
-        return TorchAgent.vectorize(self, *args, **kwargs)
-
     def _set_text_vec(
         self, obs: Message, history: History, truncate: Optional[int]
     ) -> Message:
@@ -171,42 +165,70 @@ class BartAgent(TransformerGeneratorAgent):
         self, bsz: int, beam_size: int, dev: torch.device
     ) -> torch.LongTensor:
         """
-        Override to seed decoder with EOS token.
-
-        See docstring for `BartAgent._generate` for more details.
+        Override to seed decoder with EOS BOS token.
         """
         return (
             torch.LongTensor(  # type: ignore
-                [self.END_IDX]
+                [self.END_IDX, self.START_IDX]
             )
-            .expand(bsz * beam_size, 1)
+            .expand(bsz * beam_size, 2)
             .to(dev)
         )
 
-    def _generate(
-        self,
-        batch: Batch,
-        beam_size: int,
-        max_ts: int,
-        prefix_tokens: Optional[torch.LongTensor] = None,
-    ):
+    def compute_loss(self, batch, return_output=False):
         """
-        Override to set prefix_tokens.
-
-        For bart pretraining, a bos token was added to the input.
-
-        input to encoder:
-        <bos> seq <eos>
-
-        input to decoder:
-        <eos> <bos> seq
-
-        target is:
-        <bos> seq <eos>
+        Override TGA.compute_loss to ignore start token.
         """
-        text_vec = batch.text_vec  # type: ignore
-        if text_vec is not None:
-            prefix_tokens = text_vec.new_zeros(  # type: ignore
-                (text_vec.size(0), 1)
-            ).fill_(self.START_IDX)
-        return super()._generate(batch, beam_size, max_ts, prefix_tokens)
+        if batch.label_vec is None:
+            raise ValueError('Cannot compute loss without a label.')
+        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        scores, preds, *_ = model_output
+
+        if scores.size(1) != batch.label_vec.size(1):
+            # ignore start
+            scores = scores[:, 1:, :]
+            preds = preds[:, 1:]
+
+        score_view = scores.reshape(-1, scores.size(-1))
+        loss = self.criterion(score_view, batch.label_vec.view(-1))
+        loss = loss.view(scores.shape[:-1]).sum(dim=1)
+        # save loss to metrics
+        notnull = batch.label_vec.ne(self.NULL_IDX)
+        target_tokens = notnull.long().sum(dim=-1)
+        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
+
+        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        self.record_local_metric(
+            'token_acc', AverageMetric.many(correct, target_tokens)
+        )
+        # actually do backwards loss
+        loss = loss.sum()
+        loss /= target_tokens.sum()  # average loss per token
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss
+
+    def _construct_token_losses(self, labels, model_output):
+        """
+        Override TGA._construct_token_losses to ignore start token.
+        """
+        # Get non-aggregated losses
+        scores, _, _ = model_output
+        scores = scores[:, 1:, :]  # ignore start token
+        score_view = scores.reshape(-1, scores.size(-1))
+        losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
+
+        # Zip decoded tokens with losses
+        token_losses = []
+        for i, label in enumerate(labels):
+            token_losses.append(
+                list(
+                    zip(
+                        [self.dict[token] for token in label.tolist()],
+                        losses[i].tolist(),
+                    )
+                )
+            )
+        return token_losses

@@ -1,7 +1,29 @@
-<p align="center"><img width="70%" src="docs/source/\_static/img/parlai.png" /></p>
+<p align="center">
+ <img width="70%" src="docs/source/\_static/img/parlai.png" />
+</p>
 
-[![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE) [![PyPI](https://img.shields.io/pypi/v/parlai?color=blue&label=release)](https://pypi.org/project/parlai/) [![CircleCI](https://img.shields.io/circleci/build/github/facebookresearch/ParlAI/master)](https://circleci.com/gh/facebookresearch/ParlAI/tree/master) [![Coverage](https://img.shields.io/codecov/c/github/facebookresearch/ParlAI)](https://codecov.io/gh/facebookresearch/ParlAI) ![GitHub contributors](https://img.shields.io/github/contributors/facebookresearch/ParlAI) [![Twitter](https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social)](https://twitter.com/parlai_parley)
---------------------------------------------------------------------------------
+<p align="center">
+   <a href="https://github.com/facebookresearch/ParlAI/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="CircleCI" />
+  </a>
+   <a href="https://pypi.org/project/parlai/">
+    <img src="https://img.shields.io/pypi/v/parlai?color=blue&label=release" alt="CircleCI" />
+  </a>
+    <a href="https://circleci.com/gh/facebookresearch/ParlAI/tree/master">
+    <img src="https://img.shields.io/circleci/build/github/facebookresearch/ParlAI/master" alt="Coverage" />
+  </a>
+    <a href="https://codecov.io/gh/facebookresearch/ParlAI">
+    <img src="https://img.shields.io/codecov/c/github/facebookresearch/ParlAI" alt="GitHub contributors" />
+  </a>
+    <a href="https://img.shields.io/github/contributors/facebookresearch/ParlAI">
+    <img src="https://img.shields.io/github/contributors/facebookresearch/ParlAI"/>
+  </a>
+    <a href="https://twitter.com/parlai_parley">
+    <img src="https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social" alt="Twitter" />
+  </a>
+ </p>
+ 
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 [ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
 sharing, training and testing dialogue models, from open-domain chitchat to
@@ -28,7 +50,7 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3.6 and [Pytorch](https://pytorch.org) 1.4. *It does not work with pytorch 1.5*.
+ParlAI currently requires Python3.6 and [Pytorch](https://pytorch.org) 1.4 or higher. *It does not work with pytorch 1.5.0*, but is fine with 1.5.1 and 1.6.0.
 Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
 models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents)) have additional requirements.
 
