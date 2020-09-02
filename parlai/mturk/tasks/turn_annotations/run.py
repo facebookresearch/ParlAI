@@ -79,7 +79,7 @@ def run_task(override_opt: Optional[dict] = None):
         help='base folder for saving all worker answer results during onboarding',
     )
     argparser.add_argument(
-        '--blocklist-paths',
+        '--worker-blocklist-paths',
         default=None,
         type=str,
         help='Path(s) to a list of IDs of workers to soft-block, separated by newlines. Use commas to indicate multiple lists',
@@ -148,6 +148,15 @@ def run_task(override_opt: Optional[dict] = None):
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     opt.update(opt['hit_config'])
+
+    # Read in workers to soft-block
+    if opt.get('worker_blocklist_paths') is not None:
+        blocklist_paths = opt['worker_blocklist_paths'].split(',')
+        worker_blocklist = set()
+        for path in blocklist_paths:
+            with open(path) as f:
+                worker_blocklist |= set(f.read().strip().split('\n'))
+        opt['worker_blocklist'] = worker_blocklist
 
     # Read in and define text shown to users
     if opt.get('hit_config') is None:
@@ -225,19 +234,15 @@ def run_task(override_opt: Optional[dict] = None):
 
         if not opt['is_sandbox']:
             # Soft-block all chosen workers
-            if opt['blocklist_paths'] is not None and len(opt['blocklist_paths']) > 0:
-                print('About to soft-block workers in the input list(s).')
-                blocklist_paths = opt['blocklist_paths'].split(',')
-                for path in blocklist_paths:
-                    with open(path) as f:
-                        workers_to_block = f.read().strip().split('\n')
-                    for w in set(workers_to_block):
-                        try:
-                            print('Soft Blocking {}\n'.format(w))
-                            mturk_manager.soft_block_worker(w)
-                        except Exception as e:
-                            print(f'Did not soft block worker {w}: {e}')
-                        time.sleep(0.1)
+            if len(opt['worker_blocklist']) > 0:
+                print(f"About to soft-block {len(opt['worker_blocklist'])} workers.")
+                for w in set(opt['worker_blocklist']):
+                    try:
+                        print('Soft Blocking {}\n'.format(w))
+                        mturk_manager.soft_block_worker(w)
+                    except Exception as e:
+                        print(f'Did not soft block worker {w}: {e}')
+                    time.sleep(0.1)
             else:
                 print(
                     'WARNING: We are in live mode, but a list of workers to soft-block '
