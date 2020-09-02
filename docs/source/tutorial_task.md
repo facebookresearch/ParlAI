@@ -17,7 +17,7 @@ For a fast way to add a new dataset, go to the **Quickstart** below.
 For more complete instructions, or a more complicated setup (like streaming large data), go to the section **Creating a new task: _the more complete way_**.
 
 
-# Quickstart: Adding a new dataset
+## Quickstart: Adding a new dataset
 
 Let's look at the easiest way of getting a new dataset into ParlAI
 first.
@@ -72,7 +72,7 @@ result in the same data used for train, validation and test. See the next
 section on how to have separate folds.
 :::
 
-## Handling Separate Train/Valid/Test data
+### Handling Separate Train/Valid/Test data
 
 Once you've gotten the basics of a data working above, you might want to
 separate out the data into specific train/valid/test sets, as the above
@@ -87,7 +87,7 @@ This will cause the system to add the `_train.txt`, `_valid.txt`, and
 `_test.txt` suffixes at the appropriate times during training,
 evaluation, etc.
 
-# Creating a new task: _the more complete way_
+## Creating a new task: _the more complete way_
 
 Of course after your first hacking around you may want to actually check
 this code in so that you can share it with others!
@@ -114,7 +114,7 @@ Below we go into more details for each of these steps.
 
 (part1)=
 
-## Part 1: Building the Data
+### Part 1: Building the Data
 
 :::{note} Loading data locally from disk
 If you do not intend to commit your task to ParlAI, and instead wish to load your data locally from disk for your own purposes, you can skip this section and go straight to Part 2.
@@ -179,14 +179,14 @@ def build(opt):
 
 (part2)=
 
-## Part 2: Creating the Teacher
+### Part 2: Creating the Teacher
 
 Now that we have our data, we need an agent that understand the task's
 structure and is able to present it. In other words, we need a
 `Teacher`. Every task requires an `agents.py` file in which we define
 the agents for the task. It is there that we will define our teacher.
 
-### Which base teacher should I use?
+#### Which base teacher should I use?
 
 We will describe three possible teachers to subclass; you can choose one of them based on your needs:
 1. `ParlAIDialogTeacher`: This is the simplest method available, and expects to load a text file of data in **ParlAI Dialog format** (described above). More details are shown in the section [ParlAIDialogTeacher](parlaidialogteacher).
@@ -201,7 +201,7 @@ which adjusts its response based on the received input rather than using
 fixed logs is better suited to this approach.
 
 (parlaidialogteacher)=
-### ParlAIDialogTeacher
+#### ParlAIDialogTeacher
 
 For this class, the user must implement at least an `__init__()`
 function, and often only that.
@@ -274,7 +274,7 @@ parlai display_data -t twitter
 ```
 
 (dialogteacher)=
-### DialogTeacher
+#### DialogTeacher
 
 For this class, the user must also implement their own `setup_data()`
 function, but the rest of the work of supporting hogwild or batching,
@@ -343,7 +343,7 @@ def setup_data(self, path):
                 question = qa['question']
                 answers = tuple(a['text'] for a in qa['answers'])
                 context = paragraph['context']
-                yield (context + '\n' + question, answers), True
+                yield {"text": content + "\n" + question, "labels": answers}, True
 ```
 
 As we can see from the code above, for this task, each
@@ -368,7 +368,7 @@ class DefaultTeacher(SquadTeacher):
 And we have finished building our task.
 
 (chunkteacher)=
-### Chunk Teacher
+#### Chunk Teacher
 
 Chunk Teacher is useful for streaming large amounts of data
 (*read: does not fit into memory*), that naturally separate
@@ -454,7 +454,7 @@ your chunk data.
 
 
 (fromscratch)=
-### Task from Scratch
+#### Task from Scratch
 
 In this case, one would inherit from the Teacher class. For this class,
 at least the `act()` method and probably the `observe()` method must be
@@ -516,7 +516,7 @@ dictionary. Sample entries for our tasks are presented below.
 
 (part4)=
 
-## Part 4: Executing the Task
+### Part 4: Executing the Task
 
 A simple way of testing the basic functionality in a task is to run the
 `display_data.py` example in the `examples` directory. Now that the work
