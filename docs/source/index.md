@@ -16,6 +16,7 @@ tutorial_metrics
 tutorial_fast
 tutorial_mturk
 tutorial_chat_service
+tutorial_tests
 tutorial_tipsntricks
 ```
 
