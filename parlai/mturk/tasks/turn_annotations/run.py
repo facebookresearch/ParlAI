@@ -29,6 +29,7 @@ def run_task(override_opt: Optional[dict] = None):
     each utterance of the bot for various buckets (see constants).
     """
 
+    task_specs_folder = os.path.join(os.path.realpath(__file__), 'task_specs')
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
@@ -109,19 +110,19 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--hit-config-path',
-        default=None,
+        default=os.path.join(task_specs_folder, 'hit_config.json'),
         type=str,
         help='Path to file of parameters describing how MTurk will describe the HIT to the workers',
     )
     argparser.add_argument(
         '--task-description-path',
-        default=None,
+        default=os.path.join(task_specs_folder, 'task_description.html'),
         type=str,
         help='Path to file of HTML to show on the task-description page',
     )
     argparser.add_argument(
         '--left-pane-text-path',
-        default=None,
+        default=os.path.join(task_specs_folder, 'left_pane_text.html'),
         type=str,
         help='Path to file of HTML to show in the left-hand pane of the chat window',
     )
@@ -133,13 +134,13 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--annotations-config-path',
-        default=None,
+        default=os.path.join(task_specs_folder, 'annotations_config.json'),
         type=str,
         help='Path to JSON of annotation categories',
     )
     argparser.add_argument(
         '--onboard-task-data-path',
-        default=None,
+        default=os.path.join(task_specs_folder, 'onboard_task_data.json'),
         type=str,
         help='Path to JSON containing settings for running onboarding',
     )

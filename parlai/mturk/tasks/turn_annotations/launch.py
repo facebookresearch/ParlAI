@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+
 from parlai.mturk.tasks.turn_annotations.run import run_task
 from parlai.core.params import ParlaiParser
 
@@ -13,7 +14,6 @@ def launch():
     """
     Convenience function to avoid launching from the command line all the time.
     """
-
     argparser = ParlaiParser(False, False)
     datapath = os.path.join(argparser.parlai_home, 'data')
     task_folder = 'turn_annotations'
@@ -32,6 +32,14 @@ def launch():
         'reward': 3,
         'num_turns': 6,
         'conversations_needed': models_needed_dict,
+        'task_model_parallel': True,
+        'worker_blocklist': [],
+        'check_acceptability': False,
+        'include_persona': False,
+        'conversation_start_mode': 'hi',
+        'annotations_intro': 'Does this comment from your partner have any of the following attributes? (Check all that apply)',
+        'annotations_config_path': 'TODO_FIXME_ANNOTATIONS_CONFIG_PATH',
+        'onboard_task_data_path': 'TODO_FIXME_ONBOARD_TASK_DATA_PATH',
     }
     for k, _ in override_opt.items():
         if 'TODO_FIXME' in str(override_opt[k]):
