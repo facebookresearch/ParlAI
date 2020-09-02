@@ -47,6 +47,7 @@ cli_advanced
 :maxdepth: 2
 :caption: API Reference
 
+chat_service
 core
 utils
 ```

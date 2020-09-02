@@ -17,7 +17,7 @@ If you'd like to use a service outside of the 4 listed above, please read [here]
 
 ## Overview
 
-As stated, humans messaging on chat services can be viewed as a type of agent in ParlAI, communicating with models via observations and action dicts. You can find the implementation of `ChatServiceAgent`s [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/core/agents.py). Human agents are placed in worlds with ParlAI agent(s) and possibly other humans, and the world defines how each of these agents interacts.
+As stated, humans messaging on chat services can be viewed as a type of agent in ParlAI, communicating with models via observations and action dicts. Human agents, which are [`ChatServiceAgents`](parlai.chat_service.core.agents.ChatServiceAgent) are placed in worlds with ParlAI agent(s) and possibly other humans, and the world defines how each of these agents interacts.
 
 The chat environment is defined by the **task**. A task typically consists of an `Overworld`, which can spawn subtasks (subworlds) or serve as a "main menu", allowing people to pick from multiple conversation options. The task definition resides in a config file, `config.yml`, which contains all available worlds and any additional commandline arguments.
 
