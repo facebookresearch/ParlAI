@@ -36,6 +36,13 @@ def run_task(override_opt: Optional[dict] = None):
         '-num_t', '--num_turns', default=6, type=int, help='minimum number of turns'
     )
     argparser.add_argument(
+        '--conversations-needed',
+        dest='conversations_needed_string',
+        default=None,
+        type=str,
+        help='Number of convos needed for each model. For example: "modelA:50,modelB:20"',
+    )
+    argparser.add_argument(
         '--task-model-parallel',
         default=True,
         type=bool,
@@ -170,6 +177,15 @@ def run_task(override_opt: Optional[dict] = None):
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     opt.update(opt['hit_config'])
+
+    # Set the number of conversations needed
+    if opt.get('conversations_needed_string') is not None:
+        parts = opt['conversations_needed_string'].split(',')
+        conversations_needed = []
+        for part in parts:
+            model_name, num_string = part.split(':')
+            conversations_needed[model_name] = int(num_string)
+        opt['conversations_needed'] = conversations_needed
 
     # Read in workers to soft-block
     if opt.get('worker_blocklist_paths') is not None:

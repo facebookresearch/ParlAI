@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import re
-from typing import List
+from typing import Iterable, List
 
 from parlai.utils.safety import OffensiveStringMatcher
 
@@ -15,10 +15,20 @@ class AcceptabilityChecker:
         self.offensive_lang_detector = OffensiveStringMatcher()
 
     def check_messages(
-        self, messages: List[str], is_worker_0: bool, penalize_greetings: bool = True
+        self,
+        messages: List[str],
+        is_worker_0: bool,
+        skip_violation_types: Iterable[str] = (),
     ) -> str:
         """
         Returns a list of acceptability guidelines that the input messages violate.
+
+        :param messages: List of all messages by one speaker
+        :param is_worker_0: True if `messages` represent the messages from the first
+            speaker in the conversation
+        :param skip_violation_types: Set of all violation types to skip checking
+            messages for
+        :return: comma-separated list of all violations
         """
 
         if len(messages) == 0:
@@ -28,16 +38,17 @@ class AcceptabilityChecker:
         violations = []
 
         # Do messages have the minimum acceptable average number of words?
-        total_num_words = sum([len(message.split()) for message in messages])
-        if total_num_words / len(messages) < 3:
-            violations.append('under_min_length')
+        if 'min_words' not in skip_violation_types:
+            total_num_words = sum([len(message.split()) for message in messages])
+            if total_num_words / len(messages) < 3:
+                violations.append('under_min_length')
 
         # Does the first message start with a greeting, indicating that the Turker
         # hasn't understood the directions (i.e. continue along with the previous lines
         # of conversation)? Only penalize the worker who speaks first for this, because
         # the worker who speaks second should not be at fault if the first worker does
         # this and the second just follows along.
-        if penalize_greetings:
+        if 'penalize_greetings' not in skip_violation_types:
             greetings = [
                 'hi',
                 'hii',
@@ -61,21 +72,24 @@ class AcceptabilityChecker:
                 violations.append('starts_with_greeting')
 
         # Does the Turker tend to speak in all caps?
-        num_all_caps = sum([message == message.upper() for message in messages])
-        if num_all_caps >= 2 or (num_all_caps == 1 and len(messages) == 1):
-            violations.append('too_much_all_caps')
+        if 'all_caps' not in skip_violation_types:
+            num_all_caps = sum([message == message.upper() for message in messages])
+            if num_all_caps >= 2 or (num_all_caps == 1 and len(messages) == 1):
+                violations.append('too_much_all_caps')
 
         # Are later messages an exact match of the first one?
-        if len(messages) >= 2:
-            c = messages[0]
-            if exact_match(c, messages[1:]):
-                violations.append('exact_match')
+        if 'exact_match' not in skip_violation_types:
+            if len(messages) >= 2:
+                c = messages[0]
+                if exact_match(c, messages[1:]):
+                    violations.append('exact_match')
 
         # Do the messages not pass the safety classifier?
-        for idx, message in enumerate(messages):
-            if self.offensive_lang_detector.contains_offensive_language(message):
-                violations.append(f'unsafe:{idx+1:d}')
-                # The messages are 1-indexed
+        if 'safety' not in skip_violation_types:
+            for idx, message in enumerate(messages):
+                if self.offensive_lang_detector.contains_offensive_language(message):
+                    violations.append(f'unsafe:{idx+1:d}')
+                    # The messages are 1-indexed
 
         return ','.join(violations)
 
