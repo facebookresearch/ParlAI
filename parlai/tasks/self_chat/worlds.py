@@ -87,6 +87,9 @@ class SelfChatWorld(DialogPartnerWorld):
         Override to return one or more opening messages with which to seed the self chat
         episode.
 
+        `episode_num` is provided in case you want to override this function and return
+        openers in some predictable order.
+
         The return value should be an array of strings, each string being a message in
         response to the string before it.
         """
