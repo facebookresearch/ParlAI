@@ -142,9 +142,31 @@ def run_task(override_opt: Optional[dict] = None):
         type=str,
         help='Text to show when asking worker to make their final rating',
     )
+
+    # NOTE: you have to set all three of these opts to enforce the MTurk core
+    # param max_hits_per_worker.
+    #  - Without unique_qual_name, MTurkManager creates different qualification
+    #    for each run (so a worker could do N hits per run) Also, the
+    #    worker has to get to N HITs in at least one run or they won't be given
+    #    the qualification.
+    #  - allowed_conversations is like max concurrent conversations
+    #    allowed_conversations needs to be 1 or the actual max would be N +
+    #    allowed_conversations. Worker gets notified via frontend message that
+    #    they aren't eligible (second description screen), UNLESS the frontend
+    #    overwrites that functionality.
+    # There's also still a race condition where the worker might be able to open
+    # 1 extra task
+    argparser.set_defaults(
+        unique_qual_name='turn_annotations_max_submissions',
+        max_hits_per_worker=10,
+        allowed_conversations=3,
+    )
+
     if override_opt is not None:
         argparser.set_params(**override_opt)
-    opt = argparser.parse_args()
+        opt = argparser.parse_args([])
+    else:
+        opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     opt.update(opt['hit_config'])
@@ -174,23 +196,6 @@ def run_task(override_opt: Optional[dict] = None):
     if opt.get('onboard_task_data') is None:
         with open(opt['onboard_task_data_path']) as f:
             opt['onboard_task_data'] = json.load(f)
-
-    # NOTE: you have to set all three of these opts to enforce the MTurk core
-    # param max_hits_per_worker.
-    #  - Without unique_qual_name, MTurkManager creates different qualification
-    #    for each run (so a worker could do N hits per run) Also, the
-    #    worker has to get to N HITs in at least one run or they won't be given
-    #    the qualification.
-    #  - allowed_conversations is like max concurrent conversations
-    #    allowed_conversations needs to be 1 or the actual max would be N +
-    #    allowed_conversations. Worker gets notified via frontend message that
-    #    they aren't eligible (second description screen), UNLESS the frontend
-    #    overwrites that functionality.
-    # There's also still a race condition where the worker might be able to open
-    # 1 extra task
-    opt['unique_qual_name'] = 'turn_annotations_max_submissions'
-    opt['max_hits_per_worker'] = 10
-    opt['allowed_conversations'] = 3
 
     # Limits the number of models that can generate at once
     max_concurrent_responses = 1
