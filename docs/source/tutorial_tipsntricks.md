@@ -89,7 +89,7 @@ do this with:
 # Self-chatting Poly-Encoder model on ConvAI2
 python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t convai2 --inference topk --num-self-chats 10 --display-examples True -dt valid
 ```
-will generate 10 selfchats between 2 poly-encoder models 
+will generate 10 selfchats between 2 poly-encoder model of the exact same model opt.
 
 The task set by '-t' (in the above case "convai2:selfchat") links to a
 parlAI world that handles the particular nature of interactions, see
@@ -107,8 +107,23 @@ python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/mo
 
 Additional flags can be used for self-chat.
 
-- `--num-self-chats` set the number of self-chats to generate.
-- `--selfchat-max-turns` is the number of dialogue turns for each self-chat generated. This is the total number including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia topics) and it also counts for a single turn, in addition to the model utterances. 
+- `--num-self-chats`: the number of self-chats to generate (1 by default).
+- `--selfchat-max-turns`: the number of self-chat turns (6 by default), including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia topics) in addition to the model utterances. 
+- `--selfchat-task`: whether to create a self-chat version of the task. If True (by default), it creates a [SelfChatWorld](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/self_chat/worlds.py#L52) that allows for loading contexts (see [])and openers that seed the self-chat.
+- `--seed-messages-from-task`: whether to seed the self-chat with first utterances from the task dataset with specified datatype (`train:evalmode` by default). 
+
+:::{warning} WARNING
+To initialize a list of openers to seed the selfchat, the default method of [init_openers](https://github.com/facebookresearch/ParlAI/blob/dbae75bcbe9fd15691d2d724c5107d7489cac000/parlai/tasks/self_chat/worlds.py#L76-L82) skim through each episode of the task dataset and extract the first dialogue turn, which might itself contain context information, such as persona, in addition to the first dialogue messages. When using the `--seed-messages-from-task`, override the [load_openers](https://github.com/facebookresearch/ParlAI/blob/dbae75bcbe9fd15691d2d724c5107d7489cac000/parlai/tasks/self_chat/worlds.py#L17) in seed with the desired
+
+:::
+- `-t`: name of the selfchat_task. For example, to generate 20 self-chats where two models observe its own persona randomly drawn from the convai2 dev set at the beginning of each self-chat as well as the first utterance from the convai2 valid data, try
+```bash
+parlai self_chat -mf zoo:pretrained_transformers/model_poly/model -t convai2 -dt valid --num-self-chats 20 --seed-messages-from-task
+```
+
+
+SelfChat World:
+
 
 Prettifying Display of Chats
 ----------------------------
