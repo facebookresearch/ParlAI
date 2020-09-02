@@ -24,7 +24,7 @@ This module provides a set of teachers that deal with dialog.
      Teacher class that provides access to data in the Conversations format.
      See the class description for more details.
 
-    ``FbDialogTeacher(DialogTeacher)``
+    ``FbDeprecatedDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details. **This class is deprecated**.
 
@@ -506,7 +506,7 @@ class DialogTeacher(FixedDialogTeacher):
 
     In order to subclass this class, you must implement ``setup_data()`` in
     your class (or subclass another class which does, like
-    ``FbDialogTeacher``), which reads your data file as an iterator.
+    ``FbDeprecatedDialogTeacher``), which reads your data file as an iterator.
     """
 
     def __init__(self, opt, shared=None):
@@ -514,7 +514,7 @@ class DialogTeacher(FixedDialogTeacher):
         if not hasattr(self, 'setup_data'):
             raise RuntimeError(
                 'Must implement setup_data or subclass a class '
-                'which implements it (e.g. FbDialogTeacher) '
+                'which implements it (e.g. FbDeprecatedDialogTeacher) '
                 'in order to use this class.'
             )
         super().__init__(opt, shared)
@@ -1030,7 +1030,7 @@ class StreamDialogData(DialogData):
         return self.data
 
 
-class FbDialogTeacher(DialogTeacher):
+class FbDeprecatedDialogTeacher(DialogTeacher):
     """
     This module provides access to data in the Facebook Dialog format.
 

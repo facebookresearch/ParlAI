@@ -11,12 +11,12 @@ import copy
 import os
 
 from parlai.core.teachers import (
-    FbDialogTeacher,
+    FbDeprecatedDialogTeacher,
     ParlAIDialogTeacher,
 )
 
 
-class FbformatTeacher(FbDialogTeacher):
+class FbformatTeacher(FbDeprecatedDialogTeacher):
     """
     This task simply loads the specified file: useful for quick tests without setting up
     a new task.
@@ -35,7 +35,7 @@ class FbformatTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
-class Fbformat2Teacher(FbDialogTeacher):
+class Fbformat2Teacher(FbDeprecatedDialogTeacher):
     """
     This task simply loads the specified file: useful for quick tests without setting up
     a new task.

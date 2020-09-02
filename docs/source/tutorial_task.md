@@ -17,7 +17,7 @@ For a fast way to add a new dataset, go to the **Quickstart** below.
 For more complete instructions, or a more complicated setup (like streaming large data), go to the section **Creating a new task: _the more complete way_**.
 
 
-## Quickstart: Adding a new dataset
+# Quickstart: Adding a new dataset
 
 Let's look at the easiest way of getting a new dataset into ParlAI
 first.
@@ -181,8 +181,10 @@ with additional functionality (and fewer methods to implement). These
 follow the path `Agent` =&gt; `Teacher` =&gt; `FixedDialogTeacher` =&gt;
 `DialogTeacher` =&gt; `ParlAIDialogTeacher`.
 
-(Note there is also a FbDialogTeacher, but this is deprecated --
+(Note there is also a FbDeprecatedDialogTeacher, but this is deprecated --
 although some datasets in ParlAI still currently use it.)
+
+**Which teacher should I use?**
 
 The simplest method available for creating a teacher is to use the
 `ParlAIDialogTeacher` class, which makes the process very simple if the

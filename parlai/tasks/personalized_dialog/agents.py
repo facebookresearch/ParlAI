@@ -3,7 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.teachers import FbDialogTeacher, MultiTaskTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import copy
@@ -38,7 +38,7 @@ def _path(exsz, task, opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = os.path.join(
@@ -52,7 +52,7 @@ class KBTeacher(FbDialogTeacher):
 
 # python <script.py> -t personalized_dialog:FullTask:<task_id>
 # Single full task.
-class FullTaskTeacher(FbDialogTeacher):
+class FullTaskTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('full', opt['task'].split(':')[2], opt)
         opt['cands_datafile'] = os.path.join(
@@ -66,7 +66,7 @@ class FullTaskTeacher(FbDialogTeacher):
 
 # python <script.py> -t personalized_dialog:SmallTask:<task_id>
 # Single small task.
-class SmallTaskTeacher(FbDialogTeacher):
+class SmallTaskTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path('small', opt['task'].split(':')[2], opt)
         opt['cands_datafile'] = os.path.join(

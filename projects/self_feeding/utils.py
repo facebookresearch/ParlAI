@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import copy
 
-from parlai.core.teachers import ParlAIDialogTeacher, FbDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher, FbDeprecatedDialogTeacher
 
 
 class Parley(object):
@@ -134,7 +134,7 @@ def add_person_tokens(responses, first_speaker=None, last_speaker=1):
 def extract_fb_episodes(datafile):
     opt = {'datatype': 'train', 'datafile': datafile}
     episode = None
-    for parley in FbDialogTeacher(opt).setup_data(datafile):
+    for parley in FbDeprecatedDialogTeacher(opt).setup_data(datafile):
         fields, is_new_episode = parley
         if is_new_episode:
             if episode is not None:
