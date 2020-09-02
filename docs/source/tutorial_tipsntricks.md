@@ -123,3 +123,40 @@ git repository.
 
 For more detailed instructions and features, see the
 [README](http://github.com/facebookresearch/ParlAI/blob/master/example_parlai_internal)
+
+Contributing
+------------
+
+ParlAI is maintained by a small team at Facebook, so we rely heavily on community contributions. We welcome pull requests with open wings!
+
+### Overview
+- Make your changes
+- Open a pull request
+- Iterate with reviewers, fix CI, add tests
+- Celebrate!
+
+#### Creating a Pull Request
+
+##### Selecting reviewers
+There’s no master gatekeeper for ParlAI, so don’t worry about needing to add any particular person. Just take a look at the blame for the file you’re modifying and try to find someone who has made a significant and recent change to that code. Also, add people about who might be affected by your change.
+
+Some members of the team regularly go through the PR queue and triage, so if there’s a better person to review they’ll reassign to them.
+
+##### Work in progress
+If you are not ready for the pull request to be reviewed, keep it as a draft or tag it with “[WIP]” and we’ll ignore it temporarily. If you are working on a complex change, it’s good to start things off as WIP, because you will need to spend time looking at CI results to see if things worked out or not.
+
+#### Reviewing and Testing
+
+##### Iterating
+We’ll try our best to respond as quickly as possible, and will try to minimize the number of review roundtrips. Make sure to investigate lint errors and CI failures, as these should all be passing before merging. Keep iterating with us until it’s accepted!
+
+##### Testing
+See the [documentation on writing tests](http://parl.ai/docs/tutorial_tests.html)
+
+##### Merging
+Once a pull request is accepted, CI is passing, and there are no unresolved comments there is nothing else you need to do; we will merge the PR for you. 
+
+#### Celebrate
+```bash
+parlai party
+```
