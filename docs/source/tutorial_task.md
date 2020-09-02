@@ -1,6 +1,6 @@
 # Tasks and Datasets in ParlAI
 
-__Authors__: Alexander Holden Miller, Filipe de Avila Belbute Peres, Jason Weston
+__Authors__: Alexander Holden Miller, Filipe de Avila Belbute Peres, Jason Weston, Emily dinan
 
 ParlAI can support fixed dialogue data for supervised learning (which we
 call a dataset) or even dynamic tasks involving an environment, agents
@@ -12,7 +12,12 @@ dataset) can be created.
 All setups are handled in pretty much the same way, with the same API,
 but there are less steps of course to make a basic dataset.
 
-## Getting a New Dataset Into ParlAI: _the simplest way_
+For a fast way to add a new dataset, go to the **Quickstart** below.
+
+For more complete instructions, or a more complicated setup (like streaming large data), go to the section **Creating a new task: _the more complete way_**.
+
+
+## Quickstart: Adding a new dataset
 
 Let's look at the easiest way of getting a new dataset into ParlAI
 first.
@@ -82,7 +87,7 @@ This will cause the system to add the `_train.txt`, `_valid.txt`, and
 `_test.txt` suffixes at the appropriate times during training,
 evaluation, etc.
 
-## Creating a New Task: _the more complete way_
+## Creating a new task: _the more complete way_
 
 Of course after your first hacking around you may want to actually check
 this code in so that you can share it with others!
