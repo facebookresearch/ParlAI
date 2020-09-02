@@ -89,15 +89,7 @@ do this with:
 # Self-chatting Poly-Encoder model on ConvAI2
 parlai self_chat -mf zoo:pretrained_transformers/model_poly/model -t convai2 --inference topk --num-self-chats 10 --display-examples True -dt valid
 ```
-will generate 10 selfchats between 2 poly-encoder models of the exact same model opt.
-
-The task set by '-t' (in the above case "convai2") links to a
-parlAI world that handles the particular nature of interactions, see
-e.g.
-[here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98)
-or
-[here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wizard_of_wikipedia/worlds.py#L106).
-
+will generate 10 selfchats between 2 poly-encoder models of the exact same model opt with persona context data from convai2.
 
 Flags to set up the SelfChat world:
 
@@ -110,18 +102,17 @@ Flags to set up the SelfChat world:
 - `--partner-opt-file` (optional) use this to define an opt file containing args to override for `--partner_model_file`. 
 
 #### Self-Chat World
-If the self-chat needs to run on a particular task which provides additional context to the selfchat, e.g. persona, topics, one can specify it with `-t {task_name}` which would create selfchat version of the task world, see SelfChatWorld in each world module `parlai.tasks.{task_name}.worlds`. 
+If the self-chat needs additional context to start with, e.g. persona, topics, one can specify it with `-t {task_name}` which links to a
+parlAI world that handles the particular nature of interactions, see SelfChatWorld in each world module `parlai.tasks.{task_name}.worlds`, e.g.
+[here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98)
+or
+[here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wizard_of_wikipedia/worlds.py#L106).
 
 The [base SelfChatWorld](https://github.com/facebookresearch/ParlAI/blob/selfchat_feature/parlai/tasks/self_chat/worlds.py#L52) consists of:
 - ` contexts `: context information such as persona, topics, sometimes initial utterances.
 - ` _opener`: list of seeded messages from the task.
 - ` parley()`: [parley]https://github.com/facebookresearch/ParlAI/blob/selfchat_feature/parlai/tasks/self_chat/worlds.py#L116 logic for two agents self-chat with seeded contexts and/or utterances.
 
-For example, to seed each agent in the selfchat with persona string and conversation openers from Blended Skill Talk (BST) valid dataset, run
-```bash
-parlai self_chat -mf zoo:pretrained_transformers/model_poly/model -t blended_skill_talk --display-examples True -dt valid
-```
-and each agent observe its own persona, a shared WoW topic(if there is any in the randomly chosen episode), and the initial utterance from the same episode.
 
 Flags for setting up the SelfChatWorld:
 - `-t`: name of the selfchat_task.
@@ -132,7 +123,7 @@ Flags for setting up the SelfChatWorld:
 To initialize a list of openers to seed the selfchat, the default method of [init_openers](https://github.com/facebookresearch/ParlAI/blob/dbae75bcbe9fd15691d2d724c5107d7489cac000/parlai/tasks/self_chat/worlds.py#L76-L82) skim through each episode of the task dataset and extract the first dialogue turn, which might itself contain context information, such as persona, in addition to the first dialogue messages. When using the `--seed-messages-from-task`, override the [load_openers](https://github.com/facebookresearch/ParlAI/blob/dbae75bcbe9fd15691d2d724c5107d7489cac000/parlai/tasks/self_chat/worlds.py#L17) in seed with the desired
 :::
 
-Additional flags for setting up the Customized SelfChatWorld, e.g. blended_skill_talk, convai2, etc. 
+Additional flags for setting up the task-specific SelfChatWorld: 
 
 For example, 2 additional flags for Blended Skill Talk SelfChat World:
 - ```--include-personas```: if True(by default), it will prepend the persona strings to the context each agent observes before the selfchat begins. 
@@ -141,7 +132,7 @@ For example, the self chats evaluated in the [BlenderBot](https://parl.ai/projec
 ```bash
 parlai self_chat -mf zoo:blender/blender_90M/model -t blended_skill_talk -dt valid --num-self-chats 200
 ```
-that output 200 selfchats seeded with persona, WoW topic if any and initial utterances from BST. Notice here we concatenate first utterances with context data in `contexts`.
+that output 200 selfchats where each agent observe its own persona, a shared WoW topic if any and initial utterances from a BST episode.
 
 If the model does not need to run on a particular task you can also use:
 
