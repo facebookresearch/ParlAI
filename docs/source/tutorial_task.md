@@ -140,34 +140,40 @@ hasn't been previously built or if the version is outdated. If not, we
 proceed to creating the directory for the data, and then downloading and
 uncompressing it. Finally, we mark the build as done, so that
 `build_data.built()` returns true from now on. Below is an example of
-setting up the MNIST dataset.
-
+setting up the [SQuAD](https://rajpurkar.github.io/SQuAD-explorer/) dataset.
 ```python
+RESOURCES = [
+    DownloadableFile(
+        'https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json',
+        'train-v1.1.json',
+        '<checksum for this file>',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json',
+        'dev-v1.1.json',
+        '<checksum for this file>',
+        zipped=False,
+    ),
+]
+
+
 def build(opt):
-    # get path to data directory
-    dpath = os.path.join(opt['datapath'], 'mnist')
-    # define version if any
+    dpath = os.path.join(opt['datapath'], 'SQuAD')
     version = None
 
-    # check if data had been previously built
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
-
-        # make a clean directory if needed
         if build_data.built(dpath):
-            # an older version exists, so remove these outdated files.
+            # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'mnist.tar.gz'
-        url = 'http://parl.ai/downloads/mnist/' + fname # dataset URL
-        build_data.download(url, dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES[:2]:
+            downloadable_file.download_file(dpath)
 
-        # uncompress it
-        build_data.untar(dpath, fname)
-
-        # mark the data as built
+        # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
 ```
 
@@ -242,7 +248,7 @@ first ensures the data is built by calling the `build()` method
 described in Part 1. It then sets up the paths for the built data.
 
 :::{note} Loading data locally from disk
-Note again, that if you are loading data locally from disk, you can skip the call to `build` here, and instead simply return the path to your datafile locally given `opt['datatype']`.
+Note again, that if you are loading data locally from disk, you can skip the call to `build` here, and instead simply return the path to your data file locally given `opt['datatype']`.
 :::
 
 ```python
@@ -276,112 +282,45 @@ streaming data from disk, processing images, and more is taken care of
 for them.
 
 In this section we will demonstrate the process of using the
-`DialogTeacher` class by adding a simple question-answering task based
-on the MNIST dataset. This task depends on visual data and so does not
-fit the basic `ParlAIDialogTeacher` class described above. Still, using
+`DialogTeacher` class by adding the [Stanford Question Answering Dataset (SQuAD)](https://rajpurkar.github.io/SQuAD-explorer/) dataset. The data on disk downloaded
+from the [SQuAD website](https://rajpurkar.github.io/SQuAD-explorer/) does not fit the basic `ParlAIDialogTeacher` format described above. Still, using
 `DialogTeacher` makes it easy to implement dialog tasks such as this
 one.
 
-In this task, the agent is presented with the image of a digit and then
-asked to answer which number it is seeing. A sample episode is
-demonstrated below. Note that we display an ASCII rendition here for
-human-viewing, and while you could try to train a model on the ASCII,
-the pixel values and several preprocessing options are available
-instead.
+In this task, the agent is presented with a paragraph from Wikipedia and asked to answer a question about it.
 
-    [mnist_qa]: Which number is in the image?
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@83 c@@@@@@@@@@
-    @@@@@@@@@@@@@h:  ,@@@@@@@@@@
-    @@@@@@@@@@@@c    .&@@@@@@@@@
-    @@@@@@@@@@@:  .,  :@@@@@@@@@
-    @@@@@@@@@@A  c&@2  8@@@@@@@@
-    @@@@@@@@@H  ;@@@H  h@@@@@@@@
-    @@@@@@@@9: ,&@@G.  #@@@@@@@@
-    @@@@@@@@h ,&@@A    @@@@@@@@@
-    @@@@@@@@; H@&s    r@@@@@@@@@
-    @@@@@@@@: ::.     #@@@@@@@@@
-    @@@@@@@@h        ;@@@@@@@@@@
-    @@@@@@@@h        G@@@@@@@@@@
-    @@@@@@@@@A,:2c  :@@@@@@@@@@@
-    @@@@@@@@@@@@@:  3@@@@@@@@@@@
-    @@@@@@@@@@@@&, r@@@@@@@@@@@@
-    @@@@@@@@@@@@:  A@@@@@@@@@@@@
-    @@@@@@@@@@@@   2@@@@@@@@@@@@
-    @@@@@@@@@@@@  ,@@@@@@@@@@@@@
-    @@@@@@@@@@@@  3@@@@@@@@@@@@@
-    @@@@@@@@@@@@ ,&@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+```
+[id]: squad
+[text]: In October 2014, Beyoncé signed a deal to launch an activewear line of clothing with British fashion retailer Topshop. The 50-50 venture is called Parkwood Topshop Athletic Ltd and is scheduled to launch its first dance, fitness and sports ranges in autumn 2015. The line will launch in April 2016.
+When will the full line appear?
 
-    [labels: 9|nine]
-    [cands: seven|six|one|8|two| ...and 15 more]
-       [Agent]: nine
+[labels]: April 2016
+```
 
-We will call our teacher `MnistQATeacher`. Let's initialize this class
+We will call our teacher `SquadTeacher`. Let's initialize this class
 first.
 
 ```python
-class MnistQATeacher(DialogTeacher):
+class SquadTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-        # store datatype
-        self.datatype = opt['datatype'].split(':')[0]
-
-        # store identifier for the teacher in the dialog
-        self.id = 'mnist_qa'
-
-        # strings for the labels in the class (digits)
-        # (information specific to this task)
-        self.num_strs = ['zero', 'one', 'two', 'three', 'four', 'five',
-                'six', 'seven', 'eight', 'nine']
-
-        # store paths to images and labels
-        opt['datafile'], self.image_path = _path(opt)
-
+        self.datatype = opt['datatype']
+        build(opt)  # NOTE: the call to build here
+        suffix = 'train' if opt['datatype'].startswith('train') else 'dev'
+        opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
+        self.id = 'squad'
         super().__init__(opt, shared)
 ```
 
-The `id` field names the teacher in the dialog. The `num_strs` field is
-specific to this example task. It is being used simply to store the text
-version of the digits.
+The `id` field names the teacher in the dialog.
 
-We also call our `_path()` method (defined below). The `opt['datafile']`
-item is passed to `setup_data()` when it is called by DialogTeacher,
-which we will also define below.
-
-The version of `_path()` for this example is presented below. It first
-ensures the data is built by calling the `build()` method described
-above. It then sets up the paths for the built data. This should be
-specific to the dataset being used. If your dataset does not use images,
-the `image_path` is not necessary, for example. Or if your task will use
-data other than labels, the path to the file containing this information
-can also be returned. You do not need to put this in a separate function
-like we do here, but could also encode directly in the class.
-
-```python
-def _path(opt):
-    # ensure data is built
-    build(opt)
-
-    # set up paths to data (specific to each dataset)
-    dt = opt['datatype'].split(':')[0]
-    labels_path = os.path.join(opt['datapath'], 'mnist', dt, 'labels.json')
-    image_path = os.path.join(opt['datapath'], 'mnist', dt)
-    return labels_path, image_path
-```
-
-By creating `MnistQATeacher` as a subclass of `DialogTeacher`, the job
+By creating `SquadTeacher` as a subclass of `DialogTeacher`, the job
 of creating a teacher for this task becomes much simpler: most of the
 work that needs to be done will limit itself to defining a `setup_data`
 method. This method is a generator that will take in a path to the data
 and yield a pair of elements for each call. The first element of the
 pair is a tuple containing the following information:
-`(query, labels, reward, label_candidates, path_to_image)`. The second
+`(query, labels, reward, label_candidates, path_to_image)`. In this case,
+we only return `query` and `labels`. The second
 is a boolean flag `new_episode?` which indicates if the current query
 starts a new episode or not.
 
@@ -394,58 +333,27 @@ The sample `setup_data` method for our task is presented below.
 ```python
 def setup_data(self, path):
     print('loading: ' + path)
-
-    # open data file with labels
-    # (path will be provided to setup_data from opt['datafile'] defined above)
-    with open(path) as labels_file:
-        self.labels = json.load(labels_file)
-
-    # define standard question, since it doesn't change for this task
-    self.question = 'Which number is in the image?'
-    # every episode consists of only one query in this task
-    new_episode = True
-
-    # define iterator over all queries
-    for i in range(len(self.labels)):
-        # set up path to curent image
-        img_path = os.path.join(self.image_path, '%05d.bmp' % i)
-        # get current label, both as a digit and as a text
-        label = [self.labels[i], self.num_strs[int(self.labels[i])]]
-        # yield tuple with information and new_episode? flag (always True)
-        yield (self.question, label, None, None, img_path), new_episode
+    with PathManager.open(path) as data_file:
+        self.squad = json.load(data_file)['data']
+    for article in self.squad:
+        # each paragraph is a context for the attached questions
+        for paragraph in article['paragraphs']:
+            # each question is an example
+            for qa in paragraph['qas']:
+                question = qa['question']
+                answers = tuple(a['text'] for a in qa['answers'])
+                context = paragraph['context']
+                yield (context + '\n' + question, answers), True
 ```
 
-As we can see from the code above, for this specific task the question
-is always the same, and thus it is fixed. For different tasks, this
-would likely change at each iteration. Similarly, for this task, each
+As we can see from the code above, for this task, each
 episode consists of only one query, thus `new_episode?` is always true
 (i.e., each query is the start of its episode). This could also vary
 depending on the task.
 
-Looking at the tuple provided by the iterator at each yield, we can see
-that we defined a query, a label and an image path. When working with
-`DialogTeacher` in visual tasks, we provide the path to the image on
-disk so that the dialog teacher can automatically load and process it.
-The "image-mode" command line argument allows for a number of
-post-processing options, including returning the raw pixels, extracting
-features using pre-trained image models (which are cached and loaded
-from file the next time) or as above converted to ASCII.
-
-Finally, one might notice that no reward or label candidates were
-provided in the tuple (both are set to `None`). The reward is not
-specified because it is not useful for this supervised-learning task.
-The label candidates, however, were not specified per-example for this
-task because we instead use a single set of universal candidates for
-every example in this task (the digits from '0' to '9'). For cases like
-this, with fixed label candidates, one can simply define a method
-`label_candidates()` that returns the unchanging candidates, as
-demonstrated below. For cases where the label candidates vary for each
-query, the field in the tuple can be used.
-
-```python
-def label_candidates(self):
-    return [str(x) for x in range(10)] + self.num_strs
-```
+Finally, one might notice that no reward, label candidates, or a path
+to an image were
+provided in the tuple (all are set to `None`). These fields are not relevant to this task.
 
 The only thing left to be done for this part is to define a
 `DefaultTeacher` class. This is a requirement for any task, as the
@@ -453,7 +361,7 @@ The only thing left to be done for this part is to define a
 default to the class we have built so far.
 
 ```python
-class DefaultTeacher(MnistQATeacher):
+class DefaultTeacher(SquadTeacher):
     pass
 ```
 
