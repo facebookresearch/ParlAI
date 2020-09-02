@@ -123,10 +123,10 @@ def run_task(override_opt: Optional[dict] = None):
         help='Path to JSON containing settings for running onboarding',
     )
     argparser.add_argument(
-        '--left-pane-text',
-        default=LEFT_PANE_TEXT,
+        '--left-pane-text-path',
+        default=None,
         type=str,
-        help='Text to show in the left-hand pane of the chat window',
+        help='Path to file of HTML to show in the left-hand pane of the chat window',
     )
     argparser.add_argument(
         '--final-rating-question',
@@ -148,6 +148,9 @@ def run_task(override_opt: Optional[dict] = None):
     if opt.get('onboard_task_data') is None:
         with open(opt['onboard_task_data_path']) as f:
             opt['onboard_task_data'] = json.load(f)
+    if opt.get('left_pane_text') is None:
+        with open(opt['left_pane_text_path']) as f:
+            opt['left_pane_text'] = f.readlines()
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core
     # param max_hits_per_worker.

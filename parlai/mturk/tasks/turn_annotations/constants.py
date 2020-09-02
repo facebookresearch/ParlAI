@@ -37,13 +37,3 @@ Lorem ipsum.
 <br><br>
 
 '''
-
-LEFT_PANE_TEXT = '''
-<br>
-<br>
-<b><h4>Task Description</h4></b>
-<br>
-Dummy Left Pane Task Description.
-
-Lorem ipsum.
-'''
