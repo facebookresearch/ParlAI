@@ -87,8 +87,9 @@ do this with:
 
 ```bash
 # Self-chatting Poly-Encoder model on ConvAI2
-python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t convai2:selfchat --inference topk -ne 10 --display-examples True -dt valid
+python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t convai2 --inference topk --num-self-chats 10 --display-examples True -dt valid
 ```
+will generate 10 selfchats between 2 poly-encoder models 
 
 The task set by '-t' (in the above case "convai2:selfchat") links to a
 parlAI world that handles the particular nature of interactions, see
@@ -102,6 +103,12 @@ If the model does not need to run on a particular task you can also use:
 # Self-chatting Poly-Encoder model on a generic task (so e.g., no ConvAI2 personas are input)
 python parlai/scripts/self_chat.py -mf zoo:pretrained_transformers/model_poly/model -t self_chat --inference topk -ne 10 --display-examples True -dt valid
 ```
+
+
+Additional flags can be used for self-chat.
+
+- `--num-self-chats` set the number of self-chats to generate.
+- `--selfchat-max-turns` is the number of dialogue turns for each self-chat generated. This is the total number including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia topics) and it also counts for a single turn, in addition to the model utterances. 
 
 Prettifying Display of Chats
 ----------------------------
