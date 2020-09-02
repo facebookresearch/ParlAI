@@ -293,15 +293,15 @@ pytest -s -k TreeSearch
 
 ```bash
 $ pytest -k TreeSearch
-=========================================================================================== test session starts ============================================================================================
+============= test session starts ==============
 
 collected 362 items / 361 deselected / 1 selected
 
-tests/test_tga.py .                                                                                                                                                                                  [100%]
+tests/test_tga.py .  [100%]
 
-======================================================================================== slowest 10 test durations =========================================================================================
+============= slowest 10 test durations ==============
 12.62s call     tests/test_tga.py::TestTreeSearch::test_full_context_block
 
 (0.00 durations hidden.  Use -vv to show these durations.)
-============================================================================== 1 passed, 361 deselected, 8 warnings in 15.60s ==============================================================================
+============= 1 passed, 361 deselected, 8 warnings in 15.60s =============
 ```
