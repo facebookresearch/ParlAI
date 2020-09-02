@@ -95,7 +95,7 @@ def run_task(override_opt: Optional[dict] = None):
         help="Check worker's responses against several metrics of acceptability",
     )
     argparser.add_argument(
-        '--include-persona', default=False, type=bool, help="Show personas to the bot"
+        '--include-persona', default=False, type=bool, help="Show persona to the bot"
     )
     argparser.add_argument(
         '--conversation-start-mode',
@@ -195,7 +195,7 @@ def run_task(override_opt: Optional[dict] = None):
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server(task_directory_path=directory_path)
 
-    if opt['include_personas'] or opt['conversation_start_mode'] == 'bst':
+    if opt['include_persona'] or opt['conversation_start_mode'] == 'bst':
         context_generator = ContextGenerator(opt, datatype='test')
         # We pull from the test set so that the model can't regurgitate
         # memorized conversations
