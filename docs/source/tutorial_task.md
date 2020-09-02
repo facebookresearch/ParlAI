@@ -23,7 +23,7 @@ Let's look at the easiest way of getting a new dataset into ParlAI
 first.
 
 If you have a dialogue, QA or other text-only dataset that you can put
-in a text file in the format we will now describe, you can just load it
+in a text file in the format (called **ParlAI Dialog Format**) we will now describe, you can just load it
 directly from there, with no extra code!
 
 Here's an example dataset with a single episode with 2 examples:
@@ -72,7 +72,7 @@ result in the same data used for train, validation and test. See the next
 section on how to have separate folds.
 :::
 
-### Handling Separate Train/Valid/Test data
+## Handling Separate Train/Valid/Test data
 
 Once you've gotten the basics of a data working above, you might want to
 separate out the data into specific train/valid/test sets, as the above
@@ -87,7 +87,7 @@ This will cause the system to add the `_train.txt`, `_valid.txt`, and
 `_test.txt` suffixes at the appropriate times during training,
 evaluation, etc.
 
-## Creating a new task: _the more complete way_
+# Creating a new task: _the more complete way_
 
 Of course after your first hacking around you may want to actually check
 this code in so that you can share it with others!
@@ -114,7 +114,11 @@ Below we go into more details for each of these steps.
 
 (part1)=
 
-### Part 1: Building the Data
+## Part 1: Building the Data
+
+:::{note} Loading data locally from disk
+If you do not intend to commit your task to ParlAI, and instead wish to load your data locally from disk for your own purposes, you can skip this section and go straight to Part 2.
+:::
 
 We first need to create functionality for downloading and setting up the
 dataset that is going to be used for the task. This is done in the
@@ -169,40 +173,20 @@ def build(opt):
 
 (part2)=
 
-### Part 2: Creating the Teacher
+## Part 2: Creating the Teacher
 
 Now that we have our data, we need an agent that understand the task's
 structure and is able to present it. In other words, we need a
 `Teacher`. Every task requires an `agents.py` file in which we define
 the agents for the task. It is there that we will define our teacher.
 
-Teachers already in the ParlAI system use a series of subclasses, each
-with additional functionality (and fewer methods to implement). These
-follow the path `Agent` =&gt; `Teacher` =&gt; `FixedDialogTeacher` =&gt;
-`DialogTeacher` =&gt; `ParlAIDialogTeacher`.
+### Which base teacher should I use?
 
-(Note there is also a FbDeprecatedDialogTeacher, but this is deprecated --
-although some datasets in ParlAI still currently use it.)
+We will describe three possible teachers to subclass; you can choose one of them based on your needs:
+1. `ParlAIDialogTeacher`: This is the simplest method available, and expects to load a text file of data in **ParlAI Dialog format** (described above). More details are shown in the section [ParlAIDialogTeacher](parlaidialogteacher).
+2. `DialogTeacher`: If the data is not in **ParlAI Dialog format**, one can still use the `DialogTeacher` which automates much of the work in setting up a dialog task, but gives the user more flexibility in loading the data from the disk. This is shown in the section [DialogTeacher](dialogteacher).
+3. `ChunkTeacher`: Use this teacher if you have a large amount of data broken up into many files (or "chunks") that cannot be loaded into memory at once. This is shown in the section [ChunkTeacher](chunkteacher).
 
-**Which teacher should I use?**
-
-The simplest method available for creating a teacher is to use the
-`ParlAIDialogTeacher` class, which makes the process very simple if the
-text data is already formatted in the ParlAI Dialog format. (In fact,
-even if your text data is not in the ParlAI Dialog format, it might be
-simpler to parse it into this format and use the `ParlAIDialogTeacher`.)
-This is shown in the section [ParlAIDialogTeacher](parlaidialogteacher).
-
-If the data is not in this format, one can still use the `DialogTeacher`
-which automates much of the work in setting up a dialog task, but gives
-the user more flexibility in loading the data from the disk. This is
-shown in the section [DialogTeacher](dialogteacher).
-
-If the data is still a fixed set (e.g. is not dynamic, is based on fixed
-files) and even more functionality is needed, such as providing extra
-information like the answer indices for the SQuAD dataset, one can use
-the `FixedDialogTeacher` class. This is shown in the section
-[FixedDialogTeacher](fixeddialogteacher).
 
 Finally, if the requirements for the task do not fit any of the above,
 one can still write a task from scratch without much trouble. This is
@@ -256,6 +240,10 @@ the path instead of the function. We still need to implement this
 `_path()` method. The version for this example is presented below. It
 first ensures the data is built by calling the `build()` method
 described in Part 1. It then sets up the paths for the built data.
+
+:::{note} Loading data locally from disk
+Note again, that if you are loading data locally from disk, you can skip the call to `build` here, and instead simply return the path to your datafile locally given `opt['datatype']`.
+:::
 
 ```python
 from .build import build
@@ -471,194 +459,8 @@ class DefaultTeacher(MnistQATeacher):
 
 And we have finished building our task.
 
-(fixeddialogteacher)=
-### FixedDialogTeacher
-
-For this class the user must define at least `__init__()`, a `get()`
-function, and `num_examples()` and `num_episodes()`. The user must also
-handle data loading and storage on their own, which can be done during
-intialization. However, like with its child DialogTeacher, batching and
-hogwild will still be handled automatically, as well as metric updating
-and reporting, example iteration, and more.
-
-In this section we will demonstrate the use of this class with the VQAv2
-visual question-answering task. Since we want to return additional
-fields apart from the standard ones used in DialogTeacher (text, labels,
-reward, candidates, an image, and whether the episode is done), we'll
-extend FixedDialogTeacher instead. We'll also demonstrate the use of the
-multithreaded loader that is available, which can be helpful for
-speeding up image loading by beginning to load the next example while
-the current one is being looked at by the model.
-
-In this task, the agent is presented with an image of a scene and then
-asked to answer a question about that scene. A sample episode is
-demonstrated below.
-
-![image](_static/img/task_tutorial_skateboard.jpg)
-
-    [vqa_v2]: What is this man holding?
-    [labels: skateboard]
-       [Agent]: skateboard
-
-We will call our teacher `OeTeacher` (for open-ended teacher, since it
-doesn't provide the agent with label candidates). Let's initialize this
-class first.
-
-```python
-class OeTeacher(FixedDialogTeacher):
-    """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
-    implements the ``get`` method to return additional metadata.
-    """
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.image_mode = opt.get('image_mode', 'no_image_model')
-
-        if shared and 'ques' in shared:
-            # another instance was set up already, just reference its data
-            self.ques = shared['ques']
-            if 'annotation' in shared:
-                self.annotation = shared['annotation']
-            self.image_loader = shared['image_loader']
-        else:
-            # need to set up data from scratch
-            data_path, annotation_path, self.image_path = _path(opt)
-            self._setup_data(data_path, annotation_path)
-            self.image_loader = ImageLoader(opt)
-
-        self.reset()
-```
-
-There are a few parts to this initialization. First, we store the image
-mode so the we know how to preprocess images. Then, we check if this
-teacher is being initialized with a `shared` parameter. This is used
-during hogwild or batching to share data within a batch or between
-threads without each instance having to initialize from scratch. See the
-[Batching](tutorial_worlds) tutorial for more information on this. If
-`shared` is empty, then we'll move on to loading our data.
-
-Finally we'll reset the class so parents can initialize class fields to
-support threaded loading, metrics, and more.
-
-Let's take a quick look at the fucntions which set up the data and share
-it between instances just so we see how those are set up.
-
-```python
-def _setup_data(self, data_path, annotation_path):
-    print('loading: ' + data_path)
-    with open(data_path) as data_file:
-        self.ques = json.load(data_file)
-
-    if not self.datatype.startswith('test'):
-        print('loading: ' + annotation_path)
-        with open(annotation_path) as data_file:
-            self.annotation = json.load(data_file)
-
-def share(self):
-    shared = super().share()
-    shared['ques'] = self.ques
-    if hasattr(self, 'annotation'):
-        shared['annotation'] = self.annotation
-    shared['image_loader'] = self.image_loader
-    return shared
-```
-
-Next up, we need to implement `num_examples()` and `num_episodes` for
-the FixedDialogTeacher teacher to work correctly. These are very
-straightforward, and we only have one question per episode, so we can
-reuse that definition.
-
-```python
-def num_examples(self):
-    return len(self.ques['questions'])
-
-def num_episodes(self):
-    return self.num_examples()
-```
-
-Next we need to implement the `get()` function. This has two arguments:
-which episode we want to pull from, and then the index within that
-episode of the specific example we want. Since every episode has only
-one entry in this dataset, we provide a default for the keyword and
-ignore it. Actions return from `get()` should be wrapped in the
-`Message` class, defined at `parlai/core/message.py`, which ensures that
-the fields of the action are not unintentionally edited by the agents
-that observe it.
-
-We also define the DefaultTeacher class to refer to this one. This task
-also includes another teacher which includes multiple choice candidates,
-but we don't include that in this tutorial.
-
-```python
-def get(self, episode_idx, entry_idx=0):
-    qa = self.ques['questions'][episode_idx]
-    question = qa['question']
-
-    action = {
-        'id': self.id,
-        'text': question,
-        'image_id': qa['image_id'],
-        'episode_done': True
-    }
-
-    if not self.datatype.startswith('test'):
-        # test set annotations are not available for this dataset
-        anno = self.annotation['annotations'][episode_idx]
-        action['labels'] = [ans['answer'] for ans in anno['answers']]
-
-    return Message(action)
-
-
-class DefaultTeacher(OeTeacher):
-    pass
-```
-
-At this point, the class is done! However, we'll extend it a little
-further to take advantage of a few utility methods that allow for
-loading the next image in the background by overriding the
-`next_example()` method of FixedDialogTeacher (the method that calls our
-`get()` method).
-
-```python
-def reset(self):
-    super().reset()  # call parent reset so other fields can be set up
-    self.example = None  # set up caching fields
-    self.next_example()  # call this once to get the cache moving
-
-def next_example(self):
-    """Returns the next example from this dataset after starting to queue
-    up the next example.
-    """
-    ready = None
-    # pull up the currently queued example
-    if self.example is not None:
-        if self.image_mode != 'no_image_model':
-            # move the image we loaded in the background into the example
-            image = self.data_queue.get()
-            self.example['image'] = image
-        ready = (self.example, self.epochDone)
-    # get the next base example: super().next_example() calls self.get()
-    self.example, self.epochDone = super().next_example()
-    if self.image_mode != 'no_image_model' and 'image_id' in self.example:
-        # load the next image in the background
-        image_id = self.example['image_id']
-        self.submit_load_request(image_id)
-    # return the previously cached example
-    return ready
-```
-
-This method uses the `submit_load_request()` method to start a
-background thread loading the next image, loading previously finished
-work with with `self.data_queue.get()`. It calls
-`super().next_example()` to prepare the next example it's going to
-return, which calls the `get()` method we defined, and then returns the
-previously cached example. Note that here we also call `next_example()`
-in the `reset()` function to start filling the cache.
-
-This extra functionality helps in particular with loading images--for
-this task, adding the threading helped a model to process an epoch
-approximately 2.5x faster. Further speedups can be accomplished with the
-Pytorch dataloader, adding another 6.5x speedup. A tutorial on how to
-use this dataloader is forthcoming.
+(chunkteacher)=
+### Chunk Teacher
 
 (fromscratch)=
 ### Task from Scratch
@@ -723,7 +525,7 @@ dictionary. Sample entries for our tasks are presented below.
 
 (part4)=
 
-### Part 4: Executing the Task
+## Part 4: Executing the Task
 
 A simple way of testing the basic functionality in a task is to run the
 `display_data.py` example in the `examples` directory. Now that the work
