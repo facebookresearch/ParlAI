@@ -14,11 +14,7 @@ from typing import Optional
 from parlai.core.agents import create_agent_from_shared
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.turn_annotations.constants import (
-    AGENT_0,
-    TASK_CONFIG,
-    LEFT_PANE_TEXT,
-)
+from parlai.mturk.tasks.turn_annotations.constants import AGENT_0
 from parlai.mturk.tasks.turn_annotations.worlds import (
     TurnAnnotationsOnboardWorld,
     TurnAnnotationsChatWorld,
@@ -105,6 +101,24 @@ def run_task(override_opt: Optional[dict] = None):
         help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
     argparser.add_argument(
+        '--hit-config-path',
+        default=None,
+        type=str,
+        help='Path to file of parameters describing how MTurk will describe the HIT to the workers',
+    )
+    argparser.add_argument(
+        '--task-description-path',
+        default=None,
+        type=str,
+        help='Path to file of HTML to show on the task-description page',
+    )
+    argparser.add_argument(
+        '--left-pane-text-path',
+        default=None,
+        type=str,
+        help='Path to file of HTML to show in the left-hand pane of the chat window',
+    )
+    argparser.add_argument(
         '--annotations-intro',
         default='Does this comment from your partner have any of the following attributes? (Check all that apply)',
         type=str,
@@ -123,12 +137,6 @@ def run_task(override_opt: Optional[dict] = None):
         help='Path to JSON containing settings for running onboarding',
     )
     argparser.add_argument(
-        '--left-pane-text-path',
-        default=None,
-        type=str,
-        help='Path to file of HTML to show in the left-hand pane of the chat window',
-    )
-    argparser.add_argument(
         '--final-rating-question',
         default='Please rate your partner on a scale of 1-5.',
         type=str,
@@ -139,18 +147,24 @@ def run_task(override_opt: Optional[dict] = None):
     opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
-    opt.update(TASK_CONFIG)
+    opt.update(opt['hit_config'])
 
     # Read in and define text shown to users
+    if opt.get('hit_config') is None:
+        with open(opt['hit_config_path']) as f:
+            opt['hit_config'] = json.load(f)
+    if opt.get('task_description') is None:
+        with open(opt['task_description_path']) as f:
+            opt['task_description'] = f.readlines()
+    if opt.get('left_pane_text') is None:
+        with open(opt['left_pane_text_path']) as f:
+            opt['left_pane_text'] = f.readlines()
     if opt.get('annotations_config') is None:
         with open(opt['annotations_config_path']) as f:
             opt['annotations_config'] = json.load(f)
     if opt.get('onboard_task_data') is None:
         with open(opt['onboard_task_data_path']) as f:
             opt['onboard_task_data'] = json.load(f)
-    if opt.get('left_pane_text') is None:
-        with open(opt['left_pane_text_path']) as f:
-            opt['left_pane_text'] = f.readlines()
 
     # NOTE: you have to set all three of these opts to enforce the MTurk core
     # param max_hits_per_worker.
@@ -170,8 +184,8 @@ def run_task(override_opt: Optional[dict] = None):
     opt['allowed_conversations'] = 3
 
     # Limits the number of models that can generate at once
-    MAX_CONCURRENT_RESPONSES = 1
-    semaphore = threading.Semaphore(MAX_CONCURRENT_RESPONSES)
+    max_concurrent_responses = 1
+    semaphore = threading.Semaphore(max_concurrent_responses)
 
     run_statistics = copy.deepcopy(opt['conversations_needed'])
     run_statistics = {r: 0 for (r, v) in run_statistics.items()}

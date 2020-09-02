@@ -19,21 +19,3 @@ ONBOARD_CONFIG = {
     'max_incorrect': 3,
     'onboard_failures_max_allowed': 1,
 }
-
-TASK_CONFIG = {}
-TASK_CONFIG['hit_title'] = 'Chat with a fellow conversationalist!'
-TASK_CONFIG['hit_description'] = 'Lorem Ipsum'
-
-TASK_CONFIG['hit_keywords'] = 'chat,dialog'
-TASK_CONFIG[
-    'task_description'
-] = '''
-<br>
-<b><h4>Task Description</h4></b>
-<br>
-Dummy Task Description.
-
-Lorem ipsum.
-<br><br>
-
-'''
