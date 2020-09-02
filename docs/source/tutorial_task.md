@@ -370,6 +370,89 @@ And we have finished building our task.
 (chunkteacher)=
 ### Chunk Teacher
 
+Chunk Teacher is useful for streaming large amounts of data
+(*read: does not fit into memory*), that naturally separate
+into several separate files (or chunks). The data is separated into chunks and
+loaded one chunk at a time. Loads the data off of the main thread.
+
+To implement a chunk teacher, you have to write the following functions:
+- `_get_data_folder`: Returns the path to the directory containing the chunks.
+- `get_num_samples`: Given `opt`, returns a tuple containing `(num_episodes, num_examples)`. Since we are streaming this data, we must know the number of examples a priori.
+- `get_fold_chunks`: Given `opt`, returns a list of chunks indices. For example, we might
+separate the chunks based on the data split, given by `opt['datatype']`.
+- `load_from_chunk`: Given a chunk index, loads the associated file and returns a list of samples.
+- `create_message`: Given a single sample item from the list returned by `load_from_chunk`, create a Message to return.
+
+We create an example dummy teacher to demonstrate. Let's suppose that
+`/tmp/path_to_my_chunks/` is the directory containing our chunks, and
+each chunk file (e.g. `/tmp/path_to_my_chunks/1.txt`) has the following format:
+
+```
+<input 1>\t<output 1>
+<input 2>\t<output 2>
+<input 3>\t<output 3>
+...
+<input 100>\t<output 100>
+```
+
+
+Then our chunk teacher would look like the following:
+```python
+class DummyTeacher(ChunkTeacher):
+    def _get_data_folder(self):
+        # return the path to directory containing your chunks
+        return '/tmp/path_to_my_chunks/'
+
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        # return the number of episodes and examples
+        # in this case, all of our episodes are single examples
+        # so they are the same number
+        datatype = opt['datatype']
+        if 'train' in datatype:
+            return 300, 300  # each chunk contains 100 examples
+        elif 'valid' in datatype:
+            return 100, 100
+        elif 'test' in datatype:
+            return 100, 100
+
+    def get_fold_chunks(self, opt) -> List[int]:
+        # in this case, our train split contains 3 chunks and
+        # valid and test each contain 1
+        datatype = opt['datatype']
+        if 'train' in datatype:
+            return [1, 2, 3]
+        elif 'valid' in datatype:
+            return [4]
+        elif 'test' in datatype:
+            return [5]
+
+    def load_from_chunk(self, chunk_idx: int):
+        # we load the chunk specified by chunk_idx and return a
+        # list of outputs
+        chunk_path = os.path.join(self._get_data_folder(), f'{chunk_idx}.txt')
+        output = []
+        with open(chunk_path, 'r') as f:
+            for line in f.readlines():
+                txt_input, txt_output = line.split('\t')
+                output.append((txt_input, txt_output))
+
+        return output
+
+    def create_message(self, sample_item, entry_idx=0):
+        # finally, we return a message given an element from the list
+        # returned by `load_from_chunk`
+        text, label = sample_item
+        return {'id': 'Dummy Teacher', 'text': text, 'labels': [label], 'episode_done': True}
+```
+
+
+:::{note} Streaming data
+Chunk Teacher only works with streaming data, so make sure to run with
+`-dt train:stream` (or `-dt valid:stream` or `-dt test:stream`) when using
+your chunk data.
+:::
+
+
 (fromscratch)=
 ### Task from Scratch
 
