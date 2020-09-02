@@ -1,6 +1,6 @@
 # Tasks and Datasets in ParlAI
 
-__Authors__: Alexander Holden Miller, Filipe de Avila Belbute Peres, Jason Weston, Emily dinan
+__Authors__: Alexander Holden Miller, Filipe de Avila Belbute Peres, Jason Weston, Emily Dinan
 
 ParlAI can support fixed dialogue data for supervised learning (which we
 call a dataset) or even dynamic tasks involving an environment, agents
