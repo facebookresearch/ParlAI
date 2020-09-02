@@ -89,10 +89,10 @@ do this with:
 # Self-chatting Poly-Encoder model on ConvAI2
 parlai self_chat -mf zoo:pretrained_transformers/model_poly/model -t convai2 --inference topk --num-self-chats 10 --display-examples True -dt valid
 ```
-will generate 10 selfchats between 2 poly-encoder models of the exact same model opt.
+This will generate 10 selfchats between 2 poly-encoder models with the exact same model opt.
 
-The task set by '-t' (in the above case "convai2") links to a
-parlAI world that handles the particular nature of interactions, see
+The task set by `-t` (in the above case "convai2") links to a
+ParlAI world that handles the particular nature of interactions, see
 e.g.
 [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98)
 or
@@ -117,11 +117,11 @@ The [base SelfChatWorld](https://github.com/facebookresearch/ParlAI/blob/selfcha
 - ` _opener`: list of seeded messages from the task.
 - ` parley()`: [parley]https://github.com/facebookresearch/ParlAI/blob/selfchat_feature/parlai/tasks/self_chat/worlds.py#L116 logic for two agents self-chat with seeded contexts and/or utterances.
 
-For example, to seed each agent in the selfchat with persona string and conversation openers from Blended Skill Talk (BST) valid dataset, run
+For example, to seed each agent in the selfchat with persona string and conversation openers from Blended Skill Talk (BST) valid dataset, run:
 ```bash
 parlai self_chat -mf zoo:pretrained_transformers/model_poly/model -t blended_skill_talk --display-examples True -dt valid
 ```
-and each agent observe its own persona, a shared WoW topic(if there is any in the randomly chosen episode), and the initial utterance from the same episode.
+and each agent will observe its own persona, a shared WoW topic(if there is any in the randomly chosen episode), and the initial utterance from the same episode.
 
 Flags for setting up the SelfChatWorld:
 - `-t`: name of the selfchat_task.
@@ -162,7 +162,7 @@ This handy script can prettify the display of json file of chats
 python parlai/scripts/convo_render.py -i projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html 
 ```
 
-Additional flags can be used for convo-render.
+Some additional flags that can be used for convo-render:
 
 - `--num-examples` the number of conversations to render from the json file (10 by default).
 
