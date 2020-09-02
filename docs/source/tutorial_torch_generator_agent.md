@@ -121,7 +121,7 @@ class Encoder(nn.Module):
 
 The decoder is initialized in the same way as the encoder, but now the forward pass reflects the fact that the input tokens need to be passed through the embedder and LSTM one token at a time rather than all at once. If this is the first pass through the decoder, we pass a tuple `encoder_state` to the LSTM that consists of the initial hidden and cell state, as taken from the output of the encoder. If this is a subsequent pass through the decoder, the LSTM will have given us the current values of the hidden and cell states, so we pass that back in to the LSTM, after potentially having reindexed the states with `ExampleModel().reorder_decoder_incremental_state()`.
 
-```
+```python
 class Decoder(nn.Module):
 
     def __init__(self, embeddings, hidden_size):
@@ -142,7 +142,6 @@ class Decoder(nn.Module):
         return output, incr_state
 ```
 
-
 ### Training
 
 The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
@@ -154,3 +153,79 @@ parlai train_model -m examples/seq2seq \
 ```
 
 You should get a perplexity of around 140 and a token accuracy of around 28% on the ConvAI2 validation/test set.
+
+### Using custom loss function
+
+It is common in downstream tasks that people want to use a custom loss function on top of the original cross-entropy loss used to train the generative model. You can achieve this by overriding the `compute_loss` function. And a concrete example can be found [here](https://github.com/facebookresearch/ParlAI/blob/0c25349ac91abe2a5f232c63985aed14a37f5dcf/projects/wizard_of_wikipedia/generator/agents.py#L121).  Please note `compute_loss` changes its output type based on the `return_output` parameter. It either returns only the loss or returns the loss and whatever the model's `output.forward()` was. Be mindful of that. 
+
+Let us walk though an example:
+
+```python
+    def compute_loss(self, batch, return_output=False):
+        # first compute our regular forced decoding loss
+        token_loss, model_output = super().compute_loss(batch, return_output=True)
+        # compute our additional losses, you can replace this with your losses.
+        notnull = batch.label_vec.ne(self.NULL_IDX)
+        num_tokens = notnull.long().sum().item()
+
+        encoder_states = model_output[2]
+        ctx_know_attn = encoder_states[2]
+        # knowledge_alpha is the loss weight between the decoding loss and custom losses
+        if self.knowledge_alpha == 0.0:
+            loss = token_loss
+        else:
+            # calculate additional losses, you can send your extra field
+            # (like reward in RL tasks) in the batch
+            # we will cover this later
+            _, know_pred = ctx_know_attn.max(1)
+            know_acc = (know_pred == batch.cs_ids).float().sum().item()
+            know_chance = batch.ck_mask.sum(1).float().reciprocal().sum().item()
+            # don't forget to log your losses into metrics
+            self.metrics['know_chance'] += know_chance
+            self.metrics['bsz'] += batch.text_vec.size(0)
+            self.metrics['know_acc'] += know_acc
+            know_loss = th.nn.functional.cross_entropy(
+                ctx_know_attn, batch.cs_ids, reduction='mean'
+            )
+            self.metrics['know_loss'] += know_loss.item() * batch.text_vec.size(0)
+            know_loss /= num_tokens
+            # combine them
+            loss = (
+                1 - self.knowledge_alpha
+            ) * token_loss + self.knowledge_alpha * know_loss
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss
+```
+
+### Adding more fields to the batch
+
+Batch is a `namedtuple` containing data sent to an agent. This class is the input type of the train_step and eval_step functions. Agents can override the `batchify` function to return an extended namedtuple with additional fields if they would like. However, we recommend calling the parent function to set up these fields as a base. An example is:
+
+```python
+    def batchify(self, obs_batch):
+        batch = super().batchify(obs_batch)
+        reordered_observations = [obs_batch[i] for i in batch.valid_indices]
+
+        checked_sentences = []
+        for obs in reordered_observations:
+            checked_sentence = '{} {} {}'.format(
+                obs.get('title', ''), TOKEN_KNOWLEDGE, obs.get('checked_sentence', '')
+            )
+            checked_sentences.append(checked_sentence)
+
+        batch['checked_sentence'] = checked_sentences
+        return batch
+```
+
+### Adding tokens to dialogue history
+
+In some cases, we want to add a fixed utterance to dialogue history. It can be a task token to mark a downstream fine-tuning task, or a special utterances for your own research purpose. You can simply override the `get_temp_history` function. Whatever specified there will be added to the end of your dialogue history. See [this](https://github.com/facebookresearch/ParlAI/blob/f10a7c5f9d681b6246df836c5998a2efccd928bb/parlai/core/torch_agent.py#L1670). An example of using it can be:
+
+```python
+    def get_temp_history(self, observation):
+        return '\n' + self.opt['control']
+```
+
+This code adds your specified control string to the end of the dialogue history.
