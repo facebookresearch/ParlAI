@@ -42,6 +42,7 @@ agents_list
 
 cli_usage
 cli_advanced
+cli_custom
 ```
 
 ```{toctree}
