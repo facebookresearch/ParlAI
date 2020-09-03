@@ -29,9 +29,12 @@ def run_task(override_opt: Optional[dict] = None):
     each utterance of the bot for various buckets (see constants).
     """
 
-    task_specs_folder = os.path.join(os.path.realpath(__file__), 'task_specs')
+    task_specs_folder = os.path.join(os.path.realpath(__file__), 'config')
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
+    default_task_folder = os.path.join(
+        argparser.parlai_home, 'data', 'turn_annotations'
+    )
     argparser.add_mturk_args()
     argparser.add_argument(
         '-num_t', '--num_turns', default=6, type=int, help='minimum number of turns'
@@ -70,7 +73,7 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--base-save-folder',
-        default=None,
+        default=default_task_folder,
         type=str,
         help='base folder for saving all crowdsourcing results',
     )
@@ -82,7 +85,7 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--onboard-worker-answer-folder',
-        default=None,
+        default=os.path.join(default_task_folder, 'onboard_answers'),
         type=str,
         help='base folder for saving all worker answer results during onboarding',
     )
@@ -124,7 +127,7 @@ def run_task(override_opt: Optional[dict] = None):
         '--left-pane-text-path',
         default=os.path.join(task_specs_folder, 'left_pane_text.html'),
         type=str,
-        help='Path to file of HTML to show in the left-hand pane of the chat window',
+        help='Path to file of HTML to show on the left-hand pane of the chat window',
     )
     argparser.add_argument(
         '--annotations-intro',

@@ -4,28 +4,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
-
 from parlai.mturk.tasks.turn_annotations.run import run_task
-from parlai.core.params import ParlaiParser
 
 
 def launch():
     """
     Convenience function to avoid launching from the command line all the time.
     """
-    argparser = ParlaiParser(False, False)
-    datapath = os.path.join(argparser.parlai_home, 'data')
-    task_folder = 'turn_annotations'
-    # keys of models_needed_dict will be used as unique names in the output
-    # files this says we want 110 conversations from this model.
+    # Keys of models_needed_dict will be used as unique names in the output files. This
+    # specifies that we want 110 conversations from this model.
     models_needed_dict = {'TODO_FIXME_MODEL_UNIQUE_NAME': 110}
+    # Model path should be `os.path.join(base_model_folder, model_name, 'model')`, where
+    # `model_name` is a key in `models_needed_dict`
     override_opt = {
-        'block_qualification': 'block_qualification_name',
-        'base_save_folder': os.path.join(datapath, task_folder),
-        'onboard_worker_answer_folder': os.path.join(
-            datapath, task_folder, 'onboard_answers'
-        ),
+        'block_qualification': 'TODO_FIXME_BLOCK_QUALIFICATION_NAME',
         'base_model_folder': 'TODO_FIXME_BASE_MODEL_FOLDER',
         'num_conversations': sum(models_needed_dict.values()),
         'is_sandbox': True,

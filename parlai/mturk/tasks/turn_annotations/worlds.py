@@ -552,6 +552,8 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 is_worker_0=False,
                 skip_violation_types=violations_to_skip,
             )
+        else:
+            violations_agent_0 = None
 
         time_string = time.strftime('%Y%m%d_%H%M%S')
         data_path = self.opt['save_folder']
@@ -571,9 +573,15 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             )
         with open(os.path.join(filename), 'w+') as f_json:
             data = {
+                'personas': self.context_info['personas'],
+                'context_dataset': self.context_info['context_dataset'],
+                'person1_seed_utterance': self.context_info['person1_seed_utterance'],
+                'person2_seed_utterance': self.context_info['person2_seed_utterance'],
+                'additional_context': self.context_info['additional_context'],
                 'dialog': self.dialog,
                 'workers': [ag.worker_id for ag in self.agents],
                 'bad_workers': bad_workers,
+                'acceptability_violations': (violations_agent_0,),
                 'hit_ids': [ag.hit_id for ag in self.agents],
                 'assignment_ids': [ag.assignment_id for ag in self.agents],
                 'task_description': {
@@ -583,7 +591,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     'model_file': self.agents[1].model_agent.opt['model_file'],
                     'model_opt': self.agents[1].model_agent.opt,
                 },
-                'context_info': self.context_info,
             }
             if self.check_acceptability:
                 data['acceptability_violations'] = (violations_agent_0,)
