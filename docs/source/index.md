@@ -16,6 +16,7 @@ tutorial_metrics
 tutorial_fast
 tutorial_mturk
 tutorial_chat_service
+tutorial_tests
 tutorial_tipsntricks
 ```
 
@@ -41,6 +42,7 @@ agents_list
 
 cli_usage
 cli_advanced
+cli_custom
 ```
 
 ```{toctree}
