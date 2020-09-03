@@ -29,7 +29,7 @@ def run_task(override_opt: Optional[dict] = None):
     each utterance of the bot for various buckets (see constants).
     """
 
-    task_specs_folder = os.path.join(os.path.realpath(__file__), 'config')
+    config_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config')
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     default_task_folder = os.path.join(
@@ -113,19 +113,19 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--hit-config-path',
-        default=os.path.join(task_specs_folder, 'hit_config.json'),
+        default=os.path.join(config_folder, 'hit_config.json'),
         type=str,
         help='Path to file of parameters describing how MTurk will describe the HIT to the workers',
     )
     argparser.add_argument(
         '--task-description-path',
-        default=os.path.join(task_specs_folder, 'task_description.html'),
+        default=os.path.join(config_folder, 'task_description.html'),
         type=str,
         help='Path to file of HTML to show on the task-description page',
     )
     argparser.add_argument(
         '--left-pane-text-path',
-        default=os.path.join(task_specs_folder, 'left_pane_text.html'),
+        default=os.path.join(config_folder, 'left_pane_text.html'),
         type=str,
         help='Path to file of HTML to show on the left-hand pane of the chat window',
     )
@@ -137,13 +137,13 @@ def run_task(override_opt: Optional[dict] = None):
     )
     argparser.add_argument(
         '--annotations-config-path',
-        default=os.path.join(task_specs_folder, 'annotations_config.json'),
+        default=os.path.join(config_folder, 'annotations_config.json'),
         type=str,
         help='Path to JSON of annotation categories',
     )
     argparser.add_argument(
         '--onboard-task-data-path',
-        default=os.path.join(task_specs_folder, 'onboard_task_data.json'),
+        default=os.path.join(config_folder, 'onboard_task_data.json'),
         type=str,
         help='Path to JSON containing settings for running onboarding',
     )
@@ -180,7 +180,6 @@ def run_task(override_opt: Optional[dict] = None):
         opt = argparser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
-    opt.update(opt['hit_config'])
 
     # Set the number of conversations needed
     if opt.get('conversations_needed_string') is not None:
@@ -204,6 +203,8 @@ def run_task(override_opt: Optional[dict] = None):
     if opt.get('hit_config') is None:
         with open(opt['hit_config_path']) as f:
             opt['hit_config'] = json.load(f)
+        opt.update(opt['hit_config'])
+        # Add all of the settings in hit_config into the base opt
     if opt.get('task_description') is None:
         with open(opt['task_description_path']) as f:
             opt['task_description'] = f.readlines()

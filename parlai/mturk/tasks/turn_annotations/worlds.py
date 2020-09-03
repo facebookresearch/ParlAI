@@ -57,6 +57,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         self.worker_answer_file = os.path.join(
             opt['onboard_worker_answer_folder'], 'worker_answers.json'
         )
+        self.onboard_task_data = opt['onboard_task_data']
         os.makedirs(opt['onboard_worker_answer_folder'], exist_ok=True)
         super().__init__(opt, mturk_agent)
 
@@ -83,7 +84,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         Calculate how many correct answers the user gave.
 
         :param worker_answers: dict with the keys of the message index
-        (1,3,5,7,9), so can index directly into self.opt['onboard_task_data'] for the
+        (1,3,5,7,9), so can index directly into self.onboard_task_data for the
         answers (but the frontend sends keys that are strings)
         :return: boolean as to whether the worker passed or failed the task
         """
@@ -92,7 +93,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         answer_count = sum([len(arr) for (k, arr) in worker_answers.items()])
         for m_idx_str in worker_answers:
             m = int(m_idx_str)
-            correct_answers = self.opt['onboard_task_data'][m]['answers']
+            correct_answers = self.onboard_task_data[m]['answers']
             worker_answers_for_index = worker_answers[m_idx_str]
             for ans in worker_answers_for_index:
                 if ans in correct_answers:
@@ -119,7 +120,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         onboarding_task_html = ''
         # As in the main world, render the HTML client-side b/c it's easier with
         # this legacy (non-React) task. Bad practice... TODO: change
-        for idx, utt in enumerate(self.opt['onboard_task_data']):
+        for idx, utt in enumerate(self.onboard_task_data):
             if idx % 2 == 0:
                 # human
                 onboarding_task_html += f"""<div class="alert alert-info" style="float: right; display:table;"><span class="onboarding-text"><b>YOU:</b> {utt["text"]}</span></div>"""
