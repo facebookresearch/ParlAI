@@ -16,6 +16,7 @@ tutorial_metrics
 tutorial_fast
 tutorial_mturk
 tutorial_chat_service
+tutorial_tests
 ```
 
 ```{toctree}
@@ -41,12 +42,14 @@ zoo
 
 cli_usage
 cli_advanced
+cli_custom
 ```
 
 ```{toctree}
 :maxdepth: 2
 :caption: API Reference
 
+chat_service
 core
 utils
 ```

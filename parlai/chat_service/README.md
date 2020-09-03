@@ -47,10 +47,11 @@ Below is the standard config format and hierarchy to be followed across all chat
 - opt:  # Additional model opts go here. Below are example opts that one could normally pass to parlai
     - password: # Password for messaging service, if this is wanted
     - debug: # whether to set debug mode
-    - model: # Name of model, if you want to load a model
-    - model_file: # path to model file, if you want to load a model
-    - override:
-        - model: # overrides for model
+    - models:  # set of model keys that map to model parameters
+        - custom_key:
+              - model: # Name of model, if you want to load a model
+              - model_file: # path to model file, if you want to load a model
+              - override: # overrides for model
 - additional_args:  # Additional chat service specific args go here
     - service_reference_id: 1 # Facebook Page id (if Messenger, else don't include this field)
     -  *any other args needed by <chat_service>*

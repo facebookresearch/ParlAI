@@ -5,3 +5,5 @@ If you have a dialogue, QA or other text-only dataset that you can put in a text
 E.g. use with: 
 
 python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile_datapath /tmp/data.txt
+
+See the file example_data.json in this directory for the format.

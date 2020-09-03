@@ -169,6 +169,9 @@ class Conversations:
     Conversations should be saved in JSONL format, where each line is
     a JSON of the following form:
 
+    WARNING: The data below must be on ONE LINE per dialogue
+    in a conversation file or it will not load!!
+
     .. code-block:
 
         {
