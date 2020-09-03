@@ -20,7 +20,11 @@ if TYPE_CHECKING:
 @register_mephisto_abstraction()
 class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     """
-    This Blueprint has a subtasks number option to combine multiple conversations into "sub-HITs". It also has options for the onboarding data answers and the annotation bucket definitions.
+    This Blueprint has a subtasks number option to combine multiple conversations into
+    "sub-HITs".
+
+    It also has options for the onboarding data answers and the annotation bucket
+    definitions.
     """
 
     BLUEPRINT_TYPE = 'turn_annotations_static_blueprint'
@@ -90,7 +94,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
 
     def get_frontend_args(self) -> Dict[str, Any]:
         """
-        Specifies what options within a task_config should be forwarded to the client for use by the task's frontend.
+        Specifies what options within a task_config should be forwarded to the client
+        for use by the task's frontend.
         """
         with open(self.opts['onboarding_data'], "r", encoding="utf-8-sig") as f:
             onboarding_data = json.loads(f.read())
@@ -111,7 +116,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
 
     def process_data(self, data_dicts):
         """
-        Override this in a subclass if you want to change how data is processed from input file before being sent to the frontend.
+        Override this in a subclass if you want to change how data is processed from
+        input file before being sent to the frontend.
         """
         output = []
         for d in data_dicts:
@@ -130,8 +136,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
 @register_mephisto_abstraction()
 class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
     """
-    This Blueprint mixes in a live onboarding as the last subtask (in addition to an onboarding at the start), and actually
-    increases the number of subtasks per unit by 1.
+    This Blueprint mixes in a live onboarding as the last subtask (in addition to an
+    onboarding at the start), and actually increases the number of subtasks per unit by
+    1.
     """
 
     BLUEPRINT_TYPE = 'turn_annotations_static_inflight_qa_blueprint'

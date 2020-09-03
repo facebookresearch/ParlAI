@@ -12,7 +12,9 @@ import subprocess
 from mephisto.core.operator import Operator
 
 # Have to import this even though it's not directly used
-from parlai.crowdsourcing.tasks.turn_annotations_static import turn_annotations_blueprint
+from parlai.crowdsourcing.tasks.turn_annotations_static import (
+    turn_annotations_blueprint,
+)
 
 from mephisto.utils.scripts import MephistoRunScriptParser
 from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_workers
@@ -27,7 +29,7 @@ from launch_config import (
     TASK_REWARD,
     SUBTASKS_PER_UNIT,
     UNITS_PER_ASSIGNMENT,
-    MAX_UNITS_PER_WORKER
+    MAX_UNITS_PER_WORKER,
 )
 
 # Blueprint import required though not used; this satisfies linting
@@ -83,7 +85,7 @@ ARG_STRING = (
 
 def build_task():
     """
-    Build the task
+    Build the task.
     """
     return_dir = os.getcwd()
     os.chdir(FRONTEND_SOURCE_DIR)
@@ -106,7 +108,10 @@ def build_task():
 
 
 def block_workers(local_db, requester_name):
-    """Use a block list to block undesired crowdsource workers (Mechanical Turkers for example)."""
+    """
+    Use a block list to block undesired crowdsource workers (Mechanical Turkers for
+    example).
+    """
     block_list = WORKER_BLOCK_LIST
     soft_block_qual_name = 'turn_annotations_static_no'
     print(
