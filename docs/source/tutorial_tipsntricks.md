@@ -129,13 +129,13 @@ Contributing
 
 ParlAI is maintained by a small team, so we rely heavily on community contributions. We welcome pull requests with open wings!
 
-#### Overview
+### Overview
 - Make your changes
 - Open a pull request
 - Iterate with reviewers, fix CI, add tests
 - Celebrate!
 
-#### Creating a Pull Request
+### Creating a Pull Request
 
 **Selecting reviewers**
 
@@ -147,7 +147,7 @@ Some members of the team regularly go through the PR queue and triage, so if the
 
 If you are not ready for the pull request to be reviewed, keep it as a draft or tag it with “[WIP]” and we’ll ignore it temporarily. If you are working on a complex change, it’s good to start things off as WIP, because you will need to spend time looking at CI results to see if things worked out or not.
 
-#### Reviewing and Testing
+### Reviewing and Testing
 
 **Iterating**
 
@@ -161,7 +161,7 @@ See the [documentation on writing tests](http://parl.ai/docs/tutorial_tests.html
 
 Once a pull request is accepted, CI is passing, and there are no unresolved comments there is nothing else you need to do; we will merge the PR for you. 
 
-#### Celebrate
+### Celebrate
 ```bash
 parlai party
 ```
