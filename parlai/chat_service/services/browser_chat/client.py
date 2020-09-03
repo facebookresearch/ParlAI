@@ -64,10 +64,13 @@ class BrowserHandler(BaseHTTPRequestHandler):
             json_str = json.dumps(model_response)
             self.wfile.write(bytes(json_str, 'utf-8'))
         elif self.path == '/reset':
+            self._interactive_running(b"[RESET]")
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(bytes("{}", 'utf-8'))
+            message_available.wait()
+            message_available.clear()
         else:
             return self._respond({'status': 500})
 
