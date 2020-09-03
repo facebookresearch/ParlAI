@@ -147,7 +147,7 @@ class TestConversationTeacher(unittest.TestCase):
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
-            opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            opt = {'task': 'jsonfile', 'jsonfile_datapath': fp, 'display_verbose': True}
             testing_utils.display_data(opt)
 
     def test_no_text(self):
@@ -157,7 +157,7 @@ class TestConversationTeacher(unittest.TestCase):
                 f.write(
                     '{"dialog": [[{"id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
-            opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            opt = {'task': 'jsonfile', 'jsonfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(AttributeError):
                 testing_utils.display_data(opt)
 
@@ -170,7 +170,7 @@ class TestConversationTeacher(unittest.TestCase):
                 )
             opt = {
                 'task': 'jsonfile',
-                'fromfile_datapath': fp,
+                'jsonfile_datapath': fp,
                 'display_verbose': True,
                 'label_turns': 'firstspeaker',
             }
@@ -199,7 +199,7 @@ class TestConversationTeacher(unittest.TestCase):
                 )
             opt = {
                 'task': 'jsonfile',
-                'fromfile_datapath': fp,
+                'jsonfile_datapath': fp,
                 'display_verbose': True,
                 'label_turns': 'secondspeaker',
             }
@@ -228,7 +228,7 @@ class TestConversationTeacher(unittest.TestCase):
                 )
             opt = {
                 'task': 'jsonfile',
-                'fromfile_datapath': fp,
+                'jsonfile_datapath': fp,
                 'display_verbose': True,
                 'label_turns': 'both',
             }
