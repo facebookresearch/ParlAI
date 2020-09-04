@@ -331,7 +331,6 @@ def run_task(override_opt: Optional[dict] = None):
                 num_turns=opt['num_turns'],
                 max_resp_time=opt['max_resp_time'],
                 tag='conversation t_{}'.format(conv_idx),
-                annotations_config=opt['annotations_config'],
                 context_info=context_info,
             )
             while not world.episode_done():

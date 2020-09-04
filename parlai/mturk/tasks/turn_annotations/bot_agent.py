@@ -140,18 +140,18 @@ class TurkLikeAgent:
             model_overrides_copy = copy.deepcopy(model_overrides)
             model_path = os.path.join(base_model_folder, model_nickname, 'model')
             if os.path.isfile(model_path):
-                opt = {'model_file': model_path, 'override': model_overrides_copy}
+                model_opt = {'model_file': model_path, 'override': model_overrides_copy}
             else:
                 model_opt_path = model_path + '.opt'
                 print(
                     f'Model file for model {model_nickname} does not exist! Instead, '
                     f'loading opt from {model_opt_path}.'
                 )
-                opt = Opt.load(model_opt_path)
-                if 'override' not in opt:
-                    opt['override'] = {}
-                opt['override'].update(model_overrides_copy)
-            all_model_opts[model_nickname] = opt
+                model_opt = Opt.load(model_opt_path)
+                if 'override' not in model_opt:
+                    model_opt['override'] = {}
+                model_opt['override'].update(model_overrides_copy)
+            all_model_opts[model_nickname] = model_opt
 
         active_model_opt_dicts = {m: all_model_opts[m] for m in active_models}
 

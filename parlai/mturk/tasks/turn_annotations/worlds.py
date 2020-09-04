@@ -242,7 +242,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         tag=None,
         max_resp_time=120,
         agent_timeout_shutdown=120,
-        annotations_config: Optional[dict] = None,
         context_info: Optional[dict] = None,
     ):
         # 6 turns for a single side (so 12 total), and really it appears to be
@@ -260,7 +259,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             self.context_info = context_info
         else:
             self.context_info = {}
-        self.annotations_config = annotations_config
         self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
 
@@ -602,7 +600,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 'hit_ids': [ag.hit_id for ag in self.agents],
                 'assignment_ids': [ag.assignment_id for ag in self.agents],
                 'task_description': {
-                    'annotations_config': self.annotations_config,
+                    'annotations_config': self.opt['annotations_config'],
                     'had_onboarding': False,
                     'model_nickname': self.agents[1].worker_id,
                     'model_file': self.agents[1].model_agent.opt.get('model_file'),
