@@ -256,7 +256,10 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         self.tag = tag
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
-        self.context_info = context_info
+        if context_info is not None:
+            self.context_info = context_info
+        else:
+            self.context_info = {}
         self.annotations_config = annotations_config
         self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
@@ -322,21 +325,21 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     agent.observe(validate(control_msg))
                     if agent_idx == 0:
                         time.sleep(3)
-                else:
-                    control_msg['text'] = ''
-                    agent.observe(validate(control_msg))
 
             if self.opt['conversation_start_mode'] == 'bst':
 
                 print('[Displaying first utterances as per BST task.]')
                 # Display the previous two utterances
                 human_first_msg = {
+                    'left_pane_text': self.opt['left_pane_text'],
                     'episode_done': False,
                     'id': self.agents[0].id,
                     'text': self.context_info['person1_seed_utterance'],
                     'fake_start': True,
                     'agent_idx': 0,
                 }
+                for k, v in control_msg.items():
+                    human_first_msg[k] = v
                 bot_first_msg = {
                     'episode_done': False,
                     'id': self.agents[1].id,
@@ -350,9 +353,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
 
                 self.dialog.append(human_first_msg)
                 self.dialog.append(bot_first_msg)
-                # We already incremented above, but need to do it once more b/c
-                # we are adding two turns
-                self.task_turn_idx += 1
 
                 for agent in self.agents:
                     agent.observe(validate(human_first_msg))
@@ -362,12 +362,15 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
 
                 print('[Displaying "Hi!" only as per Meena task.]')
                 human_first_msg = {
+                    'left_pane_text': self.opt['left_pane_text'],
                     'episode_done': False,
                     'id': self.agents[0].id,
                     'text': 'Hi!',
                     'fake_start': True,
                     'agent_idx': 0,
                 }
+                for k, v in control_msg.items():
+                    human_first_msg[k] = v
 
                 self.dialog.append(human_first_msg)
                 self.agents[0].observe(validate(human_first_msg))
@@ -583,11 +586,15 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             )
         with open(os.path.join(filename), 'w+') as f_json:
             data = {
-                'personas': self.context_info['personas'],
-                'context_dataset': self.context_info['context_dataset'],
-                'person1_seed_utterance': self.context_info['person1_seed_utterance'],
-                'person2_seed_utterance': self.context_info['person2_seed_utterance'],
-                'additional_context': self.context_info['additional_context'],
+                'personas': self.context_info.get('personas'),
+                'context_dataset': self.context_info.get('context_dataset'),
+                'person1_seed_utterance': self.context_info.get(
+                    'person1_seed_utterance'
+                ),
+                'person2_seed_utterance': self.context_info.get(
+                    'person2_seed_utterance'
+                ),
+                'additional_context': self.context_info.get('additional_context'),
                 'dialog': self.dialog,
                 'workers': [ag.worker_id for ag in self.agents],
                 'bad_workers': bad_workers,
