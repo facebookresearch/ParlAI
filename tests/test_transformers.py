@@ -886,7 +886,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         )
 
 
-@testing_utils.skipUnlessTorch14
+@testing_utils.skipUnlessVision
 class TestImagePolyencoder(unittest.TestCase):
     """
     Unit tests for the ImagePolyencoderAgent.

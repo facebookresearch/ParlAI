@@ -1,4 +1,4 @@
-# Advance Scripts
+# Advanced Scripts
 
 These are the more obscure and advanced scripts in parlai.
 

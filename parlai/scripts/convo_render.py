@@ -173,11 +173,9 @@ def pre_process(fname, num_ex, alt_speaker):
             data = json.loads(line)
             dialogue = data["dialog"]
             for item in dialogue:
-                if item["speaker"] == "human_evaluator":
-                    speaker = "human"
-                else:
-                    speaker = alt_speaker
-                conversation += [(speaker, item["text"])]
+                speaker = item[0]['id']
+                text = item[0]['text']
+                conversation += [(speaker, text)]
             conversation += [(END_OF_CONVO, END_OF_CONVO)]
 
     return conversation
@@ -300,7 +298,7 @@ def render_convo(opt):
     # Run
     opt.log()
     extension = validate_args(opt)
-    input_file, output_file = opt['intput'], opt['output']
+    input_file, output_file = opt['input'], opt['output']
     height, width = opt['height'], opt['width']
     alt_speaker = input_file.split('/')[-1][:-6]
 
