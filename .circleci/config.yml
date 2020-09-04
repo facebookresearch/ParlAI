@@ -415,6 +415,7 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
       - restore_cache:
           key: data-20200904-gpu16-{{ checksum "teststorun.txt" }}
       - run:
@@ -492,7 +493,6 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
-      - <<: *findtests
       - run:
           name: Fake teststorun.txt
           command: echo "quickstart" > teststorun.txt
