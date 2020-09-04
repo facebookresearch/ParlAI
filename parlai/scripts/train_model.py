@@ -653,7 +653,8 @@ class TrainLoop:
                 # do one example / batch of examples
                 try:
                     world.parley()
-                except StopTrainException:
+                except StopTrainException as e:
+                    logging.info(f"Stopping from {e}")
                     break
 
                 self.parleys += 1

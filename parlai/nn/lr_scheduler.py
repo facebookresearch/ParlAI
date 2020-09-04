@@ -48,20 +48,32 @@ class ParlAILRScheduler(object):
             Starting multiplier for warmup scheduler.
         """
         self._number_training_updates = 0
-        self.warmup_updates = warmup_updates
+        self.warmup_updates = max(0, warmup_updates)
         self.warmup_rate = warmup_rate
         self.hard_reset = hard_reset
 
     def _init_warmup_scheduler(self, optimizer, states):
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
-            updates_so_far < self.warmup_updates or self.hard_reset
+            updates_so_far <= self.warmup_updates or self.hard_reset
         ):
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
             )
+            if states.get('warmup_scheduler'):
+                self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
         else:
             self.warmup_scheduler = None
+
+    def get_last_lr(self):
+        s = self.warmup_scheduler if self._is_lr_warming_up() else self.scheduler
+        try:
+            # pytorch 1.5 or newer
+            return s.get_last_lr()[0]
+        except AttributeError:
+            # TODO: upon getting rid of pytorch 1.4, kill this
+            # pytorch 1.4 or older
+            return s.optimizer.param_groups[0]['lr']
 
     def _is_lr_warming_up(self):
         """
@@ -87,12 +99,17 @@ class ParlAILRScheduler(object):
         """
         Load state of scheduler from states.
         """
-        if self.scheduler and 'lr_scheduler' in states:
-            self.scheduler.load_state_dict(states['lr_scheduler'])
         if states.get('warmup_scheduler') and getattr(self, 'warmup_scheduler', None):
             self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
+        if self.scheduler and 'lr_scheduler' in states:
+            self.scheduler.load_state_dict(states['lr_scheduler'])
         self._number_training_updates = states.get('number_training_updates', 0)
-        self.step(self._number_training_updates)
+
+        try:
+            self.scheduler.get_last_lr()
+        except AttributeError:
+            # on older pytorches
+            self.step(self._number_training_updates)
 
     def get_initial_number_training_updates(self):
         return self._number_training_updates
@@ -228,6 +245,7 @@ class ParlAILRScheduler(object):
                 warmup_updates,
                 warmup_rate,
                 invsqrt_lr_decay_gamma,
+                max_lr_steps,
             )
         elif opt.get('lr_scheduler') == 'cosine':
             scheduler = CosineLRScheduler(
@@ -292,7 +310,7 @@ class ParlAILRScheduler(object):
         """
         self._number_training_updates = num_steps
         if self._is_lr_warming_up():
-            self.warmup_scheduler.step(epoch=num_steps)
+            self.warmup_scheduler.step()
         else:
             scheduler_steps = num_steps - self.warmup_updates
             self.train_step(scheduler_steps)
@@ -384,6 +402,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         warmup_updates,
         warmup_rate,
         invsqrt_lr_decay_gamma,
+        max_lr_steps,
     ):
         """
         invsqrt_lr_decay_gamma determines the cycle length of the inverse square root
@@ -392,6 +411,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
         super().__init__(hard_reset, warmup_updates, warmup_rate)
+        self.max_lr_steps = max_lr_steps
         self.invsqrt_lr_decay_gamma = invsqrt_lr_decay_gamma
         if invsqrt_lr_decay_gamma <= 0:
             warn_once(
@@ -408,7 +428,9 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         return self.decay_factor / np.sqrt(max(1, self.invsqrt_lr_decay_gamma + step))
 
     def train_step(self, scheduler_steps):
-        self.scheduler.step(epoch=scheduler_steps)
+        if self.max_lr_steps > 0 and scheduler_steps >= self.max_lr_steps:
+            raise StopTrainException('Maximum LR steps')
+        self.scheduler.step()
 
     def valid_step(self, metrics_dict):
         # this is a training step lr scheduler, nothing to adjust in validation
@@ -445,7 +467,7 @@ class CosineLRScheduler(ParlAILRScheduler):
     def train_step(self, scheduler_steps):
         if scheduler_steps >= self.max_lr_steps:
             raise StopTrainException('End of Cosine LR Schedule')
-        self.scheduler.step(epoch=scheduler_steps)
+        self.scheduler.step()
 
     def valid_step(self, metrics_dict):
         pass
@@ -480,13 +502,13 @@ class LinearLRScheduler(ParlAILRScheduler):
     def _linear_lr(self, step):
         # this multiplicative factor ensures linear decay rate
         # lr_mult = float(self.max_lr_steps - step - 1) / float(self.max_lr_steps - step)
-        lr_mult = max(0.0, 1.0 - step / self.max_lr_steps)
+        lr_mult = max(0.0, 1e-6 + (1.0 - step / self.max_lr_steps) * (1 - 1e-6))
         return lr_mult
 
     def train_step(self, scheduler_steps):
         if scheduler_steps >= self.max_lr_steps:
             raise StopTrainException('End of Linear LR Schedule')
-        self.scheduler.step(epoch=scheduler_steps)
+        self.scheduler.step()
 
     def valid_step(self, metrics_dict):
         pass
