@@ -174,7 +174,7 @@ round robin fashion.
 :::{note} Advanced Worlds
 We also include a few more advanced "container" worlds: in particular, we
 include both a BatchWorld and a DyamicBatchWorld. These worlds may be used when
-certain options are sent. See the [tutorial\_worlds](Worlds) tutorial to
+certain options are sent. See the [Worlds](tutorial_worlds) tutorial to
 understand how these work.
 :::
 
