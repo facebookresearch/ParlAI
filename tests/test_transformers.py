@@ -517,7 +517,7 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test --variant prelayernorm.
         """
-        valid, test = self._overfit_train(variant='prelayernorm', activation='gelu',)
+        valid, test = self._overfit_train(variant='prelayernorm', activation='gelu')
 
         self.assertLessEqual(valid['ppl'], 1.30)
         self.assertLessEqual(test['ppl'], 1.30)
@@ -764,7 +764,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         Test generators resume correctly.
         """
         GENERATOR_ARGS = dict(
-            model='transformer/generator', skip_generation=True, warmup_updates=1,
+            model='transformer/generator', skip_generation=True, warmup_updates=1
         )
         self._test_learning_rate_resuming(GENERATOR_ARGS)
 
@@ -772,7 +772,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         """
         Test resuming learning rate for the ranker.
         """
-        RANKER_ARGS = dict(model='transformer/ranker', warmup_updates=1,)
+        RANKER_ARGS = dict(model='transformer/ranker', warmup_updates=1)
         self._test_learning_rate_resuming(RANKER_ARGS)
 
     def test_invsqrt_learning_rate(self):
