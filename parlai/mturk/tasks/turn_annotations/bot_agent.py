@@ -136,11 +136,7 @@ class TurkLikeAgent:
 
         all_model_opts = {}
         print(f'Active models to use are: {active_models}')
-        for model_nickname in models_available:
-            if model_nickname not in active_models:
-                raise ValueError(
-                    f'Model {model_nickname} is not in the active models list.'
-                )
+        for model_nickname in active_models:
             model_opt_path = os.path.join(
                 base_model_folder, model_nickname, 'model.opt'
             )

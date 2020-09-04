@@ -143,7 +143,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
                 'id': 'SYSTEM',
                 'text': '',
                 'onboarding_html': onboarding_task_html,
-                'annotations_config': self.opt['annotations_config'],
+                'annotations_config': self.annotations_config,
             }
         )
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
