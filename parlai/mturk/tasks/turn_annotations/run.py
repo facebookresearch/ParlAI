@@ -112,6 +112,9 @@ def run_task(override_opt: Optional[dict] = None):
         help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
     argparser.add_argument(
+        '--context-seed', default=None, type=int, help="Set seed for pulling the context info (for testing)"
+    )
+    argparser.add_argument(
         '--hit-config-path',
         default=os.path.join(config_folder, 'hit_config.json'),
         type=str,
@@ -248,7 +251,7 @@ def run_task(override_opt: Optional[dict] = None):
     mturk_manager.setup_server(task_directory_path=directory_path)
 
     if opt['include_persona'] or opt['conversation_start_mode'] == 'bst':
-        context_generator = ContextGenerator(opt, datatype='test')
+        context_generator = ContextGenerator(opt, datatype='test', seed=0)
         # We pull from the test set so that the model can't regurgitate
         # memorized conversations
     else:
