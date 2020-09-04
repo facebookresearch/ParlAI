@@ -14,8 +14,8 @@ def launch():
     # Keys of models_needed_dict will be used as unique names in the output files. This
     # specifies that we want 110 conversations from this model.
     models_needed_dict = {'TODO_FIXME_MODEL_UNIQUE_NAME': 110}
-    # For each key `model_name` in `models_needed_dict`, there should be a model opt
-    # file located at `os.path.join(base_model_folder, model_name, 'model.opt')`
+    # For each key `model_name` in `models_needed_dict`, there should be a model file
+    # located at `os.path.join(base_model_folder, model_name, 'model')`
     override_opt = {
         'block_qualification': 'TODO_FIXME_BLOCK_QUALIFICATION_NAME',
         'base_model_folder': 'TODO_FIXME_BASE_MODEL_FOLDER',

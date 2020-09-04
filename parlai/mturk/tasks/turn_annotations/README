@@ -16,7 +16,7 @@ python mturk/tasks/turn_annotations/run.py \
 --is-sandbox True \  # Set to False for live mode
 --reward 3 \  # Only necessary in live mode
 --conversations-needed ${MODEL_NAME}:5  
-# A model .opt file should be present at ${BASE_MODEL_FOLDER}/${MODEL_NAME}/model.opt
+# A model file should be present at ${BASE_MODEL_FOLDER}/${MODEL_NAME}/model
 ```
 - **Python launch script**: see `launch.py` for an example script.
 
