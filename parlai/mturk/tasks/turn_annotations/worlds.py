@@ -297,7 +297,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         }
 
         print(
-            f'{self.__class__.__name__}:{self.tag}: is at turn {self.task_turn_idx} of {self.num_turns}...'
+            f'{self.__class__.__name__}:{self.tag}: is at turn {self.task_turn_idx}, with {self.num_turns} pairs of turns needed...'
         )
 
         if self.task_turn_idx == 0:
@@ -605,7 +605,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     'annotations_config': self.annotations_config,
                     'had_onboarding': False,
                     'model_nickname': self.agents[1].worker_id,
-                    'model_file': self.agents[1].model_agent.opt['model_file'],
+                    'model_file': self.agents[1].model_agent.opt.get('model_file'),
                     'model_opt': self.agents[1].model_agent.opt,
                 },
             }
