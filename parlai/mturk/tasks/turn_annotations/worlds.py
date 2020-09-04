@@ -30,8 +30,10 @@ from parlai.mturk.tasks.turn_annotations.constants import (
     ONBOARD_SUBMIT,
     ONBOARD_SUCCESS,
 )
-from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
-from parlai.mturk.tasks.turn_annotations.utils import Compatibility
+from parlai.mturk.tasks.turn_annotations.utils import (
+    Compatibility,
+    construct_annotations_html,
+)
 
 
 class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
@@ -47,6 +49,8 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
 
     def __init__(self, opt, mturk_agent):
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
+        self.annotations_intro = opt['annotations_intro']
+        self.annotations_config = opt['annotations_config']
         self.max_onboard_time = opt['max_onboard_time']
         self.min_correct = ONBOARD_CONFIG['min_correct']
         self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
@@ -82,6 +86,7 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
         """
         Calculate how many correct answers the user gave.
 
+        :param worker_id: worker ID, for reporting how they performed on onboarding
         :param worker_answers: dict with the keys of the message index
         (1,3,5,7,9), so can index directly into self.opt['onboard_task_data'] for the
         answers (but the frontend sends keys that are strings)
@@ -124,7 +129,11 @@ class TurnAnnotationsOnboardWorld(MTurkOnboardWorld):
                 # human
                 onboarding_task_html += f"""<div class="alert alert-info" style="float: right; display:table;"><span class="onboarding-text"><b>YOU:</b> {utt["text"]}</span></div>"""
             else:
-                annotations_html = TurkLikeAgent.construct_annotations_html(idx)
+                annotations_html = construct_annotations_html(
+                    annotations_intro=self.annotations_intro,
+                    annotations_config=self.annotations_config,
+                    turn_idx=idx,
+                )
                 onboarding_task_html += f"""<div class="alert alert-warning" style="float: left; display:table; margin-top:30px"><span class="onboarding-text"><b>THEM:</b> {utt["text"]}{annotations_html}</span></div>"""
         onboarding_task_html += '<div style="clear:both;"></div>'
 
