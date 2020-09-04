@@ -322,6 +322,9 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     agent.observe(validate(control_msg))
                     if agent_idx == 0:
                         time.sleep(3)
+                else:
+                    control_msg['text'] = ''
+                    agent.observe(validate(control_msg))
 
             if self.opt['conversation_start_mode'] == 'bst':
 
