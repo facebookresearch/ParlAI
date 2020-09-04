@@ -80,24 +80,6 @@ class TestSeq2Seq(unittest.TestCase):
         self.assertGreater(valid['accuracy'], 0.95)
         self.assertGreater(test['accuracy'], 0.95)
 
-    def test_badinput(self):
-        """
-        Ensures model doesn't crash on malformed inputs.
-        """
-        testing_utils.train_model(
-            dict(
-                task='integration_tests:bad_example',
-                model='seq2seq',
-                learningrate=LR,
-                batchsize=10,
-                datatype='train:ordered:stream',
-                num_epochs=0.11,
-                embeddingsize=16,
-                hiddensize=16,
-                inference='greedy',
-            )
-        )
-
 
 class TestBackwardsCompatibility(unittest.TestCase):
     """

@@ -479,24 +479,6 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertGreaterEqual(test['accuracy'], 0.99)
         self.assertGreaterEqual(test['f1'], 0.99)
 
-    def test_badinput(self):
-        """
-        Ensures model doesn't crash on malformed inputs.
-        """
-        testing_utils.train_model(
-            dict(
-                task='integration_tests:bad_example',
-                model='transformer/generator',
-                batchsize=4,
-                datatype='train:ordered:stream',
-                num_epochs=0.1,
-                no_cuda=True,
-                embedding_size=16,
-                skip_generation=True,
-                ffn_size=16,
-            )
-        )
-
     @testing_utils.retry(ntries=3)
     def test_xlm(self):
         """
