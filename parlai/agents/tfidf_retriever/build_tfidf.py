@@ -13,6 +13,7 @@ import numpy as np
 import scipy.sparse as sp
 import math
 
+from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
 from functools import partial
 from collections import Counter
@@ -109,7 +110,13 @@ def get_count_matrix(args, db_opts):
         doc_ids = doc_db.get_doc_ids()
 
     tok_class = tokenizers.get_class(args.tokenizer)
-    init(tok_class, db_opts)
+    if args.num_workers is not None and args.num_workers <= 1:
+        # single threaded
+        init(tok_class, db_opts)
+    else:
+        workers = ProcessPool(
+            args.num_workers, initializer=init, initargs=(tok_class, db_opts)
+        )
 
     # Compute the count matrix in steps (to keep in memory)
     logging.info('Mapping...')
@@ -119,7 +126,11 @@ def get_count_matrix(args, db_opts):
     _count = partial(count, args.ngram, args.hash_size)
     for i, batch in enumerate(batches):
         logging.info('-' * 25 + 'Batch %d/%d' % (i + 1, len(batches)) + '-' * 25)
-        for b_row, b_col, b_data in map(_count, batch):
+        if args.num_workers is not None and args.num_workers <= 1:
+            seq = map(_count, batch)
+        else:
+            seq = workers.imap_unordered(_count, batch)
+        for b_row, b_col, b_data in seq:
             row.extend(b_row)
             col.extend(b_col)
             data.extend(b_data)

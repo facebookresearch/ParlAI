@@ -25,7 +25,7 @@ class TestTfidfRetriever(unittest.TestCase):
     """
 
     @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
-    def test_sparse_tfidf_retriever(self):
+    def test_sparse_tfidf_multiworkers(self):
         with testing_utils.tempdir() as tmpdir:
             MODEL_FILE = os.path.join(tmpdir, 'tmp_test_babi')
             testing_utils.train_model(
@@ -34,6 +34,54 @@ class TestTfidfRetriever(unittest.TestCase):
                     task='babi:task1k:1',
                     model_file=MODEL_FILE,
                     retriever_numworkers=4,
+                    retriever_hashsize=2 ** 8,
+                    retriever_tokenizer='simple',
+                    datatype='train:ordered',
+                    batchsize=1,
+                    num_epochs=1,
+                )
+            )
+
+            agent = create_agent_from_model_file(MODEL_FILE)
+
+            obs = {
+                'text': (
+                    'Mary moved to the bathroom. John went to the hallway. '
+                    'Where is Mary?'
+                ),
+                'episode_done': True,
+            }
+            agent.observe(obs)
+            reply = agent.act()
+            assert reply['text'] == 'bathroom'
+
+            ANS = 'The one true label.'
+            new_example = {
+                'text': 'A bunch of new words that are not in the other task, '
+                'which the model should be able to use to identify '
+                'this label.',
+                'labels': [ANS],
+                'episode_done': True,
+            }
+            agent.observe(new_example)
+            reply = agent.act()
+            assert 'text' in reply and reply['text'] == ANS
+
+            new_example.pop('labels')
+            agent.observe(new_example)
+            reply = agent.act()
+            assert reply['text'] == ANS
+
+    @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
+    def test_sparse_tfidf_retriever_singlethread(self):
+        with testing_utils.tempdir() as tmpdir:
+            MODEL_FILE = os.path.join(tmpdir, 'tmp_test_babi')
+            testing_utils.train_model(
+                dict(
+                    model='tfidf_retriever',
+                    task='babi:task1k:1',
+                    model_file=MODEL_FILE,
+                    retriever_numworkers=1,
                     retriever_hashsize=2 ** 8,
                     retriever_tokenizer='simple',
                     datatype='train:ordered',
