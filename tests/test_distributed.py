@@ -30,9 +30,10 @@ class TestDistributed(unittest.TestCase):
     _base_config = dict(
         task='integration_tests:nocandidate',
         model='transformer/generator',
-        optimizer='adamax',
+        optimizer='adam',
         validation_metric='ppl',
-        learningrate=7e-3,
+        skip_generation=True,
+        learningrate=1e-2,
         batchsize=7,
         validation_every_n_epochs=5,
         num_epochs=20,
@@ -40,7 +41,6 @@ class TestDistributed(unittest.TestCase):
         n_heads=1,
         ffn_size=32,
         embedding_size=32,
-        beam_size=1,
         verbose=True,
     )
 
@@ -74,9 +74,7 @@ class TestDistributed(unittest.TestCase):
         valid, test = self._distributed_train_model(self._base_config)
 
         self.assertLessEqual(valid['ppl'], 1.20)
-        self.assertGreaterEqual(valid['bleu-4'], 0.95)
         self.assertLessEqual(test['ppl'], 1.20)
-        self.assertGreaterEqual(test['bleu-4'], 0.95)
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
@@ -86,9 +84,9 @@ class TestDistributed(unittest.TestCase):
 
     def test_multitask_distributed(self):
         config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests:nocandidate,integration_tests:multiturn'
+        config['num_epochs'] = 50
+        config['task'] = 'integration_tests:overfit,integration_tests:overfit_multiturn'
         config['dynb'] = 'full'
-        config['skip_generation'] = 'true'
         valid, test = self._distributed_train_model(config)
 
         self.assertLessEqual(valid['ppl'], 1.20)
@@ -97,11 +95,12 @@ class TestDistributed(unittest.TestCase):
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
         # It would be 200 if each worker did all the examples
-        self.assertEqual(valid['exs'].value(), 500)
-        self.assertEqual(test['exs'].value(), 500)
+        self.assertEqual(valid['exs'].value(), 4 * 4 + 4)
+        self.assertEqual(test['exs'].value(), 4 * 4 + 4)
 
     def test_distributed_eval_max_exs(self):
         config = copy.deepcopy(self._base_config)
+        config['num_epochs'] = 0.1
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
         valid, test = self._distributed_train_model(config)
@@ -120,6 +119,7 @@ class TestDistributed(unittest.TestCase):
 
     def test_distributed_eval_stream_mode(self):
         config = copy.deepcopy(self._base_config)
+        config['num_epochs'] = 0.1
         config['datatype'] = 'train:stream'
         valid, test = self._distributed_train_model(config)
 
@@ -131,6 +131,7 @@ class TestDistributed(unittest.TestCase):
 
     def test_distributed_eval_stream_mode_max_exs(self):
         config = copy.deepcopy(self._base_config)
+        config['num_epochs'] = 0.1
         config['datatype'] = 'train:stream'
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
@@ -151,6 +152,7 @@ class TestDistributed(unittest.TestCase):
 
     def test_chunked_dynamic_teacher(self):
         config = copy.deepcopy(self._base_config)
+        config['num_epochs'] = 1
         config['datatype'] = 'train:stream'
         config['dynamic_batching'] = 'full'
         config['truncate'] = 16
@@ -161,6 +163,7 @@ class TestDistributed(unittest.TestCase):
 
     def test_chunked_teacher(self):
         config = copy.deepcopy(self._base_config)
+        config['num_epochs'] = 1
         config['datatype'] = 'train:stream'
         config['num_epochs'] = 5
         config['dynamic_batching'] = None

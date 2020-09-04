@@ -217,6 +217,30 @@ class OverfitTeacher(CandidateTeacher, DialogTeacher):
         return self.corpussize
 
 
+class OverfitMultiturnTeacher(CandidateTeacher, DialogTeacher):
+    @classmethod
+    def add_cmdline_args(self, argparser):
+        argparser.add_argument('--corpus-size', default=4, type=int)
+
+    def __init__(self, opt, shared=None):
+        self.corpussize = opt.get('corpus_size', 4)
+        super().__init__(opt, shared)
+
+    def setup_data(self, fold):
+        super()._setup_data('train')
+        for text in self.corpus[: self.corpussize]:
+            words = text.split(' ')
+            for j in range(1, len(words) + 1):
+                real_text = ' '.join(words[:j])
+                yield (real_text, text), True
+
+    def num_examples(self):
+        return self.corpussize * EXAMPLE_SIZE
+
+    def num_episodes(self):
+        return self.corpussize * EXAMPLE_SIZE
+
+
 class VariableLengthTeacher(CandidateTeacher):
     def build_corpus(self):
         corpus = super().build_corpus()

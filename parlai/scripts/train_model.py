@@ -475,8 +475,11 @@ class TrainLoop:
                 self.save_model()
                 self.saved = True
             if (
-                opt['validation_metric'] == 'accuracy'
+                opt['validation_metric_mode'] == 'max'
                 and self.best_valid >= opt['validation_cutoff']
+            ) or (
+                opt['validation_metric_mode'] == 'min'
+                and self.best_valid <= opt['validation_cutoff']
             ):
                 logging.info('task solved! stopping.')
                 return True
