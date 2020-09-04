@@ -192,6 +192,31 @@ class CandidateTeacher(CandidateBaseTeacher, DialogTeacher):
             yield (text, [text], 0, cands), True
 
 
+class OverfitTeacher(CandidateTeacher, DialogTeacher):
+    @classmethod
+    def add_cmdline_args(self, argparser):
+        argparser.add_argument('--corpus-size', default=4, type=int)
+
+    def __init__(self, opt, shared=None):
+        self.corpussize = opt.get('corpus_size', 4)
+        super().__init__(opt, shared)
+
+    def setup_data(self, fold):
+        super()._setup_data('train')
+        for i, text in enumerate(self.corpus[: self.corpussize]):
+            cands = []
+            for j in range(NUM_CANDIDATES):
+                offset = (i + j) % len(self.corpus)
+                cands.append(self.corpus[offset])
+            yield (text, [text], 0, cands), True
+
+    def num_examples(self):
+        return self.corpussize
+
+    def num_episodes(self):
+        return self.corpussize
+
+
 class VariableLengthTeacher(CandidateTeacher):
     def build_corpus(self):
         corpus = super().build_corpus()

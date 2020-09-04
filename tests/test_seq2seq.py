@@ -21,11 +21,13 @@ class TestSeq2Seq(unittest.TestCase):
     def test_ranking(self):
         valid, test = testing_utils.train_model(
             dict(
-                task='integration_tests:candidate',
+                task='integration_tests:overfit',
                 model='seq2seq',
                 learningrate=LR,
                 batchsize=BATCH_SIZE,
-                num_epochs=3,
+                validation_every_n_epochs=10,
+                validation_metric='ppl',
+                num_epochs=100,
                 embeddingsize=16,
                 hiddensize=16,
                 rnn_class='gru',
@@ -89,7 +91,7 @@ class TestSeq2Seq(unittest.TestCase):
                 learningrate=LR,
                 batchsize=10,
                 datatype='train:ordered:stream',
-                num_epochs=1,
+                num_epochs=0.11,
                 embeddingsize=16,
                 hiddensize=16,
                 inference='greedy',

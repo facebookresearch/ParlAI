@@ -16,20 +16,21 @@ class TestDialogptModel(unittest.TestCase):
     Checks that DialoGPT gets a certain performance on the integration test task.
     """
 
-    @testing_utils.retry(ntries=3, log_retry=True)
     def test_dialogpt(self):
         valid, test = testing_utils.train_model(
             dict(
-                task='integration_tests:nocandidate',
+                task='integration_tests:overfit',
                 model='hugging_face/dialogpt',
                 add_special_tokens=True,
                 add_start_token=True,
-                optimizer='sgd',
-                learningrate=1,
+                optimizer='adam',
+                learningrate=1e-3,
                 batchsize=4,
-                num_epochs=4,
+                num_epochs=50,
+                validation_every_n_epochs=5,
+                validation_metric='ppl',
                 short_final_eval=True,
-                validation_max_exs=12,
+                skip_generation=True,
             )
         )
 

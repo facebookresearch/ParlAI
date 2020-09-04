@@ -23,29 +23,33 @@ class TestTransformerRanker(unittest.TestCase):
     Checks that transformer_ranker can learn some very basic tasks.
     """
 
+    def _overfit_train(self, **args):
+        opt = dict(
+            task='integration_tests:overfit',
+            model='transformer/ranker',
+            optimizer='adam',
+            learningrate=0.01,
+            batchsize=4,
+            validation_every_n_epochs=5,
+            validation_patience=10,
+            lr_scheduler='none',
+            n_layers=1,
+            n_heads=4,
+            ffn_size=64,
+            embedding_size=8,
+            candidates='batch',
+            eval_candidates='batch',
+            gradient_clip=0.5,
+        )
+        opt.update(args)
+        return testing_utils.train_model(opt)
+
     @testing_utils.retry(ntries=3)
     def test_repeater(self):
         """
         Test a simple repeat-after-me model.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:candidate',
-                model='transformer/ranker',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=16,
-                validation_every_n_epochs=5,
-                validation_patience=2,
-                n_layers=1,
-                n_heads=4,
-                ffn_size=64,
-                embedding_size=32,
-                candidates='batch',
-                eval_candidates='inline',
-                gradient_clip=0.5,
-            )
-        )
+        valid, test = self._overfit_train()
 
         self.assertGreaterEqual(valid['hits@1'], 0.90)
         self.assertGreaterEqual(test['hits@1'], 0.90)
@@ -62,14 +66,12 @@ class TestTransformerRanker(unittest.TestCase):
                     model_file=model_file,
                     task='integration_tests:candidate',
                     model='transformer/ranker',
-                    optimizer='adamax',
-                    learningrate=7e-3,
-                    batchsize=32,
-                    num_epochs=1,
+                    batchsize=16,
+                    num_epochs=0.1,
                     n_layers=1,
                     n_heads=1,
-                    ffn_size=32,
-                    embedding_size=32,
+                    ffn_size=4,
+                    embedding_size=4,
                     warmup_updates=1,
                     lr_scheduler='invsqrt',
                 )
@@ -80,7 +82,7 @@ class TestTransformerRanker(unittest.TestCase):
                     model_file=model_file,
                     task='integration_tests:candidate',
                     model='transformer/ranker',
-                    num_epochs=1,
+                    num_epochs=0.1,
                 )
             )
             # make sure the number of updates is being tracked correctly
@@ -160,26 +162,7 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Test --variant xlm.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:candidate',
-                model='transformer/ranker',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=16,
-                validation_every_n_epochs=5,
-                validation_patience=2,
-                n_layers=1,
-                n_heads=4,
-                ffn_size=64,
-                embedding_size=32,
-                candidates='batch',
-                eval_candidates='inline',
-                gradient_clip=0.5,
-                variant='xlm',
-                activation='gelu',
-            )
-        )
+        valid, test = self._overfit_train(variant='xlm', activation='gelu')
 
         self.assertGreaterEqual(valid['hits@1'], 0.90)
         self.assertGreaterEqual(test['hits@1'], 0.90)
@@ -189,26 +172,12 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Test --variant prelayernorm with history_add_global_end_token option.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:candidate',
-                model='transformer/ranker',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=16,
-                validation_every_n_epochs=5,
-                validation_patience=2,
-                n_layers=1,
-                n_heads=4,
-                ffn_size=64,
-                embedding_size=32,
-                candidates='batch',
-                eval_candidates='inline',
-                gradient_clip=0.5,
-                variant='prelayernorm',
-                activation='gelu',
-                history_add_global_end_token='end',
-            )
+        valid, test = self._overfit_train(
+            task='integration_tests:overfit',
+            model='transformer/ranker',
+            variant='prelayernorm',
+            activation='gelu',
+            history_add_global_end_token='end',
         )
 
         self.assertGreaterEqual(valid['hits@1'], 0.90)
@@ -219,26 +188,10 @@ class TestTransformerRanker(unittest.TestCase):
         """
         Test a transformer ranker reduction method other than `mean`.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:candidate',
-                model='transformer/ranker',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=16,
-                validation_every_n_epochs=5,
-                validation_patience=2,
-                n_layers=1,
-                n_heads=4,
-                ffn_size=64,
-                embedding_size=32,
-                candidates='batch',
-                eval_candidates='inline',
-                gradient_clip=0.5,
-                variant='xlm',
-                activation='gelu',
-                reduction_type='first',  # this is really what we're trying to test for
-            )
+        valid, test = self._overfit_train(
+            variant='xlm',
+            activation='gelu',
+            reduction_type='first',  # this is really what we're trying to test for
         )
 
         self.assertGreaterEqual(valid['hits@1'], 0.90)
@@ -249,6 +202,28 @@ class TestTransformerGenerator(unittest.TestCase):
     """
     Checks that the generative transformer can learn basic tasks.
     """
+
+    def _overfit_train(self, **args):
+        args = dict(
+            task='integration_tests:overfit',
+            model='transformer/generator',
+            optimizer='sgd',
+            learningrate=1,
+            momentum=0.9,
+            batchsize=4,
+            n_layers=1,
+            n_heads=1,
+            ffn_size=32,
+            embedding_size=16,
+            inference='greedy',
+            beam_size=1,
+            skip_generation=True,
+            validation_metric='ppl',
+            validation_every_n_epochs=10,
+            num_epochs=100,
+        )
+        args.update(args)
+        return testing_utils.train_model(args)
 
     def test_greedysearch(self):
         """
@@ -512,9 +487,9 @@ class TestTransformerGenerator(unittest.TestCase):
             dict(
                 task='integration_tests:bad_example',
                 model='transformer/generator',
-                batchsize=10,
+                batchsize=4,
                 datatype='train:ordered:stream',
-                num_epochs=1,
+                num_epochs=0.1,
                 no_cuda=True,
                 embedding_size=16,
                 skip_generation=True,
@@ -527,26 +502,11 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test --variant xlm.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:nocandidate',
-                model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
-                inference='greedy',
-                beam_size=1,
-                variant='xlm',
-                activation='gelu',
-                skip_generation=True,
-                n_segments=8,  # doesn't do anything but still good to test
-                adam_eps=1e-6,  # just to test another flag simultaneously
-            )
+        valid, test = self._overfit_train(
+            variant='xlm',
+            activation='gelu',
+            n_segments=8,  # doesn't do anything but still good to test
+            adam_eps=1e-6,  # just to test another flag simultaneously
         )
 
         self.assertLessEqual(valid['ppl'], 1.30)
@@ -557,25 +517,7 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test --variant prelayernorm.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:nocandidate',
-                model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
-                inference='greedy',
-                beam_size=1,
-                variant='prelayernorm',
-                activation='gelu',
-                skip_generation=True,
-            )
-        )
+        valid, test = self._overfit_train(variant='prelayernorm', activation='gelu',)
 
         self.assertLessEqual(valid['ppl'], 1.30)
         self.assertLessEqual(test['ppl'], 1.30)
@@ -585,23 +527,16 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test that the model outputs self-computed bleu correctly.
         """
-        valid, _ = testing_utils.train_model(
+        valid, _ = testing_utils.eval_model(
             dict(
-                task='integration_tests:nocandidate',
-                model='transformer/generator',
-                optimizer='adamax',
-                learningrate=7e-3,
-                batchsize=32,
-                num_epochs=20,
-                n_layers=1,
-                n_heads=1,
-                ffn_size=32,
-                embedding_size=32,
+                task='integration_tests',
+                model_file='zoo:unittest/context_blocking/model',
+                dict_file='zoo:unittest/context_blocking/model.dict',
                 inference='greedy',
                 beam_size=1,
-                variant='xlm',
-                activation='gelu',
+                skip_generation=False,
                 compute_tokenized_bleu=True,
+                metrics='all',
             )
         )
         try:
@@ -751,18 +686,29 @@ class TestLearningRateScheduler(unittest.TestCase):
     Test learning rate scheduler for both generative and ranking transformers.
     """
 
-    def _test_learning_rate_resuming(self, args):
+    def _test_learning_rate_resuming(self, user_args):
         """
         Test learning rate resumes correctly.
         """
+        args = dict(
+            task='integration_tests:overfit',
+            lr_scheduler='invsqrt',
+            optimizer='sgd',
+            learningrate=1e-3,
+            batchsize=4,
+            num_epochs=1,
+            n_layers=1,
+            n_heads=1,
+            ffn_size=4,
+            embedding_size=4,
+        )
+        args.update(user_args)
+
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
-            valid1, test1 = testing_utils.train_model(
-                dict(model_file=model_file, lr_scheduler='invsqrt', **args)
-            )
-            valid2, test2 = testing_utils.train_model(
-                dict(model_file=model_file, lr_scheduler='invsqrt', **args)
-            )
+            args['model_file'] = model_file
+            valid1, test1 = testing_utils.train_model(args)
+            valid2, test2 = testing_utils.train_model(args)
             # make sure the number of updates is being tracked correctly
             self.assertGreater(
                 valid2['total_train_updates'],
@@ -773,6 +719,9 @@ class TestLearningRateScheduler(unittest.TestCase):
             self.assertLess(
                 valid2['lr'], valid1['lr'], 'Learning rate is not decreasing'
             )
+
+            del args['lr_scheduler']
+            del args['model_file']
             # but make sure we're not loading the scheduler if we're fine
             # tuning
             valid3, test3 = testing_utils.train_model(
@@ -815,18 +764,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         Test generators resume correctly.
         """
         GENERATOR_ARGS = dict(
-            task='integration_tests:nocandidate',
-            model='transformer/generator',
-            optimizer='sgd',
-            learningrate=1e-3,
-            batchsize=32,
-            num_epochs=1,
-            n_layers=1,
-            n_heads=1,
-            ffn_size=32,
-            embedding_size=32,
-            skip_generation=True,
-            warmup_updates=1,
+            model='transformer/generator', skip_generation=True, warmup_updates=1,
         )
         self._test_learning_rate_resuming(GENERATOR_ARGS)
 
@@ -834,19 +772,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         """
         Test resuming learning rate for the ranker.
         """
-        RANKER_ARGS = dict(
-            task='integration_tests:candidate',
-            model='transformer/ranker',
-            optimizer='sgd',
-            learningrate=1e-3,
-            batchsize=32,
-            num_epochs=1,
-            n_layers=1,
-            n_heads=1,
-            ffn_size=32,
-            embedding_size=32,
-            warmup_updates=1,
-        )
+        RANKER_ARGS = dict(model='transformer/ranker', warmup_updates=1,)
         self._test_learning_rate_resuming(RANKER_ARGS)
 
     def test_invsqrt_learning_rate(self):
