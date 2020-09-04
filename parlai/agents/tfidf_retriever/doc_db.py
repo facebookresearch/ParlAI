@@ -30,12 +30,6 @@ class DocDB(object):
     def __exit__(self, *args):
         self.close()
 
-    def path(self):
-        """
-        Return the path to the file that backs this database.
-        """
-        return self.path
-
     def close(self):
         """
         Close the connection to the database.
