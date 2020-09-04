@@ -14,6 +14,7 @@ import unittest
 
 from parlai.core.agents import create_agent_from_shared
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.turn_annotations import run
 from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 from parlai.mturk.tasks.turn_annotations.worlds import TurnAnnotationsChatWorld
@@ -32,6 +33,9 @@ class TestTurnAnnotations(unittest.TestCase):
         config_folder = os.path.join(
             os.path.dirname(os.path.realpath(run.__file__)), 'config'
         )
+        argparser = ParlaiParser(False, False)
+        argparser.add_parlai_data_path()
+        datapath = os.path.join(argparser.parlai_home, 'data')
         with open(os.path.join(config_folder, 'left_pane_text.html')) as f:
             left_pane_text = f.readlines()
         with open(os.path.join(config_folder, 'annotations_config.json')) as f:
@@ -40,7 +44,9 @@ class TestTurnAnnotations(unittest.TestCase):
             {
                 'annotations_config': annotations_config,
                 'annotations_intro': 'Does this comment from your partner have any of the following attributes? (Check all that apply)',
-                'base_model_folder': base_model_folder,
+                'base_model_folder': os.path.join(
+                    datapath, 'models', 'blended_skill_talk', model_name
+                ),
                 'check_acceptability': False,
                 'conversation_start_mode': 'hi',
                 'final_rating_question': 'Please rate your partner on a scale of 1-5.',
@@ -58,6 +64,7 @@ class TestTurnAnnotations(unittest.TestCase):
         semaphore = threading.Semaphore(max_concurrent_responses)
 
         # Set up bot agent
+        # {{{TODO: first, trigger downloading multi_task__bst_tuned so that the model file will exist!}}}
         shared_bot_agents = TurkLikeAgent.get_bot_agents(
             opt=opt, active_models=[model_name], datapath=datapath
         )
