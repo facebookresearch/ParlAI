@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-UnigramAgent always predictions the same vocabulary distribution.
+UnigramAgent always predicts the unigram distribution.
 
 It is a full TorchGeneratorAgent model, so it can be used heavily in testing, while
 being very quick to optimize.

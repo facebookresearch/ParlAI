@@ -71,6 +71,7 @@ class ParlAILRScheduler(object):
             # pytorch 1.5 or newer
             return s.get_last_lr()[0]
         except AttributeError:
+            # TODO: upon getting rid of pytorch 1.4, kill this
             # pytorch 1.4 or older
             return s.optimizer.param_groups[0]['lr']
 
