@@ -73,8 +73,8 @@ class TestDistributed(unittest.TestCase):
     def test_generator_distributed(self):
         valid, test = self._distributed_train_model(self._base_config)
 
-        self.assertLessEqual(valid['ppl'], 1.20)
-        self.assertLessEqual(test['ppl'], 1.20)
+        self.assertLessEqual(valid['ppl'], 1.50)
+        self.assertLessEqual(test['ppl'], 1.50)
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
