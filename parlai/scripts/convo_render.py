@@ -174,7 +174,7 @@ def pre_process(fname, num_ex, alt_speaker):
             dialogue = data["dialog"]
             for item in dialogue:
                 speaker = item[0]['id']
-                text = item[0]["text"]
+                text = item[0]['text']
                 conversation += [(speaker, text)]
             conversation += [(END_OF_CONVO, END_OF_CONVO)]
 

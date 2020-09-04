@@ -12,7 +12,8 @@ import parlai.scripts.convo_render as convo_render
 class TestConvoRender(unittest.TestCase):
     def test_convo_render(self):
         """
-        Test convo render by creating a self-chat, saving it to file and render it to html.
+        Test convo render by creating a self-chat, saving it to file and render it to
+        html.
         """
         self_chat_pp = self_chat.setup_args()
         self_chat_opt = self_chat_pp.parse_args(
