@@ -665,42 +665,32 @@ workflows:
           requires:
             - unittests_37
             - unittests_gpu16
-      - unittests_38
+      - unittests_38:
+          requires:
+            - unittests_37
+            - unittests_gpu16
       - unittests_37
-      - unittests_36
+      - unittests_36:
+          requires:
+            - unittests_37
+            - unittests_gpu16
       - mturk_tests
       - unittests_osx:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
       - quickstart_tests:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
       - long_gpu_tests:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
       - teacher_tests:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
       - build_website:
           filters:
             branches:
