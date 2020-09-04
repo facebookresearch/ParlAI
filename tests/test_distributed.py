@@ -35,7 +35,7 @@ class TestDistributed(unittest.TestCase):
         learningrate=7e-3,
         batchsize=7,
         validation_every_n_epochs=5,
-        num_epochs=20,
+        num_epochs=50,
         n_layers=1,
         n_heads=1,
         ffn_size=32,
@@ -162,7 +162,7 @@ class TestDistributed(unittest.TestCase):
     def test_chunked_teacher(self):
         config = copy.deepcopy(self._base_config)
         config['datatype'] = 'train:stream'
-        config['num_epochs'] = 5
+        config['num_epochs'] = 2
         config['dynamic_batching'] = None
 
         valid, test = self._distributed_train_model(config)
