@@ -189,13 +189,13 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (OSX)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -236,14 +236,14 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (py36)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -268,14 +268,14 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (py38)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -300,14 +300,14 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (py37)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -339,14 +339,14 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (GPU; pytorch 1.4)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -378,12 +378,16 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (GPU; pytorch 1.5)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -411,13 +415,15 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - restore_cache:
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (GPU; pytorch 1.6)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -449,21 +455,61 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
+      - <<: *codecov
+      - save_cache:
+          key: data-20200904-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
+      - store_test_results:
+          path: test-results
+
+  quickstart_tests:
+    <<: *gpu
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-20200516
+      - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-20200516
+          paths:
+            - "~/nvidia-downloads/"
+      - restore_cache:
+          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+      - <<: *setup
+      - <<: *installtorchgpu16
+      - <<: *installdeps
+      - save_cache:
+          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - <<: *findtests
+      - run:
+          name: Fake teststorun.txt
+          command: echo "quickstart" > teststorun.txt
+      - restore_cache:
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
           path: test-results
+
+
 
   teacher_tests:
     <<: *small_cpu37
@@ -483,14 +529,14 @@ jobs:
             - "~/venv/lib"
       - <<: *findtests
       - restore_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
       - run:
           name: All data tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m tasks parlai/tasks/*/test.py -v
       - <<: *codecov
       - save_cache:
-          key: data-20200625-{{ checksum "teststorun.txt" }}
+          key: data-20200904-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
@@ -624,6 +670,14 @@ workflows:
       - unittests_36
       - mturk_tests
       - unittests_osx:
+          requires:
+            - unittests_gpu16
+            - unittests_gpu15
+            - unittests_gpu14
+            - unittests_38
+            - unittests_37
+            - unittests_36
+      - quickstart_tests:
           requires:
             - unittests_gpu16
             - unittests_gpu15
