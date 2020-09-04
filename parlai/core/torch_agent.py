@@ -1101,7 +1101,7 @@ class TorchAgent(ABC, Agent):
 
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            report['lr'] = GlobalAverageMetric(self.optimizer.param_groups[0]['lr'])
+            report['lr'] = GlobalAverageMetric(self.scheduler.get_last_lr())
 
         if self.use_cuda:
             report['gpu_mem'] = GlobalAverageMetric(self._gpu_usage())
@@ -1139,7 +1139,7 @@ class TorchAgent(ABC, Agent):
             props = torch.cuda.get_device_properties(dev)
             memory_avail += props.total_memory
             memory_used += torch.cuda.max_memory_allocated(dev)
-            torch.cuda.reset_max_memory_allocated(dev)
+            torch.cuda.reset_peak_memory_stats(dev)
         return memory_used / memory_avail
 
     def receive_metrics(self, metrics_dict):

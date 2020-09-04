@@ -47,12 +47,18 @@ COLORED_LEVEL_STYLES = {
 }
 
 
+def _is_interactive():
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return sys.stdout.isatty()
+
+
 # Some functions in this class assume that ':' will be the separator used in
 # the logging formats setup for this class
 class ParlaiLogger(logging.Logger):
-    def __init__(
-        self, name, console_level=INFO,
-    ):
+    def __init__(self, name, console_level=INFO):
         """
         Initialize the logger object.
 
@@ -71,20 +77,20 @@ class ParlaiLogger(logging.Logger):
 
     def _build_formatter(self):
         prefix_format = f'{self.prefix} ' if self.prefix else ''
-        if COLORED_LOGS and sys.stdout.isatty():
+        if COLORED_LOGS and _is_interactive():
             return coloredlogs.ColoredFormatter(
                 prefix_format + COLORED_FORMAT,
                 datefmt=CONSOLE_DATE_FORMAT,
                 level_styles=COLORED_LEVEL_STYLES,
                 field_styles={},
             )
-        elif sys.stdout.isatty():
+        elif _is_interactive():
             return logging.Formatter(
-                prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT,
+                prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT
             )
         else:
             return logging.Formatter(
-                prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT,
+                prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT
             )
 
     def log(self, msg, level=INFO):

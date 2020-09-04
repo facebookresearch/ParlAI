@@ -31,6 +31,13 @@ except ImportError:
     GPU_AVAILABLE = False
 
 try:
+    import torchvision  # noqa: F401
+
+    VISION_AVAILABLE = True
+except ImportError:
+    VISION_AVAILABLE = False
+
+try:
     import git
 
     git_ = git.Git()
@@ -91,15 +98,11 @@ def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
-def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
-    skip = False
-    if not TORCH_AVAILABLE:
-        skip = True
-    else:
-        from packaging import version
-
-        skip = version.parse(torch.__version__) < version.parse('1.4.0')
-    return unittest.skipIf(skip, reason)(testfn)
+def skipUnlessVision(testfn, reason='torchvision not installed'):
+    """
+    Decorate a test to skip unless torchvision is installed.
+    """
+    return unittest.skipUnless(VISION_AVAILABLE, reason)(testfn)
 
 
 class retry(object):
