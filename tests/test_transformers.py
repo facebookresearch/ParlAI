@@ -13,6 +13,7 @@ import unittest
 import pytest
 import parlai.utils.testing as testing_utils
 from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent_from_model_file
 from parlai.core.opt import Opt
 from .test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
 from parlai.core.params import ParlaiParser
@@ -280,8 +281,6 @@ class TestTransformerGenerator(unittest.TestCase):
         Test beamsearch blocking.
         """
         with testing_utils.tempdir() as tmpdir:
-            from parlai.core.agents import create_agent_from_model_file
-
             agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model')
             agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
             assert agent.act()['text'] == '5 5 5 5 5 5 5'
@@ -324,7 +323,6 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         Test beamsearch context blocking.
         """
-        from parlai.core.agents import create_agent_from_model_file
 
         agent = create_agent_from_model_file('zoo:unittest/context_blocking/model')
         agent.observe({'text': '5 4 3 2', 'episode_done': True})
@@ -355,49 +353,51 @@ class TestTransformerGenerator(unittest.TestCase):
         Test nucleus generation.
         """
         # Nucleus is inherently stochastic, just ensure no crash.
-        testing_utils.eval_model(
-            dict(
-                task='integration_tests:multiturn_candidate',
-                model='transformer/generator',
-                model_file='zoo:unittest/transformer_generator2/model',
-                batchsize=32,
-                inference='nucleus',
-                topp=0.3,
-            )
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model_file='zoo:unittest/transformer_generator2/model',
+            inference='nucleus',
+            topp=0.3,
         )
+        agent = create_agent(opt, True)
+        agent.observe({'text': '1', 'episode_done': True})
+        result = agent.act()
+        assert 'text' in result
+        assert result['text'] != ''
 
     def test_beamdelay(self):
         """
         Test delayedbeam generation.
         """
         # Delayed Beam is inherently stochastic, just ensure no crash.
-        testing_utils.eval_model(
-            dict(
-                task='integration_tests:multiturn_candidate',
-                model='transformer/generator',
-                model_file='zoo:unittest/transformer_generator2/model',
-                batchsize=32,
-                inference='delayedbeam',
-                topk=10,
-                beam_delay=5,
-            )
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model_file='zoo:unittest/transformer_generator2/model',
+            inference='delayedbeam',
+            topk=10,
+            beam_delay=2,
+            beam_min_length=2,
         )
+        agent = create_agent(opt, True)
+        obs = agent.observe({'text': '1\n1\n2\n2\n3\n3\n4', 'episode_done': True})
+        result = agent.act()
+        assert 'text' in result
+        assert result['text'] != ''
+        assert '1 2' in result['text']
 
     def test_topk(self):
         """
         Test topk generation.
         """
         # Topk is inherently stochastic, just ensure no crash.
-        testing_utils.eval_model(
-            dict(
-                task='integration_tests:multiturn_candidate',
-                model='transformer/generator',
-                model_file='zoo:unittest/transformer_generator2/model',
-                batchsize=32,
-                inference='topk',
-                topk=5,
-            )
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model_file='zoo:unittest/transformer_generator2/model',
+            inference='topk',
+            topp=10,
         )
+        agent = create_agent(opt, True)
+        agent.observe({'text': '1', 'episode_done': True})
+        result = agent.act()
+        assert 'text' in result
+        assert result['text'] != ''
 
     def test_generator_backcomp(self):
         """
