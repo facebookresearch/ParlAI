@@ -28,19 +28,19 @@ def _forced_parse(parser, opt):
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
     _base_config = dict(
-        task='integration_tests:nocandidate',
+        task='integration_tests:overfit',
         model='transformer/generator',
         optimizer='adam',
         validation_metric='ppl',
         skip_generation=True,
         learningrate=1e-2,
-        batchsize=7,
+        batchsize=4,
         validation_every_n_epochs=5,
-        num_epochs=20,
+        num_epochs=100,
         n_layers=1,
         n_heads=1,
         ffn_size=32,
-        embedding_size=32,
+        embedding_size=8,
         verbose=True,
     )
 
@@ -78,9 +78,8 @@ class TestDistributed(unittest.TestCase):
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
-        # It would be 200 if each worker did all the examples
-        self.assertEqual(valid['exs'].value(), 100)
-        self.assertEqual(test['exs'].value(), 100)
+        self.assertEqual(valid['exs'].value(), 4)
+        self.assertEqual(test['exs'].value(), 4)
 
     def test_multitask_distributed(self):
         config = copy.deepcopy(self._base_config)
