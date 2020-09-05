@@ -35,7 +35,7 @@ if __name__ == '__main__':
         url='http://parl.ai/',
         python_requires='>=3.6',
         packages=find_packages(
-            exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal*',)
+            exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal*')
         ),
         install_requires=reqs,
         include_package_data=True,
