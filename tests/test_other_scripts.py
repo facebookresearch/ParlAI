@@ -10,7 +10,6 @@ Catch all for a number of "other" scripts.
 
 import os
 import unittest
-import random
 import parlai.utils.testing as testing_utils
 
 
