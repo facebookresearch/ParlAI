@@ -114,8 +114,8 @@ class TestDistributed(unittest.TestCase):
         # parley() does batchsize examples each time, so each worker will do 49
         # example. In the future, if we fix VME, this assert should be changed
         # to exactly 90.
-        self.assertEqual(valid['exs'].value(), 98)
-        self.assertEqual(test['exs'].value(), 98)
+        self.assertEqual(valid['exs'].value(), 96)
+        self.assertEqual(test['exs'].value(), 96)
 
     def test_distributed_eval_stream_mode(self):
         config = copy.deepcopy(self._base_config)
@@ -144,13 +144,13 @@ class TestDistributed(unittest.TestCase):
         # Ensure no duplication of examples among workers
         # It would be 200 if each worker did all the examples
         # As in the test above:
-        # It does 98 instead of 90 b/c there are two workers, told to do 45
+        # It does 96 instead of 90 b/c there are two workers, told to do 45
         # each, and BatchWorld parley() does batchsize examples each time, so
         # each worker will do 49 examples.
         # In the future, if we fix VME, this assert should be changed to
         # exactly 90.
-        self.assertEqual(valid['exs'].value(), 98)
-        self.assertEqual(test['exs'].value(), 98)
+        self.assertEqual(valid['exs'].value(), 96)
+        self.assertEqual(test['exs'].value(), 96)
 
     def test_chunked_dynamic_teacher(self):
         config = copy.deepcopy(self._base_config)
