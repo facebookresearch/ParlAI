@@ -99,7 +99,8 @@ class TestDistributed(unittest.TestCase):
 
     def test_distributed_eval_max_exs(self):
         config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 0.1
+        config['task'] = 'integration_tests'
+        config['num_epochs'] = 0.01
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
         valid, test = self._distributed_train_model(config)
@@ -118,7 +119,8 @@ class TestDistributed(unittest.TestCase):
 
     def test_distributed_eval_stream_mode(self):
         config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 0.1
+        config['task'] = 'integration_tests'
+        config['num_epochs'] = 0.01
         config['datatype'] = 'train:stream'
         valid, test = self._distributed_train_model(config)
 
@@ -130,7 +132,8 @@ class TestDistributed(unittest.TestCase):
 
     def test_distributed_eval_stream_mode_max_exs(self):
         config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 0.1
+        config['task'] = 'integration_tests'
+        config['num_epochs'] = 0.01
         config['datatype'] = 'train:stream'
         config['validation_max_exs'] = 90
         config['short_final_eval'] = True
@@ -151,7 +154,8 @@ class TestDistributed(unittest.TestCase):
 
     def test_chunked_dynamic_teacher(self):
         config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 1
+        config['task'] = 'integration_tests'
+        config['num_epochs'] = 0.01
         config['datatype'] = 'train:stream'
         config['dynamic_batching'] = 'full'
         config['truncate'] = 16
@@ -162,7 +166,8 @@ class TestDistributed(unittest.TestCase):
 
     def test_chunked_teacher(self):
         config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 1
+        config['task'] = 'integration_tests'
+        config['num_epochs'] = 0.01
         config['datatype'] = 'train:stream'
         config['num_epochs'] = 5
         config['dynamic_batching'] = None
