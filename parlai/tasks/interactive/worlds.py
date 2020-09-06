@@ -9,6 +9,7 @@ from copy import deepcopy
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.core.message import Message
 
+import logging
 
 class InteractiveWorld(DialogPartnerWorld):
     """
@@ -51,9 +52,6 @@ class InteractiveWorld(DialogPartnerWorld):
         Alternate between the two agents.
         """
         
-        if self.turn_cnt == 0:
-            self.p1, self.p2 = self.get_contexts()
-
         acts = self.acts
         agents = self.agents
 
@@ -68,13 +66,7 @@ class InteractiveWorld(DialogPartnerWorld):
             )
             self.first_time = False
             return
-
-        if self.turn_cnt == 0 and self.p1 != '':
-            # add the context on to the first message to agent 0
-            context_act = Message(
-                {'id': 'context', 'text': self.p1, 'episode_done': False}
-            )
-            agents[0].observe(validate(context_act))
+ 
         try:
             act = deepcopy(agents[0].act())
         except StopIteration:
@@ -87,23 +79,24 @@ class InteractiveWorld(DialogPartnerWorld):
             return
 
         act_text = act.get('text', None)
+        logging.info('Act: ' + str(act))
+        message_history = act.get('message_history', [])
+        logging.info(str(message_history))
+
         acts[0] = act
         if act_text and '[DONE]' in act_text:
             agents[0].observe(validate(Message({'text': 'Goodbye!', 'episode_done': True})))
             self.reset()
             return
 
-        if act_text and act_text.startswith('your persona:'):
-            context_act = Message({'id': 'context', 'text': act_text,
-                                   'episode_done': False})
-            agents[1].observe(validate(context_act))
-        elif self.turn_cnt == 0 and self.p2 != '':
-            # add the context on to the first message to agent 1
-            context_act = Message(
-                {'id': 'context', 'text': self.p2, 'episode_done': False}
-            )
-            agents[1].observe(validate(context_act))
-        else:
+        logging.info('Starting observing message history')
+        for message in message_history + [act_text]:
+            if message and message.startswith('your persona:'):
+                act = Message({'id': 'context', 'text': message,
+                               'episode_done': False})
+            else:
+                act = Message({'text': message, 'episode_done': False})
+            logging.info(f'Observing message {message}')
             agents[1].observe(validate(act))
 
         acts[1] = agents[1].act()
@@ -114,3 +107,5 @@ class InteractiveWorld(DialogPartnerWorld):
         if act['episode_done']:
             self.finalize_episode()
             self.turn_cnt = 0
+
+        self.reset()

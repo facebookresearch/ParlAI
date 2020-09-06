@@ -26,7 +26,7 @@ class MessageSocketHandler(WebSocketHandler):
             logging.warn(f"No callback defined for new WebSocket messages.")
 
         self.message_callback = kwargs.pop('message_callback', _default_callback)
-        self.sid = get_rand_id()
+        self.sid = '1'
         super().__init__(*args, **kwargs)
 
     def open(self):
@@ -35,13 +35,15 @@ class MessageSocketHandler(WebSocketHandler):
         `subs` variable.
         """
         if self.sid not in self.subs.values():
+            self.subs[self.sid] = self
             self.set_nodelay(True)
 
     def on_close(self):
         """
         Runs when a socket is closed.
         """
-        del self.subs[self.sid]
+        if self.sid in self.subs:
+            del self.subs[self.sid]
 
     def on_message(self, message_text):
         """
@@ -56,13 +58,11 @@ class MessageSocketHandler(WebSocketHandler):
         """
         logging.info('websocket message from client: {}'.format(message_text))
         message = json.loads(message_text)
+        message_history = message.get('message_history', [])
 
-        self.sid = message.get('user_id')
-        self.subs[self.sid] = self
-        print(f"Current subscribers:", self.subs)
-        print("Changed sid to " + self.sid)
         message = {
             'text': message.get('text', ''),
+            'message_history': message_history,
             'payload': message.get('payload'),
             'sender': {'id': self.sid},
             'recipient': {'id': 0},
