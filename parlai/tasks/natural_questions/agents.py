@@ -107,6 +107,7 @@ class LongAnswerTeacher(ChunkTeacher):
                 answers = _create_long_answer_from_span(example)
                 answers = tuple(self._transform_html(a) for a in answers)
                 output.append((f'{context}\n{question}?', answers))
+        return output
 
     def create_message(self, sample_item, entry_idx=0):
         text, labels = sample_item
