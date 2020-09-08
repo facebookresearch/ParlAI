@@ -112,7 +112,10 @@ def run_task(override_opt: Optional[dict] = None):
         help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
     argparser.add_argument(
-        '--context-seed', default=None, type=int, help="Set seed for pulling the context info (for testing)"
+        '--context-seed',
+        default=None,
+        type=int,
+        help="Set seed for pulling the context info (for testing)",
     )
     argparser.add_argument(
         '--hit-config-path',
