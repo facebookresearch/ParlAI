@@ -12,7 +12,8 @@ import os
 import threading
 import unittest
 
-from parlai.core.agents import create_agent_from_shared
+import parlai.utils.testing as testing_utils
+from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.turn_annotations import run
