@@ -187,7 +187,7 @@ def run_task(override_opt: Optional[dict] = None):
     # Set the number of conversations needed
     if opt.get('conversations_needed_string') is not None:
         parts = opt['conversations_needed_string'].split(',')
-        conversations_needed = []
+        conversations_needed = {}
         for part in parts:
             model_name, num_string = part.split(':')
             conversations_needed[model_name] = int(num_string)
