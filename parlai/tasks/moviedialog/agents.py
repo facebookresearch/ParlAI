@@ -17,7 +17,7 @@ Task 3: Dialogs discussing questions about movies as well as recommendations.
 
 Task 4: Dialogs discussing Movies from Reddit (the /r/movies SubReddit).
 """
-from parlai.core.teachers import FbDialogTeacher, MultiTaskTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import copy
@@ -61,7 +61,7 @@ def _path(task, opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(FbDeprecatedDialogTeacher):
     """
     Simple text entry with each movie's facts in the knowledge base.
     """
@@ -78,7 +78,7 @@ class KBTeacher(FbDialogTeacher):
 
 
 # Single task.
-class TaskTeacher(FbDialogTeacher):
+class TaskTeacher(FbDeprecatedDialogTeacher):
     """
     Teacher with single task, specified by moviedialog:task:N.
     """
