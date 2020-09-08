@@ -13,7 +13,7 @@ python parlai/mturk/tasks/turn_annotations/run.py \
 --block-qualification ${BLOCK_QUALIFICATION_NAME} \
 --base-model-folder ${BASE_MODEL_FOLDER} \
 --num-conversations 5 \
---is-sandbox True \  # Set to False for live mode
+--sandbox \  # Replace with "--live" for live mode
 --reward 3 \  # Only necessary in live mode
 --conversations-needed ${MODEL_NAME}:5
 # A model file should be present at ${BASE_MODEL_FOLDER}/${MODEL_NAME}/model
