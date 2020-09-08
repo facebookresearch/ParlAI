@@ -77,6 +77,186 @@ class TestTurnAnnotations(unittest.TestCase):
                     'bucket_4': True,
                 }
             ] * num_turns  # Arbitrary choose buckets
+            desired_results = {
+                "personas": None,
+                "context_dataset": None,
+                "person1_seed_utterance": None,
+                "person2_seed_utterance": None,
+                "additional_context": None,
+                "dialog": [
+                    {
+                        "left_pane_text": left_pane_text,
+                        "episode_done": False,
+                        "id": "Person1",
+                        "text": "Hi!",
+                        "fake_start": True,
+                        "agent_idx": 0,
+                        "config": {
+                            "min_num_turns": num_turns,
+                            "annotations_config": annotations_config,
+                        },
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "Hey!",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 1,
+                            "bucket_0": true,
+                            "bucket_1": false,
+                            "bucket_2": false,
+                            "bucket_3": false,
+                            "bucket_4": false,
+                        },
+                    },
+                    {
+                        "agent_idx": 0,
+                        "text": "Hi there! How has your day been?",
+                        "id": "Person1",
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "My day has gone well how is yours?",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 3,
+                            "bucket_0": false,
+                            "bucket_1": true,
+                            "bucket_2": false,
+                            "bucket_3": false,
+                            "bucket_4": false,
+                        },
+                    },
+                    {
+                        "agent_idx": 0,
+                        "text": "Mine has been pretty good. Do you have any plans for the weekend?",
+                        "id": "Person1",
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "No solid plans but it's friday so may spoil myself and pick up a takeaway and have a few drinks!",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 5,
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": false,
+                        },
+                    },
+                    {
+                        "agent_idx": 0,
+                        "text": "Yeah that sounds great! What kind of food?",
+                        "id": "Person1",
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "Probably seafood or dessert!",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 7,
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": false,
+                            "bucket_3": true,
+                            "bucket_4": false,
+                        },
+                    },
+                    {
+                        "agent_idx": 0,
+                        "text": "I like both of those things! What's your favorite dessert?",
+                        "id": "Person1",
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "My favourite is chocolate sundae! Do you have a favourite food?",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 9,
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": false,
+                            "bucket_3": false,
+                            "bucket_4": true,
+                        },
+                    },
+                    {
+                        "agent_idx": 0,
+                        "text": "Hmm, good question - maybe ice cream?",
+                        "id": "Person1",
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "Ice cream! Ice cream is good. What kind do you like? I like vanilla!",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 11,
+                            "bucket_0": true,
+                            "bucket_1": false,
+                            "bucket_2": false,
+                            "bucket_3": false,
+                            "bucket_4": false,
+                        },
+                    },
+                    {
+                        "agent_idx": 0,
+                        "text": "Oh you can't go wrong with vanilla! I like mint choco chip",
+                        "id": "Person1",
+                    },
+                    {
+                        "agent_idx": 1,
+                        "text": "That sounds delicious! My favorite is m m chocolate chip.",
+                        "id": "Polyencoder",
+                        "problem_data": {
+                            "turn_idx": 13,
+                            "bucket_0": false,
+                            "bucket_1": true,
+                            "bucket_2": false,
+                            "bucket_3": false,
+                            "bucket_4": false,
+                            "final_rating": "3",
+                        },
+                    },
+                ],
+                "workers": ["A1MAWO5M8TN1SN", "multi_task__bst_tuned"],
+                "bad_workers": [],
+                "acceptability_violations": [null],
+                "hit_ids": ["3TUOHPJXYJ04GKD29QAW3HAL70JWXW", "none"],
+                "assignment_ids": ["3NGMS9VZTNLORWYG99ZCI6JU9GTFF0", "none"],
+                "task_description": {
+                    "annotations_config": [
+                        {
+                            "value": "bucket_0",
+                            "name": "Bucket 0",
+                            "description": "this response implies something...0",
+                        },
+                        {
+                            "value": "bucket_1",
+                            "name": "Bucket 1",
+                            "description": "this response implies something...1",
+                        },
+                        {
+                            "value": "bucket_2",
+                            "name": "Bucket 2",
+                            "description": "this response implies something...2",
+                        },
+                        {
+                            "value": "bucket_3",
+                            "name": "Bucket 3",
+                            "description": "this response implies something...3",
+                        },
+                        {
+                            "value": "bucket_4",
+                            "name": "Bucket 4",
+                            "description": "this response implies something...4",
+                        },
+                    ],
+                    "had_onboarding": false,
+                    "model_nickname": "multi_task__bst_tuned",
+                    "model_file": "/checkpoint/parlai/zoo/q_function/multi_task__bst_tuned/model",
+                },
+            }
 
             # Set up semaphore
             max_concurrent_responses = 1
@@ -134,8 +314,12 @@ class TestTurnAnnotations(unittest.TestCase):
             results_path = list(glob.glob(os.path.join(tmpdir, '*_*_sandbox.json')))[0]
             with open(results_path) as f:
                 actual_results = json.load(f)
-            for k, v in predicted_results.items():
-                self.assertEqual(actual_results.get(k), v)
+            for k, v in desired_results.items():
+                if k == 'task_description':
+                    for k2, v2 in desired_results[k].items():
+                        self.assertEqual(actual_results[k].get(k2), v2)
+                else:
+                    self.assertEqual(actual_results.get(k), v)
 
 
 class HumanLikeAgent:
@@ -144,30 +328,39 @@ class HumanLikeAgent:
     """
 
     def __init__(
-        self, human_utterances: List[str], bucket_assignments: List[Dict[str, bool]]
+        self,
+        human_utterances: List[str],
+        bucket_assignments: List[Dict[str, bool]],
+        final_rating: int,
     ):
         """
         Stores a list of human utterances to deliver for each self.act().
         """
         self.human_utterances = human_utterances
         self.bucket_assignments = bucket_assignments
-        self.turn_idx = 0
+        self.final_rating = final_rating
+        self.message_idx = 0
 
     def act(self, timeout=None) -> Message:
         _ = timeout  # This test agent doesn't use the timeout
         message = Message(
             {
-                'text': self.human_utterances[self.turn_idx],
+                'text': self.human_utterances[self.message_idx],
                 'id': 'Person1',
                 'message_id': 'DUMMY_MESSAGE_ID',
                 'problem_data_for_prior_message': {
-                    'turn_idx': self.turn_idx,
-                    **self.bucket_assignments[self.turn_idx],
+                    'turn_idx': self.message_idx * 2 + 1,
+                    **self.bucket_assignments[self.message_idx],
                 },
             }
         )
-        self.turn_idx += 1
-        message['episode_done'] = len(self.human_utterances) >= self.turn_idx
+        # The human agent turn_idx is computed differently
+        self.message_idx += 1
+        if len(self.human_utterances) >= self.message_idx:
+            message['episode_done'] = True
+            message['final_rating'] = str(self.final_rating)
+        else:
+            message['episode_done'] = False
         return message
 
     def observe(self, observation):
