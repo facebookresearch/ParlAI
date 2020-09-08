@@ -11,18 +11,21 @@
 import copy
 import os
 import jsonlines
+from tqdm import tqdm
+from typing import List, Tuple
 
 import parlai.utils.logging as logging
-from parlai.core.teachers import DialogTeacher
+from parlai.core.teachers import ChunkTeacher
 from .build import build, DATASET_NAME_LOCAL
 
-def _add_datafiles_path_to_opt(opt):
-    if opt['datatype'].startswith('train'):
-        datadir = 'train'
-    else:
-        datadir = 'dev'
-    opt['datafile'] = os.path.join(
-        opt['datapath'], DATASET_NAME_LOCAL, datadir)
+
+def _count_lines_in_file(fname):
+    num_lines = 0
+    with open(fname, 'r') as fi:
+        for line in fi:
+            num_lines += 1
+    return num_lines
+
 
 def _create_long_answer_from_span(example):
     """
@@ -51,7 +54,7 @@ def _create_long_answer_from_span(example):
     return candidate_long_answers
 
 
-class LongAnswerTeacher(DialogTeacher):
+class LongAnswerTeacher(ChunkTeacher):
     """
     Dialog Teacher for long answer format in Natural Questions
 
@@ -60,13 +63,13 @@ class LongAnswerTeacher(DialogTeacher):
     with the toy (e'g', provided sample) datasets.
     """
     def __init__(self, opt, shared=None):
-        self.datatype = opt['datatype']
         self.use_html = opt.get('use_html', False)
         build(opt)
         self.id = 'natural_questions'
-        opt = copy.deepcopy(opt)
-        _add_datafiles_path_to_opt(opt)
-        super().__init__(opt, shared)
+        self.opt = copy.deepcopy(opt)
+        self.dtype = self.opt['datatype'].split(':')[0]
+        self.dpath = os.path.join(self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
+        super().__init__(self.opt, shared)
 
     def _transform_html(self, html_content):
         if self.use_html:
@@ -74,20 +77,40 @@ class LongAnswerTeacher(DialogTeacher):
         # TODO(Mojtaba Komeili): implement tranformation later
         return html_content  #  implement the transformation to plain text
 
-    def setup_data(self, path):
-        logging.info(f'reading input from files in {path}')
-        input_files = os.listdir(path)
-        for fname in input_files:
-            fpath = os.path.join(path, fname)
-            logging.info(f'reading from {fname}')
-            with jsonlines.open(fpath, 'r') as fi:
-                for example in fi:
-                    context = self._transform_html(example['document_html'])
-                    question = example['question_text']
-                    answers = _create_long_answer_from_span(example)
-                    answers = tuple(self._transform_html(a) for a in answers)
-                    yield (f'{context}\n{question}?', answers), True
+    def _get_data_folder(self):
+        return self.dpath
 
+    def get_fold_chunks(self, opt) -> List[int]:
+        if 'train' == self.dtype:
+            return list(range(50))
+        elif 'dev' == self.dtype:
+            return list(range(5))
+        raise ValueError(f'Invalid data type: "{self.dtype}"')
+
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        logging.log(f'Counting the number of samples in {self.dtype}')
+        files = os.listdir(self.dpath)
+        n_samples = 0
+        for fname in tqdm(files):
+            n_samples += _count_lines_in_file(os.path.join(self.dpath, fname))
+        return (n_samples, n_samples)
+
+    def load_from_chunk(self, chunk_idx: int):
+        fname = f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
+        logging.info(f'reading from {fname} chunk')
+        fpath = os.path.join(self.dpath, fname)
+        output = []
+        with jsonlines.open(fpath, 'r') as fi:
+            for example in fi:
+                context = self._transform_html(example['document_html'])
+                question = example['question_text']
+                answers = _create_long_answer_from_span(example)
+                answers = tuple(self._transform_html(a) for a in answers)
+                output.append((f'{context}\n{question}?', answers))
+
+    def create_message(self, sample_item, entry_idx=0):
+        text, labels = sample_item
+        return {'id': self.id, 'text': text, 'labels': labels, 'episode_done': True}
 
 class DefaultTeacher(LongAnswerTeacher):
     pass
