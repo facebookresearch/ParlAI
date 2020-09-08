@@ -28,6 +28,7 @@ from parlai.core.torch_agent import History
 from parlai.core.torch_generator_agent import PPLMetric
 from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
+from parlai.utils.io import PathManager
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
 
@@ -80,7 +81,7 @@ class BartAgent(TransformerGeneratorAgent):
         :return opt:
             return opt with BART-specific args.
         """
-        if not opt.get('converting') and not os.path.exists(opt.get('init_model'), ''):
+        if not opt.get('converting') and not PathManager.exists(opt.get('init_model'), ''):
             download(opt['datapath'])
             opt['init_model'] = os.path.join(
                 opt['datapath'], 'models/bart/bart_large/model'
