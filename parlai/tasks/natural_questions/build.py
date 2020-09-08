@@ -29,8 +29,10 @@ def _check_gsutil_available():
         raise GSUtilsNotFound(GS_UTIL_NOT_FOUND_MESSAGE)
 
 def _download_with_gsutil(dpath):
-    for dt in ('train', 'test'):
-        os.system(f'gsutil -m cp -R gs://natural_questions/v1.0/{dt} {dpath}')
+    for dt in ('train', 'dev'):
+        download_path = os.path.join(dpath, dt)
+        os.makedirs(download_path, exist_ok=True)
+        os.system(f'gsutil -m cp -R gs://natural_questions/v1.0/{dt} {download_path}')
 
 def _untar_dir_files(dtype_path):
     files = os.listdir(dtype_path)
