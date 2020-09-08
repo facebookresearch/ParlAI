@@ -601,7 +601,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                 'assignment_ids': [ag.assignment_id for ag in self.agents],
                 'task_description': {
                     'annotations_config': self.opt['annotations_config'],
-                    'had_onboarding': False,
                     'model_nickname': self.agents[1].worker_id,
                     'model_file': self.agents[1].model_agent.opt.get('model_file'),
                     'model_opt': self.agents[1].model_agent.opt,
