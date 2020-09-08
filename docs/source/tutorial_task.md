@@ -191,7 +191,7 @@ the agents for the task. It is there that we will define our teacher.
 We will describe three possible teachers to subclass; you can choose one of them based on your needs:
 1. `ParlAIDialogTeacher`: This is the simplest method available, and expects to load a text file of data in **ParlAI Dialog format** (described above). More details are shown in the section [ParlAIDialogTeacher](parlaidialogteacher).
 2. `DialogTeacher`: If the data is not in **ParlAI Dialog format**, one can still use the `DialogTeacher` which automates much of the work in setting up a dialog task, but gives the user more flexibility in loading the data from the disk. This is shown in the section [DialogTeacher](dialogteacher).
-3. `ChunkTeacher`: Use this teacher if you have a large amount of data broken up into many files (or "chunks") that cannot be loaded into memory at once. This is shown in the section [ChunkTeacher](chunkteacher).
+3. `ChunkTeacher`: Use this teacher if you have a large dataset that cannot fit in memory at once. In the [ChunkTeacher](chunkteacher) section, we show how to break the dataset into smaller "chunks" that are efficiently loaded.
 
 
 Finally, if the requirements for the task do not fit any of the above,
@@ -318,9 +318,10 @@ of creating a teacher for this task becomes much simpler: most of the
 work that needs to be done will limit itself to defining a `setup_data`
 method. This method is a generator that will take in a path to the data
 and yield a pair of elements for each call. The first element of the
-pair is a tuple containing the following information:
-`(query, labels, reward, label_candidates, path_to_image)`. In this case,
-we only return `query` and `labels`. The second
+pair is a dictionary containing a dialogue act (with required fields
+`text` and `labels` and any other additional field required by your task,
+such as `label_candidates`). In this case,
+we *only* return `text` and `labels`. The second
 is a boolean flag `new_episode?` which indicates if the current query
 starts a new episode or not.
 
@@ -383,7 +384,7 @@ separate the chunks based on the data split, given by `opt['datatype']`.
 - `load_from_chunk`: Given a chunk index, loads the associated file and returns a list of samples.
 - `create_message`: Given a single sample item from the list returned by `load_from_chunk`, create a Message to return.
 
-We create an example dummy teacher to demonstrate. Let's suppose that
+We create an example teacher to demonstrate. Let's suppose that
 `/tmp/path_to_my_chunks/` is the directory containing our chunks, and
 each chunk file (e.g. `/tmp/path_to_my_chunks/1.txt`) has the following format:
 
@@ -398,7 +399,7 @@ each chunk file (e.g. `/tmp/path_to_my_chunks/1.txt`) has the following format:
 
 Then our chunk teacher would look like the following:
 ```python
-class DummyTeacher(ChunkTeacher):
+class ExampleChunkTeacher(ChunkTeacher):
     def _get_data_folder(self):
         # return the path to directory containing your chunks
         return '/tmp/path_to_my_chunks/'
@@ -442,7 +443,7 @@ class DummyTeacher(ChunkTeacher):
         # finally, we return a message given an element from the list
         # returned by `load_from_chunk`
         text, label = sample_item
-        return {'id': 'Dummy Teacher', 'text': text, 'labels': [label], 'episode_done': True}
+        return {'id': 'Example Chunk Teacher', 'text': text, 'labels': [label], 'episode_done': True}
 ```
 
 
