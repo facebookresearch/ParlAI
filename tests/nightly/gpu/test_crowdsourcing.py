@@ -19,7 +19,6 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.core.build_data import modelzoo_path
 from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.turn_annotations import run
 from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
 from parlai.mturk.tasks.turn_annotations.worlds import TurnAnnotationsChatWorld
@@ -41,21 +40,20 @@ class TestTurnAnnotations(unittest.TestCase):
             save_folder = tmpdir
 
             # Params
-            model_name = 'multi_task_bst_tuned'
-            zoo_model_file = 'zoo:blended_skill_talk/multi_task_bst_tuned/model'
+            model_name = 'blender_90M'
+            zoo_model_file = 'zoo:blender/blender_90M/model'
+            model = 'TransformerGenerator'
             num_turn_pairs = 6
             config_folder = os.path.join(
                 os.path.dirname(os.path.realpath(run.__file__)), 'config'
             )
-            argparser = ParlaiParser(False, False)
-            argparser.add_parlai_data_path()
-            datapath = os.path.join(argparser.parlai_home, 'data')
+            datapath = os.path.join(tmpdir, 'data')
 
             # Download zoo model file
             model_file = modelzoo_path(datapath, zoo_model_file)
-            # First, trigger downloading multi_task_bst_tuned so that the model file
-            # will exist
-            base_model_folder = os.path.dirname(model_file)
+            # First, trigger downloading the model file
+            base_model_folder = os.path.dirname(os.path.dirname(model_file))
+            # Get the folder that encloses the innermost model folder
             with open(os.path.join(config_folder, 'left_pane_text.html')) as f:
                 left_pane_text = f.readlines()
             with open(os.path.join(config_folder, 'annotations_config.json')) as f:
@@ -79,22 +77,22 @@ class TestTurnAnnotations(unittest.TestCase):
 
             # Construct desired dialog
             human_agent_id = "Person1"
-            human_utterances = [
-                "Hi there! How has your day been?",
-                "Mine has been pretty good. Do you have any plans for the weekend?",
-                "Yeah that sounds great! What kind of food?",
-                "I like both of those things! What's your favorite dessert?",
-                "Hmm, good question - maybe ice cream?",
-                "Oh you can't go wrong with vanilla! I like mint choco chip",
-            ]
             bot_utterances = [
-                "Hey!",
-                "My day has gone well how is yours?",
-                "No solid plans but it's friday so may spoil myself and pick up a takeaway and have a few drinks!",
-                "Probably seafood or dessert!",
-                "My favourite is chocolate sundae! Do you have a favourite food?",
-                "Ice cream! Ice cream is good. What kind do you like? I like vanilla!",
-                "That sounds delicious! My favorite is m m chocolate chip.",
+                "Hello, how are you today? I just got back from a long day at work, so I'm nervous.",
+                "I just don't know what to do. I've never been so nervous in my life.",
+                "Yes, I'll probably go to the movies. What about you? What do you like to do?",
+                "That's great! What kind of restaurant do you usually go to? I love italian food.",
+                "I love thai as well. What's your favorite kind of thai food? I like thai food the best.",
+                'Oh, I love peanuts! I love all kinds of peanuts. Do you eat a lot of peanuts?',
+                "I eat peanuts a lot, but only a few times a week. It's good for you.",
+            ]
+            human_utterances = [
+                "What are you nervous about?",
+                "Do you have any plans for the weekend?",
+                "Yeah that sounds great! I like to bike and try new restaurants.",
+                "Oh, Italian food is great. I also love Thai and Indian.",
+                "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
+                "Ha, a decent amount, probably. What about you?",
             ]
             bucket_assignments = [
                 {
@@ -123,7 +121,7 @@ class TestTurnAnnotations(unittest.TestCase):
             final_bot_turn = {
                 "agent_idx": 1,
                 "text": bot_utterances[num_turn_pairs],
-                "id": "Polyencoder",
+                "id": model,
                 "problem_data": {
                     "turn_idx": num_turn_pairs * 2 + 1,
                     **bucket_assignments[num_turn_pairs],
@@ -132,24 +130,20 @@ class TestTurnAnnotations(unittest.TestCase):
             }
             dialog = [fake_first_human_turn]
             for turn_pair_idx in range(num_turn_pairs):
-                bot_turn = (
-                    {
-                        "agent_idx": 1,
-                        "text": bot_utterances[turn_pair_idx],
-                        "id": "Polyencoder",
-                        "problem_data": {
-                            "turn_idx": turn_pair_idx * 2 + 1,
-                            **bucket_assignments[turn_pair_idx],
-                        },
+                bot_turn = {
+                    "agent_idx": 1,
+                    "text": bot_utterances[turn_pair_idx],
+                    "id": model,
+                    "problem_data": {
+                        "turn_idx": turn_pair_idx * 2 + 1,
+                        **bucket_assignments[turn_pair_idx],
                     },
-                )
-                human_turn = (
-                    {
-                        "agent_idx": 0,
-                        "text": human_utterances[turn_pair_idx],
-                        "id": human_agent_id,
-                    },
-                )
+                }
+                human_turn = {
+                    "agent_idx": 0,
+                    "text": human_utterances[turn_pair_idx],
+                    "id": human_agent_id,
+                }
                 dialog += [bot_turn, human_turn]
             dialog += [final_bot_turn]
 
@@ -251,19 +245,28 @@ class HumanLikeAgent:
         """
         Stores a list of human utterances to deliver for each self.act().
         """
-        self.agent_id = agent_id
+
+        # Constants
+        self.id = agent_id
         self.worker_id = HUMAN_LIKE_AGENT_WORKER_ID
+        self.hit_id = HUMAN_LIKE_AGENT_HIT_ID
+        self.assignment_id = HUMAN_LIKE_AGENT_ASSIGNMENT_ID
         self.human_utterances = human_utterances
         self.bucket_assignments = bucket_assignments
         self.final_rating = final_rating
+        self.hit_is_abandoned = False
+        self.hit_is_returned = False
+        self.disconnected = False
+        self.hit_is_expired = False
+
+        # Changing
         self.message_idx = 0
 
     def act(self, timeout=None) -> Message:
         _ = timeout  # This test agent doesn't use the timeout
         message = Message(
             {
-                'text': self.human_utterances[self.message_idx],
-                'id': self.agent_id,
+                'id': self.id,
                 'message_id': 'DUMMY_MESSAGE_ID',
                 'problem_data_for_prior_message': {
                     'turn_idx': self.message_idx * 2 + 1,
@@ -272,12 +275,22 @@ class HumanLikeAgent:
             }
         )
         # The human agent turn_idx is computed differently
-        self.message_idx += 1
-        if len(self.human_utterances) >= self.message_idx:
-            message['episode_done'] = True
-            message['final_rating'] = str(self.final_rating)
+        if self.message_idx >= len(self.human_utterances):
+            message.update(
+                {
+                    'text': "I am done with the chat and clicked the 'Done' button, thank you!",
+                    'episode_done': True,
+                }
+            )
+            # The text won't get used in this case
+            message['problem_data_for_prior_message']['final_rating'] = str(
+                self.final_rating
+            )
         else:
-            message['episode_done'] = False
+            message.update(
+                {'text': self.human_utterances[self.message_idx], 'episode_done': False}
+            )
+        self.message_idx += 1
         return message
 
     def observe(self, observation):
