@@ -7,13 +7,16 @@
 Test components of specific crowdsourcing tasks.
 """
 
+import glob
 import json
 import os
 import threading
 import unittest
+from typing import Dict, List
 
 import parlai.utils.testing as testing_utils
 from parlai.core.agents import create_agent, create_agent_from_shared
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.turn_annotations import run
@@ -64,14 +67,30 @@ class TestTurnAnnotations(unittest.TestCase):
                 }
             )
 
+            # Desired output
+            bucket_assignments = [
+                {
+                    'bucket_0': False,
+                    'bucket_1': False,
+                    'bucket_2': True,
+                    'bucket_3': False,
+                    'bucket_4': True,
+                }
+            ] * num_turns  # Arbitrary choose buckets
+
             # Set up semaphore
             max_concurrent_responses = 1
             semaphore = threading.Semaphore(max_concurrent_responses)
 
+            # Set up human agent
+            human_worker = HumanLikeAgent(
+                human_utterances=human_utterances, bucket_assignments=bucket_assignments
+            )
+
             # Set up bot agent
             download_model_opt = Opt({'model_file': zoo_model_file})
             _ = create_agent(download_model_opt, requireModelExists=True)
-            # First, trigger downloading multi_task__bst_tuned so that the model file
+            # First, trigger downloading multi_task_bst_tuned so that the model file
             # will exist
             shared_bot_agents = TurkLikeAgent.get_bot_agents(
                 opt=opt, active_models=[model_name], datapath=datapath
@@ -104,12 +123,58 @@ class TestTurnAnnotations(unittest.TestCase):
             while not world.episode_done():
                 print('About to parley')
                 world.parley()
-                # {{{TODO: test all responses}}}
 
             # Check the output data
             model_nickname, worker_is_unacceptable, convo_finished = world.save_data()
-            # {{{TODO: Make sure output values are correct}}}
-            # {{{TODO: check the final saved output}}}
+            self.assertEqual(model_nickname, model_name)
+            self.assertFalse(worker_is_unacceptable)
+            self.assertTrue(convo_finished)
+
+            # Check the final results file saved by the world
+            results_path = list(glob.glob(os.path.join(tmpdir, '*_*_sandbox.json')))[0]
+            with open(results_path) as f:
+                actual_results = json.load(f)
+            for k, v in predicted_results.items():
+                self.assertEqual(actual_results.get(k), v)
+
+
+class HumanLikeAgent:
+    """
+    Emulates a crowdsource worker for the purposes of testing.
+    """
+
+    def __init__(
+        self, human_utterances: List[str], bucket_assignments: List[Dict[str, bool]]
+    ):
+        """
+        Stores a list of human utterances to deliver for each self.act().
+        """
+        self.human_utterances = human_utterances
+        self.bucket_assignments = bucket_assignments
+        self.turn_idx = 0
+
+    def act(self, timeout=None) -> Message:
+        _ = timeout  # This test agent doesn't use the timeout
+        message = Message(
+            {
+                'text': self.human_utterances[self.turn_idx],
+                'id': 'Person1',
+                'message_id': 'DUMMY_MESSAGE_ID',
+                'problem_data_for_prior_message': {
+                    'turn_idx': self.turn_idx,
+                    **self.bucket_assignments[self.turn_idx],
+                },
+            }
+        )
+        self.turn_idx += 1
+        message['episode_done'] = len(self.human_utterances) >= self.turn_idx
+        return message
+
+    def observe(self, observation):
+        """
+        No-op.
+        """
+        pass
 
 
 if __name__ == "__main__":
