@@ -12,7 +12,8 @@ Tests that interactive.py is behaving well.
 import unittest
 from unittest import mock
 import os
-import parlai.scripts.interactive as interactive
+from parlai.scripts.interactive import Interactive
+from parlai.scripts.safe_interactive import SafeInteractive
 import parlai.utils.conversations as conversations
 import parlai.utils.testing as testing_utils
 
@@ -48,9 +49,10 @@ class TestInteractive(unittest.TestCase):
         patcher.start()
 
     def test_repeat(self):
-        pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query'])
-        interactive.interactive(opt)
+        Interactive.main(model='repeat_query')
+
+    def test_safe_interactive(self):
+        SafeInteractive.main(model='repeat_query')
 
 
 class TestInteractiveConvai2(unittest.TestCase):
@@ -61,9 +63,7 @@ class TestInteractiveConvai2(unittest.TestCase):
         patcher.start()
 
     def test_repeat(self):
-        pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query', '-t', 'convai2', '-dt', 'valid'])
-        interactive.interactive(opt)
+        Interactive.main(model='repeat_query', task='convai2', datatype='valid')
 
 
 class TestInteractiveLogging(unittest.TestCase):
@@ -76,9 +76,7 @@ class TestInteractiveLogging(unittest.TestCase):
 
     def _run_test_repeat(self, tmpdir: str, fake_input: FakeInput):
         outfile = os.path.join(tmpdir, 'log.jsonl')
-        pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query', '--outfile', outfile])
-        interactive.interactive(opt)
+        Interactive.main(model='repeat_query', outfile=outfile)
 
         log = conversations.Conversations(outfile)
         self.assertEqual(len(log), fake_input.max_episodes)

@@ -23,10 +23,10 @@ class JsonTeacher(ConversationTeacher):
     @staticmethod
     def add_cmdline_args(argparser):
         agent = argparser.add_argument_group('JsonFile Task Arguments')
-        agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
+        agent.add_argument('-jfdp', '--jsonfile-datapath', type=str, help="Data file")
         agent.add_argument(
-            '-ffdt',
-            '--fromfile-datatype-extension',
+            '-jfdt',
+            '--jsonfile-datatype-extension',
             type='bool',
             default=False,
             help="If true, use _train.jsonl, _valid.jsonl, _test.jsonl file extensions",
@@ -42,10 +42,10 @@ class JsonTeacher(ConversationTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         opt = copy.deepcopy(opt)
-        if not opt.get('fromfile_datapath'):
-            raise RuntimeError('fromfile_datapath not specified')
-        datafile = opt['fromfile_datapath']
-        if self.opt['fromfile_datatype_extension']:
+        if not opt.get('jsonfile_datapath'):
+            raise RuntimeError('jsonfile_datapath not specified')
+        datafile = opt['jsonfile_datapath']
+        if self.opt['jsonfile_datatype_extension']:
             datafile += "_" + self.opt['datatype'].split(':')[0] + '.jsonl'
         if shared is None:
             self._setup_data(datafile)

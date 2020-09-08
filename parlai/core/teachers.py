@@ -1419,34 +1419,30 @@ class ConversationTeacher(FixedDialogTeacher):
     handle file parsing for you.
 
     The data should be set up so that each dialogue instance (or, episode)
-    occupies one line of valid JSON. The way the data is set up is as follows
-    (with line breaks for readability):
+    occupies one line of valid JSON. The way the data is set up is as follows:
+
+    ::
+    { "dialog": [ [ {"id": "partner1", "text": "hello!"},  {"id": "partner2", "text": "hi back!"}  ] ] }
+
+    NOTE: If the data is not on one line per dialogue, it will not load.
+    Further, note that by default, dialogs are interpreted as being one-way.
+    For example, consider this dialog (not that the data below is not on:
 
     ::
 
         {
-            'dialogue':[
-                {'id':'modelx', 'text': 'hi'},
-                {'id':'modely', 'text': 'hi back'},
-                ...
-            ]
+            "dialog":[ [
+                {"id":"modelx", "text": X1},
+                {"id":"modely", "text": Y1},
+                {"id":"modelx", "text": X2},
+                {"id":"modely", "text": Y2},
+                {"id":"modelx", "text": X3},
+                {"id":"modely", "text": Y3},
+            ] ]
         }
 
-    Note that by default, dialogs are interpreted as being one-way.
-    For example, consider this dialog:
-
-    ::
-
-        {
-            'dialogue':[
-                {'id':'modelx', 'text': X1},
-                {'id':'modely', 'text': Y1},
-                {'id':'modelx', 'text': X2},
-                {'id':'modely', 'text': Y2},
-                {'id':'modelx', 'text': X3},
-                {'id':'modely', 'text': Y3},
-            ]
-        }
+    (Note: we use line breaks for readability above, but this data will not load as
+    stated, it must be on one line.)
 
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated,
     forming one episode. However, Y1 => X2 and Y2 => X3 are not created as

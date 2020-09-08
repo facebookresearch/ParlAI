@@ -14,11 +14,6 @@ import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
 
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
-
 
 # ------------------------------------------------------------------------------
 # Sparse matrix saving/loading helpers.
@@ -36,30 +31,12 @@ def save_sparse_csr(filename, matrix, metadata=None):
     np.savez(filename, **data)
 
 
-def save_sparse_tensor(filename, matrix, metadata=None):
-    data = {
-        'indices': matrix._indices(),
-        'values': matrix._values(),
-        'size': matrix.size(),
-        'metadata': metadata,
-    }
-    torch.save(data, filename)
-
-
 def load_sparse_csr(filename):
     loader = np.load(filename + '.npz', allow_pickle=True)
     matrix = sp.csr_matrix(
         (loader['data'], loader['indices'], loader['indptr']), shape=loader['shape']
     )
     return matrix, loader['metadata'].item(0) if 'metadata' in loader else None
-
-
-def load_sparse_tensor(filename):
-    loader = torch.load(filename)
-    matrix = torch.sparse.FloatTensor(
-        loader['indices'], loader['values'], loader['size']
-    )
-    return matrix, loader['metadata'] if 'metadata' in loader else None
 
 
 # ------------------------------------------------------------------------------
@@ -270,19 +247,7 @@ def filter_ngram(gram, mode='any'):
     """
     Decide whether to keep or discard an n-gram.
 
-    Args:
-        gram: list of tokens (length N)
-        mode: Option to throw out ngram if
-          'any': any single token passes filter_word
-          'all': all tokens pass filter_word
-          'ends': book-ended by filterable tokens
+    :param gram:
+        list of tokens (length N)
     """
-    filtered = [filter_word(w) for w in gram]
-    if mode == 'any':
-        return any(filtered)
-    elif mode == 'all':
-        return all(filtered)
-    elif mode == 'ends':
-        return filtered[0] or filtered[-1]
-    else:
-        raise ValueError('Invalid mode: %s' % mode)
+    return any(filter_word(w) for w in gram)

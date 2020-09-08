@@ -187,7 +187,7 @@ Using ParlAI
 ### Concepts in Action: Simple Display Data Script
 
 Now that we understand the basics, let's set up a simple script which
-displays any specified task. A complete version of this for utility is
+displays any specified task. A complete version of this utility is
 included at `parlai/scripts/display_data.py`, but we'll do this from
 scratch to demonstrate the concepts we just introduced.
 

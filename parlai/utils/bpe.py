@@ -290,10 +290,7 @@ class SubwordBPEHelper(BPEHelper):
         """
         super().__init__(opt, shared)
         if not SUBWORD_BPE_INSTALLED:
-            raise RuntimeError(
-                "Please run \"pip install 'git+https://github.com/rsennrich"
-                "/subword-nmt.git#egg=subword-nmt'\""
-            )
+            raise RuntimeError("Please run `pip install subword-nmt`")
         if not opt.get('dict_file'):
             raise RuntimeError('--dict-file is mandatory.')
 

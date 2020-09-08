@@ -78,6 +78,7 @@ def detect(opt):
         }
         text, log = log_time.log(report['exs'], world.num_examples(), log)
         logging.info(text)
+        return log
 
     def classify(text, stats):
         offensive = False
@@ -115,8 +116,7 @@ def detect(opt):
 
     if world.epoch_done():
         logging.info("epoch done")
-    report(world, stats)
-    return world.report()
+    return report(world, stats)
 
 
 @register_script('detect_offensive', hidden=True)

@@ -89,7 +89,7 @@ Though pip install command is easier, it would not give you access to the ready 
 ## Examples
 
 A large set of scripts can be found in [`parlai/scripts`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/scripts). Here are a few of them.
-Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
+Note: If any of these examples fail, check the [installation section](#installing-parlai) to see if you have missed something.
 
 Display 10 random examples from the SQuAD task
 ```bash
