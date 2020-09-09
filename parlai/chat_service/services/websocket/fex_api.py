@@ -102,14 +102,14 @@ def send_message():
     return result
 
 
-blueprint.route('api/start_conversation', methods=["POST"])
+@blueprint.route('/api/start_conversation', methods=["POST"])
 def start_conversation():
     # DEPRECATED
 
     return {'text': 'Hello!'}
 
 
-blueprint.route('api/end_conversation', methods=["POST"])
+@blueprint.route('/api/end_conversation', methods=["POST"])
 def end_conversation():
     # DEPRECATED
 

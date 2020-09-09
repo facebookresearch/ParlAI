@@ -51,7 +51,7 @@ def send_message(update, context):
         response = response.json()
         send_response(update, context, response)
 
-        message_history[chat_id].append(response.text)
+        message_history[chat_id].append(response.get('text'))
     except Exception as e:
         update.message.reply_text("We are unable to handle your request. Please try later.")
         raise e
