@@ -17,6 +17,7 @@ from typing import List, Tuple
 import parlai.utils.logging as logging
 from parlai.core.teachers import ChunkTeacher
 from .build import build, DATASET_NAME_LOCAL
+from .text_utils import simplify_nq_example
 
 
 def _count_lines_in_file(fname):
@@ -74,8 +75,7 @@ class LongAnswerTeacher(ChunkTeacher):
     def _transform_html(self, html_content):
         if self.use_html:
             return html_content
-        # TODO(Mojtaba Komeili): implement tranformation later
-        return html_content  #  implement the transformation to plain text
+        return simplify_nq_example(html_content)
 
     def _get_data_folder(self):
         return self.dpath
