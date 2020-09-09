@@ -91,7 +91,13 @@ class BartAgent(TransformerGeneratorAgent):
             )
         if opt.get('init_fairseq_model'):
             opt = self._convert_model(opt)
-        opt.update(BART_ARGS)
+
+        overrides = opt.get('override', {})
+        for k, v in BART_ARGS.items():
+            # do not override anything in `override`
+            if k not in overrides:
+                opt[k] = v
+
         compare_init_model_opts(opt, opt)
         return opt
 
