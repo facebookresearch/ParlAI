@@ -172,7 +172,7 @@ def main():
         # Create a qualification to ensure a worker won't repeat modifying
         # sentences will become necessary toward the end of the stack
 
-        qual_name = 'BeatTheSystemMaxHITsQual'
+        qual_name = ''  # come up with your own block qualification
         qual_desc = 'Qualification to ensure worker does not repeat evaluations.'
         qualification_id = mutils.find_or_create_qualification(
             qual_name, qual_desc, False, must_be_owned=False
