@@ -28,7 +28,11 @@ def _count_lines_in_file(fname):
     return num_lines
 
 
-def _create_long_answer_from_span(example):
+def _html_context_key(is_html):
+    return 'document_html' if is_html else 'document_text'
+
+
+def _create_long_answer_from_span(example, html_example):
     """
     Creates a list of long answer candidates, from their spans and the document.
 
@@ -42,14 +46,17 @@ def _create_long_answer_from_span(example):
 
     :param example: a dict that contain one example/entry from NQ dataset.
     """
-    context_text = example['document_html']
+    def _token_or_byte():
+        return 'byte' if html_example else 'token'
+
+    context_text = example[_html_context_key(html_example)]
     candidate_long_answers = []
     for long_asnwer_span in example['long_answer_candidates']:
         if not long_asnwer_span['top_level']:
             # not including answers contained in other ones.
             continue
-        start_index_byte = long_asnwer_span['start_byte'] - 1
-        end_index_byte = long_asnwer_span['end_byte'] - 1
+        start_index_byte = long_asnwer_span[f'start_{_token_or_byte()}'] - 1
+        end_index_byte = long_asnwer_span[f'end_{_token_or_byte()}'] - 1
         candidate_long_answers.append(
             context_text[start_index_byte:end_index_byte])
     return candidate_long_answers
@@ -72,10 +79,10 @@ class LongAnswerTeacher(ChunkTeacher):
         self.dpath = os.path.join(self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
         super().__init__(self.opt, shared)
 
-    def _transform_html(self, html_content):
+    def _simplify(self, example):
         if self.use_html:
-            return html_content
-        return simplify_nq_example(html_content)
+            return example
+        return simplify_nq_example(example)
 
     def _get_data_folder(self):
         return self.dpath
@@ -92,20 +99,22 @@ class LongAnswerTeacher(ChunkTeacher):
         files = os.listdir(self.dpath)
         n_samples = 0
         for fname in tqdm(files):
+            if fname.startswith('.'):  # some of the OS specific files
+                continue
             n_samples += _count_lines_in_file(os.path.join(self.dpath, fname))
+        logging.info(f'{n_samples} examples found in {self.dtype} dataset.')
         return (n_samples, n_samples)
 
     def load_from_chunk(self, chunk_idx: int):
         fname = f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
-        logging.info(f'reading from {fname} chunk')
         fpath = os.path.join(self.dpath, fname)
         output = []
         with jsonlines.open(fpath, 'r') as fi:
             for example in fi:
-                context = self._transform_html(example['document_html'])
+                example = self._simplify(example)
+                context = example[_html_context_key(self.use_html)]
                 question = example['question_text']
-                answers = _create_long_answer_from_span(example)
-                answers = tuple(self._transform_html(a) for a in answers)
+                answers = _create_long_answer_from_span(example, self.use_html)
                 output.append((f'{context}\n{question}?', answers))
         return output
 
