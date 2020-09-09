@@ -1040,7 +1040,7 @@ class TransformerDecoderLayer(nn.Module):
         # make sure that we don't look into the future
         mask = torch.tril(x.new(time, time).fill_(1))
         # broadcast across batch
-        mask = mask.unsqueeze(0).expand(bsz, -1, -1)
+        mask = mask.unsqueeze(0).repeat(bsz, 1, 1)
         return mask
 
     def reorder_incremental_state(
