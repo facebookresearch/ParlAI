@@ -10,6 +10,7 @@
 import copy
 import os
 
+import parlai.utils.logging as logging
 from parlai.core.teachers import (
     FbDeprecatedDialogTeacher,
     ParlAIDialogTeacher,
@@ -83,6 +84,9 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
         datafile = opt['fromfile_datapath']
         if self.opt['fromfile_datatype_extension']:
             datafile += "_" + self.opt['datatype'].split(':')[0] + '.txt'
+        else:
+            if self.opt['datatype'] == 'valid' or self.opt['datatype'] == 'test':
+                logging.warn('You are using this fromfile data as a valid or test set without setting fromfile_datatype_extension to true. Please be aware this uses directly the file you indicated, make sure this is not the same as your training file.')
         if shared is None:
             self._setup_data(datafile)
         # Truncate datafile to just the immediate enclosing folder name and file name
