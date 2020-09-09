@@ -42,17 +42,45 @@ def _create_long_answer_from_span_html(example):
     using the 'start_byte' and 'end_byte' values in the list of long answer
     candidate spans.
 
-    Returns a list of long answers. Each long answer is an str (html text).
+    Returns a list of long answers. Each long answer is a substring from the
+        original HTML text.
 
     :param example: a dict that contain one example/entry from NQ dataset.
     """
     context_text = example['document_html'].encode()
     candidate_long_answers = []
     for long_asnwer_span in example['long_answer_candidates']:
-        start_index_byte = long_asnwer_span['start_byte']
-        end_index_byte = long_asnwer_span['end_byte']
-        candidate_long_answers.append(
-            context_text[start_index_byte:end_index_byte].decode())
+        start_index = long_asnwer_span['start_byte']
+        end_index = long_asnwer_span['end_byte']
+        answer = context_text[start_index:end_index].decode()
+        candidate_long_answers.append(answer)
+    return candidate_long_answers
+
+
+def _create_long_answer_from_span_text(simplified_example):
+    """
+    Creates a list of long answer candidates, from their spans and the document.
+
+    This functin gets the full article from the input simplified example
+    dictionary (using key 'document_text'), then iterates through the long
+    answer spans (from 'long_answer_candidates' key) and creates a list of
+    slices from the article, using the 'start_token' and 'end_token' values in
+    the list of long answer candidate spans.
+
+    Returns a list of long answers. Each long answer is a substring from the
+        simplified HTML text.
+
+    :param simplified_example: a dict that contain one simplified example/entry
+        from NQ dataset.
+    """
+    context_text = simplified_example['document_text']
+    candidate_long_answers = []
+    splitted_tokens = context_text.split(' ')
+    for long_asnwer_span in simplified_example['long_answer_candidates']:
+        start_index = long_asnwer_span['start_token']
+        end_index = long_asnwer_span['end_token']
+        answer = ' '.join(splitted_tokens[start_index:end_index])
+        candidate_long_answers.append(answer)
     return candidate_long_answers
 
 
@@ -66,7 +94,7 @@ class LongAnswerTeacher(ChunkTeacher):
     """
 
     def __init__(self, opt, shared=None):
-        self.use_html = opt.get('use_html', True)
+        self.use_html = opt.get('use_html', False)
         build(opt)
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
@@ -101,6 +129,12 @@ class LongAnswerTeacher(ChunkTeacher):
         logging.info(f'{n_samples} examples found in {self.dtype} dataset.')
         return (n_samples, n_samples)
 
+    def _get_candidate_labels(self, example):
+        if self.use_html:
+            return _create_long_answer_from_span_html(example)
+        else:
+            return _create_long_answer_from_span_text(example)
+
     def load_from_chunk(self, chunk_idx: int):
 
         def _extarct_labels_indices(example, candidate_labels):
@@ -118,7 +152,7 @@ class LongAnswerTeacher(ChunkTeacher):
                 example = self._simplify(example)
                 context = example[_html_context_key(self.use_html)]
                 question = example['question_text']
-                candidate_labels = _create_long_answer_from_span_html(example)
+                candidate_labels = self._get_candidate_labels(example)
                 labels = _extarct_labels_indices(example, candidate_labels)
                 output.append(
                     (f'{context}\n{question}?',
