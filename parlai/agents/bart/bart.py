@@ -63,6 +63,7 @@ class BartAgent(TransformerGeneratorAgent):
             help='where to save fairseq conversion',
         )
         argparser.set_defaults(dict_tokenizer='gpt2')
+        argparser.set_defaults(**BART_ARGS)
 
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
@@ -91,7 +92,7 @@ class BartAgent(TransformerGeneratorAgent):
             )
         if opt.get('init_fairseq_model'):
             opt = self._convert_model(opt)
-        opt.update(BART_ARGS)
+
         compare_init_model_opts(opt, opt)
         return opt
 
