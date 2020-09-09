@@ -101,7 +101,7 @@ We can then again look at that data using the usual display data script, using t
     <.. snip ..>
     [creating task(s): jsonfile]
     [loading data from json file into task:/tmp/data.json]
-    - - - NEW EPISODE: tmp/blah.json - - -
+    - - - NEW EPISODE: tmp/data.json - - -
     hello how are you today?
        i'm great thanks! what are you doing?
     i've just been bikinig.
