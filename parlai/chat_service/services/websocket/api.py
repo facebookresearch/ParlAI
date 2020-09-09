@@ -122,60 +122,18 @@ def send_message():
     return result
 
 
-@blueprint.route('/api/send_person_message', methods=["POST"])
-def send_person_message():
-    data = request.get_json()
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    requests.append([request_id,
-                     lambda: ParlaiAPI.send_message(message_text, message_history, persona=True)])
-    
-    while request_id not in responses:
-        pass
-
-    result = responses[request_id]
-    del responses[request_id]
-    return result
-
-
-@blueprint.route('/api/start_conversation', methods=["GET", "POST"])
+blueprint.route('api/start_conversation', methods=["POST"])
 def start_conversation():
-    data = request.get_json()
+    # DEPRECATED
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    requests.append([request_id,
-                     lambda: ParlaiAPI.send_message('begin')])
- 
-    while request_id not in responses:
-        pass
-
-    result = responses[request_id]
-    del responses[request_id]
-    return {'status': 'OK'}
+    return {'text': 'Hello!'}
 
 
-@blueprint.route('/api/end_conversation', methods=["GET", "POST"])
+blueprint.route('api/end_conversation', methods=["POST"])
 def end_conversation():
     # DEPRECATED
 
-    data = request.get_json()
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    requests.append([request_id,
-                     lambda: ParlaiAPI.send_message('[DONE]')])
- 
-    while request_id not in responses:
-        pass
-
-    result = responses[request_id]
-    del responses[request_id]
-    return {'status': 'OK'}
+    return {'text': 'Goodbye!'}
 
 
 async def main():

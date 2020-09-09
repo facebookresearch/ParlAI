@@ -102,6 +102,21 @@ def send_message():
     return result
 
 
+blueprint.route('api/start_conversation', methods=["POST"])
+def start_conversation():
+    # DEPRECATED
+
+    return {'text': 'Hello!'}
+
+
+blueprint.route('api/end_conversation', methods=["POST"])
+def end_conversation():
+    # DEPRECATED
+
+    return {'text': 'Goodbye!'}
+
+
+
 async def main():
     thread = threading.Thread(target=ParlaiAPI.parse)
     thread.start()
