@@ -104,7 +104,7 @@ We can then again look at that data using the usual display data script, using t
     - - - NEW EPISODE: tmp/data.json - - -
     hello how are you today?
        i'm great thanks! what are you doing?
-    i've just been bikinig.
+    i've just been biking.
        oh nice, i haven't got on a bike in years!
     [epoch done]
     [loaded 1 episodes with a total of 2 examples]
