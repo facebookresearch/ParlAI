@@ -203,7 +203,7 @@ class History(object):
         self.reversed = opt.get('history_reversed', False)
         self._global_end_token = opt.get('history_add_global_end_token', None)
         if self._global_end_token is not None:
-            self._global_end_token = self.dict[self.dict.end_token]
+            self._global_end_token = self.parse(opt['history_add_global_end_token'])
 
         # set up history objects
         self.max_len = maxlen
@@ -322,7 +322,7 @@ class History(object):
         if self.temp_history is not None:
             history.extend([self.parse(self.temp_history)])
         if self._global_end_token is not None:
-            history += [[self._global_end_token]]
+            history += [self._global_end_token]
 
         history = sum(history, [])
         if self.reversed:

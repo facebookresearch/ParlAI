@@ -246,6 +246,7 @@ class Gpt2Agent(TorchGeneratorAgent):
         argparser.set_defaults(
             text_truncate=768,
             label_truncate=256,
+            history_add_global_end_token='\n',
             dict_maxexs=0,  # skip building dictionary
         )
         super(Gpt2Agent, cls).add_cmdline_args(argparser)
