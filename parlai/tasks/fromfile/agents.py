@@ -86,7 +86,7 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
             datafile += "_" + self.opt['datatype'].split(':')[0] + '.txt'
         else:
             if shared is None and (
-                self.opt['datatype'] == 'valid' or self.opt['datatype'] == 'test'
+                'valid' in self.opt['datatype'] or 'test' in self.opt['datatype']
             ):
                 logging.warn(
                     'You are using this fromfile data as a valid or test set without setting fromfile_datatype_extension to true. Please be aware this uses directly the file you indicated, make sure this is not the same as your training file.'
