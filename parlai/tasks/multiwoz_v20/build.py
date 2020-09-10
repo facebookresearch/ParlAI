@@ -10,15 +10,15 @@ from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
-        'https://www.repository.cam.ac.uk/bitstream/handle/1810/294507/MULTIWOZ2.1.zip?sequence=1&isAllowed=y',
-        'MULTIWOZ2.1.zip',
-        'd377a176f5ec82dc9f6a97e4653d4eddc6cad917704c1aaaa5a8ee3e79f63a8e',
+        'https://www.repository.cam.ac.uk/bitstream/handle/1810/280608/MULTIWOZ2.zip?sequence=3&isAllowed=y',
+        'MULTIWOZ2.zip',
+        '6b7c01952f8d0dfa4ac7109c1370e9c6e013ab704bc2f1d63c60bdab070c8506',
     )
 ]
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'multiwoz_v21')
+    dpath = os.path.join(opt['datapath'], 'multiwoz_v20')
     version = '1.0'
 
     if not build_data.built(dpath, version_string=version):

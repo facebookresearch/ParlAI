@@ -1083,9 +1083,20 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1908.06083"},
     },
     {
-        "id": "MultiWOZ",
-        "display_name": "MultiWOZ",
-        "task": "multiwoz",
+        "id": "MultiWOZv2.0",
+        "display_name": "MultiWOZ 2.0",
+        "task": "multiwoz_v20",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+        ),
+        "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
+    },
+    {
+        "id": "MultiWOZv2.1",
+        "display_name": "MultiWOZ 2.1",
+        "task": "multiwoz_v21",
         "tags": ["All", "Goal"],
         "description": (
             "A fully labeled collection of human-written conversations spanning"
