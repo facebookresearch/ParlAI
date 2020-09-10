@@ -195,8 +195,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 output.append(example_components)
         return output
 
-    def create_message(self, sample_item, entry_idx=0):
-        example_components = sample_item
+    def create_message(self, example_components, entry_idx=0):
         label_key = 'long_answers' if self.use_long_answer else 'short_answers'
         return {'id': self.id,
                 'text': example_components['text'],
