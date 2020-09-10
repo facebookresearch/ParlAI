@@ -44,10 +44,6 @@ from .model import DocReaderModel
 
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    """
-    Override DictionaryAgent to use spaCy tokenizer.
-    """
-
     @staticmethod
     def add_cmdline_args(argparser):
         group = DictionaryAgent.add_cmdline_args(argparser)
