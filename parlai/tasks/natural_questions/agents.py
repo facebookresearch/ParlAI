@@ -34,7 +34,7 @@ def _context_type_key(is_html):
 
 def _create_long_answer_from_span_html(example):
     """
-    Creates a list of long answer candidates, from their spans and the document.
+    Creates a list of long answer candidates, from their spans on the document.
 
     This functin gets the full article from the input example dictionary (using
     key 'document_html'), then iterates through the long answer spans (from
@@ -45,14 +45,12 @@ def _create_long_answer_from_span_html(example):
     Returns a list of long answers. Each long answer is a substring from the
         original HTML text.
 
-    :param example: a dict that contain one example/entry from NQ dataset.
+    :param example: a dict that contains one example/entry from NQ dataset.
     """
-    context_text = example['document_html'].encode()
+    context_text = example[_context_type_key(is_html=True)].encode()
     candidate_long_answers = []
     for long_asnwer_span in example['long_answer_candidates']:
         start_index = long_asnwer_span['start_byte']
-        if start_index < 0:
-            continue
         end_index = long_asnwer_span['end_byte']
         answer = context_text[start_index:end_index].decode()
         candidate_long_answers.append(answer)
@@ -61,7 +59,7 @@ def _create_long_answer_from_span_html(example):
 
 def _create_long_answer_from_span_text(simplified_example):
     """
-    Creates a list of long answer candidates, from their spans and the document.
+    Creates a list of long answer candidates, from their spans on the document.
 
     This functin gets the full article from the input simplified example
     dictionary (using key 'document_text'), then iterates through the long
@@ -72,16 +70,14 @@ def _create_long_answer_from_span_text(simplified_example):
     Returns a list of long answers. Each long answer is a substring from the
         simplified HTML text.
 
-    :param simplified_example: a dict that contain one simplified example/entry
+    :param simplified_example: a dict that contains one simplified example/entry
         from NQ dataset.
     """
-    context_text = simplified_example['document_text']
+    context_text = simplified_example[_context_type_key(is_html=False)]
     candidate_long_answers = []
     splitted_tokens = context_text.split(' ')
     for long_asnwer_span in simplified_example['long_answer_candidates']:
         start_index = long_asnwer_span['start_token']
-        if start_index < 0:
-            continue
         end_index = long_asnwer_span['end_token']
         answer = ' '.join(splitted_tokens[start_index:end_index])
         candidate_long_answers.append(answer)
@@ -90,16 +86,17 @@ def _create_long_answer_from_span_text(simplified_example):
 
 class NaturalQuestionsTeacher(ChunkTeacher):
     """
-    Dialog Teacher for Natural Questions dataset challenge.
+    The base teacher class for Natural Questions dataset challenge.
 
-    This class implements the core for the other Teachers classes that are
-    derived from it, with more details.
+    This class implements the core functionalities for other teachers.
+    The other four variations of teachers are made by setting two object
+    attributes (use_html, use_long_answer) to either True or False.
     """
 
     def __init__(self, opt, shared=None):
+        build(opt)
         self.use_html = opt.get('use_html', False)
         self.use_long_answer = opt.get('use_long_answer', False)
-        build(opt)
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
         self.dtype = self.opt['datatype'].split(':')[0]
@@ -143,7 +140,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         context = example[_context_type_key(self.use_html)]
         if self.use_html:
             offset_unit = 'byte'
-            contenxt = context.encode()
+            context = context.encode()
         else:
             offset_unit = 'token'
             context = context.split(' ')
@@ -166,6 +163,15 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         return short_answers
 
     def load_from_chunk(self, chunk_idx: int):
+        """
+        Loads from a chunk of the dataset, given the chunk index.
+
+        Returns a list of dictionaries. Each dictionary is an example from the
+            main dataset and stores the components of that examples (e.g.,
+            contenxt, question, candidate answers etc.) as key-value pairs.
+
+        :param chunk_idx: the index of the chunk dataset chunk file.
+        """
 
         def _extarct_labels_indices(example, candidate_labels):
             labels = []
@@ -186,12 +192,15 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 example_components['text'] = f'{context}\n{question}?'
 
                 if self.use_long_answer:
-                    example_components['long_answers_candidate'] = self._get_candidate_long_answers(
-                    example)
-                    example_components['long_answers'] = _extarct_labels_indices(
-                    example, example_components['long_answers_candidate'])
+                    example_components['long_answers_candidate'] = \
+                        self._get_candidate_long_answers(
+                        example)
+                    example_components['long_answers'] = \
+                        _extarct_labels_indices(example,
+                                                example_components['long_answers_candidate'])
                 else:
-                    example_components['short_answers'] = self._get_short_answers(example)
+                    example_components['short_answers'] = \
+                        self._get_short_answers(example)
                 output.append(example_components)
         return output
 
@@ -202,7 +211,13 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 'labels': example_components[label_key] or [''],
                 'episode_done': True}
 
+
 class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
+    """
+    Generates context texts (articles) in HTML, with long answers (also in HTML)
+    that are selected from major components  (e.g., paragraphs, tables, etc.)
+    from the main article, granted such an answer exists based on the article.
+    """
     def __init__(self, opt, shared=None):
         opt['use_html'] = True
         opt['use_long_answer'] = True
@@ -210,6 +225,11 @@ class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
 
 
 class NaturalQuestionsTeacherShortAnswerHTML(NaturalQuestionsTeacher):
+    """
+    Generates context texts (articles) in HTML, with short answers that are
+    selected from a short span within the main article, or YES or NO,
+    granted such an answer exists based on the article.
+    """
     def __init__(self, opt, shared=None):
         opt['use_html'] = True
         opt['use_long_answer'] = False
@@ -217,6 +237,11 @@ class NaturalQuestionsTeacherShortAnswerHTML(NaturalQuestionsTeacher):
 
 
 class NaturalQuestionsTeacherLongAnswer(NaturalQuestionsTeacher):
+    """
+    Generates context texts (articles), with long answers that are selected from
+    major components  (e.g., paragraphs, tables, etc.) from the main article,
+    granted such an answer exists based on the article.
+    """
     def __init__(self, opt, shared=None):
         opt['use_html'] = False
         opt['use_long_answer'] = True
@@ -224,6 +249,11 @@ class NaturalQuestionsTeacherLongAnswer(NaturalQuestionsTeacher):
 
 
 class NaturalQuestionsTeacherShortAnswer(NaturalQuestionsTeacher):
+    """
+    Generates context texts, with short answers that are selected from a short
+    span within the main article, or YES or NO, granted such an answer exists
+    based on the article.
+    """
     def __init__(self, opt, shared=None):
         opt['use_html'] = False
         opt['use_long_answer'] = False
