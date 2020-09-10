@@ -71,7 +71,20 @@ class ParlaiAPI:
     
     @staticmethod
     async def send_message(user_message, message_history=[], persona=False):
-        response = requests.post(FEX_API_URI, json={"context": message_history + [user_message]}).json()
+        new_history = []
+
+        for i, message in enumerate(message_history):
+            if i == 0 and message.startswith('your persona:'):
+                new_history.append(message[13:].strip())
+                continue
+            if message.startswith('your persona:'):
+                continue
+            new_history.append(message)
+
+        new_history.append(user_message)
+        print(new_history)
+        
+        response = requests.post(FEX_API_URI, json={"context": new_history}).json()
 
         try:
             response_text = format_message(response["response"])
