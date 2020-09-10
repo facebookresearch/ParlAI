@@ -28,6 +28,7 @@ from parlai.core.torch_agent import History
 from parlai.core.torch_generator_agent import PPLMetric
 from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
+from parlai.utils.io import PathManager
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
 
 
@@ -62,6 +63,7 @@ class BartAgent(TransformerGeneratorAgent):
             help='where to save fairseq conversion',
         )
         argparser.set_defaults(dict_tokenizer='gpt2')
+        argparser.set_defaults(**BART_ARGS)
 
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
@@ -80,14 +82,17 @@ class BartAgent(TransformerGeneratorAgent):
         :return opt:
             return opt with BART-specific args.
         """
-        if not opt.get('converting'):
+        if not opt.get('converting') and (
+            opt.get('init_model') is None
+            or not PathManager.exists(opt.get('init_model', ''))
+        ):
             download(opt['datapath'])
             opt['init_model'] = os.path.join(
                 opt['datapath'], 'models/bart/bart_large/model'
             )
         if opt.get('init_fairseq_model'):
             opt = self._convert_model(opt)
-        opt.update(BART_ARGS)
+
         compare_init_model_opts(opt, opt)
         return opt
 

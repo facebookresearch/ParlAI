@@ -8,8 +8,6 @@
 Base tokenizer/tokens classes and utilities.
 """
 
-import copy
-
 
 class Tokens(object):
     """
@@ -28,26 +26,6 @@ class Tokens(object):
         self.annotators = annotators
         self.opts = opts or {}
 
-    def __len__(self):
-        """
-        The number of tokens.
-        """
-        return len(self.data)
-
-    def slice(self, i=None, j=None):
-        """
-        Return a view of the list of tokens from [i, j).
-        """
-        new_tokens = copy.copy(self)
-        new_tokens.data = self.data[i:j]
-        return new_tokens
-
-    def untokenize(self):
-        """
-        Returns the original text (with whitespace reinserted).
-        """
-        return ''.join([t[self.TEXT_WS] for t in self.data]).strip()
-
     def words(self, uncased=False):
         """
         Returns a list of the text of each token.
@@ -59,42 +37,6 @@ class Tokens(object):
             return [t[self.TEXT].lower() for t in self.data]
         else:
             return [t[self.TEXT] for t in self.data]
-
-    def offsets(self):
-        """
-        Returns a list of [start, end) character offsets of each token.
-        """
-        return [t[self.SPAN] for t in self.data]
-
-    def pos(self):
-        """
-        Returns a list of part-of-speech tags of each token.
-
-        Returns None if this annotation was not included.
-        """
-        if 'pos' not in self.annotators:
-            return None
-        return [t[self.POS] for t in self.data]
-
-    def lemmas(self):
-        """
-        Returns a list of the lemmatized text of each token.
-
-        Returns None if this annotation was not included.
-        """
-        if 'lemma' not in self.annotators:
-            return None
-        return [t[self.LEMMA] for t in self.data]
-
-    def entities(self):
-        """
-        Returns a list of named-entity-recognition tags of each token.
-
-        Returns None if this annotation was not included.
-        """
-        if 'ner' not in self.annotators:
-            return None
-        return [t[self.NER] for t in self.data]
 
     def ngrams(self, n=1, uncased=False, filter_fn=None, as_strings=True):
         """
@@ -126,29 +68,6 @@ class Tokens(object):
             ngrams = ['{}'.format(' '.join(words[s:e])) for (s, e) in ngrams]
 
         return ngrams
-
-    def entity_groups(self):
-        """
-        Group consecutive entity tokens with the same NER tag.
-        """
-        entities = self.entities()
-        if not entities:
-            return None
-        non_ent = self.opts.get('non_ent', 'O')
-        groups = []
-        idx = 0
-        while idx < len(entities):
-            ner_tag = entities[idx]
-            # Check for entity tag
-            if ner_tag != non_ent:
-                # Chomp the sequence
-                start = idx
-                while idx < len(entities) and entities[idx] == ner_tag:
-                    idx += 1
-                groups.append((self.slice(start, idx).untokenize(), ner_tag))
-            else:
-                idx += 1
-        return groups
 
 
 class Tokenizer(object):

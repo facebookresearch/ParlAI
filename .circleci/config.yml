@@ -76,6 +76,7 @@ codecov: &codecov
     name: Coverage report
     command: |
       python -m codecov --flags $CIRCLE_JOB
+      mkdir -p ~/ParlAI/data
 
 installdeps: &installdeps
   run:
@@ -156,6 +157,15 @@ buildwebsite: &buildwebsite
     name: Build the website
     command: make
 
+findtests: &findtests
+  run:
+    working_directory: ~/ParlAI
+    name: Find tests to run
+    command: |
+      mkdir -p ~/ParlAI/data/models
+      python -m pytest -m unit --collect-only | grep '<'  | sed "s/^ *//" > teststorun.txt
+      cat teststorun.txt
+
 # -------------------------------------------------------------------------------------
 # Actual jobs
 # -------------------------------------------------------------------------------------
@@ -177,11 +187,17 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-osx-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (OSX)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
+      - save_cache:
+          key: data-20200904-osx-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -207,9 +223,6 @@ jobs:
     parallelism: 16
     steps:
       - checkout
-      - run:
-          name: output test split
-          command: circleci tests split --split-by=timings --timings-type=classname
       - <<: *fixgit
       - restore_cache:
           key: deps-20200828-ut36-{{ checksum "requirements.txt" }}
@@ -221,11 +234,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-ut36-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (py36)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-ut36-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -246,11 +266,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-ut38-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (py38)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-ut38-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -271,11 +298,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-ut37-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (py37)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-ut37-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -303,11 +337,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-gpu14-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (GPU; pytorch 1.4)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-gpu14-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -335,11 +376,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-gpu15-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (GPU; pytorch 1.5)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-gpu15-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -367,11 +415,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-gpu16-{{ checksum "teststorun.txt" }}
       - run:
           name: Unit tests (GPU; pytorch 1.6)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-gpu16-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -399,16 +454,62 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-nightly-{{ checksum "teststorun.txt" }}
       - run:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
+      - <<: *codecov
+      - save_cache:
+          key: data-20200904-nightly-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
+      - store_test_results:
+          path: test-results
+
+  quickstart_tests:
+    <<: *gpu
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: nvidia-downloads-20200516
+      - <<: *setupcuda
+      - save_cache:
+          key: nvidia-downloads-20200516
+          paths:
+            - "~/nvidia-downloads/"
+      - restore_cache:
+          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+      - <<: *setup
+      - <<: *installtorchgpu16
+      - <<: *installdeps
+      - save_cache:
+          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - run:
+          name: Fake teststorun.txt
+          command: echo "quickstart" > teststorun.txt
+      - restore_cache:
+          key: data-20200904-quick-{{ checksum "teststorun.txt" }}
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-quick-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
+
+
 
   teacher_tests:
     <<: *small_cpu37
@@ -426,11 +527,18 @@ jobs:
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: data-20200904-teacher-{{ checksum "teststorun.txt" }}
       - run:
           name: All data tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m tasks parlai/tasks/*/test.py -v
       - <<: *codecov
+      - save_cache:
+          key: data-20200904-teacher-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
       - store_test_results:
           path: test-results
 
@@ -557,34 +665,32 @@ workflows:
           requires:
             - unittests_37
             - unittests_gpu16
-      - unittests_38
+      - unittests_38:
+          requires:
+            - unittests_37
+            - unittests_gpu16
       - unittests_37
-      - unittests_36
+      - unittests_36:
+          requires:
+            - unittests_37
+            - unittests_gpu16
       - mturk_tests
       - unittests_osx:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
+      - quickstart_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_37
       - long_gpu_tests:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
       - teacher_tests:
           requires:
             - unittests_gpu16
-            - unittests_gpu15
-            - unittests_gpu14
-            - unittests_38
             - unittests_37
-            - unittests_36
       - build_website:
           filters:
             branches:

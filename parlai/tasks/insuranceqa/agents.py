@@ -6,7 +6,7 @@
 import copy
 import os
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher
 from .build import build
 
 
@@ -22,7 +22,7 @@ def _path(version, opt, exsz=''):
 
 
 # V1 InsuranceQA task
-class V1Teacher(FbDialogTeacher):
+class V1Teacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path('V1', opt)
@@ -30,7 +30,7 @@ class V1Teacher(FbDialogTeacher):
 
 
 # V2 InsuranceQA task
-class V2Teacher(FbDialogTeacher):
+class V2Teacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         task = opt.get('task', None)
