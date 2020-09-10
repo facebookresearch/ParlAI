@@ -57,7 +57,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
             default=True,
             help='Use only words found in provided embedding_file',
         )
-        group.set_defaults(dict_tokenizer='spacy')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
