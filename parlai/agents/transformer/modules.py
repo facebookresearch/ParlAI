@@ -1258,7 +1258,7 @@ class BasicAttention(nn.Module):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill(attn_mask, neginf(l1.dtype))
+            l1.masked_fill_(attn_mask, neginf(l1.dtype))
         l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys
