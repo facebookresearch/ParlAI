@@ -490,7 +490,11 @@ class TransformerEncoder(nn.Module):
         """
         mask = input != self.padding_idx
         if positions is None:
-            positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
+            positions = (
+                mask.to(torch.long).cumsum(dim=1, dtype=torch.int64) - 1
+            )
+            is_negative = positions < 0
+            positions.masked_fill_(is_negative, 0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
