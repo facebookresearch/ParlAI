@@ -28,7 +28,7 @@ def _count_lines_in_file(fname):
     return num_lines
 
 
-def _html_context_key(is_html):
+def _context_type_key(is_html):
     return 'document_html' if is_html else 'document_text'
 
 
@@ -51,6 +51,8 @@ def _create_long_answer_from_span_html(example):
     candidate_long_answers = []
     for long_asnwer_span in example['long_answer_candidates']:
         start_index = long_asnwer_span['start_byte']
+        if start_index < 0:
+            continue
         end_index = long_asnwer_span['end_byte']
         answer = context_text[start_index:end_index].decode()
         candidate_long_answers.append(answer)
@@ -78,23 +80,25 @@ def _create_long_answer_from_span_text(simplified_example):
     splitted_tokens = context_text.split(' ')
     for long_asnwer_span in simplified_example['long_answer_candidates']:
         start_index = long_asnwer_span['start_token']
+        if start_index < 0:
+            continue
         end_index = long_asnwer_span['end_token']
         answer = ' '.join(splitted_tokens[start_index:end_index])
         candidate_long_answers.append(answer)
     return candidate_long_answers
 
 
-class LongAnswerTeacher(ChunkTeacher):
+class NaturalQuestionsTeacher(ChunkTeacher):
     """
-    Dialog Teacher for long answer format in Natural Questions
+    Dialog Teacher for Natural Questions dataset challenge.
 
-    NOTE: This implementation of teacher is inefficient, to the extent of being
-    unpractical. This is due to the size of the dataset. It may only be used
-    with the toy (e'g', provided sample) datasets.
+    This class implements the core for the other Teachers classes that are
+    derived from it, with more details.
     """
 
     def __init__(self, opt, shared=None):
         self.use_html = opt.get('use_html', False)
+        self.use_long_answer = opt.get('use_long_answer', False)
         build(opt)
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
@@ -129,11 +133,37 @@ class LongAnswerTeacher(ChunkTeacher):
         logging.info(f'{n_samples} examples found in {self.dtype} dataset.')
         return (n_samples, n_samples)
 
-    def _get_candidate_labels(self, example):
+    def _get_candidate_long_answers(self, example):
         if self.use_html:
             return _create_long_answer_from_span_html(example)
         else:
             return _create_long_answer_from_span_text(example)
+
+    def _get_short_answers(self, example):
+        context = example[_context_type_key(self.use_html)]
+        if self.use_html:
+            offset_unit = 'byte'
+            contenxt = context.encode()
+        else:
+            offset_unit = 'token'
+            context = context.split(' ')
+
+        short_answers = []
+        for annotation in example['annotations']:
+            if 'short_answers' in annotation and annotation['short_answers']:
+                for sa in annotation['short_answers']:
+                    start_ind = sa[f'start_{offset_unit}']
+                    end_ind = sa[f'end_{offset_unit}']
+                    ans = context[start_ind:end_ind]
+                    if self.use_html:
+                        short_answers.append(ans.decode())
+                    else:
+                        short_answers.append(' '.join(ans))
+            elif 'yes_no_answer' in annotation and \
+                    annotation['yes_no_answer'] and \
+                    annotation['yes_no_answer'] != 'NONE':
+                short_answers.append(annotation['yes_no_answer'])
+        return short_answers
 
     def load_from_chunk(self, chunk_idx: int):
 
@@ -149,24 +179,57 @@ class LongAnswerTeacher(ChunkTeacher):
         output = []
         with jsonlines.open(fpath, 'r') as fi:
             for example in fi:
+                example_components = dict()
                 example = self._simplify(example)
-                context = example[_html_context_key(self.use_html)]
+                context = example[_context_type_key(self.use_html)]
                 question = example['question_text']
-                candidate_labels = self._get_candidate_labels(example)
-                labels = _extarct_labels_indices(example, candidate_labels)
-                output.append(
-                    (f'{context}\n{question}?',
-                     candidate_labels,
-                     labels))
+                example_components['text'] = f'{context}\n{question}?'
+
+                if self.use_long_answer:
+                    example_components['long_answers_candidate'] = self._get_candidate_long_answers(
+                    example)
+                    example_components['long_answers'] = _extarct_labels_indices(
+                    example, example_components['long_answers_candidate'])
+                else:
+                    example_components['short_answers'] = self._get_short_answers(example)
+                output.append(example_components)
         return output
 
     def create_message(self, sample_item, entry_idx=0):
-        text, candidate_labels, labels = sample_item
+        example_components = sample_item
+        label_key = 'long_answers' if self.use_long_answer else 'short_answers'
         return {'id': self.id,
-                'text': text,
-                'labels': labels,
+                'text': example_components['text'],
+                'labels': example_components[label_key] or [''],
                 'episode_done': True}
 
+class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
+    def __init__(self, opt, shared=None):
+        opt['use_html'] = True
+        opt['use_long_answer'] = True
+        super().__init__(opt, shared)
 
-class DefaultTeacher(LongAnswerTeacher):
+
+class NaturalQuestionsTeacherShortAnswerHTML(NaturalQuestionsTeacher):
+    def __init__(self, opt, shared=None):
+        opt['use_html'] = True
+        opt['use_long_answer'] = False
+        super().__init__(opt, shared)
+
+
+class NaturalQuestionsTeacherLongAnswer(NaturalQuestionsTeacher):
+    def __init__(self, opt, shared=None):
+        opt['use_html'] = False
+        opt['use_long_answer'] = True
+        super().__init__(opt, shared)
+
+
+class NaturalQuestionsTeacherShortAnswer(NaturalQuestionsTeacher):
+    def __init__(self, opt, shared=None):
+        opt['use_html'] = False
+        opt['use_long_answer'] = False
+        super().__init__(opt, shared)
+
+
+class DefaultTeacher(NaturalQuestionsTeacherShortAnswer):
     pass
