@@ -863,7 +863,8 @@ class TransformerDecoder(nn.Module):
 
         return tensor, new_incr_state
 
-    def forward(self, input, encoder_state, incr_state=None):
+    def forward(self, input, encoder_output, encoder_mask, incr_state=None):
+        # TODO: work around this hack
         """
         Forward pass.
 
@@ -875,10 +876,9 @@ class TransformerDecoder(nn.Module):
             The incremental state: a dictionary whose keys index the layers and whose
             values contain the incremental state for each layer.
         """
-        encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
-        positions = input.new(seq_len).long()
+        positions = input.new_empty(seq_len).long()
         positions = torch.arange(seq_len, out=positions).unsqueeze(0)
 
         if incr_state is not None:
@@ -900,7 +900,7 @@ class TransformerDecoder(nn.Module):
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
-        return tensor, new_incr_state
+        return tensor  # TODO: work around this hack
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
