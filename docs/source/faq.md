@@ -1,7 +1,12 @@
 # Frequently Asked Questions
 
-This document contains a number of questions that are regularly asked on GitHub
-Issues.
+This document contains a number of questions that are regularly asked on GitHub Issues.
+
+
+**Why is my model not generating a response?**
+
+For a generative model, check that `--skip-generation` is set to `False`.
+
 
 **Why can't I reproduce the results of an evaluation on a task with a pretrained model?**
 
