@@ -82,7 +82,6 @@ class ParlaiAPI:
             new_history.append(message)
 
         new_history.append(user_message)
-        print(new_history)
         
         response = requests.post(FEX_API_URI, json={"context": new_history}).json()
 
