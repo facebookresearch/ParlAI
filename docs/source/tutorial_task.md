@@ -58,8 +58,9 @@ We could look at that data using the usual display data script:
     [ loaded 1 episodes with a total of 2 examples ]
 
 The text file data format is called ParlAI Dialog format, and is
-described in the teachers documentation &lt;core/teachers&gt; and
-:pyparlai.core.teachers.ParlAIDialogTeacher. Essentially, there is one
+described in the [teachers documentation](core/teachers); and
+in [pyparlai.core.teachers.ParlAIDialogTeacher](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1268).
+Essentially, there is one
 training example every line, and each field in a ParlAI message is tab
 separated with the name of the field, followed by a colon. E.g. the
 usual fields like 'text', 'labels', 'label\_candidates' etc. can all be
