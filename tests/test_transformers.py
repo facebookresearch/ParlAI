@@ -377,7 +377,7 @@ class TestTransformerGenerator(unittest.TestCase):
             beam_min_length=2,
         )
         agent = create_agent(opt, True)
-        obs = agent.observe({'text': '1\n1\n2\n2\n3\n3\n4', 'episode_done': True})
+        agent.observe({'text': '1\n1\n2\n2\n3\n3\n4', 'episode_done': True})
         result = agent.act()
         assert 'text' in result
         assert result['text'] != ''
