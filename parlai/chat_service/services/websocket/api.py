@@ -10,7 +10,7 @@ import re
 import threading
 from flask import Flask, request, jsonify
 
-logging.basicConfig(filename='api.log', level=30)
+logging.basicConfig(filename='parlai_api.log', level=30)
 
 parser = argparse.ArgumentParser(description="Simple API for ParlAI chat bot")
 parser.add_argument('--hostname', default="localhost", help="ParlAI web server hostname.")
