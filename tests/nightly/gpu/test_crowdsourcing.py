@@ -19,8 +19,14 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.core.build_data import modelzoo_path
 from parlai.core.message import Message
 from parlai.core.opt import Opt
+from parlai.mturk.core.agents import TIMEOUT_MESSAGE, MTURK_DISCONNECT_MESSAGE
 from parlai.mturk.tasks.turn_annotations import run
 from parlai.mturk.tasks.turn_annotations.bot_agent import TurkLikeAgent
+from parlai.mturk.tasks.turn_annotations.constants import (
+    ONBOARD_FAIL,
+    ONBOARD_SUBMIT,
+    ONBOARD_SUCCESS,
+)
 from parlai.mturk.tasks.turn_annotations.worlds import TurnAnnotationsChatWorld
 
 
@@ -34,7 +40,78 @@ class TestTurnAnnotations(unittest.TestCase):
     Test the turn annotations task.
     """
 
+    def test_onboard_world(self):
+        """
+        Test functionality of the onboarding world.
+        """
+
+        # Params
+        answers_passing_onboarding = {
+            "1": ["bucket_0"],
+            "3": ["bucket_1"],
+            "5": ["bucket_2"],
+            "7": ["bucket_3"],
+            "9": ["bucket_4"],
+        }
+        answers_failing_onboarding = {
+            "1": ["bucket_4"],
+            "3": ["bucket_3"],
+            "5": ["bucket_2"],
+            "7": ["bucket_1"],
+            "9": ["bucket_0"],
+        }
+
+        # Define test cases
+        acts_statuses_and_saved_texts = {
+            (
+                {'text': MTURK_DISCONNECT_MESSAGE},
+                MTURK_DISCONNECT_MESSAGE,
+                None,
+            ),  # Disconnect
+            ({'text': TIMEOUT_MESSAGE}, TIMEOUT_MESSAGE, None),  # Timeout
+            (
+                {
+                    'text': ONBOARD_SUBMIT,
+                    'id': 'onboarding',
+                    'message_id': 'dummy_id',
+                    'onboard_submission': answers_passing_onboarding,
+                    'episode_done': False,
+                },
+                ONBOARD_SUCCESS,
+                {
+                    "worker_id": HUMAN_LIKE_AGENT_WORKER_ID,
+                    "worker_answers": answers_passing_onboarding,
+                },
+            ),  # Passing onboarding
+            (
+                {
+                    'text': ONBOARD_SUBMIT,
+                    'id': 'onboarding',
+                    'message_id': 'dummy_id',
+                    'onboard_submission': answers_failing_onboarding,
+                    'episode_done': False,
+                },
+                ONBOARD_FAIL,
+                {
+                    "worker_id": HUMAN_LIKE_AGENT_WORKER_ID,
+                    "worker_answers": answers_failing_onboarding,
+                },
+            ),  # Failing onboarding
+        }
+
+        # Loop over test cases
+        for act, desired_status, desired_saved_text in acts_statuses_and_saved_texts:
+            with testing_utils.tempdir() as tmpdir:
+                save_folder = tmpdir
+
+                # {{{TODO: after creating the world, set self.onboard_failures_max_allowed to 0 and make a note of this}}}
+                # {{{TODO: In the saved texts, only check for keys that are in the desired saved text}}}
+                # {{{TODO: check all cases, + for each one also check the saved file}}}
+
     def test_chat_world(self):
+        """
+        Test functionality of the chat world.
+        """
 
         with testing_utils.tempdir() as tmpdir:
             save_folder = tmpdir
