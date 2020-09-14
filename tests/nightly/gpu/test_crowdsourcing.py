@@ -66,7 +66,7 @@ class TestTurnAnnotations(unittest.TestCase):
         }
 
         # Define test cases
-        acts_statuses_and_saved_texts = {
+        acts_statuses_and_saved_texts = [
             (
                 Message({'text': MTURK_DISCONNECT_MESSAGE}),
                 MTURK_DISCONNECT_MESSAGE,
@@ -105,7 +105,7 @@ class TestTurnAnnotations(unittest.TestCase):
                     "worker_answers": answers_failing_onboarding,
                 },
             ),  # Failing onboarding
-        }
+        ]
 
         # Loop over test cases
         for act, desired_status, desired_saved_text in acts_statuses_and_saved_texts:
@@ -120,7 +120,7 @@ class TestTurnAnnotations(unittest.TestCase):
                 # Define opt
                 with open(os.path.join(config_folder, 'annotations_config.json')) as f:
                     annotations_config = json.load(f)
-                with os.path.join(config_folder, 'onboard_task_data.json') as f:
+                with open(os.path.join(config_folder, 'onboard_task_data.json')) as f:
                     onboard_task_data = json.load(f)
                 opt = Opt(
                     {
@@ -134,7 +134,10 @@ class TestTurnAnnotations(unittest.TestCase):
                 )
 
                 # Set up human agent
-                human_worker = HumanLikeOnboardingAgent(act=act)
+                human_worker = HumanLikeOnboardingAgent(
+                    onboarding_act=act,
+                    disconnect_act=Message({'text': MTURK_DISCONNECT_MESSAGE}),
+                )
 
                 world = TurnAnnotationsOnboardWorld(opt, human_worker)
                 world.onboard_failures_max_allowed = 0
@@ -355,23 +358,47 @@ class HumanLikeOnboardingAgent:
     Emulates a crowdsource worker for the purposes of testing onboarding worlds.
     """
 
-    def __init__(self, act: Message):
+    def __init__(self, onboarding_act: Message, disconnect_act: Message):
         """
         Just store what to return from self.act().
         """
-        self.act_ = act
+        self.mturk_manager = FakeMTurkManager()
+        self.worker_id = HUMAN_LIKE_AGENT_WORKER_ID
+        self.onboarding_act = onboarding_act
+        self.disconnect_act = disconnect_act
+        self.onboarding_act_returned = False
 
     def act(self, timeout=None) -> Message:
         """
-        Just return the desired self.act() in order to test onboarding.
+        The first time this is called, the desired act message is returned; after that,
+        the disconnected message is returned (this should only happen when testing what
+        happens after the user has been softblocked).
         """
         _ = timeout  # This test agent doesn't use the timeout
-        return self.act_
+        if not self.onboarding_act_returned:
+            self.onboarding_act_returned = True
+            return self.onboarding_act
+        else:
+            return self.disconnect_act
 
     def observe(self, observation):
         """
         No-op.
         """
+        pass
+
+
+class FakeMTurkManager:
+    """
+    Fake MTurkManager class that implements a no-op soft-blocking method.
+    """
+
+    def __init__(self):
+        pass
+
+    def soft_block_worker(self, worker_id, qual='block_qualification'):
+        _ = worker_id  # Ignore
+        _ = qual  # Ignore
         pass
 
 
