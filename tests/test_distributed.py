@@ -72,7 +72,7 @@ class TestDistributed(unittest.TestCase):
 
     @testing_utils.retry()
     def test_generator_distributed(self):
-        valid, test = self._distributed_train_model(self._base_config)
+        valid, test = self._distributed_train_model(copy.deepcopy(self._base_config))
 
         self.assertLessEqual(valid['ppl'], 1.50)
         self.assertLessEqual(test['ppl'], 1.50)
