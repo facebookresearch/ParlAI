@@ -70,6 +70,7 @@ class TestDistributed(unittest.TestCase):
 
         return (valid, test)
 
+    @testing_utils.retry()
     def test_generator_distributed(self):
         valid, test = self._distributed_train_model(self._base_config)
 
@@ -81,6 +82,7 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(valid['exs'].value(), 4)
         self.assertEqual(test['exs'].value(), 4)
 
+    @testing_utils.retry()
     def test_multitask_distributed(self):
         config = copy.deepcopy(self._base_config)
         config['num_epochs'] = 50
