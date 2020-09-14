@@ -44,3 +44,4 @@ Unidecode==1.1.1
 websocket-client==0.56.0
 websocket-server==0.4
 jsonlines==1.2.0
+gsutil==4.53
