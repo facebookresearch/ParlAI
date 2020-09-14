@@ -172,7 +172,7 @@ class TestTurnAnnotations(unittest.TestCase):
             semaphore = threading.Semaphore(max_concurrent_responses)
 
             # Set up human agent
-            human_worker = HumanLikeAgent(
+            human_worker = HumanLikeChatAgent(
                 agent_id=human_agent_id,
                 human_utterances=human_utterances,
                 bucket_assignments=bucket_assignments,
@@ -230,9 +230,9 @@ class TestTurnAnnotations(unittest.TestCase):
                     self.assertEqual(actual_results.get(k), v)
 
 
-class HumanLikeAgent:
+class HumanLikeChatAgent:
     """
-    Emulates a crowdsource worker for the purposes of testing.
+    Emulates a crowdsource worker for the purposes of testing chat worlds.
     """
 
     def __init__(
