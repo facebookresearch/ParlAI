@@ -189,8 +189,14 @@ class TestDistributed(unittest.TestCase):
             'transformer/classifier',
         ]:
             config['model'] = m
-            with self.assertRaises(RuntimeError):
+            try:
                 _ = self._distributed_train_model(config)
+            except RuntimeError:
+                pass
+            else:
+                self.fail('Did not raise RuntimeError')
+            finally:
+                dist.destroy_process_group()
 
 
 if __name__ == '__main__':
