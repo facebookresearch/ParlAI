@@ -173,7 +173,7 @@ jobs:
   unittests_osx:
     <<: *osx_cpu37
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - <<: *fixgit
@@ -220,7 +220,7 @@ jobs:
   unittests_36:
     <<: *standard_cpu36
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 8
     steps:
       - checkout
       - <<: *fixgit
@@ -252,7 +252,7 @@ jobs:
   unittests_38:
     <<: *standard_cpu38
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - <<: *fixgit
@@ -316,7 +316,7 @@ jobs:
   unittests_gpu14:
     <<: *gpu
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - <<: *fixgit
@@ -355,7 +355,7 @@ jobs:
   unittests_gpu15:
     <<: *gpu
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 2
     steps:
       - checkout
       - <<: *fixgit
