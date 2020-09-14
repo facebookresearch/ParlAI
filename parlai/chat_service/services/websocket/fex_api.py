@@ -88,7 +88,6 @@ class ParlaiAPI:
 
         context += new_history[-17:]
         context.append(user_message)
-        print(context)
 
         response = requests.post(FEX_API_URI, json={"context": context}).json()
 
