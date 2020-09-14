@@ -33,6 +33,7 @@ from parlai.mturk.tasks.turn_annotations.worlds import (
 )
 
 
+ANNOTATIONS_INTRO_TEXT = 'Does this comment from your partner have any of the following attributes? (Check all that apply)'
 HUMAN_LIKE_AGENT_WORKER_ID = 'HumanLikeAgent'
 HUMAN_LIKE_AGENT_HIT_ID = "hit_id"
 HUMAN_LIKE_AGENT_ASSIGNMENT_ID = "assignment_id"
@@ -67,19 +68,21 @@ class TestTurnAnnotations(unittest.TestCase):
         # Define test cases
         acts_statuses_and_saved_texts = {
             (
-                {'text': MTURK_DISCONNECT_MESSAGE},
+                Message({'text': MTURK_DISCONNECT_MESSAGE}),
                 MTURK_DISCONNECT_MESSAGE,
                 None,
             ),  # Disconnect
-            ({'text': TIMEOUT_MESSAGE}, TIMEOUT_MESSAGE, None),  # Timeout
+            (Message({'text': TIMEOUT_MESSAGE}), TIMEOUT_MESSAGE, None),  # Timeout
             (
-                {
-                    'text': ONBOARD_SUBMIT,
-                    'id': 'onboarding',
-                    'message_id': 'dummy_id',
-                    'onboard_submission': answers_passing_onboarding,
-                    'episode_done': False,
-                },
+                Message(
+                    {
+                        'text': ONBOARD_SUBMIT,
+                        'id': 'onboarding',
+                        'message_id': 'dummy_id',
+                        'onboard_submission': answers_passing_onboarding,
+                        'episode_done': False,
+                    }
+                ),
                 ONBOARD_SUCCESS,
                 {
                     "worker_id": HUMAN_LIKE_AGENT_WORKER_ID,
@@ -87,13 +90,15 @@ class TestTurnAnnotations(unittest.TestCase):
                 },
             ),  # Passing onboarding
             (
-                {
-                    'text': ONBOARD_SUBMIT,
-                    'id': 'onboarding',
-                    'message_id': 'dummy_id',
-                    'onboard_submission': answers_failing_onboarding,
-                    'episode_done': False,
-                },
+                Message(
+                    {
+                        'text': ONBOARD_SUBMIT,
+                        'id': 'onboarding',
+                        'message_id': 'dummy_id',
+                        'onboard_submission': answers_failing_onboarding,
+                        'episode_done': False,
+                    }
+                ),
                 ONBOARD_FAIL,
                 {
                     "worker_id": HUMAN_LIKE_AGENT_WORKER_ID,
@@ -120,7 +125,7 @@ class TestTurnAnnotations(unittest.TestCase):
                 opt = Opt(
                     {
                         'annotations_config': annotations_config,
-                        'annotations_intro': 'Does this comment from your partner have any of the following attributes? (Check all that apply)',
+                        'annotations_intro': ANNOTATIONS_INTRO_TEXT,
                         'is_sandbox': True,
                         'max_onboard_time': 300,
                         'onboard_task_data': onboard_task_data,
@@ -128,14 +133,22 @@ class TestTurnAnnotations(unittest.TestCase):
                     }
                 )
 
-                world = TurnAnnotationsOnboardWorld(opt, worker)
+                # Set up human agent
+                human_worker = HumanLikeOnboardingAgent(act=act)
+
+                world = TurnAnnotationsOnboardWorld(opt, human_worker)
                 world.onboard_failures_max_allowed = 0
                 # To make it easier to test giving the wrong responses
                 actual_status = world.parley()
                 self.assertEqual(actual_status, desired_status)
                 if desired_saved_text is not None:
-                    pass
-                    # {{{TODO: check the saved file. In the saved texts, only check for keys that are in the desired saved text}}}
+                    worker_answers_path = os.path.join(
+                        onboard_worker_answer_folder, 'worker_answers.json'
+                    )
+                    with open(worker_answers_path) as f:
+                        actual_saved_text = json.load(f)
+                    for k, v in desired_saved_text.items():
+                        self.assertEqual(actual_saved_text.get(k), v)
 
     def test_chat_world(self):
         """
@@ -168,7 +181,7 @@ class TestTurnAnnotations(unittest.TestCase):
             opt = Opt(
                 {
                     'annotations_config': annotations_config,
-                    'annotations_intro': 'Does this comment from your partner have any of the following attributes? (Check all that apply)',
+                    'annotations_intro': ANNOTATIONS_INTRO_TEXT,
                     'base_model_folder': base_model_folder,
                     'check_acceptability': False,
                     'conversation_start_mode': 'hi',
@@ -335,6 +348,31 @@ class TestTurnAnnotations(unittest.TestCase):
                         self.assertEqual(actual_results[k].get(k2), v2)
                 else:
                     self.assertEqual(actual_results.get(k), v)
+
+
+class HumanLikeOnboardingAgent:
+    """
+    Emulates a crowdsource worker for the purposes of testing onboarding worlds.
+    """
+
+    def __init__(self, act: Message):
+        """
+        Just store what to return from self.act().
+        """
+        self.act_ = act
+
+    def act(self, timeout=None) -> Message:
+        """
+        Just return the desired self.act() in order to test onboarding.
+        """
+        _ = timeout  # This test agent doesn't use the timeout
+        return self.act_
+
+    def observe(self, observation):
+        """
+        No-op.
+        """
+        pass
 
 
 class HumanLikeChatAgent:
