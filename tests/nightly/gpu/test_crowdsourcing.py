@@ -27,7 +27,10 @@ from parlai.mturk.tasks.turn_annotations.constants import (
     ONBOARD_SUBMIT,
     ONBOARD_SUCCESS,
 )
-from parlai.mturk.tasks.turn_annotations.worlds import TurnAnnotationsChatWorld
+from parlai.mturk.tasks.turn_annotations.worlds import (
+    TurnAnnotationsChatWorld,
+    TurnAnnotationsOnboardWorld,
+)
 
 
 HUMAN_LIKE_AGENT_WORKER_ID = 'HumanLikeAgent'
@@ -102,11 +105,37 @@ class TestTurnAnnotations(unittest.TestCase):
         # Loop over test cases
         for act, desired_status, desired_saved_text in acts_statuses_and_saved_texts:
             with testing_utils.tempdir() as tmpdir:
-                save_folder = tmpdir
+                onboard_worker_answer_folder = tmpdir
 
-                # {{{TODO: after creating the world, set self.onboard_failures_max_allowed to 0 and make a note of this}}}
-                # {{{TODO: In the saved texts, only check for keys that are in the desired saved text}}}
-                # {{{TODO: check all cases, + for each one also check the saved file}}}
+                # Params
+                config_folder = os.path.join(
+                    os.path.dirname(os.path.realpath(run.__file__)), 'config'
+                )
+
+                # Define opt
+                with open(os.path.join(config_folder, 'annotations_config.json')) as f:
+                    annotations_config = json.load(f)
+                with os.path.join(config_folder, 'onboard_task_data.json') as f:
+                    onboard_task_data = json.load(f)
+                opt = Opt(
+                    {
+                        'annotations_config': annotations_config,
+                        'annotations_intro': 'Does this comment from your partner have any of the following attributes? (Check all that apply)',
+                        'is_sandbox': True,
+                        'max_onboard_time': 300,
+                        'onboard_task_data': onboard_task_data,
+                        'onboard_worker_answer_folder': onboard_worker_answer_folder,
+                    }
+                )
+
+                world = TurnAnnotationsOnboardWorld(opt, worker)
+                world.onboard_failures_max_allowed = 0
+                # To make it easier to test giving the wrong responses
+                actual_status = world.parley()
+                self.assertEqual(actual_status, desired_status)
+                if desired_saved_text is not None:
+                    pass
+                    # {{{TODO: check the saved file. In the saved texts, only check for keys that are in the desired saved text}}}
 
     def test_chat_world(self):
         """
@@ -128,7 +157,8 @@ class TestTurnAnnotations(unittest.TestCase):
 
             # Download zoo model file
             model_file = modelzoo_path(datapath, zoo_model_file)
-            # First, trigger downloading the model file
+
+            # Define opt
             base_model_folder = os.path.dirname(os.path.dirname(model_file))
             # Get the folder that encloses the innermost model folder
             with open(os.path.join(config_folder, 'left_pane_text.html')) as f:
