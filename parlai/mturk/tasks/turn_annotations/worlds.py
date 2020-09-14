@@ -551,17 +551,14 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             human_texts = [
                 message['text'] for message in self.dialog if message['agent_idx'] == 0
             ]
-            violations_to_skip = (
-                []
-                if self.opt['conversation_start_mode'] == 'bst'
-                else ['penalize_greetings']
-            )
-            # The BST mode starts the conversation with two previous utterances, so
-            # there should be no new greeting
+            violation_types = ['min_words', 'all_caps', 'exact_match', 'safety']
+            if self.opt['conversation_start_mode'] == 'bst':
+                # The BST mode starts the conversation with two previous utterances, so
+                # there should be no new greeting
+                violation_types.append('penalize_greetings')
+
             violations_agent_0 = self.acceptability_checker.check_messages(
-                messages=human_texts,
-                is_worker_0=False,
-                skip_violation_types=violations_to_skip,
+                messages=human_texts, is_worker_0=False, violation_types=violation_types
             )
         else:
             violations_agent_0 = None

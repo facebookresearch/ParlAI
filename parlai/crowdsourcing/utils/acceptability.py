@@ -18,7 +18,7 @@ class AcceptabilityChecker:
         self,
         messages: List[str],
         is_worker_0: bool,
-        skip_violation_types: Iterable[str] = (),
+        violation_types: Iterable[str] = (),
     ) -> str:
         """
         Returns a list of acceptability guidelines that the input messages violate.
@@ -26,8 +26,7 @@ class AcceptabilityChecker:
         :param messages: List of all messages by one speaker
         :param is_worker_0: True if `messages` represent the messages from the first
             speaker in the conversation
-        :param skip_violation_types: Set of all violation types to skip checking
-            messages for
+        :param violation_types: Set of all violation types to check messages for
         :return: comma-separated list of all violations
         """
 
@@ -38,7 +37,7 @@ class AcceptabilityChecker:
         violations = []
 
         # Do messages have the minimum acceptable average number of words?
-        if 'min_words' not in skip_violation_types:
+        if 'min_words' in violation_types:
             total_num_words = sum([len(message.split()) for message in messages])
             if total_num_words / len(messages) < 3:
                 violations.append('under_min_length')
@@ -48,7 +47,7 @@ class AcceptabilityChecker:
         # of conversation)? Only penalize the worker who speaks first for this, because
         # the worker who speaks second should not be at fault if the first worker does
         # this and the second just follows along.
-        if 'penalize_greetings' not in skip_violation_types:
+        if 'penalize_greetings' in violation_types:
             greetings = [
                 'hi',
                 'hii',
@@ -72,20 +71,20 @@ class AcceptabilityChecker:
                 violations.append('starts_with_greeting')
 
         # Does the Turker tend to speak in all caps?
-        if 'all_caps' not in skip_violation_types:
+        if 'all_caps' in violation_types:
             num_all_caps = sum([message == message.upper() for message in messages])
             if num_all_caps >= 2 or (num_all_caps == 1 and len(messages) == 1):
                 violations.append('too_much_all_caps')
 
         # Are later messages an exact match of the first one?
-        if 'exact_match' not in skip_violation_types:
+        if 'exact_match' in violation_types:
             if len(messages) >= 2:
                 c = messages[0]
                 if exact_match(c, messages[1:]):
                     violations.append('exact_match')
 
         # Do the messages not pass the safety classifier?
-        if 'safety' not in skip_violation_types:
+        if 'safety' in violation_types:
             for idx, message in enumerate(messages):
                 if self.offensive_lang_detector.contains_offensive_language(message):
                     violations.append(f'unsafe:{idx+1:d}')
