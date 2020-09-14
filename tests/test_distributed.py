@@ -47,11 +47,6 @@ class TestDistributed(unittest.TestCase):
     def setUp(self):
         print(f'[Setting up test {self._testMethodName}]')
 
-    def tearDown(self):
-        # we need to de-initialize the distributed world, otherwise other
-        # tests will they're we're distributed when we're really not.
-        dist.destroy_process_group()
-
     def _distributed_train_model(self, opt):
         with testing_utils.tempdir() as tmpdir:
             if 'model_file' not in opt:
@@ -67,12 +62,14 @@ class TestDistributed(unittest.TestCase):
             build_dict.build_dict(popt)
 
             valid, test = mp_train.launch_and_train(popt, 31338)
+            dist.destroy_process_group()
 
         return (valid, test)
 
     @testing_utils.retry()
     def test_generator_distributed(self):
-        valid, test = self._distributed_train_model(copy.deepcopy(self._base_config))
+        config = copy.deepcopy(self._base_config)
+        valid, test = self._distributed_train_model(config)
 
         self.assertLessEqual(valid['ppl'], 1.50)
         self.assertLessEqual(test['ppl'], 1.50)
