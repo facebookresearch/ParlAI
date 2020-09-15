@@ -319,8 +319,9 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                         additional_context=self.context_info['additional_context'],
                         is_bot=(agent_idx == 1),
                     )
-                    control_msg['text'] = persona_utterance
-                    agent.observe(validate(control_msg))
+                    message = control_msg.copy()
+                    message['text'] = persona_utterance
+                    agent.observe(validate(message))
                     if agent_idx == 0:
                         time.sleep(3)
 
@@ -420,25 +421,27 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     if ag != agent and ag.some_agent_disconnected:
                         if idx == 0:
                             # Human
-                            control_msg['text'] = (
+                            message = control_msg.copy()
+                            message['text'] = (
                                 'The other worker unexpectedly diconnected. '
                                 'Please click "Done with this HIT" button below to finish this HIT.'
                             )
-                            control_msg['episode_done'] = True
-                            ag.observe(validate(control_msg))
+                            message['episode_done'] = True
+                            ag.observe(validate(message))
                         return
                 # agent ends chat after exceeding minimum number of turns
                 if self.task_turn_idx > self.num_turns:
                     for ag in self.agents:
                         if idx == 0:
                             print('One of you ended the chat utterance coming.')
-                            control_msg['text'] = (
+                            message = control_msg.copy()
+                            message['text'] = (
                                 'One of you ended the chat. Thanks for your '
                                 'time! Please click "Done with this HIT"'
                                 'button below to finish this HIT.'
                             )
-                            control_msg['episode_done'] = True
-                            ag.observe(validate(control_msg))
+                            message['episode_done'] = True
+                            ag.observe(validate(message))
                             # Human has just responded. Problem data received
                             # now will be from bot's prior utterance (turn_idx
                             # is a also present to be safe that data matches)
