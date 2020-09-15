@@ -174,7 +174,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         :param chunk_idx: the index of the chunk dataset chunk file.
         """
 
-        def _extarct_labels_indices(example, candidate_labels):
+        def _extract_labels_indices(example, candidate_labels):
             labels = []
             for label in example['annotations']:
                 label_ind = label['long_answer']['candidate_index']
@@ -196,7 +196,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                     example_components[
                         'long_answers_candidate'
                     ] = self._get_candidate_long_answers(example)
-                    example_components['long_answers'] = _extarct_labels_indices(
+                    example_components['long_answers'] = _extract_labels_indices(
                         example, example_components['long_answers_candidate']
                     )
                 else:
@@ -208,12 +208,15 @@ class NaturalQuestionsTeacher(ChunkTeacher):
 
     def create_message(self, example_components, entry_idx=0):
         label_key = 'long_answers' if self.use_long_answer else 'short_answers'
-        return {
+        message_dict = {
             'id': self.id,
             'text': example_components['text'],
             'labels': example_components[label_key] or [''],
             'episode_done': True,
         }
+        if self.use_long_answer:
+            message_dict['label_candidates'] = example_components['long_answers_candidate']
+        return message_dict
 
 
 class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
