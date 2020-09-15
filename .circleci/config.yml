@@ -138,6 +138,15 @@ installtorchcpu: &installtorchcpu
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
+
+installdetectrondeps: &installdetectrondeps
+  run:
+    name: Install opencv, vqa-maskrcnn-benchmark
+    command: |
+      python -m pip install opencv-python==4.2.0.34
+      git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
+      cd maskbench; python setup.py develop; cd -
+
 setupcuda: &setupcuda
   run:
     name: Setup CUDA
@@ -406,12 +415,13 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200915-gpu16-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
+      - <<: *installdetectrondeps
       - save_cache:
-          key: deps-20200828-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200915-gpu16-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
