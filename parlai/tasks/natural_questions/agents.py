@@ -17,7 +17,7 @@ from typing import List, Tuple
 import parlai.utils.logging as logging
 from parlai.core.teachers import ChunkTeacher
 from .build import build, DATASET_NAME_LOCAL
-from .text_utils import simplify_nq_example
+from .utils.text_utils import simplify_nq_example
 
 
 def _count_lines_in_file(fname):
