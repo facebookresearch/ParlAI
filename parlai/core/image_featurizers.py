@@ -274,9 +274,7 @@ class DetectronFeatureExtractor:
         self.opt = opt
         self.use_cuda = use_cuda
         self.num_features = 100
-        import torch
 
-        torch = torch
         try:
             import cv2
 
@@ -333,7 +331,7 @@ class DetectronFeatureExtractor:
 
         :return (img, scale, info):
             img: tensor representation of image
-            scale: scale of image WRT self.MIN_SIZE
+            scale: scale of image WRT self.MIN_SIZE & self.MAX_SIZE
             info: dict containing values for img width & height
         """
         im = np.array(img).astype(np.float32)
@@ -475,7 +473,8 @@ class DetectronFeatureExtractor:
         # Image dimensions should be divisible by 32, to allow convolutions
         # in detector to work
         current_img_list = to_image_list(img_tensor, size_divisible=32)
-        current_img_list = current_img_list.to("cuda")
+        if self.use_cuda:
+            current_img_list = current_img_list.to("cuda")
 
         with torch.no_grad():
             output = self.detection_model(current_img_list)
