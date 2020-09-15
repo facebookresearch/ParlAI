@@ -28,7 +28,7 @@ IMAGE_MODE_TO_DIM = {
     "resnet152_spatial": torch.Size([1, 2048, 7, 7]),
     "resnext101_32x48d_wsl": torch.Size([2048]),
     "resnext101_32x48d_wsl_spatial": torch.Size([1, 2048, 7, 7]),
-    "faster_r_cnn_152_32x8d": torch.Size([100, 2048])
+    "faster_r_cnn_152_32x8d": torch.Size([100, 2048]),
 }
 
 
@@ -41,7 +41,7 @@ class TestImageLoader(unittest.TestCase):
 
     def _base_test_loader(self, image_mode_partial):
         """
-        Test for given partial image mode
+        Test for given partial image mode.
         """
         opt = ParlaiParser().parse_args([])
         opt.update(BASE_IMAGE_ARGS)
@@ -69,7 +69,7 @@ class TestImageLoader(unittest.TestCase):
 
     def test_other_image_modes(self):
         """
-        Test non-featurized image modes
+        Test non-featurized image modes.
         """
         with testing_utils.tempdir() as tmp:
             image_file = 'tmp.jpg'
@@ -80,7 +80,9 @@ class TestImageLoader(unittest.TestCase):
             with PathManager.open(image_path, 'wb') as fp:
                 image.save(fp, 'JPEG')
 
-            with zipfile.ZipFile(PathManager.open(image_zip_path, 'wb'), mode='w') as zipf:
+            with zipfile.ZipFile(
+                PathManager.open(image_zip_path, 'wb'), mode='w'
+            ) as zipf:
                 zipf.write(image_path, arcname=image_file)
 
             for im in ['raw', 'ascii']:

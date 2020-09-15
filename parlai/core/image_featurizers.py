@@ -46,7 +46,7 @@ IMAGE_MODE_SWITCHER = {
     'resnext101_32x16d_wsl_spatial': ['resnext101_32x16d_wsl', -2],
     'resnext101_32x32d_wsl_spatial': ['resnext101_32x32d_wsl', -2],
     'resnext101_32x48d_wsl_spatial': ['resnext101_32x48d_wsl', -2],
-    'faster_r_cnn_152_32x8d': ['', -1]
+    'faster_r_cnn_152_32x8d': ['', -1],
 }
 
 
@@ -152,7 +152,7 @@ class ImageLoader:
 
     def _init_faster_r_cnn(self):
         """
-        Initialize Detectron Model
+        Initialize Detectron Model.
         """
         self.netCNN = DetectronFeatureExtractor(self.opt, self.use_cuda)
 
@@ -261,11 +261,12 @@ class ImageLoader:
 
 class DetectronFeatureExtractor:
     """
-    Code adapted from
-    https://github.com/facebookresearch/mmf/blob/master/tools/scripts/features/extract_features_vmb.py
+    Code adapted from https://github.com/facebookresearch/mmf/blob/master/tools/scripts/
+    features/extract_features_vmb.py.
 
     Docstrings and type annotations added post hoc.
     """
+
     MAX_SIZE = 1333
     MIN_SIZE = 800
 
@@ -274,9 +275,11 @@ class DetectronFeatureExtractor:
         self.use_cuda = use_cuda
         self.num_features = 100
         import torch
+
         torch = torch
         try:
             import cv2
+
             self.cv2 = cv2
         except ImportError:
             raise ImportError("Please install opencv: pip install opencv-python")
@@ -300,6 +303,7 @@ class DetectronFeatureExtractor:
         from maskrcnn_benchmark.config import cfg
         from maskrcnn_benchmark.modeling.detector import build_detection_model
         from maskrcnn_benchmark.utils.model_serialization import load_state_dict
+
         dp = self.opt['datapath']
         build(dp)
         cfg_path = os.path.join(dp, 'models/detectron/detectron_config.yaml')
@@ -318,7 +322,9 @@ class DetectronFeatureExtractor:
         model.eval()
         self.detection_model = model
 
-    def _image_transform(self, img: "Image") -> Tuple[torch.Tensor, float, Dict[str, int]]:
+    def _image_transform(
+        self, img: "Image"
+    ) -> Tuple[torch.Tensor, float, Dict[str, int]]:
         """
         Using Open-CV, perform image transform on a raw image.
 
@@ -356,7 +362,12 @@ class DetectronFeatureExtractor:
             im_scale = self.MAX_SIZE / im_size_max
 
         im = self.cv2.resize(
-            im, None, None, fx=im_scale, fy=im_scale, interpolation=self.cv2.INTER_LINEAR
+            im,
+            None,
+            None,
+            fx=im_scale,
+            fy=im_scale,
+            interpolation=self.cv2.INTER_LINEAR,
         )
         img = torch.from_numpy(im).permute(2, 0, 1)
 
@@ -370,7 +381,7 @@ class DetectronFeatureExtractor:
         im_scales: List[float],
         im_infos: List[Dict[str, int]],
         feature_name: str = "fc6",
-        conf_thresh: int = 0
+        conf_thresh: int = 0,
     ):
         """
         Post-process feature extraction from the detection model.
@@ -390,6 +401,7 @@ class DetectronFeatureExtractor:
             return list of processed image features, and list of information for each image
         """
         from maskrcnn_benchmark.layers import nms
+
         batch_size = len(output[0]["proposals"])
         n_boxes_per_image = [len(boxes) for boxes in output[0]["proposals"]]
         score_list = output[0]["scores"].split(n_boxes_per_image)
@@ -440,7 +452,7 @@ class DetectronFeatureExtractor:
 
         return feat_list, info_list
 
-    def get_detectron_features(self, images: List["PIL.Image"]) -> List[torch.Tensor]:
+    def get_detectron_features(self, images: List["Image"]) -> List[torch.Tensor]:
         """
         Extract detectron features.
 
@@ -451,6 +463,7 @@ class DetectronFeatureExtractor:
             return a list of features
         """
         from maskrcnn_benchmark.structures.image_list import to_image_list
+
         img_tensor, im_scales, im_infos = [], [], []
 
         for image in images:
@@ -467,10 +480,6 @@ class DetectronFeatureExtractor:
         with torch.no_grad():
             output = self.detection_model(current_img_list)
 
-        features, _ = self._process_feature_extraction(
-            output,
-            im_scales,
-            im_infos,
-        )
+        features, _ = self._process_feature_extraction(output, im_scales, im_infos)
 
         return features
