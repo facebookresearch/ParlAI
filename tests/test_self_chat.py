@@ -29,3 +29,16 @@ class TestSelfChat(unittest.TestCase):
             ]
         )
         self_chat.self_chat(opt)
+
+    def test_ed(self):
+        pp = self_chat.setup_args()
+        opt = pp.parse_args(
+            [
+                '-mf',
+                'zoo:blender/blender_3B/model',
+                '-t',
+                'empathetic_dialogues',
+                '--seed-messages-from-task',
+            ]
+        )
+        self_chat.self_chat(opt)
