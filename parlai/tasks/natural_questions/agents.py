@@ -88,9 +88,9 @@ class NaturalQuestionsTeacher(ChunkTeacher):
     """
     The base teacher class for Natural Questions dataset challenge.
 
-    This class implements the core functionalities for other teachers.
-    The other four variations of teachers are made by setting two object
-    attributes (use_html, use_long_answer) to either True or False.
+    This class implements the core functionalities for other teachers. The other four
+    variations of teachers are made by setting two object attributes (use_html,
+    use_long_answer) to either True or False.
     """
 
     def __init__(self, opt, shared=None):
@@ -100,8 +100,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
         self.dtype = self.opt['datatype'].split(':')[0]
-        self.dpath = os.path.join(
-            self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
+        self.dpath = os.path.join(self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
         super().__init__(self.opt, shared)
 
     def _simplify(self, example):
@@ -156,9 +155,11 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                         short_answers.append(ans.decode())
                     else:
                         short_answers.append(' '.join(ans))
-            elif 'yes_no_answer' in annotation and \
-                    annotation['yes_no_answer'] and \
-                    annotation['yes_no_answer'] != 'NONE':
+            elif (
+                'yes_no_answer' in annotation
+                and annotation['yes_no_answer']
+                and annotation['yes_no_answer'] != 'NONE'
+            ):
                 short_answers.append(annotation['yes_no_answer'])
         return short_answers
 
@@ -192,32 +193,36 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 example_components['text'] = f'{context}\n{question}?'
 
                 if self.use_long_answer:
-                    example_components['long_answers_candidate'] = \
-                        self._get_candidate_long_answers(
-                        example)
-                    example_components['long_answers'] = \
-                        _extarct_labels_indices(example,
-                                                example_components['long_answers_candidate'])
+                    example_components[
+                        'long_answers_candidate'
+                    ] = self._get_candidate_long_answers(example)
+                    example_components['long_answers'] = _extarct_labels_indices(
+                        example, example_components['long_answers_candidate']
+                    )
                 else:
-                    example_components['short_answers'] = \
-                        self._get_short_answers(example)
+                    example_components['short_answers'] = self._get_short_answers(
+                        example
+                    )
                 output.append(example_components)
         return output
 
     def create_message(self, example_components, entry_idx=0):
         label_key = 'long_answers' if self.use_long_answer else 'short_answers'
-        return {'id': self.id,
-                'text': example_components['text'],
-                'labels': example_components[label_key] or [''],
-                'episode_done': True}
+        return {
+            'id': self.id,
+            'text': example_components['text'],
+            'labels': example_components[label_key] or [''],
+            'episode_done': True,
+        }
 
 
 class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
     """
-    Generates context texts (articles) in HTML, with long answers (also in HTML)
-    that are selected from major components  (e.g., paragraphs, tables, etc.)
-    from the main article, granted such an answer exists based on the article.
+    Generates context texts (articles) in HTML, with long answers (also in HTML) that
+    are selected from major components  (e.g., paragraphs, tables, etc.) from the main
+    article, granted such an answer exists based on the article.
     """
+
     def __init__(self, opt, shared=None):
         opt['use_html'] = True
         opt['use_long_answer'] = True
@@ -226,10 +231,11 @@ class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
 
 class NaturalQuestionsTeacherShortAnswerHTML(NaturalQuestionsTeacher):
     """
-    Generates context texts (articles) in HTML, with short answers that are
-    selected from a short span within the main article, or YES or NO,
-    granted such an answer exists based on the article.
+    Generates context texts (articles) in HTML, with short answers that are selected
+    from a short span within the main article, or YES or NO, granted such an answer
+    exists based on the article.
     """
+
     def __init__(self, opt, shared=None):
         opt['use_html'] = True
         opt['use_long_answer'] = False
@@ -238,10 +244,11 @@ class NaturalQuestionsTeacherShortAnswerHTML(NaturalQuestionsTeacher):
 
 class NaturalQuestionsTeacherLongAnswer(NaturalQuestionsTeacher):
     """
-    Generates context texts (articles), with long answers that are selected from
-    major components  (e.g., paragraphs, tables, etc.) from the main article,
-    granted such an answer exists based on the article.
+    Generates context texts (articles), with long answers that are selected from major
+    components  (e.g., paragraphs, tables, etc.) from the main article, granted such an
+    answer exists based on the article.
     """
+
     def __init__(self, opt, shared=None):
         opt['use_html'] = False
         opt['use_long_answer'] = True
@@ -250,10 +257,11 @@ class NaturalQuestionsTeacherLongAnswer(NaturalQuestionsTeacher):
 
 class NaturalQuestionsTeacherShortAnswer(NaturalQuestionsTeacher):
     """
-    Generates context texts, with short answers that are selected from a short
-    span within the main article, or YES or NO, granted such an answer exists
-    based on the article.
+    Generates context texts, with short answers that are selected from a short span
+    within the main article, or YES or NO, granted such an answer exists based on the
+    article.
     """
+
     def __init__(self, opt, shared=None):
         opt['use_html'] = False
         opt['use_long_answer'] = False

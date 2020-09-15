@@ -18,10 +18,12 @@ def _download_with_gsutil(dpath):
     for dt in ('train', 'dev'):
         os.system(f'gsutil -m cp -R gs://natural_questions/v1.0/{dt} {dpath}')
 
+
 def _untar_dir_files(dtype_path):
     files = os.listdir(dtype_path)
     for fname in tqdm(files):
         build_data.ungzip(dtype_path, fname)
+
 
 def _untar_dataset_files(dpath):
     for dtype in ('train', 'dev'):
