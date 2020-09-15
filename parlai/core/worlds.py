@@ -145,7 +145,7 @@ class World(object):
         """
         Create a duplicate of the world.
         """
-        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
+        return type(self)(opt=self.opt, agents=None, shared=self.share())
 
     def _share_agents(self):
         """
@@ -519,14 +519,14 @@ class MultiWorld(World):
         for index, k in enumerate(opt['task'].split(',')):
             k = k.strip()
             if k:
-                opt_singletask = copy.deepcopy(opt)
-                opt_singletask['task'] = k
                 if shared:
                     # Create worlds based on shared data.
                     s = shared['worlds'][index]
                     self.worlds.append(s['world_class'](s['opt'], None, s))
                 else:
                     # Agents are already specified.
+                    opt_singletask = copy.deepcopy(opt)
+                    opt_singletask['task'] = k
                     self.worlds.append(
                         create_task_world(
                             opt_singletask, agents, default_world=default_world
