@@ -23,7 +23,7 @@ from .text_utils import simplify_nq_example
 def _count_lines_in_file(fname):
     num_lines = 0
     with open(fname, 'r') as fi:
-        for line in fi:
+        for _ in fi:
             num_lines += 1
     return num_lines
 
@@ -215,7 +215,9 @@ class NaturalQuestionsTeacher(ChunkTeacher):
             'episode_done': True,
         }
         if self.use_long_answer:
-            message_dict['label_candidates'] = example_components['long_answers_candidate']
+            message_dict['label_candidates'] = example_components[
+                'long_answers_candidate'
+            ]
         return message_dict
 
 
