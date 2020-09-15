@@ -17,6 +17,8 @@ DATASET_NAME_LOCAL = 'NaturalQuestions'
 def _download_with_gsutil(dpath):
     for dt in ('train', 'dev'):
         os.system(f'gsutil -m cp -R gs://natural_questions/v1.0/{dt} {dpath}')
+    # The main dataset calls 'valid' split 'dev', we rename its directory here
+    os.rename(f'{dpath}/dev', f'{dpath}/valid')
 
 
 def _untar_dir_files(dtype_path):
@@ -26,7 +28,7 @@ def _untar_dir_files(dtype_path):
 
 
 def _untar_dataset_files(dpath):
-    for dtype in ('train', 'dev'):
+    for dtype in ('train', 'valid'):
         unzip_files_path = os.path.join(dpath, dtype)
         logging.info(f'Unzipping {dtype} files at {unzip_files_path}')
         _untar_dir_files(unzip_files_path)

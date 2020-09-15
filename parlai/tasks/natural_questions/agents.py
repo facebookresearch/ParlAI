@@ -36,7 +36,7 @@ def _create_long_answer_from_span_html(example):
     """
     Creates a list of long answer candidates, from their spans on the document.
 
-    This functin gets the full article from the input example dictionary (using
+    This function gets the full article from the input example dictionary (using
     key 'document_html'), then iterates through the long answer spans (from
     'long_answer_candidates' key) and creates a list of slices from the article,
     using the 'start_byte' and 'end_byte' values in the list of long answer
@@ -49,9 +49,9 @@ def _create_long_answer_from_span_html(example):
     """
     context_text = example[_context_type_key(is_html=True)].encode()
     candidate_long_answers = []
-    for long_asnwer_span in example['long_answer_candidates']:
-        start_index = long_asnwer_span['start_byte']
-        end_index = long_asnwer_span['end_byte']
+    for long_answer_span in example['long_answer_candidates']:
+        start_index = long_answer_span['start_byte']
+        end_index = long_answer_span['end_byte']
         answer = context_text[start_index:end_index].decode()
         candidate_long_answers.append(answer)
     return candidate_long_answers
@@ -61,7 +61,7 @@ def _create_long_answer_from_span_text(simplified_example):
     """
     Creates a list of long answer candidates, from their spans on the document.
 
-    This functin gets the full article from the input simplified example
+    This function gets the full article from the input simplified example
     dictionary (using key 'document_text'), then iterates through the long
     answer spans (from 'long_answer_candidates' key) and creates a list of
     slices from the article, using the 'start_token' and 'end_token' values in
@@ -76,9 +76,9 @@ def _create_long_answer_from_span_text(simplified_example):
     context_text = simplified_example[_context_type_key(is_html=False)]
     candidate_long_answers = []
     splitted_tokens = context_text.split(' ')
-    for long_asnwer_span in simplified_example['long_answer_candidates']:
-        start_index = long_asnwer_span['start_token']
-        end_index = long_asnwer_span['end_token']
+    for long_answer_span in simplified_example['long_answer_candidates']:
+        start_index = long_answer_span['start_token']
+        end_index = long_answer_span['end_token']
         answer = ' '.join(splitted_tokens[start_index:end_index])
         candidate_long_answers.append(answer)
     return candidate_long_answers
@@ -114,7 +114,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
     def get_fold_chunks(self, opt) -> List[int]:
         if 'train' == self.dtype:
             return list(range(50))
-        elif 'dev' == self.dtype:
+        elif 'valid' == self.dtype:
             return list(range(5))
         raise ValueError(f'Invalid data type: "{self.dtype}"')
 

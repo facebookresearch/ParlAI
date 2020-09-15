@@ -297,7 +297,7 @@ def _untar(path, fname, delete=True):
 
 def ungzip(path, fname, deleteGZip=True):
     """
-    Unzips the given gzip comprresed file to the same directory.
+    Unzips the given gzip compressed file to the same directory.
 
     :param str path:
         The folder containing the archive. Will contain the contents.
