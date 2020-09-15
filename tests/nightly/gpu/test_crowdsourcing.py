@@ -304,7 +304,7 @@ class TestTurnAnnotations(unittest.TestCase):
 
             # Set up bot agent
             shared_bot_agents = TurkLikeAgent.get_bot_agents(
-                opt=opt, active_models=[model_name], datapath=datapath
+                opt=opt, active_models=[model_name]
             )
 
             # Get a bot and add it to the "human" worker

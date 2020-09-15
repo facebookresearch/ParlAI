@@ -108,7 +108,7 @@ class TurkLikeAgent:
         self.model_agent.reset()
 
     @staticmethod
-    def get_bot_agents(opt: dict, active_models: list, datapath: str, no_cuda=False):
+    def get_bot_agents(opt: dict, active_models: list, no_cuda=False):
         model_overrides = {
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands

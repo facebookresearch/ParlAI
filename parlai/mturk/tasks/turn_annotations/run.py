@@ -245,9 +245,7 @@ def run_task(override_opt: Optional[dict] = None):
     # Create the models before it launches Heroku backend b/c takes a while
     models_needed = list(opt['conversations_needed'].keys())
     active_models = [m for m in models_needed if opt['conversations_needed'][m] > 0]
-    shared_bot_agents = TurkLikeAgent.get_bot_agents(
-        opt, active_models, datapath=opt['datapath']
-    )
+    shared_bot_agents = TurkLikeAgent.get_bot_agents(opt, active_models)
 
     mturk_agent_ids = [AGENT_0]
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
