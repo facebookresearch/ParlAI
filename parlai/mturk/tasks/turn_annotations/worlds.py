@@ -257,8 +257,13 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
         self.chat_done = False
         if context_info is not None:
             self.context_info = context_info
+            self.personas = [
+                self.context_info['persona_1_strings'],
+                self.context_info['persona_2_strings'],
+            ]
         else:
             self.context_info = {}
+            self.personas = None
         self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
 
@@ -308,11 +313,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     # first utterance in the history.
                     # Previously for BST task, we also had a big first utterance
                     # that gave instructions. Removing that for this task.
-                    personas = [
-                        self.context_info['persona_1_strings'],
-                        self.context_info['persona_2_strings'],
-                    ]
-                    persona_strings = [s.strip() for s in personas[agent_idx]]
+                    persona_strings = [s.strip() for s in self.personas[agent_idx]]
                     persona_utterance = self._get_persona_utterance(
                         persona_strings=persona_strings,
                         context_dataset=self.context_info['context_dataset'],
@@ -321,7 +322,8 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
                     )
                     message = control_msg.copy()
                     message['text'] = persona_utterance
-                    agent.observe(validate(message))
+                    agent.observe(validate(message), increment_turn=False)
+                    # The bot seeing its persona does not count as a "turn"
                     if agent_idx == 0:
                         time.sleep(3)
 
@@ -584,7 +586,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld):
             )
         with open(os.path.join(filename), 'w+') as f_json:
             data = {
-                'personas': self.context_info.get('personas'),
+                'personas': self.personas,
                 'context_dataset': self.context_info.get('context_dataset'),
                 'person1_seed_utterance': self.context_info.get(
                     'person1_seed_utterance'

@@ -81,7 +81,7 @@ class TurkLikeAgent:
         self.turn_idx += 1
         return {**act_out, 'episode_done': False, 'checked_radio_name_id': ''}
 
-    def observe(self, observation):
+    def observe(self, observation, increment_turn: bool = True):
         """
         Need to protect the observe also with a semaphore for composed models where an
         act() may be called within an observe()
@@ -99,7 +99,8 @@ class TurkLikeAgent:
             f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
         )
 
-        self.turn_idx += 1
+        if increment_turn:
+            self.turn_idx += 1
 
     def shutdown(self):
         pass
