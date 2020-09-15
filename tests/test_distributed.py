@@ -11,6 +11,9 @@ import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
 import parlai.scripts.multiprocessing_train as mp_train
+import parlai.tasks.integration_tests.agents as inttests
+
+BATCHSIZE = 4
 
 
 def _forced_parse(parser, opt):
@@ -34,7 +37,7 @@ class TestDistributed(unittest.TestCase):
         validation_metric='ppl',
         skip_generation=True,
         learningrate=1e-2,
-        batchsize=4,
+        batchsize=BATCHSIZE,
         validation_every_n_epochs=5,
         num_epochs=100,
         n_layers=1,
@@ -76,8 +79,8 @@ class TestDistributed(unittest.TestCase):
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
-        self.assertEqual(valid['exs'].value(), 4)
-        self.assertEqual(test['exs'].value(), 4)
+        self.assertEqual(valid['exs'].value(), BATCHSIZE)
+        self.assertEqual(test['exs'].value(), BATCHSIZE)
 
     @testing_utils.retry()
     def test_multitask_distributed(self):
@@ -93,8 +96,12 @@ class TestDistributed(unittest.TestCase):
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
         # It would be 200 if each worker did all the examples
-        self.assertEqual(valid['exs'].value(), 4 * 4 + 4)
-        self.assertEqual(test['exs'].value(), 4 * 4 + 4)
+        self.assertEqual(
+            valid['exs'].value(), BATCHSIZE * inttests.EXAMPLE_SIZE + BATCHSIZE
+        )
+        self.assertEqual(
+            test['exs'].value(), BATCHSIZE * inttests.EXAMPLE_SIZE + BATCHSIZE
+        )
 
     def test_distributed_eval_max_exs(self):
         config = copy.deepcopy(self._base_config)
@@ -126,8 +133,8 @@ class TestDistributed(unittest.TestCase):
         # Tests that StreamDialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
         # It would be 200 if each worker did all the examples
-        self.assertEqual(valid['exs'].value(), 100)
-        self.assertEqual(test['exs'].value(), 100)
+        self.assertEqual(valid['exs'].value(), inttests.NUM_TEST)
+        self.assertEqual(test['exs'].value(), inttests.NUM_TEST)
 
     def test_distributed_eval_stream_mode_max_exs(self):
         config = copy.deepcopy(self._base_config)
@@ -160,8 +167,8 @@ class TestDistributed(unittest.TestCase):
         config['truncate'] = 16
 
         valid, test = self._distributed_train_model(config)
-        assert valid['exs'].value() == 100
-        assert test['exs'].value() == 100
+        assert valid['exs'].value() == inttests.NUM_TEST
+        assert test['exs'].value() == inttests.NUM_TEST
 
     def test_chunked_teacher(self):
         config = copy.deepcopy(self._base_config)
@@ -172,8 +179,8 @@ class TestDistributed(unittest.TestCase):
         config['dynamic_batching'] = None
 
         valid, test = self._distributed_train_model(config)
-        assert valid['exs'].value() == 100
-        assert test['exs'].value() == 100
+        assert valid['exs'].value() == inttests.NUM_TEST
+        assert test['exs'].value() == inttests.NUM_TEST
 
     def test_no_model_parallel(self):
         """
