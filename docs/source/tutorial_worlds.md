@@ -81,11 +81,11 @@ discuss the implementation of Dynamic Batching.
 ## Agent Sharing
 
 _Agent Sharing_ is the primary mechanism by which we implement batching, model
-serving, and many other ParlAI tricks.  Agent sharing works by creating
+serving, and many other ParlAI features.  Agent sharing works by creating
 _clones_ of an Agent. Each clone of an Agent has _shared state_ and
 _independent state_. Independent state includes things like the current
-dialogue context (conversation history). Shared state includes things like
-the model weights.
+dialogue context (conversation history, which is different for every batch
+element). Shared state includes things like the model weights.
 
 ```python
 agent_original = Agent(opt)
@@ -99,20 +99,25 @@ procedures.
 
 ```python
 class PseudoAgent(Agent):
-    def __init__(self, opt: Opt, shared: dict):
+    def __init__(self, opt: Opt, shared: dict = None):
         super().__init__(opt, shared)
         if shared is None:
-            # we are the original. We need to initialize any state
+            # When shared is None, we are the original, and we need to
+            # initialize any state
             self.model = self.build_model()
         else:
-            # we are a clone. use the shared dict to set any variables.
-            # this is where we incorporate any shared state
+            # When shared is NOT None, we are a clone.
+            # Use the shared dict to set any variables. this is where we
+            # incorporate any shared state
             self.model = shared['model']
 
     def share(self):
         # This is used to create the "shared" dictionary that clones will
         # receive in initialization. Make sure you enumerate everything
         # that needs to be seen in all clones!
+
+        # You will probably never call this method yourself. Rather, it is
+        # called automatically by `clone()`
         shared = super().share()
         shared['model'] = self.model
         return shared
@@ -148,6 +153,12 @@ each clone of the agent only has to focus on one conversation at a time, with
 only specific spots for synchronization. In the next section, we'll
 take a look at how this is used in Batching.
 
+:::{note} When do I clone?
+Note that while cloning is fundamental to the inner workings of ParlAI, it is
+rare that you will need to call clone yourself, unless you are creating
+custom worlds or backends.
+:::
+
 ## Batching
 
 :::{warning} Already implemented in `TorchAgent`.
@@ -182,7 +193,6 @@ This initialization code is then represented by this graphic:
 <img src="_static/img/world_share.png" alt="Sharing the teacher and agents" width="50%"/>
 </center>
 
-
 We continue with the implementation of parley:
 
 ```python
@@ -204,7 +214,7 @@ We continue with the implementation of parley:
 
 However, this is inefficient, and prevents us from utilizing the amazing
 vectorization capabilities of modern GPUs. Instead, we'll implement a special
-`batch\_act method`. This method will instead handle all the acts at once
+`batch_act method`. This method will instead handle all the acts at once
 
 ```python
 class BatchWorld(World):
@@ -243,7 +253,7 @@ This logic is more complicated, but enables us to efficiently implement batched
 operations. The new logic can be encapsulated in this graph:
 
 <center>
-<img src="_static/img/world_batchbasic.png" alt="Parley with batch_act" width="100%"/>
+<img src="_static/img/world_batchagent.png" alt="Parley with batch_act" width="100%"/>
 </center>
 
 
@@ -267,7 +277,7 @@ by all TorchAgents by default and can give you a
 [2-3x speedup in training](tutorial_fast).
 
 Dynamic batching is used to _maximize the usage of GPUs_ by grouping similarly
-lengthed examples so they occur at the same time. Intuitively, to maximize usage
+length examples so they occur at the same time. Intuitively, to maximize usage
 of GPU memory, we can either process _a few very long conversations_ or we can
 process _many short conversations_. If we can do this artfully, we will be able
 to maximize throughput and minimize waste from
@@ -276,7 +286,7 @@ Padding tokens occur whenever one conversation is much longer than another,
 so we must _pad_ the batch with empty tokens to make our tensors full rectangles.
 
 As a simple algorithm for minimizing padding, we can simply "group" similarly
-lengthed examples so they are processed at the same time. To do this, we will
+length examples so they are processed at the same time. To do this, we will
 maintain a sort of buffer of many possible conversations.
 
 Let's imagine we have a buffer of 12 conversations going on at once, and a
@@ -326,11 +336,11 @@ You can use this your training or evaluation runs with `-dynb batchsort` or
 `--dynamic-batching batchsort`.
 :::
 
-::{note}
+:::{note}
 Notice how the conversations no longer play in order. ParlAI handles all of this
 extra complexity for you. Remember, you only need to implement state tracking
 for _individual_ conversations, and along with `batch\_act`.
-::
+:::
 
 But we can take this even one step further, and implement fully dynamic batching.
 In dynamic batching, we grow our batches so that the number of _words_ per batch
