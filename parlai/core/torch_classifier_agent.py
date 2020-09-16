@@ -10,7 +10,7 @@ Torch Classifier Agents classify text into a fixed set of labels.
 
 
 from parlai.core.opt import Opt
-from parlai.utils.torch import PipelineHelper
+from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
@@ -358,6 +358,12 @@ class TorchClassifierAgent(TorchAgent):
                     self.model = torch.nn.DataParallel(self.model)
                 self.criterion.cuda()
 
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
+
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
@@ -481,7 +487,6 @@ class TorchClassifierAgent(TorchAgent):
             # choose ref class if Prob(ref class) > threshold
             prediction_id = (ref_prob <= self.threshold).to(torch.int64)
         preds = [self.class_list[idx] for idx in prediction_id]
-
         if batch.labels is None or self.opt['ignore_labels']:
             # interactive mode
             if self.opt.get('print_scores', False):
@@ -494,7 +499,7 @@ class TorchClassifierAgent(TorchAgent):
             self._update_confusion_matrix(batch, preds)
 
         if self.opt.get('print_scores', False):
-            return Output(preds, probs=probs.cpu())
+            return Output(preds, class_list=[self.class_list], probs=probs.cpu())
         else:
             return Output(preds)
 
