@@ -9,6 +9,8 @@ import json
 import random
 import tempfile
 import subprocess
+from typing import Optional
+
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.io import PathManager
@@ -21,11 +23,12 @@ ALT_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thum
 HUMAN_EMOJI_IMG = "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/apple/76/woman_1f469.png"
 
 
-def gen_convo_ul(conversations):
+def gen_convo_ul(conversations, show_icons: bool = True):
     """
     Generate the ul section of the HTML for the conversations.
 
-    :param conversation: The conversation to be rendered (after pre-processing)
+    :param conversations: The conversation to be rendered (after pre-processing)
+    :param show_icons: Show icons representing both speakers.
 
     :return: The string generating the list in HTML
     """
@@ -34,17 +37,22 @@ def gen_convo_ul(conversations):
         if speaker == END_OF_CONVO:
             ul_str += f"\n\t  <li class=\"breaker\"><hr/></li>\n"
         else:
+            if show_icons:
+                icon_str = f"""\
+    <div class="{speaker}_img_div">
+        <img class="{speaker}_img">
+    </div>"""
+            else:
+                icon_str = ''
             ul_str += f"""
-    <li>
-        <div class="{speaker}_img_div">
-            <img class="{speaker}_img">
-        </div>
-        <div class="{speaker}_p_div">
-            <p class="{speaker}">{speech}</p>
-        </div>
-        <div class="clear"></div>
-    </li>
-    """
+<li>
+    {icon_str}
+    <div class="{speaker}_p_div">
+        <p class="{speaker}">{speech}</p>
+    </div>
+    <div class="clear"></div>
+</li>
+"""
     ul_str += "\t</ul>"
 
     return ul_str
@@ -57,8 +65,8 @@ def gen_html(
     title,
     other_speaker,
     human_speaker,
-    user_icon,
-    alt_icon,
+    user_icon: Optional[str],
+    alt_icon: Optional[str],
 ):
     """
     Generate HTML string for the given conversation.
@@ -78,6 +86,7 @@ def gen_html(
 
     :return: HTML string for the desired conversation
     """
+    show_icons = user_icon is not None or alt_icon is not None
     html_str = f"""<html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -147,7 +156,7 @@ def gen_html(
     </style>
 </head>
 <body>
-{gen_convo_ul(conversations)}
+{gen_convo_ul(conversations, show_icons=show_icons)}
 </body>
 </html>
     """
@@ -230,13 +239,13 @@ def setup_args():
     conv_render.add_argument(
         "--user-icon",
         "-uic",
-        help="Absolute Path/URL to user image icon",
+        help="Absolute Path/URL to user image icon. Pass 'none' for no icon.",
         default=HUMAN_EMOJI_IMG,
     )
     conv_render.add_argument(
         "--alt-icon",
         "-aic",
-        help="Absolute Path/URL to alternate image icon",
+        help="Absolute Path/URL to alternate image icon. Pass 'none' for no icon.",
         default=ALT_EMOJI_IMG,
     )
     conv_render.add_argument(
@@ -250,7 +259,7 @@ def setup_args():
     return parser
 
 
-def check_icon_arg(src, default):
+def check_icon_arg(src: str, default: str) -> Optional[str]:
     """
     Checks if icon arguments are valid: either a URL or an absolute path.
 
@@ -259,7 +268,9 @@ def check_icon_arg(src, default):
 
     :return: src (possibly pre-pended with "file://")
     """
-    if src != default:
+    if src.lower() == 'none':
+        src = None
+    elif src != default:
         # check if URl
         if not src.startswith('https://') and not src.startswith('http://'):
             # Either a file or incorrect input
