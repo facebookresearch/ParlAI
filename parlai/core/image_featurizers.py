@@ -288,7 +288,8 @@ class DetectronFeatureExtractor:
                 'Please install vqa-maskrcnn-benchmark to use faster_r_cnn_152_32x8d features: '
                 '1. git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git\n'
                 '2. cd vqa-maskrcnn-benchmark\n'
-                '3. python setup.py develop'
+                '3. git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable\n'
+                '4. python setup.py develop'
             )
         self._build_detection_model()
 
