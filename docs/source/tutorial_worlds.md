@@ -66,7 +66,7 @@ while not world.epoch_done():
 ```
 
 This simple loop structure is powerful, and allows us to present a unified view
-of all agents, whether they are [datasets](tutorial_task), [models](agents),
+of all agents, whether they are [datasets](tutorial_task), [models](core/agents),
 or humans connected via a [chat service](tutorial\_chat_service):
 there is always a __world__ and it facilitates agents passing messages back
 and forth.
