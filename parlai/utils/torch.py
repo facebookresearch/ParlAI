@@ -55,11 +55,13 @@ def atomic_save(state_dict: Any, path: str) -> None:
 
     if io_util.USE_ATOMIC_TORCH_SAVE:
         with open(path + ".tmp", "wb") as f:
-            torch.save(state_dict, f)
+            # Manifold plugin doesn't support the new 1.6 serialization method. See T75615407
+            torch.save(state_dict, f, _use_new_zipfile_serialization=False)
         os.rename(path + ".tmp", path)
     else:
         # PathManager deosn't support os.rename. See T71772714
-        torch.save(state_dict, path)
+        # Manifold plugin doesn't support the new 1.6 serialization method. See T75615407
+        torch.save(state_dict, path, _use_new_zipfile_serialization=False)
 
 
 def padded_tensor(

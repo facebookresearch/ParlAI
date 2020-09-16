@@ -53,7 +53,7 @@ class TensorboardLogger(object):
         tbpath = opt['model_file'] + '.tensorboard'
         logging.debug(f'Saving tensorboard logs to: {tbpath}')
         if not PathManager.exists(tbpath):
-            PathManager.makedirs(tbpath)
+            PathManager.mkdirs(tbpath)
         self.writer = SummaryWriter(tbpath, comment=json.dumps(opt))
 
     def log_metrics(self, setting, step, report):

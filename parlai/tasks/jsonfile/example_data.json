@@ -1,0 +1,1 @@
+{ "dialog": [ [  {"id": "partner1", "text": "hello!"},  {"id": "partner2", "text": "hi back!"},  {"id": "partner1", "text": "what's your fave color?"},        {"id": "partner2", "text": "salmon is my fave!"},        {"id": "partner1", "text": "nice! do you like eating salmon too?"},        {"id": "partner2", "text": "yo when it's sushi!"}  ] ]}

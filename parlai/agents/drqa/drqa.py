@@ -44,10 +44,6 @@ from .model import DocReaderModel
 
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    """
-    Override DictionaryAgent to use spaCy tokenizer.
-    """
-
     @staticmethod
     def add_cmdline_args(argparser):
         group = DictionaryAgent.add_cmdline_args(argparser)
@@ -57,7 +53,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
             default=True,
             help='Use only words found in provided embedding_file',
         )
-        group.set_defaults(dict_tokenizer='spacy')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

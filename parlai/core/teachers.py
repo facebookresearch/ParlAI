@@ -24,7 +24,7 @@ This module provides a set of teachers that deal with dialog.
      Teacher class that provides access to data in the Conversations format.
      See the class description for more details.
 
-    ``FbDialogTeacher(DialogTeacher)``
+    ``FbDeprecatedDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details. **This class is deprecated**.
 
@@ -506,7 +506,7 @@ class DialogTeacher(FixedDialogTeacher):
 
     In order to subclass this class, you must implement ``setup_data()`` in
     your class (or subclass another class which does, like
-    ``FbDialogTeacher``), which reads your data file as an iterator.
+    ``FbDeprecatedDialogTeacher``), which reads your data file as an iterator.
     """
 
     def __init__(self, opt, shared=None):
@@ -514,7 +514,7 @@ class DialogTeacher(FixedDialogTeacher):
         if not hasattr(self, 'setup_data'):
             raise RuntimeError(
                 'Must implement setup_data or subclass a class '
-                'which implements it (e.g. FbDialogTeacher) '
+                'which implements it (e.g. FbDeprecatedDialogTeacher) '
                 'in order to use this class.'
             )
         super().__init__(opt, shared)
@@ -1030,7 +1030,7 @@ class StreamDialogData(DialogData):
         return self.data
 
 
-class FbDialogTeacher(DialogTeacher):
+class FbDeprecatedDialogTeacher(DialogTeacher):
     """
     This module provides access to data in the Facebook Dialog format.
 
@@ -1419,34 +1419,30 @@ class ConversationTeacher(FixedDialogTeacher):
     handle file parsing for you.
 
     The data should be set up so that each dialogue instance (or, episode)
-    occupies one line of valid JSON. The way the data is set up is as follows
-    (with line breaks for readability):
+    occupies one line of valid JSON. The way the data is set up is as follows:
+
+    ::
+    { "dialog": [ [ {"id": "partner1", "text": "hello!"},  {"id": "partner2", "text": "hi back!"}  ] ] }
+
+    NOTE: If the data is not on one line per dialogue, it will not load.
+    Further, note that by default, dialogs are interpreted as being one-way.
+    For example, consider this dialog (not that the data below is not on:
 
     ::
 
         {
-            'dialogue':[
-                {'id':'modelx', 'text': 'hi'},
-                {'id':'modely', 'text': 'hi back'},
-                ...
-            ]
+            "dialog":[ [
+                {"id":"modelx", "text": X1},
+                {"id":"modely", "text": Y1},
+                {"id":"modelx", "text": X2},
+                {"id":"modely", "text": Y2},
+                {"id":"modelx", "text": X3},
+                {"id":"modely", "text": Y3},
+            ] ]
         }
 
-    Note that by default, dialogs are interpreted as being one-way.
-    For example, consider this dialog:
-
-    ::
-
-        {
-            'dialogue':[
-                {'id':'modelx', 'text': X1},
-                {'id':'modely', 'text': Y1},
-                {'id':'modelx', 'text': X2},
-                {'id':'modely', 'text': Y2},
-                {'id':'modelx', 'text': X3},
-                {'id':'modely', 'text': Y3},
-            ]
-        }
+    (Note: we use line breaks for readability above, but this data will not load as
+    stated, it must be on one line.)
 
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated,
     forming one episode. However, Y1 => X2 and Y2 => X3 are not created as
