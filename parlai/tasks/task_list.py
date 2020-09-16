@@ -1273,4 +1273,14 @@ task_list = [
             "human and a virtual assistant."
         ),
     },
+    {
+        "id": "TaskMaster2",
+        "display_name": "TaskMaster2",
+        "task": "taskmaster2",
+        "tags": ["All", "Goal"],
+        "description": (
+            "The second version of TaskMaster, containing Wizard-of-Oz dialogues "
+            "for task oriented dialogue in 7 domains."
+        ),
+    },
 ]
