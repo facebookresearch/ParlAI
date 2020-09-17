@@ -77,16 +77,16 @@ class WritingPrompts(object):
                     if "label_candidates" in dialog_line:
                         if i < len(episode):
                             line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\t" \
-                                            f"label_candidates:{'|'.join(dialog_line['label_candidates'])}"
+                                            f"label_candidates:{'|'.join(dialog_line['label_candidates'])}\n"
                         else:
                             line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\t" \
-                                            f"label_candidates:{'|'.join(dialog_line['label_candidates'])}" \
+                                            f"label_candidates:{'|'.join(dialog_line['label_candidates'])}\n" \
                                             f"\tepisode_done:True"
                     else:
                         if i < len(episode):
-                            line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}"
+                            line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\n"
                         else:
-                            line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}" \
+                            line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\n" \
                                             f"\tepisode_done:True"
 
                     out_file.write(line_to_write)
