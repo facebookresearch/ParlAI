@@ -6,8 +6,14 @@ import more_itertools
 from blingfire import text_to_sentences
 
 
+def replace_characters(prompt):
+    """ Replace special characters.
+    """
+    prompt = prompt.replace("<newline>", " ").replace("\t", " ").replace("|", " ")
+    return prompt
+
 def ensure_dir(file_path):
-    """ Make sure
+    """ Make sure the output path exists.
     """
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
@@ -17,7 +23,7 @@ def ensure_dir(file_path):
 class WritingPrompts(object):
     """Convert WritingPrompts prompts and text files into conversation json format for ParlAI. """
 
-    def parlaidialo(self, prompts_file: str, stories_file: str, output_file: str, label_candidates: int = 0):
+    def parlai(self, prompts_file: str, stories_file: str, output_file: str, label_candidates: int = 0):
 
         print(f"Write output to: {output_file}")
         ensure_dir(output_file)
@@ -35,9 +41,9 @@ class WritingPrompts(object):
 
                 dialog_list = []
 
-                prompt = self.replace_characters(prompt)
+                prompt = replace_characters(prompt)
 
-                story = self.replace_characters(story)
+                story = replace_characters(story)
 
                 sentences = text_to_sentences(story).split('\n')
                 # print(f"Sentences: {sentences}")
@@ -84,10 +90,6 @@ class WritingPrompts(object):
                                             f"\tepisode_done:True"
 
                     out_file.write(line_to_write)
-
-    def replace_characters(self, prompt):
-        prompt = prompt.replace("<newline>", " ").replace("\t", " ").replace("|", " ")
-        return prompt
 
 
 if __name__ == '__main__':
