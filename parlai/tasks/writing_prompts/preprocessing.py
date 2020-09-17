@@ -9,7 +9,7 @@ from blingfire import text_to_sentences
 def replace_characters(prompt):
     """ Replace special characters.
     """
-    prompt = prompt.replace("<newline>", " ").replace("\t", " ").replace("|", " ")
+    prompt = prompt.replace("<newline>", " ").replace("\n", " ").replace("\t", " ").replace("|", " ")
     return prompt
 
 def ensure_dir(file_path):
@@ -80,14 +80,14 @@ class WritingPrompts(object):
                                             f"label_candidates:{'|'.join(dialog_line['label_candidates'])}\n"
                         else:
                             line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\t" \
-                                            f"label_candidates:{'|'.join(dialog_line['label_candidates'])}\n" \
-                                            f"\tepisode_done:True"
+                                            f"label_candidates:{'|'.join(dialog_line['label_candidates'])}" \
+                                            f"\tepisode_done:True\n"
                     else:
                         if i < len(episode):
                             line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\n"
                         else:
-                            line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}\n" \
-                                            f"\tepisode_done:True"
+                            line_to_write = f"text:{dialog_line['text']}\tlabels:{dialog_line['labels']}" \
+                                            f"\tepisode_done:True\n"
 
                     out_file.write(line_to_write)
 
