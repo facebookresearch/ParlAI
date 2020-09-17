@@ -2223,6 +2223,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
                 self.samples.put(sample)
             self.tot_samples_loaded += 1
+        time.sleep(0.01)  # release thread
         # and start loading the next chunk
         self._enqueue_request()
 
