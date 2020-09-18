@@ -4,19 +4,21 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from mephisto.data_model.blueprint import Blueprint
+import os
+import math
+from dataclasses import dataclass, field
+from typing import ClassVar, List, Type, Any, Dict, Iterable, TYPE_CHECKING
+
+from mephisto.core.registry import register_mephisto_abstraction
+from mephisto.data_model.blueprint import Blueprint, SharedTaskState
 from mephisto.data_model.assignment import InitializationData
+from omegaconf import MISSING, DictConfig
+
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_agent_state import (
     AcuteEvalAgentState,
 )
-from parlai.crowdsourcing.tasks.acute_eval.acute_eval_runner import AcuteEvalRunner
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_builder import AcuteEvalBuilder
-from mephisto.core.registry import register_mephisto_abstraction
-
-import os
-import math
-
-from typing import ClassVar, List, Type, Any, Dict, Iterable, TYPE_CHECKING
+from parlai.crowdsourcing.tasks.acute_eval.acute_eval_runner import AcuteEvalRunner
 
 if TYPE_CHECKING:
     from mephisto.data_model.blueprint import AgentState, TaskRunner, TaskBuilder
@@ -39,7 +41,7 @@ class AcuteEvalBlueprint(Blueprint):
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
     @classmethod
-    def assert_task_args(cls, opts: Any) -> None:
+    def assert_task_args(cls, args: DictConfig, shared_state: "SharedTaskState") -> None:
         """
         Ensure that the data can be properly loaded.
         """
