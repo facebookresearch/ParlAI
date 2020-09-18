@@ -16,6 +16,7 @@ class TestDialogptModel(unittest.TestCase):
     Checks that DialoGPT gets a certain performance on the integration test task.
     """
 
+    @testing_utils.retry(ntries=3, log_retry=True)
     def test_dialogpt(self):
         valid, test = testing_utils.train_model(
             dict(
@@ -25,7 +26,7 @@ class TestDialogptModel(unittest.TestCase):
                 add_start_token=True,
                 optimizer='adam',
                 learningrate=1e-3,
-                batchsize=4,
+                batchsize=8,
                 num_epochs=50,
                 validation_every_n_epochs=5,
                 validation_metric='ppl',
