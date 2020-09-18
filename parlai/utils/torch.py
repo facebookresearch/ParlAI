@@ -12,7 +12,7 @@ from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
 import itertools
 from collections import namedtuple
 import parlai.utils.logging as logging
-import parlai.utils.io as io_util
+import parlai.utils.io as io_utils
 
 
 try:
@@ -53,15 +53,13 @@ def atomic_save(state_dict: Any, path: str) -> None:
     final name.
     """
 
-    if io_util.USE_ATOMIC_TORCH_SAVE:
+    if io_utils.USE_ATOMIC_TORCH_SAVE:
         with open(path + ".tmp", "wb") as f:
-            # Manifold plugin doesn't support the new 1.6 serialization method. See T75615407
-            torch.save(state_dict, f, _use_new_zipfile_serialization=False)
+            torch.save(state_dict, f)
         os.rename(path + ".tmp", path)
     else:
-        # PathManager deosn't support os.rename. See T71772714
-        # Manifold plugin doesn't support the new 1.6 serialization method. See T75615407
-        torch.save(state_dict, path, _use_new_zipfile_serialization=False)
+        with io_utils.PathManager.open(path, "wb") as f:
+            torch.save(state_dict, f)
 
 
 def padded_tensor(

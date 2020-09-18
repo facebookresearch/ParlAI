@@ -13,6 +13,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import maintain_dialog_history, load_cands
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from .modules import Starspace
 
@@ -550,8 +551,7 @@ class StarspaceAgent(Agent):
             data['model'] = self.model.state_dict()
             data['optimizer'] = self.optimizer.state_dict()
             data['opt'] = self.opt
-            with PathManager.open(path, 'wb') as handle:
-                torch.save(data, handle)
+            torch_utils.atomic_save(data, path)
             with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
@@ -562,9 +562,10 @@ class StarspaceAgent(Agent):
         print('Loading existing model params from ' + path)
         import parlai.utils.pickle
 
-        data = torch.load(
-            path, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
-        )
+        with PathManager.open(path, 'rb') as f:
+            data = torch.load(
+                f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+            )
         self.model.load_state_dict(data['model'])
         self.reset()
         self.optimizer.load_state_dict(data['optimizer'])

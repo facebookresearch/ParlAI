@@ -1861,9 +1861,10 @@ class TorchAgent(ABC, Agent):
         """
         import parlai.utils.pickle
 
-        states = torch.load(
-            path, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
-        )
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(
+                f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+            )
         if 'model' in states:
             self.load_state_dict(states['model'])
         if 'optimizer' in states and hasattr(self, 'optimizer'):
