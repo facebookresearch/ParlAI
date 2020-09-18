@@ -285,14 +285,12 @@ def distributed_context(
         non-primary workers.
     :param opt:
         command line options
-    :param int port:
-        A TCP port to use. This will need to be changed to run multiple
         distributed training setups on the same machine.
     :param int gpu:
         Which GPU to use. Defaults to using rank and local devices, but must be
         manually specified when using many-hosts.
-    :param str hostname:
-        Hostname of the main server.
+    :param str init method:
+        Init method, such as tcp://localhost:61337. See torch.distributed docs.
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
@@ -379,7 +377,7 @@ def slurm_distributed_context(opt):
         )
         # Begin distributed training
         with distributed_context(
-            distributed_rank, opt, 0, device_id, init_method="tcp://{main_host}:{port}"
+            distributed_rank, opt, 0, device_id, init_method=f"tcp://{main_host}:{port}"
         ) as opt:
             yield opt
     except subprocess.CalledProcessError as e:
