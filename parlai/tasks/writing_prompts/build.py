@@ -5,19 +5,19 @@ from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
-        '$HOME/datasets/ParlAI/WritingPrompts/writing_prompts_train.txt',
+        '/home/s1569885/datasets/ParlAI/WritingPrompts/writing_prompts_train.txt',
         'writing_prompts_train.txt',
         '2d46c87db2e5861f8c671c21f247bf944796ab1ecdf7566743ab42dadcc1faeb',
         zipped=True,
     ),
     DownloadableFile(
-        '$HOME/datasets/ParlAI/WritingPrompts/writing_prompts_valid.txt',
+        '/home/s1569885/ParlAI/WritingPrompts/writing_prompts_valid.txt',
         'writing_prompts_valid.txt',
         '09b0ca93d00c4bcc010eeea07c7b6d3ad5082c1432b07acb655ac1eda3f96876',
         zipped=True,
     ),
     DownloadableFile(
-        '$HOME/datasets/ParlAI/WritingPrompts/writing_prompts_test.txt',
+        '/home/s1569885/ParlAI/WritingPrompts/writing_prompts_test.txt',
         'writing_prompts_test.txt',
         '9cb8a467eaf12d6977994340281d4aaef0467a7dc444462775f144c2a2b04426',
         zipped=True,
