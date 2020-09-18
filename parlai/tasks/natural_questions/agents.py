@@ -101,6 +101,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         self.opt = copy.deepcopy(opt)
         self.dtype = self.opt['datatype'].split(':')[0]
         self.dpath = os.path.join(self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
+        self.n_samples = None
         super().__init__(self.opt, shared)
 
     def _simplify(self, example):
@@ -119,6 +120,8 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         raise ValueError(f'Invalid data type: "{self.dtype}"')
 
     def get_num_samples(self, opt) -> Tuple[int, int]:
+        if self.n_samples:
+            return self.n_samples
         logging.log(f'Counting the number of samples in {self.dtype}')
         files = os.listdir(self.dpath)
         n_samples = 0
@@ -127,7 +130,8 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 continue
             n_samples += _count_lines_in_file(os.path.join(self.dpath, fname))
         logging.info(f'{n_samples} examples found in {self.dtype} dataset.')
-        return (n_samples, n_samples)
+        self.n_samples = (n_samples, n_samples)
+        return self.n_samples
 
     def _get_candidate_long_answers(self, example):
         if self.use_html:
