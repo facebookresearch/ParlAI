@@ -12,6 +12,7 @@ RESOURCES = [
     ),
     DownloadableFile(
         '$HOME/datasets/ParlAI/WritingPrompts/writing_prompts_valid.txt',
+        'writing_prompts_valid.txt',
         '09b0ca93d00c4bcc010eeea07c7b6d3ad5082c1432b07acb655ac1eda3f96876',
         zipped=True,
     ),
