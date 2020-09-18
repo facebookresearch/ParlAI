@@ -31,7 +31,6 @@ export STUDENT_ID=${USER}
 export CLUSTER_HOME="/home/${STUDENT_ID}"
 export DATASET_SOURCE="${CLUSTER_HOME}/datasets/ParlAI/"
 
-
 declare -a ScratchPathArray=(/disk/scratch_big/ /disk/scratch1/ /disk/scratch2/ /disk/scratch/ /disk/scratch_fast/)
 
 # Iterate the string array using for loop
@@ -59,13 +58,15 @@ cd "${EXP_ROOT}"
 
 mkdir -p ${SERIAL_DIR}
 
+NUM_EPOCHS=${NUM_EPOCHS:=20}
+
 echo "============"
 echo "ParlAI Task========"
 
 parlai train_model -m hugging_face/gpt2 -mf "${SERIAL_DIR}/${EXP_ID}.mod" \
  --add-special-tokens=True --add-start-token=True --gpt2-size=medium -t writing_prompts \
  --batchsize=4 --text-truncate=128 --label-truncate=128 --datapath="${DATASET_SOURCE}" \
- --save-after-valid=True --num-epochs=10 --max_train_time=3600 --validation-patience=3 \
+ --save-after-valid=True --num-epochs=NUM_EPOCHS --max_train_time=518400 --validation-patience=5 \
  --validation-every-n-secs=10800 --validation-max-exs=5000
 
 echo "============"
