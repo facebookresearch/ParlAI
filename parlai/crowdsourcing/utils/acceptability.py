@@ -26,7 +26,8 @@ class AcceptabilityChecker:
         :param messages: List of all messages by one speaker
         :param is_worker_0: True if `messages` represent the messages from the first
             speaker in the conversation
-        :param violation_types: Set of all violation types to check messages for
+        :param violation_types: Set of all violation types to check messages for. See
+            the comment above each violation type's codeblock for a description of it.
         :return: comma-separated list of all violations
         """
 
