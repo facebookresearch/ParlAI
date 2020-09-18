@@ -6,15 +6,16 @@
 
 import copy
 import os
+
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
+from parlai.core.opt import Opt
 from parlai.utils.strings import normalize_reply
-from parlai.mturk.tasks.turn_annotations.constants import (
-    AGENT_1,
-    ANNOTATIONS_CONFIG,
-    ANNOTATIONS_INTRO,
+from parlai.mturk.tasks.turn_annotations.constants import AGENT_1
+from parlai.mturk.tasks.turn_annotations.utils import (
+    Compatibility,
+    construct_annotations_html,
 )
-from parlai.mturk.tasks.turn_annotations.utils import Compatibility
 
 
 class TurkLikeAgent:
@@ -38,20 +39,6 @@ class TurkLikeAgent:
         self.disconnected = False
         self.hit_is_expired = False
 
-    @staticmethod
-    def construct_annotations_html(turn_idx):
-        css_style = 'margin-right:15px;'
-        annotations_html = ANNOTATIONS_INTRO
-        for a in ANNOTATIONS_CONFIG:
-            annotations_html += f"""<input type="checkbox"
-            id="checkbox_{a["value"]}_{turn_idx}"
-            name="checkbox_group_{turn_idx}"
-            ta-description="{a["description"]}"
-            ta-pretty-name="{a["name"]}" /><span
-            style={css_style}>{a["name"]}</span>"""
-        annotations_html += f'<br><br><div id="explanation_{turn_idx}"></div>'
-        return annotations_html
-
     def act(self, timeout=None):
         _ = timeout  # The model doesn't care about the timeout
         if self.semaphore:
@@ -60,7 +47,11 @@ class TurkLikeAgent:
         else:
             act_out = self.model_agent.act()
 
-        annotations_html = TurkLikeAgent.construct_annotations_html(self.turn_idx)
+        annotations_html = construct_annotations_html(
+            annotations_intro=self.opt['annotations_intro'],
+            annotations_config=self.opt['annotations_config'],
+            turn_idx=self.turn_idx,
+        )
 
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
@@ -90,7 +81,7 @@ class TurkLikeAgent:
         self.turn_idx += 1
         return {**act_out, 'episode_done': False, 'checked_radio_name_id': ''}
 
-    def observe(self, observation):
+    def observe(self, observation, increment_turn: bool = True):
         """
         Need to protect the observe also with a semaphore for composed models where an
         act() may be called within an observe()
@@ -108,7 +99,8 @@ class TurkLikeAgent:
             f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
         )
 
-        self.turn_idx += 1
+        if increment_turn:
+            self.turn_idx += 1
 
     def shutdown(self):
         pass
@@ -117,7 +109,7 @@ class TurkLikeAgent:
         self.model_agent.reset()
 
     @staticmethod
-    def get_bot_agents(opt: dict, active_models: list, datapath: str, no_cuda=False):
+    def get_bot_agents(opt: dict, active_models: list, no_cuda=False):
         model_overrides = {
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands
@@ -145,18 +137,22 @@ class TurkLikeAgent:
 
         all_model_opts = {}
         print(f'Active models to use are: {active_models}')
-        for model_nickname in models_available:
-            model_path = os.path.join(base_model_folder, model_nickname, 'model')
-
-            if model_nickname not in active_models:
-                print(
-                    f'Skipping available model because not in active models list: {model_nickname}.'
-                )
-                continue
-
+        for model_nickname in active_models:
             model_overrides_copy = copy.deepcopy(model_overrides)
-            opt = {'model_file': model_path, 'override': model_overrides_copy}
-            all_model_opts[model_nickname] = opt
+            model_path = os.path.join(base_model_folder, model_nickname, 'model')
+            if os.path.isfile(model_path):
+                model_opt = {'model_file': model_path, 'override': model_overrides_copy}
+            else:
+                model_opt_path = model_path + '.opt'
+                print(
+                    f'Model file for model {model_nickname} does not exist! Instead, '
+                    f'loading opt from {model_opt_path}.'
+                )
+                model_opt = Opt.load(model_opt_path)
+                if 'override' not in model_opt:
+                    model_opt['override'] = {}
+                model_opt['override'].update(model_overrides_copy)
+            all_model_opts[model_nickname] = model_opt
 
         active_model_opt_dicts = {m: all_model_opts[m] for m in active_models}
 
