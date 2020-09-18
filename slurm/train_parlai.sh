@@ -62,11 +62,11 @@ mkdir -p ${SERIAL_DIR}
 echo "============"
 echo "ParlAI Task========"
 
-parlai train_model --model=hugging_face/gpt2 --model-file="${SERIAL_DIR}/${EXP_ID}.mod" \
- --add-special-tokens=True --add-start-token=True --gpt2-size=medium -t writing_prompts \
- --batchsize=4 --text-truncate=128 --label-truncate=128 --datapath="${DATASET_SOURCE}" \
- --save-after-valid=True --num-epochs=10.0 --max_train_time=3600 --validation-patience=3 \
- --validation-every-n-secs=10800 --validation-max-exs=5000
+parlai train_model --model hugging_face/gpt2 --model-file ${SERIAL_DIR}/${EXP_ID}.mod" \
+ --add-special-tokens True --add-start-token True --gpt2-size medium -task writing_prompts \
+ --batchsize 4 --text-truncate 128 --label-truncate 128 --datapath "${DATASET_SOURCE}" \
+ --save-after-valid True --num-epochs 10.0 --max_train_time 3600 --validation-patience 3 \
+ --validation-every-n-secs 10800 --validation-max-exs 5000
 
 echo "============"
 echo "ParlAI Task finished"
