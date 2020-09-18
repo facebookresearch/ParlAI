@@ -38,7 +38,7 @@ class TestAcceptabilityChecker(unittest.TestCase):
             {
                 'messages': ['Hi', 'What?', 'Wow', "No", "I don't even know", 'Well,'],
                 'is_worker_0': False,
-                'expected_violations': 'min_words',
+                'expected_violations': 'under_min_length',
             },
             {  # Should fail, because the first worker shouldn't start with a greeting
                 'messages': [
@@ -50,7 +50,7 @@ class TestAcceptabilityChecker(unittest.TestCase):
                     'Well, let me know if you need an extra hand.',
                 ],
                 'is_worker_0': True,
-                'expected_violations': 'penalize_greetings',
+                'expected_violations': 'starts_with_greeting',
             },
             {
                 'messages': [
@@ -62,7 +62,7 @@ class TestAcceptabilityChecker(unittest.TestCase):
                     'WELLLLL LEMME KNOOOOOO',
                 ],
                 'is_worker_0': False,
-                'expected_violations': 'all_caps',
+                'expected_violations': 'too_much_all_caps',
             },
             {
                 'messages': [
@@ -87,7 +87,7 @@ class TestAcceptabilityChecker(unittest.TestCase):
                     "I'm gonna say something that's totally XXX!",
                 ],
                 'is_worker_0': False,
-                'expected_violations': 'safety',
+                'expected_violations': 'unsafe:7',
             },
         ]
         test_cases_with_errors = [
