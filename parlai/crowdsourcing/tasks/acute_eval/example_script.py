@@ -3,12 +3,20 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
 import os
 import time
-import shlex
+from dataclasses import dataclass, field
+
+import hydra
 from mephisto.core.operator import Operator
-from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
-from mephisto.utils.scripts import MephistoRunScriptParser
+from mephisto.utils.scripts import load_db_and_process_config
+from omegaconf import DictConfig
+
+from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
+    BLUEPRINT_TYPE,
+    SharedParlAITaskState,
+)
 
 """
 Example script for running ACUTE-EVAL.
@@ -23,7 +31,7 @@ The following args are useful to tweak to fit your specific needs;
 
 """
 
-TASK_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 parser = MephistoRunScriptParser()
 parser.add_argument(
