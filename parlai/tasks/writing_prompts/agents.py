@@ -1,15 +1,16 @@
 import copy
+import os
 
 from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build
 
 def _path(opt, filtered):
     # build the data if it does not exist
-    build(opt)
+    #build(opt)
 
     # set up path to data (specific to each dataset)
     dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'Twitter', dt + '.txt')
+    return os.path.join(opt['datapath'], 'writing_prompts', dt + '.txt')
 
 class DefaultTeacher(ParlAIDialogTeacher):
     def __init__(self, opt, shared=None):
