@@ -24,7 +24,6 @@ import math
 from collections.abc import Sequence
 import heapq
 import json
-import torch
 
 import parlai.utils.torch as torch_utils
 from parlai.core.agents import Agent

@@ -16,7 +16,7 @@ import torch
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.torch import atomic_save
-from parlai.utios.io import PathManager
+from parlai.utils.io import PathManager
 import parlai.utils.pickle
 import parlai.utils.logging as logging
 
