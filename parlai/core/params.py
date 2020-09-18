@@ -773,7 +773,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--init-model',
             default=None,
             type=str,
-            help='load model weights and dict from this file',
+            help='Initialize model weights and dict from this file',
         )
         model_args.add_argument(
             '--dict-class', hidden=True, help='the class of the dictionary agent uses'
