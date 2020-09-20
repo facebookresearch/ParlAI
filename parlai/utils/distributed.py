@@ -290,7 +290,7 @@ def distributed_context(
         Which GPU to use. Defaults to using rank and local devices, but must be
         manually specified when using many-hosts.
     :param str init method:
-        Init method, such as tcp://localhost:61337. See torch.distributed docs.
+        Init method, such as ``tcp://localhost:61337``. See torch.distributed docs.
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
