@@ -132,13 +132,13 @@ def block_workers(launch_config, opt, local_db, requester_name=None):
 
 def run_task(opt):
     """
-    Note: launch_config opt should be something like: 
+    Note: launch_config opt should be something like:
     parlai.crowdsourcing.tasks.turn_annotations_static.launch_config.LaunchConfig
     """
 
     launch_config_file = opt.get('launch_config')
     launch_module = import_module(launch_config_file)
-    launch_config = getattr(launch_module, 'LaunchConfig')
+    launch_config = launch_module.LaunchConfig
     db, arg_string = setup_mephisto(launch_config)
     if 'sandbox' not in launch_config.PROVIDER:
         block_workers(opt, db, launch_config.REQUESTER)
