@@ -70,9 +70,3 @@ def main(cfg: DictConfig) -> None:
 
 if __name__ == "__main__":
     main()
-
-
-extra_args = {
-    "block_qualification": f"acute_eval_{int(time.time())}_block",
-    # num times to use the same conversation pair
-}
