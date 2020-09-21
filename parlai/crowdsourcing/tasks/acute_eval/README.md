@@ -20,7 +20,7 @@ following BibTex entry:
 
 # Code Instructions
 
-**NOTE: this code is incompatable with the latest version of Mephisto, beginning with the changes made in [PR #246](https://github.com/facebookresearch/Mephisto/pull/246). This task will be upgraded shortly to regain compatibility with the latest version; in the meantime, please use the version of Mephisto prior to that PR, at commit 99d19c91a69c035b413b68cefcbdbd42565e949a.**
+**NOTE: this code is incompatable with the latest version of Mephisto, beginning with the changes made in [PR #246](https://github.com/facebookresearch/Mephisto/pull/246). This task will be upgraded shortly to regain compatibility with the latest version; in the meantime, please use the last version release of Mephisto prior to that PR, [v0.1](https://github.com/facebookresearch/Mephisto/releases/tag/v0.1).**
 
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
