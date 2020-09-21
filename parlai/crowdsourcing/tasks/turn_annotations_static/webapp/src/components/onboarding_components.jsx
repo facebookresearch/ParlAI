@@ -26,16 +26,18 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, onSu
     console.log('handleOnboardingSubmit');
     var countCorrect = 0;
     var countIncorrect = 0;
-    for (var turnIdx = 0; turnIdx < onboardingData.dialogue.length; turnIdx++) {
-        var answersForTurn = onboardingData.dialogue[turnIdx].answers;
+    for (var turnIdx = 0; turnIdx < onboardingData.dialog.length; turnIdx++) {
+        var modelUtteranceForTurn = onboardingData.dialog[turnIdx][1];
+        var answersForTurn = modelUtteranceForTurn.answers;
         if (!answersForTurn) {
             continue
         } else {
-            console.log('Checking answers for turn: ' + turnIdx);
+            var utteranceIdx = turnIdx * 2 + 1;
+            console.log('Checking answers for turn: ' + utteranceIdx);
             var checkboxStubNames = Object.keys(annotationBuckets.config);
             for (var j = 0; j < checkboxStubNames.length; j++) {
                 var c = checkboxStubNames[j];
-                var checkbox = document.getElementById(c + '_' + turnIdx);
+                var checkbox = document.getElementById(c + '_' + utteranceIdx);
                 if (checkbox.checked) {
                     if (answersForTurn.indexOf(c) > -1) {
                         countCorrect += 1
@@ -82,7 +84,7 @@ function OnboardingUtterance({ annotationBuckets, turnIdx, text }) {
         extraElements = '';
         extraElements = (<span key={'extra_' + turnIdx}><br /><br />
             <span style={{ fontStyle: 'italic' }}>Does this comment from your partner have any annotations? (Check all that apply)<br />
-                <Checkboxes annotationBuckets={annotationBuckets} turnIdx={turnIdx} />
+                <Checkboxes annotationBuckets={annotationBuckets} turnIdx={turnIdx} askReason={false} />
             </span>
         </span>)
     }
@@ -109,12 +111,19 @@ function OnboardingComponent({ onboardingData, annotationBuckets, onSubmit }) {
                 <ErrorBoundary>
                     <div>
                         {
-                            onboardingData.dialogue.map((utt, idx) => (
-                                <OnboardingUtterance
-                                    key={idx}
-                                    annotationBuckets={annotationBuckets}
-                                    turnIdx={idx}
-                                    text={utt.text} />
+                            onboardingData.dialog.map((turn, idx) => (
+                                <div key={'turn_pair_' + idx}>
+                                    <OnboardingUtterance
+                                        key={idx * 2}
+                                        annotationBuckets={annotationBuckets}
+                                        turnIdx={idx * 2}
+                                        text={turn[0].text} />
+                                    <OnboardingUtterance
+                                        key={idx * 2 + 1}
+                                        annotationBuckets={annotationBuckets}
+                                        turnIdx={idx * 2 + 1}
+                                        text={turn[1].text} />
+                                </div>
                             ))
                         }
                     </div>

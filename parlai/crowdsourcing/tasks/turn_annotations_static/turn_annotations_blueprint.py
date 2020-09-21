@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import os
 import json
 import logging
 from mephisto.core.registry import register_mephisto_abstraction
@@ -15,6 +16,10 @@ from argparse import _ArgumentGroup as ArgumentGroup
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
+
+
+def get_task_path():
+    return os.path.dirname(__file__)
 
 
 @register_mephisto_abstraction()
@@ -78,18 +83,25 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             help="If we only want the crowdworker to annotate the last utterance in the conversation",
         )
         group.add_argument(
+            "--ask-reason",
+            dest="ask_reason",
+            type=bool,
+            default=False,
+            help="If we want to ask the crowdworker for a reason for each of their annotations in a text field",
+        )
+        group.add_argument(
             "--onboarding-data",
             dest="onboarding_data",
             type=str,
-            default='./json/onboarding.json',
+            default=os.path.join(get_task_path(), 'json/onboarding.json'),
             help="Path to data and answers for onboarding task in JSON format",
         )
         group.add_argument(
             "--annotation-buckets",
             dest="annotation_buckets",
             type=str,
-            default='./json/annotation_buckets.json',
-            help="As per Turn Annotations task, path to annotation buckets which will be checkboxes for worker to annotate an utterance.",
+            default=os.path.join(get_task_path(), 'json/annotation_buckets.json'),
+            help="As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance.",
         )
 
     def get_frontend_args(self) -> Dict[str, Any]:
@@ -97,6 +109,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         Specifies what options within a task_config should be forwarded to the client
         for use by the task's frontend.
         """
+
         with open(self.opts['onboarding_data'], "r", encoding="utf-8-sig") as f:
             onboarding_data = json.loads(f.read())
 
@@ -109,6 +122,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             "onboarding_data": onboarding_data,
             "annotation_buckets": annotation_buckets,
             "annotate_last_utterance_only": self.opts['annotate_last_utterance_only'],
+            "ask_reason": self.opts['ask_reason'],
             "frame_height": '100%',
             "num_subtasks": self.opts["subtasks_per_unit"],
             "block_mobile": True,
@@ -185,6 +199,6 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
             "--onboarding-in-flight-data",
             dest="onboarding_in_flight_data",
             type=str,
-            default='./json/onboarding_in_flight.jsonl',
+            default=os.path.join(get_task_path(), 'json/onboarding_in_flight.jsonl'),
             help="Path to data and answers for onboarding task in JSON-L format (one JSON object per line per onboarding)",
         )

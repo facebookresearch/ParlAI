@@ -152,13 +152,13 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
   )
 }
 
-function ChatMessage({ text, agentIdx, annotationBuckets, turnIdx, doAnnotateMessage, onUserInputUpdate }) {
+function ChatMessage({ text, agentIdx, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
   var extraElements = '';
   if (doAnnotateMessage) {
     extraElements = '';
     extraElements = (<span key={'extra_' + turnIdx}><br /><br />
       <span style={{ fontStyle: 'italic' }}>Does this comment have any annotations? (Check all that apply)<br />
-        <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} onUserInputUpdate={onUserInputUpdate} />
+        <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} askReason={askReason} onUserInputUpdate={onUserInputUpdate} />
       </span>
     </span>)
   }
@@ -173,7 +173,7 @@ function ChatMessage({ text, agentIdx, annotationBuckets, turnIdx, doAnnotateMes
   )
 }
 
-function ContentPane({ subtaskData, annotationBuckets, subtaskIndex, annotateLastUtteranceOnly, numSubtasks }) {
+function ContentPane({ subtaskData, annotationBuckets, subtaskIndex, annotateLastUtteranceOnly, askReason, numSubtasks }) {
   if (subtaskData == undefined && subtaskIndex >= numSubtasks) {
     // This happens when index gets set to num subtasks + 1 after submitting
     return (<div>
@@ -193,6 +193,7 @@ function ContentPane({ subtaskData, annotationBuckets, subtaskIndex, annotateLas
                 turnIdx={idx}
                 annotationBuckets={annotationBuckets}
                 doAnnotateMessage={m.agent_idx == 1 && (idx == (subtaskData.length - 1) || !annotateLastUtteranceOnly)}
+                askReason={askReason}
                 onUserInputUpdate={() => handleUserInputUpdate(subtaskData)}
               />
             </div>
@@ -223,7 +224,7 @@ function MainTaskComponent({ taskData, annotationBuckets, taskTitle, taskDescrip
         <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, taskData.length, taskData[index], annotationBuckets, onSubmit); setIndex(index + 1); }}></SubtaskSubmitButton>
       </LeftPane>
       <RightPane>
-        <ContentPane subtaskData={taskData[index]} annotationBuckets={annotationBuckets} subtaskIndex={index} annotateLastUtteranceOnly={taskConfig.annotate_last_utterance_only} numSubtasks={taskData.length} ></ContentPane>
+        <ContentPane subtaskData={taskData[index]} annotationBuckets={annotationBuckets} subtaskIndex={index} annotateLastUtteranceOnly={taskConfig.annotate_last_utterance_only} askReason={taskConfig.ask_reason} numSubtasks={taskData.length} ></ContentPane>
       </RightPane>
       <div style={{ clear: 'both' }}>
       </div>

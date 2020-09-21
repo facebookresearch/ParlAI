@@ -24,7 +24,7 @@ function MainApp() {
     handleSubmit,
     isOnboarding,
   } = useMephistoTask();
-  console.log('Entering MainApp BLAH2');
+  console.log('Entering MainApp');
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">

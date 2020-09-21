@@ -25,7 +25,19 @@ var handleCheckboxChange = function (evt, annotationBuckets, onUserInputUpdate) 
   }
 }
 
-function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate }) {
+function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate, askReason }) {
+  var reasonComponent = (
+    <div>
+      <br></br>
+      <div>
+        <div>Why did you select the checkboxes you did?</div>
+        <input type="text" id={'input_reason_' + turnIdx} style={{ minWidth: '50%' }} />
+      </div>
+    </div>
+  )
+  if (!askReason) {
+    reasonComponent = '';
+  }
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
@@ -35,11 +47,7 @@ function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate }) {
         ))
       }
       <div id={'checkbox_description_' + turnIdx} style={{ height: '24px' }}></div>
-      <br></br>
-      <div>
-        <div>Why did you select the checkboxes you did?</div>
-        <input type="text" id={'input_reason_' + turnIdx} style={{ minWidth: '50%' }} />
-      </div>
+      {reasonComponent}
     </div>
   )
 }
