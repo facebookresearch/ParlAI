@@ -14,6 +14,8 @@ We will be moving some of our common tasks out of the Mephisto repo into
 the ParlAI repo soon, alongside better documentation and tooling for
 those common tasks.
 
+See the [turn annotations task README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/turn_annotations/README.md) for an example of what the front-end interfaces (CLI and Python script) of the new tasks will look like.
+
 The original guide for using the `parlai.mturk.core` module to collect
 data on MTurk is preserved below for those who are still running tasks
 on the old framework.
