@@ -7,8 +7,10 @@
 import os
 import time
 from dataclasses import dataclass, field
+from typing import Any, List
 
 import hydra
+from mephisto.core.hydra_config import RunScriptConfig, register_script_config
 from mephisto.core.operator import Operator
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
@@ -37,26 +39,40 @@ defaults = [
     {"conf": "example"},
 ]
 
+
+@dataclass
+class TestScriptConfig(RunScriptConfig):
+    defaults: List[Any] = field(default_factory=lambda: defaults)
+    task_dir: str = TASK_DIRECTORY
+
+
+register_script_config(name='scriptconfig', module=TestScriptConfig)
+
+
+@hydra.main(config_name="scriptconfig")
+def main(cfg: DictConfig) -> None:
+    db, cfg = load_db_and_process_config(cfg)
+
+    world_opt = {}
+
+    custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
+    if custom_bundle_path is not None:
+        assert os.path.exists(custom_bundle_path), (
+            "Must build the custom bundle with `npm install; npm run dev` from within "
+            f"the {TASK_DIRECTORY}/webapp directory in order to demo a custom bundle "
+        )
+        world_opt["send_task_data"] = True
+
+    operator = Operator(db)
+    operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
+    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+
+
+if __name__ == "__main__":
+    main()
+
+
 extra_args = {
-    "pairings_filepath": args['pairings_filepath'],
-    "block_on_onboarding_fail": True,
     "block_qualification": f"acute_eval_{int(time.time())}_block",
     # num times to use the same conversation pair
-    "annotations_per_pair": args["annotations_per_pair"],
-    "random_seed": 42,  # random seed
-    "subtasks_per_unit": args[
-        "subtasks_per_unit"
-    ],  # num comparisons to show within one unit
-    "num_matchup_pairs": args[
-        "num_matchup_pairs"
-    ],  # num pairs of conversations to be compared
-    # question phrasing
-    "s1_choice": "I would prefer to talk to <Speaker 1>",
-    "s2_choice": "I would prefer to talk to <Speaker 2>",
-    "eval_question": "Who would you prefer to talk to for a long conversation?",
-    "assignment_duration_in_seconds": 600,
 }
-
-operator = Operator(db)
-operator.parse_and_launch_run_wrapper(shlex.split(ARG_STRING), extra_args=extra_args)
-operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
