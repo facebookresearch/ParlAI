@@ -1,0 +1,9 @@
+#@package _global_
+mephisto:
+  task:
+    task_title: "Which Conversational Partner is Better?"
+    task_description: "Evaluate quality of conversations through comparison."
+    task_reward: 0.5
+    task_tags: "chat,evaluation,comparison,conversation"
+    allowed_concurrent: 1
+    maximum_units_per_worker: 0
