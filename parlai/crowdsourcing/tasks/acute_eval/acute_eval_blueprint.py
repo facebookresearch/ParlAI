@@ -35,7 +35,7 @@ class AcuteEvalBlueprintArgs(BlueprintArgs):
             'help': """\
 Tasks launched from the ACUTE-Eval blueprint require sets of pairings for workers to \
 be able to compare to. These pairings can be provided as a csv (with \
---pairings-filepath) or by passing a pairings_task_data dict into extra_args."""
+--pairings-filepath) or by setting args.blueprint.pairings_task_data."""
         },
     )
     annotations_per_pair: int = field(
