@@ -19,6 +19,9 @@ following BibTex entry:
     }
 
 # Code Instructions
+
+**NOTE: this code is incompatable with the latest version of Mephisto, beginning with the changes made in [PR #246](https://github.com/facebookresearch/Mephisto/pull/246). This task will be upgraded shortly to regain compatibility with the latest version; in the meantime, please use the version of Mephisto prior to that PR, at commit 99d19c91a69c035b413b68cefcbdbd42565e949a.**
+
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
 The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
