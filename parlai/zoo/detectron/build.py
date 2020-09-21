@@ -32,5 +32,10 @@ def build(datapath):
     version = '1.0'
     if not built(dpath, version):
         download_models(
-            opt, fnames, 'detectron', path=BASE_PATH, version=version, use_model_type=False
+            opt,
+            fnames,
+            'detectron',
+            path=BASE_PATH,
+            version=version,
+            use_model_type=False,
         )
