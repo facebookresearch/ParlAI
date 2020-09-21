@@ -1,6 +1,6 @@
 #@package _global_
 mephisto:
-  mephisto:
+  blueprint:
     annotations_per_pair: 1
     block_on_onboarding_fail: true
     block_qualification: acute_eval_${current_time}_block

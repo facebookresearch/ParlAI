@@ -34,8 +34,8 @@ class AcuteEvalBlueprintArgs(BlueprintArgs):
         metadata={
             'help': """\
 Tasks launched from the ACUTE-Eval blueprint require sets of pairings for workers to \
-be able to compare to. These pairings can be provided as a csv (with \
---pairings-filepath) or by setting args.blueprint.pairings_task_data."""
+be able to compare to. These pairings should be provided as a .jsonl with \
+--pairings-filepath."""
         },
     )
     annotations_per_pair: int = field(
@@ -103,10 +103,6 @@ class AcuteEvalBlueprint(Blueprint):
             assert os.path.exists(
                 pairings_filepath
             ), f"Provided file {pairings_filepath} doesn't exist"
-        elif args.blueprint.get("pairings_task_data") is not None:
-            assert (
-                len(args.blueprint.pairings_task_data) > 0
-            ), "Length of data dict provided was 0"
         else:
             raise AssertionError(
                 "Must provide one of a data csv, json, or a list of tasks"

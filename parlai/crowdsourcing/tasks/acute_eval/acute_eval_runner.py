@@ -127,12 +127,6 @@ class AcuteEvalRunner(TaskRunner):
 
         Loads in the data from the pairs filepath.
         """
-        preset_pairs = self.args.blueprint.get("pairings_task_data")
-        if preset_pairs is not None:
-            self.onboarding_tasks = preset_pairs["onboarding"]
-            self.desired_tasks = preset_pairs["desired"]
-            return
-
         pairs_path = self.args.blueprint.pairings_filepath
 
         with open(pairs_path) as pf:
