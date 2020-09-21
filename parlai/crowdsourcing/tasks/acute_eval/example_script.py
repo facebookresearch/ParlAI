@@ -44,6 +44,7 @@ defaults = [
 class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
+    current_time: int = int(time.time())
 
 
 register_script_config(name='scriptconfig', module=TestScriptConfig)
