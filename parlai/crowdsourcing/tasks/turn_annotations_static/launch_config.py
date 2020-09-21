@@ -4,18 +4,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-Use this file to put all the arguments (an alternative to launching them from the
-command line as params)
-"""
-
 
 class LaunchConfig:
+    """
+    Use this file to put all the arguments (an alternative to launching them from the
+    command line as params)
+    """
+
     # Run the below to register the requester if needed (first time only)
     # mephisto register mturk_sandbox --name:XXXX
     # --access-key-id:XXXX --secret-access-key:XXXX
+    # To run locally, set REQUEST = None and PROVIDER = 'mock'
     REQUESTER = 'FIXME'
     PROVIDER = 'mturk_sandbox'
+
     # This datapath is where the database object goes
     # If not Mephisto data path below then requester register seems to do nothing
     DATAPATH = 'FIXME'
@@ -41,7 +43,7 @@ class LaunchConfig:
     # Maximum tasks a worker can do across all runs with task_name (0=infinite)
     MAX_UNITS_PER_WORKER = 5
 
-    # A list of worker ID strings to block from doing the task.
+    # A list of worker IDs to block from doing the task.
     WORKER_BLOCK_LIST = []
 
     # Blueprint specific params

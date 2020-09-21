@@ -5,12 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import math
 import json
 import logging
 from mephisto.core.registry import register_mephisto_abstraction
 from mephisto.server.blueprints.static_react_task.static_react_blueprint import (
     StaticReactBlueprint,
 )
+from mephisto.core.argparse_parser import str2bool
 from typing import Any, Dict, TYPE_CHECKING
 from argparse import _ArgumentGroup as ArgumentGroup
 
@@ -78,14 +80,14 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         group.add_argument(
             "--annotate-last-utterance-only",
             dest="annotate_last_utterance_only",
-            type=bool,
+            type=str2bool,  # Need to handle it being 'False' in arg_string
             default=False,
             help="If we only want the crowdworker to annotate the last utterance in the conversation",
         )
         group.add_argument(
             "--ask-reason",
             dest="ask_reason",
-            type=bool,
+            type=str2bool,  # Need to handle it being 'False' in arg_string
             default=False,
             help="If we want to ask the crowdworker for a reason for each of their annotations in a text field",
         )
@@ -176,8 +178,10 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
             all_data.extend(grp)
 
         grouped_data = []
-        for i in range(0, len(all_data), self.subtasks_per_unit):
-            chunk = all_data[i : i + self.subtasks_per_unit]
+        number_of_tasks = math.floor(len(all_data) / self.subtasks_per_unit)
+        for i in range(0, number_of_tasks):
+            data_index = i * self.subtasks_per_unit
+            chunk = all_data[data_index : data_index + self.subtasks_per_unit]
             qc_convo_idx = i % len(self.quality_control_convos)
             chunk.append(self.quality_control_convos[qc_convo_idx])
             grouped_data.append(chunk)
