@@ -56,6 +56,7 @@ class TestImageLoader(unittest.TestCase):
                 dim,
                 f"dim mismatch for image mode {image_mode}",
             )
+        torch.cuda.empty_cache()
 
     def test_resnet(self):
         self._base_test_loader("resnet")
