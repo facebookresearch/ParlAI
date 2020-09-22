@@ -114,7 +114,7 @@ class TestTurnAnnotations(unittest.TestCase):
 
                 # Params
                 config_folder = os.path.join(
-                    os.path.dirname(os.path.realpath(run.__file__)), 'config'
+                    os.path.dirname(os.path.realpath(run.__file__)), 'task_config'
                 )
 
                 # Define opt
@@ -167,7 +167,7 @@ class TestTurnAnnotations(unittest.TestCase):
             model = 'TransformerGenerator'
             num_turn_pairs = 6
             config_folder = os.path.join(
-                os.path.dirname(os.path.realpath(run.__file__)), 'config'
+                os.path.dirname(os.path.realpath(run.__file__)), 'task_config'
             )
             datapath = os.path.join(tmpdir, 'data')
 
