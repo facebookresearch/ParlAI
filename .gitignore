@@ -134,6 +134,8 @@ tmp/
 # Heroku things
 heroku-cli-*
 *.db
+# Mephisto
+outputs/
 
 # IntelliJ IDEA
 .idea
