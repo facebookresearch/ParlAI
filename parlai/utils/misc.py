@@ -16,6 +16,7 @@ import time
 import re
 import shutil
 import json
+import os
 
 from parlai.core.message import Message
 from parlai.utils.strings import colorize
@@ -357,6 +358,11 @@ def float_formatter(f: Union[float, int]) -> str:
 
 
 def _line_width():
+    if os.environ.get('PARLAI_FORCE_WIDTH'):
+        try:
+            return int(os.environ['PARLAI_FORCE_WIDTH'])
+        except ValueError:
+            pass
     try:
         # if we're in an interactive ipython notebook, hardcode a longer width
         __IPYTHON__
@@ -410,17 +416,12 @@ def nice_report(report) -> str:
         df = pd.DataFrame([output])
         df.columns = pd.MultiIndex.from_tuples(df.columns)
         df = df.stack().transpose().droplevel(0, axis=1)
-        result = (
-            "   "
-            + df.to_string(
-                na_rep="",
-                line_width=line_width - 3,  # -3 for the extra spaces we add
-                float_format=float_formatter,
-                index=df.shape[0] > 1,
-            )
-            .replace("\n\n", "\n")
-            .replace("\n", "\n   ")
-        )
+        result = "   " + df.to_string(
+            na_rep="",
+            line_width=line_width - 3,  # -3 for the extra spaces we add
+            float_format=float_formatter,
+            index=df.shape[0] > 1,
+        ).replace("\n\n", "\n").replace("\n", "\n   ")
         result = re.sub(r"\s+$", "", result)
         return result
     else:
