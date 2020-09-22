@@ -59,9 +59,7 @@ class InteractiveWorld(DialogPartnerWorld):
             agents[0].observe(
                 {
                     'id': 'World',
-                    'text': 'Welcome to the AIDA chatbot. '
-                    'You are now paired with a bot — feel free to send a message. '
-                    'Type /done to finish the chat.',
+                    'text': 'Hello!',
                 }
             )
             self.first_time = False
