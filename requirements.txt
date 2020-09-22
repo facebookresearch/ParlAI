@@ -37,7 +37,6 @@ tensorboard==2.3.0
 tensorboardX==2.1
 tokenizers>=0.8.0
 torchtext>=0.5.0
-torchvision>=0.5.0
 tornado==6.0.4
 tqdm==4.36.1
 typing-extensions==3.7.4.1

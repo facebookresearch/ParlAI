@@ -18,8 +18,6 @@ import os
 from PIL import Image
 import numpy as np
 import torch
-import torchvision
-import torchvision.transforms as transforms
 from typing import Dict, Tuple, List
 from zipfile import ZipFile
 
@@ -90,12 +88,22 @@ class ImageLoader:
 
     def _init_transform(self):
         # initialize the transform function using torch vision.
-        self.transform = transforms.Compose(
+        try:
+            import torchvision
+            import torchvision.transforms
+
+            self.torchvision = torchvision
+            self.transforms = torchvision.transforms
+
+        except ImportError:
+            raise ImportError('Please install torchvision; see https://pytorch.org/')
+
+        self.transform = self.transforms.Compose(
             [
-                transforms.Scale(self.image_size),
-                transforms.CenterCrop(self.crop_size),
-                transforms.ToTensor(),
-                transforms.Normalize(
+                self.transforms.Scale(self.image_size),
+                self.transforms.CenterCrop(self.crop_size),
+                self.transforms.ToTensor(),
+                self.transforms.Normalize(
                     mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                 ),
             ]
@@ -109,7 +117,7 @@ class ImageLoader:
         """
         cnn_type, layer_num = self._image_mode_switcher()
         # initialize the pretrained CNN using pytorch.
-        CNN = getattr(torchvision.models, cnn_type)
+        CNN = getattr(self.torchvision.models, cnn_type)
 
         # cut off the additional layer.
         self.netCNN = torch.nn.Sequential(
