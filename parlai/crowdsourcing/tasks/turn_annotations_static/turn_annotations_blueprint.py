@@ -95,14 +95,16 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             "--onboarding-data",
             dest="onboarding_data",
             type=str,
-            default=os.path.join(get_task_path(), 'json/onboarding.json'),
+            default=os.path.join(get_task_path(), 'task_config/onboarding.json'),
             help="Path to data and answers for onboarding task in JSON format",
         )
         group.add_argument(
             "--annotation-buckets",
             dest="annotation_buckets",
             type=str,
-            default=os.path.join(get_task_path(), 'json/annotation_buckets.json'),
+            default=os.path.join(
+                get_task_path(), 'task_config/annotation_buckets.json'
+            ),
             help="As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance.",
         )
 
@@ -203,6 +205,8 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
             "--onboarding-in-flight-data",
             dest="onboarding_in_flight_data",
             type=str,
-            default=os.path.join(get_task_path(), 'json/onboarding_in_flight.jsonl'),
+            default=os.path.join(
+                get_task_path(), 'task_config/onboarding_in_flight.jsonl'
+            ),
             help="Path to data and answers for onboarding task in JSON-L format (one JSON object per line per onboarding)",
         )
