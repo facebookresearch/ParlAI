@@ -33,18 +33,18 @@ IMAGE_MODE_TO_DIM = {
 
 
 @testing_utils.skipUnlessVision
-@testing_utils.skipUnlessGPU
 class TestImageLoader(unittest.TestCase):
     """
     Unit Tests for the ImageLoader.
     """
 
-    def _base_test_loader(self, image_mode_partial):
+    def _base_test_loader(self, image_mode_partial: str, no_cuda: bool = False):
         """
         Test for given partial image mode.
         """
         opt = ParlaiParser().parse_args([])
         opt.update(BASE_IMAGE_ARGS)
+        opt['no_cuda'] = no_cuda
         for image_mode, dim in IMAGE_MODE_TO_DIM.items():
             if image_mode_partial not in image_mode:
                 continue
@@ -58,15 +58,17 @@ class TestImageLoader(unittest.TestCase):
             )
         torch.cuda.empty_cache()
 
+    @testing_utils.skipUnlessGPU
     def test_resnet(self):
         self._base_test_loader("resnet")
 
+    @testing_utils.skipUnlessGPU
     def test_resnext(self):
         self._base_test_loader("resnext")
 
     @testing_utils.skipUnlessDetectron
     def test_faster_r_cnn(self):
-        self._base_test_loader("faster_r_cnn")
+        self._base_test_loader("faster_r_cnn", True)
 
     def test_other_image_modes(self):
         """
