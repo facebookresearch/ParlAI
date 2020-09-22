@@ -11,6 +11,7 @@ Useful utilities for logging actions/observations in a world.
 from parlai.core.worlds import BatchWorld, DynamicBatchWorld
 from parlai.utils.misc import msg_to_str
 from parlai.utils.conversations import Conversations
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 import copy
@@ -137,7 +138,7 @@ class WorldLogger:
 
     def write_parlai_format(self, outfile):
         logging.info(f'Saving log to {outfile} in ParlAI format')
-        with open(outfile, 'w') as fw:
+        with PathManager.open(outfile, 'w') as fw:
             for episode in tqdm(self._logs):
                 ep = self.convert_to_labeled_data(episode)
                 for act in ep:

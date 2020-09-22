@@ -7,12 +7,11 @@
 Basic example which iterates through the tasks specified and checks them for offensive
 language.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai detect_offensive_language -t "convai_chitchat" --display-examples True
+```shell
+parlai detect_offensive_language -t "convai_chitchat" --display-examples True
+```
 """  # noqa: E501
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
@@ -79,6 +78,7 @@ def detect(opt):
         }
         text, log = log_time.log(report['exs'], world.num_examples(), log)
         logging.info(text)
+        return log
 
     def classify(text, stats):
         offensive = False
@@ -116,8 +116,7 @@ def detect(opt):
 
     if world.epoch_done():
         logging.info("epoch done")
-    report(world, stats)
-    return world.report()
+    return report(world, stats)
 
 
 @register_script('detect_offensive', hidden=True)

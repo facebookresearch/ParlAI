@@ -12,11 +12,12 @@ from parlai.utils.misc import round_sigfigs
 from parlai.core.message import Message
 from .modules import TransresnetMultimodalModel
 from projects.personality_captions.transresnet.transresnet import TransresnetAgent
+from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
 
 import torch
 from torch import optim
 import random
-import os
 import numpy as np
 import tqdm
 from collections import deque
@@ -81,9 +82,9 @@ class TransresnetMultimodalAgent(TransresnetAgent):
 
     def _build_model(self, path=None):
         init_model_path = None
-        if self.opt.get("init_model") and os.path.isfile(self.opt["init_model"]):
+        if self.opt.get("init_model") and PathManager.exists(self.opt["init_model"]):
             init_model_path = self.opt["init_model"]
-        elif self.opt.get("model_file") and os.path.isfile(self.opt["model_file"]):
+        elif self.opt.get("model_file") and PathManager.exists(self.opt["model_file"]):
             init_model_path = self.opt["model_file"]
         elif path is not None:
             init_model_path = path
@@ -103,14 +104,15 @@ class TransresnetMultimodalAgent(TransresnetAgent):
         self.fixed_cands = None
         self.fixed_cands_enc = None
         if self.fcp is not None:
-            with open(self.fcp) as f:
+            with PathManager.open(self.fcp) as f:
                 self.fixed_cands = [c.replace("\n", "") for c in f.readlines()]
             cands_enc_file = "{}.cands_enc".format(self.fcp)
             print("loading saved cand encodings")
-            if os.path.isfile(cands_enc_file):
-                self.fixed_cands_enc = torch.load(
-                    cands_enc_file, map_location=lambda cpu, _: cpu
-                )
+            if PathManager.exists(cands_enc_file):
+                with PathManager.open(cands_enc_file, 'rb') as f:
+                    self.fixed_cands_enc = torch.load(
+                        f, map_location=lambda cpu, _: cpu
+                    )
             else:
                 print("Extracting cand encodings")
                 self.model.eval()
@@ -131,7 +133,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
                     fixed_cands_enc.append(embedding)
                     pbar.update(50)
                 self.fixed_cands_enc = torch.cat(fixed_cands_enc, 0)
-                torch.save(self.fixed_cands_enc, cands_enc_file)
+                torch_utils.atomic_save(self.fixed_cands_enc, cands_enc_file)
 
     def share(self):
         """

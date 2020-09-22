@@ -11,6 +11,7 @@ import numpy as np
 from collections import Counter
 
 from parlai.core.agents import Agent
+from parlai.utils.io import PathManager
 from collections import defaultdict
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
@@ -131,7 +132,7 @@ class VqaDictionaryAgent(Agent):
                 self.tok2ind[self.unk_token] = index
                 self.ind2tok[index] = self.unk_token
 
-        if opt.get('dict_file') and os.path.isfile(opt['dict_file']):
+        if opt.get('dict_file') and PathManager.exists(opt['dict_file']):
             # load pre-existing dictionary
             self.load(opt['dict_file'])
 
@@ -274,7 +275,7 @@ class VqaDictionaryAgent(Agent):
         Initialize counts from other dictionary, or 0 if they aren't included.
         """
         print('Dictionary: loading dictionary from {}'.format(filename))
-        with open(filename) as read:
+        with PathManager.open(filename) as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
@@ -286,7 +287,7 @@ class VqaDictionaryAgent(Agent):
                     self.ind2tok[index] = token
         print('[ num ques words =  %d ]' % len(self.ind2tok))
 
-        with open(filename[:-5] + "_ans.dict") as read:
+        with PathManager.open(filename[:-5] + "_ans.dict") as read:
             for line in read:
                 split = line.strip().split('\t')
                 token = unescape(split[0])
@@ -325,13 +326,15 @@ class VqaDictionaryAgent(Agent):
         # if sort:
         #     self.sort()
 
-        with open(filename, 'a' if append else 'w') as write:
+        with PathManager.open(filename, 'a' if append else 'w') as write:
             for i in range(len(self.ind2tok)):
                 tok = self.ind2tok[i]
                 cnt = self.freq[tok]
                 write.write('{tok}\t{cnt}\n'.format(tok=escape(tok), cnt=cnt))
 
-        with open(filename[:-5] + "_ans.dict", 'a' if append else 'w') as write:
+        with PathManager.open(
+            filename[:-5] + "_ans.dict", 'a' if append else 'w'
+        ) as write:
             for i in range(len(self.ind2ans)):
                 tok = self.ind2ans[i]
                 cnt = self.ansfreq[tok]
@@ -436,12 +439,12 @@ class OeTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, annotation_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.ques = json.load(data_file)
 
         if not self.datatype.startswith('test'):
             print('loading: ' + annotation_path)
-            with open(annotation_path) as data_file:
+            with PathManager.open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
 
 

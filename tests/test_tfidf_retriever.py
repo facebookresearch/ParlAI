@@ -4,10 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
-from parlai.core.worlds import create_task
-from parlai.utils.logging import logger, ERROR
+from parlai.core.agents import create_agent_from_model_file
+import parlai.utils.testing as testing_utils
 
 import os
 import unittest
@@ -27,29 +25,24 @@ class TestTfidfRetriever(unittest.TestCase):
     """
 
     @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
-    def test_sparse_tfidf_retriever(self):
-        MODEL_FILE = '/tmp/tmp_test_babi'
-        DB_PATH = '/tmp/tmp_test_babi.db'
-        TFIDF_PATH = '/tmp/tmp_test_babi.tfidf'
-        # keep things quiet
-        logger.setLevel(ERROR)
-        try:
-            parser = ParlaiParser(True, True)
-            parser.set_defaults(
-                model='tfidf_retriever',
-                task='babi:task1k:1',
-                model_file=MODEL_FILE,
-                retriever_numworkers=4,
-                retriever_hashsize=2 ** 8,
-                datatype='train:ordered',
-                num_epochs=1,
+    def test_sparse_tfidf_multiworkers(self):
+        with testing_utils.tempdir() as tmpdir:
+            MODEL_FILE = os.path.join(tmpdir, 'tmp_test_babi')
+            testing_utils.train_model(
+                dict(
+                    model='tfidf_retriever',
+                    task='babi:task1k:1',
+                    model_file=MODEL_FILE,
+                    retriever_numworkers=4,
+                    retriever_hashsize=2 ** 8,
+                    retriever_tokenizer='simple',
+                    datatype='train:ordered',
+                    batchsize=1,
+                    num_epochs=1,
+                )
             )
-            opt = parser.parse_args([])
-            agent = create_agent(opt)
-            train_world = create_task(opt, agent)
-            # pass examples to dictionary
-            while not train_world.epoch_done():
-                train_world.parley()
+
+            agent = create_agent_from_model_file(MODEL_FILE)
 
             obs = {
                 'text': (
@@ -78,12 +71,102 @@ class TestTfidfRetriever(unittest.TestCase):
             agent.observe(new_example)
             reply = agent.act()
             assert reply['text'] == ANS
-        finally:
-            # clean up files
-            if os.path.exists(DB_PATH):
-                os.remove(DB_PATH)
-            if os.path.exists(TFIDF_PATH + '.npz'):
-                os.remove(TFIDF_PATH + '.npz')
+
+    @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
+    def test_sparse_tfidf_retriever_singlethread(self):
+        with testing_utils.tempdir() as tmpdir:
+            MODEL_FILE = os.path.join(tmpdir, 'tmp_test_babi')
+            testing_utils.train_model(
+                dict(
+                    model='tfidf_retriever',
+                    task='babi:task1k:1',
+                    model_file=MODEL_FILE,
+                    retriever_numworkers=1,
+                    retriever_hashsize=2 ** 8,
+                    retriever_tokenizer='simple',
+                    datatype='train:ordered',
+                    batchsize=1,
+                    num_epochs=1,
+                )
+            )
+
+            agent = create_agent_from_model_file(MODEL_FILE)
+
+            obs = {
+                'text': (
+                    'Mary moved to the bathroom. John went to the hallway. '
+                    'Where is Mary?'
+                ),
+                'episode_done': True,
+            }
+            agent.observe(obs)
+            reply = agent.act()
+            assert reply['text'] == 'bathroom'
+
+            ANS = 'The one true label.'
+            new_example = {
+                'text': 'A bunch of new words that are not in the other task, '
+                'which the model should be able to use to identify '
+                'this label.',
+                'labels': [ANS],
+                'episode_done': True,
+            }
+            agent.observe(new_example)
+            reply = agent.act()
+            assert 'text' in reply and reply['text'] == ANS
+
+            new_example.pop('labels')
+            agent.observe(new_example)
+            reply = agent.act()
+            assert reply['text'] == ANS
+
+    @unittest.skipIf(SKIP_TESTS, "Missing  Tfidf dependencies.")
+    def test_sparse_tfidf_retriever_regexp(self):
+        with testing_utils.tempdir() as tmpdir:
+            MODEL_FILE = os.path.join(tmpdir, 'tmp_test_babi')
+            testing_utils.train_model(
+                dict(
+                    model='tfidf_retriever',
+                    task='babi:task1k:1',
+                    model_file=MODEL_FILE,
+                    retriever_tokenizer='regexp',
+                    retriever_numworkers=4,
+                    retriever_hashsize=2 ** 8,
+                    datatype='train:ordered',
+                    batchsize=1,
+                    num_epochs=1,
+                )
+            )
+
+            agent = create_agent_from_model_file(MODEL_FILE)
+
+            obs = {
+                'text': (
+                    'Mary moved to the bathroom. John went to the hallway. '
+                    'Where is Mary?'
+                ),
+                'episode_done': True,
+            }
+            agent.observe(obs)
+            reply = agent.act()
+            assert reply['text'] == 'bathroom'
+
+            ANS = 'The one true label.'
+            new_example = {
+                'text': 'A bunch of new words that are not in the other task, '
+                'which the model should be able to use to identify '
+                'this label.',
+                'labels': [ANS],
+                'episode_done': True,
+            }
+            agent.observe(new_example)
+            reply = agent.act()
+            assert 'text' in reply and reply['text'] == ANS
+
+            new_example.pop('labels')
+            agent.observe(new_example)
+            reply = agent.act()
+            assert reply['text'] == ANS
 
 
 if __name__ == '__main__':

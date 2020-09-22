@@ -18,6 +18,7 @@ import regex as re
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -31,7 +32,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             data_path = tmpdir
-            os.makedirs(os.path.join(data_path, 'ImageTeacher'))
+            PathManager.mkdirs(os.path.join(data_path, 'ImageTeacher'))
 
             opt = {
                 'task': 'integration_tests:ImageTeacher',
@@ -54,7 +55,7 @@ class TestAbstractImageTeacher(unittest.TestCase):
         """
         self._test_display_output('no_image_model')
 
-    @testing_utils.skipUnlessTorch14
+    @testing_utils.skipUnlessVision
     @testing_utils.skipUnlessGPU
     def test_display_data_resnet(self):
         """
@@ -70,7 +71,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.txt")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write('id:test_file\ttext:input\tlabels:good label\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
             testing_utils.display_data(opt)
@@ -81,7 +82,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.txt")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write('id:test_file\ttext:input\teval_labels:bad label\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(ValueError):
@@ -90,7 +91,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
     def test_no_text(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.txt")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write('id:test_file\tlabels:bad label\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(ValueError):
@@ -99,7 +100,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
     def test_no_labels(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.txt")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write('id:test_file\ttext:bad text\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(ValueError):
@@ -108,7 +109,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
     def test_one_episode(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.txt")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 for _ in range(1000):
                     f.write('id:test_file\ttext:placeholder\tlabels:placeholder\n\n')
             opt = {'task': 'fromfile', 'fromfile_datapath': fp, 'display_verbose': True}
@@ -120,7 +121,7 @@ class TestParlAIDialogTeacher(unittest.TestCase):
             # invert the logic of the assertion
             with self.assertRaises(self.failureException):
                 fp = os.path.join(tmpdir, "goodfile.txt")
-                with open(fp, "w") as f:
+                with PathManager.open(fp, "w") as f:
                     for _ in range(1000):
                         f.write(
                             'id:test_file\ttext:placeholder\tlabels:placeholder\tepisode_done:True\n\n'
@@ -142,34 +143,34 @@ class TestConversationTeacher(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.jsonl")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
-            opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            opt = {'task': 'jsonfile', 'jsonfile_datapath': fp, 'display_verbose': True}
             testing_utils.display_data(opt)
 
     def test_no_text(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "badfile.jsonl")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
-            opt = {'task': 'jsonfile', 'fromfile_datapath': fp, 'display_verbose': True}
+            opt = {'task': 'jsonfile', 'jsonfile_datapath': fp, 'display_verbose': True}
             with self.assertRaises(AttributeError):
                 testing_utils.display_data(opt)
 
     def test_firstspeaker_label(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.jsonl")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
             opt = {
                 'task': 'jsonfile',
-                'fromfile_datapath': fp,
+                'jsonfile_datapath': fp,
                 'display_verbose': True,
                 'label_turns': 'firstspeaker',
             }
@@ -192,13 +193,13 @@ class TestConversationTeacher(unittest.TestCase):
     def test_secondspeaker_label(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.jsonl")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
             opt = {
                 'task': 'jsonfile',
-                'fromfile_datapath': fp,
+                'jsonfile_datapath': fp,
                 'display_verbose': True,
                 'label_turns': 'secondspeaker',
             }
@@ -221,13 +222,13 @@ class TestConversationTeacher(unittest.TestCase):
     def test_both_label(self):
         with testing_utils.tempdir() as tmpdir:
             fp = os.path.join(tmpdir, "goodfile.jsonl")
-            with open(fp, "w") as f:
+            with PathManager.open(fp, "w") as f:
                 f.write(
                     '{"dialog": [[{"text": "Hi.", "id": "speaker1"}, {"text": "Hello.", "id": "speaker2"}]]}\n'
                 )
             opt = {
                 'task': 'jsonfile',
-                'fromfile_datapath': fp,
+                'jsonfile_datapath': fp,
                 'display_verbose': True,
                 'label_turns': 'both',
             }
@@ -259,7 +260,7 @@ class TestChunkTeacher(unittest.TestCase):
 
     def test_no_batched(self):
         valid, test = testing_utils.eval_model(
-            dict(task='integration_tests:chunky', model='repeat_label',),
+            dict(task='integration_tests:chunky', model='repeat_label'),
             valid_datatype='valid:stream',
             test_datatype='test:stream',
         )

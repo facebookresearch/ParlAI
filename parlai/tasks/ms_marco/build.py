@@ -9,6 +9,7 @@ import json
 import os
 import tqdm
 import parlai.core.build_data as build_data
+from parlai.utils.io import PathManager
 from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
@@ -34,7 +35,7 @@ RESOURCES = [
 
 
 def read_file(filename):
-    with open(filename) as f:
+    with PathManager.open(filename) as f:
         lines = [x for x in f.readlines()]
     return lines
 
@@ -66,12 +67,12 @@ def create_fb_format(outpath, dtype, inpath):
     episodes = list(convert_file(inpath))
 
     # save the raw json version for span selection task (default)
-    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout1:
+    with PathManager.open(os.path.join(outpath, dtype + '.txt'), 'w') as fout1:
         for ep in episodes:
             fout1.write(json.dumps(ep) + "\n")
 
     # save the file for passage selection task
-    with open(os.path.join(outpath, dtype + '.passage.txt'), 'w') as fout2:
+    with PathManager.open(os.path.join(outpath, dtype + '.passage.txt'), 'w') as fout2:
         for dic in episodes:
             lq = dic["query"]
             if dtype != "test":
@@ -111,11 +112,11 @@ def build(opt):
             downloadable_file.download_file(dpath)
 
         create_fb_format(dpath, "train", os.path.join(dpath, 'train.gz'))
-        # os.remove(os.path.join(dpath, 'train.gz'))
+        # PathManager.rm(os.path.join(dpath, 'train.gz'))
         create_fb_format(dpath, "valid", os.path.join(dpath, 'valid.gz'))
-        # os.remove(os.path.join(dpath, 'valid.gz'))
+        # PathManager.rm(os.path.join(dpath, 'valid.gz'))
         create_fb_format(dpath, "test", os.path.join(dpath, 'test.gz'))
-        # os.remove(os.path.join(dpath, 'test.gz'))
+        # PathManager.rm(os.path.join(dpath, 'test.gz'))
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

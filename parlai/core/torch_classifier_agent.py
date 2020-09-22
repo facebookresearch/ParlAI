@@ -10,12 +10,13 @@ Torch Classifier Agents classify text into a fixed set of labels.
 
 
 from parlai.core.opt import Opt
-from parlai.utils.torch import PipelineHelper
+from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict
 from parlai.utils.typing import TScalar
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 
@@ -301,7 +302,7 @@ class TorchClassifierAgent(TorchAgent):
             )
         if not shared:
             if opt['classes_from_file'] is not None:
-                with open(opt['classes_from_file']) as f:
+                with PathManager.open(opt['classes_from_file']) as f:
                     self.class_list = f.read().splitlines()
             else:
                 self.class_list = opt['classes']
@@ -348,12 +349,20 @@ class TorchClassifierAgent(TorchAgent):
                 self.load(init_model)
             if self.use_cuda:
                 if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
+                    ph = PipelineHelper()
+                    ph.check_compatibility(self.opt)
+                    self.model = ph.make_parallel(self.model)
                 else:
                     self.model.cuda()
                 if self.data_parallel:
                     self.model = torch.nn.DataParallel(self.model)
                 self.criterion.cuda()
+
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
 
         if shared:
             # We don't use get here because hasattr is used on optimizer later.
@@ -478,7 +487,6 @@ class TorchClassifierAgent(TorchAgent):
             # choose ref class if Prob(ref class) > threshold
             prediction_id = (ref_prob <= self.threshold).to(torch.int64)
         preds = [self.class_list[idx] for idx in prediction_id]
-
         if batch.labels is None or self.opt['ignore_labels']:
             # interactive mode
             if self.opt.get('print_scores', False):
@@ -491,7 +499,7 @@ class TorchClassifierAgent(TorchAgent):
             self._update_confusion_matrix(batch, preds)
 
         if self.opt.get('print_scores', False):
-            return Output(preds, probs=probs.cpu())
+            return Output(preds, class_list=[self.class_list], probs=probs.cpu())
         else:
             return Output(preds)
 

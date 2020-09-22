@@ -26,7 +26,7 @@ IMAGE_MODE_TO_DIM = {
 }
 
 
-@testing_utils.skipUnlessTorch
+@testing_utils.skipUnlessVision
 @testing_utils.skipUnlessGPU
 class TestImageLoader(unittest.TestCase):
     """

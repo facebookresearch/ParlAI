@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import os
@@ -45,14 +46,14 @@ class SummariesTeacher(DialogTeacher):
 
         qa_pairs = dict()
 
-        with open(qa_path, 'r') as f:
+        with PathManager.open(qa_path, 'r') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 if row['document_id'] not in qa_pairs:
                     qa_pairs[row['document_id']] = []
                 qa_pairs[row['document_id']].append(row)
 
-        with open(summaries_path, 'r') as f:
+        with PathManager.open(summaries_path, 'r') as f:
             reader = csv.DictReader(f)
 
             for row in reader:
@@ -93,14 +94,14 @@ class DefaultTeacher(DialogTeacher):
             % len(glob.glob(os.path.join(stories_base_path, "*.content")))
         )
 
-        with open(qa_path, 'r') as f:
+        with PathManager.open(qa_path, 'r') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 if row['document_id'] not in qa_pairs:
                     qa_pairs[row['document_id']] = []
                 qa_pairs[row['document_id']].append(row)
 
-        with open(documents_path, 'r') as f:
+        with PathManager.open(documents_path, 'r') as f:
             reader = csv.DictReader(f)
 
             for row in reader:
@@ -112,7 +113,9 @@ class DefaultTeacher(DialogTeacher):
                     continue
 
                 story = None
-                with open(story_path, 'r', encoding='utf-8', errors='ignore') as f:
+                with PathManager.open(
+                    story_path, 'r', encoding='utf-8', errors='ignore'
+                ) as f:
                     story = f.read().strip()
 
                 info = 'Title:  %s' % row['wiki_title']

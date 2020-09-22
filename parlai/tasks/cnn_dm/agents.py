@@ -8,6 +8,7 @@
 
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import unicodedata
@@ -62,7 +63,7 @@ class CNNDMTeacher(DialogTeacher):
 
         print('loading: ' + input_path)
 
-        with open(input_path) as stories_file:
+        with PathManager.open(input_path) as stories_file:
             for story in stories_file:
                 try:
                     story_file = open(os.path.join(self.datapath, story.strip()))

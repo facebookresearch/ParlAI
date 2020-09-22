@@ -40,14 +40,15 @@ This module also provides a utility method:
     ``MultiTaskTeacher``.
 """
 
+import copy
+
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
 from parlai.core.loader import register_agent  # noqa: F401
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
-import copy
-import os
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 NOCOPY_ARGS = [
@@ -205,7 +206,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
         return
     opt['init_model'] = modelzoo_path(opt['datapath'], opt['init_model'])
     optfile = opt['init_model'] + '.opt'
-    if not os.path.isfile(optfile):
+    if not PathManager.exists(optfile):
         return
     init_model_opt = Opt.load(optfile)
 
@@ -294,7 +295,7 @@ def create_agent_from_opt_file(opt: Opt):
     model_file = opt['model_file']
     optfile = model_file + '.opt'
 
-    if not os.path.isfile(optfile):
+    if not PathManager.exists(optfile):
         return None
 
     opt_from_file = Opt.load(optfile)
@@ -327,13 +328,14 @@ def create_agent_from_opt_file(opt: Opt):
 
     # update dict file path
     if not opt_from_file.get('dict_file'):
+        old_dict_file = None
         opt_from_file['dict_file'] = model_file + '.dict'
-    elif opt_from_file.get('dict_file') and not os.path.isfile(
+    elif opt_from_file.get('dict_file') and not PathManager.exists(
         opt_from_file['dict_file']
     ):
         old_dict_file = opt_from_file['dict_file']
         opt_from_file['dict_file'] = model_file + '.dict'
-    if not os.path.isfile(opt_from_file['dict_file']):
+    if not PathManager.exists(opt_from_file['dict_file']):
         warn_once(
             'WARNING: Neither the specified dict file ({}) nor the '
             '`model_file`.dict file ({}) exists, check to make sure either '
@@ -384,7 +386,7 @@ def create_agent(opt: Opt, requireModelExists=False):
 
     if opt.get('model_file'):
         opt['model_file'] = modelzoo_path(opt.get('datapath'), opt['model_file'])
-        if requireModelExists and not os.path.isfile(opt['model_file']):
+        if requireModelExists and not PathManager.exists(opt['model_file']):
             raise RuntimeError(
                 'WARNING: Model file does not exist, check to make '
                 'sure it is correct: {}'.format(opt['model_file'])

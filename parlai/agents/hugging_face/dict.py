@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 
+import os
+
 # Copyright (c) Facebook, Inc. and its affiliates.
+from abc import ABC, abstractmethod
+
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.dict import DictionaryAgent
+
 
 try:
     from transformers import GPT2Tokenizer
 except ImportError:
     raise ImportError(
-        'Need to install Hugging Face transformers repository. '
-        'Try `pip install transformers`.'
+        "Need to install Hugging Face transformers repository. "
+        "Try `pip install transformers`."
     )
-from abc import ABC, abstractmethod
 
-SPECIAL_TOKENS = {
-    "bos_token": "<bos>",
-    "eos_token": "<eos>",
-    "pad_token": "<pad>",
-}
+SPECIAL_TOKENS = {"bos_token": "<bos>", "eos_token": "<eos>", "pad_token": "<pad>"}
 
 NO_OP = "x"
 
@@ -74,17 +74,26 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         """
         Instantiate tokenizer.
         """
-        model_sz = opt['gpt2_size']
-        if model_sz == 'small':
-            fle_key = 'gpt2'
-        elif model_sz == 'distilgpt2':
-            fle_key = 'distilgpt2'
+        # check if datapath has the files that hugging face code looks for
+        if all(
+            os.path.isfile(
+                os.path.join(opt["datapath"], "models", "gpt2_hf", file_name)
+            )
+            for file_name in ["merges.txt", "vocab.json"]
+        ):
+            fle_key = os.path.join(opt["datapath"], "models", "gpt2_hf")
         else:
-            fle_key = f'gpt2-{model_sz}'
+            model_sz = opt["gpt2_size"]
+            if model_sz == "small":
+                fle_key = "gpt2"
+            elif model_sz == "distilgpt2":
+                fle_key = "distilgpt2"
+            else:
+                fle_key = f"gpt2-{model_sz}"
         return GPT2Tokenizer.from_pretrained(fle_key)
 
     def _define_special_tokens(self, opt):
-        if opt['add_special_tokens']:
+        if opt["add_special_tokens"]:
             # Add addtional start/end/pad tokens
             self.tokenizer.add_special_tokens(SPECIAL_TOKENS)
             self.start_token = SPECIAL_TOKENS["bos_token"]
@@ -111,3 +120,13 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         self.ind2tok[self.end_idx] = self.end_token
         self.ind2tok[self.start_idx] = self.start_token
         self.ind2tok[self.null_idx] = self.null_token
+
+
+class DialoGPTDictionaryAgent(Gpt2DictionaryAgent):
+    def get_tokenizer(self, opt):
+        """
+        Instantiate tokenizer.
+        """
+        model_sz = opt["gpt2_size"]
+        fle_key = f"microsoft/DialoGPT-{model_sz}"
+        return GPT2Tokenizer.from_pretrained(fle_key)

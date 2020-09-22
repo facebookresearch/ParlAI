@@ -6,6 +6,7 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
+from parlai.utils.io import PathManager
 import os
 import json
 
@@ -43,7 +44,7 @@ class CommonSenseQATeacher(FixedDialogTeacher):
         else:
             raise ValueError('Datatype not train, test, or valid')
         episodes = []
-        with open(dpath) as f:
+        with PathManager.open(dpath) as f:
             for line in f:
                 episodes.append(json.loads(line))
         # There are 1221 episodes in the test set. Making the valid set this

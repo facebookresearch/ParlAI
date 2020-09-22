@@ -14,7 +14,6 @@ import bz2
 import io
 import json
 import lzma
-import os
 import re
 import requests
 import subprocess
@@ -27,6 +26,7 @@ from time import sleep, time
 from collections import defaultdict
 from parlai.core.params import ParlaiParser
 from data_utils import word_url_tokenize
+from parlai.utils.io import PathManager
 
 REDDIT_URL = "https://files.pushshift.io/reddit/"
 API_URL = "https://api.pushshift.io/reddit/"
@@ -101,7 +101,7 @@ def download_and_process(file_url, mode, subreddit_names, st_time, output_dir):
                 fh.close()
             else:
                 f.close()
-            os.remove(f_name)
+            PathManager.rm(f_name)
             tries_left = 0
 
         except EOFError:
@@ -109,7 +109,7 @@ def download_and_process(file_url, mode, subreddit_names, st_time, output_dir):
             print(
                 "failed reading file %s file, another %d tries" % (f_name, tries_left)
             )
-            os.remove(f_name)
+            PathManager.rm(f_name)
             tries_left -= 1
     print("tokenizing and selecting %s %2f" % (f_name, time() - st_time))
     processed_items = dict([(name, []) for name in subreddit_names])
@@ -428,7 +428,7 @@ def main():
 
     # get specific reddit posts
     if opt['id_list']:
-        with open(opt['id_list']) as f:
+        with PathManager.open(opt['id_list']) as f:
             post_ids = json.load(f)
         sr_names = None
         if not opt['answers_only']:

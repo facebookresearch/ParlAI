@@ -11,6 +11,7 @@ import tempfile
 import subprocess
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 
 # Constants
 END_OF_CONVO = "EOC"
@@ -164,7 +165,7 @@ def pre_process(fname, num_ex, alt_speaker):
     :return: List of tuples of the form: (speaker, speech)
     """
     conversation = []
-    with open(fname) as f:
+    with PathManager.open(fname) as f:
         lines = f.readlines()
         random.shuffle(lines)
         lines = lines[:num_ex]
@@ -172,11 +173,9 @@ def pre_process(fname, num_ex, alt_speaker):
             data = json.loads(line)
             dialogue = data["dialog"]
             for item in dialogue:
-                if item["speaker"] == "human_evaluator":
-                    speaker = "human"
-                else:
-                    speaker = alt_speaker
-                conversation += [(speaker, item["text"])]
+                speaker = item[0]['id']
+                text = item[0]['text']
+                conversation += [(speaker, text)]
             conversation += [(END_OF_CONVO, END_OF_CONVO)]
 
     return conversation
@@ -281,7 +280,7 @@ def validate_args(opt):
 
     :return: Returns extension of output file. None if no output file
     """
-    if not os.path.exists(opt['input']):
+    if not PathManager.exists(opt['input']):
         raise IOError("Input File does not exist")
     if opt['output'] is None:
         return None
@@ -299,7 +298,7 @@ def render_convo(opt):
     # Run
     opt.log()
     extension = validate_args(opt)
-    input_file, output_file = opt['intput'], opt['output']
+    input_file, output_file = opt['input'], opt['output']
     height, width = opt['height'], opt['width']
     alt_speaker = input_file.split('/')[-1][:-6]
 
@@ -322,31 +321,29 @@ def render_convo(opt):
         )
         if extension == "html":
             # save to output
-            file_handle = open(output_file, "w")
-            file_handle.write(html_str)
-            file_handle.close()
+            with PathManager.open(output_file, "w") as file_handle:
+                file_handle.write(html_str)
         else:
             # create temp dir
             with tempfile.TemporaryDirectory() as tmpdir:
                 fname = tmpdir + "/interim.html"  # save html to interim.html in tmpdir
-                file_handle = open(fname, "w")
-                file_handle.write(html_str)
-                if extension == "pdf":
-                    cmd = (
-                        f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp"
-                        f"--print-to-pdf=\"{output_file}\" {fname}"
+                with PathManager.open(fname, "w") as file_handle:
+                    file_handle.write(html_str)
+                    if extension == "pdf":
+                        cmd = (
+                            f"{CHROME_PATH} --headless --crash-dumps-dir=/tmp"
+                            f"--print-to-pdf=\"{output_file}\" {fname}"
+                        )
+                    else:
+                        cmd = (
+                            f"{CHROME_PATH} --headless --hide-scrollbars"
+                            f"--crash-dumps-dir=/tmp --window-size"
+                            f"={opt['width'] * 100},{opt['height'] * 100}"
+                            f"--screenshot=\"{output_file}\" {fname}"
+                        )
+                    subprocess.run(
+                        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
                     )
-                else:
-                    cmd = (
-                        f"{CHROME_PATH} --headless --hide-scrollbars"
-                        f"--crash-dumps-dir=/tmp --window-size"
-                        f"={opt['width'] * 100},{opt['height'] * 100}"
-                        f"--screenshot=\"{output_file}\" {fname}"
-                    )
-                subprocess.run(
-                    cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
-                )
-                file_handle.close()
 
 
 @register_script('convo_render', hidden=True)

@@ -24,6 +24,7 @@ from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 from parlai.utils.torch import (
     padded_3d,
     total_parameters,
@@ -213,7 +214,9 @@ class TorchRankerAgent(TorchAgent):
 
             if self.use_cuda:
                 if self.model_parallel:
-                    self.model = PipelineHelper().make_parallel(self.model)
+                    ph = PipelineHelper()
+                    ph.check_compatibility(self.opt)
+                    self.model = ph.make_parallel(self.model)
                 else:
                     self.model.cuda()
                 if self.data_parallel:
@@ -307,7 +310,7 @@ class TorchRankerAgent(TorchAgent):
 
     def get_task_candidates_path(self):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
-        if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
+        if PathManager.exists(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
             return path
         logging.warn(f'Building candidates file as they do not exist: {path}')
         from parlai.scripts.build_candidates import build_cands
@@ -904,10 +907,10 @@ class TorchRankerAgent(TorchAgent):
                         cand_path = self.fixed_candidates_path
                 # Load candidates
                 logging.info(f"Loading fixed candidate set from {cand_path}")
-                with open(cand_path, 'r', encoding='utf-8') as f:
+                with PathManager.open(cand_path, 'r', encoding='utf-8') as f:
                     cands = [line.strip() for line in f.readlines()]
                 # Load or create candidate vectors
-                if os.path.isfile(self.opt['fixed_candidate_vecs']):
+                if PathManager.exists(self.opt['fixed_candidate_vecs']):
                     vecs_path = opt['fixed_candidate_vecs']
                     vecs = self.load_candidates(vecs_path)
                 else:
@@ -918,7 +921,7 @@ class TorchRankerAgent(TorchAgent):
                     vecs_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'vecs'])
                     )
-                    if setting == 'reuse' and os.path.isfile(vecs_path):
+                    if setting == 'reuse' and PathManager.exists(vecs_path):
                         vecs = self.load_candidates(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
                         vecs = self._make_candidate_vecs(cands)
@@ -935,7 +938,7 @@ class TorchRankerAgent(TorchAgent):
                     enc_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'encs'])
                     )
-                    if setting == 'reuse' and os.path.isfile(enc_path):
+                    if setting == 'reuse' and PathManager.exists(enc_path):
                         encs = self.load_candidates(enc_path, cand_type='encodings')
                     else:
                         encs = self._make_candidate_encs(self.fixed_candidate_vecs)
@@ -962,7 +965,8 @@ class TorchRankerAgent(TorchAgent):
         Load fixed candidates from a path.
         """
         logging.info(f"Loading fixed candidate set {cand_type} from {path}")
-        return torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            return torch.load(f, map_location=lambda cpu, _: cpu)
 
     def _make_candidate_vecs(self, cands):
         """
@@ -984,7 +988,7 @@ class TorchRankerAgent(TorchAgent):
         Save cached vectors.
         """
         logging.info(f"Saving fixed candidate set {cand_type} to {path}")
-        with open(path, 'wb') as f:
+        with PathManager.open(path, 'wb') as f:
             torch.save(vecs, f)
 
     def encode_candidates(self, padded_cands):

@@ -32,9 +32,9 @@ class TestImport(unittest.TestCase):
         assert DialogTeacher
 
     def test_import_fbdialog(self):
-        from parlai.core.teachers import FbDialogTeacher
+        from parlai.core.teachers import FbDeprecatedDialogTeacher
 
-        assert FbDialogTeacher
+        assert FbDeprecatedDialogTeacher
 
 
 if __name__ == '__main__':

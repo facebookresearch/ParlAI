@@ -7,12 +7,11 @@
 Verify data doesn't have basic mistakes, like empty text fields or empty label
 candidates.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai verify_data -t convai2 -dt train:ordered
+```shell
+parlai verify_data -t convai2 -dt train:ordered
+```
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
@@ -129,15 +128,17 @@ def verify(opt):
             f'Loaded {world.num_episodes()} episodes with a '
             f'total of {world.num_examples()} examples'
         )
-    except Exception:
+    except AttributeError:
         pass
 
-    return report(world, counts, log_time)
+    counts['exs'] = int(world.report()['exs'])
+    return counts
 
 
-def verify_data(opt, parser):
-    report_text, report_log = verify(parser.parse_args())
-    print(report_text)
+def verify_data(opt):
+    counts = verify(opt)
+    print(counts)
+    return counts
 
 
 @register_script('verify_data', hidden=True)
@@ -147,7 +148,7 @@ class VerifyData(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return verify_data(self.opt, self.parser)
+        return verify_data(self.opt)
 
 
 if __name__ == '__main__':

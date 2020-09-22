@@ -12,9 +12,6 @@ Adapted from Adam Fisch's work at github.com/facebookresearch/DrQA/
 import numpy as np
 import scipy.sparse as sp
 
-from multiprocessing.pool import ThreadPool
-from functools import partial
-
 from . import utils
 from . import tokenizers
 from parlai.utils.logging import logger
@@ -45,12 +42,6 @@ class TfidfDocRanker(object):
         self.num_docs = self.doc_mat.shape[1] - 1
         self.strict = strict
 
-    def get_doc_index(self, doc_id):
-        """
-        Convert doc_id --> doc_index.
-        """
-        return self.doc_dict[0][doc_id] if self.doc_dict else doc_id
-
     def get_doc_id(self, doc_index):
         """
         Convert doc_index --> doc_id.
@@ -76,17 +67,6 @@ class TfidfDocRanker(object):
         doc_scores = res.data[o_sort]
         doc_ids = res.indices[o_sort]
         return doc_ids, doc_scores
-
-    def batch_closest_docs(self, queries, k=1, num_workers=None):
-        """
-        Process a batch of closest_docs requests multithreaded.
-
-        Note: we can use plain threads here as scipy is outside of the GIL.
-        """
-        with ThreadPool(num_workers) as threads:
-            closest_docs = partial(self.closest_docs, k=k)
-            results = threads.map(closest_docs, queries)
-        return results
 
     def parse(self, query):
         """

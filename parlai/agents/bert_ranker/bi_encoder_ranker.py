@@ -6,6 +6,7 @@
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.utils.torch import padded_3d
 from parlai.zoo.bert.build import download
+from parlai.utils.io import PathManager
 
 from .bert_dictionary import BertDictionaryAgent
 from .helpers import (
@@ -101,7 +102,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                     "".format(len(self.vocab_candidates))
                 )
                 enc_path = self.opt.get('model_file') + '.vocab.encs'
-                if os.path.isfile(enc_path):
+                if PathManager.exists(enc_path):
                     self.vocab_candidate_encs = self.load_candidates(
                         enc_path, cand_type='vocab encodings'
                     )

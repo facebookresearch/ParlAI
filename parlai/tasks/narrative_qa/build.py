@@ -12,6 +12,7 @@ import shutil
 import csv
 import time
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -35,7 +36,7 @@ def read_csv_to_dict_list(filepath):
 def write_dict_list_to_csv(dict_list, filepath):
     keys = list(dict_list[0].keys())
 
-    with open(filepath, 'w') as f:
+    with PathManager.open(filepath, 'w') as f:
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
 
@@ -84,7 +85,7 @@ def try_downloading(directory, row):
 
     actual_story_size = 0
     if os.path.exists(story_path):
-        with open(story_path, 'rb') as f:
+        with PathManager.open(story_path, 'rb') as f:
             actual_story_size = len(f.read())
 
     if actual_story_size <= 19000:
@@ -111,7 +112,7 @@ def download_stories(path):
     tmp_dir = os.path.join(path, 'tmp')
     build_data.make_dir(tmp_dir)
 
-    with open(documents_csv, 'r') as f:
+    with PathManager.open(documents_csv, 'r') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
             print("Downloading %s (%s)" % (row['wiki_title'], row['document_id']))

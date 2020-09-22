@@ -6,6 +6,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 import parlai.core.build_data as build_data
 import os
 import json
@@ -57,7 +58,7 @@ def _handle_data_point(data_point):
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
-    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
+    with PathManager.open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
         for data_point in data:
             fout.write(_handle_data_point(data_point))
 
@@ -76,15 +77,15 @@ def build(opt):
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(dpath)
 
-        with open(os.path.join(dpath, TRAIN_FILENAME)) as f:
+        with PathManager.open(os.path.join(dpath, TRAIN_FILENAME)) as f:
             data = json.load(f)
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, DEV_DISTRACTOR_FILENAME)) as f:
+        with PathManager.open(os.path.join(dpath, DEV_DISTRACTOR_FILENAME)) as f:
             data = json.load(f)
             make_parlai_format(dpath, 'valid_distractor', data)
 
-        with open(os.path.join(dpath, DEV_FULLWIKI_FILENAME)) as f:
+        with PathManager.open(os.path.join(dpath, DEV_FULLWIKI_FILENAME)) as f:
             data = json.load(f)
             make_parlai_format(dpath, 'valid_fullwiki', data)
 

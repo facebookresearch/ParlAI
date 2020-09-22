@@ -9,6 +9,7 @@ import parlai.core.build_data as build_data
 import os
 import json
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -80,7 +81,7 @@ def _handle_paragraph(each):
 
 def make_parlai_format(outpath, dtype, data):
     print('building parlai:' + dtype)
-    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
+    with PathManager.open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
         for line in data:
             for each in line['paragraphs']:
                 fout.write(_handle_paragraph(each))
@@ -101,11 +102,11 @@ def build(opt):
         for downloadable_file in RESOURCES:
             downloadable_file.download_file(dpath)
 
-        with open(os.path.join(dpath, RESOURCES[0].file_name)) as f:
+        with PathManager.open(os.path.join(dpath, RESOURCES[0].file_name)) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'train', data)
 
-        with open(os.path.join(dpath, RESOURCES[1].file_name)) as f:
+        with PathManager.open(os.path.join(dpath, RESOURCES[1].file_name)) as f:
             data = json.load(f)['data']
             make_parlai_format(dpath, 'valid', data)
 

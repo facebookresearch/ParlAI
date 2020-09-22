@@ -13,6 +13,7 @@ from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 import math
 import json
@@ -80,7 +81,7 @@ def setup_args(parser=None):
 def _run_self_chat_episode(opt, world, world_logger):
     bsz = opt.get('batchsize', 1)
     num_turns = opt['selfchat_max_turns']
-
+    assert bsz == 1, "Batch size cannot be different than 1 for self-chat"
     num_parleys = math.ceil(num_turns / bsz)
     for _ in range(num_parleys):
         world.parley()
@@ -111,7 +112,7 @@ def self_chat(opt):
         # Self chat with different models
         if partner_opt_file:
             print(f"WARNING: Loading override opts from: {partner_opt_file}")
-            with open(partner_opt_file) as f:
+            with PathManager.open(partner_opt_file) as f:
                 partner_opt = json.load(f)
         else:
             partner_opt = {}
