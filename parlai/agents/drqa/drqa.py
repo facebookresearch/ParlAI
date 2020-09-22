@@ -44,10 +44,6 @@ from .model import DocReaderModel
 
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    """
-    Override DictionaryAgent to use spaCy tokenizer.
-    """
-
     @staticmethod
     def add_cmdline_args(argparser):
         group = DictionaryAgent.add_cmdline_args(argparser)
@@ -57,7 +53,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
             default=True,
             help='Use only words found in provided embedding_file',
         )
-        group.set_defaults(dict_tokenizer='spacy')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -156,7 +151,8 @@ class DrqaAgent(Agent):
 
     def _init_from_saved(self, fname):
         print('[ Loading model %s ]' % fname)
-        saved_params = torch.load(fname, map_location=lambda storage, loc: storage)
+        with PathManager.open(fname, 'rb') as f:
+            saved_params = torch.load(f, map_location=lambda storage, loc: storage)
         if 'word_dict' in saved_params:
             # for compatibility with old saves
             self.word_dict.copy_dict(saved_params['word_dict'])

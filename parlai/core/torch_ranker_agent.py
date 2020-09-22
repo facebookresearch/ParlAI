@@ -965,7 +965,8 @@ class TorchRankerAgent(TorchAgent):
         Load fixed candidates from a path.
         """
         logging.info(f"Loading fixed candidate set {cand_type} from {path}")
-        return torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            return torch.load(f, map_location=lambda cpu, _: cpu)
 
     def _make_candidate_vecs(self, cands):
         """

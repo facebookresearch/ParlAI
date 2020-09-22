@@ -590,7 +590,7 @@ def download_multiprocess(
             error_path, 'parlai_download_multiprocess_errors_%s.log' % now
         )
 
-        with PathManager.open(os.path.join(error_filename), 'w+') as error_file:
+        with PathManager.open(os.path.join(error_filename), 'w') as error_file:
             error_file.write(json.dumps(collected_errors))
             logging.error(f'Summary of errors written to {error_filename}')
 

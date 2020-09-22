@@ -1109,9 +1109,20 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1908.06083"},
     },
     {
-        "id": "MultiWOZ",
-        "display_name": "MultiWOZ",
-        "task": "multiwoz",
+        "id": "MultiWOZv2.0",
+        "display_name": "MultiWOZ 2.0",
+        "task": "multiwoz_v20",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+        ),
+        "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
+    },
+    {
+        "id": "MultiWOZv2.1",
+        "display_name": "MultiWOZ 2.1",
+        "task": "multiwoz_v21",
         "tags": ["All", "Goal"],
         "description": (
             "A fully labeled collection of human-written conversations spanning"
@@ -1286,6 +1297,16 @@ task_list = [
             "The Schema-Guided Dialogue (SGD) dataset consists of over 20k "
             "annotated multi-domain, task-oriented conversations between a "
             "human and a virtual assistant."
+        ),
+    },
+    {
+        "id": "TaskMaster2",
+        "display_name": "TaskMaster2",
+        "task": "taskmaster2",
+        "tags": ["All", "Goal"],
+        "description": (
+            "The second version of TaskMaster, containing Wizard-of-Oz dialogues "
+            "for task oriented dialogue in 7 domains."
         ),
     },
 ]

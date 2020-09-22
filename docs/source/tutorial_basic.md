@@ -171,15 +171,13 @@ Another simple world we include is MultiAgentDialogWorld, which is
 similar but generalizes this to cycle between any number of agents in a
 round robin fashion.
 
-### Advanced Worlds
+:::{note} Advanced Worlds
+We also include a few more advanced "container" worlds: in particular, we
+include both a BatchWorld and a DynamicBatchWorld. These worlds may be used when
+certain options are sent. See the [Worlds](tutorial_worlds) tutorial to
+understand how these work.
+:::
 
-We also include a few more advanced "container" worlds: in particular,
-we include both a BatchWorld and a HogwildWorld. These worlds are
-automatically used when either the `numthreads` parameter or the
-`batchsize` parameter are set to greater than one. Some extra
-functionality is needed to get these to work on the side of both the
-teacher and the learner, but we'll cover that in a different tutorial
-(see: tutorial\_worlds).
 
 Using ParlAI
 ------------
@@ -187,7 +185,7 @@ Using ParlAI
 ### Concepts in Action: Simple Display Data Script
 
 Now that we understand the basics, let's set up a simple script which
-displays any specified task. A complete version of this for utility is
+displays any specified task. A complete version of this utility is
 included at `parlai/scripts/display_data.py`, but we'll do this from
 scratch to demonstrate the concepts we just introduced.
 

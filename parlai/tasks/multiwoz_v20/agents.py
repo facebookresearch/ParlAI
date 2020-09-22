@@ -16,14 +16,14 @@ def _path(opt):
     build(opt)
 
     # set up path to data (specific to each dataset)
-    jsons_path = os.path.join(opt['datapath'], 'multiwoz', 'MULTIWOZ2.1')
+    jsons_path = os.path.join(opt['datapath'], 'multiwoz_v20', 'MULTIWOZ2 2')
     conversations_path = os.path.join(jsons_path, 'data.json')
     return conversations_path, jsons_path
 
 
 class MultiWozTeacher(FixedDialogTeacher):
     """
-    MultiWOZ Teacher.
+    MultiWOZ 2.0 Teacher.
 
     This dataset contains more than just dialogue. It also contains:
     data.json also contains the following information:
@@ -46,7 +46,7 @@ class MultiWozTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         opt['datafile'], jsons_path = _path(opt)
         self._setup_data(opt['datafile'], jsons_path)
-        self.id = 'multiwoz'
+        self.id = 'multiwoz_v20'
         self.reset()
 
     def _setup_data(self, data_path, jsons_path):
