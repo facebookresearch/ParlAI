@@ -20,18 +20,16 @@ following BibTex entry:
 
 # Code Instructions
 
-**NOTE: this code is incompatable with the latest version of Mephisto, beginning with the changes made in [PR #246](https://github.com/facebookresearch/Mephisto/pull/246). This task will be upgraded shortly to regain compatibility with the latest version; in the meantime, please use the last version release of Mephisto prior to that PR, [v0.1](https://github.com/facebookresearch/Mephisto/releases/tag/v0.1).**
-
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
 The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
 
     python parlai/crowdsourcing/tasks/acute_eval/example_script.py \
-    --pairings-filepath parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
+    mephisto.blueprint.pairings_filepath=parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
 
 ## Formatting conversation data
 
-This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format. The path to this file should be passed in as `--pairings-filepath`.
+This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format. The path to this file should be passed in as `mephisto.blueprint.pairings_filepath`.
 
 This is a template of the expected format with the minimal expected fields:
 
