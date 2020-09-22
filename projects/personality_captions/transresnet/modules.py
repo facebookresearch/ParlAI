@@ -12,6 +12,7 @@ from torch import nn
 from torch import optim
 from parlai.agents.transformer.modules import TransformerEncoder
 from parlai.agents.transformer import transformer as Transformer
+from parlai.utils.io import PathManager
 
 
 class TransresnetModel(nn.Module):
@@ -549,7 +550,8 @@ class TransresnetModel(nn.Module):
     def _load_text_encoder_state(self):
         try:
             state_file = self.opt.get('load_encoder_from')
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'b') as f:
+                model = torch.load(f)
             states = model['model']
             self.text_encoder.load_state_dict(states)
         except Exception as e:

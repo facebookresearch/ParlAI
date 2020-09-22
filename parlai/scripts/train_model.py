@@ -560,7 +560,7 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            with PathManager.open(opt['model_file'] + '.' + datatype, 'a+') as f:
+            with PathManager.open(opt['model_file'] + '.' + datatype, 'a') as f:
                 f.write(f'{metrics}\n')
 
         return report
