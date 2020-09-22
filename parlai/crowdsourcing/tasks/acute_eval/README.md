@@ -25,7 +25,7 @@ Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#ins
 The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
 
     python parlai/crowdsourcing/tasks/acute_eval/example_script.py \
-    mephisto.blueprint.pairings_filepath=parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
+    mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
 
 ## Formatting conversation data
 
