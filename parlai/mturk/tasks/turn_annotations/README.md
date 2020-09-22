@@ -24,7 +24,7 @@ Some additional parameters that you can set include where to save data, lists of
 
 ## Passing in task config files
 
-The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `config/` folder will be used.
+The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
 - `--annotations-config-path`: JSON file configuring annotation categories
 - `--hit-config-path`: JSON of language that MTurk uses to describe the HIT to workers
 - `--left-pane-text-path`: HTML to show on the left-hand pane of the chat window

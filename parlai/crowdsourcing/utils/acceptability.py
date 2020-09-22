@@ -13,6 +13,13 @@ from parlai.utils.safety import OffensiveStringMatcher
 class AcceptabilityChecker:
     def __init__(self):
         self.offensive_lang_detector = OffensiveStringMatcher()
+        self.possible_violation_types = [
+            'min_words',
+            'penalize_greetings',
+            'all_caps',
+            'exact_match',
+            'safety',
+        ]
 
     def check_messages(
         self,
@@ -27,9 +34,17 @@ class AcceptabilityChecker:
         :param is_worker_0: True if `messages` represent the messages from the first
             speaker in the conversation
         :param violation_types: Set of all violation types to check messages for. See
-            the comment above each violation type's codeblock for a description of it.
+            `self.possible_violation_types` for a list of all possible violation types.
         :return: comma-separated list of all violations
         """
+
+        if any(
+            [
+                violation_type not in self.possible_violation_types
+                for violation_type in violation_types
+            ]
+        ):
+            raise ValueError('One or more violation types are unrecognized!')
 
         if len(messages) == 0:
             # There may have been a disconnect, so in this case let's give them a pass

@@ -13,7 +13,7 @@ from parlai.utils.misc import round_sigfigs
 from .modules import TransresnetModel
 from parlai.tasks.personality_captions.build import build
 from parlai.utils.io import PathManager
-
+import parlai.utils.torch as torch_utils
 
 import os
 import random
@@ -146,9 +146,10 @@ class TransresnetAgent(Agent):
             cands_enc_file = '{}.cands_enc'.format(self.fcp)
             print('loading saved cand encodings')
             if PathManager.exists(cands_enc_file):
-                self.fixed_cands_enc = torch.load(
-                    cands_enc_file, map_location=lambda cpu, _: cpu
-                )
+                with PathManager.open(cands_enc_file, 'rb') as f:
+                    self.fixed_cands_enc = torch.load(
+                        f, map_location=lambda cpu, _: cpu
+                    )
             else:
                 print('Extracting cand encodings')
                 self.model.eval()
@@ -169,7 +170,7 @@ class TransresnetAgent(Agent):
                     fixed_cands_enc.append(embedding)
                     pbar.update(50)
                 self.fixed_cands_enc = torch.cat(fixed_cands_enc, 0)
-                torch.save(self.fixed_cands_enc, cands_enc_file)
+                torch_utils.atomic_save(self.fixed_cands_enc, cands_enc_file)
 
     def load_personalities(self):
         """
@@ -491,7 +492,7 @@ class TransresnetAgent(Agent):
         print('Saving best model')
         states = {}
         states['model'] = self.model.state_dict()
-        torch.save(states, path)
+        torch_utils.atomic_save(states, path)
 
         with PathManager.open(path + '.opt', 'w') as handle:
             json.dump(self.opt, handle)
@@ -504,6 +505,7 @@ class TransresnetAgent(Agent):
         :param path:
             path from which to load model
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
         if 'model' in states:
             self.model.load_state_dict(states['model'])

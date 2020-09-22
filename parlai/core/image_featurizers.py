@@ -193,7 +193,9 @@ class ImageLoader:
             feature = self.netCNN.get_detectron_features([image])[0]
         # save the feature
         if path is not None:
-            torch.save(feature.cpu(), path)
+            import parlai.utils.torch as torch_utils
+
+            torch_utils.atomic_save(feature.cpu(), path)
         return feature
 
     def _img_to_ascii(self, im):
@@ -264,7 +266,8 @@ class ImageLoader:
         if not PathManager.exists(new_path):
             return self.extract(self._load_image(path), new_path)
         else:
-            return torch.load(new_path)
+            with PathManager.open(new_path, 'rb') as f:
+                return self.torch.load(f)
 
 
 class DetectronFeatureExtractor:
