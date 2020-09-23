@@ -23,7 +23,6 @@ from parlai.scripts.train_model import TrainLoop
 import parlai.utils.logging as logging
 import cProfile
 import io
-import pdb
 import pstats
 
 try:
