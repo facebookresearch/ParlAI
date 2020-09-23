@@ -81,7 +81,7 @@ def setup_args(parser=None):
 def _run_self_chat_episode(opt, world, world_logger):
     bsz = opt.get('batchsize', 1)
     num_turns = opt['selfchat_max_turns']
-
+    assert bsz == 1, "Batch size cannot be different than 1 for self-chat"
     num_parleys = math.ceil(num_turns / bsz)
     for _ in range(num_parleys):
         world.parley()

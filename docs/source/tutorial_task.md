@@ -58,8 +58,9 @@ We could look at that data using the usual display data script:
     [ loaded 1 episodes with a total of 2 examples ]
 
 The text file data format is called ParlAI Dialog format, and is
-described in the teachers documentation &lt;core/teachers&gt; and
-:pyparlai.core.teachers.ParlAIDialogTeacher. Essentially, there is one
+described in the [teachers documentation](core/teachers); and
+in [pyparlai.core.teachers.ParlAIDialogTeacher](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1268).
+Essentially, there is one
 training example every line, and each field in a ParlAI message is tab
 separated with the name of the field, followed by a colon. E.g. the
 usual fields like 'text', 'labels', 'label\_candidates' etc. can all be
@@ -86,6 +87,33 @@ call as follows:
 This will cause the system to add the `_train.txt`, `_valid.txt`, and
 `_test.txt` suffixes at the appropriate times during training,
 evaluation, etc.
+
+
+### Json file format (instead of text file format)
+
+Prefer to use json instead of text files? No problem, the setup is almost the same!
+Make a file like this instead (using the same example data as above):
+
+    { "dialog": [ [  {"id": "partner1", "text": "hello how are you today?"},  {"id": "partner2", "text": "i'm great thanks! what are you doing?"},  {"id": "partner1", "text": "i've just been bikinig."},        {"id": "partner2", "text": "oh nice, i haven't got on a bike in years!"} ] ]}
+
+We can then again look at that data using the usual display data script, using the jsonfile teacher:
+
+    python parlai/scripts/display_data.py -t jsonfile --json-datapath /tmp/data.json
+    <.. snip ..>
+    [creating task(s): jsonfile]
+    [loading data from json file into task:/tmp/data.json]
+    - - - NEW EPISODE: tmp/data.json - - -
+    hello how are you today?
+       i'm great thanks! what are you doing?
+    i've just been biking.
+       oh nice, i haven't got on a bike in years!
+    [epoch done]
+    [loaded 1 episodes with a total of 2 examples]
+
+The file format consists of one dialogue episode per line, and closely follows the ParlAI messages format. See [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/utils/conversations.py#L167) for more documentation.
+
+For train/valid/test splits, you can do the same as for text files, using the analogous --jsonfile-datatype-extension true flag.
+
 
 ## Creating a new task: _the more complete way_
 

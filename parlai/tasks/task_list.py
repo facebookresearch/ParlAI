@@ -409,6 +409,32 @@ task_list = [
         ),
     },
     {
+        "id": "NaturalQuestions",
+        "display_name": "Natural Questions",
+        "task": "natural_questions",
+        "tags": ["All", "QA"],
+        "description": (
+            "An open domain question answering dataset. "
+            "Each example contains real questions that people searched "
+            "for in Google and the content of the a Wikipedia article that "
+            "was amongst the top 5 search resutls for that query, "
+            "and its annotations. The annotations have the options of a long "
+            "answer that is seleced from span of major content entities in "
+            "the Wikipedia article (e.g., paragraphs, tables), a short answer"
+            "that is selected from one or more short span of words in the "
+            "article, or 'yes/no'. The existence of any of these answer "
+            "formats depends on whether the main question can be answered, "
+            "given the article; if not they are left empty."
+        ),
+        "links": {
+            "paper": "https://research.google/pubs/pub47761/",
+            "website": "https://ai.google.com/research/NaturalQuestions",
+        },
+        "notes": (
+            "Since this task uses ChunkTeacher, it should be used with streaming."
+        ),
+    },
+    {
         "id": "OpenSubtitles",
         "display_name": "Open Subtitles",
         "task": "opensubtitles",
@@ -1083,9 +1109,20 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1908.06083"},
     },
     {
-        "id": "MultiWOZ",
-        "display_name": "MultiWOZ",
-        "task": "multiwoz",
+        "id": "MultiWOZv2.0",
+        "display_name": "MultiWOZ 2.0",
+        "task": "multiwoz_v20",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+        ),
+        "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
+    },
+    {
+        "id": "MultiWOZv2.1",
+        "display_name": "MultiWOZ 2.1",
+        "task": "multiwoz_v21",
         "tags": ["All", "Goal"],
         "description": (
             "A fully labeled collection of human-written conversations spanning"
@@ -1260,6 +1297,16 @@ task_list = [
             "The Schema-Guided Dialogue (SGD) dataset consists of over 20k "
             "annotated multi-domain, task-oriented conversations between a "
             "human and a virtual assistant."
+        ),
+    },
+    {
+        "id": "TaskMaster2",
+        "display_name": "TaskMaster2",
+        "task": "taskmaster2",
+        "tags": ["All", "Goal"],
+        "description": (
+            "The second version of TaskMaster, containing Wizard-of-Oz dialogues "
+            "for task oriented dialogue in 7 domains."
         ),
     },
 ]

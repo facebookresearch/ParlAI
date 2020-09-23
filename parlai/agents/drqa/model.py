@@ -7,6 +7,7 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as F
 import numpy as np
+import parlai.utils.torch as torch_utils
 
 from torch.autograd import Variable
 from .utils import load_embeddings, AverageMeter
@@ -171,7 +172,7 @@ class DocReaderModel(object):
             'config': self.opt,
         }
         try:
-            torch.save(params, filename)
+            torch_utils.atomic_save(params, filename)
         except BaseException:
             logger.warning('[ WARN: Saving failed... continuing anyway. ]')
 
