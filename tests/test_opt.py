@@ -167,7 +167,7 @@ class TestInitOpt(unittest.TestCase):
             init_opt.save(init_opt_path)
 
             # Assert that the opt file normally can't be loaded in
-            with self.assertRaises(NotImplementedError):  # TODO: fix error
+            with self.assertRaises(RuntimeError):
                 _ = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
 
             # Assert that the opt file *can* be loaded in if we set
