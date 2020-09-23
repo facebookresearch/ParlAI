@@ -84,5 +84,47 @@ class TestInteractiveLogging(unittest.TestCase):
             self.assertEqual(len(entry), 2 * fake_input.max_turns)
 
 
+class TestInteractiveWeb(unittest.TestCase):
+    def test_iweb(self):
+        import threading
+        import time
+        import random
+        import requests
+        import json
+        import parlai.scripts.interactive_web as iweb
+
+        port = random.randint(30000, 40000)
+        thread = threading.Thread(
+            target=iweb.InteractiveWeb.main,
+            kwargs={'model': 'repeat_query', 'port': port},
+        )
+        thread.start()
+        time.sleep(1.1)
+
+        r = requests.get(f'http://localhost:{port}/')
+        assert '<html>' in r.text
+
+        r = requests.post(f'http://localhost:{port}/interact', data='This is a test')
+        assert r.status_code == 200
+        response = json.loads(r.text)
+        assert 'text' in response
+        assert response['text'] == 'This is a test'
+
+        r = requests.post(f'http://localhost:{port}/reset')
+        assert r.status_code == 200
+        response = json.loads(r.text)
+        assert response == {}
+
+        r = requests.get(f'http://localhost:{port}/bad')
+        assert r.status_code == 500
+
+        r = requests.post(f'http://localhost:{port}/bad')
+        assert r.status_code == 500
+
+        time.sleep(0.1)
+
+        iweb.shutdown()
+
+
 if __name__ == '__main__':
     unittest.main()
