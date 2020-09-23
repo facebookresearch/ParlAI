@@ -490,9 +490,7 @@ class TransformerEncoder(nn.Module):
         """
         mask = input != self.padding_idx
         if positions is None:
-            positions = (
-                mask.to(torch.long).cumsum(dim=1, dtype=torch.int64) - 1
-            )
+            positions = mask.to(torch.long).cumsum(dim=1, dtype=torch.int64) - 1
             is_negative = positions < 0
             positions.masked_fill_(is_negative, 0)
         tensor = self.embeddings(input)
@@ -900,7 +898,7 @@ class TransformerDecoder(nn.Module):
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
-        return tensor  # TODO: work around this hack
+        return tensor, new_incr_state
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
