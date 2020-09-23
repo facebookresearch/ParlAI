@@ -10,6 +10,7 @@ import unittest
 
 import parlai.utils.testing as testing_utils
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.scripts.compare_opts import compare_opts
 
 """
@@ -137,16 +138,25 @@ class TestInitOpt(unittest.TestCase):
         """
         Test --init-opt.
         """
-        # {{{TODO: test both param with and without --init-opt}}}
-        for kwargs in test_kwargs:
-            opt = ParlaiParser(True, True).parse_kwargs(**kwargs)
-            # {{{TODO}}}
 
-    def test_allow_missing_init_opts(self):
-        """
-        Test --allow-missing-init-opts.
-        """
-        # {{{TODO: test that something will fail without --allow-missing-init-opts but not with it}}}
-        for kwargs in test_kwargs:
-            opt = ParlaiParser(True, True).parse_kwargs(**kwargs)
-            # {{{TODO}}}
+        with testing_utils.tempdir() as init_opt_path:
+
+            test_model_path = '/test_model_path/model'
+
+            # Save a test opt file
+            init_opt = Opt({'model_path': test_model_path})
+            init_opt.save(init_opt_path)
+
+            # Load the opt back in with --init-opt and make sure it's been set
+            # correctly
+            opt = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
+            self.assertEqual(opt.model_path, test_model_path)
+
+    # def test_allow_missing_init_opts(self):
+    #     """
+    #     Test --allow-missing-init-opts.
+    #     """
+    #     # {{{TODO: test that something will fail without --allow-missing-init-opts but not with it}}}
+    #     for kwargs in test_kwargs:
+    #         opt = ParlaiParser(True, True).parse_kwargs(**kwargs)
+    #         # {{{TODO}}}
