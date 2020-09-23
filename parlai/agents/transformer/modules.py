@@ -828,15 +828,15 @@ class TransformerDecoder(nn.Module):
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
         incr_state: Dict[int, torch.Tensor],
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, Dict[int, Dict[str, Dict[str, torch.Tensor]]]]:
         """
         Forward pass of decoder layers.
 
         :param tensor:
             embedded input tensor for the decoder
-        :param enc_out:
+        :param encoder_output:
             encoder outputs
-        :param enc_mask:
+        :param encoder_mask:
             encoder output mask
         :param incr_state:
             Dict mapping layer_idx to incremental state
@@ -870,8 +870,10 @@ class TransformerDecoder(nn.Module):
 
         :param LongTensor[batch,seqlen] input:
             The decoder inputs (partial or full decoded token IDs).
-        :param encoder_state:
+        :param encoder_output:
             Output from the encoder module forward pass.
+        :param encoder_mask:
+            Mask from the encoder module forward pass.
         :param incr_state_tensor:
             A tensor of .dim()==7 encoding the incremental state of the layers. Indices:
                 (0) decoder layer
@@ -914,6 +916,40 @@ class TransformerDecoder(nn.Module):
         new_incr_state_tensor = self._incr_state_dict_to_tensor(new_incr_state_dict)
 
         return tensor, new_incr_state_tensor
+
+    def _incr_state_tensor_to_dict(
+        self, incr_state_tensor: torch.Tensor
+    ) -> Dict[int, Dict[str, Dict[str, torch.Tensor]]]:
+        """
+        Converts the input tensor into a nested dict containing the incremental states.
+
+        :param incr_state_tensor:
+            A tensor of .dim()==7 encoding the incremental state of the layers. Indices:
+                (0) decoder layer
+                (1) attention type (self_attn or encoder_attn)
+                (2) attention object (prev_key, prev_value, or prev_mask)
+                (3) batchsize
+                (4) n_heads
+                (5) seq_len
+                (6) dim_per_head
+        """
+        pass
+        # {{{TODO}}}
+
+    def _incr_state_dict_to_tensor(
+        self, incr_state_dict: Dict[int, Dict[str, Dict[str, torch.Tensor]]]
+    ) -> torch.Tensor:
+        """
+        Converts the input nested dict into a tensor containing the incremental states.
+
+        :param incr_state_dict:
+            A nested dict encoding the incremental state of the layers. Levels:
+                (0) decoder layer
+                (1) attention type (self_attn or encoder_attn)
+                (2) attention object (prev_key, prev_value, or prev_mask)
+        """
+        pass
+        # {{{TODO}}}
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
