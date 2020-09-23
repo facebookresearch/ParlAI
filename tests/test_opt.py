@@ -153,11 +153,25 @@ class TestInitOpt(unittest.TestCase):
             opt = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
             self.assertEqual(opt['model_file'], test_model_file)
 
-    # def test_allow_missing_init_opts(self):
-    #     """
-    #     Test --allow-missing-init-opts.
-    #     """
-    #     # {{{TODO: test that something will fail without --allow-missing-init-opts but not with it}}}
-    #     for kwargs in test_kwargs:
-    #         opt = ParlaiParser(True, True).parse_kwargs(**kwargs)
-    #         # {{{TODO}}}
+    def test_allow_missing_init_opts(self):
+        """
+        Test --allow-missing-init-opts.
+        """
+
+        with testing_utils.tempdir() as temp_dir:
+
+            init_opt_path = os.path.join(temp_dir, 'init_opt.opt')
+
+            # Save a test opt file with an argument that doesn't exist
+            init_opt = Opt({'made_up_arg': 'foo'})
+            init_opt.save(init_opt_path)
+
+            # Assert that the opt file normally can't be loaded in
+            with self.assertRaises(NotImplementedError):  # TODO: fix error
+                _ = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
+
+            # Assert that the opt file *can* be loaded in if we set
+            # --allow-missing-init-opts
+            _ = ParlaiParser(True, True).parse_kwargs(
+                init_opt=init_opt_path, allow_missing_init_opts=True
+            )
