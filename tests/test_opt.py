@@ -126,3 +126,27 @@ override (printing only non-matching values in each dict):
 \t\tIn opt 1: <MISSING>
 \t\tIn opt 2: no"""
             self.assertEqual(output, desired_output)
+
+
+class TestInitOpt(unittest.TestCase):
+    """
+    Test functionality related to --init-opt.
+    """
+
+    def test_init_opt(self):
+        """
+        Test --init-opt.
+        """
+        # {{{TODO: test both param with and without --init-opt}}}
+        for kwargs in test_kwargs:
+            opt = ParlaiParser(True, True).parse_kwargs(**kwargs)
+            # {{{TODO}}}
+
+    def test_allow_missing_init_opts(self):
+        """
+        Test --allow-missing-init-opts.
+        """
+        # {{{TODO: test that something will fail without --allow-missing-init-opts but not with it}}}
+        for kwargs in test_kwargs:
+            opt = ParlaiParser(True, True).parse_kwargs(**kwargs)
+            # {{{TODO}}}
