@@ -11,10 +11,7 @@ import copy
 import os
 
 import parlai.utils.logging as logging
-from parlai.core.teachers import (
-    FbDeprecatedDialogTeacher,
-    ParlAIDialogTeacher,
-)
+from parlai.core.teachers import FbDeprecatedDialogTeacher, ParlAIDialogTeacher
 
 
 class FbformatTeacher(FbDeprecatedDialogTeacher):
