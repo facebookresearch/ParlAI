@@ -8,12 +8,5 @@ from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 
 
 class SelfChatWorld(SelfChatBaseWorld):
-    def __init__(self, opt, agents, shared=None):
-        super().__init__(opt, agents, shared)
-
     def get_contexts(self):
         return None
-
-    def share(self):
-        shared_data = super().share()
-        return shared_data
