@@ -933,8 +933,16 @@ class TransformerDecoder(nn.Module):
                 (5) seq_len
                 (6) dim_per_head
         """
-        pass
-        # {{{TODO}}}
+        incr_state_dict = {}
+        for layer_idx in range(self.n_layers):
+            incr_state_dict[layer_idx] = {}
+            for type_idx, attn_type in enumerate(['self_attn', 'encoder_attn']):
+                incr_state_dict[layer_idx][attn_type] = {}
+                for obj_idx, obj in enumerate(['prev_key', 'prev_value', 'prev_mask']):
+                    incr_state_dict[layer_idx][attn_type][obj] = incr_state_tensor[
+                        layer_idx, type_idx, obj_idx, :, :, :, :
+                    ]
+        return incr_state_dict
 
     def _incr_state_dict_to_tensor(
         self, incr_state_dict: Dict[int, Dict[str, Dict[str, torch.Tensor]]]
@@ -948,8 +956,27 @@ class TransformerDecoder(nn.Module):
                 (1) attention type (self_attn or encoder_attn)
                 (2) attention object (prev_key, prev_value, or prev_mask)
         """
-        pass
-        # {{{TODO}}}
+        # TODO: is this efficient? Yes! Readable? Meh...
+        incr_state_tensor = torch.stack(
+            [
+                torch.stack(
+                    [
+                        torch.stack(
+                            [
+                                incr_state_dict[layer_idx][attn_type][obj]
+                                for obj in ['prev_key', 'prev_value', 'prev_mask']
+                            ],
+                            dim=0,
+                        )
+                        for attn_type in ['self_attn', 'encoder_attn']
+                    ],
+                    dim=0,
+                )
+                for layer_idx in range(self.n_layers)
+            ],
+            dim=0,
+        )
+        return incr_state_tensor
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
