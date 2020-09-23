@@ -71,12 +71,13 @@ setup: &setup
       python --version
 
 
-codecov: &codecov
+coveralls: &coveralls
   run:
     name: Coverage report
     command: |
-      python -m codecov --flags $CIRCLE_JOB
       mkdir -p ~/ParlAI/data
+      export CIRCLE_BUILD_NUM=$CIRCLE_WORKFLOW_ID
+      coveralls
 
 installdeps: &installdeps
   run:
@@ -84,7 +85,7 @@ installdeps: &installdeps
     command: |
       python -m pip install --progress-bar off --upgrade pip setuptools
       python -m pip install --progress-bar off coverage
-      python -m pip install --progress-bar off codecov
+      python -m pip install --progress-bar off coveralls
       mkdir -p ~/ParlAI/test-results
       pip install -v -r requirements.txt
       python setup.py develop
@@ -170,6 +171,25 @@ findtests: &findtests
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
+  finalize_coverage_report:
+    <<: *standard_cpu37
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: deps-20200625-fcr
+      - <<: *setup
+      - run:
+          name: Finalize coverage report
+          command: |
+            curl -k https://coveralls.io/webhook?repo_token=$COVERALLS_REPO_TOKEN -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
+      - save_cache:
+          key: deps-20200625-fcr
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+
+
   unittests_osx:
     <<: *osx_cpu37
     working_directory: ~/ParlAI
@@ -198,6 +218,7 @@ jobs:
           key: data-20200904-osx-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -241,11 +262,11 @@ jobs:
           name: Unit tests (py36)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-ut36-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -273,11 +294,11 @@ jobs:
           name: Unit tests (py38)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-ut38-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -305,11 +326,11 @@ jobs:
           name: Unit tests (py37)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-ut37-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -344,11 +365,11 @@ jobs:
           name: Unit tests (GPU; pytorch 1.4)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-gpu14-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -383,7 +404,6 @@ jobs:
           name: Unit tests (GPU; pytorch 1.5)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-gpu15-{{ checksum "teststorun.txt" }}
           paths:
@@ -422,11 +442,11 @@ jobs:
           name: Unit tests (GPU; pytorch 1.6)
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-gpu16-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -461,7 +481,7 @@ jobs:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
-      - <<: *codecov
+      - <<: *coveralls
       - save_cache:
           key: data-20200904-nightly-{{ checksum "teststorun.txt" }}
           paths:
@@ -501,11 +521,11 @@ jobs:
       - run:
           name: Quickstart unit tests (GPU; pytorch 1.4)
           command: sh tests/test_quickstart.sh
-      - <<: *codecov
       - save_cache:
           key: data-20200904-quick-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -534,11 +554,11 @@ jobs:
           name: All data tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m tasks parlai/tasks/*/test.py -v
-      - <<: *codecov
       - save_cache:
           key: data-20200904-teacher-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -560,7 +580,7 @@ jobs:
       - run:
           name: All mturk tests
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
-      - <<: *codecov
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -648,6 +668,7 @@ jobs:
             echo 'Testing docs css'
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
+
 # -------------------------------------------------------------------------------------
 # Workflows
 # -------------------------------------------------------------------------------------
@@ -691,6 +712,17 @@ workflows:
           requires:
             - unittests_gpu16
             - unittests_37
+      - finalize_coverage_report:
+          requires:
+            - teacher_tests
+            - long_gpu_tests
+            - unittests_osx
+            - unittests_36
+            - unittests_38
+            - mturk_tests
+            - unittests_gpu14
+            - unittests_gpu15
+            - unittests_gpu16
       - build_website:
           filters:
             branches:
