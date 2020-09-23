@@ -24,8 +24,8 @@ import math
 from collections.abc import Sequence
 import heapq
 import json
-import torch
 
+import parlai.utils.torch as torch_utils
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.io import PathManager
@@ -321,8 +321,7 @@ class IrBaselineAgent(Agent):
             self.dictionary.save(path + '.dict')
             data = {}
             data['opt'] = self.opt
-            with PathManager.open(path, 'wb') as handle:
-                torch.save(data, handle)
+            torch_utils.atomic_save(data, path)
             with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 

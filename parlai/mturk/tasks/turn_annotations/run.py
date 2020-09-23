@@ -29,7 +29,9 @@ def run_task(override_opt: Optional[dict] = None):
     each utterance of the bot for various buckets (see constants).
     """
 
-    config_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config')
+    config_folder = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), 'task_config'
+    )
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     default_task_folder = os.path.join(

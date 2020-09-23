@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import os
 import sys
 import logging
 
@@ -48,6 +49,8 @@ COLORED_LEVEL_STYLES = {
 
 
 def _is_interactive():
+    if os.environ.get('PARLAI_FORCE_COLOR'):
+        return True
     try:
         __IPYTHON__
         return True
@@ -72,19 +75,20 @@ class ParlaiLogger(logging.Logger):
         self.streamHandler = logging.StreamHandler(sys.stdout)
         # Log to stdout levels: console_level and above
         self.prefix = None
+        self.interactive = _is_interactive()
         self.streamHandler.setFormatter(self._build_formatter())
         super().addHandler(self.streamHandler)
 
     def _build_formatter(self):
         prefix_format = f'{self.prefix} ' if self.prefix else ''
-        if COLORED_LOGS and _is_interactive():
+        if COLORED_LOGS and self.interactive:
             return coloredlogs.ColoredFormatter(
                 prefix_format + COLORED_FORMAT,
                 datefmt=CONSOLE_DATE_FORMAT,
                 level_styles=COLORED_LEVEL_STYLES,
                 field_styles={},
             )
-        elif _is_interactive():
+        elif self.interactive:
             return logging.Formatter(
                 prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT
             )
@@ -92,6 +96,10 @@ class ParlaiLogger(logging.Logger):
             return logging.Formatter(
                 prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT
             )
+
+    def force_interactive(self):
+        self.interactive = True
+        self.streamHandler.setFormatter(self._build_formatter())
 
     def log(self, msg, level=INFO):
         """
