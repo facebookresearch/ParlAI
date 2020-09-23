@@ -1469,4 +1469,26 @@ model_list = [
     ctpb  ctps  exps  exs  gpu_mem  loss  ltpb  ltps   ppl  token_acc   tpb  tps
      120  1855 15.46 5482    .1635 2.248 19.94 308.2 9.468      .4872 139.9 2163""",
     },
+    {
+        "title": "Faster-R-CNN Detectron Features",
+        "id": "detectron",
+        "path": "zoo:detectron/detectron_model.pth",
+        "agent": "n/a",
+        "task": "n/a",
+        "project": 'https://github.com/facebookresearch/vilbert-multi-task',
+        "description": "Detectron Model for extracting 100x2048d object detection features. Model is from linked project website",
+        "example": "parlai display_data -t flickr30k --image-mode faster_r_cnn_152_32x8d -n 1 -v",
+        "result": """
+        [id]: flickr30k
+        [image_id]: 1000092795
+        [ image ]: tensor([[ 0.0000,  7.1329,  0.0000,  ...,  0.0000,  0.0000,  5.3357],
+                [ 0.0000,  0.0000,  0.0000,  ...,  0.0000,  0.0000,  0.0000],
+                [ 0.0000,  0.0000,  0.4687,  ...,  0.0000,  0.0000,  0.0000],
+                ...,
+                [ 0.0000,  3.0936,  3.4888,  ...,  0.0000,  0.0000,  0.0000],
+                [ 3.8596,  0.0000,  0.0000,  ...,  0.0000,  4.3454,  0.0000],
+                [ 0.0000,  7.9822,  1.0979,  ...,  3.5514,  0.0000, 15.3559]])
+        [labels]: Two young guys with shaggy hair look at their hands while hanging out in the yard.|Two young, White males are outside near many bushes.|Two men in green shirts are standing in a yard.|A man in a blue shirt standing in a garden.|Two friends enjoy time spent together.
+        """,
+    },
 ]
