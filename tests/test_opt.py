@@ -139,18 +139,19 @@ class TestInitOpt(unittest.TestCase):
         Test --init-opt.
         """
 
-        with testing_utils.tempdir() as init_opt_path:
+        with testing_utils.tempdir() as temp_dir:
 
-            test_model_path = '/test_model_path/model'
+            init_opt_path = os.path.join(temp_dir, 'init_opt.opt')
+            test_model_file = '/test_model_path/model'
 
             # Save a test opt file
-            init_opt = Opt({'model_path': test_model_path})
+            init_opt = Opt({'model_file': test_model_file})
             init_opt.save(init_opt_path)
 
             # Load the opt back in with --init-opt and make sure it's been set
             # correctly
             opt = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
-            self.assertEqual(opt.model_path, test_model_path)
+            self.assertEqual(opt['model_file'], test_model_file)
 
     # def test_allow_missing_init_opts(self):
     #     """
