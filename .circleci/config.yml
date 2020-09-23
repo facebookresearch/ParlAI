@@ -410,6 +410,7 @@ jobs:
           key: data-20200904-gpu15-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -483,11 +484,11 @@ jobs:
           name: Nightly GPU tests
           no_output_timeout: 60m
           command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
-      - <<: *coveralls
       - save_cache:
           key: data-20200904-nightly-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
+      - <<: *coveralls
       - store_test_results:
           path: test-results
 
@@ -527,7 +528,6 @@ jobs:
           key: data-20200904-quick-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
-      - <<: *coveralls
       - store_test_results:
           path: test-results
 
