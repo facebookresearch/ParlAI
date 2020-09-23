@@ -39,8 +39,6 @@ def _download_with_cloud_storage_client(dpath):
     def _download_blobs_from_list(blobs_list, target_path):
         for blob in tqdm(blobs_list):
             cloud_storage_fname = blob.name.split('/')[-1]
-            if not cloud_storage_fname.endswith('.gz'):
-                continue
             downloaded_fname = os.path.join(target_path, cloud_storage_fname)
             _download_blob(blob, downloaded_fname)
 
@@ -48,15 +46,20 @@ def _download_with_cloud_storage_client(dpath):
     for dtype in ('train', 'valid'):
         os.makedirs(os.path.join(dpath, dtype), exist_ok=True)
 
+    # Populating a list of train and valid dataset blobs to download
     train_blobs = []
     valid_blobs = []
     for blob in storage_client.list_blobs('natural_questions'):
         blob_name = blob.name
+        if not blob_name.endswith('.gz'):  # Not a zipped file
+            continue
+
         if blob_name.startswith('v1.0/train'):
             train_blobs.append(blob)
         elif blob_name.startswith('v1.0/dev'):
             valid_blobs.append(blob)
 
+    # Downloading the blobs to their respective dtype directory
     logging.info('Downloading train data ...')
     _download_blobs_from_list(train_blobs, os.path.join(dpath, 'train'))
     logging.info('Downloading valid data ...')
