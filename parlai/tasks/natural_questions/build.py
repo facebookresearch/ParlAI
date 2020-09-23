@@ -27,7 +27,7 @@ def _import_google_cloud_client():
     return storage
 
 
-def _download_with_gsutil(dpath):
+def _download_with_cloud_storage_client(dpath):
     # Initiating the Cloud Storage Client with anonymous credentials
     stm = _import_google_cloud_client()
     storage_client = stm.Client.create_anonymous_client()
@@ -87,6 +87,6 @@ def build(opt):
             build_data.remove_dir(dpath)
             logging.info('Removed the existing data (old version).')
         build_data.make_dir(dpath)
-        _download_with_gsutil(dpath)
+        _download_with_cloud_storage_client(dpath)
         _untar_dataset_files(dpath)
         build_data.mark_done(dpath, version_string=version)
