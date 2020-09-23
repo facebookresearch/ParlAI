@@ -14,11 +14,53 @@ import parlai.utils.logging as logging
 DATASET_NAME_LOCAL = 'NaturalQuestions'
 
 
+def _import_google_cloud_client():
+    try:
+        from google.cloud import storage
+    except ImportError:
+        raise ImportError(
+            'Please install Google Cloud Storage API:\n'
+            '\tpip install --upgrade google-cloud-storage\n'
+            'Or follow the instruction at '
+            'https://cloud.google.com/storage/docs/reference/libraries'
+        )
+    return storage
+
+
 def _download_with_gsutil(dpath):
-    for dt in ('train', 'dev'):
-        os.system(f'gsutil -m cp -R gs://natural_questions/v1.0/{dt} {dpath}')
-    # The main dataset calls 'valid' split 'dev', we rename its directory here
-    os.rename(f'{dpath}/dev', f'{dpath}/valid')
+    # Initiating the Cloud Storage Client with anonymous credentials
+    stm = _import_google_cloud_client()
+    storage_client = stm.Client.create_anonymous_client()
+
+    def _download_blob(blob, target):
+        with open(target, 'wb') as fout:
+            storage_client.download_blob_to_file(blob, fout)
+
+    def _download_blobs_from_list(blobs_list, target_path):
+        for blob in tqdm(blobs_list):
+            cloud_storage_fname = blob.name.split('/')[-1]
+            if not cloud_storage_fname.endswith('.gz'):
+                continue
+            downloaded_fname = os.path.join(target_path, cloud_storage_fname)
+            _download_blob(blob, downloaded_fname)
+
+    # Creating data storage directories
+    for dtype in ('train', 'valid'):
+        os.makedirs(os.path.join(dpath, dtype), exist_ok=True)
+
+    train_blobs = []
+    valid_blobs = []
+    for blob in storage_client.list_blobs('natural_questions'):
+        blob_name = blob.name
+        if blob_name.startswith('v1.0/train'):
+            train_blobs.append(blob)
+        elif blob_name.startswith('v1.0/dev'):
+            valid_blobs.append(blob)
+
+    logging.info('Downloading train data ...')
+    _download_blobs_from_list(train_blobs, os.path.join(dpath, 'train'))
+    logging.info('Downloading valid data ...')
+    _download_blobs_from_list(valid_blobs, os.path.join(dpath, 'valid'))
 
 
 def _untar_dir_files(dtype_path):
