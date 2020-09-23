@@ -113,3 +113,45 @@ class TestParty(unittest.TestCase):
         from parlai.scripts.party import Party
 
         Party.main(seconds=0.01)
+
+
+class TestProfileTrain(unittest.TestCase):
+    """
+    Test profile_train doesn't crash.
+    """
+
+    def test_cprofile(self):
+        from parlai.scripts.profile_train import ProfileTrain
+
+        with testing_utils.tempdir() as tmpdir:
+            ProfileTrain.main(
+                task='integration_tests:overfit',
+                model='test_agents/unigram',
+                model_file=os.path.join(tmpdir, 'model'),
+                skip_generation=True,
+            )
+
+    def test_torch(self):
+        from parlai.scripts.profile_train import ProfileTrain
+
+        with testing_utils.tempdir() as tmpdir:
+            ProfileTrain.main(
+                task='integration_tests:overfit',
+                model='test_agents/unigram',
+                torch=True,
+                model_file=os.path.join(tmpdir, 'model'),
+                skip_generation=True,
+            )
+
+    @testing_utils.skipUnlessGPU
+    def test_torch_cuda(self):
+        from parlai.scripts.profile_train import ProfileTrain
+
+        with testing_utils.tempdir() as tmpdir:
+            ProfileTrain.main(
+                task='integration_tests:overfit',
+                model='test_agents/unigram',
+                torch_cuda=True,
+                model_file=os.path.join(tmpdir, 'model'),
+                skip_generation=True,
+            )
