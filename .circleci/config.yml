@@ -77,7 +77,8 @@ coveralls: &coveralls
     command: |
       mkdir -p ~/ParlAI/data
       # export CIRCLE_BUILD_NUM=$CIRCLE_WORKFLOW_ID
-      COVERALLS_SERVICE_JOB_NUMBER=$CIRCLE_WORKFLOW_ID
+      # COVERALLS_SERVICE_JOB_NUMBER=$CIRCLE_WORKFLOW_ID
+      export CIRCLE_BUILD_NUM=$CIRCLE_BUILD_NUM-$CIRCLE_NODE_INDEX
       coverage xml -i
       coveralls
 
