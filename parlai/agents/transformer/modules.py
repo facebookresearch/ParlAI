@@ -861,8 +861,10 @@ class TransformerDecoder(nn.Module):
 
         return tensor, new_incr_state
 
-    def forward(self, input, encoder_output, encoder_mask, incr_state=None):
-        # TODO: work around this hack
+    def forward(
+        self, input, encoder_output, encoder_mask, incr_state_tensor: torch.Tensor
+    ):
+        # TODO: work around these hacks
         """
         Forward pass.
 
@@ -870,35 +872,48 @@ class TransformerDecoder(nn.Module):
             The decoder inputs (partial or full decoded token IDs).
         :param encoder_state:
             Output from the encoder module forward pass.
-        :param incr_state:
-            The incremental state: a dictionary whose keys index the layers and whose
-            values contain the incremental state for each layer.
+        :param incr_state_tensor:
+            A tensor of .dim()==7 encoding the incremental state of the layers. Indices:
+                (0) decoder layer
+                (1) attention type (self_attn or encoder_attn)
+                (2) attention object (prev_key, prev_value, or prev_mask)
+                (3) batchsize
+                (4) n_heads
+                (5) seq_len
+                (6) dim_per_head
         """
 
         seq_len = input.size(1)
         positions = input.new_empty(seq_len).long()
         positions = torch.arange(seq_len, out=positions).unsqueeze(0)
 
-        if incr_state is not None:
+        # Does the input tensor contain incremental states?
+        if incr_state_tensor.numel() > 0:
+
+            # Convert the tensor to a nested dictionary
+            incr_state_dict = self._incr_state_tensor_to_dict(incr_state_tensor)
+
             # We're doing incremental decoding, so select only the most recent position
             input = input[:, -1:]
             if positions is not None:
                 positions = positions[:, -1:]
         else:
-            incr_state = {}
+            incr_state_dict = {}
 
         tensor = self.forward_embedding(input, positions)
 
         tensor = self.dropout(tensor)  # --dropout
 
-        tensor, new_incr_state = self.forward_layers(
-            tensor, encoder_output, encoder_mask, incr_state
+        tensor, new_incr_state_dict = self.forward_layers(
+            tensor, encoder_output, encoder_mask, incr_state_dict
         )
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
-        return tensor, new_incr_state
+        new_incr_state_tensor = self._incr_state_dict_to_tensor(new_incr_state_dict)
+
+        return tensor, new_incr_state_tensor
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
