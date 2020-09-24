@@ -6,7 +6,6 @@
 
 from parlai.utils.testing import AutoTeacherTest  # noqa: F401
 import unittest
-from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.tasks.empathetic_dialogues.agents import (
     EmotionClassificationSituationTeacher,
