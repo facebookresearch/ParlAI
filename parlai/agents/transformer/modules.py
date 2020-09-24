@@ -866,7 +866,6 @@ class TransformerDecoder(nn.Module):
         input: torch.LongTensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
     ):
         # TODO: work around this change in signature
         """
@@ -878,9 +877,6 @@ class TransformerDecoder(nn.Module):
             Output from the encoder module forward pass.
         :param encoder_mask:
             Mask from the encoder module forward pass.
-        :param incr_state:
-            The incremental state: a dictionary whose keys index the layers and whose
-            values contain the incremental state for each layer.
         """
 
         seq_len = input.size(1)
@@ -888,26 +884,21 @@ class TransformerDecoder(nn.Module):
             seq_len, dtype=torch.long, device=input.device
         ).unsqueeze(0)
 
-        if incr_state is not None:
-            # We're doing incremental decoding, so select only the most recent position
-            input = input[:, -1:]
-            if positions is not None:
-                positions = positions[:, -1:]
-        else:
-            incr_state = {}
+        incr_state = {}
 
         tensor = self.forward_embedding(input, positions)
 
         tensor = self.dropout(tensor)  # --dropout
 
-        tensor, new_incr_state = self.forward_layers(
+        tensor, _ = self.forward_layers(
             tensor, encoder_output, encoder_mask, incr_state
         )
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
-        return tensor, new_incr_state
+        # TODO: deal with this change in return value
+        return tensor
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
