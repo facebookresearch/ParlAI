@@ -865,7 +865,7 @@ class TransformerDecoder(nn.Module):
         self,
         input: torch.LongTensor,
         encoder_output: torch.Tensor,
-        encoder_mask: torch.BoolTensor,
+        encoder_mask: torch.Tensor,
         incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
     ):
         # TODO: work around this hack
