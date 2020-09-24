@@ -900,14 +900,14 @@ class TransformerDecoder(nn.Module):
 
         tensor = self.dropout(tensor)  # --dropout
 
-        tensor, new_incr_states_by_layer = self.forward_layers(
+        tensor, new_incr_state = self.forward_layers(
             tensor, encoder_output, encoder_mask, incr_state
         )
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
-        return tensor, incr_state
+        return tensor, new_incr_state
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
