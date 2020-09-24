@@ -862,7 +862,16 @@ class TransformerDecoder(nn.Module):
         return tensor, new_incr_state
 
     def forward(
-        self, input, encoder_output, encoder_mask, incr_state_tensor: torch.Tensor
+        self,
+        input: torch.LongTensor,
+        encoder_output: torch.Tensor,
+        encoder_mask: torch.Tensor,
+        self_attn_prev_keys: torch.Tensor,
+        self_attn_prev_values: torch.Tensor,
+        self_attn_prev_masks: torch.Tensor,
+        encoder_attn_prev_keys: torch.Tensor,
+        encoder_attn_prev_values: torch.Tensor,
+        encoder_attn_prev_masks: torch.Tensor,
     ):
         # TODO: work around these hacks
         """
@@ -874,109 +883,115 @@ class TransformerDecoder(nn.Module):
             Output from the encoder module forward pass.
         :param encoder_mask:
             Mask from the encoder module forward pass.
-        :param incr_state_tensor:
-            A tensor of .dim()==7 encoding the incremental state of the layers. Indices:
-                (0) decoder layer
-                (1) attention type (self_attn or encoder_attn)
-                (2) attention object (prev_key, prev_value, or prev_mask)
-                (3) batchsize
-                (4) n_heads
-                (5) seq_len
-                (6) dim_per_head
         """
+        # TODO: add other params to docstring
 
         seq_len = input.size(1)
         positions = input.new_empty(seq_len).long()
         positions = torch.arange(seq_len, out=positions).unsqueeze(0)
 
-        # Does the input tensor contain incremental states?
-        if incr_state_tensor.numel() > 0:
+        stacked_incr_states = {
+            'self_attn': {
+                'prev_key': self_attn_prev_keys,
+                'prev_value': self_attn_prev_values,
+                'prev_mask': self_attn_prev_masks,
+            },
+            'encoder_attn': {
+                'prev_key': encoder_attn_prev_keys,
+                'prev_value': encoder_attn_prev_values,
+                'prev_mask': encoder_attn_prev_masks,
+            },
+        }
+        if any(
+            [
+                incr_state.numel() > 0
+                for incr_states in stacked_incr_states.values()
+                for incr_state in incr_states.values()
+            ]
+        ):
+            # At least one incremental state tensor is non-empty
 
             # Convert the tensor to a nested dictionary
-            incr_state_dict = self._incr_state_tensor_to_dict(incr_state_tensor)
+            incr_states_by_layer = self._split_incr_states_by_layer(stacked_incr_states)
 
             # We're doing incremental decoding, so select only the most recent position
             input = input[:, -1:]
             if positions is not None:
                 positions = positions[:, -1:]
         else:
-            incr_state_dict = {}
+            incr_states_by_layer = {}
 
         tensor = self.forward_embedding(input, positions)
 
         tensor = self.dropout(tensor)  # --dropout
 
-        tensor, new_incr_state_dict = self.forward_layers(
-            tensor, encoder_output, encoder_mask, incr_state_dict
+        tensor, new_incr_states_by_layer = self.forward_layers(
+            tensor, encoder_output, encoder_mask, incr_states_by_layer
         )
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
 
-        new_incr_state_tensor = self._incr_state_dict_to_tensor(new_incr_state_dict)
+        new_stacked_incr_states = self._stack_incr_states(new_incr_states_by_layer)
 
-        return tensor, new_incr_state_tensor
+        return (
+            tensor,
+            new_stacked_incr_states['self_attn']['prev_key'],
+            new_stacked_incr_states['self_attn']['prev_value'],
+            new_stacked_incr_states['self_attn']['prev_mask'],
+            new_stacked_incr_states['encoder_attn']['prev_key'],
+            new_stacked_incr_states['encoder_attn']['prev_value'],
+            new_stacked_incr_states['encoder_attn']['prev_mask'],
+        )
 
-    def _incr_state_tensor_to_dict(
-        self, incr_state_tensor: torch.Tensor
+    def _split_incr_states_by_layer(
+        self, stacked_incr_states: Dict[str, Dict[str, torch.Tensor]]
     ) -> Dict[int, Dict[str, Dict[str, torch.Tensor]]]:
         """
-        Converts the input tensor into a nested dict containing the incremental states.
+        Splits all incr states by layer.
 
-        :param incr_state_tensor:
-            A tensor of .dim()==7 encoding the incremental state of the layers. Indices:
-                (0) decoder layer
-                (1) attention type (self_attn or encoder_attn)
-                (2) attention object (prev_key, prev_value, or prev_mask)
-                (3) batchsize
-                (4) n_heads
-                (5) seq_len
-                (6) dim_per_head
+        :param stacked_incr_states: nested dict. First layer is attention type
+            (self_attn or encoder_attn) and second layer is attention object (prev_key,
+            prev_value, or prev_mask).
         """
-        incr_state_dict = {}
+        incr_states_by_layer = {}
         for layer_idx in range(self.n_layers):
-            incr_state_dict[layer_idx] = {}
+            incr_states_by_layer[layer_idx] = {}
             for type_idx, attn_type in enumerate(['self_attn', 'encoder_attn']):
-                incr_state_dict[layer_idx][attn_type] = {}
+                incr_states_by_layer[layer_idx][attn_type] = {}
                 for obj_idx, obj in enumerate(['prev_key', 'prev_value', 'prev_mask']):
-                    incr_state_dict[layer_idx][attn_type][obj] = incr_state_tensor[
-                        layer_idx, type_idx, obj_idx, :, :, :, :
-                    ]
-        return incr_state_dict
+                    incr_states_by_layer[layer_idx][attn_type][
+                        obj
+                    ] = stacked_incr_states[attn_type][obj][layer_idx]
+        return incr_states_by_layer
 
-    def _incr_state_dict_to_tensor(
-        self, incr_state_dict: Dict[int, Dict[str, Dict[str, torch.Tensor]]]
-    ) -> torch.Tensor:
+    def _stack_incr_states(
+        self, incr_states_by_layer: Dict[int, Dict[str, Dict[str, torch.Tensor]]]
+    ) -> Dict[str, Dict[str, torch.Tensor]]:
         """
-        Converts the input nested dict into a tensor containing the incremental states.
+        Stacks the incremental states across all layers.
 
-        :param incr_state_dict:
+        For all six combinations of attention type (self_attn or encoder_attn) and
+        object (prev_key, prev_value, or prev_mask), stacks the incremental states
+        across all layers to form a single tensor.
+        :param incr_states_by_layer:
             A nested dict encoding the incremental state of the layers. Levels:
                 (0) decoder layer
                 (1) attention type (self_attn or encoder_attn)
                 (2) attention object (prev_key, prev_value, or prev_mask)
         """
-        # TODO: is this efficient? Yes! Readable? Meh...
-        incr_state_tensor = torch.stack(
-            [
-                torch.stack(
+        stacked_incr_states = {}
+        for type_idx, attn_type in enumerate(['self_attn', 'encoder_attn']):
+            stacked_incr_states[attn_type] = {}
+            for obj_idx, obj in enumerate(['prev_key', 'prev_value', 'prev_mask']):
+                stacked_incr_states[attn_type][obj] = torch.stack(
                     [
-                        torch.stack(
-                            [
-                                incr_state_dict[layer_idx][attn_type][obj]
-                                for obj in ['prev_key', 'prev_value', 'prev_mask']
-                            ],
-                            dim=0,
-                        )
-                        for attn_type in ['self_attn', 'encoder_attn']
+                        incr_states_by_layer[layer_idx][attn_type][obj]
+                        for layer_idx in range(self.n_layers)
                     ],
                     dim=0,
                 )
-                for layer_idx in range(self.n_layers)
-            ],
-            dim=0,
-        )
-        return incr_state_tensor
+        return stacked_incr_states
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
