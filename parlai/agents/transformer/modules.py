@@ -865,7 +865,6 @@ class TransformerDecoder(nn.Module):
         self,
         input: torch.LongTensor,
         encoder_output: torch.Tensor,
-        encoder_mask: torch.Tensor,
         self_attn_prev_keys: torch.Tensor,
         self_attn_prev_values: torch.Tensor,
         self_attn_prev_masks: torch.Tensor,
@@ -887,8 +886,9 @@ class TransformerDecoder(nn.Module):
         # TODO: add other params to docstring
 
         seq_len = input.size(1)
-        positions = input.new_empty(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = torch.arange(
+            seq_len, dtype=torch.long, device=input.device
+        ).unsqueeze(0)
 
         stacked_incr_states = {
             'self_attn': {
@@ -926,8 +926,11 @@ class TransformerDecoder(nn.Module):
         tensor = self.dropout(tensor)  # --dropout
 
         tensor, new_incr_states_by_layer = self.forward_layers(
-            tensor, encoder_output, encoder_mask, incr_states_by_layer
-        )
+            tensor,
+            encoder_output,
+            incr_states_by_layer[0]['encoder_attn']['prev_mask'],
+            incr_states_by_layer,
+        )  # The mask will ultimately not be used here
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
