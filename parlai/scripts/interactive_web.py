@@ -23,6 +23,7 @@ from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import json
+import time
 
 HOST_NAME = 'localhost'
 PORT = 8080
@@ -255,6 +256,12 @@ def shutdown():
     if 'server' in SHARED:
         SHARED['server'].shutdown()
     SHARED.clear()
+
+
+def wait():
+    global SHARED
+    while not SHARED:
+        time.sleep(0.01)
 
 
 def interactive_web(opt):

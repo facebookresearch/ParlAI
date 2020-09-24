@@ -99,7 +99,7 @@ class TestInteractiveWeb(unittest.TestCase):
             kwargs={'model': 'repeat_query', 'port': port},
         )
         thread.start()
-        time.sleep(1.1)
+        iweb.wait()
 
         r = requests.get(f'http://localhost:{port}/')
         assert '<html>' in r.text
@@ -120,8 +120,6 @@ class TestInteractiveWeb(unittest.TestCase):
 
         r = requests.post(f'http://localhost:{port}/bad')
         assert r.status_code == 500
-
-        time.sleep(0.1)
 
         iweb.shutdown()
 
