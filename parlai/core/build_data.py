@@ -19,6 +19,7 @@ import requests
 import shutil
 import hashlib
 import tqdm
+import gzip
 import math
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
@@ -292,6 +293,39 @@ def _untar(path, fname, delete=True):
 
     if delete:
         PathManager.rm(fullpath)
+
+
+def ungzip(path, fname, deleteGZip=True):
+    """
+    Unzips the given gzip compressed file to the same directory.
+
+    :param str path:
+        The folder containing the archive. Will contain the contents.
+
+    :param str fname:
+        The filename of the archive file.
+
+    :param bool deleteGZip:
+        If true, the compressed file will be deleted after extraction.
+    """
+
+    def _get_output_filename(input_fname):
+        GZIP_EXTENSIONS = ('.gz', '.gzip', '.tgz', '.tar')
+        for ext in GZIP_EXTENSIONS:
+            if input_fname.endswith(ext):
+                return input_fname[: -len(ext)]
+        return f'{input_fname}_unzip'
+
+    logging.debug(f'unzipping {fname}')
+    fullpath = os.path.join(path, fname)
+
+    with gzip.open(fullpath, 'rb') as fin, open(
+        _get_output_filename(fullpath), 'wb'
+    ) as fout:
+        shutil.copyfileobj(fin, fout)
+
+    if deleteGZip:
+        os.remove(fullpath)
 
 
 def _unzip(path, fname, delete=True):

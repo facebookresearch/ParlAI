@@ -84,5 +84,14 @@ class TestInteractiveLogging(unittest.TestCase):
             self.assertEqual(len(entry), 2 * fake_input.max_turns)
 
 
+class TestProfileInteractive(unittest.TestCase):
+    def test_profile_interactive(self):
+        from parlai.scripts.profile_interactive import ProfileInteractive
+
+        fake_input = FakeInput(max_episodes=2)
+        with mock.patch('builtins.input', new=fake_input):
+            ProfileInteractive.main(model='repeat_query')
+
+
 if __name__ == '__main__':
     unittest.main()

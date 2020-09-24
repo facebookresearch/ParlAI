@@ -1,5 +1,5 @@
 {
-  "name": "parlai-mturk-task-compiler",
+  "name": "parlai-mephisto-task-compiler",
   "version": "1.0.0",
   "description": "",
   "main": "webpack.config.js",
@@ -11,7 +11,6 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "jquery": "^3.0.0",
-    "popper.js": "^1.14.4",
     "mephisto-task": "^1.0.10",
     "react": "16.13.1",
     "react-bootstrap": "^0.32.4",

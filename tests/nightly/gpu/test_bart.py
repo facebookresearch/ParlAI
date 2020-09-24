@@ -61,7 +61,7 @@ class TestBartModel(unittest.TestCase):
                     short_final_eval=True,
                     validation_max_exs=12,
                     model_file=mf,
-                    model_parallel=True
+                    model_parallel=True,
                 )
             )
             self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)

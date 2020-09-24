@@ -13,9 +13,7 @@ from parlai.scripts.verify_data import verify, setup_args
 import parlai.utils.testing as testing_utils
 
 KEYS = ['missing_text', 'missing_labels', 'empty_string_label_candidates']
-BASE_TEACHERS = dir(teach_module) + [
-    'CandidateBaseTeacher',
-]
+BASE_TEACHERS = dir(teach_module) + ['CandidateBaseTeacher']
 
 
 class TestNewTasks(unittest.TestCase):
@@ -74,7 +72,7 @@ class TestNewTasks(unittest.TestCase):
         if found_errors:
             self.fail(
                 "Please fix the above listed errors, or describe in the PR why "
-                "you do not expect them to pass.",
+                "you do not expect them to pass."
             )
 
 

@@ -29,3 +29,9 @@ class TestSelfChat(unittest.TestCase):
             ]
         )
         self_chat.self_chat(opt)
+
+    def test_no_plain_teacher(self):
+        from parlai.scripts.display_data import DisplayData
+
+        with self.assertRaises(RuntimeError):
+            DisplayData.main(task='self_chat')
