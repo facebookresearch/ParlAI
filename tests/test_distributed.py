@@ -206,5 +206,29 @@ class TestDistributed(unittest.TestCase):
                 dist.destroy_process_group()
 
 
+@testing_utils.skipUnlessGPU
+class TestDistributedEval(unittest.TestCase):
+    def test_mp_eval(self):
+        args = dict(
+            task='integration_tests:multiturn_nocandidate',
+            model='seq2seq',
+            model_file='zoo:unittest/seq2seq/model',
+            dict_file='zoo:unittest/seq2seq/model.dict',
+            skip_generation=False,
+            batchsize=8,
+        )
+        valid, _ = testing_utils.eval_model(args, skip_test=True)
+
+        from parlai.scripts.multiprocessing_eval import MultiProcessEval
+
+        valid_mp = MultiProcessEval.main(**args)
+
+        for key in ['exs', 'ppl', 'token_acc', 'f1', 'bleu-4', 'accuracy']:
+            self.assertAlmostEquals(
+                valid[key].value(), valid_mp[key].value(), delta=0.001
+            )
+        dist.destroy_process_group()
+
+
 if __name__ == '__main__':
     unittest.main()
