@@ -227,6 +227,7 @@ class TestDistributedEval(unittest.TestCase):
             self.assertAlmostEquals(
                 valid[key].value(), valid_mp[key].value(), delta=0.001
             )
+        dist.destroy_process_group()
 
 
 if __name__ == '__main__':
