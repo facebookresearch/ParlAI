@@ -868,7 +868,7 @@ class TransformerDecoder(nn.Module):
         encoder_mask: torch.Tensor,
         incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
     ):
-        # TODO: work around this hack
+        # TODO: work around this change in signature
         """
         Forward pass.
 
