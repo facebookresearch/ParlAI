@@ -1048,9 +1048,7 @@ class TransformerDecoderLayer(nn.Module):
             )
             >= 0
         ).to(dtype=ones.dtype, device=ones.device)
-        # This circumvents a "RuntimeError: Exporting the operator tril to ONNX opset
-        # version 11 is not supported. Please open a bug to request ONNX export support
-        # for the missing operator." error.
+        # This circumvents torch.tril not currently being supported in ONNX opset version 11.
         # broadcast across batch
         mask = mask.unsqueeze(0).repeat(bsz, 1, 1)
         return mask
