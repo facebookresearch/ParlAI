@@ -29,14 +29,14 @@ from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
-try:
-    from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
+# try:
+#     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
-    APEX_LAYER_NORM = True
-except ImportError:
-    from torch.nn import LayerNorm
+#     APEX_LAYER_NORM = True
+# except ImportError:
+from torch.nn import LayerNorm
 
-    APEX_LAYER_NORM = False
+APEX_LAYER_NORM = False
 
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
