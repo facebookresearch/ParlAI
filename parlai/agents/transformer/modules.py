@@ -1040,7 +1040,17 @@ class TransformerDecoderLayer(nn.Module):
         bsz = x.size(0)
         time = x.size(1)
         # make sure that we don't look into the future
-        mask = torch.tril(x.new(time, time).fill_(1))
+        ones = x.new_ones(time, time)
+        mask = (
+            (
+                torch.arange(0, -ones.size(1), -1).unsqueeze(0)
+                + torch.arange(ones.size(0)).unsqueeze(1)
+            )
+            >= 0
+        ).to(dtype=ones.dtype, device=ones.device)
+        # This circumvents a "RuntimeError: Exporting the operator tril to ONNX opset
+        # version 11 is not supported. Please open a bug to request ONNX export support
+        # for the missing operator." error.
         # broadcast across batch
         mask = mask.unsqueeze(0).repeat(bsz, 1, 1)
         return mask
