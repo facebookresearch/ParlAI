@@ -886,9 +886,27 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
+            # print("BEAM:", self.beam_size)
+            beam_preds_scores, beams = self._generate(batch, self.beam_size, maxlen)
             preds, scores = zip(*beam_preds_scores)
+            # print(beam_preds_scores)
+            # print(beams)
             self._add_generation_metrics(batch, preds)
+
+            n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+
+            # get the top prediction for each beam (i.e. minibatch sample)
+            beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
+            top_n_texts = []
+            for i, beams2 in enumerate(n_best_beam_preds_scores):
+                top_n_texts.append([])
+                for b, (tokens, score) in enumerate(beams2):
+                    try:
+                        top_n_texts[-1].append((self._v2t(tokens), score))
+                    except:
+                        print("Bad tokens:", tokens, flush=True)
+                        logging.error("Bad tokens: %s", tokens)
+                        raise
 
         cand_choices = None
         # TODO: abstract out the scoring here
@@ -1168,8 +1186,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
         if self.opt.get('verbose'):
-            for i, beams in enumerate(n_best_beam_preds_scores):
-                for b, (tokens, score) in enumerate(beams):
+            for i, beams2 in enumerate(n_best_beam_preds_scores):
+                for b, (tokens, score) in enumerate(beams2):
                     gen = self._v2t(tokens)
                     logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
                 logging.debug('-')
