@@ -72,6 +72,13 @@ def setup_args(parser=None):
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
     parser.add_argument(
+        '-wtim',
+        '--write-every-n-secs',
+        type=float,
+        default=-1,
+        help='if n > 0 and world logging is turned on, we write a partial output to file every n seconds',
+    )
+    parser.add_argument(
         '-mcs',
         '--metrics',
         type=str,
@@ -117,6 +124,29 @@ def _save_eval_stats(opt, report):
         f.write("\n")  # for jq
 
 
+def _write_world_logs(opt, task, world, world_logger, partial_write_cnt=-1):
+    if world_logger is None:
+        return
+
+    if partial_write_cnt < 0:  # final write
+        # dump world acts to file
+        world_logger.reset()  # add final acts to logs
+
+    base_outfile = opt['report_filename'].split('.')[0]
+    if is_distributed():
+        rank = get_rank()
+        if partial_write_cnt > 0:
+            outfile = base_outfile + f'_{task}_{rank}_replies_{partial_write_cnt}.jsonl'
+        else:
+            outfile = base_outfile + f'_{task}_{rank}_replies.jsonl'
+    else:
+        if partial_write_cnt > 0:
+            outfile = base_outfile + f'_{task}_replies_{partial_write_cnt}.jsonl'
+        else:
+            outfile = base_outfile + f'_{task}_replies.jsonl'
+    world_logger.write(outfile, world, file_format=opt['save_format'])
+
+
 def _eval_single_world(opt, agent, task):
     logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
@@ -130,6 +160,10 @@ def _eval_single_world(opt, agent, task):
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
+    write_every_n_secs = opt.get('write_every_n_secs', -1)
+    if write_every_n_secs <= 0:
+        write_every_n_secs = float('inf')
+    partial_write_cnt = 0
     log_time = TimeLogger()
 
     # max number of examples to evaluate
@@ -154,20 +188,17 @@ def _eval_single_world(opt, agent, task):
                 report.get('exs', 0), min(max_cnt, total_cnt), report
             )
             logging.info(text)
+        if log_time.time() > write_every_n_secs:
+            partial_write_cnt += 1
+            _write_world_logs(
+                opt, task, world, world_logger, partial_write_cnt=partial_write_cnt
+            )
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
     world.reset()
 
-    if world_logger is not None:
-        # dump world acts to file
-        world_logger.reset()  # add final acts to logs
-        base_outfile = opt['report_filename'].split('.')[0]
-        if is_distributed():
-            rank = get_rank()
-            outfile = base_outfile + f'_{task}_{rank}_replies.jsonl'
-        else:
-            outfile = base_outfile + f'_{task}_replies.jsonl'
-        world_logger.write(outfile, world, file_format=opt['save_format'])
+    # if world logger exists, write to file
+    _write_world_logs(opt, task, world, world_logger)
 
     return report
 
