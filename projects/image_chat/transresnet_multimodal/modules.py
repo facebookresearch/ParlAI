@@ -9,6 +9,7 @@ Modules for TransresnetMultimodalAgent.
 
 import torch
 from torch import nn
+from parlai.utils.io import PathManager
 from parlai.agents.transformer.modules import (
     TransformerEncoder,
     create_position_codes,
@@ -470,7 +471,8 @@ class TransresnetMultimodalModel(TransresnetModel):
     def _load_text_encoder_state(self):
         try:
             state_file = self.opt.get("load_encoder_from")
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'rb') as f:
+                model = torch.load(f)
             states = model["model"]
             self.text_encoder.load_state_dict(states)
         except Exception as e:
@@ -484,7 +486,8 @@ class TransresnetMultimodalModel(TransresnetModel):
     def _load_context_encoder_state(self):
         try:
             state_file = self.opt.get("load_context_encoder_from")
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'rb') as f:
+                model = torch.load(f)
             states = model["model"]
             self.context_encoder.load_state_dict(states)
         except Exception as e:

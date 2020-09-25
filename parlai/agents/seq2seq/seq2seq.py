@@ -6,6 +6,7 @@
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 from .modules import Seq2seq, opt_to_kwargs
 
 import torch
@@ -223,7 +224,8 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """
         Return opt and model states.
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
         self.model.load_state_dict(states['model'])
         if 'longest_label' in states:

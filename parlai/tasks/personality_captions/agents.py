@@ -227,7 +227,8 @@ class PersonalityCaptionsTestTeacher(PersonalityCaptionsTeacher):
         )
         import torch
 
-        self.image_features = torch.load(image_features_path)
+        with PathManager.open(image_features_path, 'rb') as f:
+            self.image_features = torch.load(f)
 
     def reset(self):
         """

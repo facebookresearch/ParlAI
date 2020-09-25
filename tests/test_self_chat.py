@@ -23,3 +23,9 @@ class TestSelfChat(unittest.TestCase):
             model_file='zoo:tutorial_transformer_generator/model',
             seed_messages_from_task=True,
         )
+
+    def test_no_plain_teacher(self):
+        from parlai.scripts.display_data import DisplayData
+
+        with self.assertRaises(RuntimeError):
+            DisplayData.main(task='self_chat')

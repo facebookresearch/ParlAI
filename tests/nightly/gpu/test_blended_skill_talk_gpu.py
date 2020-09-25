@@ -9,11 +9,7 @@ import unittest
 from parlai.utils import testing as testing_utils
 
 
-SHARED_OPTS = {
-    'batchsize': 16,
-    'task': 'blended_skill_talk',
-    'num_examples': 64,
-}
+SHARED_OPTS = {'batchsize': 16, 'task': 'blended_skill_talk', 'num_examples': 64}
 
 
 class TestBlendedSkillTalkModels(unittest.TestCase):
