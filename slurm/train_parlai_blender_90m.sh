@@ -70,7 +70,7 @@ parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,
  --dict-tokenizer bpe --dict-lower True -lr 1e-06 --optimizer adamax --lr-scheduler reduceonplateau \
  --gradient-clip 0.1 -veps 0.25 --betas 0.9,0.999 --update-freq 1 --attention-dropout 0.0 --relu-dropout 0.0 \
  --skip-generation True --save-after-valid=True --num-epochs=50 --max_train_time=604800 --validation-patience=5 \
- --validation-every-n-secs=14400 --validation-max-exs=10000 validation_every_n_epochs=-1 -batchsize=8 \
+ --validation-every-n-secs=14400 --validation-max-exs=10000 --validation_every_n_epochs=-1 --batchsize=8 \
  --validation_metric=ppl --validation_metric_mode=min \
  -mf "${SERIAL_DIR}/${EXP_ID}.mod"
 
