@@ -9,9 +9,6 @@ import unittest
 import parlai.utils.testing as testing_utils
 
 
-BATCH_SIZE = 8
-
-
 class TestHred(unittest.TestCase):
     """
     Checks that Hred can learn some very basic tasks.
@@ -20,10 +17,16 @@ class TestHred(unittest.TestCase):
     def test_generation(self):
         valid, test = testing_utils.train_model(
             dict(
-                task="integration_tests:multiturn_candidate",
+                task="integration_tests:overfit",
                 model="hred",
-                batchsize=BATCH_SIZE,
-                num_epochs=10,
+                optimizer='sgd',
+                momentum=0.9,
+                learningrate=1.0,
+                lr_scheduler='none',
+                batchsize=4,
+                num_epochs=100,
+                validation_every_n_epochs=4,
+                validation_metric='ppl',
                 embeddingsize=16,
                 hiddensize=32,
                 numlayers=1,
@@ -45,11 +48,7 @@ class TestHred(unittest.TestCase):
                 model_file="zoo:unittest/hred_model/model",
                 dict_file="zoo:unittest/hred_model/model.dict",
                 skip_generation=False,
-                inference="greedy",
-                numlayers=1,
-                embeddingsize=16,
-                hiddensize=32,
-                batchsize=BATCH_SIZE,
+                batchsize=32,
             )
         )
 
@@ -69,11 +68,10 @@ class TestHred(unittest.TestCase):
                 dict_file="zoo:unittest/hred_model/model.dict",
                 skip_generation=False,
                 numlayers=1,
-                embeddingsize=16,
-                hiddensize=32,
                 batchsize=8,
                 inference="beam",
                 beam_size=5,
+                num_examples=20,
             )
         )
         self.assertGreater(valid["accuracy"], 0.95)

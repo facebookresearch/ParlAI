@@ -1190,7 +1190,7 @@ model_list = [
         "task": "pushshift.io",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
-            "2.7B parameter generative model finetuned on blended_skill_talk tasks."
+            "2.7B parameter generative model pretrained on Reddit but not finetuned."
         ),
         "example": (
             "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
@@ -1205,7 +1205,7 @@ model_list = [
         "task": "pushshift.io",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
-            "9.4B parameter generative model finetuned on blended_skill_talk tasks."
+            "9.4B parameter generative model pretrained on Reddit but not finetuned."
         ),
         "example": (
             "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
@@ -1468,5 +1468,27 @@ model_list = [
         "result": """16:56:52 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
     ctpb  ctps  exps  exs  gpu_mem  loss  ltpb  ltps   ppl  token_acc   tpb  tps
      120  1855 15.46 5482    .1635 2.248 19.94 308.2 9.468      .4872 139.9 2163""",
+    },
+    {
+        "title": "Faster-R-CNN Detectron Features",
+        "id": "detectron",
+        "path": "zoo:detectron/detectron_model.pth",
+        "agent": "n/a",
+        "task": "n/a",
+        "project": 'https://github.com/facebookresearch/vilbert-multi-task',
+        "description": "Detectron Model for extracting 100x2048d object detection features. Model is from linked project website",
+        "example": "parlai display_data -t flickr30k --image-mode faster_r_cnn_152_32x8d -n 1 -v",
+        "result": """
+        [id]: flickr30k
+        [image_id]: 1000092795
+        [ image ]: tensor([[ 0.0000,  7.1329,  0.0000,  ...,  0.0000,  0.0000,  5.3357],
+                [ 0.0000,  0.0000,  0.0000,  ...,  0.0000,  0.0000,  0.0000],
+                [ 0.0000,  0.0000,  0.4687,  ...,  0.0000,  0.0000,  0.0000],
+                ...,
+                [ 0.0000,  3.0936,  3.4888,  ...,  0.0000,  0.0000,  0.0000],
+                [ 3.8596,  0.0000,  0.0000,  ...,  0.0000,  4.3454,  0.0000],
+                [ 0.0000,  7.9822,  1.0979,  ...,  3.5514,  0.0000, 15.3559]])
+        [labels]: Two young guys with shaggy hair look at their hands while hanging out in the yard.|Two young, White males are outside near many bushes.|Two men in green shirts are standing in a yard.|A man in a blue shirt standing in a garden.|Two friends enjoy time spent together.
+        """,
     },
 ]
