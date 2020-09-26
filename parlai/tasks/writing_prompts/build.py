@@ -5,20 +5,20 @@ from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
-        '/home/s1569885/datasets/ParlAI/WritingPrompts/writing_prompts_train.txt',
-        'writing_prompts_train.txt',
+        'https://github.com/dwlmt/parlai-datasets/raw/master/datasets/writing_prompts/writing_prompts_train.txt.tar.gz',
+        'writing_prompts_train.txt.tar.gz',
         '2d46c87db2e5861f8c671c21f247bf944796ab1ecdf7566743ab42dadcc1faeb',
         zipped=True,
     ),
     DownloadableFile(
-        '/home/s1569885/ParlAI/WritingPrompts/writing_prompts_valid.txt',
-        'writing_prompts_valid.txt',
+        'https://github.com/dwlmt/parlai-datasets/raw/master/datasets/writing_prompts/writing_prompts_valid.txt.tar.gz',
+        'writing_prompts_valid.txt.tar.gz',
         '09b0ca93d00c4bcc010eeea07c7b6d3ad5082c1432b07acb655ac1eda3f96876',
         zipped=True,
     ),
     DownloadableFile(
-        '/home/s1569885/ParlAI/WritingPrompts/writing_prompts_test.txt',
-        'writing_prompts_test.txt',
+        'https://github.com/dwlmt/parlai-datasets/raw/master/datasets/writing_prompts/writing_prompts_test.txt.tar.gz',
+        'writing_prompts_test.txt.tar.gz',
         '9cb8a467eaf12d6977994340281d4aaef0467a7dc444462775f144c2a2b04426',
         zipped=True,
     ),
