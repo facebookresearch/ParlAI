@@ -39,6 +39,7 @@ print(
     "\n"
     "Our existing tasks will either be archived along with parlai.mturk.core "
     "or migrated to work with Mephisto, depending on usage.\n"
+    'See https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/turn_annotations/README.md for an example of what the front-end interfaces (CLI and Python script) of the new tasks will look like.\n'
     '\33[5m\33[101m'
     "WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING"
     '\33[0m\n\n'

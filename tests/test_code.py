@@ -22,7 +22,7 @@ class TestInit(unittest.TestCase):
 
     def test_init_everywhere(self):
         for folder_path in testing_utils.git_ls_dirs('parlai'):
-            excluded_folders = ['mturk', 'webapp']
+            excluded_folders = ['mturk', 'task_config', 'webapp']
             if any(folder_name in folder_path for folder_name in excluded_folders):
                 continue
             self.assertIn(

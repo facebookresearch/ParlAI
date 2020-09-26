@@ -269,7 +269,7 @@ def sync_parameters(model: torch.nn.Module) -> bool:
 
 @contextlib.contextmanager
 def distributed_context(
-    rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
+    rank, opt, rank_offset=0, gpu=None, init_method="tcp://localhost:61337"
 ):
     """
     A context which wraps initialization of a distributed/multiprocessing run.
@@ -285,14 +285,12 @@ def distributed_context(
         non-primary workers.
     :param opt:
         command line options
-    :param int port:
-        A TCP port to use. This will need to be changed to run multiple
         distributed training setups on the same machine.
     :param int gpu:
         Which GPU to use. Defaults to using rank and local devices, but must be
         manually specified when using many-hosts.
-    :param str hostname:
-        Hostname of the main server.
+    :param str init method:
+        Init method, such as ``tcp://localhost:61337``. See torch.distributed docs.
     """
     # Set per-host options
     opt = copy.deepcopy(opt)
@@ -322,7 +320,7 @@ def distributed_context(
             torch.cuda.set_device(opt['gpu'])
         dist.init_process_group(
             backend="nccl",
-            init_method="tcp://{}:{}".format(hostname, port),
+            init_method=init_method,
             world_size=opt['distributed_world_size'],
             rank=rank,
         )
@@ -379,7 +377,7 @@ def slurm_distributed_context(opt):
         )
         # Begin distributed training
         with distributed_context(
-            distributed_rank, opt, port, 0, device_id, main_host
+            distributed_rank, opt, 0, device_id, init_method=f"tcp://{main_host}:{port}"
         ) as opt:
             yield opt
     except subprocess.CalledProcessError as e:

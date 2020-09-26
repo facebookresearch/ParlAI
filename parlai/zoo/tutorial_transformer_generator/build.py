@@ -22,6 +22,4 @@ def download(datapath):
     if not built(mdir, version):
         opt = {'datapath': datapath}
         fnames = ['tutorial_transformer_generator_v1.tar.gz']
-        download_models(
-            opt, fnames, model_name, version=version, use_model_type=False,
-        )
+        download_models(opt, fnames, model_name, version=version, use_model_type=False)

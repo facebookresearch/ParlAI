@@ -35,8 +35,9 @@ from parlai.core.script import ParlaiScript, register_script
 def multiprocess_train(
     rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
 ):
+    init_method = f"tcp://{hostname}:{port}"
     with distributed_utils.distributed_context(
-        rank, opt, port, rank_offset, gpu, hostname
+        rank, opt, rank_offset, gpu, init_method=init_method
     ) as opt:
         # Run the actual training
         opt['multiprocessing'] = True

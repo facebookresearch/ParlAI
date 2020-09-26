@@ -155,9 +155,6 @@ def _eval_single_world(opt, agent, task):
             )
             logging.info(text)
 
-    report = aggregate_unnamed_reports(all_gather_list(world.report()))
-    world.reset()
-
     if world_logger is not None:
         # dump world acts to file
         world_logger.reset()  # add final acts to logs
@@ -168,6 +165,9 @@ def _eval_single_world(opt, agent, task):
         else:
             outfile = base_outfile + f'_{task}_replies.jsonl'
         world_logger.write(outfile, world, file_format=opt['save_format'])
+
+    report = aggregate_unnamed_reports(all_gather_list(world.report()))
+    world.reset()
 
     return report
 

@@ -45,7 +45,7 @@ class Opt(dict):
         self.deepcopies = []
 
     def __setitem__(self, key, val):
-        loc = traceback.format_stack()[-2]
+        loc = traceback.format_stack(limit=2)[-2]
         self.history.append((key, val, loc))
         super().__setitem__(key, val)
 
@@ -64,7 +64,7 @@ class Opt(dict):
         Override deepcopy so that history is copied over to new object.
         """
         # track location of deepcopy
-        loc = traceback.format_stack()[-3]
+        loc = traceback.format_stack(limit=3)[-3]
         self.deepcopies.append(loc)
         # copy all our children
         memo = Opt({k: copy.deepcopy(v) for k, v in self.items()})

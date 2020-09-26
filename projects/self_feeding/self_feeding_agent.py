@@ -22,6 +22,7 @@ import torch.nn.functional as F
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.utils.torch import padded_tensor
+from parlai.utils.io import PathManager
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
 
@@ -838,7 +839,8 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         Overriding TorchAgent.load() to enable partial loading
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
         if 'model' in states:
             try:
                 self.model.load_state_dict(states['model'])

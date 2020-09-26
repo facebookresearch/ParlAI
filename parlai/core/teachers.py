@@ -46,6 +46,7 @@ from parlai.utils.conversations import Conversations
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
+import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 
@@ -1803,9 +1804,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
             logging.info(
                 f'Loading existing image features dict for model: {self.image_mode} at: {image_mode_features_dict_path}'
             )
-            self.image_features_dict = torch.load(
-                image_mode_features_dict_path, map_location='cpu'
-            )
+            with PathManager.open(image_mode_features_dict_path, 'rb') as f:
+                self.image_features_dict = torch.load(f, map_location='cpu')
         else:
             logging.warn('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
@@ -1857,14 +1857,14 @@ class AbstractImageTeacher(FixedDialogTeacher):
             image = self.image_loader.load(img_path).detach()
             # spatial features are [1, image_dim, spatial_dim, spatial_dim] tensors.
             # reduce non-spatial features to one-dimensional feature prior to saving.
-            if 'spatial' not in self.image_mode:
+            if not self.image_loader.is_spatial(self.image_mode):
                 image = image[0, :, 0, 0]
             image_features_dict[img_id] = image
             num += 1
             pbar.update(1)
             if num % 1000 == 0:
                 logging.debug(f'Processing image index: {num}')
-        torch.save(image_features_dict, store_dict_path)
+        torch_utils.atomic_save(image_features_dict, store_dict_path)
         return image_features_dict
 
     def reset(self):
