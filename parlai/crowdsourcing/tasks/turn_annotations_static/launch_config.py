@@ -19,6 +19,3 @@ class LaunchConfig:
     Lorem ipsum.
     <br><br>
       '''
-
-    # A list of worker IDs to block from doing the task.
-    WORKER_BLOCK_LIST = []
