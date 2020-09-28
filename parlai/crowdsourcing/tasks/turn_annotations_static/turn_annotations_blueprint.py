@@ -12,9 +12,11 @@ from argparse import _ArgumentGroup as ArgumentGroup
 from typing import Any, Dict, TYPE_CHECKING
 
 from mephisto.core.registry import register_mephisto_abstraction
+from mephisto.data_model.blueprint import SharedTaskState
 from mephisto.server.blueprints.static_react_task.static_react_blueprint import (
     StaticReactBlueprint,
 )
+from omegaconf import MISSING, DictConfig
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
@@ -22,6 +24,65 @@ if TYPE_CHECKING:
 
 def get_task_path():
     return os.path.dirname(__file__)
+
+
+STATIC_BLUEPRINT_TYPE = 'turn_annotations_static_blueprint'
+STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE = 'turn_annotations_static_inflight_qa_blueprint'
+
+
+@dataclass
+class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
+    _blueprint_type: str = STATIC_BLUEPRINT_TYPE
+
+
+#     _group: str = field(
+#         default="AcuteEvalBlueprint",
+#         metadata={
+#             'help': """\
+# Tasks launched from the ACUTE-Eval blueprint require sets of pairings for workers to \
+# be able to compare to. These pairings should be provided as a .jsonl with \
+# --pairings-filepath."""
+#         },
+#     )
+#     annotations_per_pair: int = field(
+#         default=1,
+#         metadata={"help": "Number of annotations per conversation comparison pair"},
+#     )
+#     pairings_filepath: str = field(
+#         default=MISSING,
+#         metadata={"help": "path to the file containing the task dictionaries"},
+#     )
+#     s1_choice: str = field(
+#         default="I would prefer to talk to <Speaker 1>",
+#         metadata={"help": "text next to speaker 1 radio button"},
+#     )
+#     s2_choice: str = field(
+#         default="I would prefer to talk to <Speaker 2>",
+#         metadata={"help": "text next to speaker 2 radio button"},
+#     )
+#     eval_question: str = field(
+#         default="Who would you prefer to talk to for a long conversation?",
+#         metadata={
+#             "help": 'question to present to turker for comparison (e.g. "Which speaker is better?")'
+#         },
+#     )
+#     block_on_onboarding_fail: bool = field(
+#         default=True, metadata={"help": "whether to block on onboarding failure"}
+#     )
+#     num_matchup_pairs: int = field(
+#         default=2, metadata={"help": "Number of pairs per model matchup, default 2"}
+#     )
+#     subtasks_per_unit: int = field(
+#         default=5, metadata={"help": "number of subtasks/comparisons to do per unit"}
+#     )
+#     onboarding_threshold: float = field(
+#         default=0.75,
+#         metadata={"help": "minimum accuracy on onboarding tasks, as a float 0-1.0"},
+#     )
+#     random_seed: int = field(default=42, metadata={"help": "seed for random"})
+#     additional_task_description: str = field(
+#         default='', metadata={"help": "Additional text to show on the left pane"}
+#     )
 
 
 @register_mephisto_abstraction()
@@ -34,15 +95,18 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
-    BLUEPRINT_TYPE = 'turn_annotations_static_blueprint'
+    ArgsClass = TaskAnnotationsStaticBlueprintArgs
+    BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
 
-    def __init__(self, task_run: "TaskRun", opts: Any):
-        super().__init__(task_run, opts)
-        self.subtasks_per_unit = opts['subtasks_per_unit']
+    def __init__(
+        self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
+    ):
+        super().__init__(task_run, args=args, shared_state=shared_state)
+        self.subtasks_per_unit = args.blueprint.subtasks_per_unit
 
         if self.subtasks_per_unit <= 0:
             raise Exception(
-                f'subtasks-per-unit must be greater than zero but was {self.subtasks_per_unit}'
+                f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
         grouped_data = []
 
@@ -151,6 +215,61 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         return output
 
 
+@dataclass
+class TurnAnnotationsStaticInFlightQABlueprintArgs(TurnAnnotationsStaticBlueprintArgs):
+    _blueprint_type: str = STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE
+
+
+#     _group: str = field(
+#         default="AcuteEvalBlueprint",
+#         metadata={
+#             'help': """\
+# Tasks launched from the ACUTE-Eval blueprint require sets of pairings for workers to \
+# be able to compare to. These pairings should be provided as a .jsonl with \
+# --pairings-filepath."""
+#         },
+#     )
+#     annotations_per_pair: int = field(
+#         default=1,
+#         metadata={"help": "Number of annotations per conversation comparison pair"},
+#     )
+#     pairings_filepath: str = field(
+#         default=MISSING,
+#         metadata={"help": "path to the file containing the task dictionaries"},
+#     )
+#     s1_choice: str = field(
+#         default="I would prefer to talk to <Speaker 1>",
+#         metadata={"help": "text next to speaker 1 radio button"},
+#     )
+#     s2_choice: str = field(
+#         default="I would prefer to talk to <Speaker 2>",
+#         metadata={"help": "text next to speaker 2 radio button"},
+#     )
+#     eval_question: str = field(
+#         default="Who would you prefer to talk to for a long conversation?",
+#         metadata={
+#             "help": 'question to present to turker for comparison (e.g. "Which speaker is better?")'
+#         },
+#     )
+#     block_on_onboarding_fail: bool = field(
+#         default=True, metadata={"help": "whether to block on onboarding failure"}
+#     )
+#     num_matchup_pairs: int = field(
+#         default=2, metadata={"help": "Number of pairs per model matchup, default 2"}
+#     )
+#     subtasks_per_unit: int = field(
+#         default=5, metadata={"help": "number of subtasks/comparisons to do per unit"}
+#     )
+#     onboarding_threshold: float = field(
+#         default=0.75,
+#         metadata={"help": "minimum accuracy on onboarding tasks, as a float 0-1.0"},
+#     )
+#     random_seed: int = field(default=42, metadata={"help": "seed for random"})
+#     additional_task_description: str = field(
+#         default='', metadata={"help": "Additional text to show on the left pane"}
+#     )
+
+
 @register_mephisto_abstraction()
 class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
     """
@@ -159,10 +278,13 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
     1.
     """
 
-    BLUEPRINT_TYPE = 'turn_annotations_static_inflight_qa_blueprint'
+    ArgsClass = TaskAnnotationsStaticInFlightQABlueprintArgs
+    BLUEPRINT_TYPE = STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE
 
-    def __init__(self, task_run: "TaskRun", opts: Any):
-        super().__init__(task_run, opts)
+    def __init__(
+        self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
+    ):
+        super().__init__(task_run, args=args, shared_state=shared_state)
 
         raw_qc_convos = []
         with open(self.opts['onboarding_in_flight_data'], "r") as f:
