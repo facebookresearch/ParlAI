@@ -22,9 +22,9 @@ following BibTex entry:
 
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
-The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
+The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
-    python parlai/crowdsourcing/tasks/acute_eval/example_script.py \
+    python parlai/crowdsourcing/tasks/acute_eval/run.py \
     mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
 
 ## Formatting conversation data
