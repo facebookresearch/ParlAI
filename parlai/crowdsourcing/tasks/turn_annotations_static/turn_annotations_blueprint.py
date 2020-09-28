@@ -5,18 +5,20 @@
 # LICENSE file in the root directory of this source tree.
 
 import json
+import logging
 import math
 import os
-import logging
 from argparse import _ArgumentGroup as ArgumentGroup
+from dataclasses import dataclass, field
 from typing import Any, Dict, TYPE_CHECKING
 
 from mephisto.core.registry import register_mephisto_abstraction
 from mephisto.data_model.blueprint import SharedTaskState
 from mephisto.server.blueprints.static_react_task.static_react_blueprint import (
     StaticReactBlueprint,
+    StaticReactBlueprintArgs,
 )
-from omegaconf import MISSING, DictConfig
+from omegaconf import DictConfig
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
@@ -33,56 +35,39 @@ STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE = 'turn_annotations_static_inflight_qa_bluepr
 @dataclass
 class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
     _blueprint_type: str = STATIC_BLUEPRINT_TYPE
-
-
-#     _group: str = field(
-#         default="AcuteEvalBlueprint",
-#         metadata={
-#             'help': """\
-# Tasks launched from the ACUTE-Eval blueprint require sets of pairings for workers to \
-# be able to compare to. These pairings should be provided as a .jsonl with \
-# --pairings-filepath."""
-#         },
-#     )
-#     annotations_per_pair: int = field(
-#         default=1,
-#         metadata={"help": "Number of annotations per conversation comparison pair"},
-#     )
-#     pairings_filepath: str = field(
-#         default=MISSING,
-#         metadata={"help": "path to the file containing the task dictionaries"},
-#     )
-#     s1_choice: str = field(
-#         default="I would prefer to talk to <Speaker 1>",
-#         metadata={"help": "text next to speaker 1 radio button"},
-#     )
-#     s2_choice: str = field(
-#         default="I would prefer to talk to <Speaker 2>",
-#         metadata={"help": "text next to speaker 2 radio button"},
-#     )
-#     eval_question: str = field(
-#         default="Who would you prefer to talk to for a long conversation?",
-#         metadata={
-#             "help": 'question to present to turker for comparison (e.g. "Which speaker is better?")'
-#         },
-#     )
-#     block_on_onboarding_fail: bool = field(
-#         default=True, metadata={"help": "whether to block on onboarding failure"}
-#     )
-#     num_matchup_pairs: int = field(
-#         default=2, metadata={"help": "Number of pairs per model matchup, default 2"}
-#     )
-#     subtasks_per_unit: int = field(
-#         default=5, metadata={"help": "number of subtasks/comparisons to do per unit"}
-#     )
-#     onboarding_threshold: float = field(
-#         default=0.75,
-#         metadata={"help": "minimum accuracy on onboarding tasks, as a float 0-1.0"},
-#     )
-#     random_seed: int = field(default=42, metadata={"help": "seed for random"})
-#     additional_task_description: str = field(
-#         default='', metadata={"help": "Additional text to show on the left pane"}
-#     )
+    _group: str = field(
+        default="TurnAnnotationsStaticBlueprint",
+        metadata={
+            'help': """This task renders conversations from a file and asks for turn by turn annotations of them."""
+        },
+    )
+    subtasks_per_unit: int = field(
+        default=-1, metadata={"help": "Number of subtasks/comparisons to do per unit"}
+    )
+    annotate_last_utterance_only: bool = field(
+        default=False,
+        metadata={
+            "help": "If we only want the crowdworker to annotate the last utterance in the conversation"
+        },
+    )
+    ask_reason: bool = field(
+        default=False,
+        metadata={
+            "help": "If we want to ask the crowdworker for a reason for each of their annotations in a text field"
+        },
+    )
+    onboarding_data: str = field(
+        default=os.path.join(get_task_path(), 'task_config/onboarding.json'),
+        metadata={
+            "help": "Path to data and answers for onboarding task in JSON format"
+        },
+    )
+    annotation_buckets: str = field(
+        default=os.path.join(get_task_path(), 'task_config/annotation_buckets.json'),
+        metadata={
+            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance."
+        },
+    )
 
 
 @register_mephisto_abstraction()
@@ -95,7 +80,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
-    ArgsClass = TaskAnnotationsStaticBlueprintArgs
+    ArgsClass = TurnAnnotationsStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
 
     def __init__(
@@ -128,50 +113,6 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             f'Grouped data into {len(self._initialization_data_dicts)} tasks with {self.subtasks_per_unit} subtasks each.'
         )
 
-    @classmethod
-    def add_args_to_group(cls, group: "ArgumentGroup") -> None:
-        """
-        Adds required options for TurnAnnotationStaticBlueprint.
-        """
-        super().add_args_to_group(group)
-        group.add_argument(
-            "--subtasks-per-unit",
-            dest="subtasks_per_unit",
-            type=int,
-            default=-1,
-            help="number of subtasks/comparisons to do per unit",
-        )
-        group.add_argument(
-            "--annotate-last-utterance-only",
-            dest="annotate_last_utterance_only",
-            type=str2bool,  # Need to handle it being 'False' in arg_string
-            default=False,
-            help="If we only want the crowdworker to annotate the last utterance in the conversation",
-        )
-        group.add_argument(
-            "--ask-reason",
-            dest="ask_reason",
-            type=str2bool,  # Need to handle it being 'False' in arg_string
-            default=False,
-            help="If we want to ask the crowdworker for a reason for each of their annotations in a text field",
-        )
-        group.add_argument(
-            "--onboarding-data",
-            dest="onboarding_data",
-            type=str,
-            default=os.path.join(get_task_path(), 'task_config/onboarding.json'),
-            help="Path to data and answers for onboarding task in JSON format",
-        )
-        group.add_argument(
-            "--annotation-buckets",
-            dest="annotation_buckets",
-            type=str,
-            default=os.path.join(
-                get_task_path(), 'task_config/annotation_buckets.json'
-            ),
-            help="As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance.",
-        )
-
     def get_frontend_args(self) -> Dict[str, Any]:
         """
         Specifies what options within a task_config should be forwarded to the client
@@ -181,7 +122,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         with open(self.args.blueprint.onboarding_data, "r", encoding="utf-8-sig") as f:
             onboarding_data = json.loads(f.read())
 
-        with open(self.args.blueprint.annotation_buckets, "r", encoding="utf-8-sig") as f:
+        with open(
+            self.args.blueprint.annotation_buckets, "r", encoding="utf-8-sig"
+        ) as f:
             annotation_buckets = json.loads(f.read())
 
         return {
@@ -218,56 +161,18 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
 @dataclass
 class TurnAnnotationsStaticInFlightQABlueprintArgs(TurnAnnotationsStaticBlueprintArgs):
     _blueprint_type: str = STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE
-
-
-#     _group: str = field(
-#         default="AcuteEvalBlueprint",
-#         metadata={
-#             'help': """\
-# Tasks launched from the ACUTE-Eval blueprint require sets of pairings for workers to \
-# be able to compare to. These pairings should be provided as a .jsonl with \
-# --pairings-filepath."""
-#         },
-#     )
-#     annotations_per_pair: int = field(
-#         default=1,
-#         metadata={"help": "Number of annotations per conversation comparison pair"},
-#     )
-#     pairings_filepath: str = field(
-#         default=MISSING,
-#         metadata={"help": "path to the file containing the task dictionaries"},
-#     )
-#     s1_choice: str = field(
-#         default="I would prefer to talk to <Speaker 1>",
-#         metadata={"help": "text next to speaker 1 radio button"},
-#     )
-#     s2_choice: str = field(
-#         default="I would prefer to talk to <Speaker 2>",
-#         metadata={"help": "text next to speaker 2 radio button"},
-#     )
-#     eval_question: str = field(
-#         default="Who would you prefer to talk to for a long conversation?",
-#         metadata={
-#             "help": 'question to present to turker for comparison (e.g. "Which speaker is better?")'
-#         },
-#     )
-#     block_on_onboarding_fail: bool = field(
-#         default=True, metadata={"help": "whether to block on onboarding failure"}
-#     )
-#     num_matchup_pairs: int = field(
-#         default=2, metadata={"help": "Number of pairs per model matchup, default 2"}
-#     )
-#     subtasks_per_unit: int = field(
-#         default=5, metadata={"help": "number of subtasks/comparisons to do per unit"}
-#     )
-#     onboarding_threshold: float = field(
-#         default=0.75,
-#         metadata={"help": "minimum accuracy on onboarding tasks, as a float 0-1.0"},
-#     )
-#     random_seed: int = field(default=42, metadata={"help": "seed for random"})
-#     additional_task_description: str = field(
-#         default='', metadata={"help": "Additional text to show on the left pane"}
-#     )
+    _group: str = field(
+        default="TurnAnnotationsStaticInFlightQABlueprint",
+        metadata={
+            'help': """This task mixes in a live onboarding as the last subtask (in addition to an onboarding at the start), and actually increases the number of subtasks per unit by 1."""
+        },
+    )
+    onboarding_in_flight_data: str = field(
+        default=os.path.join(get_task_path(), 'task_config/onboarding_in_flight.jsonl'),
+        metadata={
+            "help": "Path to data and answers for onboarding task in JSON-L format (one JSON object per line per onboarding)"
+        },
+    )
 
 
 @register_mephisto_abstraction()
@@ -278,7 +183,7 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
     1.
     """
 
-    ArgsClass = TaskAnnotationsStaticInFlightQABlueprintArgs
+    ArgsClass = TurnAnnotationsStaticInFlightQABlueprintArgs
     BLUEPRINT_TYPE = STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE
 
     def __init__(
@@ -315,20 +220,4 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
 
         print(
             f'{self.__class__.__name__}: Grouped data into {len(self._initialization_data_dicts)} tasks with {self.subtasks_per_unit} subtasks each (added in-flight qualification task).'
-        )
-
-    @classmethod
-    def add_args_to_group(cls, group: "ArgumentGroup") -> None:
-        """
-        Adds required options for TurnAnnotationsStaticInFlightQABlueprint.
-        """
-        super().add_args_to_group(group)
-        group.add_argument(
-            "--onboarding-in-flight-data",
-            dest="onboarding_in_flight_data",
-            type=str,
-            default=os.path.join(
-                get_task_path(), 'task_config/onboarding_in_flight.jsonl'
-            ),
-            help="Path to data and answers for onboarding task in JSON-L format (one JSON object per line per onboarding)",
         )
