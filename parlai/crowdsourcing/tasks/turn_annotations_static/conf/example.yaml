@@ -1,0 +1,8 @@
+#@package _global_
+mephisto:
+  blueprint:
+    annotation_buckets:
+    annotate_last_utterance_only: false
+    ask_reason: false
+    onboarding_data:
+    subtasks_per_unit: 6

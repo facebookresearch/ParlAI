@@ -24,7 +24,6 @@ class LaunchConfig:
     DATA_JSONL = 'FIXME'
 
     TASK_REWARD = 0.3
-    SUBTASKS_PER_UNIT = 6
 
     # How many workers to do each assignment
     UNITS_PER_ASSIGNMENT = 5
@@ -34,7 +33,3 @@ class LaunchConfig:
 
     # A list of worker IDs to block from doing the task.
     WORKER_BLOCK_LIST = []
-
-    # Blueprint specific params
-    ANNOTATE_LAST_UTTERANCE_ONLY = False
-    ASK_REASON = False

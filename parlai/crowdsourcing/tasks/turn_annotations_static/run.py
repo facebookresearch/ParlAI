@@ -19,8 +19,8 @@ from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
-    STATIC_BLUEPRINT_TYPE,
+from parlai.crowdsourcing.tasks.turn_annotations_static import (
+    turn_annotations_blueprint,
 )
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +29,6 @@ FRONTEND_BUILD_DIR = os.path.join(FRONTEND_SOURCE_DIR, "build")
 STATIC_FILES_DIR = os.path.join(FRONTEND_SOURCE_DIR, "src", "static")
 
 defaults = [
-    {"mephisto/blueprint": STATIC_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
     {"conf": "example"},
