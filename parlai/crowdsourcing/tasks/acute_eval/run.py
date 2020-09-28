@@ -5,17 +5,18 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-import time
 from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from mephisto.core.hydra_config import RunScriptConfig, register_script_config
+from mephisto.core.hydra_config import register_script_config
 from mephisto.core.operator import Operator
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
+
 
 """
 Script for running ACUTE-Evals.
@@ -40,10 +41,9 @@ defaults = [
 
 
 @dataclass
-class ScriptConfig(RunScriptConfig):
+class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    current_time: int = int(time.time())
 
 
 register_script_config(name='scriptconfig', module=ScriptConfig)

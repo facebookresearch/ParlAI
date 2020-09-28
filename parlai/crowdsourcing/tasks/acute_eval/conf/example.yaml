@@ -21,3 +21,5 @@ mephisto:
     task_reward: 0.5
     task_tags: "chat,evaluation,comparison,conversation"
     task_title: "Which Conversational Partner is Better?"
+mturk:
+  worker_blocklist_paths: null

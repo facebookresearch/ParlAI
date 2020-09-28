@@ -8,14 +8,12 @@ import os
 import random
 import shutil
 import subprocess
-import time
 from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from mephisto.core.hydra_config import RunScriptConfig, register_script_config
+from mephisto.core.hydra_config import register_script_config
 from mephisto.core.operator import Operator
-from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_workers
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
@@ -23,6 +21,10 @@ from omegaconf import DictConfig
 # blueprints
 from parlai.crowdsourcing.tasks.turn_annotations_static import (
     turn_annotations_blueprint,
+)
+from parlai.crowdsourcing.utils.mturk import (
+    MTurkRunScriptConfig,
+    soft_block_mturk_workers,
 )
 
 # Satisfy linting
@@ -41,10 +43,9 @@ defaults = [
 
 
 @dataclass
-class ScriptConfig(RunScriptConfig):
+class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    current_time: int = int(time.time())
 
 
 register_script_config(name='scriptconfig', module=ScriptConfig)
@@ -56,25 +57,9 @@ def main(cfg: DictConfig) -> None:
 
     random.seed(42)
 
-    # TODO: revise below
-    arg_string = (
-        f"--task-name turn-ann-s "
-        f'--port 2222 '
-        f'--onboarding-qualification turn-ann-s-onb '
-        f"-use-onboarding True "
-    )
-
-    if cfg.mephisto.provider.get('_provider_type', 'mock') == 'mturk':
-        soft_block_qual_name = 'turn_annotations_static_no'
-        print(
-            f'About to soft block {len(launch_config.WORKER_BLOCK_LIST)} workers by giving qualification: {soft_block_qual_name}'
-        )
-        direct_soft_block_mturk_workers(
-            db=db,
-            worker_list=launch_config.WORKER_BLOCK_LIST,
-            soft_block_qual_name=soft_block_qual_name,
-            requester_name=cfg.mephisto.provider.get("requester_name", None),
-        )
+    soft_block_qual_name = cfg.mephisto.task.get('task_name', 'turn_annotations_static')
+    # Default to a task-specific name to avoid soft-block collisions
+    soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
     # Build the task
     return_dir = os.getcwd()
