@@ -15,12 +15,12 @@ class LaunchConfig:
     # mephisto register mturk_sandbox --name:XXXX
     # --access-key-id:XXXX --secret-access-key:XXXX
     # To run locally, set REQUEST = None and PROVIDER = 'mock'
-    REQUESTER = 'FIXME'
-    PROVIDER = 'mturk_sandbox'
+    REQUESTER = None
+    PROVIDER = 'mock'
 
     # This datapath is where the database object goes
     # If not Mephisto data path below then requester register seems to do nothing
-    DATAPATH = 'FIXME'
+    DATAPATH = None
 
     TASK_TITLE = 'Chat with a fellow conversationalist'
     TASK_DESCRIPTION = '''<br>
