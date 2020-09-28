@@ -882,7 +882,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
 
         preds = None
-        top_n_texts: List[List[Tuple[str, float]]] = []
         if self.skip_generation:
             warn_once("--skip-generation true produces limited metrics")
         else:
@@ -891,11 +890,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             preds, scores = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
 
+            # bsz x beamsize
+            beam_texts: List[List[Tuple[str, float]]] = []
             for beam in beams:
-                top_n_texts.append([])
+                beam_texts.append([])
                 for tokens, score in beam.get_rescored_finished():
                     try:
-                        top_n_texts[-1].append((self._v2t(tokens), score.item()))
+                        beam_texts[-1].append((self._v2t(tokens), score.item()))
                     except KeyError:
                         logging.error("Decoding error: %s", tokens)
                         continue
@@ -930,7 +931,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self._compute_nltk_bleu(batch, text)
         retval = Output(text, cand_choices, token_losses=token_losses)
         if not self.skip_generation:
-            retval.top_n_texts = top_n_texts
+            retval.beam_texts = beam_texts
         return retval
 
     def _treesearch_factory(self, device):
@@ -1180,12 +1181,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
-        if self.opt.get('verbose'):
-            for i, batch_beams in enumerate(n_best_beam_preds_scores):
-                for b, (tokens, score) in enumerate(batch_beams):
-                    gen = self._v2t(tokens)
-                    logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
-                logging.debug('-')
 
         return beam_preds_scores, beams
 
