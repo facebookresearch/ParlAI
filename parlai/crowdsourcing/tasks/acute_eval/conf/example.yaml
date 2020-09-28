@@ -21,4 +21,3 @@ mephisto:
     task_tags: "chat,evaluation,comparison,conversation"
     task_title: "Which Conversational Partner is Better?"
     task_reward: 0.5
-
