@@ -18,7 +18,7 @@ from omegaconf import DictConfig
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
 
 """
-Example script for running ACUTE-Evals.
+Script for running ACUTE-Evals.
 The only argument that *must* be set for this to be run is:
 ``pairings_filepath``:  Path to pairings file in the format specified in the README.md
 
@@ -40,13 +40,13 @@ defaults = [
 
 
 @dataclass
-class TestScriptConfig(RunScriptConfig):
+class ScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
     current_time: int = int(time.time())
 
 
-register_script_config(name='scriptconfig', module=TestScriptConfig)
+register_script_config(name='scriptconfig', module=ScriptConfig)
 
 
 @hydra.main(config_name="scriptconfig")

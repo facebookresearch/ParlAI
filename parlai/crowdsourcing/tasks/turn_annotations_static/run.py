@@ -5,34 +5,60 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-import shlex
+import random
 import shutil
 import subprocess
-import random
+import time
+from dataclasses import dataclass, field
+from importlib import import_module
+from typing import Any, List
+
+import hydra
+from mephisto.core.hydra_config import RunScriptConfig, register_script_config
+from mephisto.core.operator import Operator
+from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_workers
+from mephisto.utils.scripts import load_db_and_process_config
+from omegaconf import DictConfig
 
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
-from mephisto.core.operator import Operator
-
-from importlib import import_module
-
-# Have to import this even though it's not directly used
-from parlai.crowdsourcing.tasks.turn_annotations_static import (
-    turn_annotations_blueprint,
+from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
+    STATIC_BLUEPRINT_TYPE,
 )
-
-from mephisto.utils.scripts import MephistoRunScriptParser
-from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_workers
-
-LAUNCH_FILE = None
-
-# Blueprint import required though not used; this satisfies linting
-_ = turn_annotations_blueprint
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_SOURCE_DIR = os.path.join(TASK_DIRECTORY, "webapp")
 FRONTEND_BUILD_DIR = os.path.join(FRONTEND_SOURCE_DIR, "build")
 STATIC_FILES_DIR = os.path.join(FRONTEND_SOURCE_DIR, "src", "static")
+
+defaults = [
+    {"mephisto/blueprint": STATIC_BLUEPRINT_TYPE},
+    {"mephisto/architect": "local"},
+    {"mephisto/provider": "mock"},
+    {"conf": "example"},
+]
+
+
+@dataclass
+class ScriptConfig(RunScriptConfig):
+    defaults: List[Any] = field(default_factory=lambda: defaults)
+    task_dir: str = TASK_DIRECTORY
+    current_time: int = int(time.time())
+
+
+register_script_config(name='scriptconfig', module=ScriptConfig)
+
+
+@hydra.main(config_name="scriptconfig")
+def main(cfg: DictConfig) -> None:
+    db, cfg = load_db_and_process_config(cfg)
+    operator = Operator(db)
+    operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
+    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+
+
+if __name__ == "__main__":
+    main()
 
 
 def setup_mephisto(launch_config):
