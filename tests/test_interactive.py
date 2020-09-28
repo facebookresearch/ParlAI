@@ -97,6 +97,7 @@ class TestInteractiveWeb(unittest.TestCase):
         thread = threading.Thread(
             target=iweb.InteractiveWeb.main,
             kwargs={'model': 'repeat_query', 'port': port},
+            daemon=True,
         )
         thread.start()
         iweb.wait()

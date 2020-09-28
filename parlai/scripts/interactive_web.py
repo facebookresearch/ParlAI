@@ -260,7 +260,7 @@ def shutdown():
 
 def wait():
     global SHARED
-    while not SHARED:
+    while not SHARED.get('ready'):
         time.sleep(0.01)
 
 
@@ -282,6 +282,7 @@ def interactive_web(opt):
     logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
+        SHARED['ready'] = True
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
