@@ -27,7 +27,7 @@ class TestMemnn(unittest.TestCase):
                 lr=1,
                 momentum=0.9,
                 batchsize=4,
-                num_epochs=10,
+                num_epochs=100,
                 validation_every_n_epochs=1,
                 embedding_size=32,
                 gradient_clip=1.0,

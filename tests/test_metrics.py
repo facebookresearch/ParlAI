@@ -19,10 +19,7 @@ from parlai.core.metrics import (
     aggregate_unnamed_reports,
     aggregate_named_reports,
 )
-from parlai.core.torch_classifier_agent import (
-    ConfusionMatrixMetric,
-    WeightedF1Metric,
-)
+from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
 
 
 class TestMetric(unittest.TestCase):

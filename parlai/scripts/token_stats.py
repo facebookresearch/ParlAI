@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import numpy as np
-from parlai.core.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.agents import create_agent
 from parlai.core.torch_agent import TorchAgent
 from parlai.core.worlds import create_task
@@ -14,6 +14,7 @@ from parlai.utils.misc import TimeLogger, nice_report
 import parlai.utils.logging as logging
 
 
+@register_script("token_stats", hidden=True)
 class TokenStats(ParlaiScript):
     @classmethod
     def setup_args(cls):
@@ -90,6 +91,7 @@ class TokenStats(ParlaiScript):
 
         report = self._compute_stats(lengths)
         print(nice_report(report))
+        return report
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@
 
 from parlai.agents.transformer.transformer import TransformerRankerAgent
 from .wizard_dict import WizardDictAgent
+from parlai.utils.io import PathManager
 
 import numpy as np
 import torch
@@ -140,7 +141,8 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         Override this method from TorchAgent to allow us to load partial weights from
         pre-trained models.
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
 
         if 'model' in states:
             new_state_dict = states['model']

@@ -22,6 +22,7 @@ from parlai.core.torch_agent import TorchAgent, Output, Batch
 from parlai.utils.misc import round_sigfigs
 from parlai.utils.torch import padded_tensor, argsort, neginf
 from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
 from .modules import Seq2seq, opt_to_kwargs
 from .util import ConvAI2History, show_beam_cands, reorder_extrep2gram_qn
 from .controls import (
@@ -1169,8 +1170,7 @@ class ControllableSeq2seqAgent(TorchAgent):
             model['optimizer'] = self.optimizer.state_dict()
             model['optimizer_type'] = self.opt['optimizer']
 
-            with PathManager.open(path, 'wb') as write:
-                torch.save(model, write)
+            torch_utils.atomic_save(model, path)
 
             # save opt file
             with PathManager.open(path + '.opt', 'w') as handle:
@@ -1181,7 +1181,8 @@ class ControllableSeq2seqAgent(TorchAgent):
         """
         Return opt and model states.
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
 
         # check opt file for multigpu
         with PathManager.open(path + ".opt", 'r') as handle:

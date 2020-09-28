@@ -39,8 +39,9 @@ def multiprocess_eval(
 
     Invoked by launch_and_eval, not instantiated directly.
     """
+    init_method = f'tcp://{hostname}:{port}'
     with distributed_utils.distributed_context(
-        rank, opt, port, rank_offset, gpu, hostname
+        rank, opt, rank_offset, gpu, init_method=init_method
     ) as opt:
         opt['multiprocessing'] = True
         return eval_model.eval_model(opt)

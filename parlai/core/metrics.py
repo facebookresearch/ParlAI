@@ -592,6 +592,10 @@ def aggregate_unnamed_reports(reports: List[Dict[str, Metric]]) -> Dict[str, Met
     return m
 
 
+def dict_report(report: Dict[str, Metric]):
+    return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
+
+
 class Metrics(object):
     """
     Metrics aggregator.
