@@ -882,7 +882,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
 
         preds = None
-        top_n_texts = []
+        top_n_texts: List[Tuple[str, float]] = []
         if self.skip_generation:
             warn_once("--skip-generation true produces limited metrics")
         else:
@@ -895,7 +895,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 top_n_texts.append([])
                 for tokens, score in beam.get_rescored_finished():
                     try:
-                        top_n_texts[-1].append((self._v2t(tokens), score))
+                        top_n_texts[-1].append((self._v2t(tokens), score.item()))
                     except KeyError:
                         logging.error("Decoding error: %s", tokens)
                         continue
