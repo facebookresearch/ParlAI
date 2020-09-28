@@ -11,17 +11,6 @@ class LaunchConfig:
     command line as params)
     """
 
-    # Run the below to register the requester if needed (first time only)
-    # mephisto register mturk_sandbox --name:XXXX
-    # --access-key-id:XXXX --secret-access-key:XXXX
-    # To run locally, set REQUEST = None and PROVIDER = 'mock'
-    REQUESTER = 'FIXME'
-    PROVIDER = 'mturk_sandbox'
-
-    # This datapath is where the database object goes
-    # If not Mephisto data path below then requester register seems to do nothing
-    DATAPATH = 'FIXME'
-
     TASK_TITLE = 'Chat with a fellow conversationalist'
     TASK_DESCRIPTION = '''<br>
     <b><h4>Task Description</h4></b>
@@ -32,7 +21,7 @@ class LaunchConfig:
     <br><br>
       '''
 
-    FILE_DATA_JSONL = 'FIXME'
+    DATA_JSONL = 'FIXME'
 
     TASK_REWARD = 0.3
     SUBTASKS_PER_UNIT = 6
@@ -41,7 +30,7 @@ class LaunchConfig:
     UNITS_PER_ASSIGNMENT = 5
 
     # Maximum tasks a worker can do across all runs with task_name (0=infinite)
-    MAX_UNITS_PER_WORKER = 5
+    MAXIMUM_UNITS_PER_WORKER = 5
 
     # A list of worker IDs to block from doing the task.
     WORKER_BLOCK_LIST = []
