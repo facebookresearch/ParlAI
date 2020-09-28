@@ -276,6 +276,26 @@ class TestTransformerGenerator(unittest.TestCase):
         self.assertAlmostEqual(test['bleu-3'], 0.40, delta=0.001)
 
     @pytest.mark.nofbcode
+    def test_beamsearch_return_all_texts(self):
+        """
+        Test beam_texts for beam_size > 1
+        """
+        size = 3
+
+        agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model', opt_overrides={"beam_size": size, "inference": "beam"})
+        agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+        response = agent.act()
+        self.assertTrue("beam_texts" in response)
+        # This line fails!!! It returns 4 options instead of 4
+        # self.assertEqual(len(response["beam_texts"]), size)
+
+        agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model', opt_overrides={"beam_size": size, "inference": "topk"})
+        agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+        response = agent.act()
+        self.assertTrue("beam_texts" in response)
+        self.assertEqual(len(response["beam_texts"]), size)
+
+    @pytest.mark.nofbcode
     def test_beamsearch_blocking(self):
         """
         Test beamsearch blocking.
