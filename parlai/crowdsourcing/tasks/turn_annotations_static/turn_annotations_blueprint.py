@@ -178,21 +178,21 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         for use by the task's frontend.
         """
 
-        with open(self.opts['onboarding_data'], "r", encoding="utf-8-sig") as f:
+        with open(self.args.blueprint.onboarding_data, "r", encoding="utf-8-sig") as f:
             onboarding_data = json.loads(f.read())
 
-        with open(self.opts['annotation_buckets'], "r", encoding="utf-8-sig") as f:
+        with open(self.args.blueprint.annotation_buckets, "r", encoding="utf-8-sig") as f:
             annotation_buckets = json.loads(f.read())
 
         return {
-            "task_description": self.opts['task_description'],
-            "task_title": self.opts['task_title'],
+            "task_description": self.args.task.get('task_description', None),
+            "task_title": self.args.task.get('task_title', None),
             "onboarding_data": onboarding_data,
             "annotation_buckets": annotation_buckets,
-            "annotate_last_utterance_only": self.opts['annotate_last_utterance_only'],
-            "ask_reason": self.opts['ask_reason'],
+            "annotate_last_utterance_only": self.args.blueprint.annotate_last_utterance_only,
+            "ask_reason": self.args.blueprint.ask_reason,
             "frame_height": '100%',
-            "num_subtasks": self.opts["subtasks_per_unit"],
+            "num_subtasks": self.args.blueprint.subtasks_per_unit,
             "block_mobile": True,
         }
 
@@ -287,7 +287,7 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
         super().__init__(task_run, args=args, shared_state=shared_state)
 
         raw_qc_convos = []
-        with open(self.opts['onboarding_in_flight_data'], "r") as f:
+        with open(self.args.blueprint.onboarding_in_flight_data, "r") as f:
             line = f.readline()
             while line:
                 qc_convo = json.loads(line)
