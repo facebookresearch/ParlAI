@@ -61,7 +61,7 @@ if __name__ == "__main__":
     main()
 
 
-def block_workers(launch_config, local_db, requester_name=None):
+def block_workers(block_list: List[str], provider: str, local_db, requester_name=None):
     """
     Use a block list to block undesired crowdsource workers (Mechanical Turkers for
     example).
@@ -72,13 +72,15 @@ def block_workers(launch_config, local_db, requester_name=None):
         )
         return
 
-    block_list = launch_config.WORKER_BLOCK_LIST
     soft_block_qual_name = 'turn_annotations_static_no'
     print(
-        f'About to soft block {len(block_list)} workers on {launch_config.PROVIDER} by giving qualification: {soft_block_qual_name}'
+        f'About to soft block {len(block_list)} workers on {provider} by giving qualification: {soft_block_qual_name}'
     )
     direct_soft_block_mturk_workers(
-        local_db, block_list, soft_block_qual_name, requester_name
+        db=local_db,
+        worker_list=block_list,
+        soft_block_qual_name=soft_block_qual_name,
+        requester_name=requester_name,
     )
 
 
@@ -126,7 +128,8 @@ def run_task(opt):
 
     if 'sandbox' not in launch_config.PROVIDER:
         block_workers(
-            launch_config=launch_config,
+            block_list=launch_config.WORKER_BLOCK_LIST,
+            provider=launch_config.PROVIDER,
             local_db=db,
             requester_name=launch_config.REQUESTER,
         )
