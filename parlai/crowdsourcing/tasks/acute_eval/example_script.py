@@ -52,17 +52,6 @@ register_script_config(name='scriptconfig', module=TestScriptConfig)
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
-
-    world_opt = {}
-
-    custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
-    if custom_bundle_path is not None:
-        assert os.path.exists(custom_bundle_path), (
-            "Must build the custom bundle with `npm install; npm run dev` from within "
-            f"the {TASK_DIRECTORY}/webapp directory in order to demo a custom bundle "
-        )
-        world_opt["send_task_data"] = True
-
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
     operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
