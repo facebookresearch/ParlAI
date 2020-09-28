@@ -11,7 +11,6 @@ class LaunchConfig:
     command line as params)
     """
 
-    TASK_TITLE = 'Chat with a fellow conversationalist'
     TASK_DESCRIPTION = '''<br>
     <b><h4>Task Description</h4></b>
     <br>
@@ -23,13 +22,8 @@ class LaunchConfig:
 
     DATA_JSONL = 'FIXME'
 
-    TASK_REWARD = 0.3
-
     # How many workers to do each assignment
     UNITS_PER_ASSIGNMENT = 5
-
-    # Maximum tasks a worker can do across all runs with task_name (0=infinite)
-    MAXIMUM_UNITS_PER_WORKER = 5
 
     # A list of worker IDs to block from doing the task.
     WORKER_BLOCK_LIST = []

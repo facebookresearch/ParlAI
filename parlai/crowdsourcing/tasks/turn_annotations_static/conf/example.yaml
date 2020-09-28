@@ -1,4 +1,6 @@
 #@package _global_
+defaults:
+  mephisto/blueprint: turn_annotations_static_blueprint
 mephisto:
   blueprint:
     annotation_buckets:
@@ -6,3 +8,7 @@ mephisto:
     ask_reason: false
     onboarding_data:
     subtasks_per_unit: 6
+  task:
+    maximum_units_per_worker: 5
+    task_reward: 0.3
+    task_title: "Chat with a fellow conversationalist"
