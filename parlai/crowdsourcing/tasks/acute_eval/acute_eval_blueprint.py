@@ -98,7 +98,7 @@ class AcuteEvalBlueprint(Blueprint):
         """
         Ensure that the data can be properly loaded.
         """
-        if args.blueprint.get("pairings_filepath") is not None:
+        if args.blueprint.get("pairings_filepath", None) is not None:
             pairings_filepath = os.path.expanduser(args.blueprint.pairings_filepath)
             assert os.path.exists(
                 pairings_filepath
@@ -108,8 +108,8 @@ class AcuteEvalBlueprint(Blueprint):
                 "Must provide one of a data csv, json, or a list of tasks"
             )
 
-        if args.blueprint.get("block_on_onboarding_fail") is True:
-            if args.blueprint.get("block_qualification") is None:
+        if args.blueprint.get("block_on_onboarding_fail", False) is True:
+            if args.blueprint.get("block_qualification", None) is None:
                 raise AssertionError(
                     "Must provide `block_qualification` to use `block_on_onboarding_fail`"
                 )
@@ -136,7 +136,6 @@ class AcuteEvalBlueprint(Blueprint):
         # TODO(#99) once we can release HITs over time, configure this to
         # release as many as needed thusfar and top off when
         # onboardings fail
-        print(self.args)
         num_conversations = math.ceil(
             self.args.blueprint.num_matchup_pairs
             / max((self.args.blueprint.subtasks_per_unit - 1), 1)
