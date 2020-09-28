@@ -60,8 +60,6 @@ def main(cfg: DictConfig) -> None:
     arg_string = (
         f"--task-name turn-ann-s "
         f'--task-source "{TASK_DIRECTORY}/webapp/build/bundle.js" '
-        f'--task-tags chat,conversation,dialog,partner '
-        f"--allowed-concurrent 1 "
         f'--extra-source-dir "{STATIC_FILES_DIR}" '
         f'--port 2222 '
         f'--onboarding-qualification turn-ann-s-onb '
