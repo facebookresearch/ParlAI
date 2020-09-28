@@ -61,15 +61,32 @@ if __name__ == "__main__":
     main()
 
 
-def setup_mephisto(launch_config):
+def block_workers(launch_config, local_db, requester_name=None):
     """
-    Mephisto data is saved in:
+    Use a block list to block undesired crowdsource workers (Mechanical Turkers for
+    example).
+    """
+    if not requester_name:
+        print(
+            'Specified no requester_name, which is done when running locally. Skipping blocking...'
+        )
+        return
 
-    <datapath>/data/runs/NO_PROJECT/<project_id>/<task_run_id>/<assignment_id>/<agent_id>/data
-    -- The NO_PROJECT and /data/ thing will fixed in later versions of Mephisto
-    -- agent_id can be mapped to MTurk worker_id with workers table in sqlite3 db
-    """
-    parser = MephistoRunScriptParser()
+    block_list = launch_config.WORKER_BLOCK_LIST
+    soft_block_qual_name = 'turn_annotations_static_no'
+    print(
+        f'About to soft block {len(block_list)} workers on {launch_config.PROVIDER} by giving qualification: {soft_block_qual_name}'
+    )
+    direct_soft_block_mturk_workers(
+        local_db, block_list, soft_block_qual_name, requester_name
+    )
+
+
+def run_task(opt):
+
+    random.seed(42)
+
+    # Set up Mephisto
     full_requester_name = launch_config.REQUESTER
     if 'sandbox' in launch_config.PROVIDER and launch_config.REQUESTER:
         full_requester_name = full_requester_name + '_sandbox'
@@ -81,8 +98,6 @@ def setup_mephisto(launch_config):
             'datapath': launch_config.DATAPATH,
         }
     )
-
-    architect_type, requester_name, db, args = parser.parse_launch_arguments()
 
     arg_string = (
         "--blueprint-type turn_annotations_static_inflight_qa_blueprint "
@@ -108,13 +123,15 @@ def setup_mephisto(launch_config):
         f'--onboarding-qualification turn-ann-s-onb '
         f"-use-onboarding True "
     )
-    return db, arg_string
 
+    if 'sandbox' not in launch_config.PROVIDER:
+        block_workers(
+            launch_config=launch_config,
+            local_db=db,
+            requester_name=launch_config.REQUESTER,
+        )
 
-def build_task():
-    """
-    Build the task.
-    """
+    # Build the task
     return_dir = os.getcwd()
     os.chdir(FRONTEND_SOURCE_DIR)
     if os.path.exists(FRONTEND_BUILD_DIR):
@@ -125,7 +142,6 @@ def build_task():
             "please make sure npm is installed, otherwise view "
             "the above error for more info."
         )
-
     webpack_complete = subprocess.call(["npm", "run", "dev"])
     if webpack_complete != 0:
         raise RuntimeError(
@@ -133,74 +149,3 @@ def build_task():
             "frontend. See the above error for more information."
         )
     os.chdir(return_dir)
-
-
-def block_workers(launch_config, opt, local_db, requester_name=None):
-    """
-    Use a block list to block undesired crowdsource workers (Mechanical Turkers for
-    example).
-    """
-    if not requester_name:
-        print(
-            'Specified no requester_name, which is done when running locally. Skipping blocking...'
-        )
-        return
-
-    block_list = launch_config.WORKER_BLOCK_LIST
-    soft_block_qual_name = 'turn_annotations_static_no'
-    print(
-        f'About to soft block {len(block_list)} workers on {launch_config.PROVIDER} by giving qualification: {soft_block_qual_name}'
-    )
-    direct_soft_block_mturk_workers(
-        local_db, block_list, soft_block_qual_name, requester_name
-    )
-
-
-def run_task(opt):
-    """
-    Note: launch_config opt should be something like:
-    parlai.crowdsourcing.tasks.turn_annotations_static.launch_config.LaunchConfig
-    """
-
-    launch_config_file = opt.get('launch_config')
-    launch_module = import_module(launch_config_file)
-    launch_config = launch_module.LaunchConfig
-    db, arg_string = setup_mephisto(launch_config)
-    if 'sandbox' not in launch_config.PROVIDER:
-        block_workers(opt, db, launch_config.REQUESTER)
-
-    build_task()
-    operator = Operator(db)
-    print(f'ARG_STRING: {arg_string}')
-    operator.parse_and_launch_run_wrapper(shlex.split(arg_string), extra_args={})
-    operator.wait_for_runs_then_shutdown()
-
-
-def setup_args(parser=None):
-    """
-    This task takes a single argument which is a Python class specifying the launch
-    config.
-    """
-    if parser is None:
-        parser = ParlaiParser(True, False, 'Static Turn Annotations Task')
-    parser.add_argument(
-        '--launch-config',
-        type=str,
-        required=True,
-        help='A Python config file with variables used in this script.',
-    )
-    return parser
-
-
-class TurnAnnotationsStaticRunner(ParlaiScript):
-    @classmethod
-    def setup_args(cls):
-        return setup_args()
-
-    def run(self):
-        return run_task(self.opt)
-
-
-if __name__ == '__main__':
-    random.seed(42)
-    TurnAnnotationsStaticRunner.main()
