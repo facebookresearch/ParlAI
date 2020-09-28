@@ -928,9 +928,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
             self._compute_nltk_bleu(batch, text)
-        return Output(
-            text, cand_choices, token_losses=token_losses, top_n_texts=top_n_texts
-        )
+        retval = Output(text, cand_choices, token_losses=token_losses)
+        if not self.skip_generation:
+            retval.top_n_texts = top_n_texts
+        return retval
 
     def _treesearch_factory(self, device):
         method = self.opt.get('inference', 'greedy')
