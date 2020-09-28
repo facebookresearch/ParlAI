@@ -882,7 +882,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 )
 
         preds = None
-        top_n_texts: List[Tuple[str, float]] = []
+        top_n_texts: List[List[Tuple[str, float]]] = []
         if self.skip_generation:
             warn_once("--skip-generation true produces limited metrics")
         else:
