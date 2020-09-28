@@ -8,6 +8,7 @@ mephisto:
     ask_reason: false
     onboarding_data:
     subtasks_per_unit: 6
+    task_source: ${task_dir}/webapp/build/bundle.js
   task:
     allowed_concurrent: 1
     maximum_units_per_worker: 5
