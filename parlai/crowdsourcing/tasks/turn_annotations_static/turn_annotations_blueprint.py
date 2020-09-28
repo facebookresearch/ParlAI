@@ -11,7 +11,6 @@ import logging
 from argparse import _ArgumentGroup as ArgumentGroup
 from typing import Any, Dict, TYPE_CHECKING
 
-from mephisto.core.argparse_parser import str2bool
 from mephisto.core.registry import register_mephisto_abstraction
 from mephisto.server.blueprints.static_react_task.static_react_blueprint import (
     StaticReactBlueprint,
