@@ -99,4 +99,4 @@ The title, description, and keywords of the task are set by values in `conf/exam
 
 ### YAML and CLI arguments
 
-A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in `acute_eval_blueprint.py`. For examples of how these arguments can be set in practice, see `conf/example.yaml`. For modifying the `task_reward` argument (for example) on the command line, append `mephisto.task.task_reward=${DESIRED_TASK_REWARD}`.
+A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in `acute_eval_blueprint.py`. For examples of how these arguments can be set in practice, see `conf/example.yaml`. For modifying the `task_reward` argument (for example) on the command line, append `mephisto.task.task_reward=${DESIRED_TASK_REWARD}`. You can also specify your own YAML file at the path `conf/<new_file>.yaml` and then load in that file by passing in `conf=<new_file>` on the command line.
