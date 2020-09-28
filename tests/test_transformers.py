@@ -282,14 +282,20 @@ class TestTransformerGenerator(unittest.TestCase):
         """
         size = 3
 
-        agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model', opt_overrides={"beam_size": size, "inference": "beam"})
+        agent = create_agent_from_model_file(
+            'zoo:unittest/beam_blocking/model',
+            opt_overrides={"beam_size": size, "inference": "beam"},
+        )
         agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
         response = agent.act()
         self.assertTrue("beam_texts" in response)
         # This line fails!!! It returns 4 options instead of 4
         # self.assertEqual(len(response["beam_texts"]), size)
 
-        agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model', opt_overrides={"beam_size": size, "inference": "topk"})
+        agent = create_agent_from_model_file(
+            'zoo:unittest/beam_blocking/model',
+            opt_overrides={"beam_size": size, "inference": "topk"},
+        )
         agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
         response = agent.act()
         self.assertTrue("beam_texts" in response)
