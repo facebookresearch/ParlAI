@@ -19,9 +19,14 @@ from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
+# Have to import this even though it's not directly used, in order to register the
+# blueprints
 from parlai.crowdsourcing.tasks.turn_annotations_static import (
     turn_annotations_blueprint,
 )
+
+# Satisfy linting
+_ = turn_annotations_blueprint
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_SOURCE_DIR = os.path.join(TASK_DIRECTORY, "webapp")
