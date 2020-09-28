@@ -3,12 +3,15 @@ defaults:
   mephisto/blueprint: turn_annotations_static_blueprint
 mephisto:
   blueprint:
-    annotation_buckets:
+    data_jsonl: FIXME_TASK_DATA_PATH
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 5
+    task_source: ${task_dir}/webapp/build/bundle.js
+    annotation_buckets: ${task_dir}/task_config/annotation_buckets.json
     annotate_last_utterance_only: false
     ask_reason: false
-    onboarding_data:
+    onboarding_data: ${task_dir}/task_config/onboarding.json
     subtasks_per_unit: 6
-    task_source: ${task_dir}/webapp/build/bundle.js
   task:
     allowed_concurrent: 1
     maximum_units_per_worker: 5

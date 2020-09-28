@@ -20,10 +20,5 @@ class LaunchConfig:
     <br><br>
       '''
 
-    DATA_JSONL = 'FIXME'
-
-    # How many workers to do each assignment
-    UNITS_PER_ASSIGNMENT = 5
-
     # A list of worker IDs to block from doing the task.
     WORKER_BLOCK_LIST = []

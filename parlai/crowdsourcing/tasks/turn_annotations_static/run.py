@@ -31,13 +31,13 @@ _ = turn_annotations_blueprint
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_SOURCE_DIR = os.path.join(TASK_DIRECTORY, "webapp")
 FRONTEND_BUILD_DIR = os.path.join(FRONTEND_SOURCE_DIR, "build")
-STATIC_FILES_DIR = os.path.join(FRONTEND_SOURCE_DIR, "src", "static")
 
 defaults = [
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
     {"conf": "example"},
 ]
+# NOTE: here, mephisto/blueprint should be specified in the YAML file
 
 
 @dataclass
@@ -59,7 +59,6 @@ def main(cfg: DictConfig) -> None:
     # TODO: revise below
     arg_string = (
         f"--task-name turn-ann-s "
-        f'--extra-source-dir "{STATIC_FILES_DIR}" '
         f'--port 2222 '
         f'--onboarding-qualification turn-ann-s-onb '
         f"-use-onboarding True "
