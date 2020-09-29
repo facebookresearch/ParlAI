@@ -618,7 +618,7 @@ class TorchAgent(ABC, Agent):
         )
         agent.add_argument(
             '--use-reply',
-            default='label',
+            default='none',
             hidden=True,
             choices=['label', 'model', 'none'],
             help='Which previous replies to use as history. If label, use '
