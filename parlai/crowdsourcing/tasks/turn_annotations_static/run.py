@@ -17,29 +17,25 @@ from mephisto.core.operator import Operator
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
-# Have to import this even though it's not directly used, in order to register the
-# blueprints
-from parlai.crowdsourcing.tasks.turn_annotations_static import (
-    turn_annotations_blueprint,
+from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
+    STATIC_BLUEPRINT_TYPE,
 )
 from parlai.crowdsourcing.utils.mturk import (
     MTurkRunScriptConfig,
     soft_block_mturk_workers,
 )
 
-# Satisfy linting
-_ = turn_annotations_blueprint
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_SOURCE_DIR = os.path.join(TASK_DIRECTORY, "webapp")
 FRONTEND_BUILD_DIR = os.path.join(FRONTEND_SOURCE_DIR, "build")
 
 defaults = [
+    {'mephisto/blueprint': STATIC_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
     {"conf": "example"},
 ]
-# NOTE: here, mephisto/blueprint should be specified in the YAML file
 
 
 @dataclass

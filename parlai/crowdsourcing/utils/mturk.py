@@ -6,6 +6,7 @@
 
 import time
 from dataclasses import dataclass, field
+from typing import Optional
 
 from mephisto.core.hydra_config import RunScriptConfig
 from mephisto.data_model.database import MephistoDB
@@ -19,7 +20,7 @@ class MTurkConfig:
     Add MTurk-specific flags.
     """
 
-    worker_blocklist_paths: str = field(
+    worker_blocklist_paths: Optional[str] = field(
         default=MISSING,
         metadata={
             "help": (
