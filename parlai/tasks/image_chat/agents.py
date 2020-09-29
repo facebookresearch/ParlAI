@@ -9,7 +9,8 @@ Images and Dialogues from Image-Chat dataset.
 """
 import json
 import os
-from typing import Tuple
+import random
+from typing import Tuple, Dict, List
 
 from parlai.core.message import Message
 from parlai.core.opt import Opt
@@ -377,3 +378,36 @@ class ImageChatTestTeacher(ImageChatTeacher):
 
 class DefaultTeacher(ImageChatTeacher):
     pass
+
+
+def get_category_map(personalities: Dict[str, List[str]]) -> Dict[str, str]:
+    """
+    Map personalities to polarity categories: "positive/neutral" and "negative".
+
+    Given a dictionary mapping Image-Chat categories (positive/neutral/negative) to
+    personalities, return a dictionary mapping each personality to its category.
+    Categories are merged into only two buckets: "positive/neutral", for personalities
+    that are more likely to be safe to use, and "negative". Add in rare personalities.
+    """
+
+    category_map = {
+        personality: _get_final_category(category)
+        for category, personalities in personalities.items()
+        for personality in personalities
+    }
+    category_map['Crude'] = _get_final_category('negative')
+    category_map['Earnest'] = _get_final_category('positive')
+    # These personalities occasionally appear but are not in personalities
+    return category_map
+
+
+def _get_final_category(category: str) -> str:
+    """
+    Given the input raw category label, return the final one.
+    """
+    if category in ['positive', 'neutral']:
+        return 'positive/neutral'
+    elif category == 'negative':
+        return 'negative'
+    else:
+        raise ValueError(f'Category "{category}" unrecognized!')
