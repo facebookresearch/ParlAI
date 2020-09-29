@@ -1513,15 +1513,11 @@ Electrician
 That sounds dangerous. Is it worth doing such a dangerous job?
 Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
 Which level are you at?
-[label_candidates]: I haven't managed to find anyone yet, but I think as long as your in love, your legal status doesn't matter|yes i agree . i only like the rain so i can sleep in
-some days .|it did, while i was working at dell yesturday. the person rush and threw a empty soda can at our boss for eating his chocolate chip cookies. |There's more stuff to do th
-an the beach though!|yeah that's right, they swarm over the tree and 'suffocate' it meaning it doesn't produce any apples.|... (5 of 100 shown)
+[label_candidates]: I haven't managed to find anyone yet, but I think as long as your in love, your legal status doesn't matter|yes i agree . i only like the rain so i can sleep in some days .|it did, while i was working at dell yesturday. the person rush and threw a empty soda can at our boss for eating his chocolate chip cookies. |There's more stuff to do than the beach though!|yeah that's right, they swarm over the tree and 'suffocate' it meaning it doesn't produce any apples.|... (5 of 100 shown)
 [eval_labels]: I received on-the-job training when i first started
    [metrics]: {'loss': AverageMetric(4.376), 'rank': AverageMetric(25), 'mrr': AverageMetric(0.04)}
    [BiEncoderRanker]: I have a low comprehension level, I'm sure I wouldn't understand those today
-   [text_candidates]: I have a low comprehension level, I'm sure I wouldn't understand those today|Since you didn't get sick, try to find some humor in the situation! I like to make
- people smile. |haha yes, Rum is the answer. What do you do in the morning?|I agree the facial expressions are one of a kind.|Really oh yes you wouldn't hang because we have to get
-up before the sunrise to get moving  lol.|... (5 of 100 shown)
-    """,
+   [text_candidates]: I have a low comprehension level, I'm sure I wouldn't understand those today|Since you didn't get sick, try to find some humor in the situation! I like to make people smile. |haha yes, Rum is the answer. What do you do in the morning?|I agree the facial expressions are one of a kind.|Really oh yes you wouldn't hang because we have to get up before the sunrise to get moving  lol.|... (5 of 100 shown)
+""",
     },
 ]
