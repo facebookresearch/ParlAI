@@ -1491,4 +1491,37 @@ model_list = [
         [labels]: Two young guys with shaggy hair look at their hands while hanging out in the yard.|Two young, White males are outside near many bushes.|Two men in green shirts are standing in a yard.|A man in a blue shirt standing in a garden.|Two friends enjoy time spent together.
         """,
     },
+    {
+        "title": "Gender classifier",
+        "id": "genderation_bias",
+        "path": "zoo:genderation_bias/gender_classifier/model",
+        "agent": "bert_ranker/bi_encoder_ranker",
+        "task": "n/a",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/genderation_bias',
+        "description": "BERT bi-encoder ranker for performing gender classification",
+        "example": "parlai dm --model-file zoo:genderation_bias/gender_classifier/model --task blended_skill_talk --eval-candidates inline --verbose True",
+        "result": """
+[context_dataset]: wizard_of_wikipedia
+[free_message]: Which level are you at?
+[convai2]: i'm a grandmaster . i think they rank bridge players like chess .
+[empathetic_dialogues]: K, 4, 5, 10th
+[wizard_of_wikipedia]: I received on-the-job training when I first started.
+[guided_chosen_suggestion]:
+[blended_skill_talk]: your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+[label_candidates]: I haven't managed to find anyone yet, but I think as long as your in love, your legal status doesn't matter|yes i agree . i only like the rain so i can sleep in
+some days .|it did, while i was working at dell yesturday. the person rush and threw a empty soda can at our boss for eating his chocolate chip cookies. |There's more stuff to do th
+an the beach though!|yeah that's right, they swarm over the tree and 'suffocate' it meaning it doesn't produce any apples.|... (5 of 100 shown)
+[eval_labels]: I received on-the-job training when i first started
+   [metrics]: {'loss': AverageMetric(4.376), 'rank': AverageMetric(25), 'mrr': AverageMetric(0.04)}
+   [BiEncoderRanker]: I have a low comprehension level, I'm sure I wouldn't understand those today
+   [text_candidates]: I have a low comprehension level, I'm sure I wouldn't understand those today|Since you didn't get sick, try to find some humor in the situation! I like to make
+ people smile. |haha yes, Rum is the answer. What do you do in the morning?|I agree the facial expressions are one of a kind.|Really oh yes you wouldn't hang because we have to get
+up before the sunrise to get moving  lol.|... (5 of 100 shown)
+    """,
+    },
 ]
