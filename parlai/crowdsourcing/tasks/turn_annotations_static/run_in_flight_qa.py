@@ -29,7 +29,7 @@ defaults = [
     {'mephisto/blueprint': STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "example"},
+    {"conf": "example_in_flight_qa"},
 ]
 
 
