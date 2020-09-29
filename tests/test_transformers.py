@@ -289,8 +289,10 @@ class TestTransformerGenerator(unittest.TestCase):
         agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
         response = agent.act()
         self.assertTrue("beam_texts" in response)
-        # This line fails!!! It returns 4 options instead of 4
-        # self.assertEqual(len(response["beam_texts"]), size)
+        self.assertGreaterEqual(len(response["beam_texts"]), size)
+        hyp, score = response["beam_texts"][0]
+        self.assertTrue(isinstance(hyp, str))
+        self.assertTrue(isinstance(score, float))
 
         agent = create_agent_from_model_file(
             'zoo:unittest/beam_blocking/model',
