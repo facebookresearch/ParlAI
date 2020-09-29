@@ -171,6 +171,9 @@ class _Abstract(DialogTeacher):
                     f'{domain}_slot_r',
                     AverageMetric(correct, len(teacher_action['slots'])),
                 )
+                self.metrics.add(
+                    'jga', AverageMetric(correct == len(teacher_action['slots']))
+                )
 
         elif teacher_action['type'] == 'apiresp':
             # keep track of statistics by domain
