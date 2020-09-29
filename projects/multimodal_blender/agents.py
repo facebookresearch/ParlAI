@@ -13,4 +13,5 @@ class BiasAgent(BiasAgentTrait, ImageSeq2seqAgent):
     Example usage:
     -m projects.multimodal_blender.agents:BiasAgent
     """
+
     pass

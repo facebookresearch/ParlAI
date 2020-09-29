@@ -15,7 +15,7 @@ class BiasAgentTrait(object):
     @classmethod
     def add_cmdline_args(cls, argparser):
         grp = super(BiasAgentTrait, cls).add_cmdline_args(argparser)
-        grp.add_argument('-bias', '--bias-class', type=str, default='f0m0')
+        grp.add_argument('--bias-class', type=str, default='f0m0')
 
     def get_temp_history(self, observation):
         _ = observation  # Unused
