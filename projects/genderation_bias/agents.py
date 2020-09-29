@@ -24,7 +24,7 @@ class BiasAgentTrait(object):
 
 class BiasAgent(BiasAgentTrait, TransformerGeneratorAgent):
     """
-    Example usage: -m projects.genderation_bias.agents:BiasAgent
+    Example usage: `-m projects.genderation_bias.agents:BiasAgent`.
     """
 
     pass

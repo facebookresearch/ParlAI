@@ -10,8 +10,7 @@ from projects.genderation_bias.agents import BiasAgentTrait
 
 class BiasAgent(BiasAgentTrait, ImageSeq2seqAgent):
     """
-    Example usage:
-    -m projects.multimodal_blender.agents:BiasAgent
+    Example usage: `-m projects.multimodal_blender.agents:BiasAgent`.
     """
 
     pass
