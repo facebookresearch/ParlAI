@@ -248,7 +248,7 @@ class GenerationTeacher(ImageChatTeacher):
             '--category-frac',
             type=float,
             default=0.0,
-            help='Fraction of the time to replace the personality with its polarity category (positive/neutral or negative)',
+            help='Fraction of the time to replace the personality with its polarity category ("positive/neutral" or "negative")',
         )
 
     def num_episodes(self) -> int:
