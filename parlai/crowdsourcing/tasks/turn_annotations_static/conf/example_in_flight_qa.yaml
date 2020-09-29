@@ -1,4 +1,9 @@
 #@package _global_
+defaults:
+  - script: scriptconfig
+  - mephisto/blueprint: turn_annotations_static_inflight_qa_blueprint
+  - mephisto/architect: local
+  - mephisto/provider: mock
 mephisto:
   blueprint:
     onboarding_in_flight_data: ${task_dir}/task_config/onboarding_in_flight.jsonl

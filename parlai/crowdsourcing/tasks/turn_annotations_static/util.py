@@ -26,6 +26,7 @@ def run_static_task(cfg: DictConfig, task_directory: str):
 
     db, cfg = load_db_and_process_config(cfg)
     print(OmegaConf.to_yaml(cfg))
+    raise Exception('Remove this when done testing!')
 
     random.seed(42)
 

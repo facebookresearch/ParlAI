@@ -31,7 +31,7 @@ class MTurkConfig:
 
 
 @dataclass
-class MTurkRunScriptConfig(RunScriptConfig):
+class MTurkRunScriptConfig:
     """
     Add useful flags for running MTurk tasks.
     """

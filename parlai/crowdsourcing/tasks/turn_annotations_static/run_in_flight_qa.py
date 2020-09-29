@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from mephisto.core.hydra_config import register_script_config
+from mephisto.core.hydra_config import config
 from omegaconf import DictConfig
 
 from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
@@ -25,21 +25,12 @@ from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-defaults = [
-    {'mephisto/blueprint': STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example_in_flight_qa"},
-]
-
-
 @dataclass
 class ScriptConfig(MTurkRunScriptConfig):
-    defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
 
 
-register_script_config(name='scriptconfig', module=ScriptConfig)
+config.store(group='script', name='scriptconfig', node=ScriptConfig)
 
 
 @hydra.main(config_name="scriptconfig")
