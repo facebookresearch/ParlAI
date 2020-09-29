@@ -210,10 +210,23 @@ class GenerationTeacher(ImageChatTeacher):
             self.idx_to_ep = shared['idx_to_ep']
         self.prepend_personality = opt.get('prepend_personality', True)
         self.include_dialogue_history = opt.get('include_dialogue_history', True)
+        self.category_frac = opt.get('category_frac', 0.0)
         super().__init__(opt, shared)
         self.num_eps = len(self.data) + len(
             [d for d in self.data if len(d['dialog']) > 1]
         )
+
+        # Replace personalities with polarity categories ("positive/neutral" or
+        # "negative"), with probability self.category_frac
+        if not shared:
+            category_map = get_category_map(self.personalities)
+            for i, d in enumerate(self.data):
+                use_category_rand = random.random()
+                if use_category_rand < self.category_frac:
+                    self.data[i]['dialog'] = [
+                        [category_map[personality], label]
+                        for personality, label in d['dialog']
+                    ]
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -230,6 +243,12 @@ class GenerationTeacher(ImageChatTeacher):
             type='bool',
             default=True,
             help='if false, remove the dialogue history',
+        )
+        agent.add_argument(
+            '--category-frac',
+            type=float,
+            default=0.0,
+            help='Fraction of the time to replace the personality with its polarity category (positive/neutral or negative)',
         )
 
     def num_episodes(self) -> int:
