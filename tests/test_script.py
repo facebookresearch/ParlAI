@@ -54,7 +54,7 @@ class TestScriptRegistry(unittest.TestCase):
         assert opt.get('bar') == 'sneaky'
 
     def test_main_noargs(self):
-        with patch.object(sys, 'argv', ['test_script.py']):
+        with patch.object(sys, 'argv', ['test_script.py']):  # argv[0] doesn't matter
             opt = _TestScript.main()
         assert opt.get('foo') == 'defaultvalue'
         assert opt.get('bar') == 'sneaky'
@@ -97,8 +97,3 @@ class TestSuperCommand(unittest.TestCase):
             script.superscript_main(args=['helpall'])
             assert 'test_script' in output.getvalue()
             assert 'hidden_script' in output.getvalue()
-
-        with testing_utils.capture_output() as output:
-            script.superscript_main(args=['help'])
-            assert 'test_script' in output.getvalue()
-            assert 'hidden_script' not in output.getvalue()
