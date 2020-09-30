@@ -87,7 +87,6 @@ class TestInteractiveLogging(unittest.TestCase):
 class TestInteractiveWeb(unittest.TestCase):
     def test_iweb(self):
         import threading
-        import time
         import random
         import requests
         import json
