@@ -23,6 +23,7 @@ import json
 import parlai.utils.logging as logging
 from typing import Optional, Tuple
 from parlai.core.message import Message
+from parlai.utils.io import PathManager
 
 import parlai.tasks.taskmaster2.build as build_
 
@@ -83,7 +84,7 @@ class _Abstract(DialogTeacher):
         for section in DOMAINS:
             parts = []
             fn = os.path.join(self.dpath, section + '.onto.json')
-            with open(fn, 'r') as f:
+            with PathManager.open(fn, 'r') as f:
                 o = json.load(f)
             assert len(o) == 1
             o = list(o.values())[0]
@@ -97,7 +98,8 @@ class _Abstract(DialogTeacher):
 
         chunks = []
         for section in DOMAINS:
-            subset = pd.read_json(os.path.join(self.dpath, section + '.json'))
+            with PathManager.open(os.path.join(self.dpath, section + '.json')) as f:
+                subset = pd.read_json(f)
             subset['domain'] = section
             chunks.append(subset)
         chunks = pd.concat(chunks, axis=0)
@@ -170,6 +172,9 @@ class _Abstract(DialogTeacher):
                 self.metrics.add(
                     f'{domain}_slot_r',
                     AverageMetric(correct, len(teacher_action['slots'])),
+                )
+                self.metrics.add(
+                    'jga', AverageMetric(correct == len(teacher_action['slots']))
                 )
 
         elif teacher_action['type'] == 'apiresp':

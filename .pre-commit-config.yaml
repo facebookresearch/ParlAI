@@ -1,6 +1,13 @@
 repos:
--   repo: https://github.com/ambv/black
-    rev: stable
+-   repo: https://github.com/psf/black
+    rev: 19.3b0
     hooks:
-    - id: black
-      language_version: python3.6
+    -   id: black
+        language_version: python3
+-   repo: local
+    hooks:
+    -   id: git-secrets
+        language: script
+        entry: .github/scripts/git-secrets --pre_commit_hook
+        name: git-secrets
+        require_serial: true

@@ -4,19 +4,19 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from mephisto.data_model.blueprint import TaskRunner
-
-import random
-import queue
 import json
-
+import queue
+import random
 from typing import List, Any, Dict, Tuple, Set, TYPE_CHECKING
+
+from mephisto.core.logger_core import get_logger
+from mephisto.data_model.blueprint import SharedTaskState, TaskRunner
+from omegaconf import DictConfig
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
     from mephisto.data_model.assignment import Unit
     from mephisto.data_model.agent import Agent
-from mephisto.core.logger_core import get_logger
 
 logger = get_logger(name=__name__, verbose=True, level="info")
 
@@ -41,7 +41,9 @@ class AcuteEvalRunner(TaskRunner):
     Relevant args are parsed in the `setup_args` function above.
     """
 
-    def __init__(self, task_run: "TaskRun", opts: Any):
+    def __init__(
+        self, task_run: "TaskRun", args: DictConfig, shared_state: SharedTaskState
+    ):
         """
         Initialize the AcuteEvaluator.
 
@@ -60,8 +62,8 @@ class AcuteEvalRunner(TaskRunner):
 
         ``unit_agent_map``: Map from unit id to the worker_id and task data for cleanup
         """
-        super().__init__(task_run, opts)
-        random.seed(opts["random_seed"])
+        super().__init__(task_run, args, shared_state)
+        random.seed(self.args.blueprint.random_seed)
         self.is_concurrent = False
         self.assignment_duration_in_seconds = (
             task_run.get_task_config().assignment_duration_in_seconds
@@ -104,11 +106,11 @@ class AcuteEvalRunner(TaskRunner):
         :param task_id:
             task id used to set block qualification, if necessary.
         """
-        if self.opts["block_on_onboarding_fail"]:
-            self.block_qualification = self.opts["block_qualification"]
+        if self.args.blueprint.block_on_onboarding_fail:
+            self.block_qualification = self.args.blueprint.block_qualification
             if self.block_qualification is None:
                 self.block_qualification = f"{task_id}_failed_onboarding"
-                self.opts["block_qualification"] = self.block_qualification
+                self.args.blueprint.block_qualification = self.block_qualification
                 logger.warning(
                     "No block_qualification set in opt, automatically creating "
                     "new qualification {}".format(self.block_qualification)
@@ -125,13 +127,7 @@ class AcuteEvalRunner(TaskRunner):
 
         Loads in the data from the pairs filepath.
         """
-        preset_pairs = self.opts.get("pairings_task_data")
-        if preset_pairs is not None:
-            self.onboarding_tasks = preset_pairs["onboarding"]
-            self.desired_tasks = preset_pairs["desired"]
-            return
-
-        pairs_path = self.opts.get("pairings_filepath")
+        pairs_path = self.args.blueprint.pairings_filepath
 
         with open(pairs_path) as pf:
             for i, l in enumerate(pf.readlines()):
@@ -147,9 +143,9 @@ class AcuteEvalRunner(TaskRunner):
                 model_left_idx = random.choice([0, 1])
                 task = {
                     "task_specs": {
-                        "s1_choice": self.opts["s1_choice"],
-                        "s2_choice": self.opts["s2_choice"],
-                        "question": self.opts["eval_question"],
+                        "s1_choice": self.args.blueprint.s1_choice,
+                        "s2_choice": self.args.blueprint.s2_choice,
+                        "question": self.args.blueprint.eval_question,
                         "is_onboarding": convo_pair["is_onboarding"],
                         "model_left": {
                             "name": eval_speakers[model_left_idx],
@@ -176,7 +172,7 @@ class AcuteEvalRunner(TaskRunner):
         """
         Fill task queue with conversation pairs.
         """
-        for _i in range(self.opts["annotations_per_pair"]):
+        for _i in range(self.args.blueprint.annotations_per_pair):
             all_task_keys = list(range(len(self.desired_tasks)))
             random.shuffle(all_task_keys)
             for p_id in all_task_keys:
@@ -226,7 +222,7 @@ class AcuteEvalRunner(TaskRunner):
                 worker_data["tasks_completed"].append(pair_id)
                 worker_data["conversations_seen"].extend(dialogue_ids)
                 task_data.append(next_task)
-                if len(task_data) == self.opts["subtasks_per_unit"]:
+                if len(task_data) == self.args.blueprint.subtasks_per_unit:
                     return task_data
             else:
                 self.task_queue.put(next_task)
@@ -254,7 +250,7 @@ class AcuteEvalRunner(TaskRunner):
             a list of tasks for a worker to complete
         """
         worker_data = self._get_worker_data(worker_id)
-        tasks_still_needed = self.opts["subtasks_per_unit"] - len(task_data)
+        tasks_still_needed = self.args.blueprint.subtasks_per_unit - len(task_data)
         tasks_remaining = [
             t_id
             for t_id in range(len(self.desired_tasks))
@@ -297,7 +293,7 @@ class AcuteEvalRunner(TaskRunner):
         :return task_data:
             A list of tasks for the worker to complete
         """
-        tasks_per_unit = self.opts["subtasks_per_unit"]
+        tasks_per_unit = self.args.blueprint.subtasks_per_unit
         # first add onboarding tasks
         task_data = self.get_onboarding_tasks(worker_id)
         logger.debug(f"Onboarding task data gotten: {len(task_data)}")
@@ -365,7 +361,9 @@ class AcuteEvalRunner(TaskRunner):
             # worker has completed all required onboarding tasks
             return []
         # get onboarding tasks for workers needing them
-        num_tasks_to_return = min(len(onboarding_todo), self.opts["subtasks_per_unit"])
+        num_tasks_to_return = min(
+            len(onboarding_todo), self.args.blueprint.subtasks_per_unit
+        )
         onboarding_tasks_chosen = onboarding_todo[:num_tasks_to_return]
         worker_data["onboarding_todo"] = onboarding_todo[num_tasks_to_return:]
         return [self.onboarding_tasks[t_id] for t_id in onboarding_tasks_chosen]
@@ -376,9 +374,6 @@ class AcuteEvalRunner(TaskRunner):
 
         :param agent:
             Agent that the worker completed the task with.
-
-        :param save_data:
-            data from the worker's completed tasks
         """
         worker = agent.get_worker()
         worker_id = worker.db_id
@@ -405,7 +400,9 @@ class AcuteEvalRunner(TaskRunner):
                 # worker already failed onboarding, add pairings back to queue
                 self.requeue_task_data(worker_id, all_task_data)
             return
-        if (num_correct / num_onboarding_tasks) >= self.opts["onboarding_threshold"]:
+        if (
+            num_correct / num_onboarding_tasks
+        ) >= self.args.blueprint.onboarding_threshold:
             # worker passed onboarding
             return
         # worker failed onboarding, soft block and record
@@ -438,7 +435,7 @@ class AcuteEvalRunner(TaskRunner):
         # Frontend implicitly asks for the initialization data, so we just need
         # to wait for a response
         _ = agent.act(timeout=self.assignment_duration_in_seconds)
-        if self.opts["block_on_onboarding_fail"]:
+        if self.args.blueprint.block_on_onboarding_fail:
             # check whether workers failed onboarding
             self.check_and_update_worker_approval(agent)
         logger.info(f"Acute eval done for {agent}")
@@ -450,7 +447,7 @@ class AcuteEvalRunner(TaskRunner):
         """
         logger.info(f"Cleaning up unit {unit.db_id}")
         if unit.db_id not in self.unit_agent_map:
-            return logger.warn(
+            return logger.warning(
                 f"Unit {unit.db_id} already appears to have been cleaned up"
             )
         worker_id, task_data = self.unit_agent_map[unit.db_id]
