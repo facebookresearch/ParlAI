@@ -53,9 +53,9 @@ class _Abstract(DialogTeacher):
         argparser.add_argument(
             '--domains',
             nargs='+',
-            default=[],
+            default=DOMAINS,
             choices=DOMAINS,
-            help='Subset of domains to use. Uses last passed in configuration. Will use all by default if this value is empty',
+            help='Uses last passed in configuration.',
         )
         return argparser
 
