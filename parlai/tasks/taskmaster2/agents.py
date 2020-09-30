@@ -50,6 +50,13 @@ class _Abstract(DialogTeacher):
     @classmethod
     def add_cmdline_args(cls, argparser):
         argparser.add_argument('--include-ontology', type=bool, default=False)
+        argparser.add_argument(
+            '--domains',
+            nargs='+',
+            default=DOMAINS,
+            choices=DOMAINS,
+            help='Uses last passed in configuration.',
+        )
         return argparser
 
     def __init__(self, opt: Opt, shared=None):
@@ -78,10 +85,10 @@ class _Abstract(DialogTeacher):
     def _normalize_annotation(self, anno):
         return anno
 
-    def _load_data(self, fold):
+    def _load_data(self, fold, domains):
         # load up the ontology
         ontology = {}
-        for section in DOMAINS:
+        for section in domains:
             parts = []
             fn = os.path.join(self.dpath, section + '.onto.json')
             with PathManager.open(fn, 'r') as f:
@@ -97,7 +104,7 @@ class _Abstract(DialogTeacher):
             ontology[section] = ' ; '.join(parts)
 
         chunks = []
-        for section in DOMAINS:
+        for section in domains:
             with PathManager.open(os.path.join(self.dpath, section + '.json')) as f:
                 subset = pd.read_json(f)
             subset['domain'] = section
@@ -198,8 +205,9 @@ class _Abstract(DialogTeacher):
             self.metrics.add(f'{domain}_delex_bleu', bleu_metric)
 
     def setup_data(self, fold):
+        domains = self.opt.get('domains', DOMAINS)
+        chunks = self._load_data(fold, domains)
         domains_cnt = Counter()
-        chunks = self._load_data(fold)
         for _, row in chunks.iterrows():
             domains_cnt[row['domain']] += 1
             first = True
