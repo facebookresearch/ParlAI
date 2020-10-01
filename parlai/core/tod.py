@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Task Oriented Dialogue (TOD) abstract classes and metrics
+Task Oriented Dialogue (TOD) abstract classes and metrics.
 """
 
 from typing import Optional, Tuple, Dict, Any
@@ -14,13 +14,13 @@ from parlai.core.metrics import AverageMetric, BleuMetric, F1Metric, Metric, Met
 
 
 class SlotMetrics(Metrics):
-    """Helper container which encapsulates standard slot metrics in task-
-    oriented learning (jga, slot_p, slot_r, etc).
+    """
+    Helper container which encapsulates standard slot metrics in task- oriented learning
+    (jga, slot_p, slot_r, etc).
 
-    Due to differences in dialogue representations between tasks, the
-    input is pre-parsed ground truth and predicted slot dictionaries.
-    This class will add domain-specific versions of these metrics as
-    well, when appropriate.
+    Due to differences in dialogue representations between tasks, the input is pre-
+    parsed ground truth and predicted slot dictionaries. This class will add domain-
+    specific versions of these metrics as well, when appropriate.
     """
 
     def __init__(
@@ -62,7 +62,9 @@ def _use_domain_metrics(
 
 
 class NlgMetrics(Metrics):
-    """Helper container for generation version of standard metrics (F1, BLEU,
+    """
+    Helper container for generation version of standard metrics (F1, BLEU,
+
     ...).
 
     This class will add domain-specific versions of these classes as
@@ -96,7 +98,8 @@ def _average_type_sum_helper(first: AverageType, second: AverageType) -> Average
 
 
 class SlotF1Metric(Metric):
-    """Metric to keep track of slot F1.
+    """
+    Metric to keep track of slot F1.
 
     Keeps track of slot precision and slot recall as running metrics.
     """
@@ -105,8 +108,9 @@ class SlotF1Metric(Metric):
 
     @property
     def macro_average(self) -> bool:
-        """Indicates whether this metric should be macro-averaged when globally
-        reported."""
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
         return True
 
     def __init__(self, slot_p: AverageType = None, slot_r: AverageType = None):
