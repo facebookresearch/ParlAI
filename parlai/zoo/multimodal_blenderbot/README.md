@@ -97,7 +97,7 @@ parlai tm \
 --optimizer adam \
 --update-freq 2 \
 --history-add-global-end-token end \
---delimiter '  ' \
+--delimiter $'\n' \
 --lr-scheduler-patience 3 \
 --warmup-updates 100 \
 --multitask-weights stochastic \
