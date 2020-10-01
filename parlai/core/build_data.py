@@ -348,10 +348,19 @@ def _unzip(path, fname, delete=True):
     with zipfile.ZipFile(PathManager.open(fullpath, 'rb'), 'r') as zf:
         for member in zf.namelist():
             outpath = os.path.join(path, member)
+            dirname = os.path.dirname(member)
             if zf.getinfo(member).is_dir():
+                # Member is a subfolder, so make it if it does not exist
                 logging.debug(f"Making directory {outpath}")
                 PathManager.mkdirs(outpath)
                 continue
+            elif dirname != '':
+                # Member is a file *in* a subfolder, so make the subfolder if it does
+                # not exist
+                outfolder = os.path.join(path, dirname)
+                if not PathManager.isdir(outfolder):
+                    logging.debug(f"Making directory {outfolder}")
+                    PathManager.mkdirs(outfolder)
             logging.debug(f"Extracting to {outpath}")
             with zf.open(member, 'r') as inf, PathManager.open(outpath, 'wb') as outf:
                 shutil.copyfileobj(inf, outf)
