@@ -33,7 +33,7 @@ class SlotMetrics(Metrics):
     ) -> None:
         super().__init__(shared=shared)
         self.add("jga", AverageMetric(teacher_slots == predicted_slots))
-        if _use_domain_metrics(domain, vaild_domains):
+        if _use_domain_metrics(domain, valid_domains):
             self.add("{domain}/jga", AverageMetric(teacher_slots == predicted_slots))
         for pred_slot_name, pred_value in predicted_slots.items():
             slot_p = AverageMetric(teacher_slots.get(pred_slot_name) == pred_value)
