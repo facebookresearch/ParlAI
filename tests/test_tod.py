@@ -8,7 +8,7 @@ import unittest
 from math import isnan
 
 from parlai.core.metrics import AverageMetric
-from parlai.utils.task_dialogue_helpers.metrics import SlotF1Metric, SlotMetrics
+from parlai.core.tod import SlotF1Metric, SlotMetrics
 
 
 class TestSlotF1Metric(unittest.TestCase):
