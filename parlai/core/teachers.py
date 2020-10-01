@@ -548,6 +548,26 @@ class DialogTeacher(FixedDialogTeacher):
 
         self.reset()
 
+    @abstractmethod
+    def setup_data(self, datafile: str):
+        """
+        The core method which the user should override.
+
+        Yields the data, one message at a time, as well as markers indicating
+        new episodes.
+
+        :param str datafile:
+            If the initializer set a 'datafile' field within the initalization,
+            this will be provided here. Otherwise, datafile will be the fold:
+            either "train", "valid", or "test".
+
+        :return:
+            Yields pairs (message, new_episode) containing a Message object
+            and whether the message marks the beginning of a totally new
+            episode.
+        """
+        pass
+
     def reset(self):
         """
         Reset the dialog to the start of the epoch, reset all metrics.
