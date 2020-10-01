@@ -124,7 +124,7 @@ After fine-tuning, run the following command to interact with your model:
 python parlai/scripts/safe_interactive.py \
 -t blended_skill_talk \
 -mf ${FINETUNED_MODEL_PATH} \
---model projects.multimodal_blender.agents:BiasAgent \
+--model projects.multimodal_blenderbot.agents:BiasAgent \
 --delimiter $'\n' \
 --beam-block-ngram 3 \
 --beam-context-block-ngram 3 \
