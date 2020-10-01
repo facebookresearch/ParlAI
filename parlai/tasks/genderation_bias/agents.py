@@ -31,13 +31,12 @@ from parlai.tasks.genderation_bias.utils import (
 )
 
 from copy import deepcopy
+import datetime
+import glob
 import json
 import os
-import datetime
 from tqdm import tqdm
 from typing import List, Optional, Tuple
-
-import glob
 
 
 class ControllableTaskTeacher(FixedDialogTeacher):
@@ -234,7 +233,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
 
         return all_episodes
 
-    def load_data(self, opt, filename) -> Optional[List[List[Message]]]:
+    def load_data(self, opt: Opt, filename: str) -> Optional[List[List[Message]]]:
         """
         Attempt to load pre-build data.
 

@@ -7,6 +7,7 @@
 import os
 from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
+import parlai.utils.logging as logging
 
 RESOURCES = [
     DownloadableFile(
@@ -28,7 +29,7 @@ def build(datapath):
     version = 'v1.0'
     dpath = os.path.join(datapath, 'genderation_bias')
     if not build_data.built(dpath, version):
-        print('[building data: ' + dpath + ']')
+        logging.info('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
