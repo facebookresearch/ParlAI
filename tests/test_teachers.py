@@ -373,12 +373,30 @@ class MessageTeacher(_MockTeacher):
                 yield Message({'text': str(j), 'label': str(j * 2)}), j == 1
 
 
+class NoDatafileTeacher(DialogTeacher):
+    def setup_data(self, datafile):
+        yield Message({'text': datafile, 'label': datafile}), True
+
+
 class ViolationTeacher(_MockTeacher):
     def setup_data(self, datafile):
         yield {'text': 'foo', 'episode_done': True}, True
 
 
 class TestDialogTeacher(unittest.TestCase):
+    def test_nodatafile(self):
+        for dt in [
+            'train:ordered',
+            'train:stream:ordered',
+            'valid',
+            'test',
+            'valid:stream',
+            'test:stream',
+        ]:
+            opt = Opt({'datatype': dt, 'datapath': '/tmp', 'task': 'test'})
+            teacher = NoDatafileTeacher(opt)
+            assert dt.startswith(teacher.act()['text'])
+
     def _verify_act(self, act, goal_text, goal_label, episode_done):
         assert 'eval_labels' in act or 'labels' in act
         labels = act.get('labels', act.get('eval_labels'))

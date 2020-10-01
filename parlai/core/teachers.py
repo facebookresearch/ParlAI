@@ -249,7 +249,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'cycle'):
             self.cycle = DatatypeHelper.should_cycle(self.datatype)
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile')
+            self.datafile = opt.get('datafile', DatatypeHelper.fold(opt['datatype']))
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -675,7 +675,10 @@ class DialogData(object):
         else:
             self.image_loader = ImageLoader(opt)
             self.data = []
-            self._load(data_loader, opt['datafile'])
+
+            # default to just the fold name, but use datafile field if provided
+            datafile = opt.get('datafile', DatatypeHelper.fold(opt['datatype']))
+            self._load(data_loader, datafile)
             self.cands = None if cands is None else set(c for c in cands)
 
         self.addedCands = []
@@ -893,7 +896,7 @@ class StreamDialogData(DialogData):
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
-            self.datafile = opt['datafile']
+            self.datafile = opt.get('datafile', DatatypeHelper.fold(opt['datatype']))
             self.reset_data = None
             self.is_reset = True
         self.entry_idx = 0
@@ -903,8 +906,8 @@ class StreamDialogData(DialogData):
 
         self.rank = get_rank()
         self.num_workers = num_workers()
-        self.is_distributed_and_is_eval = self.num_workers > 1 and any(
-            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        self.is_distributed_and_is_eval = (
+            self.num_workers > 1 and not DatatypeHelper.istraining(opt['datatype'])
         )
 
     def share(self):
