@@ -16,9 +16,9 @@ Recent work in open-domain conversational agents has demonstrated that significa
 <hr />
 <p align="center"><img width="50%" src="flowers.png" /></p>
 
-## Training and safety
+## Code and models
 
-For details on training this model and on safety concerns, see the [model card](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/multimodal_blender/README.md).
+See the [model card](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/multimodal_blender/README.md) for details.
 
 ## Citation
 
