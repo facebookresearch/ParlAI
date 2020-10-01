@@ -927,7 +927,7 @@ class StreamDialogData(DialogData):
         self.rank = get_rank()
         self.num_workers = num_workers()
         self.is_distributed_and_is_eval = (
-            self.num_workers > 1 and not DatatypeHelper.istraining(opt['datatype'])
+            self.num_workers > 1 and not DatatypeHelper.is_training(opt['datatype'])
         )
 
     def share(self):
