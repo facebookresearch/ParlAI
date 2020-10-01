@@ -4,7 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-# Helper functions for collecting metrics for dialogue oriented tasks
+"""
+Task Oriented Dialogue (TOD) abstract classes and metrics
+"""
+
 from typing import Optional, Tuple, Dict, Any
 
 from parlai.core.metrics import AverageMetric, BleuMetric, F1Metric, Metric, Metrics
