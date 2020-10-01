@@ -3,7 +3,7 @@
 Model card for the MMB DegenPos model described in [Multi-Modal Open-Domain Dialogue](TODO: add arXiv link).
 
 ## Model details
-This model was trained to create a dialogue agent that can converse engangly about the content of an image as well as about general chitchat. It is a 2.7-billion-parameter Transformer sequence-to-sequence model based on the [BlenderBot](https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot/) open-domain chatbot, trained with image features from [COCO Captions](https://cocodataset.org/) and [Image-Chat](https://parl.ai/projects/image_chat/), and using an image encoder from [Faster R-CNN](https://arxiv.org/abs/1506.01497?context=cs).
+This model was trained to create a dialogue agent that can converse engagingly about the content of an image as well as about general chitchat. It is a 2.7-billion-parameter Transformer sequence-to-sequence model based on the [BlenderBot](https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot/) open-domain chatbot, trained on the image tasks [COCO Captions](https://cocodataset.org/) and [Image-Chat](https://parl.ai/projects/image_chat/), and using an image encoder from [Faster R-CNN](https://arxiv.org/abs/1506.01497?context=cs).
 
 ## Training
 ### Domain-adaptive pre-training
@@ -65,7 +65,6 @@ After the round of domain-adaptive pre-training above, the model must be fine-tu
 ```
 parlai tm \
 -t genderation_bias:controllable_task:blended_skill_talk,genderation_bias:controllable_task:convai2:normalized,genderation_bias:controllable_task:empathetic_dialogues,genderation_bias:controllable_task:wizard_of_wikipedia,genderation_bias:controllable_task:image_chat:Generation \
---use-gendered-word-list True \
 --four-class True \
 --save-controllable-gen-data False \
 --prepend-personality True \
@@ -142,4 +141,4 @@ We have undertaken several steps to make this bot safer. The original BlenderBot
 2. When responding to an image, the bot was trained to distinguish between utterances categorized as “positive” or “neutral” in tone and utterances categorized as “negative”. During inference, the bot is able to respond to an image with only “positive” or “neutral” utterances given the appropriate context string.
     - We find that, in general, “positive” or “neutral” utterances are much less likely to be classified as containing offensive language than “negative” utterances.
 
-Even with these steps, however, we have not addressed all possible safety concerns with this model, and we do not make any kind of guarantee that the model will not produce unsafe or offensive responses. (For instance, even with these measures, 10% of responses given examples from the Image-Chat validation set are still flagged as offensive by the safety classifier presented in [the “Build it break it fix it for dialogue safety” paper of Dinan et al., 2019](https://arxiv.org/abs/1908.06083). However, in this case we have not incorporated the safety features of the `safe_interactive.py` script described above, where the safety classifier mitigates a number of these concerns -- but not all.) If you choose to train or use this model, you do so entirely at your own risk.
+Even with these steps, however, we have not addressed all possible safety concerns with this model, and we do not make any kind of guarantee that the model will not produce unsafe or offensive responses. For instance, even with these measures, 10% of responses given examples from the Image-Chat validation set are still flagged as offensive by the safety classifier presented in [the “Build it break it fix it for dialogue safety” paper of Dinan et al., 2019](https://arxiv.org/abs/1908.06083). (However, in this case we have not incorporated the safety features of the `safe_interactive.py` script described above, where the safety classifier mitigates a number of these concerns -- but not all.) If you choose to train or use this model, you do so entirely at your own risk.
