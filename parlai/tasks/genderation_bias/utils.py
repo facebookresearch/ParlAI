@@ -30,7 +30,7 @@ PUNCTUATION_LST = [
 
 def format_text(text: str, lower: bool = True) -> str:
     """
-    Space punctuation and lowercase text
+    Space punctuation and lowercase text.
 
     :param text:
         text to lowercase

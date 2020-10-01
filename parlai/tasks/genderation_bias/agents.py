@@ -41,9 +41,9 @@ from typing import List, Optional, Tuple
 
 class ControllableTaskTeacher(FixedDialogTeacher):
     """
-    Generates a controllable_gen version of a ParlAI task, i.e., for tasks with multi-turn
-    dialogues (episodes), this will generate a task with single example episodes, in which
-    we append to the context a special classification token.
+    Generates a controllable_gen version of a ParlAI task, i.e., for tasks with multi-
+    turn dialogues (episodes), this will generate a task with single example episodes,
+    in which we append to the context a special classification token.
     """
 
     @staticmethod
