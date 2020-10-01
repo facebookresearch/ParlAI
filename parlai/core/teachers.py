@@ -1601,7 +1601,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self.task = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
         self.data_path = self.get_data_path(opt)
         self.data = self.load_data(self.data_path, self.opt)
-        self.datatype = opt.get('datatype').split(':')[0]
+        self.datatype = DatatypeHelper.fold(opt['datatype'])
 
         # Example of available models: 'resnet152', 'resnext101_32x48d_wsl',
         # and ImageLoader supports other resnet and resnext models too
@@ -1781,7 +1781,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Can be override by subclass.
         """
 
-        dt = opt['datatype'].split(':')[0]
+        dt = DatatypeHelper.fold(opt['datatype'])
 
         # Sometimes file is named "val" instead of "valid"
         if dt not in ['train', 'valid', 'val', 'test']:
@@ -1979,7 +1979,7 @@ class MultiTaskTeacher(Teacher):
                     self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
-        self.random = opt.get('datatype') == 'train'
+        self.random = DatatypeHelper.should_shuffle(opt.get['datatype'])
         # Make multi-task task probabilities.
         self.cum_task_weights = [1] * len(self.tasks)
         self.task_choices = range(len(self.tasks))
