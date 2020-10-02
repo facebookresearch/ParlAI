@@ -642,18 +642,18 @@ class Metrics(object):
     def share(self):
         return {'data': self._data}
 
-
-class MetricsCollection(Metrics):
-    """
-    Helper container for Metrics that can have other metrics added to it.
-    """
-
     def add_metrics(self, other: Metrics) -> None:
-        for k, v in other.report().items():
+        """
+        Aggregate another Metrics objects metrics into this one.
+
+        Note that it is assumed that the keys for metrics are disjoint between Metrics
+        objects.
+        """
+        for k, v in other._data:
             self.add(k, v)
 
 
-class TeacherMetrics(MetricsCollection):
+class TeacherMetrics(Metrics):
     """
     Helper container which encapsulates standard metrics (F1, BLEU, ...).
     """
