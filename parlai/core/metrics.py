@@ -649,7 +649,7 @@ class MetricsCollection(Metrics):
     """
 
     def add_metrics(self, other: Metrics) -> None:
-        for k, v in other.report():
+        for k, v in other.report().items():
             self.add(k, v)
 
 
