@@ -65,7 +65,6 @@ After the round of domain-adaptive pre-training above, the model must be fine-tu
 ```
 parlai tm \
 -t genderation_bias:controllable_task:blended_skill_talk,genderation_bias:controllable_task:convai2:normalized,genderation_bias:controllable_task:empathetic_dialogues,genderation_bias:controllable_task:wizard_of_wikipedia,genderation_bias:controllable_task:image_chat:Generation \
---four-class True \
 --prepend-personality True \
 --image-mode faster_r_cnn_152_32x8d \
 --include-image-token False \
