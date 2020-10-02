@@ -171,7 +171,9 @@ class TestInitOpt(unittest.TestCase):
                 _ = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
 
             # Assert that the opt file *can* be loaded in if we set
-            # --allow-missing-init-opts
-            _ = ParlaiParser(True, True).parse_kwargs(
+            # --allow-missing-init-opts, and assert that the made-up arg does not exist
+            # in the opt
+            opt = ParlaiParser(True, True).parse_kwargs(
                 init_opt=init_opt_path, allow_missing_init_opts=True
             )
+            self.assertFalse(hasattr(opt, 'made_up_arg'))
