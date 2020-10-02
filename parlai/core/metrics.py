@@ -652,6 +652,7 @@ class Metrics(object):
         for k, v in other._data.items():
             self.add(k, v)
 
+
 class TeacherMetrics(Metrics):
     """
     Helper container which encapsulates standard metrics (F1, BLEU, ...).
