@@ -34,7 +34,7 @@ class SlotMetrics(Metrics):
         super().__init__(shared=shared)
         self.add("jga", AverageMetric(teacher_slots == predicted_slots))
         if _use_domain_metrics(domain, valid_domains):
-            self.add("{domain}/jga", AverageMetric(teacher_slots == predicted_slots))
+            self.add(f"{domain}/jga", AverageMetric(teacher_slots == predicted_slots))
         for pred_slot_name, pred_value in predicted_slots.items():
             slot_p = AverageMetric(teacher_slots.get(pred_slot_name) == pred_value)
             self.add("slot_p", slot_p)
@@ -66,11 +66,10 @@ def _use_domain_metrics(
 class NlgMetrics(Metrics):
     """
     Helper container for generation version of standard metrics (F1, BLEU,
-
     ...).
 
     This class will add domain-specific versions of these classes as
-    well, when appropriate
+    well, when appropriate. Will also calculated lexicated/delexicated statistics if provided.
     """
 
     def __init__(
@@ -78,7 +77,11 @@ class NlgMetrics(Metrics):
         guess: str,
         labels: Optional[Tuple[str]],
         teacher_domains: Optional[Tuple[str]],
+        delex_guess: Optional[str] = None,
+        delex_labels: Optional[Tuple[str]] = None,
+        shared: Dict[str, Any] = None,
     ) -> None:
+        super().__init__(shared=shared)
         bleu = BleuMetric.compute(guess, labels)
         f1 = F1Metric.compute(guess, labels)
         self.add("nlg_bleu", bleu)
@@ -86,6 +89,15 @@ class NlgMetrics(Metrics):
         for domain in teacher_domains:
             self.add(f"{domain}/nlg_bleu", bleu)
             self.add(f"{domain}/nlg_f1", f1)
+
+        if delex_guess is not None:
+            blue = BleuMetric.compute(delex_guess, delex_labels)
+            f1 = F1Metric.compute(delex_guess, delex_labels)
+            self.add("nlg_delex_bleu", bleu)
+            self.add("nlg_delex_f1", f1)
+            for domain in teacher_domains:
+                self.add(f"{domain}/nlg_delex_bleu", bleu)
+                self.add(f"{domain}/nlg_delex_f1", f1)
 
 
 AverageType = Optional[AverageMetric]
