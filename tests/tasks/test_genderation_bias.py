@@ -3,7 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-import copy
 import unittest
 
 from parlai.core.message import Message
@@ -33,8 +32,7 @@ class TestGenderationBiasTeacher(unittest.TestCase):
             "ok, have a good day",
             "bye bye! tell mom I say hello",
         ]
-        four_class_tokens = ['f0m1', 'f1m1', 'f0m0', 'f1m0']
-        three_class_tokens = ['MALE', 'FEMALE', 'NEUTRAL', 'FEMALE']
+        tokens = ['f0m1', 'f1m1', 'f0m0', 'f1m0']
         episode = [
             Message(
                 {
@@ -46,17 +44,8 @@ class TestGenderationBiasTeacher(unittest.TestCase):
             for i in range(0, len(utterances) - 1, 2)
         ]
         episode[-1].force_set('episode_done', True)
-        new_episode = flatten_and_classify(
-            copy.deepcopy(episode), -1, word_lists, four_class=True
-        )
+        new_episode = flatten_and_classify(episode, -1, word_lists)
         assert len(new_episode) == 4
         assert all(
-            ex['text'].endswith(tok) for ex, tok in zip(new_episode, four_class_tokens)
-        ), f"new episode: {new_episode}"
-        new_episode = flatten_and_classify(
-            copy.deepcopy(episode), -1, word_lists, four_class=False
-        )
-
-        assert all(
-            ex['text'].endswith(tok) for ex, tok in zip(new_episode, three_class_tokens)
+            ex['text'].endswith(tok) for ex, tok in zip(new_episode, tokens)
         ), f"new episode: {new_episode}"

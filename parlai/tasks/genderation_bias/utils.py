@@ -48,9 +48,7 @@ def format_text(text: str, lower: bool = True) -> str:
     return text
 
 
-def get_word_list_token(
-    text: str, word_lists: Tuple[List[str], List[str]], four_class: bool = False
-) -> str:
+def get_word_list_token(text: str, word_lists: Tuple[List[str], List[str]]) -> str:
     """
     Return a control token corresponding to gender within text.
 
@@ -58,9 +56,6 @@ def get_word_list_token(
         text to consider for control token
     :param word_lists:
         tuple of lists for male-specific and female-specific words
-    :param four_class:
-        whether to utilize four-class method (f0m0 --> f1m1) identifying.
-        False defaults to three-class method (MALE/FEMALE/NEUTRAL)
 
     :return token:
         return control token corresponding to input text.
@@ -75,22 +70,14 @@ def get_word_list_token(
         if word in f_list:
             f_cnt += 1
 
-    if four_class:
-        if f_cnt == 0 and m_cnt == 0:
-            return 'f0m0'
-        elif f_cnt == 0 and m_cnt > 0:
-            return 'f0m1'
-        elif f_cnt > 0 and m_cnt == 0:
-            return 'f1m0'
-        else:
-            return 'f1m1'
-    # three class regime
-    if m_cnt > f_cnt:
-        return 'MALE'
-    if f_cnt > m_cnt:
-        return 'FEMALE'
-
-    return 'NEUTRAL'
+    if f_cnt == 0 and m_cnt == 0:
+        return 'f0m0'
+    elif f_cnt == 0 and m_cnt > 0:
+        return 'f0m1'
+    elif f_cnt > 0 and m_cnt == 0:
+        return 'f1m0'
+    else:
+        return 'f1m1'
 
 
 def flatten_and_classify(
@@ -99,10 +86,9 @@ def flatten_and_classify(
     word_lists: Tuple[List[str], List[str]],
     include_labels: bool = True,
     delimiter: str = '\n',
-    four_class: bool = False,
 ):
     """
-    Flatten the dialogue history of an episode, explore into N new examples.
+    Flatten the dialogue history of an episode, explode into N new examples.
 
     Additionally, add control token corresponding to gender identified in the
     episode.
@@ -117,9 +103,6 @@ def flatten_and_classify(
         whether to include labels while flattening
     :param delimiter:
         delimiter to use while flattening
-    :param four_class:
-        boolean param indicating whether to use four-class classification
-        vs. three-class classification.
     """
     context = deque(maxlen=context_length if context_length > 0 else None)
     new_episode = []
@@ -136,9 +119,7 @@ def flatten_and_classify(
             context.append(random.choice(labels))
 
         # word list
-        control_tok = get_word_list_token(
-            random.choice(labels), word_lists, four_class=four_class
-        )
+        control_tok = get_word_list_token(random.choice(labels), word_lists)
         ex.force_set('text', ex['text'] + ' ' + control_tok)
         new_episode.append(ex)
 

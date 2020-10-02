@@ -9,7 +9,6 @@ dialogues (episodes), this will generate a task with single example episodes, in
 we append to the context a special classification token.
 
 In order to use this teacher, specify the task flag as follows:
-# `--task internal:gender_multiclass:controllable_task:<ORIGINAL TASK NAME>`.
 `--task genderation_bias:controllable_task:<ORIGINAL TASK NAME>`.
 
 As an example, try running:
@@ -48,7 +47,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
 
     @staticmethod
     def add_cmdline_args(parser):
-        flattened = parser.add_argument_group('Flattening Args')
+        flattened = parser.add_argument_group('ControllableTaskTeacher Flattening Args')
         flattened.add_argument(
             '--flatten-include-labels',
             type='bool',
@@ -68,7 +67,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
             help='Maximum number of utterances to include per episode. '
             'Default -1 keeps all.',
         )
-        agent = parser.add_argument_group('Controllable Gen Teacher Args')
+        agent = parser.add_argument_group('ControllableTaskTeacher Args')
         agent.add_argument(
             '--invalidate-cache',
             type='bool',
@@ -83,17 +82,10 @@ class ControllableTaskTeacher(FixedDialogTeacher):
             help='If greater than zero, will stop building after a certain num of exs',
         )
         agent.add_argument(
-            '--four-class',
-            type='bool',
-            default=True,
-            help='Use 4 class classification for gendered word list (f0m0/f0m1/f1m0/f1m1). '
-            'Set false to use 3-class classification (MALE/FEMALE/NEUTRAL)',
-        )
-        agent.add_argument(
             '--fixed-control',
             type=str,
             default='',
-            help='Always append this fixed control variable, good for deploy time.',
+            help='Always append this fixed control string, good for deploy time.',
         )
         # Add the arguments for the task teacher
         opt = parser.parse_and_process_known_args()[0]
@@ -108,7 +100,6 @@ class ControllableTaskTeacher(FixedDialogTeacher):
         assert opt['flatten_delimiter'] == opt.get(
             'delimiter', '\n'
         ), '--flatten-delimiter and --delimiter are set differently, please inspect and set to the same to avoid unexpected results'
-        self.four_class = opt['four_class']
         self.opt = opt
 
         if shared and 'data' in shared:
@@ -146,9 +137,9 @@ class ControllableTaskTeacher(FixedDialogTeacher):
     @classmethod
     def build_wordlists(cls, opt: Opt) -> Tuple[List[str], List[str]]:
         """
-        Load list of explicitly gendered words from.
+        Load list of explicitly gendered words.
 
-        <https://github.com/uclanlp/gn_glove/blob/master/wordlist/>.
+        Words taken from <https://github.com/uclanlp/gn_glove/blob/master/wordlist/>.
 
         Examples include brother, girl, actress, husbands, etc.
         """
@@ -181,7 +172,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
         )
         os.makedirs(self.save_dir, exist_ok=True)
 
-        fname = f"{opt['datatype'].split(':')[0]}_fourclass_{self.four_class}.json"
+        fname = f"{opt['datatype'].split(':')[0]}.json"
         self.save_path = os.path.join(self.save_dir, fname)
 
         data = self.load_data(opt, fname)
@@ -221,7 +212,6 @@ class ControllableTaskTeacher(FixedDialogTeacher):
                 opt['flatten_max_context_length'],
                 include_labels=opt['flatten_include_labels'],
                 delimiter=opt['flatten_delimiter'],
-                four_class=self.four_class,
                 word_lists=self.word_lists,
             )
             all_episodes += flattened_ep
@@ -250,8 +240,8 @@ class ControllableTaskTeacher(FixedDialogTeacher):
         # first check for the most recent date
         save_dir = self._get_save_path(opt['datapath'], '*')
         all_dates = []
-        for fle in glob.glob(os.path.join(save_dir, filename)):
-            date = os.path.split(fle)[0].split('_')[-1]
+        for fname in glob.glob(os.path.join(save_dir, filename)):
+            date = os.path.split(fname)[0].split('_')[-1]
             all_dates.append(date)
 
         if len(all_dates) > 0:
@@ -298,7 +288,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
         """
         Return a flattened example.
 
-        If using a fixed control, put in instead of what was originally in the episode.
+        If using a fixed control, put that in instead of what was originally in the text.
 
         :param episode_idx:
             index of ep in data
