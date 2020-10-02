@@ -653,16 +653,6 @@ class Metrics(object):
             self.add(k, v)
 
 
-class MetricsCollection(Metrics):
-    """
-    Helper container for Metrics that can have other metrics added to it.
-    """
-
-    def add(self, other: Metrics) -> None:
-        for k, v in other.report():
-            self.add(k, v)
-
-
 class TeacherMetrics(MetricsCollection):
     """
     Helper container which encapsulates standard metrics (F1, BLEU, ...).
