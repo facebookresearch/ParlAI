@@ -8,7 +8,7 @@
 Task Oriented Dialogue (TOD) abstract classes and metrics.
 """
 
-from typing import Optional, Tuple, Dict, Any
+from typing import Optional, List, Dict, Any
 
 from parlai.core.metrics import AverageMetric, BleuMetric, F1Metric, Metric, Metrics
 
@@ -29,7 +29,7 @@ class SlotMetrics(Metrics):
         count_empty_teacher: bool,
         predicted_slots: Dict[str, str],
         domain: Optional[str] = None,
-        valid_domains: Optional[Tuple[str]] = None,
+        valid_domains: Optional[List[str]] = None,
         shared: Dict[str, Any] = None,
     ) -> None:
         super().__init__(shared=shared)
@@ -61,8 +61,14 @@ class SlotMetrics(Metrics):
 
 
 def _use_domain_metrics(
-    domain: Optional[str] = None, valid_domains: Optional[Tuple[str]] = None
+    domain: Optional[str] = None, valid_domains: Optional[List[str]] = None
 ) -> bool:
+    """
+    Decide if we should add domain-specific metrics.
+
+    Helper in SlotMetrics above for determining if we should use domain specific
+    precision/recall/f1 metrics.
+    """
     if domain is not None:
         if valid_domains is None or domain in valid_domains:
             return True
@@ -76,16 +82,16 @@ class NlgMetrics(Metrics):
     ...).
 
     This class will add domain-specific versions of these classes as
-    well, when appropriate. Will also calculated lexicated/delexicated statistics if provided.
+    well, when appropriate. Will also calculate delexicated statistics if provided.
     """
 
     def __init__(
         self,
         guess: str,
-        labels: Optional[Tuple[str]],
-        teacher_domains: Optional[Tuple[str]],
+        labels: Optional[List[str]],
+        teacher_domains: Optional[List[str]],
         delex_guess: Optional[str] = None,
-        delex_labels: Optional[Tuple[str]] = None,
+        delex_labels: Optional[List[str]] = None,
         shared: Dict[str, Any] = None,
     ) -> None:
         super().__init__(shared=shared)
@@ -111,6 +117,13 @@ AverageType = Optional[AverageMetric]
 
 
 def _average_type_sum_helper(first: AverageType, second: AverageType) -> AverageType:
+    """
+    Helper to deal with Nones.
+
+    We are "clever" in how we aggregate SlotF1Metrics (See SlotMetrics `__init__`) in
+    that we add precision and recall values separately, but this means we need to handle
+    None.
+    """
     if first is None:
         return second
     if second is None:
