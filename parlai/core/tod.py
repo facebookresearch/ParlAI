@@ -83,7 +83,7 @@ class NlgMetrics(Metrics):
         self,
         guess: str,
         labels: Optional[Tuple[str]],
-        teacher_domains: Optional[Tuple[str]],
+        teacher_domains: Tuple[str] = [],
         delex_guess: Optional[str] = None,
         delex_labels: Optional[Tuple[str]] = None,
         shared: Dict[str, Any] = None,

@@ -14,6 +14,7 @@ from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.misc import warn_once
 from parlai.core.message import Message
+from parlai.core.tod import SlotMetrics, NlgMetrics
 from parlai.core.metrics import AverageMetric, BleuMetric
 from parlai.utils.io import PathManager
 
@@ -93,17 +94,24 @@ class Text2API2TextTeacher(DialogTeacher):
                 name, value = slot_str.split(' = ')
                 parsed[name] = value
 
-            # slot precision
-            for k, v in parsed.items():
-                self.metrics.add('slot_p', AverageMetric(v == gold.get(k)))
-            # slot recall
-            for k, v in gold.items():
-                self.metrics.add('slot_r', AverageMetric(v == parsed.get(k)))
+            self.metrics.add_metrics(
+                SlotMetrics(
+                    teacher_slots=gold,
+                    count_empty_teacher='slots' in teacher_action,
+                    predicted_slots=parsed,
+                )
+            )
+
         elif teacher_action['type'] == 'apiresp':
             delex_resp = self._delex(resp, teacher_action['slots'])
             delex_label = self._delex(labels[0], teacher_action['slots'])
-            self.metrics.add(
-                'delex_bleu', BleuMetric.compute(delex_resp, [delex_label])
+            self.metrics.add_metrics(
+                NlgMetrics(
+                    guess=resp,
+                    labels=labels,
+                    delex_guess=delex_resp,
+                    delex_labels=[delex_label],
+                )
             )
 
     def _delex(self, text, slots):
