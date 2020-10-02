@@ -3,4 +3,4 @@ This task renders conversations from a file and asks for turn-by-turn annotation
 
 See `turn_annotations_blueprint.py` for various parameters of this task, including passing in custom annotation bucket definitions using the `annotation_buckets` YAML flag, being able to group multiple conversations into one HIT using the `subtasks_per_unit` flag, passing in onboarding data with answers, and being able to ask only for the final utterance as an annotation.
 
-Two variants of the Blueprint are supported: TurnAnnotationStaticBlueprint and TurnAnnotationStaticInFlightQABlueprint. The latter includes the ability to add an inflight additional Quality Assurance task.
+Two variants of the blueprint are supported, `TurnAnnotationStaticBlueprint` and `TurnAnnotationStaticInFlightQABlueprint`. The latter variant includes the ability to add an additional in-flight (i.e. mid-HIT) quality assurance check.
