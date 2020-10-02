@@ -17,7 +17,6 @@ import hashlib
 from collections import Counter
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
-from parlai.core.metrics import AverageMetric, F1Metric, BleuMetric
 from parlai.core.tod import SlotMetrics, NlgMetrics
 from parlai.utils.misc import warn_once
 import json
