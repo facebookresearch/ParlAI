@@ -18,6 +18,7 @@ from collections import Counter
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
 from parlai.core.metrics import AverageMetric, F1Metric, BleuMetric
+from parlai.core.tod import SlotMetrics, NlgMetrics
 from parlai.utils.misc import warn_once
 import json
 import parlai.utils.logging as logging
@@ -151,58 +152,42 @@ class _Abstract(DialogTeacher):
         if teacher_action['type'] == 'apicall':
             # also count slot accuracy
             text = model_response['text']
-            slot_guesses = set(
+            slot_guesses_raw = set(
                 text.replace(CALL_TOKEN + " ", "").split(' ; ')
             )  # prevent cheating via repeated guesses
-            correct = 0
-            for slot_guess in slot_guesses:
-                if ' = ' not in slot_guess:
-                    continue
-                try:
-                    slot, guess = slot_guess.split(' = ')
-                except ValueError:
-                    continue
-                if teacher_action['slots'].get(slot) == guess:
-                    self.metrics.add('slot_p', AverageMetric(1))
-                    self.metrics.add(f'{domain}_slot_p', AverageMetric(1))
-                    correct += 1
-                else:
-                    self.metrics.add('slot_p', AverageMetric(0))
-                    self.metrics.add(f'{domain}_slot_p', AverageMetric(0))
-                    logging.debug(
-                        f"Bad slot guess '{slot_guess}' != {teacher_action['slots']}"
-                    )
-            if teacher_action['slots']:
-                self.metrics.add(
-                    'slot_r', AverageMetric(correct, len(teacher_action['slots']))
+            slot_guesses = dict(
+                map(
+                    lambda x: x.split(' = '),
+                    filter(lambda x: ' = ' in x, slot_guesses_raw),
                 )
-                self.metrics.add(
-                    f'{domain}_slot_r',
-                    AverageMetric(correct, len(teacher_action['slots'])),
+            )
+
+            self.metrics.add_metrics(
+                SlotMetrics(
+                    teacher_slots=teacher_action.get('slots', {}),
+                    count_empty_teacher=teacher_action['slots'],
+                    predicted_slots=slot_guesses,
+                    domain=domain,
+                    valid_domains=DOMAINS,
                 )
-                self.metrics.add(
-                    'jga', AverageMetric(correct == len(teacher_action['slots']))
-                )
+            )
 
         elif teacher_action['type'] == 'apiresp':
-            # keep track of statistics by domain
-            f1_metric = F1Metric.compute(model_response['text'], labels)
-            bleu_metric = BleuMetric.compute(model_response['text'], labels)
-            self.metrics.add(f'{domain}_lex_f1', f1_metric)
-            self.metrics.add(f'{domain}_lex_bleu', bleu_metric)
-
             delex_text = model_response['text']
             delex_label = labels[0]
             # compute delexicalized string metrics
             for slot, value in teacher_action['slots'].items():
                 delex_text = delex_text.replace(value, slot)
                 delex_label = delex_label.replace(value, slot)
-            f1_metric = F1Metric.compute(delex_text, (delex_label,))
-            self.metrics.add('delex_f1', f1_metric)
-            self.metrics.add(f'{domain}_delex_f1', f1_metric)
-            bleu_metric = BleuMetric.compute(delex_text, [delex_label])
-            self.metrics.add('delex_bleu', bleu_metric)
-            self.metrics.add(f'{domain}_delex_bleu', bleu_metric)
+            self.metrics.add_metrics(
+                NlgMetrics(
+                    guess=model_response['text'],
+                    labels=labels,
+                    teacher_domains=[domain],
+                    delex_guess=delex_text,
+                    delex_labels=[delex_label],
+                )
+            )
 
     def setup_data(self, fold):
         domains = self.opt.get('domains', DOMAINS)
