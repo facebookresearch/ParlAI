@@ -6,7 +6,7 @@ Code for crowdsourcing tasks that use Mephisto. See https://github.com/facebookr
 
 Tasks are launched by calling the appropriate run script: for instance, an ACUTE-Eval run can be launched with `python parlai/crowdsourcing/tasks/acute_eval/run.py`, followed by any appropriate flags. All run parameters are set using [Hydra](https://github.com/facebookresearch/hydra), and each run script has a YAML file of default parameters that will be loaded, found in the `conf/` subfolder of each task.
  
- ### Specifying your own YAML file
+### Specifying your own YAML file
  
  The easiest way to specify a different YAML file is to create a new file, say, `my_params.yaml`, in the `conf/` subfolder of the task. Then, you can launch HITs with `python ${TASK_FOLDER}/run.py conf=my_params`.
  
