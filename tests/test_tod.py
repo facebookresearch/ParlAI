@@ -62,7 +62,11 @@ class TestSlotMetrics(unittest.TestCase):
             ),
         ]
         for teacher, predicted, result in cases:
-            metric = SlotMetrics(teacher, predicted)
+            metric = SlotMetrics(
+                teacher_slots=teacher,
+                predicted_slots=predicted,
+                count_empty_teacher=True,
+            )
             self.assertEqual(result, metric.report())
 
 
