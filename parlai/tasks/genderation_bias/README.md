@@ -1,17 +1,11 @@
 Task: Genderation Bias
 ======================
-Description: The task in this directory is not a task itself, but rather a wrapper. The task will flatten a specified other ParlAI task (that is, turn multi-turn episodes into single-turn examples), and append a control token that corresponds with the level of gender present in the label. If `--four-class` is specified as `True`, the control token will be one of the following:
+Description: The task in this directory is not a task itself, but rather a wrapper. The task will flatten a specified other ParlAI task (that is, turn multi-turn episodes into single-turn examples), and append a control token that corresponds with the level of gender present in the label, where word lists from https://github.com/uclanlp/gn_glove/blob/master/wordlist/ are used to count the number of gendered words. Depending on the counts, the control token will be one of the following:
 
 - `f0m0` - no gender words in the label
 - `f0m1` - there is at least one male-specific word in the label
 - `f1m0` - there is at least one female-specific word in the label
 - `f1m1` - there is at least one male-specific word AND one female-specific word in the label
-
-If `--four-class` is `False`, then the following will be the control tokens:
-
-- `MALE` - there are more male words than female words
-- `FEMALE` - there are more female words than male words
-- `NEUTRAL` - there are no female/male words, or an equal amount.
 
 For example, one could run the following command:
 
