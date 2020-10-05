@@ -11,6 +11,8 @@ class LaunchConfig:
     command line as params)
     """
 
+    BLUEPRINT_TYPE = 'turn_annotations_static_inflight_qa_blueprint'
+
     # Run the below to register the requester if needed (first time only)
     # mephisto register mturk_sandbox --name:XXXX
     # --access-key-id:XXXX --secret-access-key:XXXX
@@ -47,5 +49,5 @@ class LaunchConfig:
     WORKER_BLOCK_LIST = []
 
     # Blueprint specific params
-    ANNOTATE_LAST_UTTERANCE_ONLY = False
     ASK_REASON = False
+    ANNOTATION_INDICES_JSONL = None

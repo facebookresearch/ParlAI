@@ -152,12 +152,15 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
   )
 }
 
-function ChatMessage({ text, agentIdx, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
+function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
   var extraElements = '';
   if (doAnnotateMessage) {
+    var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     extraElements = '';
     extraElements = (<span key={'extra_' + turnIdx}><br /><br />
-      <span style={{ fontStyle: 'italic' }}>Does this comment have any annotations? (Check all that apply)<br />
+      <span style={{ fontStyle: 'italic' }} >
+        <span dangerouslySetInnerHTML={{ __html: annotationQuestionWithoutQuotes }}></span>
+        <br />
         <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} askReason={askReason} onUserInputUpdate={onUserInputUpdate} />
       </span>
     </span>)
@@ -173,7 +176,11 @@ function ChatMessage({ text, agentIdx, annotationBuckets, turnIdx, doAnnotateMes
   )
 }
 
-function ContentPane({ subtaskData, annotationBuckets, subtaskIndex, annotateLastUtteranceOnly, askReason, numSubtasks }) {
+function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
+  var annotationQuestion = taskConfig.annotation_question;
+  var annotationBuckets = taskConfig.annotation_buckets;
+  var annotateLastUtteranceOnly = taskConfig.annotate_last_utterance_only;
+  var askReason = taskConfig.ask_reason;
   if (subtaskData == undefined && subtaskIndex >= numSubtasks) {
     // This happens when index gets set to num subtasks + 1 after submitting
     return (<div>
@@ -191,8 +198,9 @@ function ContentPane({ subtaskData, annotationBuckets, subtaskIndex, annotateLas
                 text={m.text}
                 agentIdx={m.agent_idx}
                 turnIdx={idx}
+                annotationQuestion={annotationQuestion}
                 annotationBuckets={annotationBuckets}
-                doAnnotateMessage={m.agent_idx == 1 && (idx == (subtaskData.length - 1) || !annotateLastUtteranceOnly)}
+                doAnnotateMessage={m.do_annotate}
                 askReason={askReason}
                 onUserInputUpdate={() => handleUserInputUpdate(subtaskData)}
               />
@@ -203,7 +211,7 @@ function ContentPane({ subtaskData, annotationBuckets, subtaskIndex, annotateLas
   )
 }
 
-function MainTaskComponent({ taskData, annotationBuckets, taskTitle, taskDescription, taskConfig, onSubmit }) {
+function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, onSubmit }) {
   if (taskData == undefined) {
     return <div><p> Loading chats...</p></div>;
   }
@@ -221,10 +229,10 @@ function MainTaskComponent({ taskData, annotationBuckets, taskTitle, taskDescrip
 
         <br />
         <span dangerouslySetInnerHTML={{ __html: taskDescriptionWithoutQuotes || 'Task Description Loading' }}></span>
-        <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, taskData.length, taskData[index], annotationBuckets, onSubmit); setIndex(index + 1); }}></SubtaskSubmitButton>
+        <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); setIndex(index + 1); }}></SubtaskSubmitButton>
       </LeftPane>
       <RightPane>
-        <ContentPane subtaskData={taskData[index]} annotationBuckets={annotationBuckets} subtaskIndex={index} annotateLastUtteranceOnly={taskConfig.annotate_last_utterance_only} askReason={taskConfig.ask_reason} numSubtasks={taskData.length} ></ContentPane>
+        <ContentPane subtaskData={taskData[index]} taskConfig={taskConfig} subtaskIndex={index} numSubtasks={taskData.length} ></ContentPane>
       </RightPane>
       <div style={{ clear: 'both' }}>
       </div>
