@@ -1309,4 +1309,14 @@ task_list = [
             "for task oriented dialogue in 7 domains."
         ),
     },
+    {
+        "id": "GenderationBiasControlTask",
+        "display_name": "GenderationBiasControlTask",
+        "task": "genderation_bias:controllable_task",
+        "tags": ["All"],
+        "description": (
+            "A teacher that wraps other ParlAI tasks and appends control tokens to the "
+            "text field indicating the presence of gender words in the label(s)."
+        ),
+    },
 ]
