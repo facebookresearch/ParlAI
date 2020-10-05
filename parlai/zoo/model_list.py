@@ -1491,4 +1491,15 @@ model_list = [
         [labels]: Two young guys with shaggy hair look at their hands while hanging out in the yard.|Two young, White males are outside near many bushes.|Two men in green shirts are standing in a yard.|A man in a blue shirt standing in a garden.|Two friends enjoy time spent together.
         """,
     },
+    {
+        "title": "Multi-Modal BlenderBot (MMB DegenPos)",
+        "id": "multimodal_blenderbot",
+        "path": 'n/a',
+        "agent": "projects.multimodal_blenderbot.agents:BiasAgent",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/multimodal_blenderbot',
+        "description": "Model trained to talk about both images and general chitchat, trained with a degendering teacher and with 75% of Image-Chat styles replaced by a generic polarity string",
+        "example": "python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf ${FINETUNED_MODEL_PATH} --model projects.multimodal_blenderbot.agents:BiasAgent --delimiter $'\n' --beam-block-ngram 3 --beam-context-block-ngram 3 --beam-min-length 20 --beam-size 10 --inference beam --model-parallel False",
+        "result": "(results will vary)",
+    },
 ]
