@@ -1,6 +1,6 @@
 # Model card: Multi-Modal BlenderBot
 
-Model card for the MMB DegenPos model described in [Multi-Modal Open-Domain Dialogue](TODO: add arXiv link).
+Model card for the MMB DegenPos model described in [Multi-Modal Open-Domain Dialogue](https://arxiv.org/abs/2010.01082).
 
 ## Model details
 This model was trained to create a dialogue agent that can converse engagingly about the content of an image as well as about general chitchat. It is a 2.7-billion-parameter Transformer sequence-to-sequence model based on the [BlenderBot](https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot/) open-domain chatbot, trained on the image tasks [COCO Captions](https://cocodataset.org/) and [Image-Chat](https://parl.ai/projects/image_chat/), and using an image encoder from [Faster R-CNN](https://arxiv.org/abs/1506.01497?context=cs).
