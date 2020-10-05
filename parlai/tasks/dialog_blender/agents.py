@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Google The Schema-Guided Dialogue(SGD) Dataset implementation for ParlAI.
+Dialog Blender Dataset implementation for ParlAI. 
 """
 
 import os
@@ -19,6 +19,10 @@ from parlai.core.metrics import AverageMetric, BleuMetric
 from parlai.utils.io import PathManager
 from parlai.core.worlds import create_task
 
+from parlai.tasks.dialog_blender.blender import Blender
+
+MAX_TRAIN_DIALOGS = int(1e3)
+
 
 class DialogBlender(DialogTeacher):
     """
@@ -28,18 +32,34 @@ class DialogBlender(DialogTeacher):
     @classmethod
     def add_cmdline_args(cls, argparser):
         argparser.add_argument(
-            "--dialogs_to_blend",
+            "--tasks_to_blend",
             type=str,
             default="google_sgd,dailydialog",
         )
+        argparser.add_argument(
+            "--blend_mode",
+            type=str,
+            default="fixed_interleave",
+            choices=["concat", "random_interleave", "fixed_interleave"],
+        )
+        argparser.add_argument(
+            "--eval_task",
+            type=str,
+            default="default",
+        )
         return argparser
-
 
     def __init__(self, opt: Opt, shared=None):
         self.opt = opt
         self.fold = opt['datatype'].split(':')[0]
         opt['datafile'] = self.fold
-        self.tasks_to_blend = opt['dialogs_to_blend'].split(',')
+        self.blender = Blender(opt["blend_mode"])
+        self.tasks_to_blend = opt['tasks_to_blend'].split(',')
+        self.eval_task = opt["eval_task"]
+        if self.eval_task == "default":
+            self.eval_task = self.tasks_to_blend[0]
+        else:
+            assert self.eval_task in self.tasks_to_blend
         self.dpath = os.path.join(opt['datapath'], 'dialog_blender')
         super().__init__(opt, shared)
 
@@ -53,28 +73,35 @@ class DialogBlender(DialogTeacher):
 
     def _get_dialog(self, world):
         turns = []
+        world.parley()
+        turns.append(world.get_acts()[0])
         while not world.episode_done():
             world.parley()
             turns.append(world.get_acts()[0])
+        if len(turns[0]) == 0:
+            import pdb; pdb.set_trace()
         return turns
 
-    def _merge_dialogs(self, dialogs):
-        merged_dialog = []
-        for task_id in dialogs:
-            merged_dialog += dialogs[task_id]
-        return merged_dialog
-        
-    def setup_data(self, fold):
-        worlds = {}
-        for task_id in self.tasks_to_blend:
-            worlds[task_id] = self._get_world(task_id)
+    def _merge_dialogs(self, dialogs_all_tasks):
+        merged_dialogs = []
+        for dialog_id, dialogs in enumerate(zip(*dialogs_all_tasks)):
+            merged_dialogs.append(self.blender.blend(dialogs))
+        return merged_dialogs
 
-        num_dialogs = 10000
-        for _ in range(num_dialogs):
-            dialog = {}
-            for task_id in self.tasks_to_blend:
-                dialog[task_id] = self._get_dialog(worlds[task_id])
-            for turn_id, turn in enumerate(self._merge_dialogs(dialog)):
+    def _dialogs_split(self, fold):
+        if fold != "train":
+            eval_world = self._get_world(self.eval_task)
+            return [self._get_dialog(eval_world) for _ in eval_world.num_episodes()]
+
+        dialogs_all_tasks = []
+        for task_id in self.tasks_to_blend:
+            world = self._get_world(task_id)
+            dialogs_all_tasks.append([self._get_dialog(world) for _ in range(MAX_TRAIN_DIALOGS)])
+        return self._merge_dialogs(dialogs_all_tasks)
+
+    def setup_data(self, fold):
+        for dialog in self._dialogs_split(fold):
+            for turn_id, turn in enumerate(dialog):
                 is_first_turn = turn_id == 0
                 turn['label'] = turn['labels'][0]
                 del turn['labels']
