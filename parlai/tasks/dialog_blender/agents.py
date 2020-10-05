@@ -23,6 +23,16 @@ from parlai.tasks.dialog_blender.blender import Blender
 
 MAX_TRAIN_DIALOGS = int(1e3)
 
+DOMAINS = [
+    'flights',
+    'food-ordering',
+    'hotels',
+    'movies',
+    'restaurant-search',
+    'sports',
+    'music',
+]
+
 
 class DialogBlender(DialogTeacher):
     """
@@ -31,6 +41,14 @@ class DialogBlender(DialogTeacher):
 
     @classmethod
     def add_cmdline_args(cls, argparser):
+        argparser.add_argument('--include-ontology', type=bool, default=False)
+        argparser.add_argument(
+            '--domains',
+            nargs='+',
+            default=DOMAINS,
+            choices=DOMAINS,
+            help='Uses last passed in configuration.',
+        )
         argparser.add_argument(
             "--tasks_to_blend",
             type=str,
@@ -78,8 +96,6 @@ class DialogBlender(DialogTeacher):
         while not world.episode_done():
             world.parley()
             turns.append(world.get_acts()[0])
-        if len(turns[0]) == 0:
-            import pdb; pdb.set_trace()
         return turns
 
     def _merge_dialogs(self, dialogs_all_tasks):
