@@ -36,6 +36,9 @@ _RL agents in the LIGHT world to achieve open-domain goals_:
 - **[I love your chain mail! Making knights smile in a fantasy game world: Open-domain goal-oriented dialogue agents](https://arxiv.org/abs/2002.02878)**
 Shrimai Prabhumoye, Margaret Li, Jack Urbanek, Emily Dinan, Douwe Kiela, Jason Weston, Arthur Szlam.
 
+- **[How to Motivate Your Dragon: Teaching Goal-driven Agents to Speak and Act in Fantasy Worlds](https://arxiv.org/abs/2010.00685)**
+Prithviraj Ammanabrolu, Jack Urbanek, Margaret Li, Arthur Szlam, Tim Rocktaschel, Jason Weston.
+
 _Addressing gender bias concerns in LIGHT_:
 
 - **[Queens are Powerful too: Mitigating Gender Bias in Dialogue Generation](https://arxiv.org/abs/1911.03842)**
@@ -45,9 +48,6 @@ _Deploying the LIGHT game for lifelong learning of models_:
 
 - **[Deploying Lifelong Open-Domain Dialogue Learning](https://arxiv.org/abs/2008.08076)**
 Kurt Shuster, Jack Urbanek, Emily Dinan, Arthur Szlam, Jason Weston.
-
-- **[How to Motivate Your Dragon: Teaching Goal-driven Agents to Speak and Act in Fantasy Worlds](https://arxiv.org/abs/2010.00685)**
-Prithviraj Ammanabrolu, Jack Urbanek, Margaret Li, Arthur Szlam, Tim Rocktaschel, Jason Weston.
 
 ## Datasets
 
