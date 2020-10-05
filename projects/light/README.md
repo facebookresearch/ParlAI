@@ -46,6 +46,8 @@ _Deploying the LIGHT game for lifelong learning of models_:
 - **[Deploying Lifelong Open-Domain Dialogue Learning](https://arxiv.org/abs/2008.08076)**
 Kurt Shuster, Jack Urbanek, Emily Dinan, Arthur Szlam, Jason Weston.
 
+_Training situated RL agents on natural language LIGHT quests_:
+
 - **[How to Motivate Your Dragon: Teaching Goal-driven Agents to Speak and Act in Fantasy Worlds](https://arxiv.org/abs/2010.00685)**
 Prithviraj Ammanabrolu, Jack Urbanek, Margaret Li, Arthur Szlam, Tim Rocktaschel, Jason Weston.
 
