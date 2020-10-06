@@ -210,7 +210,7 @@ def superscript_main(args=None):
         action='helpall',
         help=helpall_help_str,
     )
-    versioninfo_help_str = 'Prints version info and exit.srlai '
+    versioninfo_help_str = 'Prints version info and exit.'
     parser.add_argument(
         '--version',
         action='version',
