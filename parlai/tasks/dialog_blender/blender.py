@@ -35,8 +35,7 @@ class Blender(object):
         max_dialog_turns[0] = 4
         
         # chunkify dialogs into chunks and merge.
-        dialog_chunks = [self._chunkify(dialog, max_dialog_turns[task_id]) for task_id, dialog in
-enumerate(dialogs)]
+        dialog_chunks = [self._chunkify(dialog, max_dialog_turns[task_id]) for task_id, dialog in enumerate(dialogs)]
         num_chunks = [len(chunks) for chunks in dialog_chunks]
         interleaved_dialog = []
         task_id = 0
@@ -44,5 +43,5 @@ enumerate(dialogs)]
             if dialog_chunks[task_id]:
                 interleaved_dialog += dialog_chunks[task_id].pop(0)
                 num_chunks[task_id] -= 1
-            task_id = (task_id + 1) % 2
+            task_id = (task_id + 1) % num_tasks
         return interleaved_dialog

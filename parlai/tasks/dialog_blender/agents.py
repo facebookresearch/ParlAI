@@ -21,7 +21,7 @@ from parlai.core.worlds import create_task
 
 from parlai.tasks.dialog_blender.blender import Blender
 
-MAX_TRAIN_DIALOGS = int(1e3)
+MAX_TRAIN_DIALOGS = int(1e5)
 
 DOMAINS = [
     'flights',
@@ -121,6 +121,8 @@ class DialogBlender(DialogTeacher):
                 is_first_turn = turn_id == 0
                 turn['label'] = turn['labels'][0]
                 del turn['labels']
+                if 'label_candidates' in turn:
+                    del turn['label_candidates']
                 del turn['episode_done']
                 yield turn, is_first_turn
 
