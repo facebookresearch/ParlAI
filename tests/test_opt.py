@@ -10,6 +10,7 @@ import unittest
 
 import parlai.utils.testing as testing_utils
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.scripts.compare_opts import compare_opts
 
 """
@@ -126,3 +127,53 @@ override (printing only non-matching values in each dict):
 \t\tIn opt 1: <MISSING>
 \t\tIn opt 2: no"""
             self.assertEqual(output, desired_output)
+
+
+class TestInitOpt(unittest.TestCase):
+    """
+    Test functionality related to --init-opt.
+    """
+
+    def test_init_opt(self):
+        """
+        Test --init-opt.
+        """
+
+        with testing_utils.tempdir() as temp_dir:
+
+            init_opt_path = os.path.join(temp_dir, 'init_opt.opt')
+            test_model_file = '/test_model_path/model'
+
+            # Save a test opt file
+            init_opt = Opt({'model_file': test_model_file})
+            init_opt.save(init_opt_path)
+
+            # Load the opt back in with --init-opt and make sure it's been set
+            # correctly
+            opt = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
+            self.assertEqual(opt['model_file'], test_model_file)
+
+    def test_allow_missing_init_opts(self):
+        """
+        Test --allow-missing-init-opts.
+        """
+
+        with testing_utils.tempdir() as temp_dir:
+
+            init_opt_path = os.path.join(temp_dir, 'init_opt.opt')
+
+            # Save a test opt file with an argument that doesn't exist
+            init_opt = Opt({'made_up_arg': 'foo'})
+            init_opt.save(init_opt_path)
+
+            # Assert that the opt file normally can't be loaded in
+            with self.assertRaises(RuntimeError):
+                _ = ParlaiParser(True, True).parse_kwargs(init_opt=init_opt_path)
+
+            # Assert that the opt file *can* be loaded in if we set
+            # --allow-missing-init-opts, and assert that the made-up arg does not exist
+            # in the opt
+            opt = ParlaiParser(True, True).parse_kwargs(
+                init_opt=init_opt_path, allow_missing_init_opts=True
+            )
+            self.assertFalse(hasattr(opt, 'made_up_arg'))

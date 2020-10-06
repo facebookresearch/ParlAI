@@ -53,6 +53,14 @@ try:
 except ImportError:
     BPE_INSTALLED = False
 
+try:
+    import maskrcnn_benchmark  # noqa: F401
+    import cv2  # noqa: F401
+
+    DETECTRON_AVAILABLE = True
+except ImportError:
+    DETECTRON_AVAILABLE = False
+
 
 def is_this_circleci():
     """
@@ -103,6 +111,15 @@ def skipUnlessVision(testfn, reason='torchvision not installed'):
     Decorate a test to skip unless torchvision is installed.
     """
     return unittest.skipUnless(VISION_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessDetectron(
+    testfn, reason='maskrcnn_benchmark and/or opencv not installed'
+):
+    """
+    Decorate a test to skip unless maskrcnn_benchmark and opencv are installed.
+    """
+    return unittest.skipUnless(DETECTRON_AVAILABLE, reason)(testfn)
 
 
 class retry(object):

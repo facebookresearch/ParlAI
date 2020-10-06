@@ -49,7 +49,8 @@ def setup_args(parser=None):
     )
     parser.add_argument(
         '--seed-messages-from-task',
-        action='store_true',
+        type='bool',
+        default=False,
         help='Automatically seed conversation with messages from task dataset.',
     )
     parser.add_argument(

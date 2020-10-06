@@ -138,6 +138,16 @@ installtorchcpu: &installtorchcpu
       python -c 'import torch; print("Torch version:", torch.__version__)'
       python -m torch.utils.collect_env
 
+
+installdetectrondeps: &installdetectrondeps
+  run:
+    name: Install opencv, vqa-maskrcnn-benchmark
+    command: |
+      python -m pip install opencv-python==4.2.0.34
+      git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
+      cd maskbench; git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable
+      python setup.py develop; cd -
+
 setupcuda: &setupcuda
   run:
     name: Setup CUDA
@@ -178,12 +188,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200921-osx-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - <<: *installtorchcpuosx
       - save_cache:
-          key: deps-20200828-osx-{{ checksum "requirements.txt" }}
+          key: deps-20200921-osx-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -225,12 +235,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200921-ut36-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-ut36-{{ checksum "requirements.txt" }}
+          key: deps-20200921-ut36-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -257,12 +267,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200921-ut38-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-ut38-{{ checksum "requirements.txt" }}
+          key: deps-20200921-ut38-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -289,12 +299,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200921-ut37-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchcpu
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-ut37-{{ checksum "requirements.txt" }}
+          key: deps-20200921-ut37-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -328,12 +338,13 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200921-gpu14-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu14
       - <<: *installdeps
+      - <<: *installdetectrondeps
       - save_cache:
-          key: deps-20200828-gpu14-{{ checksum "requirements.txt" }}
+          key: deps-20200921-gpu14-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -367,12 +378,13 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828-gpu15-{{ checksum "requirements.txt" }}
+          key: deps-20200921-gpu15-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu15
       - <<: *installdeps
+      - <<: *installdetectrondeps
       - save_cache:
-          key: deps-20200828-gpu15-{{ checksum "requirements.txt" }}
+          key: deps-20200921-gpu15-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -406,12 +418,13 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200921-gpu16-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
+      - <<: *installdetectrondeps
       - save_cache:
-          key: deps-20200828-gpu16-{{ checksum "requirements.txt" }}
+          key: deps-20200921-gpu16-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -445,12 +458,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -484,12 +497,12 @@ jobs:
           paths:
             - "~/nvidia-downloads/"
       - restore_cache:
-          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-nightly-{{ checksum "requirements.txt" }}
+          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -519,11 +532,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-teacher-{{ checksum "requirements.txt" }}
+          key: deps-20200921-teacher-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-teacher-{{ checksum "requirements.txt" }}
+          key: deps-20200921-teacher-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -549,11 +562,11 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200921-mturk-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-mturk-{{ checksum "requirements.txt" }}
+          key: deps-20200921-mturk-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -571,7 +584,7 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
@@ -582,7 +595,7 @@ jobs:
             pip install s3cmd
             sudo apt-get install linkchecker
       - save_cache:
-          key: deps-20200828-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -609,12 +622,12 @@ jobs:
       - checkout
       - <<: *fixgit
       - restore_cache:
-          key: deps-20200828-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200921-dw-{{ checksum "requirements.txt" }}
       - <<: *setup
       - <<: *installtorchgpu16
       - <<: *installdeps
       - save_cache:
-          key: deps-20200828-dw-{{ checksum "requirements.txt" }}
+          key: deps-20200921-dw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"

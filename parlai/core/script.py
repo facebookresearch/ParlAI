@@ -178,8 +178,7 @@ class _SubcommandParser(ParlaiParser):
     def __init__(self, **kwargs):
         kwargs['add_parlai_args'] = False
         kwargs['add_model_args'] = False
-        if 'description' not in kwargs:
-            kwargs['description'] = None
+        assert 'description' in kwargs, 'Must supply description'
         return super().__init__(**kwargs)
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
@@ -211,7 +210,7 @@ def superscript_main(args=None):
     )
     parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
-        parser_class=_SubcommandParser, title="Commands", metavar="COMMAND",
+        parser_class=_SubcommandParser, title="Commands", metavar="COMMAND"
     )
     hparser = subparsers.add_parser(
         'help',
@@ -269,4 +268,4 @@ def superscript_main(args=None):
     elif cmd == 'help' or cmd is None:
         parser.print_help()
     elif cmd is not None:
-        SCRIPT_REGISTRY[cmd].klass._run_from_parser_and_opt(opt, parser)
+        return SCRIPT_REGISTRY[cmd].klass._run_from_parser_and_opt(opt, parser)

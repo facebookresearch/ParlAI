@@ -886,9 +886,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
+            beam_preds_scores, beams = self._generate(batch, self.beam_size, maxlen)
             preds, scores = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
+
+            # bsz x beamsize
+            beam_texts: List[List[Tuple[str, float]]] = []
+            for beam in beams:
+                beam_texts.append([])
+                for tokens, score in beam.get_rescored_finished():
+                    try:
+                        beam_texts[-1].append((self._v2t(tokens), score.item()))
+                    except KeyError:
+                        logging.error("Decoding error: %s", tokens)
+                        continue
 
         cand_choices = None
         # TODO: abstract out the scoring here
@@ -918,7 +929,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
             self._compute_nltk_bleu(batch, text)
-        return Output(text, cand_choices, token_losses=token_losses)
+        retval = Output(text, cand_choices, token_losses=token_losses)
+        if not self.skip_generation:
+            retval.beam_texts = beam_texts
+        return retval
 
     def _treesearch_factory(self, device):
         method = self.opt.get('inference', 'greedy')
@@ -1167,12 +1181,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
-        if self.opt.get('verbose'):
-            for i, beams in enumerate(n_best_beam_preds_scores):
-                for b, (tokens, score) in enumerate(beams):
-                    gen = self._v2t(tokens)
-                    logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
-                logging.debug('-')
 
         return beam_preds_scores, beams
 
