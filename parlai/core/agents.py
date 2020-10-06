@@ -325,6 +325,9 @@ def create_agent_from_opt_file(opt: Opt):
             opt_from_file[k] = v
 
     opt_from_file['model_file'] = model_file  # update model file path
+    if opt.get('init_model') is not None:
+        # update the init model path
+        opt_from_file['init_model'] = opt['init_model']
 
     # update dict file path
     if not opt_from_file.get('dict_file'):
