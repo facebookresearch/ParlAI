@@ -60,6 +60,9 @@ class AbstractWrapperTeacher(Teacher, ABC):
     def act(self):
         """
         Act on the previous observation.
+        
+        Note that self.task.act() must be called in this method for metrics to be
+        recorded correctly.
         """
         raise NotImplementedError('Abstract class: user must implement act() method')
 
