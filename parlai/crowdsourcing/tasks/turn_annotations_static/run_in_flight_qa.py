@@ -19,6 +19,10 @@ from parlai.crowdsourcing.tasks.turn_annotations_static.util import run_static_t
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 
+# TODO: merge this with run.py once Hydra supports recursive defaults
+#  (https://github.com/facebookresearch/hydra/issues/171)
+
+
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
