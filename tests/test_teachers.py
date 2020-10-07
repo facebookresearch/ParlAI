@@ -394,8 +394,8 @@ class TestDialogTeacher(unittest.TestCase):
             'test:stream',
         ]:
             opt = Opt({'datatype': dt, 'datapath': '/tmp', 'task': 'test'})
-            teacher = NoDatafileTeacher(opt)
-            assert dt.startswith(teacher.act()['text'])
+            with self.assertRaises(KeyError):
+                NoDatafileTeacher(opt)
 
     def _verify_act(self, act, goal_text, goal_label, episode_done):
         assert 'eval_labels' in act or 'labels' in act

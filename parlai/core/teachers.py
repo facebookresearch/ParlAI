@@ -249,7 +249,16 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'cycle'):
             self.cycle = DatatypeHelper.should_cycle(self.datatype)
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile', DatatypeHelper.fold(opt['datatype']))
+            if 'datafile' not in opt:
+                raise KeyError(
+                    f"{self.__class__.__name__} is expected to set opt['datafile'] "
+                    f"inside `__init__` before calling `super().__init__`. This will "
+                    f"passed to setup_data, indicating what data to load. "
+                    f"If you don't know what to use, set `opt['datafile'] = "
+                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
+                    f"to receive the fold name in setup_data."
+                )
+            self.datafile = opt['datafile']
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -696,9 +705,17 @@ class DialogData(object):
             self.image_loader = ImageLoader(opt)
             self.data = []
 
-            # default to just the fold name, but use datafile field if provided
-            datafile = opt.get('datafile', DatatypeHelper.fold(opt['datatype']))
-            self._load(data_loader, datafile)
+            if 'datafile' not in opt:
+                raise KeyError(
+                    f"{self.__class__.__name__} is expected to set opt['datafile'] "
+                    f"inside `__init__` before calling `super().__init__`. This will "
+                    f"passed to setup_data, indicating what data to load. "
+                    f"If you don't know what to use, set `opt['datafile'] = "
+                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
+                    f"to receive the fold name in setup_data."
+                )
+
+            self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(c for c in cands)
 
         self.addedCands = []
@@ -916,7 +933,16 @@ class StreamDialogData(DialogData):
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
-            self.datafile = opt.get('datafile', DatatypeHelper.fold(opt['datatype']))
+            if 'datafile' not in opt:
+                raise KeyError(
+                    f"{self.__class__.__name__} is expected to set opt['datafile'] "
+                    f"inside `__init__` before calling `super().__init__`. This will "
+                    f"passed to setup_data, indicating what data to load. "
+                    f"If you don't know what to use, set `opt['datafile'] = "
+                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
+                    f"to receive the fold name in setup_data."
+                )
+            self.datafile = opt['datafile']
             self.reset_data = None
             self.is_reset = True
         self.entry_idx = 0
@@ -2158,7 +2184,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def _get_data_folder(self):
         if not self.opt.get('datafile'):
             raise RuntimeError(
-                'Must specify datafile or override this function '
+                'Must specify datafile or override this function (_get_data_folder) '
                 'to return the data folder.'
             )
 
