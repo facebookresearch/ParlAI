@@ -7,6 +7,7 @@
 import os
 import random
 from collections import defaultdict
+from parlai.tasks.md_gender.build import build
 
 """
 Gender utilities for the multiclass gender classification tasks.
@@ -176,13 +177,15 @@ def balance_data(data_list, key='labels', shuffle=True, exclude_labels=None):
     return new_data
 
 
-def get_inferred_about_data(task, datatype, threshold=0.8):
+def get_inferred_about_data(task, opt, threshold=0.8):
     """
     Load inferred ABOUT data from teh ABOUT classifier.
     """
-    root = '/checkpoint/parlai/tasks/gender_multiclass/inferred_about/'
+    root = os.path.join(
+        opt['datapath'], 'md_gender', 'data_to_release', 'inferred_about'
+    )
     task_str = task.split(':')[-1]
-    dt = datatype.split(':')[0]
+    dt = opt['datatype'].split(':')[0]
     with open(os.path.join(root, f'{task_str}_{dt}_binary.txt'), 'r') as f:
         lines = f.read().splitlines()
     examples = []
@@ -228,7 +231,7 @@ def unformat_text(text):
     return text
 
 
-def get_explicitly_gendered_words():
+def get_explicitly_gendered_words(opt):
     """
     Load list of explicitly gendered words from.
 
@@ -236,7 +239,8 @@ def get_explicitly_gendered_words():
 
     Examples include brother, girl, actress, husbands, etc.
     """
-    folder = '/checkpoint/parlai/tasks/gender_multiclass/kinship_terms'
+    build(opt)
+    folder = os.path.join(opt['datapath'], 'md_gender', 'data_to_release', 'word_list')
     male_words = os.path.join(folder, 'male_word_file.txt')
     female_words = os.path.join(folder, 'female_word_file.txt')
 
@@ -247,29 +251,6 @@ def get_explicitly_gendered_words():
         female = f.read().splitlines()
 
     return male, female
-
-
-def get_name_gender_cnts():
-    """
-    Load all names from the SSN name database.
-
-    Returns a dictionary with counts for each name from each gender.
-    """
-    names = {}
-    # Load all names
-    folder = '/checkpoint/parlai/tasks/gender_multiclass/names/raw_names'
-    for fle in os.listdir(folder):
-        with open(os.path.join(folder, fle), 'r') as f:
-            try:
-                lines = f.read().splitlines()
-            except UnicodeDecodeError:
-                # ignore PDFs
-                continue
-            for line in lines:
-                name, gender, cnt = line.split(',')
-                names.setdefault(name, {'F': 0, 'M': 0})
-                names[name][gender] += int(cnt)
-    return names
 
 
 def mask_gendered_words(text, gendered_list, mask_token=MASK_TOKEN):

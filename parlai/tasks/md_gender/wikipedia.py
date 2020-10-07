@@ -110,7 +110,7 @@ class WikipediaTeacher(ChunkTeacher):
 
         self.mask_gendered_words = opt['mask_gendered_words']
         if self.mask_gendered_words:
-            male, female = gend_utils.get_explicitly_gendered_words()
+            male, female = gend_utils.get_explicitly_gendered_words(self.opt)
             self.gendered_list = male + female
 
         self.counts = {

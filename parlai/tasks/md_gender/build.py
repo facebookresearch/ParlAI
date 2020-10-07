@@ -13,7 +13,7 @@ RESOURCES = [
     DownloadableFile(
         'http://parl.ai/downloads/md_gender/gend_multiclass_10072020.tgz',
         'gend_multiclass_10072020.tgz',
-        'ddc3d15cd11b0dd569bb584d981b9ebe92c5a11573f5adb231601c3885dcf63b',
+        'c2c03257c53497b9e453600201fc7245b55dec1d98965093b4657fdb54822e9d',
     )
 ]
 

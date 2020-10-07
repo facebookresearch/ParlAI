@@ -239,7 +239,7 @@ class Convai2Teacher(FixedDialogTeacher):
         if self.labels_to_use == 'all' and self.add_unknown_classes:
             # load about data
             all_about_data = gend_utils.get_inferred_about_data(
-                self.opt['task'], self.opt['datatype']
+                self.opt['task'], self.opt
             )
             sample_rate = self.opt['unknown_temp']
             if sample_rate < 1.0:
