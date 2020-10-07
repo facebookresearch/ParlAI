@@ -9,6 +9,7 @@ import os
 import unittest
 
 import parlai.utils.testing as testing_utils
+from parlai.core.agents import create_agent_from_opt_file
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.scripts.compare_opts import compare_opts
@@ -177,3 +178,35 @@ class TestInitOpt(unittest.TestCase):
                 init_opt=init_opt_path, allow_missing_init_opts=True
             )
             self.assertFalse(hasattr(opt, 'made_up_arg'))
+
+
+class TestCreateAgentFromOpt(unittest.TestCase):
+    """
+    Test functionality related to create_agent_from_opt_file
+    """
+
+    def test_init_from_from_checkpoint(self):
+        with testing_utils.tempdir() as temp_dir:
+            opt_from_file = {
+                'datapath': 'dummy_path',
+                'model': 'repeat_label',
+                'init_model': os.path.join(temp_dir, 'something'),
+                'model_file': os.path.join(temp_dir, 'something_else'),
+            }
+            opt = Opt(
+                {
+                    'datapath': 'dummy_path',
+                    'model': 'repeat_label',
+                    'init_model': os.path.join(temp_dir, 'something_else.checkpoint'),
+                    'model_file': os.path.join(temp_dir, 'something_else'),
+                    'load_from_checkpoint': True,
+                }
+            )
+
+            with open(os.path.join(temp_dir, 'something_else.opt'), 'w') as f:
+                f.write(json.dumps(opt_from_file))
+
+            agent = create_agent_from_opt_file(opt)
+            init_model = agent.opt['init_model']
+            # assert that the model was loaded with the correct checkpoitn
+            assert '.checkpoint' in init_model
