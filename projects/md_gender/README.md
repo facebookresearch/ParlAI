@@ -12,8 +12,25 @@ Machine learning models are trained to find patterns in data. NLP models can ina
 
 ## Data
 
-TBD.
+Data can be found in `parlai/tasks/md_gender`.
+
+The following tasks are available right now:
+- `md_gender:convai2` (uses the ConvAI2 task)
+- `md_gender:funpedia` (uses the Funpedia task)
+- `md_gender:image_chat` (uses the Image Chat task)
+- `md_gender:light` (uses the LIGHT task)
+- `md_gender:md_gender` (new evaluation dataset)
+- `md_gender:wikipedia` (uses the Wikipedia task)
+- `md_gender:wizard` (uses the Wizard of Wikipedia task)
+
+View any of the tasks above with the following command:
+```
+parlai dd -t <taskname>
+```
+
+
+NOTE: data for the Yelp and Opensubtitles tasks has yet to be released; data will be coming soon.
 
 ## Models
 
-TBD.
+Coming soon!

@@ -4,34 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 import parlai.tasks.md_gender.utils as gend_utils
+from parlai.tasks.md_gender.build import build
 
 from copy import deepcopy
 import json
+import os
 import random
-
-
-def get_gender_data(datatype):
-    """
-    Load data from the checkpoint
-    """
-    dt = datatype.split(':')[0]
-    fle = f'/checkpoint/parlai/tasks/gender_multiclass/funpedia/{dt}.jsonl'
-
-    data = []
-    with open(fle, 'r') as f:
-        lines = f.read().splitlines()
-        for line in lines:
-            ex = json.loads(line)
-            gender = ex['gender']
-            ex['labels'] = [f'ABOUT:{gender}']
-            ex['class_type'] = 'about'
-            data.append(ex)
-
-    return data
 
 
 class FunpediaTeacher(FixedDialogTeacher):
@@ -66,9 +47,28 @@ class FunpediaTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.reset()
 
+    def _load_gender_data(self, opt):
+        build(opt)
+        dt = opt['datatype'].split(':')[0]
+        fle = os.path.join(
+            opt['datapath'], 'md_gender', 'data_to_release', 'funpedia', f'{dt}.jsonl'
+        )
+
+        data = []
+        with open(fle, 'r') as f:
+            lines = f.read().splitlines()
+            for line in lines:
+                ex = json.loads(line)
+                gender = ex['gender']
+                ex['labels'] = [f'ABOUT:{gender}']
+                ex['class_type'] = 'about'
+                data.append(ex)
+
+        return data
+
     def _setup_data(self, opt):
         # Load map from image ID to gender
-        data = get_gender_data(opt['datatype'])
+        data = self._load_gender_data(opt)
 
         # Possibly add extra examples
         extra_data = []

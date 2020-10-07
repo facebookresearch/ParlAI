@@ -4,10 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
-
+from parlai.tasks.md_gender.build import build
 from parlai.tasks.image_chat.agents import ImageChatTeacher as OrigImageTeacher
 import parlai.tasks.md_gender.utils as gend_utils
 
@@ -16,16 +15,6 @@ from copy import deepcopy
 import json
 import os
 import random
-
-
-def get_gender_data(datatype):
-    """
-    Get data file
-    """
-    dt = datatype.split(':')[0]
-    folder = '/checkpoint/parlai/tasks/gender_multiclass/image_chat'
-    fle = 'engaging_imagechat_gender_captions.{}.jsonl'.format(dt)
-    return os.path.join(folder, fle)
 
 
 class ImageChatTeacher(FixedDialogTeacher):
@@ -61,15 +50,27 @@ class ImageChatTeacher(FixedDialogTeacher):
 
         self.reset()
 
+    def _load_gender_data(self, opt):
+        """
+        Get data file.
+        """
+        build(opt)
+        dt = opt['datatype'].split(':')[0]
+        folder = os.path.join(
+            opt['datapath'], 'md_gender', 'data_to_release', 'image_chat'
+        )
+        fle = 'engaging_imagechat_gender_captions_hashed.{}.jsonl'.format(dt)
+        return os.path.join(folder, fle)
+
     def _setup_data(self, opt):
         # Load map from image ID to gender
         counts = {gend_utils.FEM: 0, gend_utils.MASC: 0, gend_utils.NEUTRAL: 0}
         self.image_id_to_gender = {}
-        gender_data_fle = get_gender_data(opt['datatype'])
+        gender_data_fle = self._load_gender_data(opt)
         with open(gender_data_fle, 'r') as f:
             for line in f:
                 gender_dct = json.loads(line)
-                image_id = int(gender_dct['id'])
+                image_id = gender_dct['id']
                 male = gender_dct['male']
                 female = gender_dct['female']
                 if not male and not female:

@@ -6,15 +6,17 @@
 
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.tasks.md_gender.build import build
 import parlai.tasks.md_gender.utils as gend_utils
 
 from copy import deepcopy
 import json
 import pickle
+import os
 import random
 
-PERSONA_PATH = '/private/home/edinan/ParlAI/data/light_bias_study/personas_all_9.json'
-LIGHT_DATA_PATH = '/private/home/jju/data/light/{}_convs.pkl'
+PERSONA_PATH = 'md_gender/data_to_release/light/personas.json'
+LIGHT_DATA_PATH = 'md_gender/data_to_release/light/data/{}_convs.pkl'
 
 
 class LIGHTTeacher(FixedDialogTeacher):
@@ -46,7 +48,7 @@ class LIGHTTeacher(FixedDialogTeacher):
         if shared and 'data' in shared:
             self.data = shared['data']
         else:
-            self._setup_data(opt['datatype'])
+            self._setup_data(opt)
             if (self.is_train and opt['balance']) or (
                 self.is_valid and opt['balance_valid']
             ):
@@ -65,17 +67,23 @@ class LIGHTTeacher(FixedDialogTeacher):
     def num_examples(self):
         return len(self.data)
 
-    def _setup_data(self, datatype):
+    def _setup_data(self, opt):
+        build(opt)
+        datatype = opt['datatype']
         dt = datatype.split(':')[0]
         # Build a map from persona to gender
         persona_map = {}
-        personas = json.load(open(PERSONA_PATH, 'rb'))['old']
+        personas = json.load(open(os.path.join(opt['datapath'], PERSONA_PATH), 'rb'))[
+            'old'
+        ]
         for gender, lst in personas.items():
             for x in lst:
                 persona_map[int(x['char_id'])] = {'name': x['name'], 'gender': gender}
 
         # Build a list of dialogue utterances and associated persona IDs
-        light_world = pickle.load(open(LIGHT_DATA_PATH.format(dt), 'rb'))
+        light_world = pickle.load(
+            open(os.path.join(opt['datapath'], LIGHT_DATA_PATH.format(dt)), 'rb')
+        )
         utt_to_pers = []
         for x in light_world:
             for act in x['conv_info']['acts']:

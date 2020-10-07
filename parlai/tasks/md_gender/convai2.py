@@ -7,6 +7,7 @@
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.tasks.convai2.agents import BothTeacher as OrigConvai2Teacher
+from parlai.tasks.md_gender.build import build
 from parlai.utils.misc import warn_once
 
 import parlai.tasks.md_gender.utils as gend_utils
@@ -18,17 +19,6 @@ import os
 
 
 gender_convert = {'man': 'male', 'woman': 'female', 'neutral': 'unknown', None: None}
-
-
-DATAFOLDER = '/checkpoint/parlai/tasks/gender_multiclass/personachat'
-
-
-########################################################
-## Persona map utils
-########################################################
-persona_map_path = os.path.join(DATAFOLDER, 'convai2_all_personas_map.json')
-with open(persona_map_path, 'rb') as f:
-    PERSONA_MAP = json.load(f)
 
 
 def convert_text(text):
@@ -47,18 +37,6 @@ def convert_text(text):
             new_text = new_text.replace(x[1], x[0])
 
     return new_text
-
-
-def get_gender_annotations(lst):
-    """
-    Take a list of personas and find the gender.
-    """
-    new_lst = sorted([convert_text(persona) for persona in lst])
-    persona_key = ' '.join(new_lst)
-    if persona_key in PERSONA_MAP:
-        return PERSONA_MAP[persona_key]
-    else:
-        return {'gender': 'neutral', 'probably': None, 'missing': True}
 
 
 class Convai2Teacher(FixedDialogTeacher):
@@ -98,8 +76,10 @@ class Convai2Teacher(FixedDialogTeacher):
 
         if shared and 'data' in shared:
             self.data = shared['data']
+            self.persona_map = shared['persona_map']
         else:
             self.missing_cnt = 0
+            self._load_persona_map(opt)
             self._setup_data(opt)
             if (self.is_train and opt['balance']) or (
                 self.is_valid and opt['balance_valid']
@@ -115,15 +95,38 @@ class Convai2Teacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.reset()
 
+    def _load_persona_map(self, opt):
+        build(opt)
+        persona_map_path = os.path.join(
+            opt['datapath'],
+            'md_gender',
+            'data_to_release',
+            'convai2',
+            'convai2_all_personas_map.json',
+        )
+        with open(persona_map_path, 'rb') as f:
+            self.persona_map = json.load(f)
+
     def num_episodes(self):
         return len(self.data)
 
     def num_examples(self):
         return len(self.data)
 
+    def get_gender_annotations(self, lst):
+        """
+        Take a list of personas and find the gender.
+        """
+        new_lst = sorted([convert_text(persona) for persona in lst])
+        persona_key = ' '.join(new_lst)
+        if persona_key in self.persona_map:
+            return self.persona_map[persona_key]
+        else:
+            return {'gender': 'neutral', 'probably': None, 'missing': True}
+
     def get_genders(self, your_persona, partner_persona):
-        partner_persona_gender = get_gender_annotations(partner_persona)
-        your_persona_gender = get_gender_annotations(your_persona)
+        partner_persona_gender = self.get_gender_annotations(partner_persona)
+        your_persona_gender = self.get_gender_annotations(your_persona)
         if 'missing' in partner_persona_gender:
             self.missing_cnt += 1
         if 'missing' in your_persona_gender:
@@ -274,4 +277,5 @@ class Convai2Teacher(FixedDialogTeacher):
     def share(self):
         shared = super().share()
         shared['data'] = self.data
+        shared['persona_map'] = self.persona_map
         return shared

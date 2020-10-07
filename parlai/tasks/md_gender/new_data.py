@@ -6,17 +6,19 @@
 
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.tasks.md_gender.build import build
 import parlai.tasks.md_gender.utils as gend_utils
 
 import json
+import os
 import random
 
-NEW_DATAFILE = '/checkpoint/parlai/tasks/gender_multiclass/new_data2/data.jsonl'
+NEW_DATAFILE = 'md_gender/data_to_release/new_data/data.jsonl'
 
 
 class MdGenderTeacher(FixedDialogTeacher):
     """
-    MDGender data collected on Mechanical Turk
+    MDGender data collected on Mechanical Turk.
     """
 
     @staticmethod
@@ -56,11 +58,12 @@ class MdGenderTeacher(FixedDialogTeacher):
         super().__init__(opt, shared)
         self.reset()
 
-    def _get_convos(self, datatype):
+    def _get_convos(self, opt):
         """
-        Get the test/train/valid split
+        Get the test/train/valid split.
         """
-        with open(NEW_DATAFILE, 'r') as f:
+        build(opt)
+        with open(os.path.join(opt['datapath'], NEW_DATAFILE), 'r') as f:
             ex_jsons = f.read().splitlines()
 
         convos = [json.loads(ex) for ex in ex_jsons]
@@ -71,8 +74,7 @@ class MdGenderTeacher(FixedDialogTeacher):
         # Load map from image ID to gender
         # TODO: proper train/test/valid splits
         data = []
-        datatype = opt['datatype'].split(':')[0]
-        convos = self._get_convos(datatype)
+        convos = self._get_convos(opt)
         for convo in convos:
             class_type = convo['class_type']
             if self.labels_to_use in ['all', class_type]:

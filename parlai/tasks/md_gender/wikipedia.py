@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import ChunkTeacher
 from parlai.tasks.wikipedia.build import build
@@ -27,8 +26,7 @@ DEBUG = False
 
 def check_if_person(text):
     """
-    Using spacy, check if the title of the Wikipedia
-    passage is a person
+    Using spacy, check if the title of the Wikipedia passage is a person.
     """
     doc = NLP(text)
     is_person = False
@@ -41,8 +39,8 @@ def check_if_person(text):
 
 def get_gender(text):
     """
-    Determine gender by the count of referring
-    pronouns in the biography (he, she, they).
+    Determine gender by the count of referring pronouns in the biography (he, she,
+    they).
     """
     he_count = len(re.findall(' he ', text.lower()))
     she_count = len(re.findall(' she ', text.lower()))
@@ -126,7 +124,10 @@ class WikipediaTeacher(ChunkTeacher):
     def _set_chunk_idx_to_file(self, opt):
         # download wikipedia data
         wiki_opt = deepcopy(opt)
+        wiki_opt['task'] = 'wikipedia:full'
+        build(wiki_opt)
 
+        # now divide data into subfolders
         data_folder = self._get_data_folder()
         self.chunk_idx_to_file = {}
         i = 0
@@ -147,20 +148,16 @@ class WikipediaTeacher(ChunkTeacher):
         if 'train' in datatype:
             return 12774693, 12774693
         elif 'valid' in datatype:
-            if not self.opt['binary']:
-                return 7669, 7669
             return 7410, 7410
         else:
-            if not self.opt['binary']:
-                return 7790, 7790
             return 7441, 7441
 
     def get_fold_chunks(self, opt) -> List[int]:  # type: ignore
         """
         Return a list of chunk IDs (integer).
 
-        Given the datatype (train/test/valid), return the list of
-        chunk IDs that correspond to that split.
+        Given the datatype (train/test/valid), return the list of chunk IDs that
+        correspond to that split.
         """
         datatype = opt['datatype']
         all_chunk_idxs = list(self.chunk_idx_to_file.keys())
@@ -177,9 +174,8 @@ class WikipediaTeacher(ChunkTeacher):
         """
         [Abstract] Given the chunk index, load examples from that chunk.
 
-        Return a list of tuples. The function `_create_message` will take
-        these tuples to form the Message object that is returned by the
-        teacher.
+        Return a list of tuples. The function `_create_message` will take these tuples
+        to form the Message object that is returned by the teacher.
         """
         output = []
         chunk_path = self.chunk_idx_to_file[chunk_idx]
@@ -197,13 +193,6 @@ class WikipediaTeacher(ChunkTeacher):
                     continue
 
                 gender = get_gender(text)
-
-                if self.opt['binary'] and gender in [
-                    gend_utils.NEUTRAL,
-                    gend_utils.NONBINARY,
-                ]:
-                    # binary classification problem, ignore these examples
-                    continue
 
                 label = f'ABOUT:{gender}'
                 for par in text.split('\n'):
