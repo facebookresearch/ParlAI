@@ -61,7 +61,7 @@ class AbstractWrapperTeacher(Teacher, ABC):
         """
         Act on the previous observation.
 
-        Typically, self.task.act() will be called in this method.
+        Typically, self.task.act() will need to be called in this method.
         """
         raise NotImplementedError('Abstract class: user must implement act() method')
 
