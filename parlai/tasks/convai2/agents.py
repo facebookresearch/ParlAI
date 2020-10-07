@@ -108,7 +108,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
         for (text, labels, reward, candidates), new_episode in super().setup_data(path):
             text = self.normalize_replies(text)
             labels = [self.normalize_replies(l) for l in labels]
-            candidates = [self.normalize_replies(l) for l in labels]
+            candidates = [self.normalize_replies(c) for c in candidates]
             yield (text, labels, reward, candidates), new_episode
 
 
