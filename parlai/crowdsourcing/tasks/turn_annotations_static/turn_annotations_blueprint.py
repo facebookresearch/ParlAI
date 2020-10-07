@@ -194,9 +194,11 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         from input file before being sent to the frontend.
         """
         output = []
+        total_annotation_count = 0
         for conv_idx, d in enumerate(data_dicts):
             max_turn_to_show = len(d['dialog']) - 1
             if annotation_indices:
+                total_annotation_count += len(annotation_indices[conv_idx])
                 # We only want to show the conversation up to the last
                 # utterance we need annotations on, b/c otherwise may confuse
                 # or bias the turkers
@@ -211,7 +213,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 processed_dialog = self._process_conversation(d, [max_turn_to_show])
                 output.append(processed_dialog)
         print(
-            f'Processed {len(data_dicts)} total conversations into {len(output)} conversations to be used in crowdsourcing task.'
+            f'Processed {len(data_dicts)} total conversations into {len(output)} conversations to be used in crowdsourcing task with {total_annotation_count} total annotations.'
         )
         np.random.shuffle(output)
         return output
@@ -245,6 +247,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                         'text': full_turn[0]['text'],
                         'agent_idx': 0,
                         'do_annotate': do_annotate,
+                        'other_metadata': full_turn[0]['other_metadata'],
                     }
                 )
                 adjusted_turn_idx += 1
@@ -257,6 +260,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                         'text': full_turn[1]['text'],
                         'agent_idx': 1,
                         'do_annotate': do_annotate,
+                        'other_metadata': full_turn[1]['other_metadata'],
                     }
                 )
                 adjusted_turn_idx += 1

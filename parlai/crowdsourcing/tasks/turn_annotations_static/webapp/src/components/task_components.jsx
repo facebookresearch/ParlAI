@@ -76,7 +76,8 @@ var handleSubtaskSubmit = function (subtaskIndex, numSubtasks, initialTaskData, 
     var answersForTurn = {
       'turn_idx': i,
       'text': initialTaskData[i].text,
-      'agent_idx': initialTaskData[i].agent_idx
+      'agent_idx': initialTaskData[i].agent_idx,
+      'other_metadata': initialTaskData[i].other_metadata
     };
     for (var j = 0; j < buckets.length; j++) {
       answersForTurn[buckets[j]] = null;
