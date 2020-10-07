@@ -9,6 +9,7 @@ import os
 import torch
 from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
+from parlai.utils.io import PathManager
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import IdentityLayer, concat_without_padding, padded_tensor
 
@@ -46,22 +47,23 @@ class GPT2Decoder(torch.nn.Module):
 
     def _init_from_pretrained(self, opt):
         # load model
+        model_sz = opt["gpt2_size"]
+        if model_sz == "small":
+            model_key = "gpt2"
+        elif model_sz == "distilgpt2":
+            model_key = "distilgpt2"
+        else:
+            model_key = f"gpt2-{model_sz}"
+
         # check if datapath has the files that hugging face code looks for
+        hf_dir = os.path.join(opt["datapath"], "hf", model_key)
         if all(
-            os.path.isfile(
-                os.path.join(opt["datapath"], "models", "gpt2_hf", file_name)
-            )
+            PathManager.exists(os.path.join(hf_dir, file_name))
             for file_name in ["pytorch_model.bin", "config.json"]
         ):
-            fle_key = os.path.join(opt["datapath"], "models", "gpt2_hf")
+            fle_key = PathManager.get_local_path(hf_dir, recursive=True)
         else:
-            model_sz = opt["gpt2_size"]
-            if model_sz == "small":
-                fle_key = "gpt2"
-            elif model_sz == "distilgpt2":
-                fle_key = "distilgpt2"
-            else:
-                fle_key = f"gpt2-{model_sz}"
+            fle_key = model_key
         return GPT2Model.from_pretrained(fle_key)
 
     def forward(self, input, encoder_state, incr_state=None):
