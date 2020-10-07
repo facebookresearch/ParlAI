@@ -223,7 +223,7 @@ def superscript_main(args=None):
         'help',
         aliases=['h'],
         help=argparse.SUPPRESS,
-        description='Prints version info and exit.',
+        description='List the main commands.',
     )
     hparser.set_defaults(super_command='help')
     hparser = subparsers.add_parser(
