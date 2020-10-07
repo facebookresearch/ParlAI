@@ -204,18 +204,16 @@ def superscript_main(args=None):
     parser = _SupercommandParser(
         False, False, formatter_class=_SuperscriptHelpFormatter
     )
-    helpall_help_str = 'List all commands, including advanced ones.'
     parser.add_argument(
         '--helpall',
         action='helpall',
-        help=helpall_help_str,
+        help='List all commands, including advanced ones.',
     )
-    versioninfo_help_str = 'Prints version info and exit.'
     parser.add_argument(
         '--version',
         action='version',
         version=get_version_string(),
-        help=versioninfo_help_str,
+        help='Prints version info and exit.',
     )
     parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
@@ -225,13 +223,13 @@ def superscript_main(args=None):
         'help',
         aliases=['h'],
         help=argparse.SUPPRESS,
-        description="List the main commands",
+        description='Prints version info and exit.',
     )
     hparser.set_defaults(super_command='help')
     hparser = subparsers.add_parser(
         'helpall',
         help=argparse.SUPPRESS,
-        description=helpall_help_str,
+        description='List all commands, including advanced ones.',
     )
     hparser.set_defaults(super_command='helpall')
 
