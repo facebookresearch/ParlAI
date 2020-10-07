@@ -182,7 +182,7 @@ class TestInitOpt(unittest.TestCase):
 
 class TestCreateAgentFromOpt(unittest.TestCase):
     """
-    Test functionality related to create_agent_from_opt_file
+    Test functionality related to create_agent_from_opt_file.
     """
 
     def test_init_from_from_checkpoint(self):
