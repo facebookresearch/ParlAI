@@ -2,7 +2,7 @@
 
 Here we list projects undertaken in the ParlAI framework that are shared publicly, either in the form of papers, public tasks (with leaderboards) and/or shared model code.
 
-This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks), [tasks](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo) for what else is in ParlAI.
+This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents), [tasks](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo) for what else is in ParlAI.
 
 ## Generative Models
 
