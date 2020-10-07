@@ -59,13 +59,13 @@ class TestNewTasks(unittest.TestCase):
                 opt['task'] = subt
                 try:
                     with testing_utils.capture_output():
-                        text, log = verify(opt)
+                        verify_results = verify(opt)
                 except Exception:
                     found_errors = True
                     traceback.print_exc()
                     print("Got above exception in {}".format(subt))
                 for key in KEYS:
-                    if log[key] != 0:
+                    if verify_results[key] != 0:
                         print('There are {} {} in {}.'.format(log[key], key, subt))
                         found_errors = True
 
