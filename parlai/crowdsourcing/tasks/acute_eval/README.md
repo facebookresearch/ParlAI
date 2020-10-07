@@ -88,5 +88,5 @@ By setting `onboarding_threshold`, you can also adjust the minimum proportion of
 
 ## YAML and CLI arguments
 
-A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in `acute_eval_blueprint.py`. For examples of how these arguments can be set in practice, see `conf/example.yaml`. For instance, `additional_task_description` gives additional text to show in the left-hand pane of the chat window.
+A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in [`acute_eval_blueprint.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/acute_eval_blueprint.py). For examples of how these arguments can be set in practice, see [`conf/example.yaml`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/conf/example.yaml). For instance, `additional_task_description` gives additional text to show in the left-hand pane of the chat window.
 
