@@ -10,7 +10,7 @@ class WritingPromptsDialogTeacher(DialogTeacher):
         parser = parser.add_argument_group('WritingPrompts Teacher Args')
         parser.add_argument(
             '--writing-prompts-config-name',
-            type='str',
+            type=str,
             default="writing_prompts_sentence",
             help="The WritingPrompts huggingface configs name to load.",
         )
