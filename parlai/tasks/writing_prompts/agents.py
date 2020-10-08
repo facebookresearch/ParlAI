@@ -30,7 +30,7 @@ class WritingPromptsDialogTeacher(DialogTeacher):
         self.id = 'writing_prompts'
 
         self.dataset = load_dataset(
-            os.path.join(os.path.dirname(os.path.realpath(__file__)), './huggingface_dataset.py'),
+            os.path.join(os.path.dirname(os.path.realpath(__file__)), 'huggingface_dataset.py'),
             name=opt["writing_prompts_config_name"], split=suffix)
 
         super().__init__(opt, shared)
