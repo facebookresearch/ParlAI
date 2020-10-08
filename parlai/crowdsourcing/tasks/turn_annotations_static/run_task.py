@@ -88,24 +88,24 @@ def setup_mephisto(launch_config):
         arg_string += (
             f'--annotation-question "\\"{launch_config.ANNOTATION_QUESTION}\\"" '
         )
-    except Exception as exc:
+    except Exception:
         logging.info(f'Launch config {launch_config} had no ANNOTATION_QUESTION field')
 
     try:
         arg_string += (
             f'--annotation-indices-jsonl {launch_config.ANNOTATION_INDICES_JSONL} '
         )
-    except Exception as exc:
+    except Exception:
         logging.info(f'Launch config {launch_config} had no ANNOTATION_INDICES_JSONL')
 
     try:
         arg_string += f'--conversation-count {launch_config.CONVERSATION_COUNT} '
-    except Exception as exc:
+    except Exception:
         logging.info(f'Launch config {launch_config} had no CONVERSATION_COUNT')
 
     try:
         arg_string += f'--onboarding-data {launch_config.ONBOARDING_DATA} '
-    except Exception as exc:
+    except Exception:
         logging.info(f'Launch config {launch_config} had no ONBOARDING_DATA')
 
     print(arg_string)

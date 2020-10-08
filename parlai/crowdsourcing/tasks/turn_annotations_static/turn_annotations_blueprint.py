@@ -190,8 +190,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
 
     def process_data(self, data_dicts, annotation_indices=None):
         """
-        Override this in a subclass if you want to change how data is processed
-        from input file before being sent to the frontend.
+        Override this in a subclass if you want to change how data is processed from
+        input file before being sent to the frontend.
         """
         output = []
         total_annotation_count = 0
@@ -220,9 +220,13 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
 
     def _process_conversation(self, d, annotation_indices):
         """
-        :param annotation_indices: Array of turn indices to annotate of the
-        actual conversation not including the context [So 0 is the "Hi!" if
-        that's the first non-context utterance of the conversation.]
+        Helper function for processing conversations.
+
+        :param annotation_indices:
+            Array of turn indices to annotate of the
+            actual conversation not including the context [So 0 is the "Hi!" if
+            that's the first non-context utterance of the conversation.]
+        :return: modified dialogue object
         """
         new_dialogue = []
         max_turn_to_show = max(annotation_indices)
