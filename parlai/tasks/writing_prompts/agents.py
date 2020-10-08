@@ -9,7 +9,6 @@ class WritingPromptsDialogTeacher(DialogTeacher):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('WritingPrompts Teacher Args')
         parser.add_argument(
-            '-wpcn',
             '--writing-prompts-config-name',
             type='str',
             default="writing_prompts_sentence",
