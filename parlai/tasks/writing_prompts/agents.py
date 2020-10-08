@@ -38,7 +38,7 @@ class WritingPromptsDialogTeacher(DialogTeacher):
     def setup_data(self, path):
         print('loading: ' + path)
 
-        dataset = load_dataset(path,name = self.config_name, split = self.suffix)
+        dataset = load_dataset(path,name = self.config_name, split = self.split)
         for story in dataset:
 
             passage_pairs = more_itertools.chunked(story["passages"], n=2)
