@@ -27,14 +27,14 @@ class WritingPromptsDialogTeacher(DialogTeacher):
 
         self.id = 'writing_prompts'
 
-        self.data = load_dataset('./huggingface_dataset.py', name=opt["config_name"], split=suffix)
+        self.dataset = load_dataset('./huggingface_dataset.py', name=opt["writing_prompts_config_name"], split=suffix)
 
         super().__init__(opt, shared)
 
     def setup_data(self, path):
         print('loading: ' + path)
 
-        for story in self.data:
+        for story in self.dataset:
 
             passage_pairs = more_itertools.chunked(story["passages"], n=2)
             passage_pairs = [p for p in passage_pairs if p[1] is not None]
