@@ -48,7 +48,8 @@ class WritingPromptsDatasetConfig(datasets.BuilderConfig):
 
 
 class WritingPromptsDataset(datasets.GeneratorBasedBuilder):
-    """TODO: Short description of my dataset."""
+    """The WritingPrompts dataset is over 300K short stories collected from the reddit forum /r/WritingPrompts/ .
+        Each story is a creative writing exercise following a prompt."""
 
     VERSION = datasets.Version("1.0.0")
 
