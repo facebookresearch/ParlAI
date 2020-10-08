@@ -42,7 +42,7 @@ class WritingPromptsDialogTeacher(DialogTeacher):
         for story in dataset:
 
             passage_pairs = more_itertools.chunked(story["passages"], n=2)
-            passage_pairs = [p for p in passage_pairs if p[1] is not None]
+            passage_pairs = [p for p in passage_pairs if len(p) > 1 and p[1] is not None]
             passage_pairs_len = len(passage_pairs)
             for i, passage_pair in enumerate(passage_pairs_len):
                 end_of_episode = i + 1 == passage_pairs_len
