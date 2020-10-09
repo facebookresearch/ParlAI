@@ -28,6 +28,10 @@ import torch.nn.functional as F
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
+from parlai.agents.transformer.module_extentions import (
+    R3FNoiseEncoderTrait,
+    R3FNoiseGeneratorAgentTrait,
+)
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
@@ -330,7 +334,7 @@ class TransformerLinearWrapper(nn.Module):
         return self.additional_linear_layer(context_h)
 
 
-class TransformerEncoder(nn.Module):
+class TransformerEncoderBase(nn.Module):
     """
     Transformer encoder module.
 
@@ -388,7 +392,7 @@ class TransformerEncoder(nn.Module):
         n_segments=0,
         output_scaling=1.0,
     ):
-        super(TransformerEncoder, self).__init__()
+        super(TransformerEncoderBase, self).__init__()
 
         self.embedding_size = embedding_size
         self.ffn_size = ffn_size
@@ -621,6 +625,12 @@ class TransformerEncoder(nn.Module):
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
         return tensor_out
+
+
+class TransformerEncoder(R3FNoiseEncoderTrait, TransformerEncoderBase):
+    def __init__(self, *args, **kwargs):
+        print("TransformerEncoder init")
+        super(TransformerEncoder, self).__init__(*args, **kwargs)
 
 
 class TransformerEncoderLayer(nn.Module):
