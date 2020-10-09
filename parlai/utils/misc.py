@@ -46,7 +46,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'text_vec',
     'label_candidates_vecs',
     'token_losses',
-    'beam_texts'
+    'beam_texts',
 }
 
 
