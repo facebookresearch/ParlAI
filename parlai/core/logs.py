@@ -41,6 +41,14 @@ class TensorboardLogger(object):
             help="Tensorboard logging of metrics, default is %(default)s",
             hidden=False,
         )
+        logger.add_argument(
+            '-tblogdir',
+            '--tensorboard-logdir',
+            type=str,
+            default=None,
+            help="Tensorboard logging directory, defaults to model_file.tensorboard",
+            hidden=False,
+        )
 
     def __init__(self, opt: Opt):
         try:
@@ -50,7 +58,11 @@ class TensorboardLogger(object):
         except ImportError:
             raise ImportError('Please run `pip install tensorboard tensorboardX`.')
 
-        tbpath = opt['model_file'] + '.tensorboard'
+        if opt['tensorboard_logdir'] is not None:
+            tbpath = opt['tensorboard_logdir']
+        else:
+            tbpath = opt['model_file'] + '.tensorboard'
+
         logging.debug(f'Saving tensorboard logs to: {tbpath}')
         if not PathManager.exists(tbpath):
             PathManager.mkdirs(tbpath)
