@@ -7,7 +7,7 @@
 Implements extentions to NN code for transformers.
 
 These include custom fine-tuning losses and the like that are training detail extentions
-applilcable to transformers rather than new model architectuures in themselves.
+rather than new model architectures in themselves.
 """
 
 import torch
@@ -21,6 +21,15 @@ R3F_NOISE_UNIFORM = "uniform"
 
 
 class R3FNoiseContext(object):
+    """
+    Class that helps implement "Better Fine-Tuning by Reducing Representational
+    Collapse", Aghajanyan et al. (2020). https://arxiv.org/ans/2008.03156.
+
+    This class should be instantiated at a point that has access to command line args
+    while also being on the initialization path for the two `R3FNoise*Extension` classes
+    below.
+    """
+
     @staticmethod
     def add_cmdline_args(argparser: ParlaiParser):
         group = argparser.add_argument_group('R3F fine-tuning Args')
@@ -126,6 +135,7 @@ class R3FNoiseContext(object):
         return self._in_noise_pass
 
 
+# NOTE: Might be good to cache this object rather than reinstantiating it every time?
 class NoisedEmbedding(nn.Module):
     def __init__(self, base, noise_sampler):
         super(NoisedEmbedding, self).__init__()
@@ -140,6 +150,9 @@ class NoisedEmbedding(nn.Module):
 
 class R3FNoiseEmbeddingExtension(object):
     """
+    Class that helps implement "Better Fine-Tuning by Reducing Representational
+    Collapse", Aghajanyan et al. (2020). https://arxiv.org/ans/2008.03156.
+
     Provides a way to hot-swap out the input-to-embedding function to one that also adds
     noise.
 
@@ -175,10 +188,12 @@ class R3FNoiseEmbeddingExtension(object):
 
 class R3FNoiseLossExtension(object):
     """
-    This class should be colocated with whatever normally calls `compute_loss` with
-    access to a model.
+    Class that helps implement "Better Fine-Tuning by Reducing Representational
+    Collapse", Aghajanyan et al. (2020). https://arxiv.org/ans/2008.03156.
 
-    In the generator case, this will normally be a TorchGeneratorAgent or a subclass
+    This class should be colocated with whatever normally calls `compute_loss`, especially the forward pass component of it.
+
+    In the generator case, this will normally be a TorchGeneratorAgent or a derived class
     thereof.
     """
 
@@ -186,6 +201,10 @@ class R3FNoiseLossExtension(object):
         self.context = context
 
     def forward_pass_with_r3f(self, model, *args, **kwargs):
+        """
+        'model' argument here is the `nn.Module` normally responsible for the full
+        forward pass.
+        """
         if not self.context.use_r3f:
             raise RuntimeError(
                 "Trying to use an R3F loss when this has not been allowed."
