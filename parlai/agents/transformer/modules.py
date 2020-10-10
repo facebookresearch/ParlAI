@@ -642,7 +642,7 @@ class TransformerEncoder(TransformerEncoderBase):
             kwargs["first_r3f_forward"] = True
             return self.r3f_embedding_extension.forward(self, *args, **kwargs)
         else:
-            kwargs.pop("first_r3f_forward")
+            kwargs.pop("first_r3f_forward", None)
             return TransformerEncoderBase.forward(self, *args, **kwargs)
 
 
