@@ -30,6 +30,10 @@ from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
 from parlai.utils.io import PathManager
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
+from parlai.agents.transformer.module_extensions import (
+    R3FNoiseLossExtension,
+    R3FNoiseContext,
+)
 
 
 class BartAgent(TransformerGeneratorAgent):
@@ -49,6 +53,7 @@ class BartAgent(TransformerGeneratorAgent):
         Override to add init-fairseq-model arg.
         """
         TransformerGeneratorAgent.add_cmdline_args(argparser)
+        R3FNoiseContext.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Bart Args')
         group.add_argument(
             '--init-fairseq-model',
@@ -68,6 +73,8 @@ class BartAgent(TransformerGeneratorAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
             opt = self._initialize_bart(opt)
+        self.r3f_context = R3FNoiseContext(opt)
+        self.r3f_loss_extension = self.r3f_context.get_loss_extension()
         super().__init__(opt, shared)
 
     def _initialize_bart(self, opt: Opt) -> Opt:
@@ -145,6 +152,7 @@ class BartAgent(TransformerGeneratorAgent):
             self._copy_embeddings(
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
+        model.set_r3f_context(self.r3f_context)
         return model
 
     def _set_text_vec(
@@ -186,7 +194,13 @@ class BartAgent(TransformerGeneratorAgent):
         """
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
-        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        r3f_adjustment = None
+        if self.r3f_loss_extension:
+            model_output, r3f_adjustment = self.r3f_loss_extension.forward_pass_with_r3f(
+                self.model, *self._model_input(batch), ys=battch.label_vec
+            )
+        else:
+            model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
 
         if scores.size(1) != batch.label_vec.size(1):
@@ -210,6 +224,8 @@ class BartAgent(TransformerGeneratorAgent):
         # actually do backwards loss
         loss = loss.sum()
         loss /= target_tokens.sum()  # average loss per token
+        if r3f_adjustment:
+            loss += r3f_adjustment
         if return_output:
             return (loss, model_output)
         else:

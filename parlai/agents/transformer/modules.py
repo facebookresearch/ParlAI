@@ -28,9 +28,9 @@ import torch.nn.functional as F
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
-from parlai.agents.transformer.module_extentions import (
-    R3FNoiseEncoderTrait,
-    R3FNoiseGeneratorAgentTrait,
+from parlai.agents.transformer.module_extensions import (
+    R3FNoiseContext,
+    R3FNoiseEmbeddingExtension,
 )
 
 try:
@@ -627,10 +627,24 @@ class TransformerEncoderBase(nn.Module):
         return tensor_out
 
 
-class TransformerEncoder(R3FNoiseEncoderTrait, TransformerEncoderBase):
+class TransformerEncoder(TransformerEncoderBase):
     def __init__(self, *args, **kwargs):
-        print("TransformerEncoder init")
         super(TransformerEncoder, self).__init__(*args, **kwargs)
+        self.r3f_embedding_extension = None
+
+    def set_r3f_embedding_extension(self, extension):
+        self.r3f_embedding_extension = extension
+
+    def forward(self, *args, **kwargs):
+        """
+        Apply any extensions.
+
+        Otherwise, run as normal.
+        """
+        if self.r3f_embedding_extension:
+            return self.r3f_embedding_extension.forward(base=self, *args, **kwargs)
+        else:
+            return TransformerEncoderBase.forward(self, *args, **kwargs)
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -1226,6 +1240,10 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         # we need to force their probability of generation to be 0.
         output[:, :, self.start_idx] = neginf(output.dtype)
         return output
+
+    def set_r3f_context(self, context: R3FNoiseContext):
+        if context:
+            self.encoder.set_r3f_embedding_extension(context.get_embedding_extension())
 
 
 class BasicAttention(nn.Module):
