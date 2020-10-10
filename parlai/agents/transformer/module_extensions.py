@@ -27,7 +27,7 @@ class R3FNoiseContext(object):
         group.add_argument(
             '--use-r3f',
             type=bool,
-            default=False,  # TODO: Change this before landing. Else everyone is getting this loss (with BART)
+            default=False,
             help='should we use the R3f loss at all?',
         )
         group.add_argument('--eps', type=float, default=1e-5, help='noise eps')
@@ -126,6 +126,18 @@ class R3FNoiseContext(object):
         return self._in_noise_pass
 
 
+class NoisedEmbedding(nn.Module):
+    def __init__(self, base, noise_sampler):
+        super(NoisedEmbedding, self).__init__()
+        self.base_embedding = base
+        self.noise_sampler = noise_sampler
+
+    def forward(self, *args, **kwargs):
+        tensor = self.base_embedding(*args, **kwargs)
+        noise = self.noise_sampler.sample(sample_shape=tensor.shape).to(tensor)
+        return tensor + noise
+
+
 class R3FNoiseEmbeddingExtension(object):
     """
     Provides a way to hot-swap out the input-to-embedding function to one that also adds
@@ -136,35 +148,23 @@ class R3FNoiseEmbeddingExtension(object):
     """
 
     def __init__(self, context: R3FNoiseContext):
-        print("R3fEmbedding Init")
         self.context = context
-
-    def _noised_embedding_func(self, base_embedding):
-        noise_sampler = self.noise_sampler
-        # NOTE: Not sure if this is the best way to define the callable. Maybe use a lambda here? Maybe use some other python-function-magic that I don't know about? Suggestions welcome.
-
-        def _result(input):
-            nonlocal base_embedding
-            nonlocal noise_sampler
-            tensor = base_embedding(input)
-            noise = noise_sampler.sample(sample_shape=tensor.shape).to(tensor)
-            return tensor + noise
-
-        return _result
 
     def forward(self, base, *args, **kwargs):
         """
         Hot swaps out the embedding calculation in `base_module` to be one that returns
-        noiseed embeddings, runs the forward as 'normal', then puts the original
+        noised embeddings, runs the forward as 'normal', then puts the original
         embedding back.
         """
         if not self.context.use_r3f:
             raise RuntimeError(
                 "Trying to add embedding noise for use in an R3f loss when using an R3F loss has not been allowed."
             )
-        if self.context.in_noised_pass():
+        if self.context.in_noise_pass():
             original_embedding = base.embeddings
-            base.embeddings = self._noised_embedding_func(original_embedding)
+            base.embeddings = NoisedEmbedding(
+                original_embedding, self.context.noise_sampler
+            )
             result = base.forward(*args, **kwargs)
             base.embeddings = original_embedding
             self.context.mark_embedding_noised()
@@ -196,4 +196,5 @@ class R3FNoiseLossExtension(object):
         self.context.end_noise_pass()
 
         symm_kl = self.context.calculate_symm_kl(noised_output[0], regular_output[0])
-        return regular_model_output, self.context.r3f_lambda * symm_kl
+
+        return regular_output, self.context.r3f_lambda * symm_kl

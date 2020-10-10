@@ -30,10 +30,7 @@ from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
 from parlai.utils.io import PathManager
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
-from parlai.agents.transformer.module_extensions import (
-    R3FNoiseLossExtension,
-    R3FNoiseContext,
-)
+from parlai.agents.transformer.module_extensions import R3FNoiseContext
 
 
 class BartAgent(TransformerGeneratorAgent):
@@ -181,9 +178,7 @@ class BartAgent(TransformerGeneratorAgent):
         Override to seed decoder with EOS BOS token.
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.END_IDX, self.START_IDX]
-            )
+            torch.LongTensor([self.END_IDX, self.START_IDX])  # type: ignore
             .expand(bsz * beam_size, 2)
             .to(dev)
         )
@@ -196,8 +191,11 @@ class BartAgent(TransformerGeneratorAgent):
             raise ValueError('Cannot compute loss without a label.')
         r3f_adjustment = None
         if self.r3f_loss_extension:
-            model_output, r3f_adjustment = self.r3f_loss_extension.forward_pass_with_r3f(
-                self.model, *self._model_input(batch), ys=battch.label_vec
+            (
+                model_output,
+                r3f_adjustment,
+            ) = self.r3f_loss_extension.forward_pass_with_r3f(
+                self.model, *self._model_input(batch), ys=batch.label_vec
             )
         else:
             model_output = self.model(*self._model_input(batch), ys=batch.label_vec)

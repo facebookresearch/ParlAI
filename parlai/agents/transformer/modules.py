@@ -28,10 +28,7 @@ import torch.nn.functional as F
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
-from parlai.agents.transformer.module_extensions import (
-    R3FNoiseContext,
-    R3FNoiseEmbeddingExtension,
-)
+from parlai.agents.transformer.module_extensions import R3FNoiseContext
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
@@ -641,9 +638,11 @@ class TransformerEncoder(TransformerEncoderBase):
 
         Otherwise, run as normal.
         """
-        if self.r3f_embedding_extension:
-            return self.r3f_embedding_extension.forward(base=self, *args, **kwargs)
+        if self.r3f_embedding_extension and not kwargs.get("first_r3f_forward"):
+            kwargs["first_r3f_forward"] = True
+            return self.r3f_embedding_extension.forward(self, *args, **kwargs)
         else:
+            kwargs.pop("first_r3f_forward")
             return TransformerEncoderBase.forward(self, *args, **kwargs)
 
 
