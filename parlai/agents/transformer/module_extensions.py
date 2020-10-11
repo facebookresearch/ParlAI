@@ -39,7 +39,7 @@ class R3FNoiseContext(object):
             default=False,
             help='should we use the R3f loss at all?',
         )
-        group.add_argument('--eps', type=float, default=1e-5, help='noise eps')
+        group.add_argument('--r3f-eps', type=float, default=1e-5, help='noise eps')
         group.add_argument(
             '--r3f-lambda',
             type=float,
@@ -47,7 +47,7 @@ class R3FNoiseContext(object):
             help='lambda for combining logistic loss and noisy KL loss',
         )
         group.add_argument(
-            '--noise-type',
+            '--r3f-noise-type',
             type=str,
             default=R3F_NOISE_UNIFORM,
             choices=[R3F_NOISE_NORMAL, R3F_NOISE_UNIFORM],
@@ -56,8 +56,8 @@ class R3FNoiseContext(object):
 
     def __init__(self, opts):
         self.use_r3f = opts.get('use_r3f')
-        self.eps = opts.get('eps')
-        self.noise_type = opts.get('noise_type')
+        self.eps = opts.get('r3f_eps')
+        self.noise_type = opts.get('r3f_noise_type')
         if self.noise_type == R3F_NOISE_NORMAL:
             self.noise_sampler = torch.distributions.normal.Normal(
                 loc=0.0, scale=self.eps
