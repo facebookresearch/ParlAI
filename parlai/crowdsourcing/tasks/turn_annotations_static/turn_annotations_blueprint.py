@@ -15,7 +15,7 @@ from mephisto.server.blueprints.static_react_task.static_react_blueprint import 
     StaticReactBlueprint,
 )
 from mephisto.core.argparse_parser import str2bool
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from argparse import _ArgumentGroup as ArgumentGroup
 
 if TYPE_CHECKING:
@@ -63,7 +63,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             ) as f:
                 line = f.readline()
                 while line:
-                    conversation_indices = json.loads(line)
+                    conversation_indices = json.loads(line)['data']
                     self.annotation_indices.append(conversation_indices)
                     line = f.readline()
             if len(self.annotation_indices) != len(self.raw_data):
@@ -196,7 +196,6 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         output = []
         total_annotation_count = 0
         for conv_idx, d in enumerate(data_dicts):
-            max_turn_to_show = len(d['dialog']) - 1
             if annotation_indices:
                 total_annotation_count += len(annotation_indices[conv_idx])
                 # We only want to show the conversation up to the last
@@ -210,7 +209,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                     processed_dialog = self._process_conversation(d, [a])
                     output.append(processed_dialog)
             else:
-                processed_dialog = self._process_conversation(d, [max_turn_to_show])
+                processed_dialog = self._process_conversation(
+                    d, annotation_indices=None
+                )
                 output.append(processed_dialog)
         print(
             f'Processed {len(data_dicts)} total conversations into {len(output)} conversations to be used in crowdsourcing task with {total_annotation_count} total annotations.'
@@ -218,18 +219,22 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         np.random.shuffle(output)
         return output
 
-    def _process_conversation(self, d, annotation_indices):
+    def _process_conversation(self, d, annotation_indices: Optional[List[int]] = None):
         """
         Helper function for processing conversations.
 
         :param annotation_indices:
             Array of turn indices to annotate of the
             actual conversation not including the context [So 0 is the "Hi!" if
-            that's the first non-context utterance of the conversation.]
+            that's the first non-context utterance of the conversation.] If this is not
+            specified, just annotate the final bot turn.
         :return: modified dialogue object
         """
         new_dialogue = []
-        max_turn_to_show = max(annotation_indices)
+        if annotation_indices is not None:
+            max_turn_to_show = max(annotation_indices)
+        else:
+            max_turn_to_show = None
         adjusted_turn_idx = 0
         for full_turn in d['dialog']:
             if len(full_turn) != 2:
@@ -237,7 +242,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                     f'Warning! Skipping incomplete conversation! full_turn was: {full_turn}'
                 )
                 continue
-            if adjusted_turn_idx > max_turn_to_show:
+            if max_turn_to_show is not None and adjusted_turn_idx > max_turn_to_show:
                 logging.info(
                     f'Skipping {adjusted_turn_idx}th utterance, b/c max_turn_to_show was {max_turn_to_show}.'
                 )
@@ -251,27 +256,35 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                         'text': full_turn[0]['text'],
                         'agent_idx': 0,
                         'do_annotate': do_annotate,
-                        'other_metadata': full_turn[0]['other_metadata'],
+                        'other_metadata': full_turn[0].get('other_metadata'),
                     }
                 )
                 adjusted_turn_idx += 1
             if 'persona' not in full_turn[1]['text']:
-                do_annotate = True
                 if annotation_indices:
                     do_annotate = adjusted_turn_idx in annotation_indices
+                else:
+                    do_annotate = False
                 new_dialogue.append(
                     {
                         'text': full_turn[1]['text'],
                         'agent_idx': 1,
                         'do_annotate': do_annotate,
-                        'other_metadata': full_turn[1]['other_metadata'],
+                        'other_metadata': full_turn[1].get('other_metadata'),
                     }
                 )
                 adjusted_turn_idx += 1
-        if adjusted_turn_idx < max_turn_to_show:
+        if max_turn_to_show is not None and adjusted_turn_idx < max_turn_to_show:
             raise Exception(
                 f'Conversation had {adjusted_turn_idx} but max_turn_to_show was {max_turn_to_show}'
             )
+        if not annotation_indices:
+            # Up until this point, no turns have been selected for annotation, so just
+            # manually set the final bot turn (with agent_idx==1) to do annotation
+            final_bot_turn_idx = [
+                idx for idx, turn in enumerate(new_dialogue) if turn['agent_idx'] == 1
+            ][-1]
+            new_dialogue[final_bot_turn_idx]['do_annotate'] = True
         return new_dialogue
 
 
