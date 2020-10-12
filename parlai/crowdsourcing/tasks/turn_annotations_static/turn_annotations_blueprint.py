@@ -264,7 +264,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 if annotation_indices:
                     do_annotate = adjusted_turn_idx in annotation_indices
                 else:
-                    do_annotate = False
+                    do_annotate = True
+                    # Default to annotating all bot utterances
                 new_dialogue.append(
                     {
                         'text': full_turn[1]['text'],
@@ -278,13 +279,6 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             raise Exception(
                 f'Conversation had {adjusted_turn_idx} but max_turn_to_show was {max_turn_to_show}'
             )
-        if not annotation_indices:
-            # Up until this point, no turns have been selected for annotation, so just
-            # manually set the final bot turn (with agent_idx==1) to do annotation
-            final_bot_turn_idx = [
-                idx for idx, turn in enumerate(new_dialogue) if turn['agent_idx'] == 1
-            ][-1]
-            new_dialogue[final_bot_turn_idx]['do_annotate'] = True
         return new_dialogue
 
 
