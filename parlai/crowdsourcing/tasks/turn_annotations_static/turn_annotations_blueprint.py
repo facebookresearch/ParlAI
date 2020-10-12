@@ -227,7 +227,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             Array of turn indices to annotate of the
             actual conversation not including the context [So 0 is the "Hi!" if
             that's the first non-context utterance of the conversation.] If this is not
-            specified, just annotate the final bot turn.
+            specified, annotate all bot turns.
         :return: modified dialogue object
         """
         new_dialogue = []
