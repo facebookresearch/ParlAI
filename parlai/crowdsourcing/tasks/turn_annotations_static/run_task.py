@@ -9,6 +9,7 @@ import shlex
 import shutil
 import subprocess
 import random
+import logging
 
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
@@ -59,16 +60,16 @@ def setup_mephisto(launch_config):
     architect_type, requester_name, db, args = parser.parse_launch_arguments()
 
     arg_string = (
-        "--blueprint-type turn_annotations_static_inflight_qa_blueprint "
+        f"--blueprint-type {launch_config.BLUEPRINT_TYPE} "
         f"--architect-type {architect_type} "
         f"--requester-name {requester_name} "
         f'--task-title "\\"{launch_config.TASK_TITLE}\\"" '
         f'--task-description "\\"{launch_config.TASK_DESCRIPTION}\\"" '
-        f"--task-name turn-ann-s "
+        f'--task-name {launch_config.TASK_NAME} '
         f'--task-source "{TASK_DIRECTORY}/webapp/build/bundle.js" '
         f'--task-reward {launch_config.TASK_REWARD} '
         f'--subtasks-per-unit {launch_config.SUBTASKS_PER_UNIT} '
-        f'--annotate-last-utterance-only {launch_config.ANNOTATE_LAST_UTTERANCE_ONLY} '
+        f'--annotation-buckets {launch_config.ANNOTATION_BUCKETS} '
         f'--ask-reason {launch_config.ASK_REASON} '
         f'--task-tags chat,conversation,dialog,partner '
         # How many workers to do each assignment
@@ -82,6 +83,32 @@ def setup_mephisto(launch_config):
         f'--onboarding-qualification turn-ann-s-onb '
         f"-use-onboarding True "
     )
+    # Optional flags:
+    try:
+        arg_string += (
+            f'--annotation-question "\\"{launch_config.ANNOTATION_QUESTION}\\"" '
+        )
+    except Exception:
+        logging.info(f'Launch config {launch_config} had no ANNOTATION_QUESTION field')
+
+    try:
+        arg_string += (
+            f'--annotation-indices-jsonl {launch_config.ANNOTATION_INDICES_JSONL} '
+        )
+    except Exception:
+        logging.info(f'Launch config {launch_config} had no ANNOTATION_INDICES_JSONL')
+
+    try:
+        arg_string += f'--conversation-count {launch_config.CONVERSATION_COUNT} '
+    except Exception:
+        logging.info(f'Launch config {launch_config} had no CONVERSATION_COUNT')
+
+    try:
+        arg_string += f'--onboarding-data {launch_config.ONBOARDING_DATA} '
+    except Exception:
+        logging.info(f'Launch config {launch_config} had no ONBOARDING_DATA')
+
+    print(arg_string)
     return db, arg_string
 
 
@@ -145,7 +172,6 @@ def run_task(opt):
 
     build_task()
     operator = Operator(db)
-    print(f'ARG_STRING: {arg_string}')
     operator.parse_and_launch_run_wrapper(shlex.split(arg_string), extra_args={})
     operator.wait_for_runs_then_shutdown()
 
