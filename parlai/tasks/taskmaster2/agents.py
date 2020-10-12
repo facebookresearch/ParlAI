@@ -157,11 +157,11 @@ class _Abstract(DialogTeacher):
                     continue
                 if teacher_action['slots'].get(slot) == guess:
                     self.metrics.add('slot_p', AverageMetric(1))
-                    self.metrics.add(f'{domain}_slot_p', AverageMetric(1))
+                    self.metrics.add(f'{domain}/slot_p', AverageMetric(1))
                     correct += 1
                 else:
                     self.metrics.add('slot_p', AverageMetric(0))
-                    self.metrics.add(f'{domain}_slot_p', AverageMetric(0))
+                    self.metrics.add(f'{domain}/slot_p', AverageMetric(0))
                     logging.debug(
                         f"Bad slot guess '{slot_guess}' != {teacher_action['slots']}"
                     )
@@ -170,7 +170,7 @@ class _Abstract(DialogTeacher):
                     'slot_r', AverageMetric(correct, len(teacher_action['slots']))
                 )
                 self.metrics.add(
-                    f'{domain}_slot_r',
+                    f'{domain}/slot_r',
                     AverageMetric(correct, len(teacher_action['slots'])),
                 )
                 self.metrics.add(
@@ -181,8 +181,8 @@ class _Abstract(DialogTeacher):
             # keep track of statistics by domain
             f1_metric = F1Metric.compute(model_response['text'], labels)
             bleu_metric = BleuMetric.compute(model_response['text'], labels)
-            self.metrics.add(f'{domain}_lex_f1', f1_metric)
-            self.metrics.add(f'{domain}_lex_bleu', bleu_metric)
+            self.metrics.add(f'{domain}/lex_f1', f1_metric)
+            self.metrics.add(f'{domain}/lex_bleu', bleu_metric)
 
             delex_text = model_response['text']
             delex_label = labels[0]
@@ -192,15 +192,19 @@ class _Abstract(DialogTeacher):
                 delex_label = delex_label.replace(value, slot)
             f1_metric = F1Metric.compute(delex_text, (delex_label,))
             self.metrics.add('delex_f1', f1_metric)
-            self.metrics.add(f'{domain}_delex_f1', f1_metric)
+            self.metrics.add(f'{domain}/delex_f1', f1_metric)
             bleu_metric = BleuMetric.compute(delex_text, [delex_label])
             self.metrics.add('delex_bleu', bleu_metric)
-            self.metrics.add(f'{domain}_delex_bleu', bleu_metric)
+            self.metrics.add(f'{domain}/delex_bleu', bleu_metric)
 
     def setup_data(self, fold):
         domains_cnt = Counter()
         chunks = self._load_data(fold)
+        count = 0
         for _, row in chunks.iterrows():
+            count += 1
+            if count > 10:
+                break
             domains_cnt[row['domain']] += 1
             first = True
             utterances = row['utterances'][:]
