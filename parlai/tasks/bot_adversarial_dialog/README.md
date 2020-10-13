@@ -13,4 +13,4 @@ This code downloads the following folders/files into the ParlAI data folder:
 - `dialogue_datasets/`: folder containing files of adversarial datasets labeled for offensiveness.
 - `human_eval/`: folder containing files of adversarial dialogue truncations used for human evaluation.
 
-Tags: #Safety, #Adversarial, #ChitChat
+Tags: #Safety, #All, #ChitChat

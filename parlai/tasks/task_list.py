@@ -88,7 +88,7 @@ task_list = [
     {
         "id": "BotAdversarialDialogue",
         "display_name": "Bot Adversarial Dialogue ",
-        "task": "bot_adversarial_dialogue",
+        "task": "bot_adversarial_dialog",
         "tags": ["All"],
         "description": (
             "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
