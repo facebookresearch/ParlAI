@@ -1319,4 +1319,14 @@ task_list = [
             "text field indicating the presence of gender words in the label(s)."
         ),
     },
+    {
+        "id": "MDGender",
+        "display_name": "MD Gender",
+        "task": "md_gender",
+        "tags": ["All"],
+        "description": (
+            "Tasks for the multi-dimensional gender bias classifier training."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2005.00614"},
+    },
 ]
