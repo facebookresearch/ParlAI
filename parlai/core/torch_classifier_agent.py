@@ -290,6 +290,7 @@ class TorchClassifierAgent(TorchAgent):
             default=None,
             help='Ignore labels provided to model',
         )
+        parser.set_defaults(use_reply='none')
 
     def __init__(self, opt: Opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)

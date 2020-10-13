@@ -618,7 +618,7 @@ class TorchAgent(ABC, Agent):
         )
         agent.add_argument(
             '--use-reply',
-            default='none',
+            default='label',
             hidden=True,
             choices=['label', 'model', 'none'],
             help='Which previous replies to use as history. If label, use '
@@ -669,7 +669,6 @@ class TorchAgent(ABC, Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
             'available on the device.',
         )
-
         cls.dictionary_class().add_cmdline_args(argparser)
         ParlAILRScheduler.add_cmdline_args(argparser)
 
