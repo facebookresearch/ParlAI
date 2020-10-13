@@ -135,8 +135,6 @@ class HFGPT2Model(TorchGeneratorModel):
 
     def __init__(self, opt, dict):
         self.add_start_token = opt["add_start_token"]
-        if not opt['add_special_tokens']:
-            dict.start_idx = dict.null_idx
         super().__init__(*self._get_special_tokens(opt, dict))
 
         # init the model
@@ -249,6 +247,10 @@ class Gpt2Agent(TorchGeneratorAgent):
             raise RuntimeError(
                 "If using batchsize > 1, --add-special-tokens must be True."
             )
+        if not opt["add_special_tokens"] and opt["add_start_token"]:
+            raise RuntimeError(
+                "--add-start-token true requires --add-special-tokens true"
+            )
         super().__init__(opt, shared)
         self.START_IDX = self.model.START_IDX
         self.END_IDX = self.model.END_IDX
@@ -262,19 +264,6 @@ class Gpt2Agent(TorchGeneratorAgent):
         Can be overriden if a more complex dictionary is required.
         """
         return Gpt2DictionaryAgent
-
-    def _v2t(self, vec):
-        """
-        Convert token indices to string of tokens.
-        """
-        new_vec = []
-        if hasattr(vec, 'cpu'):
-            vec = vec.cpu()
-        for i in vec:
-            if i != self.END_IDX and i != self.START_IDX and i != self.NULL_IDX:
-                new_vec.append(i)
-        __import__("ipdb").set_trace()  # FIXME
-        return self.dict.vec2txt(new_vec)
 
     def build_model(self, states=None):
         """
