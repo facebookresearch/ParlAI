@@ -21,7 +21,7 @@ from parlai.core.params import ParlaiParser
 
 class TestTransformerBase(unittest.TestCase):
     """
-    Base Tester class for sharing functionality
+    Base Tester class for sharing functionality.
     """
 
     def _test_resize_embeddings(self, model):
@@ -327,7 +327,7 @@ class TestTransformerGenerator(TestTransformerBase):
     @pytest.mark.nofbcode
     def test_beamsearch_return_all_texts(self):
         """
-        Test beam_texts for beam_size > 1
+        Test beam_texts for beam_size > 1.
         """
         size = 3
 
