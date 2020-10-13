@@ -86,6 +86,18 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1610.00956"},
     },
     {
+        "id": "BotAdversarialDialogue",
+        "display_name": "Bot Adversarial Dialogue ",
+        "task": "bot_adversarial_dialogue",
+        "tags": ["All"],
+        "description": (
+            "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
+            "Datasets consist of classification tasks in which the goal is to "
+            "determine if the utterance is offensive or 'safe' given a dialogue context. "
+        ),
+        "links": {"arXiv": ""},
+    },
+    {
         "id": "CBT",
         "display_name": "Children's Book Test (CBT)",
         "task": "cbt",
