@@ -1552,11 +1552,6 @@ class TreeSearch(object):
             len(n_best_list) >= 1
         ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
         for (pred, score) in n_best_list:
-            if self.eos == self.bos or self.eos == self.pad:
-                # some models (e.g. gpt2 without special tokens) use the same token
-                # for start/pad/end. We don't need this check for them, as multiple
-                # end tokens is expected
-                continue
             assert (pred == self.eos).sum() == 1, (
                 f'TreeSearch returned a finalized hypo with multiple end tokens '
                 f'with score {score.item():.2f}'
