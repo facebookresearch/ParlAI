@@ -135,7 +135,6 @@ class R3FNoisedEmbedding(nn.Module):
         self.noise_sampler = noise_sampler
 
     def __call__(self, module, input, output):
-        print("call")
         noise = self.noise_sampler.sample(sample_shape=output.shape).to(output)
         return output + noise
 
@@ -156,10 +155,8 @@ class R3FNoiseEmbeddingContextManager(AbstractContextManager):
         self.context = context
         for name, layer in module.named_modules():
             if context.noise_encoder and name == "encoder":
-                print("MY ENCODER")
                 self._find_embedding_and_set_hook(layer, "encoder")
             if context.noise_decoder and name == "decoder":
-                print("MY DECODER")
                 self._find_embedding_and_set_hook(layer, "decoder")
         self.module = module
         self.context.had_first_pass = True
