@@ -75,7 +75,7 @@ def display_model(opt):
             else:
                 simple_display(opt, world, turn)
             turn += 1
-            if False and world.get_acts()[0]['episode_done']:
+            if world.get_acts()[0]['episode_done']:
                 turn = 0
             if world.epoch_done():
                 logging.info("epoch done")
