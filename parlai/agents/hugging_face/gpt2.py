@@ -10,8 +10,7 @@ import torch
 from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import IdentityLayer, concat_without_padding, padded_tensor
-
+from parlai.utils.torch import IdentityLayer, padded_tensor
 
 try:
     from transformers import GPT2Model
@@ -35,12 +34,12 @@ class GPT2Decoder(torch.nn.Module):
         super().__init__()
         self.transformer = self._init_from_pretrained(opt)
         # add special tokens
-        self.start_idx = dict.start_idx
-        self.null_idx = dict.null_idx
-        self.add_start_token = False
         if opt["add_special_tokens"]:
             self.transformer.resize_token_embeddings(len(dict.tokenizer))
-            self.add_start_token = opt["add_start_token"]
+        self.add_start_token = opt["add_start_token"]
+        self.START_IDX = dict.start_idx
+        self.NULL_IDX = dict.null_idx
+        self.END_IDX = dict.end_idx
         # use cuda
         self.use_cuda = not opt["no_cuda"] and torch.cuda.is_available()
 
@@ -65,7 +64,6 @@ class GPT2Decoder(torch.nn.Module):
         return GPT2Model.from_pretrained(fle_key)
 
     def forward(self, input, encoder_state, incr_state=None):
-        # __import__("ipdb").set_trace()  # FIXME
         attention_mask = None
         position_ids = None
         if incr_state is None:
@@ -73,7 +71,7 @@ class GPT2Decoder(torch.nn.Module):
             if (
                 not self.add_start_token
                 and input.size(1) == 1
-                and int(input[0][0]) == self.start_idx
+                and int(input[0][0]) == self.START_IDX
             ):
                 # generating: ignore the start token
                 model_input = encoder_state
@@ -81,7 +79,7 @@ class GPT2Decoder(torch.nn.Module):
                 # forced decoding: concatenate the context
                 # with the labels
                 model_input = torch.cat([encoder_state, input], dim=-1)
-            attention_mask = model_input != self.null_idx
+            attention_mask = model_input != self.NULL_IDX
             position_ids = (
                 attention_mask.cumsum(dim=-1, dtype=torch.int64) - 1
             ).clamp_(min=0)
@@ -90,14 +88,14 @@ class GPT2Decoder(torch.nn.Module):
                 input = input[:, 1:]
             # generating with continuation
             # get the position ids
-            position_ids = (encoder_state != self.null_idx).sum(
+            position_ids = (encoder_state != self.NULL_IDX).sum(
                 -1, True, dtype=torch.int64
             ) - 1
-            delta = ((input != self.null_idx)).sum(-1, True, dtype=torch.int64)
+            delta = ((input != self.NULL_IDX)).sum(-1, True, dtype=torch.int64)
             position_ids += delta
             # generation: get the last token input
             model_input = input[:, -1:]
-            attention_mask = torch.cat([encoder_state, input], dim=-1) != self.null_idx
+            attention_mask = torch.cat([encoder_state, input], dim=-1) != self.NULL_IDX
 
         transformer_outputs = self.transformer(
             model_input,
@@ -113,7 +111,7 @@ class GPT2Decoder(torch.nn.Module):
             output = hidden_states[:, -(input.size(1) + 1) :]
             # hack: we need the last state of the encoder-side to be the first
             # element of the decoder-side
-            lengths = (input != self.null_idx).sum(dim=-1)
+            lengths = (input != self.NULL_IDX).sum(dim=-1)
             for i in range(input.size(0)):
                 output[i, input.size(1) - lengths[i]] = output[i, 0]
 
@@ -136,10 +134,10 @@ class HFGPT2Model(TorchGeneratorModel):
     """
 
     def __init__(self, opt, dict):
-        self.null_idx, self.start_idx, self.end_idx = self._get_special_tokens(
-            opt, dict
-        )
-        super().__init__(self.null_idx, self.start_idx, self.end_idx)
+        self.add_start_token = opt["add_start_token"]
+        if not opt['add_special_tokens']:
+            dict.start_idx = dict.null_idx
+        super().__init__(*self._get_special_tokens(opt, dict))
 
         # init the model
         self.encoder = IdentityLayer()
@@ -150,7 +148,6 @@ class HFGPT2Model(TorchGeneratorModel):
         )
         self._tie_weights(self.lm_head, self.decoder.transformer.wte)
         # add start token
-        self.add_start_token = opt["add_special_tokens"] and opt["add_start_token"]
 
     def _get_decoder(self, opt, dict):
         return GPT2Decoder(opt, dict)
@@ -248,11 +245,14 @@ class Gpt2Agent(TorchGeneratorAgent):
         return agent
 
     def __init__(self, opt, shared=None):
-        if not opt["add_special_tokens"] and opt["batchsize"] > 1:
+        if not opt["add_special_tokens"] and opt.get('batchsize', 1) > 1:
             raise RuntimeError(
                 "If using batchsize > 1, --add-special-tokens must be True."
             )
         super().__init__(opt, shared)
+        self.START_IDX = self.model.START_IDX
+        self.END_IDX = self.model.END_IDX
+        self.NULL_IDX = self.model.NULL_IDX
 
     @staticmethod
     def dictionary_class():
@@ -262,6 +262,19 @@ class Gpt2Agent(TorchGeneratorAgent):
         Can be overriden if a more complex dictionary is required.
         """
         return Gpt2DictionaryAgent
+
+    def _v2t(self, vec):
+        """
+        Convert token indices to string of tokens.
+        """
+        new_vec = []
+        if hasattr(vec, 'cpu'):
+            vec = vec.cpu()
+        for i in vec:
+            if i != self.END_IDX and i != self.START_IDX and i != self.NULL_IDX:
+                new_vec.append(i)
+        __import__("ipdb").set_trace()  # FIXME
+        return self.dict.vec2txt(new_vec)
 
     def build_model(self, states=None):
         """
