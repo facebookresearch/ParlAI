@@ -32,9 +32,6 @@ class R3FNoiseContext(object):
     and the `compute_loss` function.
     """
 
-    _in_noise_pass = False  # debug state flag
-    _embeddinig_noised_this_pass = False  # debug value
-
     @staticmethod
     def add_cmdline_args(argparser: ParlaiParser):
         group = argparser.add_argument_group('R3F fine-tuning Args')
