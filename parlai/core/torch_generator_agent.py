@@ -46,7 +46,7 @@ from parlai.utils.torch import (
     trainable_parameters,
     PipelineHelper,
 )
-
+from parlai.agents.transformer.module_extensions import R3FNoiseContext
 
 try:
     from nltk.translate import bleu_score as nltkbleu
@@ -384,6 +384,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Add command line arguments.
         """
+        R3FNoiseContext.add_cmdline_args(argparser)
         agent = argparser.add_argument_group('Torch Generator Agent')
         agent.add_argument(
             '--beam-size',
@@ -484,6 +485,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.output_token_losses = opt.get('verbose', False)
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
         self.beam_block_list: Optional[SearchBlocklist] = None
+
+        self.r3f_context = R3FNoiseContext(opt)
 
         if shared:
             # set up shared properties
@@ -705,7 +708,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
-        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        r3f_adjustment = None
+        if self.r3f_context.use_r3f:
+            (model_output, r3f_adjustment) = self.r3f_context.forward_pass_with_r3f(
+                self.model, *self._model_input(batch), ys=batch.label_vec
+            )
+        else:
+            model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))

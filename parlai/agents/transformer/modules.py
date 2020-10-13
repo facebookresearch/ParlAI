@@ -28,7 +28,6 @@ import torch.nn.functional as F
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
-from parlai.agents.transformer.module_extensions import R3FNoiseContext
 
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
@@ -331,7 +330,7 @@ class TransformerLinearWrapper(nn.Module):
         return self.additional_linear_layer(context_h)
 
 
-class TransformerEncoderBase(nn.Module):
+class TransformerEncoder(nn.Module):
     """
     Transformer encoder module.
 
@@ -389,7 +388,7 @@ class TransformerEncoderBase(nn.Module):
         n_segments=0,
         output_scaling=1.0,
     ):
-        super(TransformerEncoderBase, self).__init__()
+        super(TransformerEncoder, self).__init__()
 
         self.embedding_size = embedding_size
         self.ffn_size = ffn_size
@@ -622,28 +621,6 @@ class TransformerEncoderBase(nn.Module):
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
         return tensor_out
-
-
-class TransformerEncoder(TransformerEncoderBase):
-    def __init__(self, *args, **kwargs):
-        super(TransformerEncoder, self).__init__(*args, **kwargs)
-        self.r3f_embedding_extension = None
-
-    def set_r3f_embedding_extension(self, extension):
-        self.r3f_embedding_extension = extension
-
-    def forward(self, *args, **kwargs):
-        """
-        Apply any extensions.
-
-        Otherwise, run as normal.
-        """
-        if self.r3f_embedding_extension and not kwargs.get("first_r3f_forward"):
-            kwargs["first_r3f_forward"] = True
-            return self.r3f_embedding_extension.forward(self, *args, **kwargs)
-        else:
-            kwargs.pop("first_r3f_forward", None)
-            return TransformerEncoderBase.forward(self, *args, **kwargs)
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -1239,10 +1216,6 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         # we need to force their probability of generation to be 0.
         output[:, :, self.start_idx] = neginf(output.dtype)
         return output
-
-    def set_r3f_context(self, context: R3FNoiseContext):
-        if context:
-            self.encoder.set_r3f_embedding_extension(context.get_embedding_extension())
 
 
 class BasicAttention(nn.Module):

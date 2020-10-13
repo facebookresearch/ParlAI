@@ -50,7 +50,6 @@ class BartAgent(TransformerGeneratorAgent):
         Override to add init-fairseq-model arg.
         """
         TransformerGeneratorAgent.add_cmdline_args(argparser)
-        R3FNoiseContext.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Bart Args')
         group.add_argument(
             '--init-fairseq-model',
@@ -71,7 +70,6 @@ class BartAgent(TransformerGeneratorAgent):
         if not shared:
             opt = self._initialize_bart(opt)
         self.r3f_context = R3FNoiseContext(opt)
-        self.r3f_loss_extension = self.r3f_context.get_loss_extension()
         super().__init__(opt, shared)
 
     def _initialize_bart(self, opt: Opt) -> Opt:
@@ -149,7 +147,6 @@ class BartAgent(TransformerGeneratorAgent):
             self._copy_embeddings(
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
-        model.set_r3f_context(self.r3f_context)
         return model
 
     def _set_text_vec(
@@ -190,11 +187,8 @@ class BartAgent(TransformerGeneratorAgent):
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
         r3f_adjustment = None
-        if self.r3f_loss_extension:
-            (
-                model_output,
-                r3f_adjustment,
-            ) = self.r3f_loss_extension.forward_pass_with_r3f(
+        if self.r3f_context.use_r3f:
+            (model_output, r3f_adjustment) = self.r3f_context.forward_pass_with_r3f(
                 self.model, *self._model_input(batch), ys=batch.label_vec
             )
         else:
