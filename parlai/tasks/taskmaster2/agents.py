@@ -200,11 +200,7 @@ class _Abstract(DialogTeacher):
     def setup_data(self, fold):
         domains_cnt = Counter()
         chunks = self._load_data(fold)
-        count = 0
         for _, row in chunks.iterrows():
-            count += 1
-            if count > 10:
-                break
             domains_cnt[row['domain']] += 1
             first = True
             utterances = row['utterances'][:]
