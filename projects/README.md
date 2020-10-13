@@ -65,6 +65,9 @@ _Task & models for chitchat with a given persona._
 - **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/).
   _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
 
+- **Recipes for Safety in Open-Domain Chatbots** [[project]](https://parl.ai/projects/safety_recipes/) [[paper]](TBD).
+  _Methods for improving the safety of open-domain chatbots._
+
 ## Knowledge Grounded
 
 - **Wizard of Wikipedia** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
@@ -77,7 +80,7 @@ _Task & models for chitchat with a given persona._
 
 - **Personality-Captions** [[project]](http://parl.ai/projects/personality_captions/) [[paper]](https://arxiv.org/abs/1810.10665).
   _Task for personality-based engaging comments on images._
-  
+
 - **Multi-Modal BlenderBot** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/multimodal_blenderbot/) [[paper]](https://arxiv.org/abs/2010.01082). _Model for multi-modal dialogue about both images and chitchat._
 
 ## Environment Grounded
