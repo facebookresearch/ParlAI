@@ -84,7 +84,7 @@ class R3FNoiseContext(object):
         self.noise_encoder = opts.get("r3f_encoder_noise")
         self.noise_decoder = opts.get("r3f_decoder_noise")
 
-        if not self.noise_encoder and not self.noise_decoder:
+        if self.use_r3f and not self.noise_encoder and not self.noise_decoder:
             raise RuntimeError(
                 "R3FContext: Noise must be added to at least one of the encoder or decoder."
             )
