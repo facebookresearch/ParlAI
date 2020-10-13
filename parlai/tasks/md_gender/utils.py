@@ -50,22 +50,6 @@ ALL_CANDS = {'self': SELF_CANDS, 'partner': PARTNER_CANDS, 'about': ABOUT_CANDS}
 EMPTY_LABELS = {'self': 'SELF:{}', 'partner': 'PARTNER:{}', 'about': 'ABOUT:{}'}
 
 
-CONTROL_TOKENS = {
-    'self': {'male': 'SELF:MASC', 'female': 'SELF:FEM', 'unknown': 'SELF:UNKNOWN'},
-    'partner': {
-        'male': 'PARTNER:MASC',
-        'female': 'PARTNER:FEM',
-        'gender-neutral': 'PARTNER:NEUTRAL',
-        'unknown': 'PARTNER:UNKNOWN',
-    },
-    'about': {
-        'male': 'ABOUT:MASC',
-        'female': 'ABOUT:FEM',
-        'gender-neutral': 'ABOUT:NEUTRAL',
-    },
-}
-
-
 def get_data_stats(data, key='label', lst=True):
     counts = defaultdict(int)
     for ex in data:
@@ -111,16 +95,6 @@ def add_common_args(argparser):
         help='Rate at which to sample examples from the unknown class',
     )
     return argparser
-
-
-def get_control_token(self_pred, partner_pred, about_pred):
-    return ' '.join(
-        [
-            CONTROL_TOKENS['self'][self_pred],
-            CONTROL_TOKENS['partner'][partner_pred],
-            CONTROL_TOKENS['about'][about_pred],
-        ]
-    )
 
 
 def balance_data(data_list, key='labels', shuffle=True, exclude_labels=None):

@@ -242,7 +242,7 @@ class WikipediaTeacher(ChunkTeacher):
                 f'ABOUT:{gend_utils.NONBINARY}',
                 f'SELF:{gend_utils.UNKNOWN}',
                 f'PARTNER:{gend_utils.NEUTRAL}',
-            ]
+            ]  # not enough of each of these examples to balance
             output = gend_utils.balance_data(output, key=2, exclude_labels=exclude_lst)
 
         if len(output) == 0:
