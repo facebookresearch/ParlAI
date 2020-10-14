@@ -25,8 +25,8 @@ SAFETY_DICT = {'safe': OK_CLASS, 'unsafe': NOT_OK_CLASS}
 
 def _adversarial_dialogue_datapath(opt: Opt) -> str:
     """
-    Return the filepath for the specified datatype of the specified base task, with an
-    Image-Chat personality attached to each example.
+    Return the filepath for the specified datatype of the specified adversarial dialogue
+    task.
     """
     build_dialogue_datasets(opt)
     # Build the data if it doesn't exist.
@@ -134,8 +134,8 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
 
 def _human_safety_eval_datapath(opt: Opt) -> str:
     """
-    Return the filepath for the specified datatype of the specified base task, with an
-    Image-Chat personality attached to each example.
+    Return the filepath for the specified datatype of the specified human evaluation
+    task on bot adversarial dialogue.
     """
     build_human_safety_eval_dataset(opt)
     # Build the data if it doesn't exist.
