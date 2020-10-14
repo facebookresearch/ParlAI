@@ -253,6 +253,15 @@ class Gpt2Agent(TorchGeneratorAgent):
 
     def __init__(self, opt, shared=None):
         if not opt["add_special_tokens"] and opt.get('batchsize', 1) > 1:
+            # *** STOP ***
+            # You may be a future researcher who has stumbled upon this odd
+            # restriction, and is tempted to comment this out. After all, the
+            # code still runs when it's uncommented, why shouldn't you?
+            # You should know this has serious implications, as gpt2 doesn't have
+            # padding tokens. This is incompatible with ParlAI's batching,
+            # which puts conversations of different length in the same
+            # batch. Without a padding token, nonsense will be inserted into
+            # the context, and the generations & PPL you get will be wrong.
             raise RuntimeError(
                 "If using batchsize > 1, --add-special-tokens must be True."
             )
