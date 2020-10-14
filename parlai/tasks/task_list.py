@@ -86,6 +86,18 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1610.00956"},
     },
     {
+        "id": "BotAdversarialDialogue",
+        "display_name": "Bot Adversarial Dialogue ",
+        "task": "bot_adversarial_dialogue",
+        "tags": ["All"],
+        "description": (
+            "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
+            "Datasets consist of classification tasks in which the goal is to "
+            "determine if the utterance is offensive or not given a dialogue context. "
+        ),
+        "links": {"arXiv": "<placeholder>"},
+    },
+    {
         "id": "CBT",
         "display_name": "Children's Book Test (CBT)",
         "task": "cbt",
@@ -1318,5 +1330,15 @@ task_list = [
             "A teacher that wraps other ParlAI tasks and appends control tokens to the "
             "text field indicating the presence of gender words in the label(s)."
         ),
+    },
+    {
+        "id": "MDGender",
+        "display_name": "MD Gender",
+        "task": "md_gender",
+        "tags": ["All"],
+        "description": (
+            "Tasks for the multi-dimensional gender bias classifier training."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2005.00614"},
     },
 ]
