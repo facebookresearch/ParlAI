@@ -117,7 +117,7 @@ class GPT2Decoder(torch.nn.Module):
 
         if incr_state is None:
             # pull out only the hidden states for the label tokens
-            output = hidden_states[:, -(input.size(1) + 1) :]
+            output = hidden_states[:, -input.size(1) - 1 + int(self.add_start_token) :]
             # hack: we need the last state of the encoder-side to be the first
             # element of the decoder-side
             lengths = (input != self.NULL_IDX).sum(dim=-1)
