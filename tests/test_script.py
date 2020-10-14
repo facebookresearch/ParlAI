@@ -92,8 +92,17 @@ class TestSuperCommand(unittest.TestCase):
             script.superscript_main(args=['help'])
             assert 'test_script' in output.getvalue()
             assert 'hidden_script' not in output.getvalue()
+            # showing help for the super command, not the subcommand
+            assert '--foo' not in output.getvalue()
 
         with testing_utils.capture_output() as output:
             script.superscript_main(args=['helpall'])
             assert 'test_script' in output.getvalue()
             assert 'hidden_script' in output.getvalue()
+
+    def test_subcommand_help(self):
+        with testing_utils.capture_output() as output:
+            with self.assertRaises(SystemExit):
+                script.superscript_main(args=['test_script', 'foo'])
+                assert 'parlai test_script' in output.getvalue()
+                assert '--foo' in output.getvalue()
