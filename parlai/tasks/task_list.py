@@ -88,14 +88,14 @@ task_list = [
     {
         "id": "BotAdversarialDialogue",
         "display_name": "Bot Adversarial Dialogue ",
-        "task": "bot_adversarial_dialog",
+        "task": "bot_adversarial_dialogue",
         "tags": ["All"],
         "description": (
             "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
             "Datasets consist of classification tasks in which the goal is to "
-            "determine if the utterance is offensive or 'safe' given a dialogue context. "
+            "determine if the utterance is offensive or not given a dialogue context. "
         ),
-        "links": {"arXiv": ""},
+        "links": {"arXiv": "<placeholder>"},
     },
     {
         "id": "CBT",

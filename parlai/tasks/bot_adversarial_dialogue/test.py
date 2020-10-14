@@ -9,16 +9,16 @@ import unittest
 
 
 class TestBotAdversarialDialogueTurn4Teacher(unittest.TestCase, AutoTeacherTest):
-    task = 'bot_adversarial_dialog:bad_speaker_to_eval=all:bad_safety_mix=all:bad_num_turns=4'
+    task = 'bot_adversarial_dialogue:bad_speaker_to_eval=all:bad_safety_mix=all:bad_num_turns=4'
 
 
 class TestBotAdversarialDialogueSafeTeacher(unittest.TestCase, AutoTeacherTest):
-    task = 'bot_adversarial_dialog:bad_speaker_to_eval=all:bad_safety_mix=safe:bad_num_turns=4'
+    task = 'bot_adversarial_dialogue:bad_speaker_to_eval=all:bad_safety_mix=safe:bad_num_turns=4'
 
 
 class TestBotAdversarialDialogueHumanTeacher(unittest.TestCase, AutoTeacherTest):
-    task = 'bot_adversarial_dialog:bad_speaker_to_eval=human:bad_safety_mix=all:bad_num_turns=4'
+    task = 'bot_adversarial_dialogue:bad_speaker_to_eval=human:bad_safety_mix=all:bad_num_turns=4'
 
 
 class TestHumanSafetyEvaluation(unittest.TestCase, AutoTeacherTest):
-    task = 'bot_adversarial_dialog:HumanSafetyEvaluation'
+    task = 'bot_adversarial_dialogue:HumanSafetyEvaluation'

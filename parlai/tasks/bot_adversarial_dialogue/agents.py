@@ -8,7 +8,7 @@ import os
 
 from parlai.core.opt import Opt
 from parlai.core.teachers import ParlAIDialogTeacher
-from parlai.tasks.bot_adversarial_dialog.build import (
+from parlai.tasks.bot_adversarial_dialogue.build import (
     build_dialogue_datasets,
     build_human_safety_eval_dataset,
     get_adversarial_dialogue_folder,
