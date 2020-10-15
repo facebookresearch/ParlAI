@@ -664,7 +664,7 @@ class TransformerEncoderLayer(nn.Module):
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm1)
-        attended_tensor, _ = self.attention(tensor, mask=mask)
+        attended_tensor, attention_matrix, _ = self.attention(tensor, mask=mask)
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm1)
@@ -675,7 +675,7 @@ class TransformerEncoderLayer(nn.Module):
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
-        return tensor
+        return tensor, {'self_attn': attention_matrix}
 
 
 class TransformerDecoder(nn.Module):
@@ -989,7 +989,7 @@ class TransformerDecoderLayer(nn.Module):
             x = _normalize(x, self.norm1)
 
         # don't peak into the future!
-        x, final_self_attn_incr_state = self.self_attention(
+        x, self_attention_matrix, final_self_attn_incr_state = self.self_attention(
             query=x,
             mask=decoder_mask,
             incr_state=incr_state.get('self_attn'),
@@ -1004,7 +1004,7 @@ class TransformerDecoderLayer(nn.Module):
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
             x = _normalize(x, self.norm2)
-        x, final_encoder_attn_incr_state = self.encoder_attention(
+        x, encoder_attention_matrix, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
             value=encoder_output,
@@ -1027,11 +1027,15 @@ class TransformerDecoderLayer(nn.Module):
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             x = _normalize(x, self.norm3)
 
+        attention_matrices = {
+            'self_attn': self_attention_matrix,
+            'encoder_attn': encoder_attention_matrix,
+        }
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
             'encoder_attn': final_encoder_attn_incr_state,
         }
-        return x, new_incr_state
+        return x, attention_matrices, new_incr_state
 
     def _create_selfattn_mask(self, x):
         # figure out how many timestamps we need
