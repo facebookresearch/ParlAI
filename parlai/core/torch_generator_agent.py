@@ -1149,7 +1149,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 # exit early if possible
                 break
 
-            score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
+            score, _, incr_state = model.decoder(
+                decoder_input, encoder_states, incr_state
+            )
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
             score = model.output(score)
