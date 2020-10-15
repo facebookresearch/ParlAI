@@ -1309,7 +1309,7 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
 
@@ -1325,7 +1325,7 @@ class MultiHeadAttention(nn.Module):
           the key, value, and mask
         :param static_kv: True if the key and value are held constant during decoding
           (as in encoder/decoder attention)
-        :return: (final attended tensor, new incremental state)
+        :return: (final attended tensor, key/value-multiplied tensor before softmax new incremental state)
         """
 
         batch_size, query_len, dim = query.size()
@@ -1434,7 +1434,7 @@ class MultiHeadAttention(nn.Module):
 
         out = self.out_lin(attentioned)
 
-        return out, new_incr_state
+        return out, dot_prod, new_incr_state
 
     def reorder_incremental_state(
         self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
