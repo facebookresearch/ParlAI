@@ -16,8 +16,6 @@ class Reformat_Multiwoz(object):
     def __init__(self, data_dir):
         self.data_dir = data_dir
         self.data_path = os.path.join(self.data_dir, "data.json")
-        self.reformat_data_name = "data_reformat_trade_dst.json"
-        self.reformat_data_path = os.path.join(self.data_dir, self.reformat_data_name)
 
         self.val_path = os.path.join(self.data_dir, "valListFile.json")
         self.test_path = os.path.join(self.data_dir, "testListFile.json")
@@ -41,7 +39,7 @@ class Reformat_Multiwoz(object):
             json.dump(self.dials_form, tf, indent=2)
         print(f"Saved reformatted data to {self.reformat_data_path} ...")
 
-    def reformat_from_trade_proc_to_turn(self):
+    def reformat_dst(self):
         """
         following trade's code for normalizing multiwoz*
         now the data has format:
@@ -78,6 +76,8 @@ class Reformat_Multiwoz(object):
             ...
             }
         """
+        self.reformat_data_name = "data_reformat_trade_dst.json"
+        self.reformat_data_path = os.path.join(self.data_dir, self.reformat_data_name)
         self.data_trade_proc_path = os.path.join(self.data_dir, "dials_trade.json")
         self.load_dials(data_path = self.data_trade_proc_path)
         self.dials_form = {}
@@ -137,9 +137,105 @@ class Reformat_Multiwoz(object):
         with open(self.reformat_data_path, "w") as tf:
             json.dump(self.dials_form, tf, indent=2)
 
+    def reformat_dial(self):
+        """
+        following trade's code for normalizing multiwoz*
+        now the data has format:
+        file=[{
+            "dialogue_idx": dial_id,
+            "domains": [dom],
+            "dialogue": [
+                    {
+                        "turn_idx": 0,
+                        "domain": "hotel",
+                        "system_transcript": "system response", # respond to the utterance in previous turn
+                        "transcript": "user utterance",
+                        "system_act": [],
+                        "belief_state": [{
+                            "slots":[["domain-slot_type","slot_vale"]],
+                            "act":  "inform"
+                        }, ...], # accumulated
+                        "turn_label": [["domain-slot_type","slot_vale"],...],    # for current turn
+                    },
+                    ...
+                ],
+                ...
+            },
+            ]
+        and output with format like:
+        file={
+            dial_id-turn_num:
+                    {
+                        "dial_id": dial_id
+                        "turn_num": 0,
+                        "response": system response,
+                        "context" : "User: ... Sys: ... User:..."
+                    },
+            ...
+            }
+        """
+        self.reformat_data_name = "data_reformat_trade_dial.json"
+        self.reformat_data_path = os.path.join(self.data_dir, self.reformat_data_name)
+        self.data_trade_proc_path = os.path.join(self.data_dir, "dials_trade.json")
+        self.load_dials(data_path = self.data_trade_proc_path)
+        self.dials_form = {}
+        self.dials_train, self.dials_val, self.dials_test = {}, {}, {}
+
+        for dial in tqdm(self.dials):
+            # self.dials_form[dial["dialogue_idx"]] = []
+            context = []
+            for turn in dial["dialogue"]:
+                turn_form = {}
+                # # # turn number
+                turn_form["turn_num"] = turn["turn_idx"]
+
+                # # # # dialog id
+                turn_form["dial_id"] = dial["dialogue_idx"]
+                
+
+                if turn["system_transcript"] == "":
+                    # for the first turn, there is no system response
+                    context.append("<user> " + turn["transcript"])
+                    continue
+                else:
+                    # for the rest turns
+                    turn_form["response"] = turn["system_transcript"]
+
+                turn_form["context"] = " ".join(context)
+
+                self.dials_form[dial["dialogue_idx"] + "-" + str(turn_form["turn_num"])] = turn_form
+                if dial["dialogue_idx"] in self.test_list:
+                    self.dials_test[dial["dialogue_idx"] + "-" + str(turn_form["turn_num"])] = turn_form
+                elif dial["dialogue_idx"] in self.val_list:
+                    self.dials_val[dial["dialogue_idx"] + "-" + str(turn_form["turn_num"])] = turn_form
+                else:
+                    self.dials_train[dial["dialogue_idx"] + "-" + str(turn_form["turn_num"])] = turn_form
+
+                # # # adding current turn to dialog history
+                if turn["system_transcript"] != "":
+                    context.append("<system> " + turn["system_transcript"])
+                context.append("<user> " + turn["transcript"])
+
+        self.reformat_train_data_path = self.reformat_data_path.replace(".json", "_train.json")
+        self.reformat_valid_data_path = self.reformat_data_path.replace(".json", "_valid.json")
+        self.reformat_test_data_path = self.reformat_data_path.replace(".json", "_test.json")
+
+        with open(self.reformat_train_data_path, "w") as tf:
+            json.dump(self.dials_train, tf, indent=2)
+        with open(self.reformat_valid_data_path, "w") as tf:
+            json.dump(self.dials_val, tf, indent=2)
+        with open(self.reformat_test_data_path, "w") as tf:
+            json.dump(self.dials_test, tf, indent=2)
+        with open(self.reformat_data_path, "w") as tf:
+            json.dump(self.dials_form, tf, indent=2)
+
 def reformat_dst(data_dir):
     reformat = Reformat_Multiwoz(data_dir)
-    reformat.reformat_from_trade_proc_to_turn()
+    reformat.reformat_dst()
+
+def reformat_dial(data_dir):
+    reformat = Reformat_Multiwoz(data_dir)
+    reformat.reformat_dial()
 
 def Parse_args():
     parser = argparse.ArgumentParser()
@@ -155,8 +251,7 @@ def main():
     reformat = Reformat_Multiwoz(args)
     if args.reformat_data_name is not None:
         reformat.reformat_data_path = os.path.join(reformat.data_dir, args.reformat_data_name)
-    if args.trade:
-        reformat.reformat_from_trade_proc_to_turn()
+    reformat.reformat_dst()
     
 
 if __name__ == "__main__":
