@@ -5,6 +5,7 @@
 
 """
 Implements extentions to NN code for transformers.
+
 These include custom fine-tuning losses and the like that are training detail extentions
 rather than new model architectures in themselves.
 """
@@ -13,7 +14,6 @@ from contextlib import AbstractContextManager
 import copy
 import re
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.params import ParlaiParser
@@ -25,7 +25,9 @@ R3F_NOISE_UNIFORM = "uniform"
 class R3FMixin(object):
     """
     Class that helps implement "Better Fine-Tuning by Reducing Representational
-    Collapse", Aghajanyan et al. (2020). https://arxiv.org/ans/2008.03156.
+    Collapse", Aghajanyan et al.
+
+    (2020). https://arxiv.org/ans/2008.03156.
     """
 
     @staticmethod
@@ -130,10 +132,7 @@ class R3FMixin(object):
         encoder_embedding_found = False
         decoder_embedding_found = False
         for name, layer in module.named_modules():
-            if self.noise_encoder and (
-                re.match(f"^encoder.*norm_embeddings$", name)
-                or re.match("^encoder.*wte$", name)
-            ):
+            if self.noise_encoder and (re.match(f"^encoder.*norm_embeddings$", name)):
                 self.r3f_embeddings["encoder"] = layer
                 encoder_embedding_found = True
             if self.noise_decoder and (
@@ -145,34 +144,34 @@ class R3FMixin(object):
         if (self.noise_encoder != encoder_embedding_found) or (
             self.noise_decoder != decoder_embedding_found
         ):
-            raise RuntimeError("R3F: Embedding to noise not found.")
+            raise RuntimeError(
+                """
+                R3F: Embedding to add noise to not found in model. (Does the part, encoder/decoder, exist in the model you are running? Is the name for the embedding accounted for in `_find_embeddings()`?)
+                """
+            )
 
     def _deep_copy_encoder_embedding(self, parent, found_encoder=False):
         """
         TEMPORARY UNTIL BEST NOISING MODE (encoder only, decoder only, both) determined.
 
-        Needed cause BART has the same embedding in both the encoder/decoder; use this to separate them.
+        Needed cause BART has the same embedding in both the encoder/decoder; use this
+        to separate them.
         """
         for name, layer in parent.named_children():
             if name == "encoder":
                 self._deep_copy_encoder_embedding(layer, True)
-            elif found_encoder and name is "norm_embeddings":
-                setattr(
-                    parent,
-                    "norm_embeddings",
-                    copy.deepcopy(getattr(parent, "norm_embeddings")),
-                )
-            elif found_encoder and name is "wte":
-                setattr(parent, "wte", copy.deepcopy(getattr(parent, "wte")))
-                return
+            elif found_encoder and name == "norm_embeddings":
+                parent.norm_embeddings = copy.deepcopy(parent.norm_embeddings)
+            elif found_encoder and name == "wte":
+                parent.wte = copy.deepcopy(parent.wte)
             else:
                 self._deep_copy_encoder_embedding(layer, found_encoder)
 
 
 class R3FNoiseEmbeddingContextManager(AbstractContextManager):
     """
-    This class finds the input embeddings map under the encoder/decoder, depending on what
-    is selected, and adds R3F noise to their output.
+    This class finds the input embeddings map under the encoder/decoder, depending on
+    what is selected, and adds R3F noise to their output.
     """
 
     def __init__(self, context, module):
