@@ -8,7 +8,7 @@ Models trained on large unlabeled corpora of human interactions will learn patte
 
 ## Paper
 
-[Link](TBD)
+[Link](https://arxiv.org/abs/2010.07079)
 
 
 ## Data
@@ -59,6 +59,6 @@ If you use the data or models in your own work, please cite with the following B
     @inproceedings{xu2020safetyrecipes,
       author={Jing Xu, Da Ju, Margaret Li, Y-Lan Boureau, Jason Weston, Emily Dinan},
       title={Recipes for Safety in Open-domain Chatbots},
-      journal={arXiv preprint arXiv:TBD},
+      journal={arXiv preprint arXiv:2010.07079},
       year={2020},
     }

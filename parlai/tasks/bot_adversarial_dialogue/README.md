@@ -1,12 +1,12 @@
 Task: Bot Adversarial Dialogue Dataset
 ===========================
 Description: Dialogue datasets labeled with offensiveness from Bot Adversarial Dialogue task
-Link: 
-Arxiv Paper: 
-=========================== 
+[Project](parl.ai/projects/recipes/safety_recipes)
+[Arxiv Paper](https://arxiv.org/abs/2010.07079)
+===========================
 
 ## Teachers
-The `BotAdversarialDialogueTeacher` in `agents.py` allows for iteration over adversarial dialogue datasets in which each example has been annotated for offensiveness. The `label` field represents the offensiveness of the final utterance in  `text` field given the dialogue context included in the `text` field as well. 
+The `BotAdversarialDialogueTeacher` in `agents.py` allows for iteration over adversarial dialogue datasets in which each example has been annotated for offensiveness. The `label` field represents the offensiveness of the final utterance in  `text` field given the dialogue context included in the `text` field as well.
 The `HumanSafetyEvaluationTeacher` in `agents.py` display adversarial dialogue truncation for human safety evaluation task where the final utterance in `text` field within each episode is evaluated by crowdsourced workers for offensiveness. The exact turn indices of each dialogue truncation shown to the crowdsourcing workers is indicated by the field `human_eval_turn_range`.
 
 ## Files
