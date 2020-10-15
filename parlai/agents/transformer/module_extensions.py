@@ -18,6 +18,7 @@ import torch.nn.functional as F
 
 from parlai.core.params import ParlaiParser
 
+
 R3F_NOISE_NORMAL = "normal"
 R3F_NOISE_UNIFORM = "uniform"
 
@@ -76,7 +77,7 @@ class R3FMixin(object):
             )
         elif self.r3f_noise_type == R3F_NOISE_UNIFORM:
             self.r3f_noise_sampler = torch.distributions.uniform.Uniform(
-                low=-self.r3f_eps, high=self.eps
+                low=-self.r3f_eps, high=self.r3f_eps
             )
         self.r3f_lambda = opts.get("r3f_lambda")
 
@@ -84,10 +85,10 @@ class R3FMixin(object):
         self.noise_encoder = opts.get("r3f_encoder_noise")
         self.noise_decoder = opts.get("r3f_decoder_noise")
 
-        if self.use_r3f and not self.noise_encoder and not self.noise_decoder:
-            raise RuntimeError(
-                "R3FContext: Noise must be added to at least one of the encoder or decoder."
-            )
+        #        if self.use_r3f and not self.noise_encoder and not self.noise_decoder:
+        #            raise RuntimeError(
+        #                "R3FContext: Noise must be added to at least one of the encoder or decoder."
+        #            )
         # Find embedding values and store locally so we don't have to find them each turn
         self.r3f_embeddings = {}
         self._deep_copy_encoder_embedding(self.model)  # temporary
@@ -129,20 +130,16 @@ class R3FMixin(object):
         ) / noised_logits.size(0)
 
     def _find_embeddings(self, module):
-        encoder_embedding_found = False
-        decoder_embedding_found = False
         for name, layer in module.named_modules():
-            if self.noise_encoder and (re.match(f"^encoder.*norm_embeddings$", name)):
+            if self.noise_encoder and (re.search(f"encoder.*norm_embeddings$", name)):
                 self.r3f_embeddings["encoder"] = layer
-                encoder_embedding_found = True
             if self.noise_decoder and (
-                re.match(f"^decoder.*norm_embeddings$", name)
-                or re.match("^decoder.*wte$", name)
+                re.search(f"decoder.*norm_embeddings$", name)
+                or re.search("decoder.*wte$", name)
             ):
                 self.r3f_embeddings["decoder"] = layer
-                decoder_embedding_found = True
-        if (self.noise_encoder != encoder_embedding_found) or (
-            self.noise_decoder != decoder_embedding_found
+        if (self.noise_encoder is True and "encoder" not in self.r3f_embeddings) or (
+            self.noise_decoder is True and "decoder" not in self.r3f_embeddings
         ):
             raise RuntimeError(
                 """
