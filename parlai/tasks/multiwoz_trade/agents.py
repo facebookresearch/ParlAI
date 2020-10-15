@@ -236,7 +236,7 @@ class MultiWozDSTTeacher(FixedDialogTeacher):
         }
         return action
 
-class DefaultTeacher(MultiWozTeacher):
+class DefaultTeacher(MultiWozDSTTeacher):
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group('MultiWozDST Teacher Args')

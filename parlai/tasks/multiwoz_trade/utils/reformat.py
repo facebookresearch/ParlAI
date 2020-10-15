@@ -230,10 +230,16 @@ class Reformat_Multiwoz(object):
             json.dump(self.dials_form, tf, indent=2)
 
 def reformat_dst(data_dir):
+    """
+    reformat multiwoz for dialog state tracking task
+    """
     reformat = Reformat_Multiwoz(data_dir)
     reformat.reformat_dst()
 
 def reformat_dial(data_dir):
+    """
+    reformat multiwoz for dialog response generation
+    """
     reformat = Reformat_Multiwoz(data_dir)
     reformat.reformat_dial()
 
