@@ -134,21 +134,17 @@ class R3FMixin(object):
                 re.match(f"^encoder.*norm_embeddings$", name)
                 or re.match("^encoder.*wte$", name)
             ):
-                print("found encoder embedding")
                 self.r3f_embeddings["encoder"] = layer
                 encoder_embedding_found = True
             if self.noise_decoder and (
                 re.match(f"^decoder.*norm_embeddings$", name)
                 or re.match("^decoder.*wte$", name)
             ):
-                print("found decoder embedding")
                 self.r3f_embeddings["decoder"] = layer
                 decoder_embedding_found = True
         if (self.noise_encoder != encoder_embedding_found) or (
             self.noise_decoder != decoder_embedding_found
         ):
-            print(self.noise_encoder, encoder_embedding_found)
-            print(self.noise_decoder, decoder_embedding_found)
             raise RuntimeError("R3F: Embedding to noise not found.")
 
     def _deep_copy_encoder_embedding(self, parent, found_encoder=False):
@@ -161,14 +157,12 @@ class R3FMixin(object):
             if name == "encoder":
                 self._deep_copy_encoder_embedding(layer, True)
             elif found_encoder and name is "norm_embeddings":
-                print("deep copying encoder embedding")
                 setattr(
                     parent,
                     "norm_embeddings",
                     copy.deepcopy(getattr(parent, "norm_embeddings")),
                 )
             elif found_encoder and name is "wte":
-                print("deep copying encoder embedding")
                 setattr(parent, "wte", copy.deepcopy(getattr(parent, "wte")))
                 return
             else:
@@ -188,12 +182,10 @@ class R3FNoiseEmbeddingContextManager(AbstractContextManager):
         self.hooks = {}
 
         if self.context.noise_encoder:
-            print("encoder hook")
             self.hooks["encoder"] = self.context.r3f_embeddings[
                 "encoder"
             ].register_forward_hook(self._hook_implementation)
         if self.context.noise_decoder:
-            print("decoder hook")
             self.hooks["decoder"] = self.context.r3f_embeddings[
                 "decoder"
             ].register_forward_hook(self._hook_implementation)
@@ -208,7 +200,6 @@ class R3FNoiseEmbeddingContextManager(AbstractContextManager):
             self.hooks[key] = None
 
     def _hook_implementation(self, module, input, output):
-        print("call")
         noise = self.context.r3f_noise_sampler.sample(sample_shape=output.shape).to(
             output
         )
