@@ -915,7 +915,7 @@ class TransformerDecoder(nn.Module):
 
         tensor = self.forward_embedding(input, positions)
 
-        tensor = self.dropout(tensor)  # --dropout
+        embedding_output = self.dropout(tensor)  # --dropout
 
         layer_outputs = []
         attention_matrices = []
@@ -926,7 +926,7 @@ class TransformerDecoder(nn.Module):
         else:
             for idx, layer in enumerate(self.layers):
                 if idx == 0:
-                    input_tensor = tensor
+                    input_tensor = embedding_output
                 else:
                     input_tensor = layer_outputs[idx - 1]
                 output_tensor, layer_attention_matrices, new_incr_state[idx] = layer(
@@ -943,7 +943,13 @@ class TransformerDecoder(nn.Module):
         else:
             tensor = layer_outputs[-1]
 
-        return tensor, layer_outputs, attention_matrices, new_incr_state
+        return (
+            tensor,
+            layer_outputs,
+            embedding_output,
+            attention_matrices,
+            new_incr_state,
+        )
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
