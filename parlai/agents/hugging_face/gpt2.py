@@ -11,7 +11,7 @@ from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import IdentityLayer, concat_without_padding, padded_tensor
-from parlai.agents.transformer.module_extensions import R3FMixin
+from parlai.nn.r3f import R3FMixin
 
 try:
     from transformers import GPT2Model

@@ -18,7 +18,6 @@ import torch.nn.functional as F
 
 from parlai.core.params import ParlaiParser
 
-
 R3F_NOISE_NORMAL = "normal"
 R3F_NOISE_UNIFORM = "uniform"
 
@@ -34,12 +33,6 @@ class R3FMixin(object):
     @staticmethod
     def add_cmdline_args(argparser: ParlaiParser):
         group = argparser.add_argument_group('R3F fine-tuning Args')
-        group.add_argument(
-            '--use-r3f',
-            type=bool,
-            default=False,
-            help='should we use the R3f loss at all?',
-        )
         group.add_argument('--r3f-eps', type=float, default=1e-5, help='noise eps')
         group.add_argument(
             '--r3f-lambda',
@@ -66,9 +59,9 @@ class R3FMixin(object):
             default=False,
             help='Add noise to decoder. At least one of `r3f-encoder-noise` and `r3f-coder-noise` must be set to True',
         )
+        return argparser
 
     def set_r3f_settings_from_opts(self, opts):
-        self.use_r3f = opts.get('use_r3f')
         self.r3f_eps = opts.get('r3f_eps')
         self.r3f_noise_type = opts.get('r3f_noise_type')
         if self.r3f_noise_type == R3F_NOISE_NORMAL:
@@ -85,29 +78,24 @@ class R3FMixin(object):
         self.noise_encoder = opts.get("r3f_encoder_noise")
         self.noise_decoder = opts.get("r3f_decoder_noise")
 
-        #        if self.use_r3f and not self.noise_encoder and not self.noise_decoder:
-        #            raise RuntimeError(
-        #                "R3FContext: Noise must be added to at least one of the encoder or decoder."
-        #            )
         # Find embedding values and store locally so we don't have to find them each turn
         self.r3f_embeddings = {}
         self._deep_copy_encoder_embedding(self.model)  # temporary
         self._find_embeddings(self.model)
 
     def compute_loss(self, batch, return_output=False):
-        if not hasattr(self, 'use_r3f'):
+        if not hasattr(self, 'r3f_lambda'):
             self.set_r3f_settings_from_opts(self.opt)
         loss, standard_output = super().compute_loss(batch, True)
-        if self.use_r3f:
-            with R3FNoiseEmbeddingContextManager(self, self.model) as r3f:
-                noised_scores, _, _ = self.model(
-                    *self._model_input(batch), ys=batch.label_vec
-                )
-                standard_scores, _, _ = standard_output
-                r3f_loss = r3f._calculate_symm_kl(noised_scores, standard_scores)
-                loss += self.r3f_lambda * r3f_loss
+        with R3FNoiseEmbeddingContextManager(self, self.model) as r3f:
+            noised_scores, _, *_ = self.model(
+                *self._model_input(batch), ys=batch.label_vec
+            )
+            standard_scores, _, *_ = standard_output
+            r3f_loss = r3f._calculate_symm_kl(noised_scores, standard_scores)
+            loss += self.r3f_lambda * r3f_loss
         if return_output:
-            return loss, standard_output
+            return (loss, standard_output)
         else:
             return loss
 
