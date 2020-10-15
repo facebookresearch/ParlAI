@@ -1660,7 +1660,14 @@ class TorchAgent(ABC, Agent):
             # make sure we note that we're expecting a reply in the future
             self.__expecting_to_reply = True
 
+        # keep around the observation for updating history based on label
         self.observation = observation
+
+        # possibly change tokenization methodology based on if this is a
+        # training example
+        if hasattr(self.dict, 'set_training_mode'):
+            self.dict.set_training_mode('labels' in observation)
+
         # Update the history using the observation.
         # We may also consider adding a temporary string to the history
         # using the `get_temp_history()` function: this string will

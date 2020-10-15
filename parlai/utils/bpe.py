@@ -13,6 +13,7 @@ from abc import ABC, abstractmethod
 from functools import lru_cache
 import json
 import os
+import random
 import re
 from typing import Dict, List, Optional, Set, Tuple
 from typing_extensions import final
@@ -108,6 +109,8 @@ class BPEHelper(ABC):
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
         self._special_tokens: Dict[str, int] = {}
+        self.bpe_dropout = opt['bpe_dropout']
+        self._is_training_mode = False
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -124,7 +127,19 @@ class BPEHelper(ABC):
             hidden=True,
             help='add prefix space before encoding',
         )
+        parser.add_argument(
+            '--bpe-dropout',
+            type=float,
+            default=None,
+            help='Use BPE dropout during training.',
+        )
         return parser
+
+    def set_training_mode(self, mode: bool):
+        """
+        Used to toggle BPE dropout on (True) or off (False).
+        """
+        self._is_training_mode = mode
 
     @final
     def encode(self, text: str) -> List[str]:
@@ -610,14 +625,31 @@ class Gpt2BpeHelper(BPEHelper):
         :return pairs:
             set of tuples of symbols
         """
-        pairs = set()
+        pairs = []
         prev_char = word[0]
         for char in word[1:]:
-            pairs.add((prev_char, char))
+            pairs.append((prev_char, char))
             prev_char = char
         return pairs
 
-    @lru_cache(maxsize=10240)
+    def _dropout_pairs(self, pairs):
+        """
+        Implements BPE dropout (Provlikov et al., 2019).
+
+        https://arxiv.org/abs/1910.13267
+
+        Randomly removes merges from the list of possible merges. This can
+        result in different subwords being used to realized the same string,
+        and effectively regularizes representations.
+        """
+        if not self.bpe_dropout or not self._is_training_mode:
+            return pairs
+
+        dropped_pairs = [p for p in pairs if random.random() > self.bpe_dropout]
+        if not dropped_pairs:
+            dropped_pairs = [random.choice(pairs)]
+        return dropped_pairs
+
     def bpe(self, token: str) -> str:
         """
         Convert token to BPE.
@@ -635,7 +667,10 @@ class Gpt2BpeHelper(BPEHelper):
             return token
 
         while True:
-            bigram = min(pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf')))
+            dropped_pairs = self._dropout_pairs(pairs)
+            bigram = min(
+                dropped_pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf'))
+            )
             if bigram not in self.bpe_ranks:
                 break
             first, second = bigram

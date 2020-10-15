@@ -235,6 +235,9 @@ class DictionaryAgent(Agent):
             'dict_textfields', DictionaryAgent.default_textfields
         ).split(",")
 
+        # used to signal whether we should use training time tricks, like bpe droput
+        self._is_training_mode = False
+
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
         except AttributeError:
@@ -791,3 +794,16 @@ class DictionaryAgent(Agent):
         Return string representation of frequencies in dictionary.
         """
         return str(self.freq)
+
+    def set_training_mode(self, mode: bool):
+        """
+        Indicate whether the dict is being utilized during training.
+
+        This is used to signal from TorchAgent to the dict that it's allowed
+        to enable things like BPE dropout. It is NOT used to indicate whether
+        the dictionary itself is in training time.
+
+        Use True for training time, False for not.
+        """
+        if hasattr(self, 'bpe'):
+            self.bpe.set_training_mode(mode)
