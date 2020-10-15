@@ -583,10 +583,16 @@ class TransformerEncoder(nn.Module):
         Tuple[
             torch.Tensor,
             torch.BoolTensor,
+            torch.Tensor,
             List[torch.Tensor],
             List[Dict[str, torch.Tensor]],
         ],
-        Tuple[torch.Tensor, List[torch.Tensor], List[Dict[str, torch.Tensor]]],
+        Tuple[
+            torch.Tensor,
+            torch.Tensor,
+            List[torch.Tensor],
+            List[Dict[str, torch.Tensor]],
+        ],
     ]:
         """
         Forward pass.
@@ -606,12 +612,12 @@ class TransformerEncoder(nn.Module):
             tensor = _normalize(tensor, self.norm_embeddings)
 
         # --dropout on the embeddings
-        tensor = self.dropout(tensor)
+        embedding_output = self.dropout(tensor)
 
-        tensor *= mask.unsqueeze(-1).type_as(tensor)
+        embedding_output *= mask.unsqueeze(-1).type_as(embedding_output)
 
         # apply transformer layers
-        layer_outputs, attention_matrices = self.forward_layers(tensor, mask)
+        layer_outputs, attention_matrices = self.forward_layers(embedding_output, mask)
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(layer_outputs[-1], self.norm_embeddings)
@@ -621,9 +627,9 @@ class TransformerEncoder(nn.Module):
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
         if out_mask is not None:
-            return tensor, out_mask, layer_outputs, attention_matrices
+            return tensor, out_mask, embedding_output, layer_outputs, attention_matrices
         else:
-            return tensor, layer_outputs, attention_matrices
+            return tensor, embedding_output, layer_outputs, attention_matrices
 
     def _apply_model_parallel(self, tensor, mask):
         """

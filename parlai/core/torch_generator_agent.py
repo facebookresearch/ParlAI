@@ -317,12 +317,14 @@ class TorchGeneratorModel(nn.Module, ABC):
             - encoder_states are the output of model.encoder. Model specific types.
               Feed this back in to skip encoding on the next call.
         """
+        # TODO: update docstring's outputs
         assert ys is not None, "Greedy decoding in TGModel.forward no longer supported."
         # TODO: get rid of longest_label
         # keep track of longest label we've ever seen
         # we'll never produce longer ones than that during prediction
         self.longest_label = max(self.longest_label, ys.size(1))
 
+        embedding_states = {}
         hidden_states = {}
         attention_matrices = {}
 
@@ -334,18 +336,26 @@ class TorchGeneratorModel(nn.Module, ABC):
             )
         else:
             encoder_states = self.encoder(*xs)
-            hidden_states['encoder'], attention_matrices['encoder'] = encoder_states[
-                -2:
-            ]
+            embedding_states['encoder'], hidden_states['encoder'], attention_matrices[
+                'encoder'
+            ] = encoder_states[-3:]
 
         # use teacher forcing
         (
             scores,
             preds,
+            embedding_states['decoder'],
             hidden_states['decoder'],
             attention_matrices['decoder'],
         ) = self.decode_forced(encoder_states, ys)
-        return scores, preds, encoder_states[:-2], hidden_states, attention_matrices
+        return (
+            scores,
+            preds,
+            encoder_states[:-3],
+            embedding_states,
+            hidden_states,
+            attention_matrices,
+        )
 
 
 class PPLMetric(AverageMetric):
