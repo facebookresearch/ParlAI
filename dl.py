@@ -65,7 +65,10 @@ class ParlaiIterableDataset(IterableDataset):
                         batch.pop(i)
                         agents.pop(i)
 
-            yield self.agent.batchify(output)
+            out = self.agent.batchify(output)
+            # toggle this
+            # del out['observations']
+            yield out
 
 
 def main():
@@ -75,7 +78,7 @@ def main():
     dl = DataLoader(
         ParlaiIterableDataset(opt, agent.clone()),
         batch_size=None,
-        num_workers=4,
+        num_workers=0,
         pin_memory=False,
     )
     total = 0

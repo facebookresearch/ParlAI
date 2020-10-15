@@ -7,8 +7,11 @@ import torch
 import time
 import random
 import torch.multiprocessing as multiprocessing
-import tokenizers
-from transformers import GPT2Tokenizer, GPT2TokenizerFast
+
+from parlai.core.torch_agent import Batch
+from parlai.core.worlds import _create_task_agents
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser
 
 NUM_EXAMPLES = 200
 NUM_WORKERS = 10
@@ -34,86 +37,53 @@ class End:
     pass
 
 
-def tok(tokenizer, text):
-    r = {
-        'field1': tokenizer.encode(text, return_tensors='pt')[0, :128],
-        'field2': tokenizer.encode(text, return_tensors='pt')[0, :128],
-        # 'field3': tokenizer.encode(text, return_tensors='pt')[0, :128],
-        # 'field4': tokenizer.encode(text, return_tensors='pt')[0, :128],
-    }
-
-    r['len'] = len(r['field1'])
-    return r
+def prep(agent, acts):
+    batch = agent.batchify(acts)
+    # del batch['observations']
+    for key in batch.keys():
+        if isinstance(batch[key], torch.Tensor):
+            batch[key] = batch[key].share_memory_()
+    return dict(batch)
 
 
-def generate_tensors(worker_id, queue, evt):
+def generate_tensors(worker_id, queue, evt, opt, agent):
     print(f"Starting generate")
-    tokenizer = get_tokenizer()
-    sent_buffer = False
-    buff = None
-    ongoing = []
-    with open("bible.txt") as f:
-        for i, line in enumerate(f.readlines()):
-            ongoing.append(line)
-            if len(ongoing) > 10:
-                ongoing.pop(0)
-            if i % NUM_WORKERS == worker_id:
-                text = "\n".join(ongoing)
-                tokenized = tok(tokenizer, text)
-                if buff is None:
-                    buff = tokenized
-                    for k in buff.keys():
-                        if k == 'len':
-                            continue
-                        tokenized[k].share_memory_()
-                else:
-                    for k in buff.keys():
-                        if k == 'len':
-                            continue
-                        if len(buff[k]) >= len(tokenized[k]):
-                            buff[k].zero_()
-                            buff[k][: len(tokenized[k])] = tokenized[k]
-                            sent_buffer = False
-                        else:
-                            buff[k] = tokenized[k].share_memory_()
-                if sent_buffer:
-                    queue.put((worker_id, None))
-                else:
-                    sent_buffer = True
-                    queue.put((worker_id, buff))
+    agent.use_cuda = False
+    if 'train' in opt['datatype'] and 'ordered' not in opt['datatype']:
+        opt['datatype'] = opt['datatype'] + ':ordered'
+    task_agent = _create_task_agents(opt)[0].clone()
+
+    act_count = 0
+    acts = []
+    while not task_agent.epoch_done():
+        act = task_agent.act()
+        if act['episode_done']:
+            act_count += 1
+        if act_count % NUM_WORKERS != worker_id:
+            continue
+        acts.append(agent.observe(act))
+        agent.self_observe({})
+        if len(acts) == BS:
+            queue.put((worker_id, prep(agent, acts)))
+            acts = []
+    if acts:
+        queue.put((worker_id, prep(agent, acts)))
+
     queue.put((worker_id, End()))
     evt.wait()
 
 
-def get_tokenizer():
-    return GPT2TokenizerFast.from_pretrained("gpt2")
-
-
-def generate_tensors_slow():
-    print(f"Starting slow generate")
-    tokenizer = get_tokenizer()
-    with open("bible.txt") as f:
-        ongoing = []
-        for i, line in enumerate(f.readlines(), 1):
-            ongoing.append(line)
-            if len(ongoing) > 10:
-                ongoing.pop(0)
-            text = "\n".join(ongoing)
-            if i % 10000 == 0:
-                print(i)
-            item = tok(tokenizer, text)
-            item = {k: v.cuda() if k != 'len' else v for k, v in item.items()}
-            yield item
-
-
 class Reader(object):
-    def __init__(self):
-        mp = multiprocessing.get_context("spawn")
-        self.queue = mp.Manager().Queue()
+    def __init__(self, opt):
+        mp = multiprocessing.get_context("fork")
+        self.queue = mp.Queue(1000)
         self.events = [mp.Event() for _ in range(NUM_WORKERS)]
-        self.buffers = [None] * NUM_WORKERS
+        self.agent = create_agent(opt)
         self.processes = [
-            mp.Process(target=generate_tensors, args=(i, self.queue, self.events[i]))
+            mp.Process(
+                target=generate_tensors,
+                args=(i, self.queue, self.events[i], opt, self.agent),
+            )
             for i in range(NUM_WORKERS)
         ]
         self.i = 0
@@ -141,36 +111,25 @@ class Reader(object):
                 if self.running_workers == 0:
                     raise StopIteration
                 example = None
-            elif example is None:
-                example = self.buffers[worker_id]
-            else:
-                self.buffers[worker_id] = example
-        cuda = {k: v.cuda() if k != 'len' else v for k, v in example.items()}
-
-        self.i += 1
-        if self.i % 10000 == 0:
+        batch = Batch(**example)
+        batch.cuda()
+        self.i += batch.batchsize
+        if self.i % 10 == 0:
             print(self.i)
 
 
 def main():
-    import timeit
+    opt = ParlaiParser(True, True).parse_args()
+    r = Reader(opt)
 
-    print("slow")
-    dt = timeit.default_timer()
-    for item in generate_tensors_slow():
-        pass
-    print(timeit.default_timer() - dt)
-
-    print('"fast"')
-    r = Reader()
-
-    dt = timeit.default_timer()
     while True:
         try:
             r.parley()
         except StopIteration:
             break
-    print(timeit.default_timer() - dt)
+        except KeyboardInterrupt:
+            del r
+    print(r.i)
 
 
 if __name__ == '__main__':

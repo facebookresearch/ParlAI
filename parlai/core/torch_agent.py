@@ -139,6 +139,12 @@ class Batch(AttrDict):
             **kwargs,
         )
 
+    def cuda(self):
+        for key in self.keys():
+            if isinstance(self[key], torch.Tensor):
+                self[key] = self[key].cuda()
+        return self
+
 
 class Output(AttrDict):
     """
