@@ -12,6 +12,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGenerato
 from parlai.utils.io import PathManager
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import IdentityLayer, padded_tensor
+from parlai.agents.transformer.module_extensions import R3FMixin
 
 try:
     from transformers import GPT2Model
@@ -310,3 +311,10 @@ class Gpt2Agent(TorchGeneratorAgent):
             left_padded=True,
             fp16friendly=False,
         )
+
+
+class Gpt2Agent_R3F(R3FMixin, Gpt2Agent):
+    @staticmethod
+    def add_cmdline_args(argparser):
+        R3FMixin.add_cmdline_args(argparser)
+        Gpt2Agent.add_cmdline_args(argparser)

@@ -20,6 +20,7 @@ from typing import Optional, Dict, Any
 from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
 from parlai.agents.bart.modules import BartModel
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
+from parlai.agents.transformer.module_extensions import R3FMixin
 from parlai.core.agents import compare_init_model_opts
 from parlai.core.message import Message
 from parlai.core.opt import Opt
@@ -49,6 +50,7 @@ class BartAgent(TransformerGeneratorAgent):
         Override to add init-fairseq-model arg.
         """
         TransformerGeneratorAgent.add_cmdline_args(argparser)
+        R3FMixin.add_cmdline_args(argparser)
         group = argparser.add_argument_group('Bart Args')
         group.add_argument(
             '--init-fairseq-model',
@@ -173,9 +175,7 @@ class BartAgent(TransformerGeneratorAgent):
         Override to seed decoder with EOS BOS token.
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.END_IDX, self.START_IDX]
-            )
+            torch.LongTensor([self.END_IDX, self.START_IDX])  # type: ignore
             .expand(bsz * beam_size, 2)
             .to(dev)
         )
@@ -237,3 +237,12 @@ class BartAgent(TransformerGeneratorAgent):
                 )
             )
         return token_losses
+
+
+class BartAgent_R3F(R3FMixin, BartAgent):
+    @staticmethod
+    def add_cmdline_args(argparser: ParlaiParser):
+        R3FMixin.add_cmdline_args(argparser)
+        BartAgent.add_cmdline_args(argparser)
+
+    pass
