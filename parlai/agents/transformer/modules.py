@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, Tuple, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -514,7 +514,7 @@ class TransformerEncoder(nn.Module):
 
     def forward_layers(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> torch.Tensor:
+    ) -> Tuple[List[torch.Tensor], List[Dict[str, torch.Tensor]]]:
         """
         Apply transformer layers to input.
 
@@ -523,18 +523,26 @@ class TransformerEncoder(nn.Module):
         :param mask:
             mask of input
 
-        :return tensor:
-            return embedding after applying transformer layers
+        :return layer_outputs:
+            return outputs of all transformer layers
         """
+        # TODO: add attention_matrices to docstring
         if getattr(self.layers, 'is_model_parallel', False):
             # factored out for readability. It is equivalent to the other
             # condition
-            tensor = self._apply_model_parallel(tensor, mask)
+            layer_outputs, attention_matrices = self._apply_model_parallel(tensor, mask)
         else:
-            for i in range(self.n_layers):
-                tensor = self.layers[i](tensor, mask)
+            layer_output, layer_attention_matrices = self.layers[0](tensor, mask)
+            layer_outputs = [layer_output]
+            attention_matrices = [layer_attention_matrices]
+            for i in range(1, self.n_layers):
+                layer_output, layer_attention_matrices = self.layers[i](
+                    layer_outputs[i - 1], mask
+                )
+                layer_outputs.append(layer_output)
+                attention_matrices.append(layer_attention_matrices)
 
-        return tensor
+        return layer_outputs, attention_matrices
 
     def reduce_output(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
@@ -571,7 +579,15 @@ class TransformerEncoder(nn.Module):
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
+    ) -> Union[
+        Tuple[
+            torch.Tensor,
+            torch.BoolTensor,
+            List[torch.Tensor],
+            List[Dict[str, torch.Tensor]],
+        ],
+        Tuple[torch.Tensor, List[torch.Tensor], List[Dict[str, torch.Tensor]]],
+    ]:
         """
         Forward pass.
 
@@ -579,9 +595,10 @@ class TransformerEncoder(nn.Module):
             The input IDs
         :param LongTensor[batch,seqlen] positions:
             Positions for input IDs
-        :param LongTensor[batch,seqlen]:
+        :param LongTensor[batch,seqlen] segments:
             If provided, additionally adds ``segments`` as extra embedding features.
         """
+
         # embed input
         tensor, mask = self.forward_embedding(input, positions, segments)
 
@@ -594,22 +611,27 @@ class TransformerEncoder(nn.Module):
         tensor *= mask.unsqueeze(-1).type_as(tensor)
 
         # apply transformer layers
-        tensor = self.forward_layers(tensor, mask)
+        layer_outputs, attention_matrices = self.forward_layers(tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = _normalize(layer_outputs[-1], self.norm_embeddings)
+        else:
+            tensor = layer_outputs[-1]
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
         if out_mask is not None:
-            return tensor, out_mask
+            return tensor, out_mask, layer_outputs, attention_matrices
         else:
-            return tensor
+            return tensor, layer_outputs, attention_matrices
 
     def _apply_model_parallel(self, tensor, mask):
         """
         Pipeline application of model parallelism.
         """
+        raise NotImplementedError(
+            'This has not yet been changed to return layer outputs!'
+        )
         chunks = PipelineHelper.split((tensor, mask))
         work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
@@ -620,7 +642,7 @@ class TransformerEncoder(nn.Module):
             chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
-        return tensor_out
+        return layer_outputs
 
 
 class TransformerEncoderLayer(nn.Module):
