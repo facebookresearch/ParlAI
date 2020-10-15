@@ -1228,12 +1228,14 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 
         See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
         """
-        enc, mask = encoder_states
+        enc, mask, _ = encoder_states
         if not torch.is_tensor(indices):
             indices = torch.LongTensor(indices).to(enc.device)
         enc = torch.index_select(enc, 0, indices)
         mask = torch.index_select(mask, 0, indices)
-        return enc, mask
+        # NOTE: the hidden states and attention matrices don't need to be reordered
+        #  because they are not used by the decoder
+        return enc, mask, None, None
 
     def reorder_decoder_incremental_state(
         self, incremental_state: Dict[int, dict], inds: torch.Tensor

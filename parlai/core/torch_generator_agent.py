@@ -181,7 +181,7 @@ class TorchGeneratorModel(nn.Module, ABC):
             pair (logits, choices) containing the logits and MLE predictions
 
         :rtype:
-            (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
+            (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys], List[FloatTensor[bsz, ys, hid]])
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
@@ -194,10 +194,12 @@ class TorchGeneratorModel(nn.Module, ABC):
                 "you intended."
             )
         inputs = self._get_initial_forced_decoder_input(bsz, inputs)
-        latent, _ = self.decoder(inputs, encoder_states)
+        latent, hidden_states, attention_matrices, _ = self.decoder(
+            inputs, encoder_states
+        )
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
-        return logits, preds
+        return logits, preds, hidden_states, attention_matrices
 
     @abstractmethod
     def reorder_encoder_states(self, encoder_states, indices):
@@ -321,12 +323,29 @@ class TorchGeneratorModel(nn.Module, ABC):
         # we'll never produce longer ones than that during prediction
         self.longest_label = max(self.longest_label, ys.size(1))
 
+        hidden_states = {}
+        attention_matrices = {}
+
         # use cached encoding if available
-        encoder_states = prev_enc if prev_enc is not None else self.encoder(*xs)
+        if prev_enc is not None:
+            raise NotImplementedError(
+                'Cannot yet use cached encoding, because we need to pass back hidden '
+                'states and attention matrices'
+            )
+        else:
+            encoder_states = self.encoder(*xs)
+            hidden_states['encoder'], attention_matrices['encoder'] = encoder_states[
+                -2:
+            ]
 
         # use teacher forcing
-        scores, preds = self.decode_forced(encoder_states, ys)
-        return scores, preds, encoder_states
+        (
+            scores,
+            preds,
+            hidden_states['decoder'],
+            attention_matrices['decoder'],
+        ) = self.decode_forced(encoder_states, ys)
+        return scores, preds, encoder_states[:-2], hidden_states, attention_matrices
 
 
 class PPLMetric(AverageMetric):
