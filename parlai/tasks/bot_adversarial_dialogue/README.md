@@ -1,9 +1,10 @@
-Task: Bot Adversarial Dialogue Dataset
-===========================
-Description: Dialogue datasets labeled with offensiveness from Bot Adversarial Dialogue task
+# Task: Bot Adversarial Dialogue Dataset
+
+## Description
+Dialogue datasets labeled with offensiveness from Bot Adversarial Dialogue task
+
 [Project](parl.ai/projects/recipes/safety_recipes)
 [Arxiv Paper](https://arxiv.org/abs/2010.07079)
-===========================
 
 ## Teachers
 The `BotAdversarialDialogueTeacher` in `agents.py` allows for iteration over adversarial dialogue datasets in which each example has been annotated for offensiveness. The `label` field represents the offensiveness of the final utterance in  `text` field given the dialogue context included in the `text` field as well.
