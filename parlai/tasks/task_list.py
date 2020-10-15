@@ -1143,6 +1143,17 @@ task_list = [
         "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
     },
     {
+        "id": "MultiWOZ_TRADE",
+        "display_name": "MultiWOZ 2.1 trade preprocess",
+        "task": "multiwoz_trade",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+        ),
+        "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
+    },
+    {
         "id": "SelfChat",
         "display_name": "SelfChat",
         "task": "self_chat",
