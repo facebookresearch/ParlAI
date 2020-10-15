@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import timeit
 import torch
 import random
 from parlai.core.torch_agent import Batch
@@ -50,6 +51,11 @@ class ParlaiIterableDataset(IterableDataset):
             batch.append(episode_iters.pop(0))
         agents = [self.agent.clone() for _ in batch]
 
+        pre_sizes = []
+        post_sizes = []
+        pre_times = 0
+        post_times = 0
+
         while batch:
             output = []
             for i in reversed(range(len(batch))):
@@ -66,9 +72,34 @@ class ParlaiIterableDataset(IterableDataset):
                         agents.pop(i)
 
             out = self.agent.batchify(output)
+            import io, pickle
+
+            f = io.BytesIO()
+            g = io.BytesIO()
+            pickle.dump(out, f)
             # toggle this
             # del out['observations']
-            yield out
+            if out['observations']:
+                for obs in out['observations']:
+                    for key in list(obs.keys()):
+                        if isinstance(key, torch.Tensor):
+                            del obs[key]
+            pickle.dump(out, g)
+            pre_sizes.append(len(f.getvalue()))
+            post_sizes.append(len(g.getvalue()))
+            f.seek(0)
+            g.seek(0)
+            start = timeit.default_timer()
+            pickle.load(f)
+            pre_times += timeit.default_timer() - start
+            start = timeit.default_timer()
+            pickle.load(g)
+            post_times += timeit.default_timer() - start
+            # yield out
+        import numpy as np
+
+        print(np.mean(pre_sizes), np.mean(post_sizes))
+        print("time", pre_times, post_times)
 
 
 def main():
@@ -78,7 +109,7 @@ def main():
     dl = DataLoader(
         ParlaiIterableDataset(opt, agent.clone()),
         batch_size=None,
-        num_workers=0,
+        num_workers=4,
         pin_memory=False,
     )
     total = 0
