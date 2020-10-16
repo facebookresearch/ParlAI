@@ -1471,6 +1471,12 @@ class TorchAgent(ABC, Agent):
                     x_lens, xs, x_lens, valid_inds, exs, descending=True
                 )
 
+        # FULL TEXT
+        full_xs, full_x_lens = None, None
+        if any(ex.get('full_text_vec') is not None for ex in exs):
+            _full_xs = [ex.get('full_text_vec', self.EMPTY) for ex in exs]
+            full_xs, full_x_lens = self._pad_tensor(_full_xs)
+
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
@@ -1501,19 +1507,21 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        train_batch = any('labels' in obs for obs in exs)
+
         # When passing Batch objects along multiprocessing queues, it is
         # important that no tensors are unnecessarily placed in the batch,
         # as this requires an expensive tensor copy. Thus, it is necessary
         # to clean the exs of any tensors (giving us "clean" exs)
-        kleenexs = [
-            {k: v for k, v in ex.items() if not isinstance(v, torch.Tensor)}
-            for ex in exs
-        ]
+        if self.opt.get('num_workers') > 1:
+            exs = None
 
         return Batch(
             batchsize=len(valid_inds),
             text_vec=xs,
             text_lengths=x_lens,
+            full_text_vec=full_xs,
+            full_text_lengths=full_x_lens,
             label_vec=ys,
             label_lengths=y_lens,
             labels=labels,
@@ -1521,7 +1529,8 @@ class TorchAgent(ABC, Agent):
             candidates=cands,
             candidate_vecs=cand_vecs,
             image=imgs,
-            observations=kleenexs,
+            observations=exs,
+            training=train_batch,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -1866,7 +1875,6 @@ class TorchAgent(ABC, Agent):
             # the batch has already been batchified in the background
             batch_size = observations.batchsize
             batch = observations
-            observations = batch.observations
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
         # clear local metrics before anything else
         self._local_metrics.clear()
@@ -1887,8 +1895,7 @@ class TorchAgent(ABC, Agent):
             batch.cuda()
 
         # check if there are any labels available, if so we will train on them
-        observations = batch.observations
-        self.is_training = any('labels' in obs for obs in observations)
+        self.is_training = batch.training
 
         if (
             'label_vec' in batch

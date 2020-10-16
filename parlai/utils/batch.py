@@ -31,6 +31,13 @@ class Batch(AttrDict):
         list of length bsz containing the lengths of the text in same order as
         text_vec; necessary for pack_padded_sequence.
 
+    :param full_text_vec:
+        bsz x seqlen tensor containing full, untruncated parsed text data.
+
+    :param text_lengths:
+        list of length bsz containing the lengths of the full text in same order as
+        full_text_vec; necessary for pack_padded_sequence.
+
     :param label_vec:
         bsz x seqlen tensor containing the parsed label (one per batch row).
 
@@ -60,11 +67,16 @@ class Batch(AttrDict):
 
     :param observations:
         the original observations in the batched order
+
+    :param training:
+        whether this batch is a train batch
     """
 
     batchsize: int
     text_vec: Optional[torch.LongTensor]
     text_lengths: Optional[List[int]]
+    full_text_vec: Optional[torch.LongTensor]
+    full_text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]
     label_lengths: Optional[List[int]]
     labels: Optional[List[str]]
@@ -73,11 +85,14 @@ class Batch(AttrDict):
     candidate_vecs: Optional[List[List[torch.LongTensor]]]
     image: Optional[List[Any]]
     observations: Optional[List[Message]]
+    training: Optional[bool]
 
     def __init__(
         self,
         text_vec=None,
         text_lengths=None,
+        full_text_vec=None,
+        full_text_lengths=None,
         label_vec=None,
         label_lengths=None,
         labels=None,
@@ -86,11 +101,14 @@ class Batch(AttrDict):
         candidate_vecs=None,
         image=None,
         observations=None,
+        training=None,
         **kwargs,
     ):
         super().__init__(
             text_vec=text_vec,
             text_lengths=text_lengths,
+            full_text_vec=full_text_vec,
+            full_text_lengths=full_text_lengths,
             label_vec=label_vec,
             label_lengths=label_lengths,
             labels=labels,
@@ -99,6 +117,7 @@ class Batch(AttrDict):
             candidate_vecs=candidate_vecs,
             image=image,
             observations=observations,
+            training=training,
             **kwargs,
         )
 
