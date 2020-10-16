@@ -42,7 +42,6 @@ from parlai.utils.fp16 import (
     MemoryEfficientFP16Adam,
     Adafactor,
 )
-from parlai.utils.misc import AttrDict, warn_once
 from parlai.core.metrics import (
     Metrics,
     Metric,
@@ -1875,7 +1874,7 @@ class TorchAgent(ABC, Agent):
         # initialize a list of replies with this agent's id
         # in background prep, `batch_size` is the number of valid obs, whereas
         # in normal training, `batch_size` is the number of total obs
-        reply_length = max(max(batch.valid_indices) + 1, batch_size)
+        reply_length = max(max(batch.valid_indices or [0]) + 1, batch_size)
         batch_reply = [
             Message({'id': self.getID(), 'episode_done': False})
             for _ in range(reply_length)

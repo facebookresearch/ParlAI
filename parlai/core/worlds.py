@@ -1188,9 +1188,6 @@ class DynamicBatchWorld(World):
         :param acts:
             list of acts returned from the model's batch act
         """
-        # great, this batch is good to go! let's run it!
-        acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
-        self.acts = [[self._task_acts[i] for i in batch], acts]
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
             # we need to make sure that the teachers saw the result

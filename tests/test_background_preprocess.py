@@ -102,7 +102,7 @@ class TestBackgroundPreprocess(unittest.TestCase):
             args['batchsize'] = 8
             args['dynamic_batching'] = 'full'
             args['short_final_eval'] = short_final_eval
-            args['validation_max_exs'] = NUM_TEST * vme_multiplier
+            args['validation_max_exs'] = int(NUM_TEST * vme_multiplier)
             valid, test = testing_utils.train_model(args)
             for report in [valid, test]:
                 if short_final_eval:
@@ -167,7 +167,7 @@ class TestBackgroundPreprocess(unittest.TestCase):
             args['batchsize'] = 8
             args['dynamic_batching'] = 'full'
             args['short_final_eval'] = short_final_eval
-            args['validation_max_exs'] = NUM_TEST * vme_multiplier
+            args['validation_max_exs'] = int(NUM_TEST * vme_multiplier)
             valid, test = testing_utils.train_model(args)
             for rep in [valid, test]:
                 assertion = self.assertLess if short_final_eval else self.assertEqual
