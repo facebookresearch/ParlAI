@@ -1552,10 +1552,10 @@ class TreeSearch(object):
             len(n_best_list) >= 1
         ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
         for (pred, score) in n_best_list:
-            assert (
-                pred == self.eos
-            ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
-            with score {score.item():.2f}'
+            assert (pred == self.eos).sum() == 1, (
+                f'TreeSearch returned a finalized hypo with multiple end tokens '
+                f'with score {score.item():.2f}'
+            )
 
         return n_best_list
 
