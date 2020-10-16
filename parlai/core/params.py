@@ -735,7 +735,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--num-workers',
             type=int,
             default=1,
-            help='how many workers the Pytorch dataloader should use',
+            help='how many workers to use for background preprocessing',
             hidden=True,
         )
         parlai.add_argument(

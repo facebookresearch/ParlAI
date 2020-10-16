@@ -53,9 +53,6 @@ from parlai.utils.io import PathManager
 from abc import ABC, abstractmethod
 
 import concurrent.futures
-
-import multiprocessing
-from multiprocessing import Value, Lock
 from threading import Thread
 import queue
 import random

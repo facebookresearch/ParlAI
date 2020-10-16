@@ -14,7 +14,7 @@ The corpora are all randomly, but deterministically generated
 from parlai.core.teachers import (
     FixedDialogTeacher,
     DialogTeacher,
-    FbDialogTeacher,
+    FbDeprecatedDialogTeacher,
     AbstractImageTeacher,
     Teacher,
     ChunkTeacher,
@@ -93,7 +93,7 @@ class CandidateBaseTeacher(Teacher, ABC):
         return [list(x) for x in itertools.permutations(self.words, self.example_size)]
 
     def num_episodes(self) -> int:
-        if self.datatype == 'train':
+        if self.datafile == 'train':
             return self.num_train
         else:
             return self.num_test
@@ -178,7 +178,7 @@ class FixedDialogCandidateTeacher(CandidateBaseTeacher, FixedDialogTeacher):
         }
 
 
-class NoCandidateFbDialogTeacher(CandidateBaseTeacher, FbDialogTeacher):
+class NoCandidateFbDialogTeacher(CandidateBaseTeacher, FbDeprecatedDialogTeacher):
     """
     Teacher for streaming.
     """
@@ -187,7 +187,7 @@ class NoCandidateFbDialogTeacher(CandidateBaseTeacher, FbDialogTeacher):
         opt['datafile'] = self._get_datafile(opt)
         CandidateBaseTeacher.__init__(self, opt, shared=shared)
         self._prepare_data(opt)
-        FbDialogTeacher.__init__(self, opt, shared=shared)
+        FbDeprecatedDialogTeacher.__init__(self, opt, shared=shared)
 
     def _get_datafile(self, opt: Opt) -> str:
         dt = opt['datatype'].split(':')[0]
