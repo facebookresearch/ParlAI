@@ -14,15 +14,6 @@ import uuid
 import errno
 import requests
 
-# TODO uncomment once stable is created.
-# logging.warn(
-#     'Directly importing parlai.mturk.core.<module> is pending deprecation, '
-#     'please update your callsites to use either '
-#     'parlai.mturk.core.stable.<module>  '
-#     'or parlai.mturk.core.legacy_2018.<module>. \n'
-#     'updating to stable may require some migration, as detailed in <link>.'
-# )
-
 from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.core.socket_manager import Packet, SocketManager, StaticSocketManager
 from parlai.mturk.core.worker_manager import WorkerManager
@@ -32,6 +23,27 @@ import parlai.mturk.core.data_model as data_model
 import parlai.mturk.core.mturk_utils as mturk_utils
 import parlai.mturk.core.server_utils as server_utils
 import parlai.mturk.core.shared_utils as shared_utils
+
+print(
+    '\n\33[5m\33[101m'
+    "WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING"
+    '\33[0m\n'
+    'At this point, parlai.mturk.core is pending deprecation as we '
+    'prepare for a migration to Mephisto: '
+    'https://github.com/facebookresearch/Mephisto. \n'
+    'We will no longer be developing anything in parlai.mturk.core and '
+    'will eventually archive the whole module. \n'
+    "If you're creating a new task, we strongly suggest building on "
+    "Mephisto, starting from the example task here: "
+    "https://github.com/facebookresearch/Mephisto/tree/master/examples/parlai_chat_task_demo"
+    "\n"
+    "Our existing tasks will either be archived along with parlai.mturk.core "
+    "or migrated to work with Mephisto, depending on usage.\n"
+    'See https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/turn_annotations/README.md for an example of what the front-end interfaces (CLI and Python script) of the new tasks will look like.\n'
+    '\33[5m\33[101m'
+    "WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING-WARNING"
+    '\33[0m\n\n'
+)
 
 # Timeout before cancelling a world start
 WORLD_START_TIMEOUT = 11

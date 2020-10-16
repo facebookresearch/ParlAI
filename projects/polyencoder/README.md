@@ -23,7 +23,7 @@ Below we give details about available code and models:
 
 Run this command: (assumes your model zoo is in the default ./data/models)
 ```
-python examples/interactive.py -m transformer/polyencoder \
+parlai interactive -m transformer/polyencoder \
     -mf zoo:pretrained_transformers/model_poly/model \
     --encode-candidate-vecs true \
     --eval-candidates fixed  \
@@ -46,13 +46,15 @@ at the beginning it will answer nonsense.
 
 ## Fine tuning on your own tasks
 
-### bi-encoder
+### ConvAI2
+
+#### bi-encoder
 
 Execute this to train a biencoder scoring 86+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-python -u examples/train_model.py \
+parlai train_model \
     --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model \
     --batchsize 512 -t convai2 \
     --model transformer/biencoder --eval-batchsize 6 \
@@ -73,13 +75,13 @@ python -u examples/train_model.py \
      --model-file <YOUR MODEL FILE>
 ```
 
-### poly-encoder
+#### poly-encoder
 
 Execute this to train a poly-encoder scoring 89+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-python -u examples/train_model.py \
+parlai train_model \
   --init-model zoo:pretrained_transformers/poly_model_huge_reddit/model \
   -t convai2 \
   --model transformer/polyencoder --batchsize 256 --eval-batchsize 10 \
@@ -98,13 +100,13 @@ python -u examples/train_model.py \
   --model-file <YOUR MODEL FILE>
 ```
 
-### Cross-encoder
+#### Cross-encoder
 
 Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
 
 ```
-python -u examples/train_model.py \
+parlai train_model \
   --init-model zoo:pretrained_transformers/cross_model_huge_reddit/model \
   -t convai2 \
   --model transformer/crossencoder --batchsize 16 --eval-batchsize 10 \
@@ -121,3 +123,11 @@ python -u examples/train_model.py \
   --learn-embeddings True --dict-endtoken __start__ \
   --model-file <YOUR MODEL FILE>
 ```
+
+### DSTC7
+
+To fine-tune on the DSTC7 task, simply replace `-t convai2` with `-t dstc7:DSTC7TeacherAugmentedSampled` in the above commands.
+
+### UbuntuV2
+
+To fine-tune on the UbuntuV2 task, simply replace `-t convai2` with `-t ubuntu` in the above commands.

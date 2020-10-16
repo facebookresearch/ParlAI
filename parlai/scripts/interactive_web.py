@@ -5,6 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 """
 Talk with a model using a web UI.
+
+## Examples
+
+```shell
+parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
+```
 """
 
 
@@ -13,8 +19,11 @@ from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from typing import Dict, Any
+from parlai.core.script import ParlaiScript, register_script
+import parlai.utils.logging as logging
 
 import json
+import time
 
 HOST_NAME = 'localhost'
 PORT = 8080
@@ -226,11 +235,12 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(response)
 
 
-def setup_interactive(shared):
+def setup_interweb_args(shared):
     """
     Build and parse CLI opts.
     """
     parser = setup_args()
+    parser.description = 'Interactive chat with a model in a web browser'
     parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
     parser.add_argument(
         '--host',
@@ -238,30 +248,56 @@ def setup_interactive(shared):
         type=str,
         help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
     )
+    return parser
 
-    SHARED['opt'] = parser.parse_args(print_args=False)
 
-    SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+def shutdown():
+    global SHARED
+    if 'server' in SHARED:
+        SHARED['server'].shutdown()
+    SHARED.clear()
+
+
+def wait():
+    global SHARED
+    while not SHARED.get('ready'):
+        time.sleep(0.01)
+
+
+def interactive_web(opt):
+    global SHARED
+
+    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
     # Create model and assign it to the specified task
-    agent = create_agent(SHARED.get('opt'), requireModelExists=True)
+    agent = create_agent(opt, requireModelExists=True)
+    agent.opt.log()
+    SHARED['opt'] = agent.opt
     SHARED['agent'] = agent
     SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
 
-    # show args after loading model
-    parser.opt = agent.opt
-    parser.print_args()
-    return agent.opt
-
-
-if __name__ == '__main__':
-    opt = setup_interactive(SHARED)
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
-    print('http://{}:{}/'.format(opt['host'], opt['port']))
+    SHARED['server'] = httpd
+    logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
+        SHARED['ready'] = True
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
+
+
+@register_script('interactive_web', aliases=['iweb'], hidden=True)
+class InteractiveWeb(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_interweb_args(SHARED)
+
+    def run(self):
+        return interactive_web(self.opt)
+
+
+if __name__ == '__main__':
+    InteractiveWeb.main()

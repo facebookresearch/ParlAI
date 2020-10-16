@@ -11,8 +11,9 @@ import json
 import os
 import random
 
+from parlai.utils.io import PathManager
 from parlai.utils.misc import AttrDict
-
+import parlai.utils.logging as logging
 
 BAR = '=' * 60
 SMALL_BAR = '-' * 60
@@ -22,7 +23,7 @@ class Metadata:
     """
     Utility class for conversation metadata.
 
-    Metadata should be saved at <datapath>.metadata.
+    Metadata should be saved at ``<datapath>.metadata``.
     """
 
     def __init__(self, datapath):
@@ -30,13 +31,13 @@ class Metadata:
 
     def _load(self, datapath):
         self.metadata_path = self._get_path(datapath)
-        if not os.path.isfile(self.metadata_path):
+        if not PathManager.exists(self.metadata_path):
             raise RuntimeError(
                 f'Metadata at path {self.metadata_path} not found. '
                 'Double check your path.'
             )
 
-        with open(self.metadata_path, 'rb') as f:
+        with PathManager.open(self.metadata_path, 'rb') as f:
             metadata = json.load(f)
 
         self.datetime = metadata['date']
@@ -75,9 +76,7 @@ class Metadata:
         return '0.1'
 
     @classmethod
-    def save_metadata(
-        cls, datapath, opt, self_chat=False, speakers=None, **kwargs,
-    ):
+    def save_metadata(cls, datapath, opt, self_chat=False, speakers=None, **kwargs):
         """
         Dump conversation metadata to file.
         """
@@ -92,8 +91,8 @@ class Metadata:
             metadata[k] = v
 
         metadata_path = cls._get_path(datapath)
-        print(f'[ Writing metadata to file {metadata_path} ]')
-        with open(metadata_path, 'w') as f:
+        logging.info(f'Writing metadata to file {metadata_path}')
+        with PathManager.open(metadata_path, 'w') as f:
             f.write(json.dumps(metadata))
 
 
@@ -169,24 +168,30 @@ class Conversations:
 
     Conversations should be saved in JSONL format, where each line is
     a JSON of the following form:
-    {
-        'possible_conversation_level_info': True,
-        'dialog':
-            [   [
-                    {
-                        'id': 'speaker_1',
-                        'text': <first utterance>,
-                    },
-                    {
-                        'id': 'speaker_2',
-                        'text': <second utterance>,
-                    },
+
+    WARNING: The data below must be on ONE LINE per dialogue
+    in a conversation file or it will not load!!
+
+    .. code-block:
+
+        {
+            'possible_conversation_level_info': True,
+            'dialog':
+                [   [
+                        {
+                            'id': 'speaker_1',
+                            'text': <first utterance>,
+                        },
+                        {
+                            'id': 'speaker_2',
+                            'text': <second utterance>,
+                        },
+                        ...
+                    ],
                     ...
-                ],
-                ...
-            ]
-        ...
-    }
+                ]
+            ...
+        }
     """
 
     def __init__(self, datapath):
@@ -197,14 +202,14 @@ class Conversations:
         return len(self.conversations)
 
     def _load_conversations(self, datapath):
-        if not os.path.isfile(datapath):
+        if not PathManager.exists(datapath):
             raise RuntimeError(
                 f'Conversations at path {datapath} not found. '
                 'Double check your path.'
             )
 
         conversations = []
-        with open(datapath, 'r') as f:
+        with PathManager.open(datapath, 'r') as f:
             lines = f.read().splitlines()
             for line in lines:
                 conversations.append(Conversation(json.loads(line)))
@@ -229,14 +234,14 @@ class Conversations:
             metadata = Metadata(datapath)
             return metadata
         except RuntimeError:
-            print('Metadata does not exist. Please double check your datapath.')
+            logging.error('Metadata does not exist. Please double check your datapath.')
             return None
 
     def read_metadata(self):
         if self.metadata is not None:
-            print(self.metadata)
+            logging.info(self.metadata)
         else:
-            print('No metadata available.')
+            logging.warn('No metadata available.')
 
     def __getitem__(self, index):
         return self.conversations[index]
@@ -259,7 +264,7 @@ class Conversations:
 
     def read_conv_idx(self, idx):
         convo = self.conversations[idx]
-        print(convo)
+        logging.info(convo)
 
     def read_rand_conv(self):
         idx = random.choice(range(len(self)))
@@ -293,7 +298,7 @@ class Conversations:
         context_ids = context_ids.split(',')
         # save conversations
         speakers = []
-        with open(to_save, 'w') as f:
+        with PathManager.open(to_save, 'w') as f:
             for ep in act_list:
                 if not ep:
                     continue
@@ -332,9 +337,9 @@ class Conversations:
                         convo['dialog'].append(new_pair)
                 json_convo = json.dumps(convo)
                 f.write(json_convo + '\n')
-        print(f' [ Conversations saved to file: {to_save} ]')
+        logging.info(f'Conversations saved to file: {to_save}')
 
         # save metadata
         Metadata.save_metadata(
-            to_save, opt, self_chat=self_chat, speakers=speakers, **kwargs,
+            to_save, opt, self_chat=self_chat, speakers=speakers, **kwargs
         )

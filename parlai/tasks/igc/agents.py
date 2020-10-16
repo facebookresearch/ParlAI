@@ -26,6 +26,7 @@ from typing import List, Dict, Any
 from parlai.core.build_data import download_multiprocess
 from parlai.core.params import Opt
 from parlai.core.teachers import AbstractImageTeacher
+from parlai.utils.io import PathManager
 
 import parlai.utils.typing as PT
 
@@ -99,7 +100,7 @@ class IGCTeacher(AbstractImageTeacher):
         image_features_path = os.path.join(self.data_path, 'image_features')
 
         if not os.path.isdir(image_features_path):
-            os.makedirs(image_features_path)
+            PathManager.mkdirs(image_features_path)
 
         return os.path.join(
             image_features_path, f'{image_model_name}_{dt}_features_dict'
@@ -181,7 +182,7 @@ class IGCTeacher(AbstractImageTeacher):
             self._download_images(opt)
 
         self.data = []
-        with open(dp, newline='\n') as csv_file:
+        with PathManager.open(dp, newline='\n') as csv_file:
             reader = csv.reader(csv_file, delimiter=',')
             fields = []
             for i, row in enumerate(reader):
@@ -201,7 +202,7 @@ class IGCTeacher(AbstractImageTeacher):
         self.valid_image_ids = []
         for d in self.data:
             img_path = os.path.join(self.get_image_path(opt), d['image_id'])
-            if os.path.isfile(img_path):
+            if PathManager.exists(img_path):
                 self.valid_image_ids.append(d['image_id'])
 
         self.valid_image_ids = set(self.valid_image_ids)
@@ -215,7 +216,7 @@ class IGCTeacher(AbstractImageTeacher):
         ids = []
         for dt in ['test', 'val']:
             df = os.path.join(self.get_data_path(opt), f'IGC_crowd_{dt}.csv')
-            with open(df, newline='\n') as csv_file:
+            with PathManager.open(df, newline='\n') as csv_file:
                 reader = csv.reader(csv_file, delimiter=',')
                 fields = []
                 for i, row in enumerate(reader):
@@ -225,7 +226,7 @@ class IGCTeacher(AbstractImageTeacher):
                         data = dict(zip(fields, row))
                         urls.append(data['url'])
                         ids.append(data['id'])
-        os.makedirs(self.get_image_path(opt), exist_ok=True)
+        PathManager.mkdirs(self.get_image_path(opt))
         # Make one blank image
         image = Image.new('RGB', (100, 100), color=0)
         image.save(os.path.join(self.get_image_path(opt), self.blank_image_id), 'JPEG')
@@ -235,11 +236,11 @@ class IGCTeacher(AbstractImageTeacher):
         # Remove bad images
         for fp in os.listdir(self.get_image_path(opt)):
             img_path = os.path.join(self.get_image_path(opt), fp)
-            if os.path.isfile(img_path):
+            if PathManager.exists(img_path):
                 try:
                     Image.open(img_path).convert('RGB')
                 except OSError:
-                    os.remove(img_path)
+                    PathManager.rm(img_path)
 
     def share(self) -> PT.TShared:
         shared = super().share()

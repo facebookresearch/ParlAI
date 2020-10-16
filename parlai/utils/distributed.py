@@ -13,8 +13,13 @@ distributed mode.
 """
 
 import builtins
+import copy
+import os
 import pickle
 import contextlib
+import subprocess
+import socket
+import parlai.utils.logging as logging
 
 try:
     import torch.nn
@@ -24,32 +29,6 @@ try:
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
-
-
-def validate_params(opt):
-    """
-    Ensure sane combinations of command line parameters for distributed training.
-
-    Raises exceptions if anything is wrong, otherwise returns None.
-    """
-    if torch.version.__version__.startswith('0.'):
-        raise ImportError(
-            "Please upgrade to PyTorch >=1.0; "
-            "visit https://pytorch.org for instructions."
-        )
-
-    if opt.get('no_cuda', False):
-        raise ValueError('Distributed mode only makes sense when using GPUs.')
-
-    if opt.get('numthreads', 1) != 1:
-        raise ValueError('--numthreads must be 1 for distributed training.')
-
-    if 'train:stream' in opt['datatype'] or 'ordered' in opt['datatype']:
-        raise ValueError(
-            "You should not combine ordered streaming with distributed training "
-            "because all workers will have exactly the same minibatches, "
-            "defeating the purpose."
-        )
 
 
 def is_distributed():
@@ -71,7 +50,7 @@ def num_workers():
 
 def is_primary_worker():
     """
-    Determine if we are the primary (master) worker.
+    Determine if we are the primary (rank 0)  worker.
 
     Returns False if we are a secondary worker. Returns True if we are either (1) not in
     distributed mode (2) or are the primary (rank 0) worker.
@@ -94,8 +73,10 @@ def get_rank():
 @contextlib.contextmanager
 def override_print(suppress=False, prefix=None):
     """
-    Context manager to override the print to suppress or modify output. Recommended
-    usage is to call this with suppress=True for all non-primary workers, or call with a
+    Context manager to override the print to suppress or modify output.
+
+    Recommended usage is to call this with suppress=True for all non-primary
+    workers, or call with a
     prefix of rank on all workers.
 
     >>> with override_print(prefix="rank{}".format(rank)):
@@ -117,11 +98,19 @@ def override_print(suppress=False, prefix=None):
             # default to normal print
             return builtin_print(*args, **kwargs)
 
+    if prefix:
+        logging.logger.add_format_prefix(prefix)
+    if suppress:
+        logging.disable()
+
     # override the print for now
     builtins.print = new_print
     yield
     # bring it back at the end of the context
     builtins.print = builtin_print
+
+    if suppress:
+        logging.enable()
 
 
 def all_gather_list(data, max_size=16384):
@@ -276,3 +265,124 @@ def sync_parameters(model: torch.nn.Module) -> bool:
         )
 
     return True
+
+
+@contextlib.contextmanager
+def distributed_context(
+    rank, opt, rank_offset=0, gpu=None, init_method="tcp://localhost:61337"
+):
+    """
+    A context which wraps initialization of a distributed/multiprocessing run.
+
+    Every process in the distributed run should launch with this. In true
+    distributed setting you may wish to use slurm_distributed_context instead.
+
+    :param int rank:
+        This process's rank, less rank_offset.
+    :param int rank_offset:
+        Used as an offset of rank. Used between multiprocessing vs true distributed,
+        and a hack around torch.multiprocessing.spawn being only used for the
+        non-primary workers.
+    :param opt:
+        command line options
+        distributed training setups on the same machine.
+    :param int gpu:
+        Which GPU to use. Defaults to using rank and local devices, but must be
+        manually specified when using many-hosts.
+    :param str init method:
+        Init method, such as ``tcp://localhost:61337``. See torch.distributed docs.
+    """
+    # Set per-host options
+    opt = copy.deepcopy(opt)
+    # we need to manually adjust the rank differently in multiprocessing
+    # and distributed train
+    rank = rank + rank_offset
+    opt['rank'] = rank
+    if gpu is None:
+        # default assumption is local GPUs
+        gpu = rank % torch.cuda.device_count()
+    opt['gpu'] = gpu
+    # make sure we don't just use whatever GPU was saved in the model file
+    if 'override' not in opt:
+        opt['override'] = {}
+    opt['override']['gpu'] = gpu
+
+    # Suppress output of workers except the main host.
+    if opt.get('verbose') or rank != 0:
+        print_prefix = 'rank:{:3d} |'.format(rank)
+    else:
+        print_prefix = None
+    suppress_output = not opt.get('verbose') and rank != 0
+
+    with override_print(suppress_output, print_prefix):
+        # perform distributed setup, ensuring all hosts are ready
+        if opt['gpu'] != -1:
+            torch.cuda.set_device(opt['gpu'])
+        dist.init_process_group(
+            backend="nccl",
+            init_method=init_method,
+            world_size=opt['distributed_world_size'],
+            rank=rank,
+        )
+        logging.info("Distributed group initialized")
+
+        # manual_seed can be a noop without this
+        torch.cuda.init()
+        # make sure all parameters will be in sync
+        torch.manual_seed(42)
+        # force a sync so that no one gets ahead, and all are seeded together
+        sync_object(None)
+
+        yield opt
+
+
+@contextlib.contextmanager
+def slurm_distributed_context(opt):
+    """
+    Initialize a distributed context, using the SLURM environment.
+
+    Does some work to read the environment to find a list of participating nodes
+    and the main node.
+
+    :param opt:
+        Command line options.
+    """
+    # We can determine the init method automatically for Slurm.
+    # double check we're using SLURM
+    node_list = os.environ.get('SLURM_JOB_NODELIST')
+    if node_list is None:
+        raise RuntimeError(
+            'Does not appear to be in a SLURM environment. '
+            'You should not call this script directly; see launch_distributed.py'
+        )
+
+    try:
+        # Figure out the main host, and which rank we are.
+        hostnames = subprocess.check_output(
+            ['scontrol', 'show', 'hostnames', node_list]
+        )
+        main_host = hostnames.split()[0].decode('utf-8')
+        distributed_rank = int(os.environ['SLURM_PROCID'])
+        if opt.get('model_parallel'):
+            # -1 signals to multiprocessing_train to use all GPUs available.
+            # (A value of None signals to multiprocessing_train to use the GPU
+            # corresponding to the rank.
+            device_id = -1
+        else:
+            device_id = int(os.environ['SLURM_LOCALID'])
+        port = opt['port']
+        logging.info(
+            f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
+            f'main is {main_host}'
+        )
+        # Begin distributed training
+        with distributed_context(
+            distributed_rank, opt, 0, device_id, init_method=f"tcp://{main_host}:{port}"
+        ) as opt:
+            yield opt
+    except subprocess.CalledProcessError as e:
+        # scontrol failed
+        raise e
+    except FileNotFoundError:
+        # Slurm is not installed
+        raise RuntimeError('SLURM does not appear to be installed.')

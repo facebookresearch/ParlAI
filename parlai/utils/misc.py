@@ -9,18 +9,21 @@ File for miscellaneous utility functions and constants.
 
 from collections import deque, OrderedDict
 from typing import Union, Optional, Set, Any, Dict, List, Tuple
+from datetime import timedelta
+import functools
 import math
 import pdb
-import random
 import sys
 import time
 import re
 import shutil
-import warnings
 import json
+import os
 
 from parlai.core.message import Message
 from parlai.utils.strings import colorize
+from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
 
 try:
     import torch
@@ -45,6 +48,7 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'text_vec',
     'label_candidates_vecs',
     'token_losses',
+    'beam_texts',
 }
 
 
@@ -129,7 +133,7 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
         return None
     cands = []
     cnt = 0
-    with open(path) as read:
+    with PathManager.open(path) as read:
         for line in read:
             line = line.strip().replace('\\n', '\n')
             if len(line) > 0:
@@ -153,51 +157,6 @@ def load_cands(path, lines_have_ids=False, cands_are_replies=False):
                 else:
                     cands.append(line)
     return cands
-
-
-class Predictor(object):
-    """
-    Wrapper to set up running version of model and request predictions.
-
-    Note that this maintains no World state (does not use a World), merely
-    providing the observation directly to the model and getting a response.
-
-    This is limiting when it comes to certain use cases, but allows for quick
-    model deployment.
-    """
-
-    def __init__(self, args=None, **kwargs):
-        """
-        Initialize the predictor, setting up opt automatically if needed.
-
-        Args is expected to be in the same format as sys.argv: e.g. a list in
-        the form ['--model', 'seq2seq', '-hs', 128, '-lr', 0.5].
-
-        kwargs is interpreted by appending '--' to it and replacing underscores
-        with hyphens, so 'dict_file=/tmp/dict.tsv' would be interpreted as
-        '--dict-file /tmp/dict.tsv'.
-        """
-        from parlai.core.params import ParlaiParser
-        from parlai.core.agents import create_agent
-
-        if args is None:
-            args = []
-        for k, v in kwargs.items():
-            args.append('--' + str(k).replace('_', '-'))
-            args.append(str(v))
-        parser = ParlaiParser(True, True)
-        self.opt = parser.parse_args(args)
-        self.agent = create_agent(self.opt)
-
-    def predict(self, observation):
-        """
-        From a ParlAI-standard message dict, get model prediction.
-        """
-        if 'episode_done' not in observation:
-            observation['episode_done'] = True
-        self.agent.observe(observation)
-        reply = self.agent.act()
-        return reply
 
 
 class Timer(object):
@@ -294,23 +253,25 @@ class TimeLogger:
             done = done.value()
         self.tot_time += self.timer.time()
         self.timer.reset()
-        log = {}
-        log['exs'] = done
-        if total > 0:
-            log['%done'] = done / total
-            if log["%done"] > 0:
-                time_left = self.tot_time / log['%done'] - self.tot_time
-                log['time_left'] = str(int(time_left)) + 's'
-            z = '%.2f' % (100 * log['%done'])
-            log['%done'] = str(z) + '%'
-
         if report:
-            log = {**report, **log}
+            report['exs'] = done
+        if total > 0 and done > 0:
+            progress = done / total
+            seconds_left = max(0, self.tot_time / progress - self.tot_time)
+            eta = timedelta(seconds=int(seconds_left + 0.5))
+        else:
+            progress = 0
+            eta = "unknown"
+        elapsed = timedelta(seconds=int(self.tot_time))
 
-        int_time = int(self.tot_time)
-        report_s = nice_report(log)
-        text = f'{int_time}s elapsed:\n{report_s}'
-        return text, log
+        text = (
+            f'{progress:.1%} complete ({done:,d} / {total:,d}), '
+            f'{elapsed} elapsed, {eta} eta'
+        )
+        if report:
+            report_s = nice_report(report)
+            text = f'{text}\n{report_s}'
+        return text, report
 
 
 class AttrDict(dict):
@@ -416,6 +377,11 @@ def float_formatter(f: Union[float, int]) -> str:
 
 
 def _line_width():
+    if os.environ.get('PARLAI_FORCE_WIDTH'):
+        try:
+            return int(os.environ['PARLAI_FORCE_WIDTH'])
+        except ValueError:
+            pass
     try:
         # if we're in an interactive ipython notebook, hardcode a longer width
         __IPYTHON__
@@ -440,6 +406,9 @@ def nice_report(report) -> str:
     If pandas is not available, we will use a dict with like-metrics placed
     next to each other.
     """
+    if not report:
+        return ""
+
     from parlai.core.metrics import Metric
 
     try:
@@ -501,7 +470,7 @@ def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
     try:
         if x_ == 0:
             return 0
-        return round(x_, -math.floor(math.log10(abs(x_)) - sigfigs + 1))
+        return round(x_, -(math.floor(math.log10(abs(x_)) - sigfigs + 1)))
     except (ValueError, OverflowError) as ex:
         if x_ in [float('inf'), float('-inf')] or x_ != x_:  # inf or nan
             return x_
@@ -517,196 +486,6 @@ def no_lock():
     Build a nolock for other classes to use for no-op locking.
     """
     return single_nolock
-
-
-class PaddingUtils(object):
-    """
-    Helps with padding input and target tensors.
-
-    DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
-    """
-
-    # DEPRECATIONDAY: delete!
-
-    @classmethod
-    def pad_text(
-        cls,
-        observations,
-        dictionary,
-        end_idx=None,
-        null_idx=0,
-        dq=False,
-        eval_labels=True,
-        truncate=None,
-    ):
-        """
-        Pad observations to max width.
-
-        We check that examples are valid, pad with zeros, and sort by length
-        so that we can use the pack_padded function. The list valid_inds
-        keeps track of which indices are valid and the order in which we sort
-        the examples.
-
-        dq -- whether we should use deque or list
-        eval_labels -- whether or not we want to consider eval labels
-        truncate -- truncate input and output lengths
-
-        DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
-        """
-
-        def valid(obs):
-            # check if this is an example our model should actually process
-            return 'text' in obs and len(obs['text']) > 0
-
-        try:
-            # valid examples and their indices
-            valid_inds, exs = zip(
-                *[(i, ex) for i, ex in enumerate(observations) if valid(ex)]
-            )
-        except ValueError:
-            # zero examples to process in this batch, so zip failed to unpack
-            return None, None, None, None, None, None
-
-        # `x` text is already tokenized and truncated
-        # sort by length so we can use pack_padded
-        if any(['text2vec' in ex for ex in exs]):
-            parsed_x = [ex['text2vec'] for ex in exs]
-        else:
-            parsed_x = [dictionary.txt2vec(ex['text']) for ex in exs]
-
-        if len(parsed_x) > 0 and not isinstance(parsed_x[0], deque):
-            if dq:
-                parsed_x = [deque(x, maxlen=truncate) for x in parsed_x]
-            elif truncate is not None and truncate > 0:
-                parsed_x = [x[-truncate:] for x in parsed_x]
-
-        x_lens = [len(x) for x in parsed_x]
-        ind_sorted = sorted(range(len(x_lens)), key=lambda k: -x_lens[k])
-
-        exs = [exs[k] for k in ind_sorted]
-        valid_inds = [valid_inds[k] for k in ind_sorted]
-        parsed_x = [parsed_x[k] for k in ind_sorted]
-        end_idxs = [x_lens[k] for k in ind_sorted]
-
-        eval_labels_avail = any(['eval_labels' in ex for ex in exs])
-        labels_avail = any(['labels' in ex for ex in exs])
-        if eval_labels:
-            some_labels_avail = eval_labels_avail or labels_avail
-        else:
-            some_labels_avail = labels_avail
-
-        max_x_len = max(x_lens)
-
-        # pad with zeros
-        if dq:
-            parsed_x = [
-                x
-                if len(x) == max_x_len
-                else x + deque((null_idx,)) * (max_x_len - len(x))
-                for x in parsed_x
-            ]
-        else:
-            parsed_x = [
-                x if len(x) == max_x_len else x + [null_idx] * (max_x_len - len(x))
-                for x in parsed_x
-            ]
-        xs = parsed_x
-
-        # set up the target tensors
-        ys = None
-        labels = None
-        y_lens = None
-        if some_labels_avail:
-            # randomly select one of the labels to update on (if multiple)
-            if labels_avail:
-                labels = [random.choice(ex.get('labels', [''])) for ex in exs]
-            else:
-                labels = [random.choice(ex.get('eval_labels', [''])) for ex in exs]
-            # parse each label and append END
-            if dq:
-                parsed_y = [deque(maxlen=truncate) for _ in labels]
-                for deq, y in zip(parsed_y, labels):
-                    deq.extendleft(reversed(dictionary.txt2vec(y)))
-            else:
-                parsed_y = [dictionary.txt2vec(label) for label in labels]
-            if end_idx is not None:
-                for y in parsed_y:
-                    y.append(end_idx)
-
-            y_lens = [len(y) for y in parsed_y]
-            max_y_len = max(y_lens)
-
-            if dq:
-                parsed_y = [
-                    y
-                    if len(y) == max_y_len
-                    else y + deque((null_idx,)) * (max_y_len - len(y))
-                    for y in parsed_y
-                ]
-            else:
-                parsed_y = [
-                    y if len(y) == max_y_len else y + [null_idx] * (max_y_len - len(y))
-                    for y in parsed_y
-                ]
-            ys = parsed_y
-
-        return xs, ys, labels, valid_inds, end_idxs, y_lens
-
-    @classmethod
-    def map_predictions(
-        cls,
-        predictions,
-        valid_inds,
-        batch_reply,
-        observations,
-        dictionary,
-        end_idx,
-        report_freq=0.1,
-        labels=None,
-        answers=None,
-        ys=None,
-    ):
-        """
-        Match predictions to original index in the batch.
-
-        Predictions are mapped back to appropriate indices in the batch_reply
-        using valid_inds.
-
-        report_freq -- how often we report predictions
-
-        DEPRECATED. USE PARLAI.CORE.TORCH_AGENT INSTEAD.
-        """
-        for i in range(len(predictions)):
-            # map the predictions back to non-empty examples in the batch
-            # we join with spaces since we produce tokens one at a timelab
-            curr = batch_reply[valid_inds[i]]
-            output_tokens = []
-            j = 0
-            for c in predictions[i]:
-                if c == end_idx and j != 0:
-                    break
-                else:
-                    output_tokens.append(c)
-                j += 1
-            curr_pred = dictionary.vec2txt(output_tokens)
-            curr['text'] = curr_pred
-
-            if labels is not None and answers is not None and ys is not None:
-                y = []
-                for c in ys[i]:
-                    if c == end_idx:
-                        break
-                    else:
-                        y.append(c)
-                answers[valid_inds[i]] = y
-            elif answers is not None:
-                answers[valid_inds[i]] = curr_pred
-
-            if random.random() > (1 - report_freq):
-                # log sometimes
-                print('TEXT: ', observations[valid_inds[i]]['text'])
-                print('PREDICTION: ', curr_pred, '\n~')
-        return
 
 
 def clip_text(text, max_len):
@@ -975,17 +754,39 @@ def set_namedtuple_defaults(namedtuple, default=None):
     return namedtuple
 
 
-_seen_warnings: Set[str] = set()
+_seen_logs: Set[str] = set()
 
 
-def warn_once(msg: str, warningtype=None) -> None:
+def warn_once(msg: str) -> None:
     """
-    Raise a warning, but only once.
+    Log a warning, but only once.
 
     :param str msg: Message to display
-    :param Warning warningtype: Type of warning, e.g. DeprecationWarning
     """
-    global _seen_warnings
-    if msg not in _seen_warnings:
-        _seen_warnings.add(msg)
-        warnings.warn(msg, warningtype, stacklevel=2)
+    global _seen_logs
+    if msg not in _seen_logs:
+        _seen_logs.add(msg)
+        logging.warn(msg)
+
+
+def error_once(msg: str) -> None:
+    """
+    Log an error, but only once.
+
+    :param str msg: Message to display
+    """
+    global _seen_logs
+    if msg not in _seen_logs:
+        _seen_logs.add(msg)
+        logging.error(msg)
+
+
+def recursive_getattr(obj, attr, *args):
+    """
+    Recursive call to getattr for nested attributes.
+    """
+
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+
+    return functools.reduce(_getattr, [obj] + attr.split('.'))

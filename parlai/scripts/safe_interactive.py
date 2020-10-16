@@ -9,16 +9,17 @@ trained model.
 """
 
 from parlai.core.params import ParlaiParser
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.safe_local_human.safe_local_human import SafeLocalHumanAgent
-
+import parlai.utils.logging as logging
 import random
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Interactive chat with a model')
+        parser = ParlaiParser(True, True, 'Like interactive, but adds a safety filter')
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument(
         '--display-prettify',
@@ -45,22 +46,14 @@ def setup_args(parser=None):
     return parser
 
 
-def safe_interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
+def safe_interactive(opt):
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        logging.error('interactive should be passed opt not Parser')
         opt = opt.parse_args()
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
     human_agent = SafeLocalHumanAgent(opt)
     world = create_task(opt, [human_agent, agent])
 
@@ -75,11 +68,20 @@ def safe_interactive(opt, print_parser=None):
             print('---')
             print(world.display())
         if world.epoch_done():
-            print('EPOCH DONE')
+            logging.info('epoch done')
             break
+
+
+@register_script('safe_interactive')
+class SafeInteractive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return safe_interactive(self.opt)
 
 
 if __name__ == '__main__':
     random.seed(42)
-    parser = setup_args()
-    safe_interactive(parser.parse_args(print_args=False), print_parser=parser)
+    SafeInteractive.main()

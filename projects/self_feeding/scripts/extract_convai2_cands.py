@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from argparse import ArgumentParser
+from parlai.utils.io import PathManager
 
 
 def setup_args():
@@ -19,7 +20,9 @@ def setup_args():
 
 
 def main(config):
-    with open(config['infile'], 'r') as fin, open(config['outfile'], 'w') as fout:
+    with PathManager.open(config['infile'], 'r') as fin, PathManager.open(
+        config['outfile'], 'w'
+    ) as fout:
         for line in fin.readlines():
             if 'persona' in line:
                 continue

@@ -20,6 +20,7 @@ WOW_OPTIONS = {
     'beam_size': 10,
     'beam_min_length': 10,
     'skip_generation': False,
+    'num_examples': 64,
 }
 
 CONVAI2_OPTIONS = {
@@ -33,6 +34,7 @@ CONVAI2_OPTIONS = {
     'beam_size': 3,
     'beam_min_length': 10,
     'skip_generation': False,
+    'num_examples': 64,
 }
 
 ED_OPTIONS = {
@@ -46,6 +48,7 @@ ED_OPTIONS = {
     'beam_size': 5,
     'beam_min_length': 10,
     'skip_generation': False,
+    'num_examples': 64,
 }
 
 
@@ -60,21 +63,21 @@ class TestDodecaModel(unittest.TestCase):
         Test wiz of wikipedia.
         """
         valid, _ = testing_utils.eval_model(WOW_OPTIONS, skip_test=True)
-        self.assertAlmostEqual(valid['ppl'], 8.5, places=1)
-        self.assertAlmostEqual(valid['f1'], 0.379, places=2)
+        self.assertAlmostEqual(valid['ppl'], 7.742, places=1)
+        self.assertAlmostEqual(valid['f1'], 0.423, places=2)
 
     def test_convai2(self):
         """
         Test ConvAI2.
         """
         valid, _ = testing_utils.eval_model(CONVAI2_OPTIONS, skip_test=True)
-        self.assertAlmostEqual(valid['ppl'], 11.2, places=1)
-        self.assertAlmostEqual(valid['f1'], 0.211, places=2)
+        self.assertAlmostEqual(valid['ppl'], 9.382, places=1)
+        self.assertAlmostEqual(valid['f1'], 0.202, places=2)
 
     def test_ed(self):
         """
         Test empathetic_dialogues.
         """
         valid, _ = testing_utils.eval_model(ED_OPTIONS, skip_test=True)
-        self.assertAlmostEqual(valid['ppl'], 11.1, places=1)
+        self.assertAlmostEqual(valid['ppl'], 12.69, places=1)
         self.assertAlmostEqual(valid['f1'], 0.197, places=2)

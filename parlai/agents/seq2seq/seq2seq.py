@@ -6,6 +6,7 @@
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 from .modules import Seq2seq, opt_to_kwargs
 
 import torch
@@ -139,18 +140,6 @@ class Seq2seqAgent(TorchGeneratorAgent):
         super(Seq2seqAgent, cls).add_cmdline_args(argparser)
         return agent
 
-    @staticmethod
-    def model_version():
-        """
-        Return current version of this model, counting up from 0.
-
-        Models may not be backwards-compatible with older versions. Version 1 split from
-        version 0 on Aug 29, 2018. Version 2 split from version 1 on Nov 13, 2018 To use
-        version 0, use --model legacy:seq2seq:0 To use version 1, use --model
-        legacy:seq2seq:1 (legacy agent code is located in parlai/agents/legacy_agents).
-        """
-        return 2
-
     def __init__(self, opt, shared=None):
         """
         Set up model.
@@ -235,7 +224,8 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """
         Return opt and model states.
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
         self.model.load_state_dict(states['model'])
         if 'longest_label' in states:

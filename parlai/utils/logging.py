@@ -4,70 +4,102 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import os
 import sys
 import logging
 
-INFO = logging.INFO
+try:
+    import coloredlogs
+
+    COLORED_LOGS = True
+except ImportError:
+    COLORED_LOGS = False
+
+SPAM = 5
 DEBUG = logging.DEBUG
-WARN_LEVEL = logging.WARNING
+VERBOSE = DEBUG + 5
+INFO = logging.INFO
+REPORT = INFO + 5
+SUCCESS = REPORT + 1
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
-DEFAULT_CONSOLE_FORMAT = '%(asctime)s | %(levelname)s | %(message)s'
-DEFAULT_FILE_FORMAT = '%(asctime)s | %(levelname)s | %(message)s'
+logging.addLevelName(VERBOSE, "VERBOSE")
+logging.addLevelName(SPAM, "SPAM")
+logging.addLevelName(REPORT, "REPORT")
+logging.addLevelName(SUCCESS, "SUCCESS")
+
+COLORED_FORMAT = '%(asctime)s | %(message)s'
+CONSOLE_FORMAT = '%(asctime)s %(levelname).4s | %(message)s'
+CONSOLE_DATE_FORMAT = '%H:%M:%S'
+LOGFILE_FORMAT = '%(asctime)s %(levelname)-8s | %(message)s'
+LOGFILE_DATE_FORMAT = None
+
+COLORED_LEVEL_STYLES = {
+    'spam': {'color': 'white', 'faint': True},
+    'debug': {'faint': True},
+    'verbose': {'color': 'blue'},
+    'error': {'color': 'red'},
+    'info': {},
+    'report': {'bold': True},
+    'success': {'bold': True, 'color': 'green'},
+    'warning': {'color': 'yellow'},
+    'critical': {'bold': True, 'color': 'red'},
+}
+
+
+def _is_interactive():
+    if os.environ.get('PARLAI_FORCE_COLOR'):
+        return True
+    try:
+        __IPYTHON__
+        return True
+    except NameError:
+        return sys.stdout.isatty()
 
 
 # Some functions in this class assume that ':' will be the separator used in
 # the logging formats setup for this class
 class ParlaiLogger(logging.Logger):
-    def __init__(
-        self,
-        name,
-        console_level=INFO,
-        console_format=DEFAULT_CONSOLE_FORMAT,
-        file_format=None,
-        file_level=INFO,
-        filename=None,
-    ):
+    def __init__(self, name, console_level=INFO):
         """
         Initialize the logger object.
 
         :param name:
             Name of the logger
         :param console_level:
-            min. Level of messages logged to console
-        :param console_format:
-            The format of messages logged to the console.
-            Simple stdout is used if None specified
-        :param file_format:
-            The format of messages logged to the file
-        :param file_level:
-            min. Level of messages logged to the file
-        :param filename:
-            The file the logs are written to
+            minimum level of messages logged to console
         """
         super().__init__(name, console_level)  # can be initialized with any level
-
-        # Logging to a file
-        if filename:
-            # Default format used if no file format provided
-            if file_format is None:
-                file_format = DEFAULT_FILE_FORMAT
-            self.fileHandler = logging.FileHandler(filename)
-            # Log to file levels: file_level and above
-            self.fileFormatter = logging.Formatter(file_format)
-            self.fileHandler.setFormatter(self.fileFormatter)
-            super().addHandler(self.fileHandler)
-
         # Logging to stdout
         self.streamHandler = logging.StreamHandler(sys.stdout)
         # Log to stdout levels: console_level and above
-        self.consoleFormatter = logging.Formatter(console_format)
-        self.streamHandler.setFormatter(self.consoleFormatter)
+        self.prefix = None
+        self.interactive = _is_interactive()
+        self.streamHandler.setFormatter(self._build_formatter())
         super().addHandler(self.streamHandler)
 
-        # To be used with testing_utils.capture_output()
-        self.altStream = None
+    def _build_formatter(self):
+        prefix_format = f'{self.prefix} ' if self.prefix else ''
+        if COLORED_LOGS and self.interactive:
+            return coloredlogs.ColoredFormatter(
+                prefix_format + COLORED_FORMAT,
+                datefmt=CONSOLE_DATE_FORMAT,
+                level_styles=COLORED_LEVEL_STYLES,
+                field_styles={},
+            )
+        elif self.interactive:
+            return logging.Formatter(
+                prefix_format + CONSOLE_FORMAT, datefmt=CONSOLE_DATE_FORMAT
+            )
+        else:
+            return logging.Formatter(
+                prefix_format + LOGFILE_FORMAT, datefmt=LOGFILE_DATE_FORMAT
+            )
+
+    def force_interactive(self):
+        self.interactive = True
+        self.streamHandler.setFormatter(self._build_formatter())
 
     def log(self, msg, level=INFO):
         """
@@ -75,96 +107,27 @@ class ParlaiLogger(logging.Logger):
         """
         super().log(level, msg)
 
-    def add_file_handler(self, filename, level=INFO, format=None):
-        """
-        Add a file handler to the logger object.
-
-        Use case: When logging using the logger object instead of instantiating a new
-        ParlaiLogger           this function might  be useful to add a filehandler on
-        the go. Only does so if there is no file handler existing.
-        """
-        if not hasattr(self, 'fileHandler'):
-            if format is None:
-                file_format = DEFAULT_FILE_FORMAT
-            self.fileHandler = logging.FileHandler(filename)
-            self.fileHandler.level = level  # Log to file levels: level and above
-            self.fileFormatter = logging.Formatter(file_format)
-            self.fileHandler.setFormatter(self.fileFormatter)
-            super().addHandler(self.fileHandler)
-        else:
-            raise Exception("ParlaiLogger: A filehandler already exists")
-
     def add_format_prefix(self, prefix):
         """
         Include `prefix` in all future logging statements.
         """
         # change both handler formatters to add a prefix
-        new_str = prefix + " " + '%(message)s'
-
-        prevConsoleFormat = self.consoleFormatter._fmt.split(':')[:-1]
-        # Check if there was a format before this
-        if prevConsoleFormat:
-            # If so append prefix neatly after last divider
-            prevConsoleFormat += [' ' + new_str]
-            updatedConsoleFormat = ':'.join(prevConsoleFormat)
-        else:
-            updatedConsoleFormat = new_str
-        self.streamHandler.setFormatter(logging.Formatter(updatedConsoleFormat))
-
-        if hasattr(self, 'fileHandler'):
-            prevFileFormat = self.fileFormatter._fmt.split(':')[:-1]
-            # A space before the previous divider because a format always exists
-            prevFileFormat += [' ' + new_str]
-            updatedFileFormat = ':'.join(prevFileFormat)
-            self.fileHandler.setFormatter(logging.Formatter(updatedFileFormat))
-
-    def set_format(self, fmt):
-        """
-        Set format after instantiation.
-        """
-        self.streamHandler.setFormatter(logging.Formatter(fmt))
-        if hasattr(self, 'fileHandler'):
-            self.fileHandler.setFormatter(logging.Formatter(fmt))
-
-    def reset_formatters(self):
-        """
-        Resort back to initial formatting.
-        """
-        if hasattr(self, 'fileHandler'):
-            self.fileHandler.setFormatter(self.fileFormatter)
-        self.streamHandler.setFormatter(self.consoleFormatter)
+        self.prefix = prefix
+        self.streamHandler.setFormatter(self._build_formatter())
 
     def mute(self):
         """
         Stop logging to stdout.
         """
-        prev_level = self.streamHandler.level
-        self.streamHandler.level = float('inf')
-        return prev_level
+        self.prev_level = self.streamHandler.level
+        self.streamHandler.level = ERROR
+        return self.prev_level
 
-    def unmute(self, level):
+    def unmute(self):
         """
         Resume logging to stdout.
         """
-        self.streamHandler.level = level
-
-    def redirect_out(self, stream):
-        """
-        Redirect all logging output to `stream`.
-        """
-        self.altStream = stream
-        self.altStreamHandler = logging.StreamHandler(self.altStream)
-        super().addHandler(self.altStreamHandler)
-
-    def stop_redirect_out(self):
-        """
-        Stop redirecting output to alternate stream.
-        """
-        if self.altStream is None:
-            raise Exception('No existing redirection.')
-        else:
-            self.altStreamHandler.flush()
-            super().removeHandler(self.altStreamHandler)
+        self.streamHandler.level = self.prev_level
 
 
 # -----------------------------------
@@ -173,20 +136,40 @@ class ParlaiLogger(logging.Logger):
 logger = ParlaiLogger(name=__name__)
 
 
-def set_verbose_mode():
-    logger.setLevel(DEBUG)
+def set_log_level(level):
+    logger.setLevel(level)
 
 
-def info(*args, **kwargs):
-    return logger.info(*args, **kwargs)
+def disable():
+    logger.mute()
 
 
-def critical(*args, **kwargs):
-    return logger.critical(*args, **kwargs)
+def enable():
+    logger.unmute()
+
+
+def info(msg):
+    return logger.info(msg)
+
+
+def critical(msg):
+    return logger.critical(msg)
+
+
+def report(msg):
+    return logger.log(msg, level=REPORT)
+
+
+def success(msg):
+    return logger.log(msg, level=SUCCESS)
 
 
 def log(*args, **kwargs):
     return logger.log(*args, **kwargs)
+
+
+def verbose(msg):
+    return logger.log(msg, level=VERBOSE)
 
 
 def debug(*args, **kwargs):
@@ -199,3 +182,13 @@ def error(*args, **kwargs):
 
 def warn(*args, **kwargs):
     return logger.warn(*args, **kwargs)
+
+
+def warning(*args, **kwargs):
+    return logger.warn(*args, **kwargs)
+
+
+def get_all_levels():
+    levels = set(logging._nameToLevel.keys())
+    levels.remove('WARNING')
+    return [l.lower() for l in levels]

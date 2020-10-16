@@ -7,18 +7,22 @@
 Allows a model to self-chat on a given task.
 """
 from parlai.core.params import ParlaiParser
-from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent, create_agent_from_model_file
 from parlai.core.worlds import create_task
 from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
+from parlai.core.script import ParlaiScript, register_script
+import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 import math
+import json
 import random
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Self chat with a model')
+        parser = ParlaiParser(True, True, 'Generate self-chats of a model')
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument(
@@ -45,7 +49,8 @@ def setup_args(parser=None):
     )
     parser.add_argument(
         '--seed-messages-from-task',
-        action='store_true',
+        type='bool',
+        default=False,
         help='Automatically seed conversation with messages from task dataset.',
     )
     parser.add_argument(
@@ -58,6 +63,17 @@ def setup_args(parser=None):
         choices=['conversations', 'parlai'],
         help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
     )
+    parser.add_argument(
+        '-pmf',
+        '--partner-model-file',
+        default=None,
+        help='Define a different partner for self chat',
+    )
+    parser.add_argument(
+        '--partner-opt-file',
+        default=None,
+        help='Path to file containing opts to override for partner',
+    )
     parser.set_defaults(interactive_mode=True, task='self_chat')
     WorldLogger.add_cmdline_args(parser)
     return parser
@@ -66,7 +82,7 @@ def setup_args(parser=None):
 def _run_self_chat_episode(opt, world, world_logger):
     bsz = opt.get('batchsize', 1)
     num_turns = opt['selfchat_max_turns']
-
+    assert bsz == 1, "Batch size cannot be different than 1 for self-chat"
     num_parleys = math.ceil(num_turns / bsz)
     for _ in range(num_parleys):
         world.parley()
@@ -84,15 +100,35 @@ def _run_self_chat_episode(opt, world, world_logger):
 
 def self_chat(opt):
     random.seed(opt['seed'])
+    partner = opt['partner_model_file']
+    partner_opt_file = opt.get('partner_opt_file')
 
     # Create agents
     agent1 = create_agent(opt, requireModelExists=True)
-    agent2 = agent1.clone()
+    agent1.opt.log("Agent 1 Opt")
+    if partner is None:
+        # Self chat with same model
+        agent2 = agent1.clone()
+    else:
+        # Self chat with different models
+        if partner_opt_file:
+            print(f"WARNING: Loading override opts from: {partner_opt_file}")
+            with PathManager.open(partner_opt_file) as f:
+                partner_opt = json.load(f)
+        else:
+            partner_opt = {}
+        partner_opt['interactive_mode'] = opt.get('interactive_mode', True)
+        print(
+            f"WARNING: Setting partner interactive mode to: {partner_opt['interactive_mode']}"
+        )
+        agent2 = create_agent_from_model_file(partner, partner_opt)
+        agent2.opt.log("Agent 2 Opt")
 
     # Set IDs
-    model_id = agent1.id
-    agent1.id = model_id + "_1"
-    agent2.id = model_id + "_2"
+    agent1.id = agent1.id + "_1"
+    agent2.id = agent2.id + "_2"
+
+    model_id = agent1.id + "_" + agent2.id
 
     world = create_task(opt, user_agents=[agent1, agent2])
 
@@ -105,7 +141,7 @@ def self_chat(opt):
         _run_self_chat_episode(opt, world, logger)
         report = world.report()
         text, report = log_time.log(i + 1, opt['num_self_chats'], report)
-        print(text)
+        logging.info(text)
 
     # Save chats
     if opt['outfile'] is None:
@@ -125,6 +161,15 @@ def self_chat(opt):
     return logger.get_logs()
 
 
+@register_script('self_chat')
+class SelfChat(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return self_chat(self.opt)
+
+
 if __name__ == '__main__':
-    parser = setup_args()
-    self_chat(parser.parse_args(print_args=False))
+    SelfChat.main()

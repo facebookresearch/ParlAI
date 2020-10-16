@@ -15,10 +15,19 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 import parlai.scripts.build_dict as build_dict
 
+from parlai.utils.io import PathManager
 import parlai.utils.testing as testing_utils
 import os
 import shutil
 import unittest
+import pytest
+
+try:
+    from tokenizers import ByteLevelBPETokenizer  # @manual # noqa: F401
+
+    TOKENIZERS = True
+except ImportError:
+    TOKENIZERS = False
 
 DEFAULT_BYTELEVEL_BPE_VOCAB = (
     'zoo:unittest/test_bytelevel_bpe_v2/test-byte-level-bpe-v2-vocab.json'
@@ -78,7 +87,8 @@ class TestDictionary(unittest.TestCase):
     """
 
     def test_gpt2_bpe_tokenize(self):
-        opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': './data'})
+        datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
+        opt = Opt({'dict_tokenizer': 'gpt2', 'datapath': datapath})
         agent = DictionaryAgent(opt)
         self.assertEqual(
             # grinning face emoji
@@ -134,7 +144,7 @@ class TestDictionary(unittest.TestCase):
         """
         argparser = ParlaiParser()
         DictionaryAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args([], print_args=False)
+        opt = argparser.parse_args([])
         dictionary = DictionaryAgent(opt)
         num_builtin = len(dictionary)
 
@@ -157,29 +167,32 @@ class TestDictionary(unittest.TestCase):
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
+    @pytest.mark.nofbcode
     def test_set_model_file_without_dict_file(self):
         """
         Check that moving a model without moving the dictfile raises an error.
         """
         # Download model, move to a new location
-        datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
-        try:
-            # remove unittest models if there before
-            shutil.rmtree(os.path.join(datapath, 'models/unittest'))
-        except FileNotFoundError:
-            pass
+        with testing_utils.tempdir() as datapath:
+            try:
+                # remove unittest models if there before
+                shutil.rmtree(os.path.join(datapath, 'models/unittest'))
+            except FileNotFoundError:
+                pass
 
-        zoo_path = 'zoo:unittest/seq2seq/model'
-        model_path = modelzoo_path(datapath, zoo_path)
-        os.remove(model_path + '.dict')
-        # Test that eval model fails
-        with self.assertRaises(RuntimeError):
-            testing_utils.eval_model(dict(task='babi:task1k:1', model_file=model_path))
-        try:
-            # remove unittest models if there after
-            shutil.rmtree(os.path.join(datapath, 'models/unittest'))
-        except FileNotFoundError:
-            pass
+            zoo_path = 'zoo:unittest/seq2seq/model'
+            model_path = modelzoo_path(datapath, zoo_path)
+            PathManager.rm(model_path + '.dict')
+            # Test that eval model fails
+            with self.assertRaises(RuntimeError):
+                testing_utils.eval_model(
+                    dict(task='babi:task1k:1', model_file=model_path)
+                )
+            try:
+                # remove unittest models if there after
+                shutil.rmtree(os.path.join(datapath, 'models/unittest'))
+            except FileNotFoundError:
+                pass
 
     def test_train_model_with_no_dict_file(self):
         """
@@ -189,11 +202,12 @@ class TestDictionary(unittest.TestCase):
 
         parser = tms.setup_args()
         parser.set_params(task='babi:task1k:1', model='seq2seq')
-        popt = parser.parse_args([], print_args=False)
+        popt = parser.parse_args([])
         with self.assertRaises(RuntimeError):
             tms.TrainLoop(popt)
 
 
+@unittest.skipUnless(TOKENIZERS, "No tokenizers available")
 class TestByteLevelBPE(unittest.TestCase):
     """
     Test ByteLevelBPE is well-behaved.
@@ -209,7 +223,7 @@ class TestByteLevelBPE(unittest.TestCase):
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
         )
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         agent = DictionaryAgent(opt)
         self.assertEqual(
             # grinning face emoji
@@ -237,7 +251,7 @@ class TestByteLevelBPE(unittest.TestCase):
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
             bpe_add_prefix_space=False,
         )
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         agent = DictionaryAgent(opt)
         self.assertEqual(
             # grinning face emoji
@@ -379,6 +393,31 @@ class TestByteLevelBPE(unittest.TestCase):
             )
             assert da2.txt2vec("hello") == da.txt2vec("hello")
 
+    def test_add_special_tokens(self):
+        """
+        Add a list of special tokens to the dictionary.
+        """
+        special_toks_lst = ['MY', 'NAME', 'IS', 'EMILY']
+        # create Dictionary Agent
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='bytelevelbpe',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            hf_skip_special_tokens=False,
+        )
+        opt = parser.parse_args([])
+
+        agent = DictionaryAgent(opt)
+        agent.add_additional_special_tokens(special_toks_lst)
+
+        self.assertEqual(agent.additional_special_tokens, special_toks_lst)
+        phrases = ['Hi what is up EMILY', 'What IS your NAME', 'That is MY dog']
+        for phrase in phrases:
+            vec = agent.txt2vec(phrase)
+            text = agent.vec2txt(vec)
+            self.assertEqual(phrase, text)
+
 
 class TestBuildDict(unittest.TestCase):
     def _run_test(self, opt):
@@ -387,7 +426,7 @@ class TestBuildDict(unittest.TestCase):
             pp = build_dict.setup_args()
             pp.set_defaults(**opt)
             pp.set_defaults(task='babi')
-            popt = pp.parse_args([], print_args=False)
+            popt = pp.parse_args([])
             popt['dict_file'] = dict_file
             for k, v in opt.items():
                 popt[k] = v
@@ -419,7 +458,7 @@ class TestGpt2HFInterop(unittest.TestCase):
             bpe_add_prefix_space=False,
             dict_loaded=True,
         )
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         return opt
 
     def _run_test(self, slow_bytelevel_bpe, hf_bpe):
@@ -458,6 +497,7 @@ class TestGpt2HFInterop(unittest.TestCase):
             hf_bpe.vec2txt([hf_bpe.tok2ind[w] for w in BYTELEVEL_BPE_RESULT]),
         )
 
+    @pytest.mark.nofbcode
     def test_gpt2standin(self):
         with testing_utils.tempdir() as tmpdir:
             # we need to build the dict file
@@ -468,7 +508,7 @@ class TestGpt2HFInterop(unittest.TestCase):
             pp = build_dict.setup_args()
             pp.set_defaults(**hf_bpe_opt)
             pp.set_defaults(task='babi')
-            popt = pp.parse_args([], print_args=False)
+            popt = pp.parse_args([])
             popt['dict_file'] = dict_file
             build_dict.build_dict(popt)
 

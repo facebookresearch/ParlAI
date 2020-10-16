@@ -14,7 +14,7 @@ automatically, e.g.:
 
 ... code-block:
 
-   python examples/interactive.py --model-file
+   parlai interactive --model-file
        "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
 
 
@@ -45,66 +45,6 @@ There are a number of guidelines you should follow in the zoo:
 
 model_list = [
     {
-        "title": "KVMemNN ConvAI2 model",
-        "id": "convai2",
-        "path": "zoo:convai2/kvmemnn/model",
-        "agent": "projects.personachat.kvmemnn.kvmemnn:Kvmemnn",
-        "task": "convai2",
-        "description": (
-            "KvMemNN trained on the ConvAI2 task, used as a baseline in the "
-            "competition."
-        ),
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "example": (
-            "python -m parlai.scripts.interactive -mf zoo:convai2/kvmemnn/model"
-        ),
-        "result": (
-            "Enter Your Message: Hi, what do you think of peanuts?\n"
-            "there was a kid in the school system my mum works for with a severe peanut allergy"
-        ),
-    },
-    {
-        "title": "Seq2Seq ConvAI2 model",
-        "id": "convai2",
-        "path": "zoo:convai2/seq2seq/convai2_self_seq2seq_model",
-        "agent": "legacy:seq2seq:0",
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
-        ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf "
-            "zoo:convai2/seq2seq/convai2_self_seq2seq_model -m legacy:seq2seq:0"
-        ),
-        "result": (
-            "Enter Your Message: Hi, what do you think of peanuts?\n"
-            "[Seq2Seq]: i don't have any , but i do not have a favorite ."
-        ),
-    },
-    {
-        "title": "ConvAI2 Language model",
-        "id": "convai2",
-        "path": "zoo:convai2/language_model/model",
-        "agent": "language_model",
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/convai2",
-        "external_website": "http://convai.io/",
-        "description": (
-            "SeqSeq trained on the ConvAI2 task, used as a baseline in the competition."
-        ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf "
-            "zoo:convai2/language_model/model"
-        ),
-        "result": (
-            "Enter Your Message: Hi, have you ever been on an airplane?\n"
-            "[LanguageModel]: no , i do not . i am a big fan of the walking dead ."
-        ),
-    },
-    {
         "title": "DrQA SQuAD model",
         "id": "drqa",
         "path": "zoo:drqa/squad/model",
@@ -112,10 +52,7 @@ model_list = [
         "task": "squad",
         "description": "DrQA Reader trained on SQuAD",
         "external_website": "https://github.com/facebookresearch/DrQA",
-        "example": (
-            "python -m parlai.scripts.eval_model -mf zoo:drqa/squad/model -t squad "
-            "-dt test"
-        ),
+        "example": "parlai eval_model -mf zoo:drqa/squad/model -t squad -dt test",
         "result": (
             # TODO: this differs slightly from the actual results as of 2019-07-23
             "{'exs': 10570, 'accuracy': 0.6886, 'f1': 0.7821, 'hits@1': 0.689, 'hits@5': 0.689, 'hits@10': 0.689, 'hits@100': 0.689, 'bleu': 0.1364, 'train_loss': 0}"  # noqa: E501
@@ -129,7 +66,7 @@ model_list = [
         "external_website": "https://github.com/facebookresearch/DrQA",
         "task": "wikipedia:full",
         "example": (
-            "python -m parlai.scripts.interactive --model tfidf_retriever "
+            "parlai interactive --model tfidf_retriever "
             "-mf zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
         ),
         "result": (
@@ -157,10 +94,10 @@ model_list = [
         "task": "wikipedia:full",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad " "dataset."
+            "Retrieval over Wikipedia dump, used for DrQA on the open squad dataset."
         ),
         "example": (
-            "python -m parlai.scripts.interactive --model tfidf_retriever -mf "
+            "parlai interactive --model tfidf_retriever -mf "
             "zoo:wikipedia_full/tfidf_retriever/model"
         ),
         "result": (
@@ -181,11 +118,11 @@ model_list = [
         "title": "Wizard of Wikipedia (End to end Generator)",
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/end2end_generator/model",
-        "description": ("End2End Generative model for Wizard of Wikipedia"),
+        "description": "End2End Generative model for Wizard of Wikipedia",
         "task": "wizard_of_wikipedia:generator",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia:generator "
+            "parlai display_model -t wizard_of_wikipedia:generator "
             "-mf zoo:wizard_of_wikipedia/end2end_generator/model -n 1 "
             "--display-ignore-fields knowledge_parsed"
         ),
@@ -214,10 +151,10 @@ model_list = [
         "title": "Wizard of Wikipedia (Full Dialogue Retrieval Model)",
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
-        "description": ("Full Dialogue Retrieval Model for Wizard of Wikipedia"),
+        "description": "Full Dialogue Retrieval Model for Wizard of Wikipedia",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
-        "example2": "examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
+        "example2": "parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
         "result2": (
             "[ Your chosen topic is: Teapot ]\n"
             "Enter Your Message: do you like tea?\n"
@@ -228,7 +165,7 @@ model_list = [
             "[WizardRetrievalInteractiveAgent]: I think I'll try some Lipton, I love their green tea!"
         ),
         "example": (
-            "python examples/display_model.py -t wizard_of_wikipedia "
+            "parlai display_model -t wizard_of_wikipedia "
             "-mf zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model "
             "-m projects:wizard_of_wikipedia:wizard_transformer_ranker "
             "--n-heads 6 --ffn-size 1200 --embeddings-scale False "
@@ -262,10 +199,9 @@ model_list = [
         "agent": "bert_ranker/bi_encoder_ranker",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/light",
         "task": "light_dialog",
-        "description": ("LIGHT Dialogue task, replicating the numbers from the paper."),
+        "description": "LIGHT Dialogue task, replicating the numbers from the paper.",
         "example": (
-            "python examples/eval_model.py -t light_dialog "
-            "-mf zoo:light/biranker_dialogue/model"
+            "parlai eval_model -t light_dialog -mf zoo:light/biranker_dialogue/model"
         ),
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
         "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'total_train_updates': 15050,"  # noqa: E501
@@ -279,7 +215,7 @@ model_list = [
         "task": "convai2",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
         "example": (
-            "python -m parlai.scripts.eval_model --model "
+            "parlai eval_model --model "
             "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:"
             "ControllableSeq2seqAgent --task "
             "projects.controllable_dialogue.tasks.agents "
@@ -289,7 +225,7 @@ model_list = [
             "{'exs': 7801, 'accuracy': 0.0006409, 'f1': 0.1702, 'bleu': 0.005205, "
             "'token_acc': 0.3949, 'loss': 3.129, 'ppl': 22.86}"
         ),
-        "description": ("Seq2Seq model with control trained on ConvAI2"),
+        "description": "Seq2Seq model with control trained on ConvAI2",
     },
     {
         "title": "TransResNet (ResNet 152) Personality-Captions model",
@@ -302,7 +238,7 @@ model_list = [
             "Transresnet Model pretrained on the Personality-Captions task"
         ),
         "example": (
-            "python examples/eval_model.py -t personality_captions "
+            "parlai eval_model -t personality_captions "
             "-mf zoo:personality_captions/transresnet/model --num-test-labels 5 -dt test"
         ),
         "result": (
@@ -323,7 +259,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/poly_model_huge_reddit/model "
             "-t convai2 "
             "--model transformer/polyencoder --batchsize 256 --eval-batchsize 10 "
@@ -358,7 +294,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/poly_model_huge_wikito/model "
             "-t convai2 "
             "--model transformer/polyencoder --batchsize 256 --eval-batchsize 10 "
@@ -393,7 +329,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/bi_model_huge_reddit/model "
             "--batchsize 512 -t convai2 "
             "--model transformer/biencoder --eval-batchsize 6 "
@@ -430,7 +366,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/bi_model_huge_wikito/model "
             "--batchsize 512 -t convai2 "
             "--model transformer/biencoder --eval-batchsize 6 "
@@ -467,7 +403,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/cross_model_huge_reddit/model "
             "-t convai2 "
             "--model transformer/crossencoder --batchsize 16 --eval-batchsize 10 "
@@ -501,7 +437,7 @@ model_list = [
             "when fine-tuning on another task. For more details on how to train, see the project page."
         ),
         "example": (
-            "python -u examples/train_model.py "
+            "parlai train_model "
             "--init-model zoo:pretrained_transformers/cross_model_huge_wikito/model "
             "-t convai2 "
             "--model transformer/crossencoder --batchsize 16 --eval-batchsize 10 "
@@ -534,7 +470,7 @@ model_list = [
             "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits @ 1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
         ),
         "example": (
-            "python examples/interactive.py -mf "
+            "parlai interactive -mf "
             "zoo:pretrained_transformers/model_poly/model -t convai2"
         ),
         "result": (
@@ -546,7 +482,7 @@ model_list = [
             "[Polyencoder]: i am more of a tea guy . i get my tea from china .\n"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:pretrained_transformers/model_poly/model -t convai2 --eval-candidates inline"
+            "parlai eval_model -mf zoo:pretrained_transformers/model_poly/model -t convai2 --eval-candidates inline"
         ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
@@ -564,7 +500,7 @@ model_list = [
             "Bi-encoder pretrained on Reddit and fine-tuned on ConvAI2 scoring ~87 hits @ 1/20."
         ),
         "example": (
-            "python examples/interactive.py -mf "
+            "parlai interactive -mf "
             "zoo:pretrained_transformers/model_bi/model -t convai2"
         ),
         "result": (
@@ -576,7 +512,7 @@ model_list = [
             "[Biencoder]: like meat mostly , me and my dogs love them , do you like dogs ?\n"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:pretrained_transformers/model_bi/model -t convai2 --eval-candidates inline"
+            "parlai eval_model -mf zoo:pretrained_transformers/model_bi/model -t convai2 --eval-candidates inline"
         ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
@@ -594,7 +530,7 @@ model_list = [
             "Transresnet Multimodal Model pretrained on the Image-Chat task"
         ),
         "example": (
-            "python examples/eval_model.py -t image_chat "
+            "parlai eval_model -t image_chat "
             "-mf zoo:image_chat/transresnet_multimodal/model -dt test"
         ),
         "result": "{'exs': 29991, 'accuracy': 0.4032, 'f1': 0.4432, 'hits@1': 0.403, 'hits@5': 0.672, 'hits@10': 0.779, 'hits@100': 1.0, 'bleu': 0.3923,"  # noqa: E501
@@ -630,7 +566,7 @@ model_list = [
             "liven on my farm in kansas ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf "
+            "parlai eval_model -mf "
             "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all"
         ),
         "result2": (
@@ -651,7 +587,7 @@ model_list = [
             "Classifier trained on both the standard and adversarial safety tasks in addition to Wikipedia Toxic Comments."
         ),
         "example": (
-            "python examples/eval_model.py -t dialogue_safety:adversarial "
+            "parlai eval_model -t dialogue_safety:adversarial "
             "--round 3 -dt test -mf zoo:dialogue_safety/single_turn/model -bs 40"
         ),
         "result": (
@@ -669,7 +605,7 @@ model_list = [
             "Classifier trained on the multi-turn adversarial safety task in addition to both the single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
         ),
         "example": (
-            "python examples/eval_model.py -t dialogue_safety:multiturn -dt test -mf zoo:dialogue_safety/multi_turn/model --split-lines True -bs 40"
+            "parlai eval_model -t dialogue_safety:multiturn -dt test -mf zoo:dialogue_safety/multi_turn/model --split-lines True -bs 40"
         ),
         "result": (
             "{'exs': 3000, 'accuracy': 0.9317, 'f1': 0.9317, 'bleu': 9.317e-10, 'lr': 5e-09, 'total_train_updates': 0, 'examples': 3000, 'mean_loss': 0.008921, 'class___notok___recall': 0.7067, 'class___notok___prec': 0.6444, 'class___notok___f1': 0.6741, 'class___ok___recall': 0.9567, 'class___ok___prec': 0.9671, 'class___ok___f1': 0.9618, 'weighted_f1': 0.9331}"
@@ -684,7 +620,7 @@ model_list = [
             "Model files used to check backwards compatibility and code coverage of important standard models."
         ),
         "example": (
-            "python examples/eval_model.py -mf zoo:unittest/transformer_generator2/model -t integration_tests:multiturn_candidate -m transformer/generator"
+            "parlai eval_model -mf zoo:unittest/transformer_generator2/model -t integration_tests:multiturn_candidate -m transformer/generator"
         ),
         "external_website": '',
         "result": (
@@ -698,9 +634,9 @@ model_list = [
         "agent": "image_seq2seq",
         "task": "#Dodeca",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
-        "description": ("Image Seq2Seq model trained on all DodecaDialogue tasks"),
+        "description": "Image Seq2Seq model trained on all DodecaDialogue tasks",
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/all_tasks_mt/model "
+            "parlai interactive -mf zoo:dodecadialogue/all_tasks_mt/model "
             "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -710,7 +646,7 @@ model_list = [
             "[ImageSeq2seq]: i like to go to the park and play with my friends ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/all_tasks_mt/model -t \"#Dodeca\""
+            "parlai eval_model -mf zoo:dodecadialogue/all_tasks_mt/model -t \"#Dodeca\""
             "--prepend-personality True --prepend-gold-knowledge True --image-mode no_image_model"
         ),
         "result2": (
@@ -740,7 +676,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on Convai2"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/convai2_ft/model -t convai2 "
+            "parlai interactive -mf zoo:dodecadialogue/convai2_ft/model -t convai2 "
             "--inference beam --beam-size 3 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -754,7 +690,7 @@ model_list = [
             "[ImageSeq2seq]: that ' s cool . i like simple jokes ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/convai2_ft/model -t convai2"
+            "parlai eval_model -mf zoo:dodecadialogue/convai2_ft/model -t convai2"
         ),
         "result2": (
             "[ Finished evaluating tasks ['convai2'] using datatype valid ]\n"
@@ -773,7 +709,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Cornell Movie task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/cornell_movie_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/cornell_movie_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -783,7 +719,7 @@ model_list = [
             "[ImageSeq2seq]: i like to go to the movies . what about you ? do you have any hobbies ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/cornell_movie_ft/model -t cornell_movie"
+            "parlai eval_model -mf zoo:dodecadialogue/cornell_movie_ft/model -t cornell_movie"
         ),
         "result2": (
             "[ Finished evaluating tasks ['cornell_movie'] using datatype valid ]\n"
@@ -802,7 +738,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the DailyDialog task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/daily_dialog_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/daily_dialog_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -812,7 +748,7 @@ model_list = [
             "[ImageSeq2seq]: i like to go to the beach and play volleyball ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/daily_dialog_ft/model -t dailydialog"
+            "parlai eval_model -mf zoo:dodecadialogue/daily_dialog_ft/model -t dailydialog"
         ),
         "result2": (
             "[ Finished evaluating tasks ['dailydialog'] using datatype valid ]\n"
@@ -828,10 +764,13 @@ model_list = [
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
         "task": "TBD",
         "description": (
-            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task"
+            "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task. "
+            "The ELI5 model in the zoo is the one that scored the highest ROUGE scores; "
+            "it may have slightly lower f1, bleu, and slightly higher ppl than the numbers "
+            "reported in the dodeca paper."
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/eli5_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/eli5_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 200 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -862,7 +801,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Empathetic Dialogue task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/empathetic_dialogues_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/empathetic_dialogues_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -872,7 +811,7 @@ model_list = [
             "[ImageSeq2seq]: that ' s too bad . what ' s going on ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/empathetic_dialogues_ft/model -t empathetic_dialogues"
+            "parlai eval_model -mf zoo:dodecadialogue/empathetic_dialogues_ft/model -t empathetic_dialogues"
         ),
         "result2": (
             "[ Finished evaluating tasks ['empathetic_dialogues'] using datatype valid ]\n"
@@ -891,7 +830,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Grounded Conversations task"
         ),
         "example": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/igc_ft/model -t igc:responseOnly"
+            "parlai eval_model -mf zoo:dodecadialogue/igc_ft/model -t igc:responseOnly"
         ),
         "result": (
             "[ Finished evaluating tasks ['igc:responseOnly'] using datatype valid ]\n"
@@ -910,7 +849,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Chat task"
         ),
         "example": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/image_chat_ft/model -t image_chat:generation "
+            "parlai eval_model -mf zoo:dodecadialogue/image_chat_ft/model -t image_chat:generation "
             "--image-mode no_image_model"
         ),
         "result": (
@@ -930,7 +869,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the LIGHT Dialogue task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/light_dialog_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/light_dialog_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -940,7 +879,7 @@ model_list = [
             "[ImageSeq2seq]: me too . it ' s been so long since i ' ve seen a battle like this . do you have a favorite battle ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/light_dialog_ft/model -t light_dialog"
+            "parlai eval_model -mf zoo:dodecadialogue/light_dialog_ft/model -t light_dialog"
         ),
         "result2": (
             "[ Finished evaluating tasks ['light_dialog'] using datatype valid ]\n"
@@ -959,7 +898,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the pushshift.io Reddit task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/reddit_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/reddit_ft/model "
             "--inference beam --beam-size 5 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -980,7 +919,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Twitter task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/twitter_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/twitter_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 20 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -990,7 +929,7 @@ model_list = [
             "[ImageSeq2seq]: hi ! i ' m doing well ! i like to read , watch movies , play video games , and listen to music . how about you ?"
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/twitter_ft/model -t twitter"
+            "parlai eval_model -mf zoo:dodecadialogue/twitter_ft/model -t twitter"
         ),
         "result2": (
             "[ Finished evaluating tasks ['twitter'] using datatype valid ]\n"
@@ -1009,7 +948,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Ubuntu V2 task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/ubuntu_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/ubuntu_ft/model "
             "--inference beam --beam-size 2 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3"
         ),
         "result": (
@@ -1019,7 +958,7 @@ model_list = [
             "[ImageSeq2seq]: i like to read , write , and read ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/ubuntu_ft/model -t ubuntu"
+            "parlai eval_model -mf zoo:dodecadialogue/ubuntu_ft/model -t ubuntu"
         ),
         "result2": (
             "[ Finished evaluating tasks ['ubuntu'] using datatype valid ]\n"
@@ -1038,7 +977,7 @@ model_list = [
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Wizard of Wikipedia task"
         ),
         "example": (
-            "python examples/interactive.py -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model "
+            "parlai interactive -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model "
             "--inference beam --beam-size 10 --beam-min-length 10 --beam-block-ngram 3 --beam-context-block-ngram 3 -t wizard_of_wikipedia"
         ),
         "result": (
@@ -1061,7 +1000,7 @@ model_list = [
             "[ImageSeq2seq]: i don ' t make them , but i would love to ."
         ),
         "example2": (
-            "python examples/eval_model.py -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model -t wizard_of_wikipedia:Generator --prepend-gold-knowledge true"
+            "parlai eval_model -mf zoo:dodecadialogue/wizard_of_wikipedia_ft/model -t wizard_of_wikipedia:Generator --prepend-gold-knowledge true"
         ),
         "result2": (
             "[ Finished evaluating tasks ['wizard_of_wikipedia:Generator'] using datatype valid ]\n"
@@ -1080,9 +1019,95 @@ model_list = [
             "Image Seq2Seq base model, from which all DodecaDialogue models were trained"
         ),
         "example": (
-            "python examples/train_model.py -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
+            "parlai train_model -t \"#Dodeca\" --prepend-gold-knowledge true --prepend-personality true -mf /tmp/dodeca_model --init-model zoo:dodecadialogue/base_model/model --dict-file zoo:dodecadialogue/dict/dodeca.dict --model image_seq2seq --dict-tokenizer bpe --dict-lower true -bs 32 -eps 0.5 -esz 512 --ffn-size 2048 --fp16 false --n-heads 16 --n-layers 8 --n-positions 512 --text-truncate 512 --label-truncate 128 --variant xlm -lr 7e-6 --lr-scheduler reduceonplateau --optimizer adamax --dropout 0.1 --validation-every-n-secs 3600 --validation-metric ppl --validation-metric-mode min --validation-patience 10 --activation gelu --embeddings-scale true --learn-positional-embeddings true --betas 0.9,0.999 --warmup-updates 2000 --gradient-clip 0.1"
         ),
-        "result": ("A trained model (logs omitted)"),
+        "result": "A trained model (logs omitted)",
+    },
+    {
+        "title": "BlendedSkillTalk: BlendedSkillTalk single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/bst_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the BlendedSkillTalk dialogue task.",
+        "example": "parlai interactive -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
+        "result": 'Results vary.',
+        "example2": "parlai eval_model -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk -dt test",
+        "result2": """09:51:57 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .7920   .7785 5482 .8124    .0370   .7920    .9788         1   .9542 .8251 .8636 1.866 19.76
+""",
+    },
+    {
+        "title": "BlendedSkillTalk: ConvAI2 single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/convai2_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
+        "result": """10:23:53 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .7678   .7553 5482 .7902   .07928   .7678    .9728         1   .9414 .9337 .8451  2.04 19.76
+""",
+    },
+    {
+        "title": "BlendedSkillTalk: EmpatheticDialogues single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/ed_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the EmpatheticDialogues dialogue task.",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/ed_single_task/model -t blended_skill_talk -dt test",
+        "result": """10:16:47 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .6895   .6774 5482 .7219   .07928   .6895    .9509         1   .9051 1.242 .7849  2.79 19.76
+""",
+    },
+    {
+        "title": "BlendedSkillTalk: Wizard of Wikipedia single-task model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/wizard_single_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",
+        "result": """10:34:46 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .6742   .6616 5482 .7059   .07928   .6742    .9445         1   .8902 1.321 .7706 2.962 19.76
+""",
+    },
+    {
+        "title": "BlendedSkillTalk: MT Single-Skills model",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/multi_task/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",
+        "result": """10:23:35 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .8010   .7872 5482 .8204   .07928   .8010    .9779         1   .9564 .8154 .8697 1.908 19.76
+""",
+    },
+    {
+        "title": "BlendedSkillTalk: MT Single-Skills model fine-tuned on BST",
+        "id": "blended_skill_talk",
+        "path": "zoo:blended_skill_talk/multi_task_bst_tuned/model",
+        "agent": "transformer/polyencoder",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks, and then further fine-tuned on the BlendedSkillTalk dialogue task.",
+        "example": "parlai eval_model -mf zoo:blended_skill_talk/multi_task_bst_tuned/model -t blended_skill_talk -dt test",
+        "result": """10:36:01 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
+    accuracy  bleu-4  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  loss   mrr  rank   tpb
+       .8378   .8230 5482 .8543   .07928   .8378    .9872         1   .9704 .5897 .8963 1.604 19.76
+""",
     },
     {
         "title": "Tutorial Transformer Generator",
@@ -1092,9 +1117,7 @@ model_list = [
         "description": (
             "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
         ),
-        "example": (
-            "python -m parlai.scripts.interactive -mf zoo:tutorial_transformer_generator/model"
-        ),
+        "example": "parlai interactive -mf zoo:tutorial_transformer_generator/model",
         "external_website": '',
         "result": (
             "Enter Your Message: hi, how are you today?\n"
@@ -1167,12 +1190,12 @@ model_list = [
         "task": "pushshift.io",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
-            "2.7B parameter generative model finetuned on blended_skill_talk tasks."
+            "2.7B parameter generative model pretrained on Reddit but not finetuned."
         ),
         "example": (
-            "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 128 --model transformer/generator --embedding-size 2560 --ffn-size 10240 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 2 --n-decoder-layers 24 --history-add-global-end-token end --delimiter '  ' --dict-tokenizer bytelevelbpe  --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_3B/model --dict-file zoo:blender/reddit_3B/model.dict --label-truncate 128 --log_every_n_secs 10 -lr 7e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid True --text-truncate 128 --truncate 128 --warmup_updates 100 --fp16-impl mem_efficient --update-freq 2 --gradient-clip 0.1 --skip-generation True -vp 10 -vmt ppl -vmm min --model-file /tmp/test_train_27B"
         ),
-        "result": ("Results vary."),
+        "result": "Results vary.",
     },
     {
         "title": "Reddit 9.4B",
@@ -1182,11 +1205,335 @@ model_list = [
         "task": "pushshift.io",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
-            "9.4B parameter generative model finetuned on blended_skill_talk tasks."
+            "9.4B parameter generative model pretrained on Reddit but not finetuned."
         ),
         "example": (
-            "python examples/train_model.py -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -veps 0.25 --attention-dropout 0.0 --batchsize 8 --eval-batchsize 64 --model transformer/generator --embedding-size 4096 --ffn-size 16384 --variant prelayernorm --n-heads 32 --n-positions 128 --n-encoder-layers 4 --n-decoder-layers 32 --history-add-global-end-token end --dict-tokenizer bytelevelbpe --dropout 0.1 --fp16 True --init-model zoo:blender/reddit_9B/model --dict-file zoo:blender/reddit_9B/model.dict --label-truncate 128 -lr 3e-06 -dynb full --lr-scheduler cosine --max-lr-steps 9000 --lr-scheduler-patience 3 --optimizer adam --relu-dropout 0.0 --activation gelu --model-parallel true --save-after-valid False --text-truncate 128 --truncate 128 --warmup_updates 1000 --fp16-impl mem_efficient --update-freq 4 --log-every-n-secs 30 --gradient-clip 0.1 --skip-generation True -vp 10 --max-train-time 84600 -vmt ppl -vmm min --model-file /tmp/test_train_94B"
         ),
-        "result": ("Results vary."),
+        "result": "Results vary.",
+    },
+    {
+        "title": "BART",
+        "id": "bart",
+        "path": "zoo:bart/bart_large/model",
+        "agent": "bart",
+        "external_website": "https://arxiv.org/abs/1910.13461",
+        "task": "wikipedia_plus_toronto_books",
+        "description": (
+            "BART: Denoising Sequence-to-Sequence Pre-training for Natural "
+            "Language Generation, Translation, and Comprehension."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:bart/bart_large/model -t convai2 -bs 64"
+        ),
+        "result": (
+            "Finished evaluating tasks ['convai2'] using datatype valid\n"
+            "accuracy   bleu-4    exs      f1  gpu_mem    loss    ppl  token_acc   tpb\n"
+            "0        .0004641   7801  .02084    .4878   5.041  154.6      .2042  1652"
+        ),
+        "example2": (
+            "parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam"
+        ),
+        "result2": (
+            "valid:\n"
+            "accuracy  bleu-4  exs    f1  gpu_mem  loss    lr   ppl  token_acc  total_train_updates   tpb\n"
+            ".0001282  .01229 7801 .2035    .6361 2.386 1e-05 10.87      .4741                 5478 321.3"
+        ),
+    },
+    {
+        "title": "Unlikelihood ConvAI2 context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood ConvAI2 context repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with context repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood ConvAI2 label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_convai2_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ConvAI2 with label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_convai2_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[RepetitionUnlikelihood]: hi , how are you doing today ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood ELI5 context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "eli5",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ELI5 with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood ELI5 context repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_celi5_ctxt/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "eli5",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ELI5 with context repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood ELI5 label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_eli5_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "eli5",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on ELI5 with label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_eli5_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood Wizard of Wikipedia context and label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "wizard_of_wikipedia:GeneratorTeacher",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on Wizard of Wikipedia with context and label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood Wizard of Wikipedia context repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "wizard_of_wikipedia:GeneratorTeacher",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on Wizard of Wikipedia with context repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_ctxt/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood Wizard of Wikipedia label repetition model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/rep_wiki_label/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "wizard_of_wikipedia:GeneratorTeacher",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on Wizard of Wikipedia with label repetition unlikelihood"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/rep_wiki_label/model -m projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent"
+        ),
+        "result": ("Enter Your Message: Hi.\n" "[RepetitionUnlikelihood]: hi ."),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e0 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e0/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e0"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e0/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi there ! how are you ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e1 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e1/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e1"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e1/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi how are you today"
+        ),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e2 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e2/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e2"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e2/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hello , how are you ?"
+        ),
+    },
+    {
+        "title": "Unlikelihood vocab alpha 1e3 model",
+        "id": "dialogue_unlikelihood",
+        "path": "zoo:dialogue_unlikelihood/vocab_alpha1e3/model",
+        "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
+        "task": "convai2",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "description": (
+            "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e3"
+        ),
+        "example": (
+            "python parlai/scripts/interactive.py -mf zoo:dialogue_unlikelihood/vocab_alpha1e3/model -m projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent"
+        ),
+        "result": (
+            "Enter Your Message: Hi.\n"
+            "[TransformerSequenceVocabUnlikelihood]: hi there !"
+        ),
+    },
+    {
+        "title": "Style-controlled generation: C75-D+ generator",
+        "id": "style_gen",
+        "path": "zoo:style_gen/c75_labeled_dialogue_generator/model",
+        "agent": "projects.style_gen.style_gen:StyleGenAgent",
+        "task": "style_gen:BlendedSkillTalk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen',
+        "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",
+        "example": "parlai eval_model --datatype test --model projects.style_gen.style_gen:StyleGenAgent --model-file zoo:style_gen/c75_labeled_dialogue_generator/model --skip-generation True --task style_gen:LabeledBlendedSkillTalk --use-style-frac 1.00",
+        "result": """16:56:52 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
+    ctpb  ctps  exps  exs  gpu_mem  loss  ltpb  ltps   ppl  token_acc   tpb  tps
+     120  1855 15.46 5482    .1635 2.248 19.94 308.2 9.468      .4872 139.9 2163""",
+    },
+    {
+        "title": "Faster-R-CNN Detectron Features",
+        "id": "detectron",
+        "path": "zoo:detectron/detectron_model.pth",
+        "agent": "n/a",
+        "task": "n/a",
+        "project": 'https://github.com/facebookresearch/vilbert-multi-task',
+        "description": "Detectron Model for extracting 100x2048d object detection features. Model is from linked project website",
+        "example": "parlai display_data -t flickr30k --image-mode faster_r_cnn_152_32x8d -n 1 -v",
+        "result": """
+        [id]: flickr30k
+        [image_id]: 1000092795
+        [ image ]: tensor([[ 0.0000,  7.1329,  0.0000,  ...,  0.0000,  0.0000,  5.3357],
+                [ 0.0000,  0.0000,  0.0000,  ...,  0.0000,  0.0000,  0.0000],
+                [ 0.0000,  0.0000,  0.4687,  ...,  0.0000,  0.0000,  0.0000],
+                ...,
+                [ 0.0000,  3.0936,  3.4888,  ...,  0.0000,  0.0000,  0.0000],
+                [ 3.8596,  0.0000,  0.0000,  ...,  0.0000,  4.3454,  0.0000],
+                [ 0.0000,  7.9822,  1.0979,  ...,  3.5514,  0.0000, 15.3559]])
+        [labels]: Two young guys with shaggy hair look at their hands while hanging out in the yard.|Two young, White males are outside near many bushes.|Two men in green shirts are standing in a yard.|A man in a blue shirt standing in a garden.|Two friends enjoy time spent together.
+        """,
+    },
+    {
+        "title": "Multi-Modal BlenderBot (MMB DegenPos)",
+        "id": "multimodal_blenderbot",
+        "path": 'n/a',
+        "agent": "projects.multimodal_blenderbot.agents:BiasAgent",
+        "task": "blended_skill_talk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/multimodal_blenderbot',
+        "description": "Model trained to talk about both images and general chitchat, trained with a degendering teacher and with 75% of Image-Chat styles replaced by a generic polarity string",
+        "example": "python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf ${FINETUNED_MODEL_PATH} --model projects.multimodal_blenderbot.agents:BiasAgent --delimiter $'\n' --beam-block-ngram 3 --beam-context-block-ngram 3 --beam-min-length 20 --beam-size 10 --inference beam --model-parallel False",
+        "result": "(results will vary)",
+    },
+    {
+        "title": "Transformer Classifier Multi-turn Dialogue Safety Model",
+        "id": "bot_adversarial_dialogue",
+        "path": "zoo:bot_adversarial_dialogue/multi_turn_v0/model",
+        "agent": "transformer/classifier",
+        "task": "bot_adversarial_dialogue",
+        "project": "",
+        "description": (
+            "Classifier trained on the filtered multi-turn bot adversarial dialogues in addition to both dialogue_safety single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
+        ),
+        "example": (
+            "parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:bot_adversarial_dialogue/multi_turn_v0/model -bs 128"
+        ),
+        "result": (
+            "{'exs': 2598, 'accuracy': 0.8414, 'f1': 0.8414, 'loss': 0.5153, 'bleu-4': 8.414e-10, 'class___notok___recall': 0.8093, 'class___notok___prec': 0.7671, 'class___notok___f1': 0.7876, 'class___ok___recall': 0.8597, 'class___ok___prec': 0.8876, 'class___ok___f1': 0.8735, 'weighted_f1': 0.8423}"
+        ),
+    },
+    {
+        "title": "Transformer Classifier Multi-turn Dialogue Safety Model",
+        "id": "bot_adversarial_dialogue",
+        "path": "zoo:bot_adversarial_dialogue/multi_turn/model",
+        "agent": "transformer/classifier",
+        "task": "bot_adversarial_dialogue",
+        "project": "",
+        "description": (
+            "Classifier trained on the truncated multi-turn bot adversarial dialogues in addition to both dialogue_safety single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
+        ),
+        "example": (
+            "parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:bot_adversarial_dialogue/multi_turn/model -bs 128"
+        ),
+        "result": (
+            "{'exs': 2598, 'accuracy': 0.8507, 'f1': 0.8507, 'loss': 0.3878, 'bleu-4': 8.507e-10, 'class___notok___recall': 0.8633, 'class___notok___prec': 0.7588, 'class___notok___f1': 0.8077, 'class___ok___recall': 0.8434, 'class___ok___prec': 0.9154, 'class___ok___f1': 0.8779, 'weighted_f1': 0.8524}"
+        ),
     },
 ]

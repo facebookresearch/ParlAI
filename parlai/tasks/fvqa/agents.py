@@ -7,6 +7,7 @@
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.metrics import TeacherMetrics
 from parlai.core.teachers import Teacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -56,9 +57,7 @@ class SplitTeacher(Teacher):
             if shared and shared.get('factmetrics'):
                 self.factmetrics = shared['factmetrics']
             else:
-                self.factmetrics = TeacherMetrics(
-                    opt.get('numthreads', 1) > 1, opt.get('metrics', 'default')
-                )
+                self.factmetrics = TeacherMetrics(opt.get('metrics', 'default'))
             self.datatype = opt['datatype']
         questions_path, trainset_path, self.image_path = _path(opt)
 
@@ -86,7 +85,8 @@ class SplitTeacher(Teacher):
 
     def report(self):
         r = super().report()
-        r['factmetrics'] = self.factmetrics.report()
+        for k, v in self.factmetrics.report().items():
+            r[f'factmetrics_{k}'] = v
         return r
 
     def reset(self):
@@ -160,11 +160,11 @@ class SplitTeacher(Teacher):
 
     def _setup_data(self, questions_path, trainset_path, datatype, task_num):
         print('loading: ' + questions_path)
-        with open(questions_path) as questions_file:
+        with PathManager.open(questions_path) as questions_file:
             questions = json.load(questions_file)
         train_test_images = set()
         fn = os.path.join(trainset_path, '{}_list_{}.txt'.format(datatype, task_num))
-        with open(fn) as imageset:
+        with PathManager.open(fn) as imageset:
             for line in imageset:
                 train_test_images.add(line.strip())
         self.ques = [

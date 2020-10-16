@@ -46,15 +46,6 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
         # TODO: more thoroughly test out whether one of these choices is best and add a
         #  'recommended' arg here. 'add' and 'prepend' seem to be roughly similar in
         #  performance
-        agent.add_argument(
-            '--n-image-tokens',
-            type=int,
-            default=1,
-            help=(
-                'Number of tokens that the image encoding will consist of (when adding '
-                'or prepending)'
-            ),
-        )
         agent.set_defaults(reduction_type=None)
         # This agent doesn't support any encoder output reductions
         return agent

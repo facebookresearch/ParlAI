@@ -64,6 +64,15 @@ def uppercase(string: str) -> str:
         return string[0].upper() + string[1:]
 
 
+def name_to_classname(name: str) -> str:
+    words = name.split('_')
+    class_name = ''
+    for w in words:
+        # capitalize the first letter
+        class_name += w[0].upper() + w[1:]
+    return class_name
+
+
 def colorize(text, style):
     try:
         # if we're in ipython it's okay to use colors
@@ -77,6 +86,18 @@ def colorize(text, style):
 
     colorstyle = os.environ.get('PARLAI_COLORSTYLE')
 
+    RESET = '\033[0;0m'
+    if style == 'red':
+        return '\033[0;31m' + text + RESET
+    if style == 'yellow':
+        return '\033[0;93m' + text + RESET
+    if style == 'green':
+        return '\033[0;32m' + text + RESET
+    if style == 'blue':
+        return '\033[0;34m' + text + RESET
+    if style == 'brightblack':
+        return '\033[0;90m' + text + RESET
+
     if colorstyle is None or colorstyle.lower() == 'steamroller':
         BLUE = '\033[1;94m'
         BOLD_LIGHT_GRAY_NOBK = '\033[1m'
@@ -84,7 +105,6 @@ def colorize(text, style):
         MAGENTA = '\033[0;95m'
         HIGHLIGHT_RED_NOBK = '\033[1;31m'
         HIGHLIGHT_BLUE_NOBK = '\033[0;34m'
-        RESET = '\033[0;0m'
         if style == 'highlight':
             return HIGHLIGHT_RED_NOBK + text + RESET
         if style == 'highlight2':
@@ -113,7 +133,6 @@ def colorize(text, style):
         MAGENTA = '\033[0;95m'
         HIGHLIGHT_RED = '\033[1;37;41m'
         HIGHLIGHT_BLUE = '\033[1;37;44m'
-        RESET = '\033[0;0m'
         if style == 'highlight':
             return HIGHLIGHT_RED + text + RESET
         if style == 'highlight2':

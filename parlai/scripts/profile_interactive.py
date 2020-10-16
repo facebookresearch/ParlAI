@@ -4,13 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Basic script which allows to profile interaction with a model using repeat_query to
+Basic script which allows to profile interaction with a model using `repeat_query` to
 avoid human interaction (so we can time it, only).
 """
 from parlai.core.params import ParlaiParser
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.agents.repeat_query.repeat_query import RepeatQueryAgent
+import parlai.utils.logging as logging
 
 import random
 import cProfile
@@ -47,25 +49,12 @@ def setup_args(parser=None):
     return parser
 
 
-def profile_interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
-        opt = opt.parse_args()
-
+def profile_interactive(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     human_agent = RepeatQueryAgent(opt)
     world = create_task(opt, [human_agent, agent])
-
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
 
     pr = cProfile.Profile()
     pr.enable()
@@ -81,7 +70,7 @@ def profile_interactive(opt, print_parser=None):
         if cnt >= opt.get('num_examples', 100):
             break
         if world.epoch_done():
-            print("EPOCH DONE")
+            logging.info("epoch done")
             break
 
     pr.disable()
@@ -92,7 +81,16 @@ def profile_interactive(opt, print_parser=None):
     print(s.getvalue())
 
 
+@register_script('profile_interactive', hidden=True)
+class ProfileInteractive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return profile_interactive(self.opt)
+
+
 if __name__ == '__main__':
     random.seed(42)
-    parser = setup_args()
-    profile_interactive(parser.parse_args(print_args=False), print_parser=parser)
+    ProfileInteractive.main()

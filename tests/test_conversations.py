@@ -7,9 +7,9 @@ import os
 import shutil
 import unittest
 
-import parlai.utils.testing as testing_utils
 from parlai.utils.conversations import Conversations
-from parlai.core.params import ParlaiParser
+import parlai.utils.logging as logging
+import tempfile
 
 
 class TestConversations(unittest.TestCase):
@@ -18,9 +18,7 @@ class TestConversations(unittest.TestCase):
     """
 
     def setUp(self):
-        self.datapath = ParlaiParser().parse_args([], print_args=False)['datapath']
-        self.datapath = os.path.join(self.datapath, 'tmp_conversations')
-        os.makedirs(self.datapath, exist_ok=True)
+        self.datapath = tempfile.mkdtemp()
 
     def test_conversations(self):
         act_list = [
@@ -51,11 +49,7 @@ class TestConversations(unittest.TestCase):
                 ],
             ],
         ]
-        self.opt = {
-            'A': 'B',
-            'C': 'D',
-            'E': 'F',
-        }
+        self.opt = {'A': 'B', 'C': 'D', 'E': 'F'}
 
         self.convo_datapath = os.path.join(self.datapath, 'convo1')
         Conversations.save_conversations(
@@ -79,23 +73,21 @@ class TestConversations(unittest.TestCase):
 
         # test opt saved
         for x in ['A', 'C', 'E']:
-            self.assertEqual(
-                self.opt[x], convos.metadata.opt[x],
-            )
+            self.assertEqual(self.opt[x], convos.metadata.opt[x])
 
         # test kwargs
         self.assertEqual({'other_info': 'Blah blah blah'}, convos.metadata.extra_data)
 
         # test reading conversations
-        with testing_utils.capture_output() as out:
+        with self.assertLogs(logger=logging.logger, level='DEBUG') as cm:
             convos.read_conv_idx(0)
-        str_version = (
-            'Emily: Hello, do you like this test?\n'
-            'Stephen: Why yes! I love this test!\n'
-            'Emily: So will you stamp this diff?\n'
-            'Stephen: Yes, I will do it right now!\n'
-        )
-        self.assertIn(str_version, out.getvalue())
+            str_version = (
+                'Emily: Hello, do you like this test?\n'
+                'Stephen: Why yes! I love this test!\n'
+                'Emily: So will you stamp this diff?\n'
+                'Stephen: Yes, I will do it right now!\n'
+            )
+            self.assertIn(str_version, "\n".join(cm.output))
 
         # test getting a specific turn
         first = convos[0]  # Conversation

@@ -12,6 +12,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
+from parlai.utils.io import PathManager
 from collections import Counter
 import os
 import math
@@ -123,7 +124,7 @@ def learn_nidf(opt):
     word2count_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
     print("Saving word count stats to %s..." % word2count_fp)
     data = {"word2count": word_counter, "num_sents": num_sents}
-    with open(word2count_fp, "wb") as f:
+    with PathManager.open(word2count_fp, "wb") as f:
         pickle.dump(data, f)
 
 
@@ -137,7 +138,7 @@ def load_word2nidf(opt):
     """
     word2count_fp = os.path.join(opt['datapath'], CONTROLLABLE_DIR, 'word2count.pkl')
     print("Loading word count stats from %s..." % word2count_fp)
-    with open(word2count_fp, "rb") as f:
+    with PathManager.open(word2count_fp, "rb") as f:
         data = pickle.load(f)
     num_sents = data['num_sents']
     print('num_sents: ', num_sents)

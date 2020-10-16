@@ -8,6 +8,7 @@ Test TorchRankerAgent.
 """
 
 import os
+import pytest
 import unittest
 
 import parlai.utils.testing as testing_utils
@@ -29,12 +30,15 @@ class _AbstractTRATest(unittest.TestCase):
         # Add arguments for the Torch Ranker Agent to test
         # Override in child classes
         return dict(
-            task='integration_tests:candidate',
-            optimizer='adamax',
-            learningrate=7e-3,
-            batchsize=16,
-            embedding_size=32,
-            num_epochs=4,
+            task='integration_tests:overfit',
+            optimizer='adam',
+            learningrate=1e-2,
+            batchsize=4,
+            validation_every_n_epochs=5,
+            validation_patience=10,
+            lr_scheduler='none',
+            embedding_size=8,
+            gradient_clip=0.5,
         )
 
     def _get_threshold(self):
@@ -46,6 +50,7 @@ class _AbstractTRATest(unittest.TestCase):
     def test_train_inline(self):
         args = self._get_args()
         args['candidates'] = 'inline'
+        args['eval_candidates'] = 'inline'
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
@@ -56,16 +61,19 @@ class _AbstractTRATest(unittest.TestCase):
     def test_train_batch(self):
         args = self._get_args()
         args['candidates'] = 'batch'
+        args['eval_candidates'] = 'batch'
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
         self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test train fixed
+    @pytest.mark.nofbcode
     @testing_utils.retry(ntries=3)
     def test_train_fixed(self):
         args = self._get_args()
         args['candidates'] = 'fixed'
+        args['eval_candidates'] = 'fixed'
         args['encode_candidate_vecs'] = False
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
@@ -77,6 +85,7 @@ class _AbstractTRATest(unittest.TestCase):
     def test_train_batch_all(self):
         args = self._get_args()
         args['candidates'] = 'batch-all-cands'
+        args['eval_candidates'] = 'batch-all-cands'
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
@@ -93,19 +102,17 @@ class _AbstractTRATest(unittest.TestCase):
         self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test eval batch ecands
-    @testing_utils.retry(ntries=3)
     def test_eval_batch(self):
         args = self._get_args()
         args['eval_candidates'] = 'batch'
         valid, test = testing_utils.train_model(args)
-        threshold = self._get_threshold()
-
-        self.assertGreaterEqual(valid['hits@1'], threshold)
+        # no threshold, the model won't generalize on :overfit
 
     # test eval fixed ecands
     @testing_utils.retry(ntries=3)
     def test_eval_fixed(self):
         args = self._get_args()
+        args['evaltask'] = 'integration_tests'
         args['eval_candidates'] = 'fixed'
         args['encode_candidate_vecs'] = True
         args['ignore_bad_candidates'] = True
@@ -149,13 +156,7 @@ class _AbstractTRATest(unittest.TestCase):
 class TestTransformerRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
-        new_args = dict(
-            model='transformer/ranker',
-            n_layers=1,
-            n_heads=4,
-            ffn_size=64,
-            gradient_clip=0.5,
-        )
+        new_args = dict(model='transformer/ranker', n_layers=1, n_heads=4, ffn_size=32)
         for k, v in new_args.items():
             args[k] = v
         return args
@@ -172,15 +173,12 @@ class TestMemNN(_AbstractTRATest):
         return 0.5
 
 
+@pytest.mark.nofbcode
 class TestPolyRanker(_AbstractTRATest):
     def _get_args(self):
         args = super()._get_args()
         new_args = dict(
-            model='transformer/polyencoder',
-            n_layers=1,
-            n_heads=4,
-            ffn_size=64,
-            gradient_clip=0.5,
+            model='transformer/polyencoder', n_layers=1, n_heads=4, ffn_size=32
         )
         for k, v in new_args.items():
             args[k] = v
@@ -216,6 +214,7 @@ class TestPolyRanker(_AbstractTRATest):
             args['model_file'] = os.path.join(tmpdir, 'model')
             args['dict_file'] = os.path.join(tmpdir, 'model.dict')
             args['num_epochs'] = 4
+            args['add_label_to_fixed_cands'] = False
             # Train model where it has access to the candidate in labels
             valid, test = testing_utils.train_model(args)
             self.assertGreaterEqual(valid['hits@100'], 0.0)
@@ -223,12 +222,19 @@ class TestPolyRanker(_AbstractTRATest):
             # Evaluate model where label is not in fixed candidates
             args['fixed_candidates_path'] = tmp_train_val_cands_file
 
+            # need these args dropped, it was for train only
+            del args['num_epochs']
+            del args['validation_patience']
+            del args['validation_every_n_epochs']
+            # use validation set that doesn't overlap
+            args['task'] = 'integration_tests'
+
             # Will fail without appropriate arg set
             with self.assertRaises(RuntimeError):
                 testing_utils.eval_model(args, skip_valid=True)
 
             args['add_label_to_fixed_cands'] = True
-            valid, test = testing_utils.eval_model(args, skip_valid=True)
+            _, test = testing_utils.eval_model(args, skip_valid=True)
             self.assertGreaterEqual(test['hits@100'], 0.0)
 
 

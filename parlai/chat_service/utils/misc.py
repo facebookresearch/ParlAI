@@ -124,12 +124,12 @@ class SafetyDetectionResult(Enum):
     Result of identfying offensive language in a response.
 
     SAFE:       the message is safe
-    BLACKLIST:  the message contains a word from the blacklist
+    BLOCKLIST:  the message contains a word from the blocklist
     UNSAFE:     the message is deemed unsafe by the safety classifier
     """
 
     SAFE = 0
-    BLACKLIST = 1
+    BLOCKLIST = 1
     UNSAFE = 2
 
 

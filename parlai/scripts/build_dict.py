@@ -6,14 +6,13 @@
 """
 Generates a dictionary file from the training data.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  # learn the vocabulary from one task, then train on another task.
-  python -m parlai.scripts.build_dict -t convai2 --dict-file premade.dict
-  python -m parlai.scripts.train_model -t squad --dict-file premade.dict -m seq2seq
+```bash
+# learn the vocabulary from one task, then train on another task.
+parlai build_dict -t convai2 --dict-file premade.dict
+parlai train_model -t squad --dict-file premade.dict -m seq2seq
+```
 """
 
 from parlai.core.dict import DictionaryAgent
@@ -21,8 +20,10 @@ from parlai.core.params import ParlaiParser, str2class
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.utils.distributed import is_distributed
+from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
 import copy
-import os
 import tqdm
 
 
@@ -54,31 +55,24 @@ def setup_args(parser=None, hidden=True):
     dict_loop.add_argument(
         '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
-    partial, _ = parser.parse_known_args(nohelp=True)
-    if vars(partial).get('dict_class'):
-        str2class(vars(partial).get('dict_class')).add_cmdline_args(parser)
-    else:
-        DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser)
     return parser
 
 
 def build_dict(opt, skip_if_built=False):
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: should be passed opt not Parser ]')
+        logging.error('Should be passed opt not Parser')
         opt = opt.parse_args()
     if not opt.get('dict_file'):
-        print(
+        logging.error(
             'Tried to build dictionary but `--dict-file` is not set. Set '
-            + 'this param so the dictionary can be saved.'
+            'this param so the dictionary can be saved.'
         )
         return
-    if skip_if_built and os.path.isfile(opt['dict_file']):
+    if skip_if_built and PathManager.exists(opt['dict_file']):
         # Dictionary already built, skip all loading or setup
-        print("[ dictionary already built .]")
+        logging.debug("dictionary already built.")
         return None
-
-    if is_distributed():
-        raise ValueError('Dictionaries should be pre-built before distributed train.')
 
     if opt.get('dict_class'):
         # Custom dictionary class
@@ -87,21 +81,27 @@ def build_dict(opt, skip_if_built=False):
         # Default dictionary class
         dictionary = DictionaryAgent(opt)
 
-    if os.path.isfile(opt['dict_file']):
+    if PathManager.exists(opt['dict_file']) or (
+        hasattr(dictionary, 'is_prebuilt') and dictionary.is_prebuilt()
+    ):
         # Dictionary already built, return loaded dictionary agent
-        print("[ dictionary already built .]")
+        logging.debug("dictionary already built.")
         return dictionary
+
+    if is_distributed():
+        raise ValueError('Dictionaries should be pre-built before distributed train.')
 
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
     # we use train set to build dictionary
 
-    ordered_opt['numthreads'] = 1
     ordered_opt['batchsize'] = 1
     ordered_opt['num_workers'] = 1
     # Set this to none so that image features are not calculated when Teacher is
     # instantiated while building the dict
     ordered_opt['image_mode'] = 'no_image_model'
+
+    ordered_opt.log()
 
     datatypes = ['train:ordered:stream']
     if opt.get('dict_include_valid'):
@@ -128,7 +128,7 @@ def build_dict(opt, skip_if_built=False):
         while not world_dict.epoch_done():
             cnt += 1
             if cnt > opt['dict_maxexs'] and opt['dict_maxexs'] >= 0:
-                print('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
+                logging.info('Processed {} exs, moving on.'.format(opt['dict_maxexs']))
                 # don't wait too long...
                 break
             world_dict.parley()
@@ -138,13 +138,22 @@ def build_dict(opt, skip_if_built=False):
             pbar.close()
 
     dictionary.save(opt['dict_file'], sort=True)
-    print(
-        '[ dictionary built with {} tokens in {}s ]'.format(
-            len(dictionary), round(log_time.total_time(), 2)
-        )
+    logging.info(
+        f'dictionary built with {len(dictionary)} tokens '
+        f'in {log_time.total_time():.1f}s'
     )
     return dictionary
 
 
+@register_script('build_dict', hidden=True)
+class BuildDict(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args(hidden=False)
+
+    def run(self):
+        return build_dict(self.opt)
+
+
 if __name__ == '__main__':
-    build_dict(setup_args(hidden=False).parse_args())
+    BuildDict.main()

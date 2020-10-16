@@ -7,20 +7,19 @@
 Basic example which iterates through the tasks specified and checks them for offensive
 language.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  python -m parlai.scripts.detect_offensive_language -t "convai_chitchat" --display-examples True
+```shell
+parlai detect_offensive_language -t "convai_chitchat" --display-examples True
+```
 """  # noqa: E501
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
 from parlai.utils.safety import OffensiveStringMatcher, OffensiveLanguageClassifier
 from parlai.utils.misc import TimeLogger
-
-import random
+import parlai.utils.logging as logging
+from parlai.core.script import ParlaiScript, register_script
 
 
 def setup_args(parser=None):
@@ -41,29 +40,19 @@ def setup_args(parser=None):
     return parser
 
 
-def detect(opt, printargs=None, print_parser=None):
+def detect(opt):
     """
     Checks a task for offensive language.
     """
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
-    random.seed(42)
-
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
+    agent.opt.log()
     if opt['safety'] == 'string_matcher' or opt['safety'] == 'all':
         offensive_string_matcher = OffensiveStringMatcher()
     if opt['safety'] == 'classifier' or opt['safety'] == 'all':
         offensive_classifier = OffensiveLanguageClassifier()
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
         log_every_n_secs = float('inf')
@@ -88,7 +77,8 @@ def detect(opt, printargs=None, print_parser=None):
             'total_offenses%': 100 * (stats['total_offensive'] / stats['total']),
         }
         text, log = log_time.log(report['exs'], world.num_examples(), log)
-        print(text)
+        logging.info(text)
+        return log
 
     def classify(text, stats):
         offensive = False
@@ -116,19 +106,28 @@ def detect(opt, printargs=None, print_parser=None):
             for l in labels:
                 classify(l, stats)
         if len(stats['bad_words']) > 0 and opt['display_examples']:
-            print(world.display())
-            print("[Offensive words detected:]", ', '.join(stats['bad_words']))
-            print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n")
+            logging.info(world.display())
+            logging.info(
+                "Offensive words detected: {}".format(', '.join(stats['bad_words']))
+            )
         stats['bad_words_cnt'] += len(stats['bad_words'])
         if log_time.time() > log_every_n_secs:
             report(world, stats)
 
     if world.epoch_done():
-        print("EPOCH DONE")
-    report(world, stats)
-    return world.report()
+        logging.info("epoch done")
+    return report(world, stats)
+
+
+@register_script('detect_offensive', hidden=True)
+class DetectOffensive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return detect(self.opt)
 
 
 if __name__ == '__main__':
-    parser = setup_args()
-    detect(parser.parse_args(print_args=False), print_parser=parser)
+    DetectOffensive.main()

@@ -13,7 +13,8 @@ using 'wikipedia:summary'
 To put the article in the labels and the title in the text, specify
 ':key-value' at the end (for a title/content key-value association)
 """
-from parlai.core.teachers import DialogTeacher, ChunkTeacher
+from parlai.core.teachers import DialogTeacher, ChunkTeacher, ChunkOutput
+from parlai.utils.io import PathManager
 from parlai.core.message import Message
 from .build import build
 
@@ -46,7 +47,7 @@ class FullTeacher(DialogTeacher):
             subdir_path = os.path.join(path, subdir)
             for wiki_file in os.listdir(subdir_path):
                 wiki_file_path = os.path.join(subdir_path, wiki_file)
-                with open(wiki_file_path) as wf:
+                with PathManager.open(wiki_file_path) as wf:
                     for article_json in wf:
                         article = json.loads(article_json)
                         title = article['title']
@@ -99,10 +100,11 @@ class FullSplitTeacher(ChunkTeacher):
     def _get_data_folder(self):
         return os.path.join(self.opt['datapath'], 'wikipedia/full/wiki_full_extracted')
 
-    def get_num_samples(self, datatype) -> Tuple[int, int]:
+    def get_num_samples(self, opt) -> Tuple[int, int]:
         """
         Return the number of samples given the datatype.
         """
+        datatype = opt['datatype']
         if 'train' in datatype:
             return self.TRAINSIZE, self.TRAINSIZE
         elif 'valid' in datatype:
@@ -116,13 +118,14 @@ class FullSplitTeacher(ChunkTeacher):
         all_subdirs = sorted([x for x in os.listdir(folder) if 'README' not in x])
         self.chunk_idx_to_file = {i: x for i, x in enumerate(all_subdirs)}
 
-    def get_fold_chunks(self, datatype) -> List[int]:  # type: ignore
+    def get_fold_chunks(self, opt) -> List[int]:  # type: ignore
         """
         Return a list of chunk IDs (integer).
 
         Given the datatype (train/test/valid), return the list of chunk IDs that
         correspond to that split.
         """
+        datatype = opt['datatype']
         all_chunk_idxs = list(self.chunk_idx_to_file.keys())
         if 'train' in datatype:
             return all_chunk_idxs[:-2]
@@ -131,7 +134,7 @@ class FullSplitTeacher(ChunkTeacher):
         else:
             return [all_chunk_idxs[-1]]
 
-    def load_from_chunk(self, chunk_idx: int) -> List[Tuple[str, str]]:
+    def load_from_chunk(self, chunk_idx: int):
         """
         Given the chunk index, load examples from that chunk.
 
@@ -142,7 +145,7 @@ class FullSplitTeacher(ChunkTeacher):
         chunk_path = os.path.join(self.folder, self.chunk_idx_to_file[chunk_idx])
         for wiki_file in os.listdir(chunk_path):
             wiki_file_path = os.path.join(chunk_path, wiki_file)
-            with open(wiki_file_path) as wf:
+            with PathManager.open(wiki_file_path) as wf:
                 for article_json in wf:
                     article = json.loads(article_json)
                     title = article['title']
@@ -151,7 +154,7 @@ class FullSplitTeacher(ChunkTeacher):
 
         return output
 
-    def create_message(self, queue_output: Tuple[str, ...]) -> 'Message':
+    def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
         """
         Given the tuple output of the queue, return an act.
         """
@@ -183,7 +186,7 @@ class SummaryTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as wf:
+        with PathManager.open(path) as wf:
             for article_json in wf:
                 article = json.loads(article_json)
                 title = article['title']

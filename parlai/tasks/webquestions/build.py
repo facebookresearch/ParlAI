@@ -10,6 +10,7 @@ import json
 import os
 import re
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -41,7 +42,7 @@ def parse_ans(a):
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-    with open(inpath) as data_file:
+    with PathManager.open(inpath) as data_file:
         data = json.load(data_file)
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
     for i in range(len(data)):

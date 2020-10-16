@@ -36,6 +36,7 @@ class MessageSocketHandler(WebSocketHandler):
         """
         if self.sid not in self.subs.values():
             self.subs[self.sid] = self
+            self.set_nodelay(True)
             logging.info(f"Opened new socket from ip: {self.request.remote_ip}")
             logging.info(f"Current subscribers: {self.subs}")
 

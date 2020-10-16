@@ -11,7 +11,8 @@ from parlai.agents.transformer.transformer import TransformerClassifierAgent
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
 from parlai.utils.typing import TShared
-
+from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
 import os
 
 
@@ -24,9 +25,13 @@ class OffensiveLanguageClassifier:
     <http://parl.ai/projects/dialogue_safety/> for more information.
     """
 
-    def __init__(self, shared: TShared = None):
+    def __init__(
+        self,
+        shared: TShared = None,
+        custom_model_file='zoo:dialogue_safety/single_turn/model',
+    ):
         if not shared:
-            self.model = self._create_safety_model()
+            self.model = self._create_safety_model(custom_model_file)
         else:
             self.model = create_agent_from_shared(shared['model'])
         self.classes = {OK_CLASS: False, NOT_OK_CLASS: True}
@@ -35,18 +40,18 @@ class OffensiveLanguageClassifier:
         shared = {'model': self.model.share()}
         return shared
 
-    def _create_safety_model(self):
+    def _create_safety_model(self, custom_model_file):
         from parlai.core.params import ParlaiParser
 
         parser = ParlaiParser(False, False)
         TransformerClassifierAgent.add_cmdline_args(parser)
         parser.set_params(
             model='transformer/classifier',
-            model_file='zoo:dialogue_safety/single_turn/model',
+            model_file=custom_model_file,
             print_scores=True,
         )
-        safety_opt = parser.parse_args([], print_args=False)
-        return create_agent(safety_opt)
+        safety_opt = parser.parse_args([])
+        return create_agent(safety_opt, requireModelExists=True)
 
     def contains_offensive_language(self, text):
         """
@@ -80,6 +85,8 @@ class OffensiveStringMatcher:
     def __init__(self, datapath: str = None):
         """
         Get data from external sources and build data representation.
+
+        If datapath ends in '.txt' it is assumed a custom model file is already given.
         """
         import parlai.core.build_data as build_data
         from parlai.core.dict import DictionaryAgent
@@ -97,7 +104,7 @@ class OffensiveStringMatcher:
             version = 'v1.0'
             dpath = os.path.join(self.datapath, 'OffensiveLanguage')
             if not build_data.built(dpath, version):
-                print('[building data: ' + dpath + ']')
+                logging.info(f'building data: {dpath}')
                 if build_data.built(dpath):
                     # An older version exists, so remove these outdated files.
                     build_data.remove_dir(dpath)
@@ -111,14 +118,20 @@ class OffensiveStringMatcher:
                 # Mark the data as built.
                 build_data.mark_done(dpath, version)
 
-        if datapath is None:
-            from parlai.core.params import ParlaiParser
-
-            parser = ParlaiParser(False, False)
-            self.datapath = os.path.join(parser.parlai_home, 'data')
+        if datapath is not None and datapath.endswith('.txt'):
+            # Load custom file.
+            self.datafile = datapath
         else:
-            self.datapath = datapath
-        self.datafile = _path()
+            # Build data from zoo, and place in given datapath.
+            if datapath is None:
+                # Build data from zoo.
+                from parlai.core.params import ParlaiParser
+
+                parser = ParlaiParser(False, False)
+                self.datapath = parser.parse_args([])['datapath']
+            else:
+                self.datapath = datapath
+            self.datafile = _path()
 
         # store a token trie: e.g.
         # {'2': {'girls': {'1': {'cup': {'__END__': True}}}}
@@ -168,7 +181,7 @@ class OffensiveStringMatcher:
             's',
             'y',
         ]
-        self.white_list = [
+        self.allow_list = [
             'butter',
             'buttery',
             'spicy',
@@ -179,13 +192,13 @@ class OffensiveStringMatcher:
             'twinkies',
         ]
 
-        with open(self.datafile, 'r') as f:
+        with PathManager.open(self.datafile, 'r') as f:
             for p in f.read().splitlines():
                 mod_ps = [p]
                 mod_ps += [pref + p for pref in self.word_prefixes]
                 mod_ps += [p + suff for suff in self.word_suffixes]
                 for mod_p in mod_ps:
-                    if mod_p not in self.white_list:
+                    if mod_p not in self.allow_list:
                         self.add_phrase(mod_p)
 
     def add_phrase(self, phrase):
@@ -239,6 +252,22 @@ class OffensiveStringMatcher:
                 return res
 
         return None
+
+    def find_all_offensive_language(self, text):
+        """
+        Find all offensive words from text in the filter.
+        """
+        if type(text) is str:
+            toks = self.tokenize(text.lower())
+        elif type(text) is list or type(text) is tuple:
+            toks = text
+
+        all_offenses = []
+        for i in range(len(toks)):
+            res = self._check_sequence(toks, i, self.offensive_trie)
+            if res:
+                all_offenses.append(res)
+        return all_offenses
 
     def __contains__(self, key):
         """

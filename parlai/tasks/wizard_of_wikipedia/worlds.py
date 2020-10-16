@@ -18,6 +18,8 @@ from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_K
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.utils.misc import warn_once
 
+from .build import build
+
 from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import (
     KnowledgeRetrieverAgent,
 )
@@ -69,11 +71,12 @@ class InteractiveWorld(DialogPartnerWorld):
             model='projects:wizard_of_wikipedia:knowledge_retriever',
             add_token_knowledge=add_token_knowledge,
         )
-        knowledge_opt = parser.parse_args([], print_args=False)
+        knowledge_opt = parser.parse_args([])
         self.knowledge_agent = create_agent(knowledge_opt)
 
     def _load_topics(self, opt):
         # Load possible chosen topics
+        build(opt)
         topics_path = os.path.join(
             opt['datapath'], 'wizard_of_wikipedia', 'topic_splits.json'
         )

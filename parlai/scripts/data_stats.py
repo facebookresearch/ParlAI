@@ -6,23 +6,25 @@
 """
 Count and display statistics of the data.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  python parlai/scripts/data_stats.py -t convai2 -dt train:ordered
+```shell
+parlai data_stats -t convai2 -dt train:ordered
+```
 """
 from parlai.core.params import ParlaiParser
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger
 from parlai.core.dict import DictionaryAgent
+from parlai.core.script import ParlaiScript, register_script
+
+import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, False, 'Lint for ParlAI tasks')
+        parser = ParlaiParser(True, False, 'Compute data statistics')
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -70,14 +72,15 @@ def report(world, counts, log_time):
     return text, log
 
 
-def verify(opt, printargs=None, print_parser=None):
+def verify(opt):
     if opt['datatype'] == 'train':
-        print("[ note: changing datatype from train to train:ordered ]")
+        logging.warn('changing datatype from train to train:ordered')
         opt['datatype'] = 'train:ordered'
 
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
+    opt.log()
 
     log_every_n_secs = opt.get('log_every_n_secs', -1)
     if log_every_n_secs <= 0:
@@ -158,24 +161,33 @@ def verify(opt, printargs=None, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
-            if print_parser:
-                print(text)
+            logging.info(text)
 
     try:
         # print dataset size if available
-        print(
-            '[ loaded {} episodes with a total of {} examples ]'.format(
-                world.num_episodes(), world.num_examples()
-            )
+        logging.info(
+            f'loaded {world.num_episodes()} episodes with a total '
+            f'of {world.num_examples()} examples'
         )
     except Exception:
         pass
     return report(world, counts, log_time)
 
 
-if __name__ == '__main__':
-    parser = setup_args()
-    report_text, report_log = verify(
-        parser.parse_args(print_args=False), print_parser=parser
-    )
+def obtain_stats(opt, parser):
+    report_text, report_log = verify(opt)
     print(report_text.replace('\\n', '\n'))
+
+
+@register_script('data_stats', hidden=True)
+class DataStats(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return obtain_stats(self.opt, self.parser)
+
+
+if __name__ == '__main__':
+    DataStats.main()

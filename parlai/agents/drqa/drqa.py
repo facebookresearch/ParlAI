@@ -25,7 +25,6 @@ except ImportError:
     raise ImportError('Need to install pytorch: go to pytorch.org')
 
 import bisect
-import os
 import numpy as np
 import json
 import random
@@ -33,6 +32,7 @@ import random
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.build_data import modelzoo_path
+from parlai.utils.io import PathManager
 from . import config
 from .utils import build_feature_dict, vectorize, batchify, normalize_text
 from .model import DocReaderModel
@@ -44,10 +44,6 @@ from .model import DocReaderModel
 
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    """
-    Override DictionaryAgent to use spaCy tokenizer.
-    """
-
     @staticmethod
     def add_cmdline_args(argparser):
         group = DictionaryAgent.add_cmdline_args(argparser)
@@ -57,7 +53,6 @@ class SimpleDictionaryAgent(DictionaryAgent):
             default=True,
             help='Use only words found in provided embedding_file',
         )
-        group.set_defaults(dict_tokenizer='spacy')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,7 +68,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
             self.opt['embedding_file'] = modelzoo_path(
                 self.opt.get('datapath'), self.opt['embedding_file']
             )
-            with open(self.opt['embedding_file']) as f:
+            with PathManager.open(self.opt['embedding_file']) as f:
                 for line in f:
                     w = normalize_text(line.rstrip().split(' ')[0])
                     self.embedding_words.add(w)
@@ -113,8 +108,6 @@ class DrqaAgent(Agent):
         return SimpleDictionaryAgent
 
     def __init__(self, opt, shared=None):
-        if opt.get('numthreads', 1) > 1:
-            raise RuntimeError("numthreads > 1 not supported for this model.")
         super().__init__(opt, shared)
 
         # All agents keep track of the episode (for multiple questions)
@@ -130,7 +123,7 @@ class DrqaAgent(Agent):
         else:
             # set up model
             self.word_dict = DrqaAgent.dictionary_class()(opt)
-            if self.opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if self.opt.get('model_file') and PathManager.exists(opt['model_file']):
                 self._init_from_saved(opt['model_file'])
             else:
                 if self.opt.get('init_model'):
@@ -158,7 +151,8 @@ class DrqaAgent(Agent):
 
     def _init_from_saved(self, fname):
         print('[ Loading model %s ]' % fname)
-        saved_params = torch.load(fname, map_location=lambda storage, loc: storage)
+        with PathManager.open(fname, 'rb') as f:
+            saved_params = torch.load(f, map_location=lambda storage, loc: storage)
         if 'word_dict' in saved_params:
             # for compatibility with old saves
             self.word_dict.copy_dict(saved_params['word_dict'])
@@ -276,7 +270,7 @@ class DrqaAgent(Agent):
             self.opt['trained'] = True
             self.model.save(fname)
             # save opt file
-            with open(fname + '.opt', 'w') as handle:
+            with PathManager.open(fname + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
     # --------------------------------------------------------------------------

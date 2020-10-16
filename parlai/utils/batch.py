@@ -9,7 +9,10 @@ Utility file with ParlAI Batch Implementation.
 
 Separate from TorchAgent as it technically does not require Pytorch.
 """
+from parlai.core.message import Message
 from parlai.utils.misc import AttrDict
+import torch
+from typing import Optional, List, Any
 
 
 class Batch(AttrDict):
@@ -57,10 +60,19 @@ class Batch(AttrDict):
 
     :param observations:
         the original observations in the batched order
-
-    :param batchsize:
-        the number of valid examples within the Batch
     """
+
+    batchsize: int
+    text_vec: Optional[torch.LongTensor]
+    text_lengths: Optional[List[int]]
+    label_vec: Optional[torch.LongTensor]
+    label_lengths: Optional[List[int]]
+    labels: Optional[List[str]]
+    valid_indices: Optional[List[int]]
+    candidates: Optional[List[List[str]]]
+    candidate_vecs: Optional[List[List[torch.LongTensor]]]
+    image: Optional[List[Any]]
+    observations: Optional[List[Message]]
 
     def __init__(
         self,
@@ -74,7 +86,6 @@ class Batch(AttrDict):
         candidate_vecs=None,
         image=None,
         observations=None,
-        batchsize=None,
         **kwargs,
     ):
         super().__init__(
@@ -88,7 +99,6 @@ class Batch(AttrDict):
             candidate_vecs=candidate_vecs,
             image=image,
             observations=observations,
-            batchsize=batchsize,
             **kwargs,
         )
 

@@ -2,7 +2,7 @@
 
 Here we list projects undertaken in the ParlAI framework that are shared publicly, either in the form of papers, public tasks (with leaderboards) and/or shared model code.
 
-This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks), [tasks](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo) for what else is in ParlAI.
+This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents), [tasks](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo) for what else is in ParlAI.
 
 ## Generative Models
 
@@ -62,8 +62,15 @@ _Task & models for chitchat with a given persona._
 - **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
   _Task and method for improving the detection of offensive language in the context of dialogue._
 
-- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/).
+- **Recipes for Safety in Open-Domain Chatbots** [[project]](https://parl.ai/projects/safety_recipes/) [[paper]](https://arxiv.org/abs/2010.07079).
+  _Methods for improving the safety of open-domain chatbots._
+
+- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/) [[paper]](https://arxiv.org/abs/1911.03842).
   _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
+
+- **Multi-Dimensional Gender Bias Classification** [[project]](https://parl.ai/projects/md_gender/) [[paper]](https://arxiv.org/abs/2005.00614)
+  _Training fine-grained gender bias classifiers to identify gender bias in text._
+
 
 ## Knowledge Grounded
 
@@ -78,15 +85,17 @@ _Task & models for chitchat with a given persona._
 - **Personality-Captions** [[project]](http://parl.ai/projects/personality_captions/) [[paper]](https://arxiv.org/abs/1810.10665).
   _Task for personality-based engaging comments on images._
 
+- **Multi-Modal BlenderBot** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/multimodal_blenderbot/) [[paper]](https://arxiv.org/abs/2010.01082). _Model for multi-modal dialogue about both images and chitchat._
+
 ## Environment Grounded
 
 - **LIGHT** [[project]](http://parl.ai/projects/light/)
 _A large-scale text adventure game research platform for agents that speak and act._
 
-- **Mastering the Dungeon** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon).
+- **Mastering the Dungeon** (Archived) [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/mastering_the_dungeon).
 _Task & models for training grounded agents in a text adventure game via MTurk._
 
-- **Talk The Walk** [[paper]](https://arxiv.org/abs/1807.03367).
+- **Talk The Walk** (Archived) [[paper]](https://arxiv.org/abs/1807.03367).
 _Task & models for grounded dialogue for the task of navigating New York City streets._
 
 ## QA

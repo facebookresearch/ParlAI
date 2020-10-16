@@ -1,8 +1,29 @@
-<p align="center"><img width="70%" src="docs/source/\_static/img/parlai.png" /></p>
+<p align="center">
+ <img width="70%" src="docs/source/\_static/img/parlai.png" />
+</p>
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE) [![CircleCI](https://circleci.com/gh/facebookresearch/ParlAI.svg?style=shield)](https://circleci.com/gh/facebookresearch/ParlAI/tree/master) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/facebookresearch/ParlAI/blob/master/CONTRIBUTING.md) [![Twitter](https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social)](https://twitter.com/parlai_parley)
-
---------------------------------------------------------------------------------
+<p align="center">
+   <a href="https://github.com/facebookresearch/ParlAI/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="CircleCI" />
+  </a>
+   <a href="https://pypi.org/project/parlai/">
+    <img src="https://img.shields.io/pypi/v/parlai?color=blue&label=release" alt="CircleCI" />
+  </a>
+    <a href="https://circleci.com/gh/facebookresearch/ParlAI/tree/master">
+    <img src="https://img.shields.io/circleci/build/github/facebookresearch/ParlAI/master" alt="Coverage" />
+  </a>
+    <a href="https://codecov.io/gh/facebookresearch/ParlAI">
+    <img src="https://img.shields.io/codecov/c/github/facebookresearch/ParlAI" alt="GitHub contributors" />
+  </a>
+    <a href="https://img.shields.io/github/contributors/facebookresearch/ParlAI">
+    <img src="https://img.shields.io/github/contributors/facebookresearch/ParlAI"/>
+  </a>
+    <a href="https://twitter.com/parlai_parley">
+    <img src="https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social" alt="Twitter" />
+  </a>
+ </p>
+ 
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 [ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
 sharing, training and testing dialogue models, from open-domain chitchat to
@@ -29,8 +50,8 @@ See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3 and [Pytorch](https://pytorch.org) 1.1 or
-newer. Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
+ParlAI currently requires Python3.6 and [Pytorch](https://pytorch.org) 1.4 or higher. *It does not work with pytorch 1.5.0*, but is fine with 1.5.1 and 1.6.0.
+Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/master/requirements.txt). Some
 models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents)) have additional requirements.
 
 Run the following commands to clone the repository and install ParlAI:
@@ -46,6 +67,12 @@ This is the recommended installation procedure, as it provides ready access to t
 
 All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if requested will be downloaded to `~/ParlAI/downloads`. If you need to clear out the space used by these files, you can safely delete these directories and any files needed will be downloaded again.
 
+In case you still want to install ParlAI using pip (less recommended), you can install it as follows:
+```bash
+pip install parlai
+```
+Though pip install command is easier, it would not give you access to the ready examples and the data present in the repository.
+
 ## Documentation
 
  - [Quick Start](https://parl.ai/docs/tutorial_quick.html)
@@ -53,7 +80,7 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if
  - [List of available tasks/datasets](https://parl.ai/docs/tasks.html)
  - [Creating a dataset/task](http://parl.ai/docs/tutorial_task.html)
  - [List of available agents](https://parl.ai/docs/agents_list.html)
- - [Creating a new agent](https://parl.ai/docs/tutorial_seq2seq.html#)
+ - [Creating a seq2seq agent](https://parl.ai/docs/tutorial_torch_generator_agent.html)
  - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
  - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
  - [Plug into Facebook Messenger](https://parl.ai/docs/tutorial_chat_service.html)
@@ -62,22 +89,22 @@ All needed data will be downloaded to `~/ParlAI/data`, and any non-data files if
 ## Examples
 
 A large set of scripts can be found in [`parlai/scripts`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/scripts). Here are a few of them.
-Note: If any of these examples fail, check the [requirements section](#requirements) to see if you have missed something.
+Note: If any of these examples fail, check the [installation section](#installing-parlai) to see if you have missed something.
 
 Display 10 random examples from the SQuAD task
 ```bash
-python -m parlai.scripts.display_data -t squad
+parlai display_data -t squad
 ```
 
 Evaluate an IR baseline model on the validation set of the Personachat task:
 ```bash
-python -m parlai.scripts.eval_model -m ir_baseline -t personachat -dt valid
+parlai eval_model -m ir_baseline -t personachat -dt valid
 ```
 
 Train a single layer transformer on PersonaChat (requires pytorch and torchtext).
 Detail: embedding size 300, 4 attention heads,  2 epochs using batchsize 64, word vectors are initialized with fasttext and the other elements of the batch are used as negative during training.
 ```bash
-python -m parlai.scripts.train_model -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
+parlai train_model -t personachat -m transformer/ranker -mf /tmp/model_tr6 --n-layers 1 --embedding-size 300 --ffn-size 600 --n-heads 4 --num-epochs 2 -veps 0.25 -bs 64 -lr 0.001 --dropout 0.1 --embedding-type fasttext_cc --candidates batch
 ```
 
 
@@ -100,7 +127,7 @@ If you have any questions, bug reports or feature requests, please don't hesitat
 ## The Team
 ParlAI is currently maintained by Emily Dinan, Dexter Ju, Margaret Li, Spencer Poff, Pratik Ringshia, Stephen Roller, Kurt Shuster, Eric Michael Smith, Jack Urbanek, Jason Weston, Mary Williamson, and Jing Xu.
 
-Former major contributors and maintainers include Alexander H. Miller, Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres, and Chao Pan.
+Former major contributors and maintainers include Alexander H. Miller, Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra, Filipe de Avila Belbute Peres, Chao Pan, and Vedant Puri.
 
 ## Citation
 
@@ -116,4 +143,4 @@ Please cite the [arXiv paper](https://arxiv.org/abs/1705.06476) if you use ParlA
 ```
 
 ## License
-ParlAI is MIT licensed. See the LICENSE file for details.
+ParlAI is MIT licensed. See the **[LICENSE](https://github.com/facebookresearch/ParlAI/blob/master/LICENSE)** file for details.

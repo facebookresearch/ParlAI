@@ -16,7 +16,8 @@ class TestDrQAModel(unittest.TestCase):
 
     def test_pretrained(self):
         _, test = testing_utils.eval_model(
-            dict(task='squad:index', model_file='zoo:drqa/squad/model')
+            dict(task='squad:index', model_file='zoo:drqa/squad/model', batchsize=32),
+            skip_valid=True,
         )
         self.assertGreaterEqual(test['accuracy'], 0.68)
         self.assertGreaterEqual(test['f1'], 0.78)

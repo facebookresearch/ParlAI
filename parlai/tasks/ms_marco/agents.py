@@ -7,7 +7,8 @@ import copy
 import json
 import os
 
-from parlai.core.teachers import DialogTeacher, FbDialogTeacher
+from parlai.core.teachers import DialogTeacher, FbDeprecatedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -24,7 +25,7 @@ def _path(opt, is_passage=False):
     return os.path.join(opt['datapath'], 'MS_MARCO', fname)
 
 
-class PassageTeacher(FbDialogTeacher):
+class PassageTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, is_passage=True)
@@ -39,7 +40,7 @@ class DefaultTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def setup_data(self, path):
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             for jline in data_file:
                 d_example = json.loads(jline)
                 context = [d['passage_text'] for d in d_example['passages']]

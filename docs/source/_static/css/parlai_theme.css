@@ -13,6 +13,11 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
     font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
 }
 
+p { margin-bottom: 16px; }
+h1 { size: 250%; }
+h2 { size: 200%; }
+h3 { size: 150%; }
+
 .wy-menu.wy-menu-vertical p.caption {
     color: #fcfcfc;
 }
@@ -24,6 +29,14 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
 
 .wy-nav-content-wrap, .wy-menu li.current > a  {
     background-color: #fff;
+}
+
+th p, td div.line-block {
+    margin-bottom: 0px !important;
+}
+
+.text-align\:right {
+    text-align: right;
 }
 
 @media screen and (min-width: 1400px) {
@@ -67,7 +80,7 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
 
 /* Use our red for literals (it's very similar to the original color) */
 .rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
-    color: #CE3239;
+    color: #333;
 }
 
 .rst-content tt.xref, a .rst-content tt, .rst-content tt.xref,
@@ -78,11 +91,11 @@ h1, h2, .rst-content .toctree-wrapper p.caption, h3, h4, h5, h6, legend, p.capti
 /* Change link colors (except for the menu) */
 
 a {
-    color: #CE3239;
+    color: #ec1454;
 }
 
 a:hover {
-    color: #CE3239;
+    color: #ec1454;
 }
 
 
@@ -140,4 +153,13 @@ nav .hidden-section {
 }
 .wy-table-responsive table {
     width: 100%;
+}
+
+.section {
+}
+.section .section {
+    margin-bottom: 5em;
+}
+.section .section .section {
+    margin-bottom: 2em;
 }

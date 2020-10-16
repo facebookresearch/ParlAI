@@ -465,7 +465,7 @@ footer {
 footer .left {
     color: #808080;
     font-size: 14px;
-    width: 245px;
+    width: 400px;
     line-height: 27px;
     font-weight: 200;
     float: left;
@@ -501,7 +501,7 @@ footer ul.primary-nav li:last-child a {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    background-color: #ce3239;
+    background-color: #ec1454;
     height: 500px;
     position: relative;
 }

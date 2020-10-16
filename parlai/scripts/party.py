@@ -4,11 +4,22 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Throw a party.
+
+## Examples
+
+```shell
+parlai party
+```
+"""
+
 import sys
 import time
-from parlai.scripts.script import ParlaiScript
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.params import ParlaiParser
 
+DELAY = 75 / 1000
 RESET = '\u001b[0m'
 CLEAR_SCREEN = "\u001b[2J\u001b[H"
 COLORS = [
@@ -243,13 +254,20 @@ cNd.........................................;lOc
 )
 
 
+@register_script('party', hidden=True, aliases=['parrot'])
 class Party(ParlaiScript):
     @classmethod
     def setup_args(cls):
-        return ParlaiParser(False, False)
+        parser = ParlaiParser(False, False, 'Throw a party!')
+        parser.add_argument(
+            '-n', '--seconds', default=-1, type=float, help='Number of seconds to party'
+        )
+        return parser
 
     def run(self):
+        end = float('inf') if self.opt['seconds'] <= 0 else self.opt['seconds']
         i = 0
+        timespent = 0
         while True:
             try:
                 frame = FRAMES[i % len(FRAMES)]
@@ -262,10 +280,13 @@ class Party(ParlaiScript):
                 sys.stdout.write(COLORS[(i * 3 + 1) % len(COLORS)])
                 sys.stdout.write('\n\n              P A R T Y    P A R R O T\n')
                 sys.stdout.write(RESET)
-                time.sleep(75 / 1000)
+                time.sleep(DELAY)
+                timespent += DELAY
+                if timespent > end:
+                    raise KeyboardInterrupt
             except KeyboardInterrupt:
-                sys.stdout.write(RESET + '\n')
                 break
+        sys.stdout.write(RESET + '\n')
 
 
 if __name__ == '__main__':

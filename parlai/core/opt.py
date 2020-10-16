@@ -12,6 +12,23 @@ import copy
 import json
 import pickle
 import traceback
+import parlai.utils.logging as logging
+
+from typing import List
+
+from parlai.utils.io import PathManager
+
+# these keys are automatically removed upon save. This is a rather blunt hammer.
+# It's preferred you indicate this at option definiton time.
+__AUTOCLEAN_KEYS__: List[str] = [
+    "override",
+    "batchindex",
+    "download_path",
+    "datapath",
+    "batchindex",
+    # we don't save interactive mode, it's only decided by scripts or CLI
+    "interactive_mode",
+]
 
 
 class Opt(dict):
@@ -28,7 +45,7 @@ class Opt(dict):
         self.deepcopies = []
 
     def __setitem__(self, key, val):
-        loc = traceback.format_stack()[-2]
+        loc = traceback.format_stack(limit=2)[-2]
         self.history.append((key, val, loc))
         super().__setitem__(key, val)
 
@@ -47,7 +64,7 @@ class Opt(dict):
         Override deepcopy so that history is copied over to new object.
         """
         # track location of deepcopy
-        loc = traceback.format_stack()[-3]
+        loc = traceback.format_stack(limit=3)[-3]
         self.deepcopies.append(loc)
         # copy all our children
         memo = Opt({k: copy.deepcopy(v) for k, v in self.items()})
@@ -81,17 +98,51 @@ class Opt(dict):
         else:
             return f'No history for {key}'
 
+    def save(self, filename: str) -> None:
+        """
+        Save the opt to disk.
 
-def load_opt_file(optfile: str) -> Opt:
-    """
-    Load an Opt from disk.
-    """
-    try:
-        # try json first
-        with open(optfile, 'r') as t_handle:
-            opt = json.load(t_handle)
-    except UnicodeDecodeError:
-        # oops it's pickled
-        with open(optfile, 'rb') as b_handle:
-            opt = pickle.load(b_handle)
-    return Opt(opt)
+        Attempts to 'clean up' any residual values automatically.
+        """
+        # start with a shallow copy
+        dct = dict(self)
+
+        # clean up some things we probably don't want to save
+        for key in __AUTOCLEAN_KEYS__:
+            if key in dct:
+                del dct[key]
+
+        with PathManager.open(filename, 'w', encoding='utf-8') as f:
+            json.dump(dct, fp=f, indent=4)
+            # extra newline for convenience of working with jq
+            f.write('\n')
+
+    @classmethod
+    def load(cls, optfile: str) -> 'Opt':
+        """
+        Load an Opt from disk.
+        """
+        try:
+            # try json first
+            with PathManager.open(optfile, 'r', encoding='utf-8') as t_handle:
+                dct = json.load(t_handle)
+        except UnicodeDecodeError:
+            # oops it's pickled
+            with PathManager.open(optfile, 'rb') as b_handle:
+                dct = pickle.load(b_handle)
+        for key in __AUTOCLEAN_KEYS__:
+            if key in dct:
+                del dct[key]
+        return cls(dct)
+
+    def log(self, header="Opt"):
+        from parlai.core.params import print_git_commit
+
+        logging.info(header + ":")
+        for key in sorted(self.keys()):
+            valstr = str(self[key])
+            if valstr.replace(" ", "").replace("\n", "") != valstr:
+                # show newlines as escaped keys, whitespace with quotes, etc
+                valstr = repr(valstr)
+            logging.info(f"    {key}: {valstr}")
+        print_git_commit()

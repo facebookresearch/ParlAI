@@ -21,26 +21,20 @@ See below for documentation on each specific tool.
 
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
-from copy import deepcopy
-from collections import deque
-import json
 import random
-import os
 import torch
+import parlai.utils.logging as logging
 from torch import optim
 
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
-from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
-<<<<<<< HEAD
 from parlai.utils.batch import Batch
-=======
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
->>>>>>> master
+from parlai.utils.io import PathManager
 from parlai.utils.fp16 import (
     fp16_apex_available,
     fp16_optimizer_wrapper,
@@ -48,20 +42,16 @@ from parlai.utils.fp16 import (
     MemoryEfficientFP16Adam,
     Adafactor,
 )
-<<<<<<< HEAD
 from parlai.utils.misc import AttrDict, warn_once
-from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
-=======
 from parlai.core.metrics import (
     Metrics,
     Metric,
     GlobalAverageMetric,
-    GlobalSumMetric,
     GlobalFixedMetric,
+    GlobalTimerMetric,
 )
->>>>>>> master
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic_save
 
 
 class Output(AttrDict):
@@ -93,11 +83,8 @@ class History(object):
         field in the observation to track over the course of the episode
         (defaults to 'text')
 
-    :param vec_type:
-        specify a 'list' or 'deque' to save the history in this object
-
     :param maxlen:
-        if `vec_type` is 'deque', this sets the maximum length of that object
+        sets the maximum number of tunrs
 
     :param p1_token:
         token indicating 'person 1'; opt must have 'person_tokens' set to True
@@ -115,7 +102,6 @@ class History(object):
         self,
         opt,
         field='text',
-        vec_type='deque',
         maxlen=None,
         size=-1,
         p1_token='__p1__',
@@ -128,14 +114,12 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self.reversed = opt.get('history_reversed', False)
         self._global_end_token = opt.get('history_add_global_end_token', None)
         if self._global_end_token is not None:
             self._global_end_token = self.dict[self.dict.end_token]
 
         # set up history objects
-        if vec_type != 'deque' and vec_type != 'list':
-            raise RuntimeError('Type {} is not supported for history'.format(vec_type))
-        self.vec_type = vec_type
         self.max_len = maxlen
 
         self.history_strings = []
@@ -193,14 +177,17 @@ class History(object):
         # update history vecs
         self._update_vecs(text)
 
-    def update_history(self, obs, temp_history=None):
+    def update_history(self, obs: Message, temp_history: Optional[str] = None):
         """
         Update the history with the given observation.
 
-        param obs:     Observation used to update the history. param temp_history:
-        Optional temporary string. If it is not None,     this string will be appended
-        to the end of the     history. It will not be in the history on the     next
-        dialogue turn. Set to None to stop adding     to the history.
+        :param obs:
+            Observation used to update the history.
+        :param temp_history:
+            Optional temporary string. If it is not None, this string will be
+            appended to the end of the history. It will not be in the history
+            on the next dialogue turn. Set to None to stop adding to the
+            history.
         """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -225,7 +212,8 @@ class History(object):
         Return the string version of the history.
         """
         if len(self.history_strings) > 0:
-            history = self.delimiter.join(self.history_strings)
+            history = self.history_strings[:]
+            history = self.delimiter.join(history)
             if self.temp_history is not None:
                 history += self.temp_history
             return history
@@ -239,27 +227,20 @@ class History(object):
         if len(self.history_vecs) == 0:
             return None
 
-        if self.vec_type == 'deque':
-            history = deque(maxlen=self.max_len)
-            for vec in self.history_vecs[:-1]:
-                history.extend(vec)
-                history.extend(self.delimiter_tok)
-            history.extend(self.history_vecs[-1])
-            if self.temp_history is not None:
-                history.extend(self.parse(self.temp_history))
-            if self._global_end_token is not None:
-                history.extend([self._global_end_token])
-        else:
-            # vec type is a list
-            history = []
-            for vec in self.history_vecs[:-1]:
-                history += vec
-                history += self.delimiter_tok
-            history += self.history_vecs[-1]
-            if self.temp_history is not None:
-                history.extend(self.parse(self.temp_history))
-            if self._global_end_token is not None:
-                history += [self._global_end_token]
+        # vec type is a list
+        history = []
+        for vec in self.history_vecs[:-1]:
+            history += [vec]
+            history += [self.delimiter_tok]
+        history += [self.history_vecs[-1]]
+        if self.temp_history is not None:
+            history.extend([self.parse(self.temp_history)])
+        if self._global_end_token is not None:
+            history += [[self._global_end_token]]
+
+        history = sum(history, [])
+        if self.reversed:
+            history = list(reversed(history))
 
         return history
 
@@ -298,7 +279,7 @@ class TorchAgent(ABC, Agent):
     P2_TOKEN = '__p2__'
 
     @classmethod
-    def optim_opts(self):
+    def optim_opts(cls):
         """
         Fetch optimizer selection.
 
@@ -426,9 +407,12 @@ class TorchAgent(ABC, Agent):
             '-opt',
             '--optimizer',
             default='sgd',
+            metavar='OPTIMIZER',
             choices=cls.optim_opts(),
-            help='Choose between pytorch optimizers. Any member of torch.optim'
-            ' should be valid.',
+            help=(
+                f'Optimizer choice. Possible values: '
+                f'{", ".join(cls.optim_opts().keys())}.'
+            ),
         )
         optim_group.add_argument(
             '-lr', '--learningrate', type=float, default=1, help='Learning rate'
@@ -520,6 +504,9 @@ class TorchAgent(ABC, Agent):
             'to `truncate`',
         )
         agent.add_argument(
+            '--history-reversed', default=False, type='bool', help='Reverse the history'
+        )
+        agent.add_argument(
             '-histsz',
             '--history-size',
             default=-1,
@@ -573,8 +560,13 @@ class TorchAgent(ABC, Agent):
             type='nonestr',
             default=None,
             hidden=True,
-            choices=[None, 'end'],
             help='Add special token to the end of history encoding.',
+        )
+        agent.add_argument(
+            '--special-tok-lst',
+            type=str,
+            default=None,
+            help='Comma separated list of special tokens',
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
@@ -621,7 +613,7 @@ class TorchAgent(ABC, Agent):
         )
         if self.use_cuda:
             if not shared:
-                print('[ Using CUDA ]')
+                logging.info('Using CUDA')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
 
@@ -658,7 +650,7 @@ class TorchAgent(ABC, Agent):
                         self.dict['__FP16_PAD_{}__'.format(i)] = 1
 
             # global_metrics keeps track of batch-level or global-level metrics
-            self.global_metrics = Metrics(opt.get('numthreads', 1) > 1, shared=None)
+            self.global_metrics = Metrics(shared=None)
             # self.metrics is there for legacy reasons
             self.metrics: Dict[str, Any] = {}
         else:
@@ -666,9 +658,7 @@ class TorchAgent(ABC, Agent):
             self.opt = shared['opt']
             self.dict = shared['dict']
             self.metrics = shared['metrics']
-            self.global_metrics = Metrics(
-                opt.get('numthreads', 1) > 1, shared=shared['global_metrics']
-            )
+            self.global_metrics = Metrics(shared=shared['global_metrics'])
 
             if self.opt.get('num_workers', 1) == 1:
                 self.model = shared['model']
@@ -702,6 +692,7 @@ class TorchAgent(ABC, Agent):
         self.label_truncate = label_truncate if label_truncate >= 0 else None
         # stores up to hist_utt past observations within current dialog
         self.history = self.build_history()
+        self.history_reversed = opt.get('history_reversed', False)
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
@@ -730,10 +721,27 @@ class TorchAgent(ABC, Agent):
         place to do it.
         """
         d = self.dictionary_class()(self.opt)
+        self.special_toks = self._get_special_tokens()
+        if self.special_toks:
+            d.add_additional_special_tokens(self.special_toks)
+
         if self.opt.get('person_tokens'):
             d[self.P1_TOKEN] = 999_999_999
             d[self.P2_TOKEN] = 999_999_998
         return d
+
+    def _resize_token_embeddings(self, state_dict, msg=None):
+        """
+        Must define this for your agent if you wish to add additional special tokens.
+
+        Must make a call to resize the token embeddings and load the model state dict
+        with the resized token embeddings.
+        """
+        raise NotImplementedError(
+            'If you are intending to add special tokens to an already pretrained model, '
+            'you must write the function `_resize_token_embeddings` for your specific '
+            'agent.'
+        )
 
     def _get_init_model(self, opt: Opt, shared):
         """
@@ -749,11 +757,11 @@ class TorchAgent(ABC, Agent):
         is_finetune = False
         if not shared:  # only do this on first setup
             # first check load path in case we need to override paths
-            if opt.get('init_model') and os.path.isfile(opt['init_model']):
+            if opt.get('init_model') and PathManager.exists(opt['init_model']):
                 # check first for 'init_model' for loading model from file
                 init_model = opt['init_model']
                 is_finetune = True
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if opt.get('model_file') and PathManager.exists(opt['model_file']):
                 # next check for 'model_file', this would override init_model
                 init_model = opt['model_file']
                 is_finetune = False
@@ -769,10 +777,20 @@ class TorchAgent(ABC, Agent):
 
             if init_model is not None:
                 # if we are loading a model, should load its dict too
-                if os.path.isfile(init_model + '.dict') or opt['dict_file'] is None:
+                if PathManager.exists(init_model + '.dict') or opt['dict_file'] is None:
                     opt['dict_file'] = init_model + '.dict'
 
         return init_model, is_finetune
+
+    def _get_special_tokens(self) -> List[str]:
+        """
+        Return list of special tokens.
+
+        Made easily overridable for special cases.
+        """
+        if self.opt.get('special_tok_lst') is not None:
+            return self.opt['special_tok_lst'].split(',')
+        return []
 
     @abstractmethod
     def build_model(self):
@@ -791,7 +809,7 @@ class TorchAgent(ABC, Agent):
             return False
         datatype = self.opt.get('datatype', '')
         is_train = 'train' in datatype and 'evalmode' not in datatype
-        return is_train or self.opt.get('numthreads', 1) > 1
+        return is_train
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
@@ -807,6 +825,10 @@ class TorchAgent(ABC, Agent):
             type of optimizer being loaded, if changed will skip loading
             optimizer states
         """
+        if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
+            optim_states = None
+            logging.warn('Not loading optimizer due to resize in token embeddings')
+
         opt = self.opt
 
         # set up optimizer args
@@ -891,7 +913,7 @@ class TorchAgent(ABC, Agent):
         # will remain the behavior for the time being.
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
-            print('WARNING: not loading optim state since optim class changed.')
+            logging.warn('Not loading optim state since optim class changed.')
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
@@ -1002,7 +1024,7 @@ class TorchAgent(ABC, Agent):
 
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            report['lr'] = GlobalAverageMetric(self.optimizer.param_groups[0]['lr'])
+            report['lr'] = GlobalAverageMetric(self.scheduler.get_last_lr())
 
         if self.use_cuda:
             report['gpu_mem'] = GlobalAverageMetric(self._gpu_usage())
@@ -1039,9 +1061,8 @@ class TorchAgent(ABC, Agent):
         for dev in devices:
             props = torch.cuda.get_device_properties(dev)
             memory_avail += props.total_memory
-            memory_used += torch.cuda.memory_allocated(dev) + torch.cuda.memory_cached(
-                dev
-            )
+            memory_used += torch.cuda.max_memory_allocated(dev)
+            torch.cuda.reset_peak_memory_stats(dev)
         return memory_used / memory_avail
 
     def receive_metrics(self, metrics_dict):
@@ -1122,7 +1143,10 @@ class TorchAgent(ABC, Agent):
         :param emb_type:
             pretrained embedding type
         """
-        if self.opt['embedding_type'] == 'random':
+        if (
+            self.opt['embedding_type'] == 'random'
+            or not self._should_initialize_optimizer()
+        ):
             # Random embedding means no copying of pretrained embeddings
             return
 
@@ -1135,9 +1159,9 @@ class TorchAgent(ABC, Agent):
                 cnt += 1
 
         if log:
-            print(
-                'Initialized embeddings for {} tokens ({}%) from {}.'
-                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+            logging.info(
+                f'Initialized embeddings for {cnt} tokens '
+                f'({cnt / len(self.dict):.1%}) from {name}.'
             )
 
     def share(self):
@@ -1147,18 +1171,12 @@ class TorchAgent(ABC, Agent):
         Subclasses will likely want to share their model as well.
         """
         shared = super().share()
-
-        if self.opt.get('numthreads', 1) > 1 and isinstance(self.metrics, dict):
-            # move metrics and model to shared memory
-            self.metrics = SharedTable(self.metrics)
-            self.model.share_memory()
         shared['metrics'] = self.metrics
         shared['global_metrics'] = self.global_metrics.share()
 
         if self.opt.get('num_workers', 1) == 1:
             shared['model'] = self.model
             shared['criterion'] = self.criterion
-
         shared['dict'] = self.dict
         shared['opt'] = self.opt
         return shared
@@ -1257,11 +1275,16 @@ class TorchAgent(ABC, Agent):
             obs['full_text'] = history_string
             if history_string:
                 obs['text_vec'] = history.get_history_vec()
+                obs['full_text_vec'] = history.get_history_vec()
 
         # check truncation
         if obs.get('text_vec') is not None:
-            truncated_vec = self._check_truncate(obs['text_vec'], truncate, True)
+            truncate_left = not self.history_reversed
+            truncated_vec = self._check_truncate(
+                obs['text_vec'], truncate, truncate_left
+            )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
+
         return obs
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
@@ -1488,9 +1511,8 @@ class TorchAgent(ABC, Agent):
             for ex in exs
         ]
 
-        batch_size = len(valid_inds)
-
         return Batch(
+            batchsize=len(valid_inds),
             text_vec=xs,
             text_lengths=x_lens,
             label_vec=ys,
@@ -1501,7 +1523,6 @@ class TorchAgent(ABC, Agent):
             candidate_vecs=cand_vecs,
             image=imgs,
             observations=kleenexs,
-            batchsize=batch_size,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -1708,16 +1729,11 @@ class TorchAgent(ABC, Agent):
             states['optimizer_type'] = self.opt['optimizer']
 
         # lr scheduler
-        if torch.__version__.startswith('0.'):
-            warn_once(
-                "Must upgrade to Pytorch 1.0 to save the state of your " "LR scheduler."
-            )
-        else:
-            states['number_training_updates'] = self._number_training_updates
-            if getattr(self, 'scheduler', None):
-                states['lr_scheduler'] = self.scheduler.get_state_dict()
-                states['lr_scheduler_type'] = self.opt['lr_scheduler']
-                states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
+        states['number_training_updates'] = self._number_training_updates
+        if getattr(self, 'scheduler', None):
+            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            states['lr_scheduler_type'] = self.opt['lr_scheduler']
+            states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
 
@@ -1732,28 +1748,17 @@ class TorchAgent(ABC, Agent):
 
         if path:
             model_dict_path = path + '.dict'
-            if hasattr(self, 'dict') and not os.path.exists(
+            if hasattr(self, 'dict') and not PathManager.exists(
                 model_dict_path
             ):  # force save dictionary
                 # TODO: Look into possibly overriding opt('dict_file') with new path
+                logging.debug(f'Saving dictionary to {model_dict_path}')
                 self.dict.save(model_dict_path, sort=False)
             states = self.state_dict()
             if states:  # anything found to save?
-                with open(path, 'wb') as write:
-                    torch.save(states, write)
-
+                atomic_save(states, path)
                 # save opt file
-                with open(path + '.opt', 'w', encoding='utf-8') as handle:
-                    if hasattr(self, 'model_version'):
-                        self.opt['model_version'] = self.model_version()
-                    saved_opts = deepcopy(self.opt)
-                    if 'interactive_mode' in saved_opts:
-                        # We do not save the state of interactive mode, it is only decided
-                        # by scripts or command line.
-                        del saved_opts['interactive_mode']
-                    json.dump(saved_opts, handle, indent=4)
-                    # for convenience of working with jq, make sure there's a newline
-                    handle.write('\n')
+                self.opt.save(path + '.opt')
 
     def load_state_dict(self, state_dict):
         """
@@ -1766,14 +1771,19 @@ class TorchAgent(ABC, Agent):
         except RuntimeError as msg:
             msg_ = str(msg)
             if 'size mismatch' in msg_ and 'embedding' in msg_:
-                raise RuntimeError(
-                    f'{msg_}\n'
-                    '-----------------\n'
-                    'Could not load the model due to a size mismatch in the '
-                    'embeddings. A common reason for this is trying to load '
-                    'a model trained with fp16 but loaded without fp16. Try '
-                    'adding --fp16 true or --force-fp16-tokens true.'
-                )
+                if hasattr(self, 'special_toks') and len(self.special_toks) > 0:
+                    state_dict = self._resize_token_embeddings(state_dict, msg_)
+                    self.model.load_state_dict(state_dict)
+                    self.resized_embeddings = True  # make note that we resized here
+                else:
+                    raise RuntimeError(
+                        f'{msg_}\n'
+                        '-----------------\n'
+                        'Could not load the model due to a size mismatch in the '
+                        'embeddings. A common reason for this is trying to load '
+                        'a model trained with fp16 but loaded without fp16. Try '
+                        'adding --fp16 true or --force-fp16-tokens true.'
+                    )
             else:
                 raise
 
@@ -1785,9 +1795,10 @@ class TorchAgent(ABC, Agent):
         """
         import parlai.utils.pickle
 
-        states = torch.load(
-            path, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
-        )
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(
+                f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+            )
         if 'model' in states:
             self.load_state_dict(states['model'])
         if 'optimizer' in states and hasattr(self, 'optimizer'):
@@ -1857,6 +1868,7 @@ class TorchAgent(ABC, Agent):
             batch_size = observations.batchsize
             batch = observations
             observations = batch.observations
+        self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
         # clear local metrics before anything else
         self._local_metrics.clear()
 
@@ -1888,13 +1900,23 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tpb = GlobalAverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item(),
-                float(is_primary_worker()),
-            )
-            self.global_metrics.add('tpb', tpb)
+            lt = (batch.label_vec != self.NULL_IDX).sum().item()
+            ltpb = GlobalAverageMetric(lt, float(is_primary_worker()))
+            self.global_metrics.add('ltpb', ltpb)
+            self.global_metrics.add('ltps', GlobalTimerMetric(lt))
+
+            ct = (batch.text_vec != self.NULL_IDX).sum().item()
+            ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
+            self.global_metrics.add('ctpb', ctpb)
+            self.global_metrics.add('ctps', GlobalTimerMetric(ct))
+
+            ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
+            self.global_metrics.add('tpb', ttpb)
+            self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
 
         if self.is_training:
+            # register the start of updates for later counting when they occur
+            self.global_metrics.add('ups', GlobalTimerMetric(0))
             output = self.train_step(batch)
         else:
             with torch.no_grad():
@@ -1918,8 +1940,18 @@ class TorchAgent(ABC, Agent):
                     batch_reply[i]['metrics'] = {}
                 batch_reply[i]['metrics'][k] = value
 
-        # Make sure we push all the metrics to main thread in hogwild/workers
-        self.global_metrics.flush()
+        # register the end of timers
+        endtimer = GlobalTimerMetric(0)
+        self.global_metrics.add('exps', endtimer)
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
+            self.global_metrics.add('ltps', GlobalTimerMetric(0))
+            self.global_metrics.add('ctps', GlobalTimerMetric(0))
+            self.global_metrics.add('tps', GlobalTimerMetric(0))
 
         return batch_reply
 
@@ -1943,7 +1975,7 @@ class TorchAgent(ABC, Agent):
         """
         if shared is None and mode:
             # Only print in the non-shared version.
-            print("[" + self.id + ': full interactive mode on.' + ']')
+            logging.info(f'{self.id}: full interactive mode on.')
 
     def backward(self, loss):
         """
@@ -2028,7 +2060,7 @@ class TorchAgent(ABC, Agent):
         # in distributed mode, all workers step together, but we need to only
         # count it once. Only the primary worker gets to make the count
         if is_primary_worker():
-            self.global_metrics.add('updates', GlobalSumMetric(1))
+            self.global_metrics.add('ups', GlobalTimerMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)

@@ -22,6 +22,20 @@ from parlai.mturk.tasks.acute_eval.dump_task_to_acute_format import (
 )
 from parlai.mturk.tasks.acute_eval.configs import CONFIG
 
+try:
+    from parlai_internal.projects.fast_acute.model_configs import (
+        CONFIG as internal_conf,
+    )
+    from parlai_internal.projects.fast_acute.fast_eval import (
+        ACUTE_EVAL_TYPES as internal_types,
+    )
+
+    CONFIG.update(internal_conf)
+except ImportError:
+    # No access to internal
+    pass
+    internal_types = None
+
 from typing import Dict, Any, List, Tuple, Set
 from itertools import combinations
 
@@ -48,6 +62,10 @@ ACUTE_EVAL_TYPES = {
         's2_choice': 'I would prefer to talk to <Speaker 2>',
     },
 }
+if internal_types:
+    ACUTE_EVAL_TYPES.update(
+        {k: v for k, v in internal_types.items() if k not in ACUTE_EVAL_TYPES}
+    )
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(parlai_filepath), 'mturk/tasks/acute_eval/example'
 )
@@ -498,7 +516,7 @@ class ParlAIQuickAcute(object):
         with capture_output():
             parser = self_chat_setup_args()
             parser.set_params(**config)
-            opt = parser.parse_args(args=[], print_args=False)
+            opt = parser.parse_args(args=[])
         self_chat(opt)
 
     def _convert_task_to_conversations(self, config_id: str):
@@ -516,7 +534,7 @@ class ParlAIQuickAcute(object):
         with capture_output():
             parser = convert_task_setup_args()
             parser.set_params(**config)
-            opt = parser.parse_args(args=[], print_args=False)
+            opt = parser.parse_args(args=[])
         convert_task_data(opt)
 
     ##################
@@ -561,7 +579,7 @@ class ParlAIQuickAcute(object):
         """
         self._load_pairings_file()
 
-        self.acute_args = acute_add_args(print_args=False)
+        self.acute_args = acute_add_args()
         self.acute_args.update(ACUTE_DEFAULT_ARGS)
         total_convos = self.opt['matchups_per_pair'] * len(self.combos)
         self.acute_args.update(
@@ -592,7 +610,7 @@ class ParlAIQuickAcute(object):
         """
         self._print_progress(f'Analyzing Results for run id {self.run_id}')
         parser = analysis_setup_args()
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         today = datetime.date.today().isoformat()
         self.results_path = f"{self._get_vs_path(f'acute_results/{today}/')}"
         opt.update(
@@ -614,7 +632,7 @@ class ParlAIQuickAcute(object):
 
 if __name__ == '__main__':
     parser = setup_args()
-    runner = ParlAIQuickAcute(parser.parse_args(print_args=False))
+    runner = ParlAIQuickAcute(parser.parse_args())
 
     # Compile Chat Logs
     runner.compile_chat_logs()

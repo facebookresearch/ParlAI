@@ -12,7 +12,8 @@ from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import round_sigfigs
 from .modules import TransresnetModel
 from parlai.tasks.personality_captions.build import build
-
+from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
 
 import os
 import random
@@ -65,13 +66,6 @@ class TransresnetAgent(Agent):
         return arg_group
 
     def __init__(self, opt, shared=None):
-        if opt.get('numthreads', 1) > 1:
-            raise RuntimeError(
-                'Warning: You cannot use multithreading with '
-                'this agent, as the current metrics do not '
-                'support sharing of lists (for median rank '
-                'calculation). Please set --numthreads to 1'
-            )
         self.metrics = {
             'hits@1/100': 0.0,
             'loss': 0.0,
@@ -130,9 +124,9 @@ class TransresnetAgent(Agent):
 
     def _build_model(self, path=None):
         init_model_path = None
-        if self.opt.get('init_model') and os.path.isfile(self.opt['init_model']):
+        if self.opt.get('init_model') and PathManager.exists(self.opt['init_model']):
             init_model_path = self.opt['init_model']
-        elif self.opt.get('model_file') and os.path.isfile(self.opt['model_file']):
+        elif self.opt.get('model_file') and PathManager.exists(self.opt['model_file']):
             init_model_path = self.opt['model_file']
         elif path is not None:
             init_model_path = path
@@ -147,14 +141,15 @@ class TransresnetAgent(Agent):
         self.fixed_cands = None
         self.fixed_cands_enc = None
         if self.fcp is not None:
-            with open(self.fcp) as f:
+            with PathManager.open(self.fcp) as f:
                 self.fixed_cands = [c.replace('\n', '') for c in f.readlines()]
             cands_enc_file = '{}.cands_enc'.format(self.fcp)
             print('loading saved cand encodings')
-            if os.path.isfile(cands_enc_file):
-                self.fixed_cands_enc = torch.load(
-                    cands_enc_file, map_location=lambda cpu, _: cpu
-                )
+            if PathManager.exists(cands_enc_file):
+                with PathManager.open(cands_enc_file, 'rb') as f:
+                    self.fixed_cands_enc = torch.load(
+                        f, map_location=lambda cpu, _: cpu
+                    )
             else:
                 print('Extracting cand encodings')
                 self.model.eval()
@@ -175,7 +170,7 @@ class TransresnetAgent(Agent):
                     fixed_cands_enc.append(embedding)
                     pbar.update(50)
                 self.fixed_cands_enc = torch.cat(fixed_cands_enc, 0)
-                torch.save(self.fixed_cands_enc, cands_enc_file)
+                torch_utils.atomic_save(self.fixed_cands_enc, cands_enc_file)
 
     def load_personalities(self):
         """
@@ -189,7 +184,7 @@ class TransresnetAgent(Agent):
         build(self.opt)
         del self.opt['yfcc_path']
         perss = []
-        with open(personality_path) as f:
+        with PathManager.open(personality_path) as f:
             for line in f:
                 if 'Trait' not in line:
                     perss.append(line[0:-1])
@@ -497,9 +492,9 @@ class TransresnetAgent(Agent):
         print('Saving best model')
         states = {}
         states['model'] = self.model.state_dict()
-        torch.save(states, path)
+        torch_utils.atomic_save(states, path)
 
-        with open(path + '.opt', 'w') as handle:
+        with PathManager.open(path + '.opt', 'w') as handle:
             json.dump(self.opt, handle)
             handle.write('\n')
 
@@ -510,6 +505,7 @@ class TransresnetAgent(Agent):
         :param path:
             path from which to load model
         """
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
         if 'model' in states:
             self.model.load_state_dict(states['model'])

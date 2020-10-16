@@ -17,6 +17,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -135,7 +136,7 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 
     def _setup_data(self):
         print('loading: ' + self.data_path)
-        with open(self.data_path) as f:
+        with PathManager.open(self.data_path) as f:
             self.data = json.load(f)
 
     def num_episodes(self):
@@ -177,23 +178,23 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 
 class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
-        Teacher that returns the following action dict:
-        {
-            'text': chosen_topic\n # if first ex in ep
-                    last_apprentice_message\n # if possible
-                    wizard_message # if --label-type is chosen_sent
+    Teacher that returns the following action dict:
+    {
+        'text': chosen_topic\n # if first ex in ep
+                last_apprentice_message\n # if possible
+                wizard_message # if --label-type is chosen_sent
 
-            'knowledge': title_1 sentence_1\n
-                                .
-                                .
-                                .
-                         title_m sentence_n # all knowledge available to wizard
-            'labels': [title_checked sentence_checked] # default
-                                        OR
-                      [wizard_response] # if --label-type set to 'response'
+        'knowledge': title_1 sentence_1\n
+                            .
+                            .
+                            .
+                     title_m sentence_n # all knowledge available to wizard
+        'labels': [title_checked sentence_checked] # default
+                                    OR
+                  [wizard_response] # if --label-type set to 'response'
 
-            'label_candidates': knowledge + [no_passages_used no_passages_used]
-        }
+        'label_candidates': knowledge + [no_passages_used no_passages_used]
+    }
     """
 
     def __init__(self, opt, shared=None):
@@ -202,6 +203,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         self.include_knowledge = opt.get('include_knowledge', True)
         self.include_checked_sentence = opt.get('include_checked_sentence', False)
         self.knowledge_separator = opt.get('include_knowledge_separator', False)
+        self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
 
     @staticmethod
@@ -232,6 +234,12 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             type='bool',
             default=False,
             help='include special __knowledge__ token between ' 'title and passage',
+        )
+        agent.add_argument(
+            '--chosen-topic-delimiter',
+            type=str,
+            default='\n',
+            help='delimiter used when including chosen topic',
         )
         agent.add_argument(
             '--num-topics',
@@ -285,7 +293,9 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             text = chosen_topic
         elif idx == 1:
             # first response - only have the first message
-            text = '{}\n{}'.format(chosen_topic, apprentice_entry['text'])
+            text = (
+                f"{chosen_topic}{self.chosen_topic_delimiter}{apprentice_entry['text']}"
+            )
         else:
             text = ''
             if self.label_type == 'chosen_sent':
@@ -453,6 +463,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
         self.knowledge_separator = opt.get('include_knowledge_separator', True)
         self.only_checked_knowledge = opt.get('only_checked_knowledge', False)
         self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
+        self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
         self.dropout = opt.get('ignorant_dropout', 0.0)
 
     @staticmethod
@@ -478,6 +489,12 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             type='bool',
             default=False,
             help='If true, prepend text with checked sentence',
+        )
+        agent.add_argument(
+            '--gold-knowledge-delimiter',
+            type=str,
+            default='\n',
+            help='delimiter for prepending gold knowledge',
         )
 
     def getID(self):
@@ -517,9 +534,9 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
                 TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
             )
         elif self.prepend_gold_knowledge:
-            a['text'] = '{} {} {}\n{}'.format(
-                TOKEN_KNOWLEDGE, a['checked_sentence'], TOKEN_END_KNOWLEDGE, a['text']
-            )
+            a[
+                'text'
+            ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
         return a
 
 

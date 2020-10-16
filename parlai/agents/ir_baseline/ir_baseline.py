@@ -24,10 +24,11 @@ import math
 from collections.abc import Sequence
 import heapq
 import json
-import torch
 
+import parlai.utils.torch as torch_utils
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.utils.io import PathManager
 
 
 class MaxPriorityQueue(Sequence):
@@ -44,19 +45,18 @@ class MaxPriorityQueue(Sequence):
         self.capacity = max_size
         self.lst = []
 
-    def add(self, item, priority=None):
+    def add(self, item, priority):
         """
         Add element to the queue, with a separate priority if desired.
 
         Element will not be added if the queue is at capacity and the element
         has lower priority than the lowest currently in the queue.
 
-        :param item: item to add to queue.
-        :param priority: priority to use for item. if None (default), will use
-                         the item itself to calculate its own priority.
+        :param item:
+            item to add to queue.
+        :param priority:
+            priority to use for item.
         """
-        if priority is None:
-            priority = item
         if len(self.lst) < self.capacity:
             heapq.heappush(self.lst, (priority, item))
         elif priority > self.lst[0][0]:
@@ -77,18 +77,6 @@ class MaxPriorityQueue(Sequence):
         Return length of priority queue.
         """
         return len(self.lst)
-
-    def __str__(self):
-        """
-        Return str representation of the priority queue in list form.
-        """
-        return str([v for _, v in sorted(self.lst)])
-
-    def __repr__(self):
-        """
-        Return repr representation of the priority queue in list form.
-        """
-        return repr([v for _, v in sorted(self.lst)])
 
 
 stopwords = {
@@ -158,32 +146,31 @@ stopwords = {
 }
 
 
-def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
+def score_match(query_rep, text, length_penalty, dictionary=None):
     """
     Calculate the score match between the query representation the text.
 
-    :param query_rep: base query representation to match text again.
-    :param text: string to comapre against query_rep for matching tokens
-    :param length_penalty: scores are divided by the norm taken to this power
-    :dictionary: optional dictionary to use to tokenize text
-    :debug: flag to enable printing every match
+    :param query_rep:
+        base query representation to match text again.
+    :param text:
+        string to compare against query_rep for matching tokens
+    :param length_penalty:
+        scores are divided by the norm taken to this power
+    :param dictionary:
+        optional dictionary to use to tokenize text
 
-    :returns: float score of match
+    :returns:
+        float score of match
     """
     if text == "":
         return 0
-    if not dictionary:
-        words = text.lower().split(' ')
-    else:
-        words = [w for w in dictionary.tokenize(text.lower())]
+    words = [w for w in dictionary.tokenize(text.lower())]
     score = 0
     rw = query_rep['words']
     used = {}
     for w in words:
         if w in rw and w not in used:
             score += rw[w]
-            if debug:
-                print("match: " + w)
         used[w] = True
     norm = math.sqrt(len(used))
     norm = math.pow(norm * query_rep['norm'], length_penalty)
@@ -192,16 +179,21 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     return score
 
 
-def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
+def rank_candidates(query_rep, cands, length_penalty, dictionary):
     """
     Rank candidates given representation of query.
 
-    :param query_rep: base query representation to match text again.
-    :param cands: strings to compare against query_rep for matching tokens
-    :param length_penalty: scores are divided by the norm taken to this power
-    :dictionary: optional dictionary to use to tokenize text
+    :param query_rep:
+        base query representation to match text again.
+    :param cands:
+        strings to compare against query_rep for matching tokens
+    :param length_penalty:
+        scores are divided by the norm taken to this power
+    :dictionary:
+        dictionary to use to tokenize text
 
-    :returns: ordered list of candidate strings in score-ranked order
+    :returns:
+        ordered list of candidate strings in score-ranked order
     """
     if True:
         mpq = MaxPriorityQueue(100)
@@ -253,6 +245,7 @@ class IrBaselineAgent(Agent):
             default=None,
             help='file of candidate responses to choose from',
         )
+        DictionaryAgent.add_cmdline_args(parser)
 
     def __init__(self, opt, shared=None):
         """
@@ -317,8 +310,6 @@ class IrBaselineAgent(Agent):
                 rep, cands, self.length_penalty, self.dictionary
             )
             reply['text'] = reply['text_candidates'][0]
-        else:
-            reply['text'] = "I don't know."
         return reply
 
     def save(self, path=None):
@@ -330,16 +321,9 @@ class IrBaselineAgent(Agent):
             self.dictionary.save(path + '.dict')
             data = {}
             data['opt'] = self.opt
-            with open(path, 'wb') as handle:
-                torch.save(data, handle)
-            with open(path + '.opt', 'w') as handle:
+            torch_utils.atomic_save(data, path)
+            with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
-
-    def load(self, fname):
-        """
-        Load internal dictionary.
-        """
-        self.dictionary.load(fname + '.dict')
 
     def build_query_representation(self, query):
         """
@@ -356,11 +340,8 @@ class IrBaselineAgent(Agent):
         rw = rep['words']
         used = {}
         for w in words:
-            if len(self.dictionary.freq) > 0:
-                rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freq[w]))
-            else:
-                if w not in stopwords:
-                    rw[w] = 1
+            assert len(self.dictionary.freq) > 0
+            rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freq[w]))
             used[w] = True
         rep['norm'] = math.sqrt(len(words))
         return rep

@@ -3,7 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.core.teachers import FbDialogTeacher, MultiTaskTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher, MultiTaskTeacher
 from .build import build
 
 import copy
@@ -42,7 +42,7 @@ def mod_labels(ys, task):
 
 
 # Single bAbI task (1k training).
-class Task1kTeacher(FbDialogTeacher):
+class Task1kTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         default = '1'
         task = opt.get('task', f'babi:Task1k:{default}')
@@ -62,7 +62,7 @@ class Task1kTeacher(FbDialogTeacher):
 
 
 # Single bAbI task (10k training).
-class Task10kTeacher(FbDialogTeacher):
+class Task10kTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         default = '1'
         task = opt.get('task', f'babi:Task10k:{default}')

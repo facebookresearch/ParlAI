@@ -26,7 +26,8 @@ import parlai.utils.logging as logging
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_teacher_module, load_agent_module, load_world_module
 from parlai.tasks.tasks import ids_to_tasks
-from parlai.core.opt import Opt, load_opt_file
+from parlai.core.opt import Opt
+from parlai.utils.io import PathManager
 
 from typing import List, Optional
 
@@ -35,12 +36,14 @@ def print_git_commit():
     """
     Print the current git commit of ParlAI and parlai_internal.
     """
+    if not GIT_AVAILABLE:
+        return
     root = os.path.dirname(os.path.dirname(parlai.__file__))
     internal_root = os.path.join(root, 'parlai_internal')
     try:
         git_ = git.Git(root)
         current_commit = git_.rev_parse('HEAD')
-        print(f'[ Current ParlAI commit: {current_commit} ]')
+        logging.info(f'Current ParlAI commit: {current_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -49,7 +52,7 @@ def print_git_commit():
     try:
         git_ = git.Git(internal_root)
         internal_commit = git_.rev_parse('HEAD')
-        print(f'[ Current internal commit: {internal_commit} ]')
+        logging.info(f'Current internal commit: {internal_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -66,7 +69,7 @@ def print_announcements(opt):
     return
 
     noannounce_file = os.path.join(opt.get('datapath'), 'noannouncements')
-    if os.path.exists(noannounce_file):
+    if PathManager.exists(noannounce_file):
         # user has suppressed announcements, don't do anything
         return
 
@@ -122,8 +125,8 @@ def get_model_name(opt):
         if model_file is not None:
             model_file = modelzoo_path(opt.get('datapath'), model_file)
             optfile = model_file + '.opt'
-            if os.path.isfile(optfile):
-                new_opt = load_opt_file(optfile)
+            if PathManager.exists(optfile):
+                new_opt = Opt.load(optfile)
                 model = new_opt.get('model', None)
     return model
 
@@ -160,6 +163,13 @@ def str2floats(s):
     Look for single float or comma-separated floats.
     """
     return tuple(float(f) for f in s.split(','))
+
+
+def str2multitask_weights(s):
+    if s == 'stochastic':
+        return s
+    else:
+        return str2floats(s)
 
 
 def str2class(value):
@@ -204,6 +214,13 @@ def fix_underscores(args):
     return args
 
 
+class _HelpAllAction(argparse._HelpAction):
+    def __call__(self, parser, namespace, values, option_string=None):
+        if hasattr(parser, '_unsuppress_hidden'):
+            parser._unsuppress_hidden()
+        super().__call__(parser, namespace, values, option_string=option_string)
+
+
 class CustomHelpFormatter(argparse.HelpFormatter):
     """
     Produce a custom-formatted `--help` option.
@@ -212,11 +229,26 @@ class CustomHelpFormatter(argparse.HelpFormatter):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_help_position'] = 6
-        kwargs['width'] = 80
+        if 'max_help_position' not in kwargs:
+            kwargs['max_help_position'] = 8
         super().__init__(*args, **kwargs)
 
+    def _fill_text(self, text, width, indent):
+        # used to ensure that argparse doesn't word-wrap our descriptions of
+        # commands. mostly useful for the logo in the supercommand.
+        return ''.join(indent + line for line in text.splitlines(keepends=True))
+
+    def _iter_indented_subactions(self, action):
+        # used in superscript parser to hide "hidden" commands.
+        retval = super()._iter_indented_subactions(action)
+        if isinstance(action, argparse._SubParsersAction):
+            retval = [x for x in retval if x.help != argparse.SUPPRESS]
+        return retval
+
     def _format_action_invocation(self, action):
+        # used to suppress one utterance in the super parser.
+        if isinstance(action, argparse._SubParsersAction):
+            return ""
         if not action.option_strings or action.nargs == 0:
             return super()._format_action_invocation(action)
         default = self._get_default_metavar_for_optional(action)
@@ -224,12 +256,20 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         return ', '.join(action.option_strings) + ' ' + args_string
 
     def _get_help_string(self, action):
+        """
+        Help string that (almost) always inserts %(default)s.
+        """
         help = action.help
-        if '%(default)' not in action.help:
-            if action.default is not argparse.SUPPRESS:
-                defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
-                if action.option_strings or action.nargs in defaulting_nargs:
-                    help += ' (default: %(default)s)'
+        if (
+            '%(default)' in action.help
+            or not isinstance(action, argparse._StoreAction)
+            or action.default is argparse.SUPPRESS
+        ):
+            return help
+
+        defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+        if action.option_strings or action.nargs in defaulting_nargs:
+            help += ' (default: %(default)s)'
         if (
             hasattr(action, 'recommended')
             and action.recommended
@@ -260,21 +300,26 @@ class ParlaiParser(argparse.ArgumentParser):
     """
 
     def __init__(
-        self, add_parlai_args=True, add_model_args=False, description='ParlAI parser'
+        self, add_parlai_args=True, add_model_args=False, description=None, **kwargs
     ):
         """
         Initialize the ParlAI argparser.
         """
+        if 'formatter_class' not in kwargs:
+            kwargs['formatter_class'] = CustomHelpFormatter
+
         super().__init__(
             description=description,
             allow_abbrev=False,
             conflict_handler='resolve',
-            formatter_class=CustomHelpFormatter,
-            add_help=add_parlai_args,
+            add_help=True,
+            **kwargs,
         )
+        self.register('action', 'helpall', _HelpAllAction)
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
+        self.register('type', 'multitask_weights', str2multitask_weights)
         self.register('type', 'class', str2class)
         self.parlai_home = os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
@@ -584,6 +629,11 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         Add common ParlAI args across all scripts.
         """
+        self.add_argument(
+            '--helpall',
+            action='helpall',
+            help='Show usage, including advanced arguments.',
+        )
         parlai = self.add_argument_group('Main ParlAI Arguments')
         parlai.add_argument(
             '-o',
@@ -593,10 +643,13 @@ class ParlaiParser(argparse.ArgumentParser):
             'Note: Further Command-line arguments override file-based options.',
         )
         parlai.add_argument(
-            '-v',
-            '--show-advanced-args',
-            action='store_true',
-            help='Show hidden command line options (advanced users only)',
+            '--allow-missing-init-opts',
+            type='bool',
+            default=False,
+            help=(
+                'Warn instead of raising if an argument passed in with --init-opt is '
+                'not in the target opt.'
+            ),
         )
         parlai.add_argument(
             '-t', '--task', help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"'
@@ -609,8 +662,16 @@ class ParlaiParser(argparse.ArgumentParser):
             'defaults to {parlai_dir}/downloads',
         )
         parlai.add_argument(
+            '--loglevel',
+            default='info',
+            hidden=True,
+            choices=logging.get_all_levels(),
+            help='Logging level',
+        )
+        parlai.add_argument(
             '-dt',
             '--datatype',
+            metavar='DATATYPE',
             default='train',
             choices=[
                 'train',
@@ -630,7 +691,7 @@ class ParlaiParser(argparse.ArgumentParser):
             ],
             help='choose from: train, train:ordered, valid, test. to stream '
             'data add ":stream" to any option (e.g., train:stream). '
-            'by default: train is random with replacement, '
+            'by default train is random with replacement, '
             'valid is ordered, test is ordered.',
         )
         parlai.add_argument(
@@ -643,14 +704,6 @@ class ParlaiParser(argparse.ArgumentParser):
             hidden=True,
         )
         parlai.add_argument(
-            '-nt',
-            '--numthreads',
-            default=1,
-            type=int,
-            help='number of threads. Used for hogwild if batchsize is 1, else '
-            'for number of threads in threadpool loading,',
-        )
-        parlai.add_argument(
             '--hide-labels',
             default=False,
             type='bool',
@@ -661,10 +714,13 @@ class ParlaiParser(argparse.ArgumentParser):
         parlai.add_argument(
             '-mtw',
             '--multitask-weights',
-            type='floats',
+            type='multitask_weights',
             default=[1],
-            help='list of floats, one for each task, specifying '
-            'the probability of drawing the task in multitask case',
+            help=(
+                'list of floats, one for each task, specifying '
+                'the probability of drawing the task in multitask case. You may also '
+                'provide "stochastic" to simulate simple concatenation.'
+            ),
             hidden=True,
         )
         parlai.add_argument(
@@ -734,7 +790,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--init-model',
             default=None,
             type=str,
-            help='load model weights and dict from this file',
+            help='Initialize model weights and dict from this file',
         )
         model_args.add_argument(
             '--dict-class', hidden=True, help='the class of the dictionary agent uses'
@@ -816,7 +872,7 @@ class ParlaiParser(argparse.ArgumentParser):
         """
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
-        if parsed.get('init_opt', None) is not None:
+        if parsed.get('init_opt') is not None:
             self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
@@ -866,7 +922,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         if nohelp:
             # ignore help
-            args = [a for a in args if a != '-h' and a != '--help']
+            args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
@@ -876,7 +932,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -884,13 +940,19 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = load_opt_file(optfile)
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
-                raise RuntimeError(
-                    'Trying to set opt from file that does not exist: ' + str(key)
-                )
+                if opt.get('allow_missing_init_opts', False):
+                    logging.warn(
+                        f'The "{key}" key in {optfile} will not be loaded, because it '
+                        f'does not exist in the target opt.'
+                    )
+                else:
+                    raise RuntimeError(
+                        'Trying to set opt from file that does not exist: ' + str(key)
+                    )
             if key not in opt['override']:
                 opt[key] = value
                 opt['override'][key] = value
@@ -905,22 +967,35 @@ class ParlaiParser(argparse.ArgumentParser):
         # set environment variables
         # Priority for setting the datapath (same applies for download_path):
         # --datapath -> os.environ['PARLAI_DATAPATH'] -> <self.parlai_home>/data
-        if opt.get('download_path'):
-            os.environ['PARLAI_DOWNPATH'] = opt['download_path']
-        elif os.environ.get('PARLAI_DOWNPATH') is None:
-            os.environ['PARLAI_DOWNPATH'] = os.path.join(self.parlai_home, 'downloads')
         if opt.get('datapath'):
             os.environ['PARLAI_DATAPATH'] = opt['datapath']
         elif os.environ.get('PARLAI_DATAPATH') is None:
-            os.environ['PARLAI_DATAPATH'] = os.path.join(self.parlai_home, 'data')
+            DEFAULT_DATAPATH = None
+            try:
+                # internal fbcode-wide default
+                import parlai_fb
 
-        opt['download_path'] = os.environ['PARLAI_DOWNPATH']
+                DEFAULT_DATAPATH = parlai_fb.DEFAULT_DATAPATH
+            except ImportError:
+                pass
+            if not DEFAULT_DATAPATH:
+                # TODO: switch to ~/.parlai/
+                DEFAULT_DATAPATH = os.path.join(self.parlai_home, 'data')
+            os.environ['PARLAI_DATAPATH'] = DEFAULT_DATAPATH
+
         opt['datapath'] = os.environ['PARLAI_DATAPATH']
 
         return opt
 
     def _process_args_to_opts(self, args_that_override: Optional[List[str]] = None):
         self.opt = Opt(vars(self.args))
+        extra_ag = []
+
+        if '_subparser' in self.opt:
+            # if using the super command, we need to be aware of the subcommand's
+            # arguments when identifying things manually set by the user
+            self.overridable.update(self.opt['_subparser'].overridable)
+            extra_ag = self.opt.pop('_subparser')._action_groups
 
         # custom post-parsing
         self.opt['parlai_home'] = self.parlai_home
@@ -930,18 +1005,20 @@ class ParlaiParser(argparse.ArgumentParser):
         option_strings_dict = {}
         store_true = []
         store_false = []
-        for group in self._action_groups:
+        for group in self._action_groups + extra_ag:
             for a in group._group_actions:
                 if hasattr(a, 'option_strings'):
                     for option in a.option_strings:
                         option_strings_dict[option] = a.dest
-                        if '_StoreTrueAction' in str(type(a)):
+                        if isinstance(a, argparse._StoreTrueAction):
                             store_true.append(option)
-                        elif '_StoreFalseAction' in str(type(a)):
+                        elif isinstance(a, argparse._StoreFalseAction):
                             store_false.append(option)
 
         if args_that_override is None:
             args_that_override = _sys.argv[1:]
+
+        args_that_override = fix_underscores(args_that_override)
 
         for i in range(len(args_that_override)):
             if args_that_override[i] in option_strings_dict:
@@ -951,7 +1028,7 @@ class ParlaiParser(argparse.ArgumentParser):
                     self.overridable[option_strings_dict[args_that_override[i]]] = False
                 elif (
                     i < len(args_that_override) - 1
-                    and args_that_override[i + 1][:1] != '-'
+                    and args_that_override[i + 1] not in option_strings_dict
                 ):
                     key = option_strings_dict[args_that_override[i]]
                     self.overridable[key] = self.opt[key]
@@ -989,31 +1066,38 @@ class ParlaiParser(argparse.ArgumentParser):
         self._process_args_to_opts(args)
         return self.opt, unknowns
 
-    def parse_args(self, args=None, namespace=None, print_args=True):
+    def parse_args(self, args=None, namespace=None, **kwargs):
         """
         Parse the provided arguments and returns a dictionary of the ``args``.
 
         We specifically remove items with ``None`` as values in order to support the
         style ``opt.get(key, default)``, which would otherwise return ``None``.
         """
+        if 'print_args' in kwargs:
+            logging.error(
+                "You gave the print_args flag to parser.parse_args, but this is "
+                "no longer supported. Use opt.log() to print the arguments"
+            )
+            del kwargs['print_args']
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
 
         self._process_args_to_opts(args)
+        print_announcements(self.opt)
+        logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
-        if print_args:
-            self.print_args()
-            if GIT_AVAILABLE:
-                print_git_commit()
-            print_announcements(self.opt)
-
-        if os.environ.get('PARLAI_VERBOSE'):
-            self.opt['verbose'] = True
-
-        if self.opt.get('verbose'):
-            logging.set_verbose_mode()
+        assert '_subparser' not in self.opt
 
         return self.opt
+
+    def _value2argstr(self, value) -> str:
+        """
+        Reverse-parse an opt value into one interpretable by argparse.
+        """
+        if isinstance(value, (list, tuple)):
+            return ",".join(str(v) for v in value)
+        else:
+            return str(value)
 
     def _kwargs_to_str_args(self, **kwargs):
         """
@@ -1047,14 +1131,15 @@ class ParlaiParser(argparse.ArgumentParser):
                 continue
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
-                string_args.extend([str(v) for v in value])
+                string_args.extend([self._value2argstr(value) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
 
@@ -1082,13 +1167,15 @@ class ParlaiParser(argparse.ArgumentParser):
             # because user has provided an unspecified option
             action = kwname_to_action[kwname]
             last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction) and bool(value):
-                string_args.append(last_option_string)
+            if isinstance(action, argparse._StoreTrueAction):
+                if bool(value):
+                    string_args.append(last_option_string)
             elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                 string_args.append(last_option_string)
-                string_args.append(str(value))
+                string_args.append(self._value2argstr(value))
             elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                 string_args.append(last_option_string)
+                # Special case: Labels
                 string_args.extend([str(v) for v in value])
             else:
                 raise TypeError(f"Don't know what to do with {action}")
@@ -1107,31 +1194,9 @@ class ParlaiParser(argparse.ArgumentParser):
         self.error = _captured_error
         try:
             string_args = self._kwargs_to_str_args(**kwargs)
-            return self.parse_args(args=string_args, print_args=False)
+            return self.parse_args(args=string_args)
         finally:
             self.error = old_error
-
-    def print_args(self):
-        """
-        Print out all the arguments in this parser.
-        """
-        if not self.opt:
-            self.parse_args(print_args=False)
-        values = {}
-        for key, value in self.opt.items():
-            values[str(key)] = str(value)
-        for group in self._action_groups:
-            group_dict = {
-                a.dest: getattr(self.args, a.dest, None) for a in group._group_actions
-            }
-            namespace = argparse.Namespace(**group_dict)
-            count = 0
-            for key in sorted(namespace.__dict__):
-                if key in values:
-                    if count == 0:
-                        print('[ ' + group.title + ': ] ')
-                    count += 1
-                    print('[  ' + key + ': ' + values[key] + ' ]')
 
     def set_params(self, **kwargs):
         """
@@ -1141,19 +1206,10 @@ class ParlaiParser(argparse.ArgumentParser):
         for k, v in kwargs.items():
             self.overridable[k] = v
 
-    @property
-    def show_advanced_args(self):
-        """
-        Check if we should show arguments marked as hidden.
-        """
-        if hasattr(self, '_show_advanced_args'):
-            return self._show_advanced_args
-        known_args, _ = self.parse_known_args(nohelp=True)
-        if hasattr(known_args, 'show_advanced_args'):
-            self._show_advanced_args = known_args.show_advanced_args
-        else:
-            self._show_advanced_args = True
-        return self._show_advanced_args
+    def _unsuppress_hidden(self):
+        for action in self._actions:
+            if hasattr(action, 'real_help'):
+                action.help = action.real_help
 
     def _handle_custom_options(self, kwargs):
         """
@@ -1166,10 +1222,11 @@ class ParlaiParser(argparse.ArgumentParser):
             rec = kwargs.pop('recommended')
             action_attr['recommended'] = rec
         action_attr['hidden'] = kwargs.get('hidden', False)
+        action_attr['real_help'] = kwargs.get('help', None)
         if 'hidden' in kwargs:
-            hidden = kwargs.pop('hidden')
-            if hidden:
+            if kwargs.pop('hidden'):
                 kwargs['help'] = argparse.SUPPRESS
+
         if 'type' in kwargs and kwargs['type'] is bool:
             # common error, we really want simple form
             kwargs['type'] = 'bool'
