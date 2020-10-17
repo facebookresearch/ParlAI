@@ -100,22 +100,19 @@ class R3FMixin(object):
             return loss
 
     def _calculate_symm_kl(self, noised_logits, input_logits):
-        return (
-            F.kl_div(
-                F.log_softmax(noised_logits, dim=-1, dtype=torch.float32),
-                F.softmax(input_logits, dim=-1, dtype=torch.float32),
-                None,
-                None,
-                "sum",
-            )
-            + F.kl_div(
-                F.log_softmax(input_logits, dim=-1, dtype=torch.float32),
-                F.softmax(noised_logits, dim=-1, dtype=torch.float32),
-                None,
-                None,
-                "sum",
-            )
-        ) / noised_logits.size(0)
+        return F.kl_div(
+            F.log_softmax(noised_logits, dim=-1, dtype=torch.float32),
+            F.softmax(input_logits, dim=-1, dtype=torch.float32),
+            None,
+            None,
+            "mean",
+        ) + F.kl_div(
+            F.log_softmax(input_logits, dim=-1, dtype=torch.float32),
+            F.softmax(noised_logits, dim=-1, dtype=torch.float32),
+            None,
+            None,
+            "mean",
+        )
 
     def _find_embeddings(self, module):
         for name, layer in module.named_modules():
