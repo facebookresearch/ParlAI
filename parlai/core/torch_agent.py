@@ -1675,6 +1675,11 @@ class TorchAgent(ABC, Agent):
         self.history.update_history(
             observation, temp_history=self.get_temp_history(observation)
         )
+
+        if hasattr(self.dict, 'set_training_mode'):
+            # we only want bpe dropout on the context, not the label
+            self.dict.set_training_mode(False)
+
         return self.vectorize(
             observation,
             self.history,
