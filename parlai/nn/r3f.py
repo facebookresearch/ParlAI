@@ -92,7 +92,7 @@ class R3FMixin(object):
                 *self._model_input(batch), ys=batch.label_vec
             )
             standard_scores, _, *_ = standard_output
-            r3f_loss_sum = r3f._calculate_symm_kl(noised_scores, standard_scores)
+            r3f_loss = r3f._calculate_symm_kl(noised_scores, standard_scores)
             # get average loss per token correctly
             notnull = batch.label_vec.ne(self.NULL_IDX)
             target_tokens = notnull.long().sum(dim=-1)
