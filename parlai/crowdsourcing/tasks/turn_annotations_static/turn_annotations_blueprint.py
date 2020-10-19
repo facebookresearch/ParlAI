@@ -42,19 +42,34 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             'help': """This task renders conversations from a file and asks for turn by turn annotations of them."""
         },
     )
+    random_seed: int = field(
+        default=42, metadata={"help": 'Seed for random operations'}
+    )
+    annotation_question: str = field(
+        default='Does this comment require any annotations? (Check all that apply)',
+        metadata={
+            "help": "The string displayed above the checkboxes for each annotation in the task."
+        },
+    )
     subtasks_per_unit: int = field(
         default=-1, metadata={"help": "Number of subtasks/comparisons to do per unit"}
     )
-    annotate_last_utterance_only: bool = field(
-        default=False,
+    annotation_indices_jsonl: str = field(
+        default=None,
         metadata={
-            "help": "If we only want the crowdworker to annotate the last utterance in the conversation"
+            "help": "Specify which utterance indices to annotate per conversation in a JSONL file. Must be same length as conversations data-jsonl file. See example file in task_config/annotation_indices_example.jsonl"
         },
     )
     ask_reason: bool = field(
         default=False,
         metadata={
             "help": "If we want to ask the crowdworker for a reason for each of their annotations in a text field"
+        },
+    )
+    conversation_count: int = field(
+        default=None,
+        metadata={
+            "help": "Specify a positive integer if you want to use only the first N conversations in the data file"
         },
     )
     onboarding_data: str = field(
