@@ -86,7 +86,11 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
         super().__init__(task_run, args=args, shared_state=shared_state)
-        self.subtasks_per_unit = args.blueprint.subtasks_per_unit
+        print(f'Running {self.__class__.__name__} with opts: {self.opts}')
+        random.seed(self.opts["random_seed"])
+        np.random.seed(self.opts["random_seed"])
+        self.subtasks_per_unit = self.opts['subtasks_per_unit']
+        self.conversation_count = self.opts['conversation_count']
 
         if self.subtasks_per_unit <= 0:
             raise Exception(
