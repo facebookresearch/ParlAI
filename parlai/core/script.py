@@ -127,6 +127,9 @@ class _SupercommandParser(ParlaiParser):
     """
 
     def __init__(self, *args, **kwargs):
+        # used to target help messages more correctly, see GH #3182
+        self._help_subparser = None
+
         from parlai.utils.strings import colorize
 
         logo = ""
@@ -147,6 +150,22 @@ class _SupercommandParser(ParlaiParser):
         sa = sa[0]
         for _, v in sa.choices.items():
             v.add_extra_args(args)
+
+    def parse_known_args(self, args=None, namespace=None, nohelp=False):
+        known, unused = super().parse_known_args(args, namespace, nohelp)
+        if hasattr(known, '_subparser'):
+            # keep this around to keep the print message more in tune
+            self._help_subparser = known._subparser
+        return known, unused
+
+    def print_help(self):
+        """
+        Print help, possibly deferring to the appropriate subcommand.
+        """
+        if self._help_subparser:
+            self._help_subparser.print_help()
+        else:
+            return super().print_help()
 
     def add_subparsers(self, **kwargs):
         return super().add_subparsers(**kwargs)

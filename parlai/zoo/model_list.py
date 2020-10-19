@@ -1502,4 +1502,38 @@ model_list = [
         "example": "python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf ${FINETUNED_MODEL_PATH} --model projects.multimodal_blenderbot.agents:BiasAgent --delimiter $'\n' --beam-block-ngram 3 --beam-context-block-ngram 3 --beam-min-length 20 --beam-size 10 --inference beam --model-parallel False",
         "result": "(results will vary)",
     },
+    {
+        "title": "Transformer Classifier Multi-turn Dialogue Safety Model",
+        "id": "bot_adversarial_dialogue",
+        "path": "zoo:bot_adversarial_dialogue/multi_turn_v0/model",
+        "agent": "transformer/classifier",
+        "task": "bot_adversarial_dialogue",
+        "project": "",
+        "description": (
+            "Classifier trained on the filtered multi-turn bot adversarial dialogues in addition to both dialogue_safety single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
+        ),
+        "example": (
+            "parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:bot_adversarial_dialogue/multi_turn_v0/model -bs 128"
+        ),
+        "result": (
+            "{'exs': 2598, 'accuracy': 0.8414, 'f1': 0.8414, 'loss': 0.5153, 'bleu-4': 8.414e-10, 'class___notok___recall': 0.8093, 'class___notok___prec': 0.7671, 'class___notok___f1': 0.7876, 'class___ok___recall': 0.8597, 'class___ok___prec': 0.8876, 'class___ok___f1': 0.8735, 'weighted_f1': 0.8423}"
+        ),
+    },
+    {
+        "title": "Transformer Classifier Multi-turn Dialogue Safety Model",
+        "id": "bot_adversarial_dialogue",
+        "path": "zoo:bot_adversarial_dialogue/multi_turn/model",
+        "agent": "transformer/classifier",
+        "task": "bot_adversarial_dialogue",
+        "project": "",
+        "description": (
+            "Classifier trained on the truncated multi-turn bot adversarial dialogues in addition to both dialogue_safety single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
+        ),
+        "example": (
+            "parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:bot_adversarial_dialogue/multi_turn/model -bs 128"
+        ),
+        "result": (
+            "{'exs': 2598, 'accuracy': 0.8507, 'f1': 0.8507, 'loss': 0.3878, 'bleu-4': 8.507e-10, 'class___notok___recall': 0.8633, 'class___notok___prec': 0.7588, 'class___notok___f1': 0.8077, 'class___ok___recall': 0.8434, 'class___ok___prec': 0.9154, 'class___ok___f1': 0.8779, 'weighted_f1': 0.8524}"
+        ),
+    },
 ]

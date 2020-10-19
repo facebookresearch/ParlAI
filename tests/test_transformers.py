@@ -19,6 +19,55 @@ from .test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
 from parlai.core.params import ParlaiParser
 
 
+class TestTransformerBase(unittest.TestCase):
+    """
+    Base Tester class for sharing functionality.
+    """
+
+    def _test_resize_embeddings(self, model):
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model_file')
+            _, _ = testing_utils.train_model(
+                dict(
+                    model=model,
+                    task='integration_tests:short_fixed',
+                    n_layers=1,
+                    n_encoder_layers=2,
+                    n_decoder_layers=4,
+                    num_epochs=1,
+                    dict_tokenizer='bytelevelbpe',
+                    bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                    bpe_add_prefix_space=False,
+                    model_file=model_file,
+                    save_after_valid=True,
+                )
+            )
+
+            # now create agent with special tokens
+            parser = ParlaiParser()
+            parser.set_params(
+                model=model,
+                task='integration_tests:short_fixed',
+                n_layers=1,
+                n_encoder_layers=2,
+                n_decoder_layers=4,
+                dict_tokenizer='bytelevelbpe',
+                bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                bpe_add_prefix_space=False,
+                model_file=model_file,
+                save_after_valid=True,
+                special_tok_lst='PARTY,PARROT',
+            )
+            opt = parser.parse_args([])
+            agent = create_agent(opt)
+            # assert that the embeddings were resized
+            assert agent.resized_embeddings
+            # assert model has special tokens
+            self.assertEqual(agent.special_toks, ['PARTY', 'PARROT'])
+
+
 class TestTransformerRanker(unittest.TestCase):
     """
     Checks that transformer_ranker can learn some very basic tasks.
@@ -199,7 +248,7 @@ class TestTransformerRanker(unittest.TestCase):
         self.assertGreaterEqual(test['hits@1'], 0.90)
 
 
-class TestTransformerGenerator(unittest.TestCase):
+class TestTransformerGenerator(TestTransformerBase):
     """
     Checks that the generative transformer can learn basic tasks.
     """
@@ -278,7 +327,7 @@ class TestTransformerGenerator(unittest.TestCase):
     @pytest.mark.nofbcode
     def test_beamsearch_return_all_texts(self):
         """
-        Test beam_texts for beam_size > 1
+        Test beam_texts for beam_size > 1.
         """
         size = 3
 
@@ -560,48 +609,7 @@ class TestTransformerGenerator(unittest.TestCase):
 
     @pytest.mark.nofbcode
     def test_resize_embeddings(self):
-        # train original model
-        with testing_utils.tempdir() as tmpdir:
-            model_file = os.path.join(tmpdir, 'model_file')
-            _, _ = testing_utils.train_model(
-                dict(
-                    model='transformer/generator',
-                    task='integration_tests:short_fixed',
-                    n_layers=1,
-                    n_encoder_layers=2,
-                    n_decoder_layers=4,
-                    num_epochs=1,
-                    dict_tokenizer='bytelevelbpe',
-                    bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
-                    bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
-                    bpe_add_prefix_space=False,
-                    model_file=model_file,
-                    save_after_valid=True,
-                )
-            )
-
-            # now create agent with special tokens
-            parser = ParlaiParser()
-            parser.set_params(
-                model='transformer/generator',
-                task='integration_tests:short_fixed',
-                n_layers=1,
-                n_encoder_layers=2,
-                n_decoder_layers=4,
-                dict_tokenizer='bytelevelbpe',
-                bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
-                bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
-                bpe_add_prefix_space=False,
-                model_file=model_file,
-                save_after_valid=True,
-                special_tok_lst='PARTY,PARROT',
-            )
-            opt = parser.parse_args([])
-            agent = create_agent(opt)
-            # assert that the embeddings were resized
-            assert agent.resized_embeddings
-            # assert model has special tokens
-            self.assertEqual(agent.special_toks, ['PARTY', 'PARROT'])
+        self._test_resize_embeddings('transformer/generator')
 
 
 class TestClassifier(unittest.TestCase):
@@ -761,6 +769,16 @@ class TestLearningRateScheduler(unittest.TestCase):
             msg='Invsqrt LR {} was not 1/4 at step 16'.format(valid2['lr']),
             delta=0.001,
         )
+
+
+class TestPolyencoder(TestTransformerBase):
+    """
+    Unit tests for PolyencoderAgent.
+    """
+
+    @pytest.mark.nofbcode
+    def test_resize_embeddings(self):
+        self._test_resize_embeddings('transformer/polyencoder')
 
 
 @testing_utils.skipUnlessVision

@@ -62,8 +62,15 @@ _Task & models for chitchat with a given persona._
 - **Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
   _Task and method for improving the detection of offensive language in the context of dialogue._
 
-- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/).
+- **Recipes for Safety in Open-Domain Chatbots** [[project]](https://parl.ai/projects/safety_recipes/) [[paper]](https://arxiv.org/abs/2010.07079).
+  _Methods for improving the safety of open-domain chatbots._
+
+- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/) [[paper]](https://arxiv.org/abs/1911.03842).
   _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
+
+- **Multi-Dimensional Gender Bias Classification** [[project]](https://parl.ai/projects/md_gender/) [[paper]](https://arxiv.org/abs/2005.00614)
+  _Training fine-grained gender bias classifiers to identify gender bias in text._
+
 
 ## Knowledge Grounded
 
@@ -77,7 +84,7 @@ _Task & models for chitchat with a given persona._
 
 - **Personality-Captions** [[project]](http://parl.ai/projects/personality_captions/) [[paper]](https://arxiv.org/abs/1810.10665).
   _Task for personality-based engaging comments on images._
-  
+
 - **Multi-Modal BlenderBot** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/multimodal_blenderbot/) [[paper]](https://arxiv.org/abs/2010.01082). _Model for multi-modal dialogue about both images and chitchat._
 
 ## Environment Grounded

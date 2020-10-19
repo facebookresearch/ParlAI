@@ -19,7 +19,7 @@ and human evaluation---that our models generate less gendered, but still engagin
 
 ## Paper
 
-[Link](https://drive.google.com/open?id=1NU-YsvoMF1X8jivr1QtZb4Aq63oRbQjU)
+[Link](https://arxiv.org/abs/1911.03842) to appear at EMNLP 2020.
 
 ## Data
 
@@ -30,3 +30,6 @@ parlai display_data -t light_genderation_bias
 
 By default, all mitigation methods are turned on at once. Use the flags `--add-conditional` (Bias Ctrl training), `--add-new-data` (Positive Bias data), and `--add-counterfactual` (Counterfactual Data Augmentation) to control which mitigation methods to use.
 
+## Models
+
+TBD.
