@@ -162,9 +162,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         return {
             "task_description": self.args.task.get('task_description', None),
             "task_title": self.args.task.get('task_title', None),
+            "annotation_question": self.opts['annotation_question'],
             "onboarding_data": onboarding_data,
             "annotation_buckets": annotation_buckets,
-            "annotate_last_utterance_only": self.args.blueprint.annotate_last_utterance_only,
             "ask_reason": self.args.blueprint.ask_reason,
             "frame_height": '100%',
             "num_subtasks": self.args.blueprint.subtasks_per_unit,
