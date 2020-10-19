@@ -54,4 +54,6 @@ def run_static_task(cfg: DictConfig, task_directory: str):
 
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+    operator.wait_for_runs_then_shutdown(
+        skip_input=True, log_rate=cfg.monitoring_log_rate
+    )
