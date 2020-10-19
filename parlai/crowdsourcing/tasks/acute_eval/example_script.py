@@ -44,8 +44,11 @@ class TestScriptConfig(RunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
     current_time: int = int(time.time())
-    log_rate: int = field(
-        default=30, metadata={'help': 'Frequency of logging in seconds'}
+    monitoring_log_rate: int = field(
+        default=30,
+        metadata={
+            'help': 'Frequency in seconds of logging the monitoring of the crowdsourcing task'
+        },
     )
 
 
@@ -57,7 +60,9 @@ def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=cfg.log_rate)
+    operator.wait_for_runs_then_shutdown(
+        skip_input=True, log_rate=cfg.monitoring_log_rate
+    )
 
 
 if __name__ == "__main__":
