@@ -63,7 +63,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             ) as f:
                 line = f.readline()
                 while line:
-                    conversation_indices = json.loads(line)['data']
+                    conversation_indices = json.loads(line)
                     self.annotation_indices.append(conversation_indices)
                     line = f.readline()
             if len(self.annotation_indices) != len(self.raw_data):
