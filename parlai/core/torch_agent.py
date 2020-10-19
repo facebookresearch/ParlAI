@@ -1509,14 +1509,7 @@ class TorchAgent(ABC, Agent):
 
         train_batch = any('labels' in obs for obs in exs)
 
-        # When passing Batch objects along multiprocessing queues, it is
-        # important that no tensors are unnecessarily placed in the batch,
-        # as this requires an expensive tensor copy. Thus, it is necessary
-        # to clean the exs of any tensors (giving us "clean" exs)
-        if self.opt.get('num_workers') > 1:
-            exs = None
-
-        return Batch(
+        retval = Batch(
             batchsize=len(valid_inds),
             text_vec=xs,
             text_lengths=x_lens,
@@ -1532,6 +1525,24 @@ class TorchAgent(ABC, Agent):
             observations=exs,
             training=train_batch,
         )
+
+        # When passing Batch objects along multiprocessing queues, it is
+        # important that no tensors are unnecessarily placed in the batch,
+        # as this requires an expensive tensor copy. Thus, it is necessary
+        # to clean the exs of any tensors (giving us "clean" exs)
+        if self.opt.get('num_workers', 1) > 1:
+            retval = Batch(
+                **{
+                    k: v
+                    for k, v in retval.items()
+                    if isinstance(v, torch.Tensor)
+                    or isinstance(v, int)
+                    or k == 'valid_indices'
+                }
+            )
+            exs = None
+
+        return retval
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """
