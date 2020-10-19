@@ -54,7 +54,7 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
     subtasks_per_unit: int = field(
         default=-1, metadata={"help": "Number of subtasks/comparisons to do per unit"}
     )
-    annotation_indices_jsonl: str = field(
+    annotation_indices_jsonl: Optional[str] = field(
         default=None,
         metadata={
             "help": "Specify which utterance indices to annotate per conversation in a JSONL file. Must be same length as conversations data-jsonl file. See example file in task_config/annotation_indices_example.jsonl"
@@ -66,7 +66,7 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             "help": "If we want to ask the crowdworker for a reason for each of their annotations in a text field"
         },
     )
-    conversation_count: int = field(
+    conversation_count: Optional[int] = field(
         default=None,
         metadata={
             "help": "Specify a positive integer if you want to use only the first N conversations in the data file"

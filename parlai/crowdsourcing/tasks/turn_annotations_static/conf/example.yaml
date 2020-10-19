@@ -1,10 +1,6 @@
 #@package _global_
 mephisto:
   blueprint:
-    annotation_buckets: ${task_dir}/task_config/annotation_buckets.json
-    annotate_last_utterance_only: false
-    ask_reason: false
-    onboarding_data: ${task_dir}/task_config/onboarding.json
     subtasks_per_unit: 6
     task_source: ${task_dir}/webapp/build/bundle.js
     data_jsonl: FIXME_TASK_DATA_PATH
