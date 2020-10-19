@@ -78,12 +78,13 @@ function OnboardingDirections({ children }) {
     );
 }
 
-function OnboardingUtterance({ annotationBuckets, turnIdx, text }) {
+function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, text }) {
+    var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     var extraElements = '';
     if (turnIdx % 2 == 1) {
         extraElements = '';
         extraElements = (<span key={'extra_' + turnIdx}><br /><br />
-            <span style={{ fontStyle: 'italic' }}>Does this comment from your partner have any annotations? (Check all that apply)<br />
+            <span style={{ fontStyle: 'italic' }}><span dangerouslySetInnerHTML={{ __html: annotationQuestionWithoutQuotes }}></span><br />
                 <Checkboxes annotationBuckets={annotationBuckets} turnIdx={turnIdx} askReason={false} />
             </span>
         </span>)
@@ -99,7 +100,7 @@ function OnboardingUtterance({ annotationBuckets, turnIdx, text }) {
     )
 }
 
-function OnboardingComponent({ onboardingData, annotationBuckets, onSubmit }) {
+function OnboardingComponent({ onboardingData, annotationBuckets, annotationQuestion, onSubmit }) {
     return (
         <div id="onboarding-main-pane">
             <OnboardingDirections>
@@ -116,11 +117,13 @@ function OnboardingComponent({ onboardingData, annotationBuckets, onSubmit }) {
                                     <OnboardingUtterance
                                         key={idx * 2}
                                         annotationBuckets={annotationBuckets}
+                                        annotationQuestion={annotationQuestion}
                                         turnIdx={idx * 2}
                                         text={turn[0].text} />
                                     <OnboardingUtterance
                                         key={idx * 2 + 1}
                                         annotationBuckets={annotationBuckets}
+                                        annotationQuestion={annotationQuestion}
                                         turnIdx={idx * 2 + 1}
                                         text={turn[1].text} />
                                 </div>
@@ -134,7 +137,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, onSubmit }) {
             <div style={{ textAlign: 'center' }}>
                 <button id="onboarding-submit-button"
                     className="button is-link btn-lg"
-                    onClick={() => handleOnboardingSubmit({ onboardingData, annotationBuckets, onSubmit } )}
+                    onClick={() => handleOnboardingSubmit({ onboardingData, annotationBuckets, onSubmit })}
                 >
                     Submit Answers
                 </button>
