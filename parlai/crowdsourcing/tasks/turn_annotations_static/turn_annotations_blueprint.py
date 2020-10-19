@@ -19,7 +19,7 @@ from mephisto.server.blueprints.static_react_task.static_react_blueprint import 
     StaticReactBlueprint,
     StaticReactBlueprintArgs,
 )
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
@@ -103,11 +103,14 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
         super().__init__(task_run, args=args, shared_state=shared_state)
-        print(f'Running {self.__class__.__name__} with opts: {self.opts}')
-        random.seed(self.opts["random_seed"])
-        np.random.seed(self.opts["random_seed"])
-        self.subtasks_per_unit = self.opts['subtasks_per_unit']
-        self.conversation_count = self.opts['conversation_count']
+        print(
+            f'\n\nRunning {self.__class__.__name__} with opts:'
+            f'\n{OmegaConf.to_yaml(args)}'
+        )
+        random.seed(self.args.blueprint.random_seed)
+        np.random.seed(self.args.blueprint.random_seed)
+        self.subtasks_per_unit = self.args.blueprint.subtasks_per_unit
+        self.conversation_count = self.args.blueprint.conversation_count
 
         if self.subtasks_per_unit <= 0:
             raise Exception(
@@ -119,10 +122,10 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         # Load from file if needed specifying which utterances within each
         # conversation to annotate
         self.annotation_indices = None
-        if self.opts['annotation_indices_jsonl']:
+        if self.args.blueprint.annotation_indices_jsonl:
             self.annotation_indices = []
             with open(
-                self.opts['annotation_indices_jsonl'], "r", encoding="utf-8-sig"
+                self.args.blueprint.annotation_indices_jsonl, "r", encoding="utf-8-sig"
             ) as f:
                 line = f.readline()
                 while line:
@@ -179,7 +182,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         return {
             "task_description": self.args.task.get('task_description', None),
             "task_title": self.args.task.get('task_title', None),
-            "annotation_question": self.opts['annotation_question'],
+            "annotation_question": self.args.blueprint.annotation_question,
             "onboarding_data": onboarding_data,
             "annotation_buckets": annotation_buckets,
             "ask_reason": self.args.blueprint.ask_reason,
