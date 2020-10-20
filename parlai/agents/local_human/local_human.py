@@ -57,6 +57,7 @@ class LocalHumanAgent(Agent):
                 [msg],
                 ignore_fields=self.opt.get('display_ignore_fields', ''),
                 prettify=self.opt.get('display_prettify', False),
+                verbose=self.opt.get('verbose', False),
             )
         )
 
