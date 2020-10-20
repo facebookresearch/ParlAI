@@ -161,7 +161,7 @@ class TestDistributed(unittest.TestCase):
     def test_distributed(self):
         config = copy.deepcopy(self._base_config)
         config['num_epochs'] = 50
-        config['task'] = 'integration_tests:overfit'
+        config['task'] = 'integration_tests:short_fixed'
         config['dynb'] = 'full'
         valid, test = self._distributed_train_model(config)
 
