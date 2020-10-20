@@ -272,9 +272,14 @@ class Gpt2Agent(TorchGeneratorAgent):
                 "--add-start-token true requires --add-special-tokens true"
             )
         super().__init__(opt, shared)
-        self.START_IDX = self.model.START_IDX
-        self.END_IDX = self.model.END_IDX
-        self.NULL_IDX = self.model.NULL_IDX
+        if hasattr(self.model, "module"):
+            self.START_IDX = self.model.module.START_IDX
+            self.END_IDX = self.model.module.END_IDX
+            self.NULL_IDX = self.model.module.NULL_IDX
+        else:
+            self.START_IDX = self.model.START_IDX
+            self.END_IDX = self.model.END_IDX
+            self.NULL_IDX = self.model.NULL_IDX
 
     @staticmethod
     def dictionary_class():

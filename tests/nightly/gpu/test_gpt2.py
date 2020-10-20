@@ -6,6 +6,12 @@
 
 import unittest
 from parlai.core.agents import create_agent
+import torch.distributed as dist
+import parlai.utils.testing as testing_utils
+import parlai.scripts.multiprocessing_train as mp_train
+import parlai.scripts.build_dict as build_dict
+import copy
+import os
 
 
 class TestGpt2(unittest.TestCase):
@@ -95,3 +101,69 @@ class TestGpt2(unittest.TestCase):
         gpt2.observe({'text': 'My name is', 'episode_done': True})
         response = gpt2.act()
         assert response['text'] == " John. I'm a man of"
+
+
+BATCHSIZE = 4
+
+
+@testing_utils.skipUnlessGPU
+class TestDistributed(unittest.TestCase):
+    _base_config = {
+        'task': 'integration_tests:overfit',
+        'model': 'hugging_face/gpt2',
+        'gpt2_size': 'small',
+        'text_truncate': 16,
+        'label_truncate': 8,
+        'beam_min_length': 8,
+        'inference': 'beam',
+        'beam_size': 1,
+        'batchsize': BATCHSIZE,
+        'add_special_tokens': True,
+        'validation_metric': 'ppl',
+    }
+
+    def setUp(self):
+        print(f'[Setting up test {self._testMethodName}]')
+
+    def _forced_parse(self, parser, opt):
+        # TODO: Kill this after dictionaries build correctly
+        parser.set_params(**opt)
+        parser.set_params(log_every_n_sec=10)
+        popt = parser.parse_args([])
+        # in some rare cases, like for instance if the model class also
+        # overrides its default params, the params override will not
+        # be taken into account.
+        for k, v in opt.items():
+            popt[k] = v
+        return popt
+
+    def _distributed_train_model(self, opt):
+        with testing_utils.tempdir() as tmpdir:
+            if 'model_file' not in opt:
+                opt['model_file'] = os.path.join(tmpdir, 'model')
+            if 'dict_file' not in opt:
+                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+
+            parser = mp_train.setup_args()
+            # TODO: Kill this after dictionaries build correctly
+            popt = self._forced_parse(parser, opt)
+
+            # we need a prebuilt dictionary
+            parser = build_dict.setup_args()
+            build_dict.build_dict(popt)
+
+            valid, test = mp_train.launch_and_train(popt, 31338)
+            dist.destroy_process_group()
+
+        return (valid, test)
+
+    @testing_utils.retry()
+    def test_distributed(self):
+        config = copy.deepcopy(self._base_config)
+        config['num_epochs'] = 50
+        config['task'] = 'integration_tests:short_fixed'
+        config['dynb'] = 'full'
+        valid, test = self._distributed_train_model(config)
+
+        self.assertLessEqual(valid['ppl'], 3)
+        self.assertLessEqual(test['ppl'], 3)
