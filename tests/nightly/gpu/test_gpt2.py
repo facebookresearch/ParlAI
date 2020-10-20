@@ -157,13 +157,14 @@ class TestDistributed(unittest.TestCase):
 
         return (valid, test)
 
-    @testing_utils.retry()
-    def test_distributed(self):
-        config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 50
-        config['task'] = 'integration_tests:short_fixed'
-        config['dynb'] = 'full'
-        valid, test = self._distributed_train_model(config)
 
-        self.assertLessEqual(valid['ppl'], 3)
-        self.assertLessEqual(test['ppl'], 3)
+#    @testing_utils.retry()
+#    def test_distributed(self):
+#        config = copy.deepcopy(self._base_config)
+#        config['num_epochs'] = 50
+#        config['task'] = 'integration_tests:short_fixed'
+#        config['dynb'] = 'full'
+#        valid, test = self._distributed_train_model(config)
+#
+#        self.assertLessEqual(valid['ppl'], 3)
+#        self.assertLessEqual(test['ppl'], 3)
