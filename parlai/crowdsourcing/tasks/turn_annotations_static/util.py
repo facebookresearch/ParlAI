@@ -25,7 +25,7 @@ def run_static_task(cfg: DictConfig, task_directory: str):
     frontend_build_dir = os.path.join(frontend_source_dir, "build")
 
     db, cfg = load_db_and_process_config(cfg)
-    print(OmegaConf.to_yaml(cfg))
+    print(f'\nHydra config:\n{OmegaConf.to_yaml(cfg)}')
 
     random.seed(42)
 

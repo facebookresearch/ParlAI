@@ -19,7 +19,7 @@ from mephisto.server.blueprints.static_react_task.static_react_blueprint import 
     StaticReactBlueprint,
     StaticReactBlueprintArgs,
 )
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
@@ -103,10 +103,6 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
         super().__init__(task_run, args=args, shared_state=shared_state)
-        print(
-            f'\n\nRunning {self.__class__.__name__} with opts:'
-            f'\n{OmegaConf.to_yaml(args)}'
-        )
         random.seed(self.args.blueprint.random_seed)
         np.random.seed(self.args.blueprint.random_seed)
         self.subtasks_per_unit = self.args.blueprint.subtasks_per_unit
