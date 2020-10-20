@@ -70,7 +70,7 @@ def display_data(opt):
 
         # NOTE: If you want to look at the data from here rather than calling
         # world.display() you could access world.acts[0] directly, see simple_display above.
-        if opt.get('verbose', False):
+        if opt.get('verbose', False) or opt.get('display_add_fields', ''):
             print(world.display() + '\n~~')
         else:
             simple_display(opt, world, turn)

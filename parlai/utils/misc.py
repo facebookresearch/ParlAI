@@ -534,7 +534,7 @@ def display_messages(
         formatted_tl = ' | '.join(
             [f"{tl[0]} {float('{:.4g}'.format(tl[1]))}" for tl in token_losses]
         )
-        return f'{space}[{key}]: {formatted_tl}'
+        return _pretty_lines(space, key, formatted_tl, 'text2')
 
     def _pretty_lines(indent_space, field, value, style):
         line = '{}{} {}'.format(

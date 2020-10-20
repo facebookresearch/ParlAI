@@ -62,7 +62,7 @@ def display_model(opt):
     with world:
         for _k in range(int(opt['num_examples'])):
             world.parley()
-            if opt['verbose']:
+            if opt['verbose'] or opt.get('display_add_fields', ''):
                 print(world.display() + "\n~~")
             else:
                 simple_display(opt, world, turn)
