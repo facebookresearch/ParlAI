@@ -33,12 +33,6 @@ def setup_args(parser=None):
         'examples with text candidates',
     )
     parser.add_argument(
-        '--display-ignore-fields',
-        type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
-    )
-    parser.add_argument(
         '-it',
         '--interactive-task',
         type='bool',

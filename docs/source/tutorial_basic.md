@@ -92,7 +92,7 @@ candidate labels to choose from).
 Dataset-specific fields are available in some cases in order to support
 reproducing paper results. For example, SQuAD has an `answer_starts`
 field, which is available in the "squad:index" task.
-
+To display all fields of a message just add `--verbose` to your command.
 
 :::{note} Automatic Processing
 During validation and testing, the `labels` field is renamed

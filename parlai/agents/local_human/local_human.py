@@ -55,7 +55,7 @@ class LocalHumanAgent(Agent):
         print(
             display_messages(
                 [msg],
-                ignore_fields=self.opt.get('display_ignore_fields', ''),
+                add_fields=self.opt.get('display_add_fields', ''),
                 prettify=self.opt.get('display_prettify', False),
                 verbose=self.opt.get('verbose', False),
             )

@@ -33,7 +33,7 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
     parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
-    parser.add_argument('--display-ignore-fields', type=str, default='agent_reply')
+    parser.add_argument('--ignore-agent-reply', type=bool, default=True)
 
     parser.set_defaults(datatype='train:ordered')
     return parser
