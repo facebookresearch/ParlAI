@@ -107,6 +107,7 @@ class BPEHelper(ABC):
         self.opt = opt
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
+        self._special_tokens = []
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -147,6 +148,15 @@ class BPEHelper(ABC):
         :return tokens:
             A list of tokens
         """
+        for special_token in self._special_tokens:
+            split = text.split(special_token)
+            if len(split) > 1:
+                output = []
+                for i, piece in enumerate(split):
+                    if i > 0:
+                        output.append(special_token)
+                    output += self.encode(piece)
+                return output
         if self.add_prefix_space and not isinstance(self, HuggingFaceBpeHelper):
             text = f' {text}'
         return self.helper_encode(text)
@@ -218,6 +228,17 @@ class BPEHelper(ABC):
         :param dict_agent:
             agent with which we are syncing the dictionary
         """
+
+    def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        """
+        Add special tokens to the tokenizer.
+
+        These tokens are treated as discreet tokens, and prioritized over
+        the BPE tokenization.
+        """
+        # note, HF ByteLevelBPE tokenizer handles special tokens itself in
+        # a special way
+        self._special_tokens += special_tokens
 
     def finalize(
         self, frequencies: Dict[str, int], num_symbols: int, minfreq: int

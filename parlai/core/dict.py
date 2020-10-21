@@ -333,12 +333,13 @@ class DictionaryAgent(Agent):
         """
         self.additional_special_tokens = additional_special_tokens
 
-        if (
-            self.additional_special_tokens
-            and not self.supports_additional_special_tokens()
-        ):
-            raise RuntimeError(
-                f'{self.tokenizer} does not currently support adding additional special tokens'
+        if hasattr(self, 'bpe'):
+            self.bpe.add_special_tokens(self, self.additional_special_tokens)
+        else:
+            raise NotImplementedError(
+                "Only BPE-based dictionaries support special tokens. File a github "
+                "issue or pull request if you need others extended. "
+                "https://github.com/facebookresearch/ParlAI"
             )
 
         for tok in self.additional_special_tokens:
@@ -346,16 +347,6 @@ class DictionaryAgent(Agent):
 
         for i, tok in enumerate(self.additional_special_tokens):
             self.freq[tok] = 1000000000 + 4 + i
-
-        if self.tokenizer == 'bytelevelbpe':
-            self.bpe.add_special_tokens(self, self.additional_special_tokens)
-
-    def supports_additional_special_tokens(self):
-        """
-        Indicates whether the dictionary supports additional special tokens.
-        """
-        # TODO: add to others
-        return self.tokenizer in ['bytelevelbpe', 'split', 'space']
 
     def is_prebuilt(self):
         """

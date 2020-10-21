@@ -865,7 +865,7 @@ class TorchAgent(ABC, Agent):
 
         Made easily overridable for special cases.
         """
-        if self.opt.get('special_tok_lst') is not None:
+        if self.opt.get('special_tok_lst'):
             return self.opt['special_tok_lst'].split(',')
         return []
 
