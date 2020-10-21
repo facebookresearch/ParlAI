@@ -739,7 +739,6 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Use dynamic batching',
         )
         parlai.add_argument(
-            '-v',
             '--verbose',
             dest='verbose',
             type='bool',
