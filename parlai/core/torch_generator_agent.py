@@ -194,12 +194,12 @@ class TorchGeneratorModel(nn.Module, ABC):
                 "you intended."
             )
         inputs = self._get_initial_forced_decoder_input(bsz, inputs)
-        latent, hidden_states, attention_matrices, _ = self.decoder(
+        latent, hidden_states, embedding_output, attention_matrices, _ = self.decoder(
             inputs, encoder_states
         )
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
-        return logits, preds, hidden_states, attention_matrices
+        return logits, preds, embedding_output, hidden_states, attention_matrices
 
     @abstractmethod
     def reorder_encoder_states(self, encoder_states, indices):
@@ -349,7 +349,7 @@ class TorchGeneratorModel(nn.Module, ABC):
             embedding_states['decoder'],
             hidden_states['decoder'],
             attention_matrices['decoder'],
-        ) = self.decode_forced(encoder_states, ys)
+        ) = self.decode_forced(encoder_states[:-3], ys)
         return (
             scores,
             preds,

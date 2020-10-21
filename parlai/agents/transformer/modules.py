@@ -900,7 +900,7 @@ class TransformerDecoder(nn.Module):
             The incremental state: a dictionary whose keys index the layers and whose
             values contain the incremental state for each layer.
         """
-        encoder_output, encoder_mask, _ = encoder_state
+        encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
         positions = input.new(seq_len).long()
