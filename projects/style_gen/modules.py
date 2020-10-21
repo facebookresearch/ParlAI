@@ -178,9 +178,6 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
         """
         Forward pass with the ability to pass in token-embedded inputs.
         """
-        # TODO: perhaps reduce the amount of code duplicated from TransformerDecoder.
-        #  This would require modularizing several snippets of code inside
-        #  TransformerDecoder methods.
 
         encoder_output, encoder_mask = encoder_state
 

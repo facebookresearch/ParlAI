@@ -35,9 +35,6 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
     generator encoder/decoder weights can be frozen during classifier training.
     """
 
-    # TODO: perhaps reduce the amount of code duplicated from TorchClassifierAgent. This
-    #  would require modularizing several snippets of code inside TCA methods.
-
     @classmethod
     def add_cmdline_args(cls, argparser):
         """
