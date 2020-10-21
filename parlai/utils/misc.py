@@ -513,8 +513,8 @@ def display_messages(
     """
     Return a string describing the set of messages provided.
 
-    If prettify is true, candidates are displayed using prettytable. add_fields
-    provides a list of fields in the msgs which should be displayed if verbose is off.
+    If prettify is true, candidates are displayed using prettytable. add_fields provides
+    a list of fields in the msgs which should be displayed if verbose is off.
     """
 
     def _token_losses_line(
