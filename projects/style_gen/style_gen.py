@@ -8,20 +8,13 @@ Agent for style-controlled generation.
 """
 
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
-from projects.style_gen.modules import StyleAgentMixin, StyleHistory
+from projects.style_gen.modules import StyleAgentMixin
 
 
 class StyleGenAgent(StyleAgentMixin, TransformerGeneratorAgent):
     """
     General purpose generator with a style in the history.
     """
-
-    @classmethod
-    def history_class(cls):
-        """
-        Determine the history class in order to append the style.
-        """
-        return StyleHistory
 
     @classmethod
     def add_cmdline_args(cls, argparser):
