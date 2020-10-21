@@ -1470,6 +1470,19 @@ model_list = [
      120  1855 15.46 5482    .1635 2.248 19.94 308.2 9.468      .4872 139.9 2163""",
     },
     {
+        "title": "Style-controlled generation: previous and current utterance classifier",
+        "id": "style_gen",
+        "path": "zoo:style_gen/prev_curr_classifier/model",
+        "agent": "projects.style_gen.classifier:ClassifierAgent",
+        "task": "style_gen:BlendedSkillTalk",  # TODO: revise
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen',
+        "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",  # TODO: revise
+        "example": "parlai eval_model --datatype test --model projects.style_gen.style_gen:StyleGenAgent --model-file zoo:style_gen/c75_labeled_dialogue_generator/model --skip-generation True --task style_gen:LabeledBlendedSkillTalk --use-style-frac 1.00",  # TODO: revise
+        "result": """16:56:52 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
+ctpb  ctps  exps  exs  gpu_mem  loss  ltpb  ltps   ppl  token_acc   tpb  tps
+ 120  1855 15.46 5482    .1635 2.248 19.94 308.2 9.468      .4872 139.9 2163""",  # TODO: revise
+    },
+    {
         "title": "Faster-R-CNN Detectron Features",
         "id": "detectron",
         "path": "zoo:detectron/detectron_model.pth",
