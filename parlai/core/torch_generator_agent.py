@@ -1126,7 +1126,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model = self.model
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
-        encoder_states = model.encoder(*self._encoder_input(batch))
+        encoder_states = model.encoder(*self._encoder_input(batch))[:2]
         if batch.text_vec is not None:
             dev = batch.text_vec.device
         else:
@@ -1161,7 +1161,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 # exit early if possible
                 break
 
-            score, _, incr_state = model.decoder(
+            score, _, _, _, incr_state = model.decoder(
                 decoder_input, encoder_states, incr_state
             )
             # only need the final hidden state to make the word prediction
