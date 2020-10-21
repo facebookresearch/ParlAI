@@ -18,6 +18,7 @@ import signal
 from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 try:
@@ -28,6 +29,13 @@ try:
 except ImportError:
     TORCH_AVAILABLE = False
     GPU_AVAILABLE = False
+
+try:
+    import torchvision  # noqa: F401
+
+    VISION_AVAILABLE = True
+except ImportError:
+    VISION_AVAILABLE = False
 
 try:
     import git
@@ -44,6 +52,14 @@ try:
     BPE_INSTALLED = True
 except ImportError:
     BPE_INSTALLED = False
+
+try:
+    import maskrcnn_benchmark  # noqa: F401
+    import cv2  # noqa: F401
+
+    DETECTRON_AVAILABLE = True
+except ImportError:
+    DETECTRON_AVAILABLE = False
 
 
 def is_this_circleci():
@@ -90,15 +106,20 @@ def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
 
 
-def skipUnlessTorch14(testfn, reason='Test requires pytorch 1.4+'):
-    skip = False
-    if not TORCH_AVAILABLE:
-        skip = True
-    else:
-        from packaging import version
+def skipUnlessVision(testfn, reason='torchvision not installed'):
+    """
+    Decorate a test to skip unless torchvision is installed.
+    """
+    return unittest.skipUnless(VISION_AVAILABLE, reason)(testfn)
 
-        skip = version.parse(torch.__version__) < version.parse('1.4.0')
-    return unittest.skipIf(skip, reason)(testfn)
+
+def skipUnlessDetectron(
+    testfn, reason='maskrcnn_benchmark and/or opencv not installed'
+):
+    """
+    Decorate a test to skip unless maskrcnn_benchmark and opencv are installed.
+    """
+    return unittest.skipUnless(DETECTRON_AVAILABLE, reason)(testfn)
 
 
 class retry(object):
@@ -148,7 +169,7 @@ def git_ls_files(root=None, skip_nonexisting=True):
     """
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 
@@ -173,7 +194,7 @@ def git_changed_files(skip_nonexisting=True):
     fork_point = git_.merge_base('origin/master', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 
@@ -327,7 +348,7 @@ def display_data(opt):
 
     parser = dd.setup_args()
     parser.set_params(**opt)
-    popt = parser.parse_args([], print_args=False)
+    popt = parser.parse_args([])
 
     with capture_output() as train_output:
         popt['datatype'] = 'train:stream'
@@ -352,7 +373,7 @@ def display_model(opt) -> Tuple[str, str, str]:
 
     parser = dm.setup_args()
     parser.set_params(**opt)
-    popt = parser.parse_args([], print_args=False)
+    popt = parser.parse_args([])
     with capture_output() as train_output:
         # evalmode so that we don't hit train_step
         popt['datatype'] = 'train:evalmode:stream'
@@ -370,9 +391,7 @@ class AutoTeacherTest:
     def _run_display_data(self, datatype, **kwargs):
         import parlai.scripts.display_data as dd
 
-        dd.DisplayData.main(
-            task=self.task, datatype=datatype, display_verbose=True, **kwargs
-        )
+        dd.DisplayData.main(task=self.task, datatype=datatype, verbose=True, **kwargs)
 
     def test_train(self):
         """

@@ -6,12 +6,11 @@
 """
 Talk with a model using a web UI.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
+```shell
+parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
+```
 """
 
 
@@ -24,6 +23,7 @@ from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 
 import json
+import time
 
 HOST_NAME = 'localhost'
 PORT = 8080
@@ -251,24 +251,38 @@ def setup_interweb_args(shared):
     return parser
 
 
-def interactive_web(opt, parser):
-    SHARED['opt'] = parser.opt
+def shutdown():
+    global SHARED
+    if 'server' in SHARED:
+        SHARED['server'].shutdown()
+    SHARED.clear()
 
-    SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+
+def wait():
+    global SHARED
+    while not SHARED.get('ready'):
+        time.sleep(0.01)
+
+
+def interactive_web(opt):
+    global SHARED
+
+    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
 
     # Create model and assign it to the specified task
-    agent = create_agent(SHARED.get('opt'), requireModelExists=True)
+    agent = create_agent(opt, requireModelExists=True)
+    agent.opt.log()
+    SHARED['opt'] = agent.opt
     SHARED['agent'] = agent
     SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
 
-    # show args after loading model
-    parser.opt = agent.opt
-    parser.print_args()
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
+    SHARED['server'] = httpd
     logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
+        SHARED['ready'] = True
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
@@ -282,7 +296,7 @@ class InteractiveWeb(ParlaiScript):
         return setup_interweb_args(SHARED)
 
     def run(self):
-        return interactive_web(self.opt, self.parser)
+        return interactive_web(self.opt)
 
 
 if __name__ == '__main__':

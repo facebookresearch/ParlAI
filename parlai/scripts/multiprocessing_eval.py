@@ -8,19 +8,18 @@
 """
 Main launch script for single-host, multi-GPU evaluation.
 
-This is a drop-in replacement for eval_model.  This script will launch N
+This is a drop-in replacement for [eval_model]. This script will launch N
 subprocess, each which runs the full eval loop independently.
 
-Uses torch.nn.parallel.DistributedDataParallel for its main uses.  Agents must
-specifically implement the wrapper of DistributedDataParallel, but all
-TorchRankerAgents and TorchGeneratorAgents support this.
+Uses torch.nn.parallel.DistributedDataParallel for its main uses. Agents
+must specifically implement the wrapper of DistributedDataParallel, but
+all TorchRankerAgents and TorchGeneratorAgents support this.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai multiprocessing_eval -mf "zoo:tutorial_transformer_generator/model" -bs 16 -t convai2
+```shell
+parlai multiprocessing_eval -mf "zoo:tutorial_transformer_generator/model" -bs 16 -t convai2
+```
 """
 
 import torch
@@ -40,9 +39,11 @@ def multiprocess_eval(
 
     Invoked by launch_and_eval, not instantiated directly.
     """
+    init_method = f'tcp://{hostname}:{port}'
     with distributed_utils.distributed_context(
-        rank, opt, port, rank_offset, gpu, hostname
+        rank, opt, rank_offset, gpu, init_method=init_method
     ) as opt:
+        opt['multiprocessing'] = True
         return eval_model.eval_model(opt)
 
 

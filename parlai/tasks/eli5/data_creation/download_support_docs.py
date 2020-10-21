@@ -12,6 +12,7 @@ from os.path import isdir
 from time import time
 from parlai.core.params import ParlaiParser
 from data_utils import word_url_tokenize, make_ccid_filter
+from parlai.utils.io import PathManager
 
 """
 Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_support_docs.py
@@ -140,12 +141,12 @@ def main():
     url_lst = [line.strip() for line in f if line.strip() != '']
     f.close()
     if opt['urls']:
-        with open(opt['urls']) as f:
+        with PathManager.open(opt['urls']) as f:
             specific_urls = json.load(f)
         using_specific_urls = True
         using_specific_ids = False
     elif opt['ccuids']:
-        with open(opt['ccuids']) as f:
+        with PathManager.open(opt['ccuids']) as f:
             specific_ids = json.load(f)
         using_specific_urls = False
         using_specific_ids = True

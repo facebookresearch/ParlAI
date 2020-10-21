@@ -7,12 +7,11 @@ import parlai.core.agents
 import parlai.agents
 from parlai.core.params import ParlaiParser
 
+import argparse
 import os
 import pkgutil
 import importlib
 import inspect
-import io
-import csv
 
 
 """
@@ -35,22 +34,24 @@ def _make_argparse_table(class_):
             if hasattr(action, 'hidden') and action.hidden:
                 # some options are marked hidden
                 continue
-            action_strings = ",  ".join(f'``{a}``' for a in action.option_strings)
+            if action.dest == argparse.SUPPRESS or action.dest == 'help':
+                continue
+            action_strings = ",  ".join(f'`{a}`' for a in action.option_strings)
             description = []
-            # start with the help message
             if action.help:
                 h = action.help
                 if not h[0].isupper():
                     h = h[0].upper() + h[1:]
+                h = h.replace("%(default)s", str(action.default))
                 description += [h]
             # list choices if there are any
             if action.choices:
                 description += [
-                    "Choices: " + ", ".join(f'``{c}``' for c in action.choices) + "."
+                    "Choices: " + ", ".join(f'`{c}`' for c in action.choices) + "."
                 ]
             # list default and recommended values.
             default_value = ""
-            if action.default is not None:
+            if action.default is not None and action.default is not argparse.SUPPRESS:
                 default_value += f"Default: ``{action.default}``.  "
             if hasattr(action, 'recommended') and action.recommended:
                 default_value += f"Recommended: ``{action.recommended}``. "
@@ -68,17 +69,14 @@ def _make_argparse_table(class_):
         if not actions:
             continue
 
-        # render the table
-        readme.append(f"```eval_rst\n")
-        readme.append(f".. csv-table:: {ag.title}\n")
-        readme.append(f'   :widths: 35, 65\n\n')
-        cout = io.StringIO()
-        csvw = csv.writer(cout, csv.unix_dialect, delimiter=",")
+        readme.append(f'__{ag.title}__\n\n')
+        readme.append("| Argument | Description |\n")
+        readme.append("|----------|----------|\n")
         for row in actions:
-            cout.write("   ")
-            csvw.writerow(row)
-        readme.append(cout.getvalue())
-        readme.append("```\n\n")
+            text = "| " + " | ".join(row) + " |"
+            text = text.replace("\n", "<br>")
+            readme.append(f"{text}\n")
+        readme.append("\n\n")
     return readme
 
 

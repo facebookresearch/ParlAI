@@ -13,6 +13,7 @@ from parlai.utils.world_logging import WorldLogger
 from parlai.utils.misc import TimeLogger
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 import math
 import json
@@ -25,10 +26,10 @@ def setup_args(parser=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument(
-        '--display-ignore-fields',
+        '--display-add-fields',
         type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
     parser.add_argument(
         '-st',
@@ -48,7 +49,8 @@ def setup_args(parser=None):
     )
     parser.add_argument(
         '--seed-messages-from-task',
-        action='store_true',
+        type='bool',
+        default=False,
         help='Automatically seed conversation with messages from task dataset.',
     )
     parser.add_argument(
@@ -80,7 +82,7 @@ def setup_args(parser=None):
 def _run_self_chat_episode(opt, world, world_logger):
     bsz = opt.get('batchsize', 1)
     num_turns = opt['selfchat_max_turns']
-
+    assert bsz == 1, "Batch size cannot be different than 1 for self-chat"
     num_parleys = math.ceil(num_turns / bsz)
     for _ in range(num_parleys):
         world.parley()
@@ -103,6 +105,7 @@ def self_chat(opt):
 
     # Create agents
     agent1 = create_agent(opt, requireModelExists=True)
+    agent1.opt.log("Agent 1 Opt")
     if partner is None:
         # Self chat with same model
         agent2 = agent1.clone()
@@ -110,7 +113,7 @@ def self_chat(opt):
         # Self chat with different models
         if partner_opt_file:
             print(f"WARNING: Loading override opts from: {partner_opt_file}")
-            with open(partner_opt_file) as f:
+            with PathManager.open(partner_opt_file) as f:
                 partner_opt = json.load(f)
         else:
             partner_opt = {}
@@ -119,6 +122,7 @@ def self_chat(opt):
             f"WARNING: Setting partner interactive mode to: {partner_opt['interactive_mode']}"
         )
         agent2 = create_agent_from_model_file(partner, partner_opt)
+        agent2.opt.log("Agent 2 Opt")
 
     # Set IDs
     agent1.id = agent1.id + "_1"

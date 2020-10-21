@@ -120,12 +120,15 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
 
         Image features represented by tensors will set to the right type.
         """
-        if type(batch.image) == list and any(b is not None for b in batch):
+        if type(batch.image) == list and any(b is not None for b in batch.image):
             images = []
             for img in batch.image:
                 if isinstance(img, torch.Tensor):
                     img = self._process_image_features(img)
                 images.append(img)
+            batch.image = images
+        else:
+            images = [None] * len(batch.valid_indices)
             batch.image = images
         return batch
 

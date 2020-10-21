@@ -3,8 +3,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-([ ! -z "$CIRCLE_NODE_INDEX" ] && [ "$CIRCLE_NODE_INDEX" != 2 ]) && echo "SKIPPED" && exit
-
 set -e -x  # error and exit on any failure; print the commands being run
 
 # test installation & help commands
@@ -14,7 +12,7 @@ parlai train --help | grep -- --task > /dev/null
 
 # view a task & train a model
 parlai display_data -t babi:task10k:1
-parlai train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -nt 4 -eps 5 -m memnn --no-cuda
+parlai train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -eps 2 -m memnn --no-cuda
 parlai display_model -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
 
 # train a transformer on twitter

@@ -34,6 +34,7 @@ import random
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
+from parlai.utils.io import PathManager
 
 from parlai.projects.self_feeding.utils import Parley
 
@@ -78,8 +79,6 @@ def create_supp(opt):
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param bool print_parser: if provided, prints the options that are set within the
-        model after loading the model
     :return: the final result of calling report()
     """
     # Create model and assign it to the specified task
@@ -145,7 +144,7 @@ def create_supp(opt):
         f"({num_supp_correct}/{num_supp})"
     )
 
-    with open(opt['outfile'], 'w') as outfile:
+    with PathManager.open(opt['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 

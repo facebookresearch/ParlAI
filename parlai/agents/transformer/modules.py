@@ -820,6 +820,45 @@ class TransformerDecoder(nn.Module):
 
         return tensor
 
+    def forward_layers(
+        self,
+        tensor: torch.Tensor,
+        encoder_output: torch.Tensor,
+        encoder_mask: torch.Tensor,
+        incr_state: Dict[int, torch.Tensor],
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+        """
+        Forward pass of decoder layers.
+
+        :param tensor:
+            embedded input tensor for the decoder
+        :param enc_out:
+            encoder outputs
+        :param enc_mask:
+            encoder output mask
+        :param incr_state:
+            Dict mapping layer_idx to incremental state
+
+        :return (tensor, new_incr_state):
+            return encoding after applying decoder layers, as well
+            as new incremental decoding state.
+        """
+        new_incr_state = {}
+        if getattr(self.layers, 'is_model_parallel', False):
+            tensor, new_incr_state = self._apply_model_parallel(
+                tensor, encoder_output, encoder_mask, incr_state
+            )
+        else:
+            for idx, layer in enumerate(self.layers):
+                tensor, new_incr_state[idx] = layer(
+                    x=tensor,
+                    encoder_output=encoder_output,
+                    encoder_mask=encoder_mask,
+                    incr_state=incr_state.get(idx),
+                )
+
+        return tensor, new_incr_state
+
     def forward(self, input, encoder_state, incr_state=None):
         """
         Forward pass.
@@ -850,19 +889,9 @@ class TransformerDecoder(nn.Module):
 
         tensor = self.dropout(tensor)  # --dropout
 
-        new_incr_state = {}
-        if getattr(self.layers, 'is_model_parallel', False):
-            tensor, new_incr_state = self._apply_model_parallel(
-                tensor, encoder_output, encoder_mask, incr_state
-            )
-        else:
-            for idx, layer in enumerate(self.layers):
-                tensor, new_incr_state[idx] = layer(
-                    x=tensor,
-                    encoder_output=encoder_output,
-                    encoder_mask=encoder_mask,
-                    incr_state=incr_state.get(idx),
-                )
+        tensor, new_incr_state = self.forward_layers(
+            tensor, encoder_output, encoder_mask, incr_state
+        )
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
@@ -1229,7 +1258,7 @@ class BasicAttention(nn.Module):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill(attn_mask, neginf(l1.dtype))
+            l1.masked_fill_(attn_mask, neginf(l1.dtype))
         l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys

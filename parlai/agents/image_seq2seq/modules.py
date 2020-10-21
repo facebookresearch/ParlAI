@@ -179,7 +179,7 @@ class ContextWithImageEncoder(TransformerEncoder):
         images: Union[List[object], torch.Tensor],
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
-    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Encode Images.
 
@@ -214,7 +214,6 @@ class ContextWithImageEncoder(TransformerEncoder):
         assert positions is not None
         assert segments is not None
 
-        image_masks = image_encoded = None
         valid_inds = [
             i
             for i, img in enumerate(images)
@@ -250,8 +249,15 @@ class ContextWithImageEncoder(TransformerEncoder):
                     self.embedding_size,
                 )
             )
-            assert image_masks.shape == image_encoded.shape[:2]
+        else:
+            image_encoded = torch.stack([self.dummy_image_enc] * len(images)).reshape(
+                len(images),
+                self.n_image_tokens * self.n_image_channels,
+                self.embedding_size,
+            )
+            image_masks = torch.stack([~self.ones_mask] * len(images))
 
+        assert image_masks.shape == image_encoded.shape[:2]
         return image_encoded, image_masks
 
     def forward(  # type: ignore
@@ -305,18 +311,16 @@ class ContextWithImageEncoder(TransformerEncoder):
         if image_features is not None:
             # sometimes can just be a list of None
             valid_imgs = [v for v in image_features if isinstance(v, torch.Tensor)]
+            segments: Optional[torch.LongTensor] = None
             if valid_imgs:
-                image_tensor, image_mask = self.encode_images(
-                    image_features,
-                    segments=torch.ones(  # type: ignore
-                        (
-                            len(image_features),
-                            self.n_image_channels * self.n_image_tokens,
-                        ),
-                        dtype=torch.long,
-                        device=valid_imgs[0].device,
-                    ),
+                segments = torch.ones(  # type: ignore
+                    (len(image_features), self.n_image_channels * self.n_image_tokens),
+                    dtype=torch.long,
+                    device=valid_imgs[0].device,
                 )
+            image_tensor, image_mask = self.encode_images(
+                image_features, segments=segments
+            )
 
         # perform early fusion
         tensor = self._cat([context_tensor, image_tensor])

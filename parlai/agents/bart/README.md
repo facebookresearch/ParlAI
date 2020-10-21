@@ -9,7 +9,7 @@ The BART agent can be instantiated as simply `-m bart`, however it is recommende
 
 ## Basic Examples
 
-#### Train BART on convai2.
+### Train BART on convai2.
 ```bash
 parlai train_model -m bart -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam
 ```
@@ -20,7 +20,7 @@ or
 parlai train_model -m bart --init-model zoo:bart/bart_large/model -mf /tmp/model_file -t convai2 -bs 24 --fp16 true -eps 1 -lr 1e-5 --optimizer adam
 ```
 
-#### Interact with a BART Model fine-tuned in fairseq
+### Interact with a BART Model fine-tuned in fairseq
 
 ```bash
 parlai interactive -m bart --init-fairseq-model /path/to/fairseq/model

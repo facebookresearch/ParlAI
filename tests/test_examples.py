@@ -26,7 +26,6 @@ class TestExampleSeq2Seq(unittest.TestCase):
                 learningrate=LR,
                 batchsize=BATCH_SIZE,
                 num_epochs=NUM_EPOCHS,
-                numthreads=1,
                 hidden_size=16,
                 gradient_clip=1.0,
                 skip_generation=True,

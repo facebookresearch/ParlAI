@@ -6,12 +6,11 @@
 """
 Convert a dataset into the ParlAI text format.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai convert_data_to_parlai_format -t babi:task1k:1 --outfile /tmp/dump
+```shell
+parlai convert_data_to_parlai_format -t babi:task1k:1 --outfile /tmp/dump
+```
 """
 
 from parlai.core.params import ParlaiParser
@@ -28,6 +27,7 @@ def dump_data(opt):
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
+    opt.log()
     ignorefields = opt.get('ignore_fields', '')
     if opt['outfile'] is None:
         outfile = tempfile.mkstemp(

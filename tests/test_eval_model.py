@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import os
+import pytest
 import unittest
 import parlai.utils.testing as testing_utils
 
@@ -48,9 +49,11 @@ class TestEvalModel(unittest.TestCase):
 
         self.assertEqual(valid['accuracy'], 1)
         self.assertEqual(test['accuracy'], 1)
-        self.assertNotIn('rouge-L', valid)
-        self.assertNotIn('rouge-L', test)
+        self.assertNotIn('rouge_L', valid)
+        self.assertNotIn('rouge_L', test)
 
+    # TODO: install py-rouge in fbcode and unmark this test
+    @pytest.mark.nofbcode
     def test_metrics_all(self):
         """
         Test output of running eval_model.
@@ -67,14 +70,16 @@ class TestEvalModel(unittest.TestCase):
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
-        self.assertEqual(valid['rouge-L'], 1)
-        self.assertEqual(valid['rouge-1'], 1)
-        self.assertEqual(valid['rouge-2'], 1)
+        self.assertEqual(valid['rouge_L'], 1)
+        self.assertEqual(valid['rouge_1'], 1)
+        self.assertEqual(valid['rouge_2'], 1)
         self.assertEqual(test['accuracy'], 1)
-        self.assertEqual(test['rouge-L'], 1)
-        self.assertEqual(test['rouge-1'], 1)
-        self.assertEqual(test['rouge-2'], 1)
+        self.assertEqual(test['rouge_L'], 1)
+        self.assertEqual(test['rouge_1'], 1)
+        self.assertEqual(test['rouge_2'], 1)
 
+    # TODO: install py-rouge in fbcode and unmark this test
+    @pytest.mark.nofbcode
     def test_metrics_select(self):
         """
         Test output of running eval_model.
@@ -91,13 +96,13 @@ class TestEvalModel(unittest.TestCase):
         valid, test = testing_utils.eval_model(opt)
 
         self.assertEqual(valid['accuracy'], 1)
-        self.assertEqual(valid['rouge-L'], 1)
-        self.assertEqual(valid['rouge-1'], 1)
-        self.assertEqual(valid['rouge-2'], 1)
+        self.assertEqual(valid['rouge_L'], 1)
+        self.assertEqual(valid['rouge_1'], 1)
+        self.assertEqual(valid['rouge_2'], 1)
         self.assertEqual(test['accuracy'], 1)
-        self.assertEqual(test['rouge-L'], 1)
-        self.assertEqual(test['rouge-1'], 1)
-        self.assertEqual(test['rouge-2'], 1)
+        self.assertEqual(test['rouge_L'], 1)
+        self.assertEqual(test['rouge_1'], 1)
+        self.assertEqual(test['rouge_2'], 1)
 
         self.assertNotIn('bleu-4', valid)
         self.assertNotIn('bleu-4', test)
@@ -156,7 +161,7 @@ class TestEvalModel(unittest.TestCase):
         total_acc = valid['accuracy']
         # task 2 is 4 times the size of task 1
         self.assertEqual(
-            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly',
+            total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly'
         )
 
         valid, test = testing_utils.eval_model(
@@ -173,7 +178,7 @@ class TestEvalModel(unittest.TestCase):
 
         # metrics are combined correctly
         self.assertEqual(
-            total_acc, (task1_acc + task2_acc), 'Task accuracy is averaged incorrectly',
+            total_acc, (task1_acc + task2_acc), 'Task accuracy is averaged incorrectly'
         )
 
     def test_train_evalmode(self):

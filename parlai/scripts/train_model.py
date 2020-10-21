@@ -7,18 +7,19 @@
 """
 Training script for ParlAI.
 
-The standard way to train a model. After training, also computes validation
-and test error.
+The standard way to train a model. After training, also computes
+validation and test error.
 
-The user must provide a model (with ``--model``) and a task (with ``--task``).
+The user must provide a model (with `--model`) and a task (with
+`--task`).
 
-Examples
---------
-.. code-block:: shell
+## Examples
 
-  parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-  parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-  parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+```shell
+parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
+parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
+parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+```
 """  # noqa: E501
 
 # TODO List:
@@ -26,15 +27,17 @@ Examples
 
 import json
 import numpy as np
-import os
 import signal
-from typing import Dict
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_named_reports, aggregate_unnamed_reports
+from parlai.core.metrics import (
+    aggregate_named_reports,
+    aggregate_unnamed_reports,
+    dict_report,
+)
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
@@ -48,6 +51,7 @@ from parlai.utils.distributed import (
 from parlai.utils.misc import Timer, nice_report
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -258,7 +262,7 @@ class TrainLoop:
         if (
             opt['load_from_checkpoint']
             and opt.get('model_file')
-            and os.path.isfile(opt['model_file'] + '.checkpoint')
+            and PathManager.exists(opt['model_file'] + '.checkpoint')
         ):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
@@ -276,6 +280,7 @@ class TrainLoop:
 
         # Create model and assign it to the specified task
         self.agent = create_agent(opt)
+        self.agent.opt.log()
         self.world = create_task(opt, self.agent)
         # set up timers
         self.train_time = Timer()
@@ -328,12 +333,12 @@ class TrainLoop:
 
         # we may have been preempted, make sure we note that amount
         self._preempted_epochs = 0.0
-        if opt.get('model_file') and os.path.isfile(
+        if opt.get('model_file') and PathManager.exists(
             opt['model_file'] + trainstats_suffix
         ):
             # looks like we were preempted. make sure we load up our total
             # training stats, etc
-            with open(opt['model_file'] + trainstats_suffix) as ts:
+            with PathManager.open(opt['model_file'] + trainstats_suffix) as ts:
                 obj = json.load(ts)
                 self.parleys = obj.get('parleys', 0)
                 self._preempted_epochs = obj.get('total_epochs', 0)
@@ -345,10 +350,12 @@ class TrainLoop:
                     self.best_valid = obj['best_valid']
                 else:
                     # old method
-                    if opt.get('model_file') and os.path.isfile(
+                    if opt.get('model_file') and PathManager.exists(
                         opt['model_file'] + '.best_valid'
                     ):
-                        with open(opt['model_file'] + ".best_valid", 'r') as f:
+                        with PathManager.open(
+                            opt['model_file'] + ".best_valid", 'r'
+                        ) as f:
                             x = f.readline()
                             self.best_valid = float(x)
                             f.close()
@@ -380,15 +387,12 @@ class TrainLoop:
             except KeyboardInterrupt:
                 pass
 
-    def _safe_report(self, report: Dict[str, Metric]):
-        return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
-
     def _save_train_stats(self, suffix=None):
         fn = self.opt['model_file']
         if suffix:
             fn += suffix
         fn += '.trainstats'
-        with open(fn, 'w') as f:
+        with PathManager.open(fn, 'w') as f:
             json.dump(
                 {
                     'parleys': self.parleys,
@@ -419,7 +423,7 @@ class TrainLoop:
         valid_report = self._run_eval(
             self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
-        v = self._safe_report(valid_report.copy())
+        v = dict_report(valid_report)
         v['train_time'] = self.train_time.time()
         v['parleys'] = self.parleys
         v['total_exs'] = self._total_exs
@@ -471,8 +475,11 @@ class TrainLoop:
                 self.save_model()
                 self.saved = True
             if (
-                opt['validation_metric'] == 'accuracy'
+                opt['validation_metric_mode'] == 'max'
                 and self.best_valid >= opt['validation_cutoff']
+            ) or (
+                opt['validation_metric_mode'] == 'min'
+                and self.best_valid <= opt['validation_cutoff']
             ):
                 logging.info('task solved! stopping.')
                 return True
@@ -553,9 +560,8 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            f = open(opt['model_file'] + '.' + datatype, 'a+')
-            f.write(f'{metrics}\n')
-            f.close()
+            with PathManager.open(opt['model_file'] + '.' + datatype, 'a') as f:
+                f.write(f'{metrics}\n')
 
         return report
 
@@ -610,7 +616,7 @@ class TrainLoop:
         train_report = self._sync_metrics(train_report)
         self.world.reset_metrics()
 
-        train_report_trainstats = self._safe_report(train_report)
+        train_report_trainstats = dict_report(train_report)
         train_report_trainstats['total_epochs'] = self._total_epochs
         train_report_trainstats['total_exs'] = self._total_exs
         train_report_trainstats['parleys'] = self.parleys
@@ -650,11 +656,8 @@ class TrainLoop:
                 # do one example / batch of examples
                 try:
                     world.parley()
-                except StopTrainException:
-                    if is_distributed():
-                        raise RuntimeError(
-                            "StopTrainException not supported for " "distributed mode"
-                        )
+                except StopTrainException as e:
+                    logging.info(f"Stopping from {e}")
                     break
 
                 self.parleys += 1
@@ -697,10 +700,6 @@ class TrainLoop:
                         world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
-                        if is_distributed():
-                            raise RuntimeError(
-                                "StopTrainException not supported for distributed mode"
-                            )
                         break
                     # reset the log time because we logged right before validating
                     self.log_time.reset()
@@ -766,8 +765,6 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
-        self.parser.opt = self.train_loop.agent.opt
-        self.parser.print_args()
         return self.train_loop.train()
 
 

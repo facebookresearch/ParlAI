@@ -6,17 +6,16 @@
 """
 Basic script which allows local human keyboard input to talk to a trained model.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
+```shell
+parlai interactive -m drqa -mf "models:drqa/squad/model"
+```
 
-  parlai interactive -m drqa -mf "models:drqa/squad/model"
-
-When prompted, enter something like: ``Bob is Blue.\\nWhat is Bob?``
+When prompted, enter something like: `Bob is Blue.\\nWhat is Bob?`
 
 Input is often model or task specific, but in drqa, it is always
-``context '\\n' question``.
+`context '\\n' question`.
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
@@ -43,10 +42,10 @@ def setup_args(parser=None):
         'examples with text candidates',
     )
     parser.add_argument(
-        '--display-ignore-fields',
+        '--display-add-fields',
         type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
     parser.add_argument(
         '-it',
@@ -75,22 +74,14 @@ def setup_args(parser=None):
     return parser
 
 
-def interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
+def interactive(opt):
     if isinstance(opt, ParlaiParser):
         logging.error('interactive should be passed opt not Parser')
         opt = opt.parse_args()
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
     human_agent = LocalHumanAgent(opt)
     # set up world logger
     world_logger = WorldLogger(opt) if opt.get('outfile') else None
@@ -123,7 +114,7 @@ class Interactive(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return interactive(self.opt, print_parser=self.parser)
+        return interactive(self.opt)
 
 
 if __name__ == '__main__':

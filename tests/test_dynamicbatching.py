@@ -4,12 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Dict, Any
-
-import unittest
 from parlai.core.opt import Opt
-import parlai.utils.testing as testing_utils
 from parlai.tasks.integration_tests.agents import NUM_TEST, EXAMPLE_SIZE
+from parlai.utils.conversations import Conversations
+import parlai.utils.testing as testing_utils
+
+import os
+from typing import Dict, Any
+import unittest
 
 _TASK = 'integration_tests:variable_length'
 
@@ -18,9 +20,9 @@ _TASK = 'integration_tests:variable_length'
 _DEFAULT_OPTIONS = {
     'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
     'dict_tokenizer': 'space',
-    'batchsize': 16,
+    'batchsize': 64,
     'dynamic_batching': 'full',
-    'num_epochs': 1,
+    'num_epochs': 0.1,
     'truncate': 8,
     'model': 'parlai.agents.test_agents.test_agents:SilentTorchAgent',
     'task': _TASK,
@@ -96,6 +98,34 @@ class TestDynamicBatching(unittest.TestCase):
             task='integration_tests:variable_length,integration_tests:multiturn',
             datatype='train:stream',
         )
+
+    def test_world_logging(self):
+        with testing_utils.tempdir() as tmpdir:
+            save_report = os.path.join(tmpdir, 'report')
+            testing_utils.eval_model(
+                dict(
+                    model_file='zoo:unittest/transformer_generator2/model',
+                    task='integration_tests:multiturn_candidate',
+                    save_world_logs=True,
+                    report_filename=save_report,
+                    truncate=1024,
+                    dynamic_batching='full',
+                    batchsize=4,
+                )
+            )
+            convo_fle = (
+                str(save_report)
+                + '_integration_tests:multiturn_candidate_replies.jsonl'
+            )
+            convos = Conversations(convo_fle)
+            for convo in convos:
+                self.assertEquals(len(convo), 2 * 4)  # each episode is 4 turns
+                # now assert that they are all from the same dynamic batch index
+                dyn_batch_idx = convo[0]['dyn_batch_idx']
+                for i, turn in enumerate(convo):
+                    if i % 2 == 0 and i > 0:
+                        # we log the batch index in the teacher acts only
+                        self.assertEquals(dyn_batch_idx, turn['dyn_batch_idx'])
 
     def test_weird_batchsize(self):
         # intentionally a difficult number

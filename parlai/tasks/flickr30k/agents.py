@@ -6,6 +6,7 @@
 
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
+from parlai.utils.io import PathManager
 from .build import build
 
 import os
@@ -145,7 +146,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             raw_data = json.load(data_file)['images']
             if 'train' in self.datatype:
                 self.data = [d for d in raw_data if d['split'] == 'train']

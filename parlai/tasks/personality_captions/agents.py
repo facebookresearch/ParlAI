@@ -15,6 +15,7 @@ An example is given as follows:
 """
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -104,9 +105,9 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, personalities_data_path):
         print('loading: ' + data_path)
-        with open(data_path) as f:
+        with PathManager.open(data_path) as f:
             self.data = json.load(f)
-        with open(personalities_data_path) as f:
+        with PathManager.open(personalities_data_path) as f:
             self.personalities = json.load(f)
 
     def reset(self):
@@ -226,7 +227,8 @@ class PersonalityCaptionsTestTeacher(PersonalityCaptionsTeacher):
         )
         import torch
 
-        self.image_features = torch.load(image_features_path)
+        with PathManager.open(image_features_path, 'rb') as f:
+            self.image_features = torch.load(f)
 
     def reset(self):
         """

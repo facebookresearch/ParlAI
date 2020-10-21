@@ -516,7 +516,7 @@ class ParlAIQuickAcute(object):
         with capture_output():
             parser = self_chat_setup_args()
             parser.set_params(**config)
-            opt = parser.parse_args(args=[], print_args=False)
+            opt = parser.parse_args(args=[])
         self_chat(opt)
 
     def _convert_task_to_conversations(self, config_id: str):
@@ -534,7 +534,7 @@ class ParlAIQuickAcute(object):
         with capture_output():
             parser = convert_task_setup_args()
             parser.set_params(**config)
-            opt = parser.parse_args(args=[], print_args=False)
+            opt = parser.parse_args(args=[])
         convert_task_data(opt)
 
     ##################
@@ -579,7 +579,7 @@ class ParlAIQuickAcute(object):
         """
         self._load_pairings_file()
 
-        self.acute_args = acute_add_args(print_args=False)
+        self.acute_args = acute_add_args()
         self.acute_args.update(ACUTE_DEFAULT_ARGS)
         total_convos = self.opt['matchups_per_pair'] * len(self.combos)
         self.acute_args.update(
@@ -610,7 +610,7 @@ class ParlAIQuickAcute(object):
         """
         self._print_progress(f'Analyzing Results for run id {self.run_id}')
         parser = analysis_setup_args()
-        opt = parser.parse_args([], print_args=False)
+        opt = parser.parse_args([])
         today = datetime.date.today().isoformat()
         self.results_path = f"{self._get_vs_path(f'acute_results/{today}/')}"
         opt.update(
@@ -632,7 +632,7 @@ class ParlAIQuickAcute(object):
 
 if __name__ == '__main__':
     parser = setup_args()
-    runner = ParlAIQuickAcute(parser.parse_args(print_args=False))
+    runner = ParlAIQuickAcute(parser.parse_args())
 
     # Compile Chat Logs
     runner.compile_chat_logs()

@@ -46,7 +46,9 @@ at the beginning it will answer nonsense.
 
 ## Fine tuning on your own tasks
 
-### bi-encoder
+### ConvAI2
+
+#### bi-encoder
 
 Execute this to train a biencoder scoring 86+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
@@ -73,7 +75,7 @@ parlai train_model \
      --model-file <YOUR MODEL FILE>
 ```
 
-### poly-encoder
+#### poly-encoder
 
 Execute this to train a poly-encoder scoring 89+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
@@ -98,7 +100,7 @@ parlai train_model \
   --model-file <YOUR MODEL FILE>
 ```
 
-### Cross-encoder
+#### Cross-encoder
 
 Execute this to train a cross-encoder scoring 90+ on Convai2 valid set
 (requires 8 x GPU 32GB., If you don't have this, reduce the batch size )
@@ -121,3 +123,11 @@ parlai train_model \
   --learn-embeddings True --dict-endtoken __start__ \
   --model-file <YOUR MODEL FILE>
 ```
+
+### DSTC7
+
+To fine-tune on the DSTC7 task, simply replace `-t convai2` with `-t dstc7:DSTC7TeacherAugmentedSampled` in the above commands.
+
+### UbuntuV2
+
+To fine-tune on the UbuntuV2 task, simply replace `-t convai2` with `-t ubuntu` in the above commands.

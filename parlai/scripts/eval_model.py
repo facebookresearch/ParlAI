@@ -8,13 +8,12 @@
 Basic example which iterates through the tasks specified and evaluates the given model
 on them.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
-  parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+```shell
+parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
+parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+```
 """
 
 from parlai.core.params import ParlaiParser, print_announcements
@@ -29,6 +28,7 @@ from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
 from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 import json
@@ -111,7 +111,7 @@ def _save_eval_stats(opt, report):
         json_serializable_report[k] = v
 
     # Save report
-    with open(report_fname, 'w') as f:
+    with PathManager.open(report_fname, 'w') as f:
         logging.info(f'Saving model report to {report_fname}')
         json.dump({'opt': opt, 'report': json_serializable_report}, f, indent=4)
         f.write("\n")  # for jq
@@ -155,9 +155,6 @@ def _eval_single_world(opt, agent, task):
             )
             logging.info(text)
 
-    report = aggregate_unnamed_reports(all_gather_list(world.report()))
-    world.reset()
-
     if world_logger is not None:
         # dump world acts to file
         world_logger.reset()  # add final acts to logs
@@ -169,16 +166,17 @@ def _eval_single_world(opt, agent, task):
             outfile = base_outfile + f'_{task}_replies.jsonl'
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
+    report = aggregate_unnamed_reports(all_gather_list(world.report()))
+    world.reset()
+
     return report
 
 
-def eval_model(opt, print_parser=None):
+def eval_model(opt):
     """
     Evaluates a model.
 
     :param opt: tells the evaluation function how to run
-    :param bool print_parser: if provided, prints the options that are set within the
-        model after loading the model
     :return: the final result of calling report()
     """
     random.seed(42)
@@ -196,10 +194,7 @@ def eval_model(opt, print_parser=None):
 
     # load model and possibly print opt
     agent = create_agent(opt, requireModelExists=True)
-    if print_parser:
-        # show args after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
+    agent.opt.log()
 
     tasks = opt['task'].split(',')
     reports = []
@@ -229,7 +224,7 @@ class EvalModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return eval_model(self.opt, print_parser=self.parser)
+        return eval_model(self.opt)
 
 
 if __name__ == '__main__':

@@ -10,6 +10,7 @@ import gzip
 import os
 import re
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
 RESOURCES = [
     DownloadableFile(
@@ -32,9 +33,13 @@ def _regularize(sent):
 
 def create_fb_format(inpath, outpath):
     print('[building fbformat]')
-    with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, open(
+    with PathManager.open(
+        os.path.join(outpath, 'train.txt'), 'w'
+    ) as ftrain, PathManager.open(
         os.path.join(outpath, 'valid.txt'), 'w'
-    ) as fvalid, open(os.path.join(outpath, 'test.txt'), 'w') as ftest:
+    ) as fvalid, PathManager.open(
+        os.path.join(outpath, 'test.txt'), 'w'
+    ) as ftest:
 
         conv_id = 0
         # find all the files.

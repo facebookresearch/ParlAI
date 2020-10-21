@@ -6,6 +6,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 import parlai.core.build_data as build_data
 import codecs
 import os
@@ -21,9 +22,13 @@ RESOURCES = [
 
 def create_fb_format(lines_file, convo_file, outpath):
     print('[building fbformat]')
-    with open(os.path.join(outpath, 'train.txt'), 'w') as ftrain, open(
+    with PathManager.open(
+        os.path.join(outpath, 'train.txt'), 'w'
+    ) as ftrain, PathManager.open(
         os.path.join(outpath, 'valid.txt'), 'w'
-    ) as fvalid, open(os.path.join(outpath, 'test.txt'), 'w') as ftest:
+    ) as fvalid, PathManager.open(
+        os.path.join(outpath, 'test.txt'), 'w'
+    ) as ftest:
         lines = {}
 
         codecs.register_error('strict', codecs.ignore_errors)

@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import copy
@@ -37,7 +38,7 @@ class WebTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
@@ -56,7 +57,7 @@ class WebTeacher(DialogTeacher):
                     evidence_file_path = os.path.join(
                         self.evidence_dir, 'web', evidence_item['Filename']
                     )
-                    with open(evidence_file_path) as evidence_file:
+                    with PathManager.open(evidence_file_path) as evidence_file:
                         evidence = 'Title: %s\n' % evidence_item['Title']
                         evidence += evidence_file.read()
                         yield (evidence + '\n' + question, answers), True
@@ -98,7 +99,7 @@ class WikipediaTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']
@@ -118,7 +119,7 @@ class WikipediaTeacher(DialogTeacher):
                     evidence_file_path = os.path.join(
                         self.evidence_dir, 'wikipedia', evidence_item['Filename']
                     )
-                    with open(evidence_file_path) as evidence_file:
+                    with PathManager.open(evidence_file_path) as evidence_file:
                         evidence += 'Title: %s\n' % evidence_item['Title']
                         evidence += evidence_file.read() + '\n\n'
 
@@ -165,7 +166,7 @@ class NoEvidenceUnionTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             data = json.load(data_file)['Data']
         for datapoint in data:
             question = datapoint['Question']

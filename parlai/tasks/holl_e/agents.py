@@ -6,6 +6,7 @@
 
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -63,7 +64,7 @@ class HollETeacher(FixedDialogTeacher):
         # use test json if valid is given
         json_dtype = self.datatype if not self.datatype.startswith('valid') else 'test'
         json_path = os.path.join(path, f'raw_{json_dtype}_data.json')
-        with open(json_path) as f:
+        with PathManager.open(json_path) as f:
             data = json.load(f)
         episodes = []
         prev_id = None

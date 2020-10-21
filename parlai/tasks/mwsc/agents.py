@@ -7,6 +7,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -35,7 +36,7 @@ class MWSCTeacher(DialogTeacher):
         print('loading: ' + input_path)
         new_episode = True
 
-        with open(input_path) as file:
+        with PathManager.open(input_path) as file:
             for l in file:
                 schema_line = json.loads(l.strip())
                 answer = schema_line.get('answer')

@@ -28,8 +28,7 @@ class TestControllableDialogue(unittest.TestCase):
         Check the controllble dialogue data loads.
         """
         opt = ParlaiParser(True, False).parse_kwargs(
-            task='projects.controllable_dialogue.tasks.agents',
-            datatype='train:ordered',
+            task='projects.controllable_dialogue.tasks.agents', datatype='train:ordered'
         )
         teacher = DefaultTeacher(opt)
         assert teacher.num_examples() == 131438

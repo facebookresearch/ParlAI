@@ -1,0 +1,25 @@
+#@package _global_
+mephisto:
+  blueprint:
+    additional_task_description: ""
+    annotations_per_pair: 1
+    block_on_onboarding_fail: true
+    block_qualification: acute_eval_${current_time}_block
+    eval_question: "Who would you prefer to talk to for a long conversation?"
+    num_matchup_pairs: 2
+    onboarding_threshold: 0.75
+    pairings_filepath: ${task_dir}/pairings.jsonl
+    random_seed: 42
+    s1_choice: "I would prefer to talk to <Speaker 1>"
+    s2_choice: "I would prefer to talk to <Speaker 2>"
+    subtasks_per_unit: 5
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    maximum_units_per_worker: 0
+    task_description: "Evaluate quality of conversations through comparison."
+    task_reward: 0.5
+    task_tags: "chat,evaluation,comparison,conversation"
+    task_title: "Which Conversational Partner is Better?"
+mturk:
+  worker_blocklist_paths: null

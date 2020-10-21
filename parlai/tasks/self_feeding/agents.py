@@ -12,6 +12,7 @@ import numpy as np
 
 from parlai.core.teachers import ParlAIDialogTeacher, MultiTaskTeacher
 from projects.self_feeding.utils import add_person_tokens
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -69,7 +70,7 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
             else:
                 path = _path(opt, opt['datatype'].split(':')[0], add_suffix=True)
 
-        if not os.path.exists(path):
+        if not PathManager.exists(path):
             raise ValueError("Unrecognized filepath: {}".format(path))
 
         opt['parlaidialogteacher_datafile'] = path
@@ -167,7 +168,7 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
         self.episodes = []
         self.num_exs = 0
         self.max_train = self.opt.get('max_train', 0)
-        with open(path, 'r') as f:
+        with PathManager.open(path, 'r') as f:
             for line in f.readlines():
                 if self.max_train and self.num_exs >= self.max_train:
                     break
@@ -179,7 +180,7 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
                     parley['context'] = '__null__'
                 elif self.opt['history_size'] > 0:
                     utterances = re.split(r'__p\d__', parley['context'])[1:]
-                    trimmed = utterances[-self.opt['history_size'] :]
+                    trimmed = utterances[-(self.opt['history_size']) :]
                     parley['context'] = add_person_tokens(trimmed, last_speaker=1)
 
                 # WARNING: STRIPPING AWAY MEMORIES

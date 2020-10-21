@@ -20,6 +20,10 @@ from parlai.agents.transformer.modules import (
 )
 from parlai.core.torch_agent import History
 from parlai.utils.misc import AttrDict, warn_once
+from typing import Optional
+
+from parlai.core.message import Message
+from parlai.core.opt import Opt
 
 
 STYLE_SEP_TOKEN = ' STYLE '

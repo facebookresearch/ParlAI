@@ -7,12 +7,11 @@
 Verify data doesn't have basic mistakes, like empty text fields or empty label
 candidates.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  parlai verify_data -t convai2 -dt train:ordered
+```shell
+parlai verify_data -t convai2 -dt train:stream:ordered
+```
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
@@ -29,7 +28,7 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='train:ordered')
+    parser.set_defaults(datatype='train:stream:ordered')
     return parser
 
 
@@ -56,10 +55,11 @@ def warn(txt, act, opt):
         warn_once(txt)
 
 
-def verify(opt, printargs=None, print_parser=None):
+def verify(opt):
     if opt['datatype'] == 'train':
         logging.warn("changing datatype from train to train:ordered")
         opt['datatype'] = 'train:ordered'
+    opt.log()
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -120,8 +120,7 @@ def verify(opt, printargs=None, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
-            if print_parser:
-                print(text)
+            print(text)
 
     try:
         # print dataset size if available
@@ -129,17 +128,17 @@ def verify(opt, printargs=None, print_parser=None):
             f'Loaded {world.num_episodes()} episodes with a '
             f'total of {world.num_examples()} examples'
         )
-    except Exception:
+    except AttributeError:
         pass
 
-    return report(world, counts, log_time)
+    counts['exs'] = int(world.report()['exs'])
+    return counts
 
 
-def verify_data(opt, parser):
-    report_text, report_log = verify(
-        parser.parse_args(print_args=False), print_parser=parser
-    )
-    print(report_text)
+def verify_data(opt):
+    counts = verify(opt)
+    print(counts)
+    return counts
 
 
 @register_script('verify_data', hidden=True)
@@ -149,7 +148,7 @@ class VerifyData(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return verify_data(self.opt, self.parser)
+        return verify_data(self.opt)
 
 
 if __name__ == '__main__':

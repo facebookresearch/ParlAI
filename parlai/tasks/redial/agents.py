@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -58,7 +59,7 @@ class ReDialTeacher(FixedDialogTeacher):
 
     def get_title_dict(self, path):
         csv_path = os.path.join(path, 'movies_with_mentions.csv')
-        with open(csv_path, mode='r') as f:
+        with PathManager.open(csv_path, mode='r') as f:
             reader = csv.reader(f)
             for row in reader:
                 self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
@@ -94,7 +95,7 @@ class ReDialTeacher(FixedDialogTeacher):
 
     def get_data_from_file(self, filepath):
         data = []
-        with open(filepath) as f:
+        with PathManager.open(filepath) as f:
             for line in f:
                 data.append(json.loads(line))
         return data

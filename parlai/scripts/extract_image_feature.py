@@ -8,16 +8,15 @@
 Basic example which iterates through the tasks specified and load/extract the image
 features.
 
-For more options, check ``parlai.core.image_featurizers``
+For more options, check `parlai.core.image_featurizers`
 
-Examples
---------
+## Examples
 
 To extract the image feature of COCO images:
 
-.. code-block:: shell
-
-  parlai extract_image_feature -t vqa_v1 -im resnet152
+```shell
+parlai extract_image_feature -t vqa_v1 -im resnet152
+```
 """
 import copy
 import tqdm
@@ -47,6 +46,7 @@ def extract_feats(opt):
     opt['gpu'] = 0
     opt['num_epochs'] = 1
     opt['num_load_threads'] = 20
+    opt.log()
     logging.info("Loading Images")
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)

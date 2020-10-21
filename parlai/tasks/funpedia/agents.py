@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher, FixedDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher, FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import copy
@@ -37,7 +38,7 @@ def _strip_reader(filename):
     """
     Reads a file, stripping line endings.
     """
-    with open(filename) as f:
+    with PathManager.open(filename) as f:
         for line in f:
             yield line.rstrip()
 
@@ -161,7 +162,7 @@ class EchoTeacher(FunpediaTeacher):
             self.entries[i]['label'] = self.entries[i]['passage']
 
 
-class SentencechooseTeacher(FbDialogTeacher):
+class SentencechooseTeacher(FbDeprecatedDialogTeacher):
     """
     Teacher for the sentence choosing task.
 

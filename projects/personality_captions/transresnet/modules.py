@@ -12,6 +12,7 @@ from torch import nn
 from torch import optim
 from parlai.agents.transformer.modules import TransformerEncoder
 from parlai.agents.transformer import transformer as Transformer
+from parlai.utils.io import PathManager
 
 
 class TransresnetModel(nn.Module):
@@ -399,9 +400,9 @@ class TransresnetModel(nn.Module):
         for img_index in range(len(context_encoded)):
             context_encoding = context_encoded[img_index : img_index + 1, :]
             scores = torch.mm(
-                candidates_encoded[img_index]
+                candidates_encoded[img_index].to(context_encoding)
                 if not one_cand_set
-                else candidates_encoded,
+                else candidates_encoded.to(context_encoding),
                 context_encoding.transpose(0, 1),
             )
             if k >= 1:
@@ -549,7 +550,8 @@ class TransresnetModel(nn.Module):
     def _load_text_encoder_state(self):
         try:
             state_file = self.opt.get('load_encoder_from')
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'b') as f:
+                model = torch.load(f)
             states = model['model']
             self.text_encoder.load_state_dict(states)
         except Exception as e:

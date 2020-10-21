@@ -11,7 +11,7 @@
 # which specifies task 2, and policy with 0.5 answers correct, see the paper
 # for more details: https://arxiv.org/abs/1604.06045
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher
 from .build import build
 
 import copy
@@ -47,7 +47,7 @@ def _path(subdir, task, opt, dt=''):
     )
 
 
-class TaskTeacher(FbDialogTeacher):
+class TaskTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         params = opt['task'].split(':')[2]
         opt = copy.deepcopy(opt)
@@ -59,7 +59,7 @@ class TaskTeacher(FbDialogTeacher):
 
 
 # Defaults to task 2 with p=0.5.
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         task = '2_p0.5'
         opt = copy.deepcopy(opt)

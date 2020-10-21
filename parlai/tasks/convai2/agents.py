@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher
 from parlai.utils.misc import warn_once
 from .build import build
 from parlai.utils.strings import normalize_reply
@@ -35,7 +35,7 @@ def _path(opt, persona, use_cands):
     return os.path.join(opt['datapath'], 'ConvAI2', dt + cands + '.txt')
 
 
-class BothTeacher(FbDialogTeacher):
+class BothTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -47,7 +47,7 @@ class BothTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
-class NoneTeacher(FbDialogTeacher):
+class NoneTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -59,7 +59,7 @@ class NoneTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
-class SelfOriginalTeacher(FbDialogTeacher):
+class SelfOriginalTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -75,7 +75,7 @@ class SelfTeacher(SelfOriginalTeacher):
     pass
 
 
-class SelfRevisedTeacher(FbDialogTeacher):
+class SelfRevisedTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         try:
@@ -108,7 +108,7 @@ class NormalizedTeacher(SelfOriginalTeacher):
         for (text, labels, reward, candidates), new_episode in super().setup_data(path):
             text = self.normalize_replies(text)
             labels = [self.normalize_replies(l) for l in labels]
-            candidates = [self.normalize_replies(l) for l in labels]
+            candidates = [self.normalize_replies(c) for c in candidates]
             yield (text, labels, reward, candidates), new_episode
 
 

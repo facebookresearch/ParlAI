@@ -8,16 +8,14 @@ used with others.
 
 A summary of the speedups is in this table:
 
-    +-------------------------+-------+------+-------+---------+
-    | Method                  | Train | Eval | Total | Speedup |
-    +-------------------------+-------+------+-------+---------+
-    | Baseline                |  504s |  48s |  552s |    1.0x |
-    | Skip generation         |  504s |  16s |  520s |    1.1x |
-    | Dynamic batching        |  254s |  11s |  265s |    2.1x |
-    | FP16                    |  197s |   8s |  205s |    2.7x |
-    | Larger batchsize (FP16) |  151s |   7s |  158s |    3.5x |
-    | Using 4 GPUs            |   47s |   3s |   50s |   11.0x |
-    +-------------------------+-------+------+-------+---------+
+| Method                  | Train | Eval | Total | Speedup |
+| ----------------------- | ----: | ---: | ----: | ------: |
+| Baseline                |  504s |  48s |  552s |    1.0x |
+| Skip generation         |  504s |  16s |  520s |    1.1x |
+| Dynamic batching        |  254s |  11s |  265s |    2.1x |
+| FP16                    |  197s |   8s |  205s |    2.7x |
+| Larger batchsize (FP16) |  151s |   7s |  158s |    3.5x |
+| Using 4 GPUs            |   47s |   3s |   50s |   11.0x |
 
 ## Setting a baseline
 
@@ -54,7 +52,11 @@ remember you will need to _turn `--skip-generation` back off_ if you want
 statistics like BLEU or F1. Also, `--skip-generation` is only an option in
 generative models. Ranking models have similar options like `-cands batch`.
 
-
+:::{warning} Persistence
+Models trained with `--skip-generation True` will remember this option when
+loading back up. You will need to manually set it back to false whenever you
+need evaluations with generations.
+:::
 
 ## Dynamic batching
 
@@ -82,10 +84,12 @@ largest batchsize you can.
 Overall, this results in a large increase in speed: about 2x, bringing training
 down to 250s and evaluation to 11s.
 
-_WARNING_: You may find perplexity is quite a bit worse than without dynamic
+:::{warning} WARNING
+You may find perplexity is quite a bit worse than without dynamic
 batching. This is because we use larger batches, and take fewer steps.  You can
 usually increase your learning rate pretty substantially when using dynamic
 batching, to compensate for the fewer steps.
+:::
 
 ## FP16
 
@@ -123,6 +127,11 @@ In this example, we see about a 25% speedup. Generally you can expect a larger
 speedup with larger models, with models of >300M often getting a ~50% speedup.
 With the increased batch size, this can often be brought to 2.5x faster.
 
+:::{warning} FP16 requires modern GPUs
+Without a GPU with FP16 CUDA cores, you may find that FP16 actually slows
+your program. You may still see a benefit from the reduced memory usage though.
+:::
+
 ## Use multiple GPUs
 
 If you have multiple GPUs, you can utilize them by switching from `train` to
@@ -140,11 +149,12 @@ roughly 3.5x faster. The arguments for the training are left otherwise the same.
 Note that we leave batchsize the same: we use the batchsize PER GPU. In my
 system, I have 4 GPUs, so things are a little under 4x faster.
 
-_Warning_: This should never be mixed with options like `--model-parallel true`
-or `--data-parallel true`, as those options use different GPUs without
-multiprocessing.  The BlenderBot3B and BlenderBot9B models both use those
-options, so this should be used with care.
-
 Similarly, we also have the `multiprocessing_eval` command, for using multiple
 GPUs in evaluation.
 
+:::{danger}
+This should never be mixed with options like `--model-parallel true`
+or `--data-parallel true`, as those options use different GPUs without
+multiprocessing.  The BlenderBot3B and BlenderBot9B models both use those
+options, so this should be used with care.
+:::

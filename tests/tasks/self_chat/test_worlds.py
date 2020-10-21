@@ -21,7 +21,7 @@ class TestSelfChat(unittest.TestCase):
             selfchat_task=True,
             selfchat_max_turns=1,
         )
-        self.opt = parser.parse_args([], print_args=False)
+        self.opt = parser.parse_args([])
 
         agent1 = RepeatLabelAgent(self.opt)
         agent2 = agent1.clone()

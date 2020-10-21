@@ -4,21 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
 import unittest
 import parlai.utils.testing as testing_utils
 
-BATCH_SIZE = 1
-NUM_EPOCHS = 3
-LR = 1
 
-
-@unittest.skip
 class TestMemnn(unittest.TestCase):
     """
     Checks that seq2seq can learn some very basic tasks.
     """
 
+    @testing_utils.retry()
     def test_labelcands_nomemnn(self):
         """
         This test uses a single-turn task, so doesn't test memories.
@@ -26,47 +21,20 @@ class TestMemnn(unittest.TestCase):
 
         valid, test = testing_utils.train_model(
             dict(
-                task='integration_tests:candidate',
+                task='integration_tests:overfit',
                 model='memnn',
-                lr=LR,
-                batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS,
-                numthreads=1,
-                no_cuda=True,
+                optimizer='sgd',
+                lr=1,
+                momentum=0.9,
+                batchsize=4,
+                num_epochs=100,
+                validation_every_n_epochs=1,
                 embedding_size=32,
                 gradient_clip=1.0,
                 hops=1,
                 position_encoding=True,
                 time_features=False,
                 memsize=0,
-                rank_candidates=True,
-            )
-        )
-
-        self.assertGreater(valid['hits@1'], 0.95)
-        self.assertGreater(test['hits@1'], 0.95)
-
-    @testing_utils.skipIfGPU
-    @testing_utils.retry()
-    def test_labelcands_multi(self):
-        """
-        This test uses a multi-turn task and multithreading.
-        """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:multiturn_candidate',
-                model='memnn',
-                lr=LR,
-                batchsize=BATCH_SIZE,
-                num_epochs=NUM_EPOCHS,
-                numthreads=min(4, os.cpu_count()),
-                no_cuda=True,
-                embedding_size=32,
-                gradient_clip=1.0,
-                hops=2,
-                position_encoding=False,
-                time_features=True,
-                memsize=5,
                 rank_candidates=True,
             )
         )

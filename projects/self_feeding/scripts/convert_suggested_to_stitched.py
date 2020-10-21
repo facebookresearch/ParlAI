@@ -11,6 +11,7 @@ from parlai.projects.self_feeding.utils import (
     extract_parlai_episodes,
     add_person_tokens,
 )
+from parlai.utils.io import PathManager
 
 
 def setup_args():
@@ -60,7 +61,7 @@ def main(config):
                 history.append(parley.response)
 
     # Write new episodes to self-feeding format
-    with open(config['outfile'], 'w') as outfile:
+    with PathManager.open(config['outfile'], 'w') as outfile:
         for ex in examples:
             outfile.write(json.dumps(ex.to_dict()) + '\n')
 
