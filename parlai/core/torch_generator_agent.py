@@ -481,7 +481,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_block_full_context = opt.get('beam_block_full_context', False)
         self.temperature = opt.get('temperature', 1.0)
         assert self.temperature > 0, '--temperature must be greater than 0'
-        self.output_token_losses = opt.get('verbose', False)
+        self.output_token_losses = opt.get(
+            'verbose', False
+        ) or 'token_losses' in opt.get('display_add_fields', '')
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
         self.beam_block_list: Optional[SearchBlocklist] = None
 

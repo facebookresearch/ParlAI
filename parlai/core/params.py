@@ -738,6 +738,13 @@ class ParlaiParser(argparse.ArgumentParser):
             choices={None, 'full', 'batchsort'},
             help='Use dynamic batching',
         )
+        parlai.add_argument(
+            '--verbose',
+            dest='verbose',
+            type='bool',
+            default=False,
+            help='Print all messages',
+        )
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):
@@ -747,13 +754,6 @@ class ParlaiParser(argparse.ArgumentParser):
         grp = self.add_argument_group('Distributed Training')
         grp.add_argument(
             '--distributed-world-size', type=int, help='Number of workers.'
-        )
-        grp.add_argument(
-            '--verbose',
-            type='bool',
-            default=False,
-            help='All workers print output.',
-            hidden=True,
         )
         return grp
 
