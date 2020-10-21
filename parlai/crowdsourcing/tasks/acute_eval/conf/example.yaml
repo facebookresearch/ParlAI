@@ -18,6 +18,8 @@ mephisto:
     assignment_duration_in_seconds: 600
     maximum_units_per_worker: 0
     task_description: "Evaluate quality of conversations through comparison."
+    task_reward: 0.5
     task_tags: "chat,evaluation,comparison,conversation"
     task_title: "Which Conversational Partner is Better?"
-    task_reward: 0.5
+mturk:
+  worker_blocklist_paths: null
