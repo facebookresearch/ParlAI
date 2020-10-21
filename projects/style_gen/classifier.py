@@ -22,7 +22,8 @@ from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import warn_once, round_sigfigs
 from projects.style_gen.modules import (
     BatchWithPersonalities,
-    ClassifierOnGeneratorModel, ClassificationMixin,
+    ClassifierOnGeneratorModel,
+    ClassificationMixin,
 )
 
 

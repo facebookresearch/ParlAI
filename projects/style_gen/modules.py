@@ -8,12 +8,10 @@ Models and helper classes for style-controlled generation.
 """
 
 import random
+from typing import Optional, List
 
 import numpy as np
 import torch
-from parlai.core.agents import Agent
-from parlai.core.metrics import GlobalAverageMetric
-from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
 from torch import nn as nn
 
 from parlai.agents.transformer.modules import (
@@ -21,12 +19,13 @@ from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     _normalize,
 )
-from parlai.core.torch_agent import History
-from parlai.utils.misc import AttrDict, warn_once
-from typing import Optional, List
-
+from parlai.core.agents import Agent
 from parlai.core.message import Message
+from parlai.core.metrics import GlobalAverageMetric
 from parlai.core.opt import Opt
+from parlai.core.torch_agent import History
+from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
+from parlai.utils.misc import AttrDict, warn_once
 
 
 STYLE_SEP_TOKEN = ' STYLE '
