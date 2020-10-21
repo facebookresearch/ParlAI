@@ -233,8 +233,8 @@ class BPEHelper(ABC):
         """
         Add special tokens to the tokenizer.
 
-        These tokens are treated as discreet tokens, and prioritized over
-        the BPE tokenization.
+        These tokens are treated as discreet tokens, and prioritized over the BPE
+        tokenization.
         """
         # note, HF ByteLevelBPE tokenizer handles special tokens itself in
         # a special way
