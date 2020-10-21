@@ -638,17 +638,18 @@ class TransformerEncoder(nn.Module):
         raise NotImplementedError(
             'This has not yet been changed to return layer outputs!'
         )
-        chunks = PipelineHelper.split((tensor, mask))
-        work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
-
-        for chunk_idx, layer_nos, next_device in work_items:
-            s_tensor, s_mask = chunks[chunk_idx]
-            for layer_no in layer_nos:
-                s_tensor = self.layers[layer_no](s_tensor, s_mask)
-            chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
-
-        tensor_out, mask_out = PipelineHelper.join(chunks)
-        return layer_outputs
+        # TODO: implement this, or just use hooks as a workaround
+        # chunks = PipelineHelper.split((tensor, mask))
+        # work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
+        #
+        # for chunk_idx, layer_nos, next_device in work_items:
+        #     s_tensor, s_mask = chunks[chunk_idx]
+        #     for layer_no in layer_nos:
+        #         s_tensor = self.layers[layer_no](s_tensor, s_mask)
+        #     chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
+        #
+        # tensor_out, mask_out = PipelineHelper.join(chunks)
+        # return layer_outputs
 
 
 class TransformerEncoderLayer(nn.Module):
