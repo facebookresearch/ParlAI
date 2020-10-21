@@ -7,19 +7,20 @@
 """
 Torch Classifier Agents classify text into a fixed set of labels.
 """
-from typing import List, Optional, Tuple, Dict
 
-import torch
-import torch.nn.functional as F
-
-import parlai.utils.logging as logging
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
+from typing import List, Optional, Tuple, Dict
 from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
+
+
+import torch
+import torch.nn.functional as F
 
 
 class ConfusionMatrixMetric(Metric):
