@@ -1057,7 +1057,11 @@ class TransformerDecoderLayer(nn.Module):
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
             x = _normalize(x, self.norm2)
-        x, encoder_attention_matrix, final_encoder_attn_incr_state = self.encoder_attention(
+        (
+            x,
+            encoder_attention_matrix,
+            final_encoder_attn_incr_state,
+        ) = self.encoder_attention(
             query=x,
             key=encoder_output,
             value=encoder_output,

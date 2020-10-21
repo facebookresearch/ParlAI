@@ -336,9 +336,11 @@ class TorchGeneratorModel(nn.Module, ABC):
             )
         else:
             encoder_states = self.encoder(*xs)
-            embedding_states['encoder'], hidden_states['encoder'], attention_matrices[
-                'encoder'
-            ] = encoder_states[-3:]
+            (
+                embedding_states['encoder'],
+                hidden_states['encoder'],
+                attention_matrices['encoder'],
+            ) = encoder_states[-3:]
 
         # use teacher forcing
         (
