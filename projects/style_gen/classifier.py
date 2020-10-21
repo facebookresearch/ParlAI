@@ -18,12 +18,11 @@ from parlai.agents.transformer.transformer import (
 )
 from parlai.core.metrics import AverageMetric
 from parlai.core.torch_agent import Output
-from parlai.core.torch_classifier_agent import ClassificationMixin
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import warn_once, round_sigfigs
 from projects.style_gen.modules import (
     BatchWithPersonalities,
-    ClassifierOnGeneratorModel,
+    ClassifierOnGeneratorModel, ClassificationMixin,
 )
 
 
