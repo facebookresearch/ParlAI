@@ -33,6 +33,12 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
     parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
+    parser.add_argument(
+        '--display-add-fields',
+        type=str,
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
+    )
     parser.add_argument('--ignore-agent-reply', type=bool, default=True)
 
     parser.set_defaults(datatype='train:ordered')

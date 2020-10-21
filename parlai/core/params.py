@@ -742,14 +742,9 @@ class ParlaiParser(argparse.ArgumentParser):
             '-v',
             '--verbose',
             dest='verbose',
-            action='store_true',
+            type='bool',
+            default=False,
             help='Print all messages',
-        )
-        parlai.add_argument(
-            '--display-add-fields',
-            type=str,
-            default='',
-            help='Display these fields when verbose if off (e.g., "--display-add-fields label_candidates,beam_texts")',
         )
         self.add_parlai_data_path(parlai)
 

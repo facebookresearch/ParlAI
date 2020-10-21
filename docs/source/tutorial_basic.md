@@ -409,6 +409,12 @@ parlai interactive -mf zoo:pretrained_transformers/model_poly/model -t convai2
 parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
 ```
 
+To view additional fields from the model output, try use the flag `--display-add-fields`. For example, 
+```
+parlai interactive -mf zoo:blender/blender_90M/model -t convai2 --display-add-fields beam_texts
+```
+to display all beam texts.
+
 __Model Zoo__
 
 ParlAI now maintains a _model zoo_ of existing model files of agents

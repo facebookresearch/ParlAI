@@ -29,6 +29,12 @@ def setup_args(parser=None):
         'examples with text candidates',
     )
     parser.add_argument(
+        '--display-add-fields',
+        type=str,
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
+    )
+    parser.add_argument(
         '-it',
         '--interactive-task',
         type='bool',
