@@ -62,6 +62,12 @@ class BartAgent(TransformerGeneratorAgent):
             default=None,
             help='where to save fairseq conversion',
         )
+        group.add_argument(
+            '--converting',
+            type='bool',
+            default=False,
+            help='converting model from fairseq to ParlAI',
+        )
         argparser.set_defaults(dict_tokenizer='gpt2')
         argparser.set_defaults(**BART_ARGS)
 
