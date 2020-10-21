@@ -7,6 +7,7 @@
 """
 Torch Classifier Agents classify text into a fixed set of labels.
 """
+from typing import List, Optional, Tuple, Dict
 
 import torch
 import torch.nn.functional as F
@@ -16,9 +17,202 @@ from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
-from parlai.core.metrics import AverageMetric
+from parlai.core.metrics import Metric, AverageMetric
+from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
-from projects.style_gen.modules import ConfusionMatrixMetric, WeightedF1Metric
+
+
+class ConfusionMatrixMetric(Metric):
+    """
+    Class that keeps count of the confusion matrix for classification.
+
+    Also provides helper methods computes precision, recall, f1, weighted_f1 for
+    classification.
+    """
+
+    __slots__ = (
+        '_true_positives',
+        '_true_negatives',
+        '_false_positives',
+        '_false_negatives',
+    )
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
+
+    def __init__(
+        self,
+        true_positives: TScalar = 0,
+        true_negatives: TScalar = 0,
+        false_positives: TScalar = 0,
+        false_negatives: TScalar = 0,
+    ) -> None:
+        self._true_positives = self.as_number(true_positives)
+        self._true_negatives = self.as_number(true_negatives)
+        self._false_positives = self.as_number(false_positives)
+        self._false_negatives = self.as_number(false_negatives)
+
+    def __add__(
+        self, other: Optional['ConfusionMatrixMetric']
+    ) -> 'ConfusionMatrixMetric':
+        # NOTE: hinting can be cleaned up with "from __future__ import annotations" when
+        # we drop Python 3.6
+        if other is None:
+            return self
+        assert isinstance(other, ConfusionMatrixMetric)
+        full_true_positives: TScalar = self._true_positives + other._true_positives
+        full_true_negatives: TScalar = self._true_negatives + other._true_negatives
+        full_false_positives: TScalar = self._false_positives + other._false_positives
+        full_false_negatives: TScalar = self._false_negatives + other._false_negatives
+
+        # always keep the same return type
+        return type(self)(
+            true_positives=full_true_positives,
+            true_negatives=full_true_negatives,
+            false_positives=full_false_positives,
+            false_negatives=full_false_negatives,
+        )
+
+    @staticmethod
+    def compute_many(
+        true_positives: TScalar = 0,
+        true_negatives: TScalar = 0,
+        false_positives: TScalar = 0,
+        false_negatives: TScalar = 0,
+    ) -> Tuple['PrecisionMetric', 'RecallMetric', 'ClassificationF1Metric']:
+        return (
+            PrecisionMetric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+            RecallMetric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+            ClassificationF1Metric(
+                true_positives, true_negatives, false_positives, false_negatives
+            ),
+        )
+
+    @staticmethod
+    def compute_metrics(
+        predictions: List[str], gold_labels: List[str], positive_class: str
+    ) -> Tuple[
+        List['PrecisionMetric'], List['RecallMetric'], List['ClassificationF1Metric']
+    ]:
+        precisions = []
+        recalls = []
+        f1s = []
+        for predicted, gold_label in zip(predictions, gold_labels):
+            true_positives = int(
+                predicted == positive_class and gold_label == positive_class
+            )
+            true_negatives = int(
+                predicted != positive_class and gold_label != positive_class
+            )
+            false_positives = int(
+                predicted == positive_class and gold_label != positive_class
+            )
+            false_negatives = int(
+                predicted != positive_class and gold_label == positive_class
+            )
+            precision, recall, f1 = ConfusionMatrixMetric.compute_many(
+                true_positives, true_negatives, false_positives, false_negatives
+            )
+            precisions.append(precision)
+            recalls.append(recall)
+            f1s.append(f1)
+        return precisions, recalls, f1s
+
+
+class PrecisionMetric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes precision for classifier.
+    """
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return self._true_positives / (self._true_positives + self._false_positives)
+
+
+class RecallMetric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes recall for classifier.
+    """
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            return self._true_positives / (self._true_positives + self._false_negatives)
+
+
+class ClassificationF1Metric(ConfusionMatrixMetric):
+    """
+    Class that takes in a ConfusionMatrixMetric and computes f1 for classifier.
+    """
+
+    def value(self) -> float:
+        if self._true_positives == 0:
+            return 0.0
+        else:
+            numer = 2 * self._true_positives
+            denom = numer + self._false_negatives + self._false_positives
+            return numer / denom
+
+
+class WeightedF1Metric(Metric):
+    """
+    Class that represents the weighted f1 from ClassificationF1Metric.
+    """
+
+    __slots__ = '_values'
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
+
+    def __init__(self, metrics: Dict[str, ClassificationF1Metric]) -> None:
+        self._values: Dict[str, ClassificationF1Metric] = metrics
+
+    def __add__(self, other: Optional['WeightedF1Metric']) -> 'WeightedF1Metric':
+        if other is None:
+            return self
+        assert isinstance(other, WeightedF1Metric)
+        output: Dict[str, ClassificationF1Metric] = dict(**self._values)
+        for k, v in other._values.items():
+            output[k] = output.get(k, None) + v  # type: ignore
+        return WeightedF1Metric(output)
+
+    def value(self) -> float:
+        weighted_f1 = 0.0
+        values = list(self._values.values())
+        if len(values) == 0:
+            return weighted_f1
+        total_examples = (
+            values[0]._true_positives
+            + values[0]._true_negatives
+            + values[0]._false_positives
+            + values[0]._false_negatives
+        )
+        for each in values:
+            actual_positive = each._true_positives + each._false_negatives
+            weighted_f1 += each.value() * (actual_positive / total_examples)
+        return weighted_f1
+
+    @staticmethod
+    def compute_many(
+        metrics: Dict[str, List[ClassificationF1Metric]]
+    ) -> List['WeightedF1Metric']:
+        weighted_f1s = [dict(zip(metrics, t)) for t in zip(*metrics.values())]
+        return [WeightedF1Metric(metrics) for metrics in weighted_f1s]
 
 
 class TorchClassifierAgent(TorchAgent):
