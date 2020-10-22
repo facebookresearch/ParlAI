@@ -17,4 +17,13 @@ parlai eval_model \
 --datatype test \
 --use-style-frac 1.00
 ```
-[[[TODO: add example for classifier]]]
+
+Evaluating the Image-Chat-trained classifier on the LabeledBlendedSkillTalk dataset, which it itself labeled with a style for each utterance:
+```
+parlai eval_model \
+--model-file zoo:style_gen/prev_curr_classifier/model \
+--model projects.style_gen.classifier:ClassifierAgent \
+--classes-from-file image_chat \
+--task style_gen:PrevCurrUttStyle \
+--wrapper-task style_gen:LabeledBlendedSkillTalk
+```
