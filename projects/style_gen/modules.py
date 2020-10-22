@@ -21,7 +21,7 @@ from parlai.agents.transformer.modules import (
 )
 from parlai.core.agents import Agent
 from parlai.core.message import Message
-from parlai.core.metrics import GlobalAverageMetric
+from parlai.core.metrics import GlobalAverageMetric, GlobalTimerMetric
 from parlai.core.opt import Opt
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
 from parlai.utils.distributed import is_primary_worker
@@ -307,6 +307,7 @@ class ClassificationMixin(Agent):
         return labels
 
     def batch_act(self, observations):
+
         # clear local metrics before anything else
         self._local_metrics.clear()
 
@@ -320,6 +321,7 @@ class ClassificationMixin(Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
+        self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (
             'label_vec' in batch
@@ -330,13 +332,23 @@ class ClassificationMixin(Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tpb = GlobalAverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item(),
-                float(is_primary_worker()),
-            )
-            self.global_metrics.add('tpb', tpb)
+            lt = (batch.label_vec != self.NULL_IDX).sum().item()
+            ltpb = GlobalAverageMetric(lt, float(is_primary_worker()))
+            self.global_metrics.add('ltpb', ltpb)
+            self.global_metrics.add('ltps', GlobalTimerMetric(lt))
+
+            ct = (batch.text_vec != self.NULL_IDX).sum().item()
+            ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
+            self.global_metrics.add('ctpb', ctpb)
+            self.global_metrics.add('ctps', GlobalTimerMetric(ct))
+
+            ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
+            self.global_metrics.add('tpb', ttpb)
+            self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
 
         if self.is_training:
+            # register the start of updates for later counting when they occur
+            self.global_metrics.add('ups', GlobalTimerMetric(0))
             output = self.train_step(batch)
         else:
             with torch.no_grad():
@@ -347,6 +359,31 @@ class ClassificationMixin(Agent):
         if output is not None:
             # local metrics are automatically matched up
             self.match_batch(batch_reply, batch.valid_indices, output)
+
+        # broadcast the metrics back
+        for k, values in self._local_metrics.items():
+            if len(values) != len(batch.valid_indices):
+                raise IndexError(
+                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"expected {len(batch.valid_indices)}"
+                )
+            for i, value in zip(batch.valid_indices, values):
+                if 'metrics' not in batch_reply[i]:
+                    batch_reply[i]['metrics'] = {}
+                batch_reply[i]['metrics'][k] = value
+
+        # register the end of timers
+        endtimer = GlobalTimerMetric(0)
+        self.global_metrics.add('exps', endtimer)
+        if (
+            'label_vec' in batch
+            and 'text_vec' in batch
+            and batch.label_vec is not None
+            and batch.text_vec is not None
+        ):
+            self.global_metrics.add('ltps', GlobalTimerMetric(0))
+            self.global_metrics.add('ctps', GlobalTimerMetric(0))
+            self.global_metrics.add('tps', GlobalTimerMetric(0))
 
         preds = self._get_preds(batch_reply)
         if 'labels' in observations[0]:
@@ -359,20 +396,5 @@ class ClassificationMixin(Agent):
         if preds is not None and labels is not None:
             labels_lst = self._get_labels(observations, labels)
             self._update_confusion_matrix(preds, labels_lst)
-
-        # broadcast the metrics back
-        for k, values in self._local_metrics.items():
-            if len(values) != len(batch.valid_indices):
-                raise IndexError(
-                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
-                    f"expected {len(batch.valid_indices)})"
-                )
-            for i, value in zip(batch.valid_indices, values):
-                if 'metrics' not in batch_reply[i]:
-                    batch_reply[i]['metrics'] = {}
-                batch_reply[i]['metrics'][k] = value
-
-        # Make sure we push all the metrics to main thread in hogwild/workers
-        self.global_metrics.flush()
 
         return batch_reply
