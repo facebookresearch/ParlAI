@@ -44,16 +44,18 @@ class TestClassifierOnGenerator(unittest.TestCase):
     def test_accuracy(self):
         """
         Test the accuracy of the classifier trained on previous and current utterances.
+
+        This should be very close to 100%, because this classifier was used to label the
+        styles of this dataset to begin with.
         """
         _, test = testing_utils.eval_model(
             opt={
                 'batchsize': 4,
                 'fp16': False,
                 'num_examples': 16,
-                'model_file': f'zoo:style_gen/prev_curr_classifier/model',
+                'model_file': 'zoo:style_gen/prev_curr_classifier/model',
                 'model': 'projects.style_gen.classifier:ClassifierAgent',
                 'classes_from_file': 'image_chat',
-                'skip_generation': False,
                 'task': 'style_gen:PrevCurrUttStyle',
                 'wrapper_task': 'style_gen:LabeledBlendedSkillTalk',
             },
