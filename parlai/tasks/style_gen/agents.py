@@ -7,8 +7,9 @@
 import copy
 import os
 
+from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.teachers import ParlAIDialogTeacher
+from parlai.core.teachers import FixedDialogTeacher, ParlAIDialogTeacher
 from parlai.tasks.style_gen.build import (
     build_personality_list,
     build_style_labeled_datasets,
@@ -108,16 +109,19 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
 
     def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
+        assert isinstance(self.task, FixedDialogTeacher)
 
     def act(self):
         """
         Act on the previous observation.
         """
-        act = self.task.act()
-        new_act = copy.deepcopy(act)
-        if 'labels' in act or 'eval_labels' in act:
-            labels_type = 'labels' if 'labels' in act else 'eval_labels'
-            labels = act[labels_type]
+
+        orig_act = self.task.get_orig_action()
+
+        # Edit the fields of the act
+        new_act = copy.deepcopy(orig_act)
+        if 'labels' in orig_act:
+            labels = orig_act['labels']
             if len(labels) != 1:
                 raise ValueError(
                     f'{type(self).__name__} can only be used with one label!'
@@ -127,8 +131,12 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
             new_act.force_set(
                 'text', new_act['text'].split('\n')[-1] + '\n' + labels[0]
             )
-            new_act.force_set(labels_type, [new_act['personality']])
+            new_act.force_set('labels', [new_act['personality']])
         else:
-            assert 'text' not in act and act['episode_done'] is True
+            assert 'text' not in orig_act and orig_act['episode_done'] is True
         new_act.force_set('episode_done', True)  # Clear the dialogue history
-        return new_act
+
+        # Process the action
+        final_action = self.task.process_action(orig_act)
+
+        return final_action
