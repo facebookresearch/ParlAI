@@ -113,11 +113,6 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
         """
         Act on the previous observation.
         """
-        delimiter = self.opt['delimiter']
-        raise Exception(
-            f'Am I displaying the class name correctly? {type(self.__name__)}'
-        )
-        # TODO: remove
         act = self.task.act()
         new_act = copy.deepcopy(act)
         if 'labels' in act or 'eval_labels' in act:
@@ -125,16 +120,14 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
             labels = act[labels_type]
             if len(labels) != 1:
                 raise ValueError(
-                    f'{type(self.__name__)} can only be used with one label!'
+                    f'{type(self).__name__} can only be used with one label!'
                 )
+            assert '\n' not in labels[0]
+            # Classifier will not expect more than 1 newline in context
             new_act.force_set(
-                'text', new_act['text'].split(delimiter)[-1] + delimiter + labels[0]
+                'text', new_act['text'].split('\n')[-1] + '\n' + labels[0]
             )
             new_act.force_set(labels_type, [new_act['personality']])
-            import pdb
-
-            pdb.set_trace()
-            # TODO: remove when you know this is working correctly
         else:
             assert 'text' not in act and act['episode_done'] is True
         new_act.force_set('episode_done', True)  # Clear the dialogue history
