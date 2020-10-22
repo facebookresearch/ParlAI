@@ -4,10 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import copy
 import os
 
-from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher, ParlAIDialogTeacher
 from parlai.tasks.style_gen.build import (
