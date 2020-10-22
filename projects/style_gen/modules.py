@@ -302,8 +302,8 @@ class ClassificationMixin(Agent):
 
         return preds
 
-    def _get_labels(self, observations, labels):
-        labels = [obs.get(labels) for obs in observations]
+    def _get_labels(self, observations, labels_field: str):
+        labels = [obs.get(labels_field) for obs in observations]
         return labels
 
     def batch_act(self, observations):
@@ -387,14 +387,14 @@ class ClassificationMixin(Agent):
 
         preds = self._get_preds(batch_reply)
         if 'labels' in observations[0]:
-            labels = 'labels'
+            labels_field = 'labels'
         elif 'eval_labels' in observations[0]:
-            labels = 'eval_labels'
+            labels_field = 'eval_labels'
         else:
-            labels = None
+            labels_field = None
 
-        if preds is not None and labels is not None:
-            labels_lst = self._get_labels(observations, labels)
+        if preds is not None and labels_field is not None:
+            labels_lst = self._get_labels(observations, labels_field)
             self._update_confusion_matrix(preds, labels_lst)
 
         return batch_reply

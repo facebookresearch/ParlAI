@@ -214,10 +214,13 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
             if preds is None:
                 return batch_reply
 
-            labels = 'personality'
-            labels_lst = [[label] for label in self._get_labels(observations, labels)]
+            labels_field = 'personality'
+            labels_lst = [
+                [label] for label in self._get_labels(observations, labels_field)
+            ]
             # The label is expected to be in a list like in the "labels" or
-            # "eval_labels" fields
+            # "eval_labels" fields; however, obs['personality'] is a string rather than
+            # a list, so we have to wrap each string in a list to get a List[List[str]]
             self._update_confusion_matrix(preds, labels_lst)
 
             return batch_reply
