@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import copy
 import os
 
 from parlai.core.opt import Opt
@@ -92,10 +93,14 @@ class LabeledWoWPersonaTopicifierTeacher(ParlAIDialogTeacher):
 
 
 class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
-    # TODO: revise all from here
     """
-    Teacher that will shift message['labels'][0] into message['text'] for whatever task
-    is specified with --wrapper-task.
+    Serving examples for use with projects.style_gen.classifier:ClassifierAgent.
+
+    This teacher will replace message['text'] with a concatenation of the last utterance
+    in message['text'] and message['labels'][0], and it will replace message['labels']
+    with [message['personality']]. This is to allow for training/evaluation of
+    projects.style_gen.classifier:ClassifierAgent, which typically classifies the style
+    of an utterance given that utterance and the previous one as context.
 
     Because the dialogue history is effectively overwritten by this action, all episodes
     will be flattened into one example each.
@@ -108,15 +113,28 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
         """
         Act on the previous observation.
         """
+        delimiter = self.opt['delimiter']
+        raise Exception(
+            f'Am I displaying the class name correctly? {type(self.__name__)}'
+        )
+        # TODO: remove
         act = self.task.act()
         new_act = copy.deepcopy(act)
         if 'labels' in act or 'eval_labels' in act:
             labels_type = 'labels' if 'labels' in act else 'eval_labels'
             labels = act[labels_type]
             if len(labels) != 1:
-                raise ValueError('LabelToTextTeacher can only be used with one label!')
-            new_act.force_set('text', labels[0])
-            new_act.force_set(labels_type, [''])
+                raise ValueError(
+                    f'{type(self.__name__)} can only be used with one label!'
+                )
+            new_act.force_set(
+                'text', new_act['text'].split(delimiter)[-1] + delimiter + labels[0]
+            )
+            new_act.force_set(labels_type, [new_act['personality']])
+            import pdb
+
+            pdb.set_trace()
+            # TODO: remove when you know this is working correctly
         else:
             assert 'text' not in act and act['episode_done'] is True
         new_act.force_set('episode_done', True)  # Clear the dialogue history
