@@ -14,6 +14,7 @@ from parlai.tasks.style_gen.build import (
     get_style_labeled_data_folder,
     TASK_FOLDER_NAME,
 )
+from parlai.tasks.wrapper.agents import AbstractWrapperTeacher
 
 
 def get_style_labeled_data_path(opt: Opt, base_task: str) -> str:
@@ -88,3 +89,35 @@ class LabeledWoWPersonaTopicifierTeacher(ParlAIDialogTeacher):
             opt=opt, base_task='blended_skill_talk:WoWPersonaTopicifierTeacher'
         )
         super().__init__(opt, shared=shared)
+
+
+class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
+    # TODO: revise all from here
+    """
+    Teacher that will shift message['labels'][0] into message['text'] for whatever task
+    is specified with --wrapper-task.
+
+    Because the dialogue history is effectively overwritten by this action, all episodes
+    will be flattened into one example each.
+    """
+
+    def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
+
+    def act(self):
+        """
+        Act on the previous observation.
+        """
+        act = self.task.act()
+        new_act = copy.deepcopy(act)
+        if 'labels' in act or 'eval_labels' in act:
+            labels_type = 'labels' if 'labels' in act else 'eval_labels'
+            labels = act[labels_type]
+            if len(labels) != 1:
+                raise ValueError('LabelToTextTeacher can only be used with one label!')
+            new_act.force_set('text', labels[0])
+            new_act.force_set(labels_type, [''])
+        else:
+            assert 'text' not in act and act['episode_done'] is True
+        new_act.force_set('episode_done', True)  # Clear the dialogue history
+        return new_act
