@@ -41,6 +41,27 @@ class TestClassifierOnGenerator(unittest.TestCase):
         self.assertEqual(valid['accuracy'], 1.0)
         self.assertEqual(test['accuracy'], 1.0)
 
+    def test_accuracy(self):
+        """
+        Test the accuracy of the classifier trained on previous and current utterances.
+        """
+        _, test = testing_utils.eval_model(
+            opt={
+                'batchsize': 4,
+                'fp16': False,
+                'num_examples': 16,
+                'model_file': f'zoo:style_gen/prev_curr_classifier/model',
+                'model': 'projects.style_gen.classifier:ClassifierAgent',
+                'classes_from_file': 'image_chat',
+                'skip_generation': False,
+                'task': 'style_gen:PrevCurrUttStyle',
+                'wrapper_task': 'style_gen:LabeledBlendedSkillTalk',
+            },
+            skip_valid=True,
+        )
+        # We turn off FP16 because emulation of this is likely slow on the CI GPUs
+        self.assertAlmostEqual(test['accuracy'], 1.0, delta=0.0)
+
 
 class TestStyleGen(unittest.TestCase):
     def test_perplexities(self):
