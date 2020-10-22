@@ -18,6 +18,7 @@ from parlai.agents.transformer.transformer import (
 )
 from parlai.core.metrics import AverageMetric
 from parlai.core.torch_agent import Output
+from parlai.tasks.style_gen.agents import get_personality_list_path
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import warn_once, round_sigfigs
 from projects.style_gen.modules import (
@@ -67,6 +68,10 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
                 'Must specify --classes or --classes-from-file argument.'
             )
         if not shared:
+            if opt['classes_from_file'] == 'image_chat':
+                # Download the file of Image-Chat personalities and use it as the list
+                # of classes
+                opt['classes_from_file'] = get_personality_list_path(opt)
             if opt['classes_from_file'] is not None:
                 with open(opt['classes_from_file']) as f:
                     self.class_list = f.read().splitlines()
