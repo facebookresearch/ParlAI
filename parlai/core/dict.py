@@ -333,6 +333,12 @@ class DictionaryAgent(Agent):
         """
         self.additional_special_tokens = additional_special_tokens
 
+        for tok in self.additional_special_tokens:
+            self.add_token(tok)
+
+        for i, tok in enumerate(self.additional_special_tokens):
+            self.freq[tok] = 1000000000 + 4 + i
+
         if hasattr(self, 'bpe'):
             self.bpe.add_special_tokens(self, self.additional_special_tokens)
         else:
@@ -341,12 +347,6 @@ class DictionaryAgent(Agent):
                 "issue or pull request if you need others extended. "
                 "https://github.com/facebookresearch/ParlAI"
             )
-
-        for tok in self.additional_special_tokens:
-            self.add_token(tok)
-
-        for i, tok in enumerate(self.additional_special_tokens):
-            self.freq[tok] = 1000000000 + 4 + i
 
     def is_prebuilt(self):
         """

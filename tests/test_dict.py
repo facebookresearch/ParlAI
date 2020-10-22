@@ -555,16 +555,20 @@ class SpecialTokenTests(unittest.TestCase):
         with testing_utils.tempdir() as tmpdir:
             if 'dict_file' not in kwargs:
                 kwargs['dict_file'] = os.path.join(tmpdir, 'dict')
+            string = "This is a test of SPECIAL_TOKENS"
             parser = ParlaiParser(False, False)
             DictionaryAgent.add_cmdline_args(parser)
             opt = parser.parse_kwargs(**kwargs)
             da = DictionaryAgent(opt)
-            before = da.tokenize("This is a test of SPECIAL_TOKENS")
+            before = da.tokenize(string)
             da.add_additional_special_tokens(["SPECIAL_TOKENS"])
-            after = da.tokenize("This is a test of SPECIAL_TOKENS")
+            after = da.tokenize(string)
             assert before != after
             assert len(before) > len(after)
             assert after[-1] == "SPECIAL_TOKENS"
+            # we need to let the dictionary handle the tokenid mappings
+            after_ids = da.txt2vec(string)
+            assert da.vec2txt(da.txt2vec(string)) == string
 
     def test_specialtok_slow_bytelevel_bpe(self):
         self._run_specialtok_test(
@@ -574,18 +578,15 @@ class SpecialTokenTests(unittest.TestCase):
     @unittest.skipUnless(TOKENIZERS, "No tokenizers available")
     def test_specialtok_bytelevelbpe(self):
         self._run_specialtok_test(
-            dict_tokenizer="bytelevelbpe", dict_file="zoo:blender/dict_3B/dict"
+            dict_tokenizer="bytelevelbpe",
+            dict_file="zoo:blender/dict_3B/dict",
+            hf_skip_special_tokens=False,
         )
 
     def test_specialtok_gpt2(self):
         self._run_specialtok_test(dict_tokenizer="gpt2")
 
-    def test_specialtok_subwordbpe(self):
-        self._run_specialtok_test(
-            dict_tokenizer="bpe", dict_file="zoo:blender/dict_90M/dict"
-        )
-
     def test_specialtok_nonsupport(self):
-        for tokenizer in ["re", "space"]:
+        for tokenizer in ["re", "space", "bpe"]:
             with self.assertRaises(NotImplementedError):
                 self._run_specialtok_test(dict_tokenizer=tokenizer)

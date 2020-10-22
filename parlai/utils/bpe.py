@@ -107,7 +107,7 @@ class BPEHelper(ABC):
         self.opt = opt
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
-        self._special_tokens = []
+        self._special_tokens: Dict[str, int] = {}
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -148,7 +148,7 @@ class BPEHelper(ABC):
         :return tokens:
             A list of tokens
         """
-        for special_token in self._special_tokens:
+        for special_token in self._special_tokens.keys():
             split = text.split(special_token)
             if len(split) > 1:
                 output = []
@@ -176,7 +176,9 @@ class BPEHelper(ABC):
         """
 
     @final
-    def decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
+    def decode(
+        self, tokens: List[str], token_ids: List[int], delimiter: str = ' '
+    ) -> str:
         """
         Decode list of tokens into a text string.
 
@@ -192,12 +194,28 @@ class BPEHelper(ABC):
         :return text:
             decoded text
         """
-        text = delimiter.join(tokens)
-        if not self.debug:
-            text = self.helper_decode(tokens, token_ids, delimiter)
-            if self.add_prefix_space:
-                assert text.startswith(' ')
-                text = text.lstrip(' ')
+        if self.debug:
+            return delimiter.join(tokens)
+
+        for i, token in enumerate(tokens):
+            if token in self._special_tokens:
+                # special token found. to the left, we've already cleared
+                left = self.helper_decode(tokens[:i], token_ids[:i], delimiter)
+                # token itself is easy to map to a string
+                center = token
+                # to the right, there may stil be special tokens
+                right = self.decode(
+                    tokens[min(len(token_ids), i + 1) :],
+                    token_ids[min(len(token_ids), i + 1) :],
+                    delimiter,
+                )
+                return left + right + center
+
+        # no special tokens found, we can fall back
+        text = self.helper_decode(tokens, token_ids, delimiter)
+        if self.add_prefix_space:
+            assert text.startswith(' ')
+            text = text.lstrip(' ')
         return text
 
     @abstractmethod
@@ -238,7 +256,8 @@ class BPEHelper(ABC):
         """
         # note, HF ByteLevelBPE tokenizer handles special tokens itself in
         # a special way
-        self._special_tokens += special_tokens
+        for token in special_tokens:
+            self._special_tokens[token] = 1
 
     def finalize(
         self, frequencies: Dict[str, int], num_symbols: int, minfreq: int
@@ -320,6 +339,11 @@ class SubwordBPEHelper(BPEHelper):
         self.codecs = f"{opt['dict_file']}.codecs"
         if PathManager.exists(self.codecs):
             self._load_from_codecs()
+
+    def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        raise NotImplementedError(
+            "--dict-tokenizer BPE does not support special tokens."
+        )
 
     def helper_encode(self, text: str) -> List[str]:
         """
