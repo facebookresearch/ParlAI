@@ -115,28 +115,21 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
         """
         Act on the previous observation.
         """
+        act = self.task.get_orig_action()
 
-        orig_act = self.task.get_orig_action()
-
-        # Edit the fields of the act
-        new_act = copy.deepcopy(orig_act)
-        if 'labels' in orig_act:
-            labels = orig_act['labels']
+        # Edit the fields of the action manually
+        if 'labels' in act:
+            labels = act['labels']
             if len(labels) != 1:
                 raise ValueError(
                     f'{type(self).__name__} can only be used with one label!'
                 )
             assert '\n' not in labels[0]
             # Classifier will not expect more than 1 newline in context
-            new_act.force_set(
-                'text', new_act['text'].split('\n')[-1] + '\n' + labels[0]
-            )
-            new_act.force_set('labels', [new_act['personality']])
+            act.force_set('text', act['text'].split('\n')[-1] + '\n' + labels[0])
+            act.force_set('labels', [act['personality']])
         else:
-            assert 'text' not in orig_act and orig_act['episode_done'] is True
-        new_act.force_set('episode_done', True)  # Clear the dialogue history
+            assert 'text' not in act and act['episode_done'] is True
+        act.force_set('episode_done', True)  # Clear the dialogue history
 
-        # Process the action
-        final_action = self.task.process_action(orig_act)
-
-        return final_action
+        return self.task.process_action(act)

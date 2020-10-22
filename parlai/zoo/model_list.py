@@ -1476,7 +1476,7 @@ model_list = [
         "agent": "projects.style_gen.classifier:ClassifierAgent",
         "task": "style_gen:LabeledBlendedSkillTalk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen',
-        "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",  # TODO: revise
+        "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance and the previous utterance.",
         "example": "parlai eval_model --datatype test --model projects.style_gen.style_gen:StyleGenAgent --model-file zoo:style_gen/c75_labeled_dialogue_generator/model --skip-generation True --task style_gen:LabeledBlendedSkillTalk --use-style-frac 1.00",  # TODO: revise
         "result": """16:56:52 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
 ctpb  ctps  exps  exs  gpu_mem  loss  ltpb  ltps   ppl  token_acc   tpb  tps
