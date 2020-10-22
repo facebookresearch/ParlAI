@@ -1832,6 +1832,19 @@ class TorchAgent(ABC, Agent):
 
         This is easily overridable to facilitate transfer of state dicts.
         """
+        state_dict = OrderedDict(
+            {
+                key: val
+                for key, val in state_dict.items()
+                if key.split('.')[0]
+                not in [
+                    'encoder_proj_layer',
+                    'embedding_proj_layers',
+                    'hidden_proj_layers',
+                ]
+            }
+        )
+        # TODO: obviously remove this hack
         try:
             self.model.load_state_dict(state_dict)
         except RuntimeError as msg:
