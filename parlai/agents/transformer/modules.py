@@ -902,24 +902,14 @@ class TransformerDecoder(nn.Module):
                 'prev_mask': encoder_attn_prev_masks,
             },
         }
-        if any(
-            [
-                incr_state.numel() > 0
-                for incr_states in stacked_incr_states.values()
-                for incr_state in incr_states.values()
-            ]
-        ):
-            # At least one incremental state tensor is non-empty
 
-            # Convert the tensor to a nested dictionary
-            incr_states_by_layer = self._split_incr_states_by_layer(stacked_incr_states)
+        # Convert the tensor to a nested dictionary
+        incr_states_by_layer = self._split_incr_states_by_layer(stacked_incr_states)
 
-            # We're doing incremental decoding, so select only the most recent position
-            input = input[:, -1:]
-            if positions is not None:
-                positions = positions[:, -1:]
-        else:
-            incr_states_by_layer = {}
+        # We're doing incremental decoding, so select only the most recent position
+        input = input[:, -1:]
+        if positions is not None:
+            positions = positions[:, -1:]
 
         tensor = self.forward_embedding(input, positions)
 
@@ -1069,16 +1059,13 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm3 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-    def forward(self, x, encoder_output, encoder_mask, incr_state=None):
+    def forward(self, x, encoder_output, encoder_mask, incr_state):
         """
         Forward pass.
 
         The incremental state is a dict with values for self- and encoder-attention
         states.
         """
-
-        if incr_state is None:
-            incr_state = {}
 
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
