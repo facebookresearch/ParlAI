@@ -2006,7 +2006,7 @@ class MultiTaskTeacher(Teacher):
                     self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
-        self.random = DatatypeHelper.should_shuffle(opt.get['datatype'])
+        self.random = DatatypeHelper.should_shuffle(opt['datatype'])
         # Make multi-task task probabilities.
         self.cum_task_weights = [1] * len(self.tasks)
         self.task_choices = range(len(self.tasks))
