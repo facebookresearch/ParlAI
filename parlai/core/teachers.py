@@ -249,16 +249,7 @@ class FixedDialogTeacher(Teacher):
         if not hasattr(self, 'cycle'):
             self.cycle = DatatypeHelper.should_cycle(self.datatype)
         if not hasattr(self, 'datafile'):
-            if 'datafile' not in opt:
-                raise KeyError(
-                    f"{self.__class__.__name__} is expected to set opt['datafile'] "
-                    f"inside `__init__` before calling `super().__init__`. This will "
-                    f"passed to setup_data, indicating what data to load. "
-                    f"If you don't know what to use, set `opt['datafile'] = "
-                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
-                    f"to receive the fold name in setup_data."
-                )
-            self.datafile = opt['datafile']
+            self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -548,6 +539,16 @@ class DialogTeacher(FixedDialogTeacher):
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
+            if 'datafile' not in self.opt:
+                raise KeyError(
+                    f"{self.__class__.__name__} is expected to set "
+                    f"self.opt['datafile'] inside `__init__` before calling "
+                    f"`super().__init__`. This will passed to setup_data,"
+                    f"indicating what data to load. If you don't know what to"
+                    f"use, set `opt['datafile'] = "
+                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
+                    f"to receive the fold name in setup_data."
+                )
             self.data = data_class(
                 opt,
                 data_loader=self.setup_data,
