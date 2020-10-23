@@ -271,6 +271,7 @@ class ClassificationMixin(Agent):
 
         # Check that predictions and labels have Nones in the same places, and then
         # filter the Nones out because we can't compute metrics with them
+        assert len(predictions) == len(labels)
         assert all(
             [
                 (pred is None and label is None)
