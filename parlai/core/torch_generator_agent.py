@@ -481,7 +481,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_block_full_context = opt.get('beam_block_full_context', False)
         self.temperature = opt.get('temperature', 1.0)
         assert self.temperature > 0, '--temperature must be greater than 0'
-        self.output_token_losses = opt.get('verbose', False)
+        self.output_token_losses = opt.get(
+            'verbose', False
+        ) or 'token_losses' in opt.get('display_add_fields', '')
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
         self.beam_block_list: Optional[SearchBlocklist] = None
 
@@ -1552,10 +1554,10 @@ class TreeSearch(object):
             len(n_best_list) >= 1
         ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
         for (pred, score) in n_best_list:
-            assert (
-                pred == self.eos
-            ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
-            with score {score.item():.2f}'
+            assert (pred == self.eos).sum() == 1, (
+                f'TreeSearch returned a finalized hypo with multiple end tokens '
+                f'with score {score.item():.2f}'
+            )
 
         return n_best_list
 

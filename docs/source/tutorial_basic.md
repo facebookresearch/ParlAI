@@ -92,7 +92,7 @@ candidate labels to choose from).
 Dataset-specific fields are available in some cases in order to support
 reproducing paper results. For example, SQuAD has an `answer_starts`
 field, which is available in the "squad:index" task.
-
+To display all fields of a message just add `--verbose True` to your command.
 
 :::{note} Automatic Processing
 During validation and testing, the `labels` field is renamed
@@ -408,6 +408,12 @@ parlai interactive -mf zoo:pretrained_transformers/model_poly/model -t convai2
 # Interact with a Wizard Of Wikipedia (Full Dialogue Retrieval Model).
 parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
 ```
+
+To view additional fields from the model output, try use the flag `--display-add-fields`. For example, 
+```
+parlai interactive -mf zoo:blender/blender_90M/model -t convai2 --display-add-fields beam_texts
+```
+to display all beam texts.
 
 __Model Zoo__
 

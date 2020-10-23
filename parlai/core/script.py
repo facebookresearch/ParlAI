@@ -17,6 +17,7 @@ Also contains helper classes for loading scripts, etc.
 import io
 import argparse
 from typing import List, Optional, Dict, Any
+import parlai
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, CustomHelpFormatter
 from abc import abstractmethod
@@ -126,6 +127,9 @@ class _SupercommandParser(ParlaiParser):
     """
 
     def __init__(self, *args, **kwargs):
+        # used to target help messages more correctly, see GH #3182
+        self._help_subparser = None
+
         from parlai.utils.strings import colorize
 
         logo = ""
@@ -146,6 +150,22 @@ class _SupercommandParser(ParlaiParser):
         sa = sa[0]
         for _, v in sa.choices.items():
             v.add_extra_args(args)
+
+    def parse_known_args(self, args=None, namespace=None, nohelp=False):
+        known, unused = super().parse_known_args(args, namespace, nohelp)
+        if hasattr(known, '_subparser'):
+            # keep this around to keep the print message more in tune
+            self._help_subparser = known._subparser
+        return known, unused
+
+    def print_help(self):
+        """
+        Print help, possibly deferring to the appropriate subcommand.
+        """
+        if self._help_subparser:
+            self._help_subparser.print_help()
+        else:
+            return super().print_help()
 
     def add_subparsers(self, **kwargs):
         return super().add_subparsers(**kwargs)
@@ -206,7 +226,13 @@ def superscript_main(args=None):
     parser.add_argument(
         '--helpall',
         action='helpall',
-        help='show all commands, including advanced ones.',
+        help='List all commands, including advanced ones.',
+    )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=get_version_string(),
+        help='Prints version info and exit.',
     )
     parser.set_defaults(super_command=None)
     subparsers = parser.add_subparsers(
@@ -216,13 +242,13 @@ def superscript_main(args=None):
         'help',
         aliases=['h'],
         help=argparse.SUPPRESS,
-        description="List the main commands",
+        description='List the main commands.',
     )
     hparser.set_defaults(super_command='help')
     hparser = subparsers.add_parser(
         'helpall',
         help=argparse.SUPPRESS,
-        description="List all commands, including advanced ones.",
+        description='List all commands, including advanced ones.',
     )
     hparser.set_defaults(super_command='helpall')
 
@@ -265,7 +291,13 @@ def superscript_main(args=None):
     cmd = opt.pop('super_command')
     if cmd == 'helpall':
         parser.print_helpall()
+    elif cmd == 'versioninfo':
+        exit(0)
     elif cmd == 'help' or cmd is None:
         parser.print_help()
     elif cmd is not None:
         return SCRIPT_REGISTRY[cmd].klass._run_from_parser_and_opt(opt, parser)
+
+
+def get_version_string() -> str:
+    return f"ParlAI version {parlai.__version__}"
