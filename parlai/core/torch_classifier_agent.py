@@ -290,6 +290,13 @@ class TorchClassifierAgent(TorchAgent):
             default=None,
             help='Ignore labels provided to model',
         )
+        parser.add_argument(
+            '--update-classifier-head-only',
+            type='bool',
+            default=False,
+            help='Freeze the encoder and update the classifier head only',
+        )
+        parser.set_defaults(use_reply='none')
 
     def __init__(self, opt: Opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)
@@ -339,6 +346,12 @@ class TorchClassifierAgent(TorchAgent):
             self.model = shared['model']
         else:
             self.model = self.build_model()
+            # freeze the encoder and update the classifier only
+            if opt.get("update_classifier_head_only", False):
+                for _param_name, _param_value in self.model.named_parameters():
+                    if not _param_name.startswith('additional_linear_layer'):
+                        _param_value.requires_grad = False
+
             self.criterion = self.build_criterion()
             if self.model is None or self.criterion is None:
                 raise AttributeError(
