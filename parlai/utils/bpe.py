@@ -108,6 +108,7 @@ class BPEHelper(ABC):
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
         self._special_tokens: Dict[str, int] = {}
+        self.skip_special_tokens = opt.get('hf_skip_special_tokens', True)
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -128,7 +129,7 @@ class BPEHelper(ABC):
             '--hf-skip-special-tokens',
             hidden=True,
             type='bool',
-            default=True,
+            default=False,
             help='do not decode special tokens with bytelevelbpe',
         )
         return parser
@@ -202,14 +203,14 @@ class BPEHelper(ABC):
                 # special token found. to the left, we've already cleared
                 left = self.helper_decode(tokens[:i], token_ids[:i], delimiter)
                 # token itself is easy to map to a string
-                center = token
+                center = "" if self.skip_special_tokens else token
                 # to the right, there may stil be special tokens
                 right = self.decode(
                     tokens[min(len(token_ids), i + 1) :],
                     token_ids[min(len(token_ids), i + 1) :],
                     delimiter,
                 )
-                return left + right + center
+                return left + center + right
 
         # no special tokens found, we can fall back
         text = self.helper_decode(tokens, token_ids, delimiter)
@@ -761,7 +762,6 @@ class HuggingFaceBpeHelper(BPEHelper):
         # Default true for HF
         self.special_tok_map = {}  # map from HF
         self.add_prefix_space = opt.get('bpe_add_prefix_space', True)
-        self.skip_special_tokens = opt.get('hf_skip_special_tokens', True)
         if self.add_prefix_space is None:
             self.add_prefix_space = True
         if opt.get('dict_loaded'):

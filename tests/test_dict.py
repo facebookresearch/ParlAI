@@ -567,7 +567,6 @@ class SpecialTokenTests(unittest.TestCase):
             assert len(before) > len(after)
             assert after[-1] == "SPECIAL_TOKENS"
             # we need to let the dictionary handle the tokenid mappings
-            after_ids = da.txt2vec(string)
             assert da.vec2txt(da.txt2vec(string)) == string
 
     def test_specialtok_slow_bytelevel_bpe(self):
