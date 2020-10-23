@@ -69,7 +69,8 @@ def build(opt):
         if build_data.built(dpath):
             # an older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
-        build_data.make_dir(dpath)
+        build_data.make_dir(os.path.join(dpath, 'annotations'))
+        # Make the subfolder into which files will be unzipped
 
         # download the data.
         for downloadable_file in RESOURCES[3:]:

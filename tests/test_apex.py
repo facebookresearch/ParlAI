@@ -52,7 +52,7 @@ class TestNoApex(unittest.TestCase):
                 'integration_tests:nocandidate',
                 '--optimizer',
                 'adam',
-            ],
+            ]
         )
         create_agent(opt, requireModelExists=True)
 

@@ -1857,7 +1857,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             image = self.image_loader.load(img_path).detach()
             # spatial features are [1, image_dim, spatial_dim, spatial_dim] tensors.
             # reduce non-spatial features to one-dimensional feature prior to saving.
-            if 'spatial' not in self.image_mode:
+            if not self.image_loader.is_spatial(self.image_mode):
                 image = image[0, :, 0, 0]
             image_features_dict[img_id] = image
             num += 1

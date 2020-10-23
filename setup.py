@@ -9,7 +9,7 @@ import sys
 
 from setuptools import setup, find_packages
 
-VERSION = '0.9.2'  # if you update, update parlai/__init__.py too!
+VERSION = '0.9.4'  # if you update, update parlai/__init__.py too!
 
 if sys.version_info < (3, 6):
     sys.exit('Sorry, Python >=3.6 is required for ParlAI.')

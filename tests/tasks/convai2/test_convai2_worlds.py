@@ -15,9 +15,7 @@ from parlai.tasks.convai2.worlds import InteractiveWorld
 
 class TestConvAI2InteractiveWorld(unittest.TestCase):
     @patch("parlai.tasks.convai2.worlds._load_personas")
-    def test_share(
-        self, mock_load_personas,
-    ):
+    def test_share(self, mock_load_personas):
         test_personas = ['your persona:I live on a pirate\'s shoulder']
         with testing_utils.tempdir() as data_path:
             mock_load_personas.return_value = test_personas

@@ -21,7 +21,7 @@ import parlai.utils.pickle
 import parlai.utils.logging as logging
 
 
-@register_script("vacuum")
+@register_script("vacuum", hidden=True)
 class Vacuum(ParlaiScript):
     @classmethod
     def setup_args(cls):

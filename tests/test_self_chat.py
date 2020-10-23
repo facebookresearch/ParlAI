@@ -5,27 +5,27 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-import parlai.scripts.self_chat as self_chat
+from parlai.scripts.self_chat import SelfChat
 
 
 class TestSelfChat(unittest.TestCase):
     def test_vanilla(self):
-        pp = self_chat.setup_args()
-        opt = pp.parse_args(['-m', 'fixed_response', '--fixed-response', 'hi'])
-        self_chat.self_chat(opt)
+        SelfChat.main(model='fixed_response', fixed_response='hi')
 
     def test_convai2(self):
-        pp = self_chat.setup_args()
-        opt = pp.parse_args(
-            [
-                '-m',
-                'fixed_response',
-                '--fixed-response',
-                'hi',
-                '-t',
-                'convai2',
-                '-dt',
-                'valid',
-            ]
+        SelfChat.main(
+            task='convai2', model='fixed_response', fixed_response='hi', dt='valid'
         )
-        self_chat.self_chat(opt)
+
+    def test_ed(self):
+        SelfChat.main(
+            task='empathetic_dialogues',
+            model_file='zoo:tutorial_transformer_generator/model',
+            seed_messages_from_task=True,
+        )
+
+    def test_no_plain_teacher(self):
+        from parlai.scripts.display_data import DisplayData
+
+        with self.assertRaises(RuntimeError):
+            DisplayData.main(task='self_chat')

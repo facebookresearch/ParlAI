@@ -12,7 +12,7 @@ To make sure that bAbI task 1 (1k exs) loads one can run and to see a
 few of them:
 
 ```shell
-parlai profile_train -t babi:task1k:1 -m seq2seq -e 0.1 --dict-file /tmp/dict
+parlai profile_train -t babi:task1k:1 -m seq2seq --dict-file /tmp/dict
 ```
 """
 
@@ -23,7 +23,6 @@ from parlai.scripts.train_model import TrainLoop
 import parlai.utils.logging as logging
 import cProfile
 import io
-import pdb
 import pstats
 
 try:
@@ -55,6 +54,7 @@ def setup_args(parser=None):
         default=False,
         help='If true, enter debugger at end of run.',
     )
+    profile.set_defaults(num_epochs=1)
     return parser
 
 
@@ -62,28 +62,11 @@ def profile(opt):
     if opt['torch'] or opt['torch_cuda']:
         with torch.autograd.profiler.profile(use_cuda=opt['torch_cuda']) as prof:
             TrainLoop(opt).train()
-        print(prof.total_average())
 
-        sort_cpu = sorted(prof.key_averages(), key=lambda k: k.cpu_time)
-        sort_cuda = sorted(prof.key_averages(), key=lambda k: k.cuda_time)
+        key = 'cpu_time_total' if opt['torch'] else 'cuda_time_total'
+        print(prof.key_averages().table(sort_by=key, row_limit=25))
 
-        def cpu():
-            for e in sort_cpu:
-                print(e)
-
-        def cuda():
-            for e in sort_cuda:
-                print(e)
-
-        cpu()
-
-        if opt['debug']:
-            print(
-                '`cpu()` prints out cpu-sorted list, '
-                '`cuda()` prints cuda-sorted list'
-            )
-
-            pdb.set_trace()
+        return prof
     else:
         pr = cProfile.Profile()
         pr.enable()
@@ -94,8 +77,6 @@ def profile(opt):
         ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
         print(s.getvalue())
-        if opt['debug']:
-            pdb.set_trace()
 
 
 @register_script('profile_train', hidden=True)

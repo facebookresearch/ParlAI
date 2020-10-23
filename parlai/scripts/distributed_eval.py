@@ -33,18 +33,26 @@ srun python -u -m parlai.scripts.distributed_eval \
 """
 
 import parlai.scripts.eval_model as eval_model
+from parlai.core.script import ParlaiScript
 import parlai.utils.distributed as distributed_utils
 
 
-def main():
+def setup_args():
     parser = eval_model.setup_args()
     parser.add_distributed_training_args()
     parser.add_argument('--port', type=int, default=61337, help='TCP port number')
-    opt = parser.parse_args()
+    return parser
 
-    with distributed_utils.slurm_distributed_context(opt) as opt:
-        return eval_model.eval_model(opt)
+
+class DistributedEval(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        with distributed_utils.slurm_distributed_context(self.opt) as opt:
+            return eval_model.eval_model(opt)
 
 
 if __name__ == '__main__':
-    main()
+    DistributedEval.main()

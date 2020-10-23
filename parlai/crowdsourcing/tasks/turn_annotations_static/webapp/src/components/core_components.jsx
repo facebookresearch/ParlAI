@@ -19,10 +19,10 @@ function TaskFrontend({ taskData, taskConfig, isOnboarding, onSubmit }) {
     return <LoadingScreen />;
   }
   if (isOnboarding) {
-    return <OnboardingComponent onboardingData={taskConfig.onboarding_data} annotationBuckets={taskConfig.annotation_buckets} onSubmit={onSubmit} />;
+    return <OnboardingComponent onboardingData={taskConfig.onboarding_data} annotationBuckets={taskConfig.annotation_buckets} annotationQuestion={taskConfig.annotation_question} onSubmit={onSubmit} />;
   }
   return (
-    <MainTaskComponent taskData={taskData} annotationBuckets={taskConfig.annotation_buckets} taskTitle={taskConfig.task_title} taskDescription={taskConfig.task_description} taskConfig={taskConfig} onSubmit={onSubmit}></MainTaskComponent>
+    <MainTaskComponent taskData={taskData} taskTitle={taskConfig.task_title} taskDescription={taskConfig.task_description} taskConfig={taskConfig} onSubmit={onSubmit}></MainTaskComponent>
   );
 }
 

@@ -13,9 +13,7 @@ from parlai.scripts.verify_data import verify, setup_args
 import parlai.utils.testing as testing_utils
 
 KEYS = ['missing_text', 'missing_labels', 'empty_string_label_candidates']
-BASE_TEACHERS = dir(teach_module) + [
-    'CandidateBaseTeacher',
-]
+BASE_TEACHERS = dir(teach_module) + ['CandidateBaseTeacher']
 
 
 class TestNewTasks(unittest.TestCase):
@@ -61,20 +59,24 @@ class TestNewTasks(unittest.TestCase):
                 opt['task'] = subt
                 try:
                     with testing_utils.capture_output():
-                        text, log = verify(opt)
+                        verify_results = verify(opt)
                 except Exception:
                     found_errors = True
                     traceback.print_exc()
                     print("Got above exception in {}".format(subt))
                 for key in KEYS:
-                    if log[key] != 0:
-                        print('There are {} {} in {}.'.format(log[key], key, subt))
+                    if verify_results[key] != 0:
+                        print(
+                            'There are {} {} in {}.'.format(
+                                verify_results[key], key, subt
+                            )
+                        )
                         found_errors = True
 
         if found_errors:
             self.fail(
                 "Please fix the above listed errors, or describe in the PR why "
-                "you do not expect them to pass.",
+                "you do not expect them to pass."
             )
 
 
