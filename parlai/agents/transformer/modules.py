@@ -950,7 +950,7 @@ class TransformerDecoder(nn.Module):
         incr_states_by_layer = {}
         for layer_idx in range(self.n_layers):
             incr_states_by_layer[layer_idx] = {}
-            for type_idx, attn_type in enumerate(['self_attn', 'encoder_attn']):
+            for attn_type in ['self_attn', 'encoder_attn']:
                 incr_states_by_layer[layer_idx][attn_type] = {}
                 for obj_idx, obj in enumerate(['prev_key', 'prev_value', 'prev_mask']):
                     incr_states_by_layer[layer_idx][attn_type][
@@ -974,9 +974,9 @@ class TransformerDecoder(nn.Module):
                 (2) attention object (prev_key, prev_value, or prev_mask)
         """
         stacked_incr_states = {}
-        for type_idx, attn_type in enumerate(['self_attn', 'encoder_attn']):
+        for attn_type in ['self_attn', 'encoder_attn']:
             stacked_incr_states[attn_type] = {}
-            for obj_idx, obj in enumerate(['prev_key', 'prev_value', 'prev_mask']):
+            for obj in ['prev_key', 'prev_value', 'prev_mask']:
                 stacked_incr_states[attn_type][obj] = torch.stack(
                     [
                         incr_states_by_layer[layer_idx][attn_type][obj]
