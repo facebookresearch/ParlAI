@@ -19,6 +19,8 @@ from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
+import pathlib
+import pytest
 
 
 try:
@@ -387,92 +389,127 @@ def display_model(opt) -> Tuple[str, str, str]:
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
+import pytest_regressions
+from pytest_regressions.data_regression import DataRegressionFixture
+
+
 class AutoTeacherTest:
-    def _run_display_data(self, datatype, **kwargs):
-        import parlai.scripts.display_data as dd
+    def _safe(self, obj):
+        from parlai.core.message import Message
 
-        dd.DisplayData.main(task=self.task, datatype=datatype, verbose=True, **kwargs)
+        if isinstance(obj, list):
+            return [self._safe(o) for o in obj]
+        elif isinstance(obj, Message):
+            return dict(obj)
+        else:
+            return obj
 
-    def test_train(self):
+    def _regression(self, data_regression, datatype, batchsize=1):
+        import random
+        from parlai.core.agents import create_agent
+        from parlai.core.worlds import create_task
+        from parlai.core.params import ParlaiParser
+
+        random.seed(42)
+        basename = basename = f"{self.task}_{datatype}_bs{batchsize}".replace(":", "_")
+
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model='fixed_response',
+            fixed_response='none',
+            task=self.task,
+            datatype=datatype,
+            batchsize=batchsize,
+        )
+
+        agent = create_agent(opt)
+        world = create_task(opt, [])
+        acts = []
+        for i in range(10):
+            world.parley()
+            act = self._safe(world.get_acts())
+            acts.append(act)
+        data_regression.check(acts, basename=basename)
+
+    def test_train(self, data_regression):
         """
         Test --datatype train.
         """
-        return self._run_display_data('train')
+        return self._regression(data_regression, 'train')
 
-    def test_train_stream(self):
+    def test_train_stream(self, data_regression):
         """
         Test --datatype train:stream.
         """
-        return self._run_display_data('train:stream')
+        return self._regression(data_regression, 'train:stream')
 
-    def test_train_stream_ordered(self):
+    def test_train_stream_ordered(self, data_regression):
         """
         Test --datatype train:stream:ordered.
         """
-        return self._run_display_data('train:stream:ordered')
+        return self._regression(data_regression, 'train:stream:ordered')
 
-    def test_valid(self):
+    def test_valid(self, data_regression):
         """
         Test --datatype valid.
         """
-        return self._run_display_data('valid')
+        return self._regression(data_regression, 'valid')
 
-    def test_valid_stream(self):
+    def test_valid_stream(self, data_regression):
         """
         Test --datatype valid:stream.
         """
-        return self._run_display_data('valid:stream')
+        return self._regression(data_regression, 'valid:stream')
 
-    def test_test(self):
+    def test_test(self, data_regression):
         """
         Test --datatype test.
         """
-        return self._run_display_data('test')
+        return self._regression(data_regression, 'test')
 
-    def test_test_stream(self):
+    def test_test_stream(self, data_regression):
         """
         Test --datatype test:stream.
         """
-        return self._run_display_data('test:stream')
+        return self._regression(data_regression, 'test:stream')
 
-    def test_bs2_train(self):
+    def test_bs2_train(self, data_regression):
         """
         Test --datatype train.
         """
-        return self._run_display_data('train', batchsize=2)
+        return self._regression(data_regression, 'train', batchsize=2)
 
-    def test_bs2_train_stream(self):
+    def test_bs2_train_stream(self, data_regression):
         """
         Test --datatype train:stream.
         """
-        return self._run_display_data('train:stream', batchsize=2)
+        return self._regression(data_regression, 'train:stream', batchsize=2)
 
-    def test_bs2_train_stream_ordered(self):
+    def test_bs2_train_stream_ordered(self, data_regression):
         """
         Test --datatype train:stream:ordered.
         """
-        return self._run_display_data('train:stream:ordered', batchsize=2)
+        return self._regression(data_regression, 'train:stream:ordered', batchsize=2)
 
-    def test_bs2_valid(self):
+    def test_bs2_valid(self, data_regression):
         """
         Test --datatype valid.
         """
-        return self._run_display_data('valid', batchsize=2)
+        return self._regression(data_regression, 'valid', batchsize=2)
 
-    def test_bs2_valid_stream(self):
+    def test_bs2_valid_stream(self, data_regression):
         """
         Test --datatype valid:stream.
         """
-        return self._run_display_data('valid:stream', batchsize=2)
+        return self._regression(data_regression, 'valid:stream', batchsize=2)
 
-    def test_bs2_test(self):
+    def test_bs2_test(self, data_regression):
         """
         Test --datatype test.
         """
-        return self._run_display_data('test', batchsize=2)
+        return self._regression(data_regression, 'test', batchsize=2)
 
-    def test_bs2_test_stream(self):
+    def test_bs2_test_stream(self, data_regression):
         """
         Test --datatype test:stream.
         """
-        return self._run_display_data('test:stream', batchsize=2)
+        return self._regression(data_regression, 'test:stream', batchsize=2)
