@@ -1330,7 +1330,7 @@ class MultiHeadAttention(nn.Module):
           means we are blocking it. Mask is:
           - [B, key_len] (encoder self-attn and decoder enc/dec attn)
           - [B, query_len, key_len] (decoder self-attn)
-          - [B, 1, 1] (decoder self-attn with incr_state caching)
+          - [B, 1, key_len] (decoder self-attn with incr_state caching)
         :param incr_state: dictionary with values representing the previous states of
           the key, value, and mask
         :param static_kv: True if the key and value are held constant during decoding
