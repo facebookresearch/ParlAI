@@ -195,6 +195,15 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
             )
         return preds
 
+    def get_labels_field(self, observations):
+        if 'labels' in observations[0]:
+            labels_field = 'labels'
+        elif 'eval_labels' in observations[0]:
+            labels_field = 'eval_labels'
+        else:
+            labels_field = None
+        return labels_field
+
     def batch_act(self, observations):
         """
         Overwriting ClassificationMixin.batch_act() in the case where the labels are
@@ -246,6 +255,9 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
         # Get predictions
         _, prediction_id = torch.max(scores.float().cpu(), 1)
         preds = [self.class_list[idx] for idx in prediction_id]
+        labels_field = self.get_labels_field(batch['observations'])
+        labels_lst = self._get_labels(batch['observations'], labels_field)
+        self._update_confusion_matrix(preds, labels_lst)
 
         return Output(preds)
 
@@ -270,6 +282,14 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
             labels = self._get_label_tensor(batch)
             loss = self.criterion(scores, labels)
             self.record_local_metric('loss', AverageMetric.many(loss))
+            loss = loss.mean()
+
+            preds = [self.class_list[idx] for idx in prediction_id]
+            labels_field = self.get_labels_field(batch['observations'])
+
+            if preds is not None and labels_field is not None:
+                labels_lst = self._get_labels(batch['observations'], labels_field)
+                self._update_confusion_matrix(preds, labels_lst)
 
         if self.opt.get('print_scores', False):
             return Output(preds, probs=probs.cpu())

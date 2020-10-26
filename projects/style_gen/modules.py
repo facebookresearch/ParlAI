@@ -358,7 +358,7 @@ class ClassificationMixin(Agent):
                 output = self.eval_step(batch)
 
         if output is not None:
-            # local metrics are automatically matched up
+            # local metrics are automatically matched up)
             self.match_batch(batch_reply, batch.valid_indices, output)
 
         # broadcast the metrics back
@@ -385,17 +385,5 @@ class ClassificationMixin(Agent):
             self.global_metrics.add('ltps', GlobalTimerMetric(0))
             self.global_metrics.add('ctps', GlobalTimerMetric(0))
             self.global_metrics.add('tps', GlobalTimerMetric(0))
-
-        preds = self._get_preds(batch_reply)
-        if 'labels' in observations[0]:
-            labels_field = 'labels'
-        elif 'eval_labels' in observations[0]:
-            labels_field = 'eval_labels'
-        else:
-            labels_field = None
-
-        if preds is not None and labels_field is not None:
-            labels_lst = self._get_labels(observations, labels_field)
-            self._update_confusion_matrix(preds, labels_lst)
 
         return batch_reply
