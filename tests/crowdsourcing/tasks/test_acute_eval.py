@@ -8,6 +8,7 @@ Test the ACUTE-Eval crowdsourcing task.
 """
 
 import os
+import tempfile
 import unittest
 from dataclasses import dataclass, field
 from typing import Any, List
@@ -42,6 +43,7 @@ class TestScriptConfig(ScriptConfig):
 def main(cfg: DictConfig) -> None:
 
     # Set up the mock server
+    cfg.mephisto.datapath = tempfile.mkdtemp()
     db, cfg = load_db_and_process_config(cfg)
     cfg.mephisto.architect.should_run_server = True
     operator = Operator(db)
