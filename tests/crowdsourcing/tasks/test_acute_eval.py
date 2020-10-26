@@ -41,11 +41,14 @@ class TestScriptConfig(ScriptConfig):
 @hydra.main(config_path=relative_task_directory, config_name="test_script_config")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
+    cfg.mephisto.architect.should_run_server = True
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
+    assert len(operator.supervisor.channels) == 1
+    channel = list(operator.supervisor.channels.keys())[0]
     print(OmegaConf.to_yaml(cfg))
-    print(operator.supervisor.channels[-1].job.architect.server)
-    # TODO: remove 2
+    print(operator.supervisor.channels[channel].job.architect.server)
+    # TODO: remove print statements
     # {{{TODO: do all per-turn testing and end-state testing}}}
 
 
