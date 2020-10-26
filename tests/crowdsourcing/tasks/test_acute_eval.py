@@ -13,13 +13,11 @@ from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from hydra.experimental import compose, initialize_config_dir
 from mephisto.core.hydra_config import register_script_config
 from mephisto.core.operator import Operator
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig, OmegaConf
 
-from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
 from parlai.crowdsourcing.tasks.acute_eval.run import (
     ScriptConfig,
     defaults,
@@ -32,7 +30,6 @@ test_defaults = defaults + [
     {'mephisto/provider': 'mock'},
 ]
 
-# common_prefix = os.path.commonpath([__file__, TASK_DIRECTORY])
 relative_task_directory = os.path.relpath(TASK_DIRECTORY, os.path.dirname(__file__))
 
 
@@ -58,9 +55,6 @@ class TestAcuteEval(unittest.TestCase):
     """
 
     def test_base_task(self):
-        # with initialize_config_dir(config_dir=os.path.join(TASK_DIRECTORY, 'conf')):
-        # overrides = [f'+mephisto/blueprint={BLUEPRINT_TYPE}', '+mephisto/architect=mock', '+mephisto/provider=mock', f'+task_dir={TASK_DIRECTORY}']
-        # cfg = compose(config_name='example', overrides=overrides)
         register_script_config(name='test_script_config', module=TestScriptConfig)
         main()
 
