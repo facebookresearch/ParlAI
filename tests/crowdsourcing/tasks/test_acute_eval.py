@@ -58,28 +58,6 @@ def main(cfg: DictConfig) -> None:
     print(OmegaConf.to_yaml(cfg))
     # TODO: remove print statement
 
-    # # Handle baseline setup
-    # task_runner = TaskRunnerClass(self.task_run, config, EMPTY_STATE)
-    # sup.register_job(self.architect, task_runner, self.provider)
-    # self.assertEqual(len(sup.channels), 1)
-    # channel_info = list(sup.channels.values())[0]
-    # self.assertIsNotNone(channel_info)
-    # self.assertTrue(channel_info.channel.is_alive())
-    # channel_id = channel_info.channel_id
-    # task_runner = channel_info.job.task_runner
-    # self.assertIsNotNone(channel_id)
-    # self.assertEqual(
-    #     len(self.architect.server.subs),
-    #     1,
-    #     "MockServer doesn't see registered channel",
-    # )
-    # self.assertIsNotNone(
-    #     self.architect.server.last_alive_packet,
-    #     "No alive packet received by server",
-    # )
-    # sup.launch_sending_thread()
-    # self.assertIsNotNone(sup.sending_thread)
-
     # Create a mock worker agent
     mock_worker_name = "MOCK_WORKER"
     server.register_mock_worker(mock_worker_name)
@@ -87,9 +65,17 @@ def main(cfg: DictConfig) -> None:
     worker_id = workers[0].db_id
     mock_agent_details = "FAKE_ASSIGNMENT"
     server.register_mock_agent(worker_id, mock_agent_details)
-    agent_id = db.find_agents()[0].db_id
+    agent_id_1 = db.find_agents()[0].db_id
+    import pdb
+
+    pdb.set_trace()
+
+    # server.send_agent_act(agent_id_1, {"text": "message1"})
+    # message = server.get_agent_message()
 
     print("SENDING_THREAD: ", sup.sending_thread)
+    print('RECEIVED MESSAGES: ', server.received_messages)
+    # TODO: remove block
 
     # {{{TODO: do all per-turn testing and end-state testing}}}
 
