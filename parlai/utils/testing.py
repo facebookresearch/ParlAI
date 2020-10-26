@@ -390,7 +390,6 @@ def display_model(opt) -> Tuple[str, str, str]:
 
 class AutoTeacherTest:
     def _safe(self, obj):
-        import random
         from parlai.core.message import Message
 
         if isinstance(obj, list):
@@ -403,7 +402,6 @@ class AutoTeacherTest:
                 if isinstance(obj[key], set):
                     obj[key] = sorted(list(obj[key]))
                 if len(obj[key]) > 20:
-                    rng = random.Random(42)
                     obj[key] = list(obj[key][:10]) + list(obj[key][-10:])
             if 'image' in obj:
                 # convert the image to base64 encoding so we can store it as a string
