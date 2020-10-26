@@ -1,0 +1,293 @@
+- - - episode_done: false
+      eval_labels:
+      - I am good, I just got off work and tired, I have two jobs.
+      id: convai2:normalized
+      label_candidates:
+      - Oh really? I am actually in high school and I am graduating as class of 2019!
+      - That's an interesting choice. I'd have to pick french fries
+      - I just got a pet fish for my 18th birthday yesterday from my parents.
+      - Yeah, well what about you?
+      - My favorite watch is the rolex? What is yours?
+      - What is in spain that's so interesting
+      - I don't like clowns. They are scary to a kid like me
+      - Poetry. Roses are red. Violet are...?
+      - My father is a member of the army, served for 10 years now.
+      - Oh I like mexican food, but my favorite food are cheeseburgers
+      - Hey there, are you a mother?
+      - It sure is. I'd like to see more of the city though.
+      - It is not so fun I have 2 friend who speak a different langues
+      - I'd like some honey though. Do you sell it?
+      - I am a recovering heavy drinker. Full time. How about you?
+      - Hi! I have three kids. How many do you have?
+      - Awesome! I own 2 dogs, love them
+      - Yes, my favorite is broccoli and tofu in a garlic sauce. Yum!
+      - Maybe he can skydive to see a better view
+      - I am good, I just got off work and tired, I have two jobs.
+      reward: 0
+      text: 'your persona: I read twenty books a year.
+
+        your persona: I''m a stunt double as my second job.
+
+        your persona: I only eat kosher.
+
+        your persona: I was raised in a single parent household.
+
+        Hello what are doing today?'
+    - episode_done: false
+      eval_labels:
+      - I'm doing great. Just relaxing with my two dogs.
+      id: convai2:normalized
+      label_candidates:
+      - Yes I do one of the reason I'm in a poly amorous relationship
+      - I really like oranges a lot
+      - Wow impressive. Not sure you would be impressed with my rainbow coloured hair
+      - Usually older generation, like ps1 and super nintendo. Do you watch twitch?
+      - I'm in law school, I will be practicing in manhattan when I graduate.
+      - What is your favorite type of music, mine is country music
+      - Congratulations! I'm a pro wrestler.
+      - I'm mostly good. Tired and some wicked heartburn. Is that over sharing? You?
+      - Me too, and I already have the long red hair. It goes to my waist.
+      - Just finished working in the supermarket
+      - Hey how are you today?
+      - Yes we do. I'm glad you like to workout.
+      - How are you doing today
+      - I'm trying. I do a lot of training. Four hours every day. Are you active?
+      - Really what teams. And who are you rooting for.
+      - Well, I did have cancer, but it is gone now.
+      - Only when we visit dad they come out. What do you do?
+      - I love wine, I had some with dinner, when we were in europe.
+      - India is not interesting for children. Only for adults.
+      - I'm doing great. Just relaxing with my two dogs.
+      reward: 0
+      text: 'your persona: I have two dogs.
+
+        your persona: I like to work on vintage cars.
+
+        your persona: My favorite music is country.
+
+        your persona: I own two vintage mustangs.
+
+        Hi! How are you doing tonight?'
+- - - episode_done: false
+      eval_labels:
+      - I rather read, I've read about 20 books this year.
+      id: convai2:normalized
+      label_candidates:
+      - Why have you not sent help?! The scorpions are stinging my legs! Ree!!!!!!!
+      - That is great I am expecting twins in two months. Will these be your first
+        kids?
+      - Do you live on a farm or ranch?
+      - Hi how are you doing tonight I am fine.
+      - I'd love to see her do that.
+      - I don't. But I am so glad you do something that brings you joy
+      - It is hard, buy my dog keeps me company. Do you have dogs?
+      - Sounds like a good plan, what would you like to teach?
+      - I like rap music and I also produce for music artists.
+      - Where do you work?
+      - I broke my arm so I can not drink coffee
+      - I meant mickey. Cool I've a lot of friends and love the playground. Do you?
+      - Oh, yes. I wish I could skate to school. I ride the bus instead.
+      - That is my idea of heaven. I love bunnies! I donate to a bunny charity too.
+      - I work on a freelance basis as an author, blogger and affiliate marketer.
+        And you?
+      - Like me? Would you go on vacation to the beach with me
+      - I don't let myself watch tv
+      - We can go for a trade that sounds awesome
+      - What part of the world is bratislava?
+      - I rather read, I've read about 20 books this year.
+      reward: 0
+      text: I just got done watching a horror movie
+    - episode_done: false
+      eval_labels:
+      - That's neat. What kind of volunteer work do you do?
+      id: convai2:normalized
+      label_candidates:
+      - I just wanted to stop talking to you really
+      - Yes! Another great way to stay warm!
+      - I'm good. How are you?
+      - Have you been tested for memory problems?
+      - I bet you have seen many many things.
+      - Also pizza, but with pepperoni. I cannot eat too much as I want to run a 5k.
+      - Oh. Like me. I don't go out much because of my water allergy
+      - I'm still in school waht about you
+      - That's okay, you need to build a translator.
+      - My service? You teach elementary school. You are the hero, here!!
+      - Oh I like mexican food, but my favorite food are cheeseburgers
+      - I'm a farmer. What about you.
+      - Hello, how are you tonight?
+      - That's so cool! I will teach you how to drive.
+      - I usually binge something in the background
+      - Alabama. I love it here.
+      - What kind of supernatural romances?
+      - I love seafood. What do you do, college, work?
+      - I live on a big horse farm, I was born and raised here.
+      - That's neat. What kind of volunteer work do you do?
+      reward: 0
+      text: Great. In my spare time I do volunteer work.
+- - - episode_done: false
+      eval_labels:
+      - But a good movie is always good.
+      id: convai2:normalized
+      label_candidates:
+      - Oh I'm sure they are
+      - That would be great! We just bought a house so no travel soon
+      - Lol, I must go too. The imelda marcos shoe collection on qvc is on
+      - I'm so sorry to hear that. My father also passed away. He drove for nascar.
+      - Yes we do. My hair also goes down to my waist
+      - I'm just fine. My name is priya, and you?
+      - Gotta celebrate! I'm so old, I recall when nobody owned a tv.
+      - Very carefully, did you get flooded in texas?
+      - With kids in my house I can not listen to rap anymore.
+      - I'm working on both of my vintage mustangs
+      - Yes, all descendants from christopher columbus love star wars.
+      - I have a cat mouse and a dog biscuit. What about you?
+      - Yes, you have said that. What do your parents do?
+      - Oh gosh another day just grateful.
+      - Good song and what your favorite beverage?
+      - I work from home doing internet searches
+      - This one time, this guy turned into a alien, and he teleported, nobody believes
+        me
+      - That is a great question, I have never tried! Where are you from?
+      - That is awesome. Are you scared there? I'm so scared of clowns.
+      - But a good movie is always good.
+      reward: 0
+      text: Wow! I do love a good horror movie. Loving this cooler weather
+    - episode_done: false
+      eval_labels:
+      - Good for you. Do you like vintage cars? I've two older mustangs.
+      id: convai2:normalized
+      label_candidates:
+      - 20 year old vegan college student, my favorite food is hummus, wow 100!
+      - Oh I like mexican food, but my favorite food are cheeseburgers
+      - Yeah I want to study french next
+      - Where are you from? I am from where my favorite rapper is from.
+      - Bet that makes you feel old. You need a couple of old mustangs like me
+      - I like music. My father taught me to play a lot of instruments
+      - Hello! How are you doing today?
+      - Not really. School was so boring, and they forced us to read boring stuff.
+      - Sounds fun, it would be a great idea
+      - I hear the ones in greenland are quite cool. Haha.
+      - Good idea, do anything fun on the weekends?
+      - I love retail! I go shopping almost every day!! I just avoid the food court.
+      - You will figure out what you want to do soon enough.
+      - I often volunteer at a local soup kitchen.
+      - Not yet, just got married and pretty busy on the farm
+      - Friend ye? I hardly know ye...
+      - Oh got to have my papaya.
+      - Hi, so do I but I am only little so I might spell things wrong!
+      - I learned how to cook when I was laid off and stayed home with my son
+      - Good for you. Do you like vintage cars? I've two older mustangs.
+      reward: 0
+      text: I work in a homeless shelter in my town.
+- - - episode_done: false
+      eval_labels:
+      - I work in the movies as well.
+      id: convai2:normalized
+      label_candidates:
+      - That is great! Are you going to college?
+      - Ugh. I do not think I could live with them.
+      - I sing folk music. My parents aren't supportive.
+      - I love piano music. Do you play jazz?
+      - Sure, your parents will have to take you here, I'm also a teacher in kindergarten
+      - That is nice, I need a new car, how is the bmw?
+      - All natural... Second time... Twins this time.
+      - One is a tabby yet overweight and the other is a black and white cat
+      - Go to national parks. Think about what I missed out on in high school. You?
+      - No. I'm too busy with my bees. I wish I had family I was close to.
+      - Nothing like a dog and a truck!
+      - Nope, I work in a hat shop 24 7. My name is sophie by the way.
+      - When I take over the world I'll grant bacon to everyone
+      - Wow that is awesome I'm trying to relax having triplets in 90 days
+      - I bet. What will be the first thing you will eat
+      - I like electricity and electronics. I'm a bartender
+      - Blue, I guess. What is yours?
+      - I must be too cause I enjoy my activites in the spring more
+      - I do not have any pets, but I may be interested in one
+      - I work in the movies as well.
+      reward: 0
+      text: Yes! My son is in junior high and I just started letting him watch them
+        too
+    - episode_done: false
+      eval_labels:
+      - Cars are my thing. Vintage cars. I love working on them. Wrestling? Do you
+        enjoy it?
+      id: convai2:normalized
+      label_candidates:
+      - Not really. She s a bad cook and we end up getting pollo loco a lot
+      - What you like to sale and exercise is good
+      - I do meditate, but not as often as I should. It helps me de stress.
+      - Don't be so eager to grow up its not as fun as you may think
+      - I sort of like to walk my own path. I don't fit the norm for sure.
+      - Yes, I sometimes use a loom for crochet too.
+      - Oh I have never been there. I have heard its pretty. I love walking in nature
+      - Oh wow! I have to go do my homework now. Have a nice day
+      - I was raised in somalia but now living in u. S.
+      - I too have cats. Two of them. I love them also.
+      - How was that possible since it was your dad who worked there, not you.
+      - Same here. I was born in 1981 but I have never had a drink.
+      - Thought this was over, guess not
+      - No. I don't like sports. I am going to business school in a year.
+      - Hey! My name is coach jon.
+      - I am good. Well depends on where you live
+      - Cool I love wearing skinny jeans with legging
+      - No, I am just a watch dealer. My family don't like it
+      - I am not a parent but I have a german shepherd. His name is barnaby
+      - Cars are my thing. Vintage cars. I love working on them. Wrestling? Do you
+        enjoy it?
+      reward: 0
+      text: Cool. Not really into cars. My day job is wrestling.
+- - - episode_done: false
+      eval_labels:
+      - Yes it is neat, I stunt double, it is so much fun and hard work.
+      id: convai2:normalized
+      label_candidates:
+      - Big city life to overwhelming too much pressure
+      - Frozen food is bad, full of nitrates.
+      - I like to take my dog for walks and sometimes I volunteer.
+      - Great I a blue sweater that I love and you sew it for me
+      - I just want to move out. They are always on my back.
+      - Oh wow that really sucks. And assistant marketing director
+      - Thanks! I like riding horses.
+      - Well at least some good came out of it. Hope everything is well for you
+      - Amazing. Do you study and languages
+      - I'm not active but love watching birds from indoors
+      - What do you call your fish? I'm drinking fancy tea
+      - Yes, I pray for her. I'm helping her paint her kitchen red, my favorite color.
+      - I'm from mexico. I'm moving into my home soon you?
+      - Nice, I like comic books as well. What position do you play in basketball.
+      - Do you have any? Mine is a black lab
+      - Out of work right now what do you do?
+      - They are yummy salty little fish. You should try them.
+      - I prefer my roller coasters and thrills.
+      - What sport do you enjoy?
+      - Yes it is neat, I stunt double, it is so much fun and hard work.
+      reward: 0
+      text: Neat!! I used to work in the human services field
+    - episode_done: false
+      eval_labels:
+      - I didn't think about the crowd aspect of wrestling. I do not like crowds.
+      id: convai2:normalized
+      label_candidates:
+      - That's nice, what other type of music you like
+      - Yes. The tacos there were amazing! Where do you live?
+      - I do, me and my husband both go to bible study every wednesday
+      - How are you? I am great. Going to ride my arabian horse.
+      - Oh wow! What is it about?
+      - So sorry. 5 years. And we live in the boondocks.
+      - I am yes, when I was born my heart was on the outside
+      - I want to use it as a body double
+      - Just go out once in a while, who will love it
+      - Yes it hurts so much, I keep some in my library at home.
+      - Thanks but it makes my job at the bank really hard.
+      - No, can you? I am young so I haven't got that skill yet.
+      - That makes me 10 years older than you. My parents still treat me like I am
+        9
+      - Thanks you! How has your weekend been?
+      - Hi there! Do you have any pets?
+      - Ah I feel you, my boyfriend broke up with me two months ago and I am sad.
+      - That's cool. You should know a lot about history
+      - Hi. I am working as a custodian right now to help pay bills.
+      - A pitbull.. I love pits. Do u have pets
+      - I didn't think about the crowd aspect of wrestling. I do not like crowds.
+      reward: 0
+      text: Yes, I love the crowds, getting to know people.

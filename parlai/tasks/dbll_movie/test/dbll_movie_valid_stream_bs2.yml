@@ -1,0 +1,274 @@
+- - - episode_done: true
+      eval_labels:
+      - Once Were Warriors, Tracker, River Queen
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what movies did Temuera Morrison act in?
+    - episode_done: true
+      eval_labels:
+      - Weekend
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Tom Cullen act in?
+- - - episode_done: true
+      eval_labels:
+      - Alice Adams, Death Takes a Holiday, The Little Colonel
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what movies did Evelyn Venable act in?
+    - episode_done: true
+      eval_labels:
+      - Half Nelson
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what movies was Shareeka Epps an actor in?
+- - - episode_done: true
+      eval_labels:
+      - Ambush, Dog Nail Clipper, On the Road to Emmaus
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Peter Franzén appear in?
+    - episode_done: true
+      eval_labels:
+      - American Graffiti, The Buddy Holly Story, Never Cry Wolf, The Beast, Fifty/Fifty
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what movies was Charles Martin Smith an actor in?
+- - - episode_done: true
+      eval_labels:
+      - To Be or Not to Be, Caddyshack II, Written on the Wind, Uncommon Valor, The
+        High and the Mighty, The Last Voyage, Good Morning, Miss Dove, The Caretakers,
+        Great Day in the Morning
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Robert Stack appear in?
+    - episode_done: true
+      eval_labels:
+      - Caligula
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Teresa Ann Savoy appear in?
+- - - episode_done: true
+      eval_labels:
+      - I Heart Huckabees, All of Me, Big Business, The Incredible Shrinking Woman,
+        The Late Show, Getting Away with Murder, Moment by Moment, An Apology to Elephants
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what films did Lily Tomlin act in?
+    - episode_done: true
+      eval_labels:
+      - In Harm's Way, I Married a Monster from Outer Space, The Cardinal, The Story
+        of Ruth, The Unholy Wife
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what movies did Tom Tryon act in?

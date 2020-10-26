@@ -1,0 +1,56 @@
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: i am great ! i am a freshman in college , and its so exciting
+      !
+
+      Hypothesis: i am living at home but hope to live in the dorms next year .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: reading in french mostly yeah .
+
+      Hypothesis: i spend time with books .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: the night air is so awesome .
+
+      Hypothesis: i m an ovo vegetarian .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: i just began telecommuting .
+
+      Hypothesis: i am a driver for a local bakery .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: i used to be a meat eater but i am now a vegan .
+
+      Hypothesis: my favorite sport is hockey .'

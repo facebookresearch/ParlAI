@@ -1,0 +1,83 @@
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Some what ?
+      id: dailydialog:no_start
+      text: Hey man , you wanna buy some weed ?
+      topic: politics
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - What for ?
+      id: dailydialog:no_start
+      text: The taxi drivers are on strike again .
+      topic: ordinary_life
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Oh , umm , no thanks .
+      id: dailydialog:no_start
+      text: Weed ! You know ? Pot , Ganja , Mary Jane some chronic !
+      topic: politics
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: true
+      eval_labels:
+      - It is really a hot potato .
+      id: dailydialog:no_start
+      text: They want the government to reduce the price of the gasoline .
+      topic: ordinary_life
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - No , I am ok , really .
+      id: dailydialog:no_start
+      text: I also have blow if you prefer to do a few lines .
+      topic: politics
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - That's excellent . How have you managed that ?
+      id: dailydialog:no_start
+      text: We've managed to reduce our energy consumption in our factory by about
+        15 per cent in the last two years .
+      topic: work
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Do you really have all of these drugs ? Where do you get them from ?
+      id: dailydialog:no_start
+      text: Come on man ! I even got dope and acid ! Try some !
+      topic: politics
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - What does that mean exactly ?
+      id: dailydialog:no_start
+      text: Mainly because we've invested in a heat recovery system .
+      topic: work
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Sounds good ! Let ' s see , I want .
+      id: dailydialog:no_start
+      text: I got my connections ! Just tell me what you want and I ' ll even give
+        you one ounce for free .
+      topic: politics
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: true
+      eval_labels:
+      - What other sources of energy do you use ?
+      id: dailydialog:no_start
+      text: Well , we use the exhaust gases from our printing presses to provide energy
+        to heat our dryers .
+      topic: work

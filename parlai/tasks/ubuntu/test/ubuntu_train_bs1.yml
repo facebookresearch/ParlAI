@@ -1,0 +1,57 @@
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - so what is slow?  I just got back so I missed most of the background .
+    text: "the smb.conf is for smb/cifs shares that it is controlling, it has no effect\
+      \ on cifs shares that you are a client for . \n That's what I figured. So that\
+      \ means, speeding up cifs mounts will need to be done elsewhere. . \n correct.\
+      \  chances the problem is your network or disk IO . \n I don't know if that's\
+      \ the case, since I can copy to both of these systems at the exact same rate.\
+      \ ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - qtparted doesn't see my HD .
+    text: "can i install ubuntu live to hard drive . \n no ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - it makes no copy when you cd /media/ipod you really cd into GRANT . hence symbolic
+      . not sure what you are trying to do .
+    text: "and lets say pass is..123 . o o . k . mount -o knucks=123 /dev/blah /mnt/blah\
+      \ ? . ok . why is there both a /dev/blah AND a /mnt/blah? . im trying to mount\
+      \ an ipod . its on /dev/sda2 . anyone here successfully get thier ipod working?\
+      \ . how do i delete a dir . \n rm -rf /path/name_of_dir . \n thx . how do i\
+      \ make my /media/GRANT DOBSO point to /media/ipod ? . \n man ln . \n is it just\
+      \ . ln /media/GRANT\\DOBSO /media/ipod ? . \n ln -s . \n i dont think that worked\
+      \ . that put the folder in /media/ipoid . \n where do you want it? . \n i want\
+      \ /media/GRANT DOBSO to point to /media/ipod . i want a prog to think that grant\
+      \ dobso is really ipod . \n ln -s /media/GRANT* /media/ipod . \n thx . no that\
+      \ did the same thing . unless its supposed to put a folder in the other folder\
+      \ . \n /media/ipod would now be a symbolic link to media/GRANt . \n well im\
+      \ looking at it..and it adds a symbolic link..but the link is on the grant folder\
+      \ IN ipod . so the grantfolder has the symbolic link . \n im not sure what you\
+      \ mean . \n it doesnt seem to be working . it makes a copy of grant and throws\
+      \ it into ipod and the symbolic link is on the grant folder in ipod ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - sudo apt-get install acpi .
+    text: "@balloza    I can see 'Spark\" type of icon when ALWAYS SHOW option is\
+      \ used.It is not displaying how much battery is left . no toshiba . @balloza\
+      \ how do you chk the battery . ? . k . \n sudo acpi -b . \n k .   what is the\
+      \ use of this command . ? . \n it will tell you the status of your battery .\
+      \ \n   command not found when I tried it ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - onboard intel i915 . it  auto detects it in ubuntu's ADMIN/Screen & Graphics
+      program . is there a way to get ubuntu to detect things like it never knew before?  For
+      example on fist install, things were fine .
+    text: "how come i can't record a cdimage iso to a dvd? . i don't have any blank\
+      \ cd's left, so i tried to burn ubuntu to a blank dvd, and it won't burn . gnomebaker\
+      \ says please insert black cd . \n tried k3b ? . \n no go on there too . \n\
+      \ file *.iso . I wonder what are the plans for the future, 10000 people in here\
+      \ would get pretty strange . glxinfo |grep vendor . \n Mesa Project OpenGL .\
+      \ \n your video driver's not loaded, you're using the default software driver\
+      \ . \n what do i do to change that? . \n what's your vid card? ."

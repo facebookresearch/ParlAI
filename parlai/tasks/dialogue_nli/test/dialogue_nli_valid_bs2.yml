@@ -1,0 +1,112 @@
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i prefer basketball . team sports are fun .
+
+        Hypothesis: i like playing basketball .'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i like to make things too . i am working on a robot .
+
+        Hypothesis: i helped design the game starcraft .'
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: great whats your favorite color ? mine is yellow .
+
+        Hypothesis: my favorite color is navy blue .'
+    - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i worked to make a popular fun program to play on consoles .
+
+        Hypothesis: i am a musician and hope to make it big some day .'
+- - - episode_done: true
+      eval_labels:
+      - neutral
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i am all about fitness . i used to be a gym teacher .
+
+        Hypothesis: i volunteer at a soup kitchen .'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: a camero would be okay but i like my dads mustang a lot .
+
+        Hypothesis: i am very popular .'
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: good i live in ohio working as a doctor looking for a job in
+        california .
+
+        Hypothesis: i am a cashier .'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: music makes me happy , my favorite is folk . . .
+
+        Hypothesis: my favorite type of music to sing is folk music .'
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: it is chilly here on my parents farm that i currently work on
+        .
+
+        Hypothesis: i work in the public sector .'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: why is that ? i am also a musician .
+
+        Hypothesis: i am a musician .'

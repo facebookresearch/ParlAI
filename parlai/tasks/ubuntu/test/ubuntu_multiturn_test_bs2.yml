@@ -1,0 +1,68 @@
+- - - episode_done: false
+      eval_labels:
+      - 'looks like it used to be exported by lightdm, but the line had the comment
+        "// FIXME: Is this required?" so I guess it isn''t surprising it is gone'
+      id: ubuntu:multiturn
+      text: anyone knows why my stock oneiric exports env var 'USERNAME'?  I mean
+        what is that used for?  I know of $USER but not $USERNAME .  My precise install
+        doesn't export USERNAME
+    - episode_done: false
+      eval_labels:
+      - thanks!  How the heck did you figure that out?
+      id: ubuntu:multiturn
+      text: 'looks like it used to be exported by lightdm, but the line had the comment
+        "// FIXME: Is this required?" so I guess it isn''t surprising it is gone'
+- - - episode_done: true
+      eval_labels:
+      - https://bugs.launchpad.net/lightdm/+bug/864109/comments/3
+      id: ubuntu:multiturn
+      text: thanks!  How the heck did you figure that out?
+    - episode_done: true
+      eval_labels:
+      - nice thanks! .
+      id: ubuntu:multiturn
+      text: https://bugs.launchpad.net/lightdm/+bug/864109/comments/3
+- - - episode_done: true
+      eval_labels:
+      - backup your data, and re-install without encryption "might" be the easiest
+        method
+      id: ubuntu:multiturn
+      text: i set up my hd such that i have to type a passphrase to access it at boot.
+        how can i remove that passwrd, and just boot up normal. i did this at install,
+        it works fine, just tired of having reboots where i need to be at terminal
+        to type passwd in. help?
+    - episode_done: true
+      eval_labels:
+      - so you dont know, ok, anyone else? . you are like, yah my mouse doesnt work,
+        reinstall your os lolol what a joke .
+      id: ubuntu:multiturn
+      text: backup your data, and re-install without encryption "might" be the easiest
+        method
+- - - episode_done: true
+      eval_labels:
+      - not that ive ever heard of..  normal ubutnu should work on an intel based
+        mac. there is the PPC version also. .  you want total control? or what are
+        you wanting exactly?
+      id: ubuntu:multiturn
+      text: im trying to use ubuntu on my macbook pro retina . i read in the forums
+        that ubuntu has a apple version now?
+    - episode_done: true
+      eval_labels:
+      - just wondering how it runs .
+      id: ubuntu:multiturn
+      text: not that ive ever heard of..  normal ubutnu should work on an intel based
+        mac. there is the PPC version also. .  you want total control? or what are
+        you wanting exactly?
+- - - episode_done: false
+      eval_labels:
+      - you may need to create a new volume
+      id: ubuntu:multiturn
+      text: no suggestions? . links? . how can i remove luks passphrase at boot. i
+        dont want to use feature anymore...
+    - episode_done: false
+      eval_labels:
+      - that leads me to the next question lol... i dont know how to create new volumes
+        exactly in cmdline, usually i use a gui. im just trying to access this server
+        via usb loaded with next os im going to load, the luks pw is stopping me
+      id: ubuntu:multiturn
+      text: you may need to create a new volume

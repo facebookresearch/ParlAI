@@ -1,0 +1,70 @@
+- - - episode_done: true
+      id: iwslt14
+      labels:
+      - what are your plans ? mit ?
+      text: was sind deine pl@@ äne ? mit ?
+    - episode_done: true
+      id: iwslt14
+      labels:
+      - good , how about the person behind her ?
+      text: gut , was ist mit der person hinter ihr ?
+- - - episode_done: true
+      id: iwslt14
+      labels:
+      - in fact , i use basically the same technology as this 14@@ th-@@ century classroom
+        .
+      text: tatsächlich ist es im grunde dieselbe methode , wie im 14@@ . jahrhundert
+        .
+    - episode_done: true
+      id: iwslt14
+      labels:
+      - you just got@@ ta carry this thing around .
+      text: alles , was sie brauchen ist dieses ding .
+- - - episode_done: true
+      id: iwslt14
+      labels:
+      - but i don &apos;t believe in hope without en@@ dea@@ vor .
+      text: aber ich glaube nicht , dass hoffen ohne an@@ streng@@ ung funktioniert
+        .
+    - episode_done: true
+      id: iwslt14
+      labels:
+      - in a classroom with a rever@@ ber@@ ation time of 1.@@ 2 seconds , which is
+        pretty common , this is what it sounds like .
+      text: in einem klassen@@ raum mit einer nach@@ hall@@ zeit von 1,@@ 2 sekunden
+        , was ziemlich normal ist , klingt es so .
+- - - episode_done: true
+      id: iwslt14
+      labels:
+      - and i remember my very first patient in that series continu@@ ed to tell me
+        more history during what was meant to be the physical ex@@ am visit .
+      text: ich erinnere mich gut daran , dass der erste patient in diesem bereich
+        weiter erzählen wollte während der si@@ tzung für die phy@@ sische untersuchung
+        .
+    - episode_done: true
+      id: iwslt14
+      labels:
+      - so i think practic@@ ality is one case where it &apos;s worth teaching people
+        by hand .
+      text: ich denke , dass es sich aus diesem grund lo@@ hnt , den leuten das rech@@
+        nen von hand bei@@ zubringen .
+- - - episode_done: true
+      id: iwslt14
+      labels:
+      - and what &apos;s really happened over the period of time that i &apos;ve been
+        working in inten@@ sive care is that the people whose lives we started saving
+        back in the &apos; 7@@ 0s , &apos; 8@@ 0s , and &apos; 9@@ 0s , are now coming
+        to die in the 21@@ st century of diseases that we no longer have the answers
+        to in quite the way we did then .
+      text: 'im laufe meiner tä@@ tigkeit in der intensi@@ v@@ medizin geschah in
+        wahrheit folgendes : die menschen , deren leben wir seit den 7@@ 0ern ger@@
+        et@@ tet haben , werden im 21. jahrhundert an krankheiten sterben , auf die
+        wir – im gegensatz zu früher – keine antworten mehr haben .'
+    - episode_done: true
+      id: iwslt14
+      labels:
+      - now i should conf@@ ess that as &#91; far as &#93; i &apos;m concerned this
+        would be an ab@@ om@@ ination if it em@@ it@@ ted not one partic@@ le of carbon
+        .
+      text: nun muss ich ge@@ stehen , dass dies für mich auch dann ein gre@@ u@@
+        el wäre , wenn es nicht ein teilchen kohlen@@ stoff ab@@ gäbe .

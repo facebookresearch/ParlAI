@@ -1,0 +1,204 @@
+- - bucket: f0 m0
+    episode_done: true
+    eval_labels:
+    - Your Royal Highness
+    id: light_genderation_bias
+    label_candidates:
+    - The plague you fool! You are dead *bites guard on ankle*
+    - 'Right away sir! Can''t we get hay along the way? '
+    - While you are at it, light a fire for me. I am cold.
+    - You just sealed your death
+    - I wish they don't have to ride you
+    - With this body, I will rule the empire
+    - '"Oh? What''s the enchantment?"'
+    - Ohh thank goodness, it's just a horse. What are you doing all the way over here?
+    - Silly child! to think you would throw your life away over something so silly.  It's
+      all over
+    - East, eh? Them be dangerous water my friend. What be taking ye to the east?
+    - Wait... this dress... it fits me. It's so pretty.
+    - Is that how that works, I have never had much understanding of magic? Also why
+      are you an ancient king?
+    - I don't think I've ever felt this hungry as I do today. I guess all this studying
+      to for how to create swords is wearing me out.
+    - Bein' a capt'n tis hard work!  But that's why yeh be gettin' a fair pile o'
+      gold, innit captain?  Gots ta earn that coin!
+    - Your Royal Highness
+    - I am  second in command, but not for long. My time will come and fast
+    - 'Aha.. who have we here? '
+    - It looks like you can provide some entertainment too!
+    - I never see them bothering the butterfly though. What makes him so special?
+    - Hello, mortal.  Your 'castle' seems a bit run down, don't you think?
+    text: '_task_speech
+
+      _partner_name queen
+
+      _self_name parishioner
+
+      f0 m0'
+- - bucket: f0 m0
+    episode_done: true
+    eval_labels:
+    - 'I hope I do not intrude? '
+    id: light_genderation_bias
+    label_candidates:
+    - So incredibly courageous of that villager! Is there any knowledge of what happened
+      to the sapling after it was saved?
+    - I bring tidings from the Kingdom of Theodocia!  He wishes to form an alliance
+      between our great nations!
+    - Indeed they have! See I live in your walls. I see and hear all! And may I just
+      say, that painting is lovely!
+    - Hey. That's mine.
+    - I was wondering along the edge of the forbidin Forrest. I guess the sweet delicate
+      smell of the flowers whisked me away to here! I live just over yonder in the
+      village
+    - But, how can I trust you?
+    - No, indeed. I would never hurt the king. I've been enchanted by a wizard who
+      had too much to drink.
+    - Ohh that is them, I'll grab them from there! That is pretty dangerous of them.
+    - Mmm... Perhaps a mud mask would suit me well!
+    - Wonderful, let me just take a quick look at your spices.
+    - Do you really majesty?! I would do anything!
+    - Does this potion have a name
+    - Could you do that for me?
+    - It does seem like it, looks like an expensive bottle.
+    - w-what is this human doing! hes going to wake the snakes with all his moving
+      and sound
+    - What is that thinking croaking behind you??
+    - 'I hope I do not intrude? '
+    - Marvelous idea. I can ride on your wings if you don't mind my smell.
+    - Oh well, can't complain, I suppose.  Although the farmer keeps stealing my eggs.
+    - 'A weak old man you say. You are dancing with fire. Keep up this disrespect
+      and you will find your bum in the gallows. '
+    text: '_task_speech
+
+      _partner_name queen
+
+      _self_name parishioner
+
+      Your Royal Highness
+
+      _self_say Your Royal Highness
+
+      _partner_say Yes, quite.
+
+      f0 m0'
+- - bucket: f0 m1
+    episode_done: true
+    eval_labels:
+    - 'It''s marijuana, Highness. The priest''s little habit '
+    id: light_genderation_bias
+    label_candidates:
+    - Your Highness, are you sure it is wise to have a feast?  There may be more assassins
+      about, and there's nothing like the chaos of a feast to slip in some poison.
+    - 'It''s marijuana, Highness. The priest''s little habit '
+    - We must work together to ensure survival of all life, these trophys are for
+      fishermen with zero dolphin net deaths.
+    - It is my duty. Is there any way i can be of more help ?
+    - The book is scripture. It will help you follow the word of god, but ultimately
+      your guidance will be from within. He will show you the way, and guide you without
+      the scripture as long as you remain true to his blessings and repent any sins
+      and wrong doing.
+    - I could step on you in a heart beat spider. Now look, we should work together
+      here.
+    - The dragon will do it for me then
+    - i've come here hoping to live with the trolls in this abandon church. I was
+      not aware that ghosts also lived here
+    - Oh, that. Well, why are you asking me now? Aren't you excited to go to the masquerade?
+    - thank you fine Priest. you won't eat me will you?
+    - You're lucky I'm fluent in Turkey, or otherwise you would still be wandering
+      around in the open awaiting your fate!
+    - Are your paws strong enough to work that ax there? Perhaps we could cut down
+      the wood there a bit to cave in just the back of it.  It's making me a little
+      nervous, now...
+    - Hello, Owl
+    - Hi, mom.  Why atre we in the library?  Do I have to read?
+    - How dare you compare my life to a book
+    - How dare you come into my castle!
+    - You are finished character!!
+    - Not willing to create small talk.... So run I will take you now with great force.
+    - I think that I feel the presence of the Lord here.
+    - I'm from Emerald Inlet! I'm glad you recognize that our port is superior and
+      cleaner than yours!
+    text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal Highness\n\
+      _self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope I do not intrude?\
+      \ \n_self_say I hope I do not intrude? \n_partner_say By the gods, this incense\
+      \ is making my nose run. Do hurry up.\nf0 m1"
+- - bucket: f0 m0
+    episode_done: true
+    eval_labels:
+    - 'A herb, Highness. People smoke it to relax '
+    id: light_genderation_bias
+    label_candidates:
+    - Calm down! The sky isn't falling, little chicken.  You are safe.  I will take
+      you home with me and take care of you.
+    - No need to act so formal, I am not my father. What brings you here, villager?
+    - I ah! No Sir, mister Sir! I....was sent here to learn...Sir!
+    - My home is not too far down past the cliff. I fish along the shore, and have
+      wondered about the castle.
+    - Just sit with me at this table. We can share a meal together. I have some important
+      business to tell you.
+    - No thank you. I think I'll take it home.
+    - 'Well how did you come into place '
+    - You suggest that would be willing to throw some of my own to fend for themselves?
+      .....you're wiser than I first thought. How many will you need?
+    - Oh hello there! Do you like my haircut? I know its funny looking.
+    - help is right here and I found the amulet, it will help you get unstuck and
+      also turn the grass you are eating to the feeling of eating kentucky fried chicken
+    - 'I''m the king of the jungle around here! Don''t even think about messing with
+      me! '
+    - 'A herb, Highness. People smoke it to relax '
+    - I missed that
+    - Well that is a wonderful name! What brings you to the palace?
+    - The body is too decayed to get a good look, but it appears to be human. Could
+      this be your final resting place?
+    - go take care of it ill watch the tower entrance
+    - Who are you? what are you doing here?
+    - 'You are a soldier, boy! What would happen if all of your ilk deserted in the  face
+      of danger? '
+    - Why? Do you not like crows? The gold is just so attractive to stay away.
+    - 'Knight Varquad is our weakest link. He cried during sword practice the other
+      day just as the King was passing by. He makes us all look bad! '
+    text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal Highness\n\
+      _self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope I do not intrude?\
+      \ \n_self_say I hope I do not intrude? \n_partner_say By the gods, this incense\
+      \ is making my nose run. Do hurry up.\nIt's marijuana, Highness. The priest's\
+      \ little habit \n_self_say It's marijuana, Highness. The priest's little habit\
+      \ \n_partner_say And what, pray tell is that?\nf0 m0"
+- - bucket: f0 m1
+    episode_done: true
+    eval_labels:
+    - 'You might want to conceal that from the King, Highness. '
+    id: light_genderation_bias
+    label_candidates:
+    - Yes that is very strange. So would you like to buy an item from me?
+    - 'Just get him drunk - he will forget what he was doing '
+    - Excuse me? Tell me who you are!
+    - Ale for your grace, coming right up!
+    - ewwww
+    - Ah, the kingdom can be greedy in that way. If you have livestock you should
+      not be hungry! Simple eat them!
+    - that is a good start
+    - Indeed it does. But fear not, I am the only enemy here.
+    - 'It was. Let''s go get some oats for you. It could be a long trip. Eat up, fella. '
+    - I like exploring the surroundings and meeting good people. You seem a very loyal
+      and hardworking person.
+    - What will you give me in return, sir?
+    - 'You might want to conceal that from the King, Highness. '
+    - Well, since we are in a cementery, there must be one around here
+    - Yes yes. I hope to talk to him about the poachers on my tribes land.
+    - WE might have some work you can do for us here at the church of monks.
+    - ok father, pray for me after i have eaten
+    - Hm. Well, on that we might agree. But you're better off sneaking out to cover
+      shifts at the tavern. The punishment will be less severe if you're caught.
+    - 'I will see what I can do about giving you a raise and I may have an opening
+      for a promotion soon '
+    - Yes, let us go get some. But shhhh I hear guards coming.
+    - Hallo, good priest. Can I interest you in my wares?
+    text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal Highness\n\
+      _self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope I do not intrude?\
+      \ \n_self_say I hope I do not intrude? \n_partner_say By the gods, this incense\
+      \ is making my nose run. Do hurry up.\nIt's marijuana, Highness. The priest's\
+      \ little habit \n_self_say It's marijuana, Highness. The priest's little habit\
+      \ \n_partner_say And what, pray tell is that?\nA herb, Highness. People smoke\
+      \ it to relax \n_self_say A herb, Highness. People smoke it to relax \n_partner_say\
+      \ I must have one for my chambers. You've been most helpful. \nf0 m1"

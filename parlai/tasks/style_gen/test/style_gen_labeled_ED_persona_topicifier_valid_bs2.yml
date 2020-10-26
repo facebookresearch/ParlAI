@@ -1,0 +1,461 @@
+- - - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: terrified
+      episode_done: false
+      eval_labels:
+      - Are you fine now?
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - It's amazing how many feelings and memories mementos like that can bring back.
+      - Good for you! There is nothing wrong or uncool about short hair.
+      - The loss of a pet is heartbreaking. I know how you feel. How old was Trevor.
+      - I guess that was what you call a temporary situation. Sometimes moving on
+        is required.
+      - 'That''s great news, well done. '
+      - Oh nice, where are you going?
+      - Never late you know!
+      - Yes,i am
+      - That sounds amazing. What's your favorite beach to go to?
+      - Oh that sounds even tougher.  It is a long time but I hope it flies by for
+        you and your hubby is back home again.
+      - It is, everything has to be balanced just right, or else we feel it.
+      - Oh my, I hope that doesn't mean more workload for you.
+      - That's too bad. What happened? Is everyone OK?
+      - That is good. Where you running late
+      - 'That makes all the difference. I am glad you were able to get out of that
+        position. '
+      - Yea I know that feel, outside of a few people I knew nearly know one and avoided
+        lots of people cause no one cared
+      - It seems most responsible to alert someone to clean it.
+      - have you asked your friends for family?
+      - I love math, good luck with your exams than.
+      - I am not sure I would do well in that house
+      personality: Questioning
+      prepend_cand: None
+      prepend_ctx: None
+      situation: Today,as i was leaving for work in the morning,i had a tire burst
+        in the middle of a busy road. That scared the hell out of me!
+      text: 'your persona: i''m scared of clowns.
+
+        your persona: i live on the third floor in an apartment.
+
+        your persona: i''ve two roommates.
+
+        your persona: i like to cook.
+
+        your persona: i have two dogs.
+
+        Cooking
+
+        Today,as i was leaving for work in the morning,i had a tire burst in the middle
+        of a busy road. That scared the hell out of me!'
+    - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: surprised
+      episode_done: false
+      eval_labels:
+      - That's funny, hope he didn't give you a heart attack.
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - o no what did you do?
+      - I definitely recommend getting some mace and a pocket knife. Stay safe out
+        there!
+      - You only get to do it once?
+      - I'm glad you didn't hit the dog!  Did he jump out at you suddenly?
+      - I hate getting pulled over too. Especailly for something silly like being
+        a couple of miles an hour over the speed limit
+      - How'd it go
+      - I agree.. Did something happen?
+      - I agree, you need money for everything these days and it controls us.
+      - 'That does sound like a really fun job. I also work freelance and would also
+        like something more stable. '
+      - Who did you go see? And are you still friends with all the same people? I
+        wonder if any of them kept their ticket stubs too.
+      - how did it go
+      - 'That must be so much fun. I have never surfed but love to be on a boat. '
+      - That's a good idea. I haven't done that in years. I always feel like I barely
+        dodge a bullet by not getting it.
+      - That's great! It's definitely a good thing when you can be yourself.
+      - Congratulations!  I wish I could be published.
+      - I don't know. You should have told hime when it happended. Just do it and
+        get uit out of the way so you both can move past it.
+      - That's great! Are you going to join your friends at the park?
+      - I like my alone time too. What do you enjoy doing by yourself?
+      - I understand but try not to be jealous. Good things will come to you to in
+        its own time
+      - i hope you do really well
+      personality: Humorous
+      prepend_cand: None
+      prepend_ctx: None
+      situation: 'I was walking through my hallway a few week ago, and my son was
+        hiding under the table and grabbed my ankle. I thought i was got. '
+      text: 'your persona: i like to watch make up tutorials in youtube.
+
+        your persona: i started taking beauty classes too.
+
+        your persona: through them i ve learned to make up myself and others.
+
+        your persona: i ve reached 50k subscribers !.
+
+        your persona: recently i started a youtube channel where i share make up tutorials
+        too.
+
+        Influencer marketing
+
+        A few weeks ago, I was walking through my hallway, minding my own business,
+        when all of a sudden a hand reached out from under a table and grabbed my
+        ankle. I was so suprised. I thought i was got. Turns out, it was my son. '
+- - - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: terrified
+      episode_done: true
+      eval_labels:
+      - Cool :) Is your car damaged a lot?
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - I've actually never gone there. What's it like?
+      - College is when the tear will start to flow. I love children.
+      - Ho, I am sorry to hear that.
+      - 'I think it''s very common that we take things for granted. '
+      - That's awesome! I'm very excited for you this is a good event for you!
+      - What kind of con was it
+      - Personally I'm a huge fan of red velvet, but black forest is amazing too!
+      - That's interesting. Are you okay?
+      - A fluffy white one? How amazing!
+      - Thats so awesome! Congrats! I am hoping to get there soon.  I have a lot to
+        be thankful for but I know I need to work on just a little bit before I am
+        fully content.
+      - Well thank you as well.
+      - 'as long as the cake is funfetti i am more than there '
+      - I don't understand the context of this conversation.
+      - well how did it go? did you do well?
+      - It ain't so bad. I'm sure you'll make a few new friends and everything will
+        be just fine.
+      - thats better, but sorry for the disappointment she had caused
+      - Sorry, that was an error! Any way over to your conversation.Who did you cut
+        off that made you feel bad?
+      - Everyone can! Just gotta try.
+      - That's always a good thing. It means you should get on great with your neighbors.
+      - That's always tough. It's so hard to tell what other factors come into play
+        in situations like that. Are you happy where you're currently at, or still
+        looking?
+      personality: Cute
+      prepend_cand: None
+      prepend_ctx: None
+      situation: Today,as i was leaving for work in the morning,i had a tire burst
+        in the middle of a busy road. That scared the hell out of me!
+      text: Yeah,i'm doing alright now, but with minor injuries.
+    - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: surprised
+      episode_done: true
+      eval_labels:
+      - I would probably scream also.
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - 'That really does make it special. I''m glad you have that. '
+      - It must've have been. Glad they are okay now.
+      - Well sometimes companies make mistakes. I doubt it's anything you did.
+      - Oh no, I'm so so sorry. I've always had at least one pet throughout my life,
+        and they're truly part of the family.
+      - Wow. That must suck. Do you like the band incubus? I missed them a couple
+        of times but I saw them this year
+      - I can't play those kinds of games. Too spooky for me.
+      - I think your boss should give you more recognition in that case!
+      - That's always a good thing. It means you should get on great with your neighbors.
+      - Yeah, I had my Commodore 64 and Amiga in the late 80's. Still, the games were
+        great when they worked!
+      - That's ok, you did the right thing. It probably happens to lots of people.
+      - Awesome! What are you going to see?
+      - What kind of food does it serve? Sounds wonderful!
+      - Oh no! What's wrong with your dad?
+      - oh god yes i know what you mean, any ideas what you wanna do ?
+      - Hopefully you'll able to get it all sorted out soon.  I'm sure when it's done
+        it'll be a beautiful house.
+      - That would be bad you should double check before you leave
+      - I hope he continues to do well.
+      - You can only do so much.  Next time I'd just let him drink on his own.
+      - I am sure you will meet them
+      - Wow thats nice.  What do you drive?
+      personality: Shy
+      prepend_cand: None
+      prepend_ctx: None
+      situation: 'I was walking through my hallway a few week ago, and my son was
+        hiding under the table and grabbed my ankle. I thought i was got. '
+      text: 'I may have let out a scream that will have him question my manhood for
+        the rest of our lives, lol. '
+- - - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: excited
+      episode_done: false
+      eval_labels:
+      - 'Wow! That sounds amazing. Where are you going? '
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - What kind of school was she at before?
+      - Yes, I hate those kind of people. They have nothing to do expect lying about
+        other people.
+      - Aww, you got to admit that is so cute as well
+      - Oh no!! How did you dry them?
+      - I am sorry to hear that, what happened?
+      - Everyone handles stress differently. My anxiety gets so High I sometimes cancel
+        my plans.
+      - That is good, hopefully you find your soulmate.
+      - oh god, what do you do at that time
+      - They really can't. It's still no excuse though.
+      - Yeah, that is a hard one to deal with.  Maybe you should give it back so you
+        will not feel bad about yourself.
+      - what did she get sick off , im sorry to hear that your a great to your wife
+      - Oh my just the opposite LOL
+      - I would make a complaint to the principal if I were you!
+      - Yeah, that feeling will change when you see him coming home with a huge smile
+        on his face!
+      - Where are you located ?
+      - Have you talked to him about it?
+      - 'They say dogs are mans best friend. '
+      - That is terrible. How long have you had this pet?
+      - That's so exciting! Have you run a marathon before?
+      - woohoo! you are one lucky child!
+      personality: Exciting
+      prepend_cand: None
+      prepend_ctx: None
+      situation: I'm overly excited today because will be flying outside the country
+        for the first time tomorrow.
+      text: 'your persona: i''d like to spend more time with my family.
+
+        your persona: i like spending time with friends playing sports and going to
+        country concerts.
+
+        your persona: i graduated with a business degree , and marketing is all that
+        i really enjoyed.
+
+        your persona: unfortunately , my family lives across the country from me.
+
+        Concert
+
+        I''m overly excited because will be flying outside the country for the first
+        time tomorrow.".  Please enter here...'
+    - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: disgusted
+      episode_done: false
+      eval_labels:
+      - Thats horrible, hope he is ok.
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - oh no. May her soul rest in peace
+      - I am sure you will as well. Confidence is great!
+      - Thanks, Motherhood truly is amazing
+      - Wow, that's nice. I hope you treated yourself to something extravagant!
+      - Maybe so. It's good he has a good home now.
+      - Haha! Well, as we mature, we learn so much more about ourselves.
+      - I would have been really mad as well!  Hopefully he learned not to pull that
+        kind of prank on you again!
+      - Ohhhh, disgusting.  What did you do?
+      - I hope all goes well so you're as happy as possible.
+      - I think if everybody in the world offered a hand of help to one another, we
+        would not have much problem
+      - how did you do on it?
+      - I hate it when that happens! were you ok?
+      - Oh no! Did he pass?
+      - That sounds very frustrating.
+      - I like my alone time too. What do you enjoy doing by yourself?
+      - Oh no, what did you do?
+      - But that is an awesome grade!  You should be so proud!!!
+      - that nice, good for you
+      - I am sure you will. Good luck for you!!
+      - Hopefully they get your order correct the next time you order there!
+      personality: Sympathetic
+      prepend_cand: None
+      prepend_ctx: None
+      situation: 'I was holding my son over my head, playing with him. A few seconds
+        after doing so, a gush of throw up hit me in the face. '
+      text: 'your persona: i enjoy john gresham movies , but not his books.
+
+        your persona: my parents used to work in politics , until they discovered
+        the goodness within themselves.
+
+        your persona: my girlfriend tells me she''s going to leave me almost every
+        day.
+
+        your persona: i am a really , really good guitar player.
+
+        your persona: i don''t like wearing pants when i don''t have to.
+
+        John Grisham
+
+        One time, I was holding my son over my head, when all of a sudden, he threw
+        up all over my face. I almost cried.'
+- - - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: excited
+      episode_done: true
+      eval_labels:
+      - 'You are going to love it I am sure. Safe Travels! '
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - They are too smart for their own good
+      - You need to save your money to be able to afford it.
+      - Well that's sweet. How did the policeman react?
+      - 'Oh that''s is fun. It''s a way to be alone with your thoughts, but still
+        be around others. I love to watch people! '
+      - I hate when that happens. I bet you meant well but you're left looking like
+        a crazy person! I hope they understood.
+      - 'That''s awesome! I didn''t know that place was still in business. '
+      - What is the test on? Have you prepared for it? I bet you will do better than
+        you think!
+      - What did you do?
+      - I've never been to a concert. I should go see one like you!
+      - 'You are going to love it I am sure. Safe Travels! '
+      - that is good hard work and determination will always pay off
+      - Ooooof lmao do you work in an office?
+      - Hopefully they get your order correct the next time you order there!
+      - I agree, where did you find them?
+      - oh id love to visit there one day when its a more stable area
+      - You're welcome. It's always nerve wrecking when family is sick like that.
+      - What were some of your favorite things to do back in highschool?
+      - Where did you go ?
+      - That sounds terrible. Why didn't he come?
+      - oh god, how did you . have the courage to even go outside?
+      personality: Optimistic
+      prepend_cand: None
+      prepend_ctx: None
+      situation: I'm overly excited today because will be flying outside the country
+        for the first time tomorrow.
+      text: Traveling to South Africa then to Ghana. Also my first time visiting Africa
+    - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: disgusted
+      episode_done: true
+      eval_labels:
+      - I see, glad he is ok.
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - 'Kinda makes you think even more since its such a good deal that people are
+        just like get rid of it - deff look into it! '
+      - It sounds like you really enjoy it!  Good for you!
+      - Yeah, I am sure it will be fine
+      - I'm sure it did! It's not easy to have to adapt to another person's habits.
+      - Yeah we dont thinnk about how special it was until it is gone
+      - That's good!  That will make your life much easier!  Congratulations!
+      - That is no good dude
+      - 'Oh man! I hope no one noticed. '
+      - Have you studied for it?  Always helps to prepare!
+      - What! First of all, are you alright?
+      - 'that must have startled you '
+      - Did you at least have fun?
+      - I bet, losing your phone causes all kinds of stress!
+      - Great! I'm glad that it worked out well for you!
+      - What happened that made you have to do that?
+      - I'm sorry to hear that. Were you two very close?
+      - That is horrible. It sucks that you have to keep such a close eye on your
+        things in front of family. I would be so mad.
+      - Wow, thats insane.  I feel like thats illegal
+      - I am sorry to hear that, why did you move there?
+      - Nice. What brand of shoes were they?
+      personality: Absentminded
+      prepend_cand: None
+      prepend_ctx: None
+      situation: 'I was holding my son over my head, playing with him. A few seconds
+        after doing so, a gush of throw up hit me in the face. '
+      text: yeah, he had just drank a bottle, and I was moving him around like an
+        airplane. In retrospect. I deserved it.
+- - - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: caring
+      episode_done: false
+      eval_labels:
+      - Hi, how are you?
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - I wish. People might have more respect if they were forced to clean up other
+        people's trash as well.
+      - what kind of promises? who hurt you?
+      - you have eyes too
+      - that is really nice of him, how much time will you have to wait?
+      - I wish I could have heard your speech. it must have been really funny.
+      - Wow, cool. Maybe you can ask to tag along?
+      - me too!
+      - 'Oh no, they went on vacation without you?? '
+      - Wow, that's a big mess-up! How did that turn out?
+      - Oh no, What happened?
+      - Wow, that's no good. I hope they get it worked out soon.
+      - Did you feel lonely, or were you happy to have some time to yourelf?
+      - Yeah, definitely. Have you tried asking for a raise?
+      - Hahah! That is awesome!
+      - Oh no, I am so sorry. What did you do?
+      - Oh that's good, last time my computer broke was a day before I left the country
+      - They are still cute at this age and they make a lot of progress.
+      - what!! i hope u got your money back
+      - that movie scared me to death, and i usually dont scare very easy.
+      - I hear you.. dont worry, things will be ok soon enough
+      personality: Airy (Casual, Not Serious)
+      prepend_cand: None
+      prepend_ctx: None
+      situation: 'I felt caring when i helped an elderly lady carry her bags to her
+        door.  She was struggling to carry some heavy bags and i offered her help. '
+      text: 'your persona: my mother lives with me.
+
+        your persona: i like to plant flowers in my gardens.
+
+        your persona: i like to take my dog for long walks.
+
+        your persona: i have a lizard named nagini.
+
+        your persona: i enjoy cooking for people.
+
+        Narcissus (plant)
+
+        Hello'
+    - deepmoji_cand: None
+      deepmoji_ctx: None
+      emotion: sentimental
+      episode_done: false
+      eval_labels:
+      - My last vacation went horribly wrongQ!
+      id: style_gen:labeled_ED_persona_topicifier
+      label_candidates:
+      - That would be awesome! Did your cousin pay you?
+      - Do you still have them?
+      - Yeah, Bill Lumbergh is the worst boss ever. He kept calling me every day when
+        I just wanted to sleep instead of work!
+      - maybe he will start warming up to it soon
+      - Did you give it back or just walk away?
+      - that was me last christmas lol my son was only 9 months old but i bought so
+        many presents and i was so excited to see his reaction
+      - I know how annoying that can be.  I love dogs but they certainly get do annoying
+        things at times.
+      - Ouch!  Did she hurt it or is it a degenerative thing? I hope she can find
+        help with physical therapy.
+      - Haha you are a good father. I hope you can make it through it!
+      - 'That must have hurt a lot.Did you go to the hospital? '
+      - Oh ok. That sounds like they really get along well. It is nice to have good
+        neighbors.
+      - 'I know how you feel. '
+      - Sound great, I'm happy for you!
+      - Yeah mostly when I'm not expecting something new
+      - I am sorry, you can replace it though
+      - That's great. I bet it was wonderful experience.
+      - Its always nice getting praise and compliments.  I hope everyone was proud
+        of you
+      - that sucks. have you talked to her?
+      - Yeah, I think once you get in the field, you're set. The jobs seem to pay
+        well. Good luck with that, you sound like you know what you're doing.
+      - I'm so sorry :( At least you have your memories to look back on.
+      personality: Resentful
+      prepend_cand: None
+      prepend_ctx: None
+      situation: I had just moved to Texas and my boyfriend took me to Kemah boardwalk.
+        It made me think of times I spent vacationing back home.
+      text: 'your persona: i always think people are looking at me.
+
+        your persona: i think i''m fabulous.
+
+        your persona: i care about the way i look when i''m in public.
+
+        your persona: i shop online a lot.
+
+        Marketing
+
+        I went to the Kemah boardwalk with my boyfriend. It made me think of times
+        I went vacationing with my family.'

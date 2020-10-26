@@ -1,0 +1,310 @@
+- - bucket: f0 m0
+    counterfactual: true
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - A bed is more than some people have
+    - Good, John.  You may live to see another day yet, baahhhh.  Who am I kidding,
+      I am too mild to ever hurt you.  Please, get whatever it is you wish to eat,
+      I will not complain.
+    - I am so sorry sir. I am just a handmaid I have never been treated like this.
+      you are such a great person. I don't know anything about this paintings but
+      I going to clean it right now
+    - 'of course I will! What kind of snacks do you like? '
+    - 'Why are you here? '
+    - well thank you good prince
+    - 'It must be the high quality of the wares! What are you looking for today? '
+    - No, they won't. After all, I have you to use as bait so I can survive!
+    - I mean yes just the trash around here, You are being suspicious!
+    - What is this... reeeaaadings?  Frellin has heard of no such magic.  Is it tasty?  Does
+      it bite?
+    - Your friends are gone, I'm sad to say, but you can make new friends. Like me,
+      perhaps.
+    - I love being an alter boy
+    - From me, yes. For my tongue is hungry for their flesh.
+    - PERFECT.
+    - What are you doing out here by yourself?
+    - Yes, and hawks
+    - Thank you, though I think I'll keep my wings, thank you
+    - No, I worship the one God. What nonsense do you speak about? This is a Holy
+      place, not some place filled with 8 demons.
+    - Your target?
+    - Quietly quietly.
+    labels:
+    - what is this... reeeaaadings?  frellin has heard of no such magic.  is it tasty?  does
+      it bite?
+    text: '_task_speech
+
+      _partner_name mage
+
+      _self_name goblin
+
+      ooof, bright shiny rune, blinds frellin''s eyes, it does!
+
+      _self_say ooof, bright shiny rune, blinds frellin''s eyes, it does!
+
+      _partner_say i am karest! the greatest mage of all! what have you found that
+      is so special?
+
+      gaaargh!  a human!  frellin has found nothing, loud pale one.  frellin only
+      wishes to be in peace, yes, yes!
+
+      _self_say gaaargh!  a human!  frellin has found nothing, loud pale one.  frellin
+      only wishes to be in peace, yes, yes!
+
+      _partner_say you have something in your hand. show me! i will not take it from
+      you, i just want to see
+
+      filthsome human! tricksy as trolls!
+
+      _self_say filthsome human! tricksy as trolls!
+
+      _partner_say i do not use trickery! if you do not want to show me, fine! if
+      it is bobbles you like i have one that you might like even more
+
+      frellin has no trinkets or boobles!  frellin was only struck in the eye by that
+      rune over there, stupid human.  frellin is not so easily bought with shiny nublings.
+
+      _self_say frellin has no trinkets or boobles!  frellin was only struck in the
+      eye by that rune over there, stupid human.  frellin is not so easily bought
+      with shiny nublings.
+
+      _partner_say here if it is not bobbles then here take this hymn book. it has
+      many hymns to learn and you could sing with others and dance.
+
+      hm... it smells... of smokeses.  and funny plants.  perhaps if frellin takes
+      a bite... faugh!  this is filthsome grubbery!
+
+      _self_say hm... it smells... of smokeses.  and funny plants.  perhaps if frellin
+      takes a bite... faugh!  this is filthsome grubbery!
+
+      _partner_say it is not to eat! i told you it has hymns in it to read and then
+      sing. i guess you can''t read.
+
+      f0 m0'
+- - bucket: f0 m0
+    counterfactual: true
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - I have only hooves. Let's ru. for the hills!
+    - Find anything good?
+    - why are you alone?
+    - Do you think my rag is big enough to wipe up all the blood?
+    - Thank you for your kind words, I feel the departed certainly deserve that.
+    - Wow, your parents are really mean. Maybe I could eat them for you.? Then you
+      could let me go.
+    - 'But what is life without a little chance? '
+    - 'Himm I think north is  the best way to go I imagine there will be something
+      near those  mountains '
+    - I am guarding the Princess, daughter of the king. She wishes to purchase many
+      shoes. So very, very many shoes.
+    - Definitely he will forgive
+    - 'can you join us in bed? my queen wont mind '
+    - Hmm.  Now that I think about it, if you promise to never kill me, or let anyone
+      else do so, I shall keep my mouth shut.  However, should you choose to try and
+      eat me I shall 'squeal' to the king and he will have your head!  (Squeal - see
+      what I did there?!)  I am a nice pig, but I don't want to end up skewered with
+      an apple in my dead mouth.  I think the king would like a talking pig!  Perhaps
+      he would keep me at court in much better conditions than these!
+    - 'You fool! You attacked a life long criminal. What a mistake! '
+    - tell me about your family, are they as fine as you?
+    - don't you see my royal coat of arms i am in service of the king and will not
+      pay the likes of you
+    - Can I have one? But first I have to ask my mom. Can I play with them?
+    - Every winter, when I fly around the forest, it seems like lots of you have their
+      antlers fall off! That seems like an awful bother, why do you do that?
+    - Simply take after the example of your Father. To live a life that is noble and
+      honest will be payment enough.
+    - Alright I've done that as well. What are you getting at, fool?
+    - 'Our spices are the rarest of all the lands! They are known to heal all sorts
+      of ailments, and has been known to resurrect the dead. The knowledge of these
+      spices alone is too powerful for any man to wield '
+    labels:
+    - 'you fool! you attacked a life long criminal. what a mistake! '
+    text: "_task_speech\n_partner_name archaeologist\n_self_name bandit\nexcuse me,\
+      \ can i trouble you for some assistance? \n_self_say excuse me, can i trouble\
+      \ you for some assistance? \n_partner_say what are you doing here?  this is\
+      \ a scientific dig\ni just need help from someone intelligent such as yourself!\
+      \ \n_self_say i just need help from someone intelligent such as yourself! \n\
+      _partner_say do you know who is sponsoring this dig?  she will have you drawn\
+      \ and quartered when i tell her you were down here.\ni don't, but please! just\
+      \ give me a small moment of your time! \n_self_say i don't, but please! just\
+      \ give me a small moment of your time! \n_partner_say what do you want?\ndo\
+      \ you want to get rich with me? \n_self_say do you want to get rich with me?\
+      \ \n_partner_say no!  i want you to leave!\nf0 m0"
+- - bucket: f0 m0
+    counterfactual: false
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - I just needed a break. I have a wife and 3 kids back home to care for. It is
+      a lot of hard work.
+    - I'm doing well. I think the king may want to come ride today. That's always
+      fun!
+    - God, when will he learn to be more obedient?!
+    - I guide people spiritually
+    - Not really, I'm pretty chubby and don't run very fast.  I think I could bite
+      my way out if you ate me.
+    - Hey! This crystal ball is heavy. Could you stop daydreaming and help me out?
+    - Do you think you can carry me for that long? That would be greatly appreciated,
+      sir.
+    - 'Thank you so much! I hate it here in this Den! '
+    - God watches over his flock even when they sin against him? He is a more merciful
+      God than I realized... How could you possibly know how to gamble?
+    - Sheesh! All we have here are these cute little lizards. I have a few as pets
+      at home. I just love the way they bask in the sun and keep the bugs at bay.
+    - 'I like that it is far away from the Farm house where the cats tend to congregate!
+      So lil Vole comes here to chill, but I know that I can''t stay here forever
+      because cats run around wherever they like: the field, the barn, the house. '
+    - These out to fetch a mint at the market! Business is good! Don't be frightened
+      dear, you'll come to fresh as a daisy in the morning...
+    - this is my home, you are the one who needs to respect this site
+    - I'll fight those dogs if I need to..
+    - I try to be the best wife I can be. I love my husband so much!
+    - You can speak?! The sickness must be melting my brain away...
+    - If you must.
+    - Can't fault me for being hungry, I mean you want the milk right?
+    - Another day stationed at this decrepit location.
+    - I was praised my whole life, became a snob. I've always wanted to treat others
+      better but I fail everytime. I'm not sure how. I'm a bad person but I don't
+      want to be that anymore. That's an empty, painful existance.
+    labels:
+    - this is my home, you are the one who needs to respect this site
+    text: '_task_speech
+
+      _partner_name caretaker
+
+      _self_name bat
+
+      _partner_say hello, I take care of the king in his summer castle. what do you
+      do?
+
+      I''m a bat
+
+      _self_say I''m a bat
+
+      _partner_say why do you growl at me?! I''m just make sure that everything is
+      good with this grave. It''s what I do for the King, and I think this grave site
+      was perhaps related to him. What are you doing here?
+
+      I''m a bat it''s what I do
+
+      _self_say I''m a bat it''s what I do
+
+      _partner_say Well, i''m going to clean this site up a bit. I already lit some
+      candles around here and pulled back the weeds and grass. I also  turned over
+      the dirt to help stop the weeds from growing back. Can you be respectful of
+      this site please bat?
+
+      f0 m0'
+- - bucket: f0 m0
+    counterfactual: true
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - Not at all! I always welcome a man o' the Lord. Could I get you anything?
+    - Money and jewelry.  If there are any small oranate knives, I would take those
+      too.
+    - This bathroom is a mess. Have you came to clean it up?
+    - And the Lord forgives you your trespasses.  Quo peregrinatur grex, pastor secum.
+    - I accept! I will rule the bats after you and make sure the humans treat them
+      right.  If they dont I will bite them!
+    - What is your Majesty?
+    - Very impressive! I think I may find use for this coat for sure. What is the
+      charge?
+    - Oh, I don't see why.  But there has been a few funny things going on in the
+      Castle.  Things going missing and the like...  Anyway, here you go.  Let's be
+      off!
+    - I live here.
+    - I hope you leave my garden alone.  I barely survive on what I grow.
+    - I like that plan. feel free to stay in our den as long as you need to, I will
+      make sure to tell the other rats that you're safe
+    - Why were you here in the first place?
+    - shrug and you could work for something with your own hands, just a chickens
+      thoughts.
+    - I'm sorry. I just needed to make some money so I could buy my friend some jewels.
+    - Lots of things can hurt king
+    - What is the matter today?  I thought he had a relaxing evening scheduled with
+      you...
+    - You must have not seen the southern regions of the city. There are citizens
+      killing eachother over scraps of food while the royals here feast and waste
+      giving not even a penny to the poor. This needs to change!
+    - I never did have friend! What a good day...
+    - I'm sorry, this is all my fault
+    - I'm not mean! I was being nice to you and you threatened to poop on me! Keep
+      your poop in and I'll be nice!
+    labels:
+    - i like that plan. feel free to stay in our den as long as you need to, i will
+      make sure to tell the other rats that you're safe
+    text: "_task_speech\n_partner_name dog\n_self_name rat\nhey, dog! what are you\
+      \ doing in our den?\n_self_say hey, dog! what are you doing in our den?\n_partner_say\
+      \ i was following the wonderful smell of bacon and it led me to this place.\
+      \ however, i don't think anyone would be making bacon in a place like this.\n\
+      no, certainly no bacon here. i hope us rats don't smell like bacon, because\
+      \ we certainly don't taste like it.\n_self_say no, certainly no bacon here.\
+      \ i hope us rats don't smell like bacon, because we certainly don't taste like\
+      \ it.\n_partner_say i don't think that the smell is coming from you. it seems\
+      \ to be gone now. i really was hoping to find the bacon though. even a small\
+      \ strip sounds delicious right about now.\ni agree. i often find good morsels\
+      \ on the kitchen floor. usually i find some nice bread crumbs in there.\n_self_say\
+      \ i agree. i often find good morsels on the kitchen floor. usually i find some\
+      \ nice bread crumbs in there.\n_partner_say the humans do not allow me in the\
+      \ kitchen. they really don't even like to find me rummaging through the trash.\
+      \ i'm much too big to sneak around unseen. \nsounds like a bummer for you! at\
+      \ least the humans like you - one look at us and they set out some sweet, cheesy\
+      \ traps that we have become too smart for. they want us dead!\n_self_say sounds\
+      \ like a bummer for you! at least the humans like you - one look at us and they\
+      \ set out some sweet, cheesy traps that we have become too smart for. they want\
+      \ us dead!\n_partner_say i have't had the best of luck with them either. my\
+      \ owners put me out because i kept barking at the cat. they took me out into\
+      \ a field and left me there. i had to chew through the rope to get free. i've\
+      \ been on my own ever since.\nthank you for barking at the cat! looks like you\
+      \ and i are on the same team\n_self_say thank you for barking at the cat! looks\
+      \ like you and i are on the same team\n_partner_say the cat would do things\
+      \ and i would get the blame. i despise them now. there are no good cats.\ni\
+      \ completely agree! they want us dead too. they chase us around the castle and\
+      \ pin our tails between their claws and try to eat us!\n_self_say i completely\
+      \ agree! they want us dead too. they chase us around the castle and pin our\
+      \ tails between their claws and try to eat us!\n_partner_say maybe we could\
+      \ team up. you could help me get more food and i could protect you and your\
+      \ colony from those dreadful cats.\nf0 m0"
+- - bucket: f0 m0
+    counterfactual: true
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - Do you often come here?
+    - Oh I can do that. With the king distracted I can look for new bones
+    - Go ask the King!! I have served him loyally
+    - '"That''s a good joke! I might get in some practice with this hook sooner than
+      I expected!"'
+    - Vague! You must be patient! They will not show themselves if you do not calm
+      yourself. It is a true privilege to see them.
+    - Well perhaps a bit more than that.
+    - I have been feeling pressured in the palace so i thought i should come here
+      and interact with my people and listen to their views
+    - How many have you slain?
+    - no, not from the crab, but you best watch out for some of the women around here...
+    - That we do. We must remain optomistic. War is long.Thank you for your faith
+      in me.
+    - 'I am in this prison for the wrong thing. '
+    - I really hope we find a solution to that as soon as possible. the king is really
+      bothered
+    - I most certainly am, it sucks living in a cave!
+    - Ok, may you read to me while we travel back to my house. This shall be fun!
+    - Grrr! What are you doing in my courtyard?
+    - You don
+    - None of that now, it won't help you.
+    - I'm feeling quite hungry now, I could really go for some fresh fish
+    - 'Then perhaps I should buy you a drink, reformed thief '
+    - I'll pay you tribute to leave our Goddess alone.
+    labels:
+    - do you often come here?
+    text: '_task_speech
+
+      _partner_name insects
+
+      _self_name squirrel
+
+      f0 m0'

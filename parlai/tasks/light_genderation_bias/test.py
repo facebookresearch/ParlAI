@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.utils.testing import AutoTeacherTest  # noqa: F401
-import unittest
 
 
-class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
+class TestDefaultTeacher(AutoTeacherTest):
     task = 'light_genderation_bias'

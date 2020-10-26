@@ -1,0 +1,112 @@
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: we did too but working in real estate for 12 years sucked up
+        a lot of time .
+
+        Hypothesis: we did too but working in real estate for fifteen years sucked
+        up a lot of time .'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i work with a lot of kids in the healthcare industry .
+
+        Hypothesis: i work in the healthcare industry .'
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i work in sales .
+
+        Hypothesis: i work as a kindergarten teacher .'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i work as a secretary .
+
+        Hypothesis: i work in an office as a secretary .'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: my three dogs love to cheese pizza too .
+
+        Hypothesis: my favorite food is cheese pizza .'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: that sounds like lots of fun .
+
+        Hypothesis: i have defended many people .'
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i only have one leg .
+
+        Hypothesis: i only have 2 leg .'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: oh hells yeah . i will not see daylight for a long time .
+
+        Hypothesis: i am from an island .'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: what else do you like ? i like to read poetry .
+
+        Hypothesis: i read a lot of poetry .'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      text: 'Premise: i have a dog named pedro .
+
+        Hypothesis: i have two children that are in their kindergarten .'

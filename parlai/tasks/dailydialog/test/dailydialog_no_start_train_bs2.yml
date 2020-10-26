@@ -1,0 +1,87 @@
+- - - act_type: inform
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - It costs a lot of money . Hospital bills had already made deep in-roads into
+        our savings . Do you think the rest of your salary will be enough to cover
+        our daily expenses ?
+      text: About 3 000 dollars .
+      topic: ordinary_life
+    - act_type: inform
+      emotion: happiness
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - Yes . I like it very much .
+      text: This is the first time for me to have a Chinese guest . I hope you like
+        western cooking .
+      topic: relationship
+- - - act_type: inform
+      emotion: sadness
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - We have to cut back on our shopping from now on .
+      text: I am afraid not , darling . Our expenses are mounting .
+      topic: ordinary_life
+    - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - It's excellent .
+      text: Cooking is a hobby with me . I'm always trying to think up new recipes
+        . I hope you like the soup . It's kind of a specialty of mine , so I hope
+        you enjoy it .
+      topic: relationship
+- - - act_type: inform
+      emotion: no_emotion
+      episode_done: true
+      id: dailydialog:no_start
+      labels:
+      - I hope so .
+      text: Don't worry . Maybe I can find a part-time job to increase my income .
+      topic: ordinary_life
+    - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - It's delicious .
+      text: Thank you for your compliment . Won't you try this fish with white sauce
+        ? I'm rather round of it .
+      topic: relationship
+- - - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - He's not doing too well .
+      text: I haven't seen your father in like 5 years . How is he doing ?
+      topic: relationship
+    - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - I like beefsteak very much . Have you tried Chinese dishes ?
+      text: What sort of western food do you like best ?
+      topic: relationship
+- - - act_type: question
+      emotion: surprise
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - About a year ago , he started feeling weak all the time .
+      text: Why ? What's wrong ?
+      topic: relationship
+    - act_type: inform
+      emotion: happiness
+      episode_done: true
+      id: dailydialog:no_start
+      labels:
+      - Well , it's getting late . I have to get up early tomorrow . So I must say
+        good night .
+      text: I find the Chinese dishes wonderful .
+      topic: relationship

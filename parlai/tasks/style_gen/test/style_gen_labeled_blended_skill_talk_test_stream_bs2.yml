@@ -1,0 +1,417 @@
+- - - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      eval_labels:
+      - I think it's because in my head, I think everyone is judging me. I just start
+        to sweat and I get sick in my stomach.
+      free_turker_message: and why is that?
+      guided_turker_chosen_suggestion: wizard_of_wikipedia
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - Oh nice! My brother in law is a lawyer and I remember him trying to get certain
+        jobs he wanted and it not being easy sometimes
+      - I'm not from Florida, but I'm here for college. Are you in school?
+      - No, I am always spend time in playing cricket.
+      - I like Green Day, My chemical Romance, Deftones
+      - Yeah that would be devestating.  How long ago did that happen?
+      - Yes, he was.  He was a Polish composer and virtuoso pianist.
+      - My favourite breed is probably Husky because of how big they get, although
+        I'm not a fan of how much fur they shed. What's your favourite breed?
+      - What's going on with your roomates?
+      - That's great! Congratulations!
+      - Not too sure, but I never want to disappoint my family. That's why I'm in
+        college for engineering.
+      - TV is good to fall asleep to, i've wanted to start painting but being a nurse
+        keeps me busy
+      - It's on my bucket list as well. I can't wait to get the chance to go.
+      - How nice! I am on a see food diet :/, but i always text my mom and apparently
+        they're starting a plant based diet
+      - I can understand that! What other genres do you like?
+      - Well, now that all needs to change. Are you hungry in your mouth or stomach?
+        Stay focused on your weight.
+      - That really good. Though I still do make mistakes every now and then. How
+        often do you do crossword puzzles throughout the week?
+      - The university provides me accommodation for a reasonable price. We get discounts
+        for the gym it's still quite expensive. I might take up running instead.
+      - Adopted and raised by my birth father's parents...they're "Mom" and "Dad"
+        to me.
+      - oh ok will try good best
+      - 'He kept on playing dumb and acted as if he had no idea what I was rambling
+        on about. I guess you could neither of us slept well that night. '
+      personality: Anxious
+      text: 'your persona: i hate talking to people.
+
+        your persona: i believe dragons are real.
+
+        Social anxiety
+
+        Wow, I am never shy. Do you have anxiety?
+
+        Yes. I end up sweating and blushing and feel like i''m going to throw up.
+
+        and why is that?'
+    - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - What does your turtle eat?  Is it hard to take care of a turtle?
+      free_turker_message: that's funny. No. I let him roam around the house.
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - I really can't imagine... does she do the early morning shift?
+      - Good, remember to practice it all stages of life
+      - Was he better at teaching or coaching?
+      - oh wow do you like to visit thrift shops ?
+      - Wow! That is wonderful! They will get so much use out of Netflix. The selection
+        for kids is terrific.
+      - Not yet!  Where are you from?
+      - I hear that. I do the same. Do you spend much time on Youtube?
+      - I haven't been to the Bahamas yet.  Will this be your first cruise?
+      - Fired someone with out telling my boss. Two coworkers got in a a fight I perceived
+        opportunity the be the best time to get rid of one.
+      - Mountain biking accident. Couldn't afford to replace my bike afterwards.
+      - That is nice!!! I am usually very punctual. I make it early to every class.
+      - There is a Comics convention next week. Do you want to go? We can grab a meal
+        beforehand. My treat!
+      - Yes. My family moved here when I was 17, but I still have a thick accent as
+        well and that was 6 years ago
+      - Yeah, thanks for the recommendations! Do you plan to take your kid back to
+        daycare anytime soon?
+      - Buying your collection? It would make some interesting and storied decor...
+      - My favorite color is blue
+      - Do you want any in the future?
+      - 'He made the absolute best chicken parmesan! '
+      - Yeah it's like some people unfairly take advantage of another person because
+        of social skills .
+      - 'I love to read books!  '
+      personality: Curious
+      text: 'your persona: i have three daughters.
+
+        your persona: my wife and i like to go scuba diving.
+
+        My turtle ran away from me today.
+
+        Oh my god. Did you guys have a fight?
+
+        that''s funny. No. I let him roam around the house.'
+- - - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      eval_labels:
+      - I don't really have people telling me in my head, more like behind my back
+      free_turker_message: 'interesting but I know how you feel especially the whole
+        people telling that it in your head '
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - Yes! I internet at a medical device company last year! How many year have
+        you been working as an accountant now?
+      - 'Just come clean I know you did it. It is like a scene from my favorite horror
+        novel. '
+      - 2 years. How is retirement?
+      - Yes, I have that worry too - you can never be sure, can you?
+      - They are friendly and cute!
+      - better get back into the dating game!
+      - I own a ps4 and gaming PC but almost never touch the ps4. Been playing a ton
+        of Modern warfare on pc though.
+      - I've never been that far! I travel for college and I want to be a polygot
+        when I'm older. What was Africa like?
+      - Family is very important to me personally, but I've learned it's important
+        to go your own way. Fleetwood Mac knew it best.
+      - I have been to Six Flags in Gurnee, IL and near St. Louis, MO. However, I
+        much prefer Universal Studios Orlando over both.
+      - Sounds like you have a great brother!
+      - Agreed. So what else do you do for fun?
+      - If you could work one low wage position, what would it be?
+      - I agree. Also very hard on the perfectionist person. Hard for them to accept
+        if they don't make their goals.
+      - i basically a fairly unhealthy eater.  What can I say, I love snacks.
+      - 'I enjoy teaching others, you would be surprised at how much there is to know
+        about nature and the environment. '
+      - I don´t  have any kids yet. But I want to some day. Do you have kids?
+      - Yes, I already found a new place. It's really cool!
+      - I do love to read as well. Do you happen to have a favorite author or book?
+      - 'It''s on my bucket list of things to try. A friend I used to work with had
+        a daughter who owned a horse. '
+      personality: Paranoid
+      text: 'interesting but I know how you feel especially the whole people telling
+        that it in your head '
+    - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - No, not at the moment.  I have 3 girls and they are enough trouble! LOL
+      free_turker_message: He eats insects, leaves and sun flower seeds. It's easy.
+        They don't need walking and cleanup is simple. Do you have any pets?
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - Wow, engineering, sounds impressive.  I'm sure the income will be awesome.
+      - Do you own lots of things related to The Beatles?
+      - Yeah, you should probably look into that more. She sounds shady.
+      - In the past the umbrella term was billiards
+      - No, not indoors yet. I'll try. I don't know how you can stay so calm? I'm
+        about ready to get in my car and leave.
+      - It's in the works, believe me. This is just my job while I'm in school. I
+        have a semester left! What do you do?
+      - You're welcome.  I wish you the best! what do you do for a living ?
+      - That would have been all bad. Can you imagine explaining that to the grieving
+        family?
+      - 'I''m a junior in college, my 3rd year. I hope to travel for my career as
+        I love the beach and surfing. '
+      - Oh sure, I love dressing up! Did you dress up for Halloween? I was a space
+        alien.
+      - Lol I hear it's better to ask for forgiveness than permission.
+      - I enjoy a lot of great vegetarian recipes. do you have any favorites?
+      - i'm glad . always think positive .
+      - 'What kind of music do you like?i work in a factory so my music is machine
+        niose '
+      - Are you a TB Lightning fan?
+      - He is a very great actor. I also like him in Gangs of New York.
+      - Oh god its a so sad news. how it happended its due to traffic collision.
+      - Yeah, i need a vacation from all my work. I should use the vacation to do
+        some charity...
+      - do you know the song hunting fishing loving every day?
+      - 'but the worst part is you have to clean every day and keep the flat tidy
+        all the time.  '
+      personality: Childish
+      text: He eats insects, leaves and sun flower seeds. It's easy. They don't need
+        walking and cleanup is simple. Do you have any pets?
+- - - context_dataset: wizard_of_wikipedia
+      episode_done: true
+      eval_labels:
+      - Me too! What do you believe in? I believe in dragons... Just finished watching
+        Game of Thrones. Man, those things are dope
+      free_turker_message: 'Dang that''s though. But I also understand that. I have
+        people some who talks behind my back because of certain things that I believe
+        in '
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - Indeed.
+      - Cool I love the way diffrent rocks can have amzing gem like quality's to them,
+        have You eatten dinner yet going to make pork chops tonight lol
+      - Yes, if a whistleblower tells, the company can get in trouble. They can get
+        big fines for exploitation of workers.
+      - mm very tasty, what brand cheese do you use? i tried Stilton but it wasn't
+        very popular with my 10 adopted children.
+      - Oh yes, that was a great movie. Very funny!
+      - Happy birthday to them, what are their names?
+      - When I have my restaurant, I can hire you :)
+      - 'preferably, Japan and Switzerland. '
+      - Interesting, is it just a normal tomato sauce you cook them in, or is it something
+        else?
+      - wow how does it feel to have a famous gf. you must be really proud
+      - Wooowwww. That's cool. Any plans to get more pets in the future?
+      - look, i you had mom's spaghetti? would you capture it? or just let it slip?
+        (parody of eminem's lose yourself on youtube) haha
+      - What kind of dogs do you have
+      - I am getting ready to go to the gym. I meant to go earlier but I got distracted.
+      - action movies . . it all depended on my mood . you ?
+      - it did . what did you study or do for work ?
+      - I have wanted to visit Germany. However, I also dream of going to Hawaii one
+        day as well. How about you?
+      - That sounds great! I could sure use to burn some fat!
+      - If it is hot where you are you can run in the evenings or early morning.
+      - 'I haven''t been driving for long enough to tell, but I''m sure you''re right.
+        Is your mom hurt though? '
+      personality: Imaginative
+      text: 'Dang that''s though. But I also understand that. I have people some who
+        talks behind my back because of certain things that I believe in '
+    - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - I don't, just 2 siblings.  But my wife wanted a lot of kids. So, there you
+        go.
+      free_turker_message: Congratulations. Do you come from a big family?
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - yeah, i understand that hope you get new one pretty soon it's fun
+      - Oh nice never been, maybe one day but for now I am enjoying my cabin and fishing
+        on the lake. What was the document?\
+      - I love Jason Mraz. Is he too light rock for your taste?
+      - Yup! In fact I have heard archaeologists have discovered mummified ancients
+        with metal bands wrapped around individual teeth
+      - Oh wow. I would have to avoid them. Do you have pets?
+      - Ususally it's after a read something and it is =very intense.  I have a Master's
+        in Italian Lit so it happens.
+      - I appreciate that. It's funny though, I was in combat, but now I drive a Prius,
+        not a typical army vet car, according to some.
+      - Scarlet Begonias, 100%. I get weird looks for this, but oddly enough, it reminds
+        me of The Dresden Files books. Ever read them?
+      - They are so graceful and powerful. I would love to have horses.
+      - That sounds really cool. Do you have any favorite rock musicians
+      - lol , congrats . i've never done something like that . you sound brave
+      - Sounds pretty interesting. I hope everything goes well.
+      - Why did he get into a fight?
+      - That sounds nice. I am studying a masters in psychology
+      - Can't say I disagree with that. I'll stick to my beloved Anne Rice. I have
+        a blow-up doll dressed like her. Too much?
+      - I did, and brought a copy to read to my son too, they're enjoyable! Do you
+        have any other recommendations?
+      - 'In some music '
+      - horror movies are a good way to take your mind of of things. the Halloween
+        movies were fantastic. Nice and frightening
+      - I really only like the cold weather because of snow.
+      - 'oh no i bet you got in trouble ! ! ! '
+      personality: Practical
+      text: Congratulations. Do you come from a big family?
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - 'Yeah, kids grow up so quickly '
+      free_turker_message: Can't believe he grew up so quick
+      guided_turker_chosen_suggestion: empathetic_dialogues
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - It was an accident, actually. I'm a big fantasy novel reader and was Googling
+        dragons to find a new book and they came up on my search!
+      - Wow! That is a lot of siblings
+      - yeah thats the spirit , i wish i was that confident i couldnt have ended up
+        marrying arsh
+      - Maybe I should try that, My daughter just graduated college and I have been
+        stressing about her getting a job.
+      - Mah it's ok, not really much into Christmas.
+      - Do you think the chicken would even know? It's dead. Why not just eat your
+        pizza at a pizza shop?
+      - I enjoy working with the public,do you?
+      - So far. The biggest issue is when other people don't read the book and you're
+        just uh...well I guess there's nothing to discuss.
+      - Oh that's a fun car.  I drive a Cadillac Escalade.  It's a big car.
+      - 'Yeah, kids grow up so quickly '
+      - Not really. Just grabbed some pizza and spent some time in watching movies.
+      - Well, only with prodding. I've had to negotiate a lot to get them to do much
+        of anything, but it's gotten better this last year.
+      - Wow, now that's commendable!
+      - I used to be the same way in high school, I tried to show off while driving
+        a lot and got multiple tickets.
+      - Where abroad??
+      - That is a good place to have as a destination to accomplish getting over your
+        fear of flying!
+      - I could do that, I could listen to another episode on the way over aswell.
+      - '"cooking healthy meals taking long time."'
+      - A director approached me while they were making a movie. Short people can
+        model as well.
+      - 'Ha! what''s your favorite snack while you are watching sports and drinking
+        beer '
+      personality: Sarcastic
+      text: "your persona: i hate the taste of fish.\nyour persona: i like to paint.\n\
+        Our son in the Army is taking a leave to visit us next month.\nOh, you must\
+        \ be so excited! I have a son in the Army as well and I love when he gets\
+        \ to visit! \nCan't believe he grew up so quick"
+    - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - I use a Mac for my work - I'm a music teacher.  I find it really helpful.  How
+        about you?  Are you on the computer a lot?
+      free_turker_message: Wow. cool. How often do you use computers?
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - Agreed, bacon with green beans is a great side dish.
+      - That's cool. I'm trying to open my own grocery store
+      - I remember when internet phone services came out and they were sooo crappy!
+        But it was the only way I could call my bf at the time
+      - I think that's a good idea. People are just different these days too and less
+        committed to marriage.
+      - I use a Mac for my work - I'm a music teacher.  I find it really helpful.  How
+        about you?  Are you on the computer a lot?
+      - I agree. I never understand why they do that. I got popcorn thrown at me once.
+        I don't even like popcorn!
+      - You should try following a Bob Ross tutorial, you might surprise yourself
+      - Best that you are in a new place.  How long ago did you break up?
+      - why do you say that
+      - I hope that works out!I work in fast food so not many of my coworkers have
+        been married.
+      - 'Same! Travelling to work takes forever and honestly they need a lot maintenance '
+      - I bet single parenting is exhausting.
+      - It really feels like we are apart of a fake world with all the fake news.
+      - i think you might be able to teach yourself but its better to get professionally
+        taught.
+      - I don't really like coffee at all! I drank coffee in college to stay awake
+        but it's too bitter for me.
+      - Good for you, reading is like a universe, so many options..
+      - She founded an experimental theatre company, wrote several books and is even
+        in a band!
+      - Well I grew up in a small house, so there was not much room for fun
+      - Yes, that is why I love running and also try to be healthy. What about you?
+      - 'Yeah doggy dinner...YUM! '
+      personality: Intelligent
+      text: Wow. cool. How often do you use computers?
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - We will probably just spend most of the time here at home, no big plans really.
+      free_turker_message: What do you usually do when he visits?
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - Yes. Espeacially if you work at a hospital
+      - America is a great place.  Lots of different things to see.  I imagine Thailand
+        is beautiful, though.
+      - We have 3 now and that's plenty!  Two are already off to college and the youngest
+        opted for trade school.  The house seems a little bigger now.
+      - Harlem County, CA. Plenty of biking here. And you?
+      - Yea. Like what is the point of listening to the radio, if they're going to
+        play the same song. I can do that on my own without the ads.
+      - yeah, i did my degree in math though so i'm used to being lonely
+      - I really enjoy movies myself. I love the Titanic! Art and Photography is amazing
+        though!
+      - I do too, you can never know to many things.
+      - 'That sounds like a pain. What embassy? '
+      - Wow, I did not know you have horses. Are they fun?
+      - I am not good at poker, but I do like to play for fun.
+      - Not really.  I"d rather do research in a lab.
+      - I lik
+      - We both love riding motorcycles and playing put-put.
+      - Haven't sold one thing yet. :-(
+      - I've been to Colorado many times. The Uncompaghre area is really nice.
+      - Fireflies are pretty spectacular, and it's refreshing to see someone with
+        a nature focused hobby these days.
+      - Yes. We can try to improve our mental health for ourselves and those around
+        us.
+      - Yes, that is why I love running and also try to be healthy. What about you?
+      - 'I really like classic games a lot like zelda, mario, sonic, spyro etc '
+      personality: Casual
+      text: What do you usually do when he visits?
+    - context_dataset: empathetic_dialogues
+      episode_done: false
+      eval_labels:
+      - Stream from the library - now, that sounds interesting. My wife and I do some
+        scuba diving and want to begin filming underwater. Ever tried that?
+      free_turker_message: Often. I use them at work for editing. I head about a way
+        to stream videos or movies from the local library.
+      guided_turker_chosen_suggestion: ''
+      id: style_gen:labeled_blended_skill_talk
+      label_candidates:
+      - I hope their pet is okay? Have you heard any updates yet?
+      - Obsessing compulsively about my disorders is rather exhausting. How have you
+        been feeling the last few days/
+      - 'not sure , there may be many during the week. seeing that they''re new in
+        town '
+      - wow wished i could have seen him that must have been awesome  lol "allegeldy"
+        right right
+      - 'That''s terrible. Do you have anyone to help you at home? '
+      - Yeah, I think so. The members of the band changed throughout the years.
+      - I would suggest a fitness place with a rock wall.  Try that out in a safe
+        environment
+      - Badminton - that's interesting.  How did you get into that?
+      - You can never go wrong with a teddy bear, the fluffier the better. That's
+        why they need their rain coats :)
+      - That's a main part of fishing though! I prefer flies or meat.
+      - Sometimes I wonder what it would be like to be an artist. It just seems so
+        hard
+      - 'It''s definitely a lot of work especially when we are outnumbered by kids. '
+      - The Sun also Rises.  Great Hemingway!  If I am remembering correctly  which
+        I may not be.
+      - I wonder what else a page boy could do? Maybe hand out seating arrangements?
+      - Indeed, I got the bad news of my husband doing something behind my back. He
+        met up with another woman!
+      - That is true. That is real love and loyalty.
+      - Stream from the library - now, that sounds interesting. My wife and I do some
+        scuba diving and want to begin filming underwater. Ever tried that?
+      - yeah, that's good. Online gaming can have so many applications to help people
+        as well as have fun
+      - Mostly landscape. Do you enjoy art?
+      - 'I am a nurse, how about yourself? '
+      personality: Adventurous
+      text: Often. I use them at work for editing. I head about a way to stream videos
+        or movies from the local library.

@@ -1,0 +1,79 @@
+- - - episode_done: false
+      items:
+        ball_cnt: '1'
+        ball_val: '6'
+        book_cnt: '1'
+        book_val: '4'
+        hat_cnt: '3'
+        hat_val: '0'
+      labels:
+      - sorry i really need the ball and book . you can have the hat
+      text: 'Negotiate with your opponent to decide who gets how many of each item.
+        You must both agree on the distribution of items (or you both get zero), but
+        try to get as much value as you can. There are 1 book(s), each with a value
+        of 4, 3 hat(s), each with a value of 0, and 1 ball(s), each with a value of
+        6.
+
+        i need the ball and 1 hat please .'
+    - episode_done: false
+      items:
+        ball_cnt: '1'
+        ball_val: '4'
+        book_cnt: '2'
+        book_val: '0'
+        hat_cnt: '3'
+        hat_val: '2'
+      labels:
+      - can i get a ball two hats and a book ?
+      text: Negotiate with your opponent to decide who gets how many of each item.
+        You must both agree on the distribution of items (or you both get zero), but
+        try to get as much value as you can. There are 2 book(s), each with a value
+        of 0, 3 hat(s), each with a value of 2, and 1 ball(s), each with a value of
+        4.
+- - - episode_done: false
+      labels:
+      - sorry i cant make a deal without the ball .
+      text: i really need the ball . you can have the book and the hats if i can have
+        the ball .
+    - episode_done: false
+      labels:
+      - deal i'll take everything except the books
+      text: no deal . i need both books . you can have the rest .
+- - - episode_done: false
+      labels:
+      - ok , i understand
+      text: i can't make a deal without the ball either . i guess we have no deal
+        .
+    - episode_done: true
+      labels:
+      - item0=0 item1=3 item2=1 item0=2 item1=0 item2=0
+      text: <selection>
+- - - episode_done: false
+      labels:
+      - i agree
+      text: no deal .
+    - episode_done: false
+      items:
+        ball_cnt: '3'
+        ball_val: '0'
+        book_cnt: '1'
+        book_val: '8'
+        hat_cnt: '1'
+        hat_val: '2'
+      labels:
+      - i need book
+      text: 'Negotiate with your opponent to decide who gets how many of each item.
+        You must both agree on the distribution of items (or you both get zero), but
+        try to get as much value as you can. There are 1 book(s), each with a value
+        of 8, 1 hat(s), each with a value of 2, and 3 ball(s), each with a value of
+        0.
+
+        hi , i would like the book and balls and you can have the hat'
+- - - episode_done: false
+      labels:
+      - yeah just waiting on it
+      text: that button should come up soon . no deal .
+    - episode_done: false
+      labels:
+      - one ball at leat
+      text: in order for you to get the book iwould need everything else

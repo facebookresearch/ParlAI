@@ -1,0 +1,1006 @@
+- - checked_sentence: Dr Pepper is a carbonated soft drink marketed as having a unique
+      flavor.
+    chosen_topic: Dr Pepper
+    episode_done: false
+    id: style_gen:labeled_WoW_persona_topicifier
+    knowledge: 'Dr Pepper Dr Pepper is a carbonated soft drink marketed as having
+      a unique flavor.
+
+      Dr Pepper The drink was created in the 1880s by pharmacist Charles Alderton
+      in Waco, Texas and first served around 1885.
+
+      Dr Pepper Dr Pepper was first nationally marketed in the United States in 1904,
+      and is now also sold in Europe, Asia, Canada, Mexico, Australia, and South America,
+      as well as New Zealand and South Africa as an imported good.
+
+      Dr Pepper Variants include a version without high fructose corn syrup, Diet
+      Dr Pepper, as well as a line of additional flavors, first introduced in the
+      2000s.
+
+      Dr Pepper The U.S. Patent Office recognizes December 1, 1885, as the first time
+      Dr Pepper was served.
+
+      Dr Pepper It was introduced nationally in the United States at the 1904 Louisiana
+      Purchase Exposition as a new kind of soda pop, made with 23 flavors.
+
+      Dr Pepper Its introduction in 1885 preceded the introduction of Coca-Cola by
+      one year.
+
+      Dr Pepper It was formulated by Brooklyn-born pharmacist Charles Alderton in
+      Morrison''s Old Corner Drug Store in Waco, Texas.
+
+      Dr Pepper To test his new drink, he first offered it to store owner Wade Morrison,
+      who also found it to his liking.
+
+      Dr Pepper Patrons at Morrison''s soda fountain soon learned of Alderton''s new
+      drink and began ordering a "Waco".
+
+      Dr Pepper Alderton gave the formula to Morrison, who named it Dr. Pepper (later
+      stylized as "Dr Pepper").
+
+      '
+    labels:
+    - I believe you have drank Dr. Pepper before, it is a carbonated soft drink marketed
+      as having a unique flavor.
+    personality: Knowledgeable
+    text: 'your persona: in the evenings i watch the door at a club where they play
+      punkrock.
+
+      your persona: i like dr pepper and black jack gum , but not together.
+
+      your persona: i work in a corner grocery store during the day.
+
+      your persona: my favorite show is scobby doo.
+
+      Dr Pepper
+
+      '
+    title: Dr Pepper
+- - checked_sentence: The drink was created in the 1880s by pharmacist Charles Alderton
+      in Waco, Texas and first served around 1885.
+    chosen_topic: Dr Pepper
+    episode_done: false
+    id: style_gen:labeled_WoW_persona_topicifier
+    knowledge: 'Dr Pepper Dr Pepper is a carbonated soft drink marketed as having
+      a unique flavor.
+
+      Dr Pepper The drink was created in the 1880s by pharmacist Charles Alderton
+      in Waco, Texas and first served around 1885.
+
+      Dr Pepper Dr Pepper was first nationally marketed in the United States in 1904,
+      and is now also sold in Europe, Asia, Canada, Mexico, Australia, and South America,
+      as well as New Zealand and South Africa as an imported good.
+
+      Dr Pepper Variants include a version without high fructose corn syrup, Diet
+      Dr Pepper, as well as a line of additional flavors, first introduced in the
+      2000s.
+
+      Dr Pepper The U.S. Patent Office recognizes December 1, 1885, as the first time
+      Dr Pepper was served.
+
+      Dr Pepper It was introduced nationally in the United States at the 1904 Louisiana
+      Purchase Exposition as a new kind of soda pop, made with 23 flavors.
+
+      Dr Pepper Its introduction in 1885 preceded the introduction of Coca-Cola by
+      one year.
+
+      Dr Pepper It was formulated by Brooklyn-born pharmacist Charles Alderton in
+      Morrison''s Old Corner Drug Store in Waco, Texas.
+
+      Dr Pepper To test his new drink, he first offered it to store owner Wade Morrison,
+      who also found it to his liking.
+
+      Dr Pepper Patrons at Morrison''s soda fountain soon learned of Alderton''s new
+      drink and began ordering a "Waco".
+
+      Dr Pepper Alderton gave the formula to Morrison, who named it Dr. Pepper (later
+      stylized as "Dr Pepper").
+
+      Soft drink A soft drink (see terminology for other names) is a drink that typically
+      contains carbonated water (although lemonade, among others, is usually not carbonated),
+      a sweetener, and a natural or artificial flavoring.
+
+      Soft drink The sweetener may be sugar, high-fructose corn syrup, fruit juice,
+      sugar substitutes (in the case of diet drinks), or some combination of these.
+
+      Soft drink Soft drinks may also contain caffeine, colorings, preservatives,
+      and other ingredients.
+
+      Soft drink Soft drinks are called "soft" in contrast with "hard" alcoholic beverages.
+
+      Soft drink Small amounts of alcohol may be present in a soft drink, but the
+      alcohol content must be less than 0.5% of the total volume if the drink is to
+      be considered non-alcoholic.
+
+      Sugary drink tax A sugary drink tax or soda tax is a tax or surcharge designed
+      to reduce consumption of drinks with added sugar.
+
+      Sugary drink tax Drinks covered under a soda tax often include carbonated soft
+      drinks, sports drinks and energy drinks.
+
+      Sugary drink tax The tax is a matter of public debate in many countries and
+      beverage producers like Coca-Cola often oppose it.
+
+      Sugary drink tax Advocates such as national medical associations and the World
+      Health Organization (WHO) promote the tax as an example of Pigovian taxation,
+      aimed to discourage unhealthy diets and offset the growing economic costs of
+      obesity.
+
+      Sugary drink tax Type II Diabetes is a growing health concern in many developed
+      and developing countries around the world, with 1.6 million deaths directly
+      due to type II diabetes in 2015 alone.
+
+      Diet drink Diet (alternatively marketed as sugar-free, zero-calorie or low-calorie)
+      drinks are sugar-free, artificially sweetened versions of fizzy beverages with
+      virtually no calories.
+
+      Diet drink They are generally marketed toward health-conscious people, diabetics,
+      athletes, and other people who want to lose weight, improve physical fitness,
+      or reduce their sugar intake.
+
+      Diet drink The beginning of the diet drink or refreshment era was in 1952, when
+      Kirsch Bottling in Brooklyn, New York launched a sugar-free ginger ale called
+      No-Cal.
+
+      Diet drink It was designed for diabetics, not dieters, and distribution remained
+      local.
+
+      Diet drink Royal Crown Cola placed an announcement in an Atlanta newspaper in
+      1958 announcing a diet product, Diet Rite.
+
+      Energy drink An energy drink is a type of beverage containing stimulant drugs,
+      usually including caffeine, which is marketed as providing mental and physical
+      stimulation (marketed as "energy", but distinct from food energy).
+
+      Energy drink They may or may not be carbonated and many also contain sugar or
+      other sweeteners, herbal extracts, taurine, and amino acids.
+
+      Energy drink They are a subset of the larger group of energy products, which
+      includes bars and gels, and distinct from sports drinks, which are advertised
+      to enhance sports performance.
+
+      Energy drink There are many brands and varieties of energy drinks.
+
+      Energy drink Coffee, tea and other naturally caffeinated beverages are usually
+      not considered energy drinks.
+
+      Benzene in soft drinks Benzene in soft drinks is of potential concern due to
+      the carcinogenic nature of the benzene molecule.
+
+      Benzene in soft drinks This contamination is a public health concern and has
+      caused significant outcry among environmental and health advocates.
+
+      Benzene in soft drinks Benzene levels are regulated in drinking water nationally
+      and internationally, and in bottled water in the United States, but only informally
+      in soft drinks.
+
+      Benzene in soft drinks The benzene forms from decarboxylation of the preservative
+      benzoic acid in the presence of ascorbic acid (vitamin C) and metal ions (iron
+      and copper) that act as catalysts, especially under heat and light.
+
+      Benzene in soft drinks The major cause of benzene in soft drinks is the decarboxylation
+      of benzoic acid in the presence of ascorbic acid (vitamin C, E300) or erythorbic
+      acid (a diastereomer of ascorbic acid, E315).
+
+      Container deposit legislation Container-deposit legislation (also known as a
+      deposit-refund scheme, bottle bill, or deposit-return system) is any law that
+      requires the collection of a monetary deposit on beverage containers (refillable
+      or non-refillable) at the point of sale.
+
+      Container deposit legislation When the container is returned to an authorized
+      redemption center, or retailer in some jurisdictions, the deposit is partly
+      or fully refunded to the redeemer (presumed to be the original purchaser).
+
+      Container deposit legislation It is a deposit-refund system.
+
+      Container deposit legislation Governments may pass container deposit legislation
+      for several reasons, including, for example:  Deposits that are not redeemed
+      are often kept by distributors or bottlers to cover the costs of the system
+      (including handling fees paid to retailers or redemption enters to collect,
+      sort, and handle the containers) or are escheated to the governmental entity
+      involved to fund environmental programs.
+
+      PepsiCo PepsiCo, Inc. is an American multinational food, snack, and beverage
+      corporation headquartered in Purchase, New York.
+
+      PepsiCo PepsiCo has interests in the manufacturing, marketing, and distribution
+      of grain-based snack foods, beverages, and other products.
+
+      PepsiCo PepsiCo was formed in 1965 with the merger of the Pepsi-Cola Company
+      and Frito-Lay, Inc. PepsiCo has since expanded from its namesake product Pepsi
+      to a broader range of food and beverage brands, the largest of which included
+      an acquisition of Tropicana Products in 1998 and the Quaker Oats Company in
+      2001, which added the Gatorade brand to its portfolio.
+
+      Carbonated water Carbonated water (also known as sparkling water, seltzer water,
+      seltzer, bubbly water, or fizzy water, or the closely related club soda or soda
+      water) is water into which carbon dioxide gas under pressure has been dissolved.
+
+      Carbonated water Club soda or soda water may have additives, such as sodium
+      chloride, sodium bicarbonate or similar, but seltzer water is almost always
+      composed of water and carbon dioxide with no other additives.
+
+      Carbonated water Carbonation is the process that causes the water to become
+      effervescent.
+
+      Carbonated water Most carbonated water is sold in ready to drink bottles like
+      carbonated beverages such as soft drinks, but it can also be prepared at home
+      with "soda makers".
+
+      Mountain Dew Mountain Dew (stylized as Mtn Dew) is a carbonated soft drink brand
+      produced and owned by PepsiCo.
+
+      Mountain Dew The original formula was invented in 1940 by Tennessee beverage
+      bottlers Barney and Ally Hartman.
+
+      Mountain Dew A revised formula was created by Bill Bridgforth in 1958.
+
+      Mountain Dew The rights to this formula were obtained by the Tip Corporation
+      of Marion, Virginia.
+
+      Mountain Dew William H. "Bill" Jones of the Tip corporation further refined
+      the formula, launching that version of Mountain Dew in 1961.
+
+      Mountain Dew In August 1964, the Mountain Dew brand and production rights were
+      acquired from Tip by the Pepsi-Cola company, at which point distribution expanded
+      more widely across the United States and Canada.
+
+      7 Up 7 Up (stylized as 7up outside the U.S.) is a brand of lemon-lime flavored,
+      non-caffeinated soft drink.
+
+      7 Up The rights to the brand are held by Dr Pepper Snapple Group in the United
+      States, and PepsiCo (or its licensees) in the rest of the world.
+
+      7 Up The U.S. version of the "7 Up" logo includes a red circle between the "7"
+      and "Up"; this red circle has been animated and used as a mascot for the brand
+      as Cool Spot.
+
+      7 Up 7 Up was created by Charles Leiper Grigg, who launched his St. Louis–based
+      company The Howdy Corporation in 1920.
+
+      7 Up Grigg came up with the formula for a lemon-lime soft drink in 1929.
+
+      7 Up The product, originally named "Bib-Label Lithiated Lemon-Lime Soda", was
+      launched two weeks before the Wall Street Crash of 1929.
+
+      Jones Soda Jones Soda Co. is a beverage company based in Pioneer Square, Seattle,
+      Washington.
+
+      Jones Soda It bottles and distributes soft drinks, non-carbonated beverages,
+      energy drinks, and candy.
+
+      Jones Soda Jones Soda is a carbonated soft drink that has many unusual flavors
+      that are not offered by other soft drink makers.
+
+      Jones Soda The company was founded by Peter van Stolk in 1986 as a beverage
+      distributor in Western Canada.
+
+      Jones Soda Until 1995, the company distributed other beverage lines such as
+      AriZona Iced Tea and Thomas Kemper sodas in Western Canada.
+
+      Jones Soda As the company gained significant knowledge of the beverage industry,
+      it decided to get into the market with alternative beverages as the Urban Juice
+      & Soda Company.
+
+      Cider Cider ( ), hard apple cider, or hard cider in the US, is an alcoholic
+      beverage made from the fermented juice of apples.
+
+      Cider Cider is popular in the United Kingdom, especially in the West Country,
+      and widely available.
+
+      Cider The UK has the world''s highest per capita consumption, as well as its
+      largest cider-producing companies.
+
+      Cider Cider is also popular in many Commonwealth countries, such as Canada,
+      Australia, and New Zealand.
+
+      Cider Aside from the UK and its former colonies, cider is popular in other European
+      countries including Ireland, Portugal (mainly in Minho and Madeira), France
+      (particularly Brittany and Normandy), northern Italy (Piedmont and Friuli),
+      and Spain (especially Asturias and the Basque Country).
+
+      '
+    labels:
+    - I believe this one is a little different, It was invented in 1880s by pharmacist
+      Charles Alderton in Waco, Texas
+    personality: Knowledgeable
+    text: Yes I used to drink it a lot as a kid but realized soft drinks are not healthy.
+    title: Dr Pepper
+- - checked_sentence: Dr Pepper was first nationally marketed in the United States
+      in 1904, and is now also sold in Europe, Asia, Canada, Mexico, Australia, and
+      South America, as well as New Zealand and South Africa as an imported good.
+    chosen_topic: Dr Pepper
+    episode_done: true
+    id: style_gen:labeled_WoW_persona_topicifier
+    knowledge: 'Dr Pepper Dr Pepper is a carbonated soft drink marketed as having
+      a unique flavor.
+
+      Dr Pepper The drink was created in the 1880s by pharmacist Charles Alderton
+      in Waco, Texas and first served around 1885.
+
+      Dr Pepper Dr Pepper was first nationally marketed in the United States in 1904,
+      and is now also sold in Europe, Asia, Canada, Mexico, Australia, and South America,
+      as well as New Zealand and South Africa as an imported good.
+
+      Dr Pepper Variants include a version without high fructose corn syrup, Diet
+      Dr Pepper, as well as a line of additional flavors, first introduced in the
+      2000s.
+
+      Dr Pepper The U.S. Patent Office recognizes December 1, 1885, as the first time
+      Dr Pepper was served.
+
+      Dr Pepper It was introduced nationally in the United States at the 1904 Louisiana
+      Purchase Exposition as a new kind of soda pop, made with 23 flavors.
+
+      Dr Pepper Its introduction in 1885 preceded the introduction of Coca-Cola by
+      one year.
+
+      Dr Pepper It was formulated by Brooklyn-born pharmacist Charles Alderton in
+      Morrison''s Old Corner Drug Store in Waco, Texas.
+
+      Dr Pepper To test his new drink, he first offered it to store owner Wade Morrison,
+      who also found it to his liking.
+
+      Dr Pepper Patrons at Morrison''s soda fountain soon learned of Alderton''s new
+      drink and began ordering a "Waco".
+
+      Dr Pepper Alderton gave the formula to Morrison, who named it Dr. Pepper (later
+      stylized as "Dr Pepper").
+
+      New Coke New Coke was the unofficial name for the reformulation of Coca-Cola
+      introduced in April 1985 by the Coca-Cola Company to replace the original formula
+      of its flagship soft drink, Coca-Cola (also called Coke).
+
+      New Coke New Coke originally had no separate name of its own but was simply
+      known as "the new taste of Coca-Cola" until 1992, when it was renamed Coke Ⅱ.  Coca-Cola''s
+      market share had been losing ground to diet soft drinks and non-cola beverages
+      for many years.
+
+      New Coke Consumers who were purchasing regular colas seemed to prefer the sweeter
+      taste of rival Pepsi-Cola, as Coca-Cola learned in conducting blind taste tests.
+
+      Pepsi Pepsi is a carbonated soft drink produced and manufactured by PepsiCo.
+
+      Pepsi Originally created and developed in 1893 by Caleb Bradham and introduced
+      as Brad''s Drink, it was renamed as Pepsi-Cola on August 28, 1898, and then
+      as Pepsi in 1961.
+
+      Pepsi The drink Pepsi was first introduced as "Brad''s Drink" in New Bern, North
+      Carolina, United States, in 1893 by Caleb Bradham, who made it at his drugstore
+      where the drink was sold.
+
+      Pepsi It was renamed Pepsi-Cola in 1898 after the root of the word "dyspepsia"
+      and the kola nuts used in the recipe.
+
+      Pepsi The original recipe also included sugar and vanilla.
+
+      Pepsi Bradham sought to create a fountain drink that was appealing and would
+      aid in digestion and boost energy.
+
+      Coca-Cola Coca-Cola, or Coke, is a carbonated soft drink produced by The Coca-Cola
+      Company.
+
+      Coca-Cola Originally intended as a patent medicine, it was invented in the late
+      19th century by John Pemberton and was bought out by businessman Asa Griggs
+      Candler, whose marketing tactics led Coca-Cola to its dominance of the world
+      soft-drink market throughout the 20th century.
+
+      Coca-Cola The drink''s name refers to two of its original ingredients, which
+      were kola nuts (a source of caffeine) and coca leaves.
+
+      Coca-Cola The current formula of Coca-Cola remains a trade secret, although
+      a variety of reported recipes and experimental recreations have been published.
+
+      Pepsi Globe The Pepsi Globe is the icon and logo for Pepsi, called as such because
+      of the swirling "red, white, & blue" design in a sphere-like shape.
+
+      Pepsi Globe It is considered one of the world''s most recognizable corporate
+      trademarks.
+
+      Pepsi Globe The Pepsi Globe originated in the 1940s as a logo and icon for Pepsi.
+
+      Pepsi Globe The colors of the Pepsi Globe are red, white and blue.
+
+      Pepsi Globe This is one of the most recognizable logos not only in the United
+      States, but also around the world.
+
+      Pepsi Globe The Pepsi Globe has undergone several changes throughout its inception
+      in the 1940s with the most recent pivot taking place in 2009.
+
+      Pepsi Globe This change was the most intense in terms of the amount of money
+      and time that went into the branding, marketing, and visual culture involved
+      in the underlying message for the logo.
+
+      Cola wars The cola wars are a series of mutually-targeted television advertisements
+      and marketing campaigns since the 1980s between two long-time rival soft drink
+      producers, The Coca-Cola Company and PepsiCo.
+
+      Cola wars The battle between the two dominant brands in the United States intensified
+      to such an extent that the term “Cola wars” was used to describe the feud.
+
+      Cola wars Each employed numerous advertising and marketing campaigns to outdo
+      the other.
+
+      Cola wars Short periods of intense competition between the two firms contrast
+      with how the two firms avoid competition most of the time by focusing on different
+      consumers, sponsoring different sports, differentiating their logos, choosing
+      different colors for their packaging, and building different images for their
+      brand.
+
+      Diet Pepsi Diet Pepsi and Diet Pepsi Classic Formula Blend are no-calorie carbonated
+      cola soft drinks produced by PepsiCo, introduced in 1964 as a variant of Pepsi-Cola
+      with no sugar.
+
+      Diet Pepsi First test marketed in 1963 under the name Patio Diet Cola, it was
+      re-branded as "Diet Pepsi" the following year, becoming the first diet cola
+      to be distributed on a national scale in the United States.
+
+      Diet Pepsi In the 1960s and 1970s its competition consisted of Tab, produced
+      by The Coca-Cola Company, and Diet Rite soda, produced by Royal Crown.
+
+      Diet Pepsi Diet Coke was a later entrant to the diet cola market; though shortly
+      after entering production in 1982 it became the primary competing diet cola
+      to Diet Pepsi.
+
+      Edward Coke Sir Edward Coke ( "cook", ; 1 February 1552 – 3 September 1634)
+      was an English barrister, judge and, later, opposition politician, who is considered
+      to be the greatest jurist of the Elizabethan and Jacobean eras.
+
+      Edward Coke Born into a middle-class family, Coke was educated at Trinity College,
+      Cambridge, before leaving to study at the Inner Temple, where he was called
+      to the Bar on 20 April 1578.
+
+      Edward Coke As a barrister he took part in several notable cases, including
+      "Slade''s Case", before earning enough political favour to be elected to Parliament,
+      where he served first as Solicitor General and then as Speaker of the House
+      of Commons.
+
+      Charles Alderton Charles Courtice Alderton (June 21, 1857 May 29, 1941) was
+      an American pharmacist, and the creator of the carbonated soft drink Dr Pepper.
+
+      Charles Alderton Charles Courtice Alderon was born (21 June 1857, Brooklyn,
+      New York), the eldest of five children to English parents.
+
+      Charles Alderton Alderton attended Framlingham College in England, studied medicine
+      at the University of Texas, and worked as a pharmacist in Waco, in a shop called
+      "Morrison''s Old Corner Drug Store", which had a soda fountain.
+
+      Charles Alderton Alderton noticed that customers were tiring of the traditional
+      flavours of sarsaparilla, lemon and vanilla, and so to try and revive sales,
+      began experimenting with new flavour combinations, eventually settling on a
+      23 ingredient mix combined with phosphoric acid to give it tang.
+
+      Charles T. Pepper Charles Taylor Pepper (December 2, 1830 – May 28, 1903), a
+      19th-century American medical doctor, is often cited as the inspiration for
+      the name of the Dr Pepper brand soft drink, although this is uncertain.
+
+      Charles T. Pepper Pepper was born in Big Spring, Virginia, on December 2, 1830.
+
+      Charles T. Pepper His parents were John Pepper and Mary Robertson Pepper and
+      he was their 12th child.
+
+      Charles T. Pepper Pepper attended the University of Virginia for medical training
+      and received a degree in 1855.  Pepper married Isabella Howe (1838–1903) of
+      Rural Retreat on May 18, 1858, in Pulaski County, Virginia.
+
+      Charles T. Pepper She was a cousin to Governor James Hoge Tyler.
+
+      Charles T. Pepper They had five children that were all born in Rural Retreat.
+
+      Waco, Texas Waco ( ) is a city which is the county seat of McLennan County,
+      Texas, United States.
+
+      Waco, Texas It is situated along the Brazos River and I-35, halfway between
+      Dallas and Austin.
+
+      Waco, Texas The city had a 2010 population of 124,805, making it the 22nd-most
+      populous city in the state.
+
+      Waco, Texas The US Census 2016 population estimate is 134,432 The Waco Metropolitan
+      Statistical Area consists of McLennan and Falls Counties, which had a 2010 population
+      of 234,906.
+
+      Waco, Texas Falls County was added to the Waco MSA in 2013.
+
+      Waco, Texas The US Census 2016 population estimate for the Waco MSA is 265,207.
+
+      Waco, Texas Indigenous peoples occupied areas along the river for thousands
+      of years.
+
+      Waco siege The Waco siege was the siege of a compound belonging to the group
+      Branch Davidians by American federal and Texas state law enforcement, as well
+      as the U.S. military, between February 28 and April 19, 1993.
+
+      Waco siege The Branch Davidians, a sect that separated in 1955 from the Seventh-day
+      Adventist Church, was led by David Koresh and was headquartered at Mount Carmel
+      Center ranch in the community of Axtell, Texas, 13 miles (21 kilometers) east-northeast
+      of Waco.
+
+      Waco siege The group was suspected of weapons violations, causing a search and
+      arrest warrant to be obtained by the Bureau of Alcohol, Tobacco, and Firearms
+      (ATF).
+
+      Alderton, Northamptonshire Alderton is a small English village and civil parish
+      about south of Northampton, and north of Milton Keynes, along a road between
+      the A5 and A508 main roads in the southwest and northeast respectively.
+
+      Alderton, Northamptonshire The nearest large town is Towcester, about north.
+
+      Alderton, Northamptonshire The village is famous for the remains of an English
+      Heritage Scheduled Ancient Monument, a Norman Castle, known locally as "The
+      Mount", which was the subject of an investigation by the Channel 4 programme
+      "Time Team".
+
+      Alderton, Northamptonshire The 2001 census data is grouped with the nearby village
+      of Grafton Regis and showed there were 248 people living in both villages, 134
+      male, 114 female, in 94 dwellings.
+
+      Alderton, Gloucestershire Alderton is a village and civil parish in the Tewkesbury
+      District of Gloucestershire, England.
+
+      Alderton, Gloucestershire The village is about north of Cheltenham, east of
+      Tewkesbury, south of Evesham and west of Stow-on-the-Wold.
+
+      Alderton, Gloucestershire The main roads are the B4077 (Stow Road) and the A46.
+
+      Alderton, Gloucestershire The village has about 500 residents.
+
+      Alderton, Gloucestershire Alderton was officially named the most beautiful and
+      welcoming village in 1918.
+
+      Alderton, Gloucestershire The Church of England parish church of St Margaret
+      of Antioch may originate from the Anglo-Saxon era.
+
+      Alderton, Gloucestershire The current building is mostly 14th century and was
+      restored in 1890-92.
+
+      Alderton, Gloucestershire St Margaret''s ecclesiastical parish forms part of
+      the Alderton benefice that incorporates the nearby villages of Dumbleton, Little
+      Washbourne and Great Washbourne.
+
+      '
+    labels:
+    - Dr Pepper was first nationally marketed in the United States in 1904
+    personality: Scholarly
+    text: 'I see, yes it might be different. I was thinking of Pepsi and Coke actually. '
+    title: Dr Pepper
+- - checked_sentence: The Toronto Raptors are a Canadian professional basketball team
+      based in Toronto, Ontario.
+    chosen_topic: Toronto Raptors
+    episode_done: false
+    id: style_gen:labeled_WoW_persona_topicifier
+    knowledge: 'Toronto Raptors The Toronto Raptors are a Canadian professional basketball
+      team based in Toronto, Ontario.
+
+      Toronto Raptors The Raptors compete in the National Basketball Association (NBA),
+      as a member club of the league''s Eastern Conference Atlantic Division.
+
+      Toronto Raptors The team was established in 1995, along with the Vancouver Grizzlies,
+      as part of the NBA''s expansion into Canada.
+
+      Toronto Raptors When the Grizzlies relocated to Memphis, Tennessee to become
+      the Memphis Grizzlies in 2001, the Raptors became the only Canadian-based team
+      in the NBA.
+
+      Toronto Raptors They originally played their home games at SkyDome, before moving
+      eastward along Bremner Boulevard to the Air Canada Centre in 1999.
+
+      Toronto Raptors Like most expansion teams, the Raptors struggled in their early
+      years, but after the acquisition of Vince Carter through a draft day trade in
+      1998, the team set league-attendance records and made the NBA playoffs in 2000,
+      2001, and 2002.
+
+      Toronto Raptors Carter was instrumental in leading the team to a then-franchise
+      high 47 wins and their first playoff series win in 2001, where they advanced
+      to the Eastern Conference semifinals.
+
+      Toronto Raptors During the 2002–03 and 2003–04 seasons, they failed to make
+      significant progress, and Carter was traded in 2004 to the New Jersey Nets.
+
+      Toronto Raptors After Carter left, Chris Bosh emerged as the team leader.
+
+      Vince Carter Vincent Lamar Carter (born January 26, 1977) is an American professional
+      basketball player for the Sacramento Kings of the National Basketball Association
+      (NBA).
+
+      Vince Carter He is tall and plays both shooting guard and small forward.
+
+      Vince Carter Carter is one of only seven players ever to play at least 20 seasons
+      in the NBA.
+
+      Vince Carter A high school McDonald''s All-American, Carter played three years
+      at the University of North Carolina.
+
+      Vince Carter While there, he twice reached the Final Four of the NCAA Tournament
+      before being selected as the fifth overall pick in the 1998 NBA draft by the
+      Golden State Warriors, who traded him to the Toronto Raptors.
+
+      Chris Bosh Christopher Wesson Bosh (born March 24, 1984) is an American professional
+      basketball player who is currently a free agent.
+
+      Chris Bosh A high school "Mr. Basketball" in Texas, Bosh left Georgia Tech after
+      one season to enter the 2003 NBA draft.
+
+      Chris Bosh He was selected fourth overall by the Toronto Raptors in a draft
+      class that included multiple future NBA superstars such as LeBron James, Dwyane
+      Wade and Carmelo Anthony.
+
+      Chris Bosh While at Toronto, Bosh emerged as one of the young stars in the league;
+      he became a five-time NBA All-Star, was named to the All-NBA Second Team once,
+      appeared for the U.S. national team (with whom he won a gold medal at the 2008
+      Summer Olympics), and supplanted former fan-favorite Vince Carter as the face
+      and leader of the Raptors franchise.
+
+      Maple Leaf Sports &amp; Entertainment Maple Leaf Sports & Entertainment Ltd.
+      (MLSE) is a professional sports and commercial real estate company based in
+      Toronto, Ontario, Canada.
+
+      Maple Leaf Sports &amp; Entertainment With assets that include franchises in
+      four of the six major professional sports leagues in the United States and Canada,
+      it is the largest sports and entertainment company in Canada, and one of the
+      largest in North America.
+
+      Maple Leaf Sports &amp; Entertainment The primary holdings of the company are
+      its major sports franchises, the Toronto Maple Leafs of the National Hockey
+      League, Toronto Raptors of the National Basketball Association, Toronto Argonauts
+      of the Canadian Football League, and Toronto FC of Major League Soccer, as well
+      as their minor league farm teams, the Toronto Marlies of the American Hockey
+      League (AHL), Raptors 905 of the NBA G League and Toronto FC II of the United
+      Soccer League, respectively.
+
+      Kyle Lowry Kyle Lowry (born March 25, 1986) is an American professional basketball
+      player for the Toronto Raptors of the National Basketball Association (NBA).
+
+      Kyle Lowry He attended Cardinal Dougherty High School in Philadelphia and declared
+      for the NBA draft after two seasons with Villanova University under coach Jay
+      Wright.
+
+      Kyle Lowry He was selected by the Memphis Grizzlies with the 24th pick in the
+      2006 NBA draft.
+
+      Kyle Lowry Lowry is credited with helping lead the Raptors to the playoffs and
+      win an Atlantic Division title for the first time in seven years, during the
+      2013–14 season, his second season with the team.
+
+      Kyle Lowry In 2015–16, he helped lead the Raptors to 56 wins, the highest win
+      total in franchise history, and helped the team reach the Eastern Conference
+      Finals for the first time.
+
+      History of the Miami Heat The Miami Heat is an American professional basketball
+      team based in Miami.
+
+      History of the Miami Heat The team was launched in 1988 and played in the 1988–89
+      season of the National Basketball Association.
+
+      History of the Miami Heat The next season they moved from the Western Conference
+      to the Atlantic Division of the Eastern Conference.
+
+      History of the Miami Heat After a mainly mediocre performance in the first few
+      seasons, there were extensive team changes in 1995 and 1996 under head coach
+      Pat Riley, including the recruitment of Isaac Austin and P.J.
+
+      History of the Miami Heat Brown.
+
+      History of the Miami Heat They reached the Eastern Conference Finals for the
+      first time in 1996–97.
+
+      History of the Miami Heat They did not reach this level again until 2004–05,
+      under new head coach Stan Van Gundy and with Dwyane Wade as a leading team member.
+
+      2006–07 Toronto Raptors season The Toronto Raptors 2006–07 season is the twelfth
+      National Basketball Association (NBA) season for the Toronto Raptors basketball
+      franchise.
+
+      2006–07 Toronto Raptors season Following a poor 2005–06 season, General Manager
+      Bryan Colangelo greatly revamped the team roster during the pre-season but continued
+      to build the team around All-Star Chris Bosh.
+
+      2006–07 Toronto Raptors season Despite a sluggish start, the 2006–07 season
+      transformed into a year for Toronto.
+
+      2006–07 Toronto Raptors season The Raptors captured their first division title,
+      finished third in the Eastern Conference, made the playoffs for the first time
+      in five years, equalled their best ever regular season record, and secured home
+      court advantage for the first time in franchise history.
+
+      '
+    labels:
+    - Toronto Raptors are a Canadian professional basketball team based in Toronto,
+      Ontario
+    personality: Knowledgeable
+    text: 'your persona: i am studying to be a dentist.
+
+      your persona: my favorite team is the raptors.
+
+      your persona: my favorite band is rise against.
+
+      your persona: i usually go to bed late.
+
+      your persona: i like sports.
+
+      Toronto Raptors
+
+      Tell me more about Toronto Raptors buddy'
+    title: Toronto Raptors
+- - checked_sentence: The team was established in 1995, along with the Vancouver Grizzlies,
+      as part of the NBA's expansion into Canada.
+    chosen_topic: Toronto Raptors
+    episode_done: false
+    id: style_gen:labeled_WoW_persona_topicifier
+    knowledge: 'Toronto Raptors The Toronto Raptors are a Canadian professional basketball
+      team based in Toronto, Ontario.
+
+      Toronto Raptors The Raptors compete in the National Basketball Association (NBA),
+      as a member club of the league''s Eastern Conference Atlantic Division.
+
+      Toronto Raptors The team was established in 1995, along with the Vancouver Grizzlies,
+      as part of the NBA''s expansion into Canada.
+
+      Toronto Raptors When the Grizzlies relocated to Memphis, Tennessee to become
+      the Memphis Grizzlies in 2001, the Raptors became the only Canadian-based team
+      in the NBA.
+
+      Toronto Raptors They originally played their home games at SkyDome, before moving
+      eastward along Bremner Boulevard to the Air Canada Centre in 1999.
+
+      Toronto Raptors Like most expansion teams, the Raptors struggled in their early
+      years, but after the acquisition of Vince Carter through a draft day trade in
+      1998, the team set league-attendance records and made the NBA playoffs in 2000,
+      2001, and 2002.
+
+      Toronto Raptors Carter was instrumental in leading the team to a then-franchise
+      high 47 wins and their first playoff series win in 2001, where they advanced
+      to the Eastern Conference semifinals.
+
+      Toronto Raptors During the 2002–03 and 2003–04 seasons, they failed to make
+      significant progress, and Carter was traded in 2004 to the New Jersey Nets.
+
+      Toronto Raptors After Carter left, Chris Bosh emerged as the team leader.
+
+      Texas Longhorns men''s basketball The Texas Longhorns men''s basketball team
+      represents The University of Texas at Austin in NCAA Division I intercollegiate
+      men''s basketball competition.
+
+      Texas Longhorns men''s basketball The Longhorns currently compete in the Big
+      12 Conference.
+
+      Texas Longhorns men''s basketball The University of Texas began varsity intercollegiate
+      competition in men''s basketball in 1906.
+
+      Texas Longhorns men''s basketball The Longhorns rank 17th in total victories
+      among all NCAA Division I college basketball programs and 25th in all-time win
+      percentage among programs with at least 50 years in Division I, with an all-time
+      win-loss record of 1759–1057 ().
+
+      Texas Longhorns men''s basketball Among Big 12 Conference men''s basketball
+      programs, Texas is second only to Kansas in both all-time wins and all-time
+      win percentage.
+
+      Northern Cement basketball team The Northern Cement basketball team (popularly
+      known as, the NCC basketball team) refers to the team that represented the national
+      basketball program and training pool for the Philippines men''s national basketball
+      team from 1980 to 1986.
+
+      Northern Cement basketball team The team was owned by businessman Eduardo "Danding"
+      Cojuangco, Jr. through his company, Northern Cement Corporation (NCC).
+
+      Northern Cement basketball team In 1980, businessman and ambassador Eduardo
+      "Danding" Cojuangco, founder and owner of Northern Cement Corporation, was appointed
+      by the Philippine President Ferdinand E. Marcos to become the project director
+      for basketball in the country.
+
+      Northern Cement basketball team Cojuangco (despite not being an officer or member
+      of the national basketball governing body at that time - the Basketball Association
+      of the Philippines) was tasked to set up, finance, and develop the national
+      basketball team to represent the country internationally.
+
+      Minnesota Golden Gophers men''s basketball The Minnesota Golden Gophers men''s
+      basketball team represents the University of Minnesota Twin Cities campus.
+
+      Minnesota Golden Gophers men''s basketball The Golden Gophers have played in
+      the Big Ten since the conference began sponsoring basketball in 1905 and play
+      their home games in Williams Arena.
+
+      Minnesota Golden Gophers men''s basketball The Gophers had great success in
+      the early years of basketball, but have been largely overshadowed by other programs
+      since the end of World War I.
+
+      Minnesota Golden Gophers men''s basketball In total, the Gophers have won nine
+      Big Ten championships, but only four since 1919.
+
+      Minnesota Golden Gophers men''s basketball College basketball research organizations
+      have retroactively awarded Minnesota national championships in 1902, 1903, and
+      1919.
+
+      Relocation of sports teams in the United Kingdom Relocation of professional
+      sports teams in the United Kingdom is a practice which involves a sports team
+      moving from one metropolitan area to another, although occasionally moves between
+      municipalities in the same conurbation are also included.
+
+      Relocation of sports teams in the United Kingdom For relocations in other part
+      of the world see "Relocation of professional sports teams".
+
+      Relocation of sports teams in the United Kingdom In British sport, the relocation
+      of teams away from their traditional districts is unusual because of the nature
+      of the relationship between clubs and their fans: the local football club is
+      regarded by most English football supporters as part of the local identity and
+      social fabric rather than as a business that can be transplanted by its owners
+      at will.
+
+      List of Slam Dunk characters The manga and anime series "Slam Dunk" features
+      a cast of fictional characters created by Takehiko Inoue.
+
+      List of Slam Dunk characters The series takes place in Japan, with the main
+      characters being high school basketball players from Kanagawa Prefecture.
+
+      List of Slam Dunk characters It tells the story of Hanamichi Sakuragi, a teenager
+      who falls in love with Haruko Akagi after being rejected by 50 other girls.
+
+      List of Slam Dunk characters However, as Haruko is in love with Kaede Rukawa,
+      a popular and talented basketball player, Sakuragi decides to join the Shohoku
+      High School basketball team to surpass Rukawa and make Haruko fall in love with
+      him.
+
+      List of Slam Dunk characters As he starts learning how to play basketball, Sakuragi
+      starts liking the sport and resolves to become the best player.
+
+      Basketball in Greece The sport of basketball in Greece erupted with the senior
+      men''s Greek national basketball team''s win at the FIBA EuroBasket 1987 in
+      Piraeus, which caused a general basketball euphoria in the country.
+
+      Basketball in Greece Since then, men''s Greek national teams have reached constant
+      international success, leading Greece to join Russia, Serbia, Croatia, Italy,
+      Spain, France, and Lithuania in the circle of European basketball powers.
+
+      Basketball in Greece In addition to the national team''s triumph in 1987, Greece
+      won a gold medal at the FIBA EuroBasket 2005, silver medals at the FIBA EuroBasket
+      1989 and the 2006 FIBA World Championship, as well as the bronze medal at the
+      FIBA EuroBasket 2009.
+
+      Lithuania men''s national basketball team The Lithuania men''s national basketball
+      team (Lithuanian: "Lietuvos nacionalinė vyrų krepšinio rinktinė") participates
+      in FIBA''s competitions.
+
+      Lithuania men''s national basketball team Despite Lithuania''s small size, with
+      a population of just almost 2.9 million, the country''s devotion to basketball
+      has made them a traditional force of the sport in Europe.
+
+      Lithuania men''s national basketball team The Lithuanian team won the last EuroBasket
+      tournaments prior to World War II, in 1937 and 1939.
+
+      Lithuania men''s national basketball team The 1939 team was led by Frank Lubin,
+      who helped popularize basketball in the country and was called the "grandfather
+      of Lithuanian basketball".
+
+      Lithuania men''s national basketball team Following the country''s annexation
+      by the Soviet Union during the war, Lithuanian players frequently formed the
+      core of the Soviet national team.
+
+      Sports in Toronto The City of Toronto has a long history of sport.
+
+      Sports in Toronto It is home to a number of clubs, including: the Granite Club
+      (est.
+
+      Sports in Toronto 1836), the Royal Canadian Yacht Club (est.
+
+      Sports in Toronto 1852), the Toronto Cricket Skating and Curling Club (est.
+
+      Sports in Toronto pre-1827), the Argonaut Rowing Club (est.
+
+      Sports in Toronto 1872), Toronto Argonauts football club (est.
+
+      Sports in Toronto 1873), the Toronto Lawn Tennis Club (est.
+
+      Sports in Toronto 1881), and the Badminton and Racquet Club (est.
+
+      Sports in Toronto 1924).
+
+      Sports in Toronto A number of heritage venues have developed in Toronto such
+      as: Christie Pits (est.
+
+      Sports in Toronto 1899), Ricoh Coliseum (est.
+
+      Sports in Toronto 1921), Varsity Arena (est.
+
+      Sports in Toronto 1926), Maple Leaf Gardens (est.
+
+      Sports in Toronto 1931).
+
+      Sports in Toronto Toronto has teams in nearly every major professional sport,
+      including the Toronto Blue Jays (MLB), Toronto Argonauts (CFL), Toronto Raptors
+      (NBA), Toronto Rock (NLL), Toronto FC (MLS), and the Toronto Maple Leafs (NHL).
+
+      Maple Leaf Sports &amp; Entertainment Maple Leaf Sports & Entertainment Ltd.
+      (MLSE) is a professional sports and commercial real estate company based in
+      Toronto, Ontario, Canada.
+
+      Maple Leaf Sports &amp; Entertainment With assets that include franchises in
+      four of the six major professional sports leagues in the United States and Canada,
+      it is the largest sports and entertainment company in Canada, and one of the
+      largest in North America.
+
+      Maple Leaf Sports &amp; Entertainment The primary holdings of the company are
+      its major sports franchises, the Toronto Maple Leafs of the National Hockey
+      League, Toronto Raptors of the National Basketball Association, Toronto Argonauts
+      of the Canadian Football League, and Toronto FC of Major League Soccer, as well
+      as their minor league farm teams, the Toronto Marlies of the American Hockey
+      League (AHL), Raptors 905 of the NBA G League and Toronto FC II of the United
+      Soccer League, respectively.
+
+      New York Knicks The New York Knickerbockers, commonly referred to as the Knicks,
+      are an American professional basketball team based in the New York City borough
+      of Manhattan.
+
+      New York Knicks The Knicks compete in the National Basketball Association (NBA)
+      as a member of the Atlantic Division of the Eastern Conference.
+
+      New York Knicks The team plays its home games at Madison Square Garden, located
+      in the borough of Manhattan.
+
+      New York Knicks They are one of two NBA teams located in New York City; the
+      other is the Brooklyn Nets.
+
+      New York Knicks The team, established by Ned Irish in 1946, was one of the founding
+      members of the Basketball Association of America (BAA), which became the NBA
+      after merging with the rival National Basketball League (NBL) in 1949.
+
+      Vince Carter Vincent Lamar Carter (born January 26, 1977) is an American professional
+      basketball player for the Sacramento Kings of the National Basketball Association
+      (NBA).
+
+      Vince Carter He is tall and plays both shooting guard and small forward.
+
+      Vince Carter Carter is one of only seven players ever to play at least 20 seasons
+      in the NBA.
+
+      Vince Carter A high school McDonald''s All-American, Carter played three years
+      at the University of North Carolina.
+
+      Vince Carter While there, he twice reached the Final Four of the NCAA Tournament
+      before being selected as the fifth overall pick in the 1998 NBA draft by the
+      Golden State Warriors, who traded him to the Toronto Raptors.
+
+      Chris Bosh Christopher Wesson Bosh (born March 24, 1984) is an American professional
+      basketball player who is currently a free agent.
+
+      Chris Bosh A high school "Mr. Basketball" in Texas, Bosh left Georgia Tech after
+      one season to enter the 2003 NBA draft.
+
+      Chris Bosh He was selected fourth overall by the Toronto Raptors in a draft
+      class that included multiple future NBA superstars such as LeBron James, Dwyane
+      Wade and Carmelo Anthony.
+
+      Chris Bosh While at Toronto, Bosh emerged as one of the young stars in the league;
+      he became a five-time NBA All-Star, was named to the All-NBA Second Team once,
+      appeared for the U.S. national team (with whom he won a gold medal at the 2008
+      Summer Olympics), and supplanted former fan-favorite Vince Carter as the face
+      and leader of the Raptors franchise.
+
+      History of the Miami Heat The Miami Heat is an American professional basketball
+      team based in Miami.
+
+      History of the Miami Heat The team was launched in 1988 and played in the 1988–89
+      season of the National Basketball Association.
+
+      History of the Miami Heat The next season they moved from the Western Conference
+      to the Atlantic Division of the Eastern Conference.
+
+      History of the Miami Heat After a mainly mediocre performance in the first few
+      seasons, there were extensive team changes in 1995 and 1996 under head coach
+      Pat Riley, including the recruitment of Isaac Austin and P.J.
+
+      History of the Miami Heat Brown.
+
+      History of the Miami Heat They reached the Eastern Conference Finals for the
+      first time in 1996–97.
+
+      History of the Miami Heat They did not reach this level again until 2004–05,
+      under new head coach Stan Van Gundy and with Dwyane Wade as a leading team member.
+
+      '
+    labels:
+    - they were established in 1995, along with the Vancouver Grizzlies, as part of
+      the NBA's expansion into Canada.
+    personality: Knowledgeable
+    text: When was the basketball team formed?
+    title: Toronto Raptors

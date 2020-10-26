@@ -1,0 +1,300 @@
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - The ice facade is approximately 60 m high
+      - Ice formations in the Titlis glacier cave
+      - A glacier cave is a cave formed within the ice of a glacier .
+      - Glacier caves are often called ice caves , but this term is properly used
+        to describe bedrock caves that contain year-round ice.
+      labels:
+      - A glacier cave is a cave formed within the ice of a glacier .
+      reward: 0
+      text: how are glacier caves formed?
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Harry Potter is a series of seven fantasy novels written by the British author
+        J. K. Rowling .
+      - The books chronicle the adventures of a wizard , Harry Potter , and his friends
+        Ronald Weasley and Hermione Granger , all of whom are students at Hogwarts
+        School of Witchcraft and Wizardry .
+      - The main story arc concerns Harry's quest to overcome the Dark wizard Lord
+        Voldemort , whose aims are to become immortal, conquer the wizarding world
+        , subjugate non-magical people, and destroy all those who stand in his way,
+        especially Harry Potter.
+      - Since the release of the first novel Harry Potter and the Philosopher's Stone
+        on 30 June 1997, the books have gained immense popularity, critical acclaim
+        and commercial success worldwide.
+      - The series has also had some share of criticism, including concern for the
+        increasingly dark tone.
+      - ', the book series has sold about 450 million copies, making it the best-selling
+        book series in history , and has been translated into 67 languages .'
+      - The last four books consecutively set records as the fastest-selling books
+        in history.
+      - A series of many genres , including fantasy and coming of age (with elements
+        of mystery , thriller , adventure , and romance ), it has many cultural meanings
+        and references.
+      - According to Rowling, the main theme is death.
+      - There are also many other themes in the series, such as prejudice and corruption.
+      - The initial major publishers of the books were Bloomsbury in the United Kingdom
+        and Scholastic Press in the United States.
+      - The books have since been published by many publishers worldwide.
+      - The books, with the seventh book split into two parts, have been made into
+        an eight-part film series by Warner Bros. Pictures , the highest-grossing
+        film series of all time.
+      - The series also originated much tie-in merchandise, making the Harry Potter
+        brand worth in excess of $15 billion.
+      - Also due to the success of the books and films, Harry Potter has been used
+        for a theme park, The Wizarding World of Harry Potter in Universal Parks &
+        Resorts 's Islands of Adventure .
+      labels:
+      - The series also originated much tie-in merchandise, making the Harry Potter
+        brand worth in excess of $15 billion.
+      reward: 0
+      text: how much are the harry potter movies worth
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - This tablespoon has a capacity of about 15 mL.
+      - Measuring Spoons
+      - In the US and parts of Canada, a tablespoon is the largest type of spoon used
+        for eating from a bowl.
+      - In the UK, Europe and most Commonwealth countries, a tablespoon is a type
+        of large spoon usually used for serving.
+      - In countries where a tablespoon is a serving spoon, the nearest equivalent
+        to the US tablespoon is either the dessert spoon or the soup spoon .
+      - A tablespoonful, nominally the capacity of one tablespoon, is commonly used
+        as a measure of volume in cooking .
+      - It is abbreviated as T, tb, tbs, tbsp, tblsp, or tblspn.
+      - The capacity of ordinary tablespoons is not regulated by law and is subject
+        to considerable variation.
+      - In the USA one tablespoon (measurement unit) is approximately 15 mL; the capacity
+        of an actual tablespoon (dining utensil) ranges from 7 mL to 14 mL.
+      - In Australia one tablespoon (measurement unit) is 20 mL.
+      labels:
+      - This tablespoon has a capacity of about 15 mL.
+      - In the USA one tablespoon (measurement unit) is approximately 15 mL; the capacity
+        of an actual tablespoon (dining utensil) ranges from 7 mL to 14 mL.
+      - In Australia one tablespoon (measurement unit) is 20 mL.
+      reward: 0
+      text: how much is 1 tablespoon of water
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - RS-68 being tested at NASA's Stennis Space Center.
+      - The nearly transparent exhaust is due to this engine's exhaust being mostly
+        superheated steam (water vapor from its propellants, hydrogen and oxygen)
+      - Viking 5C rocket engine
+      - A rocket engine, or simply "rocket", is a jet engine that uses only stored
+        propellant mass for forming its high speed propulsive jet .
+      - Rocket engines are reaction engines and obtain thrust in accordance with Newton's
+        third law .
+      - Since they need no external material to form their jet, rocket engines can
+        be used for spacecraft propulsion as well as terrestrial uses, such as missiles
+        .
+      - Most rocket engines are internal combustion engines , although non-combusting
+        forms also exist.
+      - Rocket engines as a group have the highest exhaust velocities, are by far
+        the lightest, but are the least propellant efficient of all types of jet engines.
+      labels:
+      - A rocket engine, or simply "rocket", is a jet engine that uses only stored
+        propellant mass for forming its high speed propulsive jet .
+      reward: 0
+      text: how a rocket engine works
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Cholera is an infection in the small intestine caused by the bacterium Vibrio
+        cholerae .
+      - The main symptoms are watery diarrhea and vomiting .
+      - Transmission occurs primarily by drinking water or eating food that has been
+        contaminated by the feces (waste product) of an infected person, including
+        one with no apparent symptoms.
+      - The severity of the diarrhea and vomiting can lead to rapid dehydration and
+        electrolyte imbalance, and death in some cases.
+      - The primary treatment is oral rehydration therapy , typically with oral rehydration
+        solution , to replace water and electrolytes.
+      - If this is not tolerated or does not provide improvement fast enough, intravenous
+        fluids can also be used.
+      - Antibacterial drugs are beneficial in those with severe disease to shorten
+        its duration and severity.
+      - Worldwide, it affects 3–5 million people and causes 100,000–130,000 deaths
+        a year .
+      - Cholera was one of the earliest infections to be studied by epidemiological
+        methods.
+      labels:
+      - Transmission occurs primarily by drinking water or eating food that has been
+        contaminated by the feces (waste product) of an infected person, including
+        one with no apparent symptoms.
+      reward: 0
+      text: how are cholera and typhus transmitted and prevented
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Annelies "Anne" Marie Frank (, ?, ; 12 June 1929early March 1945) is one of
+        the most discussed Jewish victims of the Holocaust .
+      - Her diary has been the basis for several plays and films.
+      - Born in the city of Frankfurt am Main in Weimar Germany , she lived most of
+        her life in or near Amsterdam , in the Netherlands.
+      - Born a German national, Frank lost her citizenship in 1941.
+      - She gained international fame posthumously after her diary was published.
+      - It documents her experiences hiding during the German occupation of the Netherlands
+        in World War II .
+      - The Frank family moved from Germany to Amsterdam in 1933, the year the Nazis
+        gained control over Germany.
+      - By the beginning of 1940, they were trapped in Amsterdam by the Nazi occupation
+        of the Netherlands.
+      - As persecutions of the Jewish population increased in July 1942, the family
+        went into hiding in the hidden rooms of Anne's father, Otto Frank 's, office
+        building.
+      - After two years, the group was betrayed and transported to concentration camps
+        .
+      - Anne Frank and her sister, Margot , were eventually transferred to the Bergen-Belsen
+        concentration camp , where they died of typhus in March 1945.
+      - Otto Frank, the only survivor of the family, returned to Amsterdam after the
+        war to find that Anne's diary had been saved, and his efforts led to its publication
+        in 1947.
+      - It was translated from its original Dutch and first published in English in
+        1952 as The Diary of a Young Girl .
+      - It has since been translated into many languages.
+      - The diary, which was given to Anne on her 13th birthday, chronicles her life
+        from 12 June 1942 until 1 August 1944.
+      labels:
+      - Anne Frank and her sister, Margot , were eventually transferred to the Bergen-Belsen
+        concentration camp , where they died of typhus in March 1945.
+      reward: 0
+      text: how did anne frank die
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Radial engine timing and cam mechanism.
+      - Click for full resolution animation.
+      - Radial engine of a biplane
+      - Master rod (upright), slaves and balances from a two-row, fourteen-cylinder
+        Pratt & Whitney Twin Wasp
+      - The radial engine is a reciprocating type internal combustion engine configuration
+        in which the cylinders point outward from a central crankshaft like the spokes
+        of a wheel.
+      - It resembles a stylized star when viewed from the front, and is called a "star
+        engine" ( German Sternmotor) in some languages.
+      - The radial configuration was very commonly used in aircraft engines before
+        turbine engines became predominant.
+      labels:
+      - The radial engine is a reciprocating type internal combustion engine configuration
+        in which the cylinders point outward from a central crankshaft like the spokes
+        of a wheel.
+      reward: 0
+      text: how are aircraft radial engines built
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Deepwater drilling is the process of oil and gas exploration and production
+        in depths of more than 500 feet.
+      - By this definition, there are approximately 600 deepwater wells in the Gulf
+        of Mexico.
+      - It has been economically infeasible for many years, but with rising oil prices,
+        more companies are investing in this area.
+      - Major companies working in this sector include Diamond Offshore , TransOcean
+        , and Baker Hughes .
+      - 'There are basically two kinds of mobile deepwater drilling rigs: semi-submersible
+        drilling rigs and drillships .'
+      - Drilling can also be performed from a fixed-position installation such as
+        a floating spar (platform) or tension-leg platform.
+      - Recent industry analysis has estimated that the total expenditure in the global
+        deepwater infrastructure market will reach $145bn in 2011.
+      - “Not all oil is accessible on land or in shallow water.
+      - You can find some oil deposits buried deep under the ocean floor.” ...Using
+        sonic equipment, oil companies determine the drilling sites most likely to
+        produce oil.
+      - Then they use a mobile offshore drilling unit (MODU) to dig the initial well.
+      - “The reason for the resumption of such drilling, analyst say, is continuing
+        high demand for energy worldwide.”
+      - America needs the oil so it is almost necessary to face the high risks that
+        come with deepwater drilling in order for Americans to continue to carry on
+        their everyday lives.
+      - “The Energy Department recently projected that gulf oil production would expand
+        from its 2011 level of 1.3 million barrels a day, still nearly a quarter of
+        total domestic production, to 2 million barrels a day by 2020.”
+      - Deepwater drilling affects the environment in both negative and positive ways.
+      - Although Deepwater drilling rarely causes oil spills it is still a hazardous
+        possible outcome.
+      - Oil spills result in oil sinking to the bottom of the ocean smothering plant
+        life leaving fish without food and shelter to survive.
+      - On the other hand deepwater drilling effects the environment in a positive
+        ways too.
+      - In time once the deepwater oil well is not in use anymore plants will grow
+        on and around the well making a cave or cavern like shelter ideal for animals
+        to thrive in.
+      - Deepwater drilling also lets us see the depths of the ocean floor that are
+        hardly ever seen.
+      - ”Cameras on rovers at the bottom of the wells record footage and take photos
+        of rare fish that are in there natural habitat, giving scientist a look at
+        animals they rarely seen”(Chevron Corporation)."
+      labels:
+      - Deepwater drilling is the process of oil and gas exploration and production
+        in depths of more than 500 feet.
+      reward: 0
+      text: how deep can be drill for deep underwater
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Monica Samille Lewinsky (born July 23, 1973) is an American woman with whom
+        United States President Bill Clinton admitted to having had an "improper relationship"
+        while she worked at the White House in 1995 and 1996.
+      - The affair and its repercussions (which included Clinton's impeachment ) became
+        known as the Lewinsky scandal .
+      labels:
+      - Monica Samille Lewinsky (born July 23, 1973) is an American woman with whom
+        United States President Bill Clinton admitted to having had an "improper relationship"
+        while she worked at the White House in 1995 and 1996.
+      reward: 0
+      text: how old was monica lewinsky during the affair
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Francis Albert "Frank" Sinatra, , (December 12, 1915 – May 14, 1998) was an
+        American singer and film actor.
+      - Beginning his musical career in the swing era with Harry James and Tommy Dorsey
+        , Sinatra found unprecedented success as a solo artist from the early to mid-1940s
+        after being signed to Columbia Records in 1943.
+      - Being the idol of the " bobby soxers ", he released his first album, The Voice
+        of Frank Sinatra in 1946.
+      - His professional career had stalled by the 1950s, but it was reborn in 1953
+        after he won the Academy Award for Best Supporting Actor for his performance
+        in From Here to Eternity .
+      - He signed with Capitol Records in 1953 and released several critically lauded
+        albums (such as In the Wee Small Hours , Songs for Swingin' Lovers! , Come
+        Fly with Me , Only the Lonely and Nice 'n' Easy ).
+      - Sinatra left Capitol to found his own record label, Reprise Records in 1961
+        (finding success with albums such as Ring-a-Ding-Ding! , Sinatra at the Sands
+        and Francis Albert Sinatra & Antonio Carlos Jobim ), toured internationally,
+        was a founding member of the Rat Pack and fraternized with celebrities and
+        statesmen, including John F. Kennedy .
+      - 'Sinatra turned 50 in 1965, recorded the retrospective September of My Years
+        , starred in the Emmy -winning television special Frank Sinatra: A Man and
+        His Music , and scored hits with " Strangers in the Night " and " My Way ".'
+      - With sales of his music dwindling and after appearing in several poorly received
+        films, Sinatra retired for the first time in 1971.
+      - Two years later, however, he came out of retirement and in 1973 recorded several
+        albums, scoring a Top 40 hit with " (Theme From) New York, New York " in 1980.
+      - Using his Las Vegas shows as a home base, he toured both within the United
+        States and internationally, until a short time before his death in 1998.
+      - Sinatra also forged a highly successful career as a film actor.
+      - After winning Best Supporting Actor in 1953, he also garnered a nomination
+        for Best Actor for The Man with the Golden Arm , and critical acclaim for
+        his performance in The Manchurian Candidate .
+      - He also starred in such musicals as High Society , Pal Joey , Guys and Dolls
+        and On the Town .
+      - Sinatra was honored at the Kennedy Center Honors in 1983 and was awarded the
+        Presidential Medal of Freedom by Ronald Reagan in 1985 and the Congressional
+        Gold Medal in 1997.
+      - He was the recipient of eleven Grammy Awards , including the Grammy Trustees
+        Award , Grammy Legend Award and the Grammy Lifetime Achievement Award .
+      - Sinatra is also one of world’s best-selling artists of all time , having sold
+        more than 150 million copies worldwide.
+      labels:
+      - Beginning his musical career in the swing era with Harry James and Tommy Dorsey
+        , Sinatra found unprecedented success as a solo artist from the early to mid-1940s
+        after being signed to Columbia Records in 1943.
+      reward: 0
+      text: how long was frank sinatra famous

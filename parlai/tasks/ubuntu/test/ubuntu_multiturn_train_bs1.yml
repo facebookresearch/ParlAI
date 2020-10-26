@@ -1,0 +1,27 @@
+- - episode_done: true
+    id: ubuntu:multiturn
+    labels:
+    - but is NTFS going to pose a problem with linux? and can i move from computer
+      to computer in windows with NTFS without permission problems? .
+    text: i would put a ntfs partition on it if i needed to use it with windows, or
+      and ext3 if i didn't
+- - episode_done: true
+    id: ubuntu:multiturn
+    labels:
+    - slapd
+    text: what is the package name of the openldap server? i cant find it.
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - thx . how do i make my /media/GRANT DOBSO point to /media/ipod ?
+    text: rm -rf /path/name_of_dir
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - is it just . ln /media/GRANT\DOBSO /media/ipod ?
+    text: man ln
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - i dont think that worked . that put the folder in /media/ipoid
+    text: ln -s

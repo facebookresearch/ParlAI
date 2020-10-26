@@ -1,0 +1,753 @@
+- - - episode_done: true
+      eval_labels:
+      - Keddah
+      id: cbt:NE
+      label_candidates:
+      - Assamese
+      - Hai
+      - Keddah
+      - Nag
+      - Pudmini
+      - Sahib
+      - Toomai
+      - days
+      - mahout
+      - right
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        But , son , I am angry that thou shouldst meddle in the business that belongs
+        to these dirty Assamese jungle folk .
+
+        Kala Nag will obey none but me , so I must go with him into the Keddah , but
+        he is only a fighting elephant , and he does not help to rope them .
+
+        So I sit at my ease , as befits a mahout , -- not a mere hunter , -- a mahout
+        , I say , and a man who gets a pension at the end of his service .
+
+        Is the family of Toomai of the Elephants to be trodden underfoot in the dirt
+        of a Keddah ?
+
+        Bad one !
+
+        Wicked one !
+
+        Worthless son !
+
+        Go and wash Kala Nag and attend to his ears , and see that there are no thorns
+        in his feet .
+
+        Or else Petersen Sahib will surely catch thee and make thee a wild hunter
+        -- a follower of elephant ''s foot tracks , a jungle bear .
+
+        Bah !
+
+        Shame !
+
+        Go ! ''''
+
+        Little Toomai went off without saying a word , but he told Kala Nag all his
+        grievances while he was examining his feet .
+
+        `` No matter , '''' said Little Toomai , turning up the fringe of Kala Nag
+        ''s huge right ear .
+
+        `` They have said my name to Petersen Sahib , and perhaps -- and perhaps --
+        and perhaps -- who knows ?
+
+        Hai !
+
+        That is a big thorn that I have pulled out ! ''''
+
+        The next few days were spent in getting the elephants together , in walking
+        the newly caught wild elephants up and down between a couple of tame ones
+        to prevent them giving too much trouble on the downward march to the plains
+        , and in taking stock of the blankets and ropes and things that had been worn
+        out or lost in the forest .
+
+        Petersen Sahib came in on his clever she-elephant Pudmini ; he had been paying
+        off other camps among the hills , for the season was coming to an end , and
+        there was a native clerk sitting at a table under a tree , to pay the drivers
+        their wages .
+
+        As each man was paid he went back to his elephant , and joined the line that
+        stood ready to start .
+
+        The catchers , and hunters , and beaters , the men of the regular XXXXX ,
+        who stayed in the jungle year in and year out , sat on the backs of the elephants
+        that belonged to Petersen Sahib ''s permanent force , or leaned against the
+        trees with their guns across their arms , and made fun of the drivers who
+        were going away , and laughed when the newly caught elephants broke the line
+        and ran about .'
+    - episode_done: true
+      eval_labels:
+      - King
+      id: cbt:NE
+      label_candidates:
+      - Court
+      - Hallo
+      - King
+      - Princess
+      - Simpleton
+      - command
+      - courtier
+      - peasants
+      - people
+      - village
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` This is not common wood , '' answered the other .
+
+        ` What sort of wood is it , then ? ''
+
+        said the Simpleton .
+
+        ` If you throw it upon the ground , '' said the man , ` it will be changed
+        into an army of soldiers . ''
+
+        ` Come into the ship with us , then . ''
+
+        And so he too joined them ; and away the ship flew on , and on , and on ,
+        and once more the Simpleton looked out , and this time he saw a man carrying
+        straw upon his back .
+
+        ` Hallo !
+
+        Where are you carrying that straw to ? ''
+
+        ` To the village , '' said the man .
+
+        ` Do you mean to say there is no straw in the village ? ''
+
+        ` Ah !
+
+        but this is quite a peculiar straw .
+
+        If you strew it about even in the hottest summer the air at once becomes cold
+        , and snow falls , and the people freeze . ''
+
+        Then the Simpleton asked him also to join them .
+
+        At last the ship , with its strange crew , arrived at the King ''s Court .
+
+        The King was having his dinner , but he at once despatched one of his courtiers
+        to find out what the huge , strange new bird could be that had come flying
+        through the air .
+
+        The courtier peeped into the ship , and , seeing what it was , instantly went
+        back to the King and told him that it was a flying ship , and that it was
+        manned by a few peasants .
+
+        Then the King remembered his royal oath ; but he made up his mind that he
+        would never consent to let the Princess marry a poor peasant .
+
+        So he thought and thought , and then said to himself : '' I will give him
+        some impossible tasks to perform ; that will be the best way of getting rid
+        of him . ''
+
+        And he there and then decided to despatch one of his courtiers to the Simpleton
+        , with the command that he was to fetch the King the healing water from the
+        world ''s end before he had finished his dinner .
+
+        But while the XXXXX was still instructing the courtier exactly what he was
+        to say , the first man of the ship ''s company , the one with the miraculous
+        power of hearing , had overheard the King ''s words , and hastily reported
+        them to the poor Simpleton .'
+- - - episode_done: true
+      eval_labels:
+      - man
+      id: cbt:CN
+      label_candidates:
+      - birds
+      - food
+      - maiden
+      - man
+      - middle
+      - place
+      - sight
+      - south
+      - wash
+      - wings
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        -LRB- 3 -RRB- Hollenmadchen .
+
+        ` But where is he to find the Witch-maiden ? ''
+
+        said the first bird .
+
+        ` She has no settled dwelling , but is here to-day and gone to-morrow .
+
+        He might as well try to catch the wind . ''
+
+        The other replied , '' I do not know , certainly , where she is at present
+        , but in three nights from now she will come to the spring to wash her face
+        , as she does every month when the moon is full , in order that she may never
+        grow old nor wrinkled , but may always keep the bloom of youth . ''
+
+        ` Well , '' said the first bird , ` the spring is not far from here .
+
+        Shall we go and see how it is she does it ? ''
+
+        ` Willingly , if you like , '' said the other .
+
+        The youth immediately resolved to follow the birds to the spring , only two
+        things made him uneasy : first , lest he might be asleep when the birds went
+        , and secondly , lest he might lose sight of them , since he had not wings
+        to carry him along so swiftly .
+
+        He was too tired to keep awake all night , yet his anxiety prevented him from
+        sleeping soundly , and when with the earliest dawn he looked up to the tree-top
+        , he was glad to see his feathered companions still asleep with their heads
+        under their wings .
+
+        He ate his breakfast , and waited until the birds should start , but they
+        did not leave the place all day .
+
+        They hopped about from one tree to another looking for food , all day long
+        until the evening , when they went back to their old perch to sleep .
+
+        The next day the same thing happened , but on the third morning one bird said
+        to the other , ` To-day we must go to the spring to see the Witch-maiden wash
+        her face . ''
+
+        They remained on the tree till noon ; then they flew away and went towards
+        the south .
+
+        The young man ''s heart beat with anxiety lest he should lose sight of his
+        guides , but he managed to keep the birds in view until they again perched
+        upon a tree .
+
+        The young man ran after them until he was quite exhausted and out of breath
+        , and after three short rests the birds at length reached a small open space
+        in the forest , on the edge of which they placed themselves on the top of
+        a high tree .
+
+        When the youth had overtaken them , he saw that there was a clear spring in
+        the middle of the space .
+
+        He sat down at the foot of the tree upon which the birds were perched , and
+        listened attentively to what they were saying to each other .
+
+        ` The sun is not down yet , '' said the first bird ; ` we must wait yet awhile
+        till the moon rises and the maiden comes to the spring .
+
+        Do you think she will see that young XXXXX sitting under the tree ? '''
+    - episode_done: true
+      eval_labels:
+      - proof
+      id: cbt:CN
+      label_candidates:
+      - Saturday
+      - boughs
+      - face
+      - father
+      - home
+      - nothing
+      - proof
+      - remarks
+      - smile
+      - woods
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        When she got home she shut herself up in her room and cried .
+
+        There was nothing for her to do but resign , she thought dismally .
+
+        On the following Saturday Esther went for an afternoon walk , carrying her
+        kodak with her .
+
+        It was a brilliantly fine autumn day , and woods and fields were basking in
+        a mellow haze .
+
+        Esther went across lots to Mrs. Charley Cropper ''s house , intending to make
+        a call .
+
+        But the house was locked up and evidently deserted , so she rambled past it
+        to the back fields .
+
+        Passing through a grove of maples she came out among leafy young saplings
+        on the other side .
+
+        Just beyond her , with its laden boughs hanging over the line fence , was
+        the famous plum tree .
+
+        Esther looked at it for a moment .
+
+        Then an odd smile gleamed over her face and she lifted her kodak .
+
+        Monday evening Esther called on Mr. Cropper again .
+
+        After the preliminary remarks in which he indulged , she said , with seeming
+        irrelevance , that Saturday had been a fine day .
+
+        `` There was an excellent light for snapshots , '''' she went on coolly .
+
+        `` I went out with my kodak and was lucky enough to get a good negative .
+
+        I have brought you up a proof .
+
+        I thought you would be interested in it . ''''
+
+        She rose and placed the proof on the table before Mr. Cropper .
+
+        The plum tree came out clearly .
+
+        Bob and Alf Cropper were up among the boughs picking the plums .
+
+        On the ground beneath them stood their father with a basket of fruit in his
+        hand .
+
+        Mr. Cropper looked at the XXXXX and from it to Esther .'
+- - - episode_done: true
+      eval_labels:
+      - am
+      id: cbt:V
+      label_candidates:
+      - am
+      - born
+      - find
+      - picking
+      - pricked
+      - said
+      - sat
+      - seems
+      - streamed
+      - thinking
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        Longman , the third , looked at the others over his shoulder .
+
+        Goldband , the fourth , had a gold sash round his waist ; and little Playman
+        did nothing at all , and was the more proud .
+
+        There was too much ostentation , and so I came away . ''
+
+        ` And now we are sitting and shining here ! ''
+
+        said the bit of bottle-glass .
+
+        At that moment more water came into the gutter ; it streamed over the edges
+        and washed the bit of bottle-glass away .
+
+        ` Ah !
+
+        now he has been promoted ! ''
+
+        said the Darning-needle . ''
+
+        I remain here ; I am too fine .
+
+        But that is my pride , which is a sign of respectability ! ''
+
+        And she sat there very proudly , thinking lofty thoughts . ''
+
+        I really believe I must have been born a sunbeam , I am so fine !
+
+        It seems to me as if the sunbeams were always looking under the water for
+        me .
+
+        Ah , I am so fine that my own mother can not find me !
+
+        If I had my old eye which broke off , I believe I could weep ; but I ca n''t
+        -- it is not fine to weep ! ''
+
+        One day two street-urchins were playing and wading in the gutter , picking
+        up old nails , pennies , and such things .
+
+        It was rather dirty work , but it was a great delight to them .
+
+        ` Oh , oh ! ''
+
+        cried out one , as he pricked himself with the Darning-needle ; ` he is a
+        fine fellow though ! '' ''
+
+        I XXXXX not a fellow ; I am a young lady ! '''
+    - episode_done: true
+      eval_labels:
+      - answered
+      id: cbt:V
+      label_candidates:
+      - Do
+      - answered
+      - began
+      - commanded
+      - cried
+      - free
+      - like
+      - put
+      - stood
+      - succeed
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        But he did not lose courage , and ran back to the stream with his pitcher
+        , filled it once more with water , and was home ten minutes before the King
+        ''s daughter arrived .
+
+        ` Look , '' said he , '' I have only just exercised my legs ; that was nothing
+        of a run . ''
+
+        But the King was angry , and his daughter even more so , that she should be
+        carried away by a common , discharged soldier .
+
+        They consulted together how they could destroy both him and his companions
+        .
+
+        ` Then , '' said the King to her , '' I have found a way .
+
+        Do n''t be frightened ; they shall not come home again . ''
+
+        He said to them , ` You must now make merry together , and eat and drink ,
+        '' and he led them into a room which had a floor of iron ; the doors were
+        also of iron , and the windows were barred with iron .
+
+        In the room was a table spread with delicious food .
+
+        The King said to them , ` Go in and enjoy yourselves , '' and as soon as they
+        were inside he had the doors shut and bolted .
+
+        Then he made the cook come , and ordered him to keep up a large fire under
+        the room until the iron was red-hot .
+
+        The cook did so , and the Six sitting round the table felt it grow very warm
+        , and they thought this was because of their good fare ; but when the heat
+        became still greater and they wanted to go out , but found the doors and windows
+        fastened , then they knew that the King meant them harm and was trying to
+        suffocate them .
+
+        ` But he shall not succeed , '' cried he of the little hat , '' I will make
+        a frost come which shall make the fire ashamed and die out ! ''
+
+        So he put his hat on straight , and at once there came such a frost that all
+        the heat disappeared and the food on the dishes began to freeze .
+
+        When a couple of hours had passed , and the King thought they must be quite
+        dead from the heat , he had the doors opened and went in himself to see .
+
+        But when the doors were opened , there stood all Six , alive and well , saying
+        they were glad they could come out to warm themselves , for the great cold
+        in the room had frozen all the food hard in the dishes .
+
+        Then the King went angrily to the cook , and scolded him , and asked him why
+        he had not done what he was told .
+
+        But the cook answered , ` There is heat enough there ; see for yourself .
+        ''
+
+        Then the King saw a huge fire burning under the iron room , and understood
+        that he could do no harm to the Six in this way .
+
+        The King now began again to think how he could free himself from his unwelcome
+        guests .
+
+        He commanded the master to come before him , and said , ` If you will take
+        gold , and give up your right to my daughter , you shall have as much as you
+        like . ''
+
+        ` Oh , yes , your Majesty , '' XXXXX he , ` give me as much as my servant
+        can carry , and I will give up your daughter . '''
+- - - episode_done: true
+      eval_labels:
+      - as
+      id: cbt:P
+      label_candidates:
+      - across
+      - after
+      - among
+      - as
+      - by
+      - from
+      - in
+      - that
+      - though
+      - while
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        They had not known the precise day of her coming and were not aware of the
+        Camerons '' arrival at Dalveigh .
+
+        `` It ''s the girl herself .
+
+        It ''s Nora , '''' said old Nathan , rising from his bench .
+
+        `` Mother ! ''''
+
+        cried Nora .
+
+        She ran across the room and buried her face in her mother ''s breast , sobbing
+        .
+
+        When the news spread , the Racicot people crowded in to see Nora until the
+        house was full .
+
+        They spent a noisy , merry , whole-hearted evening of the old sort .
+
+        The men smoked and most of the women knitted while they talked .
+
+        They were pleased to find that Nora did not put on any airs .
+
+        Old Jonas Myers bluntly told her that he did n''t see as her year among rich
+        folks had done her much good , after all .
+
+        `` You ''re just the same as when you went away , '''' he said .
+
+        `` They have n''t made a fine lady of you .
+
+        Folks here thought you ''d be something wonderful . ''''
+
+        Nora laughed .
+
+        She was glad that they did not find her changed .
+
+        Old Nathan chuckled in his dry way .
+
+        There was a difference in the girl , and he saw it , though the neighbours
+        did not , but it was not the difference he had feared .
+
+        His daughter was not utterly taken from him yet .
+
+        Nora sat by her mother and was happy .
+
+        But XXXXX the evening wore away she grew very quiet , and watched the door
+        with something piteous in her eyes .'
+    - episode_done: true
+      eval_labels:
+      - of
+      id: cbt:P
+      label_candidates:
+      - at
+      - before
+      - in
+      - of
+      - 'on'
+      - since
+      - than
+      - to
+      - while
+      - with
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        Oh , when you see it your eyes will stick out .
+
+        You must wear it tonight .
+
+        It ''s just your style , and I ''m sure it will fit you , for our figures
+        are so much alike . ''''
+
+        `` But it is too late . '''' ''''
+
+        ''T is n''t .
+
+        It ''s not more than half an hour since Uncle George and Aunt Bella went .
+
+        I ''ll have you ready in a twinkling . ''''
+
+        `` But the fire -- and the children ! ''''
+
+        `` I ''ll stay here and look after both .
+
+        I wo n''t burn the house down , and if the twins wake up I ''ll give them
+        -- what is it you give them -- soothing syrup ?
+
+        So go at once and get you ready , while I fly over for the dress .
+
+        I ''ll fix your hair up when I get back . ''''
+
+        Margaret was gone before Aunt Beatrice could speak again .
+
+        Her niece ''s excitement seized hold of her too .
+
+        She flung the stockings into the basket and the basket into the closet .
+
+        `` I will go -- and I wo n''t do another bit of darning tonight .
+
+        I hate it -- I hate it -- I hate it !
+
+        Oh , how much good it does me to say it ! ''''
+
+        When Margaret came flying up the stairs Aunt Beatrice was ready save for hair
+        and dress .
+
+        Margaret cast the gown on the bed , revealing all its beauty of jetted lace
+        and soft yellow silk with a dextrous sweep of her arm .
+
+        Aunt Beatrice gave a little cry XXXXX admiration .'
+- - - episode_done: true
+      eval_labels:
+      - year
+      id: cbt:NE
+      label_candidates:
+      - Eagles
+      - Flowers
+      - Foxes
+      - King
+      - Prince
+      - Queen
+      - first
+      - left
+      - midnight
+      - year
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` My son , '' answered the old woman , '' I am a very poor woman , and soon
+        after midnight I set out for the neighbouring town in order to sell my eggs
+        in the market on the following morning ; but I lost my way in the dark , and
+        fell into this deep ditch , where I might have remained for ever but for your
+        kindness . ''
+
+        Then the Prince said to her , ` You can hardly walk ; I will put you on my
+        horse and lead you home .
+
+        Where do you live ? ''
+
+        ` Over there , at the edge of the forest in the little hut you see in the
+        distance , '' replied the old woman .
+
+        The Prince lifted her on to his horse , and soon they reached the hut , where
+        the old woman got down , and turning to the Prince said , ` Just wait a moment
+        , and I will give you something . ''
+
+        And she disappeared into her hut , but returned very soon and said , ` You
+        are a mighty Prince , but at the same time you have a kind heart , which deserves
+        to be rewarded .
+
+        Would you like to have the most beautiful woman in the world for your wife
+        ? ''
+
+        ` Most certainly I would , '' replied the Prince .
+
+        So the old woman continued , ` The most beautiful woman in the whole world
+        is the daughter of the Queen of the Flowers , who has been captured by a dragon
+        .
+
+        If you wish to marry her , you must first set her free , and this I will help
+        you to do .
+
+        I will give you this little bell : if you ring it once , the King of the Eagles
+        will appear ; if you ring it twice , the King of the Foxes will come to you
+        ; and if you ring it three times , you will see the King of the Fishes by
+        your side .
+
+        These will help you if you are in any difficulty .
+
+        Now farewell , and heaven prosper your undertaking . ''
+
+        She handed him the little bell , and there disappeared hut and all , as though
+        the earth had swallowed her up .
+
+        Then it dawned on the Prince that he had been speaking to a good fairy , and
+        putting the little bell carefully in his pocket , he rode home and told his
+        father that he meant to set the daughter of the Flower Queen free , and intended
+        setting out on the following day into the wide world in search of the maid
+        .
+
+        So the next morning the Prince mounted his fine horse and left his home .
+
+        He had roamed round the world for a whole year , and his horse had died of
+        exhaustion , while he himself had suffered much from want and misery , but
+        still he had come on no trace of her he was in search of .
+
+        At last one day he came to a hut , in front of which sat a very old man .
+
+        The Prince asked him , ` Do you not know where the Dragon lives who keeps
+        the daughter of the Flower Queen prisoner ? ''
+
+        ` No , I do not , '' answered the old man .
+
+        ` But if you go straight along this road for a XXXXX , you will reach a hut
+        where my father lives , and possibly he may be able to tell you . '''
+    - episode_done: true
+      eval_labels:
+      - Iwanich
+      id: cbt:NE
+      label_candidates:
+      - Iwanich
+      - Prince
+      - body-guard
+      - bread-crumbs
+      - hedgehog
+      - hyenas
+      - left
+      - prickles
+      - she-wolf
+      - snarls
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        In this way you will be able to get through the wood unhurt . ''
+
+        Iwanich thanked the old man for his counsel , dismounted from his horse ,
+        and , taking the bag and the hare in his arms , he entered the forest .
+
+        He had hardly lost sight of his gaunt grey friend when he heard growls and
+        snarls in the thicket close to him , and before he had time to think he found
+        himself surrounded by the most dreadful-looking creatures .
+
+        On one side he saw the glittering eye of a cruel tiger , on the other the
+        gleaming teeth of a great she-wolf ; here a huge bear growled fiercely , and
+        there a horrible snake coiled itself in the grass at his feet .
+
+        But Iwanich did not forget the old man ''s advice , and quickly put his hand
+        into the bag and took out as many bread-crumbs as he could hold in his hand
+        at a time .
+
+        He threw them to the beasts , but soon the bag grew lighter and lighter ,
+        and the Prince began to feel a little frightened .
+
+        And now the last crumb was gone , and the hungry beasts thronged round him
+        , greedy for fresh prey .
+
+        Then he seized the hare and threw it to them .
+
+        No sooner did the little creature feel itself on the ground than it lay back
+        its ears and flew through the wood like an arrow from a bow , closely pursued
+        by the wild beasts , and the Prince was left alone .
+
+        He looked at his ring , and when he saw that it sparkled as brightly as ever
+        he went straight on through the forest .
+
+        He had n''t gone very far when he saw a most extraordinary looking man coming
+        towards him .
+
+        He was not more than three feet high , his legs were quite crooked , and all
+        his body was covered with prickles like a hedgehog .
+
+        Two lions walked with him , fastened to his side by the two ends of his long
+        beard .
+
+        He stopped the Prince and asked him in a harsh voice : ` Are you the man who
+        has just fed my body-guard ? ''
+
+        Iwanich was so startled that he could hardly reply , but the little man continued
+        : '' I am most grateful to you for your kindness ; what can I give you as
+        a reward ? ''
+
+        ` All I ask , '' replied Iwanich , ` is , that I should be allowed to go through
+        this wood in safety . ''
+
+        ` Most certainly , '' answered the little man ; ` and for greater security
+        I will give you one of my lions as a protector .
+
+        But when you leave this wood and come near a palace which does not belong
+        to my domain , let the lion go , in order that he may not fall into the hands
+        of an enemy and be killed . ''
+
+        With these words he loosened the lion from his beard and bade the beast guard
+        the youth carefully .
+
+        With this new protector Iwanich wandered on through the forest , and though
+        he came upon a great many more wolves , hyenas , leopards , and other wild
+        beasts , they always kept at a respectful distance when they saw what sort
+        of an escort the Prince had with him .
+
+        XXXXX hurried through the wood as quickly as his legs would carry him , but
+        , nevertheless , hour after hour went by and not a trace of a green field
+        or a human habitation met his eyes .'

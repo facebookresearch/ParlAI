@@ -1,0 +1,262 @@
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - tell me.
+    - remove the HowTo at the end of the url
+    - have you restarted samba?
+    - i doubt intel would bother to put sensors in the GFX chips
+    - if you type "mount" in a terminal does it show what you mounted?
+    - but there are two more.  just do apt-cache search gtkpod.  youll see em
+    - If you have a 386 (a real 386) that's having issues with the -generic ones
+    - heh, okay one sec just need to look something up
+    - then you would need some "brute-force" atack method
+    - you have got ati card ?
+    - its ok
+    - 'yes.  mail #See if you have system mail, (and lots of it).'
+    - Host *.xyz.zy (newline) User xyz
+    - 'smoxie: Yes, it''s F4 or something on the boot screen.. smoxie: it should be
+      listed at the bottom'
+    - You want a lts probably 12.04 or 14.04
+    - '> yes. the reason is that Frfx is not a distro/os/desktop specific browser.
+      > it''s a wed browser. web'
+    - sounds like a safe strategy
+    - so you type a username and then it stalls?
+    - /usr/lib/openoffice/share/template/
+    - nothing. I've been trying to find something on google, but as far as I can tell
+      there is no error message
+    labels:
+    - I tried AOM, it said some missing ddls but I didn't go looking to download them.
+      You let me know if you have any success with AOE.
+    text: 'participant 1: It would be great to play AOE in Lucid
+
+      participant 2: checked at winehq?
+
+      participant 1: yes, I have checked it, and it is possible, but, I want to know
+      if there is someone here ever go to the trouble
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - ask them not me :p i dont know!
+    - <unconvertable> press alt+f2, type xterm and press enter.  <unconvertable> and
+      then use xrandr there... provided you can see anything
+    - it's just your .themes folder
+    - duh
+    - you would have to use a theme afaik
+    - '!pin.  theres always the ppa''s ftp url -> http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu/.  perhaps
+      -> http://ppa.launchpad.net/ubuntu-wine/ppa/ubuntu/pool/main/w/wine1.2/'
+    - Compiz up and running?. Does anyone know how to use TestDisk well?
+    - hmm, odd okay, can you change your xorg driver to vesa and restart xserver please
+    - 'http://ubuntuforums.org/showthread.php?t=1560235.  points to: http://art.ubuntuforums.org/showthread.php?t=1467062
+      which has a script for controlling the fan'
+    - you can go into your sound menu, and change your output device to digital HDMI
+    - totem sucks a bit
+    - I don't think so, people do it all the time with other software brands.  just
+      make sure to state in clear terms that you're not affiliated with Canonical
+    - add it to your sessions
+    - killall nautilus
+    - you have to edit /etc/inetd.conf and uncomment the swat line
+    - just install it to one disk
+    - are you trying to get the gtkpod package to use your compiled library?
+    - it looks like your DVD drive has changed address and now lives in Las Vegas...
+      :-)
+    - tzconfig
+    - there are some chipset manufacturers out there that have yet to open themselves
+      to the linux community.. in the meantime one can only deal with it via ndiswrapper
+      or their proprietary driver.. and ndiswrapper is not a perfect solution either
+    labels:
+    - duh
+    text: 'participant 1: anyone know where I might find info on where upstart logs
+      when it fails to start?
+
+      participant 2: /var/log ?
+
+      participant 1: /var/log/what, I''ve ls -alt in /var/log tailed syslog kern.log
+      and auth.log and i see nothing related to tomcat, in this case, erroring or
+      not starting
+
+      participant 2: or /var/log/syslog
+
+      participant 1: tailed that, i see no errors, it just fails to start. this is
+      my script https://gist.github.com//a76eba3a3673d9c49b4e. * a portion of it.
+      and one that works https://gist.github.com//62e9b5f7fb10e821ae72
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - gnome tweak tool perhaps
+    - place them wherever you want. But do you want them to do something?
+    - you're trying to resize an NTFS partition?
+    - could you help me through it?
+    - use SAO.  insead of DAO
+    - again i need to ask. what type of server do you need to install? webserver,
+      ftp server, ssh server...?
+    - so it is recommended to completey ditch my system drive and reinstall?
+    - no updates and no support here
+    - sudo apt-get remove plymouth && sudo apt-get install plymouth?
+    - yes it does.  LVM encryption that is - i think you can do standard drives but
+      thats diff than whats in the installer (GUI)
+    - cpu scaling, yes
+    - OK, try libungif4g
+    - try a shift. If that fails, try an alt or another control key
+    - then i have no idea. i cannot boot into ubuntu because im getting 1000s of Temperature
+      above threshold, cpu clock throttled messages, my fan and heatsink are fine,
+      infact im talking from windows using the same pc..any way i can turn this message
+      off? desperately want to get back to ubuntu..
+    - no.  what de are you using?
+    - I see, you're probably right. I thought it was a shell error.
+    - don't know what to tell you. sorry.
+    - are you running as superuser?
+    - looking, thanks
+    - Alt->F->D->E. Traverses the Nautilus menu
+    labels:
+    - done?
+    text: 'participant 1: i have no idea what im doing, i tried to use boot-repair
+      but it abborted saying something about it not being booted in efi mode, and
+      i could not manually install grob fromt he live disc because it said something
+      about muliple devices?. i dont know how to repair grub, or know if thats what
+      im supposed to do
+
+      participant 2: are you in the live usb right now?
+
+      participant 1: yes
+
+      participant 2: run "sudo parted -l | nc termbin.com 9999"
+
+      participant 1: now what?
+
+      participant 2: paste the link it gave you here
+
+      participant 1: http://termbin.com/52jg
+
+      participant 2: looks like you have 2 linux installs?. what''s the deal here?
+      explain more please
+
+      participant 1: ones steam os on a different drive. but the one with 3 partitions
+      is ubuntu. thats the one in question
+
+      participant 2: ok, so why are you trying to install grub? didn''t it install
+      it in the installer?
+
+      participant 1: yes but i think i broke it with a graphics driver. after i installed
+      a graphics driver it ends up givving me this "grub>_" prompt. i think i broke
+      brub. grub*
+
+      participant 2: ok.  do you know which one is your root partition?.  there are
+      2 11gb ones and a 290gb one.  try sudo mount /dev/sda2 /mnt.  then "ls /mnt"
+      and see if you get /root /etc /boot ..
+
+      participant 1: i see /boot. and root and etc
+
+      participant 2: ok, type "for i in /dev /dev/pts /proc /sys /run; do sudo mount
+      -B $i /mnt$i; done"
+
+      participant 1: ok?
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - thx
+    - what is the error message?
+    - 1) tab completion on the terminal is awesome handy thing 2) most gnome apps
+      start with "gnome-" 3) its gnome-system-monitor. !find clam
+    - -> its your choice, stop it or continue waiting..
+    - I'm waiting for 14.04. 14.04 is supported until 2019 if you are on server edition
+    - joder!
+    - did you try easycam ?
+    - do you have usb ports on the front and back? if so try using the other usb ports
+    - 'because the RC doesn''t have base-config_2.44ubuntu27. see bug #1123. (fixed)'
+    - http://askubuntu.com/questions/218986/how-to-fix-a-broadcom-43224-rev-01-in-ubuntu-12-10-running-on-a-macbook-pro
+    - Is your Windows machine UEFI based?
+    - No idea. VLC probably does it
+    - Try the usual routine maintenace stuff.  sudo dpkg --configure -a ; sudo apt-get
+      -f install and such
+    - it isn't a directory, it's a devnode.... yea... probably 660... just reboot
+      and see ;)
+    - short way is to just move what you want to save to another directory and then
+      delete everything. The long way would to use either a combination of a find
+      or grep command and then pipe the result into rm
+    - you can load ubuntu.software from the menu (click super or your windoze key
+      then type software and it should appear) then navigate to what you want & click
+      'install'
+    - ''
+    - '"unrecognized service" means there''s no "/etc/init.d/cred"'
+    - if you have an Ubuntu install CD/DVD, and want to save a little bandwidth, you
+      will want to run 'apt-cdrom add' after updating your sources.list
+    - 'If you''re willing to take a risk: https://wiki.ubuntu.com/Touch/QtTesting'
+    labels:
+    - right, so try the apt-get form?
+    text: 'participant 1: guys im trying to setup a LAMP server ( first timer) but
+      tasksel keeps returning an aptitude (100) error
+
+      participant 2: use apt-get install ^lamp-server (or close to that :x)
+
+      participant 1: im afraid that does not help. since im not able to select anything
+      in the ''gui'' i allready did it that way. I also ran dkpg --configure -a and
+      apt-get update
+
+      participant 2: what do you mean by "that way"? Also, why does it not help? What
+      happens exactly? What''s your current state?
+
+      participant 1: that way is the tasksel install lamp-server , my current status
+      is i allways get an error aptitude (100) .. there is no additional information
+
+      participant 2: you always get an error aptitude (100) when doing what?
+
+      participant 1: when i run the command #tasksel install lamp-server
+
+      participant 2: right, so don''t run that?
+
+      participant 1: i kinda need to run it to get the lamp server installed right?
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - That's perhaps something we would expect as there are no pts available.
+    - try qt4 settings
+    - yes I think thats what you are looking for. and dmesg -c will clear it I believe
+      let me chec.  yeah sudo dmesg -c will clear it then you can reboot and get a
+      fresh one.
+    - thanks -- have you heard of a phantom monitor getting detected?. that is "unknown"
+    - none at all, look at your mount options
+    - Provided you are using grub2, of course
+    - it could be any number of networking apps being used
+    - i'll get you a liink in 5 seconds for that
+    - you could try this but it seems your way should work http://reactivated.net/writing_udev_rules.html.  I
+      don't really know how to do this but you should be able to write a udev rule
+      which runs a command when your drive is mounted
+    - you need to specify it in apt-get as dpkg option
+    - any empty folder (id suggest making one in /mnt (you'll need sudo))
+    - you should be able to browse your windows shares just fine
+    - microsoft - just a little joke
+    - 'Kanafani: ah ok.'
+    - if so better to use the standard desktop iso.  might be able to find a driver
+      in additional drivers. searfch for that. in unity interface. !wireless.  broadcomm
+      generally seems to need a propritary driver yes
+    - compiz is not working? meaning, you're stuck with metacity?
+    - you need to install a ftp-server on one or both machines
+    - lspci -nnk
+    - did you install from livecd or alt cd
+    - depends on the game, some games will some wont\
+    labels:
+    - that will mount automatically; for sharing look at the docs for "cifs"
+    text: 'participant 1: I have a second hard drive slaved on my computer that holds
+      nothing except movies. I am using my computer to stream movies to my smart TV,
+      the problem is that every time I want to watch one of these movies, I have to
+      come and make sure that the HDD is mounted, and that it is shared so that the
+      TV can access the files. How can I tell ubuntu to automatically mount and share
+      this HDD every time it boots up?
+
+      participant 2: in your /etc/fstab file
+
+      participant 1: can you take me through it step by step?
+
+      participant 2: depends on your hardware config. see the fstab guide first https://help.ubuntu.com/community/Fstab
+
+      participant 1: thanks!
+
+      '

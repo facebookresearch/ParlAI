@@ -1,0 +1,77 @@
+- - episode_done: true
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - contradiction
+    text: 'Premise: Fasole bătută or Fasole făcăluită (literally "mashed beans") or
+      icre de fasole (roe of beans) is a beans-based paste. This dip is traditionally
+      made by mashing boiled beans and mixed with vegetable oil adding some chopped
+      onions. Some recipes call for garlic, chili pepper, lime/lemon juice and/or
+      additional seasonings.
+
+      Hypothesis: The main ingredient in this recipe is pork'
+- - episode_done: true
+    id: ANLI:R3
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: Howl-O-Scream is an annual special event that occurs at Busch
+      Gardens Tampa Bay, Busch Gardens Williamsburg, and SeaWorld San Antonio. The
+      parks remain operational during the day and transition to Howl-O-Scream at night.
+      The event features haunted houses, "scare zones", and live entertainment. It
+      is a seasonal event that occurs in the Fall of the year, tied to Halloween.
+
+      Hypothesis: The Howl-O-Scream event takes place in multiple locations every
+      fall'
+- - episode_done: true
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: Lindenhurst Senior High School (LSHS) is a public high school
+      in Lindenhurst, New York on the South Shore of Long Island. The high school
+      is the sole high school of the Lindenhurst Union Free School District, which
+      includes the Village of Lindenhurst and North Lindenhurst.
+
+      Hypothesis: Lindenhurst Union Free School District includes the Village of Lindenhurst.'
+- - episode_done: true
+    id: ANLI:R3
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: The Real Estate Pros are focused on providing you with the best
+      results and service in the industry. They listen carefully to understand your
+      real estate goals and work hard to create solutions that make sense for you.
+      They have extensive knowledge of the Rock Springs, WY area and can help you
+      find the right home for you or the right buyer for your home. Related
+
+      Hypothesis: The Real Estate Pros are focused on providing you with the best
+      results and service in the industry. They will make you comfortable'
+- - episode_done: true
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: Red Shirts (Italian:Camicie rosse) is a 1952 French-Italian historical
+      drama film directed by Goffredo Alessandrini and Francesco Rosi and starring
+      Anna Magnani, Raf Vallone and Alain Cuny. The title refers to the historical
+      Redshirts. It is also known as Anita Garibaldi. The film portrays the life of
+      Anita Garibaldi (1821–1849), the wife of Italian unification leader Giuseppe
+      Garibaldi.
+
+      Hypothesis: Red Shirts refers to Anita Garibaldi'

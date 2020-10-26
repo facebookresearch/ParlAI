@@ -1,0 +1,60 @@
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - universal music group
+      reward: 0
+      text: which record label does slade belong to?
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - single (music)
+      reward: 0
+      text: what type of release is addicted
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - n-gage
+      reward: 0
+      text: which platform is x-men legends released for?
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - narc
+      reward: 0
+      text: which game was designed by brian l. schmidt
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - ballot measure 9
+      reward: 0
+      text: What is a lgbt netflix movie?
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - united states
+      reward: 0
+      text: which country released moving targets
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - southern district
+      reward: 0
+      text: What is a district in israel
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - suspense
+      reward: 0
+      text: What kind of book is dying for it?
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - patrick mcgoohan
+      reward: 0
+      text: who is the program creator of the show the prisoner?
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - mischief
+      reward: 0
+      text: Which lyrics did ian dury write>

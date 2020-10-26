@@ -1,0 +1,312 @@
+- - - episode_done: false
+      id: personachat
+      label_candidates:
+      - yea . the piano . before i graduated college .
+      - yes . very warm . i love it .
+      - nice meeting you , spend as much time at home now that you can , i wish i
+        could .
+      - he was . he was my favorite artist .
+      - i was . she was an addict though . love hate relationship . in the strongest
+        way
+      - hey , how is it going today ?
+      - i am not but i want to marry . i am a lesbian and i enjoy female authors .
+      - cool . i love in california . where do you live ?
+      - his birthdays have always been so special to me .
+      - oh that is cool , do you live in like a major city ?
+      - yes ! i show them to all the people i meet . its fun
+      - maybe we could go to a lamp event , drink coffee , and listen to our fav bands
+        ?
+      - believe it or not , i like to catch and release !
+      - hi . i am good . i am dealing with two kids under ten , so there is that .
+        lol .
+      - no i do not but i do have 6 toes on my right foot
+      - have you worked on your presentation ? us cajuns are great at that .
+      - that sounds interesting . what do you do in your free time ?
+      - no i do not , its my husbands pet . i have got a phobia against spiders ,
+        but not the snake .
+      - sounds good to me , i do not know how to speak french anyways . only read
+        it
+      - great ! just got off work and relaxing before i study
+      labels:
+      - great ! just got off work and relaxing before i study
+      reward: 0
+      text: 'your persona: i just started college.
+
+        your persona: i have 3 science classes.
+
+        your persona: i work part time in the campus library.
+
+        your persona: i am living at home but hope to live in the dorms next year.
+
+        hi how are you doing'
+    - episode_done: false
+      id: personachat
+      label_candidates:
+      - hi there ! i am okay , hows you ?
+      - mine is old school , radiated
+      - oh i will just be at home with my three kids . they are the reason i drive
+        trucks .
+      - fabulous . do you have a pet ?
+      - just reading , saw myself in the mirror , my face cheeks are so big .
+      - well lets plan to go !
+      - hey , how are you ?
+      - it is sunny here but winter is coming i hate the cold
+      - where do you do nursing ?
+      - i am doing well ! how are you doing ?
+      - wow . you must be fit . what about free time ? i read political thrillers
+        .
+      - i love dogs but i only have 1 dog .
+      - i am great ! how are you ?
+      - pretty good . watching irma coverage instead of watching laker game reruns
+      - i just broke up with my girl
+      - oh that is nice . i am not much of reader but i am an eater . fast food mainly
+      - where do you work at ?
+      - what are you studying for ? i like to daydream about visiting paris and the
+        cafes
+      - not really . it was better for me to leave . cartoons and books helped me
+        get through it
+      - i am self employed but i would love to live in las vegas
+      labels:
+      - i am self employed but i would love to live in las vegas
+      reward: 0
+      text: 'your persona: i like to watch shows on netflix.
+
+        your persona: my sister is my best friend.
+
+        your persona: i want to move to las vegas.
+
+        your persona: i want to learn self defense.
+
+        your persona: i want to go back to school.
+
+        what do you do for a living ?'
+- - - episode_done: false
+      id: personachat
+      label_candidates:
+      - that is amazing to hear . i like to run with my dogs .
+      - i did not it was so yucky out
+      - not too bad so far
+      - i am a bowler and professional one and i have two kids and you ?
+      - yes it could , i am always sad ugh , how are you ?
+      - aw , that sounds awful . let me guess , not compatible ? or did this person
+        cheat ? !
+      - i love food , in general sweets , sours , meat , fruit , vegetables , everything
+        .
+      - i had a hard time in college but it got better anything is possible
+      - i like to try new hairstyles . do you ever design websites for your job ?
+      - she manipulated to get the promotion . i have been in this industry 10 years
+        and she is new
+      - that is what a grown woman like me likes . motorcycles and tattoos
+      - interesting . do you have any hobbies ? i like visiting the museums .
+      - the food or the band ?
+      - how nice ! i am an animal lover , so i have decided to become a vegetarian
+      - i am good . chatting from work at the amazon warehouse .
+      - being a nurse is a good job .
+      - tell me more about your special car and life !
+      - for sure ! who do you pull for ?
+      - burritos are great but there is nothing like a steak
+      - the library on campus , it is part time but really peaceful and easy
+      labels:
+      - the library on campus , it is part time but really peaceful and easy
+      reward: 0
+      text: nice where do you work
+    - episode_done: false
+      id: personachat
+      label_candidates:
+      - no its an anime book i like watching anime on tv too
+      - i went skydiving yesterday so full of endorphins ! slight chest pain
+      - good morning ! i am so excited . . halloweens just 1 month away ! yay !
+      - i have my own little marketing consulting firm
+      - my iphone case is red . that is probably my favorite color , to be honest
+        .
+      - nice ! i just finished a game of pool . something i am excellent at .
+      - i will never grow up ! my favorite food is still cheetos !
+      - yes it is beautiful . 300 days of sunshine . do you like the band tool ?
+      - what kind of music lessons do you teach ? instruments or voice ?
+      - that would be nice . i am sure we will adapt if love at first sight happens
+        though
+      - i am a karate instructor and love it
+      - too bad . i miss my mother . she is back home in hawaii
+      - great ! i just had a big salad after hiking all day . you ?
+      - i am great . . almost fall which means its that much closer to christmas !
+        you ?
+      - as a volunteer fire man i am staying to help
+      - hello how are you today ?
+      - seafood for the most part , new englander love a clambake
+      - i am . we have been married for 23 years . how about you ?
+      - i am totally afraid of sharks .
+      - netflix is my favorite channel
+      labels:
+      - netflix is my favorite channel
+      reward: 0
+      text: have some friends there . i cannot boat there though .
+- - - episode_done: false
+      id: personachat
+      label_candidates:
+      - i wish i knew how to play .
+      - hey , they call me blue eyes . do you have a nickname ?
+      - are you going to cook for me ?
+      - no i am currently taking my boards for pharmacy .
+      - they can come too . the more the merrier .
+      - yeah that would be cool . i might stay in japan i like it so much
+      - no , teal is . do you game ?
+      - my chihuahua runs along with me when i ride . great for keeping the pounds
+        off .
+      - you like gardening ? i love daisies ! pretty girly even though i am in my
+        24 .
+      - i listen to music do you
+      - i bet you do not . who is your favorite ?
+      - ahahah ! just like my favor taste , ice cream !
+      - good , i am here enjoying the night staring and the stars . and you ?
+      - it must have been something in the water lol
+      - they are like 80 so they just sit there
+      - i would hope so being a comedian lol
+      - finally starting to cool down . summers are brutal !
+      - wow ! ! ! that had to be scary
+      - now that is an awesome fact
+      - i live at home , next year i want to move on campus though
+      labels:
+      - i live at home , next year i want to move on campus though
+      reward: 0
+      text: that is cool i just live off my girlfriends salary
+    - episode_done: false
+      id: personachat
+      label_candidates:
+      - i do not really drink any more but i use to drink jack
+      - sorry to hear that ! yes , she is still here ! i also have an adorable dog
+        !
+      - ok i hear you . me too . that is why i just graduated , and i am 28 . haha
+        .
+      - okay , i guess i should not have gotten two dinner reservations for tomorrow
+      - mine was pizza . now it is carrots .
+      - i like all kinds of desserts and shopping online .
+      - yea its pretty nice out today
+      - they are mean little haters
+      - i run but do not swim
+      - what are your hobbies i prefer to read alot
+      - you should explore how to make some in a class .
+      - hello i am todd , how are you ?
+      - www , that is so sweet . my mother lifts weights for a hobby lol !
+      - are you broke l o l ?
+      - i am good hope you are doing well
+      - cool ! i just dropped out of college . stay in school ! !
+      - the nearest one to me is a long drive a away , but i do not mind .
+      - wow hope your wounds healed
+      - how are you doing tonight ?
+      - i am thinking about getting some more schooling
+      labels:
+      - i am thinking about getting some more schooling
+      reward: 0
+      text: what ever floats your boat . i love boating .
+- - - episode_done: false
+      id: personachat
+      label_candidates:
+      - i am doing well do you like music ?
+      - i will check them out . i am really going to miss my sister when i move .
+      - were they really ? i did not know that . i love to learn .
+      - hi . i am alright . what do you like to do ? i am a writer .
+      - me and my parents and brother moved here !
+      - i do it 3x a week its relaxing
+      - i will try ! what do you do for fun ?
+      - i have a friend that i enjoyed taking long walks on the beach with .
+      - i always listen to katie perry in the shower !
+      - i hang out with my mom a lot .
+      - they are good company usually
+      - yea she is far too demanding at times , so i just do what i want .
+      - chemical . have to carry on the tradition . both parents are scientists .
+      - you two ever watch that new british show ? my fav
+      - i want to be older and move out of this place
+      - i have four sisters and brothers . time to end chat ?
+      - hi louis ! my wife is also named louis , how funny
+      - that is ok . i cant type either
+      - what do your parents do ?
+      - i do , i make this one dish with pork marinated in catalina dressing , its
+        good
+      labels:
+      - i do , i make this one dish with pork marinated in catalina dressing , its
+        good
+      reward: 0
+      text: that is cool do you like to cook
+    - episode_done: false
+      id: personachat
+      label_candidates:
+      - hi , i am walt . what is your name ?
+      - wonderful . i am getting ready to go into work
+      - i am not sure of many jobs that you can do from home .
+      - a big newfoundland . he is silly
+      - hey man , hope your day is going better than mine .
+      - i bet she is . do you have a boyfriend or girlfriend ?
+      - play video games for money , like on youtube or something .
+      - wow that is a lot of movies . never seen school ties .
+      - that sounds beautiful
+      - i am six feet tall , lets see if you are worthy of joining my collection .
+      - no kids either . 1 dog macie and 1 cat mr pippy toes .
+      - i love pizza . i also have a love for singing lol
+      - i am so sorry . mine taught me how to cook .
+      - hi there . how is your day so far ?
+      - you do not know how to swim ? yes , you should lean
+      - sweet , i am scared of horses
+      - nothing interesting . . browsing social media
+      - have nothing else to do tonight either . i like beer though
+      - that is pretty awesome . i am actually in the olympics
+      - especially for self defence , i love boating too
+      labels:
+      - especially for self defence , i love boating too
+      reward: 0
+      text: never can have too much schooling .
+- - - episode_done: false
+      id: personachat
+      label_candidates:
+      - wow that is interesting to hear
+      - me too ! what do you do for a living ? i am in finance .
+      - helping people . i guess that is why i am a nurse .
+      - i enjoy going to park and bird watching . love country music
+      - its not as fun as biking , but it pays the bills .
+      - do you ever go geocache ?
+      - do you have a favorite snack food ?
+      - just doing alright . getting ready for work . got big dreams .
+      - what do you like to do for fun there ?
+      - really ? i am scared of horror novels my imagination is vivid !
+      - i run in my spare time , marathon winner . do you run ?
+      - so sorry to hear that . what do you like to do in your free time ?
+      - working every day . it is our busy season .
+      - i do because i love food . i eat a lot like very large meals .
+      - oh nice ! might need to visit one day . check out the video game stores too
+        .
+      - you are welcome ! what do you have planned for the weekend ?
+      - yea i also went bankrupt . . so yea . . no
+      - pork skins are good but my favorite is spaghetti
+      - that is nice charity is still helpful
+      - i do not cook a lot . this semester i have 3 different science classes
+      labels:
+      - i do not cook a lot . this semester i have 3 different science classes
+      reward: 0
+      text: that sounds so interesting i like to cook brunch on the weekends
+    - episode_done: false
+      id: personachat
+      label_candidates:
+      - hard to go wrong with chocolate ! i really like white cake .
+      - i do , but not country !
+      - the coast is beautiful . i have been trying to learn how to garden recently
+        .
+      - well does that pay well ? do you hunt ?
+      - wow are you a youtube person
+      - yeah birthdays mean allot to me .
+      - she is always cute because she gives you all the affection of a mom
+      - i love spaghetti . i want that
+      - oh hey there , what are you thinkin about right now ?
+      - ever ? i am not a big drinker so i stick to soda mainly .
+      - basically israeli martial arts . my major is education .
+      - i live in michigan . it is a cold , rainy day today .
+      - ha ha ha ! was that so hard ?
+      - out to eat a lot . i have 6 siblings so i was guaranteed to be social .
+      - what kind of museums inspire you most ?
+      - what do you do with the gamblers ?
+      - really anything that is on that late
+      - yeah of course my wife , 3 kids and 3 dogs load up in my suv
+      - i am in school in new york for designing fashion .
+      - i am very close to my sister , do you have a sister
+      labels:
+      - i am very close to my sister , do you have a sister
+      reward: 0
+      text: of course . as a doctor i do not have time for a second job .

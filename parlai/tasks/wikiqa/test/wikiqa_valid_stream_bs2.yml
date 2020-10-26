@@ -1,0 +1,404 @@
+- - - episode_done: true
+      eval_labels:
+      - Employing over 6,000, BMC is often credited with pioneering the BSM concept
+        as a way to help better align IT operations with business needs.
+      - 'For 2011, the company recorded an annual revenue of $2.1 billion, making
+        it the #20 largest software company in terms of revenue for that year.'
+      id: wikiqa
+      label_candidates:
+      - BMC Software, Inc. is an American company specializing in Business Service
+        Management (BSM) software.
+      - Headquartered in Houston , Texas , BMC develops, markets and sells software
+        used for multiple functions, including IT service management, data center
+        automation, performance management, virtualization lifecycle management and
+        cloud computing management.
+      - The name "BMC" is taken from the surnames of its three founders—Scott Boulette,
+        John Moores, and Dan Cloer.
+      - Employing over 6,000, BMC is often credited with pioneering the BSM concept
+        as a way to help better align IT operations with business needs.
+      - 'For 2011, the company recorded an annual revenue of $2.1 billion, making
+        it the #20 largest software company in terms of revenue for that year.'
+      reward: 0
+      text: how big is bmc software in houston, tx
+    - episode_done: true
+      eval_labels:
+      - Armando Pérez (born January 15, 1981), better known by his stage name Pitbull,
+        is an American rapper, songwriter, and record producer.
+      id: wikiqa
+      label_candidates:
+      - Armando Pérez (born January 15, 1981), better known by his stage name Pitbull,
+        is an American rapper, songwriter, and record producer.
+      - His first recorded performance was from the Lil Jon album Kings of Crunk in
+        2002.
+      - In 2004, he released his debut album titled M.I.A.M.I. (short for Money Is
+        A Major Issue) under TVT Records .
+      - 'Since then, he has released three other albums under the label: El Mariel
+        in 2006, The Boatlift in 2007, and Planet Pit in 2011.'
+      - He released Rebelution in 2009, which included singles " I Know You Want Me
+        (Calle Ocho) " and " Krazy ".
+      - The latter peaked at No. 30 on the Hot 100 and No. 11 on the Hot Rap Tracks
+        charts while "I Know You Want Me" peaked at No. 2 on the Hot 100 and peaked
+        within the top ten spots of charts in the UK, Canada, Italy, and the Netherlands.
+      - The song reached No. 1 in France and the European Hot 100 on the week ending
+        August 29, 2009 according to Billboard magazine.
+      - He later signed with Polo Grounds Music through Sony Music and created his
+        own label Mr. 305 Inc.
+      - Another single from Rebelution was " Hotel Room Service ", which peaked at
+        No. 8 on the Hot 100.
+      - Rebelution went on to sell over 7.5 million worldwide digital singles and
+        albums combined.
+      - 'Nevertheless, he dropped a smash called "Give Me Everything" which reached
+        #1 worldwide, and featured artists Ne-yo , Nayer , and Afrojack .'
+      - He has also performed as a featured artist in the remixes of many other hit
+        songs, like Tik Tok , Scream & Shout , Lo Hecho Esta Hecho , Bad , Papi ,
+        Diamonds , How Low , Tonight (I'm Lovin' You) , Video Phone , Over To You
+        Now and Bumpy Ride .
+      - Pérez is also the host of his own Spanish-language program on the cable channel
+        Mun2 titled La Esquina (Spanish for The Corner).
+      - In 2005 Pérez and rapper Sean 'Diddy' Combs co-founded Bad Boy Latino , a
+        subsidiary of Combs' Bad Boy Records label.
+      - It primarily focuses on Latin hip hop , Latin soul , Latin pop and other Tropical
+        music , and has offices in New York and Miami, Florida .
+      - Along with co-founding it, Pérez currently heads the A&R division of the label.
+      - Pérez has become a product endorser, representing alongside Drake , Rihanna
+        , and Trey Songz the “So Kodak” campaign for the Kodak brand and embarking
+        on a partnership with the soft drink giant Dr Pepper as part of the campaign
+        “ Vida 23 ” for which he recorded the song specifically featured on his album
+        Armando .
+      - Pitbull also announced he has become the spokesperson for Voli Vodka, in which
+        he holds a majority equity stake, and Budweiser has chosen Pitbull to promote
+        its Bud Light line of beer.
+      - The commercials currently highlight Pitbull dancing and gyrating on stage
+        holding up a bottle of Bud Light.
+      - Pitbull has also purchased an equity stake in Miami Subs Pizza and Grill .
+      reward: 0
+      text: how did armando christian perez become famous
+- - - episode_done: true
+      eval_labels:
+      - The black-and-white series originally ran from October 15, 1951, to May 6,
+        1957, on the Columbia Broadcasting System (CBS).
+      id: wikiqa
+      label_candidates:
+      - I Love Lucy is an American television sitcom starring Lucille Ball , Desi
+        Arnaz , Vivian Vance , and William Frawley .
+      - The black-and-white series originally ran from October 15, 1951, to May 6,
+        1957, on the Columbia Broadcasting System (CBS).
+      - After the series ended in 1957, however, a modified version continued for
+        three more seasons with 13 one-hour specials, running from 1957 to 1960, known
+        first as The Lucille Ball-Desi Arnaz Show and later in reruns as The Lucy–Desi
+        Comedy Hour .
+      - I Love Lucy was the most watched show in the United States in four of its
+        six seasons, and was the first to end its run at the top of the Nielsen ratings
+        (an accomplishment later matched by The Andy Griffith Show and Seinfeld ).
+      - I Love Lucy is still syndicated in dozens of languages across the world.
+      - The show was the first scripted television program to be shot on 35 mm film
+        in front of a studio audience, and won five Emmy Awards and received numerous
+        nominations.
+      - In 2002, it ranked second on TV Guide's list of television's greatest shows
+        , behind Seinfeld and ahead of The Honeymooners .
+      - In 2007, it was listed as one of Time magazine's "100 Best TV Shows of All-TIME."
+      - I Love Lucy remains popular, with an American audience of 40 million each
+        year.
+      reward: 0
+      text: how long was i love lucy on the air
+    - episode_done: true
+      eval_labels:
+      - Owls are a group of birds that belong to the order Strigiformes, constituting
+        200 extant bird of prey species .
+      id: wikiqa
+      label_candidates:
+      - Owls are a group of birds that belong to the order Strigiformes, constituting
+        200 extant bird of prey species .
+      - Most are solitary and nocturnal , with some exceptions (e.g., the Northern
+        Hawk Owl ).
+      - Owls hunt mostly small mammals , insects , and other birds, although a few
+        species specialize in hunting fish .
+      - They are found in all regions of the Earth except Antarctica , most of Greenland
+        and some remote islands.
+      - 'Owls are characterized by their small beaks and wide faces, and are divided
+        into two families : the typical owls , Strigidae; and the barn-owls , Tytonidae.'
+      reward: 0
+      text: what bird family is the owl
+- - - episode_done: true
+      eval_labels:
+      - The Oklahoma blast claimed 168 lives, including 19 children under the age
+        of 6, and injured more than 680 people.
+      id: wikiqa
+      label_candidates:
+      - The Oklahoma City bombing was a domestic terrorist bomb attack on the Alfred
+        P. Murrah Federal Building in downtown Oklahoma City on April 19, 1995.
+      - It would remain the most destructive act of terrorism on American soil until
+        the September 11, 2001 attacks .
+      - The Oklahoma blast claimed 168 lives, including 19 children under the age
+        of 6, and injured more than 680 people.
+      - The blast destroyed or damaged 324 buildings within a sixteen-block radius,
+        destroyed or burned 86 cars, and shattered glass in 258 nearby buildings.
+      - The bomb was estimated to have caused at least $652 million worth of damage.
+      - Extensive rescue efforts were undertaken by local, state, federal, and worldwide
+        agencies in the wake of the bombing, and substantial donations were received
+        from across the country.
+      - The Federal Emergency Management Agency (FEMA) activated eleven of its Urban
+        Search and Rescue Task Forces , consisting of 665 rescue workers who assisted
+        in rescue and recovery operations.
+      - Within 90 minutes of the explosion, Timothy McVeigh was stopped by Oklahoma
+        State Trooper Charlie Hanger for driving without a license plate and arrested
+        for unlawfully carrying a weapon.
+      - Forensic evidence quickly linked McVeigh and Terry Nichols to the attack;
+        Nichols was arrested, and within days both were charged.
+      - Michael and Lori Fortier were later identified as accomplices.
+      - McVeigh's co-conspirator, Terry Nichols, had assisted in the bomb preparation.
+      - Motivated by his hatred of the federal government and angered by what he perceived
+        as its mishandling of the Waco Siege (1993) and the Ruby Ridge incident (1992),
+        McVeigh timed his attack to coincide with the second anniversary of the deadly
+        fire that ended the siege at Waco.
+      - The official investigation, known as "OKBOMB", was the largest criminal investigation
+        case in American history; FBI agents conducted 28,000 interviews, amassing
+        of evidence, and collected nearly one billion pieces of information.
+      - The bombers were tried and convicted in 1997.
+      - McVeigh was executed by lethal injection on June 11, 2001, and Nichols was
+        sentenced to life in prison .
+      - Michael and Lori Fortier testified against McVeigh and Nichols; Michael was
+        sentenced to 12 years in prison for failing to warn the U.S. government, and
+        Lori received immunity from prosecution in exchange for her testimony.
+      - As with other large-scale terrorist attacks , conspiracy theories dispute
+        the official claims and allege the involvement of additional perpetrators.
+      - As a result of the bombing, the U.S. government passed the Antiterrorism and
+        Effective Death Penalty Act of 1996 , which tightened the standards for habeas
+        corpus in the United States , as well as legislation designed to increase
+        the protection around federal buildings to deter future terrorist attacks.
+      - On April 19, 2000, the Oklahoma City National Memorial was dedicated on the
+        site of the Murrah Federal Building, commemorating the victims of the bombing.
+      - Annual remembrance services are held at the same time of day as the original
+        explosion occurred.
+      reward: 0
+      text: how many people were killed in the oklahoma city bombing
+    - episode_done: true
+      eval_labels:
+      - 'There are currently 952 games (multiplatform: 751; exclusive: 123; console
+        exclusive: 78) on this list as of April 2, 2013.'
+      id: wikiqa
+      label_candidates:
+      - Official Xbox 360 Banner used on game covers from 2005-2010
+      - Official Xbox 360 Banner used on game covers from 2010-present
+      - This is a list of retail Xbox 360 games released or planned for release on
+        DVD .
+      - For a list of downloadable Xbox Live Arcade games, see the List of Xbox Live
+        Arcade games .
+      - For a list of original Xbox games available to download from the Xbox Live
+        , see the List of Xbox Originals .
+      - For a chronological list, click the sort button in the 'First released' column.
+      - For technical information, such as resolution and install sizes, see the individual
+        games' page.
+      - The column "Exclusive" indicates whether the Xbox 360 is the only platform
+        on which the game is available.
+      - This does not include handheld game consoles or mobile phones which generally
+        run a completely different version of the game under the same name.
+      - A value of "Console" for exclusivity means that, while a title may be available
+        as an arcade game or on a PC using Microsoft Windows , Unix / Linux , or Mac
+        OS X , it is not available on any other video game console in its native version.
+      - The term "Multi-platform" means that the game has appeared on multiple consoles.
+      - 'There are currently 952 games (multiplatform: 751; exclusive: 123; console
+        exclusive: 78) on this list as of April 2, 2013.'
+      reward: 0
+      text: how many xbox 360 games are there
+- - - episode_done: true
+      eval_labels:
+      - Jupiter is the fifth planet from the Sun and the largest planet in the Solar
+        System .
+      id: wikiqa
+      label_candidates:
+      - Jupiter is the fifth planet from the Sun and the largest planet in the Solar
+        System .
+      - It is a gas giant with mass one-thousandth that of the Sun but is two and
+        a half times the mass of all the other planets in the Solar System combined.
+      - Jupiter is classified as a gas giant along with Saturn , Uranus and Neptune
+        .
+      - Together, these four planets are sometimes referred to as the or outer planets.
+      - The planet was known by astronomers of ancient times, and was associated with
+        the mythology and religious beliefs of many cultures.
+      - The Romans named the planet after the Roman god Jupiter .
+      - When viewed from Earth , Jupiter can reach an apparent magnitude of −2.94,
+        making it on average the third-brightest object in the night sky after the
+        Moon and Venus .
+      - ( Mars can briefly match Jupiter's brightness at certain points in its orbit.)
+      - Jupiter is primarily composed of hydrogen with a quarter of its mass being
+        helium , although helium only comprises about a tenth of the number of molecules.
+      - It may also have a rocky core of heavier elements, but like the other gas
+        giants, Jupiter lacks a well-defined solid surface.
+      - Because of its rapid rotation, the planet's shape is that of an oblate spheroid
+        (it possesses a slight but noticeable bulge around the equator).
+      - The outer atmosphere is visibly segregated into several bands at different
+        latitudes, resulting in turbulence and storms along their interacting boundaries.
+      - A prominent result is the Great Red Spot , a giant storm that is known to
+        have existed since at least the 17th century when it was first seen by telescope
+        .
+      - Surrounding Jupiter is a faint planetary ring system and a powerful magnetosphere
+        .
+      - There are also at least 67 moons, including the four large moons called the
+        Galilean moons that were first discovered by Galileo Galilei in 1610.
+      - Ganymede , the largest of these moons, has a diameter greater than that of
+        the planet Mercury .
+      - Jupiter has been explored on several occasions by robotic spacecraft , most
+        notably during the early Pioneer and Voyager flyby missions and later by the
+        Galileo orbiter .
+      - The most recent probe to visit Jupiter was the Pluto -bound New Horizons spacecraft
+        in late February 2007.
+      - The probe used the gravity from Jupiter to increase its speed.
+      - Future targets for exploration in the Jovian system include the possible ice-covered
+        liquid ocean on the moon Europa .
+      reward: 0
+      text: how many planets is jupiter away from the sun?
+    - episode_done: true
+      eval_labels:
+      - During this event a very large number of the impact craters on the Moon would
+        have formed, and by inference on Earth , Mercury , Venus and Mars as well.
+      id: wikiqa
+      label_candidates:
+      - The Late Heavy Bombardment (commonly referred to as the lunar cataclysm, or
+        LHB) is a hypothetical event around 4.1 to 3.8 billion years ago ( Ga ).
+      - During this event a very large number of the impact craters on the Moon would
+        have formed, and by inference on Earth , Mercury , Venus and Mars as well.
+      - (While the LHB is "late" in the Solar System's accretion period when Earth
+        and the other rocky planets formed and gained most of their mass, it is early
+        in Solar System history.)
+      - The evidence for this event comes primarily from the dating of lunar samples
+        brought back by the Apollo astronauts, which indicates that most impact melt
+        rocks formed in this rather narrow interval of time.
+      - While many hypotheses have been put forth to explain a spike in the flux of
+        asteroids or comets in the inner Solar System at this time, no consensus yet
+        exists as to its cause.
+      - The Nice model , popular among planetary scientists , postulates that the
+        gas giant planets underwent orbital migration and forced objects in the asteroid
+        belt and/or Kuiper belt on eccentric orbits that put them in the path of the
+        terrestrial planets .
+      - Nevertheless, some researchers argue that the lunar sample data do not require
+        a cataclysmic cratering event near 3.9 Ga, and that the apparent clustering
+        of impact melt ages near this time is an artifact of sampling material affected
+        by a single large impact basin.
+      - Artist's impression of the moon during the Late Heavy Bombardment (Lunar Cataclysm)
+        and today
+      reward: 0
+      text: what happened on the moon during the period of Late Heavy Bombardment?
+- - - episode_done: true
+      eval_labels:
+      - Its duties have expanded over the years, and today, according to official
+        Federal Reserve documentation, include conducting the nation's monetary policy
+        , supervising and regulating banking institutions, maintaining the stability
+        of the financial system and providing financial services to depository institutions
+        , the U.S. government, and foreign official institutions.
+      id: wikiqa
+      label_candidates:
+      - The Federal Reserve System (also known as the Federal Reserve, and informally
+        as the Fed) is the central banking system of the United States.
+      - It was created on December 23, 1913, with the enactment of the Federal Reserve
+        Act , largely in response to a series of financial panics, particularly a
+        severe panic in 1907 .
+      - Over time, the roles and responsibilities of the Federal Reserve System have
+        expanded and its structure has evolved.
+      - Events such as the Great Depression were major factors leading to changes
+        in the system.
+      - 'The US Congress established three key objectives for monetary policy in the
+        Federal Reserve Act: Maximum employment, stable prices, and moderate long-term
+        interest rates.'
+      - The first two objectives are sometimes referred to as the Federal Reserve's
+        dual mandate.
+      - Its duties have expanded over the years, and today, according to official
+        Federal Reserve documentation, include conducting the nation's monetary policy
+        , supervising and regulating banking institutions, maintaining the stability
+        of the financial system and providing financial services to depository institutions
+        , the U.S. government, and foreign official institutions.
+      - The Fed also conducts research into the economy and releases numerous publications,
+        such as the Beige Book .
+      - The Federal Reserve System's structure is composed of the presidentially appointed
+        Board of Governors (or Federal Reserve Board), the Federal Open Market Committee
+        (FOMC), twelve regional Federal Reserve Banks located in major cities throughout
+        the nation, numerous privately owned U.S. member banks and various advisory
+        councils.
+      - The FOMC is the committee responsible for setting monetary policy and consists
+        of all seven members of the Board of Governors and the twelve regional bank
+        presidents, though only five bank presidents vote at any given time (the president
+        of the New York Fed and four others who rotate through one-year terms).
+      - It is also unusual in that an entity outside of the central bank, namely the
+        United States Department of the Treasury , creates the currency used.
+      - According to the Board of Governors, the Federal Reserve System "is considered
+        an independent central bank because its monetary policy decisions do not have
+        to be approved by the President or anyone else in the executive or legislative
+        branches of government, it does not receive funding appropriated by the Congress,
+        and the terms of the members of the Board of Governors span multiple presidential
+        and congressional terms."
+      - The authority of the Federal Reserve System is derived from statutes enacted
+        by the U.S. Congress and the System is subject to congressional oversight.
+      - The members of the Board of Governors, including its chairman and vice-chairman,
+        are chosen by the President and confirmed by the Senate.
+      - The government also exercises some control over the Federal Reserve by appointing
+        and setting the salaries of the system's highest-level employees.
+      - Nationally chartered commercial banks are required to hold stock in the Federal
+        Reserve Bank of their region; this entitles them to elect some of the members
+        of the board of the regional Federal Reserve Bank.
+      - Thus the Federal Reserve system has both public and private aspects.
+      - The U.S. Government receives all of the system's annual profits, after a statutory
+        dividend of 6% on member banks' capital investment is paid, and an account
+        surplus is maintained.
+      - In 2010, the Federal Reserve made a profit of $82 billion and transferred
+        $79 billion to the U.S. Treasury .
+      - This was followed at the end of 2011 with a transfer of $77 billion in profits
+        to the U.S. Treasury Department.
+      reward: 0
+      text: what does the federal reserve do
+    - episode_done: true
+      eval_labels:
+      - In the context of Earth , it refers to one or all of the major divisions of
+        the planet's World Ocean – they are, in descending order of area, the Pacific
+        , Atlantic , Indian , Southern (Antarctic) , and Arctic Oceans.
+      id: wikiqa
+      label_candidates:
+      - Surface of the Atlantic ocean meeting the Earth's planetary boundary layer
+        and troposphere .
+      - Waves on an ocean coast .
+      - This animation uses Earth science data from a variety of sensors on NASA Earth
+        observing satellites to measure physical oceanography parameters such as ocean
+        currents, ocean winds, sea surface height and sea surface temperature.
+      - An ocean (; the World Ocean of classical antiquity ) is a body of saline water
+        that composes a large part of a planet 's hydrosphere .
+      - In the context of Earth , it refers to one or all of the major divisions of
+        the planet's World Ocean – they are, in descending order of area, the Pacific
+        , Atlantic , Indian , Southern (Antarctic) , and Arctic Oceans.
+      - The word " sea " is often used interchangeably with "ocean", but strictly
+        speaking a sea is a body of saline water (possibly a division of the World
+        Ocean) partly or fully enclosed by land.
+      - Earth is the only planet known to have an ocean (or any large amounts of open
+        liquid water).
+      - Approximately 72% of the planet's surface (~3.6x108 km2) is covered by saline
+        water that is customarily divided into several principal oceans and smaller
+        seas, with the ocean covering approximately 71% of the Earth's surface.
+      - In terms of the hydrosphere of the Earth, the ocean contains 97% of the Earth's
+        water.
+      - Oceanographers have stated that out of 97%, only 5% of the ocean as a whole
+        on Earth has been explored.
+      - The origin of Earth's oceans is still unknown, but oceans are believed to
+        have formed in the Hadean period and may have been the impetus for the emergence
+        of life .
+      - Extraterrestrial oceans may be composed of a wide range of elements and compounds
+        .
+      - The only confirmed large stable bodies of extraterrestrial surface liquids
+        are the lakes of Titan , although there is evidence for the existence of oceans
+        elsewhere in the Solar System .
+      - Early in their geologic histories, Mars and Venus are theorized to have had
+        large water oceans.
+      - The Mars ocean hypothesis suggests that nearly a third of the surface of Mars
+        was once covered by water, though the water on Mars is no longer oceanic,
+        and a runaway greenhouse effect may have boiled away the global ocean of Venus.
+      - Compounds such as salts and ammonia dissolved in water lower its freezing
+        point, so that water might exist in large quantities in extraterrestrial environments
+        as brine or convecting ice .
+      - Unconfirmed oceans are speculated beneath the surface of many dwarf planets
+        and natural satellites; notably, the ocean of Europa is believed to have over
+        twice the water volume of Earth.
+      - The Solar System's gas giant planets are also believed to possess liquid atmospheric
+        layers of yet to be confirmed compositions.
+      - Oceans may also exist on exoplanets and exomoons , including surface oceans
+        of liquid water within a circumstellar habitable zone .
+      - Ocean planets are a hypothetical type of planet with a surface completely
+        covered with liquid.
+      reward: 0
+      text: how many nature oceans are on earth

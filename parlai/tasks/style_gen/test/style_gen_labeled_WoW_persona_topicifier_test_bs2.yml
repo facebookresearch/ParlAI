@@ -1,0 +1,2246 @@
+- - - checked_sentence: Blue is one of the three primary colours of pigments in painting
+        and traditional colour theory, as well as in the RGB colour model.
+      chosen_topic: Blue
+      episode_done: false
+      eval_labels:
+      - Blue is my favorite primary color.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Blue Blue is one of the three primary colours of pigments in painting
+        and traditional colour theory, as well as in the RGB colour model.
+
+        Blue It lies between violet and green on the spectrum of visible light.
+
+        Blue The eye perceives blue when observing light with a dominant wavelength
+        between approximately 450 and 495 nanometres.
+
+        Blue Most blues contain a slight mixture of other colors; azure contains some
+        green, while ultramarine contains some violet.
+
+        Blue The clear daytime sky and the deep sea appear blue because of an optical
+        effect known as Rayleigh scattering.
+
+        Blue An optical effect called Tyndall scattering explains blue eyes.
+
+        Blue Distant objects appear more blue because of another optical effect called
+        atmospheric perspective.
+
+        Blue Blue has been an important colour in art and decoration since ancient
+        times.
+
+        Blue The semi-precious stone lapis lazuli was used in ancient Egypt for jewellery
+        and ornament and later, in The Renaissance, to make the pigment ultramarine,
+        the most expensive of all pigments.
+
+        Blue In the eighth century Chinese artists used cobalt blue to colour fine
+        blue and white porcelain.
+
+        Blue In the Middle Ages, European artists used it in the windows of Cathedrals.
+
+        Blue Europeans wore clothing coloured with the vegetable dye woad until it
+        was replaced by the finer indigo from America.
+
+        '
+      label_candidates:
+      - 'Possibly, but they also exhibit little or no sexual dimorphism! '
+      - Yes, I like them. They are interesting.and prehistoric looking.  I like turtles
+        too.
+      - Oh yes, that is an amazing race!
+      - i like pop music :) It originated in US and UK in the mid 1950s
+      - shellac was once used in electrical applications
+      - Do you know what the first country song was?
+      - Yes, i do. John Lennon, George Harrison and Ringo Starr
+      - I rather enjoy hiking as well especially along well groomed trails in the
+        country side.
+      - 'Whittling knives are used to sculpt shapes out of raw wood. '
+      - I love to eat pita bread with hummus.
+      - That sounds interesting.  What kinds of topics can novels be about?
+      - I only watch the NHL. Its considered to be the premier professional  ice hockey
+        league in the world.
+      - Oh okay yeah its common I think. I went to a christian babtist school for
+        kindergarten down here in Florida, but I dont really remember it too well.
+      - I used to like it a lot as a kid, but now I barely watch it. I guess Lebron
+        James is the best player right now
+      - Mainly gas and bloating, sometimes diarrhea if I get greedy.
+      - that is awesome, that sounds like a lot of fun then!
+      - Yes a truck is a great motor vehicle for transporting cargo. Do you like them?
+      - 'I don''t  really know,  After achieving moderate local success with the 1983
+        experimental hip hop 12-inch single "Cooky Puss", Schellenbach dropped out '
+      - Yeah I love the way it sounds.
+      - Some public employees don't , but they get insurance , a pension and a certain
+        income. It can be uncertain what salary you get expect.
+      personality: Ordinary
+      text: 'your persona: i was born 20 years ago.
+
+        your persona: i live in the usa.
+
+        your persona: my favorite color is blue.
+
+        your persona: i was born male and transitioned to female when i was 17.
+
+        Blue
+
+        '
+      title: Blue
+    - checked_sentence: Cinematography (also called "Direction of Photography") is
+        the science or art of motion-picture photography by recording light or other
+        electromagnetic radiation, either electronically by means of an image sensor,
+        or chemically by means of a light-sensitive material such as film stock.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - 'Cinematography,is a type of motion picture , captured electronically by means
+        of an image '
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Cinematography Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+
+        Cinematography With an electronic image sensor, this produces an electrical
+        charge at each pixel, which is electronically processed and stored in a video
+        file for subsequent display or processing.
+
+        Cinematography The result with photographic emulsion is a series of invisible
+        latent images on the film stock, which are later chemically "developed" into
+        a visible image.
+
+        Cinematography The images on the film stock are played back at a rapid speed
+        and projected onto a screen, creating the illusion of motion.
+
+        Cinematography Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes and mass communication.
+
+        Cinematography The word "cinematography" was created from the Greek words
+        ("kinema"), meaning "movement, motion" and ("graphein") meaning "to record",
+        together meaning "recording motion."
+
+        Buddy''s Song (novel) Buddy''s Song is a novel by British author Nigel Hinton
+        which was first published in 1987.
+
+        Buddy''s Song (novel) It is the second instalment in the Buddy trilogy, between
+        Buddy and Buddy''s Blues, and follows the story of Buddy as he started to
+        pursue a musical career.
+
+        Buddy''s Song (novel) The book was adapted into a film, directed by Claude
+        Whatham and starring Roger Daltrey and Chesney Hawkes as Terry and Buddy respectively,
+        in 1990.
+
+        Buddy''s Song (novel) Whilst visiting the set in the television series based
+        on the first book the author asked why they put a guitar in Buddy''s bedroom.
+
+        Buddy''s Song (novel) The set designer explained that he figured Terry got
+        Buddy a guitar then he gave up when he could not play it.
+
+        Hi-5 (Australian band) Hi-5 are an Australian children''s musical group formed
+        in 1998, who are associated with the children''s television series of the
+        same name.
+
+        Hi-5 (Australian band) As of December 2016, the members are Lachie Dearing,
+        Courtney Clarke, Shay Clifford, Joe Kalou and Bailey Spalding.
+
+        Hi-5 (Australian band) The group is aimed at preschoolers, composed of five
+        performers who entertain and educate children through music, movement and
+        play.
+
+        Hi-5 (Australian band) "Hi-5" was created by Helena Harris and Posie Graeme-Evans,
+        initially a television series for the Nine Network, which premiered in 1999.
+
+        Hi-5 (Australian band) The cast of the show became a recognised musical group
+        for children.
+
+        Hi-5 (Australian band) The original members were Kellie Crawford, Kathleen
+        de Leon Jones, Nathan Foley, Tim Harding and Charli Robinson.
+
+        Buddy Rich Bernard "Buddy" Rich (September 30, 1917 – April 2, 1987) was an
+        American jazz drummer and bandleader.
+
+        Buddy Rich Widely considered one of the most influential drummers of all time
+        and known for his virtuoso technique, power, and speed, Rich was billed as
+        "the world''s greatest drummer" during his career.
+
+        Buddy Rich He performed with many bandleaders, most notably Tommy Dorsey,
+        Harry James, Count Basie, and led his own big band.
+
+        Buddy Rich Rich was born in Sheepshead Bay, Brooklyn to Jewish-American parents
+        Bess (née Skolnik) and Robert Rich, both vaudevillians.
+
+        Buddy Rich His talent for rhythm was first noted by his father, who saw that
+        Rich could keep a steady beat with spoons at the age of one.
+
+        List of Regular Show characters "Regular Show" is an American animated series
+        created by J. G. Quintel.
+
+        List of Regular Show characters The series contains many characters, with
+        seven main characters and various recurring and one-time characters.
+
+        List of Regular Show characters Mordecai (voiced by J. G. Quintel) is a 5''10"
+        anthropomorphic blue jay (6'' including the crest) who works as a groundskeeper
+        at The Park.
+
+        List of Regular Show characters He has been best friends with Rigby ever since
+        childhood, and together they are very lazy and constantly slack off at their
+        jobs there.
+
+        List of Regular Show characters Mordecai is more conscientious, mature, and
+        moral about his actions than Rigby is, which sometimes leads to his opposing
+        Rigby when he is the cause of some kind of chaotic problem.
+
+        Buddy''s Song (film) Buddy''s Song is a 1991 (copyrighted in 1990) British
+        film starring Chesney Hawkes, Roger Daltrey, Sharon Duce and Michael Elphick,
+        Based on the novel of the same name by Nigel Hinton.
+
+        Buddy''s Song (film) The film is a dramatic comedy featuring a 17-year-old
+        boy, Buddy Clark (Chesney Hawkes), who is determined to make it as a pop star,
+        aided by his father Terry (Roger Daltrey).
+
+        Buddy''s Song (film) He struggles with young love, estranged parents and the
+        problems associated with making it in the music business.
+
+        Buddy''s Song (film) The film was accompanied by a soundtrack album which
+        featured Hawkes'' hit "The One and Only".
+
+        Buddy''s Song (film) It was filmed in London and various towns in the Thames
+        Valley.
+
+        Citizen Kane Citizen Kane is a 1941 American mystery drama film by Orson Welles,
+        its producer, co-screenwriter, director and star.
+
+        Citizen Kane The picture was Welles''s first feature film.
+
+        Citizen Kane Nominated for Academy Awards in nine categories, it won an Academy
+        Award for Best Writing (Original Screenplay) by Herman J. Mankiewicz and Welles.
+
+        Citizen Kane Considered by many critics, filmmakers, and fans to be the greatest
+        film of all time, "Citizen Kane" was voted as such in five consecutive British
+        Film Institute "Sight & Sound" polls of critics, until it was displaced by
+        "Vertigo" in the 2012 poll.
+
+        Citizen Kane It topped the American Film Institute''s 100 Years ... 100 Movies
+        list in 1998, as well as its 2007 update.
+
+        Buddy diving Buddy diving is the use of the buddy system by scuba divers and
+        is a set of safety procedures that are intended to improve divers'' chances
+        of avoiding or surviving accidents in or under water by diving in a group
+        of two or sometimes three divers.
+
+        Buddy diving When using the buddy system, members of the group dive together
+        and co-operate with each other, so that they can help or rescue each other
+        in the event of an emergency.
+
+        Buddy diving This is most effective if the divers are both competent in all
+        the relevant skills and are sufficiently aware of the situation to be able
+        to respond in time, which is a matter of both attitude and competence.
+
+        '
+      label_candidates:
+      - what is a chenille?
+      - That's amazing and all the fragrances while cooking. I also like all the daal
+        tadka tadka is a way of frying spices and herbs before cooking, it makes for
+        a good dish.
+      - That's interesting! How long have they been around?
+      - I remember Lance Armstrong winning a bunch of those, but wasn't he a cheater?
+      - I guess not everyone huh? Well, it was Blizzard's 4th major franchise, it
+        followed the massive online game Titan.
+      - I am in a motorcycle club, do you like motorcycles
+      - Do u know that the company was founded by Sam Walton in 1962?
+      - That's a good question and I am sure that answer varies based on location.  Some
+        beaches are wild and untouched so the ratio may be quite high.
+      - 'Golf is a club and ball sport in which players use various clubs to hit balls
+        into a series of holes '
+      - Amazing information. How much do you think it would cost to buy one?
+      - 'If I barbecue on my grill, i usually put a blend of salt, garlic, and pepper
+        on my food. '
+      - It appears as though there is much variation in the profession.  I commend
+        anyone who has the drive to accomplish it.
+      - I have always wanted to work as a lifeguard but i do not know how to swim
+      - 'that is very interesting '
+      - I am thinking about buying a Ford F-150 truck this fall.
+      - I didn't realize there where so many. Which one did you graduate from?
+      - sounds like a plan if i ever get free time.
+      - My favorite country artist are Hank Williams Sr. and Merle Haggard, who do
+        you like?
+      - ya the beaches are very covered
+      - Wow, I bet Motown regrets dropping him. Do you have any favorite songs of
+        his?
+      personality: Intelligent
+      text: 'your persona: i love to put a smile on people s faces.
+
+        your persona: sometimes , people worry i am crazy.
+
+        your persona: i am obsessed with filming.
+
+        your persona: i''m a very bad liar.
+
+        your persona: i try not to think about death.
+
+        Cinematography
+
+        Hi buddy, What you think about cinematography'
+      title: Cinematography
+- - - checked_sentence: The Royal Blue was the Baltimore and Ohio Railroad (B&O)'s
+        flagship passenger train between New York City and Washington, D.C., in the
+        United States, beginning in 1890.
+      chosen_topic: Blue
+      episode_done: false
+      eval_labels:
+      - I once road on The Royal Blue train from New York to D.C
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Blue Blue is one of the three primary colours of pigments in painting
+        and traditional colour theory, as well as in the RGB colour model.
+
+        Blue It lies between violet and green on the spectrum of visible light.
+
+        Blue The eye perceives blue when observing light with a dominant wavelength
+        between approximately 450 and 495 nanometres.
+
+        Blue Most blues contain a slight mixture of other colors; azure contains some
+        green, while ultramarine contains some violet.
+
+        Blue The clear daytime sky and the deep sea appear blue because of an optical
+        effect known as Rayleigh scattering.
+
+        Blue An optical effect called Tyndall scattering explains blue eyes.
+
+        Blue Distant objects appear more blue because of another optical effect called
+        atmospheric perspective.
+
+        Blue Blue has been an important colour in art and decoration since ancient
+        times.
+
+        Blue The semi-precious stone lapis lazuli was used in ancient Egypt for jewellery
+        and ornament and later, in The Renaissance, to make the pigment ultramarine,
+        the most expensive of all pigments.
+
+        Blue In the eighth century Chinese artists used cobalt blue to colour fine
+        blue and white porcelain.
+
+        Blue In the Middle Ages, European artists used it in the windows of Cathedrals.
+
+        Blue Europeans wore clothing coloured with the vegetable dye woad until it
+        was replaced by the finer indigo from America.
+
+        Royal Blue (train) The Royal Blue was the Baltimore and Ohio Railroad (B&O)''s
+        flagship passenger train between New York City and Washington, D.C., in the
+        United States, beginning in 1890.
+
+        Royal Blue (train) The Baltimore-based B&O also used the name between 1890
+        and 1917 for its improved passenger service between New York and Washington
+        launched in the 1890s, collectively dubbed the Royal Blue Line.
+
+        Royal Blue (train) Using variants such as the "Royal Limited" and "Royal Special"
+        for individual "Royal Blue" trains, the B&O operated the service in partnership
+        with the Reading Railroad and the Central Railroad of New Jersey.
+
+        Royal Blue (train) Principal intermediate cities served were Philadelphia,
+        Wilmington, and Baltimore.
+
+        Royal Blue Coach Services Royal Blue Express Services was a coach operator
+        in the south and west of England from 1880 until 1986.
+
+        Royal Blue Coach Services The Royal Blue business was founded in 1880 by Thomas
+        Elliott in Bournemouth.
+
+        Royal Blue Coach Services The business, at first known as Royal Blue & Branksome
+        Mews, included the hire of every kind of horse-drawn vehicle, as well as coach
+        building, saddlery and blacksmithing.
+
+        Royal Blue Coach Services Elliott soon started a four-in-hand stagecoach service
+        to connect Bournemouth to the railway at Holmsley.
+
+        Royal Blue Coach Services That service became redundant when the railway was
+        extended to Bournemouth in 1888, but by then Elliott had started running Royal
+        Blue excursions by charabanc and coach around Bournemouth and the New Forest.
+
+        British Army mess dress British Army mess dress is the formal military evening
+        dress worn by British Army officers and senior non-commissioned officers in
+        their respective messes or at other formal occasions.
+
+        British Army mess dress Mess uniforms first appeared in the British Army in
+        about 1845, initially utilizing the short shell jacket worn since 1831.
+
+        British Army mess dress This working jacket was worn open over a regimental
+        waistcoat for evening dress.
+
+        British Army mess dress The original purpose was to provide a relatively comfortable
+        and inexpensive alternative to the stiff and elaborate full-dress uniforms
+        then worn by officers for evening social functions such as regimental dinners
+        or balls.
+
+        Denver Nuggets The Denver Nuggets are an American professional basketball
+        team based in Denver, Colorado.
+
+        Denver Nuggets The Nuggets compete in the National Basketball Association
+        (NBA) as a member club of the league''s Western Conference Northwest Division.
+
+        Denver Nuggets The team was founded as the Denver Larks in 1967 as a charter
+        franchise of the American Basketball Association (ABA), but changed its name
+        to Rockets before the first season.
+
+        Denver Nuggets It changed its name again to the Nuggets in 1974.
+
+        Denver Nuggets After the name change, the Nuggets played for the final ABA
+        Championship title in 1976, losing to the New York Nets.
+
+        Denver Nuggets The team has had some periods of success, qualifying for the
+        ABA Playoffs for all seasons from 1967 to the 1976 ABA playoffs where it lost
+        in the finals.
+
+        Los Angeles Rams The Los Angeles Rams are a professional American football
+        team based in the Los Angeles metropolitan area.
+
+        Los Angeles Rams The Rams compete in the National Football League (NFL), as
+        a member club of the league''s National Football Conference (NFC) West division.
+
+        Los Angeles Rams The Rams franchise has won three NFL championships, and is
+        the only franchise to win championships while representing three different
+        cities (Cleveland in 1945, Los Angeles in 1951, and St. Louis in 1999).
+
+        Los Angeles Rams The Rams play their home games at the Los Angeles Memorial
+        Coliseum in Los Angeles, California.
+
+        Los Angeles Rams The franchise began in 1936 as the Cleveland Rams, located
+        in Cleveland, Ohio.
+
+        Air Jordan Air Jordan is a brand of basketball footwear and athletic clothing
+        produced by Nike.
+
+        Air Jordan It was created for former professional basketball player, Michael
+        Jordan.
+
+        Air Jordan The original Air Jordan I sneaker, were produced exclusively for
+        Jordan in early 1984, and released to the public in late 1984.
+
+        Air Jordan The shoes were designed for Nike by Peter Moore, Tinker Hatfield,
+        and Bruce Kilgore.
+
+        Air Jordan Since its introduction into the sports shoe market, the Air Jordans
+        evolved from the original basketball shoes to models for different uses, including
+        I-XXXII.
+
+        Air Jordan The Jordan brand sponsors 21 active NBA players, including Jimmy
+        Butler, Chris Paul, Blake Griffin, Kawhi Leonard, Russell Westbrook and Carmelo
+        Anthony.
+
+        Victorian Railways S type carriage The S type carriages are a compartment
+        layout passenger carriage used on the railways of Victoria, Australia.
+
+        Victorian Railways S type carriage The carriages were constructed by the Victorian
+        Railways in 1937 for use on the "Spirit of Progress", with additional carriages
+        built until the 1950s for other trains.
+
+        Victorian Railways S type carriage Introduced by Victorian Railways Chief
+        Commissioner Harold Clapp for the "Spirit of Progress" service between Melbourne
+        and Albury, the carriages lasted through many decades of regular service across
+        a number of operators.
+
+        Victorian Railways S type carriage Most of the fleet are still in service
+        today, though none are in regular passenger service.
+
+        Victorian Railways S type carriage Two major types of carriage were constructed
+        - AS first class cars with 3+3 seating in each compartment, BS second class
+        cars with 4+4 seating.
+
+        RGB color model The RGB color model is an additive color model in which red,
+        green and blue light are added together in various ways to reproduce a broad
+        array of colors.
+
+        RGB color model The name of the model comes from the initials of the three
+        additive primary colors, red, green, and blue.
+
+        RGB color model The main purpose of the RGB color model is for the sensing,
+        representation and display of images in electronic systems, such as televisions
+        and computers, though it has also been used in conventional photography.
+
+        RGB color model Before the electronic age, the RGB color model already had
+        a solid theory behind it, based in human perception of colors.
+
+        RGB color model RGB is a "device-dependent" color model: different devices
+        detect or reproduce a given RGB value differently, since the color elements
+        (such as phosphors or dyes) and their response to the individual R, G, and
+        B levels vary from manufacturer to manufacturer, or even in the same device
+        over time.
+
+        Red Red is the colour at the end of the visible spectrum of light, next to
+        orange and opposite violet.
+
+        Red It has a dominant wavelength of approximately 625–740 nanometres.
+
+        Red It is a primary color in the RGB color model and the CMYK color model,
+        and is the complementary color of cyan.
+
+        Red Reds range from the brilliant yellow-tinged scarlet and vermillion to
+        bluish-red crimson, and vary in shade from the pale red pink to the dark red
+        burgundy.
+
+        Red The red sky at sunset results from Rayleigh scattering, while the red
+        color of the Grand Canyon and other geological features is caused by hematite
+        or red ochre, both forms of iron oxide.
+
+        Shades of green Varieties of the color green may differ in hue, chroma (also
+        called saturation or intensity) or lightness (or value, tone, or brightness),
+        or in two or three of these qualities.
+
+        Shades of green Variations in value are also called tints and shades, a tint
+        being a green or other hue mixed with white, a shade being mixed with black.
+
+        Shades of green A large selection of these various colors is shown below.
+
+        Shades of green Green is common in nature, especially in plants.
+
+        Shades of green Many plants are green mainly because of a complex chemical
+        known as chlorophyll which is involved in photosynthesis.
+
+        Shades of green Many shades of green have been named after plants or are related
+        to plants.
+
+        Chicago White Sox The Chicago White Sox are an American professional baseball
+        team based in Chicago.
+
+        Chicago White Sox The White Sox compete in Major League Baseball (MLB) as
+        a member club of the American League (AL) Central division.
+
+        Chicago White Sox Home games are held at Guaranteed Rate Field, located on
+        the city''s South Side, and the team is owned by Jerry Reinsdorf.
+
+        Chicago White Sox They are one of two major league clubs in Chicago; the other
+        is the Chicago Cubs, who are a member of the National League (NL) Central
+        division.
+
+        Chicago White Sox One of the American League''s eight charter franchises,
+        the franchise was established as a major league baseball club in .
+
+        Chicago White Sox The club was originally called the Chicago White Stockings,
+        but this was soon shortened to Chicago White Sox.
+
+        Color theory In the visual arts, color theory or colour theory is a body of
+        practical guidance to color mixing and the visual effects of a specific color
+        combination.
+
+        Color theory There are also definitions (or categories) of colors based on
+        the color wheel: primary color, secondary color and tertiary color.
+
+        Color theory Although color theory principles first appeared in the writings
+        of Leone Battista Alberti (c.1435) and the notebooks of Leonardo da Vinci
+        (c.1490), a tradition of "colory theory" began in the 18th century, initially
+        within a partisan controversy over Isaac Newton''s theory of color ("Opticks",
+        1704) and the nature of primary colors.
+
+        Linguistic relativity and the color naming debate The concept of linguistic
+        relativity concerns the relationship between language and thought, specifically
+        whether language influences thought, and, if so, how.
+
+        Linguistic relativity and the color naming debate This question has led to
+        research in multiple disciplines—especially anthropology, cognitive science,
+        linguistics, and philosophy.
+
+        Linguistic relativity and the color naming debate Among the most popular and
+        controversial theories in this area of scholarly work is the theory of linguistic
+        relativity (also known as the Sapir–Whorf hypothesis).
+
+        Linguistic relativity and the color naming debate An often-cited "strong version"
+        of the claim, first given by Lenneberg in 1953, proposes that language structure
+        determines how we perceive the world.
+
+        Tertiary color A "tertiary color" is a color made by mixing full saturation
+        of one primary color with half saturation of another primary color and none
+        of a third primary color, in a given color space such as RGB, CMYK (more modern)
+        or RYB (traditional).
+
+        Tertiary color Tertiary colors have general names, one set of names for the
+        RGB color wheel and a different set for the RYB color wheel.
+
+        Tertiary color These names are shown below.
+
+        Tertiary color Another definition of tertiary color is provided by color theorists
+        such as Moses Harrisand Josef Albers, who suggest that tertiary colors are
+        created by intermixing pairs of secondary colors: orange-green, green-purple,
+        purple-orange; or by intermixing complementary colors.
+
+        '
+      label_candidates:
+      - Yep, It actually was founded by Reed Hastings and Marc Randolph on August
+        29, 1997, in Scotts Valley, California.
+      - i really want to get involved in politics
+      - Do you know Vancouver grizzlies?
+      - Ohhh! I've always wondered about that! What else can you tell me about the
+        color blue?
+      - What did you major in?
+      - Oh wow thats a very long time .  I know my sister always makes it but i have
+        yet to try it
+      - The name comes from an Old English meaning "Thor's Day." It was named after
+        the Norse God of Thunder, Thor.
+      - I really like to drink Sprite
+      - Yes it was called The Passing, though his first published work didn't come
+        until 1990.
+      - 'Hahaha hopefully you have endurance though. They are at least 10km long!
+        Some are 20km long. '
+      - I've definitely heard of it! I know it's based on an Agatha Christie character,
+        "Hercule Poirot". What does your dad like best about it?
+      - Yes, I believe some people have a fear of being in public. Social anxiety
+        can cause sweating, trembling and nausea.
+      - Do you prefer kale with green leaves or kale with purple leaves
+      - Ohh, that is it. I forgot that they have healthy food choices too. Thanks
+        for that
+      - Its believed that spaghetti with meatballs was an innovation of early 20th-century
+        Italian immigrants in New York City
+      - Radiology is basically science that uses medical imaging.
+      - I like Coco Chanel products too. She made Chanel stuff.
+      - I am not but I do like the pool.
+      - Hey have you ever been to Baton Rouge?
+      - see, when i was a kid i was pretty skinny and weak and that racket was so
+        heavy i could barely hold it
+      personality: Extraordinary
+      text: Blue is always nice. I like royal blue.
+      title: Royal Blue (train)
+    - checked_sentence: Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - It works by lens used to repeatedly focus the light reflected from objects
+        into real images on the light-sensitive surface .
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Cinematography Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+
+        Cinematography With an electronic image sensor, this produces an electrical
+        charge at each pixel, which is electronically processed and stored in a video
+        file for subsequent display or processing.
+
+        Cinematography The result with photographic emulsion is a series of invisible
+        latent images on the film stock, which are later chemically "developed" into
+        a visible image.
+
+        Cinematography The images on the film stock are played back at a rapid speed
+        and projected onto a screen, creating the illusion of motion.
+
+        Cinematography Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes and mass communication.
+
+        Cinematography The word "cinematography" was created from the Greek words
+        ("kinema"), meaning "movement, motion" and ("graphein") meaning "to record",
+        together meaning "recording motion."
+
+        Photography Photography is the science, art, application and practice of creating
+        durable images by recording light or other electromagnetic radiation, either
+        electronically by means of an image sensor, or chemically by means of a light-sensitive
+        material such as photographic film.
+
+        Photography Typically, a lens is used to focus the light reflected or emitted
+        from objects into a real image on the light-sensitive surface inside a camera
+        during a timed exposure.
+
+        Photography With an electronic image sensor, this produces an electrical charge
+        at each pixel, which is electronically processed and stored in a digital image
+        file for subsequent display or processing.
+
+        Image stabilization Image stabilization (IS) is a family of techniques that
+        reduce blurring associated with the motion of a camera or other imaging device
+        during exposure.
+
+        Image stabilization Generally, it compensates for pan and tilt (angular movement,
+        equivalent to yaw and pitch) of the imaging device, though electronic image
+        stabilization can also compensate for rotation.
+
+        Image stabilization It is used in image-stabilized binoculars, still and video
+        cameras, astronomical telescopes, and also smartphones, mainly the high-end.
+
+        Image stabilization With still cameras, camera shake is particularly problematic
+        at slow shutter speeds or with long focal length (telephoto or zoom) lenses.
+
+        Camera A camera is an optical instrument for recording or capturing images,
+        which may be stored locally, transmitted to another location, or both.
+
+        Camera The images may be individual still photographs or sequences of images
+        constituting videos or movies.
+
+        Camera The camera is a remote sensing device as it senses subjects without
+        any contact  .
+
+        Camera The word "camera" comes from "camera obscura", which means "dark chamber"
+        and is the Latin name of the original device for projecting an image of external
+        reality onto a flat surface.
+
+        Camera The modern photographic camera evolved from the camera obscura.
+
+        Camera The functioning of the camera is very similar to the functioning of
+        the human eye.
+
+        Timeline of United States inventions (1946–91) A timeline of United States
+        inventions (1946–1991) encompasses the ingenuity and innovative advancements
+        of the United States within a historical context, dating from the era of the
+        Cold War, which have been achieved by inventors who are either native-born
+        or naturalized citizens of the United States.
+
+        Timeline of United States inventions (1946–91) Copyright protection secures
+        a person''s right to his or her first-to-invent claim of the "original" invention
+        in question, highlighted in Article I, Section 8, Clause 8 of the United States
+        Constitution which gives the following enumerated power to the United States
+        Congress: In 1641, the first patent in North America was issued to Samuel
+        Winslow by the General Court of Massachusetts for a new method of making salt.
+
+        Video camera tube The video camera tube was a type of cathode ray tube used
+        to capture the television image prior to the introduction of charge-coupled
+        devices (CCDs) in the 1980s.
+
+        Video camera tube Several different types of tubes were in use from the early
+        1930s to the 1980s.
+
+        Video camera tube In these tubes, the cathode ray was scanned across an image
+        of the scene to be broadcast.
+
+        Video camera tube The resultant current was dependent on the brightness of
+        the image on the target.
+
+        Video camera tube The size of the striking ray was tiny compared to the size
+        of the target, allowing 483 horizontal scan lines per image in the NTSC format,
+        or 576 lines in PAL.
+
+        Video camera tube Any vacuum tube which operates using a focused beam of electrons,
+        "cathode rays," is known as a cathode ray tube (CRT).
+
+        Digital cinematography Digital cinematography is the process of capturing
+        (recording) a motion picture using digital image sensors rather than through
+        film stock.
+
+        Digital cinematography As digital technology has improved in recent years,
+        this practice has become dominant.
+
+        Digital cinematography Since the mid 2010s most of the movies across the world
+        are captured as well as distributed digitally.
+
+        Digital cinematography Many vendors have brought products to market, including
+        traditional film camera vendors like Arri and Panavision, as well as new vendors
+        like RED, Blackmagic, Silicon Imaging, Vision Research and companies which
+        have traditionally focused on consumer and broadcast video equipment, like
+        Sony, GoPro, and Panasonic.
+
+        Color motion picture film Color motion picture film refers both to unexposed
+        color photographic film in a format suitable for use in a motion picture camera,
+        and to finished motion picture film, ready for use in a projector, which bears
+        images in color.
+
+        Color motion picture film The first color cinematography was by additive color
+        systems such as the one patented by Edward Raymond Turner in 1899 and tested
+        in 1902.
+
+        Color motion picture film A simplified additive system was successfully commercialized
+        in 1909 as Kinemacolor.
+
+        Color motion picture film These early systems used black-and-white film to
+        photograph and project two or more component images through different color
+        filters.
+
+        Color motion picture film Around 1920, the first practical subtractive color
+        processes were introduced.
+
+        Movie camera The movie camera, film camera or cine-camera is a type of photographic
+        camera which takes a rapid sequence of photographs on an image sensor or on
+        a film.
+
+        Movie camera In contrast to a still camera, which captures a single snapshot
+        at a time, the movie camera takes a series of images; each image constitutes
+        a "frame".
+
+        Movie camera This is accomplished through an intermittent mechanism.
+
+        Movie camera The frames are later played back in a movie projector at a specific
+        speed, called the frame rate (number of frames per second).
+
+        Movie camera While viewing at a particular frame rate, a person''s eyes and
+        brain merge the separate pictures together to create the illusion of motion.
+
+        History of film technology The history of film technology traces the development
+        of film technology from the initial development of "moving pictures" at the
+        end of 19th century to the present time.
+
+        History of film technology Motion pictures were initially exhibited as a fairground
+        novelty and developed into one of the most important tools of communication
+        and entertainment in the 20th century.
+
+        History of film technology Major developments in motion picture technology
+        have included the adoption of synchronized motion picture sound, color motion
+        picture film, and the adoption of digital film technologies to replace physical
+        film stock at both ends of the production chain by digital image sensors and
+        projectors.
+
+        Citizen Kane Citizen Kane is a 1941 American mystery drama film by Orson Welles,
+        its producer, co-screenwriter, director and star.
+
+        Citizen Kane The picture was Welles''s first feature film.
+
+        Citizen Kane Nominated for Academy Awards in nine categories, it won an Academy
+        Award for Best Writing (Original Screenplay) by Herman J. Mankiewicz and Welles.
+
+        Citizen Kane Considered by many critics, filmmakers, and fans to be the greatest
+        film of all time, "Citizen Kane" was voted as such in five consecutive British
+        Film Institute "Sight & Sound" polls of critics, until it was displaced by
+        "Vertigo" in the 2012 poll.
+
+        Citizen Kane It topped the American Film Institute''s 100 Years ... 100 Movies
+        list in 1998, as well as its 2007 update.
+
+        35 mm film 35 mm film (millimeter) is the film gauge most commonly used for
+        motion pictures and chemical still photography (see 135 film).
+
+        35 mm film The name of the gauge refers to the width of the photographic film,
+        which consists of strips 34.98 ±0.03 mm (1.377 ±0.001 inches) wide.
+
+        35 mm film The standard negative pulldown for movies ("single-frame" format)
+        is four perforations per frame along both edges, which results in 16 frames
+        per foot of film.
+
+        35 mm film For still photography, the standard frame has eight perforations
+        on each side.
+
+        35 mm film A variety of largely proprietary gauges were devised for the numerous
+        camera and projection systems being developed independently in the late 19th
+        century and early 20th century, ranging from 13 mm to 75 mm (0.51–2.95 in),
+        as well as a variety of film feeding systems.
+
+        '
+      label_candidates:
+      - They sure were. I always think of John Travolta in that movie, where he did
+        his disco dance!
+      - Oh you are right! I have never actually been to a game so I didn't know their
+        exact location
+      - Well that makes me feel better about indulging in a lazy day every now and
+        then.
+      - 'The AFC? I am all about the NFC and the Saints. '
+      - thats good to know
+      - Have you ever seen a Bob Ross episode? You know, the American painter and
+        tv host?
+      - Are you familiar with the Tango?
+      - When did this government sponsored form of living originate?
+      - I love cooking certain foods. Pizza and pasta are common ones for me.
+      - Supposedly the pie was first put together by the French, soon after the settling
+        of New Orleans. So, it has been around a long time, either way.
+      - It is hard to avoid sometimes. It is on the internet and in every grocery
+        store. It can be diagnosed as clinical pathological gambling.
+      - 'It does sound like fun! '
+      - skunks are in the family of mephtildae. ever seen a  skunk in real life?
+      - Are you in any band. My favourite is the story so far
+      - I love rolling stones. They've made some of my favorite music. I just recently
+        watched an episode of a T.V. show Westworld and they used the song Play With
+        Fire.
+      - Oh my gosh, He is my favorite too. I played his videogames way too much.
+      - Yes, people can be very sly and others can be downright obvious. The job is
+        especially tough if the boss ever thinks you're conspiring.
+      - I like that I can buy pizza cooked or frozen, whole pie or by the slice
+      - 'I''m all about loyalty! And I have a lot of respect for the athletes - they
+        are talented and have earned their athletic scholarships through so much hard
+        work and sacrifice. '
+      - Uhmnnn! I find these really interesting,Please tell me more about it
+      personality: Intelligent
+      text: Yes buddy,  Images captured with an electronic image-sensor, produces
+        an electrical charge.The word "cinematography" is based on the Greek words  meaning
+        movement, motion.
+      title: Cinematography
+- - - checked_sentence: Blue Skies is a 1946 American musical comedy film directed
+        by Stuart Heisler and starring Bing Crosby, Fred Astaire, and Joan Caulfield.
+      chosen_topic: Blue
+      episode_done: true
+      eval_labels:
+      - Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Blue Blue is one of the three primary colours of pigments in painting
+        and traditional colour theory, as well as in the RGB colour model.
+
+        Blue It lies between violet and green on the spectrum of visible light.
+
+        Blue The eye perceives blue when observing light with a dominant wavelength
+        between approximately 450 and 495 nanometres.
+
+        Blue Most blues contain a slight mixture of other colors; azure contains some
+        green, while ultramarine contains some violet.
+
+        Blue The clear daytime sky and the deep sea appear blue because of an optical
+        effect known as Rayleigh scattering.
+
+        Blue An optical effect called Tyndall scattering explains blue eyes.
+
+        Blue Distant objects appear more blue because of another optical effect called
+        atmospheric perspective.
+
+        Blue Blue has been an important colour in art and decoration since ancient
+        times.
+
+        Blue The semi-precious stone lapis lazuli was used in ancient Egypt for jewellery
+        and ornament and later, in The Renaissance, to make the pigment ultramarine,
+        the most expensive of all pigments.
+
+        Blue In the eighth century Chinese artists used cobalt blue to colour fine
+        blue and white porcelain.
+
+        Blue In the Middle Ages, European artists used it in the windows of Cathedrals.
+
+        Blue Europeans wore clothing coloured with the vegetable dye woad until it
+        was replaced by the finer indigo from America.
+
+        Nothing Records Nothing Records was an American record label specializing
+        in industrial rock and electronic music, founded by John Malm Jr. and Trent
+        Reznor in 1992.
+
+        Nothing Records It is considered an example of a vanity label, where an artist
+        is able to run a label with some degree of independence from within a larger
+        parent company—in this case, Interscope Records was the parent company.
+
+        Nothing Records Nothing Records became largely defunct in 2004 due to a lawsuit
+        by Reznor against John Malm.
+
+        Nothing Records The label became inactive as a whole following several further
+        releases—the "Beside You in Time" (February 2007) home video was the label''s
+        final release.
+
+        Irving Berlin Irving Berlin (born Israel Beilin; May 11, 1888 – September
+        22, 1989) was an American composer and lyricist, widely considered one of
+        the greatest songwriters in American history.
+
+        Irving Berlin His music forms a great part of the Great American Songbook.
+
+        Irving Berlin Born in Imperial Russia, Berlin arrived in the United States
+        at the age of five.
+
+        Irving Berlin He published his first song, "Marie from Sunny Italy", in 1907,
+        receiving 33 cents for the publishing rights, and had his first major international
+        hit, "Alexander''s Ragtime Band" in 1911.
+
+        Irving Berlin He also was an owner of the Music Box Theatre on Broadway.
+
+        Irving Berlin "Alexander''s Ragtime Band" sparked an international dance craze
+        in places as far away as Berlin''s native Russia, which also "flung itself
+        into the ragtime beat with an abandon bordering on mania."
+
+        Blue Skies (1946 film) Blue Skies is a 1946 American musical comedy film directed
+        by Stuart Heisler and starring Bing Crosby, Fred Astaire, and Joan Caulfield.
+
+        Blue Skies (1946 film) Based on a story by Irving Berlin, the film is about
+        a dancer who loves a showgirl who loves a compulsive nightclub-opener who
+        can''t stay committed to anything in life for very long.
+
+        Blue Skies (1946 film) Produced by Sol C. Siegel, "Blue Skies" was filmed
+        in Technicolor and released by Paramount Pictures.
+
+        Blue Skies (1946 film) The music, lyrics, and story were written by Irving
+        Berlin, with most of the songs recycled from earlier works.
+
+        Blue Skies (1946 film) As in "Holiday Inn" (1942), the film is designed to
+        showcase Berlin''s songs.
+
+        7 Blue Skies 7 Blue Skies is an alternative rock band formed in 2004.
+
+        7 Blue Skies The group is well known for their high energy live performances,
+        as well as for always performing barefoot.
+
+        7 Blue Skies The band has since broken up.
+
+        7 Blue Skies The band''s name was chosen following an email from producer
+        Ron Saint Germain, in which Germain signed off "Good luck, 7 blue skies!"
+
+        7 Blue Skies The band determined the name to mean "have a nice week," and
+        decided to use the name.
+
+        7 Blue Skies This was later revealed to be a typo, as the intended line was
+        "Good luck & blue skies!"
+
+        7 Blue Skies (the & is located above the 7 key).
+
+        7 Blue Skies Jon Shaffer, Adam Schulman and Andy Stickel formed the band and
+        posted an ad online for a singer and drummer in 2004.
+
+        Lloyd Cole (album) Lloyd Cole, also known as The X Album, is the debut solo
+        album by English singer, songwriter and musician Lloyd Cole released on February
+        21, 1990 by Polydor and Capitol.
+
+        Lloyd Cole (album) Previously Cole was best known for his work with The Commotions
+        but this album marked a departure from their signature sound and an opportunity
+        for him to collaborate with other musicians and explore new ideas.
+
+        Lloyd Cole (album) Following the release of "Mainstream", and limited touring
+        and promotion in support of it, Cole left the Commotions.
+
+        Lloyd Cole (album) The chance to write and record new types of songs was the
+        motivating factor.
+
+        Lloyd Cole (album) He also believed that the group had reached a natural conclusion
+        and he no longer wanted the pressure and responsibility of managing a band.
+
+        Sarah Platt Sarah Louise Platt (also Tilsley and Grimshaw) is a fictional
+        character from the British ITV soap opera "Coronation Street".
+
+        Sarah Platt She was born on-screen during the episode broadcast on 2 February
+        1987.
+
+        Sarah Platt She was played by Leah King in 1987 and by Lynsay King from 1987
+        until 8 October 1999 when King opted to leave to focus on her education.
+
+        Sarah Platt Tina O''Brien took over the role on 31 October 1999; she opted
+        to leave in 2007 and made her final on-screen appearance on 30 December 2007.
+
+        Sarah Platt A number of false rumours about O''Brien returning to the role
+        surfaced during her absence from the serial.
+
+        Sarah Platt In October 2014, it was announced that O''Brien was going to reprise
+        the role, she returned to filming in February 2015 and returned on screen
+        on 30 March 2015.
+
+        Pet Sounds Pet Sounds is the eleventh studio album by American rock band the
+        Beach Boys, released on May 16, 1966.
+
+        Pet Sounds It initially met with a lukewarm critical and commercial response
+        in the United States, peaking at number 10 in the "Billboard" 200, a significantly
+        lower placement than the band''s preceding albums.
+
+        Pet Sounds In the United Kingdom, the album was hailed by its music press
+        and was an immediate commercial success, peaking at number 2 in the UK Top
+        40 Albums Chart and remaining among the top ten positions for six months.
+
+        Pet Sounds Originally promoted as "the most progressive pop album ever", "Pet
+        Sounds" attracted recognition for its ambitious recording and unusually sophisticated
+        music, and is widely considered to be one of the most influential albums in
+        music history.
+
+        Royal Blue (train) The Royal Blue was the Baltimore and Ohio Railroad (B&O)''s
+        flagship passenger train between New York City and Washington, D.C., in the
+        United States, beginning in 1890.
+
+        Royal Blue (train) The Baltimore-based B&O also used the name between 1890
+        and 1917 for its improved passenger service between New York and Washington
+        launched in the 1890s, collectively dubbed the Royal Blue Line.
+
+        Royal Blue (train) Using variants such as the "Royal Limited" and "Royal Special"
+        for individual "Royal Blue" trains, the B&O operated the service in partnership
+        with the Reading Railroad and the Central Railroad of New Jersey.
+
+        Royal Blue (train) Principal intermediate cities served were Philadelphia,
+        Wilmington, and Baltimore.
+
+        Blue Train Races The Blue Train Races were a series of record-breaking attempts
+        between automobiles and trains in the late 1920s and early 1930s.
+
+        Blue Train Races It saw a number of motorists and their own or sponsored automobiles
+        race against the "Le Train Bleu", a train that ran between Calais and the
+        French Riviera.
+
+        Blue Train Races The rationale to beat the train was to compare the contemporary
+        automotive performance with locomotive dominance; to showcase recent progress
+        achieved by cars regarding reliability, durability, speed and comfort; to
+        promote the cars, their marques and the adventurous persona of their drivers;
+        and to establish automobiles as a viable and aspirational mode of transport
+        for the individual traveller.
+
+        Royal Blue Coach Services Royal Blue Express Services was a coach operator
+        in the south and west of England from 1880 until 1986.
+
+        Royal Blue Coach Services The Royal Blue business was founded in 1880 by Thomas
+        Elliott in Bournemouth.
+
+        Royal Blue Coach Services The business, at first known as Royal Blue & Branksome
+        Mews, included the hire of every kind of horse-drawn vehicle, as well as coach
+        building, saddlery and blacksmithing.
+
+        Royal Blue Coach Services Elliott soon started a four-in-hand stagecoach service
+        to connect Bournemouth to the railway at Holmsley.
+
+        Royal Blue Coach Services That service became redundant when the railway was
+        extended to Bournemouth in 1888, but by then Elliott had started running Royal
+        Blue excursions by charabanc and coach around Bournemouth and the New Forest.
+
+        Le Train Bleu The Calais-Mediterranée Express was a luxury French night express
+        train which operated from 1886 to 2003.
+
+        Le Train Bleu It gained international fame as the preferred train of wealthy
+        and famous passengers between Calais and the French Riviera in the two decades
+        before World War II.
+
+        Le Train Bleu It was colloquially referred to as Le Train Bleu in French (which
+        became its formal name after World War II) and the Blue Train in English because
+        of its dark blue sleeping cars.
+
+        Le Train Bleu In December 1883 the Compagnie Internationale des Wagons-Lits
+        (CIWL) created its second luxury train after the Orient Express introduced
+        in June earlier that year.
+
+        The Mystery of the Blue Train The Mystery of the Blue Train is a work of detective
+        fiction by Agatha Christie, first published in the United Kingdom by William
+        Collins & Sons on 29 March 1928 and in the United States by Dodd, Mead and
+        Company later in the same year.
+
+        The Mystery of the Blue Train The UK edition retailed at seven shillings and
+        sixpence (7/6) and the US edition at $2.00.
+
+        The Mystery of the Blue Train The book features her detective Hercule Poirot.
+
+        The Mystery of the Blue Train Poirot boards Le Train Bleu, bound for the French
+        Riviera.
+
+        The Mystery of the Blue Train So does Katherine Grey, who is having her first
+        winter out of England, after recently receiving a relatively large inheritance.
+
+        The Mystery of the Blue Train On board the train Grey meets Ruth Kettering,
+        an American heiress leaving her unhappy marriage to meet her lover.
+
+        British Army mess dress British Army mess dress is the formal military evening
+        dress worn by British Army officers and senior non-commissioned officers in
+        their respective messes or at other formal occasions.
+
+        British Army mess dress Mess uniforms first appeared in the British Army in
+        about 1845, initially utilizing the short shell jacket worn since 1831.
+
+        British Army mess dress This working jacket was worn open over a regimental
+        waistcoat for evening dress.
+
+        British Army mess dress The original purpose was to provide a relatively comfortable
+        and inexpensive alternative to the stiff and elaborate full-dress uniforms
+        then worn by officers for evening social functions such as regimental dinners
+        or balls.
+
+        Los Angeles Rams The Los Angeles Rams are a professional American football
+        team based in the Los Angeles metropolitan area.
+
+        Los Angeles Rams The Rams compete in the National Football League (NFL), as
+        a member club of the league''s National Football Conference (NFC) West division.
+
+        Los Angeles Rams The Rams franchise has won three NFL championships, and is
+        the only franchise to win championships while representing three different
+        cities (Cleveland in 1945, Los Angeles in 1951, and St. Louis in 1999).
+
+        Los Angeles Rams The Rams play their home games at the Los Angeles Memorial
+        Coliseum in Los Angeles, California.
+
+        Los Angeles Rams The franchise began in 1936 as the Cleveland Rams, located
+        in Cleveland, Ohio.
+
+        '
+      label_candidates:
+      - Rick and Morty is an animated sitcom on Cartoon Network.
+      - Is cheese a popular product in Wisconsin?
+      - I totally understand. Sunday was a really slow day for my family as well.
+        Only church and resting.
+      - I'm not sure. Spanish and English I would guess. But even the most fluent
+        speakers are rported to be more adept at language learning compared to monolinguals.
+        Which are you?
+      - Yeah, I guess dog breeds aren't as uniform as I thought!
+      - Gene Roddenberry created it based upon science fiction and it is American
+        media.
+      - How long have people been getting divorced?
+      - Are there a lot famous alumni from there? Any celebrities?
+      - 'Budwiser is a great beer, its an american style ale lager '
+      - Oh that's awesome! I actually just started eating meat again after many years,
+        I was really missing out!
+      - 'Really! Why do you prefer the iphone over other smartphones? '
+      - It it tough to learn?
+      - '25 according to Wiki: Tupac Amaru Shakur ( ) (born Lesane Parish Crooks;
+        June 16, 1971 - September 13, 1996). Crazy young. '
+      - The current members are vocalist/guitarist Tim McIlrath, guitarist Zach Blair,  bassist
+        Joe Principe and drummer Brandon Barnes
+      - I have heard of some of the characters - Tidus? and Spira? are either of those
+        chemists?
+      - 'Yes, but I take a lot of time to make sure that I''m balancing any deficiencies
+        in my diet. '
+      - 'wow, really, Radiology is the science that uses medical imaging to diagnose
+        and sometimes also treat diseases '
+      - I do not think that is strange. In fact, I find it very normal. What is it
+        about children's literature that you enjoy?
+      - OK what could possibly be the production in the next 2 years
+      - That sounds really interesting, I am thinking about Radiology as a career.
+        Are you able to expand on what kind if techniques are used?
+      personality: Scholarly
+      text: Oh that sounds really nice. I bet there was a lot of scenery and blue
+        skies.
+      title: Blue Skies (1946 film)
+    - checked_sentence: Photography is the science, art, application and practice
+        of creating durable images by recording light or other electromagnetic radiation,
+        either electronically by means of an image sensor, or chemically by means
+        of a light-sensitive material such as photographic film.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - Cinematography is also a type of photography which is the science, art, application
+        and practice of creating durable images by recording light or other electromagnetic
+        radiation, either electronically by means of an image sensor.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Cinematography Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+
+        Cinematography With an electronic image sensor, this produces an electrical
+        charge at each pixel, which is electronically processed and stored in a video
+        file for subsequent display or processing.
+
+        Cinematography The result with photographic emulsion is a series of invisible
+        latent images on the film stock, which are later chemically "developed" into
+        a visible image.
+
+        Cinematography The images on the film stock are played back at a rapid speed
+        and projected onto a screen, creating the illusion of motion.
+
+        Cinematography Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes and mass communication.
+
+        Cinematography The word "cinematography" was created from the Greek words
+        ("kinema"), meaning "movement, motion" and ("graphein") meaning "to record",
+        together meaning "recording motion."
+
+        Precursors of film Much of film as an art form grew out of several earlier
+        traditions in the fields of (oral) storytelling and literature (relating to
+        the screenplay), theatre (relating to the theatre director/film director,
+        a cast of actors, a production team that can include a scenic or set designer,
+        lighting designer, costume designer) and visual art.
+
+        Precursors of film Especially after the silent film era sound design and music
+        (relating to the soundtrack and film score) became important factors.
+
+        Precursors of film The technology of film emerged mostly from developments
+        and achievements in the fields of projection, lenses, photography and optics,
+        with sound recording and reproduction becoming important after the silent
+        film era.
+
+        Eadweard Muybridge Eadweard Muybridge (; 9 April 1830 – 8 May 1904, born Edward
+        James Muggeridge) was an English photographer important for his pioneering
+        work in photographic studies of motion, and early work in motion-picture projection.
+
+        Eadweard Muybridge He adopted the first name Eadweard as the original Anglo-Saxon
+        form of Edward, and the surname Muybridge believing it to be similarly archaic.
+
+        Eadweard Muybridge At age 20, he emigrated to America as a bookseller, first
+        to New York, and then to San Francisco.
+
+        Eadweard Muybridge Planning a return trip to Europe in 1860, he suffered serious
+        head injuries in a stagecoach crash in Texas.
+
+        Eadweard Muybridge He spent the next few years recuperating in England, where
+        he took up professional photography, learning the wet-plate collodion process,
+        and secured at least two British patents for his inventions.
+
+        Proto-Cubism Proto-Cubism (also referred to as Protocubism, Pre-Cubism or
+        Early Cubism) is an intermediary transition phase in the history of art chronologically
+        extending from 1906 to 1910.
+
+        Proto-Cubism Evidence suggests that the production of proto-Cubist paintings
+        resulted from a wide-ranging series of experiments, circumstances, influences
+        and conditions, rather than from one isolated static event, trajectory, artist
+        or discourse.
+
+        Proto-Cubism With its roots stemming from at least the late 19th century this
+        period can be characterized by a move towards the radical geometrization of
+        form and a reduction or limitation of the color palette (in comparison with
+        Fauvism).
+
+        History of film technology The history of film technology traces the development
+        of film technology from the initial development of "moving pictures" at the
+        end of 19th century to the present time.
+
+        History of film technology Motion pictures were initially exhibited as a fairground
+        novelty and developed into one of the most important tools of communication
+        and entertainment in the 20th century.
+
+        History of film technology Major developments in motion picture technology
+        have included the adoption of synchronized motion picture sound, color motion
+        picture film, and the adoption of digital film technologies to replace physical
+        film stock at both ends of the production chain by digital image sensors and
+        projectors.
+
+        Sallie Gardner at a Gallop Sallie Gardner at a Gallop, also known as The Horse
+        in Motion, is a series of photographs consisting of a galloping horse, the
+        result of a photographic experiment by Eadweard Muybridge on June 15, 1878.
+
+        Sallie Gardner at a Gallop Sometimes cited as an early silent film, the series
+        and later experiments like it were precursors to the development of motion
+        pictures.
+
+        Sallie Gardner at a Gallop The series consists of 24 photographs shot in rapid
+        succession that were shown on a zoopraxiscope.
+
+        Sallie Gardner at a Gallop It was released throughout 1878–1880.
+
+        Sallie Gardner at a Gallop Muybridge was commissioned by Leland Stanford,
+        the industrialist and horseman, who was interested in gait analysis.
+
+        Sallie Gardner at a Gallop The purpose of the shoot was to determine whether
+        a galloping horse ever lifts all four feet completely off the ground during
+        the gait; at this speed, the human eye cannot break down the action.
+
+        Chronophotography Chronophotography is an antique photographic technique from
+        the Victorian era (beginning about 1867–68), which captures movement in several
+        frames of print.
+
+        Chronophotography These prints can be subsequently arranged either like animation
+        cels or layered in a single frame.
+
+        Chronophotography It is a predecessor to cinematography and moving film, involving
+        a series of different cameras, originally created and used for the scientific
+        study of movement.
+
+        Chronophotography Chronophotography is defined as "a set of photographs of
+        a moving object, taken for the purpose of recording and exhibiting successive
+        phases of motion".
+
+        Chronophotography The term "chronophotography" was coined by French physiologist
+        Étienne-Jules Marey to describe photographs of movement from which measurements
+        could be taken and motion could be studied.
+
+        Optics Optics is the branch of physics which involves the behaviour and properties
+        of light, including its interactions with matter and the construction of instruments
+        that use or detect it.
+
+        Optics Optics usually describes the behaviour of visible, ultraviolet, and
+        infrared light.
+
+        Optics Because light is an electromagnetic wave, other forms of electromagnetic
+        radiation such as X-rays, microwaves, and radio waves exhibit similar properties.
+
+        Optics Most optical phenomena can be accounted for using the classical electromagnetic
+        description of light.
+
+        Optics Complete electromagnetic descriptions of light are, however, often
+        difficult to apply in practice.
+
+        Photography Photography is the science, art, application and practice of creating
+        durable images by recording light or other electromagnetic radiation, either
+        electronically by means of an image sensor, or chemically by means of a light-sensitive
+        material such as photographic film.
+
+        Photography Typically, a lens is used to focus the light reflected or emitted
+        from objects into a real image on the light-sensitive surface inside a camera
+        during a timed exposure.
+
+        Photography With an electronic image sensor, this produces an electrical charge
+        at each pixel, which is electronically processed and stored in a digital image
+        file for subsequent display or processing.
+
+        Lens (optics) A lens is a transmissive optical device that focuses or disperses
+        a light beam by means of refraction.
+
+        Lens (optics) A simple lens consists of a single piece of transparent material,
+        while a compound lens consists of several simple lenses ("elements"), usually
+        arranged along a common axis.
+
+        Lens (optics) Lenses are made from materials such as glass or plastic, and
+        are ground and polished or molded to a desired shape.
+
+        Lens (optics) A lens can focus light to form an image, unlike a prism, which
+        refracts light without focusing.
+
+        Lens (optics) Devices that similarly focus or disperse waves and radiation
+        other than visible light are also called lenses, such as microwave lenses,
+        electron lenses, acoustic lenses, or explosive lenses.
+
+        History of photographic lens design The invention of the camera in the early
+        19th century led to an array of lens designs intended for photography.
+
+        History of photographic lens design The problems of photographic lens design,
+        creating a lens for a task that would cover a large, flat image plane, were
+        well known even before the invention of photography due to the development
+        of lenses to work with the focal plane of the camera obscura.
+
+        History of photographic lens design The early photographic experiments of
+        Thomas Wedgwood, Nicéphore Niépce, Henry Fox Talbot, and Louis Daguerre all
+        used simple single-element convex lenses.
+
+        History of photographic lens design These lenses were found lacking.
+
+        History of photographic lens design Simple lenses could not focus an image
+        over a large flat film plane (Field curvature) and suffered from other optical
+        aberrations.
+
+        Color photography Color (or colour) photography is photography that uses media
+        capable of reproducing colors.
+
+        Color photography By contrast, black-and-white (monochrome) photography records
+        only a single channel of luminance (brightness) and uses media capable only
+        of showing shades of gray.
+
+        Color photography In color photography, electronic sensors or light-sensitive
+        chemicals record color information at the time of exposure.
+
+        Color photography This is usually done by analyzing the spectrum of colors
+        into three channels of information, one dominated by red, another by green
+        and the third by blue, in imitation of the way the normal human eye senses
+        color.
+
+        Color photography The recorded information is then used to reproduce the original
+        colors by mixing various proportions of red, green and blue light (RGB color,
+        used by video displays, digital projectors and some historical photographic
+        processes), or by using dyes or pigments to remove various proportions of
+        the red, green and blue which are present in white light (CMY color, used
+        for prints on paper and transparencies on film).
+
+        Polarization (waves) Polarization (also polarisation) is a property applying
+        to transverse waves that specifies the geometrical orientation of the oscillations.
+
+        Polarization (waves) In a transverse wave, the direction of the oscillation
+        is transverse to the direction of motion of the wave, so the oscillations
+        can have different directions perpendicular to the wave direction.
+
+        Polarization (waves) A simple example of a polarized transverse wave is vibrations
+        traveling along a taut string "(see image)"; for example, in a musical instrument
+        like a guitar string.
+
+        Polarization (waves) Depending on how the string is plucked, the vibrations
+        can be in a vertical direction, horizontal direction, or at any angle perpendicular
+        to the string.
+
+        '
+      label_candidates:
+      - I knew yellow was creepy! I bet it represents all sorts of depressing stuff
+        for cultures all over the world!
+      - Absolutely, but at the cost of sitting through horribly old 70s instructional
+        videos on VHS tape...
+      - Are there any famous players that were in that league?
+      - Are more males or females diagnosed with schizophrenia?
+      - I know that is sad.  So much work.  Have you ever been to a wild beach?  They
+        have so much untouched beauty.
+      - Oh, you may of called me out in this one. You know more than I do. I more
+        of a starving artist!  Tell me more, so I can do a better job lol
+      - That's news to me.  I thought it was mostly yeast, hops, and water.
+      - Pita bread is some of the best bread out there.
+      - Where do you like to hike?
+      - I live in New York, where we always say there are 8 million. How many people
+        in Tokyo?
+      - Wow. I never realized! Are there any characteristics a song needs to have
+        to classify as rap?
+      - My son and daughter love to take our dog for walks. It is a family tradition
+        and keeps us close.
+      - 'Oh, wow! What''s the first and second most played? '
+      - oh oh. thanks for the good information
+      - thanks, I'll have to try that recipe someday, it really sound good!
+      - I totally agree with you! and Laziness is a habit rather than a mental health
+        issue, some people think that it can be treated but you need to put your effort
+        to eliminate that habit
+      - My hair is brown, apparently the darker the hair color, the more individual
+        follicles a person has on their scalp.
+      - I will never have the courage for that! Though plenty of folks have told me
+        it changed their lives.
+      - I like to bake pecan pie it is east to make with pecans, eggs, butter, and
+        sugar
+      - some of his music isnt too bad, but i dont care much for it.
+      personality: Complex
+      text: ' Muybridge sequence of a horse galloping In the 1830s, moving images
+        were produced on revolving drums and disks'
+      title: Photography
+- - - checked_sentence: A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+      chosen_topic: Genius
+      episode_done: false
+      eval_labels:
+      - a genius is a person who displays exceptional intellectual ability.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Genius A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+
+        Genius Despite the presence of scholars in many subjects throughout history,
+        many geniuses have shown high achievements in only a single kind of activity.
+
+        Genius There is no scientifically precise definition of genius, and the question
+        of whether the notion itself has any real meaning has long been a subject
+        of debate, although psychologists are converging on a definition that emphasizes
+        creativity and eminent achievement.
+
+        Genius Usually, genius is associated with talent, but many authors (for example
+        Cesare Lombroso) systematically distinguish these terms.
+
+        Genius In ancient Rome, the "genius" (plural in Latin "genii") was the guiding
+        spirit or tutelary deity of a person, family "(gens)", or place "(genius loci)".
+
+        Genius The noun is related to the Latin verb "genui, genitus", "to bring into
+        being, create, produce", as well as to the Greek word for birth.
+
+        Genius Because the achievements of exceptional individuals seemed to indicate
+        the presence of a particularly powerful "genius", by the time of Augustus,
+        the word began to acquire its secondary meaning of "inspiration, talent".
+
+        '
+      label_candidates:
+      - Wow really? I love their Big Macs.
+      - ohh it makes for sense, i really like going out to buy things to put on the
+        christmas tree, what kind of stuff do you put on yours
+      - I just dont get why all the effort. after all An aquarium is a water-filled
+        tank
+      - Yes I have 2 I actually got mines from the Best Friend Animal Society which
+        is a shelter that rescues dogs.
+      - 'Oh yeah. Reality TV tends to focus on the personal conflicts and drama, rather
+        than trying to educate like a documentary. '
+      - 'I haven''t either. The chlorine is hard on the hair and skin. '
+      - Yes, the heat is very crucial for cardiovascular health. Extreme heat and
+        exertion trigger the release of heat shock proteins.
+      - Now I'm hungry for pizza. Is the sauce spicy or sweet?
+      - Last year.  I only read news online since I have no time.  What is your favorite
+        book?
+      - What is it that makes the kale plant green or purple? Because I know cabbage
+        kinda has the same two colors too.
+      - That's awesome, what's the largest group you've sang for?
+      - 'Allow me to complete your sentence: Allies and Axis.'
+      - Mastiffs are huge! Their massive head and enormous size intimidate me, but
+        I know they are very loving dogs.
+      - Wow! I'm sorry! Infidelity has to be one of the top reasons people divorce.
+      - Those early novels were medieval and early modern romance, and in the tradition
+        of the novella.
+      - Wow, that is interesting. I know many vegetarians nowadays who eat a lot of
+        junk food, but I think the best approach is to eat healthy proteins, grains,
+        and vegetables like the ancient people would have.
+      - Beards originated from a time when humans had hair on their entire body like
+        gorillas.
+      - yes and their names are  Alex Pall and Andrew Taggart
+      - 'Yep they sure are. I can''t spell it but they compete in a competition that
+        has 3 parts. Scentwork, obedience and protection. The protection is where
+        the guys dress up in the funny suits. '
+      - Sounds like I better get busy and start studying if I really want to do this.
+      personality: Eloquent (Well-spoken, Expressive)
+      text: 'your persona: i am an international business man.
+
+        your persona: i own a mansion that i do not live in.
+
+        your persona: i never went to school.
+
+        your persona: i am a genius and know over 300 languages.
+
+        your persona: i never met my parents.
+
+        Genius
+
+        '
+      title: Genius
+    - checked_sentence: A digital camera or digicam is a camera that captures photographs
+        in digital memory.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - Some however prefer using   digital camera or digicam ,which is a camera that
+        captures photograph.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Cinematography Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+
+        Cinematography With an electronic image sensor, this produces an electrical
+        charge at each pixel, which is electronically processed and stored in a video
+        file for subsequent display or processing.
+
+        Cinematography The result with photographic emulsion is a series of invisible
+        latent images on the film stock, which are later chemically "developed" into
+        a visible image.
+
+        Cinematography The images on the film stock are played back at a rapid speed
+        and projected onto a screen, creating the illusion of motion.
+
+        Cinematography Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes and mass communication.
+
+        Cinematography The word "cinematography" was created from the Greek words
+        ("kinema"), meaning "movement, motion" and ("graphein") meaning "to record",
+        together meaning "recording motion."
+
+        George Wallace Gouinlock George Wallace Gouinlock (August 1, 1861- February
+        13, 1932) was a Toronto-based architect who was responsible for notable structures
+        in Toronto.
+
+        George Wallace Gouinlock Gouinlock was born in 1861 in Paris, Ontario to Walter
+        & Elizabeth Gouinlock.
+
+        George Wallace Gouinlock He married Georgina Watson in 1889 and had sons George
+        Roper and Robert.
+
+        George Wallace Gouinlock He trained in various cities (including Hamilton,
+        Chicago and Milwaukee) towards becoming an architect.
+
+        George Wallace Gouinlock He later moved to Winnipeg as a junior architect
+        with Barber, Bowes & Barber.
+
+        George Wallace Gouinlock He came to Toronto in 1888 and began a partnership
+        with architect Francis S. Baker (as Gouinlock & Baker) from 1888 to 1890.
+
+        Instrumental and value rationality People reason daily about what they ought
+        to do and how they ought to act.
+
+        Instrumental and value rationality They seem to reason in two distinct ways,
+        identified as two kinds of reasoning-at-large or Rationality.
+
+        Instrumental and value rationality They reason about legitimate ends—what
+        they ought to do—and about efficient means—how they ought to achieve their
+        ends.
+
+        Instrumental and value rationality Since antiquity, scholars have accepted
+        this dichotomy and assigned supreme importance to understanding both kinds
+        of rationality, as the following quotes suggest:  Following the usage of German
+        sociologist Max Weber (1864–1920), reasoning about means has been labeled
+        instrumental rationality and reasoning about ends has been labeled value rationality.
+
+        Exhibition Place Exhibition Place is a publicly owned mixed-use district in
+        Toronto, Ontario, Canada, located by the shoreline of Lake Ontario, just west
+        of downtown.
+
+        Exhibition Place The site includes exhibit, trade, and banquet centres, theatre
+        and music buildings, monuments, parkland, sports facilities, and a number
+        of civic, provincial, and national historic sites.
+
+        Exhibition Place The district''s facilities are used year-round for exhibitions,
+        trade shows, public and private functions, and sporting events.
+
+        Exhibition Place From mid-August through Labour Day each year, the Canadian
+        National Exhibition (CNE), from which the name Exhibition Place is derived,
+        is held on the grounds.
+
+        Citizen Kane Citizen Kane is a 1941 American mystery drama film by Orson Welles,
+        its producer, co-screenwriter, director and star.
+
+        Citizen Kane The picture was Welles''s first feature film.
+
+        Citizen Kane Nominated for Academy Awards in nine categories, it won an Academy
+        Award for Best Writing (Original Screenplay) by Herman J. Mankiewicz and Welles.
+
+        Citizen Kane Considered by many critics, filmmakers, and fans to be the greatest
+        film of all time, "Citizen Kane" was voted as such in five consecutive British
+        Film Institute "Sight & Sound" polls of critics, until it was displaced by
+        "Vertigo" in the 2012 poll.
+
+        Citizen Kane It topped the American Film Institute''s 100 Years ... 100 Movies
+        list in 1998, as well as its 2007 update.
+
+        Yes Minister Yes Minister is a Political satire British sitcom written by
+        Antony Jay and Jonathan Lynn that was first transmitted on BBC Two from 1980
+        to 1984, split over three seven-episode series.
+
+        Yes Minister The sequel, Yes, Prime Minister, ran from 1986 to 1988.
+
+        Yes Minister In total there were 38 episodes, of which all but one lasted
+        half an hour.
+
+        Yes Minister Almost all episodes ended with a variation of the title of the
+        series spoken as the answer to a question posed by Hacker.
+
+        Yes Minister Several episodes were adapted for BBC Radio, and a stage play
+        was produced in 2010, the latter leading to a new television series on UKTV
+        Gold in 2013.
+
+        Yes Minister Set principally in the private office of a British Cabinet minister
+        in the fictional Department of Administrative Affairs in Whitehall, "Yes Minister"
+        follows the ministerial career of the Rt Hon Jim Hacker MP, played by Paul
+        Eddington.
+
+        Doctorate A doctorate (from Latin "docere", "to teach") or doctor''s degree
+        (from Latin "doctor", "teacher") or doctoral degree (from the ancient formalism
+        "licentia docendi") is an academic degree awarded by universities that is,
+        in most countries, a research degree that qualifies the holder to teach at
+        the university level in the degree''s field, or to work in a specific profession.
+
+        Doctorate There are a variety of doctoral degrees, with the most common being
+        the Doctor of Philosophy (PhD), which is awarded in many different fields,
+        ranging from the humanities to the scientific disciplines.
+
+        Doctorate In the United States and some other countries, there are also some
+        types of vocational, technical, or "professional degrees" that are referred
+        to as "doctorates" in their home countries, though they are not technically
+        doctoral level as they are not research degrees and no defense of any dissertation
+        or thesis is performed.
+
+        Photography Photography is the science, art, application and practice of creating
+        durable images by recording light or other electromagnetic radiation, either
+        electronically by means of an image sensor, or chemically by means of a light-sensitive
+        material such as photographic film.
+
+        Photography Typically, a lens is used to focus the light reflected or emitted
+        from objects into a real image on the light-sensitive surface inside a camera
+        during a timed exposure.
+
+        Photography With an electronic image sensor, this produces an electrical charge
+        at each pixel, which is electronically processed and stored in a digital image
+        file for subsequent display or processing.
+
+        Electromagnetic radiation In physics, electromagnetic radiation (EM radiation
+        or EMR) refers to the waves (or their quanta, photons) of the electromagnetic
+        field, propagating (radiating) through space-time, carrying electromagnetic
+        radiant energy.
+
+        Electromagnetic radiation It includes radio waves, microwaves, infrared, (visible)
+        light, ultraviolet, X-rays, and gamma rays."
+
+        Electromagnetic radiation Classically, electromagnetic radiation consists
+        of electromagnetic waves, which are synchronized oscillations of electric
+        and magnetic fields that propagate at the speed of light through a vacuum.
+
+        Electromagnetic radiation The oscillations of the two fields are perpendicular
+        to each other and perpendicular to the direction of energy and wave propagation,
+        forming a transverse wave.
+
+        Optics Optics is the branch of physics which involves the behaviour and properties
+        of light, including its interactions with matter and the construction of instruments
+        that use or detect it.
+
+        Optics Optics usually describes the behaviour of visible, ultraviolet, and
+        infrared light.
+
+        Optics Because light is an electromagnetic wave, other forms of electromagnetic
+        radiation such as X-rays, microwaves, and radio waves exhibit similar properties.
+
+        Optics Most optical phenomena can be accounted for using the classical electromagnetic
+        description of light.
+
+        Optics Complete electromagnetic descriptions of light are, however, often
+        difficult to apply in practice.
+
+        Glossary of video terms This glossary defines terms that are used in the document
+        "Defining Video Quality Requirements: A Guide for Public Safety", developed
+        by the Video Quality in Public Safety (VQIPS) Working Group.
+
+        Glossary of video terms It contains terminology and explanations of concepts
+        relevant to the video industry.
+
+        Glossary of video terms The purpose of the glossary is to inform the reader
+        of commonly used vocabulary terms in the video domain.
+
+        Glossary of video terms This glossary was compiled from various industry sources.
+
+        Glossary of video terms A device that converts analog signals into digital
+        signals.
+
+        Glossary of video terms A circuit for automatically controlling amplifier
+        gain in order to maintain a constant output voltage with a varying input voltage
+        within a predetermined range of input-to-output variation.
+
+        X-ray crystallography X-ray crystallography is a technique used for determining
+        the atomic and molecular structure of a crystal, in which the crystalline
+        atoms cause a beam of incident X-rays to diffract into many specific directions.
+
+        X-ray crystallography By measuring the angles and intensities of these diffracted
+        beams, a crystallographer can produce a three-dimensional picture of the density
+        of electrons within the crystal.
+
+        X-ray crystallography From this electron density, the mean positions of the
+        atoms in the crystal can be determined, as well as their chemical bonds, their
+        disorder, and various other information.
+
+        X-ray crystallography Since many materials can form crystals—such as salts,
+        metals, minerals, semiconductors, as well as various inorganic, organic, and
+        biological molecules—X-ray crystallography has been fundamental in the development
+        of many scientific fields.
+
+        Digital camera A digital camera or digicam is a camera that captures photographs
+        in digital memory.
+
+        Digital camera Most cameras produced today are digital, and while there are
+        still dedicated compact cameras on the market, the use of dedicated digital
+        cameras is dwindling, as digital cameras are now incorporated into many devices
+        ranging from mobile devices to vehicles.
+
+        Digital camera However, expensive, high-end, high-definition dedicated cameras
+        are still commonly used by professionals.
+
+        Digital camera Digital and movie cameras share an optical system, typically
+        using a lens with a variable diaphragm to focus light onto an image pickup
+        device.
+
+        Digital camera The diaphragm and shutter admit the correct amount of light
+        to the imager, just as with film but the image pickup device is electronic
+        rather than chemical.
+
+        '
+      label_candidates:
+      - 'Yeah absolutely. Not only do their whaling grounds extend out of their borders
+        but thei hunt for fish like Tuna does as well. '
+      - Nice, are they really good?
+      - Table Role Playing What kind of game us associated with that?
+      - Actually, i would like to be a personal financeer.  Whether someone is saving
+        for a college education, a house or a car, i would like to be able to help
+        them meet their financial goals by buying and selling stocks.
+      - Melodic hard core, sounds quite interesting. Who are their members?
+      - Oh okay. Do you like other animals like cats?
+      - well the rights to this forumula was obtained by the tip corporation
+      - OK what more do you know?
+      - That's interesting because today "modern gladiators" are like the UFC fighters.
+        They're very respected now.
+      - That must be really fun to see. What else can you tell me about Hershey?
+      - In regards to the big four, I think I really like Djokovic. He has an amazing
+        personality.
+      - Who knew! What about nachos?  Do they have nachos with guacamole?
+      - I like sushi and Asian cuisine. I an open to trying more vegetarian options.
+        Anything you would recommend as an introduction to eating vegetarian?
+      - Can't you just use your fingers too?
+      - Was Albert Enstein a genius?
+      - It's so convenient and the hosts are so nice!
+      - Is it easy for family farms to be passed down in current American tax law?
+      - What else can you tell me about painting?
+      - That is very tiny there.
+      - Neither, the first modern comic was famous funnies in the us
+      personality: Sophisticated
+      text: Yes , Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes
+      title: Digital camera
+- - - checked_sentence: A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+      chosen_topic: Genius
+      episode_done: false
+      eval_labels:
+      - universality in genres or originality typically to a degree that is associated
+        with  achievements
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Genius A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+
+        Genius Despite the presence of scholars in many subjects throughout history,
+        many geniuses have shown high achievements in only a single kind of activity.
+
+        Genius There is no scientifically precise definition of genius, and the question
+        of whether the notion itself has any real meaning has long been a subject
+        of debate, although psychologists are converging on a definition that emphasizes
+        creativity and eminent achievement.
+
+        Genius Usually, genius is associated with talent, but many authors (for example
+        Cesare Lombroso) systematically distinguish these terms.
+
+        Genius In ancient Rome, the "genius" (plural in Latin "genii") was the guiding
+        spirit or tutelary deity of a person, family "(gens)", or place "(genius loci)".
+
+        Genius The noun is related to the Latin verb "genui, genitus", "to bring into
+        being, create, produce", as well as to the Greek word for birth.
+
+        Genius Because the achievements of exceptional individuals seemed to indicate
+        the presence of a particularly powerful "genius", by the time of Augustus,
+        the word began to acquire its secondary meaning of "inspiration, talent".
+
+        IQ classification IQ classification is the practice by IQ test publishers
+        of labeling IQ score ranges with category names such as "superior" or "average".
+
+        IQ classification There are several publishers of tests of cognitive abilities.
+
+        IQ classification No two publishers use exactly the same classification labels,
+        which have changed from time to time since the beginning of intelligence testing
+        in the early twentieth century.
+
+        IQ classification IQ scores have been derived by two different methods since
+        the advent of cognitive ability tests.
+
+        IQ classification The first method historically was the "ratio IQ", based
+        on estimating a "mental age" of the test-taker (rounded to a specified number
+        of years and months), which was then divided by the test-taker''s "chronological
+        age" (rounded to a specified number of years and months).
+
+        Intelligence quotient An intelligence quotient (IQ) is a total score derived
+        from several standardized tests designed to assess human intelligence.
+
+        Intelligence quotient The abbreviation "IQ" was coined by the psychologist
+        William Stern for the German term "Intelligenzquotient", his term for a scoring
+        method for intelligence tests at University of Breslau he advocated in a 1912
+        book.
+
+        Intelligence quotient Historically, IQ is a score obtained by dividing a person’s
+        mental age score, obtained by administering an intelligence test, by the person’s
+        chronological age, both expressed in terms of years and months.
+
+        Intelligence quotient The resulting fraction is multiplied by 100 to obtain
+        the IQ score.
+
+        Environment and intelligence Environment and intelligence research investigates
+        the impact of environment on intelligence.
+
+        Environment and intelligence This is one of the most important factors in
+        understanding human group differences in IQ test scores and other measures
+        of cognitive ability.
+
+        Environment and intelligence It is estimated that genes contribute about 20–40%
+        of the variance in intelligence in childhood and about 80% in old age.
+
+        Environment and intelligence Thus the environment and its interaction with
+        genes account for a high proportion of the variation in intelligence seen
+        in groups of young children, and for a small proportion of the variation observed
+        in groups of mature adults.
+
+        Environment and intelligence Historically, there has been great interest in
+        the field of intelligence research to determine environmental influences on
+        the development of cognitive functioning, in particular, fluid intelligence,
+        as defined by its stabilization at 16 years of age.
+
+        Race and intelligence The connection between race and intelligence has been
+        a subject of debate in both popular science and academic research since the
+        inception of IQ testing in the early 20th century.
+
+        Race and intelligence While tests have broadly shown differences in average
+        scores based on self-identified race or ethnicity, there is considerable debate
+        as to whether and to what extent those differences reflect environmental factors
+        as opposed to genetic ones, as well as to the definitions of what "race" and
+        "intelligence" are, and whether they can be objectively defined at all.
+
+        Race and intelligence Currently, there is no non-circumstantial evidence that
+        these differences in test scores have a genetic component, although some researchers
+        believe that the existing circumstantial evidence makes it at least plausible
+        that hard evidence for a genetic component will eventually be found.
+
+        Genius (website) Genius (formerly Rap Genius) is a North American digital
+        media company.
+
+        Genius (website) Originally founded in August 2009 by Tom Lehman, Ilan Zechory,
+        and Mahbod Moghadam, the site allows users to provide annotations and interpretation
+        of song lyrics, news stories, sources, poetry, and documents.
+
+        Genius (website) Originally launched as Rap Genius with a focus on hip-hop
+        music, the company attracted the attention and support of celebrities, and
+        venture capital enabling further growth.
+
+        Genius (website) The site expanded in 2014 to cover other forms of media,
+        such as pop, literature, R&B, and added an annotation-embedded platform.
+
+        Genius (website) That same year, an iPhone app was released.
+
+        Cognitive epidemiology Cognitive epidemiology is a field of research that
+        examines the associations between intelligence test scores (IQ scores or extracted
+        "g"-factors) and health, more specifically morbidity (mental and physical)
+        and mortality.
+
+        Cognitive epidemiology Typically, test scores are obtained at an early age,
+        and compared to later morbidity and mortality.
+
+        Cognitive epidemiology In addition to exploring and establishing these associations,
+        cognitive epidemiology seeks to understand causal relationships between intelligence
+        and health outcomes.
+
+        Cognitive epidemiology Researchers in the field argue that intelligence measured
+        at an early age is an important predictor of later health and mortality differences.
+
+        Intellectual giftedness Intellectual giftedness is an intellectual ability
+        significantly higher than average.
+
+        Intellectual giftedness It is a characteristic of children, variously defined,
+        that motivates differences in school programming.
+
+        Intellectual giftedness It is thought to persist as a trait into adult life,
+        with various consequences studied in longitudinal studies of giftedness over
+        the last century.
+
+        Intellectual giftedness There is no generally agreed definition of giftedness
+        for either children or adults, but most school placement decisions and most
+        longitudinal studies over the course of individual lives have followed people
+        with IQs in the top two percent of the population – that is, IQs above 130.
+
+        Lewis Terman Lewis Madison Terman (January 15, 1877 – December 21, 1956) was
+        an American psychologist and author.
+
+        Lewis Terman He was noted as a pioneer in educational psychology in the early
+        20th century at the Stanford Graduate School of Education.
+
+        Lewis Terman He is best known for his revision of the Stanford-Binet IQ test
+        and for initiating the longitudinal study of children with high IQs called
+        the Genetic Studies of Genius.
+
+        Lewis Terman He was a prominent eugenicist and was a member of the Human Betterment
+        Foundation.
+
+        Lewis Terman He also served as president of the American Psychological Association.
+
+        Lewis Terman A "Review of General Psychology" survey, published in 2002, ranked
+        Terman as the 72nd most cited psychologist of the 20th century, in a tie with
+        G. Stanley Hall.
+
+        Logology (science of science) Logology ("the science of science") is the study
+        of all aspects of science and of its practitioners—aspects philosophical,
+        biological, psychological, societal, historical, political, institutional,
+        financial.
+
+        Logology (science of science) The term "logology" is used here as a synonym
+        for the equivalent term "science of science" and the semi-equivalent term
+        "sociology of science".
+
+        Logology (science of science) The term "logology" is back-formed from ""-logy""
+        (as in "geo"logy"", "anthropo"logy"", "socio"logy"", etc.)
+
+        Logology (science of science) in the sense of the "study of study" or the
+        "science of science"—or, more plainly, the "study of science".
+
+        Logology (science of science) The word "logology" provides grammatical variants
+        not available with the earlier terms "science of science" and "sociology of
+        science"—"logologist", "to logologize", "logological", "logologically".
+
+        Hochbegabtenstudium The Hochbegabtenstudium (, "College for the talented")
+        is a programme in Germany that allows students of prerequisite intellectual
+        ability (as shown on IQ tests) to attend college even if they do not hold
+        the Abitur.
+
+        Hochbegabtenstudium The Hochbegabtenstudium is also called Schülerstudium
+        ("college for school-students") because many of the students, who benefit
+        from it are still enrolled in school, while they attend college.
+
+        Hochbegabtenstudium A person wishing to do the Hochbegabtenstudium must be
+        of above average intellectual ability and must as a rule have completed at
+        least 10th grade.
+
+        Hochbegabtenstudium However some exceptions from that rule are made for very
+        young students of superior intellectual ability, who are in a lower grade.
+
+        '
+      label_candidates:
+      - mri stands for magnetic resonance imaging and nmr stands for nuclear magnetic
+        resonance, which is when nuclei in a magnetic field absorb and re emit electromagnetic
+        radiation. they have a lot in common but im not exactly sure how similar they
+        are, if i had to guess i would say nmr is a type of mri
+      - Yes, I did a beauty pageant before one time. After that I decided it wasn't
+        my thing
+      - Mmm some Rum and Coke. Can be an adjective, not a verb its so good.
+      - No I dont... is it something like.. potatoes lol
+      - Do you know when the Mustang was first made?
+      - Any of their hour-long murder mysteries is right up my alley! It's the oldest
+        national broadcaster in the world.
+      - 'Haha, I hope that didn''t go to Goodwill. He was ranked #25 in BBC''s poll
+        of 100 greatest Britons. Probably in a museum'
+      - Mastiffs are huge! Their massive head and enormous size intimidate me, but
+        I know they are very loving dogs.
+      - The vessel used for steeping tea?
+      - No  the sitting position of the person is different and there is a different
+        number of blades on the paddle
+      - What's your favorite team? I prefer the AFC over the NFC.
+      - Have they won any laurels or championship?
+      - I love going for hikes in nature for exercise.
+      - No, communism is more of a philosophical, social, political and economic ideaology.  Some
+        communists have been in government though.
+      - I see! Was it practised in ancient times?
+      - I've read a lot of fairy tales in my life, usually ones with dragons and unicorns.  Have
+        you read many fairy tales?
+      - It absorbs light energy and protects plants
+      - Oh yes she loves to purr around me. What about your cats?
+      - Oh I have never heard of that before.
+      - I love track and field. its all about running jumping and throwing
+      personality: Sophisticated
+      text: What is an IQ of a genius?
+      title: Genius
+    - checked_sentence: Until the advent of such technology, photographs were made
+        by exposing light sensitive photographic film and paper, which was processed
+        in liquid chemical solutions to develop and stabilize the image.
+      chosen_topic: Cinematography
+      episode_done: true
+      eval_labels:
+      - Prior to the advent of digital technology,  photographs were made by exposing
+        light sensitive photographic film and paper, which was processed in liquid
+        chemical .
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Cinematography Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+
+        Cinematography With an electronic image sensor, this produces an electrical
+        charge at each pixel, which is electronically processed and stored in a video
+        file for subsequent display or processing.
+
+        Cinematography The result with photographic emulsion is a series of invisible
+        latent images on the film stock, which are later chemically "developed" into
+        a visible image.
+
+        Cinematography The images on the film stock are played back at a rapid speed
+        and projected onto a screen, creating the illusion of motion.
+
+        Cinematography Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes and mass communication.
+
+        Cinematography The word "cinematography" was created from the Greek words
+        ("kinema"), meaning "movement, motion" and ("graphein") meaning "to record",
+        together meaning "recording motion."
+
+        Digital camera A digital camera or digicam is a camera that captures photographs
+        in digital memory.
+
+        Digital camera Most cameras produced today are digital, and while there are
+        still dedicated compact cameras on the market, the use of dedicated digital
+        cameras is dwindling, as digital cameras are now incorporated into many devices
+        ranging from mobile devices to vehicles.
+
+        Digital camera However, expensive, high-end, high-definition dedicated cameras
+        are still commonly used by professionals.
+
+        Digital camera Digital and movie cameras share an optical system, typically
+        using a lens with a variable diaphragm to focus light onto an image pickup
+        device.
+
+        Digital camera The diaphragm and shutter admit the correct amount of light
+        to the imager, just as with film but the image pickup device is electronic
+        rather than chemical.
+
+        Digital camera back A digital camera back is a device that attaches to the
+        back of a camera in place of the traditional negative film holder and contains
+        an electronic image sensor.
+
+        Digital camera back This lets cameras that were designed to use film take
+        digital photographs.
+
+        Digital camera back These camera backs are generally expensive by consumer
+        standards (US$5000 and up) and are primarily built to be attached on medium-
+        and large-format cameras used by professional photographers.
+
+        Digital camera back Two sensor back types are commonly used: single shot back
+        (non-scanning) and scan back.
+
+        Digital camera back Some backs, primarily older ones, require multiple exposures
+        to capture an image; generally one each for red, green, and blue.
+
+        Digital photography Digital photography is a form of photography that uses
+        cameras containing arrays of electronic photodetectors to capture images focused
+        by a lens, as opposed to an exposure on photographic film.
+
+        Digital photography The captured images are digitized and stored as a computer
+        file ready for further digital processing, viewing, digital publishing or
+        printing.
+
+        Digital photography Until the advent of such technology, photographs were
+        made by exposing light sensitive photographic film and paper, which was processed
+        in liquid chemical solutions to develop and stabilize the image.
+
+        Digital photography Digital photographs are typically created solely by computer-based
+        photoelectric and mechanical techniques, without wet bath chemical processing.
+
+        History of the camera The history of the camera can be traced much further
+        back than the introduction of photography.
+
+        History of the camera Cameras evolved from the camera obscura, and continued
+        to change through many generations of photographic technology, including daguerreotypes,
+        calotypes, dry plates, film, and to the modern day with digital cameras.
+
+        History of the camera The forerunner to the photographic camera was the "camera
+        obscura".
+
+        History of the camera Camera obscura (Latin for "dark room") is the natural
+        optical phenomenon that occurs when an image of a scene at the other side
+        of a screen (or for instance a wall) is projected through a small hole in
+        that screen and forms an inverted image (left to right and upside down) on
+        a surface opposite to the opening.
+
+        Camera A camera is an optical instrument for recording or capturing images,
+        which may be stored locally, transmitted to another location, or both.
+
+        Camera The images may be individual still photographs or sequences of images
+        constituting videos or movies.
+
+        Camera The camera is a remote sensing device as it senses subjects without
+        any contact  .
+
+        Camera The word "camera" comes from "camera obscura", which means "dark chamber"
+        and is the Latin name of the original device for projecting an image of external
+        reality onto a flat surface.
+
+        Camera The modern photographic camera evolved from the camera obscura.
+
+        Camera The functioning of the camera is very similar to the functioning of
+        the human eye.
+
+        IMAX IMAX is a 70 mm motion picture film format that displays images of greater
+        size and resolution than conventional film systems.
+
+        IMAX Graeme Ferguson, Roman Kroitor, Robert Kerr, and William C. Shaw developed
+        the IMAX cinema projection standards in the late 1960s and early 1970s in
+        Canada.
+
+        IMAX Unlike conventional projectors, the film runs horizontally (see diagram
+        sprocket holes) so that the image width is greater than the width of the film.
+
+        IMAX Since 2002, some feature films have been converted into IMAX format for
+        displaying in IMAX theatres, and some have also been partially shot in IMAX.
+
+        IMAX IMAX is the most widely used system for special-venue film presentations.
+
+        Ritz Dakota Digital The Ritz Dakota Digital is a type of point-and-shoot digital
+        camera, introduced in July of 2003, and sold by the Ritz Camera Centers.
+
+        Ritz Dakota Digital It has a digital photo resolution of 1.2 megapixels (1280
+        pixels wide, 960 pixels high) and a storage capacity of 25 pictures.
+
+        Ritz Dakota Digital When introduced, the Dakota Digital sparked massive interest,
+        primarily due to its price tag: $10.99 (US Dollars).
+
+        Ritz Dakota Digital At the time, a digital camera of similar resolution and
+        functionality was in the $40–$70 range.
+
+        Ritz Dakota Digital The reason for the low price was because the Dakota Digital
+        was a "single-use camera", i.e.
+
+        Ritz Dakota Digital the consumer takes the pictures, returns the camera to
+        the store, and the pictures are returned to the consumer in print and CD-ROM
+        format (after an additional $11 processing fee) while the camera is refurbished
+        and resold.
+
+        Digital single-lens reflex camera A digital single-lens reflex camera (also
+        called a digital SLR or DSLR) is a digital camera that combines the optics
+        and the mechanisms of a single-lens reflex camera with a digital imaging sensor,
+        as opposed to photographic film.
+
+        Digital single-lens reflex camera The reflex design scheme is the primary
+        difference between a DSLR and other digital cameras.
+
+        Digital single-lens reflex camera In the reflex design, light travels through
+        the lens, then to a mirror that alternates to send the image to either the
+        viewfinder or the image sensor.
+
+        Digital single-lens reflex camera The traditional alternative would be to
+        have a viewfinder with its own lens, hence the term "single lens" for this
+        design.
+
+        Digital single-lens reflex camera By using only one lens, the viewfinder of
+        a DSLR presents an image that will not differ substantially from what is captured
+        by the camera''s sensor.
+
+        '
+      label_candidates:
+      - A little bit,  I know that she eventually got married.
+      - I dont know anyone with a Bachelors in nursing.
+      - Yes, I agree. Yoga is a great way to destress and unwind?  What are your favorite
+        poses?
+      - Wow elderly care is really intense, I know it's important to take care of
+        our senior citizens. Have you become close with any?
+      - That sounds quite helpful and useful.
+      - That sounds really fun. I would love to try it.
+      - I just bought myself a Ford Mustang. I only buy American cars.
+      - They are some cute little kids, but do some really crazy things.
+      - Yea the Miami Heat did not do very well...it has all gone downhill since LeBron
+        left
+      - 'Yes, the object of the game is to hit the ball in such a way that your opponent
+        is not able to hit the ball back to you. '
+      - Some of their first games were Rock N Roll Racing and The Lost Vikings.
+      - 'Pisa is located in Tuscany, most famous for the leaning tower of Pisa. '
+      - I think they are slightly different. There is 47 prefectures but 23 wards.
+        That's really cool you know about prefectures though.
+      - No wonder I don't know much about it, it must be easy to miss on a map!
+      - In case you need some extra name to call your steak, you can say chops if
+        you are using some meats, such as pork, lamb and mutton, chevon and veal
+      - Spaghetti with meatballs is the best thing on the planet!
+      - i find blue to be the best color there is, Blue is one of the three primary
+        colors of pigments in painting
+      - I agree!  What is your favorite type of wedding cake?  I love marbles cake!
+      - What cool tricks do they know?
+      - That's a good question and I am sure that answer varies based on location.  Some
+        beaches are wild and untouched so the ratio may be quite high.
+      personality: Scholarly
+      text: Yes now digital camera is trendy
+      title: Digital photography

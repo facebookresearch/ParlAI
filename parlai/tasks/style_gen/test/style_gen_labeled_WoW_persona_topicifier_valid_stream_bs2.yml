@@ -1,0 +1,2545 @@
+- - - checked_sentence: Gardening is considered by many people to be a relaxing activity.
+      chosen_topic: Gardening
+      episode_done: false
+      eval_labels:
+      - I live on a farm, we garden all year long, it is very relaxing.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Gardening Gardening is the practice of growing and cultivating plants
+        as part of horticulture.
+
+        Gardening In gardens, ornamental plants are often grown for their flowers,
+        foliage, or overall appearance; useful plants, such as root vegetables, leaf
+        vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+        or for medicinal or cosmetic use.
+
+        Gardening Gardening is considered by many people to be a relaxing activity.
+
+        Gardening Gardening ranges in scale from fruit orchards, to long boulevard
+        plantings with one or more different types of shrubs, trees, and herbaceous
+        plants, to residential yards including lawns and foundation plantings, to
+        plants in large or small containers grown inside or outside.
+
+        Gardening Gardening may be very specialized, with only one type of plant grown,
+        or involve a large number of different plants in mixed plantings.
+
+        Gardening It involves an active participation in the growing of plants, and
+        tends to be labor-intensive, which differentiates it from farming or forestry.
+
+        Gardening Forest gardening, a forest-based food production system, is the
+        world''s oldest form of gardening.
+
+        Gardening Forest gardens originated in prehistoric times along jungle-clad
+        river banks and in the wet foothills of monsoon regions.
+
+        Gardening In the gradual process of families improving their immediate environment,
+        useful tree and vine species were identified, protected and improved while
+        undesirable species were eliminated.
+
+        List of Gun Sword characters This is a list of the fictional characters, with
+        biographical details, in the Japanese anime "Gun Sword" (full name Gun x Sword:
+        the "x" is silent) the story of which takes place on the fictional "Planet
+        of Endless Illusion".
+
+        List of Gun Sword characters Van is the primary protagonist of the series.
+
+        List of Gun Sword characters He is traveling the world, searching after a
+        mysterious man with an artificial claw hand who killed his bride, Helena,
+        on the day of their wedding.
+
+        List of Gun Sword characters Van swore to kill this man to avenge Helena.
+
+        List of Gun Sword characters His primary weapon is a shape-memory cloth held
+        at his side like a pistol.
+
+        List of Gun Sword characters When an electrical charge is run through the
+        weapon, it can change configuration to a dueling sword or extend to grapple
+        or embed itself into walls.
+
+        Guerrilla gardening Guerrilla gardening is the act of gardening on land that
+        the gardeners do not have the legal rights to cultivate, such as abandoned
+        sites, areas that are not being cared for, or private property.
+
+        Guerrilla gardening It encompasses a diverse range of people and motivations,
+        ranging from gardeners who spill over their legal boundaries to gardeners
+        with political influences who seek to provoke change by using guerrilla gardening
+        as a form of protest or direct action.
+
+        Guerrilla gardening This practice has implications for land rights and land
+        reform; aiming to promote re-consideration of land ownership in order to assign
+        a new purpose or reclaim land that is perceived to be in neglect or misused.
+
+        History of gardening The history of ornamental gardening may be considered
+        as aesthetic expressions of beauty through art and nature, a display of taste
+        or style in civilized life, an expression of an individual''s or culture''s
+        philosophy, and sometimes as a display of private status or national pride—in
+        private and public landscapes.
+
+        History of gardening Forest gardening, a plant-based food pro-system, is the
+        world''s oldest form of gardening.
+
+        History of gardening Forest gardens originated in prehistoric times along
+        jungle-clad river banks and in the wet foothills of monsoon regions.
+
+        History of gardening In the gradual process of families improving their immediate
+        environment, useful tree and vine species were identified, protected, and
+        improved while undesirable species were eliminated.
+
+        Urban agriculture Urban agriculture, urban farming, or urban gardening is
+        the practice of cultivating, processing, and distributing food in or around
+        a village, town, or city.
+
+        Urban agriculture Urban agriculture can also involve animal husbandry, aquaculture,
+        agroforestry, urban beekeeping, and horticulture.
+
+        Urban agriculture These activities occur in peri-urban areas as well, and
+        peri-urban agriculture may have different characteristics.
+
+        Urban agriculture Urban agriculture can reflect varying levels of economic
+        and social development.
+
+        Urban agriculture In the global north, it often takes the form of a social
+        movement for sustainable communities, where organic growers, ‘foodies,’ and
+        ‘locavores’ form social networks founded on a shared ethos of nature and community
+        holism.
+
+        Phat Beets Produce Phat Beets Produce is an American non-profit food justice
+        collective focusing on food justice in North Oakland, California, started
+        by Max Cadji and Bret Brenner in 2007.
+
+        Phat Beets Produce Their programs include weekly farmer''s markets (sourcing
+        from local farmers of color), free produce stands, youth gardens, community
+        supported agriculture programs (called the "beet box"), food and social justice
+        workshops, and a kitchen and cafe cooperative.
+
+        Phat Beets Produce Cadji helps residents have access to nutritious food by
+        coordinating between farmers, institutions, and low-income communities to
+        utilize empty land for urban gardening.
+
+        Phat Beets Produce Their work addresses disadvantaged North Oakland residents,
+        actively opposes the systematic forces of gentrification in the North Oakland
+        Area, and stands in solidarity with criminal justice issues.
+
+        Amateur Gardening (magazine) Amateur Gardening is a British weekly magazine
+        dedicated to gardening.
+
+        Amateur Gardening (magazine) It includes news, advice, feature articles, and
+        celebrity columns and interviews.
+
+        Amateur Gardening (magazine) "Amateur Gardening" was founded in London in
+        May 1884 by Shirley Hibberd, who edited it until 1887.
+
+        Amateur Gardening (magazine) This makes it the oldest UK amateur gardening
+        weekly still published today, and was Britain''s best-seller in that category
+        in 2013.
+
+        Amateur Gardening (magazine) The magazine is published on a weekly basis.
+
+        Amateur Gardening (magazine) Its editorial offices are in Poole, Dorset.
+
+        Amateur Gardening (magazine) At the time of the magazine''s launch in 1884
+        there had been several other notable gardening magazines in circulation, including
+        the "Gardeners'' Chronicle" and "Gardens Illustrated", but these were tailored
+        more for the professional gardener.
+
+        '
+      label_candidates:
+      - OK what's the history?
+      - 'Right, thats cool. I had no idea they still did the DVD thing, What is Netflix''s
+        highest rated show? do you know? '
+      - I will definitely check his first album out as he sounds interesting.
+      - I don't know a whole lot about it. I was raised Catholic but don't practice
+        anything now.
+      - 'Well , this was a good conversation. '
+      - yes! Many people sing in the shower because the hard wall surfaces create
+        an aurally pleasing acoustic environment
+      - I would probably play acoustic if I chose to take lessons
+      - Yes, i remember seeing that name. did you read those comics?
+      - Haha, yes, you'd probably enjoy a salsa dance social than, commonly held in
+        night clubs, bars, or ballrooms
+      - Oh really, thats super cool.
+      - yes i would, just so i can see why they have the phrase, a New york minute.
+        they must walk really fast
+      - Me too! I couldn't live with texting, email, internet, wifi, apps, video games,
+        and pics.
+      - It sure is.  Do you know how far it goes? Or which states it's in?
+      - I think gray hairs are something to be proud of personally, I've had some
+        even since I was like 16, which seems to defy their normal pattern.
+      - I performed at a talent show recently, it wasn't a contest or anything we
+        just all did some performances.
+      - He was from Macedonia and also played the bagpipe, zurna, recorder and drums...and
+        he composed.
+      - Is electronic music you favorite, or do you like something else more?
+      - While they live in all types of environments an enclosed area would not be
+        ideal for them
+      - Agreed, they can be aggressive but that's just bad owners.
+      - I don't think I've read that one as our library leaves a bit to be desired
+        in this area.
+      personality: Rustic (Rural)
+      text: 'your persona: i like photography.
+
+        your persona: i love traveling.
+
+        your persona: i like to garden.
+
+        your persona: i like to bake pies.
+
+        your persona: i''m a chef.
+
+        Gardening
+
+        I like Gardening, even when I''ve only been doing it for a short time.'
+      title: Gardening
+    - checked_sentence: Robert Norman Ross (October 29, 1942 – July 4, 1995) was an
+        American painter, art instructor, and television host.
+      chosen_topic: Bob Ross
+      episode_done: false
+      eval_labels:
+      - Ross was an American painter and television host
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Bob Ross Robert Norman Ross (October 29, 1942 – July 4, 1995) was
+        an American painter, art instructor, and television host.
+
+        Bob Ross He was the creator and host of "The Joy of Painting", an instructional
+        television program that aired from 1983 to 1994 on PBS in the United States,
+        and also aired in Canada, Latin America, and Europe.
+
+        Bob Ross Ross went from being a public-television personality in the 1980s
+        and 1990s to being an Internet celebrity in the 21st century, popular with
+        fans on YouTube and many other websites.
+
+        Bob Ross Ross was born in Daytona Beach, Florida, to Jack and Ollie Ross (a
+        carpenter and waitress, respectively), and raised in Orlando, Florida.
+
+        Bob Ross As a child, Ross entertained himself by caring for injured animals,
+        purportedly including an armadillo, snake, and alligator.
+
+        Bob Ross One of these animals, a squirrel named Peapod, was featured in a
+        few episodes of his show.
+
+        Bob Ross He had a half-brother, Jim, whom he mentioned in passing on his show.
+
+        Bob Ross Ross dropped out of high school in the 9th grade to work as a carpenter
+        with his father, Jack Ross, where he lost part of his left index finger.
+
+        Bob Ross This, however, did not affect the way he held his palette while painting.
+
+        Bob Ross In 1961, then 18-year-old Ross enlisted in the United States Air
+        Force and was put into service as a medical records technician.
+
+        Gay Comix Gay Comix (later Gay Comics) is an underground comics series published
+        from 1980–1998 featuring cartoons by and for gay and lesbian men and women.
+
+        Gay Comix The comic books had the tagline “Lesbians and Gay Men Put It On
+        Paper!”  Much of the early content was autobiographical, but more diverse
+        themes were explored in later editions.
+
+        Gay Comix The contents of "Gay Comix" were generally about relationships,
+        personal experiences, and humor, rather than sex.
+
+        Gay Comix It is generally less sexually explicit than the similarly-themed
+        (and male-focused) "Meatmen" series of graphic novels.
+
+        Gay Comix Its editors each made a deliberate effort to feature work by both
+        women and men.
+
+        The Joy of Painting The Joy of Painting is an American half-hour instructional
+        television show hosted by painter Bob Ross which ran from January 11, 1983
+        until May 17, 1994.
+
+        The Joy of Painting In each episode, Ross taught techniques for landscape
+        oil painting, completing a painting in each session.
+
+        The Joy of Painting The program followed the same format as its predecessor,
+        "The Magic of Oil Painting", hosted by Ross''s mentor Bill Alexander.
+
+        The Joy of Painting In its running it won three Emmy Awards.
+
+        The Joy of Painting Broadcast by non-commercial public television stations,
+        the show''s first season was in 1983, and initially produced by WNVC in Falls
+        Church, Virginia, then by WIPB in Muncie, Indiana, from 1984 until the show
+        ended in 1994, and later by Blue Ridge Public Television in Roanoke, Virginia.
+
+        Kingdom Brass Kingdom Brass is a brass band based in Cowdenbeath, in Fife,
+        Scotland.
+
+        Kingdom Brass Kingdom Brass is graded in the Championship Section, and performs
+        at various concerts, festivals and competitions all over the UK and abroad.
+
+        Kingdom Brass It was formed in 1999 by the amalgamation of the Cowdenbeath
+        and Kelty & Blairadam Bands.
+
+        Kingdom Brass The band consists of 35 brass and percussion players.
+
+        Kingdom Brass Kingdom Brass rehearse in the Co-op Hall, Broad Street, Cowdenbeath,  Kingdom
+        Brass rehearses on Thursday and Sunday evenings, from 7.30 – 9.30pm.
+
+        Kingdom Brass Kingdom Brass was formed in August 1999 after the amalgamation
+        of the Cowdenbeath and the Kelty & Blairadam Bands.
+
+        Bob Ross (publisher) Bob Ross (April 2, 1934 – December 13, 2003) was the
+        founder and former publisher of the "Bay Area Reporter" and a key gay rights
+        and AIDS activist in San Francisco.
+
+        Bob Ross (publisher) Ross was born in New York City.
+
+        Bob Ross (publisher) In addition to the "Bay Area Reporter", Ross published
+        the long-running "Gay Comix", beginning in 1985 and continuing until 1998.
+
+        Bob Ross (publisher) He was criticized by some for his more moderate policies,
+        sometimes leaning toward the conservative, with gay rights being seen by many
+        as a primarily liberal issue.
+
+        Bob Ross (publisher) In 1996, he established the Bob Ross Foundation, which
+        donated to a "broad portfolio of nonprofits".
+
+        Bob Ross (publisher) In 2016, the Foundation donated $50,000 to purchase equipment
+        for the GLBT Historical Society to digitize and publish a complete searchable
+        archive of the "Bay Area Reporter" from the first issue in 1971 until 2005
+        when the newspaper began online operations.
+
+        Bob Ross (disambiguation) Bob Ross (1942–1995) was a painter and television
+        presenter.
+
+        Bob Ross (disambiguation) Bob Ross may also refer to:
+
+        Edgar Ross (communist) Edgar Argent Ross (20 November 1904 – 16 November 2001)
+        was an Australian journalist, trade unionist and communist organiser.
+
+        Edgar Ross (communist) Ross was born in Brisbane to Bob and Ethel Ross, who
+        were based in Broken Hill.
+
+        Edgar Ross (communist) Bob Ross, a newspaper editor, was also a foundation
+        member of the Socialist League and the Social Democratic Vanguard, which influenced
+        young Edgar''s political development.
+
+        Edgar Ross (communist) The family later moved to Melbourne and, briefly, New
+        Zealand, but Edgar attended University High School in Melbourne before becoming
+        a cadet journalist in 1922, joining the Australian Journalists'' Association.
+
+        Edgar Ross (communist) He was sporting editor for the Geelong-based "Industrial
+        Advocate" and wrote book reviews for the "Socialist", both of which were edited
+        by his father.
+
+        '
+      label_candidates:
+      - Oh!  I didn't know that is what a building superintendent did!  Do you have
+        to have a college degree for that position?
+      - I feel like Tool was never the same after they replaced their original bassist
+        Paul D'Amour with Justin Chancellor in 1995.
+      - 'He grew up in Queens but then went to Pennsylvania to get an economics degree
+        from Wharton, so he''s at least well educated. '
+      - yeah, and eating meat is unsafe! it'll go bad and rot in just hours and you
+        can get infections from it
+      - No but I have always wanted to visit. Can you tell me more about Canada?
+      - That's very true! I love the all of the fun surrounding high school football.
+        The pep rallies, mascots, marching bands and homecoming parades are so much
+        fun!
+      - yes i think it is, but Teenage pregnancy in developed countries is usually
+        outside of marriage, and carries a social stigma in many cultures and groups
+      - Dr. McCoy and Mr. Spock were my favorite characters, never really cared for
+        Kirk
+      - 'That''s my interest in it: Exercise. I don''t get the "runner''s high" that
+        some people talk about, but I do see the value in improving my cardio health.'
+      - Are you a fan of animated movies, in general, or was it just this one?
+      - Wow, I didn't realize it was so big
+      - I think real vegetarianism is the practice of abstaining from alll meat and
+        by products too.
+      - I like to make bagels.
+      - Oh - that's not where I thought it was at all - LOL!!  So it's a tropical
+        place?
+      - I'm thinking of getting job working at a hospital. Do you have any experience
+        with that?
+      - So tell me more about the video games you like
+      - 'No! But I understand the intricacies of raising a child to adulthood! They
+        go through so much. '
+      - I've heard good things about it. How long has it been running?
+      - You're kidding! I had no idea that Nintendo was that old! That's crazy!
+      - 'At first it was really hard to read the text, process it, and understand
+        its meaning. But over time I got the hang of it. '
+      personality: Patriotic
+      text: 'your persona: i am a vegan.
+
+        your persona: i enjoy hiking.
+
+        your persona: my favorite artist is bob ross.
+
+        your persona: i got a job as an accountant 3 months ago.
+
+        Bob Ross
+
+        I would like to know more about bob ross'
+      title: Bob Ross
+- - - checked_sentence: Gardening ranges in scale from fruit orchards, to long boulevard
+        plantings with one or more different types of shrubs, trees, and herbaceous
+        plants, to residential yards including lawns and foundation plantings, to
+        plants in large or small containers grown inside or outside.
+      chosen_topic: Gardening
+      episode_done: false
+      eval_labels:
+      - I have planted several fruits trees, tomatoes, jalepenos, bell peppers, onions,
+        Garlic, and potatoes mostly.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Gardening Gardening is the practice of growing and cultivating plants
+        as part of horticulture.
+
+        Gardening In gardens, ornamental plants are often grown for their flowers,
+        foliage, or overall appearance; useful plants, such as root vegetables, leaf
+        vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+        or for medicinal or cosmetic use.
+
+        Gardening Gardening is considered by many people to be a relaxing activity.
+
+        Gardening Gardening ranges in scale from fruit orchards, to long boulevard
+        plantings with one or more different types of shrubs, trees, and herbaceous
+        plants, to residential yards including lawns and foundation plantings, to
+        plants in large or small containers grown inside or outside.
+
+        Gardening Gardening may be very specialized, with only one type of plant grown,
+        or involve a large number of different plants in mixed plantings.
+
+        Gardening It involves an active participation in the growing of plants, and
+        tends to be labor-intensive, which differentiates it from farming or forestry.
+
+        Gardening Forest gardening, a forest-based food production system, is the
+        world''s oldest form of gardening.
+
+        Gardening Forest gardens originated in prehistoric times along jungle-clad
+        river banks and in the wet foothills of monsoon regions.
+
+        Gardening In the gradual process of families improving their immediate environment,
+        useful tree and vine species were identified, protected and improved while
+        undesirable species were eliminated.
+
+        Mary Katherine &quot;Merricat&quot; Blackwood (Character) Mary Katherine Blackwood,
+        or "Merricat," is the protagonist of Shirley Jackson''s 1962 novel, "We Have
+        Always Lived in the Castle."
+
+        Mary Katherine &quot;Merricat&quot; Blackwood (Character) The eighteen-year-old
+        "Merricat" lives with her remaining family members, Constance and Julian Blackwood,
+        on an estate in Vermont.
+
+        Mary Katherine &quot;Merricat&quot; Blackwood (Character) As a result of a
+        tragedy six years prior the family remains isolated from the surrounding village.
+
+        Mary Katherine &quot;Merricat&quot; Blackwood (Character) The "Dictionary
+        of Literary Characters" designates a "definition" to Merricat as follows:
+        Reclusive, psychotic 18-year-old who lives in the family manse with her older
+        sister, Constance Blackwood, and her uncle, Julian Blackwood, as a child,
+        poisoned most of her family in Shirley Jackson''s "We Have Always Live in
+        the Castle".
+
+        Steve Marriott Stephen Peter Marriott (30 January 1947 – 20 April 1991) was
+        an English musician, songwriter and frontman of two notable rock and roll
+        bands, spanning over two decades.
+
+        Steve Marriott Marriott is remembered for his powerful singing voice which
+        belied his small stature, and for his aggressive approach as a guitarist in
+        mod rock bands Small Faces (1965–1969 and 1977-1978) and Humble Pie (1969–1975
+        and 1980–1981).
+
+        Steve Marriott Marriott was inducted posthumously into the Rock and Roll Hall
+        of Fame in 2012 as a member of Small Faces.
+
+        Steve Marriott In Britain, Marriott became a popular, often-photographed mod
+        style icon through his role as lead singer and guitarist with the Small Faces
+        in the mid to late 1960s.
+
+        Pet Sounds Pet Sounds is the eleventh studio album by American rock band the
+        Beach Boys, released on May 16, 1966.
+
+        Pet Sounds It initially met with a lukewarm critical and commercial response
+        in the United States, peaking at number 10 in the "Billboard" 200, a significantly
+        lower placement than the band''s preceding albums.
+
+        Pet Sounds In the United Kingdom, the album was hailed by its music press
+        and was an immediate commercial success, peaking at number 2 in the UK Top
+        40 Albums Chart and remaining among the top ten positions for six months.
+
+        Pet Sounds Originally promoted as "the most progressive pop album ever", "Pet
+        Sounds" attracted recognition for its ambitious recording and unusually sophisticated
+        music, and is widely considered to be one of the most influential albums in
+        music history.
+
+        List of Tenchi Muyo! supporting characters The following is a list of supporting
+        characters from the anime and manga series "Tenchi Muyo!".
+
+        List of Tenchi Muyo! supporting characters is a fictional character in the
+        anime "Tenchi Muyo!".
+
+        List of Tenchi Muyo! supporting characters OVA  In the OVA, Katsuhito, also
+        known as , fled Jurai over 700 years ago to "retire" on Earth.
+
+        List of Tenchi Muyo! supporting characters He was once the greatest swordsman
+        on Jurai.
+
+        List of Tenchi Muyo! supporting characters Currently Katsuhito is a Shinto
+        priest who is not only training Tenchi to be a Shinto priest but also training
+        him in Jurai swordsmanship.
+
+        List of Tenchi Muyo! supporting characters Yōshō had a marriage arranged with
+        half-sister Ayeka, but left.
+
+        List of Tenchi Muyo! supporting characters At the time, not all Juraians liked
+        the idea of mixed blood heritages (he is part human, on his mother''s side)
+        and he used Ryōko''s attack as an excuse to slip away to Earth.
+
+        List of Anita Blake: Vampire Hunter characters The following is a list of
+        fictional characters in Laurell K. Hamilton''s "" series of novels.
+
+        List of Anita Blake: Vampire Hunter characters The title character, Anita
+        Blake starts as a human with the power of necromancy.
+
+        List of Anita Blake: Vampire Hunter characters She joins the organization
+        Animators, Inc. as an animator: a person who raises zombies) and a vampire
+        executioner.
+
+        List of Anita Blake: Vampire Hunter characters In later volumes, she acquires
+        some powers that are commonly associated with vampires.
+
+        List of Anita Blake: Vampire Hunter characters She contracts the lycanthropy
+        viruses which makes her associate with were-creatures.
+
+        List of Anita Blake: Vampire Hunter characters She also grows powers as a
+        succubus.
+
+        List of Anita Blake: Vampire Hunter characters Bert is the founder and managing
+        partner of Animators, Inc. Over 6 feet tall and built like a former athlete,
+        Bert is an unscrupulous boss who is inclined to sign the animators up for
+        almost any job if the price is right.
+
+        List of Warriors characters The "Warriors" novel series is written by Erin
+        Hunter.
+
+        List of Warriors characters Due to the large number of characters present
+        in the novel series, this list is divided by Clan, e.g., all characters in
+        ThunderClan are listed together.
+
+        List of Warriors characters Each cat has a prefix.
+
+        List of Warriors characters Eg: Dawn, Violet etc.
+
+        List of Warriors characters As a young kit they will have -kit at the end
+        of their name.
+
+        List of Warriors characters Eg: Dawnkit Violetkit.
+
+        List of Warriors characters When they are an apprentice -paw will be at the
+        end of their name.
+
+        List of Warriors characters Eg: Dawnpaw Violetpaw.
+
+        List of Warriors characters When that cat is a warrior or medicine cat they
+        will have a suffix.
+
+        List of Warriors characters Eg: -fur -pelt -cloud -flame -wing -song etc.
+
+        List of Warriors characters Eg: Dawnsong Violetflame.
+
+        List of Warriors characters That is if they are in one of the clans like ThunderClan,
+        RiverClan, WindClan, ShadowClan, Skyclan.
+
+        Dennis Miller Dennis Michael Miller (born November 3, 1953) is an American
+        stand-up comedian, talk show host, political commentator, sports commentator,
+        actor, and television and radio personality.
+
+        Dennis Miller He rose as a cast member of "Saturday Night Live" in 1985, and
+        subsequently hosted a string of his own talk shows on HBO, CNBC, and in syndication.
+
+        Dennis Miller From 2007 to 2015, Miller hosted a daily, three-hour, self-titled
+        talk radio program, nationally syndicated by Westwood One.
+
+        Dennis Miller He is known for his critical assessments of current events,
+        laced with pop culture references and delivered in an idiosyncratic verbal
+        style.
+
+        Dennis Miller Miller is listed as 21st on Comedy Central''s 100 greatest stand
+        up comedians of all time, and was ranked as the best host of SNL''s "Weekend
+        Update" by Vulture.com.
+
+        Urban agriculture Urban agriculture, urban farming, or urban gardening is
+        the practice of cultivating, processing, and distributing food in or around
+        a village, town, or city.
+
+        Urban agriculture Urban agriculture can also involve animal husbandry, aquaculture,
+        agroforestry, urban beekeeping, and horticulture.
+
+        Urban agriculture These activities occur in peri-urban areas as well, and
+        peri-urban agriculture may have different characteristics.
+
+        Urban agriculture Urban agriculture can reflect varying levels of economic
+        and social development.
+
+        Urban agriculture In the global north, it often takes the form of a social
+        movement for sustainable communities, where organic growers, ‘foodies,’ and
+        ‘locavores’ form social networks founded on a shared ethos of nature and community
+        holism.
+
+        Year Long Disaster Year Long Disaster was an American hard rock band from
+        Los Angeles, California.
+
+        Year Long Disaster Formed in 2004, the band was composed of vocalist and guitarist
+        Daniel Davies, bassist Rich Mullins and drummer Brad Hargreaves.
+
+        Year Long Disaster Hargreaves was later replaced by Rob Oswald, and guitarist
+        William Mecum also joined in a later incarnation of the group.
+
+        Year Long Disaster Daniel Davies and Rich Mullins first met in November 2003,
+        after the bassist had left Karma to Burn and was playing in the band Speedealer.
+
+        Year Long Disaster After completing a drug rehabilitation program together,
+        the pair met Brad Hargreaves in November 2004, and after an informal jam session
+        formed Year Long Disaster later.
+
+        Lewis Ginter Botanical Garden The Lewis Ginter Botanical Garden, , is a botanical
+        garden located at 1800 Lakeside Avenue, on the North Side of Richmond, Virginia.
+
+        Lewis Ginter Botanical Garden It includes the Lakeside Wheel Club built by
+        Lewis Ginter and expanded and remodeled into Bloemendaal by his niece Grace
+        Arents.
+
+        Lewis Ginter Botanical Garden The Garden’s three-fold mission is (1) to provide
+        education to the community about the plant world, (2) promote the best in
+        horticulture and landscape design and (3) work toward the goal of being a
+        leader in botanical and applied horticultural research.
+
+        Lewis Ginter Botanical Garden The gently rolling terrain that is the site
+        of Lewis Ginter Botanical Garden was once the hunting ground of Powhatan Indians.
+
+        Adana Adana (; ) is a major city in southern Turkey.
+
+        Adana The city is situated on the Seyhan river, inland from the Mediterranean,
+        in south-central Anatolia.
+
+        Adana It is the administrative seat of the Adana Province and has a population
+        of 1.7 million, making it the fifth most populous city in Turkey.
+
+        Adana The Adana-Mersin polycentric metropolitan area, with a population of
+        3 million, stretches over east-west and north-south; encompassing the cities
+        of Mersin, Tarsus and Adana.
+
+        Adana Adana lies in the heart of Çukurova, a geo-cultural region alternatively
+        known as Cilicia.
+
+        Adana Home to six million people, Çukurova is one of the largest population
+        concentrations in Turkey, as well as the most agriculturally productive area,
+        owing to its large stretch of flat, fertile land.
+
+        Freddie Welsh Freddie Welsh (born Frederick Hall Thomas, 5 March 1886 – 29
+        July 1927) was a Welsh World lightweight boxing champion.
+
+        Freddie Welsh Born in Pontypridd, Wales, he was nicknamed the "Welsh Wizard".
+
+        Freddie Welsh Brought up in a tough mining community, Welsh left a middle-class
+        background to make a name for himself in America.
+
+        Freddie Welsh He turned professional as a boxer in Philadelphia in 1905, and
+        spent the best part of his career fighting in the United States.
+
+        Freddie Welsh Welsh spent much of his career chasing the World Championship
+        title, held in turn by Battling Nelson, Ad Wolgast and Willie Ritchie, failing
+        through a series of events to meet each until a successful encounter with
+        Ritchie in July 1914, when he finally became World Lightweight Champion.
+
+        Relaxing (horse) Relaxing was a bay thoroughbred born in 1976 at the Ogden
+        Phipps stud farm in Kentucky.
+
+        Relaxing (horse) She was a stakes winner and an outstanding broodmare.
+
+        Relaxing (horse) As a youngster, Relaxing was sent to England to race.
+
+        Relaxing (horse) At the age of three years, she had four wins and one second
+        out of nine races on turf before she returned to America to race on the U.S.''s
+        dirt tracks.
+
+        Relaxing (horse) In 1980, at age four, she started twelve times, winning five
+        races, and set a new track record for going 1 5/8 miles in 2:42.2 during her
+        victory against colts in the Gallant Fox Handicap (Gr-2).
+
+        Relaxing (horse) Relaxing also equaled a track record in the Firenze Handicap
+        (Gr-2).
+
+        Karma to Burn Karma to Burn, sometimes known as K2B, is a desert rock/stoner
+        rock band from Morgantown, West Virginia comprising guitarist William Mecum,
+        bassist Eric Clutter, and drummer Evan Devine.
+
+        Karma to Burn The band are noted for their uncompromising, mostly instrumental
+        sound.
+
+        Karma to Burn Their name comes from a sleevenote on Bob Dylan''s 1976 album
+        "Desire" which reads "I have a brother or two and a whole lot of karma to
+        burn..."  After years of viral self-promotion (such as phoning record companies
+        pretending to be other bands who''d heard an interesting band called Karma
+        To Burn), Karma To Burn was signed to Roadrunner Records in 1996.
+
+        '
+      label_candidates:
+      - No he wasnt but he was with daniel day lewis in Gnags of New York but it was
+        titanic 1997 whne he gained public recognition
+      - The laws do seem to vary around the world but most countries do require the
+        sanction of the courts to help resolve a lot of the issues that come up.
+      - 'I like to grow useful plants, like leafy greens, herbs, and tomatoes. It''s
+        rewarding! '
+      - yea telenovela are very popular in latin america
+      - Never been to Italy, but the Basque Country is nice, my mother is actually
+        from Mallorca
+      - Well I figure they will be valuable antiques shortly
+      - Was Henry Bergh married?
+      - Well since the beginning It has always been Eddie Vedder (lead vocals), Mike
+        McCready (lead guitar), Stone Gossard (rhythm guitar) and Jeff Ament (bass).
+      - Hey, I recognize those heroes. Comic books must have been popular for a really
+        long time, huh?
+      - I bet.  I have always wanted one especially since the name ferret is from
+        the Latin name meaning little thief.  They sound like a handful!
+      - I have a pet skunk
+      - That's interesting. Have you ever practiced yoga? It's a great activity for
+        the mind and body.
+      - I happen to have blue eyes myself. I didn't know about Tyndall effect, what
+        is it?
+      - 'I definitely enjoy the classic metal rock music more than the modern styles
+        of death metal or black metal, though. '
+      - How lucrative! Do people still use iTunes?
+      - Wow is really beautiful
+      - Cetaceans' closest living relatives are the hippopotamuses,evolved over 40
+        million years ago
+      - Nachos are one of the best easy, greasy foods to come from mexico
+      - So what do you think a religion is? I think its a way of life.
+      - No I haven't. I'm not big into video games, I'm not good at most of them!
+      personality: Meticulous (Precise, Thorough)
+      text: That sounds great.  I've always thought that I would love living in a
+        farm, but I;ve always lived in the city.  What do you mostly plant?
+      title: Gardening
+    - checked_sentence: He was the creator and host of "The Joy of Painting", an instructional
+        television program that aired from 1983 to 1994 on PBS in the United States,
+        and also aired in Canada, Latin America, and Europe.
+      chosen_topic: Bob Ross
+      episode_done: false
+      eval_labels:
+      - He created the show "The Joy of Painting"
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Bob Ross Robert Norman Ross (October 29, 1942 – July 4, 1995) was
+        an American painter, art instructor, and television host.
+
+        Bob Ross He was the creator and host of "The Joy of Painting", an instructional
+        television program that aired from 1983 to 1994 on PBS in the United States,
+        and also aired in Canada, Latin America, and Europe.
+
+        Bob Ross Ross went from being a public-television personality in the 1980s
+        and 1990s to being an Internet celebrity in the 21st century, popular with
+        fans on YouTube and many other websites.
+
+        Bob Ross Ross was born in Daytona Beach, Florida, to Jack and Ollie Ross (a
+        carpenter and waitress, respectively), and raised in Orlando, Florida.
+
+        Bob Ross As a child, Ross entertained himself by caring for injured animals,
+        purportedly including an armadillo, snake, and alligator.
+
+        Bob Ross One of these animals, a squirrel named Peapod, was featured in a
+        few episodes of his show.
+
+        Bob Ross He had a half-brother, Jim, whom he mentioned in passing on his show.
+
+        Bob Ross Ross dropped out of high school in the 9th grade to work as a carpenter
+        with his father, Jack Ross, where he lost part of his left index finger.
+
+        Bob Ross This, however, did not affect the way he held his palette while painting.
+
+        Bob Ross In 1961, then 18-year-old Ross enlisted in the United States Air
+        Force and was put into service as a medical records technician.
+
+        Ayesha Lee Ayesha Lee is a fictional character in the BBC soap opera "Doctors",
+        played by Laura Rollins.
+
+        Ayesha Lee Ayesha was introduced as a Practice Nurse at The Mill by Peter
+        Eryl Lloyd.
+
+        Ayesha Lee She made her first appearance on Tuesday 30 September 2014.
+
+        Ayesha Lee Since her arrival in the show Ayesha has faced storylines including
+        an on off relationship with Sid Vere, having a troubled relationship with
+        Tyler Green, dealing with her mother Bren''s alcohol and later drug addiction,
+        being attacked by Ike and supporting Valerie Pittman through her Cancer scare.
+
+        Ayesha Lee Ayesha first arrives at "The Mill" as a replacement for Mandy Marquez,
+        she is almost immediately attracted to new doctor Sid Vere.
+
+        The Runners The Runners are an American electronic and hip hop production
+        duo from Orlando, Florida, consisting of Andrew "Dru Brett" Harr and Jermaine
+        "Mayne Zayne" Jackson.
+
+        The Runners They came together to form the team in 2000, but they have known
+        each other since they were in kindergarten.
+
+        The Runners They both have been influenced their entire lives by producers
+        Timbaland and The Neptunes.
+
+        The Runners Their trademark is an exhale sound effect ringing "Ahhh" at the
+        beginning of their songs.
+
+        The Runners They are best known for producing the hit singles "Go Hard" and
+        "Hustlin''", by rappers DJ Khaled and Rick Ross respectively.
+
+        The Runners They have produced songs for artists like Keyshia Cole Kevin Cossom
+        Ace Hood, Chris Brown, Fat Joe, Juelz Santana, Nelly, Trip Lee, Jim Jones,
+        Lil Wayne, Justin Bieber, Fabolous and Usher.
+
+        Torment (comics) "Torment" is a story arc written by Todd McFarlane, which
+        encompassed the first five issues of the new ongoing "" comic book.
+
+        Torment (comics) It was published in 1990 by Marvel Comics.
+
+        Torment (comics) The comic was a record-breaking sales success and helped
+        start the next stage of development in the Modern Age of Comic Books, which
+        would lead to the formation of Image Comics and the rise of the speculator
+        market.
+
+        Torment (comics) The Lizard is going on a murdering spree before Spider-Man
+        tries to stop him.
+
+        Torment (comics) The Lizard poisons Spider-Man and throws him off of a building.
+
+        Torment (comics) It is later revealed that Calypso is hypnotizing the Lizard
+        to do her bidding.
+
+        Cool (aesthetic) Coolness is an aesthetic of attitude, behavior, comportment,
+        appearance and style which is generally admired.
+
+        Cool (aesthetic) Because of the varied and changing connotations of cool,
+        as well as its subjective nature, the word has no single meaning.
+
+        Cool (aesthetic) It has associations of composure and self-control (cf.
+
+        Cool (aesthetic) the OED definition) and often is used as an expression of
+        admiration or approval.
+
+        Cool (aesthetic) Although commonly regarded as slang, it is widely used among
+        disparate social groups and has endured in usage for generations.
+
+        Cool (aesthetic) There is no single concept of cool.
+
+        Cool (aesthetic) One of the essential characteristics of cool is its mutability—what
+        is considered cool changes over time and varies among cultures and generations.
+
+        Shaq–Kobe feud The "Shaq–Kobe feud" (or "Kobe–Shaq feud") was the conflict
+        between National Basketball Association (NBA) players Shaquille O''Neal and
+        Kobe Bryant, who played together on the Los Angeles Lakers team from 1996
+        to 2004.
+
+        Shaq–Kobe feud The two were able to win three consecutive NBA Championships
+        (2000, 2001, 2002) and make an NBA Finals appearance in 2004.
+
+        Shaq–Kobe feud O''Neal was the NBA Finals MVP in each of their victories.
+
+        Shaq–Kobe feud Personal differences and arguments over their respective roles
+        on the Lakers were followed by a trade that sent O''Neal to the Miami Heat
+        while Bryant was re-signed as a free agent by the Lakers.
+
+        Shaq–Kobe feud Lakers head coach Phil Jackson would later write a book entitled
+        "", reflecting on the troubles Bryant and O''Neal had during their last season
+        together.
+
+        Canibus Germaine Williams (born December 9, 1974), better known by his stage
+        name Canibus, is an American rapper and actor.
+
+        Canibus He is a member of The HRSMN, Sharpshooterz, Cloak N Dagga, The Undergods,
+        and one-half of T.H.E.M.
+
+        Canibus Canibus rose to fame in the mid-nineties.
+
+        Canibus About.com placed him at number 32 on their list of the "Top 50 MCs
+        of Our Time (1987–2007)", while in 2012 "The Source" placed him number 44
+        on their list of the Top 50 Lyricists of All Time.
+
+        Canibus In 2017 Hip-Hop Universe placed Canibus number 3 on their Top 100
+        Best Rappers Of All Time list.
+
+        Canibus Germaine Williams was born on December 9, 1974 in Kingston, Jamaica.
+
+        Old Faithful Lodge Old Faithful Lodge in Yellowstone National Park is located
+        opposite the more famous Old Faithful Inn, facing Old Faithful geyser.
+
+        Old Faithful Lodge The Lodge was built as a series of detached buildings through
+        1923 and was consolidated into one complex by architect Gilbert Stanley Underwood
+        in 1926-27.
+
+        Old Faithful Lodge The Lodge is included in the Old Faithful Historic District.
+
+        Old Faithful Lodge Compared with the Inn, which is a full-service hotel, the
+        Lodge provides only dining, social, administrative and registration services
+        for lodgers, who are accommodated in detached cabins surrounding the Lodge.
+
+        Old Faithful Lodge Several earlier buildings were consolidated by Underwood
+        into the single rambling structure, with the help of National Park Service
+        architect Daniel Ray Hull, in 1926-27.
+
+        2010 Tonight Show conflict The 2010 "Tonight Show" conflict was a media and
+        public relations conflict involving American television network NBC and two
+        of its then-late-night talk show hosts, Conan O''Brien and Jay Leno.
+
+        2010 Tonight Show conflict Leno, the host of long-running franchise "The Tonight
+        Show" since 1992, and O''Brien, host of "Late Night" since 1993, were strong
+        ratings leaders for the network for much of the decade.
+
+        2010 Tonight Show conflict When O''Brien''s contract neared its end and he
+        was courted by other networks in 2001, NBC extended his contract and essentially
+        guaranteed him he would be the fifth host of "The Tonight Show".
+
+        2010 Tonight Show conflict The network neglected to let Leno know this until
+        his contract extension in 2004, when they informed him he would remain host
+        for five more years and then transition the show to O''Brien in 2009.
+
+        List of Eat Bulaga! segments "Eat Bulaga!"
+
+        List of Eat Bulaga! segments is the longest-running noontime variety show
+        in the Philippines.
+
+        List of Eat Bulaga! segments The show has featured hundreds of segments and
+        competitions since its debut on July 30, 1979.
+
+        List of Eat Bulaga! segments The following is an incomplete list of the segments
+        of "Eat Bulaga!"
+
+        List of Eat Bulaga! segments throughout its thirty-eight year run on television.
+
+        List of Eat Bulaga! segments The segments are organized alphabetically by
+        title.
+
+        List of Eat Bulaga! segments It is a special segment that has a similar concept
+        with "I Object, Your Honor" and "I Object, #NasaanAngHustisya?
+
+        List of Eat Bulaga! segments ", that tests the cleverness and originality
+        of the "Eat Bulaga!"
+
+        List of Eat Bulaga! segments hosts.
+
+        List of Eat Bulaga! segments The hosts are divided into two teams.
+
+        List of Eat Bulaga! segments In each round, both teams are given one specific
+        object.
+
+        Diana Ross Diana Ernestine Earle Ross (born March 26, 1944) is an American
+        singer, songwriter, actress, and record producer.
+
+        Diana Ross Born and raised in Detroit, Michigan, Ross rose to fame as the
+        lead singer of the vocal group the Supremes, which, during the 1960s, became
+        Motown''s most successful act, and are the best charting girl group in US
+        history, as well as one of the world''s best-selling girl groups of all time.
+
+        Diana Ross Ross'' success as lead singer of the Supremes helped to make it
+        possible for future African-American R&B and soul acts to find mainstream
+        success.
+
+        Diana Ross The group released a record-setting twelve number-one hit singles
+        on the US "Billboard" Hot 100, including "Where Did Our Love Go", "Baby Love",
+        "Come See About Me", "Stop!
+
+        Jonathan Ross Jonathan Stephen Ross OBE (born 17 November 1960) is an English
+        television and radio presenter, film critic, actor and comedian best known
+        for presenting the BBC One chat show "Friday Night with Jonathan Ross" during
+        the 2000s.
+
+        Jonathan Ross Ross also hosted his own radio show on BBC Radio 2, and acted
+        as a film critic and presenter of the "Film" programme.
+
+        Jonathan Ross After leaving the BBC, Ross then began hosting a new chat show
+        on ITV, "The Jonathan Ross Show".
+
+        Jonathan Ross Other regular roles have included being a regular panellist
+        on the comedy sports quiz "They Think It''s All Over" and being a regular
+        presenter of the British Comedy Awards.
+
+        Jerry Ross (painter) Jerry Ross (born May 11, 1944 in Buffalo, New York) is
+        an American painter.
+
+        Jerry Ross (painter) He was born Gerald Gross to first generation Jewish parents,
+        Sidney and Jeanette Gross.
+
+        Jerry Ross (painter) The family moved to the suburbs (Kenmore and the town
+        of Tonawanda, New York).
+
+        Jerry Ross (painter) An art teacher recognized his talent and recommended
+        that he be enrolled at the Art Institute of Buffalo, which he attended from
+        age seven until age eleven.
+
+        Jerry Ross (painter) (Neevel 2006, "Eugene Weekly", p. 10)  His art teacher,
+        a Mrs. Beagleman, favored an Impressionist style of painting, and she continued
+        as his mentor until the Art Institute closed several years later.
+
+        Bill Alexander (painter) William Alexander (2 April 1915 – 24 January 1997;
+        born "Wilhelm Alexander") known as Bill Alexander on his TV show; was a German
+        painter, art instructor, and television host.
+
+        Bill Alexander (painter) He was the creator and host of "The Magic of Oil
+        Painting" (1974-1982) television programs that ran on PBS in the United States.
+
+        Bill Alexander (painter) He wrote "The Art of Bill Alexander" (1987–1995),
+        a series of books on wet-on-wet oil painting.
+
+        Bill Alexander (painter) He also taught the television painter Bob Ross the
+        wet-on-wet technique.
+
+        Bill Alexander (painter) Bill Alexander was born in East Prussia, but his
+        family fled to Berlin during World War I. Apprenticed as a carriage maker,
+        Alexander was drafted into the Wehrmacht during World War II.
+
+        '
+      label_candidates:
+      - Surprisingly it didn't reach the top spot on the TV season ratings until the
+        8th season.
+      - It was in 2007 that Netflix started putting out streaming media, but they
+        kept the DVD and Blu-ray rental system.
+      - I didn't realize it was so popular - it has 54 million users that are registered
+        as members!
+      - Yes -- all dairy products make you have gas or indigestion; however, there
+        are things you can do about it.
+      - I have a tattoo.  Do you?  There is a difference between an arm tattoo and
+        a full sleeve.
+      - I like to read nonfiction works mostly as I find it reading such things helps
+        me with my critical analysis abilities.
+      - No, same amount of school. A lawyer is anyone who practices law, an attorney
+        or a counselor, a solicitor or a chartered legal executive. Good career to
+        have an many avenues to go in to.
+      - Yeah. I like green because it's close to trees and nature.
+      - Guess what, I love lady gaga, lets dance is the greatest club song of all
+        time. What you know about that?
+      - So there are not major differences in the two types of records?
+      - Oh cool! So which of those health components are what make them good for your
+        eyesight, the carotenes?
+      - Well Hydroponics is basically the method of growing roses without any soil,
+        using only mineral nutrient solutions in a water solution. Its all done my
+        machines to keep the rose in perfect health.
+      - I love cats! Their official name is Felis catus and they are generally carnivorous.
+      - yeah it was a medicinal food source as well
+      - I love them, but think of them as a salt delivery system.  I love salt more.  Why
+        do you like them so much?
+      - It sure wakes me up in the mornings. What other effects does coffee have on
+        us humans?
+      - Indeed, the population is approximately 5,540,545 as of 7/1/16, a 10.17 increase
+        over 6 years.
+      - you have never been, oh wow it is so nice and really a wonder how the water
+        stops right alongside the land, a miracle really
+      - Yep! But since we used to grow vegetables we always got to eat them after
+        a long hot day of working, so it made up for it!
+      - maybe so. in the end, we derive pleasure from reaching our goals
+      personality: Artful
+      text: thats cool what else?
+      title: Bob Ross
+- - - checked_sentence: Forest gardening, a forest-based food production system, is
+        the world's oldest form of gardening.
+      chosen_topic: Gardening
+      episode_done: false
+      eval_labels:
+      - yes i do. Cows, chickens, Micro pigs, Guinneas, We also do forest growing
+        also. we plants large pine trees.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Gardening Gardening is the practice of growing and cultivating plants
+        as part of horticulture.
+
+        Gardening In gardens, ornamental plants are often grown for their flowers,
+        foliage, or overall appearance; useful plants, such as root vegetables, leaf
+        vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+        or for medicinal or cosmetic use.
+
+        Gardening Gardening is considered by many people to be a relaxing activity.
+
+        Gardening Gardening ranges in scale from fruit orchards, to long boulevard
+        plantings with one or more different types of shrubs, trees, and herbaceous
+        plants, to residential yards including lawns and foundation plantings, to
+        plants in large or small containers grown inside or outside.
+
+        Gardening Gardening may be very specialized, with only one type of plant grown,
+        or involve a large number of different plants in mixed plantings.
+
+        Gardening It involves an active participation in the growing of plants, and
+        tends to be labor-intensive, which differentiates it from farming or forestry.
+
+        Gardening Forest gardening, a forest-based food production system, is the
+        world''s oldest form of gardening.
+
+        Gardening Forest gardens originated in prehistoric times along jungle-clad
+        river banks and in the wet foothills of monsoon regions.
+
+        Gardening In the gradual process of families improving their immediate environment,
+        useful tree and vine species were identified, protected and improved while
+        undesirable species were eliminated.
+
+        Urban agriculture Urban agriculture, urban farming, or urban gardening is
+        the practice of cultivating, processing, and distributing food in or around
+        a village, town, or city.
+
+        Urban agriculture Urban agriculture can also involve animal husbandry, aquaculture,
+        agroforestry, urban beekeeping, and horticulture.
+
+        Urban agriculture These activities occur in peri-urban areas as well, and
+        peri-urban agriculture may have different characteristics.
+
+        Urban agriculture Urban agriculture can reflect varying levels of economic
+        and social development.
+
+        Urban agriculture In the global north, it often takes the form of a social
+        movement for sustainable communities, where organic growers, ‘foodies,’ and
+        ‘locavores’ form social networks founded on a shared ethos of nature and community
+        holism.
+
+        Cuisine of the United States The cuisine of the United States reflects its
+        history.
+
+        Cuisine of the United States The European colonization of the Americas yielded
+        the introduction of a number of ingredients and cooking styles to the latter.
+
+        Cuisine of the United States The various styles continued expanding well into
+        the 19th and 20th centuries, proportional to the influx of immigrants from
+        many different nations; such influx developed a rich diversity in food preparation
+        throughout the country.
+
+        Cuisine of the United States Early Native Americans utilized a number of cooking
+        methods in early American Cuisine that have been blended with early European
+        cooking methods to form the basis of American Cuisine.
+
+        Cuisine of the United States When the colonists came to the colonies, they
+        farmed animals for clothing and meat in a similar fashion to what they had
+        done in Europe.
+
+        History of agriculture in the People''s Republic of China In 4,000 years,
+        China has been a nation of farmers.
+
+        History of agriculture in the People''s Republic of China By the time the
+        People''s Republic of China was established in 1949, virtually all arable
+        land was under cultivation; irrigation and drainage systems constructed centuries
+        earlier and intensive farming practices already produced relatively high yields.
+
+        History of agriculture in the People''s Republic of China But little prime
+        virgin land was available to support population growth and economic development.
+
+        History of agriculture in the People''s Republic of China However, after a
+        decline in production as a result of the Great Leap Forward (1958–60), agricultural
+        reforms implemented in the 1980s increased yields and promised even greater
+        future production from existing cultivated land.
+
+        Ancient Israelite cuisine Ancient Israelite cuisine refers to the food eaten
+        by the ancient Israelites during a period of over a thousand years, from the
+        beginning of the Israelite presence in the Land of Israel at the beginning
+        of the Iron Age until the Roman period.
+
+        Ancient Israelite cuisine The dietary staples were bread, wine and olive oil,
+        but also included legumes, fruits and vegetables, dairy products, fish and
+        meat.
+
+        Ancient Israelite cuisine Religious beliefs, which prohibited the consumption
+        of certain foods, shaped the Israelite diet.
+
+        Ancient Israelite cuisine There was considerable continuity in the main components
+        of the diet over time, despite the introduction of new foodstuffs at various
+        stages.
+
+        Agriculture in India The history of Agriculture in India dates back to Indus
+        Valley Civilization Era and even before that in some parts of Southern India.
+
+        Agriculture in India Today, India ranks second worldwide in farm output.
+
+        Agriculture in India Agriculture and allied sectors like forestry and fisheries
+        accounted for 13.7% of the GDP (gross domestic product) in 2013, about 50%
+        of the workforce.
+
+        Agriculture in India The economic contribution of agriculture to India''s
+        GDP is steadily declining with the country''s broad-based economic growth.
+
+        Agriculture in India Still, agriculture is demographically the broadest economic
+        sector and plays a significant role in the overall socio-economic fabric of
+        India.
+
+        Vegetable In everyday usage, vegetables are certain parts of plants that are
+        consumed by humans as food as part of a savory meal.
+
+        Vegetable Originally, the traditional term (still commonly used in biology)
+        included the flowers, fruit, stems, leaves, roots, tubers, bark, seeds, and
+        all other plant matter, although modern-day culinary usage of the term "vegetable"
+        may exclude food derived from plants such as fruits, nuts, and cereal grains,
+        but include seeds such as pulses; the term "vegetable" is somewhat arbitrary,
+        and can be largely defined through culinary and cultural tradition.
+
+        Vegetable Originally, vegetables were collected from the wild by hunter-gatherers
+        and entered cultivation in several parts of the world, probably during the
+        period 10,000 BC to 7,000 BC, when a new agricultural way of life developed.
+
+        Indian cuisine Indian cuisine comprises a wide variety of regional and traditional
+        cuisines native to the Indian subcontinent.
+
+        Indian cuisine Given the range of diversity in soil type, climate, culture,
+        ethnic groups, and occupations, these cuisines vary substantially from each
+        other and use locally available spices, herbs, vegetables, and fruits.
+
+        Indian cuisine Indian food is also heavily influenced by religion, in particular
+        Hindu, and cultural choices and traditions.
+
+        Indian cuisine Also, Middle Eastern and Central Asian influences have occurred
+        on North Indian cuisine from the years of Mughal rule.
+
+        Indian cuisine Indian cuisine is still evolving, as a result of the nation''s
+        cultural interactions with other societies.
+
+        Israeli cuisine The Israeli cuisine ( "ha-mitbach ha-yisra’eli") comprises
+        local dishes by people native to Israel and dishes brought to Israel by Jews
+        from the Diaspora.
+
+        Israeli cuisine Since before the establishment of the State of Israel in 1948,
+        and particularly since the late 1970s, an Israeli Jewish fusion cuisine has
+        developed.
+
+        Israeli cuisine Israeli cuisine has adopted, and continues to adapt, elements
+        of various styles of Jewish cuisine, particularly the Mizrahi, Sephardic and
+        Ashkenazi styles of cooking.
+
+        Israeli cuisine It incorporates many foods traditionally eaten in Middle Eastern
+        and Mediterranean cuisines, and foods such as falafel, hummus, msabbha, shakshouka,
+        couscous, and za''atar are now widely popular in Israel.
+
+        Italian cuisine Italian cuisine is food typical from Italy.
+
+        Italian cuisine It has developed through centuries of social and economic
+        changes, with roots stretching to antiquity.
+
+        Italian cuisine Significant changes occurred with the discovery of the New
+        World and the introduction of potatoes, tomatoes, bell peppers, maize and
+        sugar beet, this last introduced in quantity in the 18th century.
+
+        Italian cuisine Italian cuisine is known for its regional diversity, especially
+        between the north and the south of the Italian peninsula.
+
+        Italian cuisine It offers an abundance of taste, and is one of the most popular
+        and copied in the world.
+
+        Italian cuisine It influenced several cuisines around the world chiefly that
+        of the United States.
+
+        Pickling Pickling is the process of preserving or expanding the lifespan of
+        food by either anaerobic fermentation in brine or immersion in vinegar.
+
+        Pickling The resulting food is called a "pickle", or, to prevent ambiguity,
+        prefaced with the adjective "pickled".
+
+        Pickling The pickling procedure will typically affect the food''s texture
+        and flavor.
+
+        Pickling In East Asia, vinaigrette (vegetable oil and vinegar) is also used
+        as a pickling medium.
+
+        Pickling Foods that are pickled include meats, fruits, eggs, and vegetables.
+
+        Pickling Another distinguishing characteristic is a pH of 4.6 or lower, which
+        is sufficient to kill most bacteria.
+
+        Pickling Pickling can preserve perishable foods for months.
+
+        Sofrito Sofrito (), or soffritto (Italian), or refogado (, ), is a sauce used
+        as a base in Spanish, Italian, Portuguese and Latin American cooking.
+
+        Sofrito Preparations may vary, but it typically consists of aromatic ingredients
+        cut into small pieces and sauteed or braised in cooking oil.
+
+        Sofrito In Spanish cuisine, sofrito consists of garlic, onion, paprika, and
+        tomatoes cooked in olive oil.
+
+        Sofrito This is known as or sometimes as in Portuguese-speaking nations, where
+        only onions and olive oil are often essential, garlic and bay laurel leaves
+        being the other most common ingredients.
+
+        Sofrito In Brazilian cuisine, the verb encompasses also dishes that are fried
+        in vegetable oil before being boiled or steamed, even when the actual fried
+        seasoning is not there.
+
+        Regional street food Street foods, ready-to-eat food or drink sold in a street
+        or other public place, such as a market or fair, by a hawker or vendor, often
+        from a portable stall, have variations within both regions and cultures.
+
+        Regional street food For example, Dorling Kindersley describes the street
+        food of Viet Nam as being "fresh and lighter than many of the cuisines in
+        the area" and "draw[ing] heavily on herbs, chile peppers and lime," while
+        street food of Thailand is "fiery" and "pungent with shrimp paste... and fish
+        sauce" with New York City''s signature street food being the hot dog, although
+        the offerings in New York also range from "spicy Middle Eastern falafel or
+        Jamaican jerk chicken to Belgian waffles."
+
+        Filipino cuisine Filipino cuisine (Filipino: "Lutuing Filipino" or "Pagkaing
+        Filipino") is composed of the cuisines of 135 distinct ethno-linguistic tribes
+        found within the Philippine archipelago, however, majority of mainstream Filipino
+        dishes that compose Filipino cuisine are from the cuisines of the Bikol, Chabakano,
+        Hiligaynon, Ilokano, Kapampangan, Meranaw, Pangasinan, Sebwano (or Bisaya),
+        Tagalog, and Waray ethno-linguistic tribes.
+
+        Filipino cuisine The style of cooking and the food associated with it have
+        evolved over many centuries from their Austronesian origins (shared with Malaysian
+        and Indonesian cuisines) to a mixed cuisine of Indian, Chinese, Spanish, and
+        American influences, in line with the major waves of influence that had enriched
+        the cultures of the archipelago, as well as others adapted to indigenous ingredients
+        and the local palate.
+
+        '
+      label_candidates:
+      - Well, they're not very big, but they are very tasty!
+      - Oh, it is nice to hear. Very glad to know about iceland.
+      - I loved Accords! I liked the sixth generation Accord, especially the two door
+        coupe
+      - Consistent employment is very important. I miss my old job.
+      - Well he used a lot of drugs and was involved romantically with a lot of women,
+        but that comes with the rock star lifestyle.
+      - 'Yes Miami is a major center in Florida, a leader in finance, culture, entertainment.
+        Maybe you can visit someday. It is very international. '
+      - ' Equestrianism has been an Olympic sport since 1900. Maybe get a horse and
+        go for the gold.  '
+      - Is that your favorite way to listen?
+      - Oh wow, that's very interesting. I didn't know that was possible. What are
+        some easy roses to grow for beginners like me?
+      - It's about moving between different geographical regions by various methods
+      - That's gonna be rough, I'm an absolute Red Bull junkie.
+      - Is it really?  So you are saying that people all over the world sing in the
+        shower?  That's hilarious!
+      - 'No it does not but i did find it also sometimes happens for medical procedures '
+      - I would suggest looking around your area to see if there is a local company
+        who makes healthy dog food. It tends to be a little more expensive, but I
+        personally find it's worth it.
+      - The average salary for MLU players is about $25.00 per game and has been that
+        way for the same way for the last three years the league has been around.
+        ... The average salary in the AUDL is about $850 a year to 1500$ a year which
+        is still much more than MLU players
+      - You mean the annual holiday commemorating the birth of jesus?
+      - 'Betta is a large genus of small, often colorful, freshwater ray-finned fishes '
+      - 'That was how I got into volunterring. I gave them my phone number because
+        I was thinking of volunteering during natural disasters like tornadoes but
+        they really needed people for notification. It also works well becuase I''ve
+        been in the Air Force for 20 years so I have experience with loss.  '
+      - It is the children's TV series "Barney & Friends" that I watched a lot when
+        I was a kid.
+      - 'So which culture exhibits kissing as a form of greeting? '
+      personality: Rustic (Rural)
+      text: Great, I love the idea of growing my own vegetables and fruits! Do you
+        have animals in the farm?
+      title: Gardening
+    - checked_sentence: He was the creator and host of "The Joy of Painting", an instructional
+        television program that aired from 1983 to 1994 on PBS in the United States,
+        and also aired in Canada, Latin America, and Europe.
+      chosen_topic: Bob Ross
+      episode_done: false
+      eval_labels:
+      - The show aired from 1983 to 1994 on PBS.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Bob Ross Robert Norman Ross (October 29, 1942 – July 4, 1995) was
+        an American painter, art instructor, and television host.
+
+        Bob Ross He was the creator and host of "The Joy of Painting", an instructional
+        television program that aired from 1983 to 1994 on PBS in the United States,
+        and also aired in Canada, Latin America, and Europe.
+
+        Bob Ross Ross went from being a public-television personality in the 1980s
+        and 1990s to being an Internet celebrity in the 21st century, popular with
+        fans on YouTube and many other websites.
+
+        Bob Ross Ross was born in Daytona Beach, Florida, to Jack and Ollie Ross (a
+        carpenter and waitress, respectively), and raised in Orlando, Florida.
+
+        Bob Ross As a child, Ross entertained himself by caring for injured animals,
+        purportedly including an armadillo, snake, and alligator.
+
+        Bob Ross One of these animals, a squirrel named Peapod, was featured in a
+        few episodes of his show.
+
+        Bob Ross He had a half-brother, Jim, whom he mentioned in passing on his show.
+
+        Bob Ross Ross dropped out of high school in the 9th grade to work as a carpenter
+        with his father, Jack Ross, where he lost part of his left index finger.
+
+        Bob Ross This, however, did not affect the way he held his palette while painting.
+
+        Bob Ross In 1961, then 18-year-old Ross enlisted in the United States Air
+        Force and was put into service as a medical records technician.
+
+        Yes (band) Yes are an English rock band formed in London in 1968 by singer
+        Jon Anderson, bassist Chris Squire, guitarist Peter Banks, keyboardist Tony
+        Kaye, and drummer Bill Bruford.
+
+        Yes (band) The band have undergone numerous formations throughout their history;
+        nineteen musicians have been full-time members.
+
+        Yes (band) Since June 2015, it has consisted of guitarist Steve Howe, drummer
+        Alan White, keyboardist Geoff Downes, singer Jon Davison, and bassist Billy
+        Sherwood, with no remaining founding members.
+
+        Yes (band) Yes have explored several musical styles over the years, and are
+        most notably regarded as progressive rock pioneers.
+
+        Yes (band) Yes began in 1968, performing original songs and rearranged covers
+        of rock, pop, blues and jazz songs, as evident on their first two albums.
+
+        Yes Minister Yes Minister is a Political satire British sitcom written by
+        Antony Jay and Jonathan Lynn that was first transmitted on BBC Two from 1980
+        to 1984, split over three seven-episode series.
+
+        Yes Minister The sequel, Yes, Prime Minister, ran from 1986 to 1988.
+
+        Yes Minister In total there were 38 episodes, of which all but one lasted
+        half an hour.
+
+        Yes Minister Almost all episodes ended with a variation of the title of the
+        series spoken as the answer to a question posed by Hacker.
+
+        Yes Minister Several episodes were adapted for BBC Radio, and a stage play
+        was produced in 2010, the latter leading to a new television series on UKTV
+        Gold in 2013.
+
+        Yes Minister Set principally in the private office of a British Cabinet minister
+        in the fictional Department of Administrative Affairs in Whitehall, "Yes Minister"
+        follows the ministerial career of the Rt Hon Jim Hacker MP, played by Paul
+        Eddington.
+
+        Yes and no Yes and no, or word pairs with a similar usage , are expressions
+        of the affirmative and the negative, respectively, in several languages including
+        English.
+
+        Yes and no Some languages make distinction between answers to affirmative
+        versus negative questions, thus may have triplet or quadruplets of words instead.
+
+        Yes and no English originally used a four-form system up to and including
+        Early Middle English but Modern English has reduced this to a two-form system
+        consisting of just ''yes'' and ''no''.
+
+        Yes and no It exists in eye blink communication, Morse Code, sign language,
+        and maybe in color coded flag communication.
+
+        Yes and no Some languages do not answer yes–no questions with single words
+        meaning ''yes'' or ''no''.
+
+        United Kingdom Alternative Vote referendum, 2011 The United Kingdom Alternative
+        Vote referendum, also known as the UK-wide referendum on the Parliamentary
+        voting system was held on Thursday 5 May 2011 (the same date as local elections
+        in many areas) in the United Kingdom (UK) to choose the method of electing
+        MPs at subsequent general elections as part of the Conservative – Liberal
+        Democrat Coalition Agreement drawn up after the 2010 general election which
+        had resulted in the first hung parliament since February 1974 and also indirectly
+        in the aftermath of the 2009 expenses scandal under the provisions of the
+        Parliamentary Voting System and Constituencies Act 2011 and was the first
+        national referendum to be held under provisions laid out in the Political
+        Parties, Elections and Referendums Act 2000.
+
+        Rick Wakeman Richard Christopher "Rick" Wakeman (born 18 May 1949) is an English
+        keyboardist, songwriter, television and radio presenter, and author.
+
+        Rick Wakeman He is best known for being in the progressive rock band Yes across
+        five tenures between 1971 and 2004 and for his solo albums released in the
+        1970s.
+
+        Rick Wakeman He is a current member of Yes Featuring Jon Anderson, Trevor
+        Rabin and Rick Wakeman.
+
+        Rick Wakeman Born and raised in West London, Wakeman intended to be a concert
+        pianist but quit his studies at the Royal College of Music in 1969 to become
+        a full-time session musician.
+
+        Rick Wakeman His early sessions included playing on "Space Oddity", among
+        others, for David Bowie and songs by Junior''s Eyes, T. Rex, Elton John, and
+        Cat Stevens.
+
+        The Yes Men The Yes Men are a culture jamming activist duo and network of
+        supporters created by Jacques Servin and Igor Vamos.
+
+        The Yes Men Through actions of tactical media, the Yes Men primarily aim to
+        raise awareness about problematic social and political issues.
+
+        The Yes Men To date, the duo have produced three films: "The Yes Men" (2003),
+        "The Yes Men Fix the World" (2009) and "The Yes Men Are Revolting" (2014).
+
+        The Yes Men In these films, they impersonate entities that they dislike, a
+        practice that they call "identity correction".
+
+        The Yes Men The Yes Men operate under the mission statement that lies can
+        expose truth.
+
+        The Yes Men They create and maintain fake websites similar to ones they intend
+        to spoof, which have led to numerous interview, conference, and TV talk show
+        invitations.
+
+        Say Yes (Michelle Williams song) "Say Yes" is a song recorded by American
+        recording artist Michelle Williams, taken from her fourth studio album "Journey
+        to Freedom" (2014).
+
+        Say Yes (Michelle Williams song) It features Williams'' former Destiny''s
+        Child groupmates Beyoncé and Kelly Rowland.
+
+        Say Yes (Michelle Williams song) The song was written by Williams, Carmen
+        Reece, Al Sherrod Lambert and Harmony Samuels who also produced it.
+
+        Say Yes (Michelle Williams song) E1 Music released "Say Yes" as the album''s
+        third single on June 2, 2014.
+
+        Say Yes (Michelle Williams song) "Say Yes" marks the third time the trio collaborated
+        as solo artists following the disbandment of their group in 2006.
+
+        Say Yes (Michelle Williams song) Musically, "Say Yes" is an uptempo gospel
+        and pop song, which takes influence from dance music.
+
+        Megan Joy Megan Joy (born September 18, 1985 as Megan Joy Knudsen), formerly
+        known as Megan Joy Corkrey, is an American singer-songwriter and actress from
+        Sandy, Utah, who was the ninth place finalist on the eighth season of "American
+        Idol".
+
+        Megan Joy With funding by her fans through Kickstarter, Joy was able to compose
+        her self-titled debut EP.
+
+        Megan Joy Backers of the project received the EP on April 27, 2012.
+
+        Megan Joy Joy released her debut album, "Megan Joy", on April 25, 2012.
+
+        Megan Joy Joy was featured on the single "Another Man" by Jonny "Itch" Fox,
+        which reached a peak position at number twelve on the Australian singles chart
+        on August 31, and September 14, 2014.
+
+        History of painting The history of painting reaches back in time to artifacts
+        from pre-historic humans, and spans all cultures.
+
+        History of painting It represents a continuous, though periodically disrupted,
+        tradition from Antiquity.
+
+        History of painting Across cultures, and spanning continents and millennia,
+        the history of painting is an ongoing river of creativity, that continues
+        into the 21st century.
+
+        History of painting Until the early 20th century it relied primarily on representational,
+        religious and classical motifs, after which time more purely abstract and
+        conceptual approaches gained favor.
+
+        History of painting Developments in Eastern painting historically parallel
+        those in Western painting, in general, a few centuries earlier.
+
+        List of House of Anubis characters The following is a list of characters from
+        Nickelodeon live-action show "House of Anubis".
+
+        List of House of Anubis characters Nina Martin is an American girl who lived
+        with her grandmother in the United States before moving to Anubis House in
+        England.
+
+        List of House of Anubis characters Nina was the leader of the group Sibuna
+        in the first two seasons.
+
+        List of House of Anubis characters With the help of her friends Fabian and
+        Amber, the three manage to hold all of the other Sibunas together in one piece.
+
+        List of House of Anubis characters She is usually caring, level-headed, clever,
+        and fearless, but is sometimes a little shy.
+
+        List of House of Anubis characters Nina arrives at Anubis House on a scholarship
+        from the United States on the same day Joy was hidden away by the Secret Society.
+
+        Joy Division Joy Division were an English rock band formed in 1976 in Salford,
+        Greater Manchester.
+
+        Joy Division Originally named Warsaw, the band consisted of singer-songwriter
+        Ian Curtis, guitarist and keyboardist Bernard Sumner, bass player Peter Hook,
+        and drummer Stephen Morris.
+
+        Joy Division Formed by Sumner and Hook after the two attended a Sex Pistols
+        gig, Joy Division soon moved beyond their punk roots to develop a sound and
+        style that made them one of the pioneers of the late-1970s post-punk movement.
+
+        Joy Division The band''s self-released 1978 debut EP, "An Ideal for Living",
+        drew the attention of the Manchester television personality Tony Wilson, who
+        signed the group to his independent label Factory Records.
+
+        The Joy of Painting The Joy of Painting is an American half-hour instructional
+        television show hosted by painter Bob Ross which ran from January 11, 1983
+        until May 17, 1994.
+
+        The Joy of Painting In each episode, Ross taught techniques for landscape
+        oil painting, completing a painting in each session.
+
+        The Joy of Painting The program followed the same format as its predecessor,
+        "The Magic of Oil Painting", hosted by Ross''s mentor Bill Alexander.
+
+        The Joy of Painting In its running it won three Emmy Awards.
+
+        The Joy of Painting Broadcast by non-commercial public television stations,
+        the show''s first season was in 1983, and initially produced by WNVC in Falls
+        Church, Virginia, then by WIPB in Muncie, Indiana, from 1984 until the show
+        ended in 1994, and later by Blue Ridge Public Television in Roanoke, Virginia.
+
+        Western painting The history of Western painting represents a continuous,
+        though disrupted, tradition from antiquity until the present time.
+
+        Western painting Until the mid-19th century it was primarily concerned with
+        representational and Classical modes of production, after which time more
+        modern, abstract and conceptual forms gained favor.
+
+        Western painting Developments in Western painting historically parallel those
+        in Eastern painting, in general a few centuries later.
+
+        Western painting African art, Islamic art, Indian art, Chinese art, and Japanese
+        art each had a significant influence on Western art, and, eventually, vice
+        versa.
+
+        Western painting Initially serving imperial, private, civic, and religious
+        patronage, Western painting later found audiences in the aristocracy and the
+        middle class.
+
+        '
+      label_candidates:
+      - ' It has 21 stages and is held over three weeks. That’s a long time! '
+      - Ive never been to Algeria, But I find it cool how The capital and most populous
+        city is Algiers which is located in the far north part of the country.
+      - Well its good to bulk to gain maximum gains possible when working out
+      - It's dangerous for other people. You might be safe wearing a helmet and pads,
+        but what about the person you run into on the sidewalk?
+      - pretty good? They are amazing, tell me why you think they are so bad.
+      - Have you ever hurt yourself while surfing? I'd be afraid I'd really hurt myself.
+      - Is there anything specific to culture or history related to Syracuse that
+        makes it unique?
+      - I think they originated in Tolkien's works. Even though they appear in other
+        media, they all generally follow the same description by Tolkien.
+      - ' Country (or country and western) is a musical genre that originated in the
+        southern United States'
+      - 'When you became a vegetarian, what were your motivations? Health? Animal
+        rights? '
+      - How long has it been around?
+      - that is probably hard to answer but it was probably street food way before
+        it was in restaurants
+      - 'Oh wow that sounds like a lot of work. '
+      - Its a shame that large companies like amazon feel the need to conquer the
+        market even though they probably had enough money before. People are very
+        greedy. Do you know what we sell at amazon?
+      - I dearly love a good buffalo steak, hard to get locally but if you ever have
+        the opportunity to try one its good
+      - How long have you done it
+      - Yea thats crazy i wouldnt want to work retail during the celebration of christmas
+        holiday
+      - it depends. usually food running, polishing dishes and silverware, helping
+        bus tables and restocking
+      - Yeah that is surprising. wish they got along.
+      - 'I also do enjoy it, Ive found a lot of good indie bands on soundcloud. What
+        are some good recommendations of indie artists? '
+      personality: Scholarly
+      text: yes I like to watch that some times
+      title: Bob Ross
+- - - checked_sentence: In the gradual process of families improving their immediate
+        environment, useful tree and vine species were identified, protected and improved
+        while undesirable species were eliminated.
+      chosen_topic: Gardening
+      episode_done: true
+      eval_labels:
+      - yes they are. they are extremely smart. most people buy them for inside pets.
+        you can train the to use a litter box just like a cat. When families started
+        using vines and trees to build their houses out of there was several species
+        of trees and vines that were eliminated by them.
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Gardening Gardening is the practice of growing and cultivating plants
+        as part of horticulture.
+
+        Gardening In gardens, ornamental plants are often grown for their flowers,
+        foliage, or overall appearance; useful plants, such as root vegetables, leaf
+        vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+        or for medicinal or cosmetic use.
+
+        Gardening Gardening is considered by many people to be a relaxing activity.
+
+        Gardening Gardening ranges in scale from fruit orchards, to long boulevard
+        plantings with one or more different types of shrubs, trees, and herbaceous
+        plants, to residential yards including lawns and foundation plantings, to
+        plants in large or small containers grown inside or outside.
+
+        Gardening Gardening may be very specialized, with only one type of plant grown,
+        or involve a large number of different plants in mixed plantings.
+
+        Gardening It involves an active participation in the growing of plants, and
+        tends to be labor-intensive, which differentiates it from farming or forestry.
+
+        Gardening Forest gardening, a forest-based food production system, is the
+        world''s oldest form of gardening.
+
+        Gardening Forest gardens originated in prehistoric times along jungle-clad
+        river banks and in the wet foothills of monsoon regions.
+
+        Gardening In the gradual process of families improving their immediate environment,
+        useful tree and vine species were identified, protected and improved while
+        undesirable species were eliminated.
+
+        Atelier Bow-Wow Atelier Bow-Wow is a Tokyo-based architecture firm, founded
+        in 1992 by Yoshiharu Tsukamoto and Momoyo Kajima.
+
+        Atelier Bow-Wow The firm is well known for its domestic and cultural architecture
+        and its research exploring the urban conditions of micro, ad hoc architecture.
+
+        Atelier Bow-Wow Yoshiharu Tsukamoto was born in Kanagawa Prefecture in 1965.
+
+        Atelier Bow-Wow He studied architecture at Tokyo Institute of Technology,
+        graduating from his undergraduate degree in 1987.
+
+        Atelier Bow-Wow Tsukamoto travelled to Paris to be a guest student at L’Ecole
+        d’Architecture de Belleville (UP 8) from 1987–88 and in 1994 he completed
+        a Doctor of Engineering program at Tokyo Institute of Technology.
+
+        Pow wow A pow wow (also powwow or pow-wow) is a social gathering held by many
+        different Native American communities.
+
+        Pow wow A modern pow wow is a specific type of event for Native American people
+        to meet and dance, sing, socialize, and honor their cultures.
+
+        Pow wow Pow wows may be private or public.
+
+        Pow wow There is generally a dancing competition, with many different types
+        of traditional dances, music and regalia, often with significant prize money
+        awarded.
+
+        Pow wow Pow wows vary in length from a one-day event, to major pow wows called
+        for a special occasion which can be up to one week long.
+
+        Pow wow In popular culture, such as older Western movies, the term has also
+        been used to describe any gathering of Native Americans, or to refer to any
+        type of meeting, such as among military personnel.
+
+        Guinea pig The domestic guinea pig or simply guinea pig ("Cavia porcellus"),
+        also known as cavy, is a species of rodent belonging to the family Caviidae
+        and the genus "Cavia".
+
+        Guinea pig Despite their common name, these animals are not in the pig family
+        Suidae, nor do they come from Guinea in Africa.
+
+        Guinea pig They originated in the Andes of South America; studies based on
+        biochemistry and hybridization suggest they are domestic descendants of a
+        closely related species of cavy such as "C. tschudii", and therefore do not
+        exist naturally in the wild.
+
+        Guinea pig The domestic guinea pig plays an important role in the folk culture
+        of many indigenous South American groups, especially as a food source, but
+        also in folk medicine and in community religious ceremonies.
+
+        Heartbreak on Hold Heartbreak on Hold is the second studio album by British
+        recording artist Alexandra Burke.
+
+        Heartbreak on Hold It was released on 4 June 2012 through Syco and RCA Records.
+
+        Heartbreak on Hold Recording for the album started in late 2010 and finished
+        in early 2012.
+
+        Heartbreak on Hold Burke collaborated with a wide range of producers for the
+        album, many of whom are noted for their distinct dance and house music influences,
+        including Erick Morillo and DJ Smash.
+
+        Heartbreak on Hold The album suffered a long series of delays to its release
+        date.
+
+        Heartbreak on Hold Originally expected for a summer 2011 release, the original
+        album was shelved as Burke parted ways with record label Syco, with whom she
+        had been signed since winning "The X Factor", in favour of RCA.
+
+        Bow Wow (rapper) Shad Gregory Moss (born March 9, 1987), better known by his
+        stage name Bow Wow (formerly Lil'' Bow Wow), is an American rapper, actor
+        and television host.
+
+        Bow Wow (rapper) As Lil'' Bow Wow, he released his first album, "Beware of
+        Dog", in 2000 at age 13, which was followed by "Doggy Bag" in 2001.
+
+        Bow Wow (rapper) In 2003, Bow Wow released his third album "Unleashed", which
+        was the first album released without using Lil'' in his name.
+
+        Bow Wow (rapper) As of September 27, 2015, Bow Wow has signed a management
+        deal to Bad Boy Records.
+
+        Bow Wow (rapper) Bow Wow made his first movie appearance in "All About the
+        Benjamins", in 2002 as a cameo.
+
+        Bow Wow (rapper) In the same year, Bow Wow made his debut as the lead role
+        in "Like Mike".
+
+        New Zealand Democratic Party for Social Credit The New Zealand Democratic
+        Party for Social Credit (shortened to Democrats for Social Credit) is a small
+        leftist political party in New Zealand.
+
+        New Zealand Democratic Party for Social Credit Its policies are based on the
+        ideas of social credit.
+
+        New Zealand Democratic Party for Social Credit The party has been known as
+        the Social Credit Political League, Social Credit Party, and New Zealand Democratic
+        Party and was part of the Alliance for a time.
+
+        New Zealand Democratic Party for Social Credit The party does not hold any
+        seats in the Parliament of New Zealand.
+
+        New Zealand Democratic Party for Social Credit It held one seat from 1966
+        to 1969.
+
+        New Zealand Democratic Party for Social Credit The party won a seat in a 1978
+        byelection, and held two seats from 1980 to 1987.
+
+        New Zealand Democratic Party for Social Credit Democratic Party members also
+        held seats when the party was part of the Alliance.
+
+        Cute (Japanese idol group) Cute, stylized as , was a Japanese idol girl group
+        part of Hello!
+
+        Cute (Japanese idol group) Project collective produced by Tsunku, who also
+        writes almost all the group''s songs.
+
+        Cute (Japanese idol group) Cute consisted of Maimi Yajima, Saki Nakajima,
+        Airi Suzuki, Chisato Okai, and Mai Hagiwara, who were all members of Hello!
+
+        Cute (Japanese idol group) Project Kids prior to the group''s formation.
+
+        Cute (Japanese idol group) The original member line-up also consisted of fellow
+        Hello!
+
+        Cute (Japanese idol group) Project Kids members Megumi Murakami and Erika
+        Umeda, as well as Hello!
+
+        Cute (Japanese idol group) Project trainee Kanna Arihara, prior to their departure.
+
+        Cute (Japanese idol group) After releasing a string of independent hits, Cute
+        made its major debut in 2007 with "Sakura Chirari" and that year won the Japan
+        Record Award for Best New Artist.
+
+        Intensive animal farming Intensive animal farming or industrial livestock
+        production, also colloquially known as factory farming, is a production approach
+        towards farm animals in order to maximize production output, while minimizing
+        production costs.
+
+        Intensive animal farming Intensive farming refers to animal husbandry, the
+        keeping of livestock such as cattle, poultry, and fish at higher stocking
+        densities than is usually the case with other forms of animal agriculture—a
+        practice typical in industrial farming by agribusinesses.
+
+        Intensive animal farming The main products of this industry are meat, milk
+        and eggs for human consumption.
+
+        Intensive animal farming There are issues regarding whether factory farming
+        is sustainable or ethical.
+
+        Animal husbandry Animal husbandry is the branch of agriculture concerned with
+        animals that are raised for meat, fibre, milk, eggs, or other products.
+
+        Animal husbandry It includes day-to-day care, selective breeding and the raising
+        of livestock.
+
+        Animal husbandry Husbandry has a long history, starting with the Neolithic
+        revolution when animals were first domesticated, from around 13,000 BC onwards,
+        antedating farming of the first crops.
+
+        Animal husbandry By the time of early civilisations such as ancient Egypt,
+        cattle, sheep, goats and pigs were being raised on farms.
+
+        Animal husbandry Major changes took place in the Columbian Exchange when Old
+        World livestock were brought to the New World, and then in the British Agricultural
+        Revolution of the 18th century, when livestock breeds like the Dishley Longhorn
+        cattle and Lincoln Longwool sheep were rapidly improved by agriculturalists
+        such as Robert Bakewell to yield more meat, milk, and wool.
+
+        Effects of global warming on human health The effects of global warming include
+        its gayon human health.
+
+        Effects of global warming on human health The observed and projected increased
+        frequency and severity of climate related impacts will further exacerbate
+        the effects on human health.
+
+        Effects of global warming on human health This article describes some of those
+        effects on individuals and populations.
+
+        Effects of global warming on human health A good example of the impact of
+        global warming on health can be seen in the disease Erythromelalgia.
+
+        Effects of global warming on human health This is a vascular disease that
+        is commonly triggered by the involvement of change in temperature, which leads
+        to syndromes including (first and second degree) burning pain, increased temperature,
+        erythema and swelling, of mainly the hands and feet that are affected.
+
+        Ashdown Forest Ashdown Forest is an ancient area of tranquil open heathland
+        occupying the highest sandy ridge-top of the High Weald Area of Outstanding
+        Natural Beauty.
+
+        Ashdown Forest It is situated some south of London in the county of Sussex,
+        England.
+
+        Ashdown Forest Rising to an altitude of above sea level, its heights provide
+        expansive vistas across the heavily wooded hills of the Weald to the chalk
+        escarpments of the North Downs and South Downs on the horizon.
+
+        Ashdown Forest Ashdown Forest''s origins lie as a medieval hunting forest
+        created soon after the Norman conquest of England.
+
+        Ashdown Forest By 1283 the forest was fenced in by a "pale" enclosing an area
+        of some .
+
+        Pinus strobus Pinus strobus, commonly denominated the eastern white pine,
+        northern white pine, white pine, Weymouth pine (British), and soft pine is
+        a large pine native to eastern North America.
+
+        Pinus strobus It occurs from Newfoundland, Canada west through the Great Lakes
+        region to southeastern Manitoba and Minnesota, United States, and south along
+        the Appalachian Mountains and upper Piedmont to northernmost Georgia and perhaps
+        very rarely in some of the higher elevations in northeastern Alabama.
+
+        Pinus strobus The Native American Haudenosaunee denominated it the "Tree of
+        Peace".
+
+        Pinus strobus It is known as the "Weymouth pine" in the United Kingdom, after
+        Captain George Weymouth of the British Royal Navy, who brought its seeds to
+        England from Maine in 1605.
+
+        Mountain pine beetle The mountain pine beetle "Dendroctonus ponderosae", is
+        a species of bark beetle native to the forests of western North America from
+        Mexico to central British Columbia.
+
+        Mountain pine beetle It has a hard black exoskeleton, and measures approximately
+        5 mm, about the size of a grain of rice.
+
+        Mountain pine beetle In western North America, the current outbreak of the
+        mountain pine beetle and its microbial associates has destroyed wide areas
+        of lodgepole pine forest, including more than 16 million of the 55 million
+        hectares of forest in British Columbia.
+
+        Mountain pine beetle The current outbreak in the Rocky Mountain National Park
+        began in 1996 and has caused the destruction of millions of acres of ponderosa
+        and lodgepole pine trees.
+
+        Pinus pinaster Pinus pinaster, the maritime pine or cluster pine, is a pine
+        native to Mediterranean region.
+
+        Pinus pinaster "P. pinaster" is a hard, fast growing pine containing small
+        seeds with large wings.
+
+        Pinus pinaster "P. pinaster" is located in the Mediterranean basin.
+
+        Pinus pinaster It favors a Mediterranean climate, which is one that has cool,
+        rainy winters and hot, dry summers.
+
+        Pinus pinaster The native area that this species of pine, "Pinus pinaster",
+        originates from is the Mediterranean Basin, including Northern Tunisia, Algeria,
+        and Morocco.
+
+        Pinus pinaster "P. pinaster" is a popular topic in ecology because of its
+        problematic growth and spread in South Africa for the past 150 years after
+        being imported into the region at the end of the 17th century (1685-1693).
+
+        '
+      label_candidates:
+      - It surely seems like it, not to mention all the bad effects, such as getting
+        in risky situations like drinking and driving or unsafe physical encounters
+      - I bet that is beautiful. What type of architecture was your koi pond built
+      - Ok when was it founded?
+      - I think that you get to see quite a bit of rugged countryside that way.
+      - the only thing i kind of dislike about equestrian is the waiting time on the
+        horse rider change
+      - Do you know of any new foods I can add to my plant based menu?
+      - Fashion designers designs are utilized by manufacturers.
+      - Wow, I guess it's why Broadway is the most famous theater
+      - Oh, I've never really listened to them. What's one of their songs?
+      - While many use picnics for breakfasts i prefer it for lunch for things like
+        ham sandwiches or such.
+      - That's sounds reliable enough for me!
+      - There's nothing like a clear blue sky to cheer the soul
+      - While playing the game players must find their way through various maze-like,
+        medieval environments while battling a variety of monsters. It's amazing!
+      - Exactly!  They were originally built in Flint, Michigan and St. Louis, Missouri,
+        but now they are built in Bowling Green, Kentucky.
+      - You either love or you hate it, I've found
+      - Oh wow, how many cheese cakes do they sell?
+      - Hundreds of different cultures. As many as 800 languages are spoken in New
+        York City, making it the most linguistically diverse city in the world.
+      - The nicotine is what is addicting. The bloodstream moves quickly.
+      - Hi - do you like pizza?
+      - Mostly the Nintendo classics like Zelda, Pokemon, and Mario games. They were
+        a huge part of my childhood.
+      personality: Intelligent
+      text: Wow, it sounds amazing, the Micro-pigs are so cute! are they trainable
+        to be well behaved?
+      title: Gardening
+    - checked_sentence: Ross went from being a public-television personality in the
+        1980s and 1990s to being an Internet celebrity in the 21st century, popular
+        with fans on YouTube and many other websites.
+      chosen_topic: Bob Ross
+      episode_done: true
+      eval_labels:
+      - He is very popular on YouTube even into this century
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Bob Ross Robert Norman Ross (October 29, 1942 – July 4, 1995) was
+        an American painter, art instructor, and television host.
+
+        Bob Ross He was the creator and host of "The Joy of Painting", an instructional
+        television program that aired from 1983 to 1994 on PBS in the United States,
+        and also aired in Canada, Latin America, and Europe.
+
+        Bob Ross Ross went from being a public-television personality in the 1980s
+        and 1990s to being an Internet celebrity in the 21st century, popular with
+        fans on YouTube and many other websites.
+
+        Bob Ross Ross was born in Daytona Beach, Florida, to Jack and Ollie Ross (a
+        carpenter and waitress, respectively), and raised in Orlando, Florida.
+
+        Bob Ross As a child, Ross entertained himself by caring for injured animals,
+        purportedly including an armadillo, snake, and alligator.
+
+        Bob Ross One of these animals, a squirrel named Peapod, was featured in a
+        few episodes of his show.
+
+        Bob Ross He had a half-brother, Jim, whom he mentioned in passing on his show.
+
+        Bob Ross Ross dropped out of high school in the 9th grade to work as a carpenter
+        with his father, Jack Ross, where he lost part of his left index finger.
+
+        Bob Ross This, however, did not affect the way he held his palette while painting.
+
+        Bob Ross In 1961, then 18-year-old Ross enlisted in the United States Air
+        Force and was put into service as a medical records technician.
+
+        I''ll Be Lovin'' U Long Time "I''ll Be Lovin'' U Long Time" is a song by American
+        singer and songwriter Mariah Carey, taken from her eleventh studio album,
+        "E=MC²" (2008).
+
+        I''ll Be Lovin'' U Long Time It was written by Carey, Aldrin Davis, Crystal
+        Johnson and Clifford Harris, and produced by the former two.
+
+        I''ll Be Lovin'' U Long Time As the song''s hook and instrumentation is derived
+        from sampling DeBarge''s "Stay with Me", Mark DeBarge and Etterlene Jordan
+        also share songwriting credits.
+
+        I''ll Be Lovin'' U Long Time "I''ll Be Lovin'' U Long Time" was released as
+        the album''s third single in the United States, Australasia and select European
+        countries on July 1, 2008.
+
+        I''ll Be Lovin'' U Long Time Drawing influence from pop, soul and R&B music
+        genres, and featuring a piano and keyboard-driven melody, the song''s lyrics
+        demonstrate the lengths the protagonist will go for her lover, and how she
+        will be ''lovin'' him long time''.
+
+        Nandini (TV series) Nandhini is an Indian multilingual supernatural television
+        drama that premiered on 23 January 2017 on Sun TV, Gemini TV, Surya TV and
+        Udaya TV channels.
+
+        Nandini (TV series) This is the first South Indian Serial to be aired in 4
+        South Indian language by Sun Network channels and same time except for Udaya
+        TV, which is half hour earlier.
+
+        Nandini (TV series) It is claimed that the show is the second biggest budgeted
+        series on Indian television after Naagin and the first in South India.
+
+        Nandini (TV series) Nithya Ram, Malavika Wales, Rahul Ravi and Adhitri are
+        the main protagonists of the series.
+
+        Nandini (TV series) The series is produced by Tamil film director Sundar C.
+        and his wife, actress Kushboo.
+
+        List of The Story of Saiunkoku characters The following is a list of characters
+        from the light novel, anime and manga series, "The Story of Saiunkoku".
+
+        List of The Story of Saiunkoku characters The Hong clan is the second most
+        powerful clan in the fictional country of Saiunkoku.
+
+        List of The Story of Saiunkoku characters The clan''s specialties are growing
+        tangerines and creating special "seven-colored" ink.
+
+        List of The Story of Saiunkoku characters Their clan seal bears the emblems
+        of a paulownia, bamboo, phoenix, and kirin.
+
+        List of The Story of Saiunkoku characters is the daughter and only child of
+        Shōka Hong.
+
+        List of The Story of Saiunkoku characters She is sixteen years old when the
+        story begins.
+
+        List of The Story of Saiunkoku characters As a descendant of the direct line,
+        she has the title hime, which means ''Princess'' or ''Lady''.
+
+        List of The Story of Saiunkoku characters Despite the high social status of
+        her family, Shūrei grew up in relatively impoverished circumstances.
+
+        Flying Hawk Flying Hawk (Oglala Lakota: "Čhetáŋ Kiŋyáŋ" in Standard Lakota
+        Orthography; a/k/a Moses Flying Hawk; March 1854 – December 24, 1931) was
+        an Oglala Lakota warrior, historian, educator and philosopher.
+
+        Flying Hawk Flying Hawk''s life chronicles the history of the Oglala Lakota
+        people through the 19th and early 20th centuries, as he fought to deflect
+        the worst effects of white rule; educate his people and preserve sacred Oglala
+        Lakota land and heritage.
+
+        Flying Hawk Chief Flying Hawk was a combatant in Red Cloud''s War and in nearly
+        all of the fights with the U.S. Army during the Great Sioux War of 1876.
+
+        Flying Hawk He fought alongside his first cousin Crazy Horse and his brothers
+        Kicking Bear and Black Fox II in the Battle of the Little Big Horn in 1876,
+        and was present at the death of Crazy Horse in 1877 and the Wounded Knee Massacre
+        of 1890.
+
+        Adelaide 36ers The Adelaide 36ers (also well known as the Sixers) are an Australian
+        professional men''s basketball team that competes in the National Basketball
+        League (NBL).
+
+        Adelaide 36ers The 36ers are the only team in the league representing the
+        state of South Australia and are based in the state capital, Adelaide.
+
+        Adelaide 36ers The club was originally called the Adelaide City Eagles when
+        they joined the NBL in 1982, but changed their name to the 36ers the following
+        year.
+
+        Adelaide 36ers The 36ers nickname comes from the fact that the Colony of South
+        Australia was officially proclaimed on 28 December 1836.
+
+        Adelaide 36ers They play their home games at the Titanium Security Arena in
+        the suburb of Findon, known as the "Brett Maher Court" within the NBL.
+
+        Foreplay/Long Time "Foreplay/Long Time" is a song written by Tom Scholz and
+        first performed by the rock band Boston on the band''s eponymous debut album,
+        and as their second single, on Epic Records in 1976.
+
+        Foreplay/Long Time It combines an instrumental introduction, "Foreplay", to
+        the main song "Long Time", generally played as one on the radio and listed
+        as one track on the album.
+
+        Foreplay/Long Time "Long Time" peaked at No.
+
+        Foreplay/Long Time 22 on the "Billboard" Hot 100 the week ending March 5,
+        1977.
+
+        Foreplay/Long Time It reached the Top 10 in Canada, peaking at No.
+
+        Foreplay/Long Time 9.
+
+        Foreplay/Long Time The standalone "Foreplay" was released as the B-side of
+        Boston''s next single "Peace of Mind", which was released in April.
+
+        Salut D''Amour (TV series) Salut D''Amour (; lit.
+
+        Salut D''Amour (TV series) Love Greeting), despite its French name, is a South
+        Korean television series that aired on KBS2 from November 1, 1994 to April
+        25, 1995 for a total of twenty five episodes.
+
+        Salut D''Amour (TV series) The theme of "Salut D''Amour", unlike later versions,
+        are not interconnected to one another by episode.
+
+        Salut D''Amour (TV series) Each episode contains a separate but closely related
+        theme.
+
+        Salut D''Amour (TV series) The Episode starts with a documentary show on Korea
+        during the war, Korea during the year he was born in (1975)-riots and crowded
+        streets in South Korea.
+
+        Salut D''Amour (TV series) The narrator talked about the population census
+        taken on September 18, 1995.
+
+        Salut D''Amour (TV series) The population stood at 37,680,000 male and female
+        sex ratio (1740:1124, males to females), as well as family events in 1982.
+
+        PBS The Public Broadcasting Service (PBS) is an American public broadcaster
+        and television program distributor.
+
+        PBS It is a non-profit organization and is the most prominent provider of
+        government-funded educational television programming to public television
+        stations in the United States, distributing series such as "Keeping Up Appearances",
+        "BBC World News" (as BBC World News America since 2012), "Nova ScienceNow",
+        "Nova", "Arthur", "Sesame Street", "PBS NewsHour", "Walking with Dinosaurs",
+        "Masterpiece", "Nature", "Rick Steves'' Europe", "American Masters", "Frontline",
+        and "Antiques Roadshow".
+
+        PBS PBS is funded by member station dues, the Corporation for Public Broadcasting,
+        government agencies, corporations, foundations and individual citizens.
+
+        BBC Television Shakespeare The BBC Television Shakespeare is a series of British
+        television adaptations of the plays of William Shakespeare, created by Cedric
+        Messina and broadcast by BBC Television.
+
+        BBC Television Shakespeare Transmitted in the UK from 3 December 1978 to 27
+        April 1985, the series spanned seven seasons and thirty-seven episodes.
+
+        BBC Television Shakespeare Development began in 1975 when Messina saw that
+        the grounds of Glamis Castle would make a perfect location for an adaptation
+        of Shakespeare''s "As You Like It" for the "Play of the Month" series.
+
+        BBC Television Shakespeare Upon returning to London, however, he had come
+        to envision an entire series devoted exclusively to the dramatic works of
+        Shakespeare.
+
+        Mister Rogers'' Neighborhood Mister Rogers'' Neighborhood (sometimes shortened
+        to Misterogers or simply Mister Rogers) is an American half-hour educational
+        children''s television series that was created and hosted by namesake Fred
+        Rogers.
+
+        Mister Rogers'' Neighborhood The series originated in 1963 as "Mister Rogers"
+        on CBC Television, and was later re-branded in 1966 as "Mister Rogers'' Neighborhood"
+        on the regional Eastern Educational Network (EEN, a forerunner of today''s
+        American Public Television), followed by its U.S. network debut on February
+        19, 1968, and it aired on NET and its successor, PBS, until August 31, 2001.
+
+        Mister Rogers'' Neighborhood The series is aimed primarily at preschool ages
+        2 to 5, but has been stated by PBS as "appropriate for all ages".
+
+        Barry Manilow Barry Manilow (born Barry Alan Pincus; June 17, 1943) is an
+        American singer-songwriter, arranger, musician and producer with a career
+        that has spanned more than 50 years.
+
+        Barry Manilow His hit recordings include "Mandy", "Can''t Smile Without You",
+        and "Copacabana (At the Copa)".
+
+        Barry Manilow He has recorded and released 47 Top 40 singles, including 12
+        that hit number one and 27 of which appeared within the top ten, and has released
+        many multi-platinum albums.
+
+        Barry Manilow Although not a favorite artist of music critics, Manilow has
+        been praised by entertainers including Frank Sinatra, who was quoted in the
+        1970s as saying, "He''s next."
+
+        American Top 40 American Top 40 (commonly abbreviated to AT40) is an internationally
+        syndicated, independent song countdown radio program created by Casey Kasem,
+        Don Bustany, Tom Rounds and Ron Jacobs.
+
+        American Top 40 The program is currently hosted by Ryan Seacrest and presented
+        as an adjunct to his weekday radio program, "On Air with Ryan Seacrest".
+
+        American Top 40 Originally a production of Watermark Inc. (later a division
+        of ABC Radio known as ABC Watermark, now Cumulus Media Networks), "AT40" is
+        now distributed by Premiere Networks in the United States, Canada, Australia,
+        the United Arab Emirates, Singapore, China, India, Sri Lanka, Indonesia, Oman
+        and several other territories worldwide.
+
+        The Lawrence Welk Show The Lawrence Welk Show was an American televised musical
+        variety show hosted by big band leader Lawrence Welk.
+
+        The Lawrence Welk Show The series aired locally in Los Angeles for four years,
+        from 1951 to 1955, then nationally for another 27 years on ABC from 1955 to
+        1971, and in first-run syndication from 1971 to 1982.
+
+        The Lawrence Welk Show Repeat episodes are broadcast in the United States
+        by Public Broadcasting Service (PBS) stations.
+
+        The Lawrence Welk Show These airings incorporate an original program—usually,
+        a color broadcast from 1965 through 1982—in its entirety.
+
+        The Lawrence Welk Show In place of the commercials, newer performance and
+        interview clips from the original stars and/or a family member of the performers
+        are included; these clips are occasionally updated.
+
+        The Voice (U.S. season 2) The second season of the American reality talent
+        show "The Voice" premiered on NBC on February 5, 2012 in the 10 p.m.
+
+        The Voice (U.S. season 2) ET slot immediately following coverage of Super
+        Bowl XLVI.
+
+        The Voice (U.S. season 2) The first promo aired on NBC on Saturday, October
+        8, 2011 during an episode of "Saturday Night Live".
+
+        The Voice (U.S. season 2) The program seeks solo artists and duos that perform
+        various types of music: pop, rock, R&B, hip-hop, alternative, Latin, country,
+        blues and indie.
+
+        The Voice (U.S. season 2) Auditions were held July 15 to August 31, 2011 in
+        Chicago, New York, San Francisco, Los Angeles, Houston, Atlanta, Nashville,
+        and Orlando.
+
+        The Voice (U.S. season 2) All four coaches return for their second season.
+
+        '
+      label_candidates:
+      - Hi, how are you? Something interesting about me is my father is a preacher.
+      - Do you know you score points at it.?
+      - It is pretty. Violet is pretty as well but Purple just seems more rich to
+        me.
+      - And that must have been waaaaay back. Aren't dogs basically descended from
+        wolves?
+      - Hi there. Do you know anything about Philip Larkin?
+      - Do you know what the best soccer team worldwide is?
+      - 'I don''t know much in depth about his presidency just know some about him.
+        He entered the race as Republican and actually defeated 16 other opponents
+        in the primaries. '
+      - Most people think of deserts as hot and dry, but deserts can be classified
+        by other things such as location, amount of precipitation and temperature.
+        Maybe the cold deserts exist because of their geographical location.
+      - 'That probably explains why you don''t have to have a driver license to operate
+        one. '
+      - 'Yes.  Which type your favorite?  Grilled?  Broiled?  I know there are so
+        many ways to cook them and so many types.  '
+      - It was put out by Disney and based on a Danish fairy tale by Hans Christian
+        Andersen.
+      - Aha, I learned something new this morning! My knowledge bank has expanded.
+      - That's really cool! Do you know any animals which would qualify as obligate
+        carnivores?
+      - Did he also have some kind of cancer?
+      - Yes with the best teachers your kid will be picking up stuff like algebra
+        and grammar in no time!
+      - ' Yellow is the color between green and orange on the spectrum of visible
+        light'
+      - rejecting your night? I see drinking as embracing and enhancing your night!
+        are all Christians dry like that?
+      - It depends on how fast you learn really and how far you'd like to go in the
+        profession. In 18th-century London upholsterers were actually interior decorators
+        as well so that took longer I'm sure.
+      - True, those who strive for excellence but can use mistakes as an incentive
+        to work harder.
+      - Wow. My friend in college was a vegan. So, vegan diets consist of what?
+      personality: Knowledgeable
+      text: it ran for a long time
+      title: Bob Ross
+- - - checked_sentence: Stamp collecting is the collecting of postage stamps and related
+        objects.
+      chosen_topic: Stamp collecting
+      episode_done: false
+      eval_labels:
+      - the hobby of stamp collecting involves collecting stamps and related objects
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Stamp collecting Stamp collecting is the collecting of postage stamps
+        and related objects.
+
+        Stamp collecting It is related to philately which is the study of stamps.
+
+        Stamp collecting It has been one of the world''s most popular hobbies since
+        the late nineteenth century with the rapid growth of the postal service.
+
+        Stamp collecting Stamp collecting proved to be an almost perfect hobby for
+        collectors because there was a never ending stream of new stamps as each country
+        sought to advertise its distinctiveness through its stamps.
+
+        Stamp collecting Stamp collecting is generally accepted as one of the areas
+        that make up the wider subject of philately, which is the study of stamps.
+
+        Stamp collecting A philatelist may, but does not have to, collect stamps.
+
+        Stamp collecting It is not uncommon for the term "philatelist" to be used
+        to mean a stamp collector.
+
+        Stamp collecting Many casual stamp collectors accumulate stamps for sheer
+        enjoyment and relaxation without worrying about the tiny details.
+
+        Stamp collecting The creation of a large or comprehensive collection, however,
+        generally requires some philatelic knowledge and will usually contain areas
+        of philatelic studies.
+
+        Stamp collecting Postage stamps are often collected for their historical value
+        and geographical aspects and also for the many subjects depicted on them,
+        ranging from ships, horses, and birds to kings, queens and presidents.
+
+        '
+      label_candidates:
+      - Well, specialized hospitals are available to potentially reduce healthcare
+        costs.
+      - Have you ever been to nashville tennesee? It is a nice place, my brother has
+        been there
+      - That's amazing! What else can you tell me about beer?
+      - I love Starbucks coffee
+      - I've been getting into the strokes as of late. Do you like them?
+      - Brooklyn, I don't to go as much. 2,629,150 residence is too many for me
+      - Very cool. So it's a mexture of all those?
+      - 'His success probably has somethig to do with his physical attributes. I think
+        he''s 6'' 7" which would make him like a torpedo in water. '
+      - but are no kill shelters viable, it seems they would become overrun if they
+        run out of space to house  animals
+      - Yes, I had to deal with that part recently in getting it replaced in my refrigerator
+        a few weeks back. Well, I can see why Whirlpool would be the biggest buyer,
+        they are very popular.
+      - Well I've been actively exercising for 6 weeks and I haven't lost a thing.
+        Since weight loss occurs when the body expends more energy then it takes in,
+        I must be still overeating.
+      - Depends on the tale, but generally yes! Why do you ask?
+      - Plus, a teaching hospital includes medical students and nurses.
+      - yeah I'm a vegetarian. I don't eat meat at all, and even animal byproducts
+      - Oh yeah? I have never heard of that . Can you tell me more about it?
+      - I love bright colored fish - they're so elegant!
+      - Which other Indian cuisine do you like. We have a wide variety of regional
+        and traditional cuisines native to the Indian subcontinent.
+      - I love that song too! I don't really have a specific one. I just find they're
+        great in their live shows. Do you know how many albums the produced?
+      - Wow I didn't know that!
+      - And the drama that seems to surround some of the pop stars. Apparently Michael
+        Jackson was a topic of sexual activity at age 9
+      personality: Complex
+      text: 'your persona: my mom taught me how to play the cello.
+
+        your persona: everyday i go swimming at the y.
+
+        your persona: my favorite color is blue.
+
+        your persona: i collect stamps.
+
+        your persona: i love going to concerts on the weekend.
+
+        Stamp collecting
+
+        '
+      title: Stamp collecting
+    - checked_sentence: Quake is a first-person shooter video game, developed by id
+        Software and published by GT Interactive in 1996.
+      chosen_topic: Quake (video game)
+      episode_done: false
+      eval_labels:
+      - 'Yes, O'' my god. Love it! It''s a first-person shooter developed by id software. '
+      id: style_gen:labeled_WoW_persona_topicifier
+      knowledge: 'Quake (video game) Quake is a first-person shooter video game, developed
+        by id Software and published by GT Interactive in 1996.
+
+        Quake (video game) It is the first game in the "Quake" series.
+
+        Quake (video game) In the game, players must find their way through various
+        maze-like, medieval environments while battling a variety of monsters using
+        a wide array of weapons.
+
+        Quake (video game) The successor to id Software''s "Doom" series, "Quake"
+        built upon the technology and gameplay of its predecessor.
+
+        Quake (video game) Unlike the "Doom" engine before it, the "Quake" engine
+        offered full real-time 3D rendering and had early support for 3D acceleration
+        through OpenGL.
+
+        Quake (video game) After "Doom" helped popularize multiplayer deathmatches,
+        "Quake" added various multiplayer options.
+
+        Quake (video game) Online multiplayer became increasingly common, with the
+        QuakeWorld update and software such as QuakeSpy making the process of finding
+        and playing against others on the Internet easier and more reliable.
+
+        Quake (video game) It features music composed by Trent Reznor and Nine Inch
+        Nails.
+
+        Quake (video game) In "Quake" single-player mode, players explore and navigate
+        to the exit of each Gothic and dark level, facing monsters and finding secret
+        areas along the way.
+
+        Quake (video game) Usually there are switches to activate or keys to collect
+        in order to open doors before the exit can be reached.
+
+        Id Software id Software LLC (; see Company name) is an American video game
+        developer headquartered in Dallas, Texas.
+
+        Id Software The company was founded on February 1, 1991, by four members of
+        the computer company Softdisk, programmers John Carmack and John Romero, game
+        designer Tom Hall, and artist Adrian Carmack (no relation to John Carmack).
+
+        Id Software Business manager Jay Wilbur was also involved.
+
+        Id Software id Software made important technological developments in video
+        game technologies for the PC (running MS-DOS and Windows), including work
+        done for the "Wolfenstein", "Doom", and "Quake" franchises.
+
+        Id Software id''s work was particularly important in 3D computer graphics
+        technology and in game engines that are heavily used throughout the video
+        game industry.
+
+        Machinima Machinima ( or ) is the use of real-time computer graphics engines
+        to create a cinematic production.
+
+        Machinima Most often video games are used to generate the computer animation.
+
+        Machinima Machinima-based artists, sometimes called machinimists or machinimators,
+        are often fan laborers, by virtue of their re-use of copyrighted materials
+        (see below).
+
+        Machinima Machinima offers to provide an archive of gaming performance and
+        access to the look and feel of software and hardware that may already have
+        become unavailable or even obsolete; for game studies, "Machinima’s gestures
+        grant access to gaming’s historical conditions of possibility and how machinima
+        offers links to a comparative horizon that informs, changes, and fully participates
+        in videogame culture."
+
+        Video game music Video game music is the soundtrack that accompanies video
+        games.
+
+        Video game music Early video game music was once limited to simple melodies
+        of early sound synthesizer technology.
+
+        Video game music These limitations inspired the style of music known as chiptunes,
+        which combines simple melodic styles with more complex patterns or traditional
+        music styles, and became the most popular sound of the first video games.
+
+        Video game music With advances in technology, video game music has now grown
+        to include the same breadth and complexity associated with television and
+        film scores, allowing for much more creative freedom.
+
+        Video game music While simple synthesizer pieces are still common, game music
+        now includes full orchestral pieces and popular music.
+
+        Speedrun A speedrun is a play-through (or a recording thereof) of a video
+        game performed with the intention of completing it as fast as possible.
+
+        Speedrun Speedruns may cover a whole game or a selected part, such as a single
+        level.
+
+        Speedrun While all speedruns aim for quick completion, some speedruns are
+        characterized by additional rules that players promise to obey, such as collecting
+        all key items.
+
+        Speedrun Players attempt speedruns mainly to challenge themselves and to entertain
+        and compete with others.
+
+        Speedrun Players performing speedruns call themselves speedrunners and often
+        record their attempts.
+
+        Speedrun These recordings are used to entertain others, to verify the completion
+        time, to certify that all rules were followed and that no cheating took place,
+        and to spot ways to improve the completion time further.
+
+        Quake II Quake II is a first-person shooter video game released in December
+        1997.
+
+        Quake II It was developed by id Software and published by Activision.
+
+        Quake II It is not a direct sequel to "Quake"; id decided to revert to an
+        existing trademark when they were unable to agree on a new name that did not
+        violate another company''s trademark.
+
+        Quake II The soundtrack for "Quake II" was mainly provided by Sonic Mayhem,
+        with some additional tracks by Bill Brown; the main theme was also composed
+        by Bill Brown and Rob Zombie, and one track by Jer Sypult.
+
+        Quake II The soundtrack for the Nintendo 64 version of the game was composed
+        by Aubrey Hodges, credited as Ken "Razor" Richmond.
+
+        Video game controversies Video game controversies are societal and scientific
+        arguments about whether the content of video games change the behavior and
+        attitudes of a player, and whether this is reflected in video game culture
+        overall.
+
+        Video game controversies Since the early 2000s, advocates of video games have
+        emphasized their use as an expressive medium, arguing for their protection
+        under the laws governing freedom of speech and also as an educational tool.
+
+        Video game controversies Detractors argue that video games are harmful and
+        therefore should be subject to legislative oversight and restrictions.
+
+        Video game controversies The positive and negative characteristics and effects
+        of video games are the subject of scientific study.
+
+        '
+      label_candidates:
+      - That's amazing, I really had no idea. They must be the biggest video game
+        company now, wouldn't you say?
+      - Some are both electronic and acoustic were used in 2000s
+      - Presbyopia is a condition caused by the aging of the eye and results in worsening
+        ability to focus.
+      - I don't know, but Walmart still operates as a grocery store there.
+      - 'Yeah it is pretty great '
+      - I have never heard of that before. In the UK a similar cake is referred to
+        as a Fairy Cake.
+      - oh no! I hope you're ok.  I don't, but my wife is allergic to seafood.
+      - 'Wow! That just sounds like a bunch of deaths waiting to happen. '
+      - Very old. Around the 5th and 6th centuries.
+      - Yep pretty crazy that phones are 20 times the size of ataris and joysticks
+        but thats how video games are now
+      - That is really neat. I guess it's better just to learn about them than to
+        keep them in captivity. I'm glad I asked.
+      - Sometimes when I do cuckoo clock sounds I lure in animals from the Black Forest
+        of Germany since that's the cuckoo's real home
+      - It really is and humans are naturals - we can hold our breath underwater and
+        make basic swimming movements within weeks of being born!
+      - I still consider "Licensed to Ill" to be the best album they have ever produced.
+      - Really? They're part of the Marvel universe, right?
+      - wow well thanks i never new they started so long ago as a simple burger stand.
+      - Yes I am :) funny enough, I know Kraft innovated the whole "cheese powder,
+        milk, and butter" thing, but I really don't like the Kraft macaroni.
+      - I like christian rock myself, Skillet is my favorite band I think
+      - I would recommend a chameleon or gecko as they are very small. But if you
+        are looking for a larger pet, go for the Komodo dragon.
+      - I have been doing it for years! I remember when I was looking it up I misspelled
+        it "Crotchet" its the common name for a Quarter note in music lol.
+      personality: Fanatical
+      text: 'your persona: playing quake on slackware linux makes me happy.
+
+        your persona: i have three dogs and two cats.
+
+        your persona: i live in chicago.
+
+        your persona: i like to use a lot of exclamation marks when i type.
+
+        your persona: both my moms tell me they love me when i call them.
+
+        Quake (video game)
+
+        My husband likes video games - I''ve heard there is one called Quake - do
+        you know much about it?'
+      title: Quake (video game)

@@ -1,0 +1,217 @@
+- - bucket: f0 m0
+    counterfactual: false
+    episode_done: true
+    eval_labels:
+    - We are usually here to eat grass for health and then we swim to find algae to
+      fulfill our needs
+    id: light_genderation_bias
+    label_candidates:
+    - '*pulling the ring from his drink* Wha? What gamblin'' scoundrel? She left me
+      because she said I was gettin too fat.'
+    - Thanks. Are you getting married under the tree?
+    - How are thee fine soldier, i am your servant.
+    - I agree we should use it to get rid of the horrible smell. We can also try to
+      use it to leave this terrible room
+    - 'Thank you queen. your hospitality is well known throughout the land! '
+    - Thank you my friend!I would love that!
+    - 'No! My negative energy! [Dress: I''ve been free! Also, apologies for the typo,
+      I meant to say, No, I didn''t say that at all.]'
+    - I am afraid that I can not get any closer.
+    - No, they have many towels and will not miss this one.  I brought it to add to
+      the large pile they already have.
+    - I think I may be too old to be a squire, unfortunately. I would give anything
+      to live here though.
+    - People, like myself, will light a candle to remember someone or to lift up a
+      prayer.  You can light one for anything.  Since you come here to see if people
+      are ok, maybe you should take a look.
+    - What do you have to exchange for some of my fruit?
+    - The urge is too great! I cannot help myself anymore! I shall take that as well!
+    - 'Thats more like it, you are not a ferocious lion! '
+    - 'I would love 15 pounds of your finest tuna. I need it for today''s supper. '
+    - We are usually here to eat grass for health and then we swim to find algae to
+      fulfill our needs
+    - What, ho! Is that a pot of gold?
+    - To be thankful for so many blessings, count each day a gift.  See how we have
+      been blessed with a warm home.  Now you children need to help me clean the church.
+    - hi
+    - You think i dont know that? Why would I give back to the people, when they have
+      given nothing back to me!
+    text: "_task_speech\n_partner_name swimmer\n_self_name turtles\n_partner_say Hello,\
+      \ turtles! I was hoping I might find you on the banks of the swamp this morning.\
+      \ \nf0 m0"
+- - bucket: f0 m0
+    counterfactual: true
+    episode_done: true
+    eval_labels:
+    - we are usually here to eat grass for health and then we swim to find algae to
+      fulfill our needs
+    id: light_genderation_bias
+    label_candidates:
+    - '*pulling the ring from his drink* Wha? What gamblin'' scoundrel? She left me
+      because she said I was gettin too fat.'
+    - Thanks. Are you getting married under the tree?
+    - How are thee fine soldier, i am your servant.
+    - I agree we should use it to get rid of the horrible smell. We can also try to
+      use it to leave this terrible room
+    - 'Thank you queen. your hospitality is well known throughout the land! '
+    - Thank you my friend!I would love that!
+    - 'No! My negative energy! [Dress: I''ve been free! Also, apologies for the typo,
+      I meant to say, No, I didn''t say that at all.]'
+    - I am afraid that I can not get any closer.
+    - No, they have many towels and will not miss this one.  I brought it to add to
+      the large pile they already have.
+    - I think I may be too old to be a squire, unfortunately. I would give anything
+      to live here though.
+    - People, like myself, will light a candle to remember someone or to lift up a
+      prayer.  You can light one for anything.  Since you come here to see if people
+      are ok, maybe you should take a look.
+    - What do you have to exchange for some of my fruit?
+    - The urge is too great! I cannot help myself anymore! I shall take that as well!
+    - 'Thats more like it, you are not a ferocious lion! '
+    - 'I would love 15 pounds of your finest tuna. I need it for today''s supper. '
+    - We are usually here to eat grass for health and then we swim to find algae to
+      fulfill our needs
+    - What, ho! Is that a pot of gold?
+    - To be thankful for so many blessings, count each day a gift.  See how we have
+      been blessed with a warm home.  Now you children need to help me clean the church.
+    - hi
+    - You think i dont know that? Why would I give back to the people, when they have
+      given nothing back to me!
+    text: "_task_speech\n_partner_name swimmer\n_self_name turtles\n_partner_say hello,\
+      \ turtles! i was hoping i might find you on the banks of the swamp this morning.\
+      \ \nf0 m0"
+- - bucket: f1 m1
+    counterfactual: false
+    episode_done: true
+    eval_labels:
+    - Yes, I am a proud father. My wife is taking nap after all her hard work. I am
+      also gathering food for her.
+    id: light_genderation_bias
+    label_candidates:
+    - Thats a good animal. I wish I had a way to keep this place cleaner.
+    - Ahh. excellent. My wife will be so pleased when I bring home these fine fish.
+      We are lucky to have such a wonderful resource in this village.
+    - And then we can steal their lunch and when they run after us they willl fall!
+    - It is my princess. What happened? *sniffs* what smell is that?
+    - Ha. You are weak compared to me. Now stop. You are acting shady.
+    - This is my home I've lived my whole life here.  My web is on the other side
+      of the room
+    - Yes we are grieving the loss of our dear son.
+    - Well... all the evidences before me point otherwise
+    - 'Ah!!! But you must always guard your weapon!! I’ve shown you no ill will! '
+    - 'Hello my child. May I help you? '
+    - I'm really only here for the bread crumbs.
+    - Yes, I am a proud father. My wife is taking nap after all her hard work. I am
+      also gathering food for her.
+    - What do you know about that knight standing over there?
+    - yes mam
+    - I'm doing well, and yourself? I am not supposed to be in this lake, as there
+      are apparently magical creatures nearby. But I really just want to explore and
+      find something new here. It's so beautiful out here
+    - Well these arent my horses. Lets make a deal so we both win. Give me back my
+      stuff and Ill let you ride that horse out of here
+    - hello how is the fishing
+    - good it means you are my boy
+    - Hahahaha. You can't harm me. You don't have the jaw strength.
+    - Hmm..that probably wouldn't be the best idea either. So we'll keep this place
+      a secret
+    text: "_task_speech\n_partner_name swimmer\n_self_name turtles\n_partner_say Hello,\
+      \ turtles! I was hoping I might find you on the banks of the swamp this morning.\
+      \ \nWe are usually here to eat grass for health and then we swim to find algae\
+      \ to fulfill our needs\n_self_say We are usually here to eat grass for health\
+      \ and then we swim to find algae to fulfill our needs\n_partner_say Speaking\
+      \ of grass, watch out for that grass snake. I don't think he would bother you\
+      \ but might go after your little ones. I see they have hatched recently!\nf1\
+      \ m1"
+- - bucket: f1 m1
+    counterfactual: true
+    episode_done: true
+    eval_labels:
+    - yes, i am a proud mother. my hubby is taking nap after all him hard work. i
+      am also gathering food for him.
+    id: light_genderation_bias
+    label_candidates:
+    - Thats a good animal. I wish I had a way to keep this place cleaner.
+    - Ahh. excellent. My wife will be so pleased when I bring home these fine fish.
+      We are lucky to have such a wonderful resource in this village.
+    - And then we can steal their lunch and when they run after us they willl fall!
+    - It is my princess. What happened? *sniffs* what smell is that?
+    - Ha. You are weak compared to me. Now stop. You are acting shady.
+    - This is my home I've lived my whole life here.  My web is on the other side
+      of the room
+    - Yes we are grieving the loss of our dear son.
+    - Well... all the evidences before me point otherwise
+    - 'Ah!!! But you must always guard your weapon!! I’ve shown you no ill will! '
+    - 'Hello my child. May I help you? '
+    - I'm really only here for the bread crumbs.
+    - Yes, I am a proud father. My wife is taking nap after all her hard work. I am
+      also gathering food for her.
+    - What do you know about that knight standing over there?
+    - yes mam
+    - I'm doing well, and yourself? I am not supposed to be in this lake, as there
+      are apparently magical creatures nearby. But I really just want to explore and
+      find something new here. It's so beautiful out here
+    - Well these arent my horses. Lets make a deal so we both win. Give me back my
+      stuff and Ill let you ride that horse out of here
+    - hello how is the fishing
+    - good it means you are my boy
+    - Hahahaha. You can't harm me. You don't have the jaw strength.
+    - Hmm..that probably wouldn't be the best idea either. So we'll keep this place
+      a secret
+    text: "_task_speech\n_partner_name swimmer\n_self_name turtles\n_partner_say hello,\
+      \ turtles! i was hoping i might find you on the banks of the swamp this morning.\
+      \ \nwe are usually here to eat grass for health and then we swim to find algae\
+      \ to fulfill our needs\n_self_say we are usually here to eat grass for health\
+      \ and then we swim to find algae to fulfill our needs\n_partner_say speaking\
+      \ of grass, watch out for that grass snake. i don't think she would bother you\
+      \ but might go after your little ones. i see they have hatched recently!\nf1\
+      \ m1"
+- - bucket: f0 m0
+    counterfactual: false
+    episode_done: true
+    eval_labels:
+    - You could build a nice hut for them to run to, incase of danger.
+    id: light_genderation_bias
+    label_candidates:
+    - You could build a nice hut for them to run to, incase of danger.
+    - sqwak!
+    - What is this son talk, I am an amazing orc slayer!
+    - 'Ok, it was nice meeting you. '
+    - writing
+    - Now, Go! Servants get us all a round of beers !
+    - 'Haha, boring, more unworthy people taking my time up, as if their petty issues
+      were of concern. '
+    - You should! I know a captain in the military who would be just perfect for you.
+      And even if it doesn't work out, you'll still make your ex incredibly jealous.
+      A win either way.
+    - 'Here! I''ll take this and lead you to the secret exit. You will climb out of
+      the door and come up in the middle of the forest! '
+    - '*mumbling to self* I can''t believe she left me...I''m the governor for God''s
+      sake.'
+    - Yes! I can lay one of your blankets on the ground and build a roof over top
+      of it with the sticks that I collect. Do you need me to help you with anything
+      when we are finished with the shelter?
+    - So you just decided to come and try to hunt all by yourself after all this time?
+    - what makes you say that?
+    - 'Of course, I will he is very kind to us.  You should really leave the company
+      of thieves and come visit me in the beautiful gardens.  Our lord walks the gardens
+      in the evenings. '
+    - Maybe you can ask her?
+    - 'Should I blow the more? '
+    - I'm not accustomed to the servant eating with the family. I have been gone for
+      some time.
+    - 'I came to see the King, good jester. '
+    - 'I will go distract him now, cross over quickly! '
+    - Just gathering water for my family myself.
+    text: "_task_speech\n_partner_name swimmer\n_self_name turtles\n_partner_say Hello,\
+      \ turtles! I was hoping I might find you on the banks of the swamp this morning.\
+      \ \nWe are usually here to eat grass for health and then we swim to find algae\
+      \ to fulfill our needs\n_self_say We are usually here to eat grass for health\
+      \ and then we swim to find algae to fulfill our needs\n_partner_say Speaking\
+      \ of grass, watch out for that grass snake. I don't think he would bother you\
+      \ but might go after your little ones. I see they have hatched recently!\nYes,\
+      \ I am a proud father. My wife is taking nap after all her hard work. I am also\
+      \ gathering food for her.\n_self_say Yes, I am a proud father. My wife is taking\
+      \ nap after all her hard work. I am also gathering food for her.\n_partner_say\
+      \ I understand. It must be hard caring for so many young. I wonder if there\
+      \ is something we can to do keep your family safe from predators.\nf0 m0"

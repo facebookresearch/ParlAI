@@ -1,0 +1,441 @@
+- - - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - We Navy mariners are ready to do our part to protect our fine harbor city!
+      - Well I'm going to give you the worst case of indigestion ever!
+      - Brains, brains, brains...I'm so hungry for brains.
+      - Hold up.  Say whaaaaaat?  That can't be right.
+      - Not really, it is quite monotonous but in a good way.
+      - I heard the dragon queen has landed.  Usually I do not care for human drama,
+        but she sounds like she'll burn all my food sources away@
+      - Mark my words... we will make our escape. I cannot stand two good, law abiding
+        men being imprisoned for trying to make honest livings. Are you able to stand?
+      - Of course, Your Majesty. How can I help you?
+      - Pleasure, I'm sure.  Mayhaps I'd best wait with ye here until they come ta
+        open the door for ye.  Can't be too careful.. nay... never too careful...
+      - My father’s father’s father had that statue made. Did you know that?
+      - I am very strong
+      - I enjoy the scream of terror people make.
+      - 'I am sorry I am bit nervous about it. I have been accused of practicing witchcraft
+        and sorcery. '
+      - Thank you I just need some nutrition.
+      - Sure, no problem. Just point the way and I will tip toe around the carpet
+        to the tub. I hope there will be bubbles!
+      - I have been on this road before, time to relax
+      - hi
+      - I see. How sad of a life that must be? You have no family?
+      - wait i do not judge i was simply curious
+      - Seven years this June. And there is no finer job than protecting you,Sir.
+        Serving you is my only desire...aside from my jewelry, of course.
+      labels:
+      - I am very strong
+      text: '_task_speech
+
+        _setting_name weathered shack, Abandoned
+
+        _setting_desc A weathered shack with a roof made of old broken tiles sits
+        in the middle of the forest. The wood is starting to split and the shack appears
+        as if it will crumble at any moment.
+
+        _partner_name animal
+
+        _self_name man
+
+        _self_persona I am a strong man. I work in the fields and pastures all day.
+        I take of my master''s sheep. One day I hope to have my own sheep.
+
+        _object_desc a mildew : The mildew grows everywhere and the smell begins to
+        make you sick.
+
+        _object_desc a wood : Looks like the tree was struck by the lightening because
+        the wood has a very unusual patterns
+
+        _object_desc a fence : The fence is made of wood.  It is long and keeps intruders
+        out.
+
+        _object_desc a tile : Upon closer inspection, the tile seems coated with a
+        mixture of candle wax and lamp oil. Whoever did this hope to cause someone
+        pain.
+
+        _object_desc a shack : The shack looks like it could collapse any second.
+
+        _object_desc an a basket : The basket is woven with an intricate design.
+
+        _object_desc a hoe for digging : The old garden hoe has been worn and rusted
+        from tending to the sacred garden.
+
+        _object_desc a sickle : The handle has been worn from use, and the blade is
+        old and caked with dirt. This is a real farmer''s tool, not something that''s
+        been used as ornamentation.
+
+        _object_desc a shoe : An item of clothing worn on ones feet. Used to protect
+        the food from the ground as well as decoration.'
+    - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - Oh, the women weren't for sacrifice - my sister will be soooo relived sacrifice
+        is not your thing, let me tell you.  They'd really like the whole death thing
+        to go away, they think it's kind of a bummer.
+      - looking for some jewels
+      - 'Hello, garderner. This shed is in terrible condition. '
+      - Fantastic, Your Highness! You won't be disappointed. Let's see, we'll need
+        roast goat, fresh vegetables, boiled greens, fruit, bread. Anything else you
+        can think of?
+      - So, you like to have a few drinks, do you? You're my kind of traveler.
+      - Maybe, one day, dear fish, we will meet again in a different life. We may
+        even be buddies for a long time, or the same species and have a family together.
+        My guilt will remain with me until i to die!!!!!!
+      - 'Ah yes! The man who shot an apple as it fell from a tree and still hit a
+        bulls eye! '
+      - My apologies. My friends and I have just been traveling for a while and are
+        still a bit restless from the journey.
+      - On to you? On to you about what?
+      - Hello, are we set for the hunt?
+      - That is a matter beyond my control I'm afraid. The contracts upon enlistment
+        do explicitly state that pay is a direct percentage of treasure brought in
+        from the excursion.
+      - I will steal in peace
+      - Thank god. It's disgusting in here! Did the king send you?
+      - Hello and what seems to be the problem?
+      - 'This isn''t fair! That king should get off his high horse, and fight his
+        own war he started. The orcs never bothered us still he provoked them. '
+      - Everyone has a bow and arrow.  That will not make any impression on anyone!
+        What about this battle ax?
+      - Uh oh! I've accidentally thrown a dagger the wrong direction!!
+      - Yeni, the nearest one to this place. Are you not from there?
+      - This is perfect, what shall I have to do for it?
+      - 'You see how the tip is discolored? They would dip the tip in rattlesnakes
+        venom. So every hit, be it a scrape or a shot to the heart, would be fatal.
+        It is made of wolves bones. They believed that using the bone of a wolf would
+        channel courage and ferociousness into their hearts in battle. '
+      labels:
+      - looking for some jewels
+      text: '_task_speech
+
+        _setting_name Confessional, Inside Church
+
+        _setting_desc The room is a small box, composed of sharply cut stone. The
+        room is uncomfortably small, and filled with a lingering scent of something
+        unfamiliar to the occupants.
+
+        _partner_name an altar boy
+
+        _self_name king
+
+        _self_persona I am the king. I rule this kingdom alongside my wife, the queen.
+        It is my divine right to be the king because my father was the king before
+        me.
+
+        _object_desc a candle : The candle is burning, with its wax running down the
+        side.
+
+        _partner_say Hello, What brings you here today?'
+- - - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - ' if I admit that it is so ...'
+      - What are you doing around these parts? I usually hate talking to humans.
+      - Oh I have seen that expression before. I'm gone!
+      - Why all the insults? Rise above being something as petty and useless as a
+        bully. What we need from you is guardianship. We wish to travel, and we need
+        someone to ensure our safety.
+      - Hmm. On second thought perhaps its best the maid not make her way here. Would
+        probably just make an even bigger mess of things. Say have you happened to
+        see my embroidery needles?
+      - I'm afraid not. My family doesn't have much money, you see, but I love to
+        read the ones in the library here
+      - 'I wonder who will be the heir to the throne. Me or you. I bet mum has it
+        hid somewhere in here. Surely we both cannot be. '
+      - Food?
+      - Ha! I am a... I mean THE political rival to the sitting king. I will take
+        his reigns. A storm coming from the west is not unusual, eh?
+      - What animal are you?
+      - Of course my child.  I will replace all the other Gods in my rightful place,
+        on the Throne of Power.  All the humans of the town, the Province and THE
+        WORLD will do my bidding!!!!
+      - Don't hit me because you have no manners. I hit back
+      - 'Thank you. I am cold, this Wing is so open and barren that it just lets the
+        wind inside. '
+      - There are plenty of those in the forest I live in!
+      - The story where he challenged the king of persia, and demanded release of
+        all illegal captives wthout any soldier
+      - Well... Its  not. You can die for all I care
+      - I might have a solution for you
+      - What a used up, tired insult!
+      - What has happened there?
+      - Please think of my needs.  Could you possibly tell me how to escape from the
+        tunnel.  I will make sure you get all the apples you want
+      labels:
+      - What animal are you?
+      text: '_self_say I am very strong
+
+        _partner_say You may be strong but I can hear the threats you cannot. '
+    - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - That would be my pleasure, your grace
+      - 'Will you let me pass? '
+      - No, not far. I'm just here to enjoy nature and pick a few flowers for the
+        queen's room.
+      - Ha! You think for a moment that you can rush this process? I am the most powerful,
+        mayor. Even more powerful than you. We will begin shortly but not until I
+        have decided.
+      - When it glows a golden color, it will have activated.  I think I remember
+        the words to the spell...  Here, grab this end here and stand on the opposite
+        side of the door.
+      - Ah yes, of course. I'm sorry, my glasses weren't on my face where they should
+        be! How have your studies been?
+      - Hello?
+      - Well then cheers to that! Would you like to try some sushi?
+      - Shall I tell the Queen what you said about her taste?
+      - Well, you see this funny haircut I am wearing. That priest, is the secret.
+        Now, I know it sounds silly. But it is true indeed.
+      - well what good would that do me?
+      - its ok sweetheart. Your husband is a noble person
+      - 'It looks like it''s to the north. Are you moving to the village? '
+      - Yes. There you go. Be sure to conceal it in your mouth so he doesn't see it.
+        .
+      - I also have another mission for you. Keep an eye out for the knights templar,
+        they are a secret society that will bring about the antichrist
+      - '* buzz buzz * ooo what a lovely place iv''e flown into * buzz buzz *'
+      - This food is edible. If only by someone who is famished. I will be going away
+        for some time in two days time. I would like you to make sure that every animal
+        in this room is accounted for when I return. No one else in the caste is to
+        eat my animals. None of the animals are allowed to become sick either. Is
+        that understood? And please tell me. Do you have children?
+      - As you wish, my king.  I shall ready the men at once and have the traitors'
+        leader to you by the morrow!
+      - Who are you calling little? I'm big! I'm mummy and daddy's favourite!
+      - Not if I end you before that!
+      labels:
+      - well what good would that do me?
+      text: '_self_say looking for some jewels
+
+        _partner_say You have come to a confessional, Sire.  There are no jewels here.  Only
+        a place to confess thous sins. '
+- - - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - You are quite good at scheming aren't you. How long have you thought about
+        this plan?
+      - I make webs and catch bugs.  Sometimes the witches use my spider-silk as ingredients
+        in their cauldron.
+      - You do a fantastic job at it
+      - Meew!
+      - I seek the blessing for a crusade I must embark on
+      - Only to ask what you think of this castle my friend. I trust your instinct.  I
+        want this castle to be mine.  Do you think I can fix it up to house me and
+        my family?
+      - Hey kitty! Want a toy?
+      - aww
+      - Who knows, as far as unicorns go this is unexplored territory
+      - Ah, friend, sometimes I envy you. Not much of worries, ignorance is bliss.
+      - Unless you plan on using that, I suggest you give it back. And by the looks
+        of your hands, you aren't too familiar with man's work.
+      - And what is this business?
+      - I play with my best friend, Horse. We live in a barn and play hide and seek
+        in the hay, I am a brown mouse. The bell tower is so tall.
+      - Ever made armor for a cat before?
+      - Indeed. The king has been kind to my family and I.
+      - Do you hear her talking? Thank god she doesn't.
+      - This is correct, are you the priest here?
+      - My pretty little one,  you know that I need only to speak to them and gaze
+        upon their faces and they will do my bidding.  Just as you would rather take
+        your own life than disappoint me.
+      - Thank's I will  need it.
+      - 'Aiiiieeeeeee.  How could youuuuuuuuuu? '
+      labels:
+      - aww
+      text: '_self_say What animal are you?
+
+        _partner_say I am a dog and I am here to keep you safe.
+
+        _self_act hug animal'
+    - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - It’s a long story. At first I wanted to escape, but villagers took care of
+        me. And to be honest... I don’t miss city life. It’s more peaceful out here.
+      - Oxpool is the home to my dearly departed uncle.  I frequented his estate as
+        a child and dipped my toes into the cool water by the bridge often.   Listen,
+        I hear the jolly singing of the friar!  He will be here shortly.
+      - One step closer and I bite you and share my rabies with you!
+      - 'Hey there friend, you should come with me and sneak into the city. '
+      - 'I think I''ll consult with the general first. He''s always so good at devloping
+        strategies. '
+      - Yessss, what isss it you need?  Tongue of sparrow?  Eye of Newt?  Sssskin
+        of sssssnake?
+      - Oh well, you can't have it all. I get bones from them.
+      - some additional leaders there to control them
+      - i'm not sure i haven't been here in awhile
+      - Such wise words my friend. I bow to your wisdom.
+      - Well of course steady the bow and pull it back
+      - I will not forget the advice you've given and one of my kin do become ruler,
+        I will see that you see out the rest of your life in ease and care.  I will
+        be back!
+      - No worries, it seems to be honest work. There is no shame in getting a little
+        dirty.
+      - That is why I am here, I was summoned for a special task.
+      - shhhhhhhh....dont make a noise
+      - 'I''m no expert in art. Maybe you can tell me more about its history. '
+      - RETRIEVE YOUR LEGS WITH THE MAGIC CRYSTAL
+      - HE SINNED. HE HAD TO DIE. JUST LIKE YOUR COUSIN AND YOUR SISTER.
+      - Ahh, a nice place to read a book isn't it?
+      - Thanks! I will feed the horses some hay while you do that. Do you like it
+        here?
+      labels:
+      - i'm not sure i haven't been here in awhile
+      text: '_self_say well what good would that do me?
+
+        _partner_say Something must have brought you here.  Do you have something
+        on your mind that you wish to free your soul from?'
+- - - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - I'm sorry, I was rude. I just need some of your scales for a potion to teach
+        my appreciates how to brew.
+      - I am very devoted to my work
+      - Ah, that's a shame, tis indeed.  Fer I've something of a bit of a ... pressing
+        matter.  Is there no way ta be seen this day?
+      - Ah! Good day to you, sire! Forgive my disposition, for I am still finding
+        my land legs. I bring good tidings from your Royal Navy!
+      - It is.  Can you imagine sticky children's fingers running through your mane
+        forever?  Gross.
+      - Thank you so much! I come to this entry way each day and get shooed by other
+        parishioners. You are a true man of God.
+      - 'hummmph .... alright then. What brings you ere? '
+      - 'for safe keeping, as of right now youre my #1 fan'
+      - lol, wow that must have been something.  Oh!  I see a sea dragon.  quick we
+        must defeat it
+      - ok
+      - Where is it, maybe i could help you scare it away?
+      - I don't like my husband very much. I was actually thinking of having a affair.
+        If you put him into a permanent sleep, I'll give you enough riches to feed
+        your village.
+      - Do you think someone is there?
+      - Well, it's a pleasure to meet you. You better believe I'll be back to get
+        some. I cant wait!
+      - ok, I like you I think I can ask the wizard in the quarters to turn me into
+        a pretty lady cat so i can  be  be your  girlfriend
+      - Where you ever a servant? I cannot even read I don't know how the king will
+        give me the time of day.
+      - Want to make a deal, knight?
+      - 'I couldn''t find the candles this morning. '
+      - 'I have been staring at you for a long time, waiting for you to leave so I
+        can eat the crumbs on the floor. '
+      - What about him visiting, dear?
+      labels:
+      - Do you think someone is there?
+      text: '_self_say aww
+
+        _partner_say I can hear the wood in this house starting to split. This is
+        not safe.'
+    - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - Aye with me leading the battle we shall surely not lose this time.
+      - I guess i haven't treated people with respect in my life
+      - He screams and tries to get out but its impossible at least until my death,
+        that will be a dark day for humanity I must train another priest so that the
+        king remains inside the skull
+      - Oh, hello there. Are you lost?
+      - 'Why steal when I could conjure you something to eat? My talents are wasted
+        here. '
+      - It is quite filthy here isn't it.
+      - I can see throwing you in prison for the rest of your life, or cut off your
+        arm so that you can't steal anymore.  But torture?  That just seems inhumane.
+      - If only my life were that simple, taking what I need when I want. As it is,
+        I toil every day but I barely eat.
+      - Aw, but it was so nice. Surely we could come to some kind of compromise!
+      - -flaps around the field-
+      - '...State your business.'
+      - Certainly I would be glad to.
+      - Darling, I'm sorry. I'm just not made for common work. Wouldn't want to break
+        a nail or something horrid like that.
+      - Its a groom. A man, who is getting married. I wonder where the wife is at
+        though.
+      - 'this place is quite decrepit, great for old food '
+      - No, the other decision. The one about you learning to sing to woo the princess.
+      - chittering at the ghost, my fur standing on end
+      - No. I must admit the name makes me a bit anxious. I tend to worry a lot.
+      - why would you have me fight my president!
+      - '"Well, quite obviously, I''m not... terribly interested. Not that you''re
+        bad looking, but. You know. I can appreciate art, but."'
+      labels:
+      - I guess i haven't treated people with respect in my life
+      text: '_self_say i''m not sure i haven''t been here in awhile
+
+        _partner_say You can meet with a priest in here and speak your heart.  A king
+        must have a lot on his mind and have to do things that may or may not convict
+        your heart. '
+- - - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - father before you became a month what were you doing for profession
+      - Church mouse you took so long to respond I forgot what we were talking about.
+      - last night. He asked me to serve him wine and I did, then...then....
+      - Hi
+      - My father *punch* taught me *groin kick* how to *knee kick* defend myself
+        *headbutt*
+      - I see and how does his enlistment affect you. Do you support it?
+      - I see. Thank you for your feedback. Maybe we could use this skeleton to craft
+        a way out of here.
+      - That's comforting
+      - Hello, little guy. You'd better not let the queen see you!
+      - You tell me, your majesty. I was dragged here by your guards!
+      - Hey there, are you with kitchen tables?
+      - I am in charge of the most important section of the castle
+      - Oh  thanks! I see a couple of caps there. Are there many other cooks that
+        work in this kitchen?
+      - Is that even possible?  What would I have to do?
+      - Repent, and pray, and read the scriptures.  Let me assist you.
+      - 'The diamonds that pepper the walls and floors! Noone has been able make it
+        out of here alive. '
+      - Make you king? Not an option.
+      - I am so glad you found your way to our pond and forest. We will live in harmony
+        for the rest of our days.
+      - Oh, I didn't see you in here. Well, sure, if you'd like to.
+      - Oh? How much does it pay?
+      labels:
+      - That's comforting
+      text: '_self_say Do you think someone is there?
+
+        _partner_say I think there is a girl here too'
+    - episode_done: false
+      id: light_dialog
+      label_candidates:
+      - yep, and then they blame you when things don't go the way you want
+      - thanks for the help this seems like a good place
+      - You've caught me. I burned down the library before coming here
+      - 'Oh, that...I found that in a house along the alley. I thought I could use
+        it for nesting. It felt nice. '
+      - I pray so. Until then, I'll do my best job cleaning.
+      - Crimes such as what?!
+      - Indeed, I am vegan depending on my mood of the day. Today I am relaxed and
+        happy, so I choose to be vegan
+      - ok lets do it together then I am willing to help you
+      - I am keeper of the Royal Hearth. I attend to the fire, keeping it burning
+        for the King and his guests' comfort.
+      - You are asking me details we have already discussed.
+      - 'Can you see anything under there? '
+      - You must have missed the last path
+      - Interesting. Well, I see no cocaine or any other drug around here. I'm only
+        interested in cheese.
+      - Thank you! I have been perfecting it over the years.
+      - Yes.With your webs
+      - Well, it's your word against the Saint . . . and he was a Saint before his
+        martyrdom.  Have you ever written a book or started a religious cult named
+        after yourself?  No?  I didn't think so.
+      - Oh, how old is he?
+      - public execution today in the square
+      - Yes yes, I'm listening.
+      - Fine, see that rock over there?  There is a tiny hole hidden by a cleft, just
+        large enough for me to dip my hand in and bring out a handful of water, or
+        catch a fish if I am lucky.
+      labels:
+      - thanks for the help this seems like a good place
+      text: '_self_say I guess i haven''t treated people with respect in my life
+
+        _partner_say Please don''t confess to me.  I''m a lowly altar boy but I shall
+        pray for you.  If you ever need a trustworthy right hand at your throne...I
+        am someone who can be trusted.  '

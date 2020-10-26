@@ -1,0 +1,335 @@
+- - - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - me too . i really like watching the dolphins toss red balls in the air .
+      - my only son doesn't like veggies either .
+      - cool . what do you look like ? i'm just a poor student .
+      - ok , i'm married with children but try to fine time for self
+      - what time do you get off ? i totally can relate .
+      - cool , when did you marry your husband ?
+      - i live in portland in maine , so there are quite a bit of beautiful subjects
+        to photograph
+      - why are you confused ? maybe i can help
+      - hurry up . i need to go meet up with my friends
+      - i like to spend time with my family , friends . one has a tattoo .
+      - yes . buns in the oven . you met my 3 children ?
+      - i don't get to watch much television with my farm work . do you ?
+      - i love me some beef , just got back from college .
+      - i do enjoy watching gold and tennis but not playing it
+      - that's very u neat name
+      - that's is just me ! i drive a truck for a living so i do what i want !
+      - awww how cute , i pet sit , not quite the same , but they are my students
+        !
+      - good morning , how are you ?
+      - i'm trying to cut out the middle man and cater directly to my clients .
+      - pretty good . finally have a day off from the airport unless another plane
+        breaks down .
+      labels:
+      - pretty good . finally have a day off from the airport unless another plane
+        breaks down .
+      reward: 0
+      text: 'your persona: i prefer vinyl records to any other music recording format.
+
+        your persona: i fix airplanes for a living.
+
+        your persona: i drive junk cars that no one else wants.
+
+        your persona: i think if i work hard enough i can fix the world.
+
+        your persona: i am never still.
+
+        partner''s persona: i make cars for a living.
+
+        partner''s persona: i like to sit on couch all day.
+
+        partner''s persona: i love mac and cheese.
+
+        partner''s persona: i make 30k a year.
+
+        hey how i would it going'
+    - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - hi my name is jason and i'm built and tall , i'm a beatles fan !
+      - lol . i bet they love that . i was raised in new hampshire
+      - drinking glass of wine while painting is something i love
+      - right now , gas ! i ate too much mcdonalds today , del race yesterday !
+      - that's very cool ! what kind do you make ?
+      - greyhounds , i've two of them .
+      - i've a decent amount myself
+      - i just moved to colorado if i ever move again i will check that place out
+      - being unemployed i eat more at home
+      - yes , i've a dog , too . called sparky . how many do you have ?
+      - i'm doing well tell me about yourself . i'm a retired mature woman .
+      - well i was schooled professionally actually . my job as a lawyer takes all
+        my time .
+      - no but i love safety patrol my first day is tomorrow
+      - what do your parents do ? mine are doctors .
+      - both of my parents are currently retired
+      - the doctors gave her another 6 weeks or so to live . what do you like to do
+        ?
+      - cool ! so what do you look like ?
+      - in my room . no one loves me , so i've no reason to leave .
+      - i think that's about it . mainly my guitar and video games .
+      - him good just got home
+      labels:
+      - him good just got home
+      reward: 0
+      text: 'your persona: i''m in the navy.
+
+        your persona: i am an orphan who was in the foster care system.
+
+        your persona: i listen to folk music.
+
+        your persona: whittling is my favorite hobby.
+
+        your persona: i went to a community college and got a degree in communication.
+
+        partner''s persona: my mom is my favorite person of all people.
+
+        partner''s persona: i''ve to live by a schedule in order to keep my mind right.
+
+        partner''s persona: i am in high school apart of the school band.
+
+        partner''s persona: i love watching greys anatomy.
+
+        hello how are you ?'
+- - - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - no i live alone with my 4 cats . are you married ?
+      - hello , how are you ?
+      - i have a feeling you will succeed . because you are focused .
+      - oh cool . do you work ? any hobbies ?
+      - is that close to your house ?
+      - lucky . i'd like to visit there someday .
+      - not at all . it was very difficult
+      - wow that is a lot . what are your hobbies ?
+      - hi ! laying in bed reading . how about yourself ?
+      - i have seen them in chocolate and in hard candy .
+      - and they will realize one day how good you are to them . keep it up !
+      - i travel a lot . my parents live on opposite sides of the world since the
+        divorce .
+      - oh i hear you ! i just lost my job as a farm hand
+      - i guess you could put it that way
+      - that is true i am not brave enough for that
+      - what a coincidence , i have made maps for them before !
+      - wonderful ! you know i really like the color palettes used in that show game
+        of thrones
+      - yes , my bf of 5 years got the broom lol , kicked him the chest it was funny
+        !
+      - have you read my article in the new yorker ?
+      - oh , i love cars . never spend more that 100 on one though . junk to some
+      labels:
+      - oh , i love cars . never spend more that 100 on one though . junk to some
+      reward: 0
+      text: wow sounds like you are on call , i create cars for a living
+    - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - that would be nice . i think that is a good idea .
+      - i was just telling somebody earlier i might pick up a cheap steak . don't
+        know yet
+      - it is in the hospital , but i'm taking online courses to get another job
+      - that would be interesting . i like cat cartoons .
+      - i ride them you hater
+      - i wasn't sure i would like it since i'm a truck driver , but .
+      - cool i'm an artist and i draw a lot .
+      - no , i've not heard of it , i like nirvana as well .
+      - me neither , i don't have any kids or close family .
+      - i'm between classes now in a rush
+      - it is a timeless place that no one will ever forget in my opinion
+      - does he support your music career ?
+      - what is your professional job
+      - i was and i don't believe love
+      - i think i'm in the mood for a la carte ice cream and a soft .
+      - yes sir he does i love me a good action movie
+      - good to find time . nice to have computers in our pockets now .
+      - yeah i would hate for a tree to fall on me or anybody
+      - never saw any of his videos
+      - traffic was crazy on the way back from whittling convention held at the community
+        college
+      labels:
+      - traffic was crazy on the way back from whittling convention held at the community
+        college
+      reward: 0
+      text: me too . the bus takes forever from the high school .
+- - - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - very cool . i shoot short films with my cam my folks got me .
+      - good job . do you have any hobbies ?
+      - i'm always online with my friends
+      - no but i did enjoy science in high school
+      - i eat meatloaf with my mother as often as i can .
+      - i'm studying to become a teacher
+      - i'm fine , miss my mom a little .
+      - that is a very inspiring field , i currently do teach yoga
+      - i'm hungry an the best food
+      - i guess its just i have 10 years more experience but she gets promoted !
+      - good for you , i need to practice more self control .
+      - yeah , you should have been kicked out for touching people against their will
+        .
+      - i can't talk about food . i make boats though
+      - hey .
+      - sure i'll go with you but i'm baking a pizza right now , my favorite . come
+        eat .
+      - video games are cool what do you play
+      - wow i travel a lot to participant in civil war reenactments , and to visit
+        my mom .
+      - i'm having dinner , which is meatloaf every night and never get tired of it
+        . haha !
+      - that still sounds young , how sad
+      - yep , i love to work on cars , airplanes , love to keep busy .
+      labels:
+      - yep , i love to work on cars , airplanes , love to keep busy .
+      reward: 0
+      text: cool you restore cars ?
+    - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - oh nice . i've a job editing books . it really is my dream job .
+      - how old are you lol ?
+      - i appreciate classic rock as well . particularly april wine .
+      - me either . i get uncomfortable in formal situations . you ?
+      - yeah , maybe you are right , i'm obsessed with movies and filming
+      - text me and let me know how it was . text me , don't call
+      - just a dog . he has to listen to my corny jokes !
+      - well you should be . i pull in 7 figures every year for my hot wife and kids
+        .
+      - i listen to the radio in my truck . mostly country . my dog likes beethoven
+        . a little joke .
+      - i don't do much of anything
+      - whew ! doing homework for my online classes . what about you ?
+      - that sounds fun . is it for family ?
+      - i didn't know that . but i should know .
+      - awesome . i'm currently a librarian at my local library .
+      - nice , well , have a good night . and remember perseverance .
+      - my mom was 30 and my dad 35 . do you have any hobbies ?
+      - that is good to hear . how long have you lived in texas ?
+      - a rare genetic disorder i'm afraid .
+      - been a vegan for 50 years . named my cat cow as i love cows so much .
+      - my foster dad showed me folk music is the best in traffic
+      labels:
+      - my foster dad showed me folk music is the best in traffic
+      reward: 0
+      text: i hate traffic . my marching band held up traffic for hours last week
+        .
+- - - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - i love potato chips and chicken
+      - yes i live in 4 walls made out of drywall .
+      - no , i don't , but it does sound like a great activity for me and the kids
+      - i'm an only child . i was a lonely child .
+      - i can pick up your recycling with my big van .
+      - i wouldn't tell him . you'll like me , i'm going to be a rich lawyer .
+      - i like to play basketball , i'm not great but i play
+      - i'm actually from there . i never learned to dive as public transport is so
+        good
+      - cats are nice . maybe i will get one with all the free time i've .
+      - the 1 that's around there i'm trying to fish
+      - what kinda engine you got in that there mower ?
+      - fps and racing games obv lol
+      - starting is good . keep it up ! how far do you usually run ?
+      - i read and mourn my terrible decisions
+      - i need some stable friends , i feel lonely sometimes .
+      - reading anything good at the moment ?
+      - i also love blue !
+      - not any more after the accident i gave them away
+      - ever been to canada i been twice my whole life
+      - i don't know . i just cannot sit still , work everyday , my partner does the
+        taxes .
+      labels:
+      - i don't know . i just cannot sit still , work everyday , my partner does the
+        taxes .
+      reward: 0
+      text: very nice , how much do you make a year ?
+    - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - can you take the train where you live ?
+      - i can't drive yet though i wish i was
+      - i love to travel , my father is in france somewhere . i have never met him
+        .
+      - i like the sims . i just got the halloween expansion pack i love that holiday
+      - not really . still live with my folks and they find it is a waste .
+      - yes , lots of snow . . . and moose !
+      - i played for a few years . i prefer it over football any day .
+      - my girlfriend loves chicken . we can get good chicken here in the city .
+      - tell me more about yourself !
+      - we have dorms here in tennessee . what are your hobbies ?
+      - i took them to see a match in new york city once
+      - i'm fine , how about you ?
+      - i love the paino . my wife plays because she's a housewife and teaches the
+        kids
+      - i might do some activist work there , to help build houses
+      - that's beautiful ! my claim to fame is . i say my abcs backwards .
+      - nice ! i like to find vintage furniture at thrift stores . find anything good
+        lately ?
+      - do you enjoy dancing or sports ?
+      - i think with enough coffee and booze anything is possible
+      - i'm tall , i like running , and i'm staunchly pro iphone
+      - high school is cool but best days were in community college
+      labels:
+      - high school is cool but best days were in community college
+      reward: 0
+      text: your foster dad sounds cool . my mother is so awesome ! ! !
+- - - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - i mostly just watch the kids and the dogs .
+      - anything you want to tell me about yourself ?
+      - hello , how are you today ?
+      - what is your favorite color
+      - i am a 29 year old man . and my love for the sweets and the godfather !
+      - i like to garden and love the outdoors . do you garden ?
+      - yes i have a cat she's so cute
+      - ll . i love to read any mystery novel .
+      - i like hindu food . i am not a very good baker though . my mom has mastered
+        that .
+      - the yellow labs , they give me advice on seafood allergies .
+      - oh no ! . i am very sorry to hear about that .
+      - i believe it , haha . want to meet up and go for italian ? yum ! my fave .
+      - my only sister has the same feelings as you do .
+      - where were you born ? i was born and raised in france .
+      - good afternoon , how are you ?
+      - i go almost every weekend , it is one of my favorite past times
+      - i also enjoy diving . need to go back soon .
+      - oh yeah most people like pretty pictures . so you married man ?
+      - i am really into anime !
+      - oh , i am pretty sure a bit more that that as i get lots of ot .
+      labels:
+      - oh , i am pretty sure a bit more that that as i get lots of ot .
+      reward: 0
+      text: o okay was wondering i make 30k
+    - episode_done: false
+      id: convai2:both
+      label_candidates:
+      - that's it ? all day ?
+      - oh no . why are you bummed out ?
+      - it is what i focus on during my free time
+      - i am from a small place called toronto
+      - i am actually in band in high school . i play the drums
+      - um okay ! so what do you do ?
+      - oh okay . i love blue on everything . how many jobs you have ?
+      - no , she passed away when i was 18 . thinking about russian recipes she taught
+        me ,
+      - in college , i was a majorette and cheerleader . baking put on a few pounds
+        .
+      - i am hoping so . fortunately , he was smart and so am i .
+      - yes i enjoy hiking and i bring my digital camera with me .
+      - i do not have much of an opinion . you ?
+      - hello . how was your weekend ? i finished reading three books .
+      - cool ! i love rap music .
+      - no . you must though , if you are asking .
+      - i am not sure i follow what you are saying .
+      - i am doing great . what do you do for a living ?
+      - that's pretty innovative , do you have a favorite cookie ?
+      - oh , that's impressive . my dads in the elks and he is in a club like that
+        .
+      - maybe you can go to the navy like me after graduation ?
+      labels:
+      - maybe you can go to the navy like me after graduation ?
+      reward: 0
+      text: i hope to graduate this year before i turn 22

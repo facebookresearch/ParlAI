@@ -1,0 +1,194 @@
+- - - episode_done: false
+      id: cornell_movie
+      label_candidates:
+      - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+        ourselves.'
+      - '  DELETE IN CUTTING'
+      - '  I''ve got the real thing!'
+      - '  Oh, we''re screwed, Night...'
+      - ' ...Mason.  I can barely hear you.'
+      - ' ...checked.'
+      - ' ...or it''ll ignite.'
+      - ' ...shit!'
+      - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a
+        tomorrow...'
+      - ' All right.  Hey.'
+      - xxxxxx
+      - y-y-yes--
+      - yeah, yes, hi, hello.
+      - yeah.
+      - yeah?
+      - yet cannot love nor write it.
+      - you'll need one more hit.
+      - '{suddenly unctious) Oh, but of course ...'
+      - '|      It''s not working. You''re not doing it properly.  Ni!'
+      - ~Don't shoot, G-Men..."
+      labels:
+      - Elijah who?
+      reward: 0
+      text: The question is, who are you? You are in the darkness, but it's not your
+        fault. Elijah Muhammad can bring you into the light.
+    - episode_done: false
+      id: cornell_movie
+      label_candidates:
+      - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+        ourselves.'
+      - '  DELETE IN CUTTING'
+      - '  I''ve got the real thing!'
+      - '  Oh, we''re screwed, Night...'
+      - ' ...Mason.  I can barely hear you.'
+      - ' ...checked.'
+      - ' ...or it''ll ignite.'
+      - ' ...shit!'
+      - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a
+        tomorrow...'
+      - ' All right.  Hey.'
+      - xxxxxx
+      - y-y-yes--
+      - yeah, yes, hi, hello.
+      - yeah.
+      - yeah?
+      - yet cannot love nor write it.
+      - you'll need one more hit.
+      - '{suddenly unctious) Oh, but of course ...'
+      - '|      It''s not working. You''re not doing it properly.  Ni!'
+      - ~Don't shoot, G-Men..."
+      labels:
+      - John.
+      reward: 0
+      text: Put the fucking kettle down.
+- - - episode_done: true
+      id: cornell_movie
+      reward: 0
+      text: Elijah Muhammad can get you out of prison. Out of the prison of your mind.
+        Maybe all you want is another fix. I thought you were smart.
+    - episode_done: true
+      id: cornell_movie
+      reward: 0
+      text: Put the fucking kettle down. Tell, Yuri, tell him put it down or I'm going
+        to make him.
+- - - episode_done: false
+      id: cornell_movie
+      label_candidates:
+      - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+        ourselves.'
+      - '  DELETE IN CUTTING'
+      - '  I''ve got the real thing!'
+      - '  Oh, we''re screwed, Night...'
+      - ' ...Mason.  I can barely hear you.'
+      - ' ...checked.'
+      - ' ...or it''ll ignite.'
+      - ' ...shit!'
+      - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a
+        tomorrow...'
+      - ' All right.  Hey.'
+      - xxxxxx
+      - y-y-yes--
+      - yeah, yes, hi, hello.
+      - yeah.
+      - yeah?
+      - yet cannot love nor write it.
+      - you'll need one more hit.
+      - '{suddenly unctious) Oh, but of course ...'
+      - '|      It''s not working. You''re not doing it properly.  Ni!'
+      - ~Don't shoot, G-Men..."
+      labels:
+      - What? You don't think I can have a normal life?
+      reward: 0
+      text: Joey...it's okay...
+    - episode_done: false
+      id: cornell_movie
+      label_candidates:
+      - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+        ourselves.'
+      - '  DELETE IN CUTTING'
+      - '  I''ve got the real thing!'
+      - '  Oh, we''re screwed, Night...'
+      - ' ...Mason.  I can barely hear you.'
+      - ' ...checked.'
+      - ' ...or it''ll ignite.'
+      - ' ...shit!'
+      - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a
+        tomorrow...'
+      - ' All right.  Hey.'
+      - xxxxxx
+      - y-y-yes--
+      - yeah, yes, hi, hello.
+      - yeah.
+      - yeah?
+      - yet cannot love nor write it.
+      - you'll need one more hit.
+      - '{suddenly unctious) Oh, but of course ...'
+      - '|      It''s not working. You''re not doing it properly.  Ni!'
+      - ~Don't shoot, G-Men..."
+      labels:
+      - Do I have to stand here in the middle and meet them all?
+      reward: 0
+      text: It's much too soon for you to have this kind of buzz around you.
+- - - episode_done: true
+      id: cornell_movie
+      reward: 0
+      text: Joey...look at me...
+    - episode_done: true
+      id: cornell_movie
+      reward: 0
+      text: I'll get you through.  Move and smile.  And smile and move...
+- - - episode_done: true
+      id: cornell_movie
+      label_candidates:
+      - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+        ourselves.'
+      - '  DELETE IN CUTTING'
+      - '  I''ve got the real thing!'
+      - '  Oh, we''re screwed, Night...'
+      - ' ...Mason.  I can barely hear you.'
+      - ' ...checked.'
+      - ' ...or it''ll ignite.'
+      - ' ...shit!'
+      - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a
+        tomorrow...'
+      - ' All right.  Hey.'
+      - xxxxxx
+      - y-y-yes--
+      - yeah, yes, hi, hello.
+      - yeah.
+      - yeah?
+      - yet cannot love nor write it.
+      - you'll need one more hit.
+      - '{suddenly unctious) Oh, but of course ...'
+      - '|      It''s not working. You''re not doing it properly.  Ni!'
+      - ~Don't shoot, G-Men..."
+      labels:
+      - What?
+      reward: 0
+      text: Don't!  I know about your husband.  You still like girls, Beth?
+    - episode_done: true
+      id: cornell_movie
+      label_candidates:
+      - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+        ourselves.'
+      - '  DELETE IN CUTTING'
+      - '  I''ve got the real thing!'
+      - '  Oh, we''re screwed, Night...'
+      - ' ...Mason.  I can barely hear you.'
+      - ' ...checked.'
+      - ' ...or it''ll ignite.'
+      - ' ...shit!'
+      - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a
+        tomorrow...'
+      - ' All right.  Hey.'
+      - xxxxxx
+      - y-y-yes--
+      - yeah, yes, hi, hello.
+      - yeah.
+      - yeah?
+      - yet cannot love nor write it.
+      - you'll need one more hit.
+      - '{suddenly unctious) Oh, but of course ...'
+      - '|      It''s not working. You''re not doing it properly.  Ni!'
+      - ~Don't shoot, G-Men..."
+      labels:
+      - No, why?
+      reward: 0
+      text: Lungs sound fine.  You didn't have any pre-existing physical conditions,
+        did you?  Allergies? Infections?

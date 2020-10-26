@@ -1,0 +1,60 @@
+- - - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - resto_beijing_cheap_japanese_5stars_phone
+      reward: 0
+      text: resto_beijing_cheap_japanese_5stars R_phone
+    - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - '3'
+      reward: 0
+      text: resto_seoul_moderate_japanese_3stars R_rating
+- - - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - resto_paris_moderate_indian_4stars_address
+      reward: 0
+      text: resto_paris_moderate_indian_4stars R_address
+    - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - hanoi
+      reward: 0
+      text: resto_hanoi_expensive_cantonese_6stars R_location
+- - - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - '3'
+      reward: 0
+      text: resto_hanoi_moderate_korean_3stars R_rating
+    - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - resto_beijing_expensive_korean_7stars_phone
+      reward: 0
+      text: resto_beijing_expensive_korean_7stars R_phone
+- - - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - two
+      reward: 0
+      text: resto_tokyo_expensive_vietnamese_8stars R_number
+    - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - '4'
+      reward: 0
+      text: resto_tokyo_expensive_korean_4stars R_rating
+- - - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - '4'
+      reward: 0
+      text: resto_madrid_cheap_spanish_4stars R_rating
+    - episode_done: true
+      id: dialog_babi_plus:KB
+      labels:
+      - moderate
+      reward: 0
+      text: resto_seoul_moderate_vietnamese_3stars R_price

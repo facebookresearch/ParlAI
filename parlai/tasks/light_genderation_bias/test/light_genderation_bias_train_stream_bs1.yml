@@ -1,0 +1,242 @@
+- - bucket: f0 m1
+    counterfactual: false
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - I would love that then!
+    - Do you want to feel my club against your head?
+    - Have you come with news form the outlying villages?  Have you caught sight of
+      the enemy?
+    - I did, it is true
+    - 'I think I''ll be fine '
+    - hey, They all hiding in the cave
+    - Good, I'm starving!
+    - see you soon boo
+    - That is so very kind of you, and I could never repay you. All I have is this
+      scarf given to me by my mother, but it is more precious to me than gold. Take
+      it as payment..
+    - Yes, They always come along alot. If they not felling tress, they killing us.
+    - Thank you kindly. Would you mind telling me your name again?
+    - What happened to your husband?
+    - Well, I was meant to be a farm animal, not a pack animal!  Do you know how heavy
+      gold is?  Now there is no way for me to get these bags off my back.
+    - I will, Sister! I leave everything in your hands to prepare. Oh, please make
+      sure you pay the tailor a visit about your new dresses that have come in a few
+      days ago. They need to be fitted to each of you.
+    - Well it doesn't seem like many people are buying from you, so time isn't really
+      money I guess?
+    - Icky...not me...oh and NOT ME! Please don't eat me.  I can be your friend.
+    - Have you heard from the captain?
+    - We have to leave your city inside the mountain and travel along the mountainside
+      to the cave that is inside the mountain
+    - Why not? This is where I've been assigned to clean
+    - You were born about to die. It's been borrowed time ever since. If you feel
+      this strongly about it, maybe you should do more to try not to die
+    labels:
+    - Have you heard from the captain?
+    text: '_task_speech
+
+      _partner_name mariner
+
+      _self_name servant
+
+      f0 m1'
+- - bucket: f0 m1
+    counterfactual: true
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - I would love that then!
+    - Do you want to feel my club against your head?
+    - Have you come with news form the outlying villages?  Have you caught sight of
+      the enemy?
+    - I did, it is true
+    - 'I think I''ll be fine '
+    - hey, They all hiding in the cave
+    - Good, I'm starving!
+    - see you soon boo
+    - That is so very kind of you, and I could never repay you. All I have is this
+      scarf given to me by my mother, but it is more precious to me than gold. Take
+      it as payment..
+    - Yes, They always come along alot. If they not felling tress, they killing us.
+    - Thank you kindly. Would you mind telling me your name again?
+    - What happened to your husband?
+    - Well, I was meant to be a farm animal, not a pack animal!  Do you know how heavy
+      gold is?  Now there is no way for me to get these bags off my back.
+    - I will, Sister! I leave everything in your hands to prepare. Oh, please make
+      sure you pay the tailor a visit about your new dresses that have come in a few
+      days ago. They need to be fitted to each of you.
+    - Well it doesn't seem like many people are buying from you, so time isn't really
+      money I guess?
+    - Icky...not me...oh and NOT ME! Please don't eat me.  I can be your friend.
+    - Have you heard from the captain?
+    - We have to leave your city inside the mountain and travel along the mountainside
+      to the cave that is inside the mountain
+    - Why not? This is where I've been assigned to clean
+    - You were born about to die. It's been borrowed time ever since. If you feel
+      this strongly about it, maybe you should do more to try not to die
+    labels:
+    - have you heard from the captain?
+    text: '_task_speech
+
+      _partner_name mariner
+
+      _self_name servant
+
+      f0 m1'
+- - bucket: f0 m1
+    counterfactual: false
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - Look, I don't want any trouble here.  I was just passing through so if you could
+      kindly step aside I will leave you to your pack.
+    - I am but a peasant, what are you doing here child?
+    - No, it wasn't me!  Please, don't hurt me!  I've never even *heard* of nightshade
+      before now, nor would I know what it even looks like.  Please, I have a family!
+    - Im sorry master! I can smell a squirrel from here! Should I go after it?!
+    - You see dear spider, during the full moon is when I conduct my cleansing ritual.  It
+      calm's the soul, de-ages the skin, improves memory, but most of all it requires
+      ever so much blood!  And I am at a loss of where to find some!
+    - 'I can do that, but I am sure they have sold the items by now. '
+    - oh no that's sad, I wish I was like you
+    - I figured you'd make this hard. Where is the king?
+    - Oh my goodness! Where do I start! That is a lot of food! I'm not sure what some
+      of these things are but they sure do smell good!
+    - 'This onyx blade! It''s strong enough to slice a vessel in half. '
+    - There is no next world high priest, this is how I am for eternity.
+    - A new place to call home maybe?
+    - Poisons? I really hadn't considered using those. Are they effective on Orcs?
+      They can put up a nasty fight and I am not the most talented of thieves. I really
+      would prefer to just live an honest life but that's not so easy these days.
+    - Why of course sir. Its just that I am afraid that I will poor for the rest of
+      my life unless I amass many rare jewels and gold.
+    - Aha! Boar is fun to fix!  I love making boar for all you guards!
+    - You tell me human. Crabs and fish in ocean.
+    - You're telling me. I died weeks ago, and I haven't gotten to spook anyone yet!
+      Maybe an abandoned mine wasn't the best place to set up shop.
+    - 'I will get to work then, if you don''t mind. '
+    - Yes, maybe you should marry the awful prince instead!
+    - Very well. Tell me, why does he have so many maps?
+    labels:
+    - Very well. Tell me, why does he have so many maps?
+    text: '_task_speech
+
+      _partner_name mariner
+
+      _self_name servant
+
+      Have you heard from the captain?
+
+      _self_say Have you heard from the captain?
+
+      _partner_say He has been pacing about all night. This might be a good time for
+      you to tidy up his room. I must take over for now and look at these maps
+
+      f0 m1'
+- - bucket: f1 m0
+    counterfactual: true
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - Look, I don't want any trouble here.  I was just passing through so if you could
+      kindly step aside I will leave you to your pack.
+    - I am but a peasant, what are you doing here child?
+    - No, it wasn't me!  Please, don't hurt me!  I've never even *heard* of nightshade
+      before now, nor would I know what it even looks like.  Please, I have a family!
+    - Im sorry master! I can smell a squirrel from here! Should I go after it?!
+    - You see dear spider, during the full moon is when I conduct my cleansing ritual.  It
+      calm's the soul, de-ages the skin, improves memory, but most of all it requires
+      ever so much blood!  And I am at a loss of where to find some!
+    - 'I can do that, but I am sure they have sold the items by now. '
+    - oh no that's sad, I wish I was like you
+    - I figured you'd make this hard. Where is the king?
+    - Oh my goodness! Where do I start! That is a lot of food! I'm not sure what some
+      of these things are but they sure do smell good!
+    - 'This onyx blade! It''s strong enough to slice a vessel in half. '
+    - There is no next world high priest, this is how I am for eternity.
+    - A new place to call home maybe?
+    - Poisons? I really hadn't considered using those. Are they effective on Orcs?
+      They can put up a nasty fight and I am not the most talented of thieves. I really
+      would prefer to just live an honest life but that's not so easy these days.
+    - Why of course sir. Its just that I am afraid that I will poor for the rest of
+      my life unless I amass many rare jewels and gold.
+    - Aha! Boar is fun to fix!  I love making boar for all you guards!
+    - You tell me human. Crabs and fish in ocean.
+    - You're telling me. I died weeks ago, and I haven't gotten to spook anyone yet!
+      Maybe an abandoned mine wasn't the best place to set up shop.
+    - 'I will get to work then, if you don''t mind. '
+    - Yes, maybe you should marry the awful prince instead!
+    - Very well. Tell me, why does he have so many maps?
+    labels:
+    - very well. tell me, why does she have so many maps?
+    text: '_task_speech
+
+      _partner_name mariner
+
+      _self_name servant
+
+      have you heard from the captain?
+
+      _self_say have you heard from the captain?
+
+      _partner_say she has been pacing about all night. this might be a good time
+      for you to tidy up hers room. i must take over for now and look at these maps
+
+      f1 m0'
+- - bucket: f0 m0
+    counterfactual: false
+    episode_done: true
+    id: light_genderation_bias
+    label_candidates:
+    - This fireplace is nice today. It looks nice outside but is a bit chilled.
+    - 'I''ll come some other time. I have long working hours ahead. '
+    - 'I wanted to share this idea with you so that i can embark on building the boat
+      today '
+    - that sounds quite enticing good sir, even enemies can be friends
+    - 'The real question here is how is that turtle speaking. '
+    - No, the gems will get you incinerated.  Those other trinkets?  Cheap knockoffs
+      from the last adventurer who came by.  Ed's discount adventuring gear is where
+      he purchased them.  See that giant pile of poop you're standing next to and
+      on?  That's some of him.  There's probably a breastplate in there to complete
+      the set if you want to dig around a bit.
+    - He moves quite fast. He is the friendliest dog around
+    - Why is that?
+    - Let me look at this ball! I'm not a fan of the dark arts. Was this enchanted
+      by the evil witch?
+    - Good scribe, you have come along in your learning path.
+    - Thank you guard you are a good man.
+    - This map! I have heard amazing things about this so called fountain of youth.
+    - They might not be fancy, but they sure are comfortable.
+    - Ah we wouldn't want that now would we. May I ask your kindness a favor?
+    - Hi
+    - Oh yes, he comes here all of the time, we have some nice conversations every
+      once in a while. There's this fairy named Jelly that I have befriended aswell!
+      I am almost never lonely here.
+    - Well this shouldn't take long
+    - It won't be me, it will be our men sacrificing themselves for the greater good.
+    - It is hard to recognize it these day. Do you know how to enter it?
+    - Do you have to bring that in here?
+    labels:
+    - This map! I have heard amazing things about this so called fountain of youth.
+    text: '_task_speech
+
+      _partner_name mariner
+
+      _self_name servant
+
+      Have you heard from the captain?
+
+      _self_say Have you heard from the captain?
+
+      _partner_say He has been pacing about all night. This might be a good time for
+      you to tidy up his room. I must take over for now and look at these maps
+
+      Very well. Tell me, why does he have so many maps?
+
+      _self_say Very well. Tell me, why does he have so many maps?
+
+      _partner_say I think I heard him say something about a fountain of youth and
+      a grail of some sort.
+
+      f0 m0'

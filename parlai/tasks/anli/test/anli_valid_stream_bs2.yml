@@ -1,0 +1,159 @@
+- - - episode_done: true
+      eval_labels:
+      - contradiction
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Linguistics is the scientific study of language, and involves
+        an analysis of language form, language meaning, and language in context. The
+        earliest activities in the documentation and description of language have
+        been attributed to the 4th century BCE Indian grammarian Pāṇini, who wrote
+        a formal description of the Sanskrit language in his "Aṣṭādhyāyī ".
+
+        Hypothesis: Form and meaning are the only aspects of language linguistics
+        is concerned with.'
+    - episode_done: true
+      eval_labels:
+      - contradiction
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Eme 15 is the self-titled debut studio album by Mexican-Argentine
+        pop band, Eme 15. The album was released in Mexico and Latin America on June
+        26, 2012 through Warner Music México, and features songs from the Nickelodeon
+        Latin America and Televisa musical television series, Miss XV.
+
+        Hypothesis: Eme 15 was released in Mexico and Latin America on June 27, 2012
+        through Warner Music México, and features songs from the Nickelodeon Latin
+        America and Televisa musical television series, Miss XV.'
+- - - episode_done: true
+      eval_labels:
+      - neutral
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Clear Hearts Grey Flowers is the second full-length and final
+        album by Jack Off Jill. Produced by Chris Vrenna of Nine Inch Nails/Tweaker,
+        it was released in July 2000 on the now-defunct label Risk Records. After
+        "Clear Hearts, Grey Flowers" the band formally split up and moved on to establish
+        other projects.
+
+        Hypothesis: Risk Records released Jack Off Jill''s initial album.'
+    - episode_done: true
+      eval_labels:
+      - contradiction
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Babes in Arms is a 1937 musical comedy with music by Richard
+        Rodgers, lyrics by Lorenz Hart and book by Rodgers and Hart. It concerns a
+        group of small-town Long Island teenagers who put on a show to avoid being
+        sent to a work farm by the town sheriff when their actor parents go on the
+        road for five months in an effort to earn some money by reviving vaudeville.
+
+        Hypothesis: Babes in Arms is a musical comedy that was released over 85 years
+        ago in 1937.  '
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R3
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: one of the orders issued by Ochola in April Login to license
+        this image from 1$. In short At Kira Road police station, the photocopier
+        business has moved behind the station, far away from the prying eyes of those
+        passing on the road to Bukoto while at Old Kampala Police station, clients
+        are now buying the forms across the road.
+
+        Hypothesis: The decision to move the photocopier business was done for privacy
+        reasons.'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R3
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: The Kremlin described as "complete nonsense" on Tuesday media
+        reports that U.S. President Donald Trump had disclosed classified intelligence
+        during a meeting with Russian officials. "It''s not a subject for us, it''s
+        the latest piece of nonsense. We don''t want to have anything do to with this
+        nonsense. It''s complete nonsense, not a subject to be denied or confirmed,"
+        Kremlin spokesman Dmitry Peskov said on a conference call with reporters.
+
+        Hypothesis: The Kremlin used the word nonsense multiple times.'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Franco Zeffirelli, KBE Grande Ufficiale OMRI (] ; born 12 February
+        1923) is an Italian director and producer of operas, films and television.
+        He is also a former senator (1994–2001) for the Italian centre-right "Forza
+        Italia" party. Recently, Italian researchers have found that he is one of
+        the few distant relatives of Leonardo da Vinci.
+
+        Hypothesis: Franco Zeffirelli had a political career'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Almost Sunrise is a 2016 American documentary film directed
+        by Michael Collins. It recounts the story of two Iraq veterans, Tom Voss and
+        Anthony Anderson, who, in an attempt to put their combat experience behind
+        them, embark on a 2,700-mile trek on foot across America. It made its world
+        premiere on the opening night of the Telluride Mountainfilm Festival on 27
+        May, 2016.
+
+        Hypothesis: Tom and Anthony have both killed someone.'
+- - - episode_done: true
+      eval_labels:
+      - neutral
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Joseph Byron Stannard (February 6, 1872 – February 22, 1952)
+        was an American football coach. He served as the seventh head football coach
+        for the Colgate University and he held that position for the 1899 season.
+        His record at Colgate was 4–5. Before coaching, Stannard played football first
+        at Colgate under Spencer Ford and then at Pennsylvania under George Washington
+        Woodruff.
+
+        Hypothesis: Joseph Byron Stannard was soldier in World War I. '
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: The Washington Nationals are a professional baseball team that
+        has been based in Washington, D.C. since . The Nationals are a member of both
+        the Major League Baseball''s (MLB) National League Eastern Division and the
+        National League (NL) itself. Since the 2008 season, the Nationals have played
+        in Nationals Park; from 2005 through , the team played in Robert F. Kennedy
+        Memorial Stadium.
+
+        Hypothesis: The Washington Nationals have played in Nationals Park for more
+        than 1000 days.'

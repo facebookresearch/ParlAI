@@ -1,0 +1,58 @@
+- - - episode_done: true
+      eval_labels:
+      - it &apos;s that pyrami@@ d .
+      id: iwslt14
+      text: es ist diese pyrami@@ de .
+    - episode_done: true
+      eval_labels:
+      - it had two-@@ to-@@ three-@@ to-@@ 400 times the tox@@ ic lo@@ ads ever allowed
+        by the ep@@ a .
+      id: iwslt14
+      text: es enth@@ i@@ elt das zwei@@ - , drei@@ - , bis 40@@ 0-@@ fa@@ che des
+        gren@@ z@@ wer@@ ts an sch@@ ad@@ stoffen der laut ep@@ a erlaubt war .
+- - - episode_done: true
+      eval_labels:
+      - in mother &apos;s milk .
+      id: iwslt14
+      text: durch die mutter@@ mil@@ ch .
+    - episode_done: true
+      eval_labels:
+      - often what j@@ ams us up is se@@ wa@@ ge .
+      id: iwslt14
+      text: oft ist es ab@@ wasser , was uns ver@@ stop@@ ft .
+- - - episode_done: true
+      eval_labels:
+      - what do you do when you have this sort of dis@@ rup@@ ted flow ?
+      id: iwslt14
+      text: was macht man , wenn man solch eine unter@@ bre@@ chung im fluss hat ?
+    - episode_done: true
+      eval_labels:
+      - 'ste@@ phen pal@@ um@@ bi : following the mer@@ cur@@ y tra@@ il'
+      id: iwslt14
+      text: 'ste@@ phen pal@@ um@@ bi : der sp@@ ur des que@@ ck@@ sil@@ bers folgen'
+- - - episode_done: true
+      eval_labels:
+      - i really thought they were so bene@@ ath me .
+      id: iwslt14
+      text: sie wären unter meinem nive@@ au .
+    - episode_done: true
+      eval_labels:
+      - but we didn &apos;t realize at the time that we actually needed a third mani@@
+        pul@@ ator , because we couldn &apos;t manipu@@ late the ne@@ ck from inside
+        and walk the horse at the same time .
+      id: iwslt14
+      text: aber wir hatten damals nicht ge@@ mer@@ kt , dass wir einen dritten brauchten
+        , denn der h@@ als war von innen nicht len@@ k@@ bar , wenn das pfer@@ d gleichzeitig
+        laufen sollte .
+- - - episode_done: true
+      eval_labels:
+      - and now we would like to introduce you to jo@@ ey .
+      id: iwslt14
+      text: jetzt würden wir euch gerne jo@@ ey vorstellen .
+    - episode_done: true
+      eval_labels:
+      - 'b@@ j : and mi@@ key also has , in his fing@@ ers , the ability to move the
+        tail from left to right , and up and down with the other hand .'
+      id: iwslt14
+      text: und mi@@ key kann mit seinen fing@@ ern den schwei@@ f bewegen , von rechts
+        nach links und von oben nach unten mit der anderen hand .

@@ -1,0 +1,313 @@
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Heavy metal (often referred to as metal) is a genre of rock music that developed
+        in the late 1960s and early 1970s, largely in the United Kingdom and in the
+        United States.
+      - With roots in blues rock and psychedelic rock , the bands that created heavy
+        metal developed a thick, massive sound, characterized by highly amplified
+        distortion , extended guitar solos, emphatic beats, and overall loudness.
+      - Heavy metal lyrics and performance styles are generally associated with masculinity
+        and machismo .
+      - The first heavy metal bands such as Led Zeppelin , Deep Purple and Black Sabbath
+        attracted large audiences, though they were often derided by critics, a status
+        common throughout the history of the genre.
+      - In the mid-1970s Judas Priest helped spur the genre's evolution by discarding
+        much of its blues influence; Motörhead introduced a punk rock sensibility
+        and an increasing emphasis on speed.
+      - Bands in the New Wave of British Heavy Metal such as Iron Maiden followed
+        in a similar vein.
+      - Before the end of the decade, heavy metal fans became known as " metalheads
+        " or " headbangers ".
+      - During the 1980s, glam metal became a commercial force with groups like Mötley
+        Crüe and Poison .
+      - 'Underground scenes produced an array of more extreme, aggressive styles:
+        thrash metal broke into the mainstream with bands such as Metallica , Megadeth
+        , Slayer , and Anthrax , while other styles of the most extreme subgenres
+        of metal like death metal and black metal remain subcultural phenomena.'
+      - Since the mid-1990s, popular styles such as nu metal , which often incorporates
+        elements of grunge and hip hop ; and metalcore , which blends extreme metal
+        with hardcore punk , have further expanded the definition of the genre.
+      labels:
+      - With roots in blues rock and psychedelic rock , the bands that created heavy
+        metal developed a thick, massive sound, characterized by highly amplified
+        distortion , extended guitar solos, emphatic beats, and overall loudness.
+      - Heavy metal lyrics and performance styles are generally associated with masculinity
+        and machismo .
+      reward: 0
+      text: what is metal music about
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - 'Assassination attempts and plots on Presidents of the United States have
+        been numerous: more than 20 attempts to kill sitting and former presidents,
+        as well as the Presidents-elect , are known.'
+      - 'Four sitting presidents have been killed: Abraham Lincoln (the 16th President),
+        James A. Garfield (the 20th President), William McKinley (the 25th President)
+        and John F. Kennedy (the 35th President).'
+      - 'Two presidents were injured in attempted assassinations: former President
+        Theodore Roosevelt (the 26th President), and President Ronald Reagan (the
+        40th President).'
+      - Although the historian J.W. Clarke has suggested that most American assassinations
+        were politically motivated actions, carried out by rational men, not all such
+        attacks have been undertaken for political reasons.
+      - Some attackers had questionable mental stability, and a few were judged legally
+        insane.
+      - Since the Vice President of the United States has for more than a century
+        been elected from the same political party as the President, the assassination
+        of the President is unlikely to result in major policy changes.
+      - This may explain why political groups typically do not make such attacks.
+      labels:
+      - 'Four sitting presidents have been killed: Abraham Lincoln (the 16th President),
+        James A. Garfield (the 20th President), William McKinley (the 25th President)
+        and John F. Kennedy (the 35th President).'
+      reward: 0
+      text: how many presidents have been assassinated
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - A financial audit, or more accurately, an audit of financial statements, is
+        the verification of the financial statements of a legal entity , with a view
+        to express an audit opinion.
+      - The audit opinion is intended to provide reasonable assurance, but not absolute
+        assurance, that the financial statements are presented fairly, in all material
+        respects, and/or give a true and fair view in accordance with the financial
+        reporting framework.
+      - The purpose of an audit is provide and objective independent examination of
+        the financial statements, which increases the value and credibility of the
+        financial statements produced by management, thus increase user confidence
+        in the financial statement, reduce investor risk and consequently reduce the
+        cost of capital of the preparer of the financial statements.
+      - Financial audits are typically performed by firms of practicing accountants
+        who are experts in financial reporting.
+      - The financial audit is one of many assurance functions provided by accounting
+        firms.
+      - Many organizations separately employ or hire internal auditors , who do not
+        attest to financial reports but focus mainly on the internal controls of the
+        organization.
+      - External auditors may choose to place limited reliance on the work of internal
+        auditors.
+      - Auditing promotes transparency and accuracy in the financial disclosures made
+        by an organization, therefore would likely to reduce of such corporations
+        to conceal unscrupulous dealings.
+      - Internationally, the International Standards on Auditing (ISA) issued by the
+        International Auditing and Assurance Standards Board (IAASB) is considered
+        as the benchmark for audit process.
+      - Almost all jurisdictions require auditors to follow the ISA or a local variation
+        of the ISA.
+      labels:
+      - The audit opinion is intended to provide reasonable assurance, but not absolute
+        assurance, that the financial statements are presented fairly, in all material
+        respects, and/or give a true and fair view in accordance with the financial
+        reporting framework.
+      - The purpose of an audit is provide and objective independent examination of
+        the financial statements, which increases the value and credibility of the
+        financial statements produced by management, thus increase user confidence
+        in the financial statement, reduce investor risk and consequently reduce the
+        cost of capital of the preparer of the financial statements.
+      - Financial audits are typically performed by firms of practicing accountants
+        who are experts in financial reporting.
+      reward: 0
+      text: how do forensic auditors examine financial reporting
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - The Canadian Citizenship Test is a test, administered by Citizenship and Immigration
+        Canada (CIC), that is required for all applicants for Canadian citizenship
+        who are aged between 18 and 54 and who meet the basic requirements for citizenship.
+      - The test is available in both French and English , the official languages
+        of Canada .
+      labels:
+      - The test is available in both French and English , the official languages
+        of Canada .
+      reward: 0
+      text: what is the format of the canadian citizenship test
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Gaius Julius Caesar (, July 100 BC – 15 March 44 BC) was a Roman general ,
+        statesman , Consul and notable author of Latin prose.
+      - He played a critical role in the events that led to the demise of the Roman
+        Republic and the rise of the Roman Empire .
+      - In 60 BC, Caesar, Crassus and Pompey formed a political alliance that was
+        to dominate Roman politics for several years.
+      - Their attempts to amass power through populist tactics were opposed by the
+        conservative elite within the Roman Senate , among them Cato the Younger with
+        the frequent support of Cicero .
+      - Caesar's conquest of Gaul , completed by 51 BC, extended Rome's territory
+        to the English Channel and the Rhine .
+      - Caesar became the first Roman general to cross both when he built a bridge
+        across the Rhine and conducted the first invasion of Britain .
+      - These achievements granted him unmatched military power and threatened to
+        eclipse the standing of Pompey, who had realigned himself with the Senate
+        after the death of Crassus in 53 BC.
+      - With the Gallic Wars concluded, the Senate ordered Caesar to lay down his
+        military command and return to Rome.
+      - Caesar refused, and marked his defiance in 49 BC by crossing the Rubicon with
+        a legion , leaving his province and illegally entering Roman territory under
+        arms.
+      - Civil war resulted, from which he emerged as the unrivaled leader of Rome.
+      - After assuming control of government, Caesar began a program of social and
+        governmental reforms, including the creation of the Julian calendar .
+      - He centralised the bureaucracy of the Republic and was eventually proclaimed
+        "dictator in perpetuity".
+      - But the underlying political conflicts had not been resolved, and on the Ides
+        of March (15 March) 44 BC, Caesar was assassinated by a group of senators
+        led by Marcus Junius Brutus .
+      - A new series of civil wars broke out, and the constitutional government of
+        the Republic was never restored.
+      - Caesar's adopted heir Octavian, later known as Augustus , rose to sole power,
+        and the era of the Roman Empire began.
+      - Much of Caesar's life is known from his own accounts of his military campaigns,
+        and from other contemporary sources, mainly the letters and speeches of Cicero
+        and the historical writings of Sallust .
+      - The later biographies of Caesar by Suetonius and Plutarch are also major sources.
+      - Caesar is deemed to be one of the greatest military commanders of history
+        .
+      labels:
+      - But the underlying political conflicts had not been resolved, and on the Ides
+        of March (15 March) 44 BC, Caesar was assassinated by a group of senators
+        led by Marcus Junius Brutus .
+      reward: 0
+      text: who killed julius caesar
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Schizophrenia ( or ) is a mental disorder characterized by a breakdown of
+        thought processes and by a deficit of typical emotional responses.
+      - Common symptoms include auditory hallucinations , paranoid or bizarre delusions
+        , or disorganized speech and thinking , and it is accompanied by significant
+        social or occupational dysfunction.
+      - The onset of symptoms typically occurs in young adulthood, with a global lifetime
+        prevalence of about 0.3–0.7%.
+      - Diagnosis is based on observed behavior and the patient's reported experiences.
+      - Genetics , early environment, neurobiology , and psychological and social
+        processes appear to be important contributory factors; some recreational and
+        prescription drugs appear to cause or worsen symptoms.
+      - Current research is focused on the role of neurobiology, although no single
+        isolated organic cause has been found.
+      - The many possible combinations of symptoms have triggered debate about whether
+        the diagnosis represents a single disorder or a number of discrete syndromes.
+      - Despite the etymology of the term from the Greek roots skhizein (σχίζειν,
+        "to split") and phrēn, phren- (φρήν, φρεν-; "mind"), schizophrenia does not
+        imply a "split personality", or "multiple personality disorder" (which is
+        known these days as dissociative identity disorder )—a condition with which
+        it is often confused in public perception.
+      - Rather, the term means a "splitting of mental functions", because of the symptomatic
+        presentation of the illness.
+      - The mainstay of treatment is antipsychotic medication, which primarily suppresses
+        dopamine (and sometimes serotonin ) receptor activity.
+      - Psychotherapy and vocational and social rehabilitation are also important
+        in treatment.
+      - In more serious cases—where there is risk to self and others— involuntary
+        hospitalization may be necessary, although hospital stays are now shorter
+        and less frequent than they once were.
+      - The disorder is thought mainly to affect cognition , but it also usually contributes
+        to chronic problems with behavior and emotion.
+      - People with schizophrenia are likely to have additional ( comorbid ) conditions,
+        including major depression and anxiety disorders ; the lifetime occurrence
+        of substance use disorder is almost 50%.
+      - Social problems, such as long-term unemployment, poverty, and homelessness
+        are common.
+      - The average life expectancy of people with the disorder is 12 to 15 years
+        less than those without, the result of increased physical health problems
+        and a higher suicide rate (about 5%).
+      labels:
+      - Diagnosis is based on observed behavior and the patient's reported experiences.
+      reward: 0
+      text: how is schizophrenia diagnosed?
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - The Bloody Beetroots is the pseudonym of Sir Bob Cornelius Rifo, the Italian
+        electro house and dance-punk music producer , DJ and photographer .
+      - The Bloody Beetroots is well-known for the black Venom mask he wears during
+        performances.
+      - In fact, the only identifying public feature of Rifo is the year "1977" tattooed
+        across his chest, which is both the year that the producer and punk-rock was
+        born.
+      - '"The Bloody Beetroots DJ set" contains Sir Bob Cornelius Rifo and Tommy Tea.'
+      labels:
+      - The Bloody Beetroots is the pseudonym of Sir Bob Cornelius Rifo, the Italian
+        electro house and dance-punk music producer , DJ and photographer .
+      reward: 0
+      text: what genre is bloody beetroots
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - RFID chip next to a grain of rice.
+      - This chip contains a radio-frequency electromagnetic field coil that modulates
+        an external magnetic field to transfer a coded identification number when
+        queried by a reader device.
+      - This small type is incorporated in consumer products, and implanted in pets,
+        for identification purposes.
+      - Radio-frequency identification (RFID) is the wireless non-contact use of radio-frequency
+        electromagnetic fields to transfer data, for the purposes of automatically
+        identifying and tracking tags attached to objects.
+      - The tags contain electronically stored information.
+      - Some tags are powered and read at short ranges (a few meters) via magnetic
+        fields ( electromagnetic induction ).
+      - Others use a local power source such as a battery, or else have no battery
+        but collect energy from the interrogating EM field, and then act as a passive
+        transponder to emit microwaves or UHF radio waves (i.e., electromagnetic radiation
+        at high frequencies).
+      - Battery powered tags may operate at hundreds of meters.
+      - Unlike a bar code , the tag does not necessarily need to be within line of
+        sight of the reader, and may be embedded in the tracked object.
+      - RFID tags are used in many industries.
+      - An RFID tag attached to an automobile during production can be used to track
+        its progress through the assembly line.
+      - Pharmaceuticals can be tracked through warehouses.
+      - Livestock and pets may have tags injected , allowing positive identification
+        of the animal.
+      - Since RFID tags can be attached to clothing, possessions, or even implanted
+        within people , the possibility of reading personally-linked information without
+        consent has raised privacy concerns.
+      labels:
+      - Some tags are powered and read at short ranges (a few meters) via magnetic
+        fields ( electromagnetic induction ).
+      - Others use a local power source such as a battery, or else have no battery
+        but collect energy from the interrogating EM field, and then act as a passive
+        transponder to emit microwaves or UHF radio waves (i.e., electromagnetic radiation
+        at high frequencies).
+      - Battery powered tags may operate at hundreds of meters.
+      reward: 0
+      text: how is rfid tag powered
+- - - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - Endodontics (from the Greek endo "inside"; and odons "tooth") is one of the
+        dental specialties recognized by the American Dental Association , Royal College
+        of Dentists of Canada , and Royal Australasian College of Dental Surgeons
+        , and deals with the tooth pulp and the tissues surrounding the root of a
+        tooth .
+      - Endodontists perform a variety of procedures including endodontic therapy
+        (commonly known as "root canal therapy"), endodontic retreatment , surgery,
+        treating cracked teeth , and treating dental trauma .
+      - Root canal therapy is one of the most common procedures.
+      - If the pulp (containing nerves , arterioles , venules , lymphatic tissue ,
+        and fibrous tissue) becomes diseased or injured, endodontic treatment is required
+        to save the tooth.
+      labels:
+      - Endodontics (from the Greek endo "inside"; and odons "tooth") is one of the
+        dental specialties recognized by the American Dental Association , Royal College
+        of Dentists of Canada , and Royal Australasian College of Dental Surgeons
+        , and deals with the tooth pulp and the tissues surrounding the root of a
+        tooth .
+      reward: 0
+      text: what is endodontic dentistry
+    - episode_done: true
+      id: wikiqa
+      label_candidates:
+      - What Chilli Wants is an American reality series on VH1 starring Chilli , one-third
+        of the Grammy Award -winning R&B trio TLC .
+      - The show chronicles Chilli's quest to find love with the help of Tionna T.
+        Smalls , an author and relationship coach.
+      - The series premiered on April 11, 2010, and has since been renewed for a second
+        season.
+      - The second season premiered on Sunday, January 2, 2011.
+      labels:
+      - What Chilli Wants is an American reality series on VH1 starring Chilli , one-third
+        of the Grammy Award -winning R&B trio TLC .
+      reward: 0
+      text: what chili wants wiki

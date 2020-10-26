@@ -1,0 +1,167 @@
+- - - episode_done: false
+      id: babi:Task1k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - office
+      reward: 0
+      text: 'Daniel and John journeyed to the bathroom.
+
+        Then they moved to the office.
+
+        Where is John?'
+    - episode_done: false
+      id: babi:Task1k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - cat
+      reward: 0
+      text: 'Wolves are afraid of cats.
+
+        Jessica is a wolf.
+
+        Winona is a wolf.
+
+        Cats are afraid of wolves.
+
+        Sheep are afraid of wolves.
+
+        Mice are afraid of sheep.
+
+        Emily is a sheep.
+
+        Gertrude is a cat.
+
+        What is winona afraid of?'
+- - - episode_done: false
+      id: babi:Task1k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - office
+      reward: 0
+      text: 'Sandra and Mary journeyed to the bedroom.
+
+        Then they moved to the office.
+
+        Where is Sandra?'
+    - episode_done: false
+      id: babi:Task1k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - cat
+      reward: 0
+      text: What is jessica afraid of?
+- - - episode_done: false
+      id: babi:Task1k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - hallway
+      reward: 0
+      text: 'John and Sandra journeyed to the garden.
+
+        Following that they moved to the hallway.
+
+        Where is Sandra?'
+    - episode_done: false
+      id: babi:Task1k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - wolf
+      reward: 0
+      text: What is gertrude afraid of?
+- - - episode_done: false
+      id: babi:Task1k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - hallway
+      reward: 0
+      text: 'Daniel and John moved to the kitchen.
+
+        After that they journeyed to the bathroom.
+
+        Where is Sandra?'
+    - episode_done: true
+      id: babi:Task1k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - cat
+      reward: 0
+      text: What is winona afraid of?
+- - - episode_done: true
+      id: babi:Task1k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bedroom
+      reward: 0
+      text: 'John and Sandra went back to the kitchen.
+
+        Then they went to the bedroom.
+
+        Where is Sandra?'
+    - episode_done: false
+      id: babi:Task1k:5
+      label_candidates:
+      - Bill
+      - Fred
+      - Jeff
+      - Mary
+      - apple
+      - football
+      - milk
+      labels:
+      - Mary
+      reward: 0
+      text: 'Mary journeyed to the bedroom.
+
+        Bill took the milk there.
+
+        Bill gave the milk to Mary.
+
+        Fred picked up the apple there.
+
+        Who did Bill give the milk to?'

@@ -1,0 +1,478 @@
+- - - episode_done: true
+      eval_labels:
+      - what are you missing in apt ?
+      id: dstc7
+      label_candidates:
+      - do you have synaptic package manager open?
+      - what laptop?
+      - what vmware are you installing btw? workstation or server, i usually use the
+        .sh script they have
+      - export http_proxy=http://proxy:port export ftp_proxy=http://proxy:port
+      - get rid of extensions and plugins, see if it still crashes
+      - yeah
+      - '<> AmaroqWolf: alias=''sudo admincommand''.  <AmaroqWolf>  aw, can''t make
+        myself type sudo? I like it better that way.'
+      - boot the old kernel first from grub menu and make sure it solves the problem.
+        Then purge the new one. and pin the old
+      - well, you _should_ have a backup anyway :p
+      - paste.ubuntu.com
+      - yes.. so ctrl+alt+F2.. login then type the line listed above
+      - what's the error?
+      - at a prompt sudo cp /etc/X11/xorg.conf /etc/X11xorg.conf.old && sudo dpkg-reconfigufe
+        xserver-xorg
+      - that could be the problem, did you use the ones from nVidia webpage or in
+        apt ?
+      - i believe in your tomcat.conf in catalina_opts (or java_opts, i'm not sure)
+      - huh.. what is the F9 key supposed to do?
+      - 'Change both Sound In and Sound Out on the sound devices option to: HDA Intel
+        (hw:intel,0).  Then do a test call'
+      - thought so...hm..do you think if I put symlink that points to a direction
+        would help? My original install is in /usr/share/xbmc and new one (with .deb)
+        is in /usr/local/share/xbmc
+      - simple solutions are always nice :-)
+      - '''man smb.conf'' lists a server option "unix extensions" (enabled by default)..  However,
+        if the server is Windows...'
+      text: 'participant 1: hey guys, does your livecd have chroot installed? and
+        bash?
+
+        participant 2: sure
+
+        participant 1: does it have everything I need to format a partition ext2?.
+        and ext3?
+
+        participant 2: yep
+
+        participant 1: yay I can use it to install gentoo. !
+
+        participant 2: lol. LOL
+
+        participant 1: =-). brb rebooting into ubuntu
+
+        participant 2: form last week:. 04:21:47] <findme> this is a big crowd here.
+        [04:21:53] <findme> have all gentoo users moved here ?
+
+        participant 1: to bad its still using apt I would switch in a heart beat if
+        it had its own package manager
+
+        '
+    - episode_done: true
+      eval_labels:
+      - well its not really a normal port... and i dont normaly see those kind of
+        port numbers unless it p2p traffic or a server or sime kind.  what was the
+        port again?
+      id: dstc7
+      label_candidates:
+      - HEELO!
+      - 'no'
+      - no change
+      - What's up?
+      - you have to select the drivers manually from the list of models and you have
+        to select the correct model otherwise it will not work.  did you install the
+        deb using sudo dpkg
+      - i did that. followed by iwconfig wlan0 commit as well
+      - be sure your system is up-to-date, then look in System / Admin / Hardware
+        Drivers
+      - change the resolution
+      - edit your menu.lst and change the timeout value
+      - very little if any.
+      - it's a duplicate , change that parameter in the line above.  you got two 'GRUB_CMDLINE_LINUX_DEFAULT'
+      - remove them from groups
+      - totem crashes on launch :@.  when i started using ubuntu it was nice, it didnt
+        have a lot of bugs, these days its starting to get redicoules, im starting
+        to feel like im working on a windows box again
+      - I think "sabayon" wants to achieve that, i.e. locking down users.
+      - we see you
+      - google to start.  or your local college.  or a book
+      - don't - it will break things
+      - you mean lazy as in "doesnt chew up time"
+      - don't configure manually.  sudo nvidia-xconfig
+      - aircrack-ng or coWPAtty ?
+      text: 'participant 1: Hey. Does anyone have any knownledge what could run on
+        port number 64200? Theres something running there on a mate''s PC, but he
+        have no idea what it is. Its ubuntu 9.04. I think this sounds very strange,
+        nmap says it doesnt know either. Have set it under wireshark surveilance now.
+        Could this possible be an rogue Remote Access daemon?
+
+        participant 2: it might be p2p traffic
+
+        participant 1: ok. why''d think that? i currently dont have any p2p servers
+        of any kind open.  as i know of..
+
+        '
+- - - episode_done: true
+      eval_labels:
+      - brb
+      id: dstc7
+      label_candidates:
+      - you can also take your pick from apt-cache search hex editor , that is if
+        ghex doesn't appeal to you.  np
+      - man chmod for more detail on how that command works
+      - waiting. hello randall
+      - the ffmpeg version provided by ubuntu might be out of date... it *might* help
+        to compile ffmpeg yourself...
+      - not really
+      - not if there is a bug in the amd drivers
+      - I would start over create manually two ext3 and a swap and Personally I would
+        move cables and move sdb to sda and go for iut
+      - sounds like you ran emacs as root  ?
+      - They usually are CNAMEs..  $ dig it.archive.ubuntu.com CNAME.  Compare with
+        se., fr., de., etc.
+      - yeah, why?
+      - When the official is released.. it will be available as normal package.
+      - very strange indeed
+      - is there a proxy on the wifi network ?
+      - then probably not
+      - welcome
+      - click on top right edge of the screen.. then System Settings..
+      - is that the latest version thats in the repos ?
+      - told you so :) and at the same time you became more attractive to women -
+        *INSTANTLY* !!!1!1!!!ONE!
+      - reinstall the ati drivers from apt and then reconfigure your xorg.conf
+      - why not just use pidgin
+      text: 'participant 1: Has anyone seen the new 911 movie? United 93 I think it''s
+        called?. I am. for my 9700 Pro
+
+        participant 2: when I was using Gentoo, there was an eselect command to switch
+        from Mesa to ATI OpenGL
+
+        participant 1: I get half the fps in Tremelous compared to Windows
+
+        participant 2: do I have to do something similiar. ?
+
+        participant 1: edit /etc/X11/xorg.conf. replace ati with fglrx. restart x.
+        I don''t know the command but there is probally one
+
+        '
+    - episode_done: true
+      eval_labels:
+      - kalarm is in the karmic repos
+      id: dstc7
+      label_candidates:
+      - your PCM is too high
+      - but . how do i activate it
+      - then how do you know it was complete and consistent?
+      - I'm using an ASUS with a synaptics touchpad, works great. although IIRC I
+        had to tweak it.  look for guides on tweaking the ASUS Zenbook for Ubuntu.
+        there's a few, and I know the touchpad was addresse
+      - if you really want help you might start by telling us what is wrong with file-roller
+      - 'try rebooting and updating again. if this doesn''t work then execute: "sudo
+        rm /var/lib/apt/lists/* -vf "and then update again'
+      - then, the driver for your touchpad is broken. I don't think that they do know
+        which keys they have given to which computer. anyone has a hint for builtin
+        webcam which does not work? (lsusb shows it, yet there is no /dev/video)
+      - ask your question
+      - would be interesting if someone has the same with warty final.  did you try
+        playing araound with edit/preferences/appearance/fonts ?
+      - wtg! :D
+      - I don't know if it can hook up to an airport card since I haven't tried wireless
+        on it, but the site says that it works.
+      - when asking questions like that, you need to be a lot more specific.  how
+        is irssi asking for a password? what did you do to get it to do that?
+      - 'tekoholic: And then runt he aforementioned command?. Ok.  I''m getting this
+        error with no other apt-get processes running: http://paste.ubuntu.com/767030/'
+      - '!sudo'
+      - i started like that not long ago. i am kinda noob aswell
+      - https://wiki.ubuntu.com/LaptopTestingTeam
+      - Otherwise restart the computer and tryto find the errors in the mentioned
+        logfiles. Problem is, that your present boot is also log. You will have to
+        search a bit. Look at the timestamps..  ..and don't repet your question just
+        after 10' ;)
+      - only one way to find out :)
+      - its definatly worth it im using a broken install because i didnt realise how
+        much better the alt cd is
+      - yes!
+      text: 'participant 1: Does anyone know of a good alarm clock for KDE?:)
+
+        participant 2: try #kubuntu
+
+        participant 1: sudo apt-get install kalarm failed. o.o q.q
+
+        participant 2: which version of ubuntu are you running?
+
+        participant 1: 9.10. Yeah, I saw that, doing it now.
+
+        '
+- - - episode_done: true
+      eval_labels:
+      - i think so tho I havn't done that
+      id: dstc7
+      label_candidates:
+      - 8.8.8.8 is valid, but you should probably use the one provided by your isp..  Your
+        isp probably sets the nameserver via dhcp when you connect directly.
+      - you sure compiz is on
+      - control-alt-f1, login and do a reboot
+      - leave the term open or do the & thing at the end. but it is not a good idea
+        to leave open for long
+      - you logged in as ttt then changed your nick to  that requires /nick newnick
+      - apparently a reboot sorts it
+      - i'm not 100% sure on that "dns-nameservers" choice.  does it fail trying "nslookup
+        google.com" ?
+      - i think gnome is crappy with twin displays, you may want to try kde
+      - um. would that need any restricted codecs installed?. https://help.ubuntu.com/ubuntu/desktopguide/C/codecs.html.
+        i think. :)
+      - only if you add it to /etc/sysctl.conf.  net.ipv6.conf.all.autoconf = 0 i
+        think
+      - I don't know, could you explain it?
+      - 'np.  also try #blender :)'
+      - this is the xbox 360, right? fully updated?
+      - what do you think about aMSN or emesene?. pidgin seems similar to empathy
+      - 'Bugger all, i dunno, '
+      - it's s shell
+      - you would know if you had installed it - read the link ubotu spat out above
+      - yes, but when Warty was frozen, it was a snapshot of sid
+      - its easiest that way its clean of any non needed crap.  when the install screen
+        comes up type server than hit enter
+      - yeah zwei, it should be
+      text: 'participant 1: Iam building a new computer and Iamthinking about turning
+        my old system into a server/router is this possible and if so anyone know
+        of a guide for doing such?
+
+        participant 2: it is possible and the best guide i know is the ubuntu server
+        guide
+
+        participant 1: can it also be set up as a router for my home network?
+
+        '
+    - episode_done: true
+      eval_labels:
+      - lol....yeah, thats a no go
+      id: dstc7
+      label_candidates:
+      - 'urkemmi: yes'
+      - what about sh ~/a/b/c/file.sh
+      - Did you get a kernel update recently?
+      - i'm sure it's something easy, but i haven't the foggiest.  so far ubuntu is
+        working like a charm for me
+      - You fall back to metacity, perhaps.
+      - seems to be a bug in postfix in ubuntu 10.X https://bugs.launchpad.net/ubuntu/+source/shadow/+bug/523896
+      - try sudo apt-get -f install
+      - but it's fun
+      - without codecs?
+      - thanks
+      - it depends on the size of the card
+      - oh. you mean when you press the reboot button, not when it boots back up?
+      - go ask in that channel
+      - Which software?
+      - i think it's set on a defined interval, see the options in system > administration
+        > software sourced. sources*
+      - use the Pictures folder option
+      - I get that.  The command is in the file.  That i posted already. /dev/sdb1
+        /home/ryan/Warehouse ext4 defaults 0 1. sorry
+      - I see. Not sure what to recommend..  I guess it's your call.
+      - with mplayer, flv video playback is slow and choppy.  nope
+      - ok , try sudo dpkg --purge packagname then
+      text: 'participant 1: arron: no network connection...?. aaron: hmmm.... strange...
+
+        participant 2: Like I said, I can go reboot in windows and access, just not
+        on ubuntu
+
+        participant 1: aaron: are you connected via WIFI or cable?
+
+        participant 2: wifi
+
+        participant 1: aaron: have you tried with a cable?
+
+        participant 2: no access to cable
+
+        participant 1: aaron: ebay... ?. aaron: what router do you have?
+
+        participant 2: lol.....let me clarify. No access to router to make a cable
+        connection.  I can get a cable, just cant get to the router
+
+        participant 1: aaron: it is your router?
+
+        participant 2: Motorola SURFboard SB5101E.  yup ypu
+
+        participant 1: aaron: are you setting your IP address manually?
+
+        participant 2: nope, all auto.
+
+        participant 1: aaron: or how about doing a factory reset of the router?. aaron:
+        sorry, you dont have access to router...
+
+        '
+- - - episode_done: true
+      eval_labels:
+      - have you tried the restricted drivers?
+      id: dstc7
+      label_candidates:
+      - np. that guide is good strag. i had the same problem
+      - yup. was waiting for your answer
+      - better and best are individual opinions
+      - i imagine it changed it on a per user setting - not system wide
+      - 'there''s a few things you can driver, graphics driver-wise: try the opensource
+        one, go back to the ubuntu default one, or try the ubuntu graphics ppa'
+      - okay that is pretty old
+      - not if you switch to a vesa driver before you swap the cards (sudo dpkg-reconfigure
+        xserver-xorg)
+      - what graphic card do you have?. could please someone make coffee two sugar
+        not milk for me ?
+      - do you see the virtual workspaces icons on the panel?
+      - sudo apt-get install <foo> --reinstall
+      - 'if yuo run: gksudo gedit /etc/hosts does dyllan-desktop resolve to 127.0.0.1'
+      - that's a common thread in Hardy, stuff being dropped with no usable replacement
+      - efi is fairly cutting edge there will be some growing pains
+      - i just do a 3 pass before i reinstall (dcfldd if=/dev/(zero,urandom,zero)
+        of=/dev/(mydrives)). only takes an hour or two if i do all my drives at once
+      - you have joined an ubuntu support channel.  ask problems about ubuntu here
+      - 'so, try this: sudo ifdown eth0 && sudo ifup eth0 (replace the eth0, for the
+        corresponding)'
+      - Allowing root to connect via ftp is a disaster waiting to happn
+      - nautilus nps
+      - never used it with grep myself.
+      - system - prefs - sessions
+      text: 'participant 1: README: http://pastebin.com/m63de7ad2
+
+        participant 2: what type of card?
+
+        participant 1: radeon geforce 210, the only slimline one :P
+
+        participant 2: what kind of drivers are you running?. restricted?
+
+        participant 1: im running the 195 beta drivers from nvidia right now, ive
+        tried every availible driver that radeon has released.
+
+        '
+    - episode_done: true
+      eval_labels:
+      - If you are running a derivative in root, that is a whole different matter.
+      id: dstc7
+      label_candidates:
+      - fan speeds?
+      - I initially tried to install ver. 7.xxx and it wouldn't take, so I used ver.
+        6.xxx and it installed fine.
+      - heh, yes .. look into one of the --crash- params to force a crash
+      - OK ... and your questions?
+      - copy the one from /etc/emacs
+      - 'the windows installer can do that, i suggest you ask in ##windows'
+      - what is it exactly?
+      - flux is better though
+      - i know nothing about vmware, sorry. what i would do is use an external tool
+        to mount the vm disk image, and look at it that way. if necessary and possible,
+        backup your stuff and set up a new vm.
+      - looked away for a bit then caught up :)
+      - well mostly
+      - can you pastebin me what you see in your motd when you login ?
+      - was it so right from the AMI or how did you get it?
+      - does that happen with audio files too, and 2) are you running firefox at the
+        same time?. !language
+      - yeah..  you gotta use my name. i'm on 3 computers here....  I need the beeps.
+      - fix your xorg.conf configuration most likely
+      - how did you install dwm? source?
+      - it clears it. It might fill up again but that's another issue
+      - what else did you do?
+      - no idea sorry
+      text: 'participant 1: hi guys is it possible to sort processes based on when
+        they were last installed?. apparently theres this weird launch application
+        that i cannot even close..for some reason it appeared after my brother visited
+        a certain website. and have this redirection url to sin1.g.adnxs.com/click...any
+        idea? i cant uninstall and find the application
+
+        participant 2: clear the cookies and history from the browser, I see this
+        on the web listed as a virus, but a browser type, no real linux enviroment
+        info.
+
+        participant 1: okay ill try  thanks. by the way  even if i restarted the machine,
+        the application still do exist
+
+        participant 2: Not really an area common for this operating system or linux
+        to be honest, my guess is cleaning the browser, and temps etc will work.
+
+        participant 1: okay  ill try..thanks for the info
+
+        '
+- - - episode_done: true
+      eval_labels:
+      - cout<<"hello world" is not a complete program. You need to just pastebin because
+        I am not behind you.
+      id: dstc7
+      label_candidates:
+      - You probably have a zombie process of one lingering open. Open the system
+        monitor and look for it.
+      - no.  the DVD has everything in main. linspire is bad
+      - Between Ubuntu One and a config script.....I can have an identical system
+        within about 10 minutes. from a single command
+      - i think i got it give me a few secs.  do this , sudo apt-get install compiz-fusion-plugins-unsupported
+      - shouldn't do, no.
+      - just use the radeon open source driver
+      - 'Maybe people on #kde do.'
+      - '!sound > .  check pm from ubotu'
+      - ok what happens when you boot it ?
+      - 'join #ubuntu-offtopic and we can continue in there'
+      - Have you pulled the key to see if there is some junk there?. have you tried
+        a live cd or another account?
+      - np :)
+      - and your ip is???
+      - of course! just don't install the bootloader
+      - So I guess you copied and pasted the line from the guide, not from your actual
+        config, did you?
+      - sudo rm -fd :C/*. :P
+      - anytime :). can someone help to understand why gdm doesn't recalls last window
+        location
+      - what does "echo $DISPLAY" say?
+      - to 'detach' ctrl+a then d
+      - should be gstreamer0.8-plugins. i think
+      text: 'participant 1: hello there. i''ve just installed ubuntu server 10.04
+        and i can''t run a c++ binary... it says -bash <binary path> no such file
+        or directory. even a simple hello world test doesn''t run. can someone help
+        me please? thanks in advance
+
+        participant 2: pastebin exactly what you are running that you expect to work
+
+        participant 1: it''s just a simple cout<<"hello world". however, when i try
+        to execute the binary, it says it''s not there =/
+
+        '
+    - episode_done: true
+      eval_labels:
+      - lsusb -v
+      id: dstc7
+      label_candidates:
+      - first make sure your speakers are plugged in
+      - what do you suggest me to do ?
+      - 'you could try #launchpad.  or #ubuntu-launchpad'
+      - yup
+      - try sudo apt-get install --reinstall phpgroupware also maybe sudo apt-get
+        install phpgroupware --fix-missing
+      - 'they are good but this is not a chat channel..  type this:. /join #off-topic'
+      - I don't think you can , but even if you can that sounds like a bug
+      - '!bcm43 | . !bcm43xx. ^'
+      - ^^
+      - i actually don't like mac os x finder, i loved openstep much better.  yes,
+        what else?
+      - hrm... ok. I know digiKam has a photo resizer (actually, it does batch work
+        to, so if you want to resize a lot of photos, that's nice)
+      - also check if there are any files called INSTALL or README. They sometimes
+        include more specific instructions if the program requires them. Does anyone
+        have experience with editing GRUB2?
+      - yes, as I recall, backlit on some models required a bit of messing.  worked
+        fine for me though
+      - not to my knowledge.. exit. Durrp
+      - Have you tried installing 915resolution?
+      - try installing and reading about dmraid. That may help. You want to isntall
+        on a raid config right?
+      - To which menu are you reffering?
+      - lsof -nPi | grep 8080
+      - so you can't connect to the ubuntu machine in the DMZ from clients on the
+        LAN?
+      - Makes no sense that with grub installed to the 2nd hard drive, and bios set
+        to boot the 2nd hard drive as the 1st boot prioriry that Windows can possibly
+        boot . What happens exactly when you attempt to boot from that 2nd hard drive
+        ?
+      text: 'participant 1: Rt2500usb rt2x00usb rt2x00lib mgd2
+
+        participant 2: you rebooted the live cd?
+
+        participant 1: !chinese. Mdg2 I booted it
+
+        participant 2: notice in the output of lsmod you see a colon and like a 0
+        or a 1, that tells you if the module is being used..  do "sudo iwlist scan"
+        and see if it is setup as wlan0 or wlan1
+
+        participant 1: Wlan0
+
+        participant 2: lshw -show.  oops wrong command
+
+        participant 1: Yea. Mdg2 what command
+
+        '

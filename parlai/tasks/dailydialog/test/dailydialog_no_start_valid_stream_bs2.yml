@@ -1,0 +1,91 @@
+- - - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - There is one . 5 blocks away from here ?
+      id: dailydialog:no_start
+      text: Good morning , sir . Is there a bank near here ?
+      topic: tourism
+    - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - This is Mr Meng speaking , Michelle .
+      id: dailydialog:no_start
+      text: Good afternoon . This is Michelle Li speaking , calling on behalf of IBA
+        . Is Mr Meng available at all ?
+      topic: finance
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Surely , of course . What kind of currency have you got ?
+      id: dailydialog:no_start
+      text: Well , that's too far . Can you change some money for me ?
+      topic: tourism
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - That was quick ! I wasn't expecting it until later this week .
+      id: dailydialog:no_start
+      text: Oh , hello ! Sorry about that . I'm just calling to say that we've received
+        your new Corporate Credit Card from HQ .
+      topic: finance
+- - - act_type: inform
+      emotion: no_emotion
+      episode_done: true
+      eval_labels:
+      - How much would you like to change ?
+      id: dailydialog:no_start
+      text: RIB .
+      topic: tourism
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Shall I come in and collect it ?
+      id: dailydialog:no_start
+      text: Yes , our application procedures have speeded up since we started using
+        the new fast-track system .
+      topic: finance
+- - - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - As a reporter , he must have acute insight and language skills . At the same
+        time , he must have good judgment , the respect for his job and tactical cooperation
+        with others .
+      id: dailydialog:no_start
+      text: What qualifications should a reporter have ?
+      topic: work
+    - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      eval_labels:
+      - Mmmm ... if I come in and collect it this afternoon , is there any way I could
+        use it today ? Petty cash is getting low , so I need to draw some money .
+      id: dailydialog:no_start
+      text: Or we can send it to you . But if you would like to use it at the ATM
+        , you'll need to wait for your PIN number .
+      topic: finance
+- - - act_type: question
+      emotion: no_emotion
+      episode_done: true
+      eval_labels:
+      - I think I've got used to work under pressure . I will adjust myself to the
+        step of your newspaper quickly .
+      id: dailydialog:no_start
+      text: Can you work under pressure ? You know , people working here are all busy
+        everyday since we're daily newspaper .
+      topic: work
+    - act_type: directive
+      emotion: no_emotion
+      episode_done: true
+      eval_labels:
+      - I see . Yes , that's fine . I'll be there at around 2:30 pm . See you later
+        , and thanks .
+      id: dailydialog:no_start
+      text: As long as you bring your ID , etc , we can serve you over the counter
+        . But you won't be able to use the ATM until your new PIN number arrives .
+      topic: finance

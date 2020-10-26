@@ -1,0 +1,30 @@
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - universal music group
+    reward: 0
+    text: which record label does slade belong to?
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - single (music)
+    reward: 0
+    text: what type of release is addicted
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - n-gage
+    reward: 0
+    text: which platform is x-men legends released for?
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - narc
+    reward: 0
+    text: which game was designed by brian l. schmidt
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - ballot measure 9
+    reward: 0
+    text: What is a lgbt netflix movie?

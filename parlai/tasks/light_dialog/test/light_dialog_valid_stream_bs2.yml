@@ -1,0 +1,508 @@
+- - - episode_done: false
+      eval_labels:
+      - Long time indeed! How have you been keeping?
+      id: light_dialog
+      label_candidates:
+      - hello, it seems we are both queens from different countries
+      - Warm milk and roasted meat
+      - I am not sir, I am happy to help you
+      - I do not think I am being held legally. Can you tell someone I am here?
+      - Is that why we draw those circle thingies on the floor in colored sand Master?
+        I am always afraid I'm going to sneeze partway through.....
+      - I'm not sure, I think we need to start with the person thee King wanted us
+        to torture.
+      - If I were a thief, which pocket would I put it in?  I will check his left
+        first!  Ouch!  He hit me!
+      - You might the mayor somewhere, but its not here, commoner. Back off while
+        I check the records.
+      - 'Now you''re making me feel a little guilty for ending her life. Do you have
+        any butchered ones available? '
+      - It's a new level of existence entirely
+      - Hey kid.watch out for those spices!!
+      - 'I believe the merchant told me that the Court representative can be bribed
+        easily with a new fishing pole. '
+      - Long time indeed! How have you been keeping?
+      - I'd be better if there were more to eat. Lucky for you, I'm in no mood for
+        camel meat.
+      - 'Aaah, nooo!  Please have mercy - ye wouldn''t hit some feller... sommat with
+        a bible, now would ye!  '
+      - thanks dad and mum will be so happy though lets not tell her till after we
+        done she worries and all
+      - No you said the stones wouldn't help me become a knight. Your a confusing
+        old person!
+      - 'Oh yeah, I''ll help you get Chuck. None of us frogs like Chuck at all. '
+      - hello small one it seems we are both quite the mini people
+      - I am not a day over 120! Who do you think you are calling old?
+      text: '_task_speech
+
+        _setting_name Turquoise Shore, Shore
+
+        _setting_desc A beautiful turquoise color water by the shore. It is filled
+        with many gems and gold.
+
+        _partner_name sea witch
+
+        _self_name mermaid
+
+        _self_persona I am one of the most beautiful mermaids to live in the sea.
+        I like to watch the other sea creatures swim by me, including dolphins, who
+        are my favorite creatures because they are so friendly. I fear the people
+        who live on land because they hunt my kind.
+
+        _object_desc a water : The water sits motionless.  It is clear.
+
+        _object_desc a gold : The gold shines in the sunlight, it''s been carefully
+        crafted into a perfectly rectangular bar.
+
+        _object_desc a thing : The thing is plentiful in the room, leaving a person
+        wondering what the value is.
+
+        _object_desc a treasure : The treasure glints and gleams with gold, jewels
+        and other precious metals.  This seems like it would be worth a fair amount
+        of coin.
+
+        _object_desc a mermaid : I am one of the most beautiful mermaids to live in
+        the sea. I like to watch the other sea creatures swim by me, including dolphins,
+        who are my favorite creatures because they are so friendly. I fear the people
+        who live on land because they hunt my kind.
+
+        _object_desc a Crab : Look at those beautiful crabs! That would make a tasty
+        dinner
+
+        _object_desc a turquoise color water : the turqoise colored water is not quite
+        transparent. it may house a creature that is not currently visible
+
+        _object_desc a stone : The shiny stone was worn smooth, and all the roughness
+        was gone.
+
+        _object_desc a gem : The gem sparkles in the light. The colored stone is a
+        dazzling sight.
+
+        _object_desc a shell : The shell once washed up on the shore with the markings
+        of a long sea travel.
+
+        _object_desc a trident : The trident is battered and worn, rusty on ends.
+
+        _partner_say Hey there Mermaid! Long time, no see.'
+    - episode_done: false
+      eval_labels:
+      - Hey there Mermaid! Long time, no see.
+      id: light_dialog
+      label_candidates:
+      - You will fall like the fallen in the painting on the wall. You have nothing
+        left to fight for. Take that and that
+      - I am sure they are wise men. Give them this and tell them we wish to have
+        peace.
+      - 'You. '
+      - well you will find that here but not from me
+      - 'Well, what should you have me do? I''ll do it! '
+      - not at all my king, just for the water as yuo said
+      - Really?? There are many guards at the exit door.They will be enough to do
+        the job.
+      - No oats?  Horse is sad!  Naaaaay!  Devastated!
+      - You make no sense. Waters? Perhaps if I drink the water I might see what they
+        see. But maybe I should avoid them?
+      - 'Take this magical crystal ball. It will allow you to speak my language. '
+      - A dancing lizard! That will surely capture their attention. Oh look, here
+        they come!
+      - I need nothing but my compensation. I am a proud man. Remember I will deny
+        ever telling you any of this. Do not squeal it was me who told you of thee
+        rumors.
+      - Hmm state your name and your place of origin, visitor.
+      - Hey there Mermaid! Long time, no see.
+      - Don't worry, Crow. You are safe. I'm searching for far bigger beasts than
+        you.
+      - You have been more than helpful. I am very glad you were here.
+      - Woah how did I get in here.  I don't mean any trouble .  I was just scavenging
+        for food.
+      - You are well intentioned, but sometimes very foolish to mess with a pirate.
+      - how are you today master
+      - This is the Royal Gardens! I would be ashamed if I seen such here. I do not,
+        but I do see many surrounding this palace...
+      text: '_task_speech
+
+        _setting_name Turquoise Shore, Shore
+
+        _setting_desc A beautiful turquoise color water by the shore. It is filled
+        with many gems and gold.
+
+        _partner_name mermaid
+
+        _self_name sea witch
+
+        _self_persona I am a sea witch.  I pray on young sailors who hope to find
+        adventure and treasures on the open sea.  I lure them in with magic spells
+        and promise of riches.
+
+        _object_desc a water : The water sits motionless.  It is clear.
+
+        _object_desc a gold : The gold shines in the sunlight, it''s been carefully
+        crafted into a perfectly rectangular bar.
+
+        _object_desc a thing : The thing is plentiful in the room, leaving a person
+        wondering what the value is.
+
+        _object_desc a treasure : The treasure glints and gleams with gold, jewels
+        and other precious metals.  This seems like it would be worth a fair amount
+        of coin.
+
+        _object_desc a mermaid : I am one of the most beautiful mermaids to live in
+        the sea. I like to watch the other sea creatures swim by me, including dolphins,
+        who are my favorite creatures because they are so friendly. I fear the people
+        who live on land because they hunt my kind.
+
+        _object_desc a Crab : Look at those beautiful crabs! That would make a tasty
+        dinner
+
+        _object_desc a turquoise color water : the turqoise colored water is not quite
+        transparent. it may house a creature that is not currently visible
+
+        _object_desc a stone : The shiny stone was worn smooth, and all the roughness
+        was gone.
+
+        _object_desc a gem : The gem sparkles in the light. The colored stone is a
+        dazzling sight.
+
+        _object_desc a shell : The shell once washed up on the shore with the markings
+        of a long sea travel.
+
+        _object_desc a trident : The trident is battered and worn, rusty on ends.'
+- - - episode_done: false
+      eval_labels:
+      - I've been catching waves with the dolphins all morning. I thought I would
+        come and get some sunshine. What kind of victims do you expect to find in
+        a tranquil place like this?
+      id: light_dialog
+      label_candidates:
+      - I have been here before your great grandparents was born, young man! Ask the
+        wizard and he can talk some sense into your head! Treat this talisman carefully,
+        wizard!
+      - They will not have these spices under their hats like we do. We keep the finest
+        spices in our hats so they are not dried out by the direct sunlight.
+      - Look at these tomatoes! Large, ripe, and perfectly red! I work hard to harvest
+        the best tomatoes, but my tool shed is in shambles. It needs some serious
+        work.
+      - how are you
+      - Poor crow. If only you were human, you would understand my lot in life.
+      - I'm so sorry to have bothered you, please don't tell the boss. I really need
+        this job, I'm saving up to go to school so one day I won't have to do this
+        anymore.
+      - None that I have spied, other than the vermin that live here with me.
+      - Let’s go!
+      - I am here to ask for help for the needy
+      - Hello there, I have come to inspect the grounds. I have my annual sunshine
+        worship fast approaching and I need a good venue.
+      - I'll never tell.
+      - The finest gold can buy, or our knights can carry. Haha! Sir Edgar returned
+        from France with some cases of very fine drink!
+      - That all sounds fine. Anything I can safely carry on my person.
+      - I've been catching waves with the dolphins all morning. I thought I would
+        come and get some sunshine. What kind of victims do you expect to find in
+        a tranquil place like this?
+      - 'Did my fine gown and  tiara not give it away? '
+      - 'Sure, I don''t mind. I can bring you at least part of the way home. Which
+        direction is it? '
+      - Hello there young one. Please, come in.
+      - This is agent Witch, come in agent cool, the Sister is in the Banquet Hall.
+      - But why me? Of all the people living here in the valley?
+      - Oh Chicken the Chicken.
+      text: '_self_say Long time indeed! How have you been keeping?
+
+        _partner_say Pretty good, You know how it goes. Just trying to find some unwitting
+        victims. What are you doing in the Turquoise Shore?'
+    - episode_done: false
+      eval_labels:
+      - Pretty good, You know how it goes. Just trying to find some unwitting victims.
+        What are you doing in the Turquoise Shore?
+      id: light_dialog
+      label_candidates:
+      - I might if the fam feels up to it. Maybe I will see you there!
+      - Do you think this will protect me?
+      - There are no bread crumbs up there The kitchen is the best.
+      - This seems like too dark and wicked a place for something as ordinary as a
+        camel.
+      - 'If you happen to succumb to the magical lure of the tree, you know where
+        to find me.  Good luck with your crops next year.  I have a feeling you will
+        do very well. '
+      - Only time will tell. Always follow your heart and the right path will always
+        be clear.
+      - I will fly around to see if I can find something better for you
+      - 'So, you wandering around with no purpose either huh rabbit? '
+      - Why hello there, little faery. I hope the garden finds you well this fine
+        day.
+      - What is it that you are selling? I have the finest of silk!
+      - Awesome! Do you know what it can do? I am a nice spider so I would like to
+        use the powers to be nice
+      - We getting closer to the deep part. I will have to carry you here.
+      - Still the rules.  Now move.
+      - Pretty good, You know how it goes. Just trying to find some unwitting victims.
+        What are you doing in the Turquoise Shore?
+      - You tricked me!
+      - 'Yeah, I wasn''t born here - but I''ve been here as long as I can remember! '
+      - Yes and my master is a great witch! She can make you fatter my delici....precious.
+      - Ah it is very good that you do.  As the knight to the royal court, I find
+        that clearing yourself of all sin is the best way to travel.
+      - Hi there, Bat! It's nice to see someone here who must feel as out of place
+        as I do!
+      - I love hugs and cheese , I would like to use the powers to get rid of this
+        horrible smell !
+      text: '_self_say Hey there Mermaid! Long time, no see.
+
+        _partner_say Long time indeed! How have you been keeping?'
+- - - episode_done: false
+      eval_labels:
+      - His armor is particularly garrish. You know I don't fraternize with land dwellers.
+      id: light_dialog
+      label_candidates:
+      - Last time I checked, a royal chef gets to tell a lowly maid what to do. Now
+        do what I asked!
+      - Oh, hello there Priest. I have collected plenty of alms today for the needy.
+      - I guess instead of a sleeping bag the hat would be a bit more practical for
+        you to hide under. I will leave you some spices you can sprinkle on the bandits
+        to make your meal so so tasty.
+      - Yeah, I'm fine. It's cold in the water though.
+      - Just so we are clear, I'm the milk type of calf not the eating type of calf.
+        You and I are on the same side.
+      - I will teach you the ways of the pirate.
+      - 'Ah this is a problem. Perhaps both of us can avoid our problems by running
+        off together. I can provide us food as I am an excellent archer. '
+      - Any bugs that you don't like...please set them on the windowsill or shew them
+        in my direction...but no, I think that's all I could want.  I can also let
+        you know news far and wide for insects talk a lot even if they don't have
+        brains.
+      - I am thirsty and I need to quench my thirst.
+      - Such wisdom already shows much promise in you, for it is, indeed, not a path
+        to be chosen lightly.  When you have made your decision, simply come to my
+        chambers with this scepter to say I had given it for you to clean.
+      - Please! Do not harm me!
+      - His armor is particularly garrish. You know I don't fraternize with land dwellers.
+      - I feared that you would get the wrong impression if I complimented your dress,
+        but I think it's beautiful. How come you have not complimented my tunic yet?
+      - 'I didn''t realize it was to baptize the child. It looked like it was a wedding. '
+      - 'THIS ONE! '
+      - No idea, i thought they were more of your people since you're a fairy
+      - There's food on all the tables. Have as much as you can carry!
+      - I've given that up after.... the fires.
+      - Wow...these are awesome. I love it so much. I will make sure you are duly
+        compensated.
+      - Now that you say that, I often found myself day dreaming as I walked and began
+        to follow a group of doves without realizing it. I think they lead me here!
+        Is that a sign?
+      text: '_self_say I''ve been catching waves with the dolphins all morning. I
+        thought I would come and get some sunshine. What kind of victims do you expect
+        to find in a tranquil place like this?
+
+        _partner_say What do you know about that knight standing over there?
+
+        _self_emote pout'
+    - episode_done: false
+      eval_labels:
+      - What do you know about that knight standing over there?
+      id: light_dialog
+      label_candidates:
+      - Thats better, but what if they like the faery?
+      - I won't disappoint you, I know that there is a reason you summoned me to these
+        chambers. You believed in my ability to do this mission with you!
+      - What do you know about that knight standing over there?
+      - Sure.  Because the King is going to send his personal mount off to the glue
+        factory for you.  Hey .. remember that time that I had that drunk tourist
+        convinced that I was really an enchanted princess.  That was hilarious!
+      - Then what will you do, miss?  Do you plan on pledging your allegiance to the
+        Forrest Gnomes?  You do know they have carpets of bear skin and were in league
+        with the witch!
+      - I did. It is chicken and noodles. Your grandmother's favorite
+      - good day guard
+      - I feel like you are lying and you have awfully nice shoes for being a poor
+        old man.
+      - It is not without its troubles. Would you like to join me?
+      - Ah, weapon practice. What brings you here?
+      - Oh thank you!
+      - Better be. *burps* Oops!
+      - I am afraid I cannot allow you to eat her. I'm obligated by my duties to protect
+        every man and woman in this castle.
+      - Guard, where can I find an apple?
+      - I would be proud to help out and do more for the kingdom
+      - So how am I meant to check without your name?
+      - This may be a little off topic, but I noticed that there is room for a cot
+        in this sitting area, if I get banished from my church for speaking the truth
+        could I come stay with you, the only person I have been able to confide in.
+      - just a servant doing his job
+      - Ohh that is too good. I wouldn't mind taking one of these off his hands, as
+        ugly as they are they are worth a fortune.
+      - When Father John founded this church, he had traveled many nights and days
+        on foot, without food or drink. He came to a clearing, in which stood twelve
+        massive trees which wove together in the image of Church, by the hand of God.
+        This place has truly been blessed. Some say it contains secret and arcane
+        magic, though I do not believe such stories. If you would like, I can give
+        you a tour of this sacred place.
+      text: '_self_say Pretty good, You know how it goes. Just trying to find some
+        unwitting victims. What are you doing in the Turquoise Shore?
+
+        _partner_say I''ve been catching waves with the dolphins all morning. I thought
+        I would come and get some sunshine. What kind of victims do you expect to
+        find in a tranquil place like this?'
+- - - episode_done: false
+      eval_labels:
+      - I suppose the only thing left to complete the illusion is for him to get wet.
+      id: light_dialog
+      label_candidates:
+      - To be thankful for so many blessings, count each day a gift.  See how we have
+        been blessed with a warm home.  Now you children need to help me clean the
+        church.
+      - We can use the vine to hang your trap out of sight. And when the cat comesssss.....
+        BOOM.
+      - 'You are most faithful, my friend. '
+      - What good is that map to you then? Where did you even get such a map?
+      - I saw a path we have not been down before on our last run. Let's go see what
+        we can find.
+      - Only that she stay warm in her pursuits of horticulture. The royal library
+        is on the west wall, and tends to get drafty.
+      - What is this thing?
+      - So everyone that bumps into that crazy woman ends up here?
+      - 'A long time, I am weary and this jacket has me over encumbered. '
+      - beef or not, this dog won't be getting any
+      - hmmm..... yes! he called it Silkworm root
+      - Yes, I am please look closer at the inscription inside the ring for me.
+      - And a good meal you'd be if you keep eating those fat juicy worms!
+      - And if you do take the King's life, who will that leave in power?
+      - I suppose the only thing left to complete the illusion is for him to get wet.
+      - Perfect! He'll have to go get a new one, which means he'll have to take me
+        to town. I love to go to town. Have you ever been to town?
+      - Hissss... I wisssh there was a spot of sssun here.  All this damp is getting
+        in my sssscales.
+      - Hello
+      - 'Son! Please calm down! You''re scaring me! '
+      - 'You know what?! I have had enough! I have a plan! '
+      text: '_self_say His armor is particularly garrish. You know I don''t fraternize
+        with land dwellers.
+
+        _partner_say I don''t know, I like when they''re shiny like that. He looks
+        like a giant fishing lure.
+
+        _partner_emote laugh
+
+        _self_act get stone'
+    - episode_done: false
+      eval_labels:
+      - I don't know, I like when they're shiny like that. He looks like a giant fishing
+        lure.
+      id: light_dialog
+      label_candidates:
+      - They are not worth too much they are just normal spices, I just carry about
+        of them to sell in bulk.
+      - 'Odd I would have thought this was the type of thing a rat would enjoy '
+      - I don't know, I like when they're shiny like that. He looks like a giant fishing
+        lure.
+      - 'I will walk with you. We can use this axe to knock away any overly interested
+        rats on our way out. '
+      - Ah, so time for a change of scenery then?  Well, they say that a change is
+        as good as a rest and, while it can be hard sometimes, life at sea is a good
+        life.
+      - No, I am an animal, but this will be perfect in my nest
+      - No, no, no! I am the wizard's assistant. I am his student. Tell me little
+        frog, where did you come from? How is it that you can talk?
+      - Umm, I'm pretty sure those are poisonous. I think you're going to end up with
+        a rash.
+      - Please bandit. We don't have much gold. You should be going after the rich
+        folk in the village! Their fortunes are massive and ours are so little. If
+        you rob us we will have to alert the Paladins!
+      - Have your self to it! I'm am going to see to it that this room gets a face
+        lift soon.
+      - ok
+      - Get out of my way!
+      - Thanks! does it hurt the worm?
+      - A king will always fight for his kingdom
+      - only the best for you!
+      - Quite a lovely place you have here! How does that hymnbook taste?
+      - Always your excellence, I am at your service and very grateful to be in your
+        presence. Here I will bring you this cross to show you my appreciation and
+        respect.
+      - Thank you. Tell me of the rumors going around here to pass time, shall you?
+      - Why yes, though ones of that size are much larger and costly - 12 pieces,
+        but it's enough to feed an entire village for a day!
+      - Taking a walk
+      text: '_self_say What do you know about that knight standing over there?
+
+        _partner_say His armor is particularly garrish. You know I don''t fraternize
+        with land dwellers.
+
+        _partner_emote pout
+
+        _self_emote laugh'
+- - - episode_done: false
+      eval_labels:
+      - For a sea witch you've certainly got a pronounced moral compass
+      id: light_dialog
+      label_candidates:
+      - 'Hm what an odd object. I assume it must be very powerful. '
+      - silver pieces
+      - Such kindness. I did build huts for a while, until all our supplies dried
+        up. Now... nothing.
+      - For a sea witch you've certainly got a pronounced moral compass
+      - Of course. Should I start with shaking out this blanket?
+      - Bah!
+      - You have any battle stories to tell?
+      - You think i dont know that? Why would I give back to the people, when they
+        have given nothing back to me!
+      - I'm sure you are working on something very important, may I ask what it is?
+      - I'll have to stop by! Have you always lived here in Dorwich?
+      - Nope nothing is happening. Maybe it's in this leaf. Here, eat this!
+      - Hello creature, are you friendly?  What are you doing here int he bazaar?
+      - We are at the top of the tower, it is some way to where you want to be. Let
+        me think..
+      - I can  not help you blend in. But I would love to hear about your foreign
+        polices from Slavic
+      - What do you mean?
+      - Hmm, it seems to be attracting the attention of flies and ants. Er, my arthritis
+        seems to be acting up, my fingers have become rather stiff. Perhaps it would
+        be best if you opened it.
+      - I will see what I can find, is that the only request?
+      - Ah, thank goodness you're here!  I've gotten, erm, a little turned around
+        since I... well, I was robbed just a few hours again.
+      - I think I'm just going to go for a swim while I am here! The water feels so
+        refreshing. Care to joing?
+      - You would make this ole' servants dreams come true!!! I would be so happy!!
+      text: '_self_say I suppose the only thing left to complete the illusion is for
+        him to get wet.
+
+        _partner_say Ahh, Let''s not make him too rusty.
+
+        _self_act drop stone'
+    - episode_done: false
+      eval_labels:
+      - Ahh, Let's not make him too rusty.
+      id: light_dialog
+      label_candidates:
+      - 'I can not eat jewels. '
+      - which part of the village do you like the most apart from the room
+      - That is of no import at the moment.  It is time for me to see the king...please
+        be on your way so that I may be announced.
+      - I’m looking for my dad
+      - Halt there!  Who are you, and who let you into my castle?!  You have the look...
+        the look of an assassin!  No, don't kill me, I'm too young to die!
+      - No I just don't want any bandits to steal my spices from me.
+      - Oh you scared me! I am a gravedigger but I live alone in solitary confinement
+        in a dark and sad cemetery.
+      - A poor excuse!
+      - Ahh, Let's not make him too rusty.
+      - So who's the suitor?
+      - Yes of course! A fisherman like me always has a spare rod! Now take your pole
+        and put a worm on the end!
+      - Hey there. Don't often see a bride without a groom
+      - That's fair enough, So what do you wanna talk about?
+      - 'a small child who grew up in a nearby village. '
+      - Who do you think you are to give me orders??? I only obey my boss
+      - Oh trust me sister I am well aware.
+      - Iron ore, for melting down and turning into shields. That's what I've been
+        hired for anyway, but between you and me, I think there's something else going
+        on.
+      - So a bear is helping you with your economy? Interesting.
+      - Yes, your majesty.  As you wish, your majesty.  I tremble before you.
+      - Should we meet again, I am Arachnibald. What is your name?
+      text: '_self_say I don''t know, I like when they''re shiny like that. He looks
+        like a giant fishing lure.
+
+        _partner_say I suppose the only thing left to complete the illusion is for
+        him to get wet.
+
+        _partner_act get stone'

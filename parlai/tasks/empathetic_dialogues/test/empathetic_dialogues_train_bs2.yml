@@ -1,0 +1,140 @@
+- - - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: nostalgic
+      episode_done: false
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - You must have felt nostalgic of the old days.
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I stumbled upon my old diary when packing for a move.
+      text: I was packing for a move to a new city and I stumbled upon my old diary.
+        Brought back so many memories.
+    - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: surprised
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - Yeah it was a lot of fun. Suprise parties are great way to make your friends
+        happy.
+      prepend_cand: null
+      prepend_ctx: null
+      situation: For my 30th birthday my friends threw me an unexpected party that
+        was a lot of fun.
+      text: Woo,i wish i was there,congrats
+- - - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: nostalgic
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - I understand it is usually hard moving to a new city leaving some many people
+        and placed behind
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I stumbled upon my old diary when packing for a move.
+      text: Absolutely. I was sitting down reading through it and just enjoying the
+        memories. Made me a little sad to move away.
+    - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: sad
+      episode_done: false
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - Awe I love weddings! Were they having a big wedding or a small one?
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I was watching a TV show and the couple were getting married. It
+        was so sweet that it made me cry.
+      text: I was watching a TV show and the couple were getting married. It was so
+        sweet that it made me cry.
+- - - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: furious
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - No, but I couldn't believe it because although I am in a bad city..I have
+        a fenced in yard..and they would've had to JUMP the fence and carry it over..and
+        I have some BIG mean dogs that everyone is scared of..So it had to be someone
+        who didn't know about my dogs...But I have a security light too..I haven't
+        seen it at any pawn shops or for sale anywhere..it's been months..But boy
+        do THIEVES make me SO ANGRY! I work HARD to have stuff and they just TAKE
+        it!
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I had to try to start my old broken lawn mower today and it made
+        me VERY angry about my nice one being stolen. I work HARd for what I have..so
+        when some druggie comes along and steals it..it just makes me fume!
+      text: I'd be mad too! Do you have any idea who could have stolen it?
+    - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: sad
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - You will when the time is right and it'll be beautiful.
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I was watching a TV show and the couple were getting married. It
+        was so sweet that it made me cry.
+      text: It was big. But it made me feel down because I haven't had one yet.
+- - - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: impressed
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - It was about saving money
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I was very impressed with a speaker I heard at work last week. He
+        really got to me
+      text: Oh so what did he speak about?
+    - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: hopeful
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - It was a art school back home
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I had faith I was going to get into a school I had always wanted
+        to go. I was just happy to have a chance
+      text: Congrats!  What school?
+- - - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: sentimental
+      episode_done: true
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - yeah it sucks, I was with her for all through her cancer and last days.
+      prepend_cand: null
+      prepend_ctx: null
+      situation: it's the anniversary of my grandmother's passing. It's been five
+        years but I was there for her through the end.
+      text: I'm sorry to hear that. I've lost both of mine, I know how you feel.
+    - deepmoji_cand: null
+      deepmoji_ctx: null
+      emotion: joyful
+      episode_done: false
+      id: empathetic_dialogues
+      label_candidates: []
+      labels:
+      - Thats cool. The N64 was a huge step up for enjoying your alone time for me.
+      prepend_cand: null
+      prepend_ctx: null
+      situation: I remember as a child when I got my Nintendo 64 how happy and excited
+        I was. Best christmas memory I have.
+      text: I think fondly of the Christmas I got my N64 .

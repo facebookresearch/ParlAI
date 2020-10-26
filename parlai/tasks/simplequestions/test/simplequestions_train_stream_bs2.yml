@@ -1,0 +1,60 @@
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - spiritualism
+      reward: 0
+      text: what is the book e about
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - united kingdom
+      reward: 0
+      text: what country was the film the debt from
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - complete madness
+      reward: 0
+      text: to what release does the release track cardiac arrest come from
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - the oath (arranged version) [ffviii]
+      reward: 0
+      text: what songs have nobuo uematsu produced?
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - swizz beatz
+      reward: 0
+      text: Who produced eve-olution?
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - eagles
+      reward: 0
+      text: Which artist recorded most of us are sad?
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - saving shiloh
+      reward: 0
+      text: what movie is produced by warner bros.
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - american football player
+      reward: 0
+      text: What is don graham known as?
+- - - episode_done: true
+      id: simplequestions
+      labels:
+      - nationwide arena
+      reward: 0
+      text: what's there to see in columbus
+    - episode_done: true
+      id: simplequestions
+      labels:
+      - balls to picasso
+      reward: 0
+      text: What album was tibet released on

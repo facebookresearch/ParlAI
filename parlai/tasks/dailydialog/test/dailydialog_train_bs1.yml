@@ -1,0 +1,45 @@
+- - act_type: no_act
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - Okay . This trail looks the best . It's a little steep . But I'm sure it will
+      be alright .
+    text: __SILENCE__
+    topic: ordinary_life
+- - act_type: inform
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - '... What a stink . This place stinks like rotten eggs .'
+    text: Well . You're the tour guide , I'll follow you .
+    topic: ordinary_life
+- - act_type: inform
+    emotion: no_emotion
+    episode_done: true
+    id: dailydialog
+    labels:
+    - Suddenly the ' great outdoors ' isn't so appealing . Let's hike a little faster
+      ...
+    text: That's sulphur you can smell . The whole of Taiwan is a volcanic region
+      . That's why Taiwan has so many hot springs . It's volcanic activity . The sulfur
+      smoke that you can smell is coming from those fumaroles over there .
+    topic: ordinary_life
+- - act_type: no_act
+    emotion: no_emotion
+    episode_done: true
+    id: dailydialog
+    labels:
+    - Today is your birthday . First of all , happy birthday to you !
+    text: __SILENCE__
+    topic: attitude_and_emotion
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - The bride's parents ' seating arrangement is on the left side of the aisle and
+      the groom's parents is on the right side .
+    text: In my wedding ceremony , where do my parents sit in the church ?
+    topic: relationship

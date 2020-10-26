@@ -1,0 +1,731 @@
+- - - episode_done: true
+      eval_labels:
+      - Chuck
+      id: cbt:NE
+      label_candidates:
+      - Chuck
+      - Johnny
+      - Marshhawk
+      - Meadows
+      - Polly
+      - Rabbit
+      - Skunk
+      - days
+      - first
+      - morning
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        At first she would n''t go without a great deal of coaxing , but after a while
+        he did n''t have to coax at all .
+
+        She seemed to delight to be with him as much as he did to be with her .
+
+        So Johnny Chuck grew happier and happier .
+
+        He was happier than he had ever been in all his life before .
+
+        You see Johnny Chuck had found the greatest thing in the world .
+
+        Do you know what it is ?
+
+        It is called love .
+
+        XII JOHNNY CHUCK PROVES HIS LOVE These spring days were beautiful days on
+        the Green Meadows .
+
+        It seemed to Johnny Chuck that the Green Meadows never had been so lovely
+        or the songs of the birds so sweet .
+
+        He had forgotten all about his old friends , Jimmy Skunk and Peter Rabbit
+        and the other little meadow people .
+
+        You see , he could n''t think of anybody but Polly Chuck , and he did n''t
+        want to be with anybody but Polly Chuck .
+
+        He had even forgotten that he had started out to see the world .
+
+        He did n''t care anything more about the world .
+
+        All he wanted was to be where Polly Chuck was .
+
+        Then he was perfectly happy .
+
+        That was because Johnny Chuck had found the greatest thing in the world ,
+        which is love .
+
+        But Johnny still had one great wish , the wish that he might show Polly Chuck
+        just how brave and strong he was and how well he could take care of her .
+
+        One morning they were feasting in a patch of sweet clover over near an old
+        stone wall .
+
+        It was the same stone wall in which Johnny Chuck had escaped from old Whitetail
+        the Marshhawk , when Johnny was a very little fellow .
+
+        Suddenly Polly gave a little scream of fright .
+
+        Johnny XXXXX looked up to see a dog almost upon her .'
+    - episode_done: true
+      eval_labels:
+      - Peter
+      id: cbt:NE
+      label_candidates:
+      - Bowen
+      - Cecily
+      - Dan
+      - Felicity
+      - Paddy
+      - Pat
+      - Peter
+      - evening
+      - months
+      - quiver
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        `` I s ` pose there ''s no use even in praying now , '''' said Cecily desperately
+        .
+
+        `` It would n''t do any harm to try , '''' sobbed Felicity .
+
+        `` You need n''t waste your prayers , '''' said Dan mournfully , `` Pat is
+        beyond human aid .
+
+        You can tell that by his eyes .
+
+        Besides , I do n''t believe it was the praying cured him last time . ''''
+
+        `` No , it was Peg Bowen , '''' declared Peter , `` but she could n''t have
+        bewitched him this time for she ''s been away for months , nobody knows where
+        . ''''
+
+        `` If he could only TELL us where he feels the worst ! ''''
+
+        said Cecily piteously .
+
+        `` It ''s so dreadful to see him suffering and not be able to do a single
+        thing to help him ! ''''
+
+        `` I do n''t think he ''s suffering much now , '''' I said comfortingly .
+
+        The Story Girl said nothing .
+
+        She passed and repassed her long brown hand gently over her pet ''s glossy
+        fur .
+
+        Pat lifted his head and essayed to creep a little nearer to his beloved mistress
+        .
+
+        The Story Girl drew his limp body close in her arms .
+
+        There was a plaintive little mew -- a long quiver -- and Paddy ''s friendly
+        soul had fared forth to wherever it is that good cats go .
+
+        `` Well , he ''s gone , '''' said Dan , turning his back abruptly to us .
+
+        `` It does n''t seem as if it can be true , '''' sobbed Cecily .
+
+        `` This time yesterday morning he was full of life . ''''
+
+        `` He drank two full saucers of cream , '''' moaned Felicity , `` and I saw
+        him catch a mouse in the evening .
+
+        Maybe it was the last one he ever caught . ''''
+
+        `` He did for many a mouse in his day , '''' said XXXXX , anxious to pay his
+        tribute to the departed . '''''
+- - - episode_done: true
+      eval_labels:
+      - dog
+      id: cbt:CN
+      label_candidates:
+      - Cousin
+      - cloak
+      - dog
+      - maiden
+      - mountain
+      - needle
+      - path
+      - pin
+      - side
+      - steps
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` What is it ? ''
+
+        answered he .
+
+        ` The ogre is coming after us .
+
+        I saw him . ''
+
+        ` But where is he ?
+
+        I do n''t see him . ''
+
+        ` Over there .
+
+        He only looks about as tall as a needle . ''
+
+        Then they both began to run as fast as they could , while the ogre and his
+        dog kept drawing always nearer .
+
+        A few more steps , and he would have been by their side , when Dschemila threw
+        the darning needle behind her .
+
+        In a moment it became an iron mountain between them and their enemy .
+
+        ` We will break it down , my dog and I , '' cried the ogre in a rage , and
+        they dashed at the mountain till they had forced a path through , and came
+        ever nearer and nearer .
+
+        ` Cousin ! ''
+
+        said Dschemila suddenly .
+
+        ` What is it ? ''
+
+        ` The ogre is coming after us with his dog . ''
+
+        ` You go on in front then , '' answered he ; and they both ran on as fast
+        as they could , while the ogre and the dog drew always nearer and nearer .
+
+        ` They are close upon us ! ''
+
+        cried the maiden , glancing behind , ` you must throw the pin . ''
+
+        So Dschemil took the pin from his cloak and threw it behind him , and a dense
+        thicket of thorns sprang up round them , which the ogre and his dog could
+        not pass through . ''
+
+        I will get through it somehow , if I burrow underground , '' cried he , and
+        very soon he and the XXXXX were on the other side .'
+    - episode_done: true
+      eval_labels:
+      - exchange
+      id: cbt:CN
+      label_candidates:
+      - daughter
+      - everybody
+      - exchange
+      - greyhound
+      - hands
+      - matter
+      - owner
+      - ram
+      - sunset
+      - tent
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        After supper Mohammed said to the owner of the tent , ` Your ram will kill
+        my greyhound . ''
+
+        ` Oh , no , he wo n''t . ''
+
+        ` And supposing he does ? ''
+
+        ` Then you can take him in exchange . ''
+
+        So in the night Mohammed killed the greyhound , and laid his body across the
+        horns of the ram .
+
+        Then he set up shrieks and yells , till he roused the Arab , who said ` Take
+        the ram and go away . ''
+
+        Mohammed did not need to be told twice , and at sunset he reached another
+        Bedouin encampment .
+
+        He was received kindly , as usual , and after supper he said to his host :
+        ` Your daughter will kill my ram . ''
+
+        ` Be silent , she will do nothing of the sort ; my daughter does not need
+        to steal meat , she has some every day . ''
+
+        ` Very well , I will go to sleep ; but if anything happens to my ram I will
+        call out . ''
+
+        ` If my daughter touches anything belonging to my guest I will kill her ,
+        '' said the Arab , and went to his bed .
+
+        When everybody was asleep , Mohammed got up , killed the ram , and took out
+        his liver , which he broiled on the fire .
+
+        He placed a piece of it in the girl ''s hands , and laid some more on her
+        night-dress while she slept and knew nothing about it .
+
+        After this he began to cry out loudly .
+
+        ` What is the matter ?
+
+        be silent at once ! ''
+
+        called the Arab .
+
+        ` How can I be silent , when my ram , which I loved like a child , has been
+        slain by your daughter ? ''
+
+        ` But my daughter is asleep , '' said the Arab .
+
+        ` Well , go and see if she has not some of the flesh about her . ''
+
+        ` If she has , you may take her in XXXXX for the ram ; '' and as they found
+        the flesh exactly as Mohammed had foretold , the Arab gave his daughter a
+        good beating , and then told her to get out of sight , for she was now the
+        property of this stranger .'
+- - - episode_done: true
+      eval_labels:
+      - stuck
+      id: cbt:V
+      label_candidates:
+      - came
+      - cried
+      - live
+      - move
+      - placed
+      - reply
+      - save
+      - speak
+      - stuck
+      - weeping
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` Udea !
+
+        Udea ! ''
+
+        he cried , but she did not move or reply .
+
+        Then he saw that she was dead , and rushed down to his brothers in the courtyard
+        and called out , ` Come quickly , our sister is dead ! ''
+
+        In a moment they were all beside her and knew that it was true , and they
+        made a bier and laid her on it , and placed her across a camel , and said
+        to the camel , ` Take her to her mother , but be careful not to halt by the
+        way , and let no man capture you , and see you kneel down before no man ,
+        save him who shall say `` string '''' -LSB- 1 -RSB- to you .
+
+        But to him who says `` string , '''' then kneel . ''
+
+        -LSB- Footnote 1 : ` Riemen . '' -RSB-
+
+        So the camel started , and when it had accomplished half its journey it met
+        three men , who ran after it in order to catch it ; but they could not .
+
+        Then they cried ` Stop ! ''
+
+        but the camel only went the faster .
+
+        The three men panted behind till one said to the others , ` Wait a minute
+        !
+
+        The string of my sandal is broken ! ''
+
+        The camel caught the word ` string '' and knelt down at once , and the men
+        came up and found a dead girl lying on a bier , with a ring on her finger
+        .
+
+        And as one of the young men took hold of her hand to pull off the ring , he
+        knocked out the man-eater ''s finger-nail , which had stuck there , and the
+        maiden sat up and said , ` Let him live who gave me life , and slay him who
+        slew me ! ''
+
+        And when the camel heard the maiden speak , it turned and carried her back
+        to her brothers .
+
+        Now the brothers were still seated in the court bewailing their sister , and
+        their eyes were dim with weeping so that they could hardly see .
+
+        And when the camel stood before them they said , ` Perhaps it has brought
+        back our sister ! ''
+
+        and rose to give it a beating .
+
+        But the camel knelt down and the girl dismounted , and they flung themselves
+        on her neck and wept more than ever for gladness .
+
+        ` Tell me , '' said the eldest , as soon as he could speak , ` how it all
+        came about , and what killed you . '' ''
+
+        I was waiting in the upper chamber , '' said she , ` and a nail of the man-eater
+        ''s XXXXX under my nail , and I fell dead upon the ground .'
+    - episode_done: true
+      eval_labels:
+      - took
+      id: cbt:V
+      label_candidates:
+      - changed
+      - ensured
+      - gave
+      - insulted
+      - preserves
+      - prevent
+      - sang
+      - standing
+      - think
+      - took
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        They began by naming her Graziella , and then Placida said : ` You know ,
+        dear sisters , that the commonest form of spite or punishment amongst us consists
+        of changing beauty to ugliness , cleverness to stupidity , and oftener still
+        to change a person ''s form altogether .
+
+        Now , as we can only each bestow one gift , I think the best plan will be
+        for one of you to give her beauty , the other good understanding , whilst
+        I will undertake that she shall never be changed into any other form . ''
+
+        The two godmothers quite agreed , and as soon as the little princess had received
+        their gifts , they went home , and Placida gave herself up to the child ''s
+        education .
+
+        She succeeded so well with it , and little Graziella grew so lovely , that
+        when she was still quite a child her fame was spread abroad only too much
+        , and one day Placida was surprised by a visit from the Fairy Queen , who
+        was attended by a very grave and severe-looking fairy .
+
+        The queen began at once : '' I have been much surprised by your behaviour
+        to Mutinosa ; she had insulted our whole race , and deserved punishment .
+
+        You might forgive your own wrongs if you chose , but not those of others .
+
+        You treated her very gently whilst she was with you , and I come now to avenge
+        our wrongs on her daughter .
+
+        You have ensured her being lovely and clever , and not subject to change of
+        form , but I shall place her in an enchanted prison , which she shall never
+        leave till she finds herself in the arms of a lover whom she herself loves
+        .
+
+        It will be my care to prevent anything of the kind happening . ''
+
+        The enchanted prison was a large high tower in the midst of the sea , built
+        of shells of all shapes and colours .
+
+        The lower floor was like a great bathroom , where the water was let in or
+        off at will .
+
+        The first floor contained the princess ''s apartments , beautifully furnished
+        .
+
+        On the second was a library , a large wardrobe-room filled with beautiful
+        clothes and every kind of linen , a music room , a pantry with bins full of
+        the best wines , and a store-room with all manner of preserves , bonbons ,
+        pastry and cakes , all of which remained as fresh as if just out of the oven
+        .
+
+        The top of the tower was laid out like a garden , with beds of the loveliest
+        flowers , fine fruit trees , and shady arbours and shrubs , where many birds
+        sang amongst the branches .
+
+        The fairies escorted Graziella and her governess , Bonnetta , to the tower
+        , and then mounted a dolphin which was waiting for them .
+
+        At a little distance from the tower the queen waved her wand and summoned
+        two thousand great fierce sharks , whom she ordered to keep close guard ,
+        and not to let a soul enter the tower .
+
+        The good governess took such pains with Graziella ''s education that when
+        she was nearly grown up she was not only most accomplished , but a very sweet
+        , good girl .
+
+        One day , as the princess was standing on a balcony , she saw the most extraordinary
+        figure rise out of the sea .
+
+        She quickly called Bonnetta to ask her what it could be .
+
+        It looked like some kind of man , with a bluish face and long sea-green hair
+        .
+
+        He was swimming towards the tower , but the sharks XXXXX no notice of him
+        .'
+- - - episode_done: true
+      eval_labels:
+      - 'on'
+      id: cbt:P
+      label_candidates:
+      - Above
+      - although
+      - as
+      - before
+      - beneath
+      - from
+      - 'on'
+      - over
+      - since
+      - that
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        One day Mrs. Griggs went away from the Dale place with a very curious story
+        , which she diligently spread far and wide .
+
+        It made a good deal of talk , but people , although they listened eagerly
+        , and wondered and questioned , were rather incredulous about it .
+
+        They thought Mrs. Griggs must be drawing considerably upon her imagination
+        ; there were not lacking those who declared that she had invented the whole
+        account , since her reputation for strict veracity was not wholly unquestioned
+        .
+
+        Mrs. Griggs ''s story was as follows : -- One day she found the door of the
+        west gable unlocked .
+
+        She went in , expecting to see bare walls and a collection of odds and ends
+        .
+
+        Instead she found herself in a finely furnished room .
+
+        Delicate lace curtains hung before the small , square , broad-silled windows
+        .
+
+        The walls were adorned with pictures in much finer taste than Mrs. Griggs
+        could appreciate .
+
+        There was a bookcase between the windows filled with choicely bound books
+        .
+
+        Beside it stood a little table with a very dainty work-basket on it .
+
+        By the basket Mrs. Griggs saw a pair of tiny scissors and a silver thimble
+        .
+
+        A wicker rocker , comfortable with silk cushions , was near it .
+
+        Above the bookcase a woman ''s picture hung -- a water-colour , if Mrs. Griggs
+        had but known it -- representing a pale , very sweet face , with large , dark
+        eyes and a wistful expression under loose masses of black , lustrous hair
+        .
+
+        Just beneath the picture , on the top shelf of the bookcase , was a vaseful
+        of flowers .
+
+        Another vaseful stood on the table beside the basket .
+
+        All this was astonishing enough .
+
+        But what puzzled Mrs. Griggs completely was the fact that a woman ''s dress
+        was hanging over a chair before the mirror -- a pale blue , silken affair
+        .
+
+        And on the floor beside it were two little blue satin slippers !
+
+        Good Mrs. Griggs did not leave the room until she had thoroughly explored
+        it , even to shaking out the blue dress and discovering it to be a tea-gown
+        -- wrapper , she called it .
+
+        But she found nothing to throw any light on the mystery .
+
+        The fact that the simple name `` Alice '''' was written XXXXX the fly-leaves
+        of all the books only deepened it , for it was a name unknown in the Dale
+        family .'
+    - episode_done: true
+      eval_labels:
+      - of
+      id: cbt:P
+      label_candidates:
+      - Hatheway
+      - 'ON'
+      - Romeo
+      - because
+      - by
+      - for
+      - in
+      - of
+      - to
+      - while
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        `` The heights by great men reached and kept Were not attained by sudden flight
+        , But they , while their companions slept , Were toiling upwards in the night
+        . ''''
+
+        -LRB- Peter , IMPRESSIVELY : -- `` I ''ve read many a worse editorial in the
+        Enterprise . '''' -RRB-
+
+        ESSAY ON SHAKESPEARE Shakespeare ''s full name was William Shakespeare .
+
+        He did not always spell it the same way .
+
+        He lived in the reign of Queen Elizabeth and wrote a great many plays .
+
+        His plays are written in dialogue form .
+
+        Some people think they were not written by Shakespeare but by another man
+        of the same name .
+
+        I have read some of them because our school teacher says everybody ought to
+        read them , but I did not care much for them .
+
+        There are some things in them I can not understand .
+
+        I like the stories of Valeria H. Montague in the Family Guide ever so much
+        better .
+
+        They are more exciting and truer to life .
+
+        Romeo and Juliet was one of the plays I read .
+
+        It was very sad .
+
+        Juliet dies and I do n''t like stories where people die .
+
+        I like it better when they all get married especially to dukes and earls .
+
+        Shakespeare himself was married to Anne Hatheway .
+
+        They are both dead now .
+
+        They have been dead a good while .
+
+        He was a very famous man .
+
+        FELICITY KING .
+
+        -LRB- PETER , MODESTLY : `` I do n''t know much about Shakespeare myself but
+        I ''ve got a book XXXXX his plays that belonged to my Aunt Jane , and I guess
+        I ''ll have to tackle him as soon as I finish with the Bible . '''' -RRB-'
+- - - episode_done: true
+      eval_labels:
+      - Reade
+      id: cbt:NE
+      label_candidates:
+      - Armstrong
+      - Cecily
+      - Felicity
+      - Reade
+      - anybody
+      - beaus
+      - day
+      - evening
+      - left
+      - something
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        `` Because the evening is the nicest time to tell things in .
+
+        I only mentioned it now so that you would have something interesting to look
+        forward to all day . ''''
+
+        `` Is it about Miss Reade ? ''''
+
+        asked Cecily .
+
+        `` Never mind . ''''
+
+        `` I ''ll bet she ''s going to be married , '''' I exclaimed , remembering
+        the ring .
+
+        `` Is she ? ''''
+
+        cried Felicity and Cecily together .
+
+        The Story Girl threw an annoyed glance at me .
+
+        She did not like to have her dramatic announcements forestalled .
+
+        `` I do n''t say that it is about Miss Reade or that it is n''t .
+
+        You must just wait till the evening . ''''
+
+        `` I wonder what it is , '''' speculated Cecily , as the Story Girl left the
+        room .
+
+        `` I do n''t believe it ''s much of anything , '''' said Felicity , beginning
+        to clear away the breakfast dishes .
+
+        `` The Story Girl always likes to make so much out of so little .
+
+        Anyhow , I do n''t believe Miss Reade is going to be married .
+
+        She has n''t any beaus around here and Mrs. Armstrong says she ''s sure she
+        does n''t correspond with anybody .
+
+        Besides , if she was she would n''t be likely to tell the Story Girl . ''''
+
+        `` Oh , she might .
+
+        They ''re such friends , you know , '''' said Cecily .
+
+        `` Miss XXXXX is no better friends with her than she is with me and you ,
+        '''' retorted Felicity .'
+    - episode_done: true
+      eval_labels:
+      - Jay
+      id: cbt:NE
+      label_candidates:
+      - Chuck
+      - Jay
+      - Johnny
+      - Meadows
+      - Mother
+      - Sammy
+      - Sun
+      - apple-trees
+      - bedclothes
+      - morning
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        snapped Sammy Jay .
+
+        `` That ''s for you to find out , '''' replied Johnny Chuck .
+
+        `` There ''s foolish pride and silly pride and pride of low degree ; A better
+        pride is honest pride , and that ''s the pride for me . ''''
+
+        And with that , Johnny Chuck disappeared in his new house .
+
+        XX SAMMY JAY UNDERSTANDS It was a beautiful morning .
+
+        Jolly , round , red Mr. Sun had thrown his bedclothes off very early and started
+        to climb up the sky , smiling his broadest .
+
+        Old Mother West Wind had swept his path clear of clouds .
+
+        The Merry Little Breezes , who , you know , are Mother West Wind ''s children
+        , had danced across the Green Meadows up to the old orchard , where they pelted
+        each other with white and pink petals of apple blossoms until the ground was
+        covered .
+
+        Each apple-tree was like a huge bouquet of loveliness .
+
+        Yes , indeed , it was very beautiful that spring morning .
+
+        Sammy Jay had gotten up almost as early as Mr. Sun and Old Mother West Wind
+        .
+
+        As soon as he had swallowed his breakfast , he flew up to the old orchard
+        and hid among the white and pink apple blossoms to watch for Johnny Chuck
+        .
+
+        You see , he knew that Johnny Chuck had some sort of a secret which filled
+        Johnny with very great pride ; but what it was Sammy Jay could n''t even guess
+        , and nothing troubles Sammy Jay quite so much as the feeling that he can
+        not find out the secrets of other people .
+
+        So he sat very , very still among the apple blossoms and waited and watched
+        .
+
+        By and by Johnny Chuck appeared on his doorstep .
+
+        He seemed very much excited , did Johnny Chuck .
+
+        He sat up very straight and looked this way and looked that way .
+
+        He looked up in the apple-trees , and Sammy Jay held his breath , for fear
+        that Johnny would see him .
+
+        But Sammy was so well hidden that , bright as Johnny Chuck ''s eyes are ,
+        they failed to see him .
+
+        Then Johnny Chuck actually climbed up on the old stone wall so as to see better
+        , and he sat there a long time , looking and looking .
+
+        Sammy XXXXX grew impatient .'

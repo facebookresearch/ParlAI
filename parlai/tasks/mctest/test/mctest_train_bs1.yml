@@ -1,0 +1,149 @@
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - Baseball and basketball
+    - Baseball and soccer
+    - Baseball only
+    - Baseball and football
+    labels:
+    - Baseball and basketball
+    reward: 0
+    text: 'Tom was the best baseball player in his neighborhood. He also enjoyed playing
+      basketball, but he wasn''t very good at it. Every morning he would get up and
+      go out to the baseball field, and every night he would dream about his favorite
+      players. He loved the Yankees, and knew he would someday play for them. One
+      day when Tom was practicing at the field, a man in a nice suit came out of a
+      long car and walked over to Tom. The man said that he worked for the Yankees,
+      and was there to see Tom play! Tom was so excited he could scream! Knowing that
+      the man was watching, he played the best game ever that day. When he was done,
+      the man told Tom that he was good enough to play for the Yankees, and to pack
+      his things right away. Tom hurried home as fast as he could, and started to
+      pack up all his clothes. His mom walked in and asked what Tom was doing. "I''m
+      going to play for the Yankees ma!" Tom said. Tom''s mom was so excited that
+      she took Tom and the whole family out for dinner. Grandpa, Grandma, Mom and
+      Dad were all there, and bought Tom a big cake! As Tom said goodbye to everyone,
+      he couldn''t help but feel sad that he would be gone for so long. "Don''t worry
+      son, we''ll be at all the games cheering you on!" said his dad. This made Tom
+      happy again, and as he left to be with his team, he knew that he had finally
+      made it. multiple: What sports did Tom play?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - Thunder
+    - Peaches
+    - Trees
+    - Lunch
+    labels:
+    - Peaches
+    reward: 0
+    text: 'Once upon a time, there was an old man named John. John loved to eat peaches.
+      In fact, John''s whole family, including his mother Stephanie, his father Bob,
+      and his brother James loved to eat peaches. John would eat peaches in the morning
+      for breakfast, in the afternoon for lunch, and in the evening for dinner. John
+      and his best friend, Rick, shared their love for peaches. One day John and Rick
+      started a peach farm so that they would never run out of their favorite fruit.
+      They planted hundreds of peach trees and waited for them to bear fruit. After
+      6 years of waiting, 1 lonely peach finally grew on one of the trees John and
+      Rick planted. They picked the peach and brought it home. They waited until the
+      weekend to eat it in case more peaches grew, but none did. John and Rick were
+      sad and confused about their farm. They planted hundreds of trees and were sure
+      that there would be thousands of peaches for them to eat in no time. Another
+      peach never grew on their farm for 17 years. One day, a mighty crack of thunder
+      led to a strong storm. Lightning hit the ground over and over, and John and
+      Rick were scared their trees might be killed. The next morning, every tree on
+      the farm had more than 10 peaches on it. John and Rick started shouting for
+      joy. one: What did John and Rick both love?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - so that the frog could be with its family
+    - he wanted to save the frog
+    - he wanted it out of the backyard
+    - so he could go back to playing with his airplane
+    labels:
+    - he wanted to save the frog
+    reward: 0
+    text: 'Kerry was playing with his toy airplane in the backyard after school one
+      day when he saw something moving in the corner of the yard. He put down his
+      toy and went over to look. He found a small frog, about two inches cross, jumping
+      across the grass.
+
+      ewline
+
+      ewlineCarefully, Kerry followed the frog as it jumped across the grass. He didn''t
+      know where the frog had come from or where it was going, but he knew that frogs
+      needed water. He wanted to help the frog.
+
+      ewline
+
+      ewlineHe ran inside and got a plastic pail that he used to use at the beach
+      for sand. He filled it up with water and brought it to the backyard.
+
+      ewline
+
+      ewlineIt took him some time to find the frog again. It seemed to be moving slower
+      than it had before. He waited for it to pause, then scooped it up with his bare
+      hands and dropped it into the water. He watched the frog swim around for a bit,
+      and then carried the pail around to the front of the house.
+
+      ewline
+
+      ewlineIt was a short way to a nearby creek running through his neighborhood.
+      Kerry walked slowly, trying not to spill the water. The pail seemed to grow
+      heavier and heavier as he walked. Finally, he reached the creek. He set the
+      pail down next to the water and tipped it over until the frog was swimming in
+      the stream. multiple: Why did Kerry put the frog in the stream?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - Nana
+    - Mary
+    - Holly
+    - Tina
+    labels:
+    - Mary
+    reward: 0
+    text: 'While walking in the park on Monday with my granddaughter Tina, we saw
+      an ice cream truck pull up on the street. "Can we get ice cream, Nana?" asked
+      Tina. "Sure we can!" I answered. As we started heading up the hill to the truck,
+      my granddaughter was scared by a bird who had swooped by her face. "Nana, that
+      bird almost made me fall down the hill!" Laughing at what was said, I answered,
+      "If you fell you might have taken Nana down with you!" Once we reached the ice
+      cream truck, Tina saw that they not only had ice cream but also carried popcorn,
+      hotdogs, juice and soda. "Nana, instead of ice cream may I get popcorn and juice?"
+      she asked. "If that is what you want, you sure can!" I answered. We got our
+      food and headed to the picnic table. On our way over we saw a child who Tina
+      knew from her kindergarten class. "Nana, may we go and say hello to Mary?" "Let''s
+      go!" We made it over to where Mary and her family were sitting and Tina saw
+      a bright blue butterfly. She did everything she could to try and catch that
+      pretty butterfly but it kept flying way to high for her to catch. "That is okay",
+      she said, "Butterflies need to be left out to fly free".  Mary asked Tina if
+      she wanted to go over her house and play Barbies when we left the park, instead
+      of going home. So we went over and the girls had a wonderful time and were both
+      tired after a long day. We needed to get a good night''s sleep to enjoy our
+      camping trip tomorrow. multiple: What was my granddaughter''s friend''s name?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - If they would help him look for Tom.
+    - If they wanted to watch Tom run in his wheel.
+    - If they knew where Tom was.
+    - If Tom was in an old sock behind his desk.
+    labels:
+    - If they knew where Tom was.
+    reward: 0
+    text: "One day, Harry bought a pet hamster name Tom. Tom was round and furry and\
+      \ had a funny smell. Harry loved it when Tom would climb up his arm and into\
+      \ his shirt sleeve. Every day before bed Harry would put Tom into his cage and\
+      \ every morning Harry would take Tom out of his cage and carry him around in\
+      \ his front shirt pocket during the day. Harry would carry Tom everywhere he\
+      \ went. Harry's favorite thing to do was to watch Tom run around in his exercise\
+      \ wheel. \newline\newlineThen one day Harry woke and to find that Tom was not\
+      \ in his cage. Tom had gone missing! This made Harry very upset. He looked everywhere\
+      \ for Tom, wondering where he could have disappeared to. Harry called his friends\
+      \ John, Rodney, and Bruno to ask if they knew where Tom was. They said that\
+      \ they didn't know. So Tom asked them if they would help him look for Tom. Only\
+      \ John and Bruno said \"yes\". to help Harry. After looking for Tom for two\
+      \ hours Bruno found Tom inside an old sock behind Harry's desk. No one knew\
+      \ how he got there. multiple: What was the first thing that Harry asked his\
+      \ friends?"

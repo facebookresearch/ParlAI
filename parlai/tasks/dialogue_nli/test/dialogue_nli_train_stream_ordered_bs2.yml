@@ -1,0 +1,112 @@
+- - - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - contradiction
+      text: 'Premise: since my dad is a mechanic we had mostly car books .
+
+        Hypothesis: my dad is a priest .'
+    - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - contradiction
+      text: 'Premise: my locks are chestnut .
+
+        Hypothesis: i am blonde .'
+- - - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - entailment
+      text: 'Premise: i am only 22 so i would not know .
+
+        Hypothesis: i am twenty two years old .'
+    - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - entailment
+      text: 'Premise: i am so sorry ! my parents died as well . they were very unhealthy
+        so i am vegan .
+
+        Hypothesis: i am a vegan .'
+- - - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - entailment
+      text: 'Premise: i was a college athlete .
+
+        Hypothesis: i am athletic .'
+    - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - neutral
+      text: 'Premise: definitely ! ribeye is my favorite .
+
+        Hypothesis: i used to be enlisted in the army .'
+- - - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - entailment
+      text: 'Premise: i really do not like meat tho .
+
+        Hypothesis: i don t like to eat meat .'
+    - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - neutral
+      text: 'Premise: we do not , our apartment is way too small for a pet .
+
+        Hypothesis: i live in the city .'
+- - - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - contradiction
+      text: 'Premise: i work as a tech .
+
+        Hypothesis: i work as a receptionist at a lawyers office .'
+    - episode_done: true
+      id: DNLI
+      label_candidates:
+      - entailment
+      - contradiction
+      - neutral
+      labels:
+      - contradiction
+      text: 'Premise: that is cute . my girlfriend is pregnant , we do not have any
+        pets .
+
+        Hypothesis: my cat died .'

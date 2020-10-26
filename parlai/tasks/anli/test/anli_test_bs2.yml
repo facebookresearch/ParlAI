@@ -1,0 +1,151 @@
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Ernest Jones is a British jeweller and watchmaker. Established
+        in 1949, its first store was opened in Oxford Street, London. Ernest Jones
+        specialises in diamonds and watches, stocking brands such as Gucci and Emporio
+        Armani. Ernest Jones is part of the Signet Jewelers group.
+
+        Hypothesis: The first Ernest Jones store was opened on the continent of Europe.'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Old Trafford is a football stadium in Old Trafford, Greater
+        Manchester, England, and the home of Manchester United. With a capacity of
+        75,643, it is the largest club football stadium in the United Kingdom, the
+        second-largest football stadium, and the eleventh-largest in Europe. It is
+        about 0.5 mi from Old Trafford Cricket Ground and the adjacent tram stop.
+
+        Hypothesis: There are only 10 larger football stadiums in Europe.'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: There is a little Shia community in El Salvador. There is an
+        Islamic Library operated by the Shia community, named "Fatimah Az-Zahra".
+        They published the first Islamic magazine in Central America: "Revista Biblioteca
+        Islámica". Additionally, they are credited with providing the first and only
+        Islamic library dedicated to spreading Islamic culture in the country.
+
+        Hypothesis: The community is south of the United States.'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: "Look at Me (When I Rock Wichoo)" is a song by American indie
+        rock band Black Kids, taken from their debut album "Partie Traumatic". It
+        was released in the UK by Almost Gold Recordings on September 8, 2008 and
+        debuted on the Top 200 UK Singles Chart at number 175.
+
+        Hypothesis: The song was released in America in September 2008'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R3
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: It is Sunday today, let''s take a look at the most popular posts
+        of the last couple of days. Most of the articles this week deal with the iPhone,
+        its future version called the iPhone 8 or iPhone Edition, and new builds of
+        iOS and macOS. There are also some posts that deal with the iPhone rival called
+        the Galaxy S8 and some other interesting stories. The list of the most interesting
+        articles is available below. Stay tuned for more rumors and don''t forget
+        to follow us on Twitter.
+
+        Hypothesis: The day of the passage is usually when Christians praise the lord
+        together'
+    - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R3
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: By The Associated Press WELLINGTON, New Zealand (AP) — All passengers
+        and crew have survived a crash-landing of a plane in a lagoon in the Federated
+        States of Micronesia. WELLINGTON, New Zealand (AP) — All passengers and crew
+        have survived a crash-landing of a plane in a lagoon in the Federated States
+        of Micronesia. Copyright © 2018 The Associated Press. All rights reserved.
+        This material may not be published, broadcast, written or redistributed.
+
+        Hypothesis: No children were killed in the accident.'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Magnus is a Belgian joint dance project of Tom Barman (from
+        the rock band dEUS) and CJ Bolland. Magnus'' debut album, "The Body Gave You
+        Everything", was released on March 29, 2004. Two of its tracks, "Summer''s
+        Here" and "Jumpneedle", were released as singles.
+
+        Hypothesis: "The body gave you everything" album was not released on March
+        28, 2003 but on March 29, 2004.'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: ANLI:R1
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Shadowboxer is a 2005 crime thriller film directed by Lee Daniels
+        and starring Academy Award winners Cuba Gooding Jr., Helen Mirren, and Mo''Nique.
+        It opened in limited release in six cities: New York, Los Angeles, Washington,
+        D.C., Baltimore, Philadelphia, and Richmond, Virginia.
+
+        Hypothesis: Shadowboxer was written and directed by Lee Daniels and was starring
+        Academy Award winners Cuba Gooding Jr., Helen Mirren, and Mo''Nique.'
+- - - episode_done: true
+      eval_labels:
+      - entailment
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: "Eternally" is a song with music by Charles Chaplin, and words
+        by the English lyricists Geoff Parsons and John Turner. The music was initially
+        composed for Charles Chaplin''s film "Limelight" (1952) titled "Terry''s Theme";
+        the film won an Oscar for "Best Original Dramatic Score" at the
+
+        Hypothesis: The words to Eternally were written partially by Geoff Parsons'
+    - episode_done: true
+      eval_labels:
+      - neutral
+      id: ANLI:R2
+      label_candidates:
+      - contradiction
+      - entailment
+      - neutral
+      text: 'Premise: Louis S. Peterson (June 17, 1922 – April 27, 1998) was a playwright,
+        actor, screenwriter, and professor. He was an American playwright and the
+        first African-American playwright to have a dramatic play produced on Broadway.
+        He was also one of the first African-American writers to be nominated for
+        an Emmy Award.
+
+        Hypothesis: Louis S. Peterson was an adult when he wrote his first play.'

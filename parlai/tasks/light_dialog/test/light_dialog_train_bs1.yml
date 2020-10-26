@@ -1,0 +1,248 @@
+- - episode_done: false
+    id: light_dialog
+    label_candidates:
+    - Wow, it smells incredible in here!
+    - You mean this hunting rifle?
+    - You're a bit bigger than my usual prey, but you'll do.
+    - Good. Call me the admiral
+    - 'Wait, careful there...some people think I''m a nasty bug! HaHa, I know what
+      you mean. '
+    - 'Return to your quarters at once, boy. This is no place for you. '
+    - Who wouldn't be impressed by me, look at this wonderful main.
+    - 'Please. '
+    - How can I get in on this townsperson?
+    - '''e''ll have to fend for himself now.  Here it comes!  '
+    - 'It is not just my family. Everyone is complaining. I was the only one to stand
+      up and fight against it, and here I am. '
+    - Yes. Have you heard of anything? You are a wise woman...
+    - Why are you commanding the undead? What do you do with them?
+    - I agree. The seats are comfy and it looks very fancy. Definitely fitting of
+      royalty
+    - I won't give you a treat then
+    - -I'm just a piece of paper, hardly fit to teach anyone such things-
+    - Why do you then, sir?
+    - You should try a grass pie sometime. Or, at least, I'd like to try a grass pie.
+      Hey what are you doing for dinner?
+    - Probably not but if I don't eat soon I'm going to die. Maybe that thief can
+      steal me some food
+    - 'Thank you, father. I am so grateful for your help. '
+    labels:
+    - You're a bit bigger than my usual prey, but you'll do.
+    text: '_task_speech
+
+      _setting_name cave exit, Cave
+
+      _setting_desc The large cave is covered along the walls with bright torches.  A
+      large hole has been carved in the ceiling of the cave, right above the ladder
+      that descends into the underground cave.  On good bright days, sunlight directly
+      surround the hole with the gold ornate ladder descending into the underground
+      part of the cave.  On the walls of the cave the torches illuminate many ornate
+      drawings and paintings mainly dealing with the history of Kings of the realm.
+
+      _partner_name miner
+
+      _self_name a wild boar
+
+      _self_persona I am a wild boar with razor sharp teeth. I hunt during the day
+      and night. I like to lay down in the village a lot.
+
+      _object_desc a Clothes : The clothing is functional and drab. The material felt
+      course and rough in your hands.
+
+      _partner_say Hey
+
+      _self_act hit miner'
+- - episode_done: false
+    id: light_dialog
+    label_candidates:
+    - Let my chambermaid pick this up. She is just inside and will return for it soon.
+    - Go home and get some rest.
+    - Soft-fleshed idiot. You are unarmed and slow. I'll make short work of you.
+    - It is very nice down here.
+    - get over here i would kiss a frog at this point to get out of here
+    - I have been well sire. I have travelled far and wide and sung for many a court.
+      But, it is good to be back in my homeland. How fares the kingdom?
+    - 'Let me replenish my energy first. Alright, lead the way! '
+    - Drumming up business!
+    - I enjoy spying on people. I have a lot of useful information...
+    - Give me a basket. I'll bring you back food. At least I asked you kindly.
+    - '...it seems I was knocked unconscious and tossed in this here trash heap. I''m
+      a royal guard of the king.'
+    - 'It is a shame, but you do speak the truth. Here, take some wine before we pray. '
+    - Thank you, but I really think that might be a mistake.
+    - I do not know. It may just do what a dragon is meant to do.
+    - What is your offering?
+    - Thank you dear monk. That is very kind of you! I will come back this way, when
+      i can!
+    - That sounds great!
+    - How I love this moat!
+    - I can think of no reason for there to be wildlife in the choir room. You must
+      leave immediately.
+    - So what brings you to these docks, helper?
+    labels:
+    - Soft-fleshed idiot. You are unarmed and slow. I'll make short work of you.
+    text: '_self_say You''re a bit bigger than my usual prey, but you''ll do.
+
+      _partner_say You would die trying
+
+      _partner_act hit a wild boar
+
+      _self_emote growl'
+- - episode_done: false
+    id: light_dialog
+    label_candidates:
+    - Hmm the horses are fitter than me! How do you get on with horses?
+    - No, what creatures live in the forest, are they dangerous to seagulls?
+    - If your faith can be shaken so easily, I doubt your faith was ever true.
+    - Just don't disturb the Queen!
+    - Ew you vile beast, do not touch me! I will have you removed!
+    - I came to see the king!  We are close friends
+    - Don't speak in hypotheticals. It is not that you WOULDN'T make it easy for me.
+      It is that by straying unarmed from your human villages, you HAVE made it easy
+      for me. Not that you are very safe there, either, as I visit the nearest village
+      without fear often.
+    - 'Surely, they must have committed crimes against the kingdom. I cannot see it
+      any other way. '
+    - My child has been possessed by an incredibly powerful demon. No mortal has been
+      able to exorcise.
+    - Fair enough. What did you get put away for?
+    - Before we leave, I'm going to pick up this gold piece. I don't know who it belongs
+      to, but it is quite valuable.
+    - 'Coffin?! But... I am afraid someone might cover it up and bury me into the
+      group. May I take this sleeping bag, instead? '
+    - Well I agree that it is warm in here.  I am almost afraid to stoke the fire
+      though, for fear all this wood will catch!
+    - 'Hello, little one. Are you lost? '
+    - You're not thinking about eating me, are you?
+    - We're just waiting for the harpist, now. It shouldn't be long!
+    - hello dear friend would you like some food?
+    - 'It''s all right . Just decide what you want to do and settle down. There are
+      lots of beautiful girls in the house of the lord '
+    - ok thanks for the reassurance maybe you can become my sister from another mother
+    - What is it?
+    labels:
+    - Don't speak in hypotheticals. It is not that you WOULDN'T make it easy for me.
+      It is that by straying unarmed from your human villages, you HAVE made it easy
+      for me. Not that you are very safe there, either, as I visit the nearest village
+      without fear often.
+    text: '_self_say Soft-fleshed idiot. You are unarmed and slow. I''ll make short
+      work of you.
+
+      _partner_say I wouldn''t make it easy for you'
+- - episode_done: true
+    id: light_dialog
+    label_candidates:
+    - How long will you be staying, if it's not too bold to ask?
+    - Aye. You best hope neither of us are captured. Promise me if it looks like Im
+      going to get got you will end me. I dont want them to have me
+    - Yeah, and could you put in a good word with me with the king? I'm trying to
+      expand my renown.
+    - ive never seen you pass before though, how strange....HOW DARE YOU! this is
+      my son your talking about and hed never leave. The past few years havnt been
+      kind to me. Yes i am old...its true. and its true i only have my son left. my
+      father taught me everything i learnt...but hes gone. is that who your going
+      to see? your father?
+    - What is your buisness here?
+    - Amazing! And what's the witch's most prized possession?
+    - 'I would never poison you rat! I''ve never met a talking rat. '
+    - Wrestle a boar? So you're arrogant as well as stupid!
+    - Thank you my fair subject. My wife and I shall reward you with a great feast
+      of food and drink.
+    - 'I wish I would''ve eaten breakfast this morning. Maybe we can find some bread
+      in here somewhere. '
+    - I see.  Well, the boys have been training hard and it is very warm outside.  I
+      don't see how you all manage to wash our things every day!
+    - No!
+    - Yeah they are! Wait, you can talk?!
+    - Unfortunately, of course.
+    - Yes, use it as inspiration. How have your Bible verses been coming, son?
+    - I see, it doesn't seem like much of an orchard though, perhaps it is haunted.
+    - On our way then.  Do you have children?
+    - It is always a nice view from here.
+    - 'Do that again, and you will be visiting them, but not from this earth! Now,
+      would you like to move forward? I have work here since I was a young lad. I
+      know this place like the back of my shovel. '
+    - Because I need to ask you a question. I've seen a lot of people tortured around
+      here...
+    labels:
+    - Wrestle a boar? So you're arrogant as well as stupid!
+    text: '_self_say Don''t speak in hypotheticals. It is not that you WOULDN''T make
+      it easy for me. It is that by straying unarmed from your human villages, you
+      HAVE made it easy for me. Not that you are very safe there, either, as I visit
+      the nearest village without fear often.
+
+      _partner_say I have faced other wild animals before now and i was able to wrestle
+      my way out'
+- - episode_done: false
+    id: light_dialog
+    label_candidates:
+    - So that means you wont give me water to drink?
+    - Bleet.
+    - Should be a good day for this, clear night sky.
+    - I can't help it!
+    - 'But this is a beautiful manner is it not? Why cannot you live happily here? '
+    - Great. I saw the stableboy around the city walls so my suspicions are pointed
+      at him. I'm also afriad it might be something more sinister as I found a vial
+      of blood in the closet neither me or my wife use.
+    - I bet you can't get up to my web SMALL dog
+    - It's quite breathtaking! These statues are exquisitely carved.
+    - 'Yes brother the Lord of GloopdeGloo has blessed you with my presence. '
+    - You always do good work! Now about those swords when should I pick them up?
+    - I am grateful beyond words. We will name our son after you, wizard. What is
+      it?
+    - 'It OK working for the king and queen '
+    - Oh wow! It works! I guess the boss really feeds you all well!! I wonder why
+      he made this chamber..
+    - Please don't hurt me. I have three piglets to take care of.
+    - don't get me wrong though, the squirrel is actually very nice. He shakes those
+      bushy tails and then he glows in the dark. He's actually quite harmless.
+    - The geese is worth more than my life
+    - Now you'll pay for deceiving me
+    - 'Hmm...maybe some clemency might be in order. I''ll speak to the King''s cousin. '
+    - Anything else honestly.
+    - Sorry priest. I accidentally pooped on your book.
+    labels:
+    - 'Yes brother the Lord of GloopdeGloo has blessed you with my presence. '
+    text: '_task_speech
+
+      _setting_name Beside church pews, Inside Church
+
+      _setting_desc The church pews fill the church as far as the eye can see. They
+      are made of wood, harvested from ancient trees long ago. They gleam with the
+      look of tender love and care, since they are polished after each ceremony.
+
+      _partner_name follower
+
+      _self_name founder
+
+      _self_persona We are the benevolent Founders of GloopdeGloo. Confident in our
+      success, we need no outside advice, but we really can''t do anything at all
+      for ourselves. We require many acolytes to do our bidding, insufferable incompetents
+      that we are!
+
+      _object_desc a carvings : The carving depicts a woodland scene with animals
+      and trees. The level of detail indicates that it has been made by a highly skilled
+      artist.
+
+      _object_desc a candle : A wax object, with a wick, that can be set on fire,
+      and used for light.
+
+      _object_desc an altar : The altar is made of alabastar and seems important.
+
+      _object_desc a pew : The pew is made of wood and is very long.
+
+      _object_desc a wood : Looks like the tree was struck by the lightening because
+      the wood has a very unusual patterns
+
+      _object_desc a tools : The tools are worn, showing their age, but still just
+      as effective as the day they were welded.
+
+      _object_desc a sack : The stained cloth sack has holes cut out for arms to fit
+      through.
+
+      _object_desc a knights armor : The armor is made of thin, lightweight metal
+      and is covered in dents and stains from many battles.
+
+      _partner_say God has given me much to appreciate
+
+      _self_emote wave'

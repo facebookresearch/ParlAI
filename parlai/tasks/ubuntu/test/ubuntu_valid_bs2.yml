@@ -1,0 +1,265 @@
+- - - episode_done: true
+      eval_labels:
+      - We are talking 12.04 not 10.04 .
+      id: ubuntu
+      label_candidates:
+      - you are still asking for the unity logout menu right? .
+      - 'lsb_release -sc . well... regardless. I believe the solution is going to
+        be to live boot to cd, chroot into the machine and set a password. . Boot
+        to live cd. Open a terminal and type sudo -s. mount /dev/sdXY /mnt      where
+        X is the disk and Y is the partition. Typically /dev/sda1.  then chroot /mnt.
+        To create a user: useradd -G admin mynewusername       using an actual user
+        name. . if we were doing more than this we would want to mount more things...
+        but for this we shouldnt need to . then, because I like things clean, umount
+        /dev/sda1 (or whatever your partition is) and reboot to the hd. . you would
+        have to type exit before the umount... sorry... to leave the chroot jail .
+        at login, press the little icon thingy in the corner and choose Unity. .'
+      - no, greenit is saying his download speeds are slow, when connecting to a machine
+        on his same LAN. I'm unsure why you think setting it up to go to the internet
+        would be A) easier, and B) make it any faster . well that is probably the
+        issue then. He needs to be at 1280x1024 instead of 1024x768 .
+      - so I am working as a linux admin intern, and my boss told me to use "sudo
+        su -" . all RHEL or centos boxes; is there a reason for that? . is it a traditional
+        thing? did sudo -i not exist at some point .
+      - no .
+      - sudo restart lightdm .
+      - We are talking 12.04 not 10.04 .
+      - you can buy _anything_ in China .
+      - you remember my flash issue from yesterday or the day before? .
+      - oh, no idea other is probably ok . update-manager or even apt . it will be
+        sorted to the right package by a bug triager, dont worry about it to much
+        . since unity is a compiz plugin i would say everyone who uses unity does
+        :) . as i said above, unity is a compiz plugin ... so it would be heavily
+        noticed if compiz wouldnt work .
+      text: "Any ideas on how lts will be released ? . \n already is ."
+    - episode_done: true
+      eval_labels:
+      - thats why i ask how much is default install ? :) .
+      id: ubuntu
+      label_candidates:
+      - thanks . I would imagine so, the site bonny linked earlier explicitly states
+        turn hamachi off .
+      - not really.  i use urxvt myself. .
+      - yes .
+      - yes I've investigated that already. It seems you can't treat both super keys
+        differently. .
+      - ': is that a question ? .'
+      - you're welcome .. since 12.04 throws dnsmasq into the mix by default (see
+        http://www.stgraber.org/2012/02/24/dns-in-ubuntu-12-04/) complexities rise
+        a bit .. maybe that page has some info on squid .
+      - as someone else suggested, close update-manager, and open from terminal update-manager
+        -d   but... it might be wise to wait for a point release. 1204 is als VERY
+        different than 1004. You might grab a dvd and load it in VM and see if you
+        are comfortable with the change. .
+      - all of this possible in older versions of Ubuntu . *was possible .
+      - thanks a lot, really! .
+      - thats why i ask how much is default install ? :) .
+      text: "how much hdd use ubuntu default install ? . \n https://help.ubuntu.com/community/Installation/SystemRequirements\
+        \ . it wont require 15gb to be honest... ."
+- - - episode_done: true
+      eval_labels:
+      - thanx .
+      id: ubuntu
+      label_candidates:
+      - And because you only have 3 GB of ram, is not justified to run a 64 bit system
+        there as 32 bit would run faster. .
+      - It works fine without setting up an ssh tunnel manually. Fun thing is, that
+        if one machine runs 11.10 and the other 12.04, the request from 12.04 to 11.10
+        works, and a connection can be made. If both are 12.04 it doesn't work. .
+        I've been thinking the same thing. I guess I'll have to file one :( . just
+        wanted to check, not that I'm being stupid. . didn't test that since the other
+        computer is 12.04 (a relative of mine) and I run different ubuntu versions
+        on vbox. . oh, 64MB? well then... ;) . he should have enough RAM to keep it
+        in tmpfs. .
+      - i have no .docx files, so don't know, why not try it yourself .
+      - but I'm sure I can work it out .
+      - im not familiar with hotspot .
+      - thanx .
+      - i've booted countless distros from USB on my AAO . years of experience.. :)
+        . i know, and my experience tells me your results will be negative .
+      - so it has two be a two-command process? .
+      - the way you put it, that sounds like a severe case of PEBKAC ;) .
+      - its ok but no error? then how do you know its a problem with dhcp client?
+        .
+      text: "in my country its nearly the 27th . when will 12.10 be out? . \n planned\
+        \ Oct 18th according to this. https://wiki.ubuntu.com/QuantalQuetzal/ReleaseSchedule?action=show&redirect=QReleaseSchedul\
+        \ ."
+    - episode_done: true
+      eval_labels:
+      - waiting for many things to be setup . final warning - you don't know when
+        it will be released, so don't suggest it will be any moment .
+      id: ubuntu
+      label_candidates:
+      - ya, but I guess you could do a git of your ENTIRE OS, and that would be the
+        same xD .
+      - noexec is a mount option. you would have to create a partition and mount it
+        .
+      - did you overwrite your win install or can you browse that drive from ubuntu?
+        . your mbr was fine if you were booting ubuntu, you likely just needed to
+        ask grub to let you chose which OS you want before auto booting ubuntu . odd,
+        you could manualy add it if needed .
+      - that's right, while chatting I regrettably make a lot of typo's. .
+      - For the most part, you should be installing python modules through packages
+        available in our repositories. But pip or easy_install or manual via distutils
+        would be the next course of action. .
+      - waiting for many things to be setup . final warning - you don't know when
+        it will be released, so don't suggest it will be any moment .
+      - afaik it's best to start at 2mb = 2048k .
+      - for some reason the headphones option does not change .
+      - Well then I don't know. Can anything boot on the computer? .
+      - Well then I don't know. Can anything boot on the computer? .
+      text: "it's not out . \n they probabaly are waiting for all the mirrors to sync.\
+        \ the release annocement will be after that. ."
+- - - episode_done: true
+      eval_labels:
+      - you sound like it's updating to skynet. ;) .
+      id: ubuntu
+      label_candidates:
+      - you sound like it's updating to skynet. ;) .
+      - gparted? i don't want do edit partitions, just mount at startup .
+      - I've tried it. not a fan at all . I have no desire to learn a new way of using
+        the app just because people are duplicating the limitations of less powerful
+        window managers .
+      - Not to mention WAY less complex ... you can have a setup in under 10 lines
+        .
+      - ok i will try that, brb . it complains about export not being an identifier...
+        never heard of the command myself . and there is no man entry for export .
+      - I did system annalysis and it said everything passed 100% .
+      - well, you can, according to that article, i also noticed the watermark vunerability.
+        .
+      - AH, okay .
+      - if not, I think you can pretty much grab any USB analog video converter that
+        complies to the device class and use that . not sure which software, though
+        .
+      - ouch .
+      text: "are the ext4 drivers stable? . \n I am not sure but the last time I checked,\
+        \ it wasn't . There have been numerous reports of data loss or corruption\
+        \ ."
+    - episode_done: true
+      eval_labels:
+      - Oh, so now wanting to know my driver version is not a support discussion?
+        :\ .
+      id: ubuntu
+      label_candidates:
+      - I had problems with 64 bit with anything above 10.10 as well... so I gave
+        up and I'm using 10.04 . the guy that answered assumed you were running an
+        executable from a FAT or NTFS sysmte. if you can access a terminal do chmod
+        +x /path/to/file/filename .
+      - thanks .
+      - start from the beginning, what were you doing and why, before you came here
+        for help .  a diffzerent distro is not an upgrade .
+      - 700 .
+      - mixing repositories is a very bad idea (tm). And as I said before, if anything
+        breaks, you can no longer be supported here .
+      - i knew that one, none of these are supported here though. I'd rather have
+        support .
+      - Oh, so now wanting to know my driver version is not a support discussion?
+        :\ .
+      - I don't know how to do that, sorry :S .
+      - and dj_segfaulyt here http://pastebin.ubuntu.com/1087349/ .
+      - well, there you go . is the problem with the Broadcom driver something new
+        because I don't remember having it happen in older versions of Ubuntu .
+      text: "Greetings . I am running Ubuntu 12.04 on a dualscreen set-up. I was wondering\
+        \ if it's possible to have the panel items (notifications, time, auth, etc.)\
+        \ only on one screen, rather than both . \n you're on the wrong channel for\
+        \ that ."
+- - - episode_done: true
+      eval_labels:
+      - may depend on the timezone ;) .
+      id: ubuntu
+      label_candidates:
+      - '#winehq, sorry . np .'
+      - I was thinking bash script, with wget, but what are awk for? and ftp won't
+        work for me. Python might, but I'm kind stuck on how to push the upload. .
+        why did you suggest awk? .
+      - sure, I can imagine that, but it's not good advertisement for Ubuntu. . 'reinstalling
+        a system' is a concept from the '90s. .
+      - may depend on the timezone ;) .
+      - Ubuntu is quite secure, but it is indeed better to enable ufw .
+      - If it's not encrypted and there was human readable text in it then "strings
+        /path/to/file | less" in a terminal should present you with some text, if
+        not then that's a good sign that it *is* encrypted somehow. .
+      - have you tried 12.04 yet? . I thought you should be able to do that .
+      - send me the link please .
+      - que veut tu dire par la ? .
+      - 'open terminal: gksudo gedit /etc/pm/config.d/modules . look for those modules
+        and put # in front of that/those lines . if that file doesn''t exist, make
+        one and fill it with SUSPEND_MODULES="b43 bcma" .'
+      text: "Multiply  or uee ctrl arrow left to return to the gui . \n or ctrl-arrow\
+        \ right (multiple times) :P ."
+    - episode_done: true
+      eval_labels:
+      - ikonia tnx for the warning, glad nothing irreversible happened .
+      id: ubuntu
+      label_candidates:
+      - Have you taken a break to eat or rest? .
+      - -rwxr-xr-x 1 root root .
+      - ikonia tnx for the warning, glad nothing irreversible happened .
+      - i did, no help :( .
+      - NetworkManager Config has "routes" tab .
+      - what other package? .
+      - i like unity. .
+      - No, I mean, as soon as the drive is mounted, an icon appears on my desktop.
+        . Happens with my actual hard drive, PSP, Flash drives, everything. .
+      - I just want the latest and greatest, also I wanted to compile to use gtk3
+        toolkit .
+      - and? this is not a chitchat channel .
+      text: "or use do-release-upgrade in a terminal and see what it return . \n it\
+        \ will break things horribly. You can downgrade OS once the upgrade process\
+        \ has started . *can't downgrade ."
+- - - episode_done: true
+      eval_labels:
+      - while i will admit that nvidia drivers are not my specialty, maybe either
+        adding a user that is in a different group or upgrading the kernel would help?
+        .
+      id: ubuntu
+      label_candidates:
+      - And if you try it again does the same issue arise? . Well it could be an issue
+        with modules not being loaded when the interfaces are brought up I guess.
+        I would think dmesg would be a good place to start. .
+      - i seem to have typed locale in terminal .
+      - switch over from wep to wpa/wpa2? .
+      - but if you unplug the mic? can you play a sound? I suppose you can, your playback
+        works just fine, you cannot record properly. Deactivate mic boost in alsamixer,
+        lower the mic levels. .
+      - I do not know of a way to do that. Sorry. .
+      - ': yeah, I guess.  Back in my day it was called wheel :) .'
+      - while i will admit that nvidia drivers are not my specialty, maybe either
+        adding a user that is in a different group or upgrading the kernel would help?
+        .
+      - cannot .
+      - fast ae? .
+      - I am still trying that too.  It's been over 30 minutes so I don't have much
+        hope. .
+      text: "anyone able to help with repairing a broken ubuntu install? . \n what\
+        \ is the problem? . \n uninstalled nvidia drivers, rebooted, now the system\
+        \ immediately enters into powersave mode for the monitor after entering a\
+        \ passphrase . i've tried booting into recovery mode through grub, makes no\
+        \ difference ."
+    - episode_done: true
+      eval_labels:
+      - how would I update my existing 11.10 virtual machine from the isos? .
+      id: ubuntu
+      label_candidates:
+      - glad to help .
+      - how would I update my existing 11.10 virtual machine from the isos? .
+      - thanks .
+      - which is a library called phpexcel, I just download it . ok . wonder how Android
+        phone do what? .
+      - for example, http://www.webupd8.org/2012/07/elegance-colors-gnome-shell-theme-gets.html
+        there are three commands to run, very self-explanatory, I run elegance-colors
+        and nothing happens . I installed gnomishgray, and again, the gtk theme can
+        be enabled via ubuntu-tweak but the window theme doesn't change .
+      - good tip though . I don't know either. .
+      - did you overwrite your win install or can you browse that drive from ubuntu?
+        . your mbr was fine if you were booting ubuntu, you likely just needed to
+        ask grub to let you chose which OS you want before auto booting ubuntu . odd,
+        you could manualy add it if needed .
+      - if you can't disable it (why not), try removing the "ubufox" package. also
+        pleas learn abot patience, there's no need to repeat the question every minute
+        :-) .
+      - add debugging to script or pastebin script . you could debug it by just adding
+        some echo lines outputting to some file for starters .
+      - ActionParsnip? . right, my bad .
+      text: "so when will 12 be on mirrors . its on nz ftp . \n how can I update from\
+        \ with 11.10? . \n i dont think they have enabled that yet ."

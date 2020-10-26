@@ -1,0 +1,28 @@
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - what are your plans ? mit ?
+    text: was sind deine pl@@ äne ? mit ?
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - good , how about the person behind her ?
+    text: gut , was ist mit der person hinter ihr ?
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - in fact , i use basically the same technology as this 14@@ th-@@ century classroom
+      .
+    text: tatsächlich ist es im grunde dieselbe methode , wie im 14@@ . jahrhundert
+      .
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - you just got@@ ta carry this thing around .
+    text: alles , was sie brauchen ist dieses ding .
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - but i don &apos;t believe in hope without en@@ dea@@ vor .
+    text: aber ich glaube nicht , dass hoffen ohne an@@ streng@@ ung funktioniert
+      .

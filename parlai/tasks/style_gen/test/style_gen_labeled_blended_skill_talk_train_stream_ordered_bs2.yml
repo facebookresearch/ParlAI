@@ -1,0 +1,108 @@
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: I like acting, I hope to be an actor, what about you?
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - that is ok.  have any kids?
+      personality: Maternal (Mother-like)
+      text: 'your persona: i''ve 2 kids.
+
+        your persona: i love flowers.
+
+        I love live music, that''s why I try to go to concerts
+
+        I do too. Wat do you like?
+
+        I like acting, I hope to be an actor, what about you?'
+    - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      free_turker_message: Oh really!? That is interesting. I am actually italian
+        myself.
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - Awesome. Me and my partner just bought a house. I can't wait to cook in my
+        kitchen.
+      personality: Earnest (Enthusiastic)
+      text: "your persona: i just bought a new house with my partner.\nyour persona:\
+        \ i like to make my own coffee.\nLasagne\nOh, I love lasagne. I make my own\
+        \ noodles as well as the sauce. \nWow.  That's amazing.  I read where lasagne\
+        \ originated in Italy during the Middle Ages.  \nOh really!? That is interesting.\
+        \ I am actually italian myself."
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: No, but someday.
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - that is good. I have 2
+      personality: Humble
+      text: No, but someday.
+    - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      free_turker_message: Moving in a new place can be a lot of fun. Are you a good
+        cook?
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - I like to think so. I love to make coffee for an after dinner treat too.
+      personality: Warm
+      text: Moving in a new place can be a lot of fun. Are you a good cook?
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: After I am done with school I plan to have a family.
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - that is great! you will be ready
+      personality: Happy
+      text: After I am done with school I plan to have a family.
+    - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      free_turker_message: Mmm That sounds delicious right now.
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - What do you like to do?
+      personality: Curious
+      text: Mmm That sounds delicious right now.
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: I hope so, how old are your kids?
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - 5 & 7.  they take up a lot of my time
+      personality: Lazy
+      text: I hope so, how old are your kids?
+    - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      free_turker_message: Well I like tattoos and piercings, I am working on my next
+        one right now.
+      guided_turker_chosen_suggestion: 'convai2 '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - piercings are cool . i do not have any tattoos though. Too scared. I want
+        some
+      personality: Cowardly
+      text: Well I like tattoos and piercings, I am working on my next one right now.
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: I would imagine. I am sure they a great kids.
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - luckily, they love flowers just as much as I do.  we spend a lot of time in
+        the garden
+      personality: Humble
+      text: I would imagine. I am sure they a great kids.
+    - context_dataset: wizard_of_wikipedia
+      episode_done: false
+      free_turker_message: What would you get?
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - Maybe something for my kids. I've always wanted an anarchy symbol.
+      personality: Destructive
+      text: What would you get?

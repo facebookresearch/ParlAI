@@ -1,0 +1,113 @@
+- - - episode_done: true
+      eval_labels:
+      - For those interested, in 1568, they decided the Case of Mines, or "R v Earl
+        of Northumberland"
+      id: funpedia
+      reward: 0
+      text: 'Case of Mines
+
+        Kind
+
+        The Case of Mines or "R v Earl of Northumberland" was decided in 1568.'
+    - episode_done: true
+      eval_labels:
+      - The population of Wailuku in Hawaii was 15313 in 2010
+      id: funpedia
+      reward: 0
+      text: 'Wailuku, Hawaii
+
+        Fun-loving
+
+        The population was 15,313 at the 2010 census.'
+- - - episode_done: true
+      eval_labels:
+      - Hmmm yes Horacio Calcaterra is a sportsman that currently is playing for Sporting
+        Cristal which is located in Torneo Descentralizado.
+      id: funpedia
+      reward: 0
+      text: 'Horacio Calcaterra
+
+        Articulate (Well-spoken, Expressive)
+
+        He currently plays for Sporting Cristal in the Torneo Descentralizado.'
+    - episode_done: true
+      eval_labels:
+      - Ceglusa is a species that is endemic in Burma
+      id: funpedia
+      reward: 0
+      text: 'Ceglusa
+
+        Sweet
+
+        Its single species, "C. polita", is endemic to Burma.'
+- - - episode_done: true
+      eval_labels:
+      - South Africans have a name for certain types of fish, they refer to them as
+        "Kurper."
+      id: funpedia
+      reward: 0
+      text: 'Kurper
+
+        Articulate (Well-spoken, Expressive)
+
+        Kurper is a generic name for certain fish in South Africa.'
+    - episode_done: true
+      eval_labels:
+      - Fisheries for cod are simply known as cod fisheries.
+      id: funpedia
+      reward: 0
+      text: 'Cod fisheries
+
+        Rational
+
+        Cod fisheries are fisheries for cod.'
+- - - episode_done: true
+      eval_labels:
+      - According to Climate Counts, I'm supposed to support climate-conscious companies,
+        but what if I want to support companies with the best products?
+      id: funpedia
+      reward: 0
+      text: 'Climate Counts
+
+        Freethinking
+
+        The Climate Counts Company Scorecard—launched in June 2007—helps people vote
+        with their dollars by making climate-conscious purchasing and investing choices
+        that put pressure on the world''s most well-known companies to take the issue
+        of climate change seriously.'
+    - episode_done: true
+      eval_labels:
+      - The third great awakening was originally affiliated with the Social Gospel
+        Movement, which applied Christianity to social issues.
+      id: funpedia
+      reward: 0
+      text: 'Third Great Awakening
+
+        Clever
+
+        It was affiliated with the Social Gospel Movement, which applied Christianity
+        to social issues and gained its force from the Awakening, as did the worldwide
+        missionary movement.'
+- - - episode_done: true
+      eval_labels:
+      - Thank god that the former municipality of Mutten merged into the municipality
+        of thusis on the 1st of january!
+      id: funpedia
+      reward: 0
+      text: 'Thusis
+
+        Appreciative (Grateful)
+
+        On 1 January 2018 the former municipality of Mutten merged into the municipality
+        of Thusis.'
+    - episode_done: true
+      eval_labels:
+      - Sometimes we must contemplate the silence in Senza colpa! in order to truly
+        understand the drama around us.
+      id: funpedia
+      reward: 0
+      text: 'Senza colpa!
+
+        Reflective
+
+        is a 1915 silent Italian drama film directed by Carmine Gallone.'

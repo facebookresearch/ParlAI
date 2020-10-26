@@ -1,0 +1,284 @@
+- - - episode_done: true
+      eval_labels:
+      - nice thanks! .
+      id: ubuntu
+      label_candidates:
+      - my humble apologies .
+      - '!nomodeset > acer . I''m assuming it is a driver issue. . !pm > acer . i
+        DON''T pm. ;) . OOPS SORRY FOR THE CAPS .'
+      - ok .
+      - '#ubuntu-offtopic .'
+      - thx . unfortunately the program isn't installed from the repositories .
+      - how can I check? By doing a recovery for testing? .
+      - nice thanks! .
+      - http://www.ubuntu.com/project/about-ubuntu/derivatives  (some call them derivatives,
+        others call them flavors, same difference) .
+      - wrong channel for it, but check efnet.org, unofficial page. .
+      - every time the kernel changes, you will lose video . yep .
+      text: "anyone knows why my stock oneiric exports env var 'USERNAME'?  I mean\
+        \ what is that used for?  I know of $USER but not $USERNAME .  My precise\
+        \ install doesn't export USERNAME . \n looks like it used to be exported by\
+        \ lightdm, but the line had the comment \"// FIXME: Is this required?\" so\
+        \ I guess it isn't surprising it is gone . \n thanks!  How the heck did you\
+        \ figure that out? . \n https://bugs.launchpad.net/lightdm/+bug/864109/comments/3\
+        \ ."
+    - episode_done: true
+      eval_labels:
+      - just wondering how it runs .
+      id: ubuntu
+      label_candidates:
+      - if you're only going to run Ubuntu, just get a normal PC rather than a mac
+        . that said, I'm running it on a macbook, because I got one relatively cheaply
+        .
+      - why do u need analyzer . it is a toy . ok msp301 . but y, i mean it is the
+        same ubunut, only with older programs . ubuntu 804 or 1204 . no i dont use
+        804 . i am asking hypo qs .
+      - yes, that's what I did, exported it to a "id_dsa" file, then back to Ubuntu
+        copied it into ~/.ssh/ .
+      - that should fix the fonts being too large .
+      - I get to the menu with options such as 'try ubuntu', 'install ubuntu', 'check
+        disc' .
+      - just wondering how it runs .
+      - nothing - i am talking about the question of myhero .
+      - Cntrl-C may stop the command but it doesn't fix my HDD problem. .
+      - okay, so hcitool echos back hci0 <mac address of controller> but the bluetooth
+        devices panel keeps disconnecting and reconnecting the device (or so it seems)
+        any idea why that would be? .
+      - the ones which are not picked up at the moment are on STDERR and not STDOUT
+        and > is only covering STDOUT .
+      text: "im trying to use ubuntu on my macbook pro retina . i read in the forums\
+        \ that ubuntu has a apple version now? . \n  not that ive ever heard of..\
+        \  normal ubutnu should work on an intel based mac. there is the PPC version\
+        \ also. .  you want total control? or what are you wanting exactly? ."
+- - - episode_done: true
+      eval_labels:
+      - so you dont know, ok, anyone else? . you are like, yah my mouse doesnt work,
+        reinstall your os lolol what a joke .
+      id: ubuntu
+      label_candidates:
+      - ah yes, i have read return as rerun .
+      - not the case, LTS is every other .04 release. The .04 isn't always more stable
+        . I would reinstall with Precise . you can restore user data and such from
+        backup .
+      - cdrom worked fine on windows. . i dont think it has anything to do with the
+        buring process, cds work fine on my desktop and my other ubuntu lap .
+      - hm? .
+      - ok .
+      - ffmpeg is part of the package , quixotedon , at least I'm quite sure it still
+        is . if not just install ffmpeg .
+      - I used the one I downloaded from AMD .
+      - 'nmap is nice, but it wasn''t what I was looking for.  I finally found it
+        again: mtr (my traceroute) is what I was looking for.  I''ll be keeping nmap
+        handy though. .'
+      - Pretty much .
+      - so you dont know, ok, anyone else? . you are like, yah my mouse doesnt work,
+        reinstall your os lolol what a joke .
+      text: "i set up my hd such that i have to type a passphrase to access it at\
+        \ boot. how can i remove that passwrd, and just boot up normal. i did this\
+        \ at install, it works fine, just tired of having reboots where i need to\
+        \ be at terminal to type passwd in. help? . \n backup your data, and re-install\
+        \ without encryption \"might\" be the easiest method ."
+    - episode_done: true
+      eval_labels:
+      - you cant load anything via usb or cd when luks is running . it wont allow
+        usb boot, i tried with 2 diff usb drives .
+      id: ubuntu
+      label_candidates:
+      - that works just fine, thanks! .
+      - thank you .
+      - rxvt-unicode is one .
+      - '-p  sorry... .  nmap -p22 . It doesn''t say:  22/tcp open  ssh  ? .'
+      - noted .
+      - you cant load anything via usb or cd when luks is running . it wont allow
+        usb boot, i tried with 2 diff usb drives .
+      - i guess so i can't even launch it. .
+      - I tarred all of ~ .
+      - I tarred all of ~ .
+      - I don't really know if I can help, but I was curious. lol . That's cool. I'll
+        look into it. Now, we better stop talking about this since it's offtopic.
+        :P .
+      text: "no suggestions? . links? . how can i remove luks passphrase at boot.\
+        \ i dont want to use feature anymore... . \n you may need to create a new\
+        \ volume . \n that leads me to the next question lol... i dont know how to\
+        \ create new volumes exactly in cmdline, usually i use a gui. im just trying\
+        \ to access this server via usb loaded with next os im going to load, the\
+        \ luks pw is stopping me . \n for something like that I would likely use something\
+        \ like a live gparted disk to avoid the conflict of editing from the disk\
+        \ ."
+- - - episode_done: true
+      eval_labels:
+      - i was setting it up under the printer configuration . thanks! .
+      id: ubuntu
+      label_candidates:
+      - i was setting it up under the printer configuration . thanks! .
+      - you should read error messages, it says 'are you root?' .
+      - waiting the college semester to close just to make sure I will not need to
+        reconfigure my environment again .
+      - by the way, the url you posted for davfs is from dapper... that's 5.xx iirc
+        .
+      - i'd say the most commonly venue would be via Launchpad. check out the factoid
+        !bug as well .
+      - i'll give a try .
+      - http://ubuntuforums.org/showthread.php?t=1549847 .
+      - I was calling myself a jerk. All I know is that you downloaded a game successfully.
+        .
+      - So I load up putty gui, then what do I do? .
+      - the old hardy man page, http://manpages.ubuntu.com/manpages/hardy/man1/gcalctool.1.html
+        says "delete" clears the screen, but it doesn't . because LTS are good .
+      text: "I just added a second usb printer but not sure what the uri should read\
+        \ - can anyone help with usb printers? . \n firefox localhost:631 . \n firefox?\
+        \ . \n yes . firefox localhost:631 . firefox http://localhost:631 . cups has\
+        \ a web based interface ."
+    - episode_done: true
+      eval_labels:
+      - it doesn't say . can you reformat the disk? .
+      id: ubuntu
+      label_candidates:
+      - That's ok.  Yea, some routers are a bit limited..... .
+      - explain slow? slow when playing games? when using the computer in general
+        (eg. CLI applications), or is it about the desktop? . sometimes the NVIDIA
+        driver doesn't like unity .
+      - but IMHO that is not a recommended way since its a ppa and looks like a dirty
+        hack to me . avant window navigator is another launcher and not the unity
+        one. .
+      - https://answers.launchpad.net/ubuntu/+source/alsa-driver/+question/195392
+        .
+      - does it show up in 'lspci'? .
+      - paste your cpp file to ubuntu paste and I'll attempt compilation .
+      - it doesn't say . can you reformat the disk? .
+      - could beits not being used. . if the system boots normally, you can stop X
+        via 'sudo service lightdm stop' then install the nvidia.run drivers . 'sudo
+        service lightdm stop' if you are running lightdm as your login manager. should
+        stop X .
+      - still installing ubuntu atm . windows boots fine btw. .
+      - that is a very unpleasant response.  you might as well say you aren't welcome
+        here. sheesh. .
+      text: "no suggestions? . links? . \n plrase restate your question . sorry i\
+        \ have no idea what that is . You can disable luks password prompt at boot\
+        \ by adding \"rd_NO_LUKS\" kernel flag to grub.conf . \n yah!! where, grub.cfg?\
+        \ syntax please. thanks . whats the syntax for rd_NO_LUKS? where to put in\
+        \ grub file ."
+- - - episode_done: true
+      eval_labels:
+      - there is one that escapes me at the moment . most people use sourceforge .
+      id: ubuntu
+      label_candidates:
+      - possibly .
+      - good lad .
+      - we needed some custom features not all the features of ffmpeg so i needed
+        those features only .
+      - there is one that escapes me at the moment . most people use sourceforge .
+      - I thought it did more. Let me see find that page . foudn it. It's called PhotoRec.
+        and it supports more than photo formats. see http://www.cgsecurity.org/wiki/File_Formats_Recovered_By_PhotoRec
+        .
+      - giles that is the exact command, replace username with the actual name of
+        the account you are trying to change. ex. 'sudo passwd kriskropd' . * .
+      - this was more for the ardunio IDE which tries to drag with it a different
+        version of gcc . sorry for the confusion... you should just install the version
+        of gcc you want, and then install the IDE with the --nodeps flag . to figure
+        out which ones you want to ignore look at apt-cache depends <package> or rdepends...
+        maybe... I haven't tried to break my system this way in a very long time.
+        . please give me the output of lsb_release -sc . ^ . that is what that command
+        just looked at... it cannot install that way because it does not exist. .
+        apt-cache policy gcc-4.4 in a pastebin please. .
+      - other then checking the addational-drivers tool (jockey-gtk) and see if you
+        got the drivers installed.. thats all i know about ati cards. .
+      - but, from what to what? Can I hook up a formerly raid'd drive via USB/SATA
+        bridge like that? .
+      - okay, i will give it a try .
+      text: "what you looking for linuxuz3r? . no i mean are you looking for a spefic\
+        \ program? . im not sure if there is anything better then sourceforge . \n\
+        \ no particular program, anything that interest me then contribute to the\
+        \ source . i wanna learn how to read code ."
+    - episode_done: true
+      eval_labels:
+      - You can partion the HD with gparted from the live cd, then start the installer..
+        perhaps. .  thats how i tend to do it. . The installers partion manager tool
+        is a bit. annoying. . I also noticed the installer did not have a 'Install
+        to a specific drive using the whold drive' option.. . sort of annoying it
+        will automate other things.. but not a fairly common case of a Seperate HD
+        Just for linux. .
+      id: ubuntu
+      label_candidates:
+      - not since the top line (root) was messed up in the /etc/passwd file (the username
+        was modified) .
+      - the software center .
+      - You can partion the HD with gparted from the live cd, then start the installer..
+        perhaps. .  thats how i tend to do it. . The installers partion manager tool
+        is a bit. annoying. . I also noticed the installer did not have a 'Install
+        to a specific drive using the whold drive' option.. . sort of annoying it
+        will automate other things.. but not a fairly common case of a Seperate HD
+        Just for linux. .
+      - thanks a lot I should see it there .
+      - 'try #ubuntu-offtopic . !alis | BuPy7 .'
+      - ok, so we know it's the framebuffer rather than X that's the issue in this
+        situation .
+      - _name_ tha packages you installed please. . Erm, sorry? You dont know the
+        name of the package you installed? . No. .
+      - Yes, but since the mount points are in his homedir, they won't have access
+        . so add the noauto option . man mount . I find it easier with parted. http://ubuntuforums.org/showthread.php?t=1000644
+        .
+      - no idea, i dont allow that service to run, not sure what i am missing .
+      - oh, are you handling mail for Windows machines? .
+      text: "I know I'm probably doing something stupid here, but I can't figure out\
+        \ how to install ubuntu to sdb. All the installer shows is sda. gparted can\
+        \ see sdb . Any ideas? . \n  use the 'somthign else/custome' option and make\
+        \ your partitions on sdb as you want. ie:   sdb1 = /  sdb2 = /home/ sdb3 =\
+        \ swap. . \n Yeah when I choose \"something else\" I'm not seeing sdb in there\
+        \ either. I'm not sure why ."
+- - - episode_done: true
+      eval_labels:
+      - I connect using the same user that I log into when I boot up. . ^^ .
+      id: ubuntu
+      label_candidates:
+      - I don't know anything about Windows, it's just a thing I remember someone
+        having problems with before .
+      - it asks about the apn username passsword ,etc .
+      - kill the process "sudo kill -9 pid" check the pid before with "ps x" . then
+        start it again with "sudo service ssh start" .
+      - if there is no such package, then how is it you had it before? You're not
+        being concise. .
+      - hopefully, this is the only way to get full parity with Windows... .
+      - http://pastie.org/5402661 .
+      - I connect using the same user that I log into when I boot up. . ^^ .
+      - it works thanks alot .
+      - maybe 12.10, but not 12.04 .  use blueman -- adapter - preferences - friendly
+        name .  use sudo apt-get apt-remove to delete obsololete soft -- also delete
+        old kernels .  that's sudo apt-get autoremove .
+      - it's not posible for my account )) . maybe admin might do for me some links
+        to my folder and that will be work? .
+      text: "Hey guys, I'm trying to write a script. I need to know what network-manager\
+        \ is doing when I click the wifi icon, and click the network that I'm already\
+        \ connected to. Doing so tells network-manager to disconnect then reconnect\
+        \ to the same network. . \n What is your queston? . \"admin user\"? ."
+    - episode_done: true
+      eval_labels:
+      - I realize that.. what I am asking for is a program to help me manage the power
+        better.. not magically generate power .
+      id: ubuntu
+      label_candidates:
+      - I'm not sure :P I'm a ubuntu-noob x) . I remember doing some chmod or ...
+        chawn I think It was. .
+      - I realize that.. what I am asking for is a program to help me manage the power
+        better.. not magically generate power .
+      - :) No idea . If you need to disable your touchpad you can use synclient for
+        that. .
+      - distro-upgrade. And also tried reinstalling that app . https://bugs.launchpad.net/ubuntu/+source/indicator-messages/+bug/1040259
+        .
+      - Has your disk died on 12.10? . Hmm. . Better turn off your computer then...
+        . Find out what's causing that activity and please don't spread FUD about
+        something you don't know what you're talking about. . 20Mbps is not normal
+        behaviour, on an SSD or HDD. . Does it regularly happen? .
+      - kthx .
+      - Despite the name, that's what it is. .
+      - Intel HD Graphics 4000 . Dr_Willis, everything had been working just fine.
+        After a reboot, bamn! .
+      - every time i attempt to play a flash video it goes in hyper fast speed for
+        the first 4 or so minutes .
+      - I use nVidia X Server Settings and by now I must have tries every single possibility
+        of setting my system up... .
+      text: "I just installed Ubuntu on my laptop, and I notice I get poor battery\
+        \ life. Does anyone know of a utility I can install to get more power management\
+        \ configuration options? . ive done that.. no dice.. I had windows 7 on here\
+        \ before this, and the battery life was better.. decent.. . \n there isn't\
+        \ any program that will magically inmprove your battery ."

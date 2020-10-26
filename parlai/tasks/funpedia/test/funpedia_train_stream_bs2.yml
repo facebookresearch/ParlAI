@@ -1,0 +1,112 @@
+- - - episode_done: true
+      id: funpedia
+      labels:
+      - Well, I bet you didn't know about danio's two pairs of long barbels
+      reward: 0
+      text: 'Danio
+
+        Cultured (Refined, Educated)
+
+        Some species have two pairs of long barbels.'
+    - episode_done: true
+      id: funpedia
+      labels:
+      - I wonder what the people in Livingston feel about their county, Sumter.
+      reward: 0
+      text: 'Livingston, Alabama
+
+        Gentle
+
+        Livingston is a city in Sumter County, Alabama, United States.'
+- - - episode_done: true
+      id: funpedia
+      labels:
+      - What a nice place to go above sea level, Soldier Mountain is
+      reward: 0
+      text: 'Soldier Mountain
+
+        Caring
+
+        Located north of Fairfield in very rural Camas County, its summit elevation
+        is above sea level with a vertical drop of .'
+    - episode_done: true
+      id: funpedia
+      labels:
+      - Incredible, the island Tyssoy is all away towards the north in the country
+      reward: 0
+      text: 'Tyssøy
+
+        Profound
+
+        The island lies in the northern part of the Raunefjorden.'
+- - - episode_done: true
+      id: funpedia
+      labels:
+      - Old Trick New Dog has lovely new songs but I am thankful for the Partridge
+        Family remake songs.
+      reward: 0
+      text: 'Old Trick New Dog
+
+        Appreciative (Grateful)
+
+        In addition to new songs, it also features several remakes of songs from "The
+        Partridge Family".'
+    - episode_done: true
+      id: funpedia
+      labels:
+      - It would be so liberating to live in a fjord like Byfjorden in Norway.
+      reward: 0
+      text: 'Byfjorden (Rogaland)
+
+        Freethinking
+
+        Byfjorden is a fjord in Rogaland county, Norway.'
+- - - episode_done: true
+      id: funpedia
+      labels:
+      - Max Landis is a comic book writer who wrote Chronicle, American Ultra, and
+        Victor Frankestein.
+      reward: 0
+      text: 'Max Landis
+
+        Humorous
+
+        Max Landis (born August 3, 1985) is an American screenwriter, director, producer,
+        and comic book writer who wrote the films "Chronicle" (2012), "American Ultra"
+        (2015), "Victor Frankenstein" (2015), and "Bright" (2017), as well as a variety
+        of short films including "The Death and Return of Superman" and "Wrestling
+        Isn''t Wrestling".'
+    - episode_done: true
+      id: funpedia
+      labels:
+      - Elmer Ernset Southard was a neuropsychiatrist, neuropathologist, professor
+        and author who was born in the United States
+      reward: 0
+      text: 'Elmer Ernest Southard
+
+        Idealistic
+
+        Elmer Ernest Southard (July 28, 1876February 8, 1920) was an American neuropsychiatrist,
+        neuropathologist, professor and author.'
+- - - episode_done: true
+      id: funpedia
+      labels:
+      - Tribes of Cain is a band from swtizerland who released 3 albums
+      reward: 0
+      text: 'Tribes of Caïn
+
+        Spirited
+
+        Tribes of Caïn is a heavy metal band from Switzerland, formed in 1999, with
+        three albums released.'
+    - episode_done: true
+      id: funpedia
+      labels:
+      - Félix stevens is a retired cuban sprinter who competed in the 80s.
+      reward: 0
+      text: 'Félix Stevens
+
+        Confident
+
+        Félix Stevens (born March 8, 1964) is a retired male sprinter from Cuba, who
+        competed in the 1980s and the early 1990s for his native country.'

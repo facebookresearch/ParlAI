@@ -1,0 +1,107 @@
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: nostalgic
+    episode_done: false
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - You must have felt nostalgic of the old days.
+    personality: Empathetic
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I stumbled upon my old diary when packing for a move.
+    text: 'your persona: i enjoy doing beadwork and writing my own patterns.
+
+      your persona: i just moved from va to pa.
+
+      your persona: i grew up on a large farm.
+
+      your persona: i love reading.
+
+      your persona: since i have fibromyalgia , the harsher winters here in pa will
+      be rough on me.
+
+      Beadwork
+
+      I was packing for a move to a new city and I stumbled upon my old diary. Brought
+      back so many memories.'
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: nostalgic
+    episode_done: true
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - I understand it is usually hard moving to a new city leaving some many people
+      and placed behind
+    personality: Empathetic
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I stumbled upon my old diary when packing for a move.
+    text: Absolutely. I was sitting down reading through it and just enjoying the
+      memories. Made me a little sad to move away.
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: surprised
+    episode_done: true
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - Yeah it was a lot of fun. Suprise parties are great way to make your friends
+      happy.
+    personality: Fun-loving
+    prepend_cand: None
+    prepend_ctx: None
+    situation: For my 30th birthday my friends threw me an unexpected party that was
+      a lot of fun.
+    text: 'your persona: i grew up in syracuse , ny with my parents and brother.
+
+      your persona: i am a huge buffalo bills fan , and our family has season tickets.
+
+      your persona: i''m currently studying at union college and want to be an english
+      teacher.
+
+      your persona: i''d also like to study abroad in spain.
+
+      your persona: that way , after graduating , i can teach english there for a
+      year or two.
+
+      Syracuse
+
+      Woo,i wish i was there,congrats'
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sad
+    episode_done: false
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - Awe I love weddings! Were they having a big wedding or a small one?
+    personality: Exciting
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I was watching a TV show and the couple were getting married. It was
+      so sweet that it made me cry.
+    text: 'your persona: we are getting married in a park.
+
+      your persona: my family hates my fiancé.
+
+      your persona: i am getting married next week.
+
+      your persona: we will be traveling to niagra falls for our honeymoon.
+
+      your persona: my dog is the ring bearer.
+
+      Niagara Falls
+
+      I was watching a TV show and the couple were getting married. It was so sweet
+      that it made me cry.'
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sad
+    episode_done: true
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - You will when the time is right and it'll be beautiful.
+    personality: Optimistic
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I was watching a TV show and the couple were getting married. It was
+      so sweet that it made me cry.
+    text: It was big. But it made me feel down because I haven't had one yet.

@@ -1,0 +1,280 @@
+- - - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/yT//f8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/17/yP/8/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/8v//P/k//z/x/8A/wD/AP8A/wD/AP8A/wD/AP8A/1H//f8A/wD/Tv/9/wD/AP8A/wD/AP8A/wD/AP8A/wD//f8X/wD/if/8//z/AP8A/wD/AP8A/wD/AP8A/wD/AP/9/wD/l//9//z/of8A/wD/AP8A/wD/AP8A/wD/AP8A//7//f/9//7//f8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/iP/F/67//f/F/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/2P/9/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/9//7/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//z/1P8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/1v8W/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '9'
+      - nine
+      text: Which number is in the image?
+    - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wb//P8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/nf+2/wD/AP8A/wD/Vv8h/wD/AP8A/wD/AP8A/wD/AP/8/wD/AP8A/wD/AP/4/1//AP8A/wD/AP8A/wD/AP8J/+z/AP8A/wD/AP/j/zr/AP8A/wD/AP8A/wD/AP8A/wD//P8S/wD/AP8Z//z/AP8A/wD/AP8A/wD/AP8A/wD/AP/1/+b/u/+7//X/4P8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/G/8b/xv//P8J/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/8/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP9M/8//AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/17/ef8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/a//3/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '4'
+      - four
+      text: Which number is in the image?
+- - - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8C/yX/iv/+/7P/AP8A/wD/AP8A/wD/AP8A/wD/ef/8//z/0P+K/x///P8A/wD/AP8A/wD/AP8A/wD//P/i/xj/AP8A/wD/AP/8/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8S//D/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/4X/lv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wT//P8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/uP+X/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/3P/0/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/CP/8/3//AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP+V/0f/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8N//H/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '7'
+      - seven
+      text: Which number is in the image?
+    - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/wP/8//z/9/8u/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/27//P/8//z/gP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP+x/xz//P/3/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/u//z/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//z//P8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/1z//v86/wD/AP8A/wD/AP8A/wD/AP8f/1b/0v/Q/9D/7//8/17/AP8A/wD/AP8A/wD/OP/t//z//P/9/7X//P/8//z//P8A/wD/AP8A/wD/xP/8/13/AP8A/x7/1v/8/wD/AP8A/wD/AP8A/wD/AP/8/y//AP9Z//H//v/n/wD/AP8A/wD/AP8A/wD/AP8A//z/4P/B//z//P+S/yz/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '2'
+      - two
+      text: Which number is in the image?
+- - - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/Vf/+//7/OP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/+/6n/4f/h/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/+/1X/AP8A/xz/HP8A/wD/AP8A/wD/AP8A/wD/AP8A//7/AP8A/wD/AP/+/wD/AP8A/wD/AP8A/wD/AP8A/wD/xf8A/wD/AP/h//7/AP8A/wD/AP8A/wD/AP8A/wD/AP/+/wD/AP84//7//v8A/wD/AP8A/wD/AP8A/wD/AP8A/zj//v/h/3H/4f9x/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/+/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//7/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD//v8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/h/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/6n/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '9'
+      - nine
+      text: Which number is in the image?
+    - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//7/f/8A/wD/P//+/wD/AP8A/wD/AP8A/wD/AP8A/wD//v/+//7//v/+//7/P/8A/wD/AP8A/wD/AP8A/wD/AP8A/77//v/+//7//v/+/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/f//+/3//AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/+//7/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP9///7//v8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP++//7//v8//wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8///7//v/+/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//7//v/+/z//AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD//v/+//7/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD//v/+//7/P/8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP9//77/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '7'
+      - seven
+      text: Which number is in the image?
+- - - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8J/5T/Rv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/m//z/Wv9P/yT/JP+L/wD/AP8A/wD/AP8A/wD/AP+t//z//P/8//z//P/8/8j/AP8A/wD/AP8A/wD/Cv/8/2L/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8w//j//P+l/2b/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wL/d//8/xj/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/9H/nv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/3/xL/AP8A/wD/AP8A/wD/AP9Y/wD/AP8A/wD/AP8A//j/Yf8A/wD/AP8A/wD/AP8A/9b/wP8A/wD/AP8N//v/zP8A/wD/AP8A/wD/AP8A/wD/aP/8/z3/Cv/I/+D/+/8W/wD/AP8A/wD/AP8A/wD/AP8A/wD/n//8/87/Lf8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '5'
+      - five
+      text: Which number is in the image?
+    - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/+H//P/y/zn/AP8A/wD/AP8A/wD/AP8A/wD/AP/Q//z/8P8L/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Z//z//P8d/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP82//z/Vv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//z/XP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/2r/3f8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/o/+a/wD/Lv93/57/g/8R/wD/AP8A/wD/AP8A/wD/K//8/07/OP/8/37/U/+V//z/8f8A/wD/AP8A/wD/AP8A/17//P8A/6z/Av8A/wD/sv/8/wj/AP8A/wD/AP8A/wD/AP+D//z/vP9b/wD/df/8//z/Av8A/wD/AP8A/wD/AP8A/wD/jf/8//z/9P/8/2z/EP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '6'
+      - six
+      text: Which number is in the image?
+- - - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/BP/e/93/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP+x//3//f8A/wb/AP8A/wD/AP8A/wD/AP8A/wD/AP/X//3/aP/Z/xz//f8N/wD/AP8A/wD/AP8A/wD/AP8A//3/Hf8A/xj//f/9/xT/AP8A/wD/AP8A/wD/AP8A/xT/2P8A/yT/zP/9//3/AP8A/wD/AP8A/wD/AP8A/wD/AP/z/wv/6v/9//3//f8A/wD/AP8A/wD/AP8A/wD/AP8A/+X//f/9/8n/Ff/9/wD/AP8A/wD/AP8A/wD/AP8A/wD/B/+s/wz/AP9R/+D/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/83/zv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/4P+g/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/9/yz/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//7/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '9'
+      - nine
+      text: Which number is in the image?
+    - episode_done: true
+      id: mnist_qa
+      image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8Z/3///v8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/+b/1/+8/xz/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/9//Gv8A/4f//f8A/wD/AP8A/wD/AP8A/wD/AP8A/03/Tf8A/wD//f8o/wD/AP8A/wD/AP8A/wD/AP8A/wD//f8A/wD/U//9/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/9/wD/F//m/+n/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/6T//f+M/3T/Nv8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/zf//f8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD//f+m/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP/9/1T/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8O/6n/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/3//AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
+      label_candidates:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+      - '4'
+      - '5'
+      - '6'
+      - '7'
+      - '8'
+      - '9'
+      - eight
+      - five
+      - four
+      - nine
+      - one
+      - seven
+      - six
+      - three
+      - two
+      - zero
+      labels:
+      - '9'
+      - nine
+      text: Which number is in the image?

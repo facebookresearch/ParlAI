@@ -1,0 +1,295 @@
+- - - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - My mom was single with 3 boys, so we never left the projects.
+      - I try to wear all black every day. It makes me feel comfortable.
+      - Well nursing stresses you out so I wish luck with sister
+      - Yeah just want to pick up nba nfl getting old
+      - I really like celine dion. What about you?
+      - No. I live near farms.
+      - I wish I had a daughter, I'm a boy mom. They're beautiful boys though still
+        lucky
+      - Yeah when I get bored I play gone with the wind my favorite movie.
+      - Hi how are you? I'm eating dinner with my hubby and 2 kids.
+      - Were you married to your high school sweetheart? I was.
+      - That is great to hear! Are you a competitive rider?
+      - Hi, I'm doing ok. I'm a banker. How about you?
+      - I'm 5 years old
+      - Hi there. How are you today?
+      - I totally understand how stressful that can be.
+      - Yeah sometimes you do not know what you are actually watching
+      - Mother taught me to cook! We are looking for an exterminator.
+      - I enjoy romantic movie. What is your favorite season? Mine is summer.
+      - Editing photos takes a lot of work.
+      - You must be very fast. Hunting is one of my favorite hobbies.
+      labels:
+      - You must be very fast. Hunting is one of my favorite hobbies.
+      reward: 0
+      text: 'your persona: I like to remodel homes.
+
+        your persona: I like to go hunting.
+
+        your persona: I like to shoot a bow.
+
+        your persona: My favorite holiday is halloween.
+
+        Hi, how are you doing? I''m getting ready to do some cheetah chasing to stay
+        in shape.'
+    - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - There was one person better than me, but I will keep trying to pass
+      - Oh that's a yummy jpb
+      - I take it you are not getting along with him?
+      - Ah, I prefer asian cuisine, especially thai food.
+      - Awesome my kids and brothers love it
+      - Just dropped pizza on my suspense novel. Two faves ruined at once!
+      - No boots unfortunately. I sell my homemade candles
+      - I am well. How are you doing?
+      - Cool! Does your husband like to read? I love to.
+      - Officer bob here. Good. I am relaxing from a long day being an officer of
+        the law.
+      - Cool! So what do you look like?
+      - I am a bit of a loner. I live by myself. No attachments.
+      - I have to cut my long beard. It might slow me down!
+      - I have some sports cars.
+      - I do listen to music and I love to cook.
+      - Its great that you dance. Its very enjoyable
+      - Most I know about trucker comes from watching ice road truckers and burt reynolds
+        films lol
+      - Good. Where are you from?
+      - Right now I am doing an ocean liner.
+      - I am spending time with my 4 sisters what are you up to
+      labels:
+      - I am spending time with my 4 sisters what are you up to
+      reward: 0
+      text: 'your persona: My mom is my best friend.
+
+        your persona: I have four sisters.
+
+        your persona: I believe that mermaids are real.
+
+        your persona: I love iced tea.
+
+        Hi, how are you doing today?'
+- - - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - Hello I am doing well how are you?
+      - Ll something like that. Do you play games?
+      - Does anything give you relief? I hate taking medicine for mine.
+      - I decorate cakes at a local bakery! And you?
+      - Do you eat lots of meat
+      - I am so weird that I like to collect people and cats
+      - How are your typing skills?
+      - Yeah. I am headed to the gym in a bit to weight lift.
+      - Yeah you have plenty of time
+      - Metal is my favorite, but I can accept that people listen to country. Haha
+      - That's why you desire to be controlled. Let me control you person one.
+      - Two dogs they are the best, how about you?
+      - You do art? What kind of art do you do?
+      - I love watching baseball outdoors on sunny days.
+      - Oh I see. Do you ever think about moving? I do, it is what I want.
+      - Sure. I wish it were winter. The sun really hurts my blue eyes.
+      - Are we pretending to play tennis
+      - I am rich and have all of my dreams fulfilled already
+      - They tire me so, I probably sleep about 10 hrs a day because of them.
+      - I also remodel homes when I am not out bow hunting.
+      labels:
+      - I also remodel homes when I am not out bow hunting.
+      reward: 0
+      text: I am! For my hobby I like to do canning or some whittling.
+    - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - That would be great. What do you do on the weekends?
+      - I am sorry to hear about that. I am not married.
+      - Hello! I just got done taking my daily blood sugar level. Yuck!
+      - They really are. And a handful at times
+      - What kind o music do you like
+      - It was nice chatting with you also. Glad it was a formal situation.
+      - I am all about driving, fast and furious!
+      - Kind of, I just love to eat fruit
+      - I am attending hesston college
+      - Fall and winter are my favorite! No I am unemployed right now.
+      - Yeah you should, that can be tricky.
+      - That is cool. What do you do for fun?
+      - Take care and I hope you do well in college!
+      - That is cool. I am scared of heights
+      - Only the one I left at the truck stop. You?
+      - Oh yes for sure that is great.
+      - Hey there how are you today?
+      - Ah manic depressive. How to you cope? Meditation? Any hobbies?
+      - Hey! What kind of music are your into?
+      - That is a good show I watch that while drinking iced tea
+      labels:
+      - That is a good show I watch that while drinking iced tea
+      reward: 0
+      text: Wow, four sisters. Just watching game of thrones.
+- - - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - Yes they do but I say no to them lol
+      - I have trouble getting along with family.
+      - I live in texas, what kind of stuff do you do in toronto?
+      - That's so unique! Veganism and line dancing usually don't mix!
+      - No, it isn't that big. Do you travel a lot
+      - That's because they are real ; what do you do for work?
+      - I am lazy all day lol. My mom wants me to get a job and move out
+      - I was born on arbor day, so plant a tree in my name
+      - Okay, I should not tell you, its against the rules but my name is sarah, call
+        me o
+      - Hello how are u tonight
+      - Cool... My parents love country music that's why I hate it
+      - I am an accountant. What do you do?
+      - What do your parents do? My dad is a mechanic.
+      - How are you liking it?
+      - I really am too. Great talking to you too.
+      - Cool. Whats it like working there?
+      - One daughter. She's pre med
+      - No and all men is taller than me why can't I find a man to dance with
+      - I live in utah, and my family live in england, so I understand
+      - That's awesome. Do you have a favorite season or time of year?
+      labels:
+      - That's awesome. Do you have a favorite season or time of year?
+      reward: 0
+      text: That's neat. When I was in high school I placed 6th in 100m dash!
+    - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - Very long, she was with me when I colored my hair pink
+      - I like being alone and hitchhiking
+      - Hi, how are you doing today?
+      - Actually been good and better than what I expected
+      - Ah, wrong! Blue is my fav color. What hobbies do you have?
+      - I'm great, loving this city life, how are you?
+      - That's true. I have supporting parents, I'm grateful for that.
+      - Just started working from home, the internet is a heck of a thing
+      - The tallest sunflowers you have ever seen are over their graves
+      - I bet. What do you drive? I have a cool, black car.
+      - I will be headed to paris on vacation to visit my sister
+      - I live in new york and you?
+      - I understand. I like to work out alone
+      - I'm eric. I'm from new york. My dad drove cab here in the seventies.
+      - I sing sometimes too. I used to do a lot of musical theatre.
+      - I rather see it in a cartoon lol I know that's fake
+      - That would be great pay
+      - My name is charlie. What kind of earrings?
+      - Of course. I'm listening.
+      - I'm a researcher I'm researching the fact that mermaids are real
+      labels:
+      - I'm a researcher I'm researching the fact that mermaids are real
+      reward: 0
+      text: I agree. What do you do for a living?
+- - - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - Not really, it is just a small local radio station. What about you, what do
+        you do?
+      - Me too! People always say I am so organized
+      - Niagra fall is where our honeymoon will be
+      - Yes! I know how to be by myself. You? I do not need new friends. You?
+      - Ll. My dad is a police officer and they have a sports team too
+      - Oh you should get your license
+      - Okay you have a good day nice talking with you!
+      - I play some ball for a living.
+      - Me too! My asthma is really embarrassing and makes me uncomfortable around
+        others.
+      - Netflix and good food is the best. Maybe lobster, my favorite seafood. Where
+        ya from?
+      - Oh nice. Why is that?
+      - Sounds fun! I helped my wife with health issues, too.
+      - I am a night owl. I think I'll play the piano a little before bed.
+      - Just the real ones, not a big game person
+      - I could be the next mrs. Adam levine. Please, I'll buy you 10 mangoes.
+      - Do you like dogs I've usually to talk
+      - What did she teach? My mom stayed home with my and my 3 older siblings
+      - Neither do I, I am just a photographer, and that is already a ot of energy
+      - No, I say I am average at 5 4. Are you vertically challenged?
+      - What is your favorite meat to eat?
+      labels:
+      - What is your favorite meat to eat?
+      reward: 0
+      text: I do not. But I do have a favorite meat since that is all I eat exclusively.
+    - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - Hi there, I'm bob.
+      - I know a bit about food. My folks have a small grocery
+      - Hey, that's life. What about you, what do you do?
+      - I like that too. If I win the lottery, I could go anywhere!
+      - What do you do for fun?
+      - No not me, I don't like to show out, like driving a mercedes. Kidding
+      - Yeah it relaxes me when I'm stressed out
+      - I left my chevy duramax running while at american eagle. Sale!
+      - Yes, you'll treat when I fall sick
+      - How do you do that?
+      - Good comparison!! That's actually a flattering comparison for me.
+      - Now I do it like a nerd
+      - I'm with you there for sure.
+      - Girls are gross boys rule
+      - Cute! My father owns bees as pets, but I'm allergic to them.
+      - Congrats! Nothing that great in my life
+      - I'm very healthy I live in a farm, what is wrong with your health?
+      - How come? Conserving energy? Whats going on
+      - It is so late but that's cool I bet they look nice.
+      - That's cool my mom does the same thing
+      labels:
+      - That's cool my mom does the same thing
+      reward: 0
+      text: Interesting. I'm a website designer. Pretty much spend all my time on
+        the computer.
+- - - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - I am listening to system of a down, I wonder if your cat would like them
+      - I absolutely agree, women are just as strong and capable.
+      - In denmark with my grandma. What about you?
+      - I live in backcountry michigan. I encounter many sick, injured wildlife daily!
+      - I am great and you
+      - I am a big foodie, I love to bake. How about you?
+      - Dance!! I win alot of mone and trifies.. What do u do four fun?
+      - Do you do any sports? Swimming helps me keep my energy up.
+      - They are excellent for the environment.
+      - I am going to catch some fish and think this over. Thanks dog!
+      - I am doing well! How about you?
+      - I like old cars better new cars are to expensive
+      - I've met bill once. He seems like a nice guy.
+      - Oh that is amazing. I've been trying to find someone who can help him
+      - I am in my early 30s, what you do for living
+      - So, you are in college? I took foreign language in college.
+      - I just turned 30 the other day
+      - What a coincidence I live up in anchorage
+      - That would be interesting. I am going to be a forensic psychologist.
+      - I like chicken or macaroni and cheese.
+      labels:
+      - I like chicken or macaroni and cheese.
+      reward: 0
+      text: I would have to say its prime rib. Do you have any favorite foods?
+    - episode_done: false
+      id: convai2:normalized
+      label_candidates:
+      - Love that too. I'm waiting on my car to be fixed. You?
+      - At least he helps you. Do you cook bake?
+      - No, I auditioned as a child but I failed horribly.
+      - I love cheese and ham sandwiches
+      - A poodle, he is hard to look after as he is so big, I'm quite small
+      - Hello, I believe in things I can touch and see. So...
+      - It is a beautiful day outside no rain here?
+      - Is english your first language?
+      - My wife does when we take our sunday drives
+      - Oh, one day may. I wonder the same.
+      - Its hard for me to relive. It involved bread and a defective oven.
+      - Hello there! How are you doing?
+      - I swear I'm losing my freaking mind.
+      - That sounds yummy. I enjoy soccer. Do you work?
+      - I see. I'm just trying to become a vegetarian. Are you?
+      - Great, I'll love it so much
+      - Wow happy anniversary to you and him.
+      - I enjoy playing tennis and baking.
+      - And what is that then
+      - Tell me more about yourself
+      labels:
+      - Tell me more about yourself
+      reward: 0
+      text: That's awesome. I have always had a love for technology.

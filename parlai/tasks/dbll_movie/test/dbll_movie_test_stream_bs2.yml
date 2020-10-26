@@ -1,0 +1,272 @@
+- - - episode_done: true
+      eval_labels:
+      - Before the Rain
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Grégoire Colin appear in?
+    - episode_done: true
+      eval_labels:
+      - Inspector Gadget, Black Christmas, Ice Princess, Harriet the Spy, The Scribbler
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what films did Michelle Trachtenberg star in?
+- - - episode_done: true
+      eval_labels:
+      - The Inbetweeners Movie, The Inbetweeners 2
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: Joe Thomas appears in which movies?
+    - episode_done: true
+      eval_labels:
+      - The Son of Kong, Kiss and Make-Up, Divorce
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Helen Mack star in?
+- - - episode_done: true
+      eval_labels:
+      - Haider, Jab We Met, Chance Pe Dance
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what films did Shahid Kapoor act in?
+    - episode_done: true
+      eval_labels:
+      - The Raven, Lake Placid, Calvary, The Smurfs 2, Stonehearst Asylum, The Grand
+        Seduction, The General, Six Shooter, Harrison's Flowers, Into the Storm, The
+        Tiger's Tail
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: Brendan Gleeson appears in which movies?
+- - - episode_done: true
+      eval_labels:
+      - Table No. 21, Cheeni Kum
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what films does Paresh Rawal appear in?
+    - episode_done: true
+      eval_labels:
+      - Michael Jordan to the Max
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what does Doug Collins star in?
+- - - episode_done: true
+      eval_labels:
+      - Cobra, Red Sonja
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: what films does Brigitte Nielsen appear in?
+    - episode_done: true
+      eval_labels:
+      - Plan 9 from Outer Space
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      reward: 0
+      text: Mona McKinnon appears in which movies?

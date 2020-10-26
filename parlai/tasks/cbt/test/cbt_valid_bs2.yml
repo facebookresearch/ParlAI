@@ -1,0 +1,721 @@
+- - - episode_done: true
+      eval_labels:
+      - Chuck
+      id: cbt:NE
+      label_candidates:
+      - Chuck
+      - Johnny
+      - Marshhawk
+      - Meadows
+      - Polly
+      - Rabbit
+      - Skunk
+      - days
+      - first
+      - morning
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        At first she would n''t go without a great deal of coaxing , but after a while
+        he did n''t have to coax at all .
+
+        She seemed to delight to be with him as much as he did to be with her .
+
+        So Johnny Chuck grew happier and happier .
+
+        He was happier than he had ever been in all his life before .
+
+        You see Johnny Chuck had found the greatest thing in the world .
+
+        Do you know what it is ?
+
+        It is called love .
+
+        XII JOHNNY CHUCK PROVES HIS LOVE These spring days were beautiful days on
+        the Green Meadows .
+
+        It seemed to Johnny Chuck that the Green Meadows never had been so lovely
+        or the songs of the birds so sweet .
+
+        He had forgotten all about his old friends , Jimmy Skunk and Peter Rabbit
+        and the other little meadow people .
+
+        You see , he could n''t think of anybody but Polly Chuck , and he did n''t
+        want to be with anybody but Polly Chuck .
+
+        He had even forgotten that he had started out to see the world .
+
+        He did n''t care anything more about the world .
+
+        All he wanted was to be where Polly Chuck was .
+
+        Then he was perfectly happy .
+
+        That was because Johnny Chuck had found the greatest thing in the world ,
+        which is love .
+
+        But Johnny still had one great wish , the wish that he might show Polly Chuck
+        just how brave and strong he was and how well he could take care of her .
+
+        One morning they were feasting in a patch of sweet clover over near an old
+        stone wall .
+
+        It was the same stone wall in which Johnny Chuck had escaped from old Whitetail
+        the Marshhawk , when Johnny was a very little fellow .
+
+        Suddenly Polly gave a little scream of fright .
+
+        Johnny XXXXX looked up to see a dog almost upon her .'
+    - episode_done: true
+      eval_labels:
+      - Reade
+      id: cbt:NE
+      label_candidates:
+      - Armstrong
+      - Cecily
+      - Felicity
+      - Reade
+      - anybody
+      - beaus
+      - day
+      - evening
+      - left
+      - something
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        `` Because the evening is the nicest time to tell things in .
+
+        I only mentioned it now so that you would have something interesting to look
+        forward to all day . ''''
+
+        `` Is it about Miss Reade ? ''''
+
+        asked Cecily .
+
+        `` Never mind . ''''
+
+        `` I ''ll bet she ''s going to be married , '''' I exclaimed , remembering
+        the ring .
+
+        `` Is she ? ''''
+
+        cried Felicity and Cecily together .
+
+        The Story Girl threw an annoyed glance at me .
+
+        She did not like to have her dramatic announcements forestalled .
+
+        `` I do n''t say that it is about Miss Reade or that it is n''t .
+
+        You must just wait till the evening . ''''
+
+        `` I wonder what it is , '''' speculated Cecily , as the Story Girl left the
+        room .
+
+        `` I do n''t believe it ''s much of anything , '''' said Felicity , beginning
+        to clear away the breakfast dishes .
+
+        `` The Story Girl always likes to make so much out of so little .
+
+        Anyhow , I do n''t believe Miss Reade is going to be married .
+
+        She has n''t any beaus around here and Mrs. Armstrong says she ''s sure she
+        does n''t correspond with anybody .
+
+        Besides , if she was she would n''t be likely to tell the Story Girl . ''''
+
+        `` Oh , she might .
+
+        They ''re such friends , you know , '''' said Cecily .
+
+        `` Miss XXXXX is no better friends with her than she is with me and you ,
+        '''' retorted Felicity .'
+- - - episode_done: true
+      eval_labels:
+      - dog
+      id: cbt:CN
+      label_candidates:
+      - Cousin
+      - cloak
+      - dog
+      - maiden
+      - mountain
+      - needle
+      - path
+      - pin
+      - side
+      - steps
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` What is it ? ''
+
+        answered he .
+
+        ` The ogre is coming after us .
+
+        I saw him . ''
+
+        ` But where is he ?
+
+        I do n''t see him . ''
+
+        ` Over there .
+
+        He only looks about as tall as a needle . ''
+
+        Then they both began to run as fast as they could , while the ogre and his
+        dog kept drawing always nearer .
+
+        A few more steps , and he would have been by their side , when Dschemila threw
+        the darning needle behind her .
+
+        In a moment it became an iron mountain between them and their enemy .
+
+        ` We will break it down , my dog and I , '' cried the ogre in a rage , and
+        they dashed at the mountain till they had forced a path through , and came
+        ever nearer and nearer .
+
+        ` Cousin ! ''
+
+        said Dschemila suddenly .
+
+        ` What is it ? ''
+
+        ` The ogre is coming after us with his dog . ''
+
+        ` You go on in front then , '' answered he ; and they both ran on as fast
+        as they could , while the ogre and the dog drew always nearer and nearer .
+
+        ` They are close upon us ! ''
+
+        cried the maiden , glancing behind , ` you must throw the pin . ''
+
+        So Dschemil took the pin from his cloak and threw it behind him , and a dense
+        thicket of thorns sprang up round them , which the ogre and his dog could
+        not pass through . ''
+
+        I will get through it somehow , if I burrow underground , '' cried he , and
+        very soon he and the XXXXX were on the other side .'
+    - episode_done: true
+      eval_labels:
+      - way
+      id: cbt:CN
+      label_candidates:
+      - Illustration
+      - children
+      - eating
+      - grazing
+      - hare
+      - home
+      - house
+      - strength
+      - sweep
+      - way
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        Then they said to the little girl : ` Climb this tree , dear Letiko , and
+        remain there till we have finished eating . ''
+
+        So Letiko climbed the tree , and the hares went grazing .
+
+        It was not very long , however , before a lamia came under the tree and called
+        out : ` Letiko , Letiko , come down and see what beautiful shoes I have on
+        . ''
+
+        ` Oh !
+
+        my shoes are much finer than yours . ''
+
+        ` Come down .
+
+        I am in a hurry , for my house is not yet swept . ''
+
+        ` Go home and sweep it then , and come back when you are ready . ''
+
+        Then the lamia went away and swept her house , and when she was ready she
+        came back and called out : ` Letiko , Letiko , come down and see what a beautiful
+        apron I have . ''
+
+        -LSB- Illustration : LETIKO , LETIKO , COME DOWN AND SEE WHAT A BEAUTIFUL
+        APRON I HAVE -RSB- ` Oh !
+
+        my apron is much finer than yours . ''
+
+        ` If you will not come down I will cut down the tree and eat you . ''
+
+        ` Do so , and then eat me . ''
+
+        Then the lamia hewed with all her strength at the tree , but could not cut
+        it down .
+
+        And when she saw that , she called out : ` Letiko , Letiko , come down , for
+        I must feed my children . ''
+
+        ` Go home then and feed them , and come back when you are ready . ''
+
+        When the lamia was gone away , Letiko called out : ` Little hares !
+
+        little hares ! ''
+
+        Then said one hare to the other : ` Listen , Letiko is calling ; '' and they
+        both ran back to her as fast as they could go .
+
+        Then Letiko came down from the tree , and they went on their way .
+
+        The lamia ran as fast as she could after them , to catch them up , and when
+        she came to a field where people were working she asked them : ` Have you
+        seen any one pass this XXXXX ? '''
+- - - episode_done: true
+      eval_labels:
+      - stuck
+      id: cbt:V
+      label_candidates:
+      - came
+      - cried
+      - live
+      - move
+      - placed
+      - reply
+      - save
+      - speak
+      - stuck
+      - weeping
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` Udea !
+
+        Udea ! ''
+
+        he cried , but she did not move or reply .
+
+        Then he saw that she was dead , and rushed down to his brothers in the courtyard
+        and called out , ` Come quickly , our sister is dead ! ''
+
+        In a moment they were all beside her and knew that it was true , and they
+        made a bier and laid her on it , and placed her across a camel , and said
+        to the camel , ` Take her to her mother , but be careful not to halt by the
+        way , and let no man capture you , and see you kneel down before no man ,
+        save him who shall say `` string '''' -LSB- 1 -RSB- to you .
+
+        But to him who says `` string , '''' then kneel . ''
+
+        -LSB- Footnote 1 : ` Riemen . '' -RSB-
+
+        So the camel started , and when it had accomplished half its journey it met
+        three men , who ran after it in order to catch it ; but they could not .
+
+        Then they cried ` Stop ! ''
+
+        but the camel only went the faster .
+
+        The three men panted behind till one said to the others , ` Wait a minute
+        !
+
+        The string of my sandal is broken ! ''
+
+        The camel caught the word ` string '' and knelt down at once , and the men
+        came up and found a dead girl lying on a bier , with a ring on her finger
+        .
+
+        And as one of the young men took hold of her hand to pull off the ring , he
+        knocked out the man-eater ''s finger-nail , which had stuck there , and the
+        maiden sat up and said , ` Let him live who gave me life , and slay him who
+        slew me ! ''
+
+        And when the camel heard the maiden speak , it turned and carried her back
+        to her brothers .
+
+        Now the brothers were still seated in the court bewailing their sister , and
+        their eyes were dim with weeping so that they could hardly see .
+
+        And when the camel stood before them they said , ` Perhaps it has brought
+        back our sister ! ''
+
+        and rose to give it a beating .
+
+        But the camel knelt down and the girl dismounted , and they flung themselves
+        on her neck and wept more than ever for gladness .
+
+        ` Tell me , '' said the eldest , as soon as he could speak , ` how it all
+        came about , and what killed you . '' ''
+
+        I was waiting in the upper chamber , '' said she , ` and a nail of the man-eater
+        ''s XXXXX under my nail , and I fell dead upon the ground .'
+    - episode_done: true
+      eval_labels:
+      - found
+      id: cbt:V
+      label_candidates:
+      - died
+      - found
+      - guess
+      - know
+      - lets
+      - made
+      - pin
+      - snowed
+      - thinks
+      - took
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        It is stylish to have hair ribbons to match your dress .
+
+        But it is hard to match gray drugget .
+
+        I like scarlet for that .
+
+        It is stylish to pin a piece of ribbon on your coat the same colour as your
+        chum wears in her hair .
+
+        Mary Martha Cowan saw them doing it in town and started us doing it here .
+
+        I always wear Kitty ''s ribbon and Kitty wears mine , but the Story Girl thinks
+        it is silly .
+
+        CECILY KING .
+
+        AN ACCOUNT OF OUR VISIT TO COUSIN MATTIE ''S We all walked over to Cousin
+        Mattie ''s last week .
+
+        They were all well there and we had a fine dinner .
+
+        On our way back a snow-storm came up and we got lost in the woods .
+
+        We did n''t know where we were or nothing .
+
+        If we had n''t seen a light I guess we ''d all have been frozen and snowed
+        over , and they would never have found us till spring and that would be very
+        sad .
+
+        But we saw a light and made for it and it was Peg Bowen ''s .
+
+        Some people think she is a witch and it ''s hard to tell , but she was real
+        hospitable and took us all in .
+
+        Her house was very untidy but it was warm .
+
+        She has a skull .
+
+        I mean a loose skull , not her own .
+
+        She lets on it tells her things , but Uncle Alec says it could n''t because
+        it was only an Indian skull that old Dr. Beecham had and Peg stole it when
+        he died , but Uncle Roger says he would n''t trust himself with Peg ''s skull
+        for anything .
+
+        She gave us supper .
+
+        It was a horrid meal .
+
+        The Story Girl says I must not tell what I XXXXX in the bread and butter because
+        it would be too disgusting to read in Our Magazine but it do n''t matter because
+        we were all there , except Sara Ray , and know what it was .'
+- - - episode_done: true
+      eval_labels:
+      - 'on'
+      id: cbt:P
+      label_candidates:
+      - Above
+      - although
+      - as
+      - before
+      - beneath
+      - from
+      - 'on'
+      - over
+      - since
+      - that
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        One day Mrs. Griggs went away from the Dale place with a very curious story
+        , which she diligently spread far and wide .
+
+        It made a good deal of talk , but people , although they listened eagerly
+        , and wondered and questioned , were rather incredulous about it .
+
+        They thought Mrs. Griggs must be drawing considerably upon her imagination
+        ; there were not lacking those who declared that she had invented the whole
+        account , since her reputation for strict veracity was not wholly unquestioned
+        .
+
+        Mrs. Griggs ''s story was as follows : -- One day she found the door of the
+        west gable unlocked .
+
+        She went in , expecting to see bare walls and a collection of odds and ends
+        .
+
+        Instead she found herself in a finely furnished room .
+
+        Delicate lace curtains hung before the small , square , broad-silled windows
+        .
+
+        The walls were adorned with pictures in much finer taste than Mrs. Griggs
+        could appreciate .
+
+        There was a bookcase between the windows filled with choicely bound books
+        .
+
+        Beside it stood a little table with a very dainty work-basket on it .
+
+        By the basket Mrs. Griggs saw a pair of tiny scissors and a silver thimble
+        .
+
+        A wicker rocker , comfortable with silk cushions , was near it .
+
+        Above the bookcase a woman ''s picture hung -- a water-colour , if Mrs. Griggs
+        had but known it -- representing a pale , very sweet face , with large , dark
+        eyes and a wistful expression under loose masses of black , lustrous hair
+        .
+
+        Just beneath the picture , on the top shelf of the bookcase , was a vaseful
+        of flowers .
+
+        Another vaseful stood on the table beside the basket .
+
+        All this was astonishing enough .
+
+        But what puzzled Mrs. Griggs completely was the fact that a woman ''s dress
+        was hanging over a chair before the mirror -- a pale blue , silken affair
+        .
+
+        And on the floor beside it were two little blue satin slippers !
+
+        Good Mrs. Griggs did not leave the room until she had thoroughly explored
+        it , even to shaking out the blue dress and discovering it to be a tea-gown
+        -- wrapper , she called it .
+
+        But she found nothing to throw any light on the mystery .
+
+        The fact that the simple name `` Alice '''' was written XXXXX the fly-leaves
+        of all the books only deepened it , for it was a name unknown in the Dale
+        family .'
+    - episode_done: true
+      eval_labels:
+      - in
+      id: cbt:P
+      label_candidates:
+      - as
+      - by
+      - for
+      - from
+      - in
+      - of
+      - 'on'
+      - to
+      - upon
+      - with
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        ` When the old man discovered who we were he was beside himself with pleasure
+        , and offered us a refuge in the cave where he lived .
+
+        We gladly accepted his offer , and to the cave we all went , taking with us
+        the last little pig , which he gave us as a present . ''
+
+        `` The Bassa of the Sea , '''' he added , `` will pay you anything you like
+        to ask for it . ''''
+
+        ` Without asking why it was so precious I took the pig and placed it in my
+        work bag , where it has been ever since .
+
+        Only yesterday we offered it to the Bassa , who laughed at us , and this so
+        enraged us against the dervish that we cut off his beard when he was asleep
+        , and now he dare not show himself . ''
+
+        ` Ah , '' exclaimed the page , ` it is not fitting that such beauty should
+        waste itself in making other people miserable .
+
+        Forget the unhappy past and think only of the future .
+
+        And accept , I pray you , this watch , to mark the brighter hours in store
+        . ''
+
+        So saying he laid the watch upon her knee .
+
+        Then he turned to Tezila .
+
+        ` And you , fair maiden , permit me to offer you this other watch .
+
+        True it is only of silver , but it is all I have left to give .
+
+        And I feel quite sure that you must have somewhere a silver seal , that will
+        be exactly the thing to go with it . ''
+
+        ` Why , so you have , '' cried Dely ; ` fasten your silver seal to your watch
+        , and I will hang my gold one on to mine . ''
+
+        The seals were produced , and , as Azemi had guessed , they were the talismans
+        which the two Circassians had taken from Izif and Izouf , mounted in gold
+        and silver .
+
+        As quick as lightning the watches slid from the hands of Tezila and her sister
+        , and Aurora and Argentine stood before them , each with her talisman on her
+        finger .
+
+        At first they seemed rather confused themselves at the change which had taken
+        place , and the sunlight which they had not seen for so long , but when gradually
+        they understood that their enchantment had come to an end , they could find
+        no words to express their happiness .
+
+        The Circassians could with difficulty be comforted for the loss of the talismans
+        , but Aurora and Argentine entreated them to dry their tears , as their father
+        , Siroco , who was governor of Alexandria , would not fail to reward them
+        in any manner they wished .
+
+        This promise was soon confirmed by Siroco himself , who came into the garden
+        with the Bassa and his two sons , and was speedily joined by the ladies of
+        the family .
+
+        Only Hassan was absent .
+
+        It was the hour XXXXX which he was condemned to bewail his ebony hand .'
+- - - episode_done: true
+      eval_labels:
+      - Peter
+      id: cbt:NE
+      label_candidates:
+      - Bowen
+      - Cecily
+      - Dan
+      - Felicity
+      - Paddy
+      - Pat
+      - Peter
+      - evening
+      - months
+      - quiver
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        `` I s ` pose there ''s no use even in praying now , '''' said Cecily desperately
+        .
+
+        `` It would n''t do any harm to try , '''' sobbed Felicity .
+
+        `` You need n''t waste your prayers , '''' said Dan mournfully , `` Pat is
+        beyond human aid .
+
+        You can tell that by his eyes .
+
+        Besides , I do n''t believe it was the praying cured him last time . ''''
+
+        `` No , it was Peg Bowen , '''' declared Peter , `` but she could n''t have
+        bewitched him this time for she ''s been away for months , nobody knows where
+        . ''''
+
+        `` If he could only TELL us where he feels the worst ! ''''
+
+        said Cecily piteously .
+
+        `` It ''s so dreadful to see him suffering and not be able to do a single
+        thing to help him ! ''''
+
+        `` I do n''t think he ''s suffering much now , '''' I said comfortingly .
+
+        The Story Girl said nothing .
+
+        She passed and repassed her long brown hand gently over her pet ''s glossy
+        fur .
+
+        Pat lifted his head and essayed to creep a little nearer to his beloved mistress
+        .
+
+        The Story Girl drew his limp body close in her arms .
+
+        There was a plaintive little mew -- a long quiver -- and Paddy ''s friendly
+        soul had fared forth to wherever it is that good cats go .
+
+        `` Well , he ''s gone , '''' said Dan , turning his back abruptly to us .
+
+        `` It does n''t seem as if it can be true , '''' sobbed Cecily .
+
+        `` This time yesterday morning he was full of life . ''''
+
+        `` He drank two full saucers of cream , '''' moaned Felicity , `` and I saw
+        him catch a mouse in the evening .
+
+        Maybe it was the last one he ever caught . ''''
+
+        `` He did for many a mouse in his day , '''' said XXXXX , anxious to pay his
+        tribute to the departed . '''''
+    - episode_done: true
+      eval_labels:
+      - Jay
+      id: cbt:NE
+      label_candidates:
+      - Chuck
+      - Jay
+      - Johnny
+      - Meadows
+      - Mother
+      - Sammy
+      - Sun
+      - apple-trees
+      - bedclothes
+      - morning
+      reward: 0
+      text: 'Fill in the blank in the last sentence.
+
+        snapped Sammy Jay .
+
+        `` That ''s for you to find out , '''' replied Johnny Chuck .
+
+        `` There ''s foolish pride and silly pride and pride of low degree ; A better
+        pride is honest pride , and that ''s the pride for me . ''''
+
+        And with that , Johnny Chuck disappeared in his new house .
+
+        XX SAMMY JAY UNDERSTANDS It was a beautiful morning .
+
+        Jolly , round , red Mr. Sun had thrown his bedclothes off very early and started
+        to climb up the sky , smiling his broadest .
+
+        Old Mother West Wind had swept his path clear of clouds .
+
+        The Merry Little Breezes , who , you know , are Mother West Wind ''s children
+        , had danced across the Green Meadows up to the old orchard , where they pelted
+        each other with white and pink petals of apple blossoms until the ground was
+        covered .
+
+        Each apple-tree was like a huge bouquet of loveliness .
+
+        Yes , indeed , it was very beautiful that spring morning .
+
+        Sammy Jay had gotten up almost as early as Mr. Sun and Old Mother West Wind
+        .
+
+        As soon as he had swallowed his breakfast , he flew up to the old orchard
+        and hid among the white and pink apple blossoms to watch for Johnny Chuck
+        .
+
+        You see , he knew that Johnny Chuck had some sort of a secret which filled
+        Johnny with very great pride ; but what it was Sammy Jay could n''t even guess
+        , and nothing troubles Sammy Jay quite so much as the feeling that he can
+        not find out the secrets of other people .
+
+        So he sat very , very still among the apple blossoms and waited and watched
+        .
+
+        By and by Johnny Chuck appeared on his doorstep .
+
+        He seemed very much excited , did Johnny Chuck .
+
+        He sat up very straight and looked this way and looked that way .
+
+        He looked up in the apple-trees , and Sammy Jay held his breath , for fear
+        that Johnny would see him .
+
+        But Sammy was so well hidden that , bright as Johnny Chuck ''s eyes are ,
+        they failed to see him .
+
+        Then Johnny Chuck actually climbed up on the old stone wall so as to see better
+        , and he sat there a long time , looking and looking .
+
+        Sammy XXXXX grew impatient .'

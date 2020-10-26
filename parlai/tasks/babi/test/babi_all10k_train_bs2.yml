@@ -1,0 +1,203 @@
+- - - episode_done: false
+      id: babi:Task10k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - hallway
+      reward: 0
+      text: 'Sandra and Daniel moved to the bedroom.
+
+        Then they moved to the hallway.
+
+        Where is Sandra?'
+    - episode_done: false
+      id: babi:Task10k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - cat
+      reward: 0
+      text: 'Sheep are afraid of cats.
+
+        Mice are afraid of wolves.
+
+        Emily is a sheep.
+
+        Wolves are afraid of sheep.
+
+        Cats are afraid of mice.
+
+        Gertrude is a sheep.
+
+        Winona is a cat.
+
+        Jessica is a mouse.
+
+        What is gertrude afraid of?'
+- - - episode_done: false
+      id: babi:Task10k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - garden
+      reward: 0
+      text: 'Mary and Daniel moved to the kitchen.
+
+        Following that they travelled to the garden.
+
+        Where is Daniel?'
+    - episode_done: false
+      id: babi:Task10k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - cat
+      reward: 0
+      text: What is emily afraid of?
+- - - episode_done: false
+      id: babi:Task10k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bedroom
+      reward: 0
+      text: 'Daniel and John went back to the bathroom.
+
+        After that they journeyed to the bedroom.
+
+        Where is John?'
+    - episode_done: false
+      id: babi:Task10k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - cat
+      reward: 0
+      text: What is gertrude afraid of?
+- - - episode_done: false
+      id: babi:Task10k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - garden
+      reward: 0
+      text: 'Daniel and John travelled to the office.
+
+        After that they travelled to the garden.
+
+        Where is John?'
+    - episode_done: true
+      id: babi:Task10k:15
+      label_candidates:
+      - cat
+      - mouse
+      - sheep
+      - wolf
+      labels:
+      - mouse
+      reward: 0
+      text: What is winona afraid of?
+- - - episode_done: true
+      id: babi:Task10k:13
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - garden
+      reward: 0
+      text: 'Sandra and Daniel travelled to the bedroom.
+
+        Then they travelled to the garden.
+
+        Where is Daniel?'
+    - episode_done: false
+      id: babi:Task10k:5
+      label_candidates:
+      - Bill
+      - Fred
+      - Jeff
+      - Mary
+      - apple
+      - football
+      - milk
+      labels:
+      - Jeff
+      reward: 0
+      text: 'Mary took the football there.
+
+        Mary discarded the football.
+
+        Mary took the football there.
+
+        Fred grabbed the milk there.
+
+        Fred put down the milk.
+
+        Mary discarded the football.
+
+        Bill went back to the hallway.
+
+        Jeff picked up the apple there.
+
+        Mary went back to the kitchen.
+
+        Bill moved to the office.
+
+        Bill went to the hallway.
+
+        Jeff journeyed to the office.
+
+        Mary went to the hallway.
+
+        Jeff dropped the apple.
+
+        Fred journeyed to the kitchen.
+
+        Jeff got the apple there.
+
+        Fred went back to the garden.
+
+        Fred took the milk there.
+
+        Bill went back to the kitchen.
+
+        Fred travelled to the office.
+
+        Jeff handed the apple to Fred.
+
+        Fred handed the apple to Jeff.
+
+        Who did Fred give the apple to?'

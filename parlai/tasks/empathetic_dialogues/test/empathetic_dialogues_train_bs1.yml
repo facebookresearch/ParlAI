@@ -1,0 +1,68 @@
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: nostalgic
+    episode_done: false
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - You must have felt nostalgic of the old days.
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I stumbled upon my old diary when packing for a move.
+    text: I was packing for a move to a new city and I stumbled upon my old diary.
+      Brought back so many memories.
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: nostalgic
+    episode_done: true
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - I understand it is usually hard moving to a new city leaving some many people
+      and placed behind
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I stumbled upon my old diary when packing for a move.
+    text: Absolutely. I was sitting down reading through it and just enjoying the
+      memories. Made me a little sad to move away.
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: surprised
+    episode_done: true
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - Yeah it was a lot of fun. Suprise parties are great way to make your friends
+      happy.
+    prepend_cand: null
+    prepend_ctx: null
+    situation: For my 30th birthday my friends threw me an unexpected party that was
+      a lot of fun.
+    text: Woo,i wish i was there,congrats
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sad
+    episode_done: false
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - Awe I love weddings! Were they having a big wedding or a small one?
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I was watching a TV show and the couple were getting married. It was
+      so sweet that it made me cry.
+    text: I was watching a TV show and the couple were getting married. It was so
+      sweet that it made me cry.
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sad
+    episode_done: true
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - You will when the time is right and it'll be beautiful.
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I was watching a TV show and the couple were getting married. It was
+      so sweet that it made me cry.
+    text: It was big. But it made me feel down because I haven't had one yet.

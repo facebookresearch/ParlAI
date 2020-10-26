@@ -1,0 +1,126 @@
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: It was good, I was especially proud because she won some
+        awards for being able to play the trumpet
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - I would be proud if it was my daughter.
+      personality: Maternal (Mother-like)
+      text: 'your persona: i breed maine coon cats and show them.
+
+        your persona: my parents recently moved to florida.
+
+        I went to my daughter''s awards ceremony at school recently.
+
+        How was that experience for you
+
+        It was good, I was especially proud because she won some awards for being
+        able to play the trumpet'
+    - context_dataset: convai2
+      episode_done: false
+      free_turker_message: Yeah australia is amazing in its own way, very nature based
+        country!
+      guided_turker_chosen_suggestion: 'convai2 '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - yep nature is pretty awesome . the complexity of everything can humble a person
+        .
+      personality: Humble
+      text: 'your persona: i work as a janitor.
+
+        your persona: i''m very smart.
+
+        oh that sucks ! i am moving to australia to get married soon
+
+        really ? i hear they have lots of great campsites there . i love camping !
+
+        Yeah australia is amazing in its own way, very nature based country!'
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: Indeed; being a guitar player myself, I'm happy to see
+        she has an interest in music, but something was bothering me
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - What was bothering you about this?
+      personality: Questioning
+      text: Indeed; being a guitar player myself, I'm happy to see she has an interest
+        in music, but something was bothering me
+    - context_dataset: convai2
+      episode_done: false
+      free_turker_message: Truly! I was of thinking of diversity and complexity when
+        I made that decision, glad I finally got my mind to agree on something!
+      guided_turker_chosen_suggestion: 'wizard_of_wikipedia '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - If I went to Australia, I think I'd visit Canberra or Sydney
+      personality: Adventurous
+      text: Truly! I was of thinking of diversity and complexity when I made that
+        decision, glad I finally got my mind to agree on something!
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: 'It wasn''t the ceremony, but the fact that I''m gay and
+        still married to my wife. plus, my parents don''t even know '
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - You should tell your wife because this is unfair to her.
+      personality: Scornful
+      text: 'It wasn''t the ceremony, but the fact that I''m gay and still married
+        to my wife. plus, my parents don''t even know '
+    - context_dataset: convai2
+      episode_done: false
+      free_turker_message: You should go to Melbourne, they held UFC 243 there, last
+        weekend!
+      guided_turker_chosen_suggestion: 'wizard_of_wikipedia '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - I love the big ppv events! It's hard to believe that UFC has hosted over 400
+        events since it inception!
+      personality: Extraordinary
+      text: You should go to Melbourne, they held UFC 243 there, last weekend!
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: I know, but I'm not sure how to go about it, and I have
+        my daughter to worry about still
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - You start with the truth.  It will set you free.
+      personality: Profound
+      text: I know, but I'm not sure how to go about it, and I have my daughter to
+        worry about still
+    - context_dataset: convai2
+      episode_done: false
+      free_turker_message: Thats true! I love seeing there growth over time and how
+        they have grown as a company with names such as conor mcgregor!
+      guided_turker_chosen_suggestion: 'wizard_of_wikipedia '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - Hes still pretty young, I love McGregor he is actually 2nd on the UFC's pound
+        for pound rankings.
+      personality: Knowledgeable
+      text: Thats true! I love seeing there growth over time and how they have grown
+        as a company with names such as conor mcgregor!
+- - - context_dataset: empathetic_dialogues
+      episode_done: false
+      free_turker_message: I don't think it's so black and white, but it sounds like
+        the only option, you're right. It's my parents I'm especially worried about
+      guided_turker_chosen_suggestion: ' '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - You are an adult.  Man up and tell them the truth.
+      personality: Tough
+      text: I don't think it's so black and white, but it sounds like the only option,
+        you're right. It's my parents I'm especially worried about
+    - context_dataset: convai2
+      episode_done: false
+      free_turker_message: 'No he''s not, Khabib Nurmagomedov holds that spot. '
+      guided_turker_chosen_suggestion: 'wizard_of_wikipedia '
+      id: style_gen:labeled_blended_skill_talk
+      labels:
+      - Oh I didn't know about that. He is the Ultimate Fighting Championship lightweight
+        champion.
+      personality: Knowledgeable
+      text: 'No he''s not, Khabib Nurmagomedov holds that spot. '

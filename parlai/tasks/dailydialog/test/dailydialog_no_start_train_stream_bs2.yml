@@ -1,0 +1,86 @@
+- - - act_type: directive
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - You know that is tempting but is really not good for our fitness .
+      text: Say , Jim , how about going for a few beers after dinner ?
+      topic: attitude_and_emotion
+    - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - Of course I can . It's a piece of cake ! Believe it or not , I can do 30 push-ups
+        a minute .
+      text: Can you do push-ups ?
+      topic: relationship
+- - - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - Do you really think so ? I don't . It will just make us fat and act silly
+        . Remember last time ?
+      text: What do you mean ? It will help us to relax .
+      topic: attitude_and_emotion
+    - act_type: question
+      emotion: surprise
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - You mean 30 push-ups ?
+      text: Really ? I think that's impossible !
+      topic: relationship
+- - - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - I suggest a walk over to the gym where we can play singsong and meet some
+        of our friends .
+      text: I guess you are right . But what shall we do ? I don't feel like sitting
+        at home .
+      topic: attitude_and_emotion
+    - act_type: inform
+      emotion: no_emotion
+      episode_done: true
+      id: dailydialog:no_start
+      labels:
+      - It's easy . If you do exercise everyday , you can make it , too .
+      text: Yeah !
+      topic: relationship
+- - - act_type: commissive
+      emotion: happiness
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - Sounds great to me ! If they are willing , we could ask them to go dancing
+        with us . That is excellent exercise and fun , too .
+      text: That's a good idea . I hear Mary and Sally often go there to play pingpong
+        . Perhaps we can make a foursome with them .
+      topic: attitude_and_emotion
+    - act_type: question
+      emotion: no_emotion
+      episode_done: false
+      id: dailydialog:no_start
+      labels:
+      - No , I listen to background music .
+      text: Can you study with the radio on ?
+      topic: relationship
+- - - act_type: directive
+      emotion: happiness
+      episode_done: true
+      id: dailydialog:no_start
+      labels:
+      - All right .
+      text: Good . Let ' s go now .
+      topic: attitude_and_emotion
+    - act_type: question
+      emotion: no_emotion
+      episode_done: true
+      id: dailydialog:no_start
+      labels:
+      - The radio has too many comerials .
+      text: What is the difference ?
+      topic: relationship

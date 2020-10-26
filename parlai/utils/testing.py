@@ -19,8 +19,7 @@ from typing import Tuple, Dict, Any
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
-import pathlib
-import pytest
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
 try:
@@ -389,24 +388,41 @@ def display_model(opt) -> Tuple[str, str, str]:
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
-import pytest_regressions
-from pytest_regressions.data_regression import DataRegressionFixture
-
-
 class AutoTeacherTest:
     def _safe(self, obj):
+        import random
         from parlai.core.message import Message
 
         if isinstance(obj, list):
             return [self._safe(o) for o in obj]
         elif isinstance(obj, Message):
-            return dict(obj)
+            obj = dict(obj)
+            for key in ['label_candidates', 'eval_label_candidates']:
+                if key not in obj:
+                    continue
+                if isinstance(obj[key], set):
+                    obj[key] = sorted(list(obj[key]))
+                if len(obj[key]) > 20:
+                    rng = random.Random(42)
+                    obj[key] = list(obj[key][:10]) + list(obj[key][-10:])
+            if 'image' in obj:
+                # convert the image to base64 encoding so we can store it as a string
+                import base64
+                import PIL
+
+                assert isinstance(obj['image'], PIL.Image.Image)
+                resized = obj['image'].resize((16, 16), PIL.Image.NEAREST)
+                gray = resized.convert('LA')
+                obj['image_hex'] = base64.b64encode(gray.tobytes()).decode('ascii')
+                del obj['image']
+            return obj
         else:
             return obj
 
-    def _regression(self, data_regression, datatype, batchsize=1):
+    def _regression(
+        self, data_regression: DataRegressionFixture, datatype: str, batchsize: int = 1
+    ):
         import random
-        from parlai.core.agents import create_agent
         from parlai.core.worlds import create_task
         from parlai.core.params import ParlaiParser
 
@@ -421,10 +437,9 @@ class AutoTeacherTest:
             batchsize=batchsize,
         )
 
-        agent = create_agent(opt)
         world = create_task(opt, [])
         acts = []
-        for i in range(10):
+        for _ in range(5):
             world.parley()
             act = self._safe(world.get_acts())
             acts.append(act)

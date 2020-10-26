@@ -1,0 +1,52 @@
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'Animals United directed_by Reinhard Klooss, Holger Tappe
+
+      Animals United written_by Erich Kästner, Reinhard Klooss, Oliver Huzly
+
+      Animals United starred_actors Stephen Fry
+
+      Animals United release_year 2010
+
+      Animals United in_language German
+
+      Animals United has_genre Comedy'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'Killers from Space directed_by W. Lee Wilder
+
+      Killers from Space written_by William Raynor, Myles Wilder
+
+      Killers from Space starred_actors Peter Graves
+
+      Killers from Space release_year 1954
+
+      Killers from Space has_tags peter graves'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'Eichmann directed_by Robert Young
+
+      Eichmann starred_actors Thomas Kretschmann, Troy Garity
+
+      Eichmann release_year 2007'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'The Lost Thing directed_by Shaun Tan
+
+      The Lost Thing written_by Shaun Tan'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'I due carabinieri directed_by Carlo Verdone
+
+      I due carabinieri starred_actors Carlo Verdone
+
+      I due carabinieri release_year 1984
+
+      I due carabinieri in_language Italian
+
+      I due carabinieri has_genre Comedy'

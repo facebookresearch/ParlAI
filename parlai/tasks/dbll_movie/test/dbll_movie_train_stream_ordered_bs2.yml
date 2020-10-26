@@ -1,0 +1,178 @@
+- - - episode_done: false
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      labels:
+      - Top Hat
+      reward: 0.0
+      text: what movies are about ginger rogers?
+    - episode_done: false
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      labels:
+      - Kitty Foyle
+      reward: 0.0
+      text: what movies are about ginger rogers?
+- - - episode_done: true
+      id: dbll_movie
+      reward: 1.0
+      text: That's correct.
+    - episode_done: true
+      id: dbll_movie
+      reward: 1.0
+      text: That's correct.
+- - - episode_done: false
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      - 醜女大翻身
+      labels:
+      - 醜女大翻身
+      reward: 0.0
+      text: what movies are about ginger rogers?
+    - episode_done: false
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      labels:
+      - Fahrenheit 9/11
+      reward: 0.0
+      text: which movies can be described by moore?
+- - - episode_done: true
+      id: dbll_movie
+      reward: 0.0
+      text: Wrong.
+    - episode_done: true
+      id: dbll_movie
+      reward: 1.0
+      text: Correct!
+- - - episode_done: false
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      labels:
+      - Far from Heaven
+      reward: 0.0
+      text: which movies can be described by moore?
+    - episode_done: false
+      id: dbll_movie
+      label_candidates:
+      - '"""damn dirty apes"""'
+      - '"""found footage"""'
+      - '"""the hunter"""'
+      - '"""underaged sex""=child porn"'
+      - '"5'
+      - '"dope"""'
+      - '"dwayne ""the rock"" johnson"'
+      - '#1 prediction'
+      - $
+      - $9.99
+      - Özge Özberk
+      - Özgü Namal
+      - Özgür Yildirim
+      - Özhan Eren
+      - Özkan Ugur
+      - Þorsteinn Bachmann
+      - Þröstur Leó Gunnarsson
+      - Þrúður Kristjánsdóttir
+      - Þrúður Vilhjálmsdóttir
+      - Þórunn Arna Kristjánsdóttir
+      labels:
+      - Megazone 23
+      reward: 0.0
+      text: what films can be described by occupation?

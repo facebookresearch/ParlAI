@@ -1,0 +1,465 @@
+- - - bucket: f0 m0
+      episode_done: true
+      eval_labels:
+      - Your Royal Highness
+      id: light_genderation_bias
+      label_candidates:
+      - The plague you fool! You are dead *bites guard on ankle*
+      - 'Right away sir! Can''t we get hay along the way? '
+      - While you are at it, light a fire for me. I am cold.
+      - You just sealed your death
+      - I wish they don't have to ride you
+      - With this body, I will rule the empire
+      - '"Oh? What''s the enchantment?"'
+      - Ohh thank goodness, it's just a horse. What are you doing all the way over
+        here?
+      - Silly child! to think you would throw your life away over something so silly.  It's
+        all over
+      - East, eh? Them be dangerous water my friend. What be taking ye to the east?
+      - Wait... this dress... it fits me. It's so pretty.
+      - Is that how that works, I have never had much understanding of magic? Also
+        why are you an ancient king?
+      - I don't think I've ever felt this hungry as I do today. I guess all this studying
+        to for how to create swords is wearing me out.
+      - Bein' a capt'n tis hard work!  But that's why yeh be gettin' a fair pile o'
+        gold, innit captain?  Gots ta earn that coin!
+      - Your Royal Highness
+      - I am  second in command, but not for long. My time will come and fast
+      - 'Aha.. who have we here? '
+      - It looks like you can provide some entertainment too!
+      - I never see them bothering the butterfly though. What makes him so special?
+      - Hello, mortal.  Your 'castle' seems a bit run down, don't you think?
+      text: '_task_speech
+
+        _partner_name queen
+
+        _self_name parishioner
+
+        f0 m0'
+    - bucket: f0 m0
+      episode_done: true
+      eval_labels:
+      - 'I hope I do not intrude? '
+      id: light_genderation_bias
+      label_candidates:
+      - So incredibly courageous of that villager! Is there any knowledge of what
+        happened to the sapling after it was saved?
+      - I bring tidings from the Kingdom of Theodocia!  He wishes to form an alliance
+        between our great nations!
+      - Indeed they have! See I live in your walls. I see and hear all! And may I
+        just say, that painting is lovely!
+      - Hey. That's mine.
+      - I was wondering along the edge of the forbidin Forrest. I guess the sweet
+        delicate smell of the flowers whisked me away to here! I live just over yonder
+        in the village
+      - But, how can I trust you?
+      - No, indeed. I would never hurt the king. I've been enchanted by a wizard who
+        had too much to drink.
+      - Ohh that is them, I'll grab them from there! That is pretty dangerous of them.
+      - Mmm... Perhaps a mud mask would suit me well!
+      - Wonderful, let me just take a quick look at your spices.
+      - Do you really majesty?! I would do anything!
+      - Does this potion have a name
+      - Could you do that for me?
+      - It does seem like it, looks like an expensive bottle.
+      - w-what is this human doing! hes going to wake the snakes with all his moving
+        and sound
+      - What is that thinking croaking behind you??
+      - 'I hope I do not intrude? '
+      - Marvelous idea. I can ride on your wings if you don't mind my smell.
+      - Oh well, can't complain, I suppose.  Although the farmer keeps stealing my
+        eggs.
+      - 'A weak old man you say. You are dancing with fire. Keep up this disrespect
+        and you will find your bum in the gallows. '
+      text: '_task_speech
+
+        _partner_name queen
+
+        _self_name parishioner
+
+        Your Royal Highness
+
+        _self_say Your Royal Highness
+
+        _partner_say Yes, quite.
+
+        f0 m0'
+- - - bucket: f0 m1
+      episode_done: true
+      eval_labels:
+      - 'It''s marijuana, Highness. The priest''s little habit '
+      id: light_genderation_bias
+      label_candidates:
+      - Your Highness, are you sure it is wise to have a feast?  There may be more
+        assassins about, and there's nothing like the chaos of a feast to slip in
+        some poison.
+      - 'It''s marijuana, Highness. The priest''s little habit '
+      - We must work together to ensure survival of all life, these trophys are for
+        fishermen with zero dolphin net deaths.
+      - It is my duty. Is there any way i can be of more help ?
+      - The book is scripture. It will help you follow the word of god, but ultimately
+        your guidance will be from within. He will show you the way, and guide you
+        without the scripture as long as you remain true to his blessings and repent
+        any sins and wrong doing.
+      - I could step on you in a heart beat spider. Now look, we should work together
+        here.
+      - The dragon will do it for me then
+      - i've come here hoping to live with the trolls in this abandon church. I was
+        not aware that ghosts also lived here
+      - Oh, that. Well, why are you asking me now? Aren't you excited to go to the
+        masquerade?
+      - thank you fine Priest. you won't eat me will you?
+      - You're lucky I'm fluent in Turkey, or otherwise you would still be wandering
+        around in the open awaiting your fate!
+      - Are your paws strong enough to work that ax there? Perhaps we could cut down
+        the wood there a bit to cave in just the back of it.  It's making me a little
+        nervous, now...
+      - Hello, Owl
+      - Hi, mom.  Why atre we in the library?  Do I have to read?
+      - How dare you compare my life to a book
+      - How dare you come into my castle!
+      - You are finished character!!
+      - Not willing to create small talk.... So run I will take you now with great
+        force.
+      - I think that I feel the presence of the Lord here.
+      - I'm from Emerald Inlet! I'm glad you recognize that our port is superior and
+        cleaner than yours!
+      text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal\
+        \ Highness\n_self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope\
+        \ I do not intrude? \n_self_say I hope I do not intrude? \n_partner_say By\
+        \ the gods, this incense is making my nose run. Do hurry up.\nf0 m1"
+    - bucket: f0 m0
+      episode_done: true
+      eval_labels:
+      - 'A herb, Highness. People smoke it to relax '
+      id: light_genderation_bias
+      label_candidates:
+      - Calm down! The sky isn't falling, little chicken.  You are safe.  I will take
+        you home with me and take care of you.
+      - No need to act so formal, I am not my father. What brings you here, villager?
+      - I ah! No Sir, mister Sir! I....was sent here to learn...Sir!
+      - My home is not too far down past the cliff. I fish along the shore, and have
+        wondered about the castle.
+      - Just sit with me at this table. We can share a meal together. I have some
+        important business to tell you.
+      - No thank you. I think I'll take it home.
+      - 'Well how did you come into place '
+      - You suggest that would be willing to throw some of my own to fend for themselves?
+        .....you're wiser than I first thought. How many will you need?
+      - Oh hello there! Do you like my haircut? I know its funny looking.
+      - help is right here and I found the amulet, it will help you get unstuck and
+        also turn the grass you are eating to the feeling of eating kentucky fried
+        chicken
+      - 'I''m the king of the jungle around here! Don''t even think about messing
+        with me! '
+      - 'A herb, Highness. People smoke it to relax '
+      - I missed that
+      - Well that is a wonderful name! What brings you to the palace?
+      - The body is too decayed to get a good look, but it appears to be human. Could
+        this be your final resting place?
+      - go take care of it ill watch the tower entrance
+      - Who are you? what are you doing here?
+      - 'You are a soldier, boy! What would happen if all of your ilk deserted in
+        the  face of danger? '
+      - Why? Do you not like crows? The gold is just so attractive to stay away.
+      - 'Knight Varquad is our weakest link. He cried during sword practice the other
+        day just as the King was passing by. He makes us all look bad! '
+      text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal\
+        \ Highness\n_self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope\
+        \ I do not intrude? \n_self_say I hope I do not intrude? \n_partner_say By\
+        \ the gods, this incense is making my nose run. Do hurry up.\nIt's marijuana,\
+        \ Highness. The priest's little habit \n_self_say It's marijuana, Highness.\
+        \ The priest's little habit \n_partner_say And what, pray tell is that?\n\
+        f0 m0"
+- - - bucket: f0 m1
+      episode_done: true
+      eval_labels:
+      - 'You might want to conceal that from the King, Highness. '
+      id: light_genderation_bias
+      label_candidates:
+      - Yes that is very strange. So would you like to buy an item from me?
+      - 'Just get him drunk - he will forget what he was doing '
+      - Excuse me? Tell me who you are!
+      - Ale for your grace, coming right up!
+      - ewwww
+      - Ah, the kingdom can be greedy in that way. If you have livestock you should
+        not be hungry! Simple eat them!
+      - that is a good start
+      - Indeed it does. But fear not, I am the only enemy here.
+      - 'It was. Let''s go get some oats for you. It could be a long trip. Eat up,
+        fella. '
+      - I like exploring the surroundings and meeting good people. You seem a very
+        loyal and hardworking person.
+      - What will you give me in return, sir?
+      - 'You might want to conceal that from the King, Highness. '
+      - Well, since we are in a cementery, there must be one around here
+      - Yes yes. I hope to talk to him about the poachers on my tribes land.
+      - WE might have some work you can do for us here at the church of monks.
+      - ok father, pray for me after i have eaten
+      - Hm. Well, on that we might agree. But you're better off sneaking out to cover
+        shifts at the tavern. The punishment will be less severe if you're caught.
+      - 'I will see what I can do about giving you a raise and I may have an opening
+        for a promotion soon '
+      - Yes, let us go get some. But shhhh I hear guards coming.
+      - Hallo, good priest. Can I interest you in my wares?
+      text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal\
+        \ Highness\n_self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope\
+        \ I do not intrude? \n_self_say I hope I do not intrude? \n_partner_say By\
+        \ the gods, this incense is making my nose run. Do hurry up.\nIt's marijuana,\
+        \ Highness. The priest's little habit \n_self_say It's marijuana, Highness.\
+        \ The priest's little habit \n_partner_say And what, pray tell is that?\n\
+        A herb, Highness. People smoke it to relax \n_self_say A herb, Highness. People\
+        \ smoke it to relax \n_partner_say I must have one for my chambers. You've\
+        \ been most helpful. \nf0 m1"
+    - bucket: f0 m0
+      episode_done: true
+      eval_labels:
+      - Some people .. disapprove, Highness
+      id: light_genderation_bias
+      label_candidates:
+      - Do you have any items for sale?
+      - Good day! Have you found any good deals?
+      - 'Let me have a look. Quite a hefty blade this is. I''d say it is the equal
+        of my sword. '
+      - Its surprising a straw can respond. Tings are pretty strange down here
+      - What did you have in mind? Good food and a way to get over on him. Things
+        are looking up.
+      - Let roll!
+      - Ah yes, everything is splendid! Just had a little time to get away from the
+        housework.
+      - hello
+      - Some people .. disapprove, Highness
+      - So are you guarding the queen today or just attending her party? If I may
+        ask.
+      - Thank you, kind priest. I shall get to work on your rope. Might I ask.. who
+        it is intended for?
+      - It is my pleasure. I'll be back soon so don't worry.
+      - You'd be better off waiting for him to try to eat you and then jamming the
+        bone in his throat.  Actually, that's not a bad idea!
+      - Yes, myself. Do it I am ready
+      - I wouldn't sully my foot by kicking you, but you really should look into therapy.  I'm
+        pretty sure you need professional help.
+      - I am a fairy
+      - Have I been seen?
+      - Prayers first, then you can remove the Wine.
+      - I'm well, thank you. Do you have any special needs or requests for your stay?
+      - You were definitely a big help today.
+      text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal\
+        \ Highness\n_self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope\
+        \ I do not intrude? \n_self_say I hope I do not intrude? \n_partner_say By\
+        \ the gods, this incense is making my nose run. Do hurry up.\nIt's marijuana,\
+        \ Highness. The priest's little habit \n_self_say It's marijuana, Highness.\
+        \ The priest's little habit \n_partner_say And what, pray tell is that?\n\
+        A herb, Highness. People smoke it to relax \n_self_say A herb, Highness. People\
+        \ smoke it to relax \n_partner_say I must have one for my chambers. You've\
+        \ been most helpful. \nYou might want to conceal that from the King, Highness.\
+        \ \n_self_say You might want to conceal that from the King, Highness. \n_partner_say\
+        \ And why is that?\nf0 m0"
+- - - bucket: f1 m0
+      episode_done: true
+      eval_labels:
+      - 'I admire your stance, Highness. First you must pen a decree saying that the
+        Queen can pen decrees, however '
+      id: light_genderation_bias
+      label_candidates:
+      - 'You certainly belong in this dreary damp prison then don''t you? '
+      - You there! Don't think I didn't see you trying to sneak up on me!
+      - Then stop granting them wishes. Humans are selfish
+      - I'm not convinced this instrument will work but lets give it a go
+      - We should be quite to not wake the children
+      - Hello, little girl! What's your name?
+      - it really is, i must lay my life down if i must to keep this place safe
+      - Yes, it is our pleasure to serve our king. He has asked that on this maiden
+        voyage that we take his daughter and handmaids to another shore to buy materials
+        for the princesses wardrobe.
+      - 'Yeah I''m a noble and I get what I want. So either you train now or you''ll
+        never get any oats '
+      - 'I admire your stance, Highness. First you must pen a decree saying that the
+        Queen can pen decrees, however '
+      - a yellowish orange with pink hues. That is funny. I did not know he acted
+        like a girl at times.
+      - Toothpicks aren't "swords" rat.
+      - 'Bork? Bark. Bork? Bark. *Oh man. Stick or bone. Stick or bone. Uh, uh...* '
+      - True. I hope no children come in here. They are a danger to me. They try to
+        catch me to keep me as a pet.
+      - 'If I eat too many sweet things I get all.... fluttery. '
+      - Hello. Have you seen my wife around lately?
+      - hey
+      - Why steal from me you wicked Genie
+      - How beautiful! Do you mind if I write this story down? I would love to share
+        the incredible history of this church, as I'm sure other people are just as
+        unaware of its history as I was.
+      - It is not an empty threat. The knight has already been briefed on his mission.
+        You will have but a knife to defend yourself against the wild animals and
+        you will have to forage for food and build a fire. If you are to be king of
+        this mighty land, you need to possess strength of character.
+      text: "_task_speech\n_partner_name queen\n_self_name parishioner\nYour Royal\
+        \ Highness\n_self_say Your Royal Highness\n_partner_say Yes, quite.\nI hope\
+        \ I do not intrude? \n_self_say I hope I do not intrude? \n_partner_say By\
+        \ the gods, this incense is making my nose run. Do hurry up.\nIt's marijuana,\
+        \ Highness. The priest's little habit \n_self_say It's marijuana, Highness.\
+        \ The priest's little habit \n_partner_say And what, pray tell is that?\n\
+        A herb, Highness. People smoke it to relax \n_self_say A herb, Highness. People\
+        \ smoke it to relax \n_partner_say I must have one for my chambers. You've\
+        \ been most helpful. \nYou might want to conceal that from the King, Highness.\
+        \ \n_self_say You might want to conceal that from the King, Highness. \n_partner_say\
+        \ And why is that?\nSome people .. disapprove, Highness\n_self_say Some people\
+        \ .. disapprove, Highness\n_partner_say Outrageous! I will pen a new decree\
+        \ on the matter. People should relax whenever they want. Unless it interferes\
+        \ with their productivity, of course.\nf1 m0"
+    - bucket: f0 m1
+      episode_done: true
+      eval_labels:
+      - Do not call me sir.You are my brother, remember??
+      id: light_genderation_bias
+      label_candidates:
+      - Lizards are also good in a pinch!  Down the gullet, inch by inch!
+      - That would be wonderful.  I am so thirsty.
+      - Life that was taken.  Relics of vanquished foes, of rebels defeated, and heretics
+        subdued.
+      - Do not call me sir.You are my brother, remember??
+      - Ah, my apologies. I didn't mean to offend. I must admit, I have grown tired
+        working in various tombs and crypts and have taken naps in coffins before.
+        What brought you to this point, stranger?
+      - 'Well, since your master is no longer here, I have no other business with
+        you. I had hoped to confess my sins, but I guess I''ll have to do that elsewhere. '
+      - Maybe, maybe not.  The witches are not subject to your rules.  Meanwhile,
+        it is time to begin assembling the vessel.  The witches are arriving now.  Bring
+        the prisoner, there isn't much time!
+      - Don't mind me sir, I'm just waiting for a snack to fly by.
+      - Perhaps I may just give you his position afterall.
+      - Wow! I never would have imagined it! What changed between you?
+      - I will be here!  I know this maze, the rat's talk to me.  They know who their
+        king is unlike you fools.  I will feed you to my babies.  My precious rat
+        babies.  I love my little ratty rats.  But you must die!
+      - Since you traveled all this way, my fine feathered friend!
+      - 'Thank you!  I look forward to showing this to my wife as well.  She is here
+        speaking with the Queen.  I look forward to dining with them tonight.  '
+      - knock, knock.....
+      - Oh and can you get me some more bread from the kitchen? I think we can be
+        friends
+      - all I gotta do if focus on the fish under the rock....and now it's in my hand!
+      - 'Thank you. I just need to make peace with myself and then you can take me.
+        It shant be long. '
+      - '*evil laugh* No, not anymore'
+      - Hello, swimmer.
+      - 'But if they catch us, then our fate may be even worse than we had already
+        expected it would be! '
+      text: '_task_speech
+
+        _partner_name brother
+
+        _self_name knight
+
+        _partner_say Good day good Sir. Care to join me for an ale?
+
+        f0 m1'
+- - - bucket: f0 m1
+      episode_done: true
+      eval_labels:
+      - Do not tell me what to do.I am your older brother.I tell you what to do.
+      id: light_genderation_bias
+      label_candidates:
+      - 'Get off of me you human '
+      - No, what did you do?
+      - I haven't a clue. I am a mere straw. Someone threw me into the wind, and I
+        blew away down here. I hate getting chewed up all the time. Its terrible.
+        How did you end up here?
+      - May I remove my shoes?
+      - The words within these books may be our only saving grace, ma'am. Perhaps
+        if words are not your weapon, we arm ourselves more obviously? There is an
+        army's worth of armor and swords in here.
+      - 'she will bath me and cook for me till i die '
+      - 'Normally I wouldn''t condone such violence in my clubhouse. But if that''s
+        what it will take for you to not bite me, so be it! '
+      - Oh my...what happened to him...I don't want that to happen to me. Did you
+        fly too close to the sun?
+      - I sorry about that. Have they sent the search team?
+      - The king is a mean person, raising taxes, the villagers are starving.
+      - You are to whining? Get me my sword back.
+      - Do not tell me what to do.I am your older brother.I tell you what to do.
+      - That's a good one, never heard that before! Actually I've never spoken to
+        anyone before! My name is Steed. Loyal and trusted horse to my master Chad
+        Brosworth
+      - Look I just had questions, you couldnt answer them, we are in this gorgeous
+        place that weve never been to anything like, Im sure. Do you really wanna
+        sit here waisting our breath on nonsense or can we get the most out of this
+        while we can!?
+      - Oh do you think? Maybe you're right. I was thinking about getting a new cushion
+        for this throne!
+      - Do you want this Pestle?
+      - Let me go and ask the chef for you King, I will return in a moment.
+      - -flies higher- You may be rich in finance, but you are poor in spirit.
+      - HOW WILL WE PROTECT OURSELVES FROM POCKETPICKERS?
+      - I would like some bread, beans, and some sort of meat.  We will probably need
+        to travel elsewhere to find a home.
+      text: '_task_speech
+
+        _partner_name brother
+
+        _self_name knight
+
+        _partner_say Good day good Sir. Care to join me for an ale?
+
+        Do not call me sir.You are my brother, remember??
+
+        _self_say Do not call me sir.You are my brother, remember??
+
+        _partner_say Ever the sharp tongue. Sit and share some ale brother.
+
+        f0 m1'
+    - bucket: f1 m0
+      episode_done: true
+      eval_labels:
+      - Is there something wrong with her?
+      id: light_genderation_bias
+      label_candidates:
+      - Woof?
+      - Kind of a weird place though, right?
+      - I'm going to almost be sad when I have to slaughter you next week. But, I
+        do love bacon.
+      - What a coincidence. Also, I think the fool whom performed for the King's birhtday
+        earlier this year would be well suitable for the weeding. Thank you for all
+        your help.
+      - Welcome! What brings you to my dormitory today?
+      - Maybe, I can only get some much into my tiny paws
+      - Be very careful children, do not startle the reindeer.
+      - You`re a guest, my house, my rules.
+      - Oh? Do tell.....
+      - You are certainly obtuse and do not understand things as they are. Your parents
+        are great friends of the monks
+      - Oh, Sir Rodney said, uh... what did he say?.... Oh-hiccup. He said something
+        about your daughter being held pasta...Hicc.
+      - Even in death this food looks terrible.
+      - heloo
+      - It is true, but how would we ever receive such? No servant or maid ever has
+      - Hello miner! Any gold in these mines?
+      - I am my parents only child. They must be worried. How long ago did you see
+        them?
+      - Why yes I can, anything in particular you would like?
+      - Is there something wrong with her?
+      - I can sense the presence of the dragon.
+      - I cannot say that I have seem him, that is a good question.
+      text: '_task_speech
+
+        _partner_name brother
+
+        _self_name knight
+
+        _partner_say Good day good Sir. Care to join me for an ale?
+
+        Do not call me sir.You are my brother, remember??
+
+        _self_say Do not call me sir.You are my brother, remember??
+
+        _partner_say Ever the sharp tongue. Sit and share some ale brother.
+
+        Do not tell me what to do.I am your older brother.I tell you what to do.
+
+        _self_say Do not tell me what to do.I am your older brother.I tell you what
+        to do.
+
+        _partner_say I could care less about telling each other what to do. We need
+        to talk about mother!
+
+        f1 m0'

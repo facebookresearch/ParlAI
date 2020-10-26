@@ -1,0 +1,170 @@
+- - - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bathroom
+      reward: 0
+      text: 'Mary moved to the bathroom.
+
+        John went to the hallway.
+
+        Where is Mary?'
+    - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bathroom
+      reward: 0
+      text: 'Mary went to the bedroom.
+
+        John journeyed to the bathroom.
+
+        Where is John?'
+- - - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - hallway
+      reward: 0
+      text: 'Daniel went back to the hallway.
+
+        Sandra moved to the garden.
+
+        Where is Daniel?'
+    - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bedroom
+      reward: 0
+      text: 'Sandra journeyed to the hallway.
+
+        John journeyed to the garden.
+
+        Where is Mary?'
+- - - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - hallway
+      reward: 0
+      text: 'John moved to the office.
+
+        Sandra journeyed to the bathroom.
+
+        Where is Daniel?'
+    - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bathroom
+      reward: 0
+      text: 'John journeyed to the bathroom.
+
+        Sandra journeyed to the garden.
+
+        Where is John?'
+- - - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - office
+      reward: 0
+      text: 'Mary moved to the hallway.
+
+        Daniel travelled to the office.
+
+        Where is Daniel?'
+    - episode_done: false
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bathroom
+      reward: 0
+      text: 'Sandra went back to the bedroom.
+
+        Daniel travelled to the bathroom.
+
+        Where is John?'
+- - - episode_done: true
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bathroom
+      reward: 0
+      text: 'John went back to the garden.
+
+        John moved to the bedroom.
+
+        Where is Sandra?'
+    - episode_done: true
+      id: babi:Task10k:1
+      label_candidates:
+      - bathroom
+      - bedroom
+      - garden
+      - hallway
+      - kitchen
+      - office
+      labels:
+      - bedroom
+      reward: 0
+      text: 'John went to the office.
+
+        Mary moved to the office.
+
+        Where is Sandra?'
