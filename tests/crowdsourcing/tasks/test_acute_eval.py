@@ -15,8 +15,9 @@ from typing import Any, List
 
 import hydra
 from mephisto.core.hydra_config import register_script_config
+from mephisto.core.local_database import LocalMephistoDB
 from mephisto.core.operator import Operator
-from mephisto.utils.scripts import load_db_and_process_config
+from mephisto.utils.scripts import augment_config_from_db
 from omegaconf import DictConfig, OmegaConf
 
 from parlai.crowdsourcing.tasks.acute_eval.run import (
@@ -43,8 +44,10 @@ class TestScriptConfig(ScriptConfig):
 def main(cfg: DictConfig) -> None:
 
     # Set up the mock server
-    cfg.mephisto.datapath = tempfile.mkdtemp()
-    db, cfg = load_db_and_process_config(cfg)
+    data_dir = tempfile.mkdtemp()
+    database_path = os.path.join(data_dir, "mephisto.db")
+    db = LocalMephistoDB(database_path)
+    cfg = augment_config_from_db(cfg, db)
     cfg.mephisto.architect.should_run_server = True
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
