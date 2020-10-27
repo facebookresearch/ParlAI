@@ -179,6 +179,7 @@ class R3FNoiseEmbeddingContextManager(AbstractContextManager):
                 return True
         if self.context.noise_decoder:
             return True
+        return False
 
     def _hook_implementation(self, module, input, output):
         if not self._noise_embedding_this_pass():
