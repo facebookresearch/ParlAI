@@ -162,8 +162,13 @@ class TestDistributed(unittest.TestCase):
         config = copy.deepcopy(self._base_config)
         config['num_epochs'] = 50
         config['task'] = 'integration_tests:overfit'
-        config['dynb'] = 'full'
+        config['batchsize'] = 2
+        config['dropout'] = 0.0
+        config['attention_dropout'] = 0.0
+        config['learningrate'] = 1.0
+        config['momentum'] = 0.90
+        config['skip_generation'] = True
         valid, test = self._distributed_train_model(config)
 
-        self.assertLessEqual(valid['ppl'], 3)
-        self.assertLessEqual(test['ppl'], 3)
+        self.assertLessEqual(valid['ppl'], 10)
+        self.assertLessEqual(test['ppl'], 10)
