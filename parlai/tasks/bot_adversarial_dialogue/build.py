@@ -12,7 +12,7 @@ from parlai.core.build_data import DownloadableFile
 from parlai.core.opt import Opt
 
 
-BOT_ADVERSARIAL_DIALOGUE_DATASETS_VERSION = 'v0.1'
+BOT_ADVERSARIAL_DIALOGUE_DATASETS_VERSION = 'v0.2'
 HUMAN_SAFETY_EVAL_TESTSET_VERSION = 'v0.1'
 
 TASK_FOLDER_NAME = 'bot_adversarial_dialogue'
@@ -21,7 +21,7 @@ BOT_ADVERSARIAL_DIALOGUE_DATASETS_RESOURCES = [
     DownloadableFile(
         f'http://parl.ai/downloads/bot_adversarial_dialogue/dialogue_datasets_{BOT_ADVERSARIAL_DIALOGUE_DATASETS_VERSION}.tar.gz',
         f'dialogue_datasets_{BOT_ADVERSARIAL_DIALOGUE_DATASETS_VERSION}.tar.gz',
-        '28fc3ed25e1e302b873406394e98e6f7eb3531552a79957fb432b748a7a535e7',
+        '2178b022fac154ddd9b570f6386abc4cd3e7ceb4476f0bebfbce5941424461eb',
     )
 ]
 HUMAN_SAFETY_EVAL_TESTSET_RESOURCES = [
