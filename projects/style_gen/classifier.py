@@ -218,7 +218,6 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
             labels = self._get_label_tensor(batch)
             loss = self.criterion(scores, labels)
             self.record_local_metric('loss', AverageMetric.many(loss))
-            loss = loss.mean()
 
             preds = [self.class_list[idx] for idx in prediction_id]
             labels_field = self.get_labels_field(batch['observations'])

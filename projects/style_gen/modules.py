@@ -21,11 +21,9 @@ from parlai.agents.transformer.modules import (
 )
 from parlai.core.agents import Agent
 from parlai.core.message import Message
-from parlai.core.metrics import GlobalAverageMetric, GlobalTimerMetric
 from parlai.core.opt import Opt
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
-from parlai.utils.distributed import is_primary_worker
-from parlai.utils.misc import AttrDict, warn_once
+from parlai.utils.misc import warn_once
 
 
 STYLE_SEP_TOKEN = ' STYLE '
@@ -269,13 +267,6 @@ class ClassificationMixin(Agent):
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
         self.record_local_metric('weighted_f1', WeightedF1Metric.compute_many(f1_dict))
-
-    def _get_preds(self, batch_reply):
-        preds = [reply.get('text') for reply in batch_reply]
-        if all(x is None for x in preds):
-            return None
-
-        return preds
 
     def _get_labels(self, observations, labels_field: str):
         labels = [obs.get(labels_field) for obs in observations]
