@@ -1341,4 +1341,16 @@ task_list = [
         ),
         "links": {"arXiv": "https://arxiv.org/abs/2005.00614"},
     },
+    {
+        "id": "MultiWOZ_TRADE",
+        "display_name": "MultiWOZ TRADE",
+        "task": "multiwoz_trade",
+        "tags": ["All", "Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics."
+        ),
+        "links": {"website":
+"http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
+    },
 ]
