@@ -11,8 +11,7 @@ from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.utils.io import PathManager
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import IdentityLayer, concat_without_padding, padded_tensor
-
+from parlai.utils.torch import IdentityLayer, padded_tensor
 
 try:
     from transformers import GPT2Model
@@ -36,12 +35,21 @@ class GPT2Decoder(torch.nn.Module):
         super().__init__()
         self.transformer = self._init_from_pretrained(opt)
         # add special tokens
-        self.start_idx = dict.start_idx
-        self.null_idx = dict.null_idx
-        self.add_start_token = False
         if opt["add_special_tokens"]:
+            size_before = self.transformer.wte.weight.size(0)
             self.transformer.resize_token_embeddings(len(dict.tokenizer))
-            self.add_start_token = opt["add_start_token"]
+            with torch.no_grad():
+                # first reduce the random jitter of the initialization
+                self.transformer.wte.weight[size_before:] *= 0.1
+                # next center it on the endoftext token
+                self.transformer.wte.weight[
+                    size_before:
+                ] += self.transformer.wte.weight[size_before - 1].unsqueeze(0)
+
+        self.add_start_token = opt["add_start_token"]
+        self.START_IDX = dict.start_idx
+        self.NULL_IDX = dict.null_idx
+        self.END_IDX = dict.end_idx
         # use cuda
         self.use_cuda = not opt["no_cuda"] and torch.cuda.is_available()
 
@@ -68,33 +76,62 @@ class GPT2Decoder(torch.nn.Module):
 
     def forward(self, input, encoder_state, incr_state=None):
         attention_mask = None
+        position_ids = None
         if incr_state is None:
             # first step
             if (
                 not self.add_start_token
                 and input.size(1) == 1
-                and int(input[0][0]) == self.start_idx
+                and int(input[0][0]) == self.START_IDX
             ):
                 # generating: ignore the start token
                 model_input = encoder_state
             else:
                 # forced decoding: concatenate the context
                 # with the labels
-                model_input, _ = concat_without_padding(
-                    encoder_state, input, use_cuda=self.use_cuda, null_idx=self.null_idx
-                )
-                attention_mask = model_input != self.null_idx
+                model_input = torch.cat([encoder_state, input], dim=-1)
+            attention_mask = model_input != self.NULL_IDX
+            position_ids = (
+                attention_mask.cumsum(dim=-1, dtype=torch.int64) - 1
+            ).clamp_(min=0)
         else:
+            if not self.add_start_token:
+                input = input[:, 1:]
+            # generating with continuation
+            # get the position ids
+            position_ids = (encoder_state != self.NULL_IDX).sum(
+                -1, True, dtype=torch.int64
+            ) - 1
+            delta = ((input != self.NULL_IDX)).sum(-1, True, dtype=torch.int64)
+            position_ids += delta
             # generation: get the last token input
-            model_input = input[:, -1].unsqueeze(1)
+            model_input = input[:, -1:]
+            attention_mask = torch.cat([encoder_state, input], dim=-1) != self.NULL_IDX
 
         transformer_outputs = self.transformer(
-            model_input, past=incr_state, attention_mask=attention_mask
+            model_input,
+            past=incr_state,
+            attention_mask=attention_mask,
+            position_ids=position_ids,
         )
         hidden_states = transformer_outputs[0]
         new_incr_state = transformer_outputs[1]
 
-        return hidden_states, new_incr_state
+        if incr_state is None:
+            # pull out only the hidden states for the label tokens
+            output = hidden_states[:, -input.size(1) - 1 + int(self.add_start_token) :]
+            # hack: we need the last state of the encoder-side to be the first
+            # element of the decoder-side
+            lengths = (input != self.NULL_IDX).sum(dim=-1)
+            for i in range(input.size(0)):
+                output[i, input.size(1) - lengths[i]] = output[i, 0]
+
+        else:
+            # generation, we're only doing one token at a time. no need to
+            # shove things back in
+            output = hidden_states
+
+        return output, new_incr_state
 
 
 class HFGPT2Model(TorchGeneratorModel):
@@ -108,10 +145,8 @@ class HFGPT2Model(TorchGeneratorModel):
     """
 
     def __init__(self, opt, dict):
-        self.null_idx, self.start_idx, self.end_idx = self._get_special_tokens(
-            opt, dict
-        )
-        super().__init__(self.null_idx, self.start_idx, self.end_idx)
+        self.add_start_token = opt["add_start_token"]
+        super().__init__(*self._get_special_tokens(opt, dict))
 
         # init the model
         self.encoder = IdentityLayer()
@@ -122,9 +157,6 @@ class HFGPT2Model(TorchGeneratorModel):
         )
         self._tie_weights(self.lm_head, self.decoder.transformer.wte)
         # add start token
-        self.add_start_token = opt["add_special_tokens"] and opt["add_start_token"]
-        # used to reverse concatenation of context and labels
-        self.text_lengths = None
 
     def _get_decoder(self, opt, dict):
         return GPT2Decoder(opt, dict)
@@ -142,29 +174,7 @@ class HFGPT2Model(TorchGeneratorModel):
     def output(self, tensor):
         """
         Compute output logits.
-
-        Because we concatenate the context with the labels using the
-        `concat_without_padding` function, we must truncate the input tensor to return
-        only the scores for the label tokens.
         """
-        # get only scores for labels
-        if self.text_lengths is not None:
-            total_length = max(self.text_lengths)
-            to_select = tensor.size(1) - total_length
-            if not self.add_start_token:
-                to_select = to_select + 1
-            if to_select > 0:
-                # select only label scores
-                bsz = tensor.size(0)
-                new_tensors = []
-                for i in range(bsz):
-                    start = self.text_lengths[i]
-                    if not self.add_start_token:
-                        start = start - 1
-                    end = start + to_select
-                    new_tensors.append(tensor[i : i + 1, start:end, :])
-                tensor = torch.cat(new_tensors, 0)
-
         return self.lm_head(tensor)
 
     def reorder_decoder_incremental_state(self, incremental_state, inds):
@@ -186,17 +196,6 @@ class HFGPT2Model(TorchGeneratorModel):
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
         return logits, preds
-
-    def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
-        model_input, text_lengths = xs
-        if ys is not None:
-            self.text_lengths = text_lengths
-        else:
-            self.text_lengths = None
-
-        return super().forward(
-            model_input, ys=ys, prev_enc=prev_enc, maxlen=maxlen, bsz=bsz
-        )
 
 
 ############################################
@@ -255,11 +254,32 @@ class Gpt2Agent(TorchGeneratorAgent):
         return agent
 
     def __init__(self, opt, shared=None):
-        if not opt["add_special_tokens"] and opt["batchsize"] > 1:
+        if not opt["add_special_tokens"] and opt.get('batchsize', 1) > 1:
+            # *** STOP ***
+            # You may be a future researcher who has stumbled upon this odd
+            # restriction, and is tempted to comment this out. After all, the
+            # code still runs when it's uncommented, why shouldn't you?
+            # You should know this has serious implications, as gpt2 doesn't have
+            # padding tokens. This is incompatible with ParlAI's batching,
+            # which puts conversations of different length in the same
+            # batch. Without a padding token, nonsense will be inserted into
+            # the context, and the generations & PPL you get will be wrong.
             raise RuntimeError(
                 "If using batchsize > 1, --add-special-tokens must be True."
             )
+        if not opt["add_special_tokens"] and opt["add_start_token"]:
+            raise RuntimeError(
+                "--add-start-token true requires --add-special-tokens true"
+            )
         super().__init__(opt, shared)
+        if hasattr(self.model, "module"):
+            self.START_IDX = self.model.module.START_IDX
+            self.END_IDX = self.model.module.END_IDX
+            self.NULL_IDX = self.model.module.NULL_IDX
+        else:
+            self.START_IDX = self.model.START_IDX
+            self.END_IDX = self.model.END_IDX
+            self.NULL_IDX = self.model.NULL_IDX
 
     @staticmethod
     def dictionary_class():
@@ -276,19 +296,17 @@ class Gpt2Agent(TorchGeneratorAgent):
         """
         return HFGPT2Model(self.opt, self.dict)
 
-    def _model_input(self, batch):
-        """
-        Override to pass in text lengths.
-        """
-        return (batch.text_vec, batch.text_lengths)
-
     def _encoder_input(self, batch):
         return (batch.text_vec,)
 
     def _pad_tensor(self, items):
         """
-        Override to always set fp16friendly to False.
+        Override to always set fp16friendly to False and left_pad to True.
         """
         return padded_tensor(
-            items, pad_idx=self.NULL_IDX, use_cuda=self.use_cuda, fp16friendly=False
+            items,
+            pad_idx=self.NULL_IDX,
+            use_cuda=self.use_cuda,
+            left_padded=True,
+            fp16friendly=False,
         )

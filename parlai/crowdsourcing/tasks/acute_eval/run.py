@@ -5,20 +5,21 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-import time
 from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from mephisto.core.hydra_config import RunScriptConfig, register_script_config
+from mephisto.core.hydra_config import register_script_config
 from mephisto.core.operator import Operator
 from mephisto.utils.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
+
 
 """
-Example script for running ACUTE-Evals.
+Script for running ACUTE-Evals.
 The only argument that *must* be set for this to be run is:
 ``pairings_filepath``:  Path to pairings file in the format specified in the README.md
 
@@ -40,13 +41,18 @@ defaults = [
 
 
 @dataclass
-class TestScriptConfig(RunScriptConfig):
+class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    current_time: int = int(time.time())
+    monitoring_log_rate: int = field(
+        default=30,
+        metadata={
+            'help': 'Frequency in seconds of logging the monitoring of the crowdsourcing task'
+        },
+    )
 
 
-register_script_config(name='scriptconfig', module=TestScriptConfig)
+register_script_config(name='scriptconfig', module=ScriptConfig)
 
 
 @hydra.main(config_name="scriptconfig")
@@ -54,7 +60,9 @@ def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+    operator.wait_for_runs_then_shutdown(
+        skip_input=True, log_rate=cfg.monitoring_log_rate
+    )
 
 
 if __name__ == "__main__":

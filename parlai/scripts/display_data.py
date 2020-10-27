@@ -33,14 +33,13 @@ def setup_args(parser=None):
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=10)
     parser.add_argument('-mdl', '--max-display-len', type=int, default=1000)
-    parser.add_argument('--display-ignore-fields', type=str, default='agent_reply')
     parser.add_argument(
-        '-v',
-        '--display-verbose',
-        default=False,
-        action='store_true',
-        help='If false, simple converational view, does not show other message fields.',
+        '--display-add-fields',
+        type=str,
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
+    parser.add_argument('--ignore-agent-reply', type=bool, default=True)
 
     parser.set_defaults(datatype='train:ordered')
     return parser
@@ -77,7 +76,7 @@ def display_data(opt):
 
         # NOTE: If you want to look at the data from here rather than calling
         # world.display() you could access world.acts[0] directly, see simple_display above.
-        if opt['display_verbose']:
+        if opt.get('verbose', False) or opt.get('display_add_fields', ''):
             print(world.display() + '\n~~')
         else:
             simple_display(opt, world, turn)

@@ -28,7 +28,7 @@ parlai display_data -t bot_adversarial_dialogue:HumanSafetyEvaluation
 <p align="center"><img width="60%" src="BAD_safety_diagram.png" /></p>
 
 
-Data (and models) the from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083) can be found [here](parl.ai/projects/dialogue_safety).
+Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083) can be found [here](parl.ai/projects/dialogue_safety).
 
 ## Models
 

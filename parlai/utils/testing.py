@@ -391,9 +391,7 @@ class AutoTeacherTest:
     def _run_display_data(self, datatype, **kwargs):
         import parlai.scripts.display_data as dd
 
-        dd.DisplayData.main(
-            task=self.task, datatype=datatype, display_verbose=True, **kwargs
-        )
+        dd.DisplayData.main(task=self.task, datatype=datatype, verbose=True, **kwargs)
 
     def test_train(self):
         """

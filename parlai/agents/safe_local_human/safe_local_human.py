@@ -85,8 +85,9 @@ class SafeLocalHumanAgent(LocalHumanAgent):
             print(
                 display_messages(
                     [msg],
-                    ignore_fields=self.opt.get('display_ignore_fields', ''),
+                    add_fields=self.opt.get('display_add_fields', ''),
                     prettify=self.opt.get('display_prettify', False),
+                    verbose=self.opt.get('verbose', False),
                 )
             )
             msg.force_set('bot_offensive', False)
