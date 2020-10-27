@@ -341,7 +341,7 @@ class TorchClassifierAgent(TorchAgent):
             self.threshold = None
 
         # set up model and optimizers
-
+        states = {}
         if shared:
             self.model = shared['model']
         else:
@@ -359,7 +359,7 @@ class TorchClassifierAgent(TorchAgent):
                 )
             if init_model:
                 logging.info(f'Loading existing model parameters from {init_model}')
-                self.load(init_model)
+                states = self.load(init_model)
             if self.use_cuda:
                 if self.model_parallel:
                     ph = PipelineHelper()
@@ -384,7 +384,7 @@ class TorchClassifierAgent(TorchAgent):
         elif self._should_initialize_optimizer():
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
             self.init_optim(optim_params)
-            self.build_lr_scheduler()
+            self.build_lr_scheduler(states, hard_reset=self.is_finetune)
 
     def build_criterion(self):
         weight_tensor = torch.FloatTensor(self.class_weights)
