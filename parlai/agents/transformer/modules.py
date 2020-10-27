@@ -278,11 +278,10 @@ def create_position_codes(n_pos, dim, out):
             for pos in range(n_pos)
         ]
     )
-
-    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
-    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
     out.detach_()
     out.requires_grad = False
+    out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out).detach()
+    out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out).detach()
 
 
 class TransformerResponseWrapper(nn.Module):
