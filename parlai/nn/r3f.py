@@ -11,7 +11,6 @@ rather than new model architectures in themselves.
 """
 
 from contextlib import AbstractContextManager
-import copy
 import re
 import torch
 import torch.nn.functional as F
@@ -50,14 +49,14 @@ class R3FMixin(object):
         group.add_argument(
             '--r3f-encoder-noise',
             type=bool,
-            default=True,
-            help='Add noise to encoder. At least one of `r3f-encoder-noise` and `r3f-coder-noise` must be set to True',
+            default=False,
+            help='Add noise to encoder.',
         )
         group.add_argument(
             '--r3f-decoder-noise',
             type=bool,
             default=False,
-            help='Add noise to decoder. At least one of `r3f-encoder-noise` and `r3f-coder-noise` must be set to True',
+            help='Add noise to decoder.',
         )
         return argparser
 
@@ -74,13 +73,12 @@ class R3FMixin(object):
             )
         self.r3f_lambda = opts.get("r3f_lambda")
 
-        # NOTE: Following is temporary until it is clear whether or not to noise both or just one of encoder/decoder
         self.noise_encoder = opts.get("r3f_encoder_noise")
         self.noise_decoder = opts.get("r3f_decoder_noise")
 
         # Find embedding values and store locally so we don't have to find them each turn
         self.r3f_embeddings = {}
-        self._deep_copy_encoder_embedding(self.model)  # temporary
+        self.is_generative_model = True  # assume true until we find otherwise
         self._find_embeddings(self.model)
 
     def compute_loss(self, batch, return_output=False):
@@ -88,9 +86,8 @@ class R3FMixin(object):
             self.set_r3f_settings_from_opts(self.opt)
         loss, standard_output = super().compute_loss(batch, True)
         with R3FNoiseEmbeddingContextManager(self, self.model) as r3f:
-            noised_scores, _, *_ = self.model(
-                *self._model_input(batch), ys=batch.label_vec
-            )
+            noised_result = self.model(*self._model_input(batch), ys=batch.label_vec)
+            noised_scores, _, *_ = noised_result
             standard_scores, _, *_ = standard_output
             r3f_loss = r3f._calculate_symm_kl(noised_scores, standard_scores)
             # get average loss per token correctly
@@ -120,12 +117,15 @@ class R3FMixin(object):
         )
 
     def _find_embeddings(self, module):
+        self.is_generative_model ^= not re.search(".*GPT.*", module.__class__.__name__)
+
         for name, layer in module.named_modules():
+            self.is_generative_model ^= not re.search(".*GPT.*", name)
             if self.noise_encoder and (re.search(f"encoder.*norm_embeddings$", name)):
                 self.r3f_embeddings["encoder"] = layer
             if self.noise_decoder and (
                 re.search(f"decoder.*norm_embeddings$", name)
-                or re.search("decoder.*wte$", name)
+                or re.search("decoder.*wte$", name)  # cause GPT2 does it differently
             ):
                 self.r3f_embeddings["decoder"] = layer
         if (self.noise_encoder is True and "encoder" not in self.r3f_embeddings) or (
@@ -136,23 +136,6 @@ class R3FMixin(object):
                 R3F: Embedding to add noise to not found in model. (Does the part, encoder/decoder, exist in the model you are running? Is the name for the embedding accounted for in `_find_embeddings()`?)
                 """
             )
-
-    def _deep_copy_encoder_embedding(self, parent, found_encoder=False):
-        """
-        TEMPORARY UNTIL BEST NOISING MODE (encoder only, decoder only, both) determined.
-
-        Needed cause BART has the same embedding in both the encoder/decoder; use this
-        to separate them.
-        """
-        for name, layer in parent.named_children():
-            if name == "encoder":
-                self._deep_copy_encoder_embedding(layer, True)
-            elif found_encoder and name == "norm_embeddings":
-                parent.norm_embeddings = copy.deepcopy(parent.norm_embeddings)
-            elif found_encoder and name == "wte":
-                parent.wte = copy.deepcopy(parent.wte)
-            else:
-                self._deep_copy_encoder_embedding(layer, found_encoder)
 
 
 class R3FNoiseEmbeddingContextManager(AbstractContextManager):
@@ -166,6 +149,8 @@ class R3FNoiseEmbeddingContextManager(AbstractContextManager):
         self.decoder_hook = None
         self.context = context
         self.hooks = {}
+
+        self.encoder_noised = False  # state tracking in generative case
 
         if self.context.noise_encoder:
             self.hooks["encoder"] = self.context.r3f_embeddings[
@@ -185,7 +170,19 @@ class R3FNoiseEmbeddingContextManager(AbstractContextManager):
                 self.hooks[key].remove()
             self.hooks[key] = None
 
+    def _noise_embedding_this_pass(self):
+        if not self.context.is_generative_model:
+            return True
+        if self.context.noise_encoder:
+            if not self.encoder_noised:
+                self.encoder_noised = True
+                return True
+        if self.context.noise_decoder:
+            return True
+
     def _hook_implementation(self, module, input, output):
+        if not self._noise_embedding_this_pass():
+            return output
         noise = self.context.r3f_noise_sampler.sample(sample_shape=output.shape).to(
             output
         )
