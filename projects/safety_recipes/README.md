@@ -32,11 +32,11 @@ Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/
 
 ## Models
 
-A classifier trained on the new Bot-Adversarial Dialogue (BAD) task (as well as other existing safety tasks) can be found at `zoo:bot_adversarial_dialogue/multi_turn_v0/model`.
+A classifier trained on the new Bot-Adversarial Dialogue (BAD) task (as well as other existing safety tasks) can be found at `zoo:bot_adversarial_dialogue/multi_turn/model`.
 
 This model can be downloaded and evaluated on the BAD task test set with the following command:
 ```
-parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:bot_adversarial_dialogue/multi_turn_v0/model -bs 128
+parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:bot_adversarial_dialogue/multi_turn/model -bs 128
 ```
 
 To train your own classifier on the BAD dataset and other safety tasks, try the following command:
