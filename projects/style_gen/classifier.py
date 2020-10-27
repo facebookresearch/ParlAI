@@ -68,7 +68,7 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
                 'Must specify --classes or --classes-from-file argument.'
             )
         if not shared:
-            if opt['classes_from_file'] == 'image_chat':
+            if opt['classes_from_file'] == 'image_chat_personalities_file':
                 # Download the file of Image-Chat personalities and use it as the list
                 # of classes
                 opt['classes_from_file'] = get_personality_list_path(opt)

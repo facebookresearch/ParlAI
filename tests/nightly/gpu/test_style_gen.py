@@ -55,7 +55,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
                 'num_examples': 16,
                 'model_file': 'zoo:style_gen/prev_curr_classifier/model',
                 'model': 'projects.style_gen.classifier:ClassifierAgent',
-                'classes_from_file': 'image_chat',
+                'classes_from_file': 'image_chat_personalities_file',
                 'task': 'style_gen:PrevCurrUttStyle',
                 'wrapper_task': 'style_gen:LabeledBlendedSkillTalk',
             },

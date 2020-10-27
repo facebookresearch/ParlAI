@@ -23,7 +23,7 @@ Evaluating the Image-Chat-trained classifier on the LabeledBlendedSkillTalk data
 parlai eval_model \
 --model-file zoo:style_gen/prev_curr_classifier/model \
 --model projects.style_gen.classifier:ClassifierAgent \
---classes-from-file image_chat \
+--classes-from-file image_chat_personalities_file \
 --task style_gen:PrevCurrUttStyle \
 --wrapper-task style_gen:LabeledBlendedSkillTalk
 ```
