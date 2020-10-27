@@ -524,6 +524,38 @@ jobs:
 
 
 
+  crowdsourcing_tests:
+    <<: *standard_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - checkout
+      - <<: *fixgit
+      - restore_cache:
+          key: deps-20201020-crowdsourcing-{{ checksum "requirements.txt" }}
+      - <<: *setup
+      - <<: *installdeps
+      - save_cache:
+          key: deps-20201020-crowdsourcing-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - <<: *findtests
+      - restore_cache:
+          key: deps-20201020-crowdsourcing-{{ checksum "teststorun.txt" }}
+      - run:
+          name: All crowdsourcing tests
+          no_output_timeout: 60m
+          command: coverage run -m pytest --junitxml=test-results/junit.xml -m crowdsourcing -v
+      - <<: *codecov
+      - save_cache:
+          key: deps-20201020-crowdsourcing-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
+      - store_test_results:
+          path: test-results
+
+
   teacher_tests:
     <<: *small_cpu37
     working_directory: ~/ParlAI
@@ -697,6 +729,10 @@ workflows:
             - unittests_gpu16
             - unittests_37
       - long_gpu_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_37
+      - crowdsourcing_tests:
           requires:
             - unittests_gpu16
             - unittests_37

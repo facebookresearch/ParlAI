@@ -22,9 +22,9 @@ following BibTex entry:
 
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
-The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
+The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
-    python parlai/crowdsourcing/tasks/acute_eval/example_script.py \
+    python parlai/crowdsourcing/tasks/acute_eval/run.py \
     mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
 
 ## Formatting conversation data
@@ -86,17 +86,7 @@ By default, `block_on_onboarding_fail` in `conf/example.yaml` is set to `true`, 
 By setting `onboarding_threshold`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) that must be answered correctly to pass onboarding.
 
 
-## Other settings
+## YAML and CLI arguments
 
-### Task configuration on MTurk
+A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in [`acute_eval_blueprint.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/acute_eval_blueprint.py). For examples of how these arguments can be set in practice, see [`conf/example.yaml`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/conf/example.yaml). For instance, `additional_task_description` gives additional text to show in the left-hand pane of the chat window.
 
-The title, description, and keywords of the task are set by values in `conf/example.yaml`. These values are used as follows:
-- `task_title`: A short and descriptive title about the kind of task that the HIT contains. On the Amazon Mechanical Turk web site, the HIT title appears in search results and everywhere that the HIT is mentioned.
-- `task_description`: Includes detailed information about the kind of task that the HIT contains. On the Amazon Mechanical Turk web site, the HIT description appears in the expanded view of search results, and in the HIT and assignment screens.
-- `task_tags`: One or more words or phrases that describe the HIT, separated by commas. On MTurk website, these words are used in searches to find HITs.
-- `additional_task_description`: Additional text to show in the left-hand pane of the chat window.
-
-
-### YAML and CLI arguments
-
-A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in `acute_eval_blueprint.py`. For examples of how these arguments can be set in practice, see `conf/example.yaml`. For modifying the `task_reward` argument (for example) on the command line, append `mephisto.task.task_reward=${DESIRED_TASK_REWARD}`. You can also specify your own YAML file at the path `conf/<new_file>.yaml` and then load in that file by passing in `conf=<new_file>` on the command line.
