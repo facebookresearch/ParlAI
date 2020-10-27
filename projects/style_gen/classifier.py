@@ -21,11 +21,7 @@ from parlai.core.torch_agent import Output
 from parlai.tasks.style_gen.agents import get_personality_list_path
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import warn_once, round_sigfigs
-from projects.style_gen.modules import (
-    BatchWithPersonalities,
-    ClassifierOnGeneratorModel,
-    ClassificationMixin,
-)
+from projects.style_gen.modules import ClassifierOnGeneratorModel, ClassificationMixin
 
 
 class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
@@ -48,12 +44,6 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
             type='bool',
             default=False,
             help='Only train the classifier head and not the encoder and decoder',
-        )
-        agent.add_argument(
-            '--personality-as-label',
-            type='bool',
-            default=True,
-            help='The personality is in the label field instead of the personality field',
         )
         return agent
 
@@ -87,8 +77,6 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
             self.class_dict = shared['class_dict']
             self.class_weights = shared['class_weights']
 
-        self.personality_as_label = opt['personality_as_label']
-
         super().__init__(opt, shared)
 
         # Override the criterion
@@ -109,10 +97,7 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
         Build and return model.
         """
         model = ClassifierOnGeneratorModel(
-            self.opt,
-            self.dict,
-            num_classes=len(self.class_list),
-            personality_as_label=self.personality_as_label,
+            self.opt, self.dict, num_classes=len(self.class_list)
         )
         return model
 
@@ -144,32 +129,13 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
         shared['class_weights'] = self.class_weights
         return shared
 
-    def batchify(self, obs_batch, sort=False):
-        base_batch = super().batchify(obs_batch, sort)
-        if self.personality_as_label:
-            return base_batch
-        else:
-            assert sort is False
-            # Sorting would make it hard to line up the observations within one batch
-            personalities = [
-                obs['personality'] for obs in obs_batch if self.is_valid(obs)
-            ]
-            assert len(personalities) == len(base_batch.text_vec)
-            batch_with_personalities = BatchWithPersonalities(
-                personalities=personalities, **base_batch.__dict__
-            )
-            return batch_with_personalities
-
     def _get_label_tensor(self, batch):
         """
         Obtain the correct class labels.
 
         Raises a `KeyError` if one of the labels is not in the class list.
         """
-        if self.personality_as_label:
-            labels = batch.labels
-        else:
-            labels = batch.personalities
+        labels = batch.labels
         try:
             labels_indices_list = [self.class_dict[label] for label in labels]
         except KeyError as e:
@@ -203,36 +169,6 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
         else:
             labels_field = None
         return labels_field
-
-    def batch_act(self, observations):
-        """
-        Overwriting ClassificationMixin.batch_act() in the case where the labels are
-        stored in the "personality" field.
-        """
-
-        if self.personality_as_label:
-
-            batch_reply = super().batch_act(observations)
-            return batch_reply
-
-        else:
-
-            batch_reply = super(ClassificationMixin, self).batch_act(observations)
-
-            preds = self._get_preds(batch_reply)
-            if preds is None:
-                return batch_reply
-
-            labels_field = 'personality'
-            labels_lst = [
-                [label] for label in self._get_labels(observations, labels_field)
-            ]
-            # The label is expected to be in a list like in the "labels" or
-            # "eval_labels" fields; however, obs['personality'] is a string rather than
-            # a list, so we have to wrap each string in a list to get a List[List[str]]
-            self._update_confusion_matrix(preds, labels_lst)
-
-            return batch_reply
 
     def train_step(self, batch):
         """
@@ -298,15 +234,3 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
 
     def score(self, batch):
         return self.model(*self._model_input(batch))
-
-    def _model_input(self, batch):
-        """
-        Create the input (x) value for the model.
-
-        If `label_vec` encodes the personalities, which are the target values, it does
-        not get passed in as a model input.
-        """
-        if self.personality_as_label:
-            return (batch.text_vec,)
-        else:
-            return batch.text_vec, batch.label_vec

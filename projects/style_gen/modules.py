@@ -117,10 +117,9 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
             n_segments=n_segments,
         )
 
-    def __init__(self, opt, dictionary, num_classes: int, personality_as_label: bool):
+    def __init__(self, opt, dictionary, num_classes: int):
         super().__init__(opt, dictionary)
         self.classifier_head = nn.Linear(opt['embedding_size'], num_classes)
-        self.personality_as_label = personality_as_label
 
     def forward(self, *xs):
         """
@@ -129,48 +128,23 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
         :param xs:
             - list of inputs to the encoder/decoder. Elements:
               - text_vec: (LongTensor[bsz, text seqlen])
-              - label_vec: (LongTensor[bsz, label seqlen])
-                  (Only used if not self.personality_as_label)
         :return:
             - the model's predicted per-class scores.
               (FloatTensor[bsz, len(class_list)])
         """
 
-        if self.personality_as_label:
-            # All tokens go into the encoder and classification is learned from that.
-            # This is useful in the standard case where we have a fixed utterance that
-            # doesn't need to be generated, and we can just stick it all in the encoder
-            # to be classified.
-            assert len(xs) == 1
-            # Only one input allowed
-            bsz = xs[0].size(0)
-            encoder_states = self.encoder(*xs)
-            inputs = self.START.detach().expand(bsz, 1)
-            # Generate most likely class given start token as input
-            latent, _ = self.decoder(inputs, encoder_states)
-            # latent: [bsz, seqlen, emb_dim]
-            scores = self.classifier_head(latent.squeeze(dim=1))
-        else:
-            # Tokens are split between the encoder and decoder and classification is
-            # learned from both. This is useful when we want to classify a partially
-            # generated utterance, along with its context in the encoder.
-            text_vec, label_vec = xs
-            encoder_states = self.encoder(text_vec)
-            latent, _ = self.decoder(label_vec, encoder_states)
-            # latent: [bsz, seqlen, emb_dim]
-            scores = self.classifier_head(latent.mean(dim=1))
+        # All tokens go into the encoder and classification is learned from that.
+        assert len(xs) == 1
+        # Only one input allowed
+        bsz = xs[0].size(0)
+        encoder_states = self.encoder(*xs)
+        inputs = self.START.detach().expand(bsz, 1)
+        # Generate most likely class given start token as input
+        latent, _ = self.decoder(inputs, encoder_states)
+        # latent: [bsz, seqlen, emb_dim]
+        scores = self.classifier_head(latent.squeeze(dim=1))
 
         return scores
-
-
-class BatchWithPersonalities(AttrDict):
-    """
-    Adds a 'personalities' field to the batch in the case where personality information
-    is not encoded in any other field.
-    """
-
-    def __init__(self, personalities=None, **kwargs):
-        super().__init__(personalities=personalities, **kwargs)
 
 
 class TransformerDecoderWithEmbeds(TransformerDecoder):
@@ -306,84 +280,3 @@ class ClassificationMixin(Agent):
     def _get_labels(self, observations, labels_field: str):
         labels = [obs.get(labels_field) for obs in observations]
         return labels
-
-    def batch_act(self, observations):
-
-        # clear local metrics before anything else
-        self._local_metrics.clear()
-
-        # initialize a list of replies with this agent's id
-        batch_reply = [
-            Message({'id': self.getID(), 'episode_done': False}) for _ in observations
-        ]
-
-        # check if there are any labels available, if so we will train on them
-        self.is_training = any('labels' in obs for obs in observations)
-
-        # create a batch from the vectors
-        batch = self.batchify(observations)
-        self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
-
-        if (
-            'label_vec' in batch
-            and 'text_vec' in batch
-            and batch.label_vec is not None
-            and batch.text_vec is not None
-        ):
-            # tokens per batch
-            # we divide by the binary is_primary_worker() so that the numerator is
-            # num_tokens in all workers, and the denominator is 1.
-            lt = (batch.label_vec != self.NULL_IDX).sum().item()
-            ltpb = GlobalAverageMetric(lt, float(is_primary_worker()))
-            self.global_metrics.add('ltpb', ltpb)
-            self.global_metrics.add('ltps', GlobalTimerMetric(lt))
-
-            ct = (batch.text_vec != self.NULL_IDX).sum().item()
-            ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
-            self.global_metrics.add('ctpb', ctpb)
-            self.global_metrics.add('ctps', GlobalTimerMetric(ct))
-
-            ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
-            self.global_metrics.add('tpb', ttpb)
-            self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
-
-        if self.is_training:
-            # register the start of updates for later counting when they occur
-            self.global_metrics.add('ups', GlobalTimerMetric(0))
-            output = self.train_step(batch)
-        else:
-            with torch.no_grad():
-                # save memory and compute by disabling autograd.
-                # use `with torch.enable_grad()` to gain back gradients.
-                output = self.eval_step(batch)
-
-        if output is not None:
-            # local metrics are automatically matched up)
-            self.match_batch(batch_reply, batch.valid_indices, output)
-
-        # broadcast the metrics back
-        for k, values in self._local_metrics.items():
-            if len(values) != len(batch.valid_indices):
-                raise IndexError(
-                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
-                    f"expected {len(batch.valid_indices)}"
-                )
-            for i, value in zip(batch.valid_indices, values):
-                if 'metrics' not in batch_reply[i]:
-                    batch_reply[i]['metrics'] = {}
-                batch_reply[i]['metrics'][k] = value
-
-        # register the end of timers
-        endtimer = GlobalTimerMetric(0)
-        self.global_metrics.add('exps', endtimer)
-        if (
-            'label_vec' in batch
-            and 'text_vec' in batch
-            and batch.label_vec is not None
-            and batch.text_vec is not None
-        ):
-            self.global_metrics.add('ltps', GlobalTimerMetric(0))
-            self.global_metrics.add('ctps', GlobalTimerMetric(0))
-            self.global_metrics.add('tps', GlobalTimerMetric(0))
-
-        return batch_reply
