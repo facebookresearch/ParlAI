@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-90M parameter Blender dictionary file: please see <parl.ai/project/blender>.
+90M parameter Blender dictionary file: please see https://parl.ai/project/recipes.
 """
 
 from .build import build
