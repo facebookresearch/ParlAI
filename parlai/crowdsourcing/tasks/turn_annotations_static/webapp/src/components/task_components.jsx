@@ -55,8 +55,10 @@ var handleUserInputUpdate = function (subtaskData) {
   // HACK: need a more elegant way to check if all turns have an answer 
   if (validateUserInput(subtaskData)) {
     showEnabledCssNextButton();
+    document.getElementById('submit-button').disabled = false;
   } else {
     showDisableCssNextButton();
+    document.getElementById('submit-button').disabled = true;
   }
 }
 
@@ -165,11 +167,12 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
 function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
   var extraElements = '';
   if (doAnnotateMessage) {
-    var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
+    // For some reason, """ from Python is carrying over (hydra migration solved this)
+    // var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     extraElements = '';
     extraElements = (<span key={'extra_' + turnIdx}><br /><br />
       <span style={{ fontStyle: 'italic' }} >
-        <span dangerouslySetInnerHTML={{ __html: annotationQuestionWithoutQuotes }}></span>
+        <span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span>
         <br />
         <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} askReason={askReason} onUserInputUpdate={onUserInputUpdate} />
       </span>
@@ -227,18 +230,18 @@ function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, o
   }
   const [index, setIndex] = React.useState(0);
 
-  // For some reason, """ from Python is carrying over
-  var taskTitleWithoutQuotes = taskTitle.replace(/['"]+/g, '');
-  var taskDescriptionWithoutQuotes = taskDescription.replace(/['"]+/g, '');
+  // For some reason, """ from Python is carrying over (hydra migration solved this)
+  // var taskTitleWithoutQuotes = taskTitle.replace(/['"]+/g, '');
+  // var taskDescriptionWithoutQuotes = taskDescription.replace(/['"]+/g, '');
 
   return (
     <div style={{ margin: 0, padding: 0, height: '100%' }}>
       <LeftPane>
-        <h4><span dangerouslySetInnerHTML={{ __html: taskTitleWithoutQuotes || 'Task Title Loading' }}></span></h4>
+        <h4><span dangerouslySetInnerHTML={{ __html: taskTitle || 'Task Title Loading' }}></span></h4>
         <SubtaskCounter subtaskIndex={index} numSubtasks={taskData.length}></SubtaskCounter>
 
         <br />
-        <span dangerouslySetInnerHTML={{ __html: taskDescriptionWithoutQuotes || 'Task Description Loading' }}></span>
+        <span dangerouslySetInnerHTML={{ __html: taskDescription || 'Task Description Loading' }}></span>
         <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); setIndex(index + 1); }}></SubtaskSubmitButton>
       </LeftPane>
       <RightPane>

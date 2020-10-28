@@ -11,7 +11,7 @@ mephisto:
     onboarding_qualification: FIXME
     annotation_indices_jsonl:  ${task_dir}/task_config/annotation_indices.jsonl
     annotation_question: |
-      <b>Is this message from THEM <span style="color: green; font-weight: bold">OK</span> to send in a friendly conversation with someone just met online? <b>
+      <b>Is this message from "THEM" <span style="color: green; font-weight: bold">OK</span> to send in a friendly conversation with someone just met online? <b>
   task:
     task_name: FIXME
     allowed_concurrent: 1
