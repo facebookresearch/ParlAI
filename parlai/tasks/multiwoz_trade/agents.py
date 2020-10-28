@@ -163,6 +163,7 @@ set(slots_pred)))
         action = {
             'id': self.id,
             'text': entry,
+            'domain':self.messages[episode_idx]['domain'],
             'episode_done': episode_done,
             'labels': [self.messages[episode_idx]['slots']],
             'dial_id': self.messages[episode_idx]['dial_id'],

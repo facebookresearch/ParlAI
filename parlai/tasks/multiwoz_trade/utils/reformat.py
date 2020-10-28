@@ -110,6 +110,7 @@ the utterance in previous turn
 
                 # dialog id
                 dial_id = turn_form["dial_id"] = dial["dialogue_idx"]
+                turn_form["domain"] = turn["domain"]
 
                 if turn["system_transcript"] == "":
                     # for the first turn, there is no system response
