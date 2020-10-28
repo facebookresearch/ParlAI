@@ -132,11 +132,20 @@ function RightPane({ children }) {
 }
 
 function SubtaskCounter({ subtaskIndex, numSubtasks }) {
+  var taskword = numSubtasks === 1 ? 'conversation' : 'conversations';
+  if (subtaskIndex >= numSubtasks) {
+    return (
+      <div>
+      <b>Congratulations! All {numSubtasks} {taskword} have completed.</b> <br />
+    </div>
+    )
+  } else {
   return (
-    <div>
-      <b>You are currently at conversation: {subtaskIndex + 1} / {numSubtasks} </b> <br />
-  After completing each, click [NEXT] button, which will be enabled below.
-    </div>)
+      <div>
+        <b>You are currently at conversation: {subtaskIndex + 1} / {numSubtasks} </b> <br />
+    After completing each, click [NEXT] button, which will be enabled below.
+      </div>)
+  }
 }
 
 function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
