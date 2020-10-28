@@ -54,7 +54,7 @@ from parlai.crowdsourcing.tasks.acute_eval.run import (
     TASK_DIRECTORY,
 )
 
-from hydra.experimental import initialize
+from hydra.experimental import compose, initialize
 
 from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
 
@@ -298,39 +298,40 @@ DESIRED_OUTPUTS = {
 }
 
 
-@dataclass
-class TestScriptConfig(ScriptConfig):
-    defaults: List[Any] = field(default_factory=lambda: test_defaults)
+# @dataclass
+# class TestScriptConfig(ScriptConfig):
+#     defaults: List[Any] = field(default_factory=lambda: test_defaults)
 
 
-test_defaults = defaults + [
-    {"mephisto/architect": "mock"},
-    {"mephisto/provider": "mock"},
-]
+# test_defaults = defaults + [
+#     {"mephisto/architect": "mock"},
+#     {"mephisto/provider": "mock"},
+# ]
 
 relative_task_directory = os.path.relpath(TASK_DIRECTORY, os.path.dirname(__file__))
+relative_config_path = os.path.join(relative_task_directory, 'conf')
 
 
 EMPTY_STATE = SharedTaskState()
 
-register_script_config(name="test_script_config", module=TestScriptConfig)
+# register_script_config(name="test_script_config", module=TestScriptConfig)
 
 
-@hydra.main(config_path=relative_task_directory, config_name="test_script_config")
-def main(cfg: DictConfig):
+# @hydra.main(config_path=relative_task_directory, config_name="test_script_config")
+# def main(cfg: DictConfig):
 
-    # Set up the mock server
-    # data_dir = tempfile.mkdtemp()
-    # database_path = os.path.join(data_dir, "mephisto.db")
-    # db = LocalMephistoDB(database_path)
-    global config
-    config = cfg
-    # cfg = augment_config_from_db(cfg, db)
-    # cfg.mephisto.architect.should_run_server = True
-    print(OmegaConf.to_yaml(config))
+#     # Set up the mock server
+#     # data_dir = tempfile.mkdtemp()
+#     # database_path = os.path.join(data_dir, "mephisto.db")
+#     # db = LocalMephistoDB(database_path)
+#     global config
+#     config = cfg
+#     # cfg = augment_config_from_db(cfg, db)
+#     # cfg.mephisto.architect.should_run_server = True
+#     print(OmegaConf.to_yaml(config))
 
-    # import pdb; pdb.set_trace()
-    # return cfg
+#     # import pdb; pdb.set_trace()
+#     # return cfg
 
 
 class TestAcuteEval(unittest.TestCase):
@@ -372,11 +373,21 @@ class TestAcuteEval(unittest.TestCase):
 
         # foo = main()
         # import pdb; pdb.set_trace()
-        main()
-        self.config = config
-        self.config = augment_config_from_db(self.config, self.db)
-        self.config.mephisto.architect.should_run_server = True
-        print(OmegaConf.to_yaml(self.config))
+
+        # Define the configuration settings
+        with initialize(config_path=relative_config_path):
+            self.config = compose(
+                config_name="example",
+                overrides=[
+                    f'+task_dir={TASK_DIRECTORY}',
+                    f'+current_time={int(time.time())}',
+                ],
+            )
+            print(OmegaConf.to_yaml(self.config))  # TODO: remove
+        # main()
+        # self.config = config
+        # self.config = augment_config_from_db(self.config, self.db)
+        # self.config.mephisto.architect.should_run_server = True
         # self.config = cfg
         # self.set_config()
 
@@ -623,6 +634,7 @@ class TestAcuteEval(unittest.TestCase):
         state = agents[0].state.get_data()
         self.assertEqual(DESIRED_INPUTS, state['inputs'])
         self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
+        print(state)  # TODO: remove
 
         # # Give up to 1 seconds for the actual operations to occur
         # start_time = time.time()
