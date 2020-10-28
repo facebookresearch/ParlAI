@@ -63,6 +63,15 @@ import json
 import argparse
 
 
+ERROR_MESSAGE_NO_DATAFILE = (
+    "{class_name} is expected to set self.opt['datafile'] inside `__init__` "
+    "before calling `super().__init__`. This will passed to setup_data, "
+    "indicating what data to load. If you don't know what to use, set "
+    "`opt['datafile'] = parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
+    "to receive the fold name in setup_data."
+)
+
+
 ChunkOutput = TypeVar('ChunkOutput')
 
 
@@ -541,13 +550,7 @@ class DialogTeacher(FixedDialogTeacher):
         else:
             if 'datafile' not in self.opt:
                 raise KeyError(
-                    f"{self.__class__.__name__} is expected to set "
-                    f"self.opt['datafile'] inside `__init__` before calling "
-                    f"`super().__init__`. This will passed to setup_data,"
-                    f"indicating what data to load. If you don't know what to"
-                    f"use, set `opt['datafile'] = "
-                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
-                    f"to receive the fold name in setup_data."
+                    ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
                 )
             self.data = data_class(
                 opt,
@@ -708,12 +711,7 @@ class DialogData(object):
 
             if 'datafile' not in opt:
                 raise KeyError(
-                    f"{self.__class__.__name__} is expected to set opt['datafile'] "
-                    f"inside `__init__` before calling `super().__init__`. This will "
-                    f"passed to setup_data, indicating what data to load. "
-                    f"If you don't know what to use, set `opt['datafile'] = "
-                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
-                    f"to receive the fold name in setup_data."
+                    ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
                 )
 
             self._load(data_loader, opt['datafile'])
@@ -936,12 +934,7 @@ class StreamDialogData(DialogData):
             self.data_loader = data_loader
             if 'datafile' not in opt:
                 raise KeyError(
-                    f"{self.__class__.__name__} is expected to set opt['datafile'] "
-                    f"inside `__init__` before calling `super().__init__`. This will "
-                    f"passed to setup_data, indicating what data to load. "
-                    f"If you don't know what to use, set `opt['datafile'] = "
-                    f"parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
-                    f"to receive the fold name in setup_data."
+                    ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
                 )
             self.datafile = opt['datafile']
             self.reset_data = None
