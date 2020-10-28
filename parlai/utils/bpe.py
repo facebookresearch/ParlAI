@@ -199,6 +199,8 @@ class BPEHelper(ABC):
             return delimiter.join(tokens)
 
         for i, token in enumerate(tokens):
+            # note, HF ByteLevelBPE tokenizer handles special tokens itself in
+            # a special way, so this will be skipped
             if token in self._special_tokens:
                 # special token found. to the left, we've already cleared
                 left = self.helper_decode(tokens[:i], token_ids[:i], delimiter)
@@ -256,8 +258,9 @@ class BPEHelper(ABC):
         tokenization.
         """
         # note, HF ByteLevelBPE tokenizer handles special tokens itself in
-        # a special way
+        # a special way, so this will be skipped
         for token in special_tokens:
+            # exploiting dictionaries' insertion ordering to emulate ordered sets
             self._special_tokens[token] = 1
 
     def finalize(
