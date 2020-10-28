@@ -26,8 +26,9 @@ __AUTOCLEAN_KEYS__: List[str] = [
     "download_path",
     "datapath",
     "batchindex",
-    # we don't save interactive mode, it's only decided by scripts or CLI
+    # we don't save interactive mode or load from checkpoint, it's only decided by scripts or CLI
     "interactive_mode",
+    "load_from_checkpoint",
 ]
 
 
