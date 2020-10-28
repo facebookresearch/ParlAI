@@ -8,14 +8,7 @@ from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.zoo.bert.build import download
 
 from .bert_dictionary import BertDictionaryAgent
-from .helpers import (
-    BertWrapper,
-    BertModel,
-    get_bert_optimizer,
-    add_common_args,
-    surround,
-    MODEL_PATH,
-)
+from .helpers import BertWrapper, BertModel, add_common_args, surround, MODEL_PATH
 
 import os
 
@@ -30,7 +23,11 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     @staticmethod
     def add_cmdline_args(parser):
         add_common_args(parser)
-        parser.set_defaults(encode_candidate_vecs=False, candidates='inline')
+        parser.set_defaults(
+            encode_candidate_vecs=True,
+            candidates='inline',
+            dict_maxexs=0,  # skip building dictionary
+        )
 
     def __init__(self, opt, shared=None):
         # download pretrained models
@@ -53,14 +50,6 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
             add_transformer_layer=self.opt['add_transformer_layer'],
             layer_pulled=self.opt['pull_from_layer'],
             aggregation=self.opt['bert_aggregation'],
-        )
-
-    def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        self.optimizer = get_bert_optimizer(
-            [self.model],
-            self.opt['type_optimization'],
-            self.opt['learningrate'],
-            fp16=self.opt.get('fp16'),
         )
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
