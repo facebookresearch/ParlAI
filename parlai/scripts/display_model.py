@@ -44,13 +44,11 @@ def simple_display(opt, world, turn):
 def setup_args():
     parser = ParlaiParser(True, True, 'Display model predictions.')
     parser.add_argument('-n', '-ne', '--num-examples', default=10)
-    parser.add_argument('--display-ignore-fields', type=str, default='')
     parser.add_argument(
-        '--verbose',
-        type='bool',
-        default=False,
-        hidden=True,
-        help='Display additional debug info, e.g. the per-token loss breakdown for generative models.',
+        '--display-add-fields',
+        type=str,
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
     # by default we want to display info about the validation set
     parser.set_defaults(datatype='valid')
@@ -70,7 +68,7 @@ def display_model(opt):
     with world:
         for _k in range(int(opt['num_examples'])):
             world.parley()
-            if opt['verbose']:
+            if opt['verbose'] or opt.get('display_add_fields', ''):
                 print(world.display() + "\n~~")
             else:
                 simple_display(opt, world, turn)

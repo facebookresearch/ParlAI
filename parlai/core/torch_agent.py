@@ -669,7 +669,6 @@ class TorchAgent(ABC, Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
             'available on the device.',
         )
-
         cls.dictionary_class().add_cmdline_args(argparser)
         ParlAILRScheduler.add_cmdline_args(argparser)
 

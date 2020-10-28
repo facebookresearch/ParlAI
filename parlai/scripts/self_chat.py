@@ -26,10 +26,10 @@ def setup_args(parser=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('-d', '--display-examples', type='bool', default=True)
     parser.add_argument(
-        '--display-ignore-fields',
+        '--display-add-fields',
         type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
     parser.add_argument(
         '-st',

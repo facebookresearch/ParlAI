@@ -1,0 +1,25 @@
+#@package _global_
+mephisto:
+  blueprint:
+    subtasks_per_unit: 6
+    task_source: ${task_dir}/webapp/build/bundle.js
+    data_jsonl: FIXME_TASK_DATA_PATH
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 5
+    onboarding_qualification: turn_annotations_static
+  task:
+    allowed_concurrent: 1
+    maximum_units_per_worker: 5
+    task_description: |
+      <b><h4>Task Description</h4></b>
+      <br>
+      Dummy Task Description.
+
+      Lorem ipsum.
+      <br><br>
+    task_name: turn_annotations_static
+    task_reward: 0.3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a fellow conversationalist"
+mturk:
+  worker_blocklist_paths: null
