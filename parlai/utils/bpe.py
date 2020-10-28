@@ -108,7 +108,7 @@ class BPEHelper(ABC):
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
         self._special_tokens: Dict[str, int] = {}
-        self.skip_special_tokens = opt.get('hf_skip_special_tokens', True)
+        self.skip_special_tokens = opt.get('skip_special_tokens', True)
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -126,11 +126,12 @@ class BPEHelper(ABC):
             help='add prefix space before encoding',
         )
         parser.add_argument(
-            '--hf-skip-special-tokens',
+            '--skip-special-tokens',
             hidden=True,
             type='bool',
             default=False,
-            help='do not decode special tokens with bytelevelbpe',
+            help='Do not decode special tokens (skip them in the string)',
+            recommended=False,
         )
         return parser
 

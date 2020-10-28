@@ -404,7 +404,7 @@ class TestByteLevelBPE(unittest.TestCase):
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
-            hf_skip_special_tokens=False,
+            skip_special_tokens=False,
         )
         opt = parser.parse_args([])
 
@@ -577,9 +577,7 @@ class SpecialTokenTests(unittest.TestCase):
     @unittest.skipUnless(TOKENIZERS, "No tokenizers available")
     def test_specialtok_bytelevelbpe(self):
         self._run_specialtok_test(
-            dict_tokenizer="bytelevelbpe",
-            dict_file="zoo:blender/dict_3B/dict",
-            hf_skip_special_tokens=False,
+            dict_tokenizer="bytelevelbpe", dict_file="zoo:blender/dict_3B/dict"
         )
 
     def test_specialtok_gpt2(self):
