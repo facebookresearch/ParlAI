@@ -108,7 +108,6 @@ class BPEHelper(ABC):
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
         self._special_tokens: Dict[str, int] = {}
-        self.skip_special_tokens = opt.get('skip_special_tokens', True)
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -124,14 +123,6 @@ class BPEHelper(ABC):
             type='bool',
             hidden=True,
             help='add prefix space before encoding',
-        )
-        parser.add_argument(
-            '--skip-special-tokens',
-            hidden=True,
-            type='bool',
-            default=False,
-            help='Do not decode special tokens (skip them in the string)',
-            recommended=False,
         )
         return parser
 
@@ -206,7 +197,7 @@ class BPEHelper(ABC):
                 # special token found. to the left, we've already cleared
                 left = self.helper_decode(tokens[:i], token_ids[:i], delimiter)
                 # token itself is easy to map to a string
-                center = "" if self.skip_special_tokens else token
+                center = token
                 # to the right, there may stil be special tokens
                 right = self.decode(
                     tokens[min(len(token_ids), i + 1) :],
@@ -845,9 +836,7 @@ class HuggingFaceBpeHelper(BPEHelper):
         :return text:
             decoded text
         """
-        text = self.tokenizer.decode(
-            token_ids, skip_special_tokens=self.skip_special_tokens
-        )
+        text = self.tokenizer.decode(token_ids, skip_special_tokens=False)
 
         return text
 

@@ -62,9 +62,7 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
 
     def vec2txt(self, vec):
         return self.tokenizer.decode(
-            vec,
-            skip_special_tokens=opt.get('skip_special_tokens'),
-            clean_up_tokenization_spaces=True,
+            vec, skip_special_tokens=False, clean_up_tokenization_spaces=True
         )
 
     def act(self):

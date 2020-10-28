@@ -1875,6 +1875,22 @@ class TorchAgent(ABC, Agent):
         # call the parent upgrades
         opt_from_disk = super(TorchAgent, cls).upgrade_opt(opt_from_disk)
 
+        if 'hf_skip_special_tokens' in opt_from_disk:
+            # 2020-10-28: we killed the --hf-skip-special-tokens option
+            if (
+                opt_from_disk['hf_skip_special_tokens']
+                and opt_from_disk.get('special_tok_lst')
+                and opt_from_disk.get('tokenizer') == 'bytelevelbpe'
+            ):
+                # but only warn about it in cases it might have been used.
+                warn_once(
+                    "Model was previously trained with --hf-skip-special-tokens true "
+                    "but this option is no longer supported. If you had extra tokens "
+                    "as part of a label and relied on this behavior, you may have to "
+                    "retrain your models with special tokens absent from labels."
+                )
+            del opt_from_disk['hf_skip_special_tokens']
+
         if opt_from_disk.get('fp16'):
             # 2020-01-28 If the model was trained with fp16, we might not have saved
             # the dict with the special fp16 tokens (https://git.io/Jvm7N), IF the
