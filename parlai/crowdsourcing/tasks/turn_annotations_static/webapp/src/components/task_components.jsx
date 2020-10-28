@@ -55,14 +55,12 @@ var handleUserInputUpdate = function (subtaskData) {
   // HACK: need a more elegant way to check if all turns have an answer 
   if (validateUserInput(subtaskData)) {
     showEnabledCssNextButton();
-    document.getElementById('submit-button').disabled = false;
   } else {
     showDisableCssNextButton();
-    document.getElementById('submit-button').disabled = true;
   }
 }
 
-var handleSubtaskSubmit = function (subtaskIndex, numSubtasks, initialTaskData, annotationBuckets, mephistoSubmit) {
+var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initialTaskData, annotationBuckets, mephistoSubmit) {
   // initialTaskData is the initial task data for this index
   console.log('In handleSubtaskSubmit for subtask: ' + subtaskIndex);
   if (!validateUserInput(initialTaskData)) {
@@ -122,6 +120,7 @@ var handleSubtaskSubmit = function (subtaskIndex, numSubtasks, initialTaskData, 
     mephistoSubmit(window.workerAnswers);
   }
   showDisableCssNextButton();
+  setIndex(subtaskIndex + 1); 
 }
 
 function LeftPane({ stretch = false, children }) {
@@ -242,7 +241,7 @@ function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, o
 
         <br />
         <span dangerouslySetInnerHTML={{ __html: taskDescription || 'Task Description Loading' }}></span>
-        <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); setIndex(index + 1); }}></SubtaskSubmitButton>
+        <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, setIndex, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); }} initialTaskData={taskData[index]}></SubtaskSubmitButton>
       </LeftPane>
       <RightPane>
         <ContentPane subtaskData={taskData[index]} taskConfig={taskConfig} subtaskIndex={index} numSubtasks={taskData.length} ></ContentPane>
