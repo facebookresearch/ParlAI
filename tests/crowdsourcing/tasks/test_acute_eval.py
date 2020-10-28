@@ -66,16 +66,16 @@ def main(cfg: DictConfig) -> None:
     mock_agent_details = "FAKE_ASSIGNMENT"
     server.register_mock_agent(worker_id, mock_agent_details)
     agent_id_1 = db.find_agents()[0].db_id
-    import pdb
-
-    pdb.set_trace()
-
-    # server.send_agent_act(agent_id_1, {"text": "message1"})
-    # message = server.get_agent_message()
 
     print("SENDING_THREAD: ", sup.sending_thread)
     print('RECEIVED MESSAGES: ', server.received_messages)
     # TODO: remove block
+
+    # {{{TODO: just try calling task_runner.get_init_data_for_agent(agent_info.agent); for this static task, this will trigger `agent.state.set_init_state(assignment_data.shared)`}}}
+
+    # server.send_agent_act(agent_id_1, {"text": "message1"})
+    # message = server.get_agent_message()
+    # TODO: remove
 
     # {{{TODO: do all per-turn testing and end-state testing}}}
 
