@@ -61,8 +61,7 @@ class BartModel(TransformerGeneratorModel):
         assert incremental_state is not None
         assert len(incremental_state) > 0
 
-        for layer in incremental_state.keys():
-            incr_state_l = incremental_state[layer]
+        for incr_state_l in incremental_state.values():
             assert 'self_attn' in incr_state_l
             assert 'prev_mask' in incr_state_l['self_attn']
             self_attn_mask = incr_state_l['self_attn']['prev_mask']
