@@ -305,94 +305,57 @@ class TestAcuteEval(AbstractTestSupervisor, unittest.TestCase):
                     f'+current_time={int(time.time())}',
                 ],
             )
-
-    def tearDown(self):
-        if self.sup is not None:
-            self.sup.shutdown()
-        self.launcher.expire_units()
-        self.architect.cleanup()
-        self.architect.shutdown()
-        self.db.shutdown()
-        shutil.rmtree(self.data_dir, ignore_errors=True)
-
-    def get_mock_assignment_data_array(self) -> List[InitializationData]:
-        mock_data = MockTaskRunner.get_mock_assignment_data()
-        return [mock_data, mock_data]
+        print(OmegaConf.to_yaml(self.config))
 
     def test_base_task(self):
+
         # Handle baseline setup
         sup = Supervisor(self.db)
         self.sup = sup
-        task_runner_class = AcuteEvalBlueprint.TaskRunnerClass
-        args = AcuteEvalBlueprint.ArgsClass()
+        task_runner_class = self.BlueprintClass.TaskRunnerClass
+        args = self.BlueprintClass.ArgsClass()
         args.timeout_time = 5
         args.is_concurrent = False
-        print(OmegaConf.to_yaml(self.config))
         task_runner = task_runner_class(
             self.task_run, self.config.mephisto, EMPTY_STATE
         )
         sup.register_job(self.architect, task_runner, self.provider)
-        self.assertEqual(len(sup.channels), 1)
         channel_info = list(sup.channels.values())[0]
-        self.assertIsNotNone(channel_info)
-        self.assertTrue(channel_info.channel.is_alive)
-        channel_id = channel_info.channel_id
         task_runner = channel_info.job.task_runner
-        self.assertIsNotNone(channel_id)
-        self.assertEqual(
-            len(self.architect.server.subs),
-            1,
-            "MockServer doesn't see registered channel",
-        )
-        self.assertIsNotNone(
-            self.architect.server.last_alive_packet,
-            "No alive packet received by server",
-        )
         sup.launch_sending_thread()
-        self.assertIsNotNone(sup.sending_thread)
 
         # Register a worker
         mock_worker_name = "MOCK_WORKER"
         self.architect.server.register_mock_worker(mock_worker_name)
         workers = self.db.find_workers(worker_name=mock_worker_name)
-        self.assertEqual(len(workers), 1, "Worker not successfully registered")
-        worker = workers[0]
-
-        self.architect.server.register_mock_worker(mock_worker_name)
-        workers = self.db.find_workers(worker_name=mock_worker_name)
-        self.assertEqual(len(workers), 1, "Worker potentially re-registered")
         worker_id = workers[0].db_id
-
-        self.assertEqual(len(task_runner.running_assignments), 0)
 
         # Register an agent
         mock_agent_details = "FAKE_ASSIGNMENT"
         self.architect.server.register_mock_agent(worker_id, mock_agent_details)
-        agents = self.db.find_agents()
-        agents[0].state = AcuteEvalBlueprint.AgentStateClass(agents[0])
+        agent = self.db.find_agents()[0]
+        agent.state = self.BlueprintClass.AgentStateClass(agent)
         # By default, the Agent is created with the MockAgentState
-        self.assertEqual(len(agents), 1, "Agent was not created properly")
 
         # Set initial data
-        _ = task_runner.get_init_data_for_agent(agents[0])
+        _ = task_runner.get_init_data_for_agent(agent)
 
         # Make agent act
-        agent_id_1 = agents[0].db_id
+        agent_id_1 = agent.db_id
         packet = Packet(
             packet_type=PACKET_TYPE_AGENT_ACTION,
             sender_id=agent_id_1,
             receiver_id="Mephisto",
             data={"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS},
         )
-        agents[0].observe(packet)
+        agent.observe(packet)
 
         # Check that the inputs and outputs are as expected
-        state = agents[0].state.get_data()
+        state = agent.state.get_data()
         self.assertEqual(DESIRED_INPUTS, state['inputs'])
         self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
 
         sup.shutdown()
-        self.assertTrue(channel_info.channel.is_closed)
 
 
 if __name__ == "__main__":
