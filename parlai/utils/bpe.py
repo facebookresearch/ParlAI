@@ -246,8 +246,7 @@ class BPEHelper(ABC):
         """
         Add special tokens to the tokenizer.
 
-        These tokens are never split, and prioritized over the BPE
-        tokenization.
+        These tokens are never split, and prioritized over the BPE tokenization.
         """
         # note, HF ByteLevelBPE tokenizer handles special tokens itself in
         # a special way, so this will be skipped
