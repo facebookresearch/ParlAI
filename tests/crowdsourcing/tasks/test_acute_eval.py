@@ -19,7 +19,7 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
 from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
 
 try:
-    import mephisto
+    import mephisto  # To raise an ImportError if not installed
     from mephisto.core.supervisor import Supervisor
     from mephisto.data_model.blueprint import Blueprint
     from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
