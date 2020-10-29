@@ -25,7 +25,7 @@ try:
     from mephisto.data_model.test.utils import AbstractTestSupervisor, EMPTY_STATE
 
     SKIP_TESTS = False
-except ImportError:
+except ModuleNotFoundError:
     SKIP_TESTS = True
 
 
