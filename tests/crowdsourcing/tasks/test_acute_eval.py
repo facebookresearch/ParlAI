@@ -13,24 +13,33 @@ import unittest
 from typing import List
 
 from hydra.experimental import compose, initialize
-from mephisto.core.hydra_config import MephistoConfig
-from mephisto.core.local_database import LocalMephistoDB
-from mephisto.core.supervisor import Supervisor
-from mephisto.core.task_launcher import TaskLauncher
-from mephisto.data_model.assignment import InitializationData
-from mephisto.data_model.blueprint import SharedTaskState
-from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
-from mephisto.data_model.task import TaskRun
-from mephisto.data_model.test.utils import get_test_task_run
-from mephisto.providers.mock.mock_provider import MockProvider
-from mephisto.server.architects.mock_architect import MockArchitect, MockArchitectArgs
-from mephisto.server.blueprints.mock.mock_task_runner import MockTaskRunner
 from omegaconf import OmegaConf
 
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
     AcuteEvalBlueprint,
 )
 from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
+
+try:
+    from mephisto.core.hydra_config import MephistoConfig
+    from mephisto.core.local_database import LocalMephistoDB
+    from mephisto.core.supervisor import Supervisor
+    from mephisto.core.task_launcher import TaskLauncher
+    from mephisto.data_model.assignment import InitializationData
+    from mephisto.data_model.blueprint import SharedTaskState
+    from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
+    from mephisto.data_model.task import TaskRun
+    from mephisto.data_model.test.utils import get_test_task_run
+    from mephisto.providers.mock.mock_provider import MockProvider
+    from mephisto.server.architects.mock_architect import (
+        MockArchitect,
+        MockArchitectArgs,
+    )
+    from mephisto.server.blueprints.mock.mock_task_runner import MockTaskRunner
+
+    SKIP_TESTS = False
+except ImportError:
+    SKIP_TESTS = True
 
 
 # Params
@@ -273,6 +282,7 @@ DESIRED_OUTPUTS = {
 EMPTY_STATE = SharedTaskState()
 
 
+@unittest.skipIf(SKIP_TESTS, "Mephisto not installed.")
 class TestAcuteEval(unittest.TestCase):
     """
     Test the ACUTE-Eval crowdsourcing task.
