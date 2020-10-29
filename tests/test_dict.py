@@ -602,3 +602,26 @@ class SpecialTokenTests(unittest.TestCase):
         for tokenizer in ["bpe"]:
             with self.assertRaises(NotImplementedError):
                 self._run_specialtok_test(dict_tokenizer=tokenizer)
+
+
+class TestBpeDropout(unittest.TestCase):
+    def test_bpe_dropout_gpt2(self):
+        pp = ParlaiParser(False, False)
+        DictionaryAgent.add_cmdline_args(pp)
+        opt = pp.parse_kwargs(dict_tokenizer='gpt2', bpe_dropout=0.5)
+        da = DictionaryAgent(opt)
+        da.set_training_mode(False)
+        s = (
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+            "Donec vitae metus sollicitudin, ullamcorper tortor ut, rhoncus lacus. "
+            "Praesent sollicitudin commodo turpis, ut pharetra tortor gravida nec."
+        )
+        no_dropout = da.txt2vec(s)
+        da.set_training_mode(True)
+        not_the_same = 0
+        for _ in range(30):
+            r = da.txt2vec(s)
+            assert da.vec2txt(r) == s
+            if r != no_dropout:
+                not_the_same += 1
+        assert not_the_same > 0

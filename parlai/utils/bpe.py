@@ -109,7 +109,7 @@ class BPEHelper(ABC):
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
         self._special_tokens: Dict[str, int] = {}
-        self.bpe_dropout = opt['bpe_dropout']
+        self.bpe_dropout = opt.get('bpe_dropout')
         self._is_training_mode = False
 
     @staticmethod
@@ -804,6 +804,13 @@ class HuggingFaceBpeHelper(BPEHelper):
         except ImportError:
             raise ImportError(
                 'Please install HuggingFace tokenizer with: pip install tokenizers'
+            )
+
+        if self.bpe_dropout:
+            raise ValueError(
+                '--bpe-dropout is not supported with ByteLevelBPE because tokenizers '
+                'library does not allow dynamically turning BPE on/off. You can use '
+                '--dict-tokenizer slow_bytelevel_bpe to gain this feature.'
             )
 
         if self.lower:
