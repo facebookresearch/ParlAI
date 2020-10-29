@@ -625,3 +625,6 @@ class TestBpeDropout(unittest.TestCase):
             if r != no_dropout:
                 not_the_same += 1
         assert not_the_same > 0
+
+    # TODO: add a test for slow_bytelevel_bpe with blender dictionary
+    # TODO: add a valuerror test for bytelevelbpe with blender
