@@ -13,6 +13,14 @@ from parlai.utils.io import PathManager
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import IdentityLayer, padded_tensor
 
+from typing import Optional
+from parlai.mturk.tasks.turn_annotations.utils import Compatibility
+from parlai.core.torch_agent import Batch
+import copy
+import nltk.data
+from parlai.utils.logging import logger
+from nltk.tokenize import RegexpTokenizer
+
 try:
     from transformers import GPT2Model
 except ImportError:
@@ -221,6 +229,8 @@ class Gpt2Agent(TorchGeneratorAgent):
     sure that the batch size is 1.
     """
 
+    add_A = False
+
     @classmethod
     def add_cmdline_args(cls, argparser):
         agent = argparser.add_argument_group("Gpt2 Args")
@@ -310,3 +320,80 @@ class Gpt2Agent(TorchGeneratorAgent):
             left_padded=True,
             fp16friendly=False,
         )
+
+    # def get_temp_history(self, observation) -> Optional[str]:
+    #     return '\n'
+
+    # def get_clean_output(self, txt, tokenizer):
+    #     txt = (
+    #         txt.replace('.', '. ')
+    #         .replace(',', ', ')
+    #         .replace('!', '! ')
+    #         .replace('?', '? ')
+    #     )
+    #     sentences = tokenizer.tokenize(txt)
+    #     # take the first
+    #     word_tokenizer = RegexpTokenizer(r'\w+')
+    #     try:
+    #         sentences_splits_longer = [
+    #             x
+    #             for x in sentences[0].split('\n')
+    #             if len(word_tokenizer.tokenize(x)) > 1
+    #         ]
+    #         sentences_splits_shorter = [
+    #             x
+    #             for x in sentences[0].split('\n')
+    #             if len(word_tokenizer.tokenize(x)) == 1
+    #         ]
+    #     except:
+    #         logger.warning('____GOT ERROR FROM sentences splits__', sentences)
+    #         sentences_splits_longer = []
+    #         sentences_splits_shorter = []
+    #     if len(sentences_splits_longer) > 0:
+    #         sentence = sentences_splits_longer[0]
+    #     elif len(sentences_splits_shorter) > 0:
+    #         sentence = sentences_splits_shorter[0]
+    #     else:
+    #         sentence = 'Hey do you want to talk about something else?'
+    #     logger.warning(f'sentences_splits_longer  = {sentences_splits_longer}')
+    #     logger.warning(f'sentences_splits_shorter  = {sentences_splits_shorter}')
+    #     return sentence
+
+    # def observe(self, observation):
+    #     """
+    #     Process incoming message in preparation for producing a response.
+
+    #     This includes remembering the past history of the conversation.
+    #     """
+    #     # TODO: Migration plan: TorchAgent currently supports being passed
+    #     # observations as vanilla dicts for legacy interop; eventually we
+    #     # want to remove this behavior and demand that teachers return Messages
+    #     try:
+    #         if observation['text'].strip()[-1] not in ['.', '?', '!']:
+    #             Compatibility.backward_compatible_force_set(
+    #                 observation, 'text', observation['text'] + '.'
+    #             )
+    #         if add_A:
+    #             Compatibility.backward_compatible_force_set(
+    #                 observation, 'text', 'A: ' + observation['text']
+    #             )
+    #     except:
+    #         pass
+    #     return super().observe(observation)
+
+    # def eval_step(self, batch):
+    #     add_A = True
+    #     inpt = [
+    #         obs.get('text') for obs in batch.observations
+    #     ]  # we have to get full text in multi-turn
+    #     logger.warning(f"input__ {inpt}")
+    #     outpt = super().eval_step(batch)
+    #     logger.warning(f'___BEFORE {outpt.text}')
+
+    #     gpt2_output_text = outpt.text
+    #     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    #     for i, txt in enumerate(outpt.text):
+    #         gpt2_output_text[i] = self.get_clean_output(txt, tokenizer)
+    #     outpt['text'] = gpt2_output_text
+    #     logger.warning(f'___AFTER {gpt2_output_text}')
+    #     return outpt

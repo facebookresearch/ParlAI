@@ -8,7 +8,7 @@ To use GPT2, run your command with the flag: `-m hugging_face/gpt2`.
 ### Examples
 **Talk to GPT2 large in interactive mode, with beam size 10, 3-gram beam blocking, and minimum beam length 25:**
 ```bash
-parlai interactive -m hugging_face/gpt2 --add-special-tokens False --gpt2-size large --inference beam --beam-size 10 --beam-context-block-ngram 3 --beam-block-ngram 3 --beam-min-length 25
+parlai interactive -m hugging_face/gpt2 --add-special-tokens False --gpt2-size large --inference beam --beam-size 10 --beam-context-block-ngram 3 --beam-block-ngram 3 --beam-min-length 1
 ```
 _Note:_ In the above command, we must have the flag `--add-special-tokens False` if we want to use the model _without_ finetuning it.
 
