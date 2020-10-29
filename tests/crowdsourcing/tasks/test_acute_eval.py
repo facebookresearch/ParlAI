@@ -303,6 +303,7 @@ try:
                 )
 
         def test_base_task(self):
+
             # Handle baseline setup
             sup = Supervisor(self.db)
             self.sup = sup
