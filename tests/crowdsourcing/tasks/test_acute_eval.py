@@ -19,13 +19,14 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
 from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
 
 try:
+    import mephisto
     from mephisto.core.supervisor import Supervisor
     from mephisto.data_model.blueprint import Blueprint
     from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
     from mephisto.data_model.test.utils import AbstractTestSupervisor, EMPTY_STATE
 
     SKIP_TESTS = False
-except ModuleNotFoundError:
+except ImportError:
     SKIP_TESTS = True
 
 
