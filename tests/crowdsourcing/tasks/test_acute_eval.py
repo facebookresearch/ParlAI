@@ -7,10 +7,9 @@
 
 import os
 import shutil
-import tempfile
 import time
 import unittest
-from typing import List
+from typing import ClassVar, List, Type
 
 from hydra.experimental import compose, initialize
 from omegaconf import OmegaConf
@@ -29,7 +28,7 @@ try:
     from mephisto.data_model.blueprint import SharedTaskState
     from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
     from mephisto.data_model.task import TaskRun
-    from mephisto.data_model.test.utils import get_test_task_run
+    from mephisto.data_model.test.utils import get_test_task_run, AbstractTestSupervisor
     from mephisto.providers.mock.mock_provider import MockProvider
     from mephisto.server.architects.mock_architect import (
         MockArchitect,
@@ -283,42 +282,15 @@ EMPTY_STATE = SharedTaskState()
 
 
 @unittest.skipIf(SKIP_TESTS, "Mephisto not installed.")
-class TestAcuteEval(unittest.TestCase):
+class TestAcuteEval(AbstractTestSupervisor, unittest.TestCase):
     """
     Test the ACUTE-Eval crowdsourcing task.
     """
 
+    BlueprintClass: ClassVar[Type["Blueprint"]] = AcuteEvalBlueprint
+
     def setUp(self):
-        self.data_dir = tempfile.mkdtemp()
-        database_path = os.path.join(self.data_dir, "mephisto.db")
-        self.db = LocalMephistoDB(database_path)
-        self.task_id = self.db.new_task(
-            "test_acute_eval", AcuteEvalBlueprint.BLUEPRINT_TYPE
-        )
-        self.task_run_id = get_test_task_run(self.db)
-        self.task_run = TaskRun(self.db, self.task_run_id)
-
-        architect_config = OmegaConf.structured(
-            MephistoConfig(architect=MockArchitectArgs(should_run_server=True))
-        )
-
-        self.architect = MockArchitect(
-            self.db, architect_config, EMPTY_STATE, self.task_run, self.data_dir
-        )
-        self.architect.prepare()
-        self.architect.deploy()
-        self.urls = self.architect._get_socket_urls()  # FIXME
-        self.url = self.urls[0]
-        self.provider = MockProvider(self.db)
-        self.provider.setup_resources_for_task_run(
-            self.task_run, self.task_run.args, EMPTY_STATE, self.url
-        )
-        self.launcher = TaskLauncher(
-            self.db, self.task_run, self.get_mock_assignment_data_array()
-        )
-        self.launcher.create_assignments()
-        self.launcher.launch_units(self.url)
-        self.sup = None
+        super().setUp()
 
         # Define the configuration settings
         relative_task_directory = os.path.relpath(
