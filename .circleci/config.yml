@@ -153,7 +153,7 @@ installcrowdsourcingdeps: &installcrowdsourcingdeps
     name: Install Mephisto
     command: |
       git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-      cd Mephisto; git checkout bee439684e6e86ce25c688ebc71550580ebb7dc2 -b stable
+      cd Mephisto; git checkout a9abd9deb2d2a5e0d6fde7dd6873fb73b4cb4872 -b stable
       pip install -e .
 
 setupcuda: &setupcuda
