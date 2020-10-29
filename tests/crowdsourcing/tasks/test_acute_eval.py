@@ -13,11 +13,6 @@ from typing import ClassVar, Type
 from hydra.experimental import compose, initialize
 from omegaconf import OmegaConf
 
-from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
-    AcuteEvalBlueprint,
-)
-from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
-
 try:
 
     import mephisto  # To raise an ImportError if not installed
@@ -25,6 +20,11 @@ try:
     from mephisto.data_model.blueprint import Blueprint
     from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
     from mephisto.data_model.test.utils import AbstractTestSupervisor, EMPTY_STATE
+
+    from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
+        AcuteEvalBlueprint,
+    )
+    from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
 
     # Params
     DESIRED_INPUTS = [
