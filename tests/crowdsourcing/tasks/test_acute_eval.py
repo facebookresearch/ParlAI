@@ -14,7 +14,6 @@ from hydra.experimental import compose, initialize
 
 try:
 
-    import mephisto  # To raise an ImportError if not installed
     from mephisto.core.supervisor import Supervisor
     from mephisto.data_model.blueprint import Blueprint
     from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
@@ -352,7 +351,7 @@ try:
             sup.shutdown()
 
 
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     pass
 
 if __name__ == "__main__":
