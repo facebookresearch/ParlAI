@@ -39,11 +39,7 @@ function MainApp() {
   }
 
   if (isPreview) {
-    // For some reason, """ from Python is carrying over (hydra migration solved this)
-    // var taskTitleWithoutQuotes = taskConfig.task_title.replace(/['"]+/g, '');
-    // var taskDescriptionWithoutQuotes = taskConfig.task_description.replace(/['"]+/g, '');
     return (
-      // For some reason, """ from Python is carrying over
       <section className="hero is-medium is-link">
         <div class="hero-body">
           <h3><span dangerouslySetInnerHTML={{ __html: taskConfig.task_title || 'Task Title Loading' }}></span></h3>

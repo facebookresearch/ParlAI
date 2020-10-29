@@ -79,7 +79,6 @@ function OnboardingDirections({ children }) {
 }
 
 function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, text }) {
-    // var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     var extraElements = '';
     if (turnIdx % 2 == 1) {
         extraElements = '';

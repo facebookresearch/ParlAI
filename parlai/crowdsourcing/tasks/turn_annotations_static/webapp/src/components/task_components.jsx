@@ -166,8 +166,6 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
 function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
   var extraElements = '';
   if (doAnnotateMessage) {
-    // For some reason, """ from Python is carrying over (hydra migration solved this)
-    // var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     extraElements = '';
     extraElements = (<span key={'extra_' + turnIdx}><br /><br />
       <span style={{ fontStyle: 'italic' }} >
@@ -228,10 +226,6 @@ function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, o
     return <div><p> Loading chats...</p></div>;
   }
   const [index, setIndex] = React.useState(0);
-
-  // For some reason, """ from Python is carrying over (hydra migration solved this)
-  // var taskTitleWithoutQuotes = taskTitle.replace(/['"]+/g, '');
-  // var taskDescriptionWithoutQuotes = taskDescription.replace(/['"]+/g, '');
 
   return (
     <div style={{ margin: 0, padding: 0, height: '100%' }}>
