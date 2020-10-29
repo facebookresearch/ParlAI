@@ -152,9 +152,13 @@ installcrowdsourcingdeps: &installcrowdsourcingdeps
   run:
     name: Install Mephisto
     command: |
+      cd ..
       git clone git@github.com:facebookresearch/Mephisto.git Mephisto
       cd Mephisto; git checkout a9abd9deb2d2a5e0d6fde7dd6873fb73b4cb4872 -b stable
-      pip install -e .
+      pip install -r requirements.txt
+      python setup.py develop
+      echo | mephisto check
+      # `echo` so that ENTER will be pressed at the prompt
 
 setupcuda: &setupcuda
   run:
@@ -741,10 +745,7 @@ workflows:
           requires:
             - unittests_gpu16
             - unittests_37
-      - crowdsourcing_tests:
-          requires:
-            - unittests_gpu16
-            - unittests_37
+      - crowdsourcing_tests
       - teacher_tests:
           requires:
             - unittests_gpu16

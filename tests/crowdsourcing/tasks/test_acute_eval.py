@@ -11,7 +11,6 @@ import unittest
 from typing import ClassVar, Type
 
 from hydra.experimental import compose, initialize
-from omegaconf import OmegaConf
 
 try:
 
@@ -302,7 +301,6 @@ try:
                         f'+current_time={int(time.time())}',
                     ],
                 )
-            print(OmegaConf.to_yaml(self.config))
 
         def test_base_task(self):
             # Handle baseline setup
