@@ -1,29 +1,29 @@
 - - episode_done: false
     eval_labels:
-    - i'm good , i just got off work and tired , i have two jobs .
+    - i am good , i just got off work and tired , i have two jobs .
     id: convai2:self_revised
     label_candidates:
-    - oh really ? i'm actually in high school and i'm graduating as class of 2019
+    - oh really ? i am actually in high school and i am graduating as class of 2019
       !
-    - that is an interesting choice . i would have to pick french fries
+    - that's an interesting choice . i'd have to pick french fries
     - i just got a pet fish for my 18th birthday yesterday from my parents .
     - yeah , well what about you ?
     - my favorite watch is the rolex ? what is yours ?
-    - what is in spain that is so interesting
-    - i do not like clowns . they're scary to a kid like me
+    - what is in spain that's so interesting
+    - i don't like clowns . they are scary to a kid like me
     - poetry . roses are red . violet are . . . ?
     - my father is a member of the army , served for 10 years now .
     - oh i like mexican food , but my favorite food are cheeseburgers
     - hey there , are you a mother ?
-    - it sure is . i would like to see more of the city though .
-    - it isn't so fun i have 2 friend who speak a different langues
-    - i would like some honey though . do you sell it ?
-    - i'm a recovering heavy drinker . full time . how about you ?
+    - it sure is . i'd like to see more of the city though .
+    - it is not so fun i have 2 friend who speak a different langues
+    - i'd like some honey though . do you sell it ?
+    - i am a recovering heavy drinker . full time . how about you ?
     - hi ! i have three kids . how many do you have ?
     - awesome ! i own 2 dogs , love them
     - yes , my favorite is broccoli and tofu in a garlic sauce . yum !
     - maybe he can skydive to see a better view
-    - i'm good , i just got off work and tired , i have two jobs .
+    - i am good , i just got off work and tired , i have two jobs .
     reward: 0
     text: 'your persona: i''ve been know to finish almost two dozen novels in a twelve
       month period.
@@ -42,8 +42,8 @@
     label_candidates:
     - why have you not sent help ? ! the scorpions are stinging my legs ! ree ! !
       ! ! ! ! !
-    - that's great i am expecting twins in two months . will these be your first kids
-      ?
+    - that is great i am expecting twins in two months . will these be your first
+      kids ?
     - do you live on a farm or ranch ?
     - hi how are you doing tonight i am fine .
     - i'd love to see her do that .
@@ -56,7 +56,7 @@
     - i meant mickey . cool i've a lot of friends and love the playground . do you
       ?
     - oh , yes . i wish i could skate to school . i ride the bus instead .
-    - that's my idea of heaven . i love bunnies ! i donate to a bunny charity too
+    - that is my idea of heaven . i love bunnies ! i donate to a bunny charity too
       .
     - i work on a freelance basis as an author , blogger and affiliate marketer .
       and you ?
@@ -91,8 +91,8 @@
     - i work from home doing internet searches
     - this one time , this guy turned into a alien , and he teleported , nobody believes
       me
-    - that's a great question , i have never tried ! where are you from ?
-    - that's awesome . are you scared there ? i'm so scared of clowns .
+    - that is a great question , i have never tried ! where are you from ?
+    - that is awesome . are you scared there ? i'm so scared of clowns .
     - but a good movie is always good .
     reward: 0
     text: wow ! i do love a good horror movie . loving this cooler weather
@@ -101,12 +101,12 @@
     - i work in the movies as well .
     id: convai2:self_revised
     label_candidates:
-    - that's great ! are you going to college ?
+    - that is great ! are you going to college ?
     - ugh . i do not think i could live with them .
     - i sing folk music . my parents aren't supportive .
     - i love piano music . do you play jazz ?
     - sure , your parents will have to take you here , i'm also a teacher in kindergarten
-    - that's nice , i need a new car , how is the bmw ?
+    - that is nice , i need a new car , how is the bmw ?
     - all natural . . . second time . . . twins this time .
     - one is a tabby yet overweight and the other is a black and white cat
     - go to national parks . think about what i missed out on in high school . you
@@ -115,7 +115,7 @@
     - nothing like a dog and a truck !
     - nope , i work in a hat shop 24 7 . my name is sophie by the way .
     - when i take over the world i'll grant bacon to everyone
-    - wow that's awesome i'm trying to relax having triplets in 90 days
+    - wow that is awesome i'm trying to relax having triplets in 90 days
     - i bet . what will be the first thing you will eat
     - i like electricity and electronics . i'm a bartender
     - blue , i guess . what is yours ?
@@ -139,11 +139,11 @@
     - thanks ! i like riding horses .
     - well at least some good came out of it . hope everything is well for you
     - amazing . do you study and languages
-    - i am not active but love watching birds from indoors
-    - what do you call your fish ? i am drinking fancy tea
-    - yes , i pray for her . i am helping her paint her kitchen red , my favorite
-      color .
-    - i am from mexico . i am moving into my home soon you ?
+    - i'm not active but love watching birds from indoors
+    - what do you call your fish ? i'm drinking fancy tea
+    - yes , i pray for her . i'm helping her paint her kitchen red , my favorite color
+      .
+    - i'm from mexico . i'm moving into my home soon you ?
     - nice , i like comic books as well . what position do you play in basketball
       .
     - do you have any ? mine is a black lab

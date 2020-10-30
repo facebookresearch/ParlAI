@@ -1,61 +1,61 @@
 - - episode_done: false
     eval_labels:
-    - i am good , i just got off work and tired , i've two jobs .
+    - i am good , i just got off work and tired , i have two jobs .
     id: convai2:none
     label_candidates:
     - oh really ? i am actually in high school and i am graduating as class of 2019
       !
-    - that is an interesting choice . i would have to pick french fries
+    - that's an interesting choice . i'd have to pick french fries
     - i just got a pet fish for my 18th birthday yesterday from my parents .
     - yeah , well what about you ?
     - my favorite watch is the rolex ? what is yours ?
-    - what is in spain that is so interesting
-    - i do not like clowns . they are scary to a kid like me
+    - what is in spain that's so interesting
+    - i don't like clowns . they are scary to a kid like me
     - poetry . roses are red . violet are . . . ?
     - my father is a member of the army , served for 10 years now .
     - oh i like mexican food , but my favorite food are cheeseburgers
     - hey there , are you a mother ?
-    - it sure is . i would like to see more of the city though .
-    - it is not so fun i've 2 friend who speak a different langues
-    - i would like some honey though . do you sell it ?
+    - it sure is . i'd like to see more of the city though .
+    - it is not so fun i have 2 friend who speak a different langues
+    - i'd like some honey though . do you sell it ?
     - i am a recovering heavy drinker . full time . how about you ?
-    - hi ! i've three kids . how many do you have ?
+    - hi ! i have three kids . how many do you have ?
     - awesome ! i own 2 dogs , love them
     - yes , my favorite is broccoli and tofu in a garlic sauce . yum !
     - maybe he can skydive to see a better view
-    - i am good , i just got off work and tired , i've two jobs .
+    - i am good , i just got off work and tired , i have two jobs .
     reward: 0
     text: hello what are doing today ?
 - - episode_done: false
     eval_labels:
-    - i rather read , i have read about 20 books this year .
+    - i rather read , i've read about 20 books this year .
     id: convai2:none
     label_candidates:
     - why have you not sent help ? ! the scorpions are stinging my legs ! ree ! !
       ! ! ! ! !
-    - that's great i am expecting twins in two months . will these be your first kids
-      ?
+    - that is great i am expecting twins in two months . will these be your first
+      kids ?
     - do you live on a farm or ranch ?
     - hi how are you doing tonight i am fine .
-    - i would love to see her do that .
-    - i do not . but i am so glad you do something that brings you joy
+    - i'd love to see her do that .
+    - i don't . but i am so glad you do something that brings you joy
     - it is hard , buy my dog keeps me company . do you have dogs ?
     - sounds like a good plan , what would you like to teach ?
     - i like rap music and i also produce for music artists .
     - where do you work ?
     - i broke my arm so i can not drink coffee
-    - i meant mickey . cool i have a lot of friends and love the playground . do you
+    - i meant mickey . cool i've a lot of friends and love the playground . do you
       ?
     - oh , yes . i wish i could skate to school . i ride the bus instead .
-    - that's my idea of heaven . i love bunnies ! i donate to a bunny charity too
+    - that is my idea of heaven . i love bunnies ! i donate to a bunny charity too
       .
     - i work on a freelance basis as an author , blogger and affiliate marketer .
       and you ?
     - like me ? would you go on vacation to the beach with me
-    - i do not let myself watch tv
+    - i don't let myself watch tv
     - we can go for a trade that sounds awesome
     - what part of the world is bratislava ?
-    - i rather read , i have read about 20 books this year .
+    - i rather read , i've read about 20 books this year .
     reward: 0
     text: i just got done watching a horror movie
 - - episode_done: false
@@ -82,8 +82,8 @@
     - i work from home doing internet searches
     - this one time , this guy turned into a alien , and he teleported , nobody believes
       me
-    - that's a great question , i have never tried ! where are you from ?
-    - that's awesome . are you scared there ? i'm so scared of clowns .
+    - that is a great question , i have never tried ! where are you from ?
+    - that is awesome . are you scared there ? i'm so scared of clowns .
     - but a good movie is always good .
     reward: 0
     text: wow ! i do love a good horror movie . loving this cooler weather
@@ -94,7 +94,7 @@
     label_candidates:
     - that is great ! are you going to college ?
     - ugh . i do not think i could live with them .
-    - i sing folk music . my parents are not supportive .
+    - i sing folk music . my parents aren't supportive .
     - i love piano music . do you play jazz ?
     - sure , your parents will have to take you here , i'm also a teacher in kindergarten
     - that is nice , i need a new car , how is the bmw ?
@@ -130,11 +130,11 @@
     - thanks ! i like riding horses .
     - well at least some good came out of it . hope everything is well for you
     - amazing . do you study and languages
-    - i am not active but love watching birds from indoors
-    - what do you call your fish ? i am drinking fancy tea
-    - yes , i pray for her . i am helping her paint her kitchen red , my favorite
-      color .
-    - i am from mexico . i am moving into my home soon you ?
+    - i'm not active but love watching birds from indoors
+    - what do you call your fish ? i'm drinking fancy tea
+    - yes , i pray for her . i'm helping her paint her kitchen red , my favorite color
+      .
+    - i'm from mexico . i'm moving into my home soon you ?
     - nice , i like comic books as well . what position do you play in basketball
       .
     - do you have any ? mine is a black lab

@@ -2,7 +2,7 @@
     id: convai2:none
     label_candidates:
     - me too . i really like watching the dolphins toss red balls in the air .
-    - my only son does not like veggies either .
+    - my only son doesn't like veggies either .
     - cool . what do you look like ? i'm just a poor student .
     - ok , i'm married with children but try to fine time for self
     - what time do you get off ? i totally can relate .
@@ -16,8 +16,8 @@
     - i don't get to watch much television with my farm work . do you ?
     - i love me some beef , just got back from college .
     - i do enjoy watching gold and tennis but not playing it
-    - that is very u neat name
-    - that is is just me ! i drive a truck for a living so i do what i want !
+    - that's very u neat name
+    - that's is just me ! i drive a truck for a living so i do what i want !
     - awww how cute , i pet sit , not quite the same , but they are my students !
     - good morning , how are you ?
     - i'm trying to cut out the middle man and cater directly to my clients .
@@ -27,7 +27,7 @@
     - pretty good . finally have a day off from the airport unless another plane breaks
       down .
     reward: 0
-    text: hey how i'd it going
+    text: hey how i would it going
 - - episode_done: false
     id: convai2:none
     label_candidates:
@@ -36,7 +36,7 @@
     - i have a feeling you will succeed . because you are focused .
     - oh cool . do you work ? any hobbies ?
     - is that close to your house ?
-    - lucky . i would like to visit there someday .
+    - lucky . i'd like to visit there someday .
     - not at all . it was very difficult
     - wow that is a lot . what are your hobbies ?
     - hi ! laying in bed reading . how about yourself ?
@@ -46,7 +46,7 @@
       .
     - oh i hear you ! i just lost my job as a farm hand
     - i guess you could put it that way
-    - that is true i'm not brave enough for that
+    - that is true i am not brave enough for that
     - what a coincidence , i have made maps for them before !
     - wonderful ! you know i really like the color palettes used in that show game
       of thrones
@@ -63,25 +63,25 @@
     label_candidates:
     - very cool . i shoot short films with my cam my folks got me .
     - good job . do you have any hobbies ?
-    - i am always online with my friends
+    - i'm always online with my friends
     - no but i did enjoy science in high school
     - i eat meatloaf with my mother as often as i can .
-    - i am studying to become a teacher
-    - i am fine , miss my mom a little .
-    - that's a very inspiring field , i currently do teach yoga
-    - i am hungry an the best food
-    - i guess its just i've 10 years more experience but she gets promoted !
+    - i'm studying to become a teacher
+    - i'm fine , miss my mom a little .
+    - that is a very inspiring field , i currently do teach yoga
+    - i'm hungry an the best food
+    - i guess its just i have 10 years more experience but she gets promoted !
     - good for you , i need to practice more self control .
     - yeah , you should have been kicked out for touching people against their will
       .
-    - i cant talk about food . i make boats though
+    - i can't talk about food . i make boats though
     - hey .
-    - sure i will go with you but i am baking a pizza right now , my favorite . come
+    - sure i'll go with you but i'm baking a pizza right now , my favorite . come
       eat .
     - video games are cool what do you play
     - wow i travel a lot to participant in civil war reenactments , and to visit my
       mom .
-    - i am having dinner , which is meatloaf every night and never get tired of it
+    - i'm having dinner , which is meatloaf every night and never get tired of it
       . haha !
     - that still sounds young , how sad
     - yep , i love to work on cars , airplanes , love to keep busy .
@@ -95,14 +95,14 @@
     - i love potato chips and chicken
     - yes i live in 4 walls made out of drywall .
     - no , i don't , but it does sound like a great activity for me and the kids
-    - i am an only child . i was a lonely child .
+    - i'm an only child . i was a lonely child .
     - i can pick up your recycling with my big van .
-    - i would not tell him . you'll like me , i am going to be a rich lawyer .
-    - i like to play basketball , i am not great but i play
-    - i am actually from there . i never learned to dive as public transport is so
+    - i wouldn't tell him . you'll like me , i'm going to be a rich lawyer .
+    - i like to play basketball , i'm not great but i play
+    - i'm actually from there . i never learned to dive as public transport is so
       good
-    - cats are nice . maybe i will get one with all the free time i have .
-    - the 1 that's around there i am trying to fish
+    - cats are nice . maybe i will get one with all the free time i've .
+    - the 1 that's around there i'm trying to fish
     - what kinda engine you got in that there mower ?
     - fps and racing games obv lol
     - starting is good . keep it up ! how far do you usually run ?
@@ -128,7 +128,7 @@
     - what is your favorite color
     - i am a 29 year old man . and my love for the sweets and the godfather !
     - i like to garden and love the outdoors . do you garden ?
-    - yes i have a cat she is so cute
+    - yes i have a cat she's so cute
     - ll . i love to read any mystery novel .
     - i like hindu food . i am not a very good baker though . my mom has mastered
       that .

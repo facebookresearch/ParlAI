@@ -7,12 +7,12 @@
       - yeah just want to pick up nba nfl getting old
       - i really like celine dion . what about you ?
       - no . i live near farms .
-      - i wish i had a daughter , i'm a boy mom . they are beautiful boys though still
+      - i wish i had a daughter , i'm a boy mom . they're beautiful boys though still
         lucky
       - yeah when i get bored i play gone with the wind my favorite movie .
       - hi how are you ? i'm eating dinner with my hubby and 2 kids .
       - were you married to your high school sweetheart ? i was .
-      - that's great to hear ! are you a competitive rider ?
+      - that is great to hear ! are you a competitive rider ?
       - hi , i'm doing ok . i'm a banker . how about you ?
       - i'm 5 years old
       - hi there . how are you today ?
@@ -30,8 +30,8 @@
     - episode_done: false
       id: convai2:none
       label_candidates:
-      - there was one person better than me , but i'll keep trying to pass
-      - oh that is a yummy jpb
+      - there was one person better than me , but i will keep trying to pass
+      - oh that's a yummy jpb
       - i take it you are not getting along with him ?
       - ah , i prefer asian cuisine , especially thai food .
       - awesome my kids and brothers love it
@@ -43,8 +43,8 @@
         the law .
       - cool ! so what do you look like ?
       - i am a bit of a loner . i live by myself . no attachments .
-      - i've to cut my long beard . it might slow me down !
-      - i've some sports cars .
+      - i have to cut my long beard . it might slow me down !
+      - i have some sports cars .
       - i do listen to music and i love to cook .
       - its great that you dance . its very enjoyable
       - most i know about trucker comes from watching ice road truckers and burt reynolds
@@ -114,30 +114,30 @@
       id: convai2:none
       label_candidates:
       - yes they do but i say no to them lol
-      - i've trouble getting along with family .
+      - i have trouble getting along with family .
       - i live in texas , what kind of stuff do you do in toronto ?
-      - that is so unique ! veganism and line dancing usually do not mix !
-      - no , it is not that big . do you travel a lot
-      - that is because they're real ; what do you do for work ?
-      - i'm lazy all day lol . my mom wants me to get a job and move out
+      - that's so unique ! veganism and line dancing usually don't mix !
+      - no , it isn't that big . do you travel a lot
+      - that's because they are real ; what do you do for work ?
+      - i am lazy all day lol . my mom wants me to get a job and move out
       - i was born on arbor day , so plant a tree in my name
       - okay , i should not tell you , its against the rules but my name is sarah
         , call me o
       - hello how are u tonight
-      - cool . . . my parents love country music that is why i hate it
-      - i'm an accountant . what do you do ?
+      - cool . . . my parents love country music that's why i hate it
+      - i am an accountant . what do you do ?
       - what do your parents do ? my dad is a mechanic .
       - how are you liking it ?
       - i really am too . great talking to you too .
       - cool . whats it like working there ?
-      - one daughter . she is pre med
-      - no and all men is taller than me why cant i find a man to dance with
+      - one daughter . she's pre med
+      - no and all men is taller than me why can't i find a man to dance with
       - i live in utah , and my family live in england , so i understand
-      - that is awesome . do you have a favorite season or time of year ?
+      - that's awesome . do you have a favorite season or time of year ?
       labels:
-      - that is awesome . do you have a favorite season or time of year ?
+      - that's awesome . do you have a favorite season or time of year ?
       reward: 0
-      text: that is neat . when i was in high school i placed 6th in 100m dash !
+      text: that's neat . when i was in high school i placed 6th in 100m dash !
     - episode_done: false
       id: convai2:none
       label_candidates:
@@ -146,23 +146,23 @@
       - hi , how are you doing today ?
       - actually been good and better than what i expected
       - ah , wrong ! blue is my fav color . what hobbies do you have ?
-      - i am great , loving this city life , how are you ?
-      - that's true . i've supporting parents , i am grateful for that .
+      - i'm great , loving this city life , how are you ?
+      - that's true . i have supporting parents , i'm grateful for that .
       - just started working from home , the internet is a heck of a thing
       - the tallest sunflowers you have ever seen are over their graves
-      - i bet . what do you drive ? i've a cool , black car .
-      - i'll be headed to paris on vacation to visit my sister
+      - i bet . what do you drive ? i have a cool , black car .
+      - i will be headed to paris on vacation to visit my sister
       - i live in new york and you ?
       - i understand . i like to work out alone
-      - i am eric . i am from new york . my dad drove cab here in the seventies .
+      - i'm eric . i'm from new york . my dad drove cab here in the seventies .
       - i sing sometimes too . i used to do a lot of musical theatre .
       - i rather see it in a cartoon lol i know that's fake
       - that would be great pay
       - my name is charlie . what kind of earrings ?
-      - of course . i am listening .
-      - i am a researcher i am researching the fact that mermaids are real
+      - of course . i'm listening .
+      - i'm a researcher i'm researching the fact that mermaids are real
       labels:
-      - i am a researcher i am researching the fact that mermaids are real
+      - i'm a researcher i'm researching the fact that mermaids are real
       reward: 0
       text: i agree . what do you do for a living ?
 - - - episode_done: false
@@ -188,13 +188,13 @@
       - i could be the next mrs . adam levine . please , i'll buy you 10 mangoes .
       - do you like dogs i've usually to talk
       - what did she teach ? my mom stayed home with my and my 3 older siblings
-      - neither do i , i am just a photographer , and that's already a ot of energy
+      - neither do i , i am just a photographer , and that is already a ot of energy
       - no , i say i am average at 5 4 . are you vertically challenged ?
       - what is your favorite meat to eat ?
       labels:
       - what is your favorite meat to eat ?
       reward: 0
-      text: i do not . but i do have a favorite meat since that's all i eat exclusively
+      text: i do not . but i do have a favorite meat since that is all i eat exclusively
         .
     - episode_done: false
       id: convai2:none
@@ -207,7 +207,7 @@
       - no not me , i don't like to show out , like driving a mercedes . kidding
       - yeah it relaxes me when i'm stressed out
       - i left my chevy duramax running while at american eagle . sale !
-      - yes , you will treat when i fall sick
+      - yes , you'll treat when i fall sick
       - how do you do that ?
       - good comparison ! ! that's actually a flattering comparison for me .
       - now i do it like a nerd
@@ -236,12 +236,12 @@
       - i am a big foodie , i love to bake . how about you ?
       - dance ! ! i win alot of mone and trifies . . what do u do four fun ?
       - do you do any sports ? swimming helps me keep my energy up .
-      - they're excellent for the environment .
+      - they are excellent for the environment .
       - i am going to catch some fish and think this over . thanks dog !
       - i am doing well ! how about you ?
       - i like old cars better new cars are to expensive
       - i've met bill once . he seems like a nice guy .
-      - oh that's amazing . i've been trying to find someone who can help him
+      - oh that is amazing . i've been trying to find someone who can help him
       - i am in my early 30s , what you do for living
       - so , you are in college ? i took foreign language in college .
       - i just turned 30 the other day
@@ -251,15 +251,15 @@
       labels:
       - i like chicken or macaroni and cheese .
       reward: 0
-      text: i'd have to say its prime rib . do you have any favorite foods ?
+      text: i would have to say its prime rib . do you have any favorite foods ?
     - episode_done: false
       id: convai2:none
       label_candidates:
-      - love that too . i am waiting on my car to be fixed . you ?
+      - love that too . i'm waiting on my car to be fixed . you ?
       - at least he helps you . do you cook bake ?
       - no , i auditioned as a child but i failed horribly .
       - i love cheese and ham sandwiches
-      - a poodle , he is hard to look after as he is so big , i am quite small
+      - a poodle , he is hard to look after as he is so big , i'm quite small
       - hello , i believe in things i can touch and see . so . . .
       - it is a beautiful day outside no rain here ?
       - is english your first language ?
@@ -267,9 +267,9 @@
       - oh , one day may . i wonder the same .
       - its hard for me to relive . it involved bread and a defective oven .
       - hello there ! how are you doing ?
-      - i swear i am losing my freaking mind .
+      - i swear i'm losing my freaking mind .
       - that sounds yummy . i enjoy soccer . do you work ?
-      - i see . i am just trying to become a vegetarian . are you ?
+      - i see . i'm just trying to become a vegetarian . are you ?
       - great , i'll love it so much
       - wow happy anniversary to you and him .
       - i enjoy playing tennis and baking .
@@ -278,4 +278,4 @@
       labels:
       - tell me more about yourself
       reward: 0
-      text: that is awesome . i've always had a love for technology .
+      text: that's awesome . i have always had a love for technology .
