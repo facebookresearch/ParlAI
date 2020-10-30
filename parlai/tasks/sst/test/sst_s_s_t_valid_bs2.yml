@@ -1,0 +1,108 @@
+- - - episode_done: true
+      eval_labels:
+      - negative
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: 'One long string of cliches.
+
+        Is this sentence positive or negative?'
+    - episode_done: true
+      eval_labels:
+      - negative
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: '"If you''ve ever entertained the notion of doing what the title of this
+        film implies, what Sex With Strangers actually shows may put you off the idea
+        forever."
+
+        Is this sentence positive or negative?'
+- - - episode_done: true
+      eval_labels:
+      - negative
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: 'K-19 exploits our substantial collective fear of nuclear holocaust to
+        generate cheap Hollywood tension.
+
+        Is this sentence positive or negative?'
+    - episode_done: true
+      eval_labels:
+      - negative
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: '"It''s played in the most straight-faced fashion, with little humor to
+        lighten things up."
+
+        Is this sentence positive or negative?'
+- - - episode_done: true
+      eval_labels:
+      - positive
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: '"There is a fabric of complex ideas here, and feelings that profoundly
+        deepen them."
+
+        Is this sentence positive or negative?'
+    - episode_done: true
+      eval_labels:
+      - positive
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: '"Although laced with humor and a few fanciful touches, the film is a
+        refreshingly serious look at young women."
+
+        Is this sentence positive or negative?'
+- - - episode_done: true
+      eval_labels:
+      - negative
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: 'It all feels like a Monty Python sketch gone horribly wrong.
+
+        Is this sentence positive or negative?'
+    - episode_done: true
+      eval_labels:
+      - positive
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: 'It''s a stunning lyrical work of considerable force and truth.
+
+        Is this sentence positive or negative?'
+- - - episode_done: true
+      eval_labels:
+      - negative
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: '"However it may please those who love movies that blare with pop songs,
+        young science fiction fans will stomp away in disgust."
+
+        Is this sentence positive or negative?'
+    - episode_done: true
+      eval_labels:
+      - positive
+      id: sst
+      label_candidates:
+      - negative
+      - positive
+      text: 'Broomfield turns his distinctive ''blundering'' style into something
+        that could really help clear up the case.
+
+        Is this sentence positive or negative?'
