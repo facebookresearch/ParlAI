@@ -2251,7 +2251,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if curr_reset_count > reset_count:
                 # Uh oh, we reset in the middle of loading!
                 logging.info(
-                    f"Reset was called on Chunk Teacher in the middle of loading a chunk: drain queue"
+                    "Reset was called on Chunk Teacher in the middle of loading a chunk: drain queue"
                 )
                 # drain the samples queue
                 self._drain(self.samples)
