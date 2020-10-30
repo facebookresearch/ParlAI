@@ -373,128 +373,34 @@ jobs:
           marker: nightly_gpu
           pytest_flags: -v -s
 
+  teacher_tests:
+    executor: standard_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 8
+    steps:
+      - runtests:
+          cachename: teacher
+          marker: teacher
+          pytest_flags: -v -s
 
-workflows:
-  version: 2
-  commit:
-    jobs:
-      - cleaninstall_36
-      - unittests_gpu16
-      - unittests_36
-      - unittests_37:
-          requires:
-            - unittests_gpu16
-            - unittests_36
-      - unittests_38:
-          requires:
-            - unittests_gpu16
-            - unittests_36
-      - unittests_gpu14:
-          requires:
-            - unittests_gpu16
-            - unittests_36
-      - unittests_gpu15:
-          requires:
-            - unittests_gpu16
-            - unittests_36
-      - unittests_osx:
-          requires:
-            - unittests_gpu16
-            - unittests_36
-      - long_gpu_tests:
-          requires:
-            - unittests_gpu16
-            - unittests_36
-      - teacher_tests:
-          requires:
-            - unittests_gpu16
-            - unittests_36
+  mturk_tests:
+    executor: standard_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - runtests:
+          cachename: mturk
+          marker: mturk
 
-#  crowdsourcing_tests:
-#    <<: *standard_cpu37
-#    working_directory: ~/ParlAI
-#    parallelism: 1
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20201020-crowdsourcing-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20201020-crowdsourcing-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: deps-20201020-crowdsourcing-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: All crowdsourcing tests
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m crowdsourcing -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: deps-20201020-crowdsourcing-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#
-#  teacher_tests:
-#    <<: *small_cpu37
-#    working_directory: ~/ParlAI
-#    parallelism: 8
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20200921-teacher-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-teacher-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-teacher-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: All data tests
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m tasks parlai/tasks/*/test.py -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-teacher-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#  mturk_tests:
-#    <<: *standard_cpu37
-#    working_directory: ~/ParlAI
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20200921-mturk-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-mturk-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - run:
-#          name: All mturk tests
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m mturk parlai/mturk/core/test/*.py -v
-#      - <<: *codecov
-#      - store_test_results:
-#          path: test-results
-#
+  crowdsourcing_tests:
+    executor: standard_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - runtests:
+          cachename: crowdsourcing
+          marker: crowdsourcing
+
 #  build_website:
 #    <<: *standard_cpu37
 #    working_directory: ~/ParlAI
@@ -579,6 +485,48 @@ workflows:
 #            echo 'Testing docs css'
 #            curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 #
+
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - cleaninstall_36
+      - unittests_gpu16
+      - unittests_36
+      - mturk_tests
+      - crowdsourcing_tests
+      - unittests_37:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_38:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_gpu14:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_gpu15:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_osx:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - long_gpu_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - teacher_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+
+
+
 ## -------------------------------------------------------------------------------------
 ## Workflows
 ## -------------------------------------------------------------------------------------
@@ -586,46 +534,6 @@ workflows:
 #  version: 2
 #  commit:
 #    jobs:
-#      - cleaninstall_36
-#      - unittests_gpu16
-#      - unittests_gpu15:
-#          requires:
-#            - unittests_37
-#            - unittests_gpu16
-#      - unittests_gpu14:
-#          requires:
-#            - unittests_37
-#            - unittests_gpu16
-#      - unittests_38:
-#          requires:
-#            - unittests_37
-#            - unittests_gpu16
-#      - unittests_37
-#      - unittests_36:
-#          requires:
-#            - unittests_37
-#            - unittests_gpu16
-#      - mturk_tests
-#      - unittests_osx:
-#          requires:
-#            - unittests_gpu16
-#            - unittests_37
-#      - quickstart_tests:
-#          requires:
-#            - unittests_gpu16
-#            - unittests_37
-#      - long_gpu_tests:
-#          requires:
-#            - unittests_gpu16
-#            - unittests_37
-#      - crowdsourcing_tests:
-#          requires:
-#            - unittests_gpu16
-#            - unittests_37
-#      - teacher_tests:
-#          requires:
-#            - unittests_gpu16
-#            - unittests_37
 #      - build_website:
 #          filters:
 #            branches:
