@@ -1,0 +1,45 @@
+- - episode_done: false
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - uber_lyft.location.from.accept
+    - - uber_lyft.location.from.accept
+    - - uber_lyft.location.to.accept
+      - uber_lyft.location.to.accept
+    labels:
+    - the corner of Willis and Neil
+    - corner of Willis and Neil
+    - Fogo de Chao
+    text: Yes, I'm here and I'm at the corner of Willis and Neil. I need to get to
+      Fogo de Chao, I have a business meeting there in about 40 minutes.
+- - episode_done: false
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - uber_lyft.duration.estimate.accept
+    labels:
+    - 10 minut
+    text: Sure.  It looks like traffic isn't too bad, and it's only about a 10 minute
+      drive.  What size uber do you need?
+- - episode_done: false
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - uber_lyft.num.people.accept
+      - uber_lyft.num.people.accept
+    labels:
+    - just me
+    text: It's just me, so the smallest size will do.
+- - episode_done: false
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - uber_lyft.type.ride
+      - uber_lyft.type.ride
+    labels:
+    - Uber Pool
+    text: Hm. Is Uber Pool ok?
+- - episode_done: false
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - uber_lyft.type.ride.accept
+      - uber_lyft.type.ride.accept
+    labels:
+    - UberX
+    text: Gotcha. So an UberX then?

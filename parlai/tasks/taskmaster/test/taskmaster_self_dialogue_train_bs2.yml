@@ -1,0 +1,50 @@
+- - - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - No, get me lyft
+      text: Would you want a taxi?
+    - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - When
+      text: Can I book a table for party of 3
+- - - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - cool
+      text: I'll call them
+    - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - What time?
+      text: Today
+- - - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - I'm in aspen. colorodo
+      text: what is your locartion?
+    - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - We dont have availability at 8pm. How about 8:30pm?
+      text: 8pm
+- - - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - West main
+      text: what street?
+    - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - Sure. Any children with you?
+      text: Can I book for 9pm?
+- - - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - north mill street
+      text: Where sre you going?
+    - episode_done: false
+      id: taskmaster:self_dialogue
+      labels:
+      - OK. Any special requirement? I.e. Disabled suitable table, etc.?
+      text: 'Yes'

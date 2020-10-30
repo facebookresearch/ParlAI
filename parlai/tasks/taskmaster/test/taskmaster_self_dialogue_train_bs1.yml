@@ -1,0 +1,25 @@
+- - episode_done: false
+    id: taskmaster:self_dialogue
+    labels:
+    - No, get me lyft
+    text: Would you want a taxi?
+- - episode_done: false
+    id: taskmaster:self_dialogue
+    labels:
+    - cool
+    text: I'll call them
+- - episode_done: false
+    id: taskmaster:self_dialogue
+    labels:
+    - I'm in aspen. colorodo
+    text: what is your locartion?
+- - episode_done: false
+    id: taskmaster:self_dialogue
+    labels:
+    - West main
+    text: what street?
+- - episode_done: false
+    id: taskmaster:self_dialogue
+    labels:
+    - north mill street
+    text: Where sre you going?
