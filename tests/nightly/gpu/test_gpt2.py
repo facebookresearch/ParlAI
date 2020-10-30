@@ -11,6 +11,7 @@ import parlai.utils.testing as testing_utils
 import parlai.scripts.multiprocessing_train as mp_train
 import parlai.scripts.build_dict as build_dict
 import os
+import copy
 
 
 class TestGpt2(unittest.TestCase):
