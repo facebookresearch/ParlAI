@@ -1,0 +1,62 @@
+- - - episode_done: false
+      id: redial
+      labels:
+      - Hello!
+      text: Hi!
+    - episode_done: false
+      id: redial
+      labels:
+      - Good morning! How are you?
+      text: Hi.
+- - - episode_done: false
+      id: redial
+      labels:
+      - 'I tend to like animated movies. Some of my favorites are The Emperor''s New
+        Groove and Fullmetal Alchemist: Brotherhood .'
+      text: What movies are you interested in?
+    - episode_done: false
+      id: redial
+      labels:
+      - I haven't seen a good documentary in a LONG time.  I generally prefer historical
+        or environmental docs, but I can look into others as well.
+      text: I am great thanks. Excellent morning for a movie. Is there a particular
+        genre you like?
+- - - episode_done: false
+      id: redial
+      labels:
+      - That was one of my favorites as a child! Can you recommend any more recent
+        animated movies?
+      text: Okay, I've seen a few animated. I also liked the Emperor. I really like
+        A Goofy Movie as well
+    - episode_done: false
+      id: redial
+      labels:
+      - I'm not sure if I've seen that one.  Is the about the orcas in Japan?
+      text: The first one that comes to mind for me is Blackfish  . Have you watched
+        it?
+- - - episode_done: false
+      id: redial
+      labels:
+      - Thanks! I've been meaning to watch that since I saw The Lego Batman Movie
+      text: It's definitely a good one! Have you seen  The Lego Movie not super recent
+        but it is good
+    - episode_done: false
+      id: redial
+      labels:
+      - Oh wait, I'm thinking The Cove  (which is a good one if you're into animal
+        rights docs, but it's got a sad ending).  I haven't seen Blackfish , but I'd
+        be down to give it a try.
+      text: It is about the killer whale Tilikum who was at SeaWorld.
+- - - episode_done: true
+      id: redial
+      labels:
+      - Thanks! I think that definitely helps.
+      text: 'Or the new Captain Underpants: The First Epic Movie I loved the books
+        as a kid Hope this helps!'
+    - episode_done: false
+      id: redial
+      labels:
+      - Is there any animation you can recommend? Not necessarily documentaries, mind
+        you, lol.
+      text: I haven't watched The Cove  . Blackfish  was surprisingly good...definitely
+        eye opening.

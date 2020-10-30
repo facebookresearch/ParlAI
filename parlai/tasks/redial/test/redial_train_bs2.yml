@@ -1,0 +1,51 @@
+- - - episode_done: false
+      id: redial
+      labels:
+      - Hi I'm looking for a good Horror movie
+      text: Hello. What's your taste in movies?
+    - episode_done: false
+      id: redial
+      labels:
+      - Hey!
+      text: Hi there
+- - - episode_done: false
+      id: redial
+      labels:
+      - Yea Im looking for something older something scary
+      text: Have you seen The Babadook ? The Conjuring was scary also.
+    - episode_done: false
+      id: redial
+      labels:
+      - 'I am looking for a comedy i really liked Bridesmaids '
+      text: What types of movies do you like?
+- - - episode_done: false
+      id: redial
+      labels:
+      - Hmm I havent seen that one
+      text: How about Rosemary's Baby  ?
+    - episode_done: false
+      id: redial
+      labels:
+      - I have, and I liked it I like more girly comedies
+      text: Have you seen Wedding Crashers ?
+- - - episode_done: false
+      id: redial
+      labels:
+      - is it like The Exorcist  haha Yea
+      text: 'or The Exorcist '
+    - episode_done: true
+      id: redial
+      labels:
+      - like the classic Clueless  Oh yes. I love that movie good suggestions. thanks!
+        have a good day!
+      text: So.. then I am sure you're familiar with Pitch Perfect 2 !
+- - - episode_done: false
+      id: redial
+      labels:
+      - love that one cool thanks I'll check it out.
+      text: It has a similar feel to it I think.
+    - episode_done: false
+      id: redial
+      labels:
+      - Hello! What kind of movies are you looking to watch today?
+      text: Hello!
