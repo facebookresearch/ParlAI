@@ -323,80 +323,72 @@ jobs:
             - installtorchcpu
           cachename: ut38
           marker: unit
+
+  unittests_gpu14:
+    executor: gpu
+    working_directory: ~/ParlAI
+    parallelism: 2
+    steps:
+      - runtests:
+          install_torch:
+            - installtorchgpu14
+          install_cuda: true
+          cachename: gpu14
+          marker: unit
+
+  unittests_gpu15:
+    executor: gpu
+    working_directory: ~/ParlAI
+    parallelism: 2
+    steps:
+      - runtests:
+          install_torch:
+            - installtorchgpu15
+          install_cuda: true
+          cachename: gpu15
+          marker: unit
+
+  unittests_gpu16:
+    executor: gpu
+    working_directory: ~/ParlAI
+    parallelism: 2
+    steps:
+      - runtests:
+          install_torch:
+            - installtorchgpu16
+          install_cuda: true
+          cachename: gpu16
+          marker: unit
+
+
 workflows:
   version: 2
   commit:
     jobs:
       - cleaninstall_36
+      - unittests_gpu16
       - unittests_36
-      - unittests_37
-      - unittests_38
-      - unittests_osx
+      - unittests_37:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_38:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_gpu14:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_gpu15:
+          requires:
+            - unittests_gpu16
+            - unittests_36
+      - unittests_osx:
+          requires:
+            - unittests_gpu16
+            - unittests_36
 
-#  unittests_38:
-#    <<: *standard_cpu38
-#    working_directory: ~/ParlAI
-#    parallelism: 2
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20200921-ut38-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchcpu
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-ut38-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-ut38-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Unit tests (py38)
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-ut38-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#  unittests_37:
-#    <<: *standard_cpu37
-#    working_directory: ~/ParlAI
-#    parallelism: 8
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20200921-ut37-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchcpu
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-ut37-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-ut37-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Unit tests (py37)
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-ut37-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
 #  unittests_gpu14:
 #    <<: *gpu
 #    working_directory: ~/ParlAI
