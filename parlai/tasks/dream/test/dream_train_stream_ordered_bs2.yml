@@ -1,0 +1,149 @@
+- - - episode_done: true
+      id: dream
+      label_candidates:
+      - Consult her dancing teacher.
+      - Take a more interesting class.
+      - Continue her dancing class.
+      labels:
+      - Continue her dancing class.
+      text: 'M: I am considering dropping my dancing class. I am not making any progress.
+
+        W: If I were you, I stick with it. It''s definitely worth time and effort.
+
+        What does the man suggest the woman do?'
+    - episode_done: false
+      id: dream
+      label_candidates:
+      - It's really terrible.
+      - It's very good indeed.
+      - It's better than what he does.
+      labels:
+      - It's very good indeed.
+      text: 'W: Well, I''m afraid my cooking isn''t to your taste.
+
+        M: Actually, I like it very much.
+
+        W: I''m glad you enjoy it. Let me serve you some more fish.
+
+        M: No, thank you. I''ve had enough fish, but I''d like some soup.
+
+        W: Here it is. Help yourself!
+
+        M: Thanks. I didn''t know you were so good at cooking. If only my wife could
+        learn to cook from you.
+
+        W: Why not bring your wife next time? I haven''t seen her for quite a while.
+
+        M: OK, I will. She will be very glad to see you, too. Thank you for the wonderful
+        meal.
+
+        What does the man think of the woman''s cooking?'
+- - - episode_done: true
+      id: dream
+      label_candidates:
+      - At home
+      - In their classroom
+      - On the street
+      labels:
+      - On the street
+      text: 'M: Look at the girl on the bike!
+
+        F: Oh, yes she''s really a smart girl.
+
+        Where are the two persons?'
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - Improve cooking skills.
+      - Bring his wife next time.
+      - Have some soup.
+      labels:
+      - Bring his wife next time.
+      text: What does the woman ask the man to do?
+- - - episode_done: true
+      id: dream
+      label_candidates:
+      - To play the piano.
+      - To give a performance.
+      - To sing a song.
+      labels:
+      - To play the piano.
+      text: 'M: Can you accompany me while I am singing.
+
+        W: I don''t play very well, but I will give it a try.
+
+        What does the man want the woman to do?'
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - It will take about one month to repair the watch.
+      - The watch is no longer worth repairing.
+      - It is a good idea to keep the old watch.
+      labels:
+      - The watch is no longer worth repairing.
+      text: 'W: I can''t figure out what''s wrong with my watch. It was just a month
+        ago that I had it repaired.
+
+        M: Don''t waste your time and money any more. It''s very old watch and it
+        is quite worn out.
+
+        What does the man mean?'
+- - - episode_done: false
+      id: dream
+      label_candidates:
+      - At a university.
+      - At a TV station.
+      - At a newspaper office.
+      labels:
+      - At a TV station.
+      text: 'W: Hello, this is TBC Television Studios. How can I help you?
+
+        M: Hello. I''m calling because I saw an ad in the campus newspaper. It said
+        you wanted an assistant to work on your local news program.
+
+        W: Right. But you do realize that we just need volunteers. It''s an unpaid
+        position.
+
+        M: Oh, sure. I understand that. I just want to get some experience working
+        for television news production after I get my degree.
+
+        W: I see. Well, you''ll need to talk to Ms. Black. She is in charge of the
+        program. But first, you''ll need to come here to fill out an application form.
+        Can you drop by the studio later today?
+
+        Where does the woman work?'
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - It's raining.
+      - It's cloudy.
+      - It's sunny.
+      labels:
+      - It's cloudy.
+      text: 'M: I think it''s going to rain.
+
+        W: I guess so. The skies are dark and cloudy.
+
+        What is the weather like?'
+- - - episode_done: true
+      id: dream
+      label_candidates:
+      - He needs a well-paid position.
+      - He has recently lost another job.
+      - He wants some working experience.
+      labels:
+      - He wants some working experience.
+      text: Why is the man applying for this position?
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - In a restaurant.
+      - In a hotel.
+      - In the street.
+      labels:
+      - In a hotel.
+      text: 'W: Front desk. Can I help you?
+
+        M: Yeah, hi, this is Room 327. Is your dining room still open?
+
+        Where are the two speakers?'

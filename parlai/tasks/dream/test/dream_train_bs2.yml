@@ -1,0 +1,178 @@
+- - - episode_done: false
+      id: dream
+      label_candidates:
+      - To teach in his mother school.
+      - To give a concert.
+      - To give a talk.
+      labels:
+      - To give a talk.
+      text: 'M: When I got home last night I found a letter from the school I used
+        to study in. The students there want me to go back and talk to them.
+
+        W: Oh, really? And are you going?
+
+        M: I don''t know. I used to hate school, so I don''t feel like going back.
+
+        W: But it''s different now.
+
+        M: Yes, I know. But it''s still a difficult situation. You see, when I was
+        at school I used to be bad at studies and none of the teachers liked me.
+
+        W: Well; I think you should go. When I was younger, I used to dream about
+        meeting a famous pop star. You can''t let them down.
+
+        M: Maybe you are right. OK, I''ll go.
+
+        What is the man invited to do?'
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - At home.
+      - In a shop.
+      - In a bank.
+      labels:
+      - In a shop.
+      text: 'W: How much do you want?
+
+        M: Two kilos, please.
+
+        Where does it possibly happen?'
+- - - episode_done: false
+      id: dream
+      label_candidates:
+      - A pop singer.
+      - A teacher.
+      - A famous actor.
+      labels:
+      - A pop singer.
+      text: What is the man now?
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - They shouldn't change their plan.
+      - They'd better change their mind.
+      - The tennis game won't last long.
+      labels:
+      - They shouldn't change their plan.
+      text: 'W: If the weather is this hot tomorrow, we may as well give up the idea
+        of playing tennis in the afternoon.
+
+        M: Oh, I don''t think it''ll last long. The weather forecast says it will
+        cloud over by mid-afternoon
+
+        What does the man mean?'
+- - - episode_done: true
+      id: dream
+      label_candidates:
+      - The man is going back to his former school to get further education.
+      - The man has decided to accept the invitation of his school.
+      - The man used to like school but have some trouble in his subjects.
+      labels:
+      - The man has decided to accept the invitation of his school.
+      text: Which of the following is true?
+    - episode_done: false
+      id: dream
+      label_candidates:
+      - A map of China.
+      - A map of the city.
+      - Stamps.
+      labels:
+      - A map of the city.
+      text: 'W: Excuse me, could you tell me where the post office is?
+
+        M: Post office? It''s not far from here. Do you know Xinhua Road?
+
+        W: I''m from the United States and this is my first trip to your city. I know
+        nothing about the city.
+
+        M: Oh, welcome to our city, I''ll show you the road. Please follow me.
+
+        W: Thanks, by the way, where can I buy a map of the city?
+
+        M: Just at the gate of the post office. Look, the post office is just across
+        the street.
+
+        W: Thank you very much. Good-bye.
+
+        M: Good-bye.
+
+        What does the woman want to buy?'
+- - - episode_done: true
+      id: dream
+      label_candidates:
+      - He shows great enthusiasm for his studies.
+      - He is a very versatile person.
+      - He does not study hard enough.
+      labels:
+      - He does not study hard enough.
+      text: 'M: Your son certainly shows a lot of enthusiasm on the tennis court.
+
+        W: I only wish he''d show as much for his studies.
+
+        What does the woman imply about her son?'
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - England.
+      - Australia.
+      - America.
+      labels:
+      - America.
+      text: Where is the woman from?
+- - - episode_done: false
+      id: dream
+      label_candidates:
+      - A raincoat.
+      - A lost overcoat.
+      - A new belt.
+      labels:
+      - A lost overcoat.
+      text: 'M: Good morning, madam.
+
+        W: Good morning. I wonder if you can help. I''ve lost my coat.
+
+        M: Where did you lose it, madam?
+
+        W: Er... I left it on a bus yesterday morning.
+
+        M: Can you describe it? Is it a raincoat?
+
+        W: No. It''s a long white overcoat. It''s got a belt, and one of those thick
+        furry collars that keep your ears warm. It''s a very nice coat, actually.
+
+        M: Hmm. I''m afraid we haven''t got anything like that, madam. Sorry. But,
+        may I have your name and your telephone number? We''ll contact you as soon
+        as we''ve got it.
+
+        What are the two speakers mainly talking about?'
+    - episode_done: true
+      id: dream
+      label_candidates:
+      - James.
+      - James Black.
+      - Jim.
+      labels:
+      - Jim.
+      text: 'M: What class did you have this afternoon, Kate?
+
+        W: A chemistry class. We''ve got a new chemistry teacher this term.
+
+        M: Who is it?
+
+        W: James Black. He told us to call Jim, not to call him Mr. Black.
+
+        M: Oh, James Black. I know him. He''s a little thin man who smiles a lot.
+
+        W: Yes, but many of us are afraid of him.
+
+        M: Really? But I hear he''s a very good teacher.
+
+        W: Yes, he is. His classes are always lively and interesting. And we all watch
+        and listen to him very carefully in his class.
+
+        M: It''s important to watch carefully when you''re studying chemistry, I think.
+
+        W: Jim often says that too, So we are never allowed to do anything without
+        watching.
+
+        What does the teacher ask his students to call him?'

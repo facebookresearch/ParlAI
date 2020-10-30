@@ -1,0 +1,72 @@
+- - episode_done: false
+    id: dream
+    label_candidates:
+    - To teach in his mother school.
+    - To give a concert.
+    - To give a talk.
+    labels:
+    - To give a talk.
+    text: 'M: When I got home last night I found a letter from the school I used to
+      study in. The students there want me to go back and talk to them.
+
+      W: Oh, really? And are you going?
+
+      M: I don''t know. I used to hate school, so I don''t feel like going back.
+
+      W: But it''s different now.
+
+      M: Yes, I know. But it''s still a difficult situation. You see, when I was at
+      school I used to be bad at studies and none of the teachers liked me.
+
+      W: Well; I think you should go. When I was younger, I used to dream about meeting
+      a famous pop star. You can''t let them down.
+
+      M: Maybe you are right. OK, I''ll go.
+
+      What is the man invited to do?'
+- - episode_done: false
+    id: dream
+    label_candidates:
+    - A pop singer.
+    - A teacher.
+    - A famous actor.
+    labels:
+    - A pop singer.
+    text: What is the man now?
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - The man is going back to his former school to get further education.
+    - The man has decided to accept the invitation of his school.
+    - The man used to like school but have some trouble in his subjects.
+    labels:
+    - The man has decided to accept the invitation of his school.
+    text: Which of the following is true?
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - At home.
+    - In a shop.
+    - In a bank.
+    labels:
+    - In a shop.
+    text: 'W: How much do you want?
+
+      M: Two kilos, please.
+
+      Where does it possibly happen?'
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - They shouldn't change their plan.
+    - They'd better change their mind.
+    - The tennis game won't last long.
+    labels:
+    - They shouldn't change their plan.
+    text: 'W: If the weather is this hot tomorrow, we may as well give up the idea
+      of playing tennis in the afternoon.
+
+      M: Oh, I don''t think it''ll last long. The weather forecast says it will cloud
+      over by mid-afternoon
+
+      What does the man mean?'
