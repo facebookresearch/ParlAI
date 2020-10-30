@@ -1,0 +1,78 @@
+- - - episode_done: true
+      eval_labels:
+      - area:south
+      - price range:expensive
+      id: woz
+      text: 'I''m looking for an expensive restaurant in the south part of town.
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      eval_labels:
+      - request:phone
+      - request:address
+      id: woz
+      text: 'Okay, what is the next one after that.  And can I get the address and
+        phone number both, please?
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      eval_labels:
+      - area:west
+      - price range:cheap
+      id: woz
+      text: 'I''m looking for a cheap restaurant in the west.
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      eval_labels:
+      - request:phone
+      - request:address
+      id: woz
+      text: 'What is the address and phone number?
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      eval_labels:
+      - area:centre
+      - food:spanish
+      - request:phone
+      - request:address
+      id: woz
+      text: 'Looking for the address and phone of a spanish in the centre of town.
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      eval_labels:
+      - area:south
+      id: woz
+      text: 'What is in the south?
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      eval_labels:
+      - food:korean
+      id: woz
+      text: "I'd like a restaurant with Korean food please. \nWhat is the change in\
+        \ the dialogue state?"
+    - episode_done: true
+      eval_labels:
+      - request:phone
+      - request:address
+      id: woz
+      text: 'What is their address and phone number?
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      eval_labels:
+      - food:turkish
+      id: woz
+      text: 'Hi there, I''m looking for a Turkish place
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      eval_labels:
+      - request:address
+      id: woz
+      text: 'Is there anything else? If so, what is their address?
+
+        What is the change in the dialogue state?'

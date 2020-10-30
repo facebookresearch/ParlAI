@@ -1,0 +1,88 @@
+- - - episode_done: true
+      id: woz
+      labels:
+      - request:phone
+      - request:address
+      text: 'What is the address and phone number for Frankie and Bennys?
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      id: woz
+      labels:
+      - request:phone
+      - request:address
+      text: 'YES PLEASE AND THE ADDRESS AS WELL.
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      id: woz
+      labels:
+      - food:italian
+      - request:phone
+      text: 'Yes. Could I have the phone number for the Italian restaurant?
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      id: woz
+      labels:
+      - area:south
+      - price range:cheap
+      - request:phone
+      - request:address
+      text: 'I''m looking for the address and phone number of a cheap restaurant in
+        the south part of town
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      id: woz
+      labels:
+      - food:italian
+      - price range:expensive
+      text: "I am interested in finding an expensive restaurant serving Italian food.\
+        \ \nWhat is the change in the dialogue state?"
+    - episode_done: true
+      id: woz
+      labels:
+      - request:phone
+      - food:italian
+      - price range:cheap
+      text: 'Where does not matter - I would like the phone number for 2 cheap Italian
+        restaurants please.
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      id: woz
+      labels:
+      - area:west
+      - food:british
+      - request:address
+      text: 'I am looking for a british restaurant options on the west side of town
+        and I would like their addresses.
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      id: woz
+      labels:
+      - food:european
+      text: 'How about European food instead?
+
+        What is the change in the dialogue state?'
+- - - episode_done: true
+      id: woz
+      labels:
+      - food:swiss
+      text: 'I''m looking for a place that serves swiss food.
+
+        What is the change in the dialogue state?'
+    - episode_done: true
+      id: woz
+      labels:
+      - food:steakhouse
+      - price range:cheap
+      - request:phone
+      - request:address
+      text: 'I''m looking for a inexpensive Steakhouse.  Can you tell me an address
+        and phone number for such a place?  If that is not available I would like
+        one that serves European food.
+
+        What is the change in the dialogue state?'
