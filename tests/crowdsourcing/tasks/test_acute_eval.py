@@ -282,6 +282,13 @@ try:
         Test the ACUTE-Eval crowdsourcing task.
         """
 
+        def setUp(self):
+            self.operator = None
+
+        def tearDown(self):
+            if self.operator is not None:
+                self.operator.shutdown()
+
         def test_base_task(self):
 
             # Define the configuration settings
@@ -296,6 +303,7 @@ try:
                         f'+mephisto.blueprint._blueprint_type={AcuteEvalBlueprint.BLUEPRINT_TYPE}',
                         f'+mephisto/architect=mock',
                         f'+mephisto/provider=mock',
+                        f'mephisto.blueprint.block_on_onboarding_fail={False}',
                         f'+task_dir={TASK_DIRECTORY}',
                         f'+current_time={int(time.time())}',
                     ],
@@ -313,9 +321,11 @@ try:
             self.db = LocalMephistoDB(database_path)
             self.config = augment_config_from_db(self.config, self.db)
             self.config.mephisto.architect.should_run_server = True
-            operator = Operator(self.db)
-            operator.validate_and_run_config(self.config.mephisto, shared_state=None)
-            channel_info = list(operator.supervisor.channels.values())[0]
+            self.operator = Operator(self.db)
+            self.operator.validate_and_run_config(
+                self.config.mephisto, shared_state=None
+            )
+            channel_info = list(self.operator.supervisor.channels.values())[0]
             server = channel_info.job.architect.server
 
             # Register a worker
@@ -328,21 +338,18 @@ try:
             mock_agent_details = "FAKE_ASSIGNMENT"
             server.register_mock_agent(worker_id, mock_agent_details)
             agent = self.db.find_agents()[0]
+            agent_id_1 = agent.db_id
 
             # Set initial data
-            _ = channel_info.job.task_runner.get_init_data_for_agent(agent)
+            server.request_init_data(agent_id_1)
 
             # Make agent act
-            agent_id_1 = agent.db_id
-            packet = Packet(
-                packet_type=PACKET_TYPE_AGENT_ACTION,
-                sender_id=agent_id_1,
-                receiver_id="Mephisto",
-                data={"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS},
+            server.send_agent_act(
+                agent_id_1, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
             )
-            agent.observe(packet)
 
             # Check that the inputs and outputs are as expected
+            agent = self.db.find_agents()[0]
             state = agent.state.get_data()
             self.assertEqual(DESIRED_INPUTS, state['inputs'])
             self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
