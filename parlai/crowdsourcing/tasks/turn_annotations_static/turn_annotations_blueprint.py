@@ -13,16 +13,16 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import numpy as np
-from mephisto.core.registry import register_mephisto_abstraction
-from mephisto.data_model.blueprint import SharedTaskState
-from mephisto.server.blueprints.static_react_task.static_react_blueprint import (
+from mephisto.operations.registry import register_mephisto_abstraction
+from mephisto.abstractions.blueprint import SharedTaskState
+from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
     StaticReactBlueprint,
     StaticReactBlueprintArgs,
 )
 from omegaconf import DictConfig
 
 if TYPE_CHECKING:
-    from mephisto.data_model.task import TaskRun
+    from mephisto.data_model.task_run import TaskRun
 
 
 def get_task_path():

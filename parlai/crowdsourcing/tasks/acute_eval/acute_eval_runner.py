@@ -9,13 +9,13 @@ import queue
 import random
 from typing import List, Any, Dict, Tuple, Set, TYPE_CHECKING
 
-from mephisto.core.logger_core import get_logger
-from mephisto.data_model.blueprint import SharedTaskState, TaskRunner
+from mephisto.operations.logger_core import get_logger
+from mephisto.abstractions.blueprint import SharedTaskState, TaskRunner
 from omegaconf import DictConfig
 
 if TYPE_CHECKING:
-    from mephisto.data_model.task import TaskRun
-    from mephisto.data_model.assignment import Unit
+    from mephisto.data_model.task_run import TaskRun
+    from mephisto.data_model.unit import Unit
     from mephisto.data_model.agent import Agent
 
 logger = get_logger(name=__name__, verbose=True, level="info")

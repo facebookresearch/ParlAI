@@ -9,8 +9,8 @@ import random
 import shutil
 import subprocess
 
-from mephisto.core.operator import Operator
-from mephisto.utils.scripts import load_db_and_process_config
+from mephisto.operations.operator import Operator
+from mephisto.tools.scripts import load_db_and_process_config
 from omegaconf import DictConfig, OmegaConf
 
 from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
