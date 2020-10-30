@@ -1,0 +1,232 @@
+- - - episode_done: true
+      eval_labels:
+      - Bob:1;Alice:0
+      id: DialogueQE
+      text: 'Alice(Human): Would you like to do and purge the Middle East with fire
+        and sword?'
+    - episode_done: true
+      eval_labels:
+      - Alice:3;Bob:1
+      id: DialogueQE
+      text: 'Alice(Human): Hi there
+
+        Bob(Human): yeah
+
+        Bob(Human): hi
+
+        Alice(Human): How are you?
+
+        Bob(Human): fine, where are you?
+
+        Alice(Human): I''m in space
+
+        Alice(Human): and you?
+
+        Bob(Human): i''m too, it''s cold
+
+        Alice(Human): what are you doing there?
+
+        Bob(Human): I''m research gravity. And you?
+
+        Alice(Human): trying to get home
+
+        Alice(Human): what does you nik mean?
+
+        Bob(Human): It''s my name, you have troble with space?
+
+        Alice(Human): right, no fuel left to return
+
+        Alice(Human): can you help?
+
+        Bob(Human): yes, couse
+
+        Alice(Human): how?
+
+        Bob(Human): I have some fuel!
+
+        Alice(Human): is it 95 or 98?
+
+        Bob(Human): 86 :(
+
+        Alice(Human): where did you get that?
+
+        Bob(Human): Where did we start the conversation?
+
+        Bob(Human): Earth
+
+        Alice(Human): noone is using this type of fuel anymore
+
+        Alice(Human): Do you speak russian?
+
+        Bob(Human): I''m from Russia, and we are using this fuel in car
+
+        Bob(Human): yes
+
+        Alice(Human): say something in russian?
+
+        Bob(Human): привет, человек))
+
+        Alice(Human): ты шутишь?
+
+        Bob(Human): нет
+
+        Bob(Human): ты знаешь русский?
+
+        Alice(Human): стакан наполовину полон или пуст?
+
+        Alice(Human): да, я немного говорю по русски
+
+        Bob(Human): Зависит от того пессимист ты или оптимист
+
+        Alice(Human): а у тебя как*
+
+        Alice(Human): ?
+
+        Bob(Human): Ребят, с русским явно проблемы( не используйте диалоги с форумов)
+
+        Bob(Human): Замечательно
+
+        Alice(Human): в смысле?
+
+        Alice(Human): полон или пуст?
+
+        Bob(Human): нечто среднее
+
+        Alice(Human): то есть?
+
+        Bob(Human): пуст
+
+        Bob(Human): как ты?'
+- - - episode_done: true
+      eval_labels:
+      - Alice:1;Bob:1
+      id: DialogueQE
+      text: 'Bob(Human): what''s your name?
+
+        Alice(Human): i''m a your bot
+
+        Bob(Human): you my pennis
+
+        Alice(Human): you are rude
+
+        Bob(Human): а по русски говоришь?
+
+        Bob(Human): нет?
+
+        Bob(Human): u understand russian ?'
+    - episode_done: true
+      eval_labels:
+      - Alice:0;Bob:1
+      id: DialogueQE
+      text: 'Alice(Human): hi there
+
+        Bob(Bot): Thanks for the clarification. I guess I was wrong. Thanks for the
+        clarification.
+
+        Bob(Bot): Sorry, I didn''t realize that I meant to say that they aren''t.
+
+        Alice(Human): this bot is broken, guys, next'
+- - - episode_done: true
+      eval_labels:
+      - Alice:1;Bob:0
+      id: DialogueQE
+      text: 'Alice(Bot): Hello. I am professional teacher about reading comprehension.
+        Let''s compete! You give me questions, and I will answer all of your questions.
+        XD
+
+        Bob(Human): You can try
+
+        Bob(Human): What is your name?
+
+        Alice(Bot): I can''t.
+
+        Alice(Bot): It''s me.
+
+        Bob(Human): What is your name
+
+        Bob(Human): ?
+
+        Alice(Bot): What?'
+    - episode_done: true
+      eval_labels:
+      - Alice:5;Bob:4
+      id: DialogueQE
+      text: 'Bob(Human): What is beer?
+
+        Bob(Human): Starch source?
+
+        Alice(Human): Beer is a very bad thing
+
+        Alice(Human): You really don''t know what it is?
+
+        Bob(Human): So uh, is that you writing or someone out there?
+
+        Alice(Human): Why you have that question?
+
+        Alice(Human): Do you think that I''m bot?
+
+        Bob(Human): Aren''t you?
+
+        Alice(Human): No, I''m not a bot
+
+        Bob(Human): Alright, kolis'' davai mujik
+
+        Alice(Human): Okey, ya bot
+
+        Alice(Human): You are very smart bot
+
+        Bob(Human): omg so AI
+
+        Bob(Human): horowego tebe nastroyeniya i vsego horowego
+
+        Alice(Human): I tebe togo zhe'
+- - - episode_done: true
+      eval_labels:
+      - Bob:4;Alice:4
+      id: DialogueQE
+      text: 'Alice(Human): Hello
+
+        Bob(Human): Hi
+
+        Alice(Human): So what is Comcast exactly?
+
+        Bob(Human): An internet company
+
+        Alice(Human): And it participated in the Olympics as a sponsor?
+
+        Alice(Human): It is easy to understand whether you bot or not by a response
+        time :('
+    - episode_done: true
+      eval_labels:
+      - Bob:1;Alice:0
+      id: DialogueQE
+      text: 'Alice(Human): Hello there
+
+        Alice(Human): Are you there'
+- - - episode_done: true
+      eval_labels:
+      - Bob:1;Alice:0
+      id: DialogueQE
+      text: 'Alice(Human): Let''s not talk about semiconductors, I actually studied
+        liberal arts'
+    - episode_done: true
+      eval_labels:
+      - Alice:2;Bob:0
+      id: DialogueQE
+      text: 'Alice(Bot): What is neighboring
+
+        Bob(Human): Countries
+
+        Alice(Bot): That remark was too complicated for me. We were talking about
+        IwasaskingaboutMehmed''sfather.
+
+        Bob(Human): Wow, I don''t think you should remember my answers from a different
+        session, bot.
+
+        Alice(Bot): what is different
+
+        Bob(Human): I don''t know what you are talking about.
+
+        Alice(Bot): I don''t know what I am talkingabout.
+
+        Bob(Human): When did one of Africa''s bloodiest civil wars ensue?'

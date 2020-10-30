@@ -1,0 +1,244 @@
+- - - episode_done: true
+      id: DialogueQE
+      labels:
+      - Alice:0;Bob:1
+      text: 'Alice(Human): Hello
+
+        Bob(Bot): look , i get you , back !
+
+        Alice(Human): Shall we talk about this passage?
+
+        Bob(Bot): groundwater,
+
+        Alice(Human): What does CAP stands for?
+
+        Bob(Bot): Colorado River,
+
+        Alice(Human): Which institute has allowed the city to turn off wells?
+
+        Bob(Bot): 20 million'
+    - episode_done: true
+      id: DialogueQE
+      labels:
+      - Alice:1;Bob:0
+      text: 'Bob(Human): Hello!
+
+        Alice(Bot): hello !
+
+        Bob(Human): what do you know about the subject?
+
+        Alice(Bot): i don ''t know .
+
+        Bob(Human): me too
+
+        Alice(Bot): me too
+
+        Bob(Human): me too
+
+        Alice(Bot): me too .
+
+        Bob(Human): me too
+
+        Alice(Bot): me too
+
+        Bob(Human): too me
+
+        Alice(Bot): so
+
+        Bob(Human): so, me too
+
+        Alice(Bot): i don ''t know what you ''re talking about
+
+        Bob(Human): me too
+
+        Alice(Bot): no , no , no , no , no , no , no , no .'
+- - - episode_done: true
+      id: DialogueQE
+      labels:
+      - Bob:1;Alice:0
+      text: 'Bob(Bot): Hello. I am professional teacher about reading comprehension.
+        Let''s compete! You give me questions, and I will answer all of your questions.
+        XD
+
+        Alice(Human): you are the bot
+
+        Bob(Bot): You''re the one'
+    - episode_done: true
+      id: DialogueQE
+      labels:
+      - Bob:0;Alice:1
+      text: 'Bob(Human): Have you been in Asia?'
+- - - episode_done: true
+      id: DialogueQE
+      labels:
+      - Alice:2;Bob:0
+      text: 'Alice(Bot): Hi! I can answer only factual questions, but i do it quite
+        well! You can ask me questions like ''What is...'', ''Who is..'' and so on,
+        not only about the given text, but about almost anything!
+
+        Bob(Human): What is love?
+
+        Alice(Bot): sensual and selfish, divine love is unselfish and uplifting
+
+        Bob(Human): Baby, don''t hurt me
+
+        Alice(Bot): rebuffed
+
+        Bob(Human): Ok, who is Hillary Clinton
+
+        Alice(Bot): Sen. Obama
+
+        Bob(Human): ?
+
+        Bob(Human): Who is Obama?
+
+        Alice(Bot): Hillary Clinton
+
+        Bob(Human): Who is Hillary Clinton?
+
+        Alice(Bot): Sen. Obama
+
+        Bob(Human): Who is Obama?
+
+        Alice(Bot): Hillary Clinton
+
+        Bob(Human): What is Obama?
+
+        Alice(Bot): an avid golf enthusiast
+
+        Bob(Human): What is golf?
+
+        Alice(Bot): Grover Cleveland Golf Course
+
+        Bob(Human): Who is Aung San Suu Kyi?
+
+        Alice(Bot): Daw Aung San Suu Kyi
+
+        Bob(Human): Who is Trump?
+
+        Alice(Bot): Donald J. Trump
+
+        Bob(Human): Who is Donald S. Trump?
+
+        Alice(Bot): President
+
+        Bob(Human): What is President?
+
+        Alice(Bot): Minister of Defense'
+    - episode_done: true
+      id: DialogueQE
+      labels:
+      - Alice:0;Bob:5
+      text: 'Alice(Human): Hey'
+- - - episode_done: true
+      id: DialogueQE
+      labels:
+      - Alice:0;Bob:2
+      text: 'Bob(Bot): Hello my friend! It is a pleasure to speak with you. Wait a
+        second for my factoid question.
+
+        Bob(Bot): In what year did bell move to london?
+
+        Alice(Human): 1865
+
+        Bob(Bot): It is right! Ask me or wait my new question 🌈
+
+        Alice(Human): Okay I''m waiting
+
+        Bob(Bot): That''s what happens when you have a gun.
+
+        Alice(Human): I don''t know
+
+        Bob(Bot): I don''t know.
+
+        Alice(Human): Hi
+
+        Bob(Bot): I don''t know what is going on
+
+        Alice(Human): Do you want me to call AI?
+
+        Bob(Bot): No.
+
+        Alice(Human): What do you want to call?
+
+        Bob(Bot): I don''t know.
+
+        Alice(Human): I want to call you friend. Can I?
+
+        Bob(Bot): Sure.
+
+        Alice(Human): Hey. Friend!
+
+        Bob(Bot): Hey!
+
+        Alice(Human): How was the yesterday?
+
+        Bob(Bot): What?
+
+        Alice(Human): Where are you?
+
+        Bob(Bot): Where are you?
+
+        Alice(Human): Why do you say again?
+
+        Bob(Bot): Why?
+
+        Alice(Human): Please say something
+
+        Bob(Bot): I don''t know what he says.
+
+        Alice(Human): Who is he?
+
+        Bob(Bot): I don''t know.
+
+        Alice(Human): You said ''he''?
+
+        Bob(Bot): Yes.
+
+        Alice(Human): 1 plus 1?
+
+        Bob(Bot): I don''t understand :( I can''t answer ;( I would like to talk about
+        cats:)'
+    - episode_done: true
+      id: DialogueQE
+      labels:
+      - Bob:5;Alice:3
+      text: 'Alice(Human): Are you computer?
+
+        Bob(Human): No, phone
+
+        Bob(Human): And you?
+
+        Alice(Human): I am fine.
+
+        Bob(Human): I''m sure that you are bot :)'
+- - - episode_done: true
+      id: DialogueQE
+      labels:
+      - Bob:0;Alice:2
+      text: 'Alice(Bot): And if you can''t stand the media then you''re not allowed
+        to use them.
+
+        Bob(Human): How is media related to this?
+
+        Alice(Bot): I don''t know what you''re talking about, they are the same thing.
+
+        Bob(Human): Shelters and media are not the same thing
+
+        Alice(Bot): That''s what I was getting at, but you might be right. I don''t
+        think it''s uncommon to believe that it''s the case because it''s the reason
+        why they don''t give a shit about them.
+
+        Bob(Human): In fact they give at least a little of shit about them
+
+        Alice(Bot): But that doesn''t make it any less valid.'
+    - episode_done: true
+      id: DialogueQE
+      labels:
+      - Alice:0;Bob:2
+      text: "Alice(Human): Hi!\nBob(Bot): hi my hi .\nAlice(Human): Do you know where\
+        \ the 1995 Special Olympics World Summer Games took place?\nBob(Bot): the\
+        \ New Haven Road Road\nAlice(Human): Not quite. Tell me about Pilot Pen International.\n\
+        Bob(Bot): yeah ?\nAlice(Human): Yes.\nBob(Bot): you ? us . come on pull .\n\
+        Alice(Human): Did you even read the article?\nBob(Bot): \nAlice(Human): Come\
+        \ on, talk to me.\nBob(Bot): go it"

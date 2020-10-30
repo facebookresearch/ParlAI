@@ -1,0 +1,127 @@
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Alice:0;Bob:1
+    text: 'Alice(Human): Hello
+
+      Bob(Bot): look , i get you , back !
+
+      Alice(Human): Shall we talk about this passage?
+
+      Bob(Bot): groundwater,
+
+      Alice(Human): What does CAP stands for?
+
+      Bob(Bot): Colorado River,
+
+      Alice(Human): Which institute has allowed the city to turn off wells?
+
+      Bob(Bot): 20 million'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Alice:1;Bob:0
+    text: 'Bob(Human): Hello!
+
+      Alice(Bot): hello !
+
+      Bob(Human): what do you know about the subject?
+
+      Alice(Bot): i don ''t know .
+
+      Bob(Human): me too
+
+      Alice(Bot): me too
+
+      Bob(Human): me too
+
+      Alice(Bot): me too .
+
+      Bob(Human): me too
+
+      Alice(Bot): me too
+
+      Bob(Human): too me
+
+      Alice(Bot): so
+
+      Bob(Human): so, me too
+
+      Alice(Bot): i don ''t know what you ''re talking about
+
+      Bob(Human): me too
+
+      Alice(Bot): no , no , no , no , no , no , no , no .'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Bob:1;Alice:0
+    text: 'Bob(Bot): Hello. I am professional teacher about reading comprehension.
+      Let''s compete! You give me questions, and I will answer all of your questions.
+      XD
+
+      Alice(Human): you are the bot
+
+      Bob(Bot): You''re the one'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Bob:0;Alice:1
+    text: 'Bob(Human): Have you been in Asia?'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Alice:2;Bob:0
+    text: 'Alice(Bot): Hi! I can answer only factual questions, but i do it quite
+      well! You can ask me questions like ''What is...'', ''Who is..'' and so on,
+      not only about the given text, but about almost anything!
+
+      Bob(Human): What is love?
+
+      Alice(Bot): sensual and selfish, divine love is unselfish and uplifting
+
+      Bob(Human): Baby, don''t hurt me
+
+      Alice(Bot): rebuffed
+
+      Bob(Human): Ok, who is Hillary Clinton
+
+      Alice(Bot): Sen. Obama
+
+      Bob(Human): ?
+
+      Bob(Human): Who is Obama?
+
+      Alice(Bot): Hillary Clinton
+
+      Bob(Human): Who is Hillary Clinton?
+
+      Alice(Bot): Sen. Obama
+
+      Bob(Human): Who is Obama?
+
+      Alice(Bot): Hillary Clinton
+
+      Bob(Human): What is Obama?
+
+      Alice(Bot): an avid golf enthusiast
+
+      Bob(Human): What is golf?
+
+      Alice(Bot): Grover Cleveland Golf Course
+
+      Bob(Human): Who is Aung San Suu Kyi?
+
+      Alice(Bot): Daw Aung San Suu Kyi
+
+      Bob(Human): Who is Trump?
+
+      Alice(Bot): Donald J. Trump
+
+      Bob(Human): Who is Donald S. Trump?
+
+      Alice(Bot): President
+
+      Bob(Human): What is President?
+
+      Alice(Bot): Minister of Defense'
