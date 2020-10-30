@@ -2235,7 +2235,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         Load data into self.samples until buffersize is reached.
         """
-        reset_count = self.reset_count.value()
+        reset_count = self.reset_counter.value()
         data = future.result()
         if data is None:
             return
@@ -2247,7 +2247,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
                 self.samples.put(sample)
             self.tot_samples_loaded += 1
-            curr_reset_count = self.reset_count.value()
+            curr_reset_count = self.reset_counter.value()
             if curr_reset_count > reset_count:
                 # Uh oh, we reset in the middle of loading!
                 logging.info(
