@@ -44,7 +44,7 @@ from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.conversations import Conversations
 from parlai.utils.data import DatatypeHelper
-from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once, SimpleCounter
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
@@ -2140,6 +2140,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.is_root_teacher = True
             self.samples = queue.Queue(maxsize=self.buffersize)
             self.chunks = queue.Queue()
+            self.reset_counter = SimpleCounter()  # track no. of resets
             if self.is_train:
                 # TODO: possible need a fixed seed here in the future
                 self.rng = random.Random()
@@ -2234,6 +2235,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         Load data into self.samples until buffersize is reached.
         """
+        reset_count = self.reset_count.value()
         data = future.result()
         if data is None:
             return
@@ -2245,6 +2247,15 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
                 self.samples.put(sample)
             self.tot_samples_loaded += 1
+            curr_reset_count = self.reset_count.value()
+            if curr_reset_count > reset_count:
+                # Uh oh, we reset in the middle of loading!
+                logging.info(
+                    f"Reset was called on Chunk Teacher in the middle of loading a chunk: drain queue"
+                )
+                # drain the samples queue
+                self._drain(self.samples)
+                break
         # and start loading the next chunk
         self._enqueue_request()
 
@@ -2314,15 +2325,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return msg
 
     def _drain(self, q):
-        while not q.empty():
-            try:
-                q.get()
-            except queue.Empty:
-                return
+        with q.mutex:
+            q.queue.clear()
 
     def reset(self):
         super().reset()
         if self.is_root_teacher:
+            self.reset_counter.increment()
             # drain the queues and refill the chunk queue with a new epoch.
             # additionally, we have to relaunch the loader
             self._drain(self.samples)
