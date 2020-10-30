@@ -1,0 +1,50 @@
+- - - episode_done: true
+      image: blue square solid
+      labels:
+      - blue square
+      text: color shape
+    - episode_done: true
+      image: green square dashed
+      labels:
+      - square green
+      text: shape color
+- - - episode_done: true
+      image: blue triangle dotted
+      labels:
+      - triangle dotted
+      text: shape style
+    - episode_done: true
+      image: purple circle solid
+      labels:
+      - purple circle
+      text: color shape
+- - - episode_done: true
+      image: purple circle filled
+      labels:
+      - circle purple
+      text: shape color
+    - episode_done: true
+      image: green square solid
+      labels:
+      - solid square
+      text: style shape
+- - - episode_done: true
+      image: green square solid
+      labels:
+      - square solid
+      text: shape style
+    - episode_done: true
+      image: blue circle solid
+      labels:
+      - circle blue
+      text: shape color
+- - - episode_done: true
+      image: green triangle filled
+      labels:
+      - triangle filled
+      text: shape style
+    - episode_done: true
+      image: green triangle dotted
+      labels:
+      - green triangle
+      text: color shape

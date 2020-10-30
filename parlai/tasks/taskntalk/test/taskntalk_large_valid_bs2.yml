@@ -1,0 +1,50 @@
+- - - episode_done: true
+      image: green spade vstripe
+      labels:
+      - vstripe spade
+      text: style shape
+    - episode_done: true
+      image: orange circle hgrad
+      labels:
+      - circle hgrad
+      text: shape style
+- - - episode_done: true
+      image: red square dotted
+      labels:
+      - red square
+      text: color shape
+    - episode_done: true
+      image: yellow square vstripe
+      labels:
+      - vstripe square
+      text: style shape
+- - - episode_done: true
+      image: red club dotted
+      labels:
+      - club dotted
+      text: shape style
+    - episode_done: true
+      image: red circle dashed
+      labels:
+      - red dashed
+      text: color style
+- - - episode_done: true
+      image: orange diamond dashed
+      labels:
+      - diamond dashed
+      text: shape style
+    - episode_done: true
+      image: teal square dashed
+      labels:
+      - dashed teal
+      text: style color
+- - - episode_done: true
+      image: yellow club vgrad
+      labels:
+      - yellow club
+      text: color shape
+    - episode_done: true
+      image: orange club solid
+      labels:
+      - orange solid
+      text: color style
