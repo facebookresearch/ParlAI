@@ -351,7 +351,7 @@ jobs:
   unittests_gpu16:
     executor: gpu
     working_directory: ~/ParlAI
-    parallelism: 2
+    parallelism: 8
     steps:
       - runtests:
           install_torch:
@@ -359,6 +359,19 @@ jobs:
           install_cuda: true
           cachename: gpu16
           marker: unit
+
+  long_gpu_tests:
+    executor: gpu
+    working_directory: ~/ParlAI
+    parallelism: 8
+    steps:
+      - runtests:
+          install_torch:
+            - installtorchgpu16
+          install_cuda: true
+          cachename: nightly
+          marker: nightly_gpu
+          pytest_flags: -v -s
 
 
 workflows:
@@ -388,166 +401,11 @@ workflows:
           requires:
             - unittests_gpu16
             - unittests_36
+      - long_gpu_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_36
 
-#  unittests_gpu14:
-#    <<: *gpu
-#    working_directory: ~/ParlAI
-#    parallelism: 2
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: nvidia-downloads-20200516
-#      - <<: *setupcuda
-#      - save_cache:
-#          key: nvidia-downloads-20200516
-#          paths:
-#            - "~/nvidia-downloads/"
-#      - restore_cache:
-#          key: deps-20200921-gpu14-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu14
-#      - <<: *installdeps
-#      - <<: *installdetectrondeps
-#      - save_cache:
-#          key: deps-20200921-gpu14-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-gpu14-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Unit tests (GPU; pytorch 1.4)
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-gpu14-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#  unittests_gpu15:
-#    <<: *gpu
-#    working_directory: ~/ParlAI
-#    parallelism: 2
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: nvidia-downloads-20200516
-#      - <<: *setupcuda
-#      - save_cache:
-#          key: nvidia-downloads-20200516
-#          paths:
-#            - "~/nvidia-downloads/"
-#      - restore_cache:
-#          key: deps-20200921-gpu15-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu15
-#      - <<: *installdeps
-#      - <<: *installdetectrondeps
-#      - save_cache:
-#          key: deps-20200921-gpu15-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-gpu15-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Unit tests (GPU; pytorch 1.5)
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-gpu15-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#  unittests_gpu16:
-#    <<: *gpu
-#    working_directory: ~/ParlAI
-#    parallelism: 8
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: nvidia-downloads-20200516
-#      - <<: *setupcuda
-#      - save_cache:
-#          key: nvidia-downloads-20200516
-#          paths:
-#            - "~/nvidia-downloads/"
-#      - restore_cache:
-#          key: deps-20200921-gpu16-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu16
-#      - <<: *installdeps
-#      - <<: *installdetectrondeps
-#      - save_cache:
-#          key: deps-20200921-gpu16-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-gpu16-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Unit tests (GPU; pytorch 1.6)
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m unit -v
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-gpu16-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#  long_gpu_tests:
-#    <<: *gpu
-#    working_directory: ~/ParlAI
-#    parallelism: 8
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: nvidia-downloads-20200516
-#      - <<: *setupcuda
-#      - save_cache:
-#          key: nvidia-downloads-20200516
-#          paths:
-#            - "~/nvidia-downloads/"
-#      - restore_cache:
-#          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu16
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *findtests
-#      - restore_cache:
-#          key: data-20200904-nightly-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Nightly GPU tests
-#          no_output_timeout: 60m
-#          command: coverage run -m pytest --junitxml=test-results/junit.xml -m nightly_gpu -v -s
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-nightly-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
 #  quickstart_tests:
 #    <<: *gpu
 #    working_directory: ~/ParlAI
