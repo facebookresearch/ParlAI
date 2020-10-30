@@ -16,7 +16,6 @@ try:
 
     from mephisto.core.local_database import LocalMephistoDB
     from mephisto.core.operator import Operator
-    from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
     from mephisto.utils.scripts import augment_config_from_db
 
     from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
