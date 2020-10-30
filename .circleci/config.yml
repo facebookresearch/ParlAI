@@ -405,49 +405,11 @@ workflows:
           requires:
             - unittests_gpu16
             - unittests_36
+      - teacher_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_36
 
-#  quickstart_tests:
-#    <<: *gpu
-#    working_directory: ~/ParlAI
-#    parallelism: 1
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: nvidia-downloads-20200516
-#      - <<: *setupcuda
-#      - save_cache:
-#          key: nvidia-downloads-20200516
-#          paths:
-#            - "~/nvidia-downloads/"
-#      - restore_cache:
-#          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu16
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-nightly-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - run:
-#          name: Fake teststorun.txt
-#          command: echo "quickstart" > teststorun.txt
-#      - restore_cache:
-#          key: data-20200904-quick-{{ checksum "teststorun.txt" }}
-#      - run:
-#          name: Quickstart unit tests (GPU; pytorch 1.4)
-#          command: sh tests/test_quickstart.sh
-#      - <<: *codecov
-#      - save_cache:
-#          key: data-20200904-quick-{{ checksum "teststorun.txt" }}
-#          paths:
-#            - "~/ParlAI/data"
-#      - store_test_results:
-#          path: test-results
-#
-#
-#
 #  crowdsourcing_tests:
 #    <<: *standard_cpu37
 #    working_directory: ~/ParlAI
