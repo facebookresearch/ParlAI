@@ -302,12 +302,36 @@ jobs:
           cachename: ut36
           marker: unit
 
+  unittests_37:
+    executor: standard_cpu38
+    working_directory: ~/ParlAI
+    parallelism: 2
+    steps:
+      - runtests:
+          install_torch:
+            - installtorchcpu
+          cachename: ut37
+          marker: unit
+
+  unittests_38:
+    executor: standard_cpu38
+    working_directory: ~/ParlAI
+    parallelism: 2
+    steps:
+      - runtests:
+          install_torch:
+            - installtorchcpu
+          cachename: ut38
+          marker: unit
 workflows:
   version: 2
   commit:
     jobs:
       - cleaninstall_36
       - unittests_36
+      - unittests_37
+      - unittests_38
+      - unittests_osx
 
 #  unittests_38:
 #    <<: *standard_cpu38
