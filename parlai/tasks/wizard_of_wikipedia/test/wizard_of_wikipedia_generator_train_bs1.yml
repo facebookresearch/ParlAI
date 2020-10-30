@@ -1,0 +1,946 @@
+- - checked_sentence: Dr Pepper is a carbonated soft drink marketed as having a unique
+      flavor.
+    chosen_topic: Dr Pepper
+    episode_done: false
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Dr Pepper __knowledge__ Dr Pepper is a carbonated soft drink marketed as having
+      a unique flavor.
+
+      Dr Pepper __knowledge__ The drink was created in the 1880s by pharmacist Charles
+      Alderton in Waco, Texas and first served around 1885.
+
+      Dr Pepper __knowledge__ Dr Pepper was first nationally marketed in the United
+      States in 1904, and is now also sold in Europe, Asia, Canada, Mexico, Australia,
+      and South America, as well as New Zealand and South Africa as an imported good.
+
+      Dr Pepper __knowledge__ Variants include a version without high fructose corn
+      syrup, Diet Dr Pepper, as well as a line of additional flavors, first introduced
+      in the 2000s.
+
+      Dr Pepper __knowledge__ The U.S. Patent Office recognizes December 1, 1885,
+      as the first time Dr Pepper was served.
+
+      Dr Pepper __knowledge__ It was introduced nationally in the United States at
+      the 1904 Louisiana Purchase Exposition as a new kind of soda pop, made with
+      23 flavors.
+
+      Dr Pepper __knowledge__ Its introduction in 1885 preceded the introduction of
+      Coca-Cola by one year.
+
+      Dr Pepper __knowledge__ It was formulated by Brooklyn-born pharmacist Charles
+      Alderton in Morrison''s Old Corner Drug Store in Waco, Texas.
+
+      Dr Pepper __knowledge__ To test his new drink, he first offered it to store
+      owner Wade Morrison, who also found it to his liking.
+
+      Dr Pepper __knowledge__ Patrons at Morrison''s soda fountain soon learned of
+      Alderton''s new drink and began ordering a "Waco".
+
+      Dr Pepper __knowledge__ Alderton gave the formula to Morrison, who named it
+      Dr. Pepper (later stylized as "Dr Pepper").
+
+      '
+    label_candidates: []
+    labels:
+    - I believe you have drank Dr. Pepper before, it is a carbonated soft drink marketed
+      as having a unique flavor.
+    text: Dr Pepper
+    title: Dr Pepper
+- - checked_sentence: The drink was created in the 1880s by pharmacist Charles Alderton
+      in Waco, Texas and first served around 1885.
+    chosen_topic: Dr Pepper
+    episode_done: false
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Dr Pepper __knowledge__ Dr Pepper is a carbonated soft drink marketed as having
+      a unique flavor.
+
+      Dr Pepper __knowledge__ The drink was created in the 1880s by pharmacist Charles
+      Alderton in Waco, Texas and first served around 1885.
+
+      Dr Pepper __knowledge__ Dr Pepper was first nationally marketed in the United
+      States in 1904, and is now also sold in Europe, Asia, Canada, Mexico, Australia,
+      and South America, as well as New Zealand and South Africa as an imported good.
+
+      Dr Pepper __knowledge__ Variants include a version without high fructose corn
+      syrup, Diet Dr Pepper, as well as a line of additional flavors, first introduced
+      in the 2000s.
+
+      Dr Pepper __knowledge__ The U.S. Patent Office recognizes December 1, 1885,
+      as the first time Dr Pepper was served.
+
+      Dr Pepper __knowledge__ It was introduced nationally in the United States at
+      the 1904 Louisiana Purchase Exposition as a new kind of soda pop, made with
+      23 flavors.
+
+      Dr Pepper __knowledge__ Its introduction in 1885 preceded the introduction of
+      Coca-Cola by one year.
+
+      Dr Pepper __knowledge__ It was formulated by Brooklyn-born pharmacist Charles
+      Alderton in Morrison''s Old Corner Drug Store in Waco, Texas.
+
+      Dr Pepper __knowledge__ To test his new drink, he first offered it to store
+      owner Wade Morrison, who also found it to his liking.
+
+      Dr Pepper __knowledge__ Patrons at Morrison''s soda fountain soon learned of
+      Alderton''s new drink and began ordering a "Waco".
+
+      Dr Pepper __knowledge__ Alderton gave the formula to Morrison, who named it
+      Dr. Pepper (later stylized as "Dr Pepper").
+
+      Soft drink __knowledge__ A soft drink (see terminology for other names) is a
+      drink that typically contains carbonated water (although lemonade, among others,
+      is usually not carbonated), a sweetener, and a natural or artificial flavoring.
+
+      Soft drink __knowledge__ The sweetener may be sugar, high-fructose corn syrup,
+      fruit juice, sugar substitutes (in the case of diet drinks), or some combination
+      of these.
+
+      Soft drink __knowledge__ Soft drinks may also contain caffeine, colorings, preservatives,
+      and other ingredients.
+
+      Soft drink __knowledge__ Soft drinks are called "soft" in contrast with "hard"
+      alcoholic beverages.
+
+      Soft drink __knowledge__ Small amounts of alcohol may be present in a soft drink,
+      but the alcohol content must be less than 0.5% of the total volume if the drink
+      is to be considered non-alcoholic.
+
+      Sugary drink tax __knowledge__ A sugary drink tax or soda tax is a tax or surcharge
+      designed to reduce consumption of drinks with added sugar.
+
+      Sugary drink tax __knowledge__ Drinks covered under a soda tax often include
+      carbonated soft drinks, sports drinks and energy drinks.
+
+      Sugary drink tax __knowledge__ The tax is a matter of public debate in many
+      countries and beverage producers like Coca-Cola often oppose it.
+
+      Sugary drink tax __knowledge__ Advocates such as national medical associations
+      and the World Health Organization (WHO) promote the tax as an example of Pigovian
+      taxation, aimed to discourage unhealthy diets and offset the growing economic
+      costs of obesity.
+
+      Sugary drink tax __knowledge__ Type II Diabetes is a growing health concern
+      in many developed and developing countries around the world, with 1.6 million
+      deaths directly due to type II diabetes in 2015 alone.
+
+      Diet drink __knowledge__ Diet (alternatively marketed as sugar-free, zero-calorie
+      or low-calorie) drinks are sugar-free, artificially sweetened versions of fizzy
+      beverages with virtually no calories.
+
+      Diet drink __knowledge__ They are generally marketed toward health-conscious
+      people, diabetics, athletes, and other people who want to lose weight, improve
+      physical fitness, or reduce their sugar intake.
+
+      Diet drink __knowledge__ The beginning of the diet drink or refreshment era
+      was in 1952, when Kirsch Bottling in Brooklyn, New York launched a sugar-free
+      ginger ale called No-Cal.
+
+      Diet drink __knowledge__ It was designed for diabetics, not dieters, and distribution
+      remained local.
+
+      Diet drink __knowledge__ Royal Crown Cola placed an announcement in an Atlanta
+      newspaper in 1958 announcing a diet product, Diet Rite.
+
+      Energy drink __knowledge__ An energy drink is a type of beverage containing
+      stimulant drugs, usually including caffeine, which is marketed as providing
+      mental and physical stimulation (marketed as "energy", but distinct from food
+      energy).
+
+      Energy drink __knowledge__ They may or may not be carbonated and many also contain
+      sugar or other sweeteners, herbal extracts, taurine, and amino acids.
+
+      Energy drink __knowledge__ They are a subset of the larger group of energy products,
+      which includes bars and gels, and distinct from sports drinks, which are advertised
+      to enhance sports performance.
+
+      Energy drink __knowledge__ There are many brands and varieties of energy drinks.
+
+      Energy drink __knowledge__ Coffee, tea and other naturally caffeinated beverages
+      are usually not considered energy drinks.
+
+      Benzene in soft drinks __knowledge__ Benzene in soft drinks is of potential
+      concern due to the carcinogenic nature of the benzene molecule.
+
+      Benzene in soft drinks __knowledge__ This contamination is a public health concern
+      and has caused significant outcry among environmental and health advocates.
+
+      Benzene in soft drinks __knowledge__ Benzene levels are regulated in drinking
+      water nationally and internationally, and in bottled water in the United States,
+      but only informally in soft drinks.
+
+      Benzene in soft drinks __knowledge__ The benzene forms from decarboxylation
+      of the preservative benzoic acid in the presence of ascorbic acid (vitamin C)
+      and metal ions (iron and copper) that act as catalysts, especially under heat
+      and light.
+
+      Benzene in soft drinks __knowledge__ The major cause of benzene in soft drinks
+      is the decarboxylation of benzoic acid in the presence of ascorbic acid (vitamin
+      C, E300) or erythorbic acid (a diastereomer of ascorbic acid, E315).
+
+      Container deposit legislation __knowledge__ Container-deposit legislation (also
+      known as a deposit-refund scheme, bottle bill, or deposit-return system) is
+      any law that requires the collection of a monetary deposit on beverage containers
+      (refillable or non-refillable) at the point of sale.
+
+      Container deposit legislation __knowledge__ When the container is returned to
+      an authorized redemption center, or retailer in some jurisdictions, the deposit
+      is partly or fully refunded to the redeemer (presumed to be the original purchaser).
+
+      Container deposit legislation __knowledge__ It is a deposit-refund system.
+
+      Container deposit legislation __knowledge__ Governments may pass container deposit
+      legislation for several reasons, including, for example:  Deposits that are
+      not redeemed are often kept by distributors or bottlers to cover the costs of
+      the system (including handling fees paid to retailers or redemption enters to
+      collect, sort, and handle the containers) or are escheated to the governmental
+      entity involved to fund environmental programs.
+
+      PepsiCo __knowledge__ PepsiCo, Inc. is an American multinational food, snack,
+      and beverage corporation headquartered in Purchase, New York.
+
+      PepsiCo __knowledge__ PepsiCo has interests in the manufacturing, marketing,
+      and distribution of grain-based snack foods, beverages, and other products.
+
+      PepsiCo __knowledge__ PepsiCo was formed in 1965 with the merger of the Pepsi-Cola
+      Company and Frito-Lay, Inc. PepsiCo has since expanded from its namesake product
+      Pepsi to a broader range of food and beverage brands, the largest of which included
+      an acquisition of Tropicana Products in 1998 and the Quaker Oats Company in
+      2001, which added the Gatorade brand to its portfolio.
+
+      Carbonated water __knowledge__ Carbonated water (also known as sparkling water,
+      seltzer water, seltzer, bubbly water, or fizzy water, or the closely related
+      club soda or soda water) is water into which carbon dioxide gas under pressure
+      has been dissolved.
+
+      Carbonated water __knowledge__ Club soda or soda water may have additives, such
+      as sodium chloride, sodium bicarbonate or similar, but seltzer water is almost
+      always composed of water and carbon dioxide with no other additives.
+
+      Carbonated water __knowledge__ Carbonation is the process that causes the water
+      to become effervescent.
+
+      Carbonated water __knowledge__ Most carbonated water is sold in ready to drink
+      bottles like carbonated beverages such as soft drinks, but it can also be prepared
+      at home with "soda makers".
+
+      Mountain Dew __knowledge__ Mountain Dew (stylized as Mtn Dew) is a carbonated
+      soft drink brand produced and owned by PepsiCo.
+
+      Mountain Dew __knowledge__ The original formula was invented in 1940 by Tennessee
+      beverage bottlers Barney and Ally Hartman.
+
+      Mountain Dew __knowledge__ A revised formula was created by Bill Bridgforth
+      in 1958.
+
+      Mountain Dew __knowledge__ The rights to this formula were obtained by the Tip
+      Corporation of Marion, Virginia.
+
+      Mountain Dew __knowledge__ William H. "Bill" Jones of the Tip corporation further
+      refined the formula, launching that version of Mountain Dew in 1961.
+
+      Mountain Dew __knowledge__ In August 1964, the Mountain Dew brand and production
+      rights were acquired from Tip by the Pepsi-Cola company, at which point distribution
+      expanded more widely across the United States and Canada.
+
+      7 Up __knowledge__ 7 Up (stylized as 7up outside the U.S.) is a brand of lemon-lime
+      flavored, non-caffeinated soft drink.
+
+      7 Up __knowledge__ The rights to the brand are held by Dr Pepper Snapple Group
+      in the United States, and PepsiCo (or its licensees) in the rest of the world.
+
+      7 Up __knowledge__ The U.S. version of the "7 Up" logo includes a red circle
+      between the "7" and "Up"; this red circle has been animated and used as a mascot
+      for the brand as Cool Spot.
+
+      7 Up __knowledge__ 7 Up was created by Charles Leiper Grigg, who launched his
+      St. Louis–based company The Howdy Corporation in 1920.
+
+      7 Up __knowledge__ Grigg came up with the formula for a lemon-lime soft drink
+      in 1929.
+
+      7 Up __knowledge__ The product, originally named "Bib-Label Lithiated Lemon-Lime
+      Soda", was launched two weeks before the Wall Street Crash of 1929.
+
+      Jones Soda __knowledge__ Jones Soda Co. is a beverage company based in Pioneer
+      Square, Seattle, Washington.
+
+      Jones Soda __knowledge__ It bottles and distributes soft drinks, non-carbonated
+      beverages, energy drinks, and candy.
+
+      Jones Soda __knowledge__ Jones Soda is a carbonated soft drink that has many
+      unusual flavors that are not offered by other soft drink makers.
+
+      Jones Soda __knowledge__ The company was founded by Peter van Stolk in 1986
+      as a beverage distributor in Western Canada.
+
+      Jones Soda __knowledge__ Until 1995, the company distributed other beverage
+      lines such as AriZona Iced Tea and Thomas Kemper sodas in Western Canada.
+
+      Jones Soda __knowledge__ As the company gained significant knowledge of the
+      beverage industry, it decided to get into the market with alternative beverages
+      as the Urban Juice & Soda Company.
+
+      Cider __knowledge__ Cider ( ), hard apple cider, or hard cider in the US, is
+      an alcoholic beverage made from the fermented juice of apples.
+
+      Cider __knowledge__ Cider is popular in the United Kingdom, especially in the
+      West Country, and widely available.
+
+      Cider __knowledge__ The UK has the world''s highest per capita consumption,
+      as well as its largest cider-producing companies.
+
+      Cider __knowledge__ Cider is also popular in many Commonwealth countries, such
+      as Canada, Australia, and New Zealand.
+
+      Cider __knowledge__ Aside from the UK and its former colonies, cider is popular
+      in other European countries including Ireland, Portugal (mainly in Minho and
+      Madeira), France (particularly Brittany and Normandy), northern Italy (Piedmont
+      and Friuli), and Spain (especially Asturias and the Basque Country).
+
+      '
+    label_candidates: []
+    labels:
+    - I believe this one is a little different, It was invented in 1880s by pharmacist
+      Charles Alderton in Waco, Texas
+    text: Yes I used to drink it a lot as a kid but realized soft drinks are not healthy.
+    title: Dr Pepper
+- - checked_sentence: Dr Pepper was first nationally marketed in the United States
+      in 1904, and is now also sold in Europe, Asia, Canada, Mexico, Australia, and
+      South America, as well as New Zealand and South Africa as an imported good.
+    chosen_topic: Dr Pepper
+    episode_done: true
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Dr Pepper __knowledge__ Dr Pepper is a carbonated soft drink marketed as having
+      a unique flavor.
+
+      Dr Pepper __knowledge__ The drink was created in the 1880s by pharmacist Charles
+      Alderton in Waco, Texas and first served around 1885.
+
+      Dr Pepper __knowledge__ Dr Pepper was first nationally marketed in the United
+      States in 1904, and is now also sold in Europe, Asia, Canada, Mexico, Australia,
+      and South America, as well as New Zealand and South Africa as an imported good.
+
+      Dr Pepper __knowledge__ Variants include a version without high fructose corn
+      syrup, Diet Dr Pepper, as well as a line of additional flavors, first introduced
+      in the 2000s.
+
+      Dr Pepper __knowledge__ The U.S. Patent Office recognizes December 1, 1885,
+      as the first time Dr Pepper was served.
+
+      Dr Pepper __knowledge__ It was introduced nationally in the United States at
+      the 1904 Louisiana Purchase Exposition as a new kind of soda pop, made with
+      23 flavors.
+
+      Dr Pepper __knowledge__ Its introduction in 1885 preceded the introduction of
+      Coca-Cola by one year.
+
+      Dr Pepper __knowledge__ It was formulated by Brooklyn-born pharmacist Charles
+      Alderton in Morrison''s Old Corner Drug Store in Waco, Texas.
+
+      Dr Pepper __knowledge__ To test his new drink, he first offered it to store
+      owner Wade Morrison, who also found it to his liking.
+
+      Dr Pepper __knowledge__ Patrons at Morrison''s soda fountain soon learned of
+      Alderton''s new drink and began ordering a "Waco".
+
+      Dr Pepper __knowledge__ Alderton gave the formula to Morrison, who named it
+      Dr. Pepper (later stylized as "Dr Pepper").
+
+      New Coke __knowledge__ New Coke was the unofficial name for the reformulation
+      of Coca-Cola introduced in April 1985 by the Coca-Cola Company to replace the
+      original formula of its flagship soft drink, Coca-Cola (also called Coke).
+
+      New Coke __knowledge__ New Coke originally had no separate name of its own but
+      was simply known as "the new taste of Coca-Cola" until 1992, when it was renamed
+      Coke Ⅱ.  Coca-Cola''s market share had been losing ground to diet soft drinks
+      and non-cola beverages for many years.
+
+      New Coke __knowledge__ Consumers who were purchasing regular colas seemed to
+      prefer the sweeter taste of rival Pepsi-Cola, as Coca-Cola learned in conducting
+      blind taste tests.
+
+      Pepsi __knowledge__ Pepsi is a carbonated soft drink produced and manufactured
+      by PepsiCo.
+
+      Pepsi __knowledge__ Originally created and developed in 1893 by Caleb Bradham
+      and introduced as Brad''s Drink, it was renamed as Pepsi-Cola on August 28,
+      1898, and then as Pepsi in 1961.
+
+      Pepsi __knowledge__ The drink Pepsi was first introduced as "Brad''s Drink"
+      in New Bern, North Carolina, United States, in 1893 by Caleb Bradham, who made
+      it at his drugstore where the drink was sold.
+
+      Pepsi __knowledge__ It was renamed Pepsi-Cola in 1898 after the root of the
+      word "dyspepsia" and the kola nuts used in the recipe.
+
+      Pepsi __knowledge__ The original recipe also included sugar and vanilla.
+
+      Pepsi __knowledge__ Bradham sought to create a fountain drink that was appealing
+      and would aid in digestion and boost energy.
+
+      Coca-Cola __knowledge__ Coca-Cola, or Coke, is a carbonated soft drink produced
+      by The Coca-Cola Company.
+
+      Coca-Cola __knowledge__ Originally intended as a patent medicine, it was invented
+      in the late 19th century by John Pemberton and was bought out by businessman
+      Asa Griggs Candler, whose marketing tactics led Coca-Cola to its dominance of
+      the world soft-drink market throughout the 20th century.
+
+      Coca-Cola __knowledge__ The drink''s name refers to two of its original ingredients,
+      which were kola nuts (a source of caffeine) and coca leaves.
+
+      Coca-Cola __knowledge__ The current formula of Coca-Cola remains a trade secret,
+      although a variety of reported recipes and experimental recreations have been
+      published.
+
+      Pepsi Globe __knowledge__ The Pepsi Globe is the icon and logo for Pepsi, called
+      as such because of the swirling "red, white, & blue" design in a sphere-like
+      shape.
+
+      Pepsi Globe __knowledge__ It is considered one of the world''s most recognizable
+      corporate trademarks.
+
+      Pepsi Globe __knowledge__ The Pepsi Globe originated in the 1940s as a logo
+      and icon for Pepsi.
+
+      Pepsi Globe __knowledge__ The colors of the Pepsi Globe are red, white and blue.
+
+      Pepsi Globe __knowledge__ This is one of the most recognizable logos not only
+      in the United States, but also around the world.
+
+      Pepsi Globe __knowledge__ The Pepsi Globe has undergone several changes throughout
+      its inception in the 1940s with the most recent pivot taking place in 2009.
+
+      Pepsi Globe __knowledge__ This change was the most intense in terms of the amount
+      of money and time that went into the branding, marketing, and visual culture
+      involved in the underlying message for the logo.
+
+      Cola wars __knowledge__ The cola wars are a series of mutually-targeted television
+      advertisements and marketing campaigns since the 1980s between two long-time
+      rival soft drink producers, The Coca-Cola Company and PepsiCo.
+
+      Cola wars __knowledge__ The battle between the two dominant brands in the United
+      States intensified to such an extent that the term “Cola wars” was used to describe
+      the feud.
+
+      Cola wars __knowledge__ Each employed numerous advertising and marketing campaigns
+      to outdo the other.
+
+      Cola wars __knowledge__ Short periods of intense competition between the two
+      firms contrast with how the two firms avoid competition most of the time by
+      focusing on different consumers, sponsoring different sports, differentiating
+      their logos, choosing different colors for their packaging, and building different
+      images for their brand.
+
+      Diet Pepsi __knowledge__ Diet Pepsi and Diet Pepsi Classic Formula Blend are
+      no-calorie carbonated cola soft drinks produced by PepsiCo, introduced in 1964
+      as a variant of Pepsi-Cola with no sugar.
+
+      Diet Pepsi __knowledge__ First test marketed in 1963 under the name Patio Diet
+      Cola, it was re-branded as "Diet Pepsi" the following year, becoming the first
+      diet cola to be distributed on a national scale in the United States.
+
+      Diet Pepsi __knowledge__ In the 1960s and 1970s its competition consisted of
+      Tab, produced by The Coca-Cola Company, and Diet Rite soda, produced by Royal
+      Crown.
+
+      Diet Pepsi __knowledge__ Diet Coke was a later entrant to the diet cola market;
+      though shortly after entering production in 1982 it became the primary competing
+      diet cola to Diet Pepsi.
+
+      Edward Coke __knowledge__ Sir Edward Coke ( "cook", ; 1 February 1552 – 3 September
+      1634) was an English barrister, judge and, later, opposition politician, who
+      is considered to be the greatest jurist of the Elizabethan and Jacobean eras.
+
+      Edward Coke __knowledge__ Born into a middle-class family, Coke was educated
+      at Trinity College, Cambridge, before leaving to study at the Inner Temple,
+      where he was called to the Bar on 20 April 1578.
+
+      Edward Coke __knowledge__ As a barrister he took part in several notable cases,
+      including "Slade''s Case", before earning enough political favour to be elected
+      to Parliament, where he served first as Solicitor General and then as Speaker
+      of the House of Commons.
+
+      Charles Alderton __knowledge__ Charles Courtice Alderton (June 21, 1857 May
+      29, 1941) was an American pharmacist, and the creator of the carbonated soft
+      drink Dr Pepper.
+
+      Charles Alderton __knowledge__ Charles Courtice Alderon was born (21 June 1857,
+      Brooklyn, New York), the eldest of five children to English parents.
+
+      Charles Alderton __knowledge__ Alderton attended Framlingham College in England,
+      studied medicine at the University of Texas, and worked as a pharmacist in Waco,
+      in a shop called "Morrison''s Old Corner Drug Store", which had a soda fountain.
+
+      Charles Alderton __knowledge__ Alderton noticed that customers were tiring of
+      the traditional flavours of sarsaparilla, lemon and vanilla, and so to try and
+      revive sales, began experimenting with new flavour combinations, eventually
+      settling on a 23 ingredient mix combined with phosphoric acid to give it tang.
+
+      Charles T. Pepper __knowledge__ Charles Taylor Pepper (December 2, 1830 – May
+      28, 1903), a 19th-century American medical doctor, is often cited as the inspiration
+      for the name of the Dr Pepper brand soft drink, although this is uncertain.
+
+      Charles T. Pepper __knowledge__ Pepper was born in Big Spring, Virginia, on
+      December 2, 1830.
+
+      Charles T. Pepper __knowledge__ His parents were John Pepper and Mary Robertson
+      Pepper and he was their 12th child.
+
+      Charles T. Pepper __knowledge__ Pepper attended the University of Virginia for
+      medical training and received a degree in 1855.  Pepper married Isabella Howe
+      (1838–1903) of Rural Retreat on May 18, 1858, in Pulaski County, Virginia.
+
+      Charles T. Pepper __knowledge__ She was a cousin to Governor James Hoge Tyler.
+
+      Charles T. Pepper __knowledge__ They had five children that were all born in
+      Rural Retreat.
+
+      Waco, Texas __knowledge__ Waco ( ) is a city which is the county seat of McLennan
+      County, Texas, United States.
+
+      Waco, Texas __knowledge__ It is situated along the Brazos River and I-35, halfway
+      between Dallas and Austin.
+
+      Waco, Texas __knowledge__ The city had a 2010 population of 124,805, making
+      it the 22nd-most populous city in the state.
+
+      Waco, Texas __knowledge__ The US Census 2016 population estimate is 134,432
+      The Waco Metropolitan Statistical Area consists of McLennan and Falls Counties,
+      which had a 2010 population of 234,906.
+
+      Waco, Texas __knowledge__ Falls County was added to the Waco MSA in 2013.
+
+      Waco, Texas __knowledge__ The US Census 2016 population estimate for the Waco
+      MSA is 265,207.
+
+      Waco, Texas __knowledge__ Indigenous peoples occupied areas along the river
+      for thousands of years.
+
+      Waco siege __knowledge__ The Waco siege was the siege of a compound belonging
+      to the group Branch Davidians by American federal and Texas state law enforcement,
+      as well as the U.S. military, between February 28 and April 19, 1993.
+
+      Waco siege __knowledge__ The Branch Davidians, a sect that separated in 1955
+      from the Seventh-day Adventist Church, was led by David Koresh and was headquartered
+      at Mount Carmel Center ranch in the community of Axtell, Texas, 13 miles (21
+      kilometers) east-northeast of Waco.
+
+      Waco siege __knowledge__ The group was suspected of weapons violations, causing
+      a search and arrest warrant to be obtained by the Bureau of Alcohol, Tobacco,
+      and Firearms (ATF).
+
+      Alderton, Northamptonshire __knowledge__ Alderton is a small English village
+      and civil parish about south of Northampton, and north of Milton Keynes, along
+      a road between the A5 and A508 main roads in the southwest and northeast respectively.
+
+      Alderton, Northamptonshire __knowledge__ The nearest large town is Towcester,
+      about north.
+
+      Alderton, Northamptonshire __knowledge__ The village is famous for the remains
+      of an English Heritage Scheduled Ancient Monument, a Norman Castle, known locally
+      as "The Mount", which was the subject of an investigation by the Channel 4 programme
+      "Time Team".
+
+      Alderton, Northamptonshire __knowledge__ The 2001 census data is grouped with
+      the nearby village of Grafton Regis and showed there were 248 people living
+      in both villages, 134 male, 114 female, in 94 dwellings.
+
+      Alderton, Gloucestershire __knowledge__ Alderton is a village and civil parish
+      in the Tewkesbury District of Gloucestershire, England.
+
+      Alderton, Gloucestershire __knowledge__ The village is about north of Cheltenham,
+      east of Tewkesbury, south of Evesham and west of Stow-on-the-Wold.
+
+      Alderton, Gloucestershire __knowledge__ The main roads are the B4077 (Stow Road)
+      and the A46.
+
+      Alderton, Gloucestershire __knowledge__ The village has about 500 residents.
+
+      Alderton, Gloucestershire __knowledge__ Alderton was officially named the most
+      beautiful and welcoming village in 1918.
+
+      Alderton, Gloucestershire __knowledge__ The Church of England parish church
+      of St Margaret of Antioch may originate from the Anglo-Saxon era.
+
+      Alderton, Gloucestershire __knowledge__ The current building is mostly 14th
+      century and was restored in 1890-92.
+
+      Alderton, Gloucestershire __knowledge__ St Margaret''s ecclesiastical parish
+      forms part of the Alderton benefice that incorporates the nearby villages of
+      Dumbleton, Little Washbourne and Great Washbourne.
+
+      '
+    label_candidates: []
+    labels:
+    - Dr Pepper was first nationally marketed in the United States in 1904
+    text: 'I see, yes it might be different. I was thinking of Pepsi and Coke actually. '
+    title: Dr Pepper
+- - checked_sentence: The chicken ("Gallus gallus domesticus") is a type of domesticated
+      fowl, a subspecies of the red junglefowl.
+    chosen_topic: Chicken
+    episode_done: false
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Chicken __knowledge__ The chicken ("Gallus gallus domesticus") is a type of
+      domesticated fowl, a subspecies of the red junglefowl.
+
+      Chicken __knowledge__ It is one of the most common and widespread domestic animals,
+      with a total population of more than 19 billion as of 2011.
+
+      Chicken __knowledge__ Humans commonly keep chickens as a source of food (consuming
+      both their meat and eggs) and as pets.
+
+      Chicken __knowledge__ Genetic studies have pointed to multiple maternal origins
+      in Southeast Asia, East Asia, and South Asia, but with the clade found in the
+      Americas, Europe, the Middle East and Africa originating in the Indian subcontinent.
+
+      Chicken __knowledge__ From India, the domesticated chicken was imported to Lydia
+      in western Asia Minor, and to Greece by the fifth century BC.
+
+      Chicken __knowledge__ Fowl had been known in Egypt since the mid-15th century
+      BC, with the "bird that gives birth every day" having come to Egypt from the
+      land between Syria and Shinar, Babylonia, according to the annals of Thutmose
+      III.
+
+      Chicken __knowledge__ In the UK and Ireland, adult male chickens over the age
+      of one year are primarily known as cocks, whereas in the United States, Australia
+      and Canada, they are more commonly called roosters.
+
+      Chicken __knowledge__ Males less than a year old are "cockerels".
+
+      Chicken __knowledge__ Castrated roosters are called "capons" (surgical and chemical
+      castration are now illegal in some parts of the world).
+
+      No Man''s Sky __knowledge__ No Man''s Sky is an action-adventure survival video
+      game developed and published by the indie studio Hello Games for PlayStation
+      4 and Microsoft Windows.
+
+      No Man''s Sky __knowledge__ It was released worldwide in August 2016.
+
+      No Man''s Sky __knowledge__ The game is built around four pillars: exploration,
+      survival, combat, and trading.
+
+      No Man''s Sky __knowledge__ Players are free to perform within the entirety
+      of a procedurally generated deterministic open universe, which includes over
+      18 quintillion planets.
+
+      No Man''s Sky __knowledge__ Through the game''s procedural generation system,
+      planets have their own ecosystems with unique forms of flora and fauna, and
+      various sentient alien species may engage the player in combat or trade within
+      planetary systems.
+
+      Hello Kitty __knowledge__ Shortly after her creation in 1974, the Hello Kitty
+      vinyl coin purse was introduced by Sanrio in March 1975.
+
+      Hello Kitty __knowledge__ The character was then brought to the United States
+      in 1976.
+
+      Hello Kitty __knowledge__ The character is a staple of the "kawaii" segment
+      of Japanese popular culture.
+
+      Hello Kitty __knowledge__ By 2010, Sanrio had groomed Hello Kitty into a global
+      marketing phenomenon worth $5 billion a year.
+
+      Hello Kitty __knowledge__ By 2014, when Hello Kitty was 40 years old, she was
+      worth about $7 billion a year, all without advertising except on Sanrio''s,
+      related show producers'', and ticket sales'' webpages and at show venues and
+      nearby locations.
+
+      Hello Kitty __knowledge__ Originally aimed at preadolescent females, Hello Kitty''s
+      market has broadened to include adult consumers, being found on a variety of
+      products ranging from school supplies to fashion accessories.
+
+      Hello! Project __knowledge__  In 1997, Japanese rock group Sharam Q, fronted
+      by Tsunku, began auditions for a female vocalist.
+
+      Hello! Project __knowledge__ These auditions aired via the reality show Asayan,
+      and resulted in Michiyo Heike being crowned winner.
+
+      Hello! Project __knowledge__ Tsunku, however, decided to give five of the runners-up,
+      Yuko Nakazawa, Natsumi Abe, Kaori Iida, Asuka Fukuda and Aya Ishiguro, a chance
+      to become a group in their own right.
+
+      Hello! Project __knowledge__ The girls were set the task of selling 50,000 copies
+      of their demo single "Ai no Tane," in just five days.
+
+      Hello! Project __knowledge__ The girls sold the required number of copies in
+      four days, and subsequently became an official group.
+
+      Hello! Project __knowledge__ Morning Musume''s debut single, "Morning Coffee,"
+      was released on January 28, 1998 on the One Up Music label and charted at #6
+      on the Oricon weekly chart.
+
+      Morning Musume __knowledge__ , formerly simply and colloquially referred to
+      as , is a Japanese female idol group, holding the second highest overall single
+      sales (of a female group) on the Oricon charts as of February 2012, with the
+      Oricon record of most top ten singles with an amount of 50, and they have sold
+      over 21 million copies in Japan alone.
+
+      Morning Musume __knowledge__ Morning Musume was formed in 1997 by rock singer-songwriter
+      turned record producer Tsunku, who later composed the vast majority of the group''s
+      songs over the decade.
+
+      Morning Musume __knowledge__ They are the lead group of Hello!
+
+      Morning Musume __knowledge__ Project that specialises in upbeat, pop-oriented
+      music coupled with dance performance.
+
+      Burger King grilled chicken sandwiches __knowledge__ International fast-food
+      restaurant chain Burger King and its Australian franchise Hungry Jack''s have
+      had a variety of grilled chicken sandwiches in their product portfolio since
+      1990.
+
+      Burger King grilled chicken sandwiches __knowledge__ The BK Broiler was the
+      first iteration, and was one of the most successful product introductions in
+      the fast food industry to that point in time.
+
+      Burger King grilled chicken sandwiches __knowledge__ However sales dropped in
+      the following two years, and the product was reformulated and renamed to the
+      Chicken Whopper to align the product with the company''s Whopper Sandwich.
+
+      Burger King grilled chicken sandwiches __knowledge__ A change of ownership of
+      Burger King in 2004 prompted another reformulation of the product into the BK
+      Baguette product line that focused on a more health-oriented product.
+
+      Hello (Adele song) __knowledge__ "Hello" is a song by English singer Adele,
+      released on 23 October 2015 by XL Recordings as the lead single from her third
+      studio album, "25" (2015).
+
+      Hello (Adele song) __knowledge__ Adele co-wrote the song with her producer,
+      Greg Kurstin.
+
+      Hello (Adele song) __knowledge__ "Hello" is a piano ballad with soul influences,
+      and lyrics that discuss themes of nostalgia and regret.
+
+      Hello (Adele song) __knowledge__ Upon release, the song was acclaimed by music
+      critics, who compared it favourably to Adele''s previous work and praised the
+      song''s lyrics and Adele''s vocals while many critics and publications ranked
+      it as one of the best songs of the year.
+
+      Hello (Adele song) __knowledge__ It was recorded in London.
+
+      Hello (Adele song) __knowledge__ "Hello" reached number one in almost every
+      country it charted in, including the United Kingdom, where it became her second
+      UK number-one single, following "Someone like You", and has the largest opening
+      week sales in three years.
+
+      List of Berenstain Bears books __knowledge__ This list of "Berenstain Bears"
+      books includes many in the picture book series (such as "Beginner Books" and
+      "First Time Books") and the illustrated children''s novels, such as those in
+      the "Big Chapter Books" series.
+
+      List of Berenstain Bears books __knowledge__ Since the first "Berenstain Bears"
+      installment was published in 1962, the series has sold close to 260 million
+      copies.
+
+      List of Berenstain Bears books __knowledge__ In addition to writing children''s
+      literature, the authors Stan and Jan Berenstain also wrote two parenting books,
+      "What Your Parents Never Told You About Being a Mom or Dad" (1995) and "The
+      Berenstain Bears and the Bear Essentials" (2005), as well as their autobiography,
+      "Down a Sunny Dirt Road" (2002).
+
+      '
+    label_candidates: []
+    labels:
+    - Chicken is a domesticated fowl
+    text: 'Chicken
+
+      Hello, tell me what started your interest in chicken? '
+    title: Chicken
+- - checked_sentence: Humans commonly keep chickens as a source of food (consuming
+      both their meat and eggs) and as pets.
+    chosen_topic: Chicken
+    episode_done: false
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Chicken __knowledge__ The chicken ("Gallus gallus domesticus") is a type of
+      domesticated fowl, a subspecies of the red junglefowl.
+
+      Chicken __knowledge__ It is one of the most common and widespread domestic animals,
+      with a total population of more than 19 billion as of 2011.
+
+      Chicken __knowledge__ Humans commonly keep chickens as a source of food (consuming
+      both their meat and eggs) and as pets.
+
+      Chicken __knowledge__ Genetic studies have pointed to multiple maternal origins
+      in Southeast Asia, East Asia, and South Asia, but with the clade found in the
+      Americas, Europe, the Middle East and Africa originating in the Indian subcontinent.
+
+      Chicken __knowledge__ From India, the domesticated chicken was imported to Lydia
+      in western Asia Minor, and to Greece by the fifth century BC.
+
+      Chicken __knowledge__ Fowl had been known in Egypt since the mid-15th century
+      BC, with the "bird that gives birth every day" having come to Egypt from the
+      land between Syria and Shinar, Babylonia, according to the annals of Thutmose
+      III.
+
+      Chicken __knowledge__ In the UK and Ireland, adult male chickens over the age
+      of one year are primarily known as cocks, whereas in the United States, Australia
+      and Canada, they are more commonly called roosters.
+
+      Chicken __knowledge__ Males less than a year old are "cockerels".
+
+      Chicken __knowledge__ Castrated roosters are called "capons" (surgical and chemical
+      castration are now illegal in some parts of the world).
+
+      Poultry __knowledge__ Poultry () are domesticated birds kept by humans for their
+      eggs, their meat or their feathers.
+
+      Poultry __knowledge__ These birds are most typically members of the superorder
+      Galloanserae (fowl), especially the order Galliformes (which includes chickens,
+      quails and turkeys).
+
+      Poultry __knowledge__ Poultry also includes other birds that are killed for
+      their meat, such as the young of pigeons (known as squabs) but does not include
+      similar wild birds hunted for sport or food and known as game.
+
+      Poultry __knowledge__ The word "poultry" comes from the French/Norman word "poule",
+      itself derived from the Latin word "pullus", which means small animal.
+
+      Poultry __knowledge__ The domestication of poultry took place several thousand
+      years ago.
+
+      List of Artemis Fowl characters __knowledge__ This is a list of characters in
+      the "Artemis Fowl" novel series by Eoin Colfer.
+
+      List of Artemis Fowl characters __knowledge__ Leon Abbot is the main antagonist
+      of "".
+
+      List of Artemis Fowl characters __knowledge__ He is a demon who opposed the
+      time-spell at the battle of Taillte, and broke the circle of warlocks as they
+      were performing the spell.
+
+      List of Artemis Fowl characters __knowledge__ In the aftermath, he and Qweffor,
+      an apprentice warlock, merge by lava and magic, and the hybrid is catapulted
+      to the "near past" in France.
+
+      List of Artemis Fowl characters __knowledge__ Abbot retains control of the body,
+      stealing Qweffor''s magic.
+
+      List of Artemis Fowl characters __knowledge__ On Earth, Abbot learns how far
+      humans have advanced from Minerva Paradizo.
+
+      List of Artemis Fowl characters __knowledge__ Realizing that any attempt to
+      resume war with the humans would lead to certain extinction, Abbot steals a
+      book and a crossbow and resolves to return to Hybras to spend what time the
+      island has left as ruler.
+
+      Domestication of animals __knowledge__ The domestication of animals is the mutual
+      relationship between animals with the humans who have influence on their care
+      and reproduction.
+
+      Domestication of animals __knowledge__ Charles Darwin recognized the small number
+      of traits that made domesticated species different from their wild ancestors.
+
+      Domestication of animals __knowledge__ He was also the first to recognize the
+      difference between conscious selective breeding in which humans directly select
+      for desirable traits, and unconscious selection where traits evolve as a by-product
+      of natural selection or from selection on other traits.
+
+      Domestication of animals __knowledge__ There is a genetic difference between
+      domestic and wild populations.
+
+      Domestication of animals __knowledge__ There is also such a difference between
+      the domestication traits that researchers believe to have been essential at
+      the early stages of domestication, and the improvement traits that have appeared
+      since the split between wild and domestic populations.
+
+      Papadzules __knowledge__ Papadzules (; Mexican Spanish, from Mayan ) is a traditional
+      dish from the Yucatán Peninsula resembling enchiladas.
+
+      Papadzules __knowledge__ In its simplest form it consists of corn tortillas
+      dipped in a sauce of "pepita" (pumpkin seeds) filled with hard-boiled eggs,
+      and garnished with a cooked tomato-pepper sauce.
+
+      Papadzules __knowledge__ Two theories exist about the origin of the name.
+
+      Papadzules __knowledge__ Diana Kennedy says it derives from a phrase meaning
+      "food of the lords" because this dish was reportedly fed to the Spaniards.
+
+      Papadzules __knowledge__ Variations of this etymology appear elsewhere.
+
+      Papadzules __knowledge__ The second theory posits that it derives from Mayan
+      "papakʼ", to anoint or smear, and "sul", to soak or drench, making the meaning
+      something along the lines of "smeared and drenched".
+
+      Agriculture in Mexico __knowledge__ Agriculture in Mexico has been an important
+      sector of the country’s economy historically and politically even though now
+      it accounts for a very small percentage of Mexico’s GDP.
+
+      Agriculture in Mexico __knowledge__ Mexico is one of the cradles of human agriculture
+      with the Mesoamericans developing domesticated plants such as maize, beans,
+      tomatoes, squash, avocados, cacao, various kinds of spices, and more.
+
+      Agriculture in Mexico __knowledge__ Turkeys were the only domesticated fowl
+      in the prehispanic period and small dogs were raised for food.
+
+      Agriculture in Mexico __knowledge__ There were no large domesticated animals.
+
+      Agriculture in Mexico __knowledge__ During the early colonial period, the Spanish
+      introduced more plants and the concept of domesticated animals, principally
+      cattle, horses, donkeys, mules, goats and sheep, and barn yard animals such
+      as chickens and pigs.
+
+      History of agriculture __knowledge__ The history of agriculture records the
+      domestication of plants and animals and the development and dissemination of
+      techniques for raising them productively.
+
+      History of agriculture __knowledge__ Agriculture began independently in different
+      parts of the globe, and included a diverse range of taxa.
+
+      History of agriculture __knowledge__ At least eleven separate regions of the
+      Old and New World were involved as independent centers of origin.
+
+      History of agriculture __knowledge__ Wild grains were collected and eaten from
+      at least 20,000 BC.
+
+      History of agriculture __knowledge__ From around 9,500 BC, the eight Neolithic
+      founder crops—emmer wheat, einkorn wheat, hulled barley, peas, lentils, bitter
+      vetch, chick peas, and flax—were cultivated in the Levant.
+
+      Korean fried chicken __knowledge__ Korean fried chicken or KFC, usually called
+      chikin (, from the English "chicken") in Korea, refers to a variety of fried
+      chicken dishes from South Korea, including the basic huraideu chikin (, from
+      the English "fried chicken") and spicy yangnyeom chikin (, "seasoned chicken").
+
+      Korean fried chicken __knowledge__ In South Korea, fried chicken is consumed
+      as a meal, an appetizer, anju (food that is served and eaten with drinks), or
+      as an after-meal snack.
+
+      Korean fried chicken __knowledge__ Korean fried chicken differs from typical
+      American fried chicken because it is fried twice; the skin is therefore crunchier
+      and less greasy.
+
+      Korean fried chicken __knowledge__ Furthermore, Korean-style chicken is not
+      characterized by the crags and crusty nubs associated with American fried chicken;
+      it was described by Julia Moskin of "The New York Times" as a "thin, crackly
+      and almost transparent crust".
+
+      Domestication __knowledge__ Domestication is a sustained multi-generational
+      relationship in which one group of organisms assumes a significant degree of
+      influence over the reproduction and care of another group to secure a more predictable
+      supply of resources from that second group.
+
+      Domestication __knowledge__ Charles Darwin recognized the small number of traits
+      that made domestic species different from their wild ancestors.
+
+      Domestication __knowledge__ He was also the first to recognize the difference
+      between conscious selective breeding in which humans directly select for desirable
+      traits, and unconscious selection where traits evolve as a by-product of natural
+      selection or from selection on other traits.
+
+      '
+    label_candidates: []
+    labels:
+    - A subspecies of the red jungle fowl. Human keep it as a source of food
+    text: What is a domesticated fowl?
+    title: Chicken

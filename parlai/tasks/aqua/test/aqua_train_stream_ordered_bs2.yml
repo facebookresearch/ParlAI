@@ -1,0 +1,201 @@
+- - - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 21
+      - B ) 21.5
+      - C ) 22
+      - D ) 22.5
+      - E ) 23
+      labels:
+      - E ) 23
+      text: Two friends plan to walk along a 43 - km trail , starting at opposite
+        ends of the trail at the same time . If Friend P ' s rate is 15 % faster than
+        Friend Q ' s , how many kilometers will Friend P have walked when they pass
+        each other ?
+    - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 4 and 1
+      - B ) 1 and 5
+      - C ) 5 and 1
+      - D ) 3 and 5
+      - E ) 5 and 3
+      labels:
+      - C ) 5 and 1
+      text: In the coordinate plane , points ( x , 1 ) and ( 5 , y ) are on line k
+        . If line k passes through the origin and has slope 1 / 5 , then what are
+        the values of x and y respectively ?
+- - - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'If Q complete x kilometers , then P completes 1.15 x kilometers .
+
+        x + 1.15 x = 43
+
+        2.15 x = 43
+
+        x = 43 / 2.15 = 20
+
+        Then P will have have walked 1.15 * 20 = 23 km .
+
+        The answer is E .'
+      labels:
+      - 'If Q complete x kilometers , then P completes 1.15 x kilometers .
+
+        x + 1.15 x = 43
+
+        2.15 x = 43
+
+        x = 43 / 2.15 = 20
+
+        Then P will have have walked 1.15 * 20 = 23 km .
+
+        The answer is E .'
+      text: Can you provide a rationale for your answer?
+    - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'Line k passes through the origin and has slope 1 / 5 means that its equation
+        is y = 1 / 5 * x .
+
+        Thus : ( x , 1 ) = ( 5 , 1 ) and ( 5 , y ) = ( 5,1 ) - - > x = 5 and y = 1
+
+        Answer : C'
+      labels:
+      - 'Line k passes through the origin and has slope 1 / 5 means that its equation
+        is y = 1 / 5 * x .
+
+        Thus : ( x , 1 ) = ( 5 , 1 ) and ( 5 , y ) = ( 5,1 ) - - > x = 5 and y = 1
+
+        Answer : C'
+      text: Can you provide a rationale for your answer?
+- - - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) II
+      - B ) I and II
+      - C ) I and III
+      - D ) II and III
+      - E ) All of the above
+      labels:
+      - B ) I and II
+      text: 'For all numbers p and q , the operation @ is defined by p @ q = p ^ 2
+        - pq . If xy ≠ 0 , then which of the following can be equal to zero ?
+
+        I . x @ y
+
+        II . ( xy ) @ y
+
+        III . x @ ( x + y )'
+    - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) $ 1600
+      - B ) $ 2000
+      - C ) $ 2150
+      - D ) $ 2500
+      - E ) $ 12000
+      labels:
+      - A ) $ 1600
+      text: Carl is facing very difficult financial times and can only pay the interest
+        on a $ 10,000 loan he has taken . The bank charges him a quarterly compound
+        rate of 4 % . What is the approximate interest he pays annually ?
+- - - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'p @ q = p ^ 2 - pq = p ( p - q ) . . . . so p @ q will be zero if p = q or
+        p = 0 . . but a can not be equal to 0 . . as per Q , x and y can take any
+        int value except 0 . . .
+
+        now lets look at the choices . .
+
+        when x = y , it will be 0 . . . so ok . . .
+
+        when we put xy = y , it is possible when x = 1 and y any integer . . . so
+        ok again
+
+        when we put x = x + y . . . . only possibility when y = 0 and it is given
+        x and y can not be 0 . . . . so not possible
+
+        only l and ll possible ans B . . . .'
+      labels:
+      - 'p @ q = p ^ 2 - pq = p ( p - q ) . . . . so p @ q will be zero if p = q or
+        p = 0 . . but a can not be equal to 0 . . as per Q , x and y can take any
+        int value except 0 . . .
+
+        now lets look at the choices . .
+
+        when x = y , it will be 0 . . . so ok . . .
+
+        when we put xy = y , it is possible when x = 1 and y any integer . . . so
+        ok again
+
+        when we put x = x + y . . . . only possibility when y = 0 and it is given
+        x and y can not be 0 . . . . so not possible
+
+        only l and ll possible ans B . . . .'
+      text: Can you provide a rationale for your answer?
+    - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'Usually , you are given the annual rate of interest and it is mentioned that
+        it is annual rate .
+
+        The bank charges him a quarterly compounded ANNUAL rate of 16 % .
+
+        Here you find per quarter rate as ( 16 / 4 ) % = 4 %
+
+        I have actually never seen a question with quarter rate given but since this
+        question did not mentionannual rate of interestand since the options did not
+        make sense with 4 % annual rate of interest , it is apparent that the intent
+        was a 4 % quarterly rate . So the bank charges 4 % every quarter and compounds
+        it in the next quarter . Had it been a simple quarterly rate , we would have
+        just found 4 * 4 % of 10,000 = $ 1600 as our answer .
+
+        But since , the interest is compounded , it will be a bit more than $ 1600
+        . Option ( A ) looks correct .'
+      labels:
+      - 'Usually , you are given the annual rate of interest and it is mentioned that
+        it is annual rate .
+
+        The bank charges him a quarterly compounded ANNUAL rate of 16 % .
+
+        Here you find per quarter rate as ( 16 / 4 ) % = 4 %
+
+        I have actually never seen a question with quarter rate given but since this
+        question did not mentionannual rate of interestand since the options did not
+        make sense with 4 % annual rate of interest , it is apparent that the intent
+        was a 4 % quarterly rate . So the bank charges 4 % every quarter and compounds
+        it in the next quarter . Had it been a simple quarterly rate , we would have
+        just found 4 * 4 % of 10,000 = $ 1600 as our answer .
+
+        But since , the interest is compounded , it will be a bit more than $ 1600
+        . Option ( A ) looks correct .'
+      text: Can you provide a rationale for your answer?
+- - - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 18 seconds
+      - B ) 27 seconds
+      - C ) 26 seconds
+      - D ) 12 seconds
+      - E ) 8 seconds
+      labels:
+      - E ) 8 seconds
+      text: The speed at which a man can row a boat in still water is 25 kmph . If
+        he rows downstream , where the speed of current is 11 kmph , what time will
+        he take to cover 80 metres ?
+    - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 8
+      - B ) 9
+      - C ) 10
+      - D ) 11
+      - E ) 12
+      labels:
+      - A ) 8
+      text: There are k - 2 members in a certain band , including Jim and Ellen .
+        Two members are to be selected to attend the Grammy awards ceremony . If there
+        are 6 possible combinations in which Jim and Ellen are not selected , what
+        is the value of k ?

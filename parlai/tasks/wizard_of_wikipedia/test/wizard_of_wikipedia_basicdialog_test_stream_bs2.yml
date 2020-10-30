@@ -1,0 +1,62 @@
+- - - episode_done: false
+      eval_labels:
+      - Blue is always nice. I like royal blue.
+      id: wizard_of_wikipedia
+      text: Blue is my favorite primary color.
+    - episode_done: false
+      eval_labels:
+      - 'Cinematography,is a type of motion picture , captured electronically by means
+        of an image '
+      id: wizard_of_wikipedia
+      text: Hi buddy, What you think about cinematography
+- - - episode_done: false
+      eval_labels:
+      - Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
+      id: wizard_of_wikipedia
+      text: I once road on The Royal Blue train from New York to D.C
+    - episode_done: false
+      eval_labels:
+      - It works by lens used to repeatedly focus the light reflected from objects
+        into real images on the light-sensitive surface .
+      id: wizard_of_wikipedia
+      text: Yes buddy,  Images captured with an electronic image-sensor, produces
+        an electrical charge.The word "cinematography" is based on the Greek words  meaning
+        movement, motion.
+- - - episode_done: false
+      eval_labels:
+      - No I haven't, but I always like the way he danced.
+      id: wizard_of_wikipedia
+      text: Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing
+        Crosby?
+    - episode_done: false
+      eval_labels:
+      - Cinematography is also a type of photography which is the science, art, application
+        and practice of creating durable images by recording light or other electromagnetic
+        radiation, either electronically by means of an image sensor.
+      id: wizard_of_wikipedia
+      text: ' Muybridge sequence of a horse galloping In the 1830s, moving images
+        were produced on revolving drums and disks'
+- - - episode_done: true
+      eval_labels:
+      - He was definitely a legend. I think he was a good singer too.
+      id: wizard_of_wikipedia
+      text: Yes. I was sad when he died in 1977. He was my favorite actor.
+    - episode_done: false
+      eval_labels:
+      - Some however prefer using   digital camera or digicam ,which is a camera that
+        captures photograph.
+      id: wizard_of_wikipedia
+      text: Yes , Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes
+- - - episode_done: false
+      eval_labels:
+      - What is an IQ of a genius?
+      id: wizard_of_wikipedia
+      text: a genius is a person who displays exceptional intellectual ability.
+    - episode_done: true
+      eval_labels:
+      - Prior to the advent of digital technology,  photographs were made by exposing
+        light sensitive photographic film and paper, which was processed in liquid
+        chemical .
+      id: wizard_of_wikipedia
+      text: Yes now digital camera is trendy

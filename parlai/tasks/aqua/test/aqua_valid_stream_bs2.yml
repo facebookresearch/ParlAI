@@ -1,0 +1,155 @@
+- - - episode_done: false
+      eval_labels:
+      - A ) 32400
+      id: AQuA
+      label_candidates:
+      - A ) 32400
+      - B ) 6000
+      - C ) 600
+      - D ) 60000
+      - E ) 10
+      text: Three birds are flying at a fast rate of 900 kilometers per hour . What
+        is their speed in miles per minute ? [ 1 km = 0.6 miles ]
+    - episode_done: false
+      eval_labels:
+      - D ) 250 m
+      id: AQuA
+      label_candidates:
+      - A ) 100 m
+      - B ) 150 m
+      - C ) 200 m
+      - D ) 250 m
+      - E ) 300 m
+      text: A ship is leaving a port . It takes 240 seconds to passes through a 750
+        m channel to get to the port gates , and takes 60 seconds to pass through
+        the gates of the port . What is its length ?
+- - - episode_done: true
+      eval_labels:
+      - 'To calculate the equivalent of miles in a kilometer
+
+        0.6 kilometers = 1 mile
+
+        900 kilometers = ( 0.6 ) * 900 = 540 miles
+
+        In 1 hour there are 60 minutes
+
+        Speed in miles / minutes = 60 * 540 = 32400
+
+        Correct answer - A'
+      id: AQuA
+      label_candidates:
+      - 'To calculate the equivalent of miles in a kilometer
+
+        0.6 kilometers = 1 mile
+
+        900 kilometers = ( 0.6 ) * 900 = 540 miles
+
+        In 1 hour there are 60 minutes
+
+        Speed in miles / minutes = 60 * 540 = 32400
+
+        Correct answer - A'
+      text: Can you provide a rationale for your answer?
+    - episode_done: true
+      eval_labels:
+      - 'Let the length of the ship be x metres and its speed be y m / sec . Then
+        , x / y = 60 ⇒ y = x / 60
+
+        ∴ ( x + 750 ) / 240 = x / 60 ⇔ x = 250 m . Answer D'
+      id: AQuA
+      label_candidates:
+      - 'Let the length of the ship be x metres and its speed be y m / sec . Then
+        , x / y = 60 ⇒ y = x / 60
+
+        ∴ ( x + 750 ) / 240 = x / 60 ⇔ x = 250 m . Answer D'
+      text: Can you provide a rationale for your answer?
+- - - episode_done: false
+      eval_labels:
+      - C ) 24
+      id: AQuA
+      label_candidates:
+      - A ) 6
+      - B ) 18
+      - C ) 24
+      - D ) 36
+      - E ) 48
+      text: A rectangular piece of cloth 2 feet wide was cut lengthwise into two smaller
+        rectangular pieces . The shorter piece was one - third of the length of the
+        longer of the 2 new pieces and had an area of 12 square feet . What was the
+        length Q in feet of the original piece of cloth before cutting ?
+    - episode_done: false
+      eval_labels:
+      - B ) ( 0,3 )
+      id: AQuA
+      label_candidates:
+      - A ) ( 1,1 )
+      - B ) ( 0,3 )
+      - C ) ( 2,0 )
+      - D ) ( 3,6 )
+      - E ) ( 6,3 )
+      text: In the xy - coordinate plane , which of the following points must lie
+        on the line kx + 2 y = 6 for every possible value of k ?
+- - - episode_done: true
+      eval_labels:
+      - 'The question says , length of shorter piece is 1 / 3 rd of the length of
+        longer of the two new pieces
+
+        This means after I split it into two pieces , I have a shorter piece and a
+        longer one . The length of shorter is 1 / 3 rd the length of longer . The
+        6 I found out was length of shorter piece . Then , length of longer should
+        be 18 and total length should be 24 .'
+      id: AQuA
+      label_candidates:
+      - 'The question says , length of shorter piece is 1 / 3 rd of the length of
+        longer of the two new pieces
+
+        This means after I split it into two pieces , I have a shorter piece and a
+        longer one . The length of shorter is 1 / 3 rd the length of longer . The
+        6 I found out was length of shorter piece . Then , length of longer should
+        be 18 and total length should be 24 .'
+      text: Can you provide a rationale for your answer?
+    - episode_done: true
+      eval_labels:
+      - 'For a point to satisfy the given equation for all possible values of k ,
+        then x must equal 0 .
+
+        When x = 0 , the equation is simply 2 y = 6 , and then y = 3 .
+
+        The answer is B .'
+      id: AQuA
+      label_candidates:
+      - 'For a point to satisfy the given equation for all possible values of k ,
+        then x must equal 0 .
+
+        When x = 0 , the equation is simply 2 y = 6 , and then y = 3 .
+
+        The answer is B .'
+      text: Can you provide a rationale for your answer?
+- - - episode_done: false
+      eval_labels:
+      - C ) 13
+      id: AQuA
+      label_candidates:
+      - A ) 7
+      - B ) 9
+      - C ) 13
+      - D ) 27
+      - E ) 45
+      text: A travel company wants to charter a plane to the Bahamas . Chartering
+        the plane costs $ 5,000 . So far , 12 people have signed up for the trip .
+        If the company charges $ 200 per ticket , how many more passengers must sign
+        up for the trip before the company can make any profit on the charter ?
+    - episode_done: false
+      eval_labels:
+      - B ) $ 905
+      id: AQuA
+      label_candidates:
+      - A ) $ 895
+      - B ) $ 905
+      - C ) $ 910
+      - D ) $ 915
+      - E ) $ 945
+      text: 'Kirk sells cars . On two sales , Kirk has received commissions of $ 850
+        , and $ 705 , and he has one additional sale pending . If Kirk is to receive
+        an average ( arithmetic mean ) commission of exactly $ 820 on the three sales
+        , then the third commission must be :'

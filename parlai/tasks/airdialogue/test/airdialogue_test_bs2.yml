@@ -1,0 +1,52 @@
+- - - episode_done: false
+      eval_labels:
+      - Hello.
+      id: airdialogue
+      text: Hello.
+    - episode_done: false
+      eval_labels:
+      - Hello, how may I help you at this moment?
+      id: airdialogue
+      text: Hello, I am Nicholas Smith.
+- - - episode_done: false
+      eval_labels:
+      - Sure, I am here to day that.
+      id: airdialogue
+      text: I want to travel from New York, LGA to PHL. Can you help me out in booking
+        a flight ticket?
+    - episode_done: false
+      eval_labels:
+      - Sure, I am gleeful to help you. Can you please share your journey dates?
+      id: airdialogue
+      text: I would like to go to a event in Oakland, so could you please book a ticket
+        for me?
+- - - episode_done: false
+      eval_labels:
+      - Can you please tell me your name firstly?
+      id: airdialogue
+      text: Thank you for accepting my request.
+    - episode_done: false
+      eval_labels:
+      - Noted. Please share your airport codes.
+      id: airdialogue
+      text: Sure, I would like to go on 07/14 and return back on 07/16.
+- - - episode_done: false
+      eval_labels:
+      - May I know your travelling dates please?
+      id: airdialogue
+      text: Sure, myself Barbara Campbell.
+    - episode_done: false
+      eval_labels:
+      - Can I have a moment please? I will check the availability.
+      id: airdialogue
+      text: My source and destination airport codes are DTW and OAK.
+- - - episode_done: false
+      eval_labels:
+      - Let me know about affordable price please.
+      id: airdialogue
+      text: My travelling dates are from Apr 27 to Apr 29.
+    - episode_done: false
+      eval_labels:
+      - There is a connecting flight available with AA airline, shall I book it?
+      id: airdialogue
+      text: Ok, ensure it is a single connecting flight.

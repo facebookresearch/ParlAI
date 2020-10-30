@@ -1,0 +1,27 @@
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - What would you like to see while there?
+    text: I am planning a trip in Cambridge
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - 'Unfortunately, I have many in other area but nothing in the centre. Can I look
+      up something else for you? '
+    text: I would like to go to an entertainment venue in the centre of town.
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - There are 13 churches in the centre. How about christi's college? The address
+      is saint andrew's street.
+    text: How about a college then. I will need the address and phone number.
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - Okay the phone number is 01223334900.
+    text: 'Ok that will work. Can I get their phone number please? '
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - I'd be happy to help, where are you leaving from?
+    text: Thank you. I also need information on a train.

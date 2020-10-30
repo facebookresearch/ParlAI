@@ -1,0 +1,64 @@
+- - - episode_done: false
+      eval_labels:
+      - Blue is always nice. I like royal blue.
+      id: wizard_of_wikipedia
+      text: Blue is my favorite primary color.
+    - episode_done: false
+      eval_labels:
+      - Yes buddy,  Images captured with an electronic image-sensor, produces an electrical
+        charge.The word "cinematography" is based on the Greek words  meaning movement,
+        motion.
+      id: wizard_of_wikipedia
+      text: 'Cinematography,is a type of motion picture , captured electronically
+        by means of an image '
+- - - episode_done: false
+      eval_labels:
+      - Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
+      id: wizard_of_wikipedia
+      text: I once road on The Royal Blue train from New York to D.C
+    - episode_done: false
+      eval_labels:
+      - ' Muybridge sequence of a horse galloping In the 1830s, moving images were
+        produced on revolving drums and disks'
+      id: wizard_of_wikipedia
+      text: It works by lens used to repeatedly focus the light reflected from objects
+        into real images on the light-sensitive surface .
+- - - episode_done: false
+      eval_labels:
+      - No I haven't, but I always like the way he danced.
+      id: wizard_of_wikipedia
+      text: Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing
+        Crosby?
+    - episode_done: false
+      eval_labels:
+      - Yes , Cinematography finds uses in many fields of science and business as
+        well as for entertainment purposes
+      id: wizard_of_wikipedia
+      text: Cinematography is also a type of photography which is the science, art,
+        application and practice of creating durable images by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor.
+- - - episode_done: true
+      eval_labels:
+      - He was definitely a legend. I think he was a good singer too.
+      id: wizard_of_wikipedia
+      text: Yes. I was sad when he died in 1977. He was my favorite actor.
+    - episode_done: true
+      eval_labels:
+      - Yes now digital camera is trendy
+      id: wizard_of_wikipedia
+      text: Some however prefer using   digital camera or digicam ,which is a camera
+        that captures photograph.
+- - - chosen_topic: Blue
+      episode_done: false
+      eval_labels:
+      - I once road on The Royal Blue train from New York to D.C
+      id: wizard_of_wikipedia
+      text: Blue is always nice. I like royal blue.
+    - chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - 'Cinematography,is a type of motion picture , captured electronically by means
+        of an image '
+      id: wizard_of_wikipedia
+      text: Hi buddy, What you think about cinematography

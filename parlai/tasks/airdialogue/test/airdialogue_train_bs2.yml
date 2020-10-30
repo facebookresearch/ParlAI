@@ -1,0 +1,51 @@
+- - - episode_done: false
+      id: airdialogue
+      labels:
+      - Hello. How may I assist you now?
+      text: Hi.
+    - episode_done: false
+      id: airdialogue
+      labels:
+      - Hello.
+      text: Hello.
+- - - episode_done: false
+      id: airdialogue
+      labels:
+      - Ok, please mention your planned dates for this trip.
+      text: Gregory Perez here. I want to book a flight ticket from DCA to PHX. Can
+        you help me in that?
+    - episode_done: false
+      id: airdialogue
+      labels:
+      - How can I assist you King?
+      text: I am Jonathan King.
+- - - episode_done: false
+      id: airdialogue
+      labels:
+      - May I know your depart and arrival time?
+      text: My trip dates are Jan 26 to Jan 28.
+    - episode_done: false
+      id: airdialogue
+      labels:
+      - Sure, please tell me your trip dates.
+      text: I want to book a ticket from CLT to CLT, can you help me?
+- - - episode_done: false
+      id: airdialogue
+      labels:
+      - Do you need a connecting flight?
+      text: My depart time should be in the afternoon.
+    - episode_done: false
+      id: airdialogue
+      labels:
+      - Please wait for a moment.
+      text: I am departing on 03/20 and return on 03/22.
+- - - episode_done: false
+      id: airdialogue
+      labels:
+      - Gregory Perez, there is no flight currently available for your journey.
+      text: I need a connecting flight.
+    - episode_done: false
+      id: airdialogue
+      labels:
+      - JetBlue airlines is available for you with 1 connection, can I book?
+      text: Sure.

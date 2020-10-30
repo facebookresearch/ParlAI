@@ -1,0 +1,74 @@
+- - - chosen_topic: Toronto Raptors
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - Toronto Raptors are a Canadian professional basketball team based in Toronto,
+        Ontario
+      text: Tell me more about Toronto Raptors buddy
+    - chosen_topic: Chevrolet Corvette
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - Why not? It's an awesome car and US made - currently in Bowling Green KY and
+        previously in Michigan and Missouri.
+      text: I'm feeling a mid-life crisis coming on, and I think a Chevy Corvette
+        is the only cure? Whatcha think? Good idea or greatest idea?
+- - - chosen_topic: Toronto Raptors
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - they were established in 1995, along with the Vancouver Grizzlies, as part
+        of the NBA's expansion into Canada.
+      text: When was the basketball team formed?
+    - chosen_topic: Chevrolet Corvette
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - Don't know the price tag, but if you fancy a white one, there were 300 hand-built
+        ones produced in 1953. That would be a sweet car to own.
+      text: Alright, I like the support I'm getting here. What should I know about
+        Corvettes before I get one? Like an average MSRP.
+- - - chosen_topic: Toronto Raptors
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - dont know really , but they Raptors struggled in their early years, but after
+        the acquisition of Vince Carter through a draft day trade in 1998, the team
+        set league-attendance records and made the NBA playoffs in 2000, 2001, and
+        2002.
+      text: How many NBA titles have they won so far?
+    - chosen_topic: Chevrolet Corvette
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - Well, it was known as one of the "solid axle" models, so you should be able
+        to find a decent one.
+      text: Oh yeah, an old school Vette would be pretty awesome, and DEFINITELY in
+        true mid-life crisis style. Would it be much of a fixer-upper?
+- - - chosen_topic: Toronto Raptors
+      episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - no information about that ,oronto has teams in nearly every major professional
+        sport, including the Toronto Blue Jays (MLB), Toronto Argonauts (CFL), Toronto
+        Raptors (NBA), Toronto Rock (NLL), Toronto FC (MLS)
+      text: Oh ok. Which toronto businessman was responsible for bringing the the  Toronto
+        Raptors to Canada
+    - chosen_topic: Chevrolet Corvette
+      episode_done: true
+      id: wizard_of_wikipedia
+      labels:
+      - Not much, just the Chevy Corvette is one sweet sports car - enjoy!
+      text: Alright you've convinced me. Anything else important I should know before
+        I go drop 50 grand?
+- - - chosen_topic: Toronto Raptors
+      episode_done: true
+      id: wizard_of_wikipedia
+      labels:
+      - you are welcome!
+      text: Oh ok. Thanks for enlightening me about the Toronto Raptors
+    - episode_done: false
+      id: wizard_of_wikipedia
+      labels:
+      - What is a domesticated fowl?
+      text: Chicken is a domesticated fowl

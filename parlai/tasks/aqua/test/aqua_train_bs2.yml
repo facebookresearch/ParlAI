@@ -1,0 +1,172 @@
+- - - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 120960
+      - B ) 135650
+      - C ) 115850
+      - D ) 142560
+      - E ) 185260
+      labels:
+      - A ) 120960
+      text: In how many different ways can the letters of the word ' MATHEMATICS '
+        be arranged so that the vowels always come together ?
+    - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) a ) - a
+      - B ) b ) - 1 / a
+      - C ) c ) 1 / a
+      - D ) d ) 0
+      - E ) e ) a
+      labels:
+      - E ) e ) a
+      text: 'an operation * is defined by the equation :
+
+        a * b = a - b / a + b , for all numbers a and b such that a is not equal to
+        - b , if a is not equal to - t and a * t = 0 , then = ?'
+- - - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'In the word '' MATHEMATICS '' we treat the two vowels AEAI as one letter
+        . Thus , we have MTHMTCS ( AEAI )
+
+        Now , we have to arranged 8 letters , out of which M occurs twice , T occurs
+        twice and the rest are different .
+
+        Number of ways of arranging these letters = 8 ! / ( 2 ! ) ( 2 ! ) = 10080
+        .
+
+        Now AEAI has 4 letters in which A occurs 2 times and the rest are different
+        .
+
+        number of ways of arranging these letters = 4 ! / 2 ! = 12 .
+
+        Required number of ways = ( 10080 * 12 ) = 120960 .
+
+        Answer is A'
+      labels:
+      - 'In the word '' MATHEMATICS '' we treat the two vowels AEAI as one letter
+        . Thus , we have MTHMTCS ( AEAI )
+
+        Now , we have to arranged 8 letters , out of which M occurs twice , T occurs
+        twice and the rest are different .
+
+        Number of ways of arranging these letters = 8 ! / ( 2 ! ) ( 2 ! ) = 10080
+        .
+
+        Now AEAI has 4 letters in which A occurs 2 times and the rest are different
+        .
+
+        number of ways of arranging these letters = 4 ! / 2 ! = 12 .
+
+        Required number of ways = ( 10080 * 12 ) = 120960 .
+
+        Answer is A'
+      text: Can you provide a rationale for your answer?
+    - episode_done: true
+      id: AQuA
+      label_candidates:
+      - If a * t = 0 and a = - t then a - t = o of a = t , so answer E
+      labels:
+      - If a * t = 0 and a = - t then a - t = o of a = t , so answer E
+      text: Can you provide a rationale for your answer?
+- - - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 50 sec
+      - B ) 77
+      - C ) 55
+      - D ) 44
+      - E ) 11
+      labels:
+      - A ) 50 sec
+      text: How much time will a train of length 200 m moving at a speed of 72 kmph
+        take to cross another train of length 300 m , moving at 36 kmph in the same
+        direction ?
+    - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 50,000
+      - B ) 750,000
+      - C ) 850,000
+      - D ) 7 , 500,000
+      - E ) R = 750 , 000,000
+      labels:
+      - E ) R = 750 , 000,000
+      text: The number x of cars sold each week varies with the price y in dollars
+        according to the equation x = 800,000 – 50 y . What would be the total weekly
+        revenue R , in dollars , from the sale of cars priced at $ 15,000 ?
+- - - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'Answer : Option A
+
+        Explanation :
+
+        The distance to be covered = Sum of their lengths = 200 + 300 = 500 m .
+
+        Relative speed = 72 - 36 = 36 kmph = 36 * 5 / 18 = 10 mps .
+
+        Time required = d / s = 500 / 10
+
+        = 50 sec .
+
+        Answer : A'
+      labels:
+      - 'Answer : Option A
+
+        Explanation :
+
+        The distance to be covered = Sum of their lengths = 200 + 300 = 500 m .
+
+        Relative speed = 72 - 36 = 36 kmph = 36 * 5 / 18 = 10 mps .
+
+        Time required = d / s = 500 / 10
+
+        = 50 sec .
+
+        Answer : A'
+      text: Can you provide a rationale for your answer?
+    - episode_done: true
+      id: AQuA
+      label_candidates:
+      - 'number of cars sold = x = 800000 - 50 y
+
+        y = 15000
+
+        x = 800000 - 750000 = 50000
+
+        revenue from 50000 cars = 15000 * 50000 = 750000000 E'
+      labels:
+      - 'number of cars sold = x = 800000 - 50 y
+
+        y = 15000
+
+        x = 800000 - 750000 = 50000
+
+        revenue from 50000 cars = 15000 * 50000 = 750000000 E'
+      text: Can you provide a rationale for your answer?
+- - - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 1000
+      - B ) 289
+      - C ) 209
+      - D ) 280
+      - E ) 892
+      labels:
+      - A ) 1000
+      text: Find the principle on a certain sum of money at 5 % per annum for 2 2
+        / 5 years if the amount being Rs . 1120 ?
+    - episode_done: false
+      id: AQuA
+      label_candidates:
+      - A ) 60 degrees
+      - B ) 120 degrees
+      - C ) 45 degrees
+      - D ) 50 degrees
+      - E ) None of these
+      labels:
+      - D ) 50 degrees
+      text: The time in a clock is 20 minute past 2 . Find the angle between the hands
+        of the clock .

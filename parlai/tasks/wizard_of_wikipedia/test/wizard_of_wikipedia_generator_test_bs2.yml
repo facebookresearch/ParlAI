@@ -1,0 +1,2011 @@
+- - - checked_sentence: Blue is one of the three primary colours of pigments in painting
+        and traditional colour theory, as well as in the RGB colour model.
+      chosen_topic: Blue
+      episode_done: false
+      eval_labels:
+      - Blue is my favorite primary color.
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Blue __knowledge__ Blue is one of the three primary colours of pigments in
+        painting and traditional colour theory, as well as in the RGB colour model.
+
+        Blue __knowledge__ It lies between violet and green on the spectrum of visible
+        light.
+
+        Blue __knowledge__ The eye perceives blue when observing light with a dominant
+        wavelength between approximately 450 and 495 nanometres.
+
+        Blue __knowledge__ Most blues contain a slight mixture of other colors; azure
+        contains some green, while ultramarine contains some violet.
+
+        Blue __knowledge__ The clear daytime sky and the deep sea appear blue because
+        of an optical effect known as Rayleigh scattering.
+
+        Blue __knowledge__ An optical effect called Tyndall scattering explains blue
+        eyes.
+
+        Blue __knowledge__ Distant objects appear more blue because of another optical
+        effect called atmospheric perspective.
+
+        Blue __knowledge__ Blue has been an important colour in art and decoration
+        since ancient times.
+
+        Blue __knowledge__ The semi-precious stone lapis lazuli was used in ancient
+        Egypt for jewellery and ornament and later, in The Renaissance, to make the
+        pigment ultramarine, the most expensive of all pigments.
+
+        Blue __knowledge__ In the eighth century Chinese artists used cobalt blue
+        to colour fine blue and white porcelain.
+
+        Blue __knowledge__ In the Middle Ages, European artists used it in the windows
+        of Cathedrals.
+
+        Blue __knowledge__ Europeans wore clothing coloured with the vegetable dye
+        woad until it was replaced by the finer indigo from America.
+
+        '
+      label_candidates: []
+      text: Blue
+      title: Blue
+    - checked_sentence: Cinematography (also called "Direction of Photography") is
+        the science or art of motion-picture photography by recording light or other
+        electromagnetic radiation, either electronically by means of an image sensor,
+        or chemically by means of a light-sensitive material such as film stock.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - 'Cinematography,is a type of motion picture , captured electronically by means
+        of an image '
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography __knowledge__ Typically, a lens is used to repeatedly focus
+        the light reflected from objects into real images on the light-sensitive surface
+        inside a camera during a questioned exposure, creating multiple images.
+
+        Cinematography __knowledge__ With an electronic image sensor, this produces
+        an electrical charge at each pixel, which is electronically processed and
+        stored in a video file for subsequent display or processing.
+
+        Cinematography __knowledge__ The result with photographic emulsion is a series
+        of invisible latent images on the film stock, which are later chemically "developed"
+        into a visible image.
+
+        Cinematography __knowledge__ The images on the film stock are played back
+        at a rapid speed and projected onto a screen, creating the illusion of motion.
+
+        Cinematography __knowledge__ Cinematography finds uses in many fields of science
+        and business as well as for entertainment purposes and mass communication.
+
+        Cinematography __knowledge__ The word "cinematography" was created from the
+        Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+        "to record", together meaning "recording motion."
+
+        Buddy''s Song (novel) __knowledge__ Buddy''s Song is a novel by British author
+        Nigel Hinton which was first published in 1987.
+
+        Buddy''s Song (novel) __knowledge__ It is the second instalment in the Buddy
+        trilogy, between Buddy and Buddy''s Blues, and follows the story of Buddy
+        as he started to pursue a musical career.
+
+        Buddy''s Song (novel) __knowledge__ The book was adapted into a film, directed
+        by Claude Whatham and starring Roger Daltrey and Chesney Hawkes as Terry and
+        Buddy respectively, in 1990.
+
+        Buddy''s Song (novel) __knowledge__ Whilst visiting the set in the television
+        series based on the first book the author asked why they put a guitar in Buddy''s
+        bedroom.
+
+        Buddy''s Song (novel) __knowledge__ The set designer explained that he figured
+        Terry got Buddy a guitar then he gave up when he could not play it.
+
+        Hi-5 (Australian band) __knowledge__ Hi-5 are an Australian children''s musical
+        group formed in 1998, who are associated with the children''s television series
+        of the same name.
+
+        Hi-5 (Australian band) __knowledge__ As of December 2016, the members are
+        Lachie Dearing, Courtney Clarke, Shay Clifford, Joe Kalou and Bailey Spalding.
+
+        Hi-5 (Australian band) __knowledge__ The group is aimed at preschoolers, composed
+        of five performers who entertain and educate children through music, movement
+        and play.
+
+        Hi-5 (Australian band) __knowledge__ "Hi-5" was created by Helena Harris and
+        Posie Graeme-Evans, initially a television series for the Nine Network, which
+        premiered in 1999.
+
+        Hi-5 (Australian band) __knowledge__ The cast of the show became a recognised
+        musical group for children.
+
+        Hi-5 (Australian band) __knowledge__ The original members were Kellie Crawford,
+        Kathleen de Leon Jones, Nathan Foley, Tim Harding and Charli Robinson.
+
+        Buddy Rich __knowledge__ Bernard "Buddy" Rich (September 30, 1917 – April
+        2, 1987) was an American jazz drummer and bandleader.
+
+        Buddy Rich __knowledge__ Widely considered one of the most influential drummers
+        of all time and known for his virtuoso technique, power, and speed, Rich was
+        billed as "the world''s greatest drummer" during his career.
+
+        Buddy Rich __knowledge__ He performed with many bandleaders, most notably
+        Tommy Dorsey, Harry James, Count Basie, and led his own big band.
+
+        Buddy Rich __knowledge__ Rich was born in Sheepshead Bay, Brooklyn to Jewish-American
+        parents Bess (née Skolnik) and Robert Rich, both vaudevillians.
+
+        Buddy Rich __knowledge__ His talent for rhythm was first noted by his father,
+        who saw that Rich could keep a steady beat with spoons at the age of one.
+
+        List of Regular Show characters __knowledge__ "Regular Show" is an American
+        animated series created by J. G. Quintel.
+
+        List of Regular Show characters __knowledge__ The series contains many characters,
+        with seven main characters and various recurring and one-time characters.
+
+        List of Regular Show characters __knowledge__ Mordecai (voiced by J. G. Quintel)
+        is a 5''10" anthropomorphic blue jay (6'' including the crest) who works as
+        a groundskeeper at The Park.
+
+        List of Regular Show characters __knowledge__ He has been best friends with
+        Rigby ever since childhood, and together they are very lazy and constantly
+        slack off at their jobs there.
+
+        List of Regular Show characters __knowledge__ Mordecai is more conscientious,
+        mature, and moral about his actions than Rigby is, which sometimes leads to
+        his opposing Rigby when he is the cause of some kind of chaotic problem.
+
+        Buddy''s Song (film) __knowledge__ Buddy''s Song is a 1991 (copyrighted in
+        1990) British film starring Chesney Hawkes, Roger Daltrey, Sharon Duce and
+        Michael Elphick, Based on the novel of the same name by Nigel Hinton.
+
+        Buddy''s Song (film) __knowledge__ The film is a dramatic comedy featuring
+        a 17-year-old boy, Buddy Clark (Chesney Hawkes), who is determined to make
+        it as a pop star, aided by his father Terry (Roger Daltrey).
+
+        Buddy''s Song (film) __knowledge__ He struggles with young love, estranged
+        parents and the problems associated with making it in the music business.
+
+        Buddy''s Song (film) __knowledge__ The film was accompanied by a soundtrack
+        album which featured Hawkes'' hit "The One and Only".
+
+        Buddy''s Song (film) __knowledge__ It was filmed in London and various towns
+        in the Thames Valley.
+
+        Citizen Kane __knowledge__ Citizen Kane is a 1941 American mystery drama film
+        by Orson Welles, its producer, co-screenwriter, director and star.
+
+        Citizen Kane __knowledge__ The picture was Welles''s first feature film.
+
+        Citizen Kane __knowledge__ Nominated for Academy Awards in nine categories,
+        it won an Academy Award for Best Writing (Original Screenplay) by Herman J.
+        Mankiewicz and Welles.
+
+        Citizen Kane __knowledge__ Considered by many critics, filmmakers, and fans
+        to be the greatest film of all time, "Citizen Kane" was voted as such in five
+        consecutive British Film Institute "Sight & Sound" polls of critics, until
+        it was displaced by "Vertigo" in the 2012 poll.
+
+        Citizen Kane __knowledge__ It topped the American Film Institute''s 100 Years ...
+        100 Movies list in 1998, as well as its 2007 update.
+
+        Buddy diving __knowledge__ Buddy diving is the use of the buddy system by
+        scuba divers and is a set of safety procedures that are intended to improve
+        divers'' chances of avoiding or surviving accidents in or under water by diving
+        in a group of two or sometimes three divers.
+
+        Buddy diving __knowledge__ When using the buddy system, members of the group
+        dive together and co-operate with each other, so that they can help or rescue
+        each other in the event of an emergency.
+
+        Buddy diving __knowledge__ This is most effective if the divers are both competent
+        in all the relevant skills and are sufficiently aware of the situation to
+        be able to respond in time, which is a matter of both attitude and competence.
+
+        '
+      label_candidates: []
+      text: 'Cinematography
+
+        Hi buddy, What you think about cinematography'
+      title: Cinematography
+- - - checked_sentence: The Royal Blue was the Baltimore and Ohio Railroad (B&O)'s
+        flagship passenger train between New York City and Washington, D.C., in the
+        United States, beginning in 1890.
+      chosen_topic: Blue
+      episode_done: false
+      eval_labels:
+      - I once road on The Royal Blue train from New York to D.C
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Blue __knowledge__ Blue is one of the three primary colours of pigments in
+        painting and traditional colour theory, as well as in the RGB colour model.
+
+        Blue __knowledge__ It lies between violet and green on the spectrum of visible
+        light.
+
+        Blue __knowledge__ The eye perceives blue when observing light with a dominant
+        wavelength between approximately 450 and 495 nanometres.
+
+        Blue __knowledge__ Most blues contain a slight mixture of other colors; azure
+        contains some green, while ultramarine contains some violet.
+
+        Blue __knowledge__ The clear daytime sky and the deep sea appear blue because
+        of an optical effect known as Rayleigh scattering.
+
+        Blue __knowledge__ An optical effect called Tyndall scattering explains blue
+        eyes.
+
+        Blue __knowledge__ Distant objects appear more blue because of another optical
+        effect called atmospheric perspective.
+
+        Blue __knowledge__ Blue has been an important colour in art and decoration
+        since ancient times.
+
+        Blue __knowledge__ The semi-precious stone lapis lazuli was used in ancient
+        Egypt for jewellery and ornament and later, in The Renaissance, to make the
+        pigment ultramarine, the most expensive of all pigments.
+
+        Blue __knowledge__ In the eighth century Chinese artists used cobalt blue
+        to colour fine blue and white porcelain.
+
+        Blue __knowledge__ In the Middle Ages, European artists used it in the windows
+        of Cathedrals.
+
+        Blue __knowledge__ Europeans wore clothing coloured with the vegetable dye
+        woad until it was replaced by the finer indigo from America.
+
+        Royal Blue (train) __knowledge__ The Royal Blue was the Baltimore and Ohio
+        Railroad (B&O)''s flagship passenger train between New York City and Washington,
+        D.C., in the United States, beginning in 1890.
+
+        Royal Blue (train) __knowledge__ The Baltimore-based B&O also used the name
+        between 1890 and 1917 for its improved passenger service between New York
+        and Washington launched in the 1890s, collectively dubbed the Royal Blue Line.
+
+        Royal Blue (train) __knowledge__ Using variants such as the "Royal Limited"
+        and "Royal Special" for individual "Royal Blue" trains, the B&O operated the
+        service in partnership with the Reading Railroad and the Central Railroad
+        of New Jersey.
+
+        Royal Blue (train) __knowledge__ Principal intermediate cities served were
+        Philadelphia, Wilmington, and Baltimore.
+
+        Royal Blue Coach Services __knowledge__ Royal Blue Express Services was a
+        coach operator in the south and west of England from 1880 until 1986.
+
+        Royal Blue Coach Services __knowledge__ The Royal Blue business was founded
+        in 1880 by Thomas Elliott in Bournemouth.
+
+        Royal Blue Coach Services __knowledge__ The business, at first known as Royal
+        Blue & Branksome Mews, included the hire of every kind of horse-drawn vehicle,
+        as well as coach building, saddlery and blacksmithing.
+
+        Royal Blue Coach Services __knowledge__ Elliott soon started a four-in-hand
+        stagecoach service to connect Bournemouth to the railway at Holmsley.
+
+        Royal Blue Coach Services __knowledge__ That service became redundant when
+        the railway was extended to Bournemouth in 1888, but by then Elliott had started
+        running Royal Blue excursions by charabanc and coach around Bournemouth and
+        the New Forest.
+
+        British Army mess dress __knowledge__ British Army mess dress is the formal
+        military evening dress worn by British Army officers and senior non-commissioned
+        officers in their respective messes or at other formal occasions.
+
+        British Army mess dress __knowledge__ Mess uniforms first appeared in the
+        British Army in about 1845, initially utilizing the short shell jacket worn
+        since 1831.
+
+        British Army mess dress __knowledge__ This working jacket was worn open over
+        a regimental waistcoat for evening dress.
+
+        British Army mess dress __knowledge__ The original purpose was to provide
+        a relatively comfortable and inexpensive alternative to the stiff and elaborate
+        full-dress uniforms then worn by officers for evening social functions such
+        as regimental dinners or balls.
+
+        Denver Nuggets __knowledge__ The Denver Nuggets are an American professional
+        basketball team based in Denver, Colorado.
+
+        Denver Nuggets __knowledge__ The Nuggets compete in the National Basketball
+        Association (NBA) as a member club of the league''s Western Conference Northwest
+        Division.
+
+        Denver Nuggets __knowledge__ The team was founded as the Denver Larks in 1967
+        as a charter franchise of the American Basketball Association (ABA), but changed
+        its name to Rockets before the first season.
+
+        Denver Nuggets __knowledge__ It changed its name again to the Nuggets in 1974.
+
+        Denver Nuggets __knowledge__ After the name change, the Nuggets played for
+        the final ABA Championship title in 1976, losing to the New York Nets.
+
+        Denver Nuggets __knowledge__ The team has had some periods of success, qualifying
+        for the ABA Playoffs for all seasons from 1967 to the 1976 ABA playoffs where
+        it lost in the finals.
+
+        Los Angeles Rams __knowledge__ The Los Angeles Rams are a professional American
+        football team based in the Los Angeles metropolitan area.
+
+        Los Angeles Rams __knowledge__ The Rams compete in the National Football League
+        (NFL), as a member club of the league''s National Football Conference (NFC)
+        West division.
+
+        Los Angeles Rams __knowledge__ The Rams franchise has won three NFL championships,
+        and is the only franchise to win championships while representing three different
+        cities (Cleveland in 1945, Los Angeles in 1951, and St. Louis in 1999).
+
+        Los Angeles Rams __knowledge__ The Rams play their home games at the Los Angeles
+        Memorial Coliseum in Los Angeles, California.
+
+        Los Angeles Rams __knowledge__ The franchise began in 1936 as the Cleveland
+        Rams, located in Cleveland, Ohio.
+
+        Air Jordan __knowledge__ Air Jordan is a brand of basketball footwear and
+        athletic clothing produced by Nike.
+
+        Air Jordan __knowledge__ It was created for former professional basketball
+        player, Michael Jordan.
+
+        Air Jordan __knowledge__ The original Air Jordan I sneaker, were produced
+        exclusively for Jordan in early 1984, and released to the public in late 1984.
+
+        Air Jordan __knowledge__ The shoes were designed for Nike by Peter Moore,
+        Tinker Hatfield, and Bruce Kilgore.
+
+        Air Jordan __knowledge__ Since its introduction into the sports shoe market,
+        the Air Jordans evolved from the original basketball shoes to models for different
+        uses, including I-XXXII.
+
+        Air Jordan __knowledge__ The Jordan brand sponsors 21 active NBA players,
+        including Jimmy Butler, Chris Paul, Blake Griffin, Kawhi Leonard, Russell
+        Westbrook and Carmelo Anthony.
+
+        Victorian Railways S type carriage __knowledge__ The S type carriages are
+        a compartment layout passenger carriage used on the railways of Victoria,
+        Australia.
+
+        Victorian Railways S type carriage __knowledge__ The carriages were constructed
+        by the Victorian Railways in 1937 for use on the "Spirit of Progress", with
+        additional carriages built until the 1950s for other trains.
+
+        Victorian Railways S type carriage __knowledge__ Introduced by Victorian Railways
+        Chief Commissioner Harold Clapp for the "Spirit of Progress" service between
+        Melbourne and Albury, the carriages lasted through many decades of regular
+        service across a number of operators.
+
+        Victorian Railways S type carriage __knowledge__ Most of the fleet are still
+        in service today, though none are in regular passenger service.
+
+        Victorian Railways S type carriage __knowledge__ Two major types of carriage
+        were constructed - AS first class cars with 3+3 seating in each compartment,
+        BS second class cars with 4+4 seating.
+
+        RGB color model __knowledge__ The RGB color model is an additive color model
+        in which red, green and blue light are added together in various ways to reproduce
+        a broad array of colors.
+
+        RGB color model __knowledge__ The name of the model comes from the initials
+        of the three additive primary colors, red, green, and blue.
+
+        RGB color model __knowledge__ The main purpose of the RGB color model is for
+        the sensing, representation and display of images in electronic systems, such
+        as televisions and computers, though it has also been used in conventional
+        photography.
+
+        RGB color model __knowledge__ Before the electronic age, the RGB color model
+        already had a solid theory behind it, based in human perception of colors.
+
+        RGB color model __knowledge__ RGB is a "device-dependent" color model: different
+        devices detect or reproduce a given RGB value differently, since the color
+        elements (such as phosphors or dyes) and their response to the individual
+        R, G, and B levels vary from manufacturer to manufacturer, or even in the
+        same device over time.
+
+        Red __knowledge__ Red is the colour at the end of the visible spectrum of
+        light, next to orange and opposite violet.
+
+        Red __knowledge__ It has a dominant wavelength of approximately 625–740 nanometres.
+
+        Red __knowledge__ It is a primary color in the RGB color model and the CMYK
+        color model, and is the complementary color of cyan.
+
+        Red __knowledge__ Reds range from the brilliant yellow-tinged scarlet and
+        vermillion to bluish-red crimson, and vary in shade from the pale red pink
+        to the dark red burgundy.
+
+        Red __knowledge__ The red sky at sunset results from Rayleigh scattering,
+        while the red color of the Grand Canyon and other geological features is caused
+        by hematite or red ochre, both forms of iron oxide.
+
+        Shades of green __knowledge__ Varieties of the color green may differ in hue,
+        chroma (also called saturation or intensity) or lightness (or value, tone,
+        or brightness), or in two or three of these qualities.
+
+        Shades of green __knowledge__ Variations in value are also called tints and
+        shades, a tint being a green or other hue mixed with white, a shade being
+        mixed with black.
+
+        Shades of green __knowledge__ A large selection of these various colors is
+        shown below.
+
+        Shades of green __knowledge__ Green is common in nature, especially in plants.
+
+        Shades of green __knowledge__ Many plants are green mainly because of a complex
+        chemical known as chlorophyll which is involved in photosynthesis.
+
+        Shades of green __knowledge__ Many shades of green have been named after plants
+        or are related to plants.
+
+        Chicago White Sox __knowledge__ The Chicago White Sox are an American professional
+        baseball team based in Chicago.
+
+        Chicago White Sox __knowledge__ The White Sox compete in Major League Baseball
+        (MLB) as a member club of the American League (AL) Central division.
+
+        Chicago White Sox __knowledge__ Home games are held at Guaranteed Rate Field,
+        located on the city''s South Side, and the team is owned by Jerry Reinsdorf.
+
+        Chicago White Sox __knowledge__ They are one of two major league clubs in
+        Chicago; the other is the Chicago Cubs, who are a member of the National League
+        (NL) Central division.
+
+        Chicago White Sox __knowledge__ One of the American League''s eight charter
+        franchises, the franchise was established as a major league baseball club
+        in .
+
+        Chicago White Sox __knowledge__ The club was originally called the Chicago
+        White Stockings, but this was soon shortened to Chicago White Sox.
+
+        Color theory __knowledge__ In the visual arts, color theory or colour theory
+        is a body of practical guidance to color mixing and the visual effects of
+        a specific color combination.
+
+        Color theory __knowledge__ There are also definitions (or categories) of colors
+        based on the color wheel: primary color, secondary color and tertiary color.
+
+        Color theory __knowledge__ Although color theory principles first appeared
+        in the writings of Leone Battista Alberti (c.1435) and the notebooks of Leonardo
+        da Vinci (c.1490), a tradition of "colory theory" began in the 18th century,
+        initially within a partisan controversy over Isaac Newton''s theory of color
+        ("Opticks", 1704) and the nature of primary colors.
+
+        Linguistic relativity and the color naming debate __knowledge__ The concept
+        of linguistic relativity concerns the relationship between language and thought,
+        specifically whether language influences thought, and, if so, how.
+
+        Linguistic relativity and the color naming debate __knowledge__ This question
+        has led to research in multiple disciplines—especially anthropology, cognitive
+        science, linguistics, and philosophy.
+
+        Linguistic relativity and the color naming debate __knowledge__ Among the
+        most popular and controversial theories in this area of scholarly work is
+        the theory of linguistic relativity (also known as the Sapir–Whorf hypothesis).
+
+        Linguistic relativity and the color naming debate __knowledge__ An often-cited
+        "strong version" of the claim, first given by Lenneberg in 1953, proposes
+        that language structure determines how we perceive the world.
+
+        Tertiary color __knowledge__ A "tertiary color" is a color made by mixing
+        full saturation of one primary color with half saturation of another primary
+        color and none of a third primary color, in a given color space such as RGB,
+        CMYK (more modern) or RYB (traditional).
+
+        Tertiary color __knowledge__ Tertiary colors have general names, one set of
+        names for the RGB color wheel and a different set for the RYB color wheel.
+
+        Tertiary color __knowledge__ These names are shown below.
+
+        Tertiary color __knowledge__ Another definition of tertiary color is provided
+        by color theorists such as Moses Harrisand Josef Albers, who suggest that
+        tertiary colors are created by intermixing pairs of secondary colors: orange-green,
+        green-purple, purple-orange; or by intermixing complementary colors.
+
+        '
+      label_candidates: []
+      text: Blue is always nice. I like royal blue.
+      title: Royal Blue (train)
+    - checked_sentence: Typically, a lens is used to repeatedly focus the light reflected
+        from objects into real images on the light-sensitive surface inside a camera
+        during a questioned exposure, creating multiple images.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - It works by lens used to repeatedly focus the light reflected from objects
+        into real images on the light-sensitive surface .
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography __knowledge__ Typically, a lens is used to repeatedly focus
+        the light reflected from objects into real images on the light-sensitive surface
+        inside a camera during a questioned exposure, creating multiple images.
+
+        Cinematography __knowledge__ With an electronic image sensor, this produces
+        an electrical charge at each pixel, which is electronically processed and
+        stored in a video file for subsequent display or processing.
+
+        Cinematography __knowledge__ The result with photographic emulsion is a series
+        of invisible latent images on the film stock, which are later chemically "developed"
+        into a visible image.
+
+        Cinematography __knowledge__ The images on the film stock are played back
+        at a rapid speed and projected onto a screen, creating the illusion of motion.
+
+        Cinematography __knowledge__ Cinematography finds uses in many fields of science
+        and business as well as for entertainment purposes and mass communication.
+
+        Cinematography __knowledge__ The word "cinematography" was created from the
+        Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+        "to record", together meaning "recording motion."
+
+        Photography __knowledge__ Photography is the science, art, application and
+        practice of creating durable images by recording light or other electromagnetic
+        radiation, either electronically by means of an image sensor, or chemically
+        by means of a light-sensitive material such as photographic film.
+
+        Photography __knowledge__ Typically, a lens is used to focus the light reflected
+        or emitted from objects into a real image on the light-sensitive surface inside
+        a camera during a timed exposure.
+
+        Photography __knowledge__ With an electronic image sensor, this produces an
+        electrical charge at each pixel, which is electronically processed and stored
+        in a digital image file for subsequent display or processing.
+
+        Image stabilization __knowledge__ Image stabilization (IS) is a family of
+        techniques that reduce blurring associated with the motion of a camera or
+        other imaging device during exposure.
+
+        Image stabilization __knowledge__ Generally, it compensates for pan and tilt
+        (angular movement, equivalent to yaw and pitch) of the imaging device, though
+        electronic image stabilization can also compensate for rotation.
+
+        Image stabilization __knowledge__ It is used in image-stabilized binoculars,
+        still and video cameras, astronomical telescopes, and also smartphones, mainly
+        the high-end.
+
+        Image stabilization __knowledge__ With still cameras, camera shake is particularly
+        problematic at slow shutter speeds or with long focal length (telephoto or
+        zoom) lenses.
+
+        Camera __knowledge__ A camera is an optical instrument for recording or capturing
+        images, which may be stored locally, transmitted to another location, or both.
+
+        Camera __knowledge__ The images may be individual still photographs or sequences
+        of images constituting videos or movies.
+
+        Camera __knowledge__ The camera is a remote sensing device as it senses subjects
+        without any contact  .
+
+        Camera __knowledge__ The word "camera" comes from "camera obscura", which
+        means "dark chamber" and is the Latin name of the original device for projecting
+        an image of external reality onto a flat surface.
+
+        Camera __knowledge__ The modern photographic camera evolved from the camera
+        obscura.
+
+        Camera __knowledge__ The functioning of the camera is very similar to the
+        functioning of the human eye.
+
+        Timeline of United States inventions (1946–91) __knowledge__ A timeline of
+        United States inventions (1946–1991) encompasses the ingenuity and innovative
+        advancements of the United States within a historical context, dating from
+        the era of the Cold War, which have been achieved by inventors who are either
+        native-born or naturalized citizens of the United States.
+
+        Timeline of United States inventions (1946–91) __knowledge__ Copyright protection
+        secures a person''s right to his or her first-to-invent claim of the "original"
+        invention in question, highlighted in Article I, Section 8, Clause 8 of the
+        United States Constitution which gives the following enumerated power to the
+        United States Congress: In 1641, the first patent in North America was issued
+        to Samuel Winslow by the General Court of Massachusetts for a new method of
+        making salt.
+
+        Video camera tube __knowledge__ The video camera tube was a type of cathode
+        ray tube used to capture the television image prior to the introduction of
+        charge-coupled devices (CCDs) in the 1980s.
+
+        Video camera tube __knowledge__ Several different types of tubes were in use
+        from the early 1930s to the 1980s.
+
+        Video camera tube __knowledge__ In these tubes, the cathode ray was scanned
+        across an image of the scene to be broadcast.
+
+        Video camera tube __knowledge__ The resultant current was dependent on the
+        brightness of the image on the target.
+
+        Video camera tube __knowledge__ The size of the striking ray was tiny compared
+        to the size of the target, allowing 483 horizontal scan lines per image in
+        the NTSC format, or 576 lines in PAL.
+
+        Video camera tube __knowledge__ Any vacuum tube which operates using a focused
+        beam of electrons, "cathode rays," is known as a cathode ray tube (CRT).
+
+        Digital cinematography __knowledge__ Digital cinematography is the process
+        of capturing (recording) a motion picture using digital image sensors rather
+        than through film stock.
+
+        Digital cinematography __knowledge__ As digital technology has improved in
+        recent years, this practice has become dominant.
+
+        Digital cinematography __knowledge__ Since the mid 2010s most of the movies
+        across the world are captured as well as distributed digitally.
+
+        Digital cinematography __knowledge__ Many vendors have brought products to
+        market, including traditional film camera vendors like Arri and Panavision,
+        as well as new vendors like RED, Blackmagic, Silicon Imaging, Vision Research
+        and companies which have traditionally focused on consumer and broadcast video
+        equipment, like Sony, GoPro, and Panasonic.
+
+        Color motion picture film __knowledge__ Color motion picture film refers both
+        to unexposed color photographic film in a format suitable for use in a motion
+        picture camera, and to finished motion picture film, ready for use in a projector,
+        which bears images in color.
+
+        Color motion picture film __knowledge__ The first color cinematography was
+        by additive color systems such as the one patented by Edward Raymond Turner
+        in 1899 and tested in 1902.
+
+        Color motion picture film __knowledge__ A simplified additive system was successfully
+        commercialized in 1909 as Kinemacolor.
+
+        Color motion picture film __knowledge__ These early systems used black-and-white
+        film to photograph and project two or more component images through different
+        color filters.
+
+        Color motion picture film __knowledge__ Around 1920, the first practical subtractive
+        color processes were introduced.
+
+        Movie camera __knowledge__ The movie camera, film camera or cine-camera is
+        a type of photographic camera which takes a rapid sequence of photographs
+        on an image sensor or on a film.
+
+        Movie camera __knowledge__ In contrast to a still camera, which captures a
+        single snapshot at a time, the movie camera takes a series of images; each
+        image constitutes a "frame".
+
+        Movie camera __knowledge__ This is accomplished through an intermittent mechanism.
+
+        Movie camera __knowledge__ The frames are later played back in a movie projector
+        at a specific speed, called the frame rate (number of frames per second).
+
+        Movie camera __knowledge__ While viewing at a particular frame rate, a person''s
+        eyes and brain merge the separate pictures together to create the illusion
+        of motion.
+
+        History of film technology __knowledge__ The history of film technology traces
+        the development of film technology from the initial development of "moving
+        pictures" at the end of 19th century to the present time.
+
+        History of film technology __knowledge__ Motion pictures were initially exhibited
+        as a fairground novelty and developed into one of the most important tools
+        of communication and entertainment in the 20th century.
+
+        History of film technology __knowledge__ Major developments in motion picture
+        technology have included the adoption of synchronized motion picture sound,
+        color motion picture film, and the adoption of digital film technologies to
+        replace physical film stock at both ends of the production chain by digital
+        image sensors and projectors.
+
+        Citizen Kane __knowledge__ Citizen Kane is a 1941 American mystery drama film
+        by Orson Welles, its producer, co-screenwriter, director and star.
+
+        Citizen Kane __knowledge__ The picture was Welles''s first feature film.
+
+        Citizen Kane __knowledge__ Nominated for Academy Awards in nine categories,
+        it won an Academy Award for Best Writing (Original Screenplay) by Herman J.
+        Mankiewicz and Welles.
+
+        Citizen Kane __knowledge__ Considered by many critics, filmmakers, and fans
+        to be the greatest film of all time, "Citizen Kane" was voted as such in five
+        consecutive British Film Institute "Sight & Sound" polls of critics, until
+        it was displaced by "Vertigo" in the 2012 poll.
+
+        Citizen Kane __knowledge__ It topped the American Film Institute''s 100 Years ...
+        100 Movies list in 1998, as well as its 2007 update.
+
+        35 mm film __knowledge__ 35 mm film (millimeter) is the film gauge most commonly
+        used for motion pictures and chemical still photography (see 135 film).
+
+        35 mm film __knowledge__ The name of the gauge refers to the width of the
+        photographic film, which consists of strips 34.98 ±0.03 mm (1.377 ±0.001 inches)
+        wide.
+
+        35 mm film __knowledge__ The standard negative pulldown for movies ("single-frame"
+        format) is four perforations per frame along both edges, which results in
+        16 frames per foot of film.
+
+        35 mm film __knowledge__ For still photography, the standard frame has eight
+        perforations on each side.
+
+        35 mm film __knowledge__ A variety of largely proprietary gauges were devised
+        for the numerous camera and projection systems being developed independently
+        in the late 19th century and early 20th century, ranging from 13 mm to 75 mm
+        (0.51–2.95 in), as well as a variety of film feeding systems.
+
+        '
+      label_candidates: []
+      text: Yes buddy,  Images captured with an electronic image-sensor, produces
+        an electrical charge.The word "cinematography" is based on the Greek words  meaning
+        movement, motion.
+      title: Cinematography
+- - - checked_sentence: Blue Skies is a 1946 American musical comedy film directed
+        by Stuart Heisler and starring Bing Crosby, Fred Astaire, and Joan Caulfield.
+      chosen_topic: Blue
+      episode_done: true
+      eval_labels:
+      - Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Blue __knowledge__ Blue is one of the three primary colours of pigments in
+        painting and traditional colour theory, as well as in the RGB colour model.
+
+        Blue __knowledge__ It lies between violet and green on the spectrum of visible
+        light.
+
+        Blue __knowledge__ The eye perceives blue when observing light with a dominant
+        wavelength between approximately 450 and 495 nanometres.
+
+        Blue __knowledge__ Most blues contain a slight mixture of other colors; azure
+        contains some green, while ultramarine contains some violet.
+
+        Blue __knowledge__ The clear daytime sky and the deep sea appear blue because
+        of an optical effect known as Rayleigh scattering.
+
+        Blue __knowledge__ An optical effect called Tyndall scattering explains blue
+        eyes.
+
+        Blue __knowledge__ Distant objects appear more blue because of another optical
+        effect called atmospheric perspective.
+
+        Blue __knowledge__ Blue has been an important colour in art and decoration
+        since ancient times.
+
+        Blue __knowledge__ The semi-precious stone lapis lazuli was used in ancient
+        Egypt for jewellery and ornament and later, in The Renaissance, to make the
+        pigment ultramarine, the most expensive of all pigments.
+
+        Blue __knowledge__ In the eighth century Chinese artists used cobalt blue
+        to colour fine blue and white porcelain.
+
+        Blue __knowledge__ In the Middle Ages, European artists used it in the windows
+        of Cathedrals.
+
+        Blue __knowledge__ Europeans wore clothing coloured with the vegetable dye
+        woad until it was replaced by the finer indigo from America.
+
+        Nothing Records __knowledge__ Nothing Records was an American record label
+        specializing in industrial rock and electronic music, founded by John Malm
+        Jr. and Trent Reznor in 1992.
+
+        Nothing Records __knowledge__ It is considered an example of a vanity label,
+        where an artist is able to run a label with some degree of independence from
+        within a larger parent company—in this case, Interscope Records was the parent
+        company.
+
+        Nothing Records __knowledge__ Nothing Records became largely defunct in 2004
+        due to a lawsuit by Reznor against John Malm.
+
+        Nothing Records __knowledge__ The label became inactive as a whole following
+        several further releases—the "Beside You in Time" (February 2007) home video
+        was the label''s final release.
+
+        Irving Berlin __knowledge__ Irving Berlin (born Israel Beilin; May 11, 1888
+        – September 22, 1989) was an American composer and lyricist, widely considered
+        one of the greatest songwriters in American history.
+
+        Irving Berlin __knowledge__ His music forms a great part of the Great American
+        Songbook.
+
+        Irving Berlin __knowledge__ Born in Imperial Russia, Berlin arrived in the
+        United States at the age of five.
+
+        Irving Berlin __knowledge__ He published his first song, "Marie from Sunny
+        Italy", in 1907, receiving 33 cents for the publishing rights, and had his
+        first major international hit, "Alexander''s Ragtime Band" in 1911.
+
+        Irving Berlin __knowledge__ He also was an owner of the Music Box Theatre
+        on Broadway.
+
+        Irving Berlin __knowledge__ "Alexander''s Ragtime Band" sparked an international
+        dance craze in places as far away as Berlin''s native Russia, which also "flung
+        itself into the ragtime beat with an abandon bordering on mania."
+
+        Blue Skies (1946 film) __knowledge__ Blue Skies is a 1946 American musical
+        comedy film directed by Stuart Heisler and starring Bing Crosby, Fred Astaire,
+        and Joan Caulfield.
+
+        Blue Skies (1946 film) __knowledge__ Based on a story by Irving Berlin, the
+        film is about a dancer who loves a showgirl who loves a compulsive nightclub-opener
+        who can''t stay committed to anything in life for very long.
+
+        Blue Skies (1946 film) __knowledge__ Produced by Sol C. Siegel, "Blue Skies"
+        was filmed in Technicolor and released by Paramount Pictures.
+
+        Blue Skies (1946 film) __knowledge__ The music, lyrics, and story were written
+        by Irving Berlin, with most of the songs recycled from earlier works.
+
+        Blue Skies (1946 film) __knowledge__ As in "Holiday Inn" (1942), the film
+        is designed to showcase Berlin''s songs.
+
+        7 Blue Skies __knowledge__ 7 Blue Skies is an alternative rock band formed
+        in 2004.
+
+        7 Blue Skies __knowledge__ The group is well known for their high energy live
+        performances, as well as for always performing barefoot.
+
+        7 Blue Skies __knowledge__ The band has since broken up.
+
+        7 Blue Skies __knowledge__ The band''s name was chosen following an email
+        from producer Ron Saint Germain, in which Germain signed off "Good luck, 7
+        blue skies!"
+
+        7 Blue Skies __knowledge__ The band determined the name to mean "have a nice
+        week," and decided to use the name.
+
+        7 Blue Skies __knowledge__ This was later revealed to be a typo, as the intended
+        line was "Good luck & blue skies!"
+
+        7 Blue Skies __knowledge__ (the & is located above the 7 key).
+
+        7 Blue Skies __knowledge__ Jon Shaffer, Adam Schulman and Andy Stickel formed
+        the band and posted an ad online for a singer and drummer in 2004.
+
+        Lloyd Cole (album) __knowledge__ Lloyd Cole, also known as The X Album, is
+        the debut solo album by English singer, songwriter and musician Lloyd Cole
+        released on February 21, 1990 by Polydor and Capitol.
+
+        Lloyd Cole (album) __knowledge__ Previously Cole was best known for his work
+        with The Commotions but this album marked a departure from their signature
+        sound and an opportunity for him to collaborate with other musicians and explore
+        new ideas.
+
+        Lloyd Cole (album) __knowledge__ Following the release of "Mainstream", and
+        limited touring and promotion in support of it, Cole left the Commotions.
+
+        Lloyd Cole (album) __knowledge__ The chance to write and record new types
+        of songs was the motivating factor.
+
+        Lloyd Cole (album) __knowledge__ He also believed that the group had reached
+        a natural conclusion and he no longer wanted the pressure and responsibility
+        of managing a band.
+
+        Sarah Platt __knowledge__ Sarah Louise Platt (also Tilsley and Grimshaw) is
+        a fictional character from the British ITV soap opera "Coronation Street".
+
+        Sarah Platt __knowledge__ She was born on-screen during the episode broadcast
+        on 2 February 1987.
+
+        Sarah Platt __knowledge__ She was played by Leah King in 1987 and by Lynsay
+        King from 1987 until 8 October 1999 when King opted to leave to focus on her
+        education.
+
+        Sarah Platt __knowledge__ Tina O''Brien took over the role on 31 October 1999;
+        she opted to leave in 2007 and made her final on-screen appearance on 30 December
+        2007.
+
+        Sarah Platt __knowledge__ A number of false rumours about O''Brien returning
+        to the role surfaced during her absence from the serial.
+
+        Sarah Platt __knowledge__ In October 2014, it was announced that O''Brien
+        was going to reprise the role, she returned to filming in February 2015 and
+        returned on screen on 30 March 2015.
+
+        Pet Sounds __knowledge__ Pet Sounds is the eleventh studio album by American
+        rock band the Beach Boys, released on May 16, 1966.
+
+        Pet Sounds __knowledge__ It initially met with a lukewarm critical and commercial
+        response in the United States, peaking at number 10 in the "Billboard" 200,
+        a significantly lower placement than the band''s preceding albums.
+
+        Pet Sounds __knowledge__ In the United Kingdom, the album was hailed by its
+        music press and was an immediate commercial success, peaking at number 2 in
+        the UK Top 40 Albums Chart and remaining among the top ten positions for six
+        months.
+
+        Pet Sounds __knowledge__ Originally promoted as "the most progressive pop
+        album ever", "Pet Sounds" attracted recognition for its ambitious recording
+        and unusually sophisticated music, and is widely considered to be one of the
+        most influential albums in music history.
+
+        Royal Blue (train) __knowledge__ The Royal Blue was the Baltimore and Ohio
+        Railroad (B&O)''s flagship passenger train between New York City and Washington,
+        D.C., in the United States, beginning in 1890.
+
+        Royal Blue (train) __knowledge__ The Baltimore-based B&O also used the name
+        between 1890 and 1917 for its improved passenger service between New York
+        and Washington launched in the 1890s, collectively dubbed the Royal Blue Line.
+
+        Royal Blue (train) __knowledge__ Using variants such as the "Royal Limited"
+        and "Royal Special" for individual "Royal Blue" trains, the B&O operated the
+        service in partnership with the Reading Railroad and the Central Railroad
+        of New Jersey.
+
+        Royal Blue (train) __knowledge__ Principal intermediate cities served were
+        Philadelphia, Wilmington, and Baltimore.
+
+        Blue Train Races __knowledge__ The Blue Train Races were a series of record-breaking
+        attempts between automobiles and trains in the late 1920s and early 1930s.
+
+        Blue Train Races __knowledge__ It saw a number of motorists and their own
+        or sponsored automobiles race against the "Le Train Bleu", a train that ran
+        between Calais and the French Riviera.
+
+        Blue Train Races __knowledge__ The rationale to beat the train was to compare
+        the contemporary automotive performance with locomotive dominance; to showcase
+        recent progress achieved by cars regarding reliability, durability, speed
+        and comfort; to promote the cars, their marques and the adventurous persona
+        of their drivers; and to establish automobiles as a viable and aspirational
+        mode of transport for the individual traveller.
+
+        Royal Blue Coach Services __knowledge__ Royal Blue Express Services was a
+        coach operator in the south and west of England from 1880 until 1986.
+
+        Royal Blue Coach Services __knowledge__ The Royal Blue business was founded
+        in 1880 by Thomas Elliott in Bournemouth.
+
+        Royal Blue Coach Services __knowledge__ The business, at first known as Royal
+        Blue & Branksome Mews, included the hire of every kind of horse-drawn vehicle,
+        as well as coach building, saddlery and blacksmithing.
+
+        Royal Blue Coach Services __knowledge__ Elliott soon started a four-in-hand
+        stagecoach service to connect Bournemouth to the railway at Holmsley.
+
+        Royal Blue Coach Services __knowledge__ That service became redundant when
+        the railway was extended to Bournemouth in 1888, but by then Elliott had started
+        running Royal Blue excursions by charabanc and coach around Bournemouth and
+        the New Forest.
+
+        Le Train Bleu __knowledge__ The Calais-Mediterranée Express was a luxury French
+        night express train which operated from 1886 to 2003.
+
+        Le Train Bleu __knowledge__ It gained international fame as the preferred
+        train of wealthy and famous passengers between Calais and the French Riviera
+        in the two decades before World War II.
+
+        Le Train Bleu __knowledge__ It was colloquially referred to as Le Train Bleu
+        in French (which became its formal name after World War II) and the Blue Train
+        in English because of its dark blue sleeping cars.
+
+        Le Train Bleu __knowledge__ In December 1883 the Compagnie Internationale
+        des Wagons-Lits (CIWL) created its second luxury train after the Orient Express
+        introduced in June earlier that year.
+
+        The Mystery of the Blue Train __knowledge__ The Mystery of the Blue Train
+        is a work of detective fiction by Agatha Christie, first published in the
+        United Kingdom by William Collins & Sons on 29 March 1928 and in the United
+        States by Dodd, Mead and Company later in the same year.
+
+        The Mystery of the Blue Train __knowledge__ The UK edition retailed at seven
+        shillings and sixpence (7/6) and the US edition at $2.00.
+
+        The Mystery of the Blue Train __knowledge__ The book features her detective
+        Hercule Poirot.
+
+        The Mystery of the Blue Train __knowledge__ Poirot boards Le Train Bleu, bound
+        for the French Riviera.
+
+        The Mystery of the Blue Train __knowledge__ So does Katherine Grey, who is
+        having her first winter out of England, after recently receiving a relatively
+        large inheritance.
+
+        The Mystery of the Blue Train __knowledge__ On board the train Grey meets
+        Ruth Kettering, an American heiress leaving her unhappy marriage to meet her
+        lover.
+
+        British Army mess dress __knowledge__ British Army mess dress is the formal
+        military evening dress worn by British Army officers and senior non-commissioned
+        officers in their respective messes or at other formal occasions.
+
+        British Army mess dress __knowledge__ Mess uniforms first appeared in the
+        British Army in about 1845, initially utilizing the short shell jacket worn
+        since 1831.
+
+        British Army mess dress __knowledge__ This working jacket was worn open over
+        a regimental waistcoat for evening dress.
+
+        British Army mess dress __knowledge__ The original purpose was to provide
+        a relatively comfortable and inexpensive alternative to the stiff and elaborate
+        full-dress uniforms then worn by officers for evening social functions such
+        as regimental dinners or balls.
+
+        Los Angeles Rams __knowledge__ The Los Angeles Rams are a professional American
+        football team based in the Los Angeles metropolitan area.
+
+        Los Angeles Rams __knowledge__ The Rams compete in the National Football League
+        (NFL), as a member club of the league''s National Football Conference (NFC)
+        West division.
+
+        Los Angeles Rams __knowledge__ The Rams franchise has won three NFL championships,
+        and is the only franchise to win championships while representing three different
+        cities (Cleveland in 1945, Los Angeles in 1951, and St. Louis in 1999).
+
+        Los Angeles Rams __knowledge__ The Rams play their home games at the Los Angeles
+        Memorial Coliseum in Los Angeles, California.
+
+        Los Angeles Rams __knowledge__ The franchise began in 1936 as the Cleveland
+        Rams, located in Cleveland, Ohio.
+
+        '
+      label_candidates: []
+      text: Oh that sounds really nice. I bet there was a lot of scenery and blue
+        skies.
+      title: Blue Skies (1946 film)
+    - checked_sentence: Photography is the science, art, application and practice
+        of creating durable images by recording light or other electromagnetic radiation,
+        either electronically by means of an image sensor, or chemically by means
+        of a light-sensitive material such as photographic film.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - Cinematography is also a type of photography which is the science, art, application
+        and practice of creating durable images by recording light or other electromagnetic
+        radiation, either electronically by means of an image sensor.
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography __knowledge__ Typically, a lens is used to repeatedly focus
+        the light reflected from objects into real images on the light-sensitive surface
+        inside a camera during a questioned exposure, creating multiple images.
+
+        Cinematography __knowledge__ With an electronic image sensor, this produces
+        an electrical charge at each pixel, which is electronically processed and
+        stored in a video file for subsequent display or processing.
+
+        Cinematography __knowledge__ The result with photographic emulsion is a series
+        of invisible latent images on the film stock, which are later chemically "developed"
+        into a visible image.
+
+        Cinematography __knowledge__ The images on the film stock are played back
+        at a rapid speed and projected onto a screen, creating the illusion of motion.
+
+        Cinematography __knowledge__ Cinematography finds uses in many fields of science
+        and business as well as for entertainment purposes and mass communication.
+
+        Cinematography __knowledge__ The word "cinematography" was created from the
+        Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+        "to record", together meaning "recording motion."
+
+        Precursors of film __knowledge__ Much of film as an art form grew out of several
+        earlier traditions in the fields of (oral) storytelling and literature (relating
+        to the screenplay), theatre (relating to the theatre director/film director,
+        a cast of actors, a production team that can include a scenic or set designer,
+        lighting designer, costume designer) and visual art.
+
+        Precursors of film __knowledge__ Especially after the silent film era sound
+        design and music (relating to the soundtrack and film score) became important
+        factors.
+
+        Precursors of film __knowledge__ The technology of film emerged mostly from
+        developments and achievements in the fields of projection, lenses, photography
+        and optics, with sound recording and reproduction becoming important after
+        the silent film era.
+
+        Eadweard Muybridge __knowledge__ Eadweard Muybridge (; 9 April 1830 – 8 May
+        1904, born Edward James Muggeridge) was an English photographer important
+        for his pioneering work in photographic studies of motion, and early work
+        in motion-picture projection.
+
+        Eadweard Muybridge __knowledge__ He adopted the first name Eadweard as the
+        original Anglo-Saxon form of Edward, and the surname Muybridge believing it
+        to be similarly archaic.
+
+        Eadweard Muybridge __knowledge__ At age 20, he emigrated to America as a bookseller,
+        first to New York, and then to San Francisco.
+
+        Eadweard Muybridge __knowledge__ Planning a return trip to Europe in 1860,
+        he suffered serious head injuries in a stagecoach crash in Texas.
+
+        Eadweard Muybridge __knowledge__ He spent the next few years recuperating
+        in England, where he took up professional photography, learning the wet-plate
+        collodion process, and secured at least two British patents for his inventions.
+
+        Proto-Cubism __knowledge__ Proto-Cubism (also referred to as Protocubism,
+        Pre-Cubism or Early Cubism) is an intermediary transition phase in the history
+        of art chronologically extending from 1906 to 1910.
+
+        Proto-Cubism __knowledge__ Evidence suggests that the production of proto-Cubist
+        paintings resulted from a wide-ranging series of experiments, circumstances,
+        influences and conditions, rather than from one isolated static event, trajectory,
+        artist or discourse.
+
+        Proto-Cubism __knowledge__ With its roots stemming from at least the late
+        19th century this period can be characterized by a move towards the radical
+        geometrization of form and a reduction or limitation of the color palette
+        (in comparison with Fauvism).
+
+        History of film technology __knowledge__ The history of film technology traces
+        the development of film technology from the initial development of "moving
+        pictures" at the end of 19th century to the present time.
+
+        History of film technology __knowledge__ Motion pictures were initially exhibited
+        as a fairground novelty and developed into one of the most important tools
+        of communication and entertainment in the 20th century.
+
+        History of film technology __knowledge__ Major developments in motion picture
+        technology have included the adoption of synchronized motion picture sound,
+        color motion picture film, and the adoption of digital film technologies to
+        replace physical film stock at both ends of the production chain by digital
+        image sensors and projectors.
+
+        Sallie Gardner at a Gallop __knowledge__ Sallie Gardner at a Gallop, also
+        known as The Horse in Motion, is a series of photographs consisting of a galloping
+        horse, the result of a photographic experiment by Eadweard Muybridge on June
+        15, 1878.
+
+        Sallie Gardner at a Gallop __knowledge__ Sometimes cited as an early silent
+        film, the series and later experiments like it were precursors to the development
+        of motion pictures.
+
+        Sallie Gardner at a Gallop __knowledge__ The series consists of 24 photographs
+        shot in rapid succession that were shown on a zoopraxiscope.
+
+        Sallie Gardner at a Gallop __knowledge__ It was released throughout 1878–1880.
+
+        Sallie Gardner at a Gallop __knowledge__ Muybridge was commissioned by Leland
+        Stanford, the industrialist and horseman, who was interested in gait analysis.
+
+        Sallie Gardner at a Gallop __knowledge__ The purpose of the shoot was to determine
+        whether a galloping horse ever lifts all four feet completely off the ground
+        during the gait; at this speed, the human eye cannot break down the action.
+
+        Chronophotography __knowledge__ Chronophotography is an antique photographic
+        technique from the Victorian era (beginning about 1867–68), which captures
+        movement in several frames of print.
+
+        Chronophotography __knowledge__ These prints can be subsequently arranged
+        either like animation cels or layered in a single frame.
+
+        Chronophotography __knowledge__ It is a predecessor to cinematography and
+        moving film, involving a series of different cameras, originally created and
+        used for the scientific study of movement.
+
+        Chronophotography __knowledge__ Chronophotography is defined as "a set of
+        photographs of a moving object, taken for the purpose of recording and exhibiting
+        successive phases of motion".
+
+        Chronophotography __knowledge__ The term "chronophotography" was coined by
+        French physiologist Étienne-Jules Marey to describe photographs of movement
+        from which measurements could be taken and motion could be studied.
+
+        Optics __knowledge__ Optics is the branch of physics which involves the behaviour
+        and properties of light, including its interactions with matter and the construction
+        of instruments that use or detect it.
+
+        Optics __knowledge__ Optics usually describes the behaviour of visible, ultraviolet,
+        and infrared light.
+
+        Optics __knowledge__ Because light is an electromagnetic wave, other forms
+        of electromagnetic radiation such as X-rays, microwaves, and radio waves exhibit
+        similar properties.
+
+        Optics __knowledge__ Most optical phenomena can be accounted for using the
+        classical electromagnetic description of light.
+
+        Optics __knowledge__ Complete electromagnetic descriptions of light are, however,
+        often difficult to apply in practice.
+
+        Photography __knowledge__ Photography is the science, art, application and
+        practice of creating durable images by recording light or other electromagnetic
+        radiation, either electronically by means of an image sensor, or chemically
+        by means of a light-sensitive material such as photographic film.
+
+        Photography __knowledge__ Typically, a lens is used to focus the light reflected
+        or emitted from objects into a real image on the light-sensitive surface inside
+        a camera during a timed exposure.
+
+        Photography __knowledge__ With an electronic image sensor, this produces an
+        electrical charge at each pixel, which is electronically processed and stored
+        in a digital image file for subsequent display or processing.
+
+        Lens (optics) __knowledge__ A lens is a transmissive optical device that focuses
+        or disperses a light beam by means of refraction.
+
+        Lens (optics) __knowledge__ A simple lens consists of a single piece of transparent
+        material, while a compound lens consists of several simple lenses ("elements"),
+        usually arranged along a common axis.
+
+        Lens (optics) __knowledge__ Lenses are made from materials such as glass or
+        plastic, and are ground and polished or molded to a desired shape.
+
+        Lens (optics) __knowledge__ A lens can focus light to form an image, unlike
+        a prism, which refracts light without focusing.
+
+        Lens (optics) __knowledge__ Devices that similarly focus or disperse waves
+        and radiation other than visible light are also called lenses, such as microwave
+        lenses, electron lenses, acoustic lenses, or explosive lenses.
+
+        History of photographic lens design __knowledge__ The invention of the camera
+        in the early 19th century led to an array of lens designs intended for photography.
+
+        History of photographic lens design __knowledge__ The problems of photographic
+        lens design, creating a lens for a task that would cover a large, flat image
+        plane, were well known even before the invention of photography due to the
+        development of lenses to work with the focal plane of the camera obscura.
+
+        History of photographic lens design __knowledge__ The early photographic experiments
+        of Thomas Wedgwood, Nicéphore Niépce, Henry Fox Talbot, and Louis Daguerre
+        all used simple single-element convex lenses.
+
+        History of photographic lens design __knowledge__ These lenses were found
+        lacking.
+
+        History of photographic lens design __knowledge__ Simple lenses could not
+        focus an image over a large flat film plane (Field curvature) and suffered
+        from other optical aberrations.
+
+        Color photography __knowledge__ Color (or colour) photography is photography
+        that uses media capable of reproducing colors.
+
+        Color photography __knowledge__ By contrast, black-and-white (monochrome)
+        photography records only a single channel of luminance (brightness) and uses
+        media capable only of showing shades of gray.
+
+        Color photography __knowledge__ In color photography, electronic sensors or
+        light-sensitive chemicals record color information at the time of exposure.
+
+        Color photography __knowledge__ This is usually done by analyzing the spectrum
+        of colors into three channels of information, one dominated by red, another
+        by green and the third by blue, in imitation of the way the normal human eye
+        senses color.
+
+        Color photography __knowledge__ The recorded information is then used to reproduce
+        the original colors by mixing various proportions of red, green and blue light
+        (RGB color, used by video displays, digital projectors and some historical
+        photographic processes), or by using dyes or pigments to remove various proportions
+        of the red, green and blue which are present in white light (CMY color, used
+        for prints on paper and transparencies on film).
+
+        Polarization (waves) __knowledge__ Polarization (also polarisation) is a property
+        applying to transverse waves that specifies the geometrical orientation of
+        the oscillations.
+
+        Polarization (waves) __knowledge__ In a transverse wave, the direction of
+        the oscillation is transverse to the direction of motion of the wave, so the
+        oscillations can have different directions perpendicular to the wave direction.
+
+        Polarization (waves) __knowledge__ A simple example of a polarized transverse
+        wave is vibrations traveling along a taut string "(see image)"; for example,
+        in a musical instrument like a guitar string.
+
+        Polarization (waves) __knowledge__ Depending on how the string is plucked,
+        the vibrations can be in a vertical direction, horizontal direction, or at
+        any angle perpendicular to the string.
+
+        '
+      label_candidates: []
+      text: ' Muybridge sequence of a horse galloping In the 1830s, moving images
+        were produced on revolving drums and disks'
+      title: Photography
+- - - checked_sentence: A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+      chosen_topic: Genius
+      episode_done: false
+      eval_labels:
+      - a genius is a person who displays exceptional intellectual ability.
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Genius __knowledge__ A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+
+        Genius __knowledge__ Despite the presence of scholars in many subjects throughout
+        history, many geniuses have shown high achievements in only a single kind
+        of activity.
+
+        Genius __knowledge__ There is no scientifically precise definition of genius,
+        and the question of whether the notion itself has any real meaning has long
+        been a subject of debate, although psychologists are converging on a definition
+        that emphasizes creativity and eminent achievement.
+
+        Genius __knowledge__ Usually, genius is associated with talent, but many authors
+        (for example Cesare Lombroso) systematically distinguish these terms.
+
+        Genius __knowledge__ In ancient Rome, the "genius" (plural in Latin "genii")
+        was the guiding spirit or tutelary deity of a person, family "(gens)", or
+        place "(genius loci)".
+
+        Genius __knowledge__ The noun is related to the Latin verb "genui, genitus",
+        "to bring into being, create, produce", as well as to the Greek word for birth.
+
+        Genius __knowledge__ Because the achievements of exceptional individuals seemed
+        to indicate the presence of a particularly powerful "genius", by the time
+        of Augustus, the word began to acquire its secondary meaning of "inspiration,
+        talent".
+
+        '
+      label_candidates: []
+      text: Genius
+      title: Genius
+    - checked_sentence: A digital camera or digicam is a camera that captures photographs
+        in digital memory.
+      chosen_topic: Cinematography
+      episode_done: false
+      eval_labels:
+      - Some however prefer using   digital camera or digicam ,which is a camera that
+        captures photograph.
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography __knowledge__ Typically, a lens is used to repeatedly focus
+        the light reflected from objects into real images on the light-sensitive surface
+        inside a camera during a questioned exposure, creating multiple images.
+
+        Cinematography __knowledge__ With an electronic image sensor, this produces
+        an electrical charge at each pixel, which is electronically processed and
+        stored in a video file for subsequent display or processing.
+
+        Cinematography __knowledge__ The result with photographic emulsion is a series
+        of invisible latent images on the film stock, which are later chemically "developed"
+        into a visible image.
+
+        Cinematography __knowledge__ The images on the film stock are played back
+        at a rapid speed and projected onto a screen, creating the illusion of motion.
+
+        Cinematography __knowledge__ Cinematography finds uses in many fields of science
+        and business as well as for entertainment purposes and mass communication.
+
+        Cinematography __knowledge__ The word "cinematography" was created from the
+        Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+        "to record", together meaning "recording motion."
+
+        George Wallace Gouinlock __knowledge__ George Wallace Gouinlock (August 1,
+        1861- February 13, 1932) was a Toronto-based architect who was responsible
+        for notable structures in Toronto.
+
+        George Wallace Gouinlock __knowledge__ Gouinlock was born in 1861 in Paris,
+        Ontario to Walter & Elizabeth Gouinlock.
+
+        George Wallace Gouinlock __knowledge__ He married Georgina Watson in 1889
+        and had sons George Roper and Robert.
+
+        George Wallace Gouinlock __knowledge__ He trained in various cities (including
+        Hamilton, Chicago and Milwaukee) towards becoming an architect.
+
+        George Wallace Gouinlock __knowledge__ He later moved to Winnipeg as a junior
+        architect with Barber, Bowes & Barber.
+
+        George Wallace Gouinlock __knowledge__ He came to Toronto in 1888 and began
+        a partnership with architect Francis S. Baker (as Gouinlock & Baker) from
+        1888 to 1890.
+
+        Instrumental and value rationality __knowledge__ People reason daily about
+        what they ought to do and how they ought to act.
+
+        Instrumental and value rationality __knowledge__ They seem to reason in two
+        distinct ways, identified as two kinds of reasoning-at-large or Rationality.
+
+        Instrumental and value rationality __knowledge__ They reason about legitimate
+        ends—what they ought to do—and about efficient means—how they ought to achieve
+        their ends.
+
+        Instrumental and value rationality __knowledge__ Since antiquity, scholars
+        have accepted this dichotomy and assigned supreme importance to understanding
+        both kinds of rationality, as the following quotes suggest:  Following the
+        usage of German sociologist Max Weber (1864–1920), reasoning about means has
+        been labeled instrumental rationality and reasoning about ends has been labeled
+        value rationality.
+
+        Exhibition Place __knowledge__ Exhibition Place is a publicly owned mixed-use
+        district in Toronto, Ontario, Canada, located by the shoreline of Lake Ontario,
+        just west of downtown.
+
+        Exhibition Place __knowledge__ The site includes exhibit, trade, and banquet
+        centres, theatre and music buildings, monuments, parkland, sports facilities,
+        and a number of civic, provincial, and national historic sites.
+
+        Exhibition Place __knowledge__ The district''s facilities are used year-round
+        for exhibitions, trade shows, public and private functions, and sporting events.
+
+        Exhibition Place __knowledge__ From mid-August through Labour Day each year,
+        the Canadian National Exhibition (CNE), from which the name Exhibition Place
+        is derived, is held on the grounds.
+
+        Citizen Kane __knowledge__ Citizen Kane is a 1941 American mystery drama film
+        by Orson Welles, its producer, co-screenwriter, director and star.
+
+        Citizen Kane __knowledge__ The picture was Welles''s first feature film.
+
+        Citizen Kane __knowledge__ Nominated for Academy Awards in nine categories,
+        it won an Academy Award for Best Writing (Original Screenplay) by Herman J.
+        Mankiewicz and Welles.
+
+        Citizen Kane __knowledge__ Considered by many critics, filmmakers, and fans
+        to be the greatest film of all time, "Citizen Kane" was voted as such in five
+        consecutive British Film Institute "Sight & Sound" polls of critics, until
+        it was displaced by "Vertigo" in the 2012 poll.
+
+        Citizen Kane __knowledge__ It topped the American Film Institute''s 100 Years ...
+        100 Movies list in 1998, as well as its 2007 update.
+
+        Yes Minister __knowledge__ Yes Minister is a Political satire British sitcom
+        written by Antony Jay and Jonathan Lynn that was first transmitted on BBC
+        Two from 1980 to 1984, split over three seven-episode series.
+
+        Yes Minister __knowledge__ The sequel, Yes, Prime Minister, ran from 1986
+        to 1988.
+
+        Yes Minister __knowledge__ In total there were 38 episodes, of which all but
+        one lasted half an hour.
+
+        Yes Minister __knowledge__ Almost all episodes ended with a variation of the
+        title of the series spoken as the answer to a question posed by Hacker.
+
+        Yes Minister __knowledge__ Several episodes were adapted for BBC Radio, and
+        a stage play was produced in 2010, the latter leading to a new television
+        series on UKTV Gold in 2013.
+
+        Yes Minister __knowledge__ Set principally in the private office of a British
+        Cabinet minister in the fictional Department of Administrative Affairs in
+        Whitehall, "Yes Minister" follows the ministerial career of the Rt Hon Jim
+        Hacker MP, played by Paul Eddington.
+
+        Doctorate __knowledge__ A doctorate (from Latin "docere", "to teach") or doctor''s
+        degree (from Latin "doctor", "teacher") or doctoral degree (from the ancient
+        formalism "licentia docendi") is an academic degree awarded by universities
+        that is, in most countries, a research degree that qualifies the holder to
+        teach at the university level in the degree''s field, or to work in a specific
+        profession.
+
+        Doctorate __knowledge__ There are a variety of doctoral degrees, with the
+        most common being the Doctor of Philosophy (PhD), which is awarded in many
+        different fields, ranging from the humanities to the scientific disciplines.
+
+        Doctorate __knowledge__ In the United States and some other countries, there
+        are also some types of vocational, technical, or "professional degrees" that
+        are referred to as "doctorates" in their home countries, though they are not
+        technically doctoral level as they are not research degrees and no defense
+        of any dissertation or thesis is performed.
+
+        Photography __knowledge__ Photography is the science, art, application and
+        practice of creating durable images by recording light or other electromagnetic
+        radiation, either electronically by means of an image sensor, or chemically
+        by means of a light-sensitive material such as photographic film.
+
+        Photography __knowledge__ Typically, a lens is used to focus the light reflected
+        or emitted from objects into a real image on the light-sensitive surface inside
+        a camera during a timed exposure.
+
+        Photography __knowledge__ With an electronic image sensor, this produces an
+        electrical charge at each pixel, which is electronically processed and stored
+        in a digital image file for subsequent display or processing.
+
+        Electromagnetic radiation __knowledge__ In physics, electromagnetic radiation
+        (EM radiation or EMR) refers to the waves (or their quanta, photons) of the
+        electromagnetic field, propagating (radiating) through space-time, carrying
+        electromagnetic radiant energy.
+
+        Electromagnetic radiation __knowledge__ It includes radio waves, microwaves,
+        infrared, (visible) light, ultraviolet, X-rays, and gamma rays."
+
+        Electromagnetic radiation __knowledge__ Classically, electromagnetic radiation
+        consists of electromagnetic waves, which are synchronized oscillations of
+        electric and magnetic fields that propagate at the speed of light through
+        a vacuum.
+
+        Electromagnetic radiation __knowledge__ The oscillations of the two fields
+        are perpendicular to each other and perpendicular to the direction of energy
+        and wave propagation, forming a transverse wave.
+
+        Optics __knowledge__ Optics is the branch of physics which involves the behaviour
+        and properties of light, including its interactions with matter and the construction
+        of instruments that use or detect it.
+
+        Optics __knowledge__ Optics usually describes the behaviour of visible, ultraviolet,
+        and infrared light.
+
+        Optics __knowledge__ Because light is an electromagnetic wave, other forms
+        of electromagnetic radiation such as X-rays, microwaves, and radio waves exhibit
+        similar properties.
+
+        Optics __knowledge__ Most optical phenomena can be accounted for using the
+        classical electromagnetic description of light.
+
+        Optics __knowledge__ Complete electromagnetic descriptions of light are, however,
+        often difficult to apply in practice.
+
+        Glossary of video terms __knowledge__ This glossary defines terms that are
+        used in the document "Defining Video Quality Requirements: A Guide for Public
+        Safety", developed by the Video Quality in Public Safety (VQIPS) Working Group.
+
+        Glossary of video terms __knowledge__ It contains terminology and explanations
+        of concepts relevant to the video industry.
+
+        Glossary of video terms __knowledge__ The purpose of the glossary is to inform
+        the reader of commonly used vocabulary terms in the video domain.
+
+        Glossary of video terms __knowledge__ This glossary was compiled from various
+        industry sources.
+
+        Glossary of video terms __knowledge__ A device that converts analog signals
+        into digital signals.
+
+        Glossary of video terms __knowledge__ A circuit for automatically controlling
+        amplifier gain in order to maintain a constant output voltage with a varying
+        input voltage within a predetermined range of input-to-output variation.
+
+        X-ray crystallography __knowledge__ X-ray crystallography is a technique used
+        for determining the atomic and molecular structure of a crystal, in which
+        the crystalline atoms cause a beam of incident X-rays to diffract into many
+        specific directions.
+
+        X-ray crystallography __knowledge__ By measuring the angles and intensities
+        of these diffracted beams, a crystallographer can produce a three-dimensional
+        picture of the density of electrons within the crystal.
+
+        X-ray crystallography __knowledge__ From this electron density, the mean positions
+        of the atoms in the crystal can be determined, as well as their chemical bonds,
+        their disorder, and various other information.
+
+        X-ray crystallography __knowledge__ Since many materials can form crystals—such
+        as salts, metals, minerals, semiconductors, as well as various inorganic,
+        organic, and biological molecules—X-ray crystallography has been fundamental
+        in the development of many scientific fields.
+
+        Digital camera __knowledge__ A digital camera or digicam is a camera that
+        captures photographs in digital memory.
+
+        Digital camera __knowledge__ Most cameras produced today are digital, and
+        while there are still dedicated compact cameras on the market, the use of
+        dedicated digital cameras is dwindling, as digital cameras are now incorporated
+        into many devices ranging from mobile devices to vehicles.
+
+        Digital camera __knowledge__ However, expensive, high-end, high-definition
+        dedicated cameras are still commonly used by professionals.
+
+        Digital camera __knowledge__ Digital and movie cameras share an optical system,
+        typically using a lens with a variable diaphragm to focus light onto an image
+        pickup device.
+
+        Digital camera __knowledge__ The diaphragm and shutter admit the correct amount
+        of light to the imager, just as with film but the image pickup device is electronic
+        rather than chemical.
+
+        '
+      label_candidates: []
+      text: Yes , Cinematography finds uses in many fields of science and business
+        as well as for entertainment purposes
+      title: Digital camera
+- - - checked_sentence: A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+      chosen_topic: Genius
+      episode_done: false
+      eval_labels:
+      - universality in genres or originality typically to a degree that is associated
+        with  achievements
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Genius __knowledge__ A genius is a person who displays exceptional intellectual
+        ability, creative productivity, universality in genres or originality, typically
+        to a degree that is associated with the achievement of new advances in a domain
+        of knowledge.
+
+        Genius __knowledge__ Despite the presence of scholars in many subjects throughout
+        history, many geniuses have shown high achievements in only a single kind
+        of activity.
+
+        Genius __knowledge__ There is no scientifically precise definition of genius,
+        and the question of whether the notion itself has any real meaning has long
+        been a subject of debate, although psychologists are converging on a definition
+        that emphasizes creativity and eminent achievement.
+
+        Genius __knowledge__ Usually, genius is associated with talent, but many authors
+        (for example Cesare Lombroso) systematically distinguish these terms.
+
+        Genius __knowledge__ In ancient Rome, the "genius" (plural in Latin "genii")
+        was the guiding spirit or tutelary deity of a person, family "(gens)", or
+        place "(genius loci)".
+
+        Genius __knowledge__ The noun is related to the Latin verb "genui, genitus",
+        "to bring into being, create, produce", as well as to the Greek word for birth.
+
+        Genius __knowledge__ Because the achievements of exceptional individuals seemed
+        to indicate the presence of a particularly powerful "genius", by the time
+        of Augustus, the word began to acquire its secondary meaning of "inspiration,
+        talent".
+
+        IQ classification __knowledge__ IQ classification is the practice by IQ test
+        publishers of labeling IQ score ranges with category names such as "superior"
+        or "average".
+
+        IQ classification __knowledge__ There are several publishers of tests of cognitive
+        abilities.
+
+        IQ classification __knowledge__ No two publishers use exactly the same classification
+        labels, which have changed from time to time since the beginning of intelligence
+        testing in the early twentieth century.
+
+        IQ classification __knowledge__ IQ scores have been derived by two different
+        methods since the advent of cognitive ability tests.
+
+        IQ classification __knowledge__ The first method historically was the "ratio
+        IQ", based on estimating a "mental age" of the test-taker (rounded to a specified
+        number of years and months), which was then divided by the test-taker''s "chronological
+        age" (rounded to a specified number of years and months).
+
+        Intelligence quotient __knowledge__ An intelligence quotient (IQ) is a total
+        score derived from several standardized tests designed to assess human intelligence.
+
+        Intelligence quotient __knowledge__ The abbreviation "IQ" was coined by the
+        psychologist William Stern for the German term "Intelligenzquotient", his
+        term for a scoring method for intelligence tests at University of Breslau
+        he advocated in a 1912 book.
+
+        Intelligence quotient __knowledge__ Historically, IQ is a score obtained by
+        dividing a person’s mental age score, obtained by administering an intelligence
+        test, by the person’s chronological age, both expressed in terms of years
+        and months.
+
+        Intelligence quotient __knowledge__ The resulting fraction is multiplied by
+        100 to obtain the IQ score.
+
+        Environment and intelligence __knowledge__ Environment and intelligence research
+        investigates the impact of environment on intelligence.
+
+        Environment and intelligence __knowledge__ This is one of the most important
+        factors in understanding human group differences in IQ test scores and other
+        measures of cognitive ability.
+
+        Environment and intelligence __knowledge__ It is estimated that genes contribute
+        about 20–40% of the variance in intelligence in childhood and about 80% in
+        old age.
+
+        Environment and intelligence __knowledge__ Thus the environment and its interaction
+        with genes account for a high proportion of the variation in intelligence
+        seen in groups of young children, and for a small proportion of the variation
+        observed in groups of mature adults.
+
+        Environment and intelligence __knowledge__ Historically, there has been great
+        interest in the field of intelligence research to determine environmental
+        influences on the development of cognitive functioning, in particular, fluid
+        intelligence, as defined by its stabilization at 16 years of age.
+
+        Race and intelligence __knowledge__ The connection between race and intelligence
+        has been a subject of debate in both popular science and academic research
+        since the inception of IQ testing in the early 20th century.
+
+        Race and intelligence __knowledge__ While tests have broadly shown differences
+        in average scores based on self-identified race or ethnicity, there is considerable
+        debate as to whether and to what extent those differences reflect environmental
+        factors as opposed to genetic ones, as well as to the definitions of what
+        "race" and "intelligence" are, and whether they can be objectively defined
+        at all.
+
+        Race and intelligence __knowledge__ Currently, there is no non-circumstantial
+        evidence that these differences in test scores have a genetic component, although
+        some researchers believe that the existing circumstantial evidence makes it
+        at least plausible that hard evidence for a genetic component will eventually
+        be found.
+
+        Genius (website) __knowledge__ Genius (formerly Rap Genius) is a North American
+        digital media company.
+
+        Genius (website) __knowledge__ Originally founded in August 2009 by Tom Lehman,
+        Ilan Zechory, and Mahbod Moghadam, the site allows users to provide annotations
+        and interpretation of song lyrics, news stories, sources, poetry, and documents.
+
+        Genius (website) __knowledge__ Originally launched as Rap Genius with a focus
+        on hip-hop music, the company attracted the attention and support of celebrities,
+        and venture capital enabling further growth.
+
+        Genius (website) __knowledge__ The site expanded in 2014 to cover other forms
+        of media, such as pop, literature, R&B, and added an annotation-embedded platform.
+
+        Genius (website) __knowledge__ That same year, an iPhone app was released.
+
+        Cognitive epidemiology __knowledge__ Cognitive epidemiology is a field of
+        research that examines the associations between intelligence test scores (IQ
+        scores or extracted "g"-factors) and health, more specifically morbidity (mental
+        and physical) and mortality.
+
+        Cognitive epidemiology __knowledge__ Typically, test scores are obtained at
+        an early age, and compared to later morbidity and mortality.
+
+        Cognitive epidemiology __knowledge__ In addition to exploring and establishing
+        these associations, cognitive epidemiology seeks to understand causal relationships
+        between intelligence and health outcomes.
+
+        Cognitive epidemiology __knowledge__ Researchers in the field argue that intelligence
+        measured at an early age is an important predictor of later health and mortality
+        differences.
+
+        Intellectual giftedness __knowledge__ Intellectual giftedness is an intellectual
+        ability significantly higher than average.
+
+        Intellectual giftedness __knowledge__ It is a characteristic of children,
+        variously defined, that motivates differences in school programming.
+
+        Intellectual giftedness __knowledge__ It is thought to persist as a trait
+        into adult life, with various consequences studied in longitudinal studies
+        of giftedness over the last century.
+
+        Intellectual giftedness __knowledge__ There is no generally agreed definition
+        of giftedness for either children or adults, but most school placement decisions
+        and most longitudinal studies over the course of individual lives have followed
+        people with IQs in the top two percent of the population – that is, IQs above
+        130.
+
+        Lewis Terman __knowledge__ Lewis Madison Terman (January 15, 1877 – December
+        21, 1956) was an American psychologist and author.
+
+        Lewis Terman __knowledge__ He was noted as a pioneer in educational psychology
+        in the early 20th century at the Stanford Graduate School of Education.
+
+        Lewis Terman __knowledge__ He is best known for his revision of the Stanford-Binet
+        IQ test and for initiating the longitudinal study of children with high IQs
+        called the Genetic Studies of Genius.
+
+        Lewis Terman __knowledge__ He was a prominent eugenicist and was a member
+        of the Human Betterment Foundation.
+
+        Lewis Terman __knowledge__ He also served as president of the American Psychological
+        Association.
+
+        Lewis Terman __knowledge__ A "Review of General Psychology" survey, published
+        in 2002, ranked Terman as the 72nd most cited psychologist of the 20th century,
+        in a tie with G. Stanley Hall.
+
+        Logology (science of science) __knowledge__ Logology ("the science of science")
+        is the study of all aspects of science and of its practitioners—aspects philosophical,
+        biological, psychological, societal, historical, political, institutional,
+        financial.
+
+        Logology (science of science) __knowledge__ The term "logology" is used here
+        as a synonym for the equivalent term "science of science" and the semi-equivalent
+        term "sociology of science".
+
+        Logology (science of science) __knowledge__ The term "logology" is back-formed
+        from ""-logy"" (as in "geo"logy"", "anthropo"logy"", "socio"logy"", etc.)
+
+        Logology (science of science) __knowledge__ in the sense of the "study of
+        study" or the "science of science"—or, more plainly, the "study of science".
+
+        Logology (science of science) __knowledge__ The word "logology" provides grammatical
+        variants not available with the earlier terms "science of science" and "sociology
+        of science"—"logologist", "to logologize", "logological", "logologically".
+
+        Hochbegabtenstudium __knowledge__ The Hochbegabtenstudium (, "College for
+        the talented") is a programme in Germany that allows students of prerequisite
+        intellectual ability (as shown on IQ tests) to attend college even if they
+        do not hold the Abitur.
+
+        Hochbegabtenstudium __knowledge__ The Hochbegabtenstudium is also called Schülerstudium
+        ("college for school-students") because many of the students, who benefit
+        from it are still enrolled in school, while they attend college.
+
+        Hochbegabtenstudium __knowledge__ A person wishing to do the Hochbegabtenstudium
+        must be of above average intellectual ability and must as a rule have completed
+        at least 10th grade.
+
+        Hochbegabtenstudium __knowledge__ However some exceptions from that rule are
+        made for very young students of superior intellectual ability, who are in
+        a lower grade.
+
+        '
+      label_candidates: []
+      text: What is an IQ of a genius?
+      title: Genius
+    - checked_sentence: Until the advent of such technology, photographs were made
+        by exposing light sensitive photographic film and paper, which was processed
+        in liquid chemical solutions to develop and stabilize the image.
+      chosen_topic: Cinematography
+      episode_done: true
+      eval_labels:
+      - Prior to the advent of digital technology,  photographs were made by exposing
+        light sensitive photographic film and paper, which was processed in liquid
+        chemical .
+      id: WizTeacher
+      knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+        Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+        is the science or art of motion-picture photography by recording light or
+        other electromagnetic radiation, either electronically by means of an image
+        sensor, or chemically by means of a light-sensitive material such as film
+        stock.
+
+        Cinematography __knowledge__ Typically, a lens is used to repeatedly focus
+        the light reflected from objects into real images on the light-sensitive surface
+        inside a camera during a questioned exposure, creating multiple images.
+
+        Cinematography __knowledge__ With an electronic image sensor, this produces
+        an electrical charge at each pixel, which is electronically processed and
+        stored in a video file for subsequent display or processing.
+
+        Cinematography __knowledge__ The result with photographic emulsion is a series
+        of invisible latent images on the film stock, which are later chemically "developed"
+        into a visible image.
+
+        Cinematography __knowledge__ The images on the film stock are played back
+        at a rapid speed and projected onto a screen, creating the illusion of motion.
+
+        Cinematography __knowledge__ Cinematography finds uses in many fields of science
+        and business as well as for entertainment purposes and mass communication.
+
+        Cinematography __knowledge__ The word "cinematography" was created from the
+        Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+        "to record", together meaning "recording motion."
+
+        Digital camera __knowledge__ A digital camera or digicam is a camera that
+        captures photographs in digital memory.
+
+        Digital camera __knowledge__ Most cameras produced today are digital, and
+        while there are still dedicated compact cameras on the market, the use of
+        dedicated digital cameras is dwindling, as digital cameras are now incorporated
+        into many devices ranging from mobile devices to vehicles.
+
+        Digital camera __knowledge__ However, expensive, high-end, high-definition
+        dedicated cameras are still commonly used by professionals.
+
+        Digital camera __knowledge__ Digital and movie cameras share an optical system,
+        typically using a lens with a variable diaphragm to focus light onto an image
+        pickup device.
+
+        Digital camera __knowledge__ The diaphragm and shutter admit the correct amount
+        of light to the imager, just as with film but the image pickup device is electronic
+        rather than chemical.
+
+        Digital camera back __knowledge__ A digital camera back is a device that attaches
+        to the back of a camera in place of the traditional negative film holder and
+        contains an electronic image sensor.
+
+        Digital camera back __knowledge__ This lets cameras that were designed to
+        use film take digital photographs.
+
+        Digital camera back __knowledge__ These camera backs are generally expensive
+        by consumer standards (US$5000 and up) and are primarily built to be attached
+        on medium- and large-format cameras used by professional photographers.
+
+        Digital camera back __knowledge__ Two sensor back types are commonly used:
+        single shot back (non-scanning) and scan back.
+
+        Digital camera back __knowledge__ Some backs, primarily older ones, require
+        multiple exposures to capture an image; generally one each for red, green,
+        and blue.
+
+        Digital photography __knowledge__ Digital photography is a form of photography
+        that uses cameras containing arrays of electronic photodetectors to capture
+        images focused by a lens, as opposed to an exposure on photographic film.
+
+        Digital photography __knowledge__ The captured images are digitized and stored
+        as a computer file ready for further digital processing, viewing, digital
+        publishing or printing.
+
+        Digital photography __knowledge__ Until the advent of such technology, photographs
+        were made by exposing light sensitive photographic film and paper, which was
+        processed in liquid chemical solutions to develop and stabilize the image.
+
+        Digital photography __knowledge__ Digital photographs are typically created
+        solely by computer-based photoelectric and mechanical techniques, without
+        wet bath chemical processing.
+
+        History of the camera __knowledge__ The history of the camera can be traced
+        much further back than the introduction of photography.
+
+        History of the camera __knowledge__ Cameras evolved from the camera obscura,
+        and continued to change through many generations of photographic technology,
+        including daguerreotypes, calotypes, dry plates, film, and to the modern day
+        with digital cameras.
+
+        History of the camera __knowledge__ The forerunner to the photographic camera
+        was the "camera obscura".
+
+        History of the camera __knowledge__ Camera obscura (Latin for "dark room")
+        is the natural optical phenomenon that occurs when an image of a scene at
+        the other side of a screen (or for instance a wall) is projected through a
+        small hole in that screen and forms an inverted image (left to right and upside
+        down) on a surface opposite to the opening.
+
+        Camera __knowledge__ A camera is an optical instrument for recording or capturing
+        images, which may be stored locally, transmitted to another location, or both.
+
+        Camera __knowledge__ The images may be individual still photographs or sequences
+        of images constituting videos or movies.
+
+        Camera __knowledge__ The camera is a remote sensing device as it senses subjects
+        without any contact  .
+
+        Camera __knowledge__ The word "camera" comes from "camera obscura", which
+        means "dark chamber" and is the Latin name of the original device for projecting
+        an image of external reality onto a flat surface.
+
+        Camera __knowledge__ The modern photographic camera evolved from the camera
+        obscura.
+
+        Camera __knowledge__ The functioning of the camera is very similar to the
+        functioning of the human eye.
+
+        IMAX __knowledge__ IMAX is a 70 mm motion picture film format that displays
+        images of greater size and resolution than conventional film systems.
+
+        IMAX __knowledge__ Graeme Ferguson, Roman Kroitor, Robert Kerr, and William
+        C. Shaw developed the IMAX cinema projection standards in the late 1960s and
+        early 1970s in Canada.
+
+        IMAX __knowledge__ Unlike conventional projectors, the film runs horizontally
+        (see diagram sprocket holes) so that the image width is greater than the width
+        of the film.
+
+        IMAX __knowledge__ Since 2002, some feature films have been converted into
+        IMAX format for displaying in IMAX theatres, and some have also been partially
+        shot in IMAX.
+
+        IMAX __knowledge__ IMAX is the most widely used system for special-venue film
+        presentations.
+
+        Ritz Dakota Digital __knowledge__ The Ritz Dakota Digital is a type of point-and-shoot
+        digital camera, introduced in July of 2003, and sold by the Ritz Camera Centers.
+
+        Ritz Dakota Digital __knowledge__ It has a digital photo resolution of 1.2
+        megapixels (1280 pixels wide, 960 pixels high) and a storage capacity of 25
+        pictures.
+
+        Ritz Dakota Digital __knowledge__ When introduced, the Dakota Digital sparked
+        massive interest, primarily due to its price tag: $10.99 (US Dollars).
+
+        Ritz Dakota Digital __knowledge__ At the time, a digital camera of similar
+        resolution and functionality was in the $40–$70 range.
+
+        Ritz Dakota Digital __knowledge__ The reason for the low price was because
+        the Dakota Digital was a "single-use camera", i.e.
+
+        Ritz Dakota Digital __knowledge__ the consumer takes the pictures, returns
+        the camera to the store, and the pictures are returned to the consumer in
+        print and CD-ROM format (after an additional $11 processing fee) while the
+        camera is refurbished and resold.
+
+        Digital single-lens reflex camera __knowledge__ A digital single-lens reflex
+        camera (also called a digital SLR or DSLR) is a digital camera that combines
+        the optics and the mechanisms of a single-lens reflex camera with a digital
+        imaging sensor, as opposed to photographic film.
+
+        Digital single-lens reflex camera __knowledge__ The reflex design scheme is
+        the primary difference between a DSLR and other digital cameras.
+
+        Digital single-lens reflex camera __knowledge__ In the reflex design, light
+        travels through the lens, then to a mirror that alternates to send the image
+        to either the viewfinder or the image sensor.
+
+        Digital single-lens reflex camera __knowledge__ The traditional alternative
+        would be to have a viewfinder with its own lens, hence the term "single lens"
+        for this design.
+
+        Digital single-lens reflex camera __knowledge__ By using only one lens, the
+        viewfinder of a DSLR presents an image that will not differ substantially
+        from what is captured by the camera''s sensor.
+
+        '
+      label_candidates: []
+      text: Yes now digital camera is trendy
+      title: Digital photography
