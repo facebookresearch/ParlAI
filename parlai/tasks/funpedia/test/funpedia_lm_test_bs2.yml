@@ -1,0 +1,67 @@
+- - - episode_done: true
+      eval_labels:
+      - For those interested, in 1568, they decided the Case of Mines, or "R v Earl
+        of Northumberland"
+      id: funpedia:lm
+      reward: 0
+      text: ''
+    - episode_done: true
+      eval_labels:
+      - The population of Wailuku in Hawaii was 15313 in 2010
+      id: funpedia:lm
+      reward: 0
+      text: ''
+- - - episode_done: true
+      eval_labels:
+      - Hmmm yes Horacio Calcaterra is a sportsman that currently is playing for Sporting
+        Cristal which is located in Torneo Descentralizado.
+      id: funpedia:lm
+      reward: 0
+      text: ''
+    - episode_done: true
+      eval_labels:
+      - Ceglusa is a species that is endemic in Burma
+      id: funpedia:lm
+      reward: 0
+      text: ''
+- - - episode_done: true
+      eval_labels:
+      - South Africans have a name for certain types of fish, they refer to them as
+        "Kurper."
+      id: funpedia:lm
+      reward: 0
+      text: ''
+    - episode_done: true
+      eval_labels:
+      - Fisheries for cod are simply known as cod fisheries.
+      id: funpedia:lm
+      reward: 0
+      text: ''
+- - - episode_done: true
+      eval_labels:
+      - According to Climate Counts, I'm supposed to support climate-conscious companies,
+        but what if I want to support companies with the best products?
+      id: funpedia:lm
+      reward: 0
+      text: ''
+    - episode_done: true
+      eval_labels:
+      - The third great awakening was originally affiliated with the Social Gospel
+        Movement, which applied Christianity to social issues.
+      id: funpedia:lm
+      reward: 0
+      text: ''
+- - - episode_done: true
+      eval_labels:
+      - Thank god that the former municipality of Mutten merged into the municipality
+        of thusis on the 1st of january!
+      id: funpedia:lm
+      reward: 0
+      text: ''
+    - episode_done: true
+      eval_labels:
+      - Sometimes we must contemplate the silence in Senza colpa! in order to truly
+        understand the drama around us.
+      id: funpedia:lm
+      reward: 0
+      text: ''

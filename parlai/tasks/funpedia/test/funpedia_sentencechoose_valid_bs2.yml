@@ -1,0 +1,182 @@
+- - - episode_done: true
+      eval_labels:
+      - Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball
+        player.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball
+        player.
+      - He played collegiately for Rice University.
+      - In his final year, he led the Southwest Conference in scoring and was All-American
+        in 1943.
+      - In 1971 he was inducted into the Rice Athletic Hall of Fame, and in 2003 his
+        basketball jersey was retired.
+      reward: 0
+      text: Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball
+        player. He played collegiately for Rice University. In his final year, he
+        led the Southwest Conference in scoring and was All-American in 1943. In 1971
+        he was inducted into the Rice Athletic Hall of Fame, and in 2003 his basketball
+        jersey was retired.
+    - episode_done: true
+      eval_labels:
+      - Gerald Rashard Everett (born June 25, 1994) is an American football tight
+        end for the Los Angeles Rams of the National Football League (NFL).
+      id: funpedia:sentencechoose
+      label_candidates:
+      - Gerald Rashard Everett (born June 25, 1994) is an American football tight
+        end for the Los Angeles Rams of the National Football League (NFL).
+      - He played college football at South Alabama, and was drafted by the Rams in
+        the second round of the 2017 NFL Draft.
+      reward: 0
+      text: Gerald Rashard Everett (born June 25, 1994) is an American football tight
+        end for the Los Angeles Rams of the National Football League (NFL). He played
+        college football at South Alabama, and was drafted by the Rams in the second
+        round of the 2017 NFL Draft.
+- - - episode_done: true
+      eval_labels:
+      - The Nahoni Range is a mountain range in the Yukon, Canada.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - The Nahoni Range is a mountain range in the Yukon, Canada.
+      - It has an area of 4535 km and is a subrange of the Ogilvie Mountains which
+        in turn form part of the Yukon Ranges.
+      reward: 0
+      text: The Nahoni Range is a mountain range in the Yukon, Canada. It has an area
+        of 4535 km and is a subrange of the Ogilvie Mountains which in turn form part
+        of the Yukon Ranges.
+    - episode_done: true
+      eval_labels:
+      - The Vieux Fort River is a river in Saint Lucia.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - The Vieux Fort River is a river in Saint Lucia.
+      - It flows south-southeast, reaching the coast close to the country's southernmost
+        point at the town of Vieux Fort.
+      reward: 0
+      text: The Vieux Fort River is a river in Saint Lucia. It flows south-southeast,
+        reaching the coast close to the country's southernmost point at the town of
+        Vieux Fort.
+- - - episode_done: true
+      eval_labels:
+      - Popovača is a town in Croatia in the Moslavina geographical region.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - Popovača is a town in Croatia in the Moslavina geographical region.
+      - Administratively it is part of the Sisak-Moslavina County.
+      - The town has a population of 11,905 (2011 census), 96% of which are ethnic
+        Croats.
+      reward: 0
+      text: Popovača is a town in Croatia in the Moslavina geographical region. Administratively
+        it is part of the Sisak-Moslavina County. The town has a population of 11,905
+        (2011 census), 96% of which are ethnic Croats.
+    - episode_done: true
+      eval_labels:
+      - Bass Guitar is a UK-based music magazine established in 2003 and continuing
+        to the present day.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - Bass Guitar is a UK-based music magazine established in 2003 and continuing
+        to the present day.
+      - The magazine was originally a bi-monthly publication until 2009 when it became
+        monthly.
+      - The magazine has its headquarters in Warwickshire.
+      - It includes interviews, features, album and gear reviews.
+      - In May 2016 the publisher of the magazine, Blaze Publishing, was acquired
+        by Future plc.
+      reward: 0
+      text: Bass Guitar is a UK-based music magazine established in 2003 and continuing
+        to the present day. The magazine was originally a bi-monthly publication until
+        2009 when it became monthly. The magazine has its headquarters in Warwickshire.
+        It includes interviews, features, album and gear reviews. In May 2016 the
+        publisher of the magazine, Blaze Publishing, was acquired by Future plc.
+- - - episode_done: true
+      eval_labels:
+      - The campus resides in close proximity to the Humboldt Bay National Wildlife
+        Refuge, Table Bluff, the southern portion of Humboldt Bay, as well as national
+        forest.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - College of the Redwoods (CR) is a public two-year community college with its
+        main campus of approximately located on the southernmost edge of Eureka in
+        Humboldt County, California.
+      - The campus resides in close proximity to the Humboldt Bay National Wildlife
+        Refuge, Table Bluff, the southern portion of Humboldt Bay, as well as national
+        forest.
+      - The campus's architecture utilizes American Craftsman styling, and has wooden
+        support beams in each structure.
+      - Redwoods Community College District serves four counties and has two branch
+        campuses, as well as three additional sites.
+      - On-campus housing is available at the main campus.
+      reward: 0
+      text: College of the Redwoods (CR) is a public two-year community college with
+        its main campus of approximately located on the southernmost edge of Eureka
+        in Humboldt County, California. The campus resides in close proximity to the
+        Humboldt Bay National Wildlife Refuge, Table Bluff, the southern portion of
+        Humboldt Bay, as well as national forest. The campus's architecture utilizes
+        American Craftsman styling, and has wooden support beams in each structure.
+        Redwoods Community College District serves four counties and has two branch
+        campuses, as well as three additional sites. On-campus housing is available
+        at the main campus.
+    - episode_done: true
+      eval_labels:
+      - The Siege of Middelburg (1572–1574) was a siege that lasted two years and
+        took place in the years between 1572 and 1574 during the Eighty Years' War
+        and the Anglo-Spanish War (1585–1604).
+      id: funpedia:sentencechoose
+      label_candidates:
+      - The Siege of Middelburg (1572–1574) was a siege that lasted two years and
+        took place in the years between 1572 and 1574 during the Eighty Years' War
+        and the Anglo-Spanish War (1585–1604).
+      - A Dutch rebel army with the support of English laid siege to Middelburg which
+        was being held by Spanish forces under Cristóbal de Mondragón.
+      - The Spanish held out and only capitulated when news of the relief effort to
+        save Middelburg was defeated at Rimmerswiel.
+      reward: 0
+      text: The Siege of Middelburg (1572–1574) was a siege that lasted two years
+        and took place in the years between 1572 and 1574 during the Eighty Years'
+        War and the Anglo-Spanish War (1585–1604). A Dutch rebel army with the support
+        of English laid siege to Middelburg which was being held by Spanish forces
+        under Cristóbal de Mondragón. The Spanish held out and only capitulated when
+        news of the relief effort to save Middelburg was defeated at Rimmerswiel.
+- - - episode_done: true
+      eval_labels:
+      - Strange Days on Planet Earth grew into an ongoing partnership with the National
+        Geographic Society to bring focus on our personal connection to the planet’s
+        life systems.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - Strange Days on Planet Earth is a four-part (1 hour each) television program
+        on PBS concerning human impact on the environment.
+      - It is narrated by Edward Norton.
+      - The show was produced by Sea Studios Foundation.
+      - Strange Days on Planet Earth grew into an ongoing partnership with the National
+        Geographic Society to bring focus on our personal connection to the planet’s
+        life systems.
+      reward: 0
+      text: Strange Days on Planet Earth is a four-part (1 hour each) television program
+        on PBS concerning human impact on the environment. It is narrated by Edward
+        Norton. The show was produced by Sea Studios Foundation. Strange Days on Planet
+        Earth grew into an ongoing partnership with the National Geographic Society
+        to bring focus on our personal connection to the planet’s life systems.
+    - episode_done: true
+      eval_labels:
+      - Cicely Mary Barker (28 June 1895 – 16 February 1973) was an English illustrator
+        best known for a series of fantasy illustrations depicting fairies and flowers.
+      id: funpedia:sentencechoose
+      label_candidates:
+      - Cicely Mary Barker (28 June 1895 – 16 February 1973) was an English illustrator
+        best known for a series of fantasy illustrations depicting fairies and flowers.
+      - Barker's art education began in girlhood with correspondence courses and instruction
+        at the Croydon School of Art.
+      - Her earliest professional work included greeting cards and juvenile magazine
+        illustrations, and her first book, "Flower Fairies of the Spring", was published
+        in 1923.
+      - Similar books were published in the following decades.
+      reward: 0
+      text: Cicely Mary Barker (28 June 1895 – 16 February 1973) was an English illustrator
+        best known for a series of fantasy illustrations depicting fairies and flowers.
+        Barker's art education began in girlhood with correspondence courses and instruction
+        at the Croydon School of Art. Her earliest professional work included greeting
+        cards and juvenile magazine illustrations, and her first book, "Flower Fairies
+        of the Spring", was published in 1923. Similar books were published in the
+        following decades.
