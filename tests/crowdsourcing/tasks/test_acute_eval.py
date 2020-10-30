@@ -6,18 +6,18 @@
 
 
 import os
+import tempfile
 import time
 import unittest
-from typing import ClassVar, Type
 
 from hydra.experimental import compose, initialize
 
 try:
 
-    from mephisto.core.supervisor import Supervisor
-    from mephisto.data_model.blueprint import Blueprint
+    from mephisto.core.local_database import LocalMephistoDB
+    from mephisto.core.operator import Operator
     from mephisto.data_model.packet import Packet, PACKET_TYPE_AGENT_ACTION
-    from mephisto.data_model.test.utils import AbstractTestSupervisor, EMPTY_STATE
+    from mephisto.utils.scripts import augment_config_from_db
 
     from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
         AcuteEvalBlueprint,
@@ -277,15 +277,12 @@ try:
         ]
     }
 
-    class TestAcuteEval(AbstractTestSupervisor, unittest.TestCase):
+    class TestAcuteEval(unittest.TestCase):
         """
         Test the ACUTE-Eval crowdsourcing task.
         """
 
-        BlueprintClass: ClassVar[Type["Blueprint"]] = AcuteEvalBlueprint
-
-        def setUp(self):
-            super().setUp()
+        def test_base_task(self):
 
             # Define the configuration settings
             relative_task_directory = os.path.relpath(
@@ -296,43 +293,44 @@ try:
                 self.config = compose(
                     config_name="example",
                     overrides=[
+                        f'+mephisto.blueprint._blueprint_type={AcuteEvalBlueprint.BLUEPRINT_TYPE}',
+                        f'+mephisto/architect=mock',
+                        f'+mephisto/provider=mock',
                         f'+task_dir={TASK_DIRECTORY}',
                         f'+current_time={int(time.time())}',
                     ],
                 )
+                # TODO: when Hydra 1.1 is released with support for recursive defaults,
+                #  don't manually specify all missing blueprint args anymore, but
+                #  instead define the blueprint in the defaults list directly.
+                #  Currently, the blueprint can't be set in the defaults list without
+                #  overriding params in the YAML file, as documented at
+                #  https://github.com/facebookresearch/hydra/issues/326 and as fixed in
+                #  https://github.com/facebookresearch/hydra/pull/1044.
 
-        def test_base_task(self):
-
-            # Handle baseline setup
-            sup = Supervisor(self.db)
-            self.sup = sup
-            task_runner_class = self.BlueprintClass.TaskRunnerClass
-            args = self.BlueprintClass.ArgsClass()
-            args.timeout_time = 5
-            args.is_concurrent = False
-            task_runner = task_runner_class(
-                self.task_run, self.config.mephisto, EMPTY_STATE
-            )
-            sup.register_job(self.architect, task_runner, self.provider)
-            channel_info = list(sup.channels.values())[0]
-            task_runner = channel_info.job.task_runner
-            sup.launch_sending_thread()
+            self.data_dir = tempfile.mkdtemp()
+            database_path = os.path.join(self.data_dir, "mephisto.db")
+            self.db = LocalMephistoDB(database_path)
+            self.config = augment_config_from_db(self.config, self.db)
+            self.config.mephisto.architect.should_run_server = True
+            operator = Operator(self.db)
+            operator.validate_and_run_config(self.config.mephisto, shared_state=None)
+            channel_info = list(operator.supervisor.channels.values())[0]
+            server = channel_info.job.architect.server
 
             # Register a worker
             mock_worker_name = "MOCK_WORKER"
-            self.architect.server.register_mock_worker(mock_worker_name)
+            server.register_mock_worker(mock_worker_name)
             workers = self.db.find_workers(worker_name=mock_worker_name)
             worker_id = workers[0].db_id
 
             # Register an agent
             mock_agent_details = "FAKE_ASSIGNMENT"
-            self.architect.server.register_mock_agent(worker_id, mock_agent_details)
+            server.register_mock_agent(worker_id, mock_agent_details)
             agent = self.db.find_agents()[0]
-            agent.state = self.BlueprintClass.AgentStateClass(agent)
-            # By default, the Agent is created with the MockAgentState
 
             # Set initial data
-            _ = task_runner.get_init_data_for_agent(agent)
+            _ = channel_info.job.task_runner.get_init_data_for_agent(agent)
 
             # Make agent act
             agent_id_1 = agent.db_id
@@ -348,8 +346,6 @@ try:
             state = agent.state.get_data()
             self.assertEqual(DESIRED_INPUTS, state['inputs'])
             self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
-
-            sup.shutdown()
 
 
 except ImportError:
