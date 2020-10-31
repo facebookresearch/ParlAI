@@ -416,14 +416,13 @@ jobs:
           pytest_flags: -v -s
 
   teacher_tests:
-    executor: small_cpu37
+    executor: standard_cpu37
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
       - runtests:
           cachename: teacher
           marker: teacher
-          pytest_flags: -v -s
 
   mturk_tests:
     executor: small_cpu37
