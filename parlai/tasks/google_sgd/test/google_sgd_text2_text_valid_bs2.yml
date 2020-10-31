@@ -1,0 +1,68 @@
+- - - episode_done: false
+      eval_labels:
+      - What city do you want to dine in? Do you have a preferred restaurant?
+      id: google_sgd:text2_text
+      text: I want to make a restaurant reservation for 2 people at half past 11 in
+        the morning.
+      type: text
+    - episode_done: false
+      eval_labels:
+      - Which area would you like me to look in? Which restaurant would you like to
+        eat in and at what time?
+      id: google_sgd:text2_text
+      text: I am not in the mood to cook today. I want to eat out at a restaurant
+        instead.
+      type: text
+- - - episode_done: false
+      eval_labels:
+      - 'Confirming: I will reserve a table for 2 people at Sino in San Jose. The
+        reservation time is 11:30 am today.'
+      id: google_sgd:text2_text
+      text: Please find restaurants in San Jose. Can you try Sino?
+      type: text
+    - episode_done: false
+      eval_labels:
+      - You would like a table for 1 person for today at 11:30 am at the Sipan Peruvian
+        Restaurant & Bar in Saratoga?
+      id: google_sgd:text2_text
+      text: Look for a restaurant in Saratoga. Check to see if I can have a table
+        for 1 at Sipan for 11:30.
+      type: text
+- - - episode_done: false
+      eval_labels:
+      - Your reservation has been made. Their phone number is 408-247-8880.
+      id: google_sgd:text2_text
+      text: Yes, thanks. What's their phone number?
+      type: text
+    - episode_done: false
+      eval_labels:
+      - You would like me to book a table at Rosie Mccann's Irish Pub & Restaurant
+        for tomorrow?
+      id: google_sgd:text2_text
+      text: I would like to book at table at Rosie Mccann's for March 2nd.
+      type: text
+- - - episode_done: false
+      eval_labels:
+      - 'The street address is 377 Santana Row #1000. They have good vegetarian options.'
+      id: google_sgd:text2_text
+      text: What's their address? Do they have vegetarian options on their menu?
+      type: text
+    - episode_done: false
+      eval_labels:
+      - You would like to reserve a table for 11:30 am for next Monday?
+      id: google_sgd:text2_text
+      text: I want the eat there on the 4th of this month.
+      type: text
+- - - episode_done: false
+      eval_labels:
+      - Is there anything else I can help you with?
+      id: google_sgd:text2_text
+      text: Thanks very much.
+      type: text
+    - episode_done: false
+      eval_labels:
+      - My apologies. The reservation was unsuccessful. Is there anything else I can
+        assist you with?
+      id: google_sgd:text2_text
+      text: That would be fine. Is the restaurant costly?
+      type: text

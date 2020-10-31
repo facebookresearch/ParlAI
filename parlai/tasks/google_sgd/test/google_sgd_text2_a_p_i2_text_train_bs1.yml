@@ -1,0 +1,51 @@
+- - episode_done: false
+    id: google_sgd:text2_a_p_i2_text
+    labels:
+    - what city then?
+    slots:
+      city: []
+    text: 'I want Cambodian food that is afforadable api_resp: city = []'
+    type: apiresp
+- - episode_done: false
+    id: google_sgd:text2_a_p_i2_text
+    labels:
+    - 'apicall: FindRestaurants.city = Burlingame ; FindRestaurants.cuisine = Thai
+      ; FindRestaurants.price_range = moderate'
+    slots:
+      FindRestaurants.city: Burlingame
+      FindRestaurants.cuisine: Thai
+      FindRestaurants.price_range: moderate
+    text: It needs to be in burlingame
+    type: apicall
+- - episode_done: false
+    id: google_sgd:text2_a_p_i2_text
+    labels:
+    - there are 2 in coconut bay thai restaurant in burlingame
+    slots:
+      city:
+      - Burlingame
+      count:
+      - '2'
+      restaurant_name:
+      - Coconut Bay Thai Restaurant
+    text: 'api_resp: restaurant_name = [''Coconut Bay Thai Restaurant''] ; city =
+      [''Burlingame''] ; count = [''2'']'
+    type: apiresp
+- - episode_done: false
+    id: google_sgd:text2_a_p_i2_text
+    labels:
+    - anything else for you?
+    slots:
+      ? ''
+      : []
+    text: 'yes that is fine api_resp:  = []'
+    type: apiresp
+- - episode_done: false
+    id: google_sgd:text2_a_p_i2_text
+    labels:
+    - 'apicall: FindProvider.city = Burlingame ; FindProvider.is_unisex = True'
+    slots:
+      FindProvider.city: Burlingame
+      FindProvider.is_unisex: 'True'
+    text: I need a salon in burlingame
+    type: apicall

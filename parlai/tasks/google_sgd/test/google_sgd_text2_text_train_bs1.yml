@@ -1,0 +1,30 @@
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - what city then?
+    text: I want Cambodian food that is afforadable
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - there are 2 in coconut bay thai restaurant in burlingame
+    text: It needs to be in burlingame
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - anything else for you?
+    text: yes that is fine
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - 10 salons in burlingame barber shop in burlingame
+    text: I need a salon in burlingame
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - what time for?
+    text: yes that works
+    type: text

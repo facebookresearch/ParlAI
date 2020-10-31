@@ -1,0 +1,112 @@
+- - - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - what city then?
+      slots:
+        city: []
+      text: 'I want Cambodian food that is afforadable api_resp: city = []'
+      type: apiresp
+    - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - What type of event would you like to go to?
+      slots:
+        event_name: []
+      text: 'Hi I''m bored and would like to go to an event in Vancouver, BC. api_resp:
+        event_name = []'
+      type: apiresp
+- - - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - 'apicall: FindRestaurants.city = Burlingame ; FindRestaurants.cuisine = Thai
+        ; FindRestaurants.price_range = moderate'
+      slots:
+        FindRestaurants.city: Burlingame
+        FindRestaurants.cuisine: Thai
+        FindRestaurants.price_range: moderate
+      text: It needs to be in burlingame
+      type: apicall
+    - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - What date would you like to go on and how many tickets should I book?
+      slots:
+        date: []
+        number_of_tickets: []
+      text: 'I''d like to check out the Smokey Robinson concert. api_resp: date =
+        [] ; number_of_tickets = []'
+      type: apiresp
+- - - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - there are 2 in coconut bay thai restaurant in burlingame
+      slots:
+        city:
+        - Burlingame
+        count:
+        - '2'
+        restaurant_name:
+        - Coconut Bay Thai Restaurant
+      text: 'api_resp: restaurant_name = [''Coconut Bay Thai Restaurant''] ; city
+        = [''Burlingame''] ; count = [''2'']'
+      type: apiresp
+    - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - So you'd like to go see Smokey Robinson next Friday in Vancouver. You'd like
+        2 tickets. Is this correct?
+      slots:
+        city:
+        - Vancouver
+        date:
+        - '2019-03-08'
+        event_name:
+        - Smokey Robinson
+        number_of_tickets:
+        - '2'
+      text: 'I''d like two tickets on the 8th of March. api_resp: event_name = [''Smokey
+        Robinson''] ; number_of_tickets = [''2''] ; date = [''2019-03-08''] ; city
+        = [''Vancouver'']'
+      type: apiresp
+- - - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - anything else for you?
+      slots:
+        ? ''
+        : []
+      text: 'yes that is fine api_resp:  = []'
+      type: apiresp
+    - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - 'apicall: BuyEventTickets.city = Vancouver ; BuyEventTickets.date = 2019-03-08
+        ; BuyEventTickets.event_name = Smokey Robinson ; BuyEventTickets.number_of_tickets
+        = 2'
+      slots:
+        BuyEventTickets.city: Vancouver
+        BuyEventTickets.date: '2019-03-08'
+        BuyEventTickets.event_name: Smokey Robinson
+        BuyEventTickets.number_of_tickets: '2'
+      text: Yes that's great, where is the venue?
+      type: apicall
+- - - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - 'apicall: FindProvider.city = Burlingame ; FindProvider.is_unisex = True'
+      slots:
+        FindProvider.city: Burlingame
+        FindProvider.is_unisex: 'True'
+      text: I need a salon in burlingame
+      type: apicall
+    - episode_done: false
+      id: google_sgd:text2_a_p_i2_text
+      labels:
+      - Everything has been booked. The venue's address is 2901 East Hastings Street.
+      slots:
+        ? ''
+        : []
+        venue_address:
+        - 2901 East Hastings Street
+      text: 'api_resp: venue_address = [''2901 East Hastings Street''] ;  = []'
+      type: apiresp

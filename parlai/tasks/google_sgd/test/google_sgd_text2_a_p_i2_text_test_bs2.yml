@@ -1,0 +1,141 @@
+- - - episode_done: false
+      eval_labels:
+      - Any preference on the restaurant, location and time?
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        location: []
+        restaurant_name: []
+        time: []
+      text: 'Hi, could you get me a restaurant booking on the 8th please? api_resp:
+        time = [] ; restaurant_name = [] ; location = []'
+      type: apiresp
+    - episode_done: false
+      eval_labels:
+      - In which city are you trying to book the table?
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        location: []
+      text: 'Can you book a table for me at the Ancient Szechuan for the 11th of this
+        month at 11:30 am? api_resp: location = []'
+      type: apiresp
+- - - episode_done: false
+      eval_labels:
+      - Please confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for
+        2 on March 8th.
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        date:
+        - '2019-03-08'
+        location:
+        - Corte Madera
+        number_of_seats:
+        - '2'
+        restaurant_name:
+        - P.f. Chang's
+        time:
+        - '12:00'
+      text: 'Could you get me a reservation at P.f. Chang''s in Corte Madera at afternoon
+        12? api_resp: restaurant_name = ["P.f. Chang''s"] ; location = [''Corte Madera'']
+        ; time = [''12:00''] ; date = [''2019-03-08''] ; number_of_seats = [''2'']'
+      type: apiresp
+    - episode_done: false
+      eval_labels:
+      - Please confirm that you need a table for 2 at the Butterfly Restaurant in
+        San Francisco at 11:30 am on March 11th.
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        date:
+        - '2019-03-11'
+        location:
+        - San Francisco
+        number_of_seats:
+        - '2'
+        restaurant_name:
+        - Butterfly Restaurant
+        time:
+        - '11:30'
+      text: 'Can you book a table at the Butterfly restaurant in San Francisco? api_resp:
+        restaurant_name = [''Butterfly Restaurant''] ; location = [''San Francisco'']
+        ; time = [''11:30''] ; date = [''2019-03-11''] ; number_of_seats = [''2'']'
+      type: apiresp
+- - - episode_done: false
+      eval_labels:
+      - 'apicall: ReserveRestaurant.date = 2019-03-08 ; ReserveRestaurant.location
+        = Corte Madera ; ReserveRestaurant.number_of_seats = 2 ; ReserveRestaurant.restaurant_name
+        = P.f. Chang''s ; ReserveRestaurant.time = 12:00'
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        ReserveRestaurant.date: '2019-03-08'
+        ReserveRestaurant.location: Corte Madera
+        ReserveRestaurant.number_of_seats: '2'
+        ReserveRestaurant.restaurant_name: P.f. Chang's
+        ReserveRestaurant.time: '12:00'
+      text: Sure, that is great.
+      type: apicall
+    - episode_done: false
+      eval_labels:
+      - 'apicall: ReserveRestaurant.date = 2019-03-11 ; ReserveRestaurant.location
+        = San Francisco ; ReserveRestaurant.number_of_seats = 2 ; ReserveRestaurant.restaurant_name
+        = Butterfly Restaurant ; ReserveRestaurant.time = 11:30'
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        ReserveRestaurant.date: '2019-03-11'
+        ReserveRestaurant.location: San Francisco
+        ReserveRestaurant.number_of_seats: '2'
+        ReserveRestaurant.restaurant_name: Butterfly Restaurant
+        ReserveRestaurant.time: '11:30'
+      text: That's perfect. What cuisine do they offer?
+      type: apicall
+- - - episode_done: false
+      eval_labels:
+      - Sorry, your reservation could not be made. Could I help you with something
+        else?
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        ? ''
+        : []
+      text: 'api_resp:  = []'
+      type: apiresp
+    - episode_done: false
+      eval_labels:
+      - Your table has been booked successfully and they serve Asian cuisine.
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        ? ''
+        : []
+        category:
+        - Asian
+      text: 'api_resp: category = [''Asian''] ;  = []'
+      type: apiresp
+- - - episode_done: false
+      eval_labels:
+      - Sure, please confirm your reservation at Benissimo Restaurant & Bar in Corte
+        Madera at 12 pm for 2 on March 8th.
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        date:
+        - '2019-03-08'
+        location:
+        - Corte Madera
+        number_of_seats:
+        - '2'
+        restaurant_name:
+        - Benissimo Restaurant & Bar
+        time:
+        - '12:00'
+      text: 'Could you try booking a table at Benissimo instead? api_resp: restaurant_name
+        = [''Benissimo Restaurant & Bar''] ; location = [''Corte Madera''] ; time
+        = [''12:00''] ; date = [''2019-03-08''] ; number_of_seats = [''2'']'
+      type: apiresp
+    - episode_done: false
+      eval_labels:
+      - Their prices are moderate and they have a user rating of 4.0.
+      id: google_sgd:text2_a_p_i2_text
+      slots:
+        price_range:
+        - moderate
+        rating:
+        - '4.00'
+      text: 'Can you get me the user rating of the restaurant? Is it expensive? api_resp:
+        rating = [''4.00''] ; price_range = [''moderate'']'
+      type: apiresp
