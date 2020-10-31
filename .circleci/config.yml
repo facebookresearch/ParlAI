@@ -287,6 +287,7 @@ commands:
           name: check for bad links
           working_directory: ~/ParlAI/
           command: |
+            sudo apt-get install linkchecker
             python -m http.server --directory website/build >/dev/null &
             linkchecker http://localhost:8000/
             kill %1
