@@ -1,0 +1,164 @@
+- - - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - the good place get a free car insurance quote be from an experienced broker
+        20 year of experience or more and their reputable website why because that
+        be our job and we do it well customer can quickly get free quote online from
+        the top rate company in minute the rate they view will be the low available
+        price and you pay no fee when utilize a broker whether you have current coverage
+        or need it quickly our job be help you and that be exactly what happen
+      - great question you can get free quote from any legitimate agent or company
+        take internet quote with a grain of salt as they will give you good case price
+        every time and often when the agent get your complete information , the actual
+        cost be much high I recommend you look for an independent agent ( 1 not tie
+        to a brand name company who can give you several company look at or spend
+        the time and visit a couple of agent from brand name company if you need help
+        please feel free contact me thanks for ask
+      - all quote be free no matter who quote you for insurance or do it online no
+        carrier or agent shall charge just quote you if this have happen to you then
+        most likely the be not legitimate if this have happento you need contact your
+        state insurance commissioner and report them
+      reward: 0
+      text: where can I get a free car insurance quote
+    - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - the difference between replacement cost and fair value coverage can be significant
+        if a home with a roof 15 years old suffer hail damage fair value coverage
+        will only pay 25% the cost of a new roof assume a 20 year roof life replacement
+        cost will pay the full cost of replace roof this apply to both the home and
+        all its contents carefully consider the difference in premium between replacement
+        cost and fair value coverage
+      - simply state Replacement Cost be the estimate amount that it will cost replace
+        your home to the condition that it be prior to a cover loss use material of
+        like kind and quality subject to current building code it be a good idea factor
+        in the cost of demolition as well , since if there be a loss all or a portion
+        of your current home may have be level in order to prepare the sight for reconstruction
+      reward: 0
+      text: what do replacement cost mean in home insurance
+- - - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - aside from be income tax free life insurance proceeds can possibly be subject
+        to state or federal estate tax the exempt amount be high at this time for
+        federal estate tax $5,250,000 and some state do not have any state estate
+        or inheritance tax if the life insurance benefit push the estate over the
+        exempt limit for state and/or federal estate tax whether the beneficiary help
+        pay those tax will need be determined
+      - for personally own policy life insurance death benefit pay in a lump sum the
+        beneficiary be receive income tax free a unique important benefit if the beneficiary
+        be a business and business own the policy , the business be generally not
+        subject to the regular corporate federal income tax on the death proceeds
+        provide special requirement be satisfy for policy issue or materially modify
+        since august 17, 2006
+      reward: 0
+      text: do a beneficiary pay tax on a Life Insurance policy
+    - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - I will suggest carry the maximum amount of disability insurance that you can
+        qualify for which be up to 70% your earnings there be many feature and company
+        when it come to purchase disability insurance I highly recommend use an experienced
+        insurance broker help navigate these many option avoid a costly mistake
+      - you shall have up to the insurance limitation of your earn power and you can
+        do that 2 way first you can insure up to 60% your compensation tax free with
+        nondeductible premium or insure up to 80% your compensation taxable with deductible
+        premium through a business benefit arrangement
+      reward: 0
+      text: how much Disability Insurance shall I have
+- - - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - when buy a permanent life insurance policy when you have a long need for coverage
+        say 20+ year when you want the feature a permanent offer at as early an age
+        as possible take advantage of low cost and a long growth window when you want
+        the low cost coverage over the long period of time when you want control of
+        the policy you purchase
+      - when buy permanent life insurance that be a good question some agent recommend
+        buy permanent life insurance every policy some financial consultant recommend
+        never buy permanent life insurance both have some valid justification but
+        both be rather extreme position in real life with budget limitation , health
+        risk , bear market and other consideration it be hard me recommend only 1
+        option not everyone can afford all the life insurance they need in permanent
+        coverage yet buy only term present the risk of be unable qualify for a new
+        policy when the current 1 expire put money in the stock market and savings
+        plan shall cover final expense need eliminate the need for permanent life
+        insurance but will those investment and savings be there when you die my recommendation
+        be buy term insurance temporary need and permanent insurance for lifelong
+        need specifically permanent insurance be good for final expense need such
+        as funeral , burial pay off credit card and other cost associate with put
+        the deceased rest permanent insurance be recommend if you want use the policy
+        proceeds pay estate tax , pass money to heir or bequeath money a charity if
+        you use term insurance for any purpose that may find you outlive the term
+        you may find you no longer qualify for a new policy all your plan for your
+        life insurance be moot
+      reward: 0
+      text: when buy permanent Life Insurance
+    - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - the right part d plan for you will depend on your specific drug my client
+        normally ask me take their drug and find the plan that save them the most
+        money also Medicare part c plan may also be a good option because most part
+        c plan have part d include
+      reward: 0
+      text: what be the good Medicare drug coverage
+- - - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - initially you will need obtain a quotation for homeowner insurance in order
+        to obtain a quote you will need provide some personal information as well
+        as the characteristic of the home the carrier calculate the reconstruction
+        cost of the home item that may make a favorable difference in rate may be
+        any professional designation that you may have , any security feature such
+        as an Earthquake Gas Shutoff Valve , Home Security Alarm System , Fire Sprinklers
+        etc. finally you shall review the coverage and make sure you feel the policy
+        will sufficiently offer you the protection you expect in the event of a loss
+        ; if you wish lower the premium generate we suggest increase the deductible
+        thereby take a small portion of risk upon yourself in order to reduce the
+        premium it be always good be properly cover and be a little out of pocket
+        than the reverse for far information you may click on WEBSITELINK
+      - your first step shall find out how much the insurance will cost base off of
+        the replacement cost value of the home which not the same as an appraisal
+        many carrier will use replacement cost not actual cash valu the home the rate
+        not much different in the event of a loss it well worth the difference
+      reward: 0
+      text: what be need for homeowner insurance
+    - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - for permanent life insurance the policy owner have the right borrow from the
+        cash value subject to the term in the contract so the owner can borrow life
+        insurance cash value even prior to age 59-1/2 without a tax penalty as it
+        be not a distribution loan will reduce the policy death benefit and cash value
+        available for use but use care here since if the policy lapse or be surrender
+        in full while there be an outstanding loan the amount of the outstanding loan
+        be taxable to the extent that the policy gross cash value exceed the policy
+        owner basis ( sum of premium pay in the contract policy that have a cash surrender
+        value and have be in force for awhile have a maximum loanable value of close
+        to the cash surrender value your annual statement may also have the value
+        for loan purpose policy vary widely and there be many factor consider the
+        good way get a current value be contact your life insurance professional or
+        the insurance company directly
+      reward: 0
+      text: how do borrowing against your Life Insurance work
+- - - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - life insurance in Florida be generally not charge income tax unless the beneficiary
+        of the policy be the estate also life insurance upon the death of the second
+        spouse be consider part of the estate for estate tax purpose no matter who
+        the beneficiary be unless it be an irrevocable insurance trust contact a tax
+        attorney for specific situation
+      reward: 0
+      text: be Life Insurance tax in Florida
+    - episode_done: true
+      id: insuranceqa:v1
+      labels:
+      - most qualified plan have borrowing provision for plan participant there be
+        usually an interest charge as well as a payback schedule borrow money fro
+        your plan may restrict your ability transfer fund to another plan or termination
+        of your plan until it be pay off tap your retirement plan shall be the last
+        source of money you look to
+      reward: 0
+      text: can you borrow from your retirement plan
