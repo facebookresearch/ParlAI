@@ -23,7 +23,7 @@ executors:
       - image: circleci/python:3.7.5-buster-node
     environment:
       PYTHONUNBUFFERED: 1
-    resource_class: large
+    resource_class: medium
 
   standard_cpu36:
     docker:
@@ -179,14 +179,6 @@ commands:
             nvidia-smi
             pyenv global 3.7.0
 
-  buildwebsite:
-    description: Build the website
-    steps:
-      - run:
-          working_directory: ~/ParlAI/website
-          name: Build the website
-          command: make
-
   findtests:
     description: Find tests to run
     parameters:
@@ -260,6 +252,55 @@ commands:
       - codecov
       - store_test_results:
           path: test-results
+
+  website:
+    description: Build (and possibly deploy) the website
+    parameters:
+      deploy:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - fixgit
+      - restore_cache:
+          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
+      - setup
+      - installdeps
+      - installtorchgpu16
+      - save_cache:
+          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - run:
+          working_directory: ~/ParlAI/website
+          name: build the website
+          command: make
+      - run:
+          name: zip up the website
+          working_directory: ~/ParlAI/website/build/
+          command: |
+            zip -r ~/ParlAI/website.zip *
+      - store_artifacts:
+          path: website.zip
+      - run:
+          name: check for bad links
+          working_directory: ~/ParlAI/
+          command: |
+            python -m http.server --directory website/build >/dev/null &
+            linkchecker http://localhost:8000/
+            kill %1
+      - when:
+         condition: << parameters.deploy >>
+         steps:
+         - run:
+             working_directory: ~/ParlAI/
+             name: Upload the website
+             command: |
+               pip install s3cmd
+               s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
+               s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
+               s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
 
 
 # -------------------------------------------------------------------------------------
@@ -374,7 +415,7 @@ jobs:
           pytest_flags: -v -s
 
   teacher_tests:
-    executor: standard_cpu37
+    executor: small_cpu37
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
@@ -384,7 +425,7 @@ jobs:
           pytest_flags: -v -s
 
   mturk_tests:
-    executor: standard_cpu37
+    executor: small_cpu37
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -393,7 +434,7 @@ jobs:
           marker: mturk
 
   crowdsourcing_tests:
-    executor: standard_cpu37
+    executor: small_cpu37
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -401,90 +442,39 @@ jobs:
           cachename: crowdsourcing
           marker: crowdsourcing
 
-#  build_website:
-#    <<: *standard_cpu37
-#    working_directory: ~/ParlAI
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu16
-#      - <<: *installdeps
-#      - run:
-#          working_directory: ~/ParlAI/
-#          name: more build website dependencies
-#          command: |
-#            pip install s3cmd
-#            sudo apt-get install linkchecker
-#      - save_cache:
-#          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *buildwebsite
-#      - run:
-#          name: zip up the website
-#          working_directory: ~/ParlAI/website/build/
-#          command: |
-#            zip -r ~/ParlAI/website.zip *
-#      - store_artifacts:
-#          path: website.zip
-#      - run:
-#          name: check for bad links
-#          working_directory: ~/ParlAI/
-#          command: |
-#            python -m http.server --directory website/build >/dev/null &
-#            linkchecker http://localhost:8000/
-#            kill %1
-#
-#  deploy_website:
-#    <<: *standard_cpu37
-#    working_directory: ~/ParlAI
-#    steps:
-#      - checkout
-#      - <<: *fixgit
-#      - restore_cache:
-#          key: deps-20200921-dw-{{ checksum "requirements.txt" }}
-#      - <<: *setup
-#      - <<: *installtorchgpu16
-#      - <<: *installdeps
-#      - save_cache:
-#          key: deps-20200921-dw-{{ checksum "requirements.txt" }}
-#          paths:
-#            - "~/venv/bin"
-#            - "~/venv/lib"
-#      - <<: *buildwebsite
-#      - run:
-#          working_directory: ~/ParlAI/
-#          name: Upload the website
-#          command: |
-#            pip install s3cmd
-#            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
-#            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
-#            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
-#
-#  test_website:
-#    <<: *standard_cpu37
-#    working_directory: ~/
-#    steps:
-#      - run:
-#          working_directory: ~/ParlAI/
-#          name: Test the website
-#          command: |
-#            echo 'Testing root page:'
-#            curl -f -i 'https://parl.ai/'
-#            echo
-#            echo 'Testing root css:'
-#            curl -f -i 'https://parl.ai/static/css/parlai.css'
-#            echo
-#            echo 'Testing docs page'
-#            curl -f -i 'https://parl.ai/docs/'
-#            echo
-#            echo 'Testing docs css'
-#            curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
-#
+  build_website:
+    executor: small_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - website:
+          deploy: false
+
+  deploy_website:
+    executor: small_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - website:
+          deploy: true
+
+  test_website:
+    executor: small_cpu37
+    working_directory: ~/ParlAI
+    steps:
+      - run:
+          name: Test the website
+          command: |
+            echo 'Testing root page:'
+            curl -f -i 'https://parl.ai/'
+            echo
+            echo 'Testing root css:'
+            curl -f -i 'https://parl.ai/static/css/parlai.css'
+            echo
+            echo 'Testing docs page'
+            curl -f -i 'https://parl.ai/docs/'
+            echo
+            echo 'Testing docs css'
+            curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
 
 workflows:
@@ -493,55 +483,45 @@ workflows:
     jobs:
       - cleaninstall_36
       - unittests_gpu16
-      - unittests_36
+      - unittests_37
       - mturk_tests
       - crowdsourcing_tests
-      - unittests_37:
+      - unittests_36:
           requires:
             - unittests_gpu16
-            - unittests_36
+            - unittests_37
       - unittests_38:
           requires:
             - unittests_gpu16
-            - unittests_36
+            - unittests_37
       - unittests_gpu14:
           requires:
             - unittests_gpu16
-            - unittests_36
+            - unittests_37
       - unittests_gpu15:
           requires:
             - unittests_gpu16
-            - unittests_36
+            - unittests_37
       - unittests_osx:
           requires:
             - unittests_gpu16
-            - unittests_36
+            - unittests_37
       - long_gpu_tests:
           requires:
             - unittests_gpu16
-            - unittests_36
+            - unittests_37
       - teacher_tests:
           requires:
             - unittests_gpu16
-            - unittests_36
-
-
-
-## -------------------------------------------------------------------------------------
-## Workflows
-## -------------------------------------------------------------------------------------
-#workflows:
-#  version: 2
-#  commit:
-#    jobs:
-#      - build_website:
-#          filters:
-#            branches:
-#              ignore: master
-#      - deploy_website:
-#          filters:
-#            branches:
-#              only: master
-#      - test_website:
-#          requires:
-#            - deploy_website
+            - unittests_37
+      - build_website:
+          filters:
+            branches:
+              ignore: master
+      - deploy_website:
+          filters:
+            branches:
+              only: master
+      - test_website:
+          requires:
+            - deploy_website
