@@ -196,10 +196,6 @@ commands:
   runtests:
     description: Run a full suite of unit tests
     parameters:
-      install_torch:
-        description: Which torch setup should we do?
-        type: steps
-        default: []
       cachename:
         description: the key for our caches. date and checksum will be added
         type: string
@@ -229,7 +225,6 @@ commands:
           key: deps-20200921-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
-      - << parameters.install_torch >>
       - << parameters.more_installs >>
       - save_cache:
           key: deps-20200921-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
@@ -339,7 +334,7 @@ jobs:
     parallelism: 8
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchcpu
           cachename: ut36
           marker: unit
@@ -350,7 +345,7 @@ jobs:
     parallelism: 2
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchcpu
           cachename: ut37
           marker: unit
@@ -361,7 +356,7 @@ jobs:
     parallelism: 2
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchcpu
           cachename: ut38
           marker: unit
@@ -372,7 +367,7 @@ jobs:
     parallelism: 2
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchgpu14
           install_cuda: true
           cachename: gpu14
@@ -384,7 +379,7 @@ jobs:
     parallelism: 2
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchgpu15
           install_cuda: true
           cachename: gpu15
@@ -396,7 +391,7 @@ jobs:
     parallelism: 8
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchgpu16
           install_cuda: true
           cachename: gpu16
@@ -408,12 +403,21 @@ jobs:
     parallelism: 8
     steps:
       - runtests:
-          install_torch:
+          more_installs:
             - installtorchgpu16
           install_cuda: true
           cachename: nightly
           marker: nightly_gpu
           pytest_flags: -v -s
+
+  crowdsourcing_tests:
+    executor: small_cpu37
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - runtests:
+          cachename: crowdsourcing
+          marker: crowdsourcing
 
   teacher_tests:
     executor: standard_cpu37
@@ -432,15 +436,6 @@ jobs:
       - runtests:
           cachename: mturk
           marker: mturk
-
-  crowdsourcing_tests:
-    executor: small_cpu37
-    working_directory: ~/ParlAI
-    parallelism: 1
-    steps:
-      - runtests:
-          cachename: crowdsourcing
-          marker: crowdsourcing
 
   build_website:
     executor: small_cpu37
@@ -483,30 +478,33 @@ workflows:
     jobs:
       - cleaninstall_36
       - unittests_gpu16
-      - unittests_37
-      - mturk_tests
-      - crowdsourcing_tests
-      - unittests_36:
-          requires:
-            - unittests_gpu16
-            - unittests_37
-      - unittests_38:
-          requires:
-            - unittests_gpu16
-            - unittests_37
-      - unittests_gpu14:
-          requires:
-            - unittests_gpu16
-            - unittests_37
       - unittests_gpu15:
           requires:
-            - unittests_gpu16
             - unittests_37
+            - unittests_gpu16
+      - unittests_gpu14:
+          requires:
+            - unittests_37
+            - unittests_gpu16
+      - unittests_38:
+          requires:
+            - unittests_37
+            - unittests_gpu16
+      - unittests_37
+      - unittests_36:
+          requires:
+            - unittests_37
+            - unittests_gpu16
+      - mturk_tests
       - unittests_osx:
           requires:
             - unittests_gpu16
             - unittests_37
       - long_gpu_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_37
+      - crowdsourcing_tests:
           requires:
             - unittests_gpu16
             - unittests_37
