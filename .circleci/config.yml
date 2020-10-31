@@ -167,16 +167,16 @@ commands:
   installcrowdsourcingdeps:
     description: Install Mephisto
     steps:
-        run:
+      - run:
             name: Install Mephisto
             command: |
-            cd ..
-            git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-        cd Mephisto; git checkout 7eb85dcbf8bee89a7ac9adc5f23b0f05a78bcb4b -b stable
-        pip install -r requirements.txt
-        python setup.py develop
-        echo | mephisto check
-        # `echo` so that ENTER will be pressed at the prompt
+              cd ..
+              git clone git@github.com:facebookresearch/Mephisto.git Mephisto
+              cd Mephisto; git checkout 7eb85dcbf8bee89a7ac9adc5f23b0f05a78bcb4b -b stable
+              pip install -r requirements.txt
+              python setup.py develop
+              # `echo` so that ENTER will be pressed at the prompt
+              echo | mephisto check
 
   setupcuda:
     description: Setup CUDA
@@ -432,7 +432,7 @@ jobs:
       - runtests:
           cachename: crowdsourcing
           marker: crowdsourcing
-          more_installs
+          more_installs:
             - installcrowdsourcingdeps
 
   teacher_tests:
