@@ -41,7 +41,7 @@ def get_class_name(item):
     #   are likely to share caching more
     # - split up the rest by class name because slow tests tend to be in
     #   the same module
-    if class_name and '.tasks.' not in module_name and 'nightly_gpu' not in module_name:
+    if class_name and '.tasks.' not in module_name:
         return "{}.{}".format(module_name, class_name)
     else:
         return module_name
