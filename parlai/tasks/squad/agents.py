@@ -163,7 +163,7 @@ class OpensquadTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    answers = (a['text'] for a in qa['answers'])
+                    answers = [a['text'] for a in qa['answers']]
                     yield (question, answers), True
 
 
