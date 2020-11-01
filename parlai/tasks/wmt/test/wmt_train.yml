@@ -1,41 +1,41 @@
 - - episode_done: true
     id: wmt
     labels:
-    - Der Flughafen gewährleistet übliche Handlingdienste , d.h. komplettes Ramp __AT__
-      Handling , Geschäftshandling , wie auch das Betanken der Flugzeuge . Die Belegschaft
-      spricht fließend Englisch und Deutsch .
+    - Jetzt sollten wir also - und ich möchte von der Frau Kommissarin wissen , ob
+      sie mit mir darin konform geht - Lösungen für die Mängel und Lücken konzipieren
+      , damit die Finanzierbarkeit gesichert ist .
     reward: 0
-    text: 'To the ground services belong standard handling services : whole ramp and
-      traffic handling , fueling .'
+    text: So we should - and I would like to ask the Commissioner if she agrees -
+      come up with solutions for the shortages and gaps in order to achieve proper
+      financeability .
 - - episode_done: true
     id: wmt
     labels:
-    - Das Hermes Hotel erwartet Sie im Viertel Plaka im Herzen der Altstadt .
+    - Alle auf dieser Webseite erwähnten Warenzeichen und Markennamen gehören selbstverständlich
+      ihren jeweiligen Inhabern und werden hier nur aus dokumentatorischen Gründen
+      erwähnt .
     reward: 0
-    text: Hermes Hotel is situated in the heart of the old city , in the Plaka area
-      .
+    text: All tradmarks and logos mentioned on this website belong to their owners
+      and are included for documentary reasons only .
 - - episode_done: true
     id: wmt
     labels:
-    - Pattaya ist der bereits am längsten bekannte Urlaubsort in Thailand .
+    - Der Zeltplatz muss vor 12.00 Uhr frei verlassen werden .
     reward: 0
-    text: Pattaya is the longest established of all Thailand &apos;s beach destinations
-      .
+    text: All the Guest with tents , campers , caravans must leave the place available
+      before 12.00pm on the day of departure .
 - - episode_done: true
     id: wmt
     labels:
-    - Ist die Kommission ebenfalls der Meinung , dass diese Schritte nach Abschluss
-      der Untersuchungen ergriffen werden könnten ?
+    - Ein erstes Projekt , mit dem eine Bank mit einer Beteiligung von 20 Mio USD
+      gestützt wurde , ist genehmigt worden .
     reward: 0
-    text: I wonder whether the Commission would agree that those steps might be taken
-      at the end of the studies ?
+    text: With its promotion of foreign trade and investment the German government
+      supports and accompanies German enterprises in their activities abroad and provides
+      coverage in the form of investment guarantees .
 - - episode_done: true
     id: wmt
     labels:
-    - ( RO ) Zu Beginn möchte ich betonen , wie wichtig es meiner Meinung nach für
-      die EU ist , bei der Überprüfungskonferenz in New York einen ehrgeizigen Aktionsplan
-      zu unterstützen .
+    - Bingo ist ein auf 90 Nummern ( 1 bis 90 ) beruhendes Lotterie __AT__ Spiel .
     reward: 0
-    text: ( RO ) I would like to begin by emphasising how important I feel it is for
-      the EU to promote an ambitious action plan during the review conference in New
-      York .
+    text: Bingo is a lottery game using 90 numbers ( 1 to 90 ) .
