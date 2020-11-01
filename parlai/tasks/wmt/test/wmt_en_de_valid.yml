@@ -1,0 +1,46 @@
+- - episode_done: true
+    eval_labels:
+    - Es werden Tiere in ganz Europa gekauft und über den Kontinent transportiert
+      .
+    id: wmt:en_de
+    reward: 0
+    text: Animals are bought throughout Europe and transported over the entire continent
+      .
+- - episode_done: true
+    eval_labels:
+    - NextGEN Gallery benutzen um Spiegelung zu generieren ( Weniger ist mehr !
+    id: wmt:en_de
+    reward: 0
+    text: Use NextGEN Gallery to generate reflection ( less is more !
+- - episode_done: true
+    eval_labels:
+    - Die Buchfalzkorrektur ist besonders dann erforderlich , wenn gescannte Texte
+      anschließend mit einer OCR __AT__ Software nachbearbeitet werden .
+    id: wmt:en_de
+    reward: 0
+    text: The Book Fold Correction is particularly required when the operator applies
+      post __AT__ processing software like OCR .
+- - episode_done: true
+    eval_labels:
+    - Wie ich Sie kenne , Herr Lindqvist , bezweifle ich keinen einzigen Augenblick
+      , daß Sie weiter versuchen werden , in den kommenden Wochen und Monaten die
+      Dinge in Bewegung zu bringen .
+    id: wmt:en_de
+    reward: 0
+    text: As I know you , Mr Lindqvist , I do not doubt for one moment that you will
+      make a further attempt to make things move in the weeks and months to come .
+- - episode_done: true
+    eval_labels:
+    - Erstens stießen wir bezüglich der Achtung der sozialen Werte und Rechte auf
+      den Widerwillen von Abgeordneten der Rechten und in der Fraktion der Allianz
+      der Liberalen und Demokraten für Europa , die Notwendigkeit zu akzeptieren ,
+      die sozialen Rechte der europäischen Bürgerinnen und Bürger auf Dauer zu schützen
+      , sodass diese niemals in zukünftigen Rechtsvorschriften durch Markterwägungen
+      überschwemmt würden .
+    id: wmt:en_de
+    reward: 0
+    text: Firstly , with regard to respect for social values and rights , we came
+      up against the reluctance of Members on the right and in the Group of the Alliance
+      of Liberals and Democrats for Europe to accept the need to permanently safeguard
+      Europeans &apos; social rights so that they can never be swamped by market considerations
+      in any future legislation .

@@ -1,0 +1,41 @@
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Der Flughafen gewährleistet übliche Handlingdienste , d.h. komplettes Ramp __AT__
+      Handling , Geschäftshandling , wie auch das Betanken der Flugzeuge . Die Belegschaft
+      spricht fließend Englisch und Deutsch .
+    reward: 0
+    text: 'To the ground services belong standard handling services : whole ramp and
+      traffic handling , fueling .'
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Das Hermes Hotel erwartet Sie im Viertel Plaka im Herzen der Altstadt .
+    reward: 0
+    text: Hermes Hotel is situated in the heart of the old city , in the Plaka area
+      .
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Pattaya ist der bereits am längsten bekannte Urlaubsort in Thailand .
+    reward: 0
+    text: Pattaya is the longest established of all Thailand &apos;s beach destinations
+      .
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Ist die Kommission ebenfalls der Meinung , dass diese Schritte nach Abschluss
+      der Untersuchungen ergriffen werden könnten ?
+    reward: 0
+    text: I wonder whether the Commission would agree that those steps might be taken
+      at the end of the studies ?
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - ( RO ) Zu Beginn möchte ich betonen , wie wichtig es meiner Meinung nach für
+      die EU ist , bei der Überprüfungskonferenz in New York einen ehrgeizigen Aktionsplan
+      zu unterstützen .
+    reward: 0
+    text: ( RO ) I would like to begin by emphasising how important I feel it is for
+      the EU to promote an ambitious action plan during the review conference in New
+      York .
