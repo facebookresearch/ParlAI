@@ -99,8 +99,7 @@ class CrowdsourcingTestMixin:
         """
         Register mock agents for testing, taking the place of crowdsourcing workers.
 
-        Specify the number of agents to register. Return the agents' IDs after
-        creation.
+        Specify the number of agents to register. Return the agents' IDs after creation.
         """
 
         for idx in range(num_agents):
