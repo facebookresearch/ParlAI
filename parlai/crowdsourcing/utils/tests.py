@@ -34,15 +34,14 @@ class CrowdsourcingTestMixin:
         if self.operator is not None:
             self.operator.shutdown()
 
-    def set_up_test(
+    def _set_up_config(
         self,
         blueprint_type: str,
         task_directory: str,
         overrides: Optional[List[str]] = None,
-        shared_state: Optional[SharedTaskState] = None,
     ):
         """
-        Set up the config, database, operator, and server.
+        Set up the config and database.
 
         Uses the Hydra compose() API for unit testing and a temporary directory to store
         the test database.
@@ -84,6 +83,11 @@ class CrowdsourcingTestMixin:
         self.db = LocalMephistoDB(database_path)
         self.config = augment_config_from_db(self.config, self.db)
         self.config.mephisto.architect.should_run_server = True
+
+    def _set_up_server(self, shared_state: Optional[SharedTaskState] = None):
+        """
+        Set up the operator and server.
+        """
         self.operator = Operator(self.db)
         self.operator.validate_and_run_config(
             self.config.mephisto, shared_state=shared_state

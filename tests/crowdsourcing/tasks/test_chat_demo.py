@@ -7,6 +7,7 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import os
 import unittest
 
 # Desired inputs/outputs
@@ -254,7 +255,8 @@ try:
     # From the Mephisto repo
     from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
     from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
-        ParlAIChatBlueprint,
+        SharedParlAITaskState,
+        BLUEPRINT_TYPE,
     )
 
     from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
@@ -266,7 +268,7 @@ try:
 
         def test_base_task(self):
 
-            # Set up the config, database, operator, and server
+            # Set up the config and database
             overrides = [
                 '+mephisto.blueprint.world_file=${task_dir}/demo_worlds.py',
                 '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
@@ -275,11 +277,30 @@ try:
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
-            self.set_up_test(
-                blueprint_type=ParlAIChatBlueprint.BLUEPRINT_TYPE,
+            self._set_up_config(
+                blueprint_type=BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
                 overrides=overrides,
             )
+
+            # Set up the operator and server
+            world_opt = {
+                "num_turns": self.config.num_turns,
+                "turn_timeout": self.config.turn_timeout,
+            }
+            custom_bundle_path = self.config.mephisto.blueprint.get(
+                "custom_source_bundle", None
+            )
+            if custom_bundle_path is not None:
+                assert os.path.exists(custom_bundle_path), (
+                    "Must build the custom bundle with `npm install; npm run dev` from within "
+                    f"the {TASK_DIRECTORY}/webapp directory in order to demo a custom bundle "
+                )  # TODO: this won't work for the unit test - build this directly!
+                world_opt["send_task_data"] = True
+            shared_state = SharedParlAITaskState(
+                world_opt=world_opt, onboarding_world_opt=world_opt
+            )
+            self._set_up_server(shared_state=shared_state)
 
             # Set up the mock human agents
             agent_0_id, agent_1_id = self._register_mock_agents(num_agents=2)

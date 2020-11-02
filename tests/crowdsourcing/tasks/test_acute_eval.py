@@ -252,7 +252,7 @@ DESIRED_OUTPUTS = {
 try:
 
     from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
-        AcuteEvalBlueprint,
+        BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
     from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
@@ -266,11 +266,12 @@ try:
 
             # Set up the config, database, operator, and server
             overrides = [f'mephisto.blueprint.block_on_onboarding_fail={False}']
-            self.set_up_test(
-                blueprint_type=AcuteEvalBlueprint.BLUEPRINT_TYPE,
+            self._set_up_config(
+                blueprint_type=BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
                 overrides=overrides,
             )
+            self._set_up_server()
 
             # Set up the mock human agent
             agent_id = self._register_mock_agents(num_agents=1)[0]
