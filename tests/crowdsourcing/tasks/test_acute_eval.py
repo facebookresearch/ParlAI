@@ -269,24 +269,16 @@ try:
                 overrides=overrides,
             )
 
-            # Register a worker
-            mock_worker_name = "MOCK_WORKER"
-            self.server.register_mock_worker(mock_worker_name)
-            workers = self.db.find_workers(worker_name=mock_worker_name)
-            worker_id = workers[0].db_id
-
-            # Register an agent
-            mock_agent_details = "FAKE_ASSIGNMENT"
-            self.server.register_mock_agent(worker_id, mock_agent_details)
-            agent = self.db.find_agents()[0]
-            agent_id_1 = agent.db_id
+            # Set up the mock human agent
+            agent = self._register_mock_agent(suffix='0')
+            agent_id = agent.db_id
 
             # Set initial data
-            self.server.request_init_data(agent_id_1)
+            self.server.request_init_data(agent_id)
 
             # Make agent act
             self.server.send_agent_act(
-                agent_id_1, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
+                agent_id, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
             )
 
             # Check that the inputs and outputs are as expected
