@@ -16,14 +16,14 @@ DESIRED_STATE_AGENT_0 = {
             {
                 "packet_type": "update_status",
                 "sender_id": "mephisto",
-                "receiver_id": "10320",
+                "receiver_id": "1",
                 "data": {"state": {"agent_display_name": "Chat Agent 1"}},
                 "timestamp": 1604343628.610868,
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10320",
-                "receiver_id": "mephisto",
+                "sender_id": "1",
+                "receiver_id": "Mephisto",
                 "data": {
                     "text": "Hi! How are you?",
                     "task_data": {},
@@ -36,7 +36,7 @@ DESIRED_STATE_AGENT_0 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10320",
+                "receiver_id": "1",
                 "data": {
                     "text": "I'm pretty good - you?",
                     "task_data": {},
@@ -48,8 +48,8 @@ DESIRED_STATE_AGENT_0 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10320",
-                "receiver_id": "mephisto",
+                "sender_id": "1",
+                "receiver_id": "Mephisto",
                 "data": {
                     "text": "I'm okay - how was your weekend?",
                     "task_data": {},
@@ -62,7 +62,7 @@ DESIRED_STATE_AGENT_0 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10320",
+                "receiver_id": "1",
                 "data": {
                     "text": "I was fine. Did you do anything fun?",
                     "task_data": {},
@@ -75,7 +75,7 @@ DESIRED_STATE_AGENT_0 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10320",
+                "receiver_id": "1",
                 "data": {
                     "id": "Coordinator",
                     "text": "Please fill out the form to complete the chat:",
@@ -110,8 +110,8 @@ DESIRED_STATE_AGENT_0 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10320",
-                "receiver_id": "mephisto",
+                "sender_id": "1",
+                "receiver_id": "Mephisto",
                 "data": {
                     "text": "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
                     "task_data": {
@@ -136,7 +136,7 @@ DESIRED_STATE_AGENT_0 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10320",
+                "receiver_id": "1",
                 "data": {
                     "id": "SUBMIT_WORLD_DATA",
                     "WORLD_DATA": {"example_key": "example_value"},
@@ -146,8 +146,8 @@ DESIRED_STATE_AGENT_0 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10320",
-                "receiver_id": "mephisto",
+                "sender_id": "1",
+                "receiver_id": "Mephisto",
                 "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": True},
                 "timestamp": 1604343708.6682835,
             },
@@ -161,14 +161,14 @@ DESIRED_STATE_AGENT_1 = {
             {
                 "packet_type": "update_status",
                 "sender_id": "mephisto",
-                "receiver_id": "10321",
+                "receiver_id": "2",
                 "data": {"state": {"agent_display_name": "Chat Agent 2"}},
                 "timestamp": 1604343628.611253,
             },
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10321",
+                "receiver_id": "2",
                 "data": {
                     "text": "Hi! How are you?",
                     "task_data": {},
@@ -180,8 +180,8 @@ DESIRED_STATE_AGENT_1 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10321",
-                "receiver_id": "mephisto",
+                "sender_id": "2",
+                "receiver_id": "Mephisto",
                 "data": {
                     "text": "I'm pretty good - you?",
                     "task_data": {},
@@ -194,7 +194,7 @@ DESIRED_STATE_AGENT_1 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10321",
+                "receiver_id": "2",
                 "data": {
                     "text": "I'm okay - how was your weekend?",
                     "task_data": {},
@@ -206,8 +206,8 @@ DESIRED_STATE_AGENT_1 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10321",
-                "receiver_id": "mephisto",
+                "sender_id": "2",
+                "receiver_id": "Mephisto",
                 "data": {
                     "text": "I was fine. Did you do anything fun?",
                     "task_data": {},
@@ -220,7 +220,7 @@ DESIRED_STATE_AGENT_1 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10321",
+                "receiver_id": "2",
                 "data": {
                     "id": "Coordinator",
                     "text": "Please fill out the form to complete the chat:",
@@ -255,8 +255,8 @@ DESIRED_STATE_AGENT_1 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10321",
-                "receiver_id": "mephisto",
+                "sender_id": "2",
+                "receiver_id": "Mephisto",
                 "data": {
                     "text": "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
                     "task_data": {
@@ -281,7 +281,7 @@ DESIRED_STATE_AGENT_1 = {
             {
                 "packet_type": "agent_action",
                 "sender_id": "mephisto",
-                "receiver_id": "10321",
+                "receiver_id": "2",
                 "data": {
                     "id": "SUBMIT_WORLD_DATA",
                     "WORLD_DATA": {"example_key": "example_value"},
@@ -291,8 +291,8 @@ DESIRED_STATE_AGENT_1 = {
             },
             {
                 "packet_type": "agent_action",
-                "sender_id": "10321",
-                "receiver_id": "mephisto",
+                "sender_id": "2",
+                "receiver_id": "Mephisto",
                 "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": True},
                 "timestamp": 1604343711.3286684,
             },
@@ -306,7 +306,10 @@ AGENT_MESSAGES = [
 ]
 AGENT_0_DISPLAY_ID = 'Chat Agent 1'
 AGENT_1_DISPLAY_ID = 'Chat Agent 2'
-FORM_PROMPT = "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n"
+FORM_PROMPTS = {
+    'agent_0': "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
+    'agent_1': "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
+}
 FORM_RESPONSES = {
     'agent_0': [
         {
@@ -407,7 +410,7 @@ try:
             self.server.send_agent_act(
                 agent_id=agent_0_id,
                 act_content={
-                    'text': FORM_PROMPT,
+                    'text': FORM_PROMPTS['agent_0'],
                     'task_data': {'form_responses': FORM_RESPONSES['agent_0']},
                     'id': AGENT_0_DISPLAY_ID,
                     'episode_done': False,
@@ -416,7 +419,7 @@ try:
             self.server.send_agent_act(
                 agent_id=agent_1_id,
                 act_content={
-                    'text': FORM_PROMPT,
+                    'text': FORM_PROMPTS['agent_1'],
                     'task_data': {'form_responses': FORM_RESPONSES['agent_1']},
                     'id': AGENT_1_DISPLAY_ID,
                     'episode_done': False,
