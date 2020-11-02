@@ -12,242 +12,297 @@ import unittest
 
 # Desired inputs/outputs
 # TODO: revise these
-DESIRED_INPUTS = [
-    {
-        "task_specs": {
-            "s1_choice": "I would prefer to talk to <Speaker 1>",
-            "s2_choice": "I would prefer to talk to <Speaker 2>",
-            "question": "Who would you prefer to talk to for a long conversation?",
-            "is_onboarding": True,
-            "model_left": {
-                "name": "modela",
-                "dialogue": [
-                    {"id": "modela", "text": "Hello how are you?"},
-                    {"id": "human_evaluator", "text": "I'm well, how about yourself?"},
-                    {"id": "modela", "text": "Good, just reading a book."},
-                    {"id": "human_evaluator", "text": "What book are you reading?"},
-                    {
-                        "id": "modela",
-                        "text": "An English textbook. Do you like to read?",
-                    },
-                    {
-                        "id": "human_evaluator",
-                        "text": "Yes, I really enjoy reading, but my favorite thing to do is dog walking.",
-                    },
-                    {
-                        "id": "modela",
-                        "text": "Do you have a dog? I don't have any pets",
-                    },
-                    {
-                        "id": "human_evaluator",
-                        "text": "Yes, I have a labrador poodle mix.",
-                    },
-                ],
+DESIRED_STATE_AGENT_0 = {
+    "outputs": {
+        "messages": [
+            {
+                "packet_type": "update_status",
+                "sender_id": "mephisto",
+                "receiver_id": "10320",
+                "data": {"state": {"agent_display_name": "Chat Agent 1"}},
+                "timestamp": 1604343628.610868,
             },
-            "model_right": {
-                "name": "modelc",
-                "dialogue": [
-                    {"id": "modelc", "text": "Hello hello hello"},
-                    {"id": "human_evaluator", "text": "How are you?"},
-                    {"id": "modelc", "text": "Hello hello hello"},
-                    {"id": "human_evaluator", "text": "Hello back"},
-                    {"id": "modelc", "text": "Hello hello hello"},
-                    {"id": "human_evaluator", "text": "You must really like that word"},
-                    {"id": "modelc", "text": "Hello hello hello"},
-                    {"id": "human_evaluator", "text": "Ok"},
-                ],
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10320",
+                "receiver_id": "mephisto",
+                "data": {
+                    "text": "Hi! How are you?",
+                    "task_data": {},
+                    "id": "Chat Agent 1",
+                    "episode_done": false,
+                    "message_id": "cae52060-800a-4f85-b654-03e60755705a",
+                },
+                "timestamp": 1604343659.7957256,
             },
-        },
-        "pairing_dict": {
-            "is_onboarding": True,
-            "speakers_to_eval": ["modela", "modelc"],
-            "correct_answer": "modela",
-            "tags": ["onboarding1"],
-            "dialogue_dicts": [
-                {
-                    "speakers": ["modela", "human_evaluator"],
-                    "id": "ABCDEF",
-                    "evaluator_id_hashed": "HUMAN1",
-                    "oz_id_hashed": None,
-                    "dialogue": [
-                        {"id": "modela", "text": "Hello how are you?"},
-                        {
-                            "id": "human_evaluator",
-                            "text": "I'm well, how about yourself?",
-                        },
-                        {"id": "modela", "text": "Good, just reading a book."},
-                        {"id": "human_evaluator", "text": "What book are you reading?"},
-                        {
-                            "id": "modela",
-                            "text": "An English textbook. Do you like to read?",
-                        },
-                        {
-                            "id": "human_evaluator",
-                            "text": "Yes, I really enjoy reading, but my favorite thing to do is dog walking.",
-                        },
-                        {
-                            "id": "modela",
-                            "text": "Do you have a dog? I don't have any pets",
-                        },
-                        {
-                            "id": "human_evaluator",
-                            "text": "Yes, I have a labrador poodle mix.",
-                        },
-                    ],
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10320",
+                "data": {
+                    "text": "I'm pretty good - you?",
+                    "task_data": {},
+                    "id": "Chat Agent 2",
+                    "episode_done": false,
+                    "message_id": "7daabd84-96f8-4a5a-a105-c229ec03c871",
                 },
-                {
-                    "speakers": ["modelc", "human_evaluator"],
-                    "id": "ZYX",
-                    "evaluator_id_hashed": "HUMAN3",
-                    "oz_id_hashed": None,
-                    "dialogue": [
-                        {"id": "modelc", "text": "Hello hello hello"},
-                        {"id": "human_evaluator", "text": "How are you?"},
-                        {"id": "modelc", "text": "Hello hello hello"},
-                        {"id": "human_evaluator", "text": "Hello back"},
-                        {"id": "modelc", "text": "Hello hello hello"},
-                        {
-                            "id": "human_evaluator",
-                            "text": "You must really like that word",
-                        },
-                        {"id": "modelc", "text": "Hello hello hello"},
-                        {"id": "human_evaluator", "text": "Ok"},
-                    ],
+                "timestamp": 1604343667.6145806,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10320",
+                "receiver_id": "mephisto",
+                "data": {
+                    "text": "I'm okay - how was your weekend?",
+                    "task_data": {},
+                    "id": "Chat Agent 1",
+                    "episode_done": false,
+                    "message_id": "b2b4c92d-8b2e-4418-a14a-e1b4dba42a09",
                 },
-            ],
-        },
-        "pair_id": 0,
+                "timestamp": 1604343676.5881488,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10320",
+                "data": {
+                    "text": "I was fine. Did you do anything fun?",
+                    "task_data": {},
+                    "id": "Chat Agent 2",
+                    "episode_done": false,
+                    "message_id": "389280ae-4a91-466e-8409-7818a4bcf324",
+                },
+                "timestamp": 1604343688.4189346,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10320",
+                "data": {
+                    "id": "Coordinator",
+                    "text": "Please fill out the form to complete the chat:",
+                    "task_data": {
+                        "respond_with_form": [
+                            {
+                                "type": "choices",
+                                "question": "How much did you enjoy talking to this user?",
+                                "choices": [
+                                    "Not at all",
+                                    "A little",
+                                    "Somewhat",
+                                    "A lot",
+                                ],
+                            },
+                            {
+                                "type": "choices",
+                                "question": "Do you think this user is a bot or a human?",
+                                "choices": [
+                                    "Definitely a bot",
+                                    "Probably a bot",
+                                    "Probably a human",
+                                    "Definitely a human",
+                                ],
+                            },
+                            {"type": "text", "question": "Enter any comment here"},
+                        ]
+                    },
+                    "message_id": "c2ec35da-cfb7-447b-9767-5b4fcc9231df",
+                },
+                "timestamp": 1604343688.4194062,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10320",
+                "receiver_id": "mephisto",
+                "data": {
+                    "text": "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
+                    "task_data": {
+                        "form_responses": [
+                            {
+                                "question": "How much did you enjoy talking to this user?",
+                                "response": "A lot",
+                            },
+                            {
+                                "question": "Do you think this user is a bot or a human?",
+                                "response": "Definitely a human",
+                            },
+                            {"question": "Enter any comment here", "response": "Yes"},
+                        ]
+                    },
+                    "id": "Chat Agent 1",
+                    "episode_done": false,
+                    "message_id": "5b799128-5f8b-440e-8947-aee6113690d2",
+                },
+                "timestamp": 1604343698.391118,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10320",
+                "data": {
+                    "id": "SUBMIT_WORLD_DATA",
+                    "WORLD_DATA": {"example_key": "example_value"},
+                    "text": "",
+                },
+                "timestamp": 1604343706.6179278,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10320",
+                "receiver_id": "mephisto",
+                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": true},
+                "timestamp": 1604343708.6682835,
+            },
+        ]
     },
-    {
-        "task_specs": {
-            "s1_choice": "I would prefer to talk to <Speaker 1>",
-            "s2_choice": "I would prefer to talk to <Speaker 2>",
-            "question": "Who would you prefer to talk to for a long conversation?",
-            "is_onboarding": False,
-            "model_left": {
-                "name": "modelb",
-                "dialogue": [
-                    {
-                        "id": "human_evaluator",
-                        "text": "Hi, I love food, what about you?",
-                    },
-                    {
-                        "id": "modelb",
-                        "text": "I love food too, what's your favorite? Mine is burgers.",
-                    },
-                    {
-                        "id": "human_evaluator",
-                        "text": "I'm a chef and I love all foods. What do you do?",
-                    },
-                    {"id": "modelb", "text": "I'm retired now, but I was a nurse."},
-                    {
-                        "id": "human_evaluator",
-                        "text": "Wow, that's really admirable. My sister is a nurse.",
-                    },
-                    {"id": "modelb", "text": "Do you have any hobbies?"},
-                    {"id": "human_evaluator", "text": "I like to paint and play piano"},
-                    {
-                        "id": "modelb",
-                        "text": "You're very artistic. I wish I could be so creative.",
-                    },
-                ],
-            },
-            "model_right": {
-                "name": "modela",
-                "dialogue": [
-                    {"id": "modela", "text": "Hi how are you doing?"},
-                    {"id": "human_evaluator", "text": "I'm doing ok."},
-                    {"id": "modela", "text": "Oh, what's wrong?"},
-                    {
-                        "id": "human_evaluator",
-                        "text": "Feeling a bit sick after my workout",
-                    },
-                    {"id": "modela", "text": "Do you workout a lot?"},
-                    {
-                        "id": "human_evaluator",
-                        "text": "Yes, I go to the gym every day. I do a lot of lifting.",
-                    },
-                    {"id": "modela", "text": "That's cool, I like to climb."},
-                    {"id": "human_evaluator", "text": "I've never been."},
-                ],
-            },
-        },
-        "pairing_dict": {
-            "is_onboarding": False,
-            "speakers_to_eval": ["modelb", "modela"],
-            "tags": ["example1"],
-            "dialogue_ids": [0, 1],
-            "dialogue_dicts": [
-                {
-                    "speakers": ["modelb", "human_evaluator"],
-                    "id": "AGHIJK",
-                    "evaluator_id_hashed": "HUMAN2",
-                    "oz_id_hashed": None,
-                    "dialogue": [
-                        {
-                            "id": "human_evaluator",
-                            "text": "Hi, I love food, what about you?",
-                        },
-                        {
-                            "id": "modelb",
-                            "text": "I love food too, what's your favorite? Mine is burgers.",
-                        },
-                        {
-                            "id": "human_evaluator",
-                            "text": "I'm a chef and I love all foods. What do you do?",
-                        },
-                        {"id": "modelb", "text": "I'm retired now, but I was a nurse."},
-                        {
-                            "id": "human_evaluator",
-                            "text": "Wow, that's really admirable. My sister is a nurse.",
-                        },
-                        {"id": "modelb", "text": "Do you have any hobbies?"},
-                        {
-                            "id": "human_evaluator",
-                            "text": "I like to paint and play piano",
-                        },
-                        {
-                            "id": "modelb",
-                            "text": "You're very artistic. I wish I could be so creative.",
-                        },
-                    ],
-                },
-                {
-                    "speakers": ["modela", "human_evaluator"],
-                    "id": "123456",
-                    "evaluator_id_hashed": "HUMAN1",
-                    "oz_id_hashed": None,
-                    "dialogue": [
-                        {"id": "modela", "text": "Hi how are you doing?"},
-                        {"id": "human_evaluator", "text": "I'm doing ok."},
-                        {"id": "modela", "text": "Oh, what's wrong?"},
-                        {
-                            "id": "human_evaluator",
-                            "text": "Feeling a bit sick after my workout",
-                        },
-                        {"id": "modela", "text": "Do you workout a lot?"},
-                        {
-                            "id": "human_evaluator",
-                            "text": "Yes, I go to the gym every day. I do a lot of lifting.",
-                        },
-                        {"id": "modela", "text": "That's cool, I like to climb."},
-                        {"id": "human_evaluator", "text": "I've never been."},
-                    ],
-                },
-            ],
-        },
-        "pair_id": 1,
-    },
-]
-DESIRED_OUTPUTS = {
-    "final_data": [
-        {"speakerChoice": "modela", "textReason": "Turn 1"},
-        {"speakerChoice": "modelb", "textReason": "Turn 2"},
-        {"speakerChoice": "modelb", "textReason": "Turn 3"},
-        {"speakerChoice": "modelb", "textReason": "Turn 4"},
-        {"speakerChoice": "modelb", "textReason": "Turn 5"},
-    ]
+    "inputs": {},
 }
+DESIRED_STATE_AGENT_1 = {
+    "outputs": {
+        "messages": [
+            {
+                "packet_type": "update_status",
+                "sender_id": "mephisto",
+                "receiver_id": "10321",
+                "data": {"state": {"agent_display_name": "Chat Agent 2"}},
+                "timestamp": 1604343628.611253,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10321",
+                "data": {
+                    "text": "Hi! How are you?",
+                    "task_data": {},
+                    "id": "Chat Agent 1",
+                    "episode_done": false,
+                    "message_id": "cae52060-800a-4f85-b654-03e60755705a",
+                },
+                "timestamp": 1604343659.7962258,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10321",
+                "receiver_id": "mephisto",
+                "data": {
+                    "text": "I'm pretty good - you?",
+                    "task_data": {},
+                    "id": "Chat Agent 2",
+                    "episode_done": false,
+                    "message_id": "7daabd84-96f8-4a5a-a105-c229ec03c871",
+                },
+                "timestamp": 1604343667.6141868,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10321",
+                "data": {
+                    "text": "I'm okay - how was your weekend?",
+                    "task_data": {},
+                    "id": "Chat Agent 1",
+                    "episode_done": false,
+                    "message_id": "b2b4c92d-8b2e-4418-a14a-e1b4dba42a09",
+                },
+                "timestamp": 1604343676.5885365,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10321",
+                "receiver_id": "mephisto",
+                "data": {
+                    "text": "I was fine. Did you do anything fun?",
+                    "task_data": {},
+                    "id": "Chat Agent 2",
+                    "episode_done": false,
+                    "message_id": "389280ae-4a91-466e-8409-7818a4bcf324",
+                },
+                "timestamp": 1604343688.4185243,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10321",
+                "data": {
+                    "id": "Coordinator",
+                    "text": "Please fill out the form to complete the chat:",
+                    "task_data": {
+                        "respond_with_form": [
+                            {
+                                "type": "choices",
+                                "question": "How much did you enjoy talking to this user?",
+                                "choices": [
+                                    "Not at all",
+                                    "A little",
+                                    "Somewhat",
+                                    "A lot",
+                                ],
+                            },
+                            {
+                                "type": "choices",
+                                "question": "Do you think this user is a bot or a human?",
+                                "choices": [
+                                    "Definitely a bot",
+                                    "Probably a bot",
+                                    "Probably a human",
+                                    "Definitely a human",
+                                ],
+                            },
+                            {"type": "text", "question": "Enter any comment here"},
+                        ]
+                    },
+                    "message_id": "a8494a4a-1868-4dfb-93ad-2c1bb1574993",
+                },
+                "timestamp": 1604343688.4199135,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10321",
+                "receiver_id": "mephisto",
+                "data": {
+                    "text": "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
+                    "task_data": {
+                        "form_responses": [
+                            {
+                                "question": "How much did you enjoy talking to this user?",
+                                "response": "Not at all",
+                            },
+                            {
+                                "question": "Do you think this user is a bot or a human?",
+                                "response": "Definitely a bot",
+                            },
+                            {"question": "Enter any comment here", "response": "No"},
+                        ]
+                    },
+                    "id": "Chat Agent 2",
+                    "episode_done": false,
+                    "message_id": "13ab6814-cf47-47f7-92c9-d06739918bd7",
+                },
+                "timestamp": 1604343706.509115,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "mephisto",
+                "receiver_id": "10321",
+                "data": {
+                    "id": "SUBMIT_WORLD_DATA",
+                    "WORLD_DATA": {"example_key": "example_value"},
+                    "text": "",
+                },
+                "timestamp": 1604343706.6186645,
+            },
+            {
+                "packet_type": "agent_action",
+                "sender_id": "10321",
+                "receiver_id": "mephisto",
+                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": true},
+                "timestamp": 1604343711.3286684,
+            },
+        ]
+    },
+    "inputs": {},
+}
+# TODO: move this to a YAML file given the upcoming pytest regressions framework
 
 
 try:
@@ -274,6 +329,8 @@ try:
                 '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
                 '+mephisto.blueprint.num_conversations=1',
                 '+mephisto.task.allowed_concurrent=0',
+                '+num_turns=3',
+                '+turn_timeout=300',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
@@ -288,15 +345,6 @@ try:
                 "num_turns": self.config.num_turns,
                 "turn_timeout": self.config.turn_timeout,
             }
-            custom_bundle_path = self.config.mephisto.blueprint.get(
-                "custom_source_bundle", None
-            )
-            if custom_bundle_path is not None:
-                assert os.path.exists(custom_bundle_path), (
-                    "Must build the custom bundle with `npm install; npm run dev` from within "
-                    f"the {TASK_DIRECTORY}/webapp directory in order to demo a custom bundle "
-                )  # TODO: this won't work for the unit test - build this directly!
-                world_opt["send_task_data"] = True
             shared_state = SharedParlAITaskState(
                 world_opt=world_opt, onboarding_world_opt=world_opt
             )
@@ -319,12 +367,19 @@ try:
             state_0, state_1 = [
                 agent.state.get_data() for agent in self.db.find_agents()
             ]
-            import pdb
+            actual_and_desired_states = [
+                (state_0, DESIRED_STATE_AGENT_0),
+                (state_1, DESIRED_STATE_AGENT_1),
+            ]
+            for actual_state, desired_state in actual_and_desired_states:
+                assert actual_state['inputs'] == desired_state['inputs']
+                for actual_message, desired_message in zip(
+                    actual_state['outputs']['messages'],
+                    desired_state['outputs']['messages'],
+                ):
+                    pass
 
-            pdb.set_trace()
-            # {{{TODO: do all this}}}
-            # self.assertEqual(DESIRED_INPUTS, state['inputs'])
-            # self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
+                    # {{{TODO: do all this}}}
 
 
 except ImportError:

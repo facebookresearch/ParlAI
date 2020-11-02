@@ -247,6 +247,7 @@ DESIRED_OUTPUTS = {
         {"speakerChoice": "modelb", "textReason": "Turn 5"},
     ]
 }
+# TODO: move this to a YAML file given the upcoming pytest regressions framework
 
 
 try:
