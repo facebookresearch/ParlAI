@@ -87,24 +87,28 @@ class CrowdsourcingTestMixin:
         channel_info = list(self.operator.supervisor.channels.values())[0]
         self.server = channel_info.job.architect.server
 
-    def _register_mock_agent(self, suffix: str) -> str:
+    def _register_mock_agents(self, num_agents: int = 1) -> List[str]:
         """
-        Register a mock agent for testing, taking the place of a crowdsourcing worker.
+        Register mock agents for testing, taking the place of crowdsourcing workers.
 
-        Specify a suffix to uniquely identify the agent. Return the agent's ID after
+        Specify the number of agents to register. Return the agents' IDs after
         creation.
         """
 
-        # Register the worker
-        mock_worker_name = f"MOCK_WORKER__{suffix}"
-        self.server.register_mock_worker(mock_worker_name)
-        workers = self.db.find_workers(worker_name=mock_worker_name)
-        worker_id = workers[0].db_id
+        for idx in range(num_agents):
 
-        # Register the agent
-        mock_agent_details = f"FAKE_ASSIGNMENT__{suffix}"
-        self.server.register_mock_agent(worker_id, mock_agent_details)
+            # Register the worker
+            mock_worker_name = f"MOCK_WORKER_{idx:d}"
+            self.server.register_mock_worker(mock_worker_name)
+            workers = self.db.find_workers(worker_name=mock_worker_name)
+            worker_id = workers[0].db_id
+
+            # Register the agent
+            mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
+            self.server.register_mock_agent(worker_id, mock_agent_details)
+
+        # Get all agents' IDs
         agents = self.db.find_agents()
-        agent_id = agents[0].db_id
+        agent_ids = [agent.db_id for agent in agents]
 
-        return agent_id
+        return agent_ids

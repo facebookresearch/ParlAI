@@ -251,43 +251,52 @@ DESIRED_OUTPUTS = {
 
 try:
 
-    # TODO: revise below
-    from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
-        AcuteEvalBlueprint,
+    # From the Mephisto repo
+    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
+    from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
+        ParlAIChatBlueprint,
     )
-    from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
+
     from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
 
-    class TestAcuteEval(CrowdsourcingTestMixin, unittest.TestCase):
+    class TestChatDemo(CrowdsourcingTestMixin, unittest.TestCase):
         """
-        Test the ACUTE-Eval crowdsourcing task.
+        Test the chat demo crowdsourcing task.
         """
 
         def test_base_task(self):
 
             # Set up the config, database, operator, and server
-            overrides = [f'mephisto.blueprint.block_on_onboarding_fail={False}']
+            overrides = []
             self.set_up_test(
-                blueprint_type=AcuteEvalBlueprint.BLUEPRINT_TYPE,
+                blueprint_type=ParlAIChatBlueprint.BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
                 overrides=overrides,
             )
 
-            # Set up the mock human agent
-            agent_id = self._register_mock_agent(suffix='0')
+            # Set up the mock human agents
+            agent_0_id, agent_1_id = self._register_mock_agents(num_agents=2)
 
             # Set initial data
-            self.server.request_init_data(agent_id)
+            self.server.request_init_data(agent_0_id)
+            self.server.request_init_data(agent_1_id)
 
             # Make agent act
-            self.server.send_agent_act(
-                agent_id, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
-            )
+            # {{{TODO: do all this for all turns}}}
+            # self.server.send_agent_act(
+            #     agent_id, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
+            # )
 
             # Check that the inputs and outputs are as expected
-            state = self.db.find_agents()[0].state.get_data()
-            self.assertEqual(DESIRED_INPUTS, state['inputs'])
-            self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
+            state_0, state_1 = [
+                agent.state.get_data() for agent in self.db.find_agents()
+            ]
+            import pdb
+
+            pdb.set_trace()
+            # {{{TODO: do all this}}}
+            # self.assertEqual(DESIRED_INPUTS, state['inputs'])
+            # self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
 
 
 except ImportError:

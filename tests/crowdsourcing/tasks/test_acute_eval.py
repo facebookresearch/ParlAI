@@ -273,7 +273,7 @@ try:
             )
 
             # Set up the mock human agent
-            agent_id = self._register_mock_agent(suffix='0')
+            agent_id = self._register_mock_agents(num_agents=1)[0]
 
             # Set initial data
             self.server.request_init_data(agent_id)
