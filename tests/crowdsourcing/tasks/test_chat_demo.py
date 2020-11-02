@@ -267,7 +267,14 @@ try:
         def test_base_task(self):
 
             # Set up the config, database, operator, and server
-            overrides = []
+            overrides = [
+                '+mephisto.blueprint.world_file=${task_dir}/demo_worlds.py',
+                '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
+                '+mephisto.blueprint.num_conversations=1',
+                '+mephisto.task.allowed_concurrent=0',
+            ]
+            # TODO: remove all of these params once Hydra 1.1 is released with support
+            #  for recursive defaults
             self.set_up_test(
                 blueprint_type=ParlAIChatBlueprint.BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,

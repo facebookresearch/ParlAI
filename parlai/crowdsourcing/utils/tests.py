@@ -15,6 +15,7 @@ from typing import List, Optional
 from hydra.experimental import compose, initialize
 from mephisto.core.local_database import LocalMephistoDB
 from mephisto.core.operator import Operator
+from mephisto.data_model.blueprint import SharedTaskState
 from mephisto.utils.scripts import augment_config_from_db
 
 
@@ -38,6 +39,7 @@ class CrowdsourcingTestMixin:
         blueprint_type: str,
         task_directory: str,
         overrides: Optional[List[str]] = None,
+        shared_state: Optional[SharedTaskState] = None,
     ):
         """
         Set up the config, database, operator, and server.
@@ -83,7 +85,9 @@ class CrowdsourcingTestMixin:
         self.config = augment_config_from_db(self.config, self.db)
         self.config.mephisto.architect.should_run_server = True
         self.operator = Operator(self.db)
-        self.operator.validate_and_run_config(self.config.mephisto, shared_state=None)
+        self.operator.validate_and_run_config(
+            self.config.mephisto, shared_state=shared_state
+        )
         channel_info = list(self.operator.supervisor.channels.values())[0]
         self.server = channel_info.job.architect.server
 
