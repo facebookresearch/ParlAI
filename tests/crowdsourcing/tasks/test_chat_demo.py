@@ -7,11 +7,9 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
-import os
 import unittest
 
 # Desired inputs/outputs
-# TODO: revise these
 DESIRED_STATE_AGENT_0 = {
     "outputs": {
         "messages": [
@@ -30,7 +28,7 @@ DESIRED_STATE_AGENT_0 = {
                     "text": "Hi! How are you?",
                     "task_data": {},
                     "id": "Chat Agent 1",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "cae52060-800a-4f85-b654-03e60755705a",
                 },
                 "timestamp": 1604343659.7957256,
@@ -43,7 +41,7 @@ DESIRED_STATE_AGENT_0 = {
                     "text": "I'm pretty good - you?",
                     "task_data": {},
                     "id": "Chat Agent 2",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "7daabd84-96f8-4a5a-a105-c229ec03c871",
                 },
                 "timestamp": 1604343667.6145806,
@@ -56,7 +54,7 @@ DESIRED_STATE_AGENT_0 = {
                     "text": "I'm okay - how was your weekend?",
                     "task_data": {},
                     "id": "Chat Agent 1",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "b2b4c92d-8b2e-4418-a14a-e1b4dba42a09",
                 },
                 "timestamp": 1604343676.5881488,
@@ -69,7 +67,7 @@ DESIRED_STATE_AGENT_0 = {
                     "text": "I was fine. Did you do anything fun?",
                     "task_data": {},
                     "id": "Chat Agent 2",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "389280ae-4a91-466e-8409-7818a4bcf324",
                 },
                 "timestamp": 1604343688.4189346,
@@ -130,7 +128,7 @@ DESIRED_STATE_AGENT_0 = {
                         ]
                     },
                     "id": "Chat Agent 1",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "5b799128-5f8b-440e-8947-aee6113690d2",
                 },
                 "timestamp": 1604343698.391118,
@@ -150,7 +148,7 @@ DESIRED_STATE_AGENT_0 = {
                 "packet_type": "agent_action",
                 "sender_id": "10320",
                 "receiver_id": "mephisto",
-                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": true},
+                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": True},
                 "timestamp": 1604343708.6682835,
             },
         ]
@@ -175,7 +173,7 @@ DESIRED_STATE_AGENT_1 = {
                     "text": "Hi! How are you?",
                     "task_data": {},
                     "id": "Chat Agent 1",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "cae52060-800a-4f85-b654-03e60755705a",
                 },
                 "timestamp": 1604343659.7962258,
@@ -188,7 +186,7 @@ DESIRED_STATE_AGENT_1 = {
                     "text": "I'm pretty good - you?",
                     "task_data": {},
                     "id": "Chat Agent 2",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "7daabd84-96f8-4a5a-a105-c229ec03c871",
                 },
                 "timestamp": 1604343667.6141868,
@@ -201,7 +199,7 @@ DESIRED_STATE_AGENT_1 = {
                     "text": "I'm okay - how was your weekend?",
                     "task_data": {},
                     "id": "Chat Agent 1",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "b2b4c92d-8b2e-4418-a14a-e1b4dba42a09",
                 },
                 "timestamp": 1604343676.5885365,
@@ -214,7 +212,7 @@ DESIRED_STATE_AGENT_1 = {
                     "text": "I was fine. Did you do anything fun?",
                     "task_data": {},
                     "id": "Chat Agent 2",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "389280ae-4a91-466e-8409-7818a4bcf324",
                 },
                 "timestamp": 1604343688.4185243,
@@ -275,7 +273,7 @@ DESIRED_STATE_AGENT_1 = {
                         ]
                     },
                     "id": "Chat Agent 2",
-                    "episode_done": false,
+                    "episode_done": False,
                     "message_id": "13ab6814-cf47-47f7-92c9-d06739918bd7",
                 },
                 "timestamp": 1604343706.509115,
@@ -295,7 +293,7 @@ DESIRED_STATE_AGENT_1 = {
                 "packet_type": "agent_action",
                 "sender_id": "10321",
                 "receiver_id": "mephisto",
-                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": true},
+                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": True},
                 "timestamp": 1604343711.3286684,
             },
         ]
@@ -322,6 +320,8 @@ try:
         """
 
         def test_base_task(self):
+
+            # # Setup
 
             # Set up the config and database
             overrides = [
@@ -353,6 +353,8 @@ try:
             # Set up the mock human agents
             agent_0_id, agent_1_id = self._register_mock_agents(num_agents=2)
 
+            # # Feed messages to the agents
+
             # Set initial data
             self.server.request_init_data(agent_0_id)
             self.server.request_init_data(agent_1_id)
@@ -363,7 +365,8 @@ try:
             #     agent_id, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
             # )
 
-            # Check that the inputs and outputs are as expected
+            # # Check that the inputs and outputs are as expected
+
             state_0, state_1 = [
                 agent.state.get_data() for agent in self.db.find_agents()
             ]
@@ -373,13 +376,29 @@ try:
             ]
             for actual_state, desired_state in actual_and_desired_states:
                 assert actual_state['inputs'] == desired_state['inputs']
+                assert len(actual_state['outputs']['messages']) == len(
+                    desired_state['outputs']['messages']
+                )
                 for actual_message, desired_message in zip(
                     actual_state['outputs']['messages'],
                     desired_state['outputs']['messages'],
                 ):
-                    pass
-
-                    # {{{TODO: do all this}}}
+                    for key, desired_value in desired_message.items():
+                        if key == 'timestamp':
+                            pass  # The timestamp will obviously be different
+                        elif key == 'data':
+                            for key_inner, desired_value_inner in desired_message[
+                                key
+                            ].items():
+                                if key_inner == 'message_id':
+                                    pass  # The message ID will be different
+                                else:
+                                    self.assertEqual(
+                                        actual_message[key][key_inner],
+                                        desired_value_inner,
+                                    )
+                        else:
+                            self.assertEqual(actual_message[key], desired_value)
 
 
 except ImportError:
