@@ -46,7 +46,7 @@ class MTurkRunScriptConfig(MTurkRunScriptConfigMixin, RunScriptConfig):
     Add useful flags for running MTurk tasks.
 
     Use this instead of MTurkRunScriptConfigMixin when there are no task-specific fields
-    for the script config.
+    that need to be set in the script config.
     """
 
 
