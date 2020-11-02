@@ -48,7 +48,9 @@ class BothEncoderRankerAgent(TorchAgent):
             default=-1,
             help='crossencoder will be fed those many elements at train or eval time.',
         )
-        parser.set_defaults(encode_candidate_vecs=True)
+        parser.set_defaults(
+            encode_candidate_vecs=True, dict_maxexs=0  # skip building dictionary
+        )
 
     def __init__(self, opt, shared=None):
         opt['lr_scheduler'] = 'none'

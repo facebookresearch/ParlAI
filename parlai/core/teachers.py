@@ -471,6 +471,21 @@ class FixedDialogTeacher(Teacher):
         """
         Send new dialog message.
         """
+        orig_action = self.get_orig_action()
+        processed_action = self.process_action(orig_action)
+        return processed_action
+
+    def get_orig_action(self) -> Message:
+        """
+        Get the unprocessed action and reset if needed.
+
+        This function will return the raw action from `self.next_example()`, before the
+        `self.last_act` and `self.lastY` attributes have been defined based on this
+        action for metrics or custom evaluations. This is so that wrapper teachers can
+        modify the raw action first, such as to change the contents of its 'text' and
+        'label' fields, without the action becoming out of sync with `self.last_act` and
+        `self.lastY`.
+        """
         if not hasattr(self, 'epochDone'):
             # reset if haven't yet
             self.reset()
@@ -480,6 +495,13 @@ class FixedDialogTeacher(Teacher):
         # TODO: all teachers should eventually create messages
         # while setting up the data, so this won't be necessary
         action = Message(action)
+
+        return action
+
+    def process_action(self, action: Message) -> Message:
+        """
+        Remember the raw action and prepare its fields for passing out of the teacher.
+        """
         action.force_set('id', self.getID())
 
         # remember correct answer if available

@@ -56,6 +56,7 @@ _Competition on dialogue chitchat based on the PersonaChat task._
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat).
 _Task & models for chitchat with a given persona._
 
+- **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token_
 
 ## Well-Behaved
 
