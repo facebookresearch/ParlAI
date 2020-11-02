@@ -270,8 +270,7 @@ try:
             )
 
             # Set up the mock human agent
-            agent = self._register_mock_agent(suffix='0')
-            agent_id = agent.db_id
+            agent_id = self._register_mock_agent(suffix='0')
 
             # Set initial data
             self.server.request_init_data(agent_id)
@@ -282,7 +281,7 @@ try:
             )
 
             # Check that the inputs and outputs are as expected
-            state = agent.state.get_data()
+            state = self.db.find_agents()[0].state.get_data()
             self.assertEqual(DESIRED_INPUTS, state['inputs'])
             self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
 

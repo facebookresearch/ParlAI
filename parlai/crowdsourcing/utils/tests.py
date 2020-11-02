@@ -15,7 +15,6 @@ from typing import List, Optional
 from hydra.experimental import compose, initialize
 from mephisto.core.local_database import LocalMephistoDB
 from mephisto.core.operator import Operator
-from mephisto.data_model.agent import Agent
 from mephisto.utils.scripts import augment_config_from_db
 
 
@@ -88,11 +87,11 @@ class CrowdsourcingTestMixin:
         channel_info = list(self.operator.supervisor.channels.values())[0]
         self.server = channel_info.job.architect.server
 
-    def _register_mock_agent(self, suffix: str) -> Agent:
+    def _register_mock_agent(self, suffix: str) -> str:
         """
         Register a mock agent for testing, taking the place of a crowdsourcing worker.
 
-        Specify a suffix to uniquely identify the agent. Return the agent after
+        Specify a suffix to uniquely identify the agent. Return the agent's ID after
         creation.
         """
 
@@ -105,6 +104,7 @@ class CrowdsourcingTestMixin:
         # Register the agent
         mock_agent_details = f"FAKE_ASSIGNMENT__{suffix}"
         self.server.register_mock_agent(worker_id, mock_agent_details)
-        agent = self.db.find_agents()[0]
+        agents = self.db.find_agents()
+        agent_id = agents[0].db_id
 
-        return agent
+        return agent_id
