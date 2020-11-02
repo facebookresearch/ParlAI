@@ -22,7 +22,6 @@ See below for documentation on each specific tool.
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
-from collections import OrderedDict
 import torch
 import parlai.utils.logging as logging
 from torch import optim
@@ -1832,19 +1831,6 @@ class TorchAgent(ABC, Agent):
 
         This is easily overridable to facilitate transfer of state dicts.
         """
-        state_dict = OrderedDict(
-            {
-                key: val
-                for key, val in state_dict.items()
-                if key.split('.')[0]
-                not in [
-                    'encoder_proj_layer',
-                    'embedding_proj_layers',
-                    'hidden_proj_layers',
-                ]
-            }
-        )
-        # TODO: obviously remove this hack
         try:
             self.model.load_state_dict(state_dict)
         except RuntimeError as msg:
