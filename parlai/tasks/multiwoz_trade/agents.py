@@ -7,10 +7,15 @@
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from .build import build
 import os
 import json
 import random
+from parlai.tasks.dialog_blender.blender import Blender
+from parlai.core.worlds import create_task
+import numpy as np
+
 
 
 class MultiWozTradeTeacher(FixedDialogTeacher):
@@ -96,10 +101,50 @@ class MultiWozTradeDSTTeacher(MultiWozTradeTeacher):
     and is expected to generate all previous dialog slots. Therefore, each turn
     is a individual episode.
     """
+    MAX_TRAIN_DIALOGS = 5000
+    CONTEXT_SWITCH_TEMPLATES = [" Anyways, getting back to the {}", " Coming back to the {}", " Alright, getting back to {}", "Getting back to the {}"]
+
+    @classmethod
+    def add_cmdline_args(cls, argparser):
+        argparser.add_argument(
+            "--tasks_to_blend",
+            type=str,
+            default="",
+        )
+        return argparser
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.id = 'multiwoz_trade'
+        self.tasks_to_blend = []
+        if opt['tasks_to_blend'] != "":
+            self.tasks_to_blend = opt['tasks_to_blend'].split(',')
+        self.opt = opt
         self.reset()
+        self._init_other_tasks(opt)
+
+    def _get_world(self, task_id):
+        curr_task_opt = self.opt.copy()
+        curr_task_opt['task'] = task_id
+        curr_task_opt['datapath'] = os.path.join(curr_task_opt['datapath'],"blended_tasks")
+        agent = RepeatLabelAgent(curr_task_opt)
+        world = create_task(curr_task_opt, agent)
+        return world
+
+    def _get_dialog(self, world):
+        turns = []  
+        world.parley()
+        turns.append(world.get_acts()[0])
+        while not world.episode_done():
+            world.parley()
+            turns.append(world.get_acts()[0])
+        return turns
+    
+    def _init_other_tasks(self, opt):
+        self.dialogs_all_tasks = []
+        for task_id in self.tasks_to_blend:
+            world = self._get_world(task_id)
+            self.dialogs_all_tasks.append([self._get_dialog(world) for _ in range(self.MAX_TRAIN_DIALOGS)])
 
 
     def _extract_slot_from_string(self, slots_string):
@@ -136,8 +181,7 @@ slot_val,"
         return slots_list
 
 
-    def custom_evaluation(self, teacher_action: Message, labels,
-model_response: Message):
+    def custom_evaluation(self, teacher_action: Message, labels, model_response: Message):
         """
         for dialog state tracking, we compute the joint goal accuracy, which is
         the percentage of the turns where the model correctly and precisely
@@ -153,17 +197,76 @@ model_response: Message):
         # extract generated slots from model_response
         slots_pred = self._extract_slot_from_string(resp)
 
-        self.metrics.add('joint goal acc', AverageMetric(set(slots_truth) ==
-set(slots_pred)))
+        self.metrics.add('joint goal acc', AverageMetric(set(slots_truth) == set(slots_pred)))
 
+    def _can_interleave(self, turn):
+        #sys_turn = turn["labels"][0]
+        sys_turn = turn.split(" <system> ")[1]
+        return "?" not in sys_turn   
+    
+    def _chunk_dialogs(self, dialogs, max_chunk_size=2):
+        chunks = []
+        chunk = []
+        for turn in dialogs:
+            if len(chunk) >= max_chunk_size and self._can_interleave(turn):
+                chunks.append(chunk)
+                chunk = []
+            chunk.append(turn)
+        chunks.append(chunk)
+        return chunks
 
+    def _blend_dialogs(self, multiwoz_turns, other_turn_chunks, domain):
+        num_avail_positions_to_insert = len(multiwoz_turns)
+        num_locs_to_insert = min(len(other_turn_chunks), num_avail_positions_to_insert)
+        positions_to_insert = set(np.random.choice(num_avail_positions_to_insert, num_locs_to_insert,replace=False))
+        blended_turns = []
+        for turn_id, turn in enumerate(multiwoz_turns):
+            if turn_id in positions_to_insert:
+                for turn in other_turn_chunks.pop(0):
+                    blended_turns.append(turn)
+                if turn_id > 0:
+                     context_switch_string = random.choice(self.CONTEXT_SWITCH_TEMPLATES).format(domain)
+                     context_switch_turn = context_switch_string + "," + multiwoz_turns[turn_id]
+                     blended_turns.append(context_switch_turn)
+                else:
+                    blended_turns.append(multiwoz_turns[turn_id])
+            else:
+                blended_turns.append(multiwoz_turns[turn_id])
+        while other_turn_chunks:
+            for turn in other_turn_chunks.pop(0):
+                    blended_turns.append(turn)
+            
+        return blended_turns
+
+    def _extend_dialog_history(self, self_entry, sys_response, domain):
+        if not self.tasks_to_blend:
+            return self_entry
+        self_turns = self_entry.split(' <user> ')
+        if len(self_turns) < 2:
+            return self_entry
+            
+        dialogs_to_blend = random.choice(self.dialogs_all_tasks)
+        dialog_to_blend = random.choice(dialogs_to_blend)
+        turns = [f" {turn['text']} <system> {turn['labels'][0]}" for turn in dialog_to_blend]
+        chunked_dialog = self._chunk_dialogs(turns)
+        
+        self_entry += ' <system> ' + sys_response
+        self_turns = self_entry.split('<user>')
+        if self_turns[0] == '':
+            self_turns.pop(0)
+        
+        blended_turns = self._blend_dialogs(self_turns, chunked_dialog, domain)
+        blended_context = "<user>" + " <user> ".join(blended_turns)
+        return blended_context
+        
     def get(self, episode_idx, entry_idx=0):
         entry = self.messages[episode_idx]['context'] # includes all previous dialog history
         episode_done = True     # each turn is a individual episode
+        domain = self.messages[episode_idx]['domain']
         action = {
             'id': self.id,
-            'text': entry,
-            'domain':self.messages[episode_idx]['domain'],
+            'text': self._extend_dialog_history(entry, self.messages[episode_idx]['response'], domain),
+            'domain':domain,
             'episode_done': episode_done,
             'labels': [self.messages[episode_idx]['slots']],
             'dial_id': self.messages[episode_idx]['dial_id'],
@@ -174,4 +277,3 @@ set(slots_pred)))
 
 class DefaultTeacher(MultiWozTradeDSTTeacher):
     pass
-
