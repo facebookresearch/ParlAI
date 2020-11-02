@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import hydra
 from omegaconf import DictConfig
@@ -31,13 +31,19 @@ class ScriptConfig(MTurkRunScriptConfigMixin, TestScriptConfig):
     Use the mixin's soft-blocking with the defaults from the Mephisto version.
     """
 
-    pass
+    monitoring_log_rate: int = field(
+        default=30,
+        metadata={
+            'help': 'Frequency in seconds of logging the monitoring of the crowdsourcing task'
+        },
+    )
 
 
 register_script_config(name="scriptconfig", module=ScriptConfig)
+relative_task_directory = os.path.relpath(TASK_DIRECTORY, os.path.dirname(__file__))
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path=relative_task_directory, config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 
