@@ -3,6 +3,8 @@ SEED = 42
 
 
 class Blender(object):
+    wh_words = ['who', 'where', 'when', 'why', 'what', 'whats', 'how', 'which']
+
     def __init__(self, blend_mode):
         self.blend_mode = blend_mode
         random.seed(SEED)
@@ -23,19 +25,31 @@ class Blender(object):
             concatenated_dialog += dialog
         return concatenated_dialog
 
+    def _can_interleave(self, turn):
+        sys_turn = turn["labels"][0]
+        return "?" not in sys_turn
+
+    def _chunk_dialogs(self, dialogs, max_chunk_size=2):
+        chunks = []
+        chunk = []
+        for turn in dialogs:
+            print(len(dialogs), len(chunks), len(chunk), self._can_interleave(turn))
+            if len(chunk) >= max_chunk_size and self._can_interleave(turn):
+                chunks.append(chunk)
+                chunk = []
+            chunk.append(turn)
+        chunks.append(chunk)
+        return chunks
+
     def _random_interleave(self, dialogs):
         pass
         
-    def _chunkify(self, l, n):
-        return [l[i:i + n] for i in range(0, len(l), n)]  
-
     def _fixed_interleave(self, dialogs):
         num_tasks = len(dialogs)
         max_dialog_turns = [2]*num_tasks
-        max_dialog_turns[0] = 4
         
         # chunkify dialogs into chunks and merge.
-        dialog_chunks = [self._chunkify(dialog, max_dialog_turns[task_id]) for task_id, dialog in enumerate(dialogs)]
+        dialog_chunks = [self._chunk_dialogs(dialog, max_dialog_turns[task_id]) for task_id, dialog in enumerate(dialogs)]
         num_chunks = [len(chunks) for chunks in dialog_chunks]
         interleaved_dialog = []
         task_id = 0
