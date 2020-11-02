@@ -4,13 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-End-to-end testing for the ACUTE-Eval crowdsourcing task.
+End-to-end testing for the chat demo crowdsourcing task.
 """
-
 
 import unittest
 
 # Desired inputs/outputs
+# TODO: revise these
 DESIRED_INPUTS = [
     {
         "task_specs": {
@@ -251,6 +251,7 @@ DESIRED_OUTPUTS = {
 
 try:
 
+    # TODO: revise below
     from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
         AcuteEvalBlueprint,
     )
