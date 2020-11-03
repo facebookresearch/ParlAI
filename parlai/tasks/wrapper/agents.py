@@ -92,7 +92,9 @@ class AbstractWrapperTeacher(Teacher, ABC):
         """
         Edit and return the input action, from the inner teacher's .get_orig_action().
         """
-        raise NotImplementedError('Abstract class: user must implement act() method')
+        raise NotImplementedError(
+            'Abstract class: user must implement the _edit_action() method'
+        )
 
     def num_examples(self):
         """
