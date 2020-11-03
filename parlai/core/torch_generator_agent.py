@@ -710,6 +710,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.view(-1, scores.size(-1))
+        # compute loss for text tokens
         loss = self.criterion(score_view, batch.label_vec.view(-1))
         loss = loss.view(scores.shape[:-1]).sum(dim=1)
         # save loss to metrics
@@ -722,6 +723,44 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
         )
+
+        scores_text = scores[:, :, :8008]
+        score_view_text = scores_text.view(-1, scores_text.size(-1))
+        text_label_vec = batch.label_vec.clone()
+        text_label_vec[text_label_vec >= 8008] = 0
+        loss_text = self.criterion(score_view_text, text_label_vec.view(-1))
+        loss_text = loss_text.view(scores_text.shape[:-1]).sum(dim=1)
+        # save loss to metrics
+        notnull_text = text_label_vec.ne(self.NULL_IDX)
+        target_tokens_text = notnull_text.long().sum(dim=-1)
+
+        self.record_local_metric(
+            'loss_text', AverageMetric.many(loss_text, target_tokens_text)
+        )
+
+        self.record_local_metric(
+            'ppl_text', PPLMetric.many(loss_text, target_tokens_text)
+        )
+
+        scores_control = scores.clone()
+        scores_control[:, :, :8008] = 0
+        score_view_control = scores_control.view(-1, scores_control.size(-1))
+        control_label_vec = batch.label_vec.clone()
+        control_label_vec[control_label_vec < 8008] = 0
+        loss_control = self.criterion(score_view_control, control_label_vec.view(-1))
+        loss_control = loss_control.view(scores_control.shape[:-1]).sum(dim=1)
+        # save loss to metrics
+        notnull_control = control_label_vec.ne(self.NULL_IDX)
+        target_tokens_control = notnull_control.long().sum(dim=-1)
+
+        self.record_local_metric(
+            'loss_control', AverageMetric.many(loss_control, target_tokens_control)
+        )
+
+        self.record_local_metric(
+            'ppl_control', PPLMetric.many(loss_control, target_tokens_control)
+        )
+
         # actually do backwards loss
         loss = loss.sum()
         loss /= target_tokens.sum()  # average loss per token
