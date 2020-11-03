@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.dict import DictionaryAgent
 from parlai.zoo.bert.build import download
+from parlai.utils.misc import warn_once
 
 try:
     from pytorch_pretrained_bert import BertTokenizer
@@ -26,6 +27,9 @@ class BertDictionaryAgent(DictionaryAgent):
     def __init__(self, opt):
         super().__init__(opt)
         # initialize from vocab path
+        warn_once(
+            'WARNING: BERT uses a Hugging Face tokenizer; ParlAI dictionary args are ignored'
+        )
         download(opt['datapath'])
         vocab_path = os.path.join(opt['datapath'], 'models', 'bert_models', VOCAB_PATH)
         self.tokenizer = BertTokenizer.from_pretrained(vocab_path)

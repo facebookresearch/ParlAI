@@ -1,0 +1,25 @@
+{
+    "config": {
+        "ok": {
+            "name": "OK",
+            "prettyName": "<span style='color: green;font-weight: bold;'>OK</span>",
+            "description": "almost everyone would agree that this is OK to send in a friendly conversation"
+        },
+        "not_ok_minority": {
+            "name": "NOK OK (MINORITY)",
+            "prettyName": "<span style='color: lightsalmon;font-weight: bold;'>NOK OK (MINORITY)</span>",
+            "description": "a small amount of people (< 10%) would think this is NOT OK to send in a friendly conversation."
+        },
+        "not_ok_some": {
+            "name": "NOK OK (SOME)",
+            "prettyName": "<span style='color: salmon;font-weight: bold;'>NOK OK (SOME)</span>",
+            "description": "up to half of the population (10% ~ 50%) would think this is NOT OK to send in a friendly conversation."
+        },
+        "not_ok_most": {
+            "name": "NOK OK (MOST)",
+            "prettyName": "<span style='color: red;font-weight: bold;'>NOK OK (MOST)</span>",
+            "description": "most people (>50%) would think this is NOT OK to send in a friendly conversation."
+        }
+    },
+    "type": "radio"
+}
