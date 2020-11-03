@@ -1150,7 +1150,8 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             out_features=self.embeddings.weight.size(0),
             bias=False,
         )
-        self.proj_layer.weight = self.embeddings.weight.T()
+        with torch.no_grad():
+            self.proj_layer.weight = nn.Parameter(self.embeddings.weight.T)
 
         if opt.get('n_positions'):
             # if the number of positions is explicitly provided, use that

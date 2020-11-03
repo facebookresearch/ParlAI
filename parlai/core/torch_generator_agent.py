@@ -531,11 +531,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 states = {}
 
         logging.info('Quantizing the model.')
+        qconfig_spec = {nn.Linear, nn.LayerNorm}
         self.model.encoder = torch.quantization.quantize_dynamic(
-            self.model.encoder, dtype=torch.qint8
+            self.model.encoder, qconfig_spec=qconfig_spec, dtype=torch.qint8
         )
         self.model.decoder = torch.quantization.quantize_dynamic(
-            self.model.decoder, dtype=torch.qint8
+            self.model.decoder, qconfig_spec=qconfig_spec, dtype=torch.qint8
         )
 
         if shared is not None:

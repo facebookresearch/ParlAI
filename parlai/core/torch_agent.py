@@ -23,6 +23,7 @@ from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
 import torch
+import torch.nn as nn
 import parlai.utils.logging as logging
 from torch import optim
 
@@ -1831,8 +1832,18 @@ class TorchAgent(ABC, Agent):
 
         This is easily overridable to facilitate transfer of state dicts.
         """
+        state_dict['proj_layer.weight'] = self.model.proj_layer.weight
+        # We've already initialized the projection layer with the embedding weights, so just add these to the state dict
         try:
             self.model.load_state_dict(state_dict)
+            with torch.no_grad():
+                self.model.proj_layer.weight = nn.Parameter(
+                    self.model.embeddings.weight.T
+                )
+                # Copy the *correct* embedding weights from state_dict back to the
+                #  proj_layer
+                # TODO: is this necessary? For some reason it seemed to work without
+                #  this
         except RuntimeError as msg:
             msg_ = str(msg)
             if 'size mismatch' in msg_ and 'embedding' in msg_:
