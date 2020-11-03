@@ -23,7 +23,6 @@ import numpy as np
 import torch
 import torch.cuda
 import torch.nn as nn
-import torch.nn.functional as F
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
@@ -1145,6 +1144,12 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         self.embeddings = _create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
+        self.proj_layer = nn.Linear(
+            in_features=self.embeddings.weight.size(1),
+            out_features=self.embeddings.weight.size(0),
+            bias=False,
+        )
+        self.proj_layer.weight = self.embeddings.weight.T()
 
         if opt.get('n_positions'):
             # if the number of positions is explicitly provided, use that
@@ -1211,7 +1216,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         Compute output logits.
         """
         # project back to vocabulary
-        output = F.linear(tensor, self.embeddings.weight)
+        output = self.proj_layer(tensor)
         # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
         # we need to force their probability of generation to be 0.
         output[:, :, self.start_idx] = neginf(output.dtype)

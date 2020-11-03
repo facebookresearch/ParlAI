@@ -530,6 +530,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else:
                 states = {}
 
+        logging.info('Quantizing the model.')
+        self.model.encoder = torch.quantization.quantize_dynamic(
+            self.model.encoder, dtype=torch.qint8
+        )
+        self.model.decoder = torch.quantization.quantize_dynamic(
+            self.model.decoder, dtype=torch.qint8
+        )
+
         if shared is not None:
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
