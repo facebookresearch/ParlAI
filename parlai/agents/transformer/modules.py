@@ -23,6 +23,7 @@ import numpy as np
 import torch
 import torch.cuda
 import torch.nn as nn
+import torch.nn.functional as F
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
@@ -1302,6 +1303,8 @@ class MultiHeadAttention(nn.Module):
         # and set biases to 0
         self.out_lin = nn.Linear(dim, dim)
 
+        self.softmax = nn.Softmax(dim=-1)
+
         nn.init.xavier_normal_(self.out_lin.weight)
 
     def forward(  # type: ignore
@@ -1423,9 +1426,7 @@ class MultiHeadAttention(nn.Module):
         assert attn_mask.shape == dot_prod.shape
         dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(
-            dot_prod, dim=-1, dtype=torch.float  # type: ignore
-        ).type_as(query)
+        attn_weights = self.softmax(dot_prod).type_as(query)
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
@@ -1462,9 +1463,9 @@ class TransformerFFN(nn.Module):
         super(TransformerFFN, self).__init__()
         self.relu_dropout = nn.Dropout(p=relu_dropout)
         if activation == 'relu':
-            self.nonlinear = F.relu
+            self.nonlinear = nn.ReLU()
         elif activation == 'gelu':
-            self.nonlinear = F.gelu
+            self.nonlinear = nn.GELU()
         else:
             raise ValueError(
                 "Don't know how to handle --activation {}".format(activation)
