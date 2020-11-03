@@ -41,13 +41,18 @@ parlai eval_model -t bot_adversarial_dialogue:bad_num_turns=4 -dt test -mf zoo:b
 
 To train your own classifier on the BAD dataset and other safety tasks, try the following command:
 ```
-parlai train_model -t dialogue_safety:WikiToxicComments,dialogue_safety:standard,dialogue_safety:adversarial,bot_adversarial_dialogue --model transformer/classifier --load-from-pretrained-ranker True --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model --dict-file zoo:pretrained_transformers/bi_model_huge_reddit/model.dict --history-size 20 --label-truncate 72 --text-truncate 360 --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 --variant xlm --reduction-type mean --share-encoders False --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 --embedding-size 768 --activation gelu  --embeddings-scale False --n-segments 2 --learn-embeddings True --share-word-embeddings False --dict-endtoken __start__ --classes __notok__ __ok__ --round 3 --use-test-set True --model transformer/classifier --multitask-weights 3,1,1,1 -lr 5e-05 -bs 20 --data-parallel True -vtim 60 -vp 30 -stim 60 -vme 10000 --lr-scheduler fixed --lr-scheduler-patience 3 --lr-scheduler-decay 0.9 --warmup_updates 1000 --validation-metric class___notok___f1 --validation-metric-mode max --save-after-valid True --model-file <your model file path>
+parlai train_model -t dialogue_safety:WikiToxicComments,dialogue_safety:standard,dialogue_safety:adversarial,bot_adversarial_dialogue --model transformer/classifier --load-from-pretrained-ranker True --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model --dict-file zoo:pretrained_transformers/bi_model_huge_reddit/model.dict --history-size 20 --label-truncate 72 --text-truncate 360 --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 --variant xlm --reduction-type mean --share-encoders False --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 --embedding-size 768 --activation gelu  --embeddings-scale False --n-segments 2 --learn-embeddings True --share-word-embeddings False --dict-endtoken __start__ --classes __notok__ __ok__ --round 3 --use-test-set False --model transformer/classifier --multitask-weights 3,1,1,1 -lr 5e-05 -bs 20 --data-parallel True -vtim 60 -vp 30 -stim 60 -vme 10000 --lr-scheduler fixed --lr-scheduler-patience 3 --lr-scheduler-decay 0.9 --warmup_updates 1000 --validation-metric class___notok___f1 --validation-metric-mode max --save-after-valid True --model-file <your model file path>
 ```
 
 
 ## Human Evaluations
 
-- Evaluating safety: Mechanical Turk task for analyzing the safety of models will be released shortly. *Check back soon!*
+- Evaluating safety: To run Mechanical Turk task for analyzing the safety of models, please run:
+```
+python projects/safety_recipes/human_safety_evaluation/run.py
+```
+See [Mephisto](https://github.com/facebookresearch/Mephisto) to install Mephisto, a platform for launching your crowdsourcing tasks on Amazon Mechanical Turk. To enable onboarding task, please edit the [onboarding task](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/onboarding.json). To render your own chats, please include your chat logs [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl) and turn indices per conversation to annotate [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl). 
+
 
 - Evaluating engagingness: To run ACUTE-Eval human evaluations for engagingness, see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval).
 
