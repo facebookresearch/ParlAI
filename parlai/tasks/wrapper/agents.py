@@ -90,7 +90,10 @@ class AbstractWrapperTeacher(Teacher, ABC):
     @abstractmethod
     def _edit_action(self, act: Message) -> Message:
         """
-        Edit and return the input action, from the inner teacher's .get_orig_action().
+        Edit and return the input action.
+
+        The input action typically comes from the inner teacher's .get_orig_action()
+        method.
         """
         raise NotImplementedError(
             'Abstract class: user must implement the _edit_action() method'
