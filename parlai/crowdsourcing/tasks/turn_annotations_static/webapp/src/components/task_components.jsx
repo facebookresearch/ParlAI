@@ -60,7 +60,7 @@ var handleUserInputUpdate = function (subtaskData) {
   }
 }
 
-var handleSubtaskSubmit = function (subtaskIndex, numSubtasks, initialTaskData, annotationBuckets, mephistoSubmit) {
+var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initialTaskData, annotationBuckets, mephistoSubmit) {
   // initialTaskData is the initial task data for this index
   console.log('In handleSubtaskSubmit for subtask: ' + subtaskIndex);
   if (!validateUserInput(initialTaskData)) {
@@ -120,6 +120,7 @@ var handleSubtaskSubmit = function (subtaskIndex, numSubtasks, initialTaskData, 
     mephistoSubmit(window.workerAnswers);
   }
   showDisableCssNextButton();
+  setIndex(subtaskIndex + 1); 
 }
 
 function LeftPane({ stretch = false, children }) {
@@ -132,11 +133,20 @@ function RightPane({ children }) {
 }
 
 function SubtaskCounter({ subtaskIndex, numSubtasks }) {
+  var taskword = numSubtasks === 1 ? 'conversation' : 'conversations';
+  if (subtaskIndex >= numSubtasks) {
+    return (
+      <div>
+      <b>Congratulations! All {numSubtasks} {taskword} have completed.</b> <br />
+    </div>
+    )
+  } else {
   return (
-    <div>
-      <b>You are currently at conversation: {subtaskIndex + 1} / {numSubtasks} </b> <br />
-  After completing each, click [NEXT] button, which will be enabled below.
-    </div>)
+      <div>
+        <b>You are currently at conversation: {subtaskIndex + 1} / {numSubtasks} </b> <br />
+    After completing each, click [NEXT] button, which will be enabled below.
+      </div>)
+  }
 }
 
 function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
@@ -156,11 +166,10 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
 function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
   var extraElements = '';
   if (doAnnotateMessage) {
-    var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     extraElements = '';
     extraElements = (<span key={'extra_' + turnIdx}><br /><br />
       <span style={{ fontStyle: 'italic' }} >
-        <span dangerouslySetInnerHTML={{ __html: annotationQuestionWithoutQuotes }}></span>
+        <span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span>
         <br />
         <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} askReason={askReason} onUserInputUpdate={onUserInputUpdate} />
       </span>
@@ -218,19 +227,15 @@ function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, o
   }
   const [index, setIndex] = React.useState(0);
 
-  // For some reason, """ from Python is carrying over
-  var taskTitleWithoutQuotes = taskTitle.replace(/['"]+/g, '');
-  var taskDescriptionWithoutQuotes = taskDescription.replace(/['"]+/g, '');
-
   return (
     <div style={{ margin: 0, padding: 0, height: '100%' }}>
       <LeftPane>
-        <h4><span dangerouslySetInnerHTML={{ __html: taskTitleWithoutQuotes || 'Task Title Loading' }}></span></h4>
+        <h4><span dangerouslySetInnerHTML={{ __html: taskTitle || 'Task Title Loading' }}></span></h4>
         <SubtaskCounter subtaskIndex={index} numSubtasks={taskData.length}></SubtaskCounter>
 
         <br />
-        <span dangerouslySetInnerHTML={{ __html: taskDescriptionWithoutQuotes || 'Task Description Loading' }}></span>
-        <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); setIndex(index + 1); }}></SubtaskSubmitButton>
+        <span dangerouslySetInnerHTML={{ __html: taskDescription || 'Task Description Loading' }}></span>
+        <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, setIndex, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); }} initialTaskData={taskData[index]}></SubtaskSubmitButton>
       </LeftPane>
       <RightPane>
         <ContentPane subtaskData={taskData[index]} taskConfig={taskConfig} subtaskIndex={index} numSubtasks={taskData.length} ></ContentPane>
