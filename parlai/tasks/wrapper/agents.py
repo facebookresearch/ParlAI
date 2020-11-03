@@ -18,7 +18,7 @@ teacher for each of the original teachers.
 
 import copy
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from parlai.core.agents import create_agent_from_shared
 from parlai.core.message import Message
 from parlai.core.opt import Opt
@@ -87,7 +87,6 @@ class AbstractWrapperTeacher(Teacher, ABC):
         processed_action = self.task.process_action(edited_action)
         return processed_action
 
-    @abstractmethod
     def _edit_action(self, act: Message) -> Message:
         """
         Edit and return the input action.
