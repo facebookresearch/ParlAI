@@ -666,7 +666,7 @@ class DictionaryAgent(Agent):
         with PathManager.open(filename + '.opt', 'w', encoding='utf-8') as handle:
             json.dump(self.opt, handle, indent=4)
         # save the byte level bpe model file as well
-        if self.tokenizer == 'bytelevelbpe':
+        if self.tokenizer == 'bytelevelbpe' or self.tokenizer == 'slow_bytelevel_bpe':
             # This saves filename-vocab.json and filename-merges.txt as
             # hugging face tokenizer does
             self.bpe.save(os.path.dirname(filename), os.path.basename(filename))
