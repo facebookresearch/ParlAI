@@ -24,6 +24,7 @@ import torch
 import torch.cuda
 import torch.nn as nn
 import torch.nn.functional as F
+import opt_einsum
 
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
@@ -644,7 +645,7 @@ class TransformerEncoderLayer(nn.Module):
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = MultiHeadAttention(
+        self.attention = PerformerAttention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
@@ -956,12 +957,12 @@ class TransformerDecoderLayer(nn.Module):
         self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
-        self.self_attention = MultiHeadAttention(
+        self.self_attention = PerformerAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.encoder_attention = MultiHeadAttention(
+        self.encoder_attention = PerformerAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
@@ -1274,6 +1275,180 @@ class BasicAttention(nn.Module):
             return lhs_emb.squeeze(self.dim - 1)
 
 
+class PerformerAttention(nn.Module):
+    """
+    Implements PerformerAttention.
+
+    See Choromanski et al. (2020) https://arxiv.org/abs/2009.14794.
+    """
+
+    def __init__(self, n_heads, dim, dropout=0):
+        super().__init__()
+        self.n_heads = n_heads
+        self.dim = dim
+
+        self.attn_dropout = nn.Dropout(p=dropout)  # --attention-dropout
+        self.q_lin = nn.Linear(dim, dim)
+        self.k_lin = nn.Linear(dim, dim)
+        self.v_lin = nn.Linear(dim, dim)
+        dim_per_head = dim // n_heads
+        omegas, _ = torch.qr(torch.randn(dim_per_head, dim_per_head // 4))
+        self.omegas = torch.nn.Parameter(omegas)
+        # TODO: merge for the initialization step
+        nn.init.xavier_normal_(self.q_lin.weight)
+        nn.init.xavier_normal_(self.k_lin.weight)
+        nn.init.xavier_normal_(self.v_lin.weight)
+        # and set biases to 0
+        self.out_lin = nn.Linear(dim, dim)
+
+        nn.init.xavier_normal_(self.out_lin.weight)
+
+    def forward(  # type: ignore
+        # TODO: remove type ignore with pytorch 1.5:
+        # https://github.com/pytorch/pytorch/pull/31057
+        self,
+        query: torch.Tensor,
+        key: Optional[torch.Tensor] = None,
+        value: Optional[torch.Tensor] = None,
+        mask: torch.Tensor = None,
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        static_kv: bool = False,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+        """
+        Forward pass.
+
+        :param query: attention query
+        :param key: attention key
+        :param value: attention value
+        :param mask: tensor in which True means that we are allowing attention and False
+          means we are blocking it. Mask is:
+          - [B, key_len] (encoder self-attn and decoder enc/dec attn)
+          - [B, query_len, key_len] (decoder self-attn)
+          - [B, 1, 1] (decoder self-attn with incr_state caching)
+        :param incr_state: dictionary with values representing the previous states of
+          the key, value, and mask
+        :param static_kv: True if the key and value are held constant during decoding
+          (as in encoder/decoder attention)
+        :return: (final attended tensor, new incremental state)
+        """
+
+        batch_size, query_len, dim = query.size()
+        assert (
+            dim == self.dim
+        ), 'Dimensions do not match: {} query vs {} configured'.format(dim, self.dim)
+        assert mask is not None, 'Mask is None, please specify a mask'
+        n_heads = self.n_heads
+        dim_per_head = dim // n_heads
+        scale = math.sqrt(dim_per_head)
+
+        def prepare_head(tensor):
+            # input is [batch_size, seq_len, n_heads * dim_per_head]
+            # output is [batch_size * n_heads, seq_len, dim_per_head]
+            bsz, seq_len, _ = tensor.size()
+            tensor = tensor.reshape(batch_size, tensor.size(1), n_heads, dim_per_head)
+            tensor = tensor.transpose(1, 2).reshape(
+                batch_size * n_heads, seq_len, dim_per_head
+            )
+            return tensor
+
+        # q, k, v are the transformed values
+        if key is None and value is None:
+            # self attention
+            key = value = query
+            _, _key_len, dim = query.size()
+        elif value is None:
+            # key and value are the same, but query differs
+            # self attention
+            value = key
+
+        assert key is not None  # let mypy know we sorted this
+        _, _key_len, dim = key.size()
+
+        q = prepare_head(self.q_lin(query))
+        k = prepare_head(self.k_lin(key))
+        v = prepare_head(self.v_lin(value))
+
+        # Prepend incremental states. For each of the key, value, and mask, see if
+        # a previous incremental state exists, and if so, reshape it to match the shape
+        # of the new state. Concatenate the previous and new states to match what the
+        # full state would have been if we had not cached. (If we are using static_kv,
+        # these three states are unchanging, so just re-use the cached states.)
+        if incr_state is None:
+            incr_state = {}
+        if 'prev_key' in incr_state:
+            prev_key = incr_state['prev_key'].view(
+                batch_size * n_heads, -1, dim_per_head
+            )
+            if static_kv:
+                k = prev_key
+            else:
+                k = torch.cat([prev_key, k], dim=1)
+        if 'prev_value' in incr_state:
+            prev_value = incr_state['prev_value'].view(
+                batch_size * n_heads, -1, dim_per_head
+            )
+            if static_kv:
+                v = prev_value
+            else:
+                v = torch.cat([prev_value, v], dim=1)
+        if 'prev_mask' in incr_state:
+            if static_kv:
+                mask = incr_state['prev_mask']
+            else:
+                mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
+                # Prepend along the key_len dimension (analogous to
+                # incr_state['prev_key'])
+
+        # Save new incremental states. We reshape to allow for reordering along batch
+        # dimension.
+        new_incr_state = {
+            'prev_key': k.view(batch_size, n_heads, -1, dim_per_head),
+            'prev_value': v.view(batch_size, n_heads, -1, dim_per_head),
+            'prev_mask': mask,
+        }
+        full_key_len = k.size(1)
+
+        qprime = self._kernel_proj(q)
+        qprime = self._h(qprime) * qprime
+        kprime = self._kernel_proj(k)
+        # kprimev = torch.bmm(kprime.transpose(1, 2), v)
+        attn_mask = (
+            (mask != 0)
+            .view(batch_size, 1, -1, full_key_len)
+            .repeat(1, n_heads, 1, 1)
+            .expand(batch_size, n_heads, query_len, full_key_len)
+            .view(batch_size * n_heads, query_len, full_key_len)
+        )
+        attentioned = torch.einsum('blr,bkr,blk,bko->blo', qprime, kprime, attn_mask, v)
+        attentioned = (
+            attentioned.type_as(query)
+            .view(batch_size, n_heads, query_len, dim_per_head)
+            .transpose(1, 2)
+            .reshape(batch_size, query_len, dim)
+        )
+        out = self.out_lin(attentioned)
+
+        return out, new_incr_state
+
+    def _h(self, x):
+        return torch.exp(-torch.norm(x, p=2, dim=-1, keepdim=True) / 2) / np.sqrt(2)
+
+    def _kernel_proj(self, x):
+        xprime = torch.matmul(x, self.omegas)
+        return torch.cat([torch.exp(xprime), torch.exp(-xprime)], dim=-1)
+
+    def reorder_incremental_state(
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Reorder the input incremental-state tensors.
+        """
+        return {
+            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
+            for key, val in incremental_state.items()
+        }
+
+
 class MultiHeadAttention(nn.Module):
     """
     Implements MultiHeadAttention; this is the core workhorse of the Transformer.
@@ -1335,7 +1510,6 @@ class MultiHeadAttention(nn.Module):
         assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
-        scale = math.sqrt(dim_per_head)
 
         def prepare_head(tensor):
             # input is [batch_size, seq_len, n_heads * dim_per_head]
