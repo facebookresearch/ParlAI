@@ -2303,7 +2303,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return output, chunk_reset_cnt
 
     def get(self, episode_idx, entry_idx=0):
-        curr_reset_cnt = self.reset_count.value()
+        curr_reset_cnt = self.reset_counter.value()
         if self._episode_done:
             # Get the next episode or example
             queue_output, reset_cnt = self.samples.get()
