@@ -74,7 +74,8 @@ class DownloadableFile:
                 # remove_dir(dpath)
                 raise AssertionError(
                     f"Checksum for {self.file_name} from \n{self.url}\n"
-                    "does not match the expected checksum. Please try again."
+                    f"does not match the expected checksum:\n{sha256_hash.hexdigest()} != {self.hashcode}"
+                    "\n\nPlease try again."
                 )
             else:
                 logging.debug("Checksum Successful")

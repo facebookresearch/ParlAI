@@ -30,6 +30,14 @@ parlai display_data -t bot_adversarial_dialogue:HumanSafetyEvaluation
 
 Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083) can be found [here](parl.ai/projects/dialogue_safety).
 
+
+We also release the validation set for the sensitive topics detection as described in the paper. The data can be viewed with the following command:
+
+```
+parlai display_data -t sensitive_topics_
+```
+
+
 ## Models
 
 A classifier trained on the new Bot-Adversarial Dialogue (BAD) task (as well as other existing safety tasks) can be found at `zoo:bot_adversarial_dialogue/multi_turn_v0/model`.
