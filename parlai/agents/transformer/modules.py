@@ -646,7 +646,10 @@ class TransformerEncoderLayer(nn.Module):
         self.activation = activation
         self.variant = variant
         self.attention = PerformerAttention(
-            n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
+            n_heads,
+            embedding_size,
+            dropout=attention_dropout,  # --attention-dropout
+            is_self_attention=True,
         )
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = TransformerFFN(
@@ -958,12 +961,12 @@ class TransformerDecoderLayer(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
         self.self_attention = PerformerAttention(
-            n_heads, embedding_size, dropout=attention_dropout
+            n_heads, embedding_size, dropout=attention_dropout, is_self_attention=True
         )
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.encoder_attention = PerformerAttention(
-            n_heads, embedding_size, dropout=attention_dropout
+            n_heads, embedding_size, dropout=attention_dropout, is_self_attention=False
         )
         self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
@@ -1282,17 +1285,20 @@ class PerformerAttention(nn.Module):
     See Choromanski et al. (2020) https://arxiv.org/abs/2009.14794.
     """
 
-    def __init__(self, n_heads, dim, dropout=0):
+    def __init__(self, n_heads, dim, dropout=0, is_self_attention: bool = True):
         super().__init__()
         self.n_heads = n_heads
         self.dim = dim
+        self.is_self_attention = is_self_attention
 
         self.attn_dropout = nn.Dropout(p=dropout)  # --attention-dropout
         self.q_lin = nn.Linear(dim, dim)
         self.k_lin = nn.Linear(dim, dim)
         self.v_lin = nn.Linear(dim, dim)
         dim_per_head = dim // n_heads
-        omegas, _ = torch.qr(torch.randn(dim_per_head, dim_per_head // 4))
+        self.m = int(np.ceil(dim_per_head * np.log2(dim_per_head)))
+        self.m = 13
+        omegas, _ = torch.qr(torch.randn(dim_per_head, self.m))
         self.omegas = torch.nn.Parameter(omegas)
         # TODO: merge for the initialization step
         nn.init.xavier_normal_(self.q_lin.weight)
@@ -1411,18 +1417,25 @@ class PerformerAttention(nn.Module):
         qprime = self._kernel_proj(q)
         qprime = self._h(qprime) * qprime
         kprime = self._kernel_proj(k)
-        # kprimev = torch.bmm(kprime.transpose(1, 2), v)
-        attn_mask = (
-            (mask != 0)
-            .view(batch_size, 1, -1, full_key_len)
-            .repeat(1, n_heads, 1, 1)
-            .expand(batch_size, n_heads, query_len, full_key_len)
-            .view(batch_size * n_heads, query_len, full_key_len)
-        )
-        attentioned = torch.einsum('blr,bkr,blk,bko->blo', qprime, kprime, attn_mask, v)
+        if (self.is_self_attention and mask.ndim == 2) or not self.is_self_attention:
+            # null out values which should be masked. Don't have
+            # to stress about query mask, it will be handled via upstream
+            m = (
+                mask.unsqueeze(1)
+                .expand(mask.size(0), self.n_heads, mask.size(1))
+                .reshape(mask.size(0) * self.n_heads, mask.size(1), 1)
+            )
+            kprime = m * kprime
+            kprimev = torch.bmm(kprime.transpose(1, 2), v)
+            attentioned = torch.bmm(qprime, kprimev)
+        elif self.is_self_attention and mask.ndim == 3:
+            # causal self-attention
+            G = (kprime.unsqueeze(-1) * v.unsqueeze(2)).cumsum(dim=1)
+            m = qprime.size(-1)
+            attentioned = torch.bmm(qprime.view(-1, 1, m), G.view(-1, m, dim_per_head))
+
         attentioned = (
-            attentioned.type_as(query)
-            .view(batch_size, n_heads, query_len, dim_per_head)
+            attentioned.view(batch_size, n_heads, query_len, dim_per_head)
             .transpose(1, 2)
             .reshape(batch_size, query_len, dim)
         )
