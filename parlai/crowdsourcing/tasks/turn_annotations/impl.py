@@ -32,7 +32,16 @@ def run_task(cfg: DictConfig, task_directory: str):
 
     random.seed(42)
 
-    soft_block_qual_name = cfg.mephisto.task.get('task_name', 'turn_annotations')
+    # Update task name when on sandbox or local to ensure data is split.
+    task_name = cfg.mephisto.task.get('task_name', 'turn_annotations')
+    architect_type = cfg.mephisto.architect._architect_type
+    if architect_type == 'local':
+        task_name = f"{task_name}_local"
+    elif architect_type == 'mturk_sandbox':
+        task_name = f"{task_name}_sandbox"
+    cfg.mephisto.task.task_name = task_name
+
+    soft_block_qual_name = f"{task_name}_ineligible"
     # Default to a task-specific name to avoid soft-block collisions
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 

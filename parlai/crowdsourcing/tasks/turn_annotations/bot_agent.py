@@ -11,8 +11,8 @@ import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.utils.strings import normalize_reply
-from parlai.mturk.tasks.turn_annotations.constants import AGENT_1
-from parlai.mturk.tasks.turn_annotations.utils import (
+from parlai.crowdsourcing.tasks.turn_annotations.constants import AGENT_1
+from parlai.crowdsourcing.tasks.turn_annotations.utils import (
     Compatibility,
     construct_annotations_html,
 )
