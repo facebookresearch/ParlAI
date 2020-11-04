@@ -2237,7 +2237,10 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         Load data into self.samples until buffersize is reached.
         """
-        chunk_output, chunk_reset_cnt = future.result()
+        output = future.result()
+        if output is None:
+            return
+        chunk_output, chunk_reset_cnt = output
         if chunk_output is None:
             return
         while chunk_output:
@@ -2306,16 +2309,19 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         curr_reset_cnt = self.reset_counter.value()
         if self._episode_done:
             # Get the next episode or example
-            queue_output, reset_cnt = self.samples.get()
+            output = self.samples.get()
+            if output is None:
+                return None
+            queue_output, reset_cnt = output
             stale_exs = 0
             while curr_reset_cnt > reset_cnt:
                 stale_exs += 1
-                queue_output, reset_cnt = self.samples.get()
+                output = self.samples.get()
+                if output is None:
+                    return None
+                queue_output, reset_cnt = output
             if stale_exs > 0:
                 logging.info(f"Removed {stale_exs} stale examples from the queue.")
-
-            if queue_output is None:
-                return None
 
             # Update the last queue output in the case
             # of multi-turn episodes
