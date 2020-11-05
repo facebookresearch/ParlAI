@@ -20,12 +20,16 @@ Contains the following utilities:
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
+import timeit
 from operator import attrgetter
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.quantization import quantize_dynamic
 
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
@@ -549,6 +553,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             )
 
         self.reset()
+
+        self.dec_elapsed_times = []
+        self.nums_passes = []
 
     def build_criterion(self):
         """
@@ -1127,12 +1134,62 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
 
+        orig_model_path = '/checkpoint/ems/2020_antiscaling/sweeps/s2020_10_21__narrow_distillation/00_initial/_000__032__snapshot_10_23/model'
+        model_parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
+        args_ = f"""\
+--model-file {orig_model_path} \
+--model bart \
+--no-cuda \
+--fp16 False \
+"""
+        opt = model_parser.parse_args(args_.split())
+        agent = create_agent(opt, requireModelExists=True)
+        model = agent.model
+        model = quantize_dynamic(
+            model=model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
+        )
+
+        dec_elapsed_time = 0.0
+        num_passes = 0
+
+        # Params
+        batch_size = 1
+        encoder_seq_len = 200  # --text-truncate
+        decoder_seq_len = 32  # --label-truncate
+        max_token_idx = 50000
+
+        # Create inputs
+        x = torch.randint(
+            low=0,
+            high=max_token_idx,
+            size=(batch_size, encoder_seq_len),
+            dtype=torch.long,
+        )
+        y = torch.randint(
+            low=0,
+            high=max_token_idx,
+            size=(batch_size, decoder_seq_len),
+            dtype=torch.long,
+        )
+
+        # Pass through decoder
+        torch_enc_out, torch_enc_out_mask = model.encoder(x)
+
+        # Pass through decoder
+        start_time = timeit.default_timer()
+        _ = model.decoder(y, (torch_enc_out, torch_enc_out_mask))
+        dec_elapsed_time += timeit.default_timer() - start_time
+
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):
                 # exit early if possible
                 break
 
+            # start_time = timeit.default_timer()
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
+            # print(decoder_input.shape, encoder_states[0].shape, encoder_states[1].shape)
+            # dec_elapsed_time += timeit.default_timer() - start_time
+            # num_passes += 1
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
             score = model.output(score)
@@ -1172,6 +1229,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             decoder_input = self._get_next_decoder_input(
                 decoder_input, selection, incr_state_inds
             )
+
+        self.dec_elapsed_times.append(dec_elapsed_time)
+        self.nums_passes.append(num_passes)
 
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
