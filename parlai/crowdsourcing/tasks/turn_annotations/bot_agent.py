@@ -7,6 +7,7 @@
 import copy
 import os
 
+from omegaconf import DictConfig
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
@@ -109,12 +110,13 @@ class TurkLikeAgent:
         self.model_agent.reset()
 
     @staticmethod
-    def get_bot_agents(opt: dict, active_models: list, no_cuda=False):
+    def get_bot_agents(args: DictConfig, active_models: list, no_cuda=False):
+        return {}
         model_overrides = {
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands
             'interactive_mode': True,
-            'model_parallel': opt['task_model_parallel'],
+            'model_parallel': args.blueprint.task_model_parallel,
         }
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU
@@ -126,7 +128,7 @@ class TurkLikeAgent:
 
         # Get the model nicknames from common folder and use them to load opts
         # from file, and add options specified in MODEL_CONFIGS
-        base_model_folder = opt.get('base_model_folder', None)
+        base_model_folder = os.path.expanduser(args.blueprint.base_model_folder)
         models_available = []
         for obj in os.listdir(base_model_folder):
             if os.path.isdir(os.path.join(base_model_folder, obj)):

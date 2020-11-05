@@ -20,6 +20,7 @@ module.exports = {
   resolve: {
     alias: {
       react: path.resolve("./node_modules/react"),
+      "mephisto-task": path.resolve("./node_modules/mephisto-task"),
     },
   },
   module: {

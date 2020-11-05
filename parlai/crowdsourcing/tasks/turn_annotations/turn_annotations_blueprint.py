@@ -17,7 +17,7 @@ from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 import numpy as np
-from threading import Semaphore
+from threading import Semaphore, Condition
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
@@ -40,11 +40,12 @@ BLUEPRINT_TYPE = 'turn_annotations_blueprint'
 
 
 @dataclass
-class SharedTurnAnnotationTaskState(SharedParlAITaskState):
+class SharedTurnAnnotationsTaskState(SharedParlAITaskState):
     shared_models: Dict[str, Any] = field(default_factory=dict)
     conversations_needed: Dict[str, Any] = field(default_factory=dict)
     run_statistics: Dict[str, int] = field(default_factory=dict)
     onboard_statistics: Dict[str, int] = field(default_factory=dict)
+    statistics_condition: Optional[Condition] = None
     generation_semaphore: Optional[Semaphore] = None
     context_generator: Optional[Any] = None
 
@@ -69,9 +70,10 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
         metadata={"help": "Path to file containing turn annotations parlai world"},
     )
     custom_source_dir: str = field(
-        default=os.path.join(get_task_path(), 'webapp'),
+        default=os.path.join(get_task_path(), 'frontend'),
         metadata={"help": "Path to turn annotations frontend code"},
     )
+    num_turns: int = field(default=6, metadata={"help": 'minimum number of turns'})
     random_seed: int = field(
         default=42, metadata={"help": 'Seed for random operations'}
     )
@@ -101,12 +103,6 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     base_model_folder: str = field(
         default=MISSING, metadata={"help": "base folder for loading model files from"}
-    )
-    onboard_worker_answer_folder: str = field(
-        default="${mephisto.blueprint.base_save_folder}/onboard_answers",
-        metadata={
-            "help": "base folder for saving all worker answer results during onboarding"
-        },
     )
     check_acceptability: bool = field(
         default=False,
@@ -187,21 +183,29 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
         cls, args: "DictConfig", shared_state: "SharedTaskState"
     ) -> None:
         """Ensure that arguments are properly configured to launch this task"""
-        super().assert_task_args(args, shared_state)
-        assert args.blueprint.get('conversations_needed_string', None) is not None, (
-            "Must provide a string of needed conversations per model",
-        )
-        try:
-            conversations_needed = {}
-            for part in parts:
-                model_name, num_string = part.split(':')
-                conversations_needed[model_name] = int(num_string)
-        except Exception as e:
-            raise Exception(
-                "Could not create conversations needed dict from given string. "
-                f"Error was {e}.\n"
-                "Be sure the format is like modelA:50,modelB:20"
+        if len(shared_state.conversations_needed) == 0:
+            assert (
+                args.blueprint.get('conversations_needed_string', None) is not None
+            ), (
+                "Must provide a string of needed conversations per model if not providing "
+                "a conversations needed dict"
             )
+            try:
+                conversations_needed = {}
+                parts = args.blueprint.conversations_needed_string.split(',')
+                for part in parts:
+                    model_name, num_string = part.split(':')
+                    conversations_needed[model_name] = int(num_string)
+            except Exception as e:
+                raise Exception(
+                    "Could not create conversations needed dict from given string. "
+                    f"Error was {e}.\n"
+                    "Be sure the format is like modelA:50,modelB:20"
+                )
+        else:
+            conversations_needed = shared_state.conversations_needed
+        args.blueprint.num_conversations = sum(conversations_needed.values())
+        super().assert_task_args(args, shared_state)
         assert (
             args.blueprint.get("task_description_file", None) is not None
         ), "Must provide a task description file"
@@ -241,14 +245,13 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
         conversations_needed_string = args.blueprint.conversations_needed_string
         parts = conversations_needed_string.split(',')
         conversations_needed = {}
-        tot_conversations = 0
+        parts = conversations_needed_string.split(',')
         for part in parts:
             model_name, num_string = part.split(':')
             conversations_needed[model_name] = int(num_string)
-            tot_conversations += int(num_string)
         self.conversations_needed = conversations_needed
         shared_state.conversations_needed = conversations_needed
-        args.blueprint.num_conversations = tot_conversations
+        args.blueprint.num_conversations = sum(conversations_needed.values())
 
         # Default conversation initialization
         super().__init__(task_run, args=args, shared_state=shared_state)
@@ -268,23 +271,23 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
             args.blueprint.onboard_task_data_path
         )
         with open(onboard_task_data_path, "r") as onboard_task_data_file:
-            self.onboard_task_data = onboard_task_data_file.read()
+            self.onboard_task_data = json.load(onboard_task_data_file)
 
         run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
         shared_state.run_statistics = run_statistics
 
-        # Models and context need parlai options
+        # Initialize models
+        models_needed = list(conversations_needed.keys())
+        active_models = [m for m in models_needed if conversations_needed[m] > 0]
+        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, active_models)
+        shared_state.shared_models = shared_bot_agents
+
+        # Context need parlai options
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         if len(args.blueprint.override_opt) > 0:
             argparser.set_params(**override_opt)
         opt = argparser.parse_args([])
-
-        # Initialize models
-        models_needed = list(conversations_needed.keys())
-        active_models = [m for m in models_needed if conversations_needed[m] > 0]
-        shared_bot_agents = TurkLikeAgent.get_bot_agents(opt, active_models)
-        shared_state.shared_models = shared_bot_agents
 
         if (
             args.blueprint.include_persona
@@ -297,15 +300,38 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
             context_generator = None
         shared_state.context_generator = context_generator
 
+        # Limits the number of models that can generate at once
+        max_concurrent_responses = 1
+        semaphore = Semaphore(max_concurrent_responses)
+
+        # Lock for editing run statistics between threads
+        statistics_condition = Condition()
+
+        # Move shared state into the world and onboarding opts, such that these
+        # can be used by the worlds
+        shared_state.onboarding_world_opt.update(
+            {
+                'onboard_statistics': shared_state.onboard_statistics,
+                'statistics_condition': statistics_condition,
+            }
+        )
+        shared_state.world_opt.update(
+            {
+                'conversations_needed': conversations_needed,
+                'context_generator': context_generator,
+                'semaphore': semaphore,
+                'shared_models': shared_bot_agents,
+                'num_turns': args.blueprint.num_turns,
+                'max_resp_time': args.blueprint.max_resp_time,
+                'statistics_condition': statistics_condition,
+            }
+        )
+
     def get_frontend_args(self) -> Dict[str, Any]:
         """
         Specifies what options within a task_config should be forwarded to the client
         for use by the task's frontend.
         """
-
-        with open(self.args.blueprint.onboarding_data, "r", encoding="utf-8-sig") as f:
-            onboarding_data = json.loads(f.read())
-
         with open(
             self.args.blueprint.annotations_config_path, "r", encoding="utf-8-sig"
         ) as f:

@@ -15,8 +15,9 @@ from omegaconf import DictConfig, OmegaConf
 
 from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
 from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_blueprint import (
-    SharedTurnAnnotationTaskState,
+    SharedTurnAnnotationsTaskState,
 )
+import parlai.crowdsourcing.tasks.turn_annotations.worlds as world_module
 
 
 def run_task(cfg: DictConfig, task_directory: str):
@@ -46,7 +47,7 @@ def run_task(cfg: DictConfig, task_directory: str):
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
     # Init
-    shared_state = SharedTurnAnnotationTaskState()
+    shared_state = SharedTurnAnnotationsTaskState(world_module=world_module)
 
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)

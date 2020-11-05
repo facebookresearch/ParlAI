@@ -44,8 +44,7 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
     times and is soft banned if they fail more than that.
     """
 
-    def __init__(self, opt, mturk_agent):
-        self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
+    def __init__(self, opt, agent):
         self.annotations_intro = opt['annotations_intro']
         self.annotations_config = opt['annotations_config']
         self.max_onboard_time = opt['max_onboard_time']
@@ -59,8 +58,11 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
             opt['onboard_worker_answer_folder'], 'worker_answers.json'
         )
         self.onboard_task_data = opt['onboard_task_data']
+        self.status = 'DISCONNECT'
+        self.onboard_statistics = opt['onboard_statistics']
+        self.statistics_condition = opt['statistics_condition']
         os.makedirs(opt['onboard_worker_answer_folder'], exist_ok=True)
-        super().__init__(opt, mturk_agent)
+        super().__init__(opt, agent)
 
     def _is_worker_disconnected(self, act):
         return 'text' in act and act['text'] in [
@@ -144,7 +146,9 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
             }
         )
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
-        return self._handle_act(act)
+        self.status = self._handle_act(act)
+        self.agent.observe({'id': 'SYSTEM', 'text': '', 'final_status': self.status})
+        return None
 
     def _handle_act(self, act):
         print(
@@ -227,6 +231,13 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
             self.mturk_agent.observe(validate(control_msg))
             self.episodeDone = True
             return None
+
+    def shutdown(self):
+        super().shutdown()
+        with self.statistics_condition:
+            if self.status not in self.onboard_statistics:
+                self.onboard_statistics[self.status] = 0
+            self.onboard_statistics[self.status] += 1
 
 
 class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
@@ -639,3 +650,21 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
 
     def review_work(self):
         pass
+
+
+def make_onboarding_world(opt, agent):
+    return TurnAnnotationsOnboardWorld(opt, agent)
+
+
+def validate_onboarding(data):
+    """Check the contents of the data to ensure they are valid"""
+    print(f"Validating onboarding data {data}")
+    return True
+
+
+def make_world(opt, agents):
+    return MTurkMultiAgentDialogWorld(opt, agents)
+
+
+def get_world_params():
+    return {"agent_count": 1}

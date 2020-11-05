@@ -21,7 +21,20 @@ var renderOnboardingFail = function () {
     alert('Sorry, you\'ve exceeded the maximum amount of tries to label the sample conversation correctly, and thus we don\'t believe you can complete the task correctly. Please return the HIT.')
 }
 
-var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, onSubmit }) {
+function arraysEqual(_arr1, _arr2) {
+    if (!Array.isArray(_arr1) || ! Array.isArray(_arr2) || _arr1.length !== _arr2.length)
+      return false;
+
+    var arr1 = _arr1.concat().sort();
+    var arr2 = _arr2.concat().sort();
+    for (var i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i])
+            return false;
+    }
+    return true;
+}
+
+var handleOnboardingSubmit = function ({ onboardingData, currentTurnAnnotations, onSubmit }) {
     // OVERRIDE: Re-implement this to change onboarding success criteria
     console.log('handleOnboardingSubmit');
     var countCorrect = 0;
@@ -32,38 +45,30 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, onSu
         if (!answersForTurn) {
             continue
         } else {
-            var utteranceIdx = turnIdx * 2 + 1;
-            console.log('Checking answers for turn: ' + utteranceIdx);
-            var checkboxStubNames = Object.keys(annotationBuckets.config);
-            for (var j = 0; j < checkboxStubNames.length; j++) {
-                var c = checkboxStubNames[j];
-                var checkbox = document.getElementById(c + '_' + utteranceIdx);
-                if (checkbox.checked) {
-                    if (answersForTurn.indexOf(c) > -1) {
-                        countCorrect += 1
-                    } else {
-                        countIncorrect += 1
-                    }
-                } else {
-                    if (answersForTurn.indexOf(c) > - 1) {
-                        countIncorrect += 1
-                    }
-                    // If not checked *and* not an answer 
-                    // don't increment anything
+            let givenAnswers = currentTurnAnnotations[turnIdx];
+            let answerArray = [];
+            for (let arrayKey in givenAnswers) {
+                if (givenAnswers[arrayKey]) {
+                    answerArray.push(arrayKey);
                 }
+            }
+            if (arraysEqual(answerArray, answersForTurn)) {
+                correctCount += 1;
+            } else {
+                countIncorrect += 1;
             }
         }
     }
     console.log('correct: ' + countCorrect + ', incorrect: ' + countIncorrect);
     if (countCorrect >= ONBOARDING_MIN_CORRECT && countIncorrect <= ONBOARDING_MAX_INCORRECT) {
-        onSubmit({ success: true });
+        onSubmit({ annotations: currentTurnAnnotations, success: true });
     } else {
         if (onboardingFailuresCount < ONBOARDING_MAX_FAILURES_ALLOWED) {
             onboardingFailuresCount += 1;
             alert('You did not label the sample conversation well enough. Please try one more time!');
         } else {
             renderOnboardingFail();
-            onSubmit({ success: false })
+            onSubmit({ annotations: currentTurnAnnotations, success: false })
         }
     }
 }
@@ -78,13 +83,26 @@ function OnboardingDirections({ children }) {
     );
 }
 
-function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, text }) {
+function OnboardingUtterance({ 
+    annotationBuckets, 
+    annotationQuestion, 
+    turnIdx, 
+    text, 
+    annotations = null, 
+    onUpdateAnnotation = null,
+}) {
     var extraElements = '';
     if (turnIdx % 2 == 1) {
         extraElements = '';
         extraElements = (<span key={'extra_' + turnIdx}><br /><br />
             <span style={{ fontStyle: 'italic' }}><span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span><br />
-                <Checkboxes annotationBuckets={annotationBuckets} turnIdx={turnIdx} askReason={false} />
+                <Checkboxes 
+                    annotations={annotations} 
+                    onUpdateAnnotations={onUpdateAnnotation} 
+                    annotationBuckets={annotationBuckets} 
+                    turnIdx={turnIdx} 
+                    askReason={false} 
+                />
             </span>
         </span>)
     }
@@ -100,6 +118,11 @@ function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, t
 }
 
 function OnboardingComponent({ onboardingData, annotationBuckets, annotationQuestion, onSubmit }) {
+    const [currentTurnAnnotations, setCurrentAnnotations] = React.useState(
+        Array.from(Array(onboardingData.dialog.length), () => Object.fromEntries(
+            annotationBuckets.map(bucket => [bucket.value, false]))
+        )
+    );
     return (
         <div id="onboarding-main-pane">
             <OnboardingDirections>
@@ -124,7 +147,16 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
                                         annotationBuckets={annotationBuckets}
                                         annotationQuestion={annotationQuestion}
                                         turnIdx={idx * 2 + 1}
-                                        text={turn[1].text} />
+                                        text={turn[1].text} 
+                                        annotations={currentTurnAnnotations[idx]}
+                                        onUpdateAnnotation={
+                                            (newAnnotations) => {
+                                                let updatedAnnotations = currentTurnAnnotations.slice()
+                                                updatedAnnotations[idx] = newAnnotations;
+                                                setCurrentAnnotations(updatedAnnotations);
+                                            }
+                                        }
+                                        />
                                 </div>
                             ))
                         }
@@ -136,7 +168,11 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
             <div style={{ textAlign: 'center' }}>
                 <button id="onboarding-submit-button"
                     className="button is-link btn-lg"
-                    onClick={() => handleOnboardingSubmit({ onboardingData, annotationBuckets, onSubmit })}
+                    onClick={() => handleOnboardingSubmit({ 
+                        onboardingData, 
+                        currentTurnAnnotations, 
+                        onSubmit,
+                    })}
                 >
                     Submit Answers
                 </button>
