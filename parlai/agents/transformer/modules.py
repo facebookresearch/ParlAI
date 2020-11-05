@@ -1297,8 +1297,8 @@ class PerformerAttention(nn.Module):
         self.v_lin = nn.Linear(dim, dim)
         dim_per_head = dim // n_heads
         self.m = int(np.ceil(dim_per_head * np.log2(dim_per_head)))
-        self.m = 13
         omegas, _ = torch.qr(torch.randn(dim_per_head, self.m))
+        self.m = omegas.size(1)
         self.omegas = torch.nn.Parameter(omegas)
         self.omegas.requires_grad = False
         # TODO: merge for the initialization step
