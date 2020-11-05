@@ -516,7 +516,8 @@ class TrainLoop:
             cnt = valid_world.report().get('exs') or 0
 
         valid_report = valid_world.report()
-        valid_world.reset()  # make sure world doesn't remember valid data
+        if opt.get('validation_share_agent', False):
+            valid_world.reset()  # make sure world doesn't remember valid data
 
         return valid_report
 
