@@ -1297,6 +1297,7 @@ class PerformerAttention(nn.Module):
         self.v_lin = nn.Linear(dim, dim)
         dim_per_head = dim // n_heads
         self.m = int(np.ceil(dim_per_head * np.log2(dim_per_head)))
+        self.m = 13
         omegas, _ = torch.qr(torch.randn(dim_per_head, self.m))
         self.omegas = torch.nn.Parameter(omegas)
         self.omegas.requires_grad = False
@@ -1430,9 +1431,16 @@ class PerformerAttention(nn.Module):
             attentioned = torch.bmm(qprime, kprimev)
         elif self.is_self_attention and mask.ndim == 3:
             # causal self-attention
-            G = (kprime.unsqueeze(-1) * v.unsqueeze(2)).cumsum(dim=1)
-            r = qprime.size(-1)
-            attentioned = torch.bmm(qprime.view(-1, 1, r), G.view(-1, r, dim_per_head))
+            attentioned = []
+            Gps = None
+            for i in range(full_key_len):
+                G = kprime[:, i, :].unsqueeze(2) * v[:, i, :].unsqueeze(1)
+                if Gps is None:
+                    Gps = G
+                else:
+                    Gps = Gps + G
+                attentioned.append(torch.bmm(qprime[:, i, :].unsqueeze(1), Gps))
+            attentioned = torch.cat(attentioned, dim=1)
 
         attentioned = (
             attentioned.view(batch_size, n_heads, query_len, dim_per_head)
