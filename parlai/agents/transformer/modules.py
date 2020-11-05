@@ -1299,6 +1299,7 @@ class PerformerAttention(nn.Module):
         self.m = int(np.ceil(dim_per_head * np.log2(dim_per_head)))
         omegas, _ = torch.qr(torch.randn(dim_per_head, self.m))
         self.omegas = torch.nn.Parameter(omegas)
+        self.omegas.requires_grad = False
         # TODO: merge for the initialization step
         nn.init.xavier_normal_(self.q_lin.weight)
         nn.init.xavier_normal_(self.k_lin.weight)
@@ -1430,8 +1431,8 @@ class PerformerAttention(nn.Module):
         elif self.is_self_attention and mask.ndim == 3:
             # causal self-attention
             G = (kprime.unsqueeze(-1) * v.unsqueeze(2)).cumsum(dim=1)
-            m = qprime.size(-1)
-            attentioned = torch.bmm(qprime.view(-1, 1, m), G.view(-1, m, dim_per_head))
+            r = qprime.size(-1)
+            attentioned = torch.bmm(qprime.view(-1, 1, r), G.view(-1, r, dim_per_head))
 
         attentioned = (
             attentioned.view(batch_size, n_heads, query_len, dim_per_head)
