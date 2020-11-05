@@ -10,7 +10,9 @@ from typing import Optional
 
 from mephisto.core.hydra_config import RunScriptConfig
 from mephisto.data_model.database import MephistoDB
-from mephisto.providers.mturk.utils.script_utils import direct_soft_block_mturk_workers
+from mephisto.abstractions.providers.mturk.utils.script_utils import (
+    direct_soft_block_mturk_workers,
+)
 from omegaconf import DictConfig, MISSING
 
 
