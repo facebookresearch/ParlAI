@@ -32,9 +32,6 @@ This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
-import copy
-from typing import List, Tuple, Optional, TypeVar
-
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
@@ -51,16 +48,18 @@ import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 
 from abc import ABC, abstractmethod
-
+import argparse
+from collections import defaultdict
 import concurrent.futures
-from threading import Thread
+import copy
+import json
+import os
 import queue
 import random
+from threading import Thread
 import time
-import os
 import torch
-import json
-import argparse
+from typing import List, Tuple, Optional, TypeVar
 
 
 ChunkOutput = TypeVar('ChunkOutput')
@@ -2149,7 +2148,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 self.rng = random.Random(42)
             self._enqueue_chunks()
             # launch queue loader on the main thread
-            self.tot_samples_loaded = 0
+            self.tot_samples_loaded = defaultdict(int)
             if not opt.get("no_auto_enqueues", False):
                 self._enqueue_request()
 
@@ -2248,10 +2247,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             # self.buffersize, so will block if the
             # buffer gets full
             sample = chunk_output.pop(0)
-            if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
+            if (
+                self.is_train
+                or self.tot_samples_loaded[chunk_reset_cnt] % self.dws == self.rank
+            ):
                 # log the reset count at the time the chunk was queued
                 self.samples.put((sample, chunk_reset_cnt))
-            self.tot_samples_loaded += 1
+            self.tot_samples_loaded[chunk_reset_cnt] += 1
         # and start loading the next chunk
         self._enqueue_request()
 
@@ -2346,7 +2348,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
-            self.tot_samples_loaded = 0  # reset the count of samples loaded
+            self.tot_samples_loaded = defaultdict(
+                int
+            )  # reset the count of samples loaded
             self._enqueue_request()
 
 
