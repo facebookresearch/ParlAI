@@ -326,11 +326,8 @@ class TestChunkTeacher(unittest.TestCase):
                 num_epochs=0.5,
                 validation_every_n_epochs=0.1,
                 batchsize=32,
-                truncate=16,
                 dynamic_batching='full',
-            ),
-            valid_datatype='valid:stream',
-            test_datatype='test:stream',
+            )
         )
 
 
