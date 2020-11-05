@@ -19,6 +19,9 @@ from parlai.core.message import Message
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
+from parlai.core.loader import register_agent
+from collections import defaultdict
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -247,6 +250,33 @@ class TestConversationTeacher(unittest.TestCase):
             self.assertEqual(texts[1], 'Hi.')
             self.assertEqual(labels[1], 'Hello.')
             self.assertEqual(num_episodes, 2)
+
+
+@register_agent("unique_examples")
+class UniqueExamplesAgent(RepeatLabelAgent):
+    """
+    Simple agent which asserts that it has only seen unique examples.
+
+    Useful for debugging. Inherits from RepeatLabelAgent.
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt)
+        self.unique_examples = defaultdict(int)
+
+    def reset(self):
+        super().reset()
+        self.unique_examples = defaultdict(int)
+
+    def act(self):
+        obs = self.observation
+        text = obs.get('text')
+        if text in self.unique_examples:
+            raise RuntimeError(f'Already saw example: {text}')
+        else:
+            self.unique_examples[text] += 1
+
+        return super().act()
 
 
 class TestChunkTeacher(unittest.TestCase):
