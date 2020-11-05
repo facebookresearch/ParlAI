@@ -557,6 +557,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.dec_elapsed_times = []
         self.nums_passes = []
 
+        self.model = quantize_dynamic(
+            model=self.model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
+        )
+
     def build_criterion(self):
         """
         Construct and return the loss function.
@@ -1133,21 +1137,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
-
-        orig_model_path = '/checkpoint/ems/2020_antiscaling/sweeps/s2020_10_21__narrow_distillation/00_initial/_000__032__snapshot_10_23/model'
-        model_parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
-        args_ = f"""\
---model-file {orig_model_path} \
---model bart \
---no-cuda \
---fp16 False \
-"""
-        opt = model_parser.parse_args(args_.split())
-        agent = create_agent(opt, requireModelExists=True)
-        model = agent.model
-        model = quantize_dynamic(
-            model=model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
-        )
 
         dec_elapsed_time = 0.0
         num_passes = 0
