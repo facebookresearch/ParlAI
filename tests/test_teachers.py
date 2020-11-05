@@ -316,7 +316,7 @@ class TestChunkTeacher(unittest.TestCase):
 
     def test_slow_loading(self):
         """
-        Test that a slow loading teacher sees the right examples during validation
+        Test that a slow loading teacher sees the right examples during validation.
         """
         valid, test = testing_utils.train_model(
             dict(
