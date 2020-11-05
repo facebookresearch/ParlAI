@@ -314,6 +314,25 @@ class TestChunkTeacher(unittest.TestCase):
                 test_datatype='test',
             )
 
+    def test_slow_loading(self):
+        """
+        Test that a slow loading teacher sees the right examples during validation
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:chunky_unique_slow',
+                model='unique_examples',
+                datatype='train:stream',
+                num_epochs=0.5,
+                validation_every_n_epochs=0.1,
+                batchsize=32,
+                truncate=16,
+                dynamic_batching='full',
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test:stream',
+        )
+
 
 class CustomEvaluationTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
