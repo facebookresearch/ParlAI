@@ -318,17 +318,21 @@ class TestChunkTeacher(unittest.TestCase):
         """
         Test that a slow loading teacher sees the right examples during validation.
         """
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:chunky_unique_slow',
-                model='unique_examples',
-                datatype='train:stream',
-                num_epochs=0.5,
-                validation_every_n_epochs=0.1,
-                batchsize=32,
-                dynamic_batching='full',
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model')
+            valid, test = testing_utils.train_model(
+                dict(
+                    task='integration_tests:chunky_unique_slow',
+                    model='unique_examples',
+                    model_file=model_file,
+                    datatype='train:stream',
+                    num_epochs=0.5,
+                    validation_every_n_epochs=0.1,
+                    batchsize=1,
+                    dynamic_batching='full',
+                    dict_maxexs=0,
+                )
             )
-        )
 
 
 class CustomEvaluationTeacher(DialogTeacher):
