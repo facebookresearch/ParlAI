@@ -1418,6 +1418,7 @@ class PerformerAttention(nn.Module):
         qprime = self._kernel_proj(q)
         qprime = self._h(qprime) * qprime
         kprime = self._kernel_proj(k)
+        v = torch.cat([v, torch.ones_like(v[:, :, :1])], dim=2)
         if (self.is_self_attention and mask.ndim == 2) or not self.is_self_attention:
             # null out values which should be masked. Don't have
             # to stress about query mask, it will be handled via upstream
@@ -1441,6 +1442,9 @@ class PerformerAttention(nn.Module):
                     Gps = Gps + G
                 attentioned.append(torch.bmm(qprime[:, i, :].unsqueeze(1), Gps))
             attentioned = torch.cat(attentioned, dim=1)
+
+        attentioned, norm = attentioned[:, :, :-1], attentioned[:, :, -1:]
+        attentioned = attentioned / (norm + 1e-6)
 
         attentioned = (
             attentioned.view(batch_size, n_heads, query_len, dim_per_head)
