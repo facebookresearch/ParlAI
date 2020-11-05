@@ -1296,8 +1296,11 @@ class PerformerAttention(nn.Module):
         self.k_lin = nn.Linear(dim, dim)
         self.v_lin = nn.Linear(dim, dim)
         dim_per_head = dim // n_heads
-        self.m = int(np.ceil(dim_per_head * np.log2(dim_per_head)))
-        omegas, _ = torch.qr(torch.randn(dim_per_head, self.m))
+        omegas = []
+        for x in range(int(np.ceil(np.log2(dim_per_head)))):
+            omega, _ = torch.qr(torch.randn(dim_per_head, dim_per_head))
+            omegas.append(omega)
+        omegas = torch.cat(omegas, dim=1)
         self.m = omegas.size(1)
         self.omegas = torch.nn.Parameter(omegas)
         self.omegas.requires_grad = False
@@ -1415,9 +1418,8 @@ class PerformerAttention(nn.Module):
         }
         full_key_len = k.size(1)
 
-        qprime = self._kernel_proj(q)
-        qprime = self._h(qprime) * qprime
-        kprime = self._kernel_proj(k)
+        qprime = self._kernel_proj(q) / (np.sqrt(self.m) * np.sqrt(dim_per_head))
+        kprime = self._kernel_proj(k) / (np.sqrt(self.m) * np.sqrt(dim_per_head))
         v = torch.cat([v, torch.ones_like(v[:, :, :1])], dim=2)
         if (self.is_self_attention and mask.ndim == 2) or not self.is_self_attention:
             # null out values which should be masked. Don't have
