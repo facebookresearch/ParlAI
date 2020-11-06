@@ -236,7 +236,7 @@ def remove_dir(path):
     shutil.rmtree(path, ignore_errors=True)
 
 
-def untar(path, fname, delete=True, flatten=True):
+def untar(path, fname, delete=True, flatten=False):
     """
     Unpack the given archive file to the same directory.
 
@@ -255,7 +255,7 @@ def untar(path, fname, delete=True, flatten=True):
         return _untar(path, fname, delete=delete, flatten=flatten)
 
 
-def _untar(path, fname, delete=True, flatten=True):
+def _untar(path, fname, delete=True, flatten=False):
     """
     Unpack the given archive file to the same directory.
 
@@ -399,7 +399,13 @@ def get_model_dir(datapath):
 
 
 def download_models(
-    opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False
+    opt,
+    fnames,
+    model_folder,
+    version='v1.0',
+    path='aws',
+    use_model_type=False,
+    flatten_tar=False,
 ):
     """
     Download models into the ParlAI model zoo from a url.
@@ -435,7 +441,7 @@ def download_models(
                 url = path + '/' + fname
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
-                untar(dpath, fname, flatten=not use_model_type)
+                untar(dpath, fname, flatten=flatten_tar)
         # Mark the data as built.
         mark_done(dpath, version)
 
