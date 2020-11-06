@@ -8,7 +8,7 @@ Pretrained Transformer-based classifier for classification of sensitive topics.
 
 Example command:
 ```
-parlai eval_model -mf zoo:sensitive_topics_classifier/sensitive_topics_opensource/model -t sensitive_topics_evaluation -dt valid -bs 16
+parlai eval_model -mf zoo:sensitive_topics_classifier/model -t sensitive_topics_evaluation -dt valid -bs 16
 ```
 """
 from parlai.core.build_data import built, download_models, get_model_dir

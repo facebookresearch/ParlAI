@@ -36,10 +36,13 @@ We also release the validation set for the sensitive topics detection as describ
 ```
 parlai display_data -t sensitive_topics_evaluation -dt valid
 ```
+See below for a classifier trained to predict these topics.
 
 
 ## Models
 
+
+### BAD classifier
 A classifier trained on the new Bot-Adversarial Dialogue (BAD) task (as well as other existing safety tasks) can be found at `zoo:bot_adversarial_dialogue/multi_turn/model`.
 
 This model can be downloaded and evaluated on the BAD task test set with the following command:
@@ -52,6 +55,19 @@ To train your own classifier on the BAD dataset and other safety tasks, try the 
 parlai train_model -t dialogue_safety:WikiToxicComments,dialogue_safety:standard,dialogue_safety:adversarial,bot_adversarial_dialogue --model transformer/classifier --load-from-pretrained-ranker True --init-model zoo:pretrained_transformers/bi_model_huge_reddit/model --dict-file zoo:pretrained_transformers/bi_model_huge_reddit/model.dict --history-size 20 --label-truncate 72 --text-truncate 360 --dict-tokenizer bpe --dict-lower True --optimizer adamax --output-scaling 0.06 --variant xlm --reduction-type mean --share-encoders False --learn-positional-embeddings True --n-layers 12 --n-heads 12 --ffn-size 3072 --attention-dropout 0.1 --relu-dropout 0.0 --dropout 0.1 --n-positions 1024 --embedding-size 768 --activation gelu  --embeddings-scale False --n-segments 2 --learn-embeddings True --share-word-embeddings False --dict-endtoken __start__ --classes __notok__ __ok__ --round 3 --use-test-set False --model transformer/classifier --multitask-weights 3,1,1,1 -lr 5e-05 -bs 20 --data-parallel True -vtim 60 -vp 30 -stim 60 -vme 10000 --lr-scheduler fixed --lr-scheduler-patience 3 --lr-scheduler-decay 0.9 --warmup_updates 1000 --validation-metric class___notok___f1 --validation-metric-mode max --save-after-valid True --model-file <your model file path>
 ```
 
+### Sensitive Topics Classifier
+A classifier trained to predict whether conversational messages are about sensitive topics can be found at `zoo:sensitive_topics_classifier/model`. The sensitive topics it was trained to predict are the following:
+1. Drugs
+2. Politics
+3. Religion
+4. Medical Advice
+5. Relationships & Dating / NSFW
+6. None of the above
+
+This model can be downloaded and evaluated on the sensitive topics detection evaluation dataset with the following command:
+```
+parlai eval_model -mf zoo:sensitive_topics_classifier/model -t sensitive_topics_evaluation -dt valid -bs 16
+```
 
 ## Human Evaluations
 

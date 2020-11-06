@@ -236,7 +236,7 @@ def remove_dir(path):
     shutil.rmtree(path, ignore_errors=True)
 
 
-def untar(path, fname, delete=True):
+def untar(path, fname, delete=True, flatten=True):
     """
     Unpack the given archive file to the same directory.
 
@@ -250,12 +250,12 @@ def untar(path, fname, delete=True):
         If true, the archive will be deleted after extraction.
     """
     if ".zip" in fname:
-        return _unzip(path, fname, delete=delete)
+        return _unzip(path, fname, delete=delete, flatten=True)
     else:
-        return _untar(path, fname, delete=delete)
+        return _untar(path, fname, delete=delete, flatten=True)
 
 
-def _untar(path, fname, delete=True):
+def _untar(path, fname, delete=True, flatten=True):
     """
     Unpack the given archive file to the same directory.
 
@@ -282,7 +282,11 @@ def _untar(path, fname, delete=True):
                 # internal file systems will actually create a literal "."
                 # directory, so we gotta watch out for that
                 item_name = item_name[2:]
-            fn = os.path.join(path, item_name)
+            if flatten:
+                # flatten the tar file if there are subdirectories
+                fn = os.path.join(path, os.path.split(item_name)[-1])
+            else:
+                fn = os.path.join(path, item_name)
             logging.debug(f"Extracting to {fn}")
             if item.isdir():
                 PathManager.mkdirs(fn)
@@ -431,7 +435,7 @@ def download_models(
                 url = path + '/' + fname
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
-                untar(dpath, fname)
+                untar(dpath, fname, flatten=not use_model_type)
         # Mark the data as built.
         mark_done(dpath, version)
 
