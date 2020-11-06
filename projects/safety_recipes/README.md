@@ -16,19 +16,19 @@ Models trained on large unlabeled corpora of human interactions will learn patte
 We release the Bot-Adversarial Dialogue task at `parlai/tasks/bot_adversarial_dialogue`. To view the data, run:
 
 ```
-parlai display_data -t bot_adversarial_dialogue
+parlai display_data -t bot_adversarial_dialogue --bad-include-persona True
 ```
 
 To view the data used for the fixed test set, run:
 
 ```
-parlai display_data -t bot_adversarial_dialogue:HumanSafetyEvaluation
+parlai display_data -t bot_adversarial_dialogue:HumanSafetyEvaluation --bad-include-persona True
 ```
 
 <p align="center"><img width="60%" src="BAD_safety_diagram.png" /></p>
 
 
-Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083) can be found [here](parl.ai/projects/dialogue_safety).
+Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083), used as baselines, can be found [here](parl.ai/projects/dialogue_safety).
 
 
 We also release the validation set for the sensitive topics detection as described in the paper. The data can be viewed with the following command:
