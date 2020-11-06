@@ -11,16 +11,17 @@ from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
-        'http://parl.ai/downloads/md_gender/gend_multiclass_10072020.tgz',
-        'gend_multiclass_10072020.tgz',
-        'c2c03257c53497b9e453600201fc7245b55dec1d98965093b4657fdb54822e9d',
+        'http://parl.ai/downloads/sensitive_topics_evaluation/data_valid.jsonl',
+        'data_valid.jsonl',
+        'df3a71da78bd231402237fded6df530c80f91814f03a2c3e0581be14fe24633d',
+        zipped=False,
     )
 ]
 
 
 def build(opt):
     version = 'v1.0'
-    dpath = os.path.join(opt['datapath'], 'md_gender')
+    dpath = os.path.join(opt['datapath'], 'sensitive_topics_evaluation')
 
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
@@ -35,3 +36,5 @@ def build(opt):
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)
+
+    return os.path.join(dpath, 'data_valid.jsonl')

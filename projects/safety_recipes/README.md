@@ -34,7 +34,7 @@ Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/
 We also release the validation set for the sensitive topics detection as described in the paper. The data can be viewed with the following command:
 
 ```
-parlai display_data -t sensitive_topics_
+parlai display_data -t sensitive_topics_evaluation -dt valid
 ```
 
 
@@ -59,7 +59,7 @@ parlai train_model -t dialogue_safety:WikiToxicComments,dialogue_safety:standard
 ```
 python projects/safety_recipes/human_safety_evaluation/run.py
 ```
-See [Mephisto](https://github.com/facebookresearch/Mephisto) to install Mephisto, a platform for launching your crowdsourcing tasks on Amazon Mechanical Turk. To enable onboarding task, please edit the [onboarding task](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/onboarding.json). To render your own chats, please include your chat logs [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl) and turn indices per conversation to annotate [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl). 
+See [Mephisto](https://github.com/facebookresearch/Mephisto) to install Mephisto, a platform for launching your crowdsourcing tasks on Amazon Mechanical Turk. To enable onboarding task, please edit the [onboarding task](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/onboarding.json). To render your own chats, please include your chat logs [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl) and turn indices per conversation to annotate [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl).
 
 
 - Evaluating engagingness: To run ACUTE-Eval human evaluations for engagingness, see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval).
