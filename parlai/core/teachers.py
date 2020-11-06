@@ -32,9 +32,6 @@ This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
-import copy
-from typing import List, Tuple, Optional, TypeVar
-
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
@@ -44,23 +41,25 @@ from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.conversations import Conversations
 from parlai.utils.data import DatatypeHelper
-from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
+from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once, SimpleCounter
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 
 from abc import ABC, abstractmethod
-
+import argparse
+from collections import defaultdict
 import concurrent.futures
-from threading import Thread
+import copy
+import json
+import os
 import queue
 import random
+from threading import Thread
 import time
-import os
 import torch
-import json
-import argparse
+from typing import List, Tuple, Optional, TypeVar
 
 
 ChunkOutput = TypeVar('ChunkOutput')
@@ -2135,11 +2134,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.is_root_teacher = False
             self.chunks = shared['chunks']
             self.samples = shared['samples']
+            self.reset_counter = shared['reset_counter']
             self.rng = shared['rng']
         else:
             self.is_root_teacher = True
             self.samples = queue.Queue(maxsize=self.buffersize)
             self.chunks = queue.Queue()
+            self.reset_counter = SimpleCounter()  # track no. of resets
             if self.is_train:
                 # TODO: possible need a fixed seed here in the future
                 self.rng = random.Random()
@@ -2147,7 +2148,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 self.rng = random.Random(42)
             self._enqueue_chunks()
             # launch queue loader on the main thread
-            self.tot_samples_loaded = 0
+            self.tot_samples_loaded = defaultdict(int)
             if not opt.get("no_auto_enqueues", False):
                 self._enqueue_request()
 
@@ -2201,6 +2202,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         shared = super().share()
         shared['samples'] = self.samples
         shared['chunks'] = self.chunks
+        shared['reset_counter'] = self.reset_counter
         shared['rng'] = self.rng
         return shared
 
@@ -2234,17 +2236,24 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         Load data into self.samples until buffersize is reached.
         """
-        data = future.result()
-        if data is None:
+        output = future.result()
+        if output is None:
             return
-        while data:
+        chunk_output, chunk_reset_cnt = output
+        if chunk_output is None:
+            return
+        while chunk_output:
             # self.samples is a queue with maxsize
             # self.buffersize, so will block if the
             # buffer gets full
-            sample = data.pop(0)
-            if self.is_train or self.tot_samples_loaded % self.dws == self.rank:
-                self.samples.put(sample)
-            self.tot_samples_loaded += 1
+            sample = chunk_output.pop(0)
+            if (
+                self.is_train
+                or self.tot_samples_loaded[chunk_reset_cnt] % self.dws == self.rank
+            ):
+                # log the reset count at the time the chunk was queued
+                self.samples.put((sample, chunk_reset_cnt))
+            self.tot_samples_loaded[chunk_reset_cnt] += 1
         # and start loading the next chunk
         self._enqueue_request()
 
@@ -2254,8 +2263,10 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         if self.is_train:
             self.rng.shuffle(self.fold_chunks)
+        # save the reset count at the time a chunk was queued
+        reset_cnt = self.reset_counter.value()
         for c in self.fold_chunks:
-            self.chunks.put(c)
+            self.chunks.put((c, reset_cnt))
 
     @abstractmethod
     def load_from_chunk(self, chunk_idx: int) -> List[ChunkOutput]:
@@ -2287,21 +2298,32 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 # if we're in valid/test, we need to actually signal the end
                 return None
 
-        next_chunk = self.chunks.get()
+        next_chunk, chunk_reset_cnt = self.chunks.get()
         # abstract method `load_from_chunk` returns a list of tuples
         output = self.load_from_chunk(next_chunk)
 
         if self.is_train:
             # randomize the samples
             random.Random().shuffle(output)
-        return output
+        return output, chunk_reset_cnt
 
     def get(self, episode_idx, entry_idx=0):
+        curr_reset_cnt = self.reset_counter.value()
         if self._episode_done:
             # Get the next episode or example
-            queue_output = self.samples.get()
-            if queue_output is None:
+            output = self.samples.get()
+            if output is None:
                 return None
+            queue_output, reset_cnt = output
+            stale_exs = 0
+            while curr_reset_cnt > reset_cnt:
+                stale_exs += 1
+                output = self.samples.get()
+                if output is None:
+                    return None
+                queue_output, reset_cnt = output
+            if stale_exs > 0:
+                logging.info(f"Removed {stale_exs} stale examples from the queue.")
 
             # Update the last queue output in the case
             # of multi-turn episodes
@@ -2314,21 +2336,21 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return msg
 
     def _drain(self, q):
-        while not q.empty():
-            try:
-                q.get()
-            except queue.Empty:
-                return
+        with q.mutex:
+            q.queue.clear()
 
     def reset(self):
         super().reset()
         if self.is_root_teacher:
+            self.reset_counter.increment()
             # drain the queues and refill the chunk queue with a new epoch.
             # additionally, we have to relaunch the loader
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
-            self.tot_samples_loaded = 0  # reset the count of samples loaded
+            self.tot_samples_loaded = defaultdict(
+                int
+            )  # reset the count of samples loaded
             self._enqueue_request()
 
 

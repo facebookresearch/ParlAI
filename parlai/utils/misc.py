@@ -311,6 +311,21 @@ class NoLock(object):
         pass
 
 
+class SimpleCounter:
+    """
+    Simple counter object.
+    """
+
+    def __init__(self, value=0):
+        self.val = value
+
+    def increment(self, value=1):
+        self.val += value
+
+    def value(self):
+        return self.val
+
+
 def _report_sort_key(report_key: str) -> Tuple[str, str]:
     """
     Sorting name for reports.

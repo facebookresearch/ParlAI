@@ -79,12 +79,11 @@ function OnboardingDirections({ children }) {
 }
 
 function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, text }) {
-    var annotationQuestionWithoutQuotes = annotationQuestion.replace(/['"]+/g, '');
     var extraElements = '';
     if (turnIdx % 2 == 1) {
         extraElements = '';
         extraElements = (<span key={'extra_' + turnIdx}><br /><br />
-            <span style={{ fontStyle: 'italic' }}><span dangerouslySetInnerHTML={{ __html: annotationQuestionWithoutQuotes }}></span><br />
+            <span style={{ fontStyle: 'italic' }}><span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span><br />
                 <Checkboxes annotationBuckets={annotationBuckets} turnIdx={turnIdx} askReason={false} />
             </span>
         </span>)

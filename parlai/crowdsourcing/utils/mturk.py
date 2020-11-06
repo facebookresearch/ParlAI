@@ -31,13 +31,23 @@ class MTurkConfig:
 
 
 @dataclass
-class MTurkRunScriptConfig(RunScriptConfig):
+class MTurkRunScriptConfigMixin:
     """
     Add useful flags for running MTurk tasks.
     """
 
     current_time: int = int(time.time())  # For parametrizing block_qualification
     mturk: MTurkConfig = MTurkConfig()
+
+
+@dataclass
+class MTurkRunScriptConfig(MTurkRunScriptConfigMixin, RunScriptConfig):
+    """
+    Add useful flags for running MTurk tasks.
+
+    Use this instead of MTurkRunScriptConfigMixin when there are no task-specific fields
+    that need to be set in the script config.
+    """
 
 
 def soft_block_mturk_workers(

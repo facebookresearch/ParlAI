@@ -626,6 +626,7 @@ class DictionaryAgent(Agent):
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
         filename = self.opt['dict_file'] if filename is None else filename
+        make_dir(os.path.dirname(filename))
 
         if self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
             needs_removal = self.bpe.finalize(
@@ -643,7 +644,6 @@ class DictionaryAgent(Agent):
 
         logging.info(f'Saving dictionary to {filename}')
 
-        make_dir(os.path.dirname(filename))
         mode = 'a' if append else 'w'
         with PathManager.open(filename, mode, encoding='utf-8') as write:
             for i in self.ind2tok.keys():
