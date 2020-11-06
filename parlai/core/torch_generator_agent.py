@@ -554,8 +554,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         self.reset()
 
-        self.dec_elapsed_times = []
-        self.nums_passes = []
+        # self.dec_elapsed_times = []
+        # self.nums_passes = []
 
         self.model = quantize_dynamic(
             model=self.model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
@@ -1228,8 +1228,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
 
-        dec_elapsed_time = 0.0
-        num_passes = 0
+        # dec_elapsed_time = 0.0
+        # num_passes = 0
 
         # num_trials = 1000
 
@@ -1279,9 +1279,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 # exit early if possible
                 break
 
-            start_time = timeit.default_timer()
+            # start_time = timeit.default_timer()
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
-            dec_elapsed_time += timeit.default_timer() - start_time
+            # dec_elapsed_time += timeit.default_timer() - start_time
             # num_passes += 1
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
@@ -1323,8 +1323,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 decoder_input, selection, incr_state_inds
             )
 
-        self.dec_elapsed_times.append(dec_elapsed_time)
-        self.nums_passes.append(num_passes)
+        # self.dec_elapsed_times.append(dec_elapsed_time)
+        # self.nums_passes.append(num_passes)
 
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
