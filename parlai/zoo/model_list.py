@@ -1549,4 +1549,19 @@ model_list = [
             "{'exs': 2598, 'accuracy': 0.8507, 'f1': 0.8507, 'loss': 0.3878, 'bleu-4': 8.507e-10, 'class___notok___recall': 0.8633, 'class___notok___prec': 0.7588, 'class___notok___f1': 0.8077, 'class___ok___recall': 0.8434, 'class___ok___prec': 0.9154, 'class___ok___f1': 0.8779, 'weighted_f1': 0.8524}"
         ),
     },
+    {
+        "title": "Transformer Classifier Sensitive Topics Detection",
+        "id": "sensitive_topics_classifier",
+        "path": "zoo:sensitive_topics_classifier/model",
+        "agent": "transformer/classifier",
+        "task": "sensitive_topics_evaluation",
+        "project": "",
+        "description": (
+            "Pretrained Transformer-based classifier for classification of sensitive topics."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:sensitive_topics_classifier/model -t sensitive_topics_evaluation -dt valid -bs 16"
+        ),
+        "result": ("TBD"),
+    },
 ]
