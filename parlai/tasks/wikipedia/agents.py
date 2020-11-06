@@ -169,6 +169,27 @@ class FullSplitTeacher(ChunkTeacher):
         return shared
 
 
+class CompletionTeacher(FullSplitTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self._current_item = None
+
+    def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
+        title, text = queue_output
+        return (title + "\n\n" + text).split("\n\n")
+
+    def get(self, episode_idx, entry_idx=0):
+        if not self._current_item or len(self._current_item) <= 1:
+            __import__("ipdb").set_trace()  # FIXME
+            self._current_item = super().get(episode_idx, entry_idx).split("\n\n")
+        text = self._current_item.pop(0)
+        return {
+            'text': text,
+            'labels': [self._current_item[0]],
+            'episode_done': len(self._current_item) <= 1,
+        }
+
+
 class SummaryTeacher(DialogTeacher):
     """
     Reads Wikipedia pages one at a time, only uses summaries.
