@@ -250,9 +250,9 @@ def untar(path, fname, delete=True, flatten=True):
         If true, the archive will be deleted after extraction.
     """
     if ".zip" in fname:
-        return _unzip(path, fname, delete=delete, flatten=True)
+        return _unzip(path, fname, delete=delete, flatten=flatten)
     else:
-        return _untar(path, fname, delete=delete, flatten=True)
+        return _untar(path, fname, delete=delete, flatten=flatten)
 
 
 def _untar(path, fname, delete=True, flatten=True):
