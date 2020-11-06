@@ -53,7 +53,7 @@ var handleOnboardingSubmit = function ({ onboardingData, currentTurnAnnotations,
                 }
             }
             if (arraysEqual(answerArray, answersForTurn)) {
-                correctCount += 1;
+                countCorrect += 1;
             } else {
                 countIncorrect += 1;
             }

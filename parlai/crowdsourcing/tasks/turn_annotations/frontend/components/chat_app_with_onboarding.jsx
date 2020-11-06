@@ -16,12 +16,10 @@ import {
   useMephistoLiveTask,
   AGENT_STATUS,
 } from "mephisto-task";
-import BaseFrontend from "bootstrap-chat";
+import { BaseFrontend, AppContext } from "bootstrap-chat";
 import { OnboardingComponent } from "./onboarding_components.jsx"
 
 /* ================= Application Components ================= */
-
-const AppContext = React.createContext({});
 
 const INPUT_MODE = {
   WAITING: "waiting",
@@ -185,7 +183,7 @@ function CustomOnboardingChatApp({
           },
         }}
       >
-        <div className="container-fluid" id="ui-container">
+        <div className="container-fluid" id="ui-container" style={{'display': "block"}}>
           <BaseFrontend
             inputMode={inputMode}
             messages={messages}

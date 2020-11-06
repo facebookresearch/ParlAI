@@ -13,9 +13,11 @@ from typing import List, Optional
 
 import numpy as np
 
-from parlai.core.worlds import validate, MultiAgentDialogWorld
+from parlai.core.worlds import validate
+from parlai.core.agents import create_agent_from_shared
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
+from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
 
 from parlai.crowdsourcing.tasks.turn_annotations.constants import (
     AGENT_1,
@@ -29,8 +31,15 @@ from parlai.crowdsourcing.tasks.turn_annotations.constants import (
 
 from parlai.crowdsourcing.tasks.turn_annotations.utils import (
     Compatibility,
-    construct_annotations_html,
+    get_mturk_id_from_mephisto_wrapper,
 )
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_task_runner import (
+        MephistoAgentWrapper,
+    )
 
 
 class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
@@ -44,70 +53,57 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
     times and is soft banned if they fail more than that.
     """
 
-    def __init__(self, opt, agent):
-        self.annotations_intro = opt['annotations_intro']
-        self.annotations_config = opt['annotations_config']
-        self.max_onboard_time = opt['max_onboard_time']
+    def __init__(self, opt, agent: "MephistoAgentWrapper"):
+        super().__init__(opt, agent)
         self.min_correct = ONBOARD_CONFIG['min_correct']
         self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
         self.onboard_failures_max_allowed = ONBOARD_CONFIG[
             'onboard_failures_max_allowed'
         ]
         self.onboard_failure_count = 0
-        self.worker_answer_file = os.path.join(
-            opt['onboard_worker_answer_folder'], 'worker_answers.json'
-        )
         self.onboard_task_data = opt['onboard_task_data']
         self.status = 'DISCONNECT'
         self.onboard_statistics = opt['onboard_statistics']
         self.statistics_condition = opt['statistics_condition']
-        os.makedirs(opt['onboard_worker_answer_folder'], exist_ok=True)
-        super().__init__(opt, agent)
+        self.max_onboard_time = opt['max_onboard_time']
+        self.onboarding_qualification = opt['onboarding_qualification']
+        self.worker_id = get_mturk_id_from_mephisto_wrapper(self.agent)
 
-    def _is_worker_disconnected(self, act):
-        return 'text' in act and act['text'] in [
-            MTURK_DISCONNECT_MESSAGE,
-            RETURN_MESSAGE,
-            TIMEOUT_MESSAGE,
-        ]
+    def has_same_answer(self, ans1, ans2):
+        if len(ans1) != len(ans2):
+            return False
 
-    def write_worker_answers_to_file(self, worker_answers):
-        now = datetime.datetime.now()
-        obj = {
-            'dt': datetime.datetime.strftime(now, '%Y%m%d %H:%M:%S'),
-            'worker_id': self.mturk_agent.worker_id,
-            'worker_answers': worker_answers,
-        }
+        ans1_sort = sorted(ans1)
+        ans2_sort = sorted(ans2)
 
-        with open(self.worker_answer_file, 'a+') as f:
-            f.write(json.dumps(obj) + '\n')
+        for x in range(len(ans1_sort)):
+            if ans1_sort[x] != ans2_sort[x]:
+                return False
+        return True
 
-    def check_onboarding_answers(self, worker_id, worker_answers):
+    def check_onboarding_answers(self, worker_answers):
         """
         Calculate how many correct answers the user gave.
 
-        :param worker_id: worker ID, for reporting how they performed on onboarding
-        :param worker_answers: dict with the keys of the message index
-        (1,3,5,7,9), so can index directly into self.onboard_task_data for the
-        answers (but the frontend sends keys that are strings)
+        :param worker_answers: list of dicts containing mappings between an 
+        annotation value and whether it was selected for each bucket.
         :return: boolean as to whether the worker passed or failed the task
         """
+        given_turns = self.onboard_task_data['dialog']
+        correct_answers = [t[1]['answers'] for t in given_turns]
         number_correct = 0
         number_incorrect = 0
-        answer_count = sum([len(arr) for (k, arr) in worker_answers.items()])
-        for m_idx_str in worker_answers:
-            m = int(m_idx_str)
-            correct_answers = self.onboard_task_data[m]['answers']
-            worker_answers_for_index = worker_answers[m_idx_str]
-            for ans in worker_answers_for_index:
-                if ans in correct_answers:
-                    number_correct += 1
-                else:
-                    number_incorrect += 1
+        for worker_answer, correct_answer in zip(worker_answers, correct_answers):
+            worker_only_selected = [
+                key for key, selected in worker_answer.items() if selected
+            ]
+            if self.has_same_answer(worker_only_selected, correct_answer):
+                number_correct += 1
+            else:
+                number_incorrect += 1
 
-        assert answer_count == (number_correct + number_incorrect)
         print(
-            f'Worker {worker_id} got {number_correct} annotations correct and {number_incorrect} incorrect in onboarding.'
+            f'Worker {self.worker_id} got {number_correct} annotations correct and {number_incorrect} incorrect in onboarding.'
         )
         if (
             number_correct >= self.min_correct
@@ -118,119 +114,43 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
 
     def parley(self):
         print(
-            f'{self.__class__.__name__}: starting parley for worker_id: {self.mturk_agent.worker_id}'
+            f'{self.__class__.__name__}: starting parley for worker_id: {self.worker_id}'
         )
 
-        onboarding_task_html = ''
-        # As in the main world, render the HTML client-side b/c it's easier with
-        # this legacy (non-React) task. Bad practice... TODO: change
-        for idx, utt in enumerate(self.onboard_task_data):
-            if idx % 2 == 0:
-                # human
-                onboarding_task_html += f"""<div class="alert alert-info" style="float: right; display:table;"><span class="onboarding-text"><b>YOU:</b> {utt["text"]}</span></div>"""
-            else:
-                annotations_html = construct_annotations_html(
-                    annotations_intro=self.annotations_intro,
-                    annotations_config=self.annotations_config,
-                    turn_idx=idx,
-                )
-                onboarding_task_html += f"""<div class="alert alert-warning" style="float: left; display:table; margin-top:30px"><span class="onboarding-text"><b>THEM:</b> {utt["text"]}{annotations_html}</span></div>"""
-        onboarding_task_html += '<div style="clear:both;"></div>'
-
-        self.mturk_agent.observe(
-            {
-                'id': 'SYSTEM',
-                'text': '',
-                'onboarding_html': onboarding_task_html,
-                'annotations_config': self.annotations_config,
-            }
-        )
-        act = self.mturk_agent.act(timeout=self.max_onboard_time)
+        # We are rendering a frontend based on the initial task data, so we just
+        # wait for the results to come in
+        act = self.agent.act(timeout=self.max_onboard_time)
         self.status = self._handle_act(act)
         self.agent.observe({'id': 'SYSTEM', 'text': '', 'final_status': self.status})
+        if self.status == ONBOARD_FAIL:
+            start_time = time.time()
+            # After soft ban, we just block in while loop until worker goes
+            # away (Disconnects or returns the HIT as asked on the frontend)
+            while time.time() - start_time < self.max_onboard_time:
+                act = self.agent.act(timeout=self.max_onboard_time)
+                time.sleep(0.5)
         return None
 
     def _handle_act(self, act):
-        print(
-            f'{self.__class__.__name__}: got act: {act} for worker_id: {self.mturk_agent.worker_id}'
-        )
+        if 'task_data' not in act:
+            print(f'{self.__class__.__name__}: {self.worker_id} had no data submitted')
+            return ONBOARD_FAIL
 
-        # disconnect
-        if 'text' in act and act['text'] == MTURK_DISCONNECT_MESSAGE:
-            print(
-                f'{self.__class__.__name__}: User disconnected {self.mturk_agent.worker_id}'
-            )
+        worker_answers = act['task_data']['annotations']
+
+        if self.check_onboarding_answers(worker_answers):
+            print(f'Worker {self.worker_id} successfully passed the onboard task.')
+
+            # This will end the onboarding and send them directly to the HIT
             self.episodeDone = True
-            return MTURK_DISCONNECT_MESSAGE
-
-        # timeout
-        if 'text' in act and act['text'] == TIMEOUT_MESSAGE:
-            print(
-                f'{self.__class__.__name__}: User timed out {self.mturk_agent.worker_id}'
+            return ONBOARD_SUCCESS
+        else:
+            print(f'Worker {self.worker_id} failed onboarding.')
+            # Grant the failed qualification, then sleep as we want worker to return
+            self.agent.mephisto_agent.get_worker().grant_qualification(
+                self.onboarding_qualification, 0
             )
-            self.episodeDone = True
-            return TIMEOUT_MESSAGE
-
-        if 'text' in act and act['text'] == ONBOARD_SUBMIT:
-            print(
-                f'{self.__class__.__name__}: Got first onboarding task submission for worker {self.mturk_agent.worker_id}.'
-            )
-            worker_answers = act['onboard_submission']
-            self.write_worker_answers_to_file(worker_answers)
-            if self.check_onboarding_answers(
-                self.mturk_agent.worker_id, worker_answers
-            ):
-                print(
-                    f'Worker {self.mturk_agent.worker_id} successfully passed the onboard task.'
-                )
-
-                # This will end the onboarding and send them directly to the HIT
-                self.episodeDone = True
-                return ONBOARD_SUCCESS
-            elif self.onboard_failure_count < self.onboard_failures_max_allowed:
-                # User failed but give the option to try again
-                print(
-                    f'{self.__class__.__name__}: Worker {self.mturk_agent.worker_id} failed onboarding but failure count is less than max times allowed, so will try again. (failure count is: {self.onboard_failure_count} of max allowed {self.onboard_failures_max_allowed}). submission is: {act["onboard_submission"]}'
-                )
-                self.onboard_failure_count += 1
-                self.mturk_agent.observe({'id': 'System', 'text': ONBOARD_TRY_AGAIN})
-                act = self.mturk_agent.act(timeout=self.max_onboard_time)
-                return self._handle_act(act)
-            else:
-                # User has now failed too many times - soft ban them
-                print(
-                    f'{self.__class__.__name__}: Worker FAILED onboarding too many times...Soft blocking {self.mturk_agent.worker_id}. Submission was: {act["onboard_submission"]}'
-                )
-                self.mturk_agent.mturk_manager.soft_block_worker(
-                    self.mturk_agent.worker_id
-                )
-                self.mturk_agent.observe({'id': 'System', 'text': ONBOARD_FAIL})
-
-                # After soft ban, we just block in while loop until worker goes
-                # away (Disconnects or returns the HIT as asked on the frontend)
-                # If you don't do this, for some reason it still would let the
-                # worker through to actual chat/HIT after onboard world shutdown
-                after_block_act = self.mturk_agent.act()
-                while not self._is_worker_disconnected(after_block_act):
-                    self.mturk_agent.observe({'id': 'System', 'text': ONBOARD_FAIL})
-                    after_block_act = self.mturk_agent.act()
-                print(
-                    f'{self.__class__.__name__}: Failed onboarding worker {self.mturk_agent.worker_id} did disconnect or return HIT. Ending onboarding.'
-                )
-                self.episodeDone = True
-                return ONBOARD_FAIL
-
-        if 'text' not in act:
-            # We think that when we get here it's b/c the user has passed
-            # onboarding successfully and clicked Continue to HIT button (which
-            # only appears after they successfully complete the onboarding)
-            print(
-                f'{self.__class__.__name__}: No text in act from onboarding. Marking episode done; act was: {act}'
-            )
-            control_msg = {'id': 'SYSTEM', 'text': WAITING_MSG}
-            self.mturk_agent.observe(validate(control_msg))
-            self.episodeDone = True
-            return None
+            return ONBOARD_FAIL
 
     def shutdown(self):
         super().shutdown()
@@ -240,28 +160,30 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
             self.onboard_statistics[self.status] += 1
 
 
-class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
+class TurnAnnotationsChatWorld(CrowdTaskWorld):
     def __init__(
         self,
         opt,
-        agents=None,
-        shared=None,
-        num_turns=6,
-        tag=None,
-        max_resp_time=120,
+        agent=None,
+        bot=None,
         agent_timeout_shutdown=120,
         context_info: Optional[dict] = None,
     ):
-        # 6 turns for a single side (so 12 total), and really it appears to be
-        # 14 total b/c of the "Hi!" and first bot utterance
+        super().__init__(opt, agent)
 
-        self.agents = agents
+        # num_turns turns for a single side, and really it appears to be
+        # (num_turns + 1) * 2 total b/c of the "Hi!" and first bot utterance
+
+        num_turns = opt['num_turns']
+        max_resp_time = opt['max_resp_time']
+
+        self.opt = opt
+        self.bot = bot
         self.task_turn_idx = 0
         self.num_turns = num_turns
 
         self.dialog = []
-        self.tag = tag
-        self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
+        self.tag = f'conversation_id {agent.mephisto_agent.db_id}'
         self.chat_done = False
         if context_info is not None:
             self.context_info = context_info
@@ -279,14 +201,14 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
         self.max_resp_time = max_resp_time  # in secs
         self.agent_timeout_shutdown = agent_timeout_shutdown
         print(
-            f'Creating {self.__class__.__name__} for tag {tag} with {num_turns} turns.'
+            f'Creating {self.__class__.__name__} for tag {self.tag} with {num_turns} turns.'
         )
-        super().__init__(opt, agents, shared)
 
     def __add_problem_data_to_utterance(self, p):
         # Human has just responded. Problem data received
         # now will be from bot's prior utterance (turn_idx
         # is also present to be safe that data matches)
+        print(p)
         is_fake_utterance = (
             'fake_start' in self.dialog[p['turn_idx']]
             and self.dialog[p['turn_idx']]['fake_start']
@@ -298,51 +220,37 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
         self.dialog[p['turn_idx']]['problem_data'] = p
 
     def parley(self):
-        control_msg = {
-            'episode_done': False,
-            'config': {
-                'min_num_turns': self.num_turns,
-                'annotations_config': self.opt['annotations_config'],
-            },
-            'left_pane_text': self.opt['left_pane_text'],
-        }
-
         print(
             f'{self.__class__.__name__}:{self.tag}: is at turn {self.task_turn_idx}, with {self.num_turns} pairs of turns needed...'
         )
 
-        if self.task_turn_idx == 0:
+        control_msg = {"episode_done": False}
 
-            for agent_idx, agent in enumerate(self.agents):
-                if agent_idx == 1 and self.opt['include_persona']:
-                    print('Including persona for the bot.')
-                    # The Bot agent
-                    # We add the personas and 1/3 of the time WoW topic as the
-                    # first utterance in the history.
-                    # Previously for BST task, we also had a big first utterance
-                    # that gave instructions. Removing that for this task.
-                    persona_strings = [s.strip() for s in self.personas[agent_idx]]
-                    persona_utterance = self._get_persona_utterance(
-                        persona_strings=persona_strings,
-                        context_dataset=self.context_info['context_dataset'],
-                        additional_context=self.context_info['additional_context'],
-                        is_bot=(agent_idx == 1),
-                    )
-                    message = control_msg.copy()
-                    message['text'] = persona_utterance
-                    agent.observe(validate(message), increment_turn=False)
-                    # The bot seeing its persona does not count as a "turn"
-                    if agent_idx == 0:
-                        time.sleep(3)
+        if self.task_turn_idx == 0:
+            if self.opt['include_persona']:
+                # The Bot agent
+                # We add the personas and 1/3 of the time WoW topic as the
+                # first utterance in the history.
+                # Previously for BST task, we also had a big first utterance
+                # that gave instructions. Removing that for this task.
+                persona_strings = [s.strip() for s in self.personas[agent_idx]]
+                persona_utterance = self._get_persona_utterance(
+                    persona_strings=persona_strings,
+                    context_dataset=self.context_info['context_dataset'],
+                    additional_context=self.context_info['additional_context'],
+                    is_bot=True,
+                )
+                message = control_msg.copy()
+                message['text'] = persona_utterance
+                # The bot seeing its persona does not count as a "turn"
+                self.bot.observe(validate(message), increment_turn=False)
 
             if self.opt['conversation_start_mode'] == 'bst':
-
                 print('[Displaying first utterances as per BST task.]')
                 # Display the previous two utterances
                 human_first_msg = {
-                    'left_pane_text': self.opt['left_pane_text'],
                     'episode_done': False,
-                    'id': self.agents[0].id,
+                    'id': self.agent.id,
                     'text': self.context_info['person1_seed_utterance'],
                     'fake_start': True,
                     'agent_idx': 0,
@@ -351,7 +259,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
                     human_first_msg[k] = v
                 bot_first_msg = {
                     'episode_done': False,
-                    'id': self.agents[1].id,
+                    'id': self.bot.id,
                     'text': self.context_info['person2_seed_utterance'],
                     'fake_start': True,
                     'agent_idx': 1,
@@ -363,17 +271,15 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
                 self.dialog.append(human_first_msg)
                 self.dialog.append(bot_first_msg)
 
-                for agent in self.agents:
-                    agent.observe(validate(human_first_msg))
-                    agent.observe(validate(bot_first_msg))
+                for observer in [self.agent, self.bot]:
+                    observer.observe(validate(human_first_msg))
+                    observer.observe(validate(bot_first_msg))
 
             elif self.opt['conversation_start_mode'] == 'hi':
-
                 print('[Displaying "Hi!" only as per Meena task.]')
                 human_first_msg = {
-                    'left_pane_text': self.opt['left_pane_text'],
                     'episode_done': False,
-                    'id': self.agents[0].id,
+                    'id': self.agent.id,
                     'text': 'Hi!',
                     'fake_start': True,
                     'agent_idx': 0,
@@ -382,24 +288,22 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
                     human_first_msg[k] = v
 
                 self.dialog.append(human_first_msg)
-                self.agents[0].observe(validate(human_first_msg))
-                self.agents[1].observe(validate(human_first_msg))
+                self.agent.observe(validate(human_first_msg))
+                self.bot.observe(validate(human_first_msg))
 
-                first_bot_act = self.agents[1].act()
+                first_bot_act = self.bot.act()
                 first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
 
-                self.agents[0].observe(validate(first_bot_act))
+                self.agent.observe(validate(first_bot_act))
 
                 bot_utterance_data = {
                     'agent_idx': 1,
-                    # Get rid of annotations HTML from bot response
-                    'text': first_bot_act['text'].split('<br>')[0],
+                    'text': first_bot_act['text'],
                     'id': first_bot_act['id'],
                 }
                 self.dialog.append(bot_utterance_data)
 
             else:
-
                 raise ValueError(
                     f"Conversation start mode {self.opt['conversation_start_mode']} "
                     f"not recognized!"
@@ -413,16 +317,13 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
             f'{self.__class__.__name__}:{self.tag}: About to act with task turn idx: {self.task_turn_idx}'
         )
         acts = [None, None]
-        for idx, agent in enumerate(self.agents):
+        for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
                 acts[idx] = Compatibility.maybe_fix_act(acts[idx])
                 print(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
-
-            if self.check_timeout(acts[idx]):
-                return
 
             if acts[idx]['episode_done']:
                 self.chat_done = True
@@ -486,14 +387,7 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
                 self.task_turn_idx += 1
 
     def shutdown(self):
-        global shutdown_agent
-
-        def shutdown_agent(mturk_agent):
-            mturk_agent.shutdown()
-
-        Parallel(n_jobs=len(self.agents), backend='threading')(
-            delayed(shutdown_agent)(agent) for agent in self.agents
-        )
+        self.agent.shutdown()
 
     def episode_done(self):
         return self.chat_done
@@ -632,22 +526,6 @@ class TurnAnnotationsChatWorld(MultiAgentDialogWorld, CrowdTaskWorld):
         else:
             return self.agents[1].worker_id, False, convo_finished
 
-    def check_timeout(self, act):
-        if act['text'] == '[TIMEOUT]' and act['episode_done']:
-            control_msg = {'episode_done': True}
-            control_msg['id'] = 'SYSTEM'
-            control_msg[
-                'text'
-            ] = 'HIT has timed out. Please click the "Done with this HIT" button below to exit this HIT. No rejections.'
-            for ag in self.agents:
-                if ag.id != act['id']:
-                    if ag.id != AGENT_1:
-                        ag.observe(validate(control_msg))
-            self.chat_done = True
-            return True
-        else:
-            return False
-
     def review_work(self):
         pass
 
@@ -659,11 +537,61 @@ def make_onboarding_world(opt, agent):
 def validate_onboarding(data):
     """Check the contents of the data to ensure they are valid"""
     print(f"Validating onboarding data {data}")
-    return True
+    messages = data['outputs']['messages']
+    if len(messages) == 0:
+        return False
+    status_message = messages[-2]
+    if status_message is None:
+        return False
+    submitted_data = status_message.get('data')
+    if submitted_data is None:
+        return False
+    final_status = submitted_data.get('final_status')
+    return final_status == ONBOARD_SUCCESS
 
 
 def make_world(opt, agents):
-    return MTurkMultiAgentDialogWorld(opt, agents)
+    # Extract important components from opt
+    semaphore = opt['semaphore']
+    run_statistics = opt['run_statistics']
+    shared_bot_agents = opt['shared_bot_agents']
+    statistics_condition = opt['statistics_condition']
+    context_generator = opt['context_generator']
+    num_turns = opt['num_turns']
+
+    # Decide on a bot to use
+    run_statistics = opt['run_statistics']
+    with statistics_condition:
+        remaining_counts_needed = [
+            (m, c - run_statistics[m]) for (m, c) in opt['conversations_needed'].items()
+        ]
+        remaining_counts_needed.sort(reverse=True, key=lambda x: x[1])
+        model_name = remaining_counts_needed[0][0]
+        print(f'Remaining conversation counts needed: {remaining_counts_needed}')
+        print(f'Choosing the "{model_name}" model for the bot.')
+        run_statistics[model_name] += 1
+
+    # Create the bot
+    bot_agent = create_agent_from_shared(shared_bot_agents[model_name])
+    bot_worker = TurkLikeAgent(
+        opt,
+        model_name=model_name,
+        model_agent=bot_agent,
+        num_turns=num_turns,
+        semaphore=semaphore,
+    )
+
+    # Get context: personas, previous utterances, etc.
+    if context_generator is not None:
+        context_info = context_generator.get_context()
+    else:
+        context_info = None
+
+    agents[0].agent_id = "Worker"
+
+    return TurnAnnotationsChatWorld(
+        opt, agent=agents[0], bot=bot_worker, context_info=context_info
+    )
 
 
 def get_world_params():

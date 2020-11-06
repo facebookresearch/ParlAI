@@ -8,6 +8,16 @@ from typing import Dict, List
 
 from parlai.core.message import Message
 from parlai.core.metrics import Metric
+from mephisto.abstractions.providers.mturk.mturk_agent import MTurkAgent
+
+
+def get_mturk_id_from_mephisto_wrapper(agent):
+    """
+    Returns the MTurk worker ID from a ParlAI-Wrapped Mephisto Agent
+    """
+    if not isinstance(agent, MTurkAgent):
+        return f"--NOT-MTURK-AGENT-{agent.mephisto_agent.get_worker().worker_name}"
+    return agent.mephisto_agent.get_worker().get_mturk_worker_id()
 
 
 class Compatibility(object):

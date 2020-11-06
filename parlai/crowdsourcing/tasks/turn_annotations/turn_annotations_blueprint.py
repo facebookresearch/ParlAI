@@ -313,17 +313,24 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
             {
                 'onboard_statistics': shared_state.onboard_statistics,
                 'statistics_condition': statistics_condition,
+                'max_onboard_time': args.blueprint.max_onboard_time,
+                'onboard_task_data': self.onboard_task_data,
+                'onboarding_qualification': args.blueprint.onboarding_qualification,
             }
         )
         shared_state.world_opt.update(
             {
                 'conversations_needed': conversations_needed,
+                'run_statistics': shared_state.run_statistics,
                 'context_generator': context_generator,
                 'semaphore': semaphore,
-                'shared_models': shared_bot_agents,
+                'shared_bot_agents': shared_bot_agents,
                 'num_turns': args.blueprint.num_turns,
                 'max_resp_time': args.blueprint.max_resp_time,
                 'statistics_condition': statistics_condition,
+                'check_acceptability': args.blueprint.check_acceptability,
+                'include_persona': args.blueprint.include_persona,
+                'conversation_start_mode': args.blueprint.conversation_start_mode,
             }
         )
 
@@ -338,13 +345,14 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
             annotation_buckets = json.loads(f.read())
 
         return {
+            "min_num_turns": self.args.blueprint.num_turns,
             "task_description": self.full_task_description,
             "task_title": self.args.task.get('task_title', None),
             "annotation_question": self.args.blueprint.annotation_question,
             "annotation_buckets": annotation_buckets,
             "onboarding_data": self.onboard_task_data,
             "left_pane_text": self.left_pane_text,
-            "frame_height": '100%',
+            "frame_height": '650px',
             "final_rating_question": self.args.blueprint.final_rating_question,
             "block_mobile": True,
         }
