@@ -1924,6 +1924,51 @@ class TorchAgent(ABC, Agent):
         ``eval_step`` methods instead. The former is called when labels are
         present in the observations batch; otherwise, the latter is called.
         """
+        # import timeit
+
+        # num_trials = 1000
+
+        # # Params
+        # batch_size = 1
+        # encoder_seq_len = 200  # --text-truncate
+        # decoder_seq_len = 32  # --label-truncate
+        # max_token_idx = 50000
+
+        # enc_elapsed_time = 0.0
+        # dec_elapsed_time = 0.0
+        # for trial_idx in range(num_trials):
+
+        #     if trial_idx % 10 == 0:
+        #         print(f'Starting trial #{trial_idx:d} of {num_trials:d}.')
+
+        #     # Create inputs
+        #     x = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, encoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+        #     y = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, decoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     torch_enc_out, torch_enc_out_mask = self.model.encoder(x)
+        #     enc_elapsed_time += timeit.default_timer() - start_time
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     _ = self.model.decoder(y, (torch_enc_out, torch_enc_out_mask))
+        #     dec_elapsed_time += timeit.default_timer() - start_time
+
+        # print(f'Mean encoder elapsed time: {enc_elapsed_time/num_trials*1000:0.3f} ms.')
+        # print(f'Mean decoder elapsed time: {dec_elapsed_time/num_trials*1000:0.3f} ms.')
+        # raise Exception('Thank you, you are of no further service to us.')
+
         # clear local metrics before anything else
         self._local_metrics.clear()
 

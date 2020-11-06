@@ -561,6 +561,51 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             model=self.model, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
         )
 
+        # import timeit
+
+        # num_trials = 1000
+
+        # # Params
+        # batch_size = 1
+        # encoder_seq_len = 200  # --text-truncate
+        # decoder_seq_len = 32  # --label-truncate
+        # max_token_idx = 50000
+
+        # enc_elapsed_time = 0.0
+        # dec_elapsed_time = 0.0
+        # for trial_idx in range(num_trials):
+
+        #     if trial_idx % 10 == 0:
+        #         print(f'Starting trial #{trial_idx:d} of {num_trials:d}.')
+
+        #     # Create inputs
+        #     x = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, encoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+        #     y = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, decoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     torch_enc_out, torch_enc_out_mask = self.model.encoder(x)
+        #     enc_elapsed_time += timeit.default_timer() - start_time
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     _ = self.model.decoder(y, (torch_enc_out, torch_enc_out_mask))
+        #     dec_elapsed_time += timeit.default_timer() - start_time
+
+        # print(f'Mean encoder elapsed time: {enc_elapsed_time/num_trials*1000:0.3f} ms.')
+        # print(f'Mean decoder elapsed time: {dec_elapsed_time/num_trials*1000:0.3f} ms.')
+        # raise Exception('Thank you, you are of no further service to us.')
+
     def build_criterion(self):
         """
         Construct and return the loss function.
@@ -876,6 +921,51 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Evaluate a single batch of examples.
         """
+        # import timeit
+
+        # num_trials = 1000
+
+        # # Params
+        # batch_size = 1
+        # encoder_seq_len = 200  # --text-truncate
+        # decoder_seq_len = 32  # --label-truncate
+        # max_token_idx = 50000
+
+        # enc_elapsed_time = 0.0
+        # dec_elapsed_time = 0.0
+        # for trial_idx in range(num_trials):
+
+        #     if trial_idx % 10 == 0:
+        #         print(f'Starting trial #{trial_idx:d} of {num_trials:d}.')
+
+        #     # Create inputs
+        #     x = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, encoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+        #     y = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, decoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     torch_enc_out, torch_enc_out_mask = self.model.encoder(x)
+        #     enc_elapsed_time += timeit.default_timer() - start_time
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     _ = self.model.decoder(y, (torch_enc_out, torch_enc_out_mask))
+        #     dec_elapsed_time += timeit.default_timer() - start_time
+
+        # print(f'Mean encoder elapsed time: {enc_elapsed_time/num_trials*1000:0.3f} ms.')
+        # print(f'Mean decoder elapsed time: {dec_elapsed_time/num_trials*1000:0.3f} ms.')
+        # raise Exception('Thank you, you are of no further service to us.')
+
         if batch.text_vec is None and batch.image is None:
             return
         if batch.text_vec is not None:
@@ -1141,43 +1231,57 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         dec_elapsed_time = 0.0
         num_passes = 0
 
-        # Params
-        batch_size = 1
-        encoder_seq_len = 200  # --text-truncate
-        decoder_seq_len = 32  # --label-truncate
-        max_token_idx = 50000
+        # num_trials = 1000
 
-        # Create inputs
-        x = torch.randint(
-            low=0,
-            high=max_token_idx,
-            size=(batch_size, encoder_seq_len),
-            dtype=torch.long,
-        )
-        y = torch.randint(
-            low=0,
-            high=max_token_idx,
-            size=(batch_size, decoder_seq_len),
-            dtype=torch.long,
-        )
+        # # Params
+        # batch_size = 1
+        # encoder_seq_len = 200  # --text-truncate
+        # decoder_seq_len = 32  # --label-truncate
+        # max_token_idx = 50000
 
-        # Pass through decoder
-        torch_enc_out, torch_enc_out_mask = model.encoder(x)
+        # enc_elapsed_time = 0.0
+        # dec_elapsed_time = 0.0
+        # for trial_idx in range(num_trials):
 
-        # Pass through decoder
-        start_time = timeit.default_timer()
-        _ = model.decoder(y, (torch_enc_out, torch_enc_out_mask))
-        dec_elapsed_time += timeit.default_timer() - start_time
+        #     if trial_idx % 10 == 0:
+        #         print(f'Starting trial #{trial_idx:d} of {num_trials:d}.')
+
+        #     # Create inputs
+        #     x = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, encoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+        #     y = torch.randint(
+        #         low=0,
+        #         high=max_token_idx,
+        #         size=(batch_size, decoder_seq_len),
+        #         dtype=torch.long,
+        #     )
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     torch_enc_out, torch_enc_out_mask = self.model.encoder(x)
+        #     enc_elapsed_time += timeit.default_timer() - start_time
+
+        #     # Pass through decoder
+        #     start_time = timeit.default_timer()
+        #     _ = self.model.decoder(y, (torch_enc_out, torch_enc_out_mask))
+        #     dec_elapsed_time += timeit.default_timer() - start_time
+
+        # print(f'Mean encoder elapsed time: {enc_elapsed_time/num_trials*1000:0.3f} ms.')
+        # print(f'Mean decoder elapsed time: {dec_elapsed_time/num_trials*1000:0.3f} ms.')
+        # raise Exception('Thank you, you are of no further service to us.')
 
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):
                 # exit early if possible
                 break
 
-            # start_time = timeit.default_timer()
+            start_time = timeit.default_timer()
             score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
-            # print(decoder_input.shape, encoder_states[0].shape, encoder_states[1].shape)
-            # dec_elapsed_time += timeit.default_timer() - start_time
+            dec_elapsed_time += timeit.default_timer() - start_time
             # num_passes += 1
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
