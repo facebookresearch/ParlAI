@@ -32,14 +32,7 @@ try:
 
             # Set up the config and database
             # TODO: revise below
-            overrides = [
-                '+mephisto.blueprint.world_file=${task_dir}/demo_worlds.py',
-                '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
-                '+mephisto.blueprint.num_conversations=1',
-                '+mephisto.task.allowed_concurrent=0',
-                '+num_turns=3',
-                '+turn_timeout=300',
-            ]
+            overrides = [f'mephisto.blueprint.data_jsonl={data_path}']
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
             self._set_up_config(
