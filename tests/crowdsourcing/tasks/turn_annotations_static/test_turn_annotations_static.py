@@ -11,26 +11,27 @@ import unittest
 
 try:
 
-    # From the Mephisto repo
-    # TODO: revise below
-    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
-    from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
-        SharedParlAITaskState,
-        BLUEPRINT_TYPE,
+    from parlai.crowdsourcing.tasks.turn_annotations_static.run import TASK_DIRECTORY
+    from parlai.crowdsourcing.tasks.turn_annotations_static.run_in_flight_qa import (
+        TASK_DIRECTORY,
     )
-
+    from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
+        STATIC_BLUEPRINT_TYPE,
+        STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
+    )
     from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
 
-    class TestChatDemo(CrowdsourcingTestMixin, unittest.TestCase):
+    class TestTurnAnnotationsStatic(CrowdsourcingTestMixin, unittest.TestCase):
         """
-        Test the chat demo crowdsourcing task.
+        Test the turn annotations crowdsourcing tasks.
         """
 
-        def test_base_task(self):
+        def test_no_in_flight_qa(self):
 
             # # Setup
 
             # Set up the config and database
+            # TODO: revise below
             overrides = [
                 '+mephisto.blueprint.world_file=${task_dir}/demo_worlds.py',
                 '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
