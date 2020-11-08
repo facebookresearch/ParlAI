@@ -605,10 +605,10 @@ class SpecialTokenTests(unittest.TestCase):
 
 
 class TestBpeDropout(unittest.TestCase):
-    def test_bpe_dropout_gpt2(self):
+    def _test_bpe_dropout(self, **dict_args):
         pp = ParlaiParser(False, False)
         DictionaryAgent.add_cmdline_args(pp)
-        opt = pp.parse_kwargs(dict_tokenizer='gpt2', bpe_dropout=0.5)
+        opt = pp.parse_kwargs(bpe_dropout=0.5, **dict_args)
         da = DictionaryAgent(opt)
         da.set_training_mode(False)
         s = (
@@ -626,5 +626,16 @@ class TestBpeDropout(unittest.TestCase):
                 not_the_same += 1
         assert not_the_same > 0
 
-    # TODO: add a test for slow_bytelevel_bpe with blender dictionary
-    # TODO: add a valuerror test for bytelevelbpe with blender
+    def test_gpt2_bpe_dropout(self):
+        self._test_bpe_dropout(dict_tokenizer='gpt2')
+
+    def test_slowbytelevel_dropout(self):
+        self._test_bpe_dropout(
+            dict_tokenizer="slow_bytelevel_bpe", dict_file="zoo:blender/dict_3B/dict"
+        )
+
+    def test_bytelevelbpe_dropout(self):
+        with self.assertRaises(NotImplementedError):
+            self._test_bpe_dropout(
+                dict_tokenizer="bytelevelbpe", dict_file="zoo:blender/dict_3B/dict"
+            )

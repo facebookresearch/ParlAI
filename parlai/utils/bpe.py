@@ -807,7 +807,7 @@ class HuggingFaceBpeHelper(BPEHelper):
             )
 
         if self.bpe_dropout:
-            raise ValueError(
+            raise NotImplementedError(
                 '--bpe-dropout is not supported with ByteLevelBPE because tokenizers '
                 'library does not allow dynamically turning BPE on/off. You can use '
                 '--dict-tokenizer slow_bytelevel_bpe to gain this feature.'
