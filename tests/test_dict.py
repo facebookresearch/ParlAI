@@ -404,7 +404,6 @@ class TestByteLevelBPE(unittest.TestCase):
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
-            skip_special_tokens=False,
         )
         opt = parser.parse_args([])
 
