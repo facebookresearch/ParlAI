@@ -7,6 +7,8 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import os
+import sys
 import unittest
 
 # Desired inputs/outputs
@@ -339,12 +341,18 @@ FORM_RESPONSES = {
 
 try:
 
-    # From the Mephisto repo
-    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
+    import mephisto
     from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
         BLUEPRINT_TYPE,
     )
+
+    # From the Mephisto repo
+    mephisto_repo_folder = os.path.dirname(
+        os.path.dirname(os.path.abspath(mephisto.__file__))
+    )
+    sys.path.insert(1, mephisto_repo_folder)
+    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
 
     from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
 
