@@ -10,6 +10,7 @@ Utilities for running tests.
 import os
 import tempfile
 import time
+import unittest
 from typing import List, Optional
 
 from hydra.experimental import compose, initialize
@@ -19,9 +20,9 @@ from mephisto.data_model.blueprint import SharedTaskState
 from mephisto.utils.scripts import augment_config_from_db
 
 
-class CrowdsourcingTestMixin:
+class AbstractCrowdsourcingTest(unittest.TestCase):
     """
-    Mixin for end-to-end tests of Mephisto-based crowdsourcing tasks.
+    Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
 
     Allows for setup and teardown of the operator, as well as for config specification
     and agent registration.

@@ -256,9 +256,9 @@ try:
         BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
-    from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
+    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
 
-    class TestAcuteEval(CrowdsourcingTestMixin, unittest.TestCase):
+    class TestAcuteEval(AbstractCrowdsourcingTest):
         """
         Test the ACUTE-Eval crowdsourcing task.
         """

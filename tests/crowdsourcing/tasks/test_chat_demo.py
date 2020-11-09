@@ -346,9 +346,9 @@ try:
         BLUEPRINT_TYPE,
     )
 
-    from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
+    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
 
-    class TestChatDemo(CrowdsourcingTestMixin, unittest.TestCase):
+    class TestChatDemo(AbstractCrowdsourcingTest):
         """
         Test the chat demo crowdsourcing task.
         """

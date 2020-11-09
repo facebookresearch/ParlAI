@@ -32,9 +32,9 @@ try:
         STATIC_BLUEPRINT_TYPE,
         STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
+    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
 
-    class TestTurnAnnotationsStatic(CrowdsourcingTestMixin, unittest.TestCase):
+    class TestTurnAnnotationsStatic(AbstractCrowdsourcingTest):
         """
         Test the turn annotations crowdsourcing tasks.
         """
