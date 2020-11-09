@@ -12,10 +12,8 @@ import os
 import unittest
 
 
-SAMPLE_CONVERSATIONS_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    'task_config',
-    'sample_conversations.jsonl',
+TASK_CONFIG_FOLDER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'task_config'
 )
 EXPECTED_STATES_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'expected_states'
@@ -54,7 +52,7 @@ try:
             overrides = [
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
                 '+mephisto.blueprint.conversation_count=null',
-                f'mephisto.blueprint.data_jsonl={SAMPLE_CONVERSATIONS_PATH}',
+                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
             ]
@@ -91,7 +89,8 @@ try:
             overrides = [
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
                 '+mephisto.blueprint.conversation_count=null',
-                f'mephisto.blueprint.data_jsonl={SAMPLE_CONVERSATIONS_PATH}',
+                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
+                f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
             ]
@@ -131,9 +130,11 @@ try:
             overrides = [
                 f'+mephisto.blueprint.annotation_indices_jsonl={TASK_DIRECTORY}/task_config/annotation_indices_example.jsonl',
                 '+mephisto.blueprint.conversation_count=null',
-                f'mephisto.blueprint.data_jsonl={SAMPLE_CONVERSATIONS_PATH}',
+                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations_annotation_file.jsonl',
+                f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
+                'mephisto.blueprint.subtasks_per_unit=4',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
