@@ -32,9 +32,9 @@ try:
         STATIC_BLUEPRINT_TYPE,
         STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
+    from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
-    class TestTurnAnnotationsStatic(AbstractCrowdsourcingTest):
+    class TestTurnAnnotationsStatic(AbstractOneTurnCrowdsourcingTest):
         """
         Test the turn annotations crowdsourcing tasks.
         """
@@ -70,24 +70,7 @@ try:
             # Set up the operator and server
             self._set_up_server()
 
-            # Set up the mock human agent
-            agent_id = self._register_mock_agents(num_agents=1)[0]
-
-            # Set initial data
-            self.server.request_init_data(agent_id)
-
-            # # Make agent act
-
-            self.server.send_agent_act(
-                agent_id,
-                {"MEPHISTO_is_submit": True, "task_data": expected_state['outputs']},
-            )
-
-            # # Check that the inputs and outputs are as expected
-
-            state = self.db.find_agents()[0].state.get_data()
-            self.assertEqual(expected_state['inputs'], state['inputs'])
-            self.assertEqual(expected_state['outputs'], state['outputs'])
+            self._test_agent_state(expected_state=expected_state)
 
 
 except ImportError:

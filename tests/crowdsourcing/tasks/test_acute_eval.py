@@ -256,9 +256,9 @@ try:
         BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
-    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
+    from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
-    class TestAcuteEval(AbstractCrowdsourcingTest):
+    class TestAcuteEval(AbstractOneTurnCrowdsourcingTest):
         """
         Test the ACUTE-Eval crowdsourcing task.
         """
@@ -274,21 +274,9 @@ try:
             )
             self._set_up_server()
 
-            # Set up the mock human agent
-            agent_id = self._register_mock_agents(num_agents=1)[0]
-
-            # Set initial data
-            self.server.request_init_data(agent_id)
-
-            # Make agent act
-            self.server.send_agent_act(
-                agent_id, {"MEPHISTO_is_submit": True, "task_data": DESIRED_OUTPUTS}
-            )
-
-            # Check that the inputs and outputs are as expected
-            state = self.db.find_agents()[0].state.get_data()
-            self.assertEqual(DESIRED_INPUTS, state['inputs'])
-            self.assertEqual(DESIRED_OUTPUTS, state['outputs'])
+            # Check that the agent state is as it should be
+            expected_state = {'inputs': DESIRED_INPUTS, 'outputs': DESIRED_OUTPUTS}
+            self._test_agent_state(expected_state=expected_state)
 
 
 except ImportError:
