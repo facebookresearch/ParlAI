@@ -28,12 +28,17 @@ try:
         STATIC_BLUEPRINT_TYPE,
         STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
     )
+    from parlai.crowdsourcing.tasks.turn_annotations_static.util import build_task
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
     class TestTurnAnnotationsStatic(AbstractOneTurnCrowdsourcingTest):
         """
         Test the turn annotations crowdsourcing tasks.
         """
+
+        def setUp(self):
+            super().setUp()
+            build_task(task_directory=TASK_DIRECTORY)
 
         def test_no_in_flight_qa(self):
             """
