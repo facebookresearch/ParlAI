@@ -41,13 +41,15 @@ try:
 
             # Set up the config and database
             overrides = [
-                f'mephisto.blueprint.data_jsonl={SAMPLE_CONVERSATIONS_PATH}',
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
                 '+mephisto.blueprint.conversation_count=null',
+                f'mephisto.blueprint.data_jsonl={SAMPLE_CONVERSATIONS_PATH}',
+                'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
+            # TODO: test onboarding as well, and don't nullify the onboarding_qualification param
             self._set_up_config(
                 blueprint_type=STATIC_BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
