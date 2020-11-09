@@ -22,7 +22,7 @@ try:
 
     from parlai.crowdsourcing.tasks.turn_annotations_static.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.turn_annotations_static.run_in_flight_qa import (
-        TASK_DIRECTORY,
+        TASK_DIRECTORY as TASK_DIRECTORY_IN_FLIGHT_QA,
     )
     from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
         STATIC_BLUEPRINT_TYPE,
@@ -55,19 +55,19 @@ try:
             )
 
             # Set up the operator and server
-            self._set_up_server(shared_state=None)
+            self._set_up_server()
 
             # Set up the mock human agents
-            agent_0_id = self._register_mock_agents(num_agents=1)[0]
+            agent_id = self._register_mock_agents(num_agents=1)[0]
 
             # # Feed messages to the agent
 
             # Set initial data
-            self.server.request_init_data(agent_0_id)
+            self.server.request_init_data(agent_id)
 
-            state_0 = self.db.find_agents()[0].state.get_data()
+            state = self.db.find_agents()[0].state.get_data()
             print('foooooooooo')
-            print(state_0)
+            print(state)
             # TODO: remove block
 
             import pdb
