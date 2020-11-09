@@ -11,7 +11,11 @@ import os
 import unittest
 
 
-EXPECTED_OUTPUTS_FOLDER = os.path.join(os.path.dirname(__file__), 'expected_outputs')
+SAMPLE_CONVERSATIONS_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'task_config',
+    'sample_conversations.jsonl',
+)
 
 
 try:
@@ -37,7 +41,10 @@ try:
 
             # Set up the config and database
             overrides = [
-                f'mephisto.blueprint.data_jsonl={EXPECTED_OUTPUTS_FOLDER}.no_in_flight_qa.json'
+                f'mephisto.blueprint.data_jsonl={SAMPLE_CONVERSATIONS_PATH}',
+                '+mephisto.blueprint.annotation_indices_jsonl=null',
+                '+mephisto.blueprint.conversation_count=null',
+                '+mephisto.blueprint.random_seed=42',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
@@ -57,6 +64,11 @@ try:
 
             # Set initial data
             self.server.request_init_data(agent_0_id)
+
+            state_0 = self.db.find_agents()[0].state.get_data()
+            print('foooooooooo')
+            print(state_0)
+            # TODO: remove block
 
             import pdb
 
@@ -114,9 +126,7 @@ try:
 
             # # Check that the inputs and outputs are as expected
 
-            state_0, state_1 = [
-                agent.state.get_data() for agent in self.db.find_agents()
-            ]
+            state_0 = self.db.find_agents()[0].state.get_data()
             actual_and_desired_states = [
                 (state_0, DESIRED_STATE_AGENT_0),
                 (state_1, DESIRED_STATE_AGENT_1),
