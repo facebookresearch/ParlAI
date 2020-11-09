@@ -55,11 +55,14 @@ try:
 
             # # Feed messages to the agent
 
-            # TODO: revise below
             # Set initial data
             self.server.request_init_data(agent_0_id)
-            self.server.request_init_data(agent_1_id)
 
+            import pdb
+
+            pdb.set_trace()
+            # TODO: remove
+            # TODO: revise below
             # Have agents talk to each other
             for agent_0_text, agent_1_text in AGENT_MESSAGES:
                 self._send_agent_message(
@@ -143,19 +146,6 @@ try:
                                     )
                         else:
                             self.assertEqual(actual_message[key], desired_value)
-
-        def _send_agent_message(self, agent_id: str, agent_display_id: str, text: str):
-            """
-            Have the agent specified by agent_id send the specified text with the given
-            display ID string.
-            """
-            act_content = {
-                "text": text,
-                "task_data": {},
-                "id": agent_display_id,
-                "episode_done": False,
-            }
-            self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
 
 
 except ImportError:
