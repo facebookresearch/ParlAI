@@ -28,7 +28,7 @@ from torch import optim
 
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
-from parlai.core.dict import DictionaryAgent
+from parlai.core.dict import DictionaryAgent, TokenizationMode
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
@@ -1665,8 +1665,12 @@ class TorchAgent(ABC, Agent):
 
         # possibly change tokenization methodology based on if this is a
         # training example
-        if hasattr(self.dict, 'set_training_mode'):
-            self.dict.set_training_mode('labels' in observation)
+        is_training_mode = 'labels' in observation
+        if hasattr(self.dict, 'set_tokenization_mode'):
+            if is_training_mode:
+                self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
+            else:
+                self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
 
         # Update the history using the observation.
         # We may also consider adding a temporary string to the history
@@ -1676,9 +1680,11 @@ class TorchAgent(ABC, Agent):
             observation, temp_history=self.get_temp_history(observation)
         )
 
-        if hasattr(self.dict, 'set_training_mode'):
-            # we only want bpe dropout on the context, not the label
-            self.dict.set_training_mode(False)
+        if hasattr(self.dict, 'set_tokenization_mode'):
+            if is_training_mode:
+                self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_LABEL)
+            else:
+                self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_LABEL)
 
         return self.vectorize(
             observation,

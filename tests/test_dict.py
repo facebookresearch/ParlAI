@@ -11,7 +11,7 @@ Dictionary testing.
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import find_ngrams
 from parlai.core.params import ParlaiParser
-from parlai.core.dict import DictionaryAgent
+from parlai.core.dict import DictionaryAgent, TokenizationMode
 from parlai.core.opt import Opt
 import parlai.scripts.build_dict as build_dict
 
@@ -610,14 +610,14 @@ class TestBpeDropout(unittest.TestCase):
         DictionaryAgent.add_cmdline_args(pp)
         opt = pp.parse_kwargs(bpe_dropout=0.5, **dict_args)
         da = DictionaryAgent(opt)
-        da.set_training_mode(False)
+        da.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
         s = (
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             "Donec vitae metus sollicitudin, ullamcorper tortor ut, rhoncus lacus. "
             "Praesent sollicitudin commodo turpis, ut pharetra tortor gravida nec."
         )
         no_dropout = da.txt2vec(s)
-        da.set_training_mode(True)
+        da.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
         not_the_same = 0
         for _ in range(30):
             r = da.txt2vec(s)

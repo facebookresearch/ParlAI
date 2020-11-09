@@ -21,6 +21,15 @@ import re
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 from typing import List
+import enum
+
+
+class TokenizationMode(enum.Enum):
+    TRAIN_TIME_TEXT = 0
+    TRAIN_TIME_LABEL = 1
+    TEST_TIME_TEXT = 2
+    TEST_TIME_LABEL = 3
+
 
 RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
@@ -236,7 +245,7 @@ class DictionaryAgent(Agent):
         ).split(",")
 
         # used to signal whether we should use training time tricks, like bpe droput
-        self._is_training_mode = False
+        self._tokenization_mode = TokenizationMode.TEST_TIME_LABEL
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -795,9 +804,12 @@ class DictionaryAgent(Agent):
         """
         return str(self.freq)
 
-    def set_training_mode(self, mode: bool):
+    def set_tokenization_mode(self, mode: TokenizationMode):
         """
-        Indicate whether the dict is being utilized during training.
+        Indicate what "kind" of tokenization is being done.
+
+        This can be Training Time / Testing Time, and it can be over
+        context or labels.
 
         This is used to signal from TorchAgent to the dict that it's allowed
         to enable things like BPE dropout. It is NOT used to indicate whether
@@ -805,5 +817,8 @@ class DictionaryAgent(Agent):
 
         Use True for training time, False for not.
         """
+        self._context_mode = mode
         if hasattr(self, 'bpe'):
-            self.bpe.set_training_mode(mode)
+            # enable bpe dropout only in texts at training time. disable all
+            # other times
+            self.bpe.enable_bpe_dropout(mode == TokenizationMode.TRAIN_TIME_TEXT)

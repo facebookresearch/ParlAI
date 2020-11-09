@@ -109,8 +109,8 @@ class BPEHelper(ABC):
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
         self._special_tokens: Dict[str, int] = {}
-        self.bpe_dropout = opt.get('bpe_dropout')
-        self._is_training_mode = False
+        self.bpe_dropout: Optional[float] = opt.get('bpe_dropout')
+        self._bpe_dropout_enabled = False
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -135,11 +135,11 @@ class BPEHelper(ABC):
         )
         return parser
 
-    def set_training_mode(self, mode: bool):
+    def enable_bpe_dropout(self, enabled: bool):
         """
         Used to toggle BPE dropout on (True) or off (False).
         """
-        self._is_training_mode = mode
+        self._bpe_dropout_enabled = enabled
 
     @final
     def encode(self, text: str) -> List[str]:
@@ -642,7 +642,7 @@ class Gpt2BpeHelper(BPEHelper):
         result in different subwords being used to realized the same string,
         and effectively regularizes representations.
         """
-        if not self.bpe_dropout or not self._is_training_mode:
+        if not self.bpe_dropout or not self._bpe_dropout_enabled:
             return pairs
 
         dropped_pairs = [p for p in pairs if random.random() > self.bpe_dropout]
