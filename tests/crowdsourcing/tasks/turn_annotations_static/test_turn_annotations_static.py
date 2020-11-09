@@ -10,6 +10,7 @@ End-to-end testing for the chat demo crowdsourcing task.
 import json
 import os
 import unittest
+from typing import List
 
 
 TASK_CONFIG_FOLDER = os.path.join(
@@ -38,76 +39,34 @@ try:
             """
             Test static turn annotations without in-flight QA.
             """
-
-            # # Load the .json of the expected state
-            expected_state_path = os.path.join(
-                EXPECTED_STATES_FOLDER, 'no_in_flight_qa.json'
-            )
-            with open(expected_state_path) as f:
-                expected_state = json.load(f)
-
-            # # Setup
-
-            # Set up the config and database
             overrides = [
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
-                '+mephisto.blueprint.conversation_count=null',
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
-                'mephisto.blueprint.onboarding_qualification=null',
-                '+mephisto.blueprint.random_seed=42',
             ]
-            # TODO: remove all of these params once Hydra 1.1 is released with support
-            #  for recursive defaults
-            # TODO: test onboarding as well, and don't nullify the
-            #  onboarding_qualification param
-            self._set_up_config(
+            self._test_turn_annotations_static_task(
                 blueprint_type=STATIC_BLUEPRINT_TYPE,
-                task_directory=TASK_DIRECTORY,
+                expected_state_path=os.path.join(
+                    EXPECTED_STATES_FOLDER, 'no_in_flight_qa.json'
+                ),
                 overrides=overrides,
             )
-
-            # Set up the operator and server
-            self._set_up_server()
-
-            self._test_agent_state(expected_state=expected_state)
 
         def test_in_flight_qa(self):
             """
             Test static turn annotations with in-flight QA.
             """
-
-            # # Load the .json of the expected state
-            expected_state_path = os.path.join(
-                EXPECTED_STATES_FOLDER, 'in_flight_qa.json'
-            )
-            with open(expected_state_path) as f:
-                expected_state = json.load(f)
-
-            # # Setup
-
-            # Set up the config and database
             overrides = [
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
-                '+mephisto.blueprint.conversation_count=null',
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
                 f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
-                'mephisto.blueprint.onboarding_qualification=null',
-                '+mephisto.blueprint.random_seed=42',
             ]
-            # TODO: remove all of these params once Hydra 1.1 is released with support
-            #  for recursive defaults
-            # TODO: test onboarding as well, and don't nullify the
-            #  onboarding_qualification param
-            self._set_up_config(
+            self._test_turn_annotations_static_task(
                 blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
-                task_directory=TASK_DIRECTORY,
+                expected_state_path=os.path.join(
+                    EXPECTED_STATES_FOLDER, 'in_flight_qa.json'
+                ),
                 overrides=overrides,
             )
-
-            # Set up the operator and server
-            self._set_up_server()
-
-            self._test_agent_state(expected_state=expected_state)
 
         def test_in_flight_qa_annotation_file(self):
             """
@@ -116,32 +75,48 @@ try:
             The annotation file will list which turns of which conversations should
             receive annotations.
             """
+            overrides = [
+                f'+mephisto.blueprint.annotation_indices_jsonl={TASK_DIRECTORY}/task_config/annotation_indices_example.jsonl',
+                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations_annotation_file.jsonl',
+                f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
+                'mephisto.blueprint.subtasks_per_unit=4',
+            ]
+            self._test_turn_annotations_static_task(
+                blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
+                expected_state_path=os.path.join(
+                    EXPECTED_STATES_FOLDER, 'in_flight_qa_annotation_file.json'
+                ),
+                overrides=overrides,
+            )
+
+        def _test_turn_annotations_static_task(
+            self, blueprint_type: str, expected_state_path: str, overrides: List[str]
+        ):
+            """
+            Test the static turn annotations task under specific conditions.
+
+            Pass in parameters that will change depending on how we're testing the
+            static turn annotations task.
+            """
 
             # # Load the .json of the expected state
-            expected_state_path = os.path.join(
-                EXPECTED_STATES_FOLDER, 'in_flight_qa_annotation_file.json'
-            )
             with open(expected_state_path) as f:
                 expected_state = json.load(f)
 
             # # Setup
 
             # Set up the config and database
-            overrides = [
-                f'+mephisto.blueprint.annotation_indices_jsonl={TASK_DIRECTORY}/task_config/annotation_indices_example.jsonl',
+            overrides += [
                 '+mephisto.blueprint.conversation_count=null',
-                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations_annotation_file.jsonl',
-                f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
-                'mephisto.blueprint.subtasks_per_unit=4',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
             # TODO: test onboarding as well, and don't nullify the
             #  onboarding_qualification param
             self._set_up_config(
-                blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
+                blueprint_type=blueprint_type,
                 task_directory=TASK_DIRECTORY,
                 overrides=overrides,
             )
