@@ -7,7 +7,12 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import os
 import unittest
+
+
+EXPECTED_OUTPUTS_FOLDER = os.path.join(os.path.dirname(__file__), 'expected_outputs')
+
 
 try:
 
@@ -31,31 +36,26 @@ try:
             # # Setup
 
             # Set up the config and database
-            # TODO: revise below
-            overrides = [f'mephisto.blueprint.data_jsonl={data_path}']
+            overrides = [
+                f'mephisto.blueprint.data_jsonl={EXPECTED_OUTPUTS_FOLDER}.no_in_flight_qa.json'
+            ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults
             self._set_up_config(
-                blueprint_type=BLUEPRINT_TYPE,
+                blueprint_type=STATIC_BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
                 overrides=overrides,
             )
 
             # Set up the operator and server
-            world_opt = {
-                "num_turns": self.config.num_turns,
-                "turn_timeout": self.config.turn_timeout,
-            }
-            shared_state = SharedParlAITaskState(
-                world_opt=world_opt, onboarding_world_opt=world_opt
-            )
-            self._set_up_server(shared_state=shared_state)
+            self._set_up_server(shared_state=None)
 
             # Set up the mock human agents
-            agent_0_id, agent_1_id = self._register_mock_agents(num_agents=2)
+            agent_0_id = self._register_mock_agents(num_agents=1)[0]
 
-            # # Feed messages to the agents
+            # # Feed messages to the agent
 
+            # TODO: revise below
             # Set initial data
             self.server.request_init_data(agent_0_id)
             self.server.request_init_data(agent_1_id)
