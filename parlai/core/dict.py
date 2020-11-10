@@ -454,7 +454,8 @@ class DictionaryAgent(Agent):
         """
         return self.bpe_tokenize(text)
 
-    def re_tokenize(self, text):
+    @staticmethod
+    def re_tokenize(text):
         r"""
         Tokenize using a liberal regular expression.
 
@@ -466,7 +467,8 @@ class DictionaryAgent(Agent):
         """
         return RETOK.findall(text)
 
-    def split_tokenize(self, text):
+    @staticmethod
+    def split_tokenize(text):
         """
         Tokenize on whitespace and some limited punctuation.
 
@@ -485,7 +487,8 @@ class DictionaryAgent(Agent):
             .split()
         )
 
-    def space_tokenize(self, text):
+    @staticmethod
+    def space_tokenize(text):
         """
         Tokenize exactly on spaces.
 
