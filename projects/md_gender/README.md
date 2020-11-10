@@ -34,4 +34,7 @@ NOTE: data for the Opensubtitles tasks has yet to be released; data will be comi
 
 ## Models
 
-NOW!
+Try interacting the the multi-tasked classifier by running the following command:
+```
+parlai interactive -t md_gender -m projects.md_gender.bert_ranker_classifier.agents:BertRankerClassifierAgent -mf zoo:md_gender/model -ecands inline -cands inline --interactive_mode False --data-parallel False
+```
