@@ -17,7 +17,7 @@ import sys as _sys
 
 class YelpTeacher(FixedDialogTeacher):
     """
-    Yelp gender teacher!
+    Yelp MD Gender Teacher.
     """
 
     @staticmethod
@@ -74,7 +74,7 @@ class YelpTeacher(FixedDialogTeacher):
                 f'directory: \n{self.data_path}\n{stars}'
             )
 
-    def load_gender_data(self, datatype):
+    def _load_gender_data(self, datatype):
         """
         Load data from the checkpoint
         """
