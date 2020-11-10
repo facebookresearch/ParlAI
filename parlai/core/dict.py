@@ -247,6 +247,7 @@ class DictionaryAgent(Agent):
             self.tok2ind = shared.get('tok2ind', {})
             self.ind2tok = shared.get('ind2tok', {})
         else:
+            self.additional_special_tokens: List[str] = []
             self.freq = defaultdict(int)
             self.tok2ind = {}
             self.ind2tok = {}
@@ -341,11 +342,14 @@ class DictionaryAgent(Agent):
 
         if hasattr(self, 'bpe'):
             self.bpe.add_special_tokens(self, self.additional_special_tokens)
+        elif self.tokenizer in ('split', 're', 'space'):
+            pass
         else:
             raise NotImplementedError(
-                "Only BPE-based dictionaries support special tokens. File a github "
-                "issue or pull request if you need others extended. "
-                "https://github.com/facebookresearch/ParlAI"
+                f"Special Tokens are not supported with this tokenizer. "
+                f"(--dict-tokenizer {self.tokenizer}). File a github issue or "
+                f"pull request if you need others extended. "
+                f"https://github.com/facebookresearch/ParlAI"
             )
 
     def is_prebuilt(self):
@@ -450,8 +454,7 @@ class DictionaryAgent(Agent):
         """
         return self.bpe_tokenize(text)
 
-    @staticmethod
-    def re_tokenize(text):
+    def re_tokenize(self, text):
         r"""
         Tokenize using a liberal regular expression.
 
@@ -463,8 +466,7 @@ class DictionaryAgent(Agent):
         """
         return RETOK.findall(text)
 
-    @staticmethod
-    def split_tokenize(text):
+    def split_tokenize(self, text):
         """
         Tokenize on whitespace and some limited punctuation.
 
@@ -483,8 +485,7 @@ class DictionaryAgent(Agent):
             .split()
         )
 
-    @staticmethod
-    def space_tokenize(text):
+    def space_tokenize(self, text):
         """
         Tokenize exactly on spaces.
 
@@ -509,7 +510,20 @@ class DictionaryAgent(Agent):
     def tokenize(self, text, building=False):
         """
         Return a sequence of tokens from the iterable.
+
+        Also handles special tokens for some tokenizers
         """
+        if self.tokenizer in ('re', 'split', 'space'):
+            for special_token in self.additional_special_tokens:
+                index = text.find(special_token)
+                if index == -1:
+                    continue
+                left = text[:index]
+                right = text[index + len(special_token) :]
+                tokens_left = self.tokenize(left, building) if left else []
+                tokens_right = self.tokenize(right, building) if right else []
+                return tokens_left + [special_token] + tokens_right
+
         if self.lower:
             text = text.lower()
 
