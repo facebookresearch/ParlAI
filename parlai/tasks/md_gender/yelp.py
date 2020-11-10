@@ -76,7 +76,7 @@ class YelpTeacher(FixedDialogTeacher):
 
     def _load_gender_data(self, datatype):
         """
-        Load data from the checkpoint
+        Load data from the checkpoint.
         """
         dt = datatype.split(':')[0]
         data = []

@@ -152,7 +152,7 @@ class InteractiveWorld(DialogPartnerWorld):
         )
 
         pred_text = f'SELF: {self_pred}\nPARTNER: {partner_pred}\nABOUT: {about_pred}'
-        acts[1] = {'text': pred_text, 'episode_done': True}
+        acts[1] = {'id': 'MDGender Classifier', 'text': pred_text, 'episode_done': True}
 
         human_agent.observe(validate(acts[1]))
         self.update_counters()

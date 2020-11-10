@@ -4,7 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Classifier trained on the md_gender task. For more info see: <parl.ai/projects/md_gender>.
+Classifier trained on the md_gender task.
+
+For more info see: <parl.ai/projects/md_gender>.
 """
 
 from parlai.core.build_data import download_models
