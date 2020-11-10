@@ -551,7 +551,7 @@ class SpecialTokenTests(unittest.TestCase):
     """
 
     def _run_specialtok_test(self, **kwargs):
-        for special_token in ['SPECIAL TOKENS', '[SPECIAL TOKENS]']:
+        for special_token in ['SPECIAL TOKENS', '[SPECIAL; TOKENS]']:
             with testing_utils.tempdir() as tmpdir:
                 if 'dict_file' not in kwargs:
                     kwargs['dict_file'] = os.path.join(tmpdir, 'dict')
