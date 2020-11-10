@@ -15,8 +15,9 @@ var handleCheckboxChange = function (evt, annotationBuckets, onUserInputUpdate) 
   var reasonHtml = '';
 
   if (evt.target.checked) {
-    var checkboxPrettyName = annotationBuckets.config[whichCheckbox]['name'];
-    var checkboxDescription = annotationBuckets.config[whichCheckbox]['description'];
+    let checkboxDict = annotationBuckets.config[whichCheckbox];
+    var checkboxPrettyName = ('prettyName' in checkboxDict) ? checkboxDict['prettyName'] : checkboxDict['name'];
+    var checkboxDescription = checkboxDict['description'];
     reasonHtml = 'You labeled this as <b>' + checkboxPrettyName + '</b>, meaning that: ' + checkboxDescription;
   }
   document.getElementById('checkbox_description_' + turnIdx).innerHTML = reasonHtml;
@@ -38,11 +39,12 @@ function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate, askReason }
   if (!askReason) {
     reasonComponent = '';
   }
+  let input_type = annotationBuckets.type !== undefined ? annotationBuckets.type : "checkbox";
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
         Object.keys(annotationBuckets.config).map(c => (
-          <span key={'span_' + c + '_' + turnIdx}><input type="checkbox" id={c + '_' + turnIdx} name={'checkbox_group_' + turnIdx} onChange={(evt) => handleCheckboxChange(evt, annotationBuckets, onUserInputUpdate)} /><span style={{ marginRight: '15px' }}>{annotationBuckets.config[c].name}</span>
+          <span key={'span_' + c + '_' + turnIdx}><input type={input_type} id={c + '_' + turnIdx} name={'checkbox_group_' + turnIdx} onChange={(evt) => handleCheckboxChange(evt, annotationBuckets, onUserInputUpdate)} /><span style={{ marginRight: '15px' }}>{annotationBuckets.config[c].name}</span>
           </span>
         ))
       }
