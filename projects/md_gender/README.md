@@ -22,6 +22,7 @@ The following tasks are available right now:
 - `md_gender:md_gender` (new evaluation dataset)
 - `md_gender:wikipedia` (uses the Wikipedia task)
 - `md_gender:wizard` (uses the Wizard of Wikipedia task)
+- `md_gender:yelp` (uses data from Yelp)
 
 View any of the tasks above with the following command:
 ```
@@ -29,8 +30,8 @@ parlai dd -t <taskname>
 ```
 
 
-NOTE: data for the Yelp and Opensubtitles tasks has yet to be released; data will be coming soon.
+NOTE: data for the Opensubtitles tasks has yet to be released; data will be coming soon.
 
 ## Models
 
-Coming soon!
+NOW!
