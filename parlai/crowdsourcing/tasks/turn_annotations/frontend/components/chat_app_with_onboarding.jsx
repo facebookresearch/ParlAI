@@ -34,6 +34,7 @@ function CustomOnboardingChatApp({
   renderTextResponse,
   renderResponse,
   onMessagesChange,
+  propAppSettings={},
 }) {
   const [taskContext, updateContext] = React.useReducer(
     (oldContext, newContext) => Object.assign(oldContext, newContext),
@@ -48,18 +49,26 @@ function CustomOnboardingChatApp({
     []
   );
 
+  const initialAppSettings = {
+    ...propAppSettings, 
+    volume: 1, 
+    isReview: false, 
+    isCoverPage: false, 
+    numMessages: 0
+  };
+  const [appSettings, setAppSettings] = React.useReducer(
+    (prevSettings, newSettings) => Object.assign({}, prevSettings, newSettings),
+    initialAppSettings
+  );
+  const [inputMode, setInputMode] = React.useState(INPUT_MODE.WAITING);
+
+
   React.useEffect(() => {
     if (onMessagesChange) {
       onMessagesChange(messages);
     }
+    setAppSettings({ numMessages: messages.length });
   }, [messages]);
-
-  const initialAppSettings = { volume: 1, isReview: false, isCoverPage: false };
-  const [appSettings, setAppSettings] = React.useReducer(
-    (prevSettings, newSettings) => Object.assign(prevSettings, newSettings),
-    initialAppSettings
-  );
-  const [inputMode, setInputMode] = React.useState(INPUT_MODE.WAITING);
 
   function playNotifSound() {
     let audio = new Audio("./notif.mp3");

@@ -204,20 +204,16 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             f'Creating {self.__class__.__name__} for tag {self.tag} with {num_turns} turns.'
         )
 
-    def __add_problem_data_to_utterance(self, p):
+    def __add_problem_data_to_utterance(self, p, turn_idx):
         # Human has just responded. Problem data received
         # now will be from bot's prior utterance (turn_idx
         # is also present to be safe that data matches)
         print(p)
         is_fake_utterance = (
-            'fake_start' in self.dialog[p['turn_idx']]
-            and self.dialog[p['turn_idx']]['fake_start']
+            'fake_start' in self.dialog[turn_idx]
+            and self.dialog[turn_idx]['fake_start']
         )
-        annotations = []
-        for a in self.opt['annotations_config']:
-            annotations.append(p[a['value']])
-        assert any(annotations) or is_fake_utterance
-        self.dialog[p['turn_idx']]['problem_data'] = p
+        self.dialog[turn_idx]['problem_data'] = p
 
     def parley(self):
         print(
@@ -325,39 +321,15 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
 
-            if acts[idx]['episode_done']:
+            if acts[idx].get('task_data', {}).get('final_rating') is not None:
                 self.chat_done = True
-                for ag in self.agents:
-                    # if agent disconnected
-                    if ag != agent and ag.some_agent_disconnected:
-                        if idx == 0:
-                            # Human
-                            message = control_msg.copy()
-                            message['text'] = (
-                                'The other worker unexpectedly diconnected. '
-                                'Please click "Done with this HIT" button below to finish this HIT.'
-                            )
-                            message['episode_done'] = True
-                            ag.observe(validate(message))
-                        return
                 # agent ends chat after exceeding minimum number of turns
                 if self.task_turn_idx > self.num_turns:
-                    for ag in self.agents:
-                        if idx == 0:
-                            print('One of you ended the chat utterance coming.')
-                            message = control_msg.copy()
-                            message['text'] = (
-                                'One of you ended the chat. Thanks for your '
-                                'time! Please click "Done with this HIT"'
-                                'button below to finish this HIT.'
-                            )
-                            message['episode_done'] = True
-                            ag.observe(validate(message))
-                            # Human has just responded. Problem data received
-                            # now will be from bot's prior utterance (turn_idx
-                            # is a also present to be safe that data matches)
-                            p = acts[idx]['problem_data_for_prior_message']
-                            self.__add_problem_data_to_utterance(p)
+                    # Human has just responded. Problem data received
+                    # now will be from bot's prior utterance (turn_idx
+                    # is a also present to be safe that data matches)
+                    p = acts[idx]['task_data']['problem_data_for_prior_message']
+                    self.__add_problem_data_to_utterance(p, idx - 1)
                 return
 
             else:
@@ -374,10 +346,10 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                     # Human has just responded. Problem data received
                     # now will be from bot's prior utterance (turn_idx
                     # is a also present to be safe that data matches)
-                    p = acts[idx]['problem_data_for_prior_message']
-                    self.__add_problem_data_to_utterance(p)
+                    p = acts[idx]['task_data']['problem_data_for_prior_message']
+                    self.__add_problem_data_to_utterance(p, idx - 1)
 
-                for other_agent in self.agents:
+                for other_agent in [self.agent, self.bot]:
                     if other_agent != agent:
                         other_agent.observe(validate(acts[idx]))
 
@@ -443,16 +415,15 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
     def save_data(self):
         convo_finished = True
         bad_workers = []
-        for ag in self.agents:
-            if (
-                ag.hit_is_abandoned
-                or ag.hit_is_returned
-                or ag.disconnected
-                or ag.hit_is_expired
-            ):
-                bad_workers.append(ag.worker_id)
-                convo_finished = False
-                ag.not_approve = True
+        if (
+            self.agent.hit_is_abandoned
+            or self.agent.hit_is_returned
+            or self.agent.disconnected
+            or self.agent.hit_is_expired
+        ):
+            bad_workers.append(self.worker_id)
+            convo_finished = False
+            self.agent.not_approve = True
 
         if self.check_acceptability:
             human_texts = [
@@ -498,7 +469,7 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 ),
                 'additional_context': self.context_info.get('additional_context'),
                 'dialog': self.dialog,
-                'workers': [ag.worker_id for ag in self.agents],
+                'workers': [self.worker_id],
                 'bad_workers': bad_workers,
                 'acceptability_violations': (violations_agent_0,),
                 'hit_ids': [ag.hit_id for ag in self.agents],

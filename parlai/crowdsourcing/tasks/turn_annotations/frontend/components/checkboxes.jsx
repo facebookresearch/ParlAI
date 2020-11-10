@@ -8,7 +8,14 @@
 
 import React from "react";
 
-function Checkboxes({ annotationBuckets, turnIdx, askReason, annotations, onUpdateAnnotations }) {
+function Checkboxes({ 
+  annotationBuckets, 
+  turnIdx, 
+  askReason, 
+  annotations, 
+  onUpdateAnnotations, 
+  enabled=true, 
+}) {
   var reasonComponent = (
     <div>
       <br></br>
@@ -37,6 +44,7 @@ function Checkboxes({ annotationBuckets, turnIdx, askReason, annotations, onUpda
                 oldAnnotations[annotationBuckets[c].value] = newVal;
                 onUpdateAnnotations(oldAnnotations);
               }} 
+              disabled={!enabled}
             />
             <span style={{ marginRight: '15px' }}>
               {annotationBuckets[c].name}
