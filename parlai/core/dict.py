@@ -694,21 +694,6 @@ class DictionaryAgent(Agent):
         assert len(self.freq) == len(self.ind2tok) == len(self.tok2ind)
         return sorted_pairs
 
-    def parse(self, txt_or_vec, vec_type=list):
-        """
-        Parse either text or a vector of indices.
-
-        Calls `~txt2vec` if `txt_or_vec is a string, or `~vec2txt` otherwise.
-
-        :param vec_type:
-            type of the returned vector if the input is a string.
-        """
-        # TODO: try to deprecate this, preferring straight txt2vec
-        if type(txt_or_vec) == str:
-            return self.txt2vec(txt_or_vec, vec_type)
-        else:
-            return self.vec2txt(txt_or_vec)
-
     def txt2vec(self, text, vec_type=list):
         """
         Convert a string to a vector (list of ints).
