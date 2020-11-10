@@ -152,17 +152,17 @@ class TestDictionary(unittest.TestCase):
         dictionary.act()
         assert len(dictionary) - num_builtin == 2
 
-        vec = dictionary.txt2vec('hello world')
+        vec = dictionary.parse('hello world')
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
-        vec = dictionary.txt2vec('hello world', vec_type=list)
+        vec = dictionary.parse('hello world', vec_type=list)
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
-        vec = dictionary.txt2vec('hello world', vec_type=tuple)
+        vec = dictionary.parse('hello world', vec_type=tuple)
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
