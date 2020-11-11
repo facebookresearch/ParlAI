@@ -20,7 +20,6 @@ except ImportError:
     )
 
 SPECIAL_TOKENS = {"bos_token": "<bos>", "eos_token": "<eos>", "pad_token": "<pad>"}
-DIALOGPT_PAD_TOKEN = "<pad>"
 NO_OP = "x"
 
 
@@ -125,13 +124,6 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
 
 
 class DialoGPTDictionaryAgent(Gpt2DictionaryAgent):
-    def _define_special_tokens(self, opt):
-        super()._define_special_tokens(opt)
-        if not opt["add_special_tokens"]:
-            # the original pad token '|<endoftext>|' has another usage in global history end token.
-            self.tokenizer.add_special_tokens({"pad_token": DIALOGPT_PAD_TOKEN})
-            self.null_token = DIALOGPT_PAD_TOKEN
-
     def get_tokenizer(self, opt):
         """
         Instantiate tokenizer.

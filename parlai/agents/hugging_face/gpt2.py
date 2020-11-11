@@ -108,6 +108,7 @@ class GPT2Decoder(torch.nn.Module):
             model_input = input[:, -1:]
             attention_mask = torch.cat([encoder_state, input], dim=-1) != self.NULL_IDX
 
+        model_input = model_input.clamp_(min=0)
         transformer_outputs = self.transformer(
             model_input,
             past=incr_state,

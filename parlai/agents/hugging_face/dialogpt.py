@@ -26,6 +26,12 @@ class DialoGPTDecoder(GPT2Decoder):
     This decoder is initialized with the pretrained model from Hugging Face.
     """
 
+    def __init__(self, opt, dict):
+        super().__init__(opt, dict)
+        if opt.get('batchsize', 1) == 1 and self.END_IDX == self.NULL_IDX:
+            # get around the dual usage of end_idx that would otherwise mask endtoken during forward pass.
+            self.NULL_IDX = -1
+
     def _init_from_pretrained(self, opt):
         # load model
         model_sz = opt['gpt2_size']
