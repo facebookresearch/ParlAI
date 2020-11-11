@@ -50,10 +50,6 @@ class SharedTurnAnnotationsTaskState(SharedParlAITaskState):
     context_generator: Optional[Any] = None
 
 
-# annotations_intro => annotation_question
-# task_description_path => task_description_file
-
-
 @dataclass
 class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
     _blueprint_type: str = BLUEPRINT_TYPE
@@ -161,6 +157,9 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
             "in order to override the parlai parser defaults."
         },
     )
+
+
+# TODO make an AgentState for this blueprint that will save/load data in the expected formats.
 
 
 @register_mephisto_abstraction()
