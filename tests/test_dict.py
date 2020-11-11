@@ -404,7 +404,6 @@ class TestByteLevelBPE(unittest.TestCase):
             dict_tokenizer='bytelevelbpe',
             bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
             bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
-            hf_skip_special_tokens=False,
         )
         opt = parser.parse_args([])
 
@@ -544,3 +543,62 @@ class TestGpt2HFInterop(unittest.TestCase):
             agent.txt2vec(u'Hello, ParlAI! \U0001f600'),
             [agent.tok2ind[w] for w in ['\\xc4\\xa0'] + slow_bytelevel_bpe_RESULT],
         )
+
+
+class SpecialTokenTests(unittest.TestCase):
+    """
+    Test special tokens tokenization.
+    """
+
+    def _run_specialtok_test(self, **kwargs):
+        for special_token in ['SPECIAL TOKENS', '[SPECIAL; TOKENS]']:
+            with testing_utils.tempdir() as tmpdir:
+                if 'dict_file' not in kwargs:
+                    kwargs['dict_file'] = os.path.join(tmpdir, 'dict')
+                string = f"This is a test of {special_token}"
+                parser = ParlaiParser(False, False)
+                DictionaryAgent.add_cmdline_args(parser)
+                opt = parser.parse_kwargs(**kwargs)
+                da = DictionaryAgent(opt)
+                before = da.tokenize(string)
+                da.add_additional_special_tokens([special_token])
+                after = da.tokenize(string)
+                assert before != after
+                assert len(before) > len(after)
+                assert after[-1] == special_token
+                assert before[:5] == after[:5]
+                if opt['dict_tokenizer'] in (
+                    'bytelevelbpe',
+                    'gpt2',
+                    'slow_bytelevel_bpe',
+                ):
+                    # we need to let the dictionary handle the tokenid mappings
+                    assert da.vec2txt(da.txt2vec(string)) == string
+
+    def test_specialtok_slow_bytelevel_bpe(self):
+        self._run_specialtok_test(
+            dict_tokenizer="slow_bytelevel_bpe", dict_file="zoo:blender/dict_3B/dict"
+        )
+
+    @unittest.skipUnless(TOKENIZERS, "No tokenizers available")
+    def test_specialtok_bytelevelbpe(self):
+        self._run_specialtok_test(
+            dict_tokenizer="bytelevelbpe", dict_file="zoo:blender/dict_3B/dict"
+        )
+
+    def test_specialtok_gpt2(self):
+        self._run_specialtok_test(dict_tokenizer="gpt2")
+
+    def test_specialtok_re(self):
+        self._run_specialtok_test(dict_tokenizer='re')
+
+    def test_specialtok_space(self):
+        self._run_specialtok_test(dict_tokenizer='space')
+
+    def test_specialtok_split(self):
+        self._run_specialtok_test(dict_tokenizer='split')
+
+    def test_specialtok_nonsupport(self):
+        for tokenizer in ["bpe"]:
+            with self.assertRaises(NotImplementedError):
+                self._run_specialtok_test(dict_tokenizer=tokenizer)
