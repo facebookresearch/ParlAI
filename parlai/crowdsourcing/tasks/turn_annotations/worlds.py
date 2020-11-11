@@ -413,6 +413,7 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             )
 
     def save_data(self):
+        # TODO revisit with agent states
         convo_finished = True
         bad_workers = []
         if (
