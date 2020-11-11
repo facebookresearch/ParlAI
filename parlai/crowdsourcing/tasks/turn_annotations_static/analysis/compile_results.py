@@ -24,7 +24,6 @@ class TurnAnnotationsStaticResultsCompiler:
     """
 
     PROBLEM_BUCKETS = ['bucket_0', 'bucket_1', 'bucket_2', 'bucket_3', 'bucket_4']
-    EXTENDED_PROBLEM_BUCKETS = PROBLEM_BUCKETS + ['any_problem']
 
     NUM_SUBTASKS = 7
     LIVE_ONBOARDING_IS_LAST_SUBTASK = True
@@ -39,7 +38,7 @@ class TurnAnnotationsStaticResultsCompiler:
     def parse_args(cls):
         parser = argparse.ArgumentParser()
         parser.add_argument(
-            '--results-paths',
+            '--results-folders',
             type=str,
             help='Comma-separated list of result folders (example: "/basefolder/mephisto/data/runs/NO_PROJECT/123")',
         )
@@ -63,7 +62,7 @@ class TurnAnnotationsStaticResultsCompiler:
     def __init__(self, opt: Optional[Dict[str, Any]] = None):
         if opt is None:
             opt = {}
-        self.results_folders = opt.get('results_folders')
+        self.results_folders = opt.get('results_folders').split(',')
         self.output_folder = opt.get('output_folder')
         self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
         self.gold_annotations_file = opt.get('gold_annotations_file')
@@ -353,7 +352,12 @@ class TurnAnnotationsStaticResultsCompiler:
         utterance_ids = bot_only_df['utterance_id'].unique()
         print(f'Number of unique utterance_ids: {len(utterance_ids)}.')
 
-        for k in self.EXTENDED_PROBLEM_BUCKETS:
+        if 'any_problem' in summed_df:
+            # We've computed a column marking if any problem exists, so include this
+            extended_problem_buckets = self.PROBLEM_BUCKETS + ['any_problem']
+        else:
+            extended_problem_buckets = self.PROBLEM_BUCKETS
+        for k in extended_problem_buckets:
             one_annotator = len(summed_df[summed_df[k] == 1])
             two_annotators = len(summed_df[summed_df[k] == 2])
             three_annotators = len(summed_df[summed_df[k] >= 3])
