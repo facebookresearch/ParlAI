@@ -62,7 +62,10 @@ class TurnAnnotationsStaticResultsCompiler:
     def __init__(self, opt: Optional[Dict[str, Any]] = None):
         if opt is None:
             opt = {}
-        self.results_folders = opt.get('results_folders').split(',')
+        if 'results_folders' in opt:
+            self.results_folders = opt['results_folders'].split(',')
+        else:
+            self.results_folders = None
         self.output_folder = opt.get('output_folder')
         self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
         self.gold_annotations_file = opt.get('gold_annotations_file')
