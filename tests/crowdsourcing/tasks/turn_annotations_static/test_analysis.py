@@ -79,11 +79,9 @@ class TestAnalysis(unittest.TestCase):
 
             # Run compilation of results
             opt = {
-                'results_folders': [
-                    os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
-                    )
-                ],
+                'results_folders': os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
+                ),
                 'output_folder': tmpdir,
                 'onboarding_in_flight_data_file': os.path.join(
                     analysis_config_folder, 'onboarding_in_flight.jsonl'
@@ -91,7 +89,10 @@ class TestAnalysis(unittest.TestCase):
                 'gold_annotations_file': temp_gold_annotations_path,
             }
             with testing_utils.capture_output() as output:
-                TurnAnnotationsStaticResultsCompiler(opt).compile_results()
+                compiler = TurnAnnotationsStaticResultsCompiler(opt)
+                compiler.NUM_SUBTASKS = 3
+                compiler.NUM_ANNOTATIONS = 2
+                compiler.compile_results()
                 actual_stdout = output.getvalue()
 
                 # Check the output against what it should be
