@@ -13,7 +13,6 @@ import unittest
 
 import pandas as pd
 
-from parlai.crowdsourcing.tasks.turn_annotations_static.run import TASK_DIRECTORY
 from parlai.crowdsourcing.tasks.turn_annotations_static.analysis.compile_results import (
     TurnAnnotationsStaticResultsCompiler,
 )
@@ -35,6 +34,9 @@ class TestAnalysis(unittest.TestCase):
             # Define desired stdout
 
             # Paths
+            analysis_config_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'analysis_config'
+            )
             temp_gold_annotations_path = os.path.join(tmpdir, 'gold_annotations.json')
 
             # Save a file of gold annotations
@@ -84,7 +86,7 @@ class TestAnalysis(unittest.TestCase):
                 ],
                 'output_folder': tmpdir,
                 'onboarding_in_flight_data_file': os.path.join(
-                    TASK_DIRECTORY, 'task_config/onboarding_in_flight.jsonl'
+                    analysis_config_folder, 'onboarding_in_flight.jsonl'
                 ),
                 'gold_annotations_file': temp_gold_annotations_path,
             }
@@ -103,8 +105,7 @@ I AM OBVIOUSLY WRONG\
 
             # Check that the saved results file is what it should be
             desired_results_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                'analysis_outputs/desired_results.csv',
+                analysis_config_folder, 'desired_results.csv'
             )
             desired_results = pd.read_csv(desired_results_path)
             actual_results_path = [obj for obj in os.listdir(tmpdir)][0]
