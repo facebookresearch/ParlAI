@@ -21,6 +21,15 @@ import re
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 from typing import List
+import enum
+
+
+class TokenizationMode(enum.Enum):
+    TRAIN_TIME_TEXT = 0
+    TRAIN_TIME_LABEL = 1
+    TEST_TIME_TEXT = 2
+    TEST_TIME_LABEL = 3
+
 
 RETOK = re.compile(r'\w+|[^\w\s]|\n', re.UNICODE)
 
@@ -234,6 +243,9 @@ class DictionaryAgent(Agent):
         self.textfields = opt.get(
             'dict_textfields', DictionaryAgent.default_textfields
         ).split(",")
+
+        # used to signal whether we should use training time tricks, like bpe droput
+        self._tokenization_mode = TokenizationMode.TEST_TIME_LABEL
 
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
@@ -663,7 +675,7 @@ class DictionaryAgent(Agent):
         with PathManager.open(filename + '.opt', 'w', encoding='utf-8') as handle:
             json.dump(self.opt, handle, indent=4)
         # save the byte level bpe model file as well
-        if self.tokenizer == 'bytelevelbpe':
+        if self.tokenizer == 'bytelevelbpe' or self.tokenizer == 'slow_bytelevel_bpe':
             # This saves filename-vocab.json and filename-merges.txt as
             # hugging face tokenizer does
             self.bpe.save(os.path.dirname(filename), os.path.basename(filename))
@@ -701,6 +713,21 @@ class DictionaryAgent(Agent):
             self.resize_to_max(self.maxtokens)
         assert len(self.freq) == len(self.ind2tok) == len(self.tok2ind)
         return sorted_pairs
+
+    def parse(self, txt_or_vec, vec_type=list):
+        """
+        Parse either text or a vector of indices.
+
+        Calls `~txt2vec` if `txt_or_vec is a string, or `~vec2txt` otherwise.
+
+        :param vec_type:
+            type of the returned vector if the input is a string.
+        """
+        # TODO: try to deprecate this, preferring straight txt2vec
+        if type(txt_or_vec) == str:
+            return self.txt2vec(txt_or_vec, vec_type)
+        else:
+            return self.vec2txt(txt_or_vec)
 
     def txt2vec(self, text, vec_type=list):
         """
@@ -791,3 +818,22 @@ class DictionaryAgent(Agent):
         Return string representation of frequencies in dictionary.
         """
         return str(self.freq)
+
+    def set_tokenization_mode(self, mode: TokenizationMode):
+        """
+        Indicate what "kind" of tokenization is being done.
+
+        This can be Training Time / Testing Time, and it can be over
+        context or labels.
+
+        This is used to signal from TorchAgent to the dict that it's allowed
+        to enable things like BPE dropout. It is NOT used to indicate whether
+        the dictionary itself is in training time.
+
+        Use True for training time, False for not.
+        """
+        self._context_mode = mode
+        if hasattr(self, 'bpe'):
+            # enable bpe dropout only in texts at training time. disable all
+            # other times
+            self.bpe.enable_bpe_dropout(mode == TokenizationMode.TRAIN_TIME_TEXT)

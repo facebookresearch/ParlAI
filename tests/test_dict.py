@@ -11,7 +11,7 @@ Dictionary testing.
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import find_ngrams
 from parlai.core.params import ParlaiParser
-from parlai.core.dict import DictionaryAgent
+from parlai.core.dict import DictionaryAgent, TokenizationMode
 from parlai.core.opt import Opt
 import parlai.scripts.build_dict as build_dict
 
@@ -152,17 +152,17 @@ class TestDictionary(unittest.TestCase):
         dictionary.act()
         assert len(dictionary) - num_builtin == 2
 
-        vec = dictionary.txt2vec('hello world')
+        vec = dictionary.parse('hello world')
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
-        vec = dictionary.txt2vec('hello world', vec_type=list)
+        vec = dictionary.parse('hello world', vec_type=list)
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
 
-        vec = dictionary.txt2vec('hello world', vec_type=tuple)
+        vec = dictionary.parse('hello world', vec_type=tuple)
         assert len(vec) == 2
         assert vec[0] == num_builtin
         assert vec[1] == num_builtin + 1
@@ -602,3 +602,40 @@ class SpecialTokenTests(unittest.TestCase):
         for tokenizer in ["bpe"]:
             with self.assertRaises(NotImplementedError):
                 self._run_specialtok_test(dict_tokenizer=tokenizer)
+
+
+class TestBpeDropout(unittest.TestCase):
+    def _test_bpe_dropout(self, **dict_args):
+        pp = ParlaiParser(False, False)
+        DictionaryAgent.add_cmdline_args(pp)
+        opt = pp.parse_kwargs(bpe_dropout=0.5, **dict_args)
+        da = DictionaryAgent(opt)
+        da.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
+        s = (
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+            "Donec vitae metus sollicitudin, ullamcorper tortor ut, rhoncus lacus. "
+            "Praesent sollicitudin commodo turpis, ut pharetra tortor gravida nec."
+        )
+        no_dropout = da.txt2vec(s)
+        da.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
+        not_the_same = 0
+        for _ in range(30):
+            r = da.txt2vec(s)
+            assert da.vec2txt(r) == s
+            if r != no_dropout:
+                not_the_same += 1
+        assert not_the_same > 0
+
+    def test_gpt2_bpe_dropout(self):
+        self._test_bpe_dropout(dict_tokenizer='gpt2')
+
+    def test_slowbytelevel_dropout(self):
+        self._test_bpe_dropout(
+            dict_tokenizer="slow_bytelevel_bpe", dict_file="zoo:blender/dict_3B/dict"
+        )
+
+    def test_bytelevelbpe_dropout(self):
+        with self.assertRaises(NotImplementedError):
+            self._test_bpe_dropout(
+                dict_tokenizer="bytelevelbpe", dict_file="zoo:blender/dict_3B/dict"
+            )
