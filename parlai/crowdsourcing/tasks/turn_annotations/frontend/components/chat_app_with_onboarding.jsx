@@ -141,6 +141,11 @@ function CustomOnboardingChatApp({
     }
   }, [isOnboarding, agentStatus]);
 
+  React.useEffect(() => {
+    // clear messages when onboarding changes status
+    addMessage(false);
+  }, [isOnboarding])
+
   const handleMessageSend = React.useCallback(
     (message) => {
       message = {
@@ -175,7 +180,9 @@ function CustomOnboardingChatApp({
       onboardingData={taskConfig.onboarding_data} 
       annotationBuckets={taskConfig.annotation_buckets} 
       annotationQuestion={taskConfig.annotation_question} 
-      onSubmit={(dat) => handleMessageSend({text: '', task_data: dat})} 
+      onSubmit={(dat) => {
+        handleMessageSend({text: '', task_data: dat});
+      }} 
     />;
   }
 

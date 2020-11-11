@@ -171,7 +171,7 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes}) {
 function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
   
   const lastMessageIdx = appSettings.numMessages - 1;
-  const lastMessageAnnotations = appSettings.checkboxValues[currLastMessageIdx];
+  const lastMessageAnnotations = appSettings.checkboxValues[lastMessageIdx];
   
   const computedActive = hasAnyAnnotations(lastMessageAnnotations) & active;
   
@@ -181,7 +181,7 @@ function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
         onMessageSend={onMessageSend}
         taskConfig={taskConfig}
         active={computedActive}
-        currentCheckboxes={currentCheckboxes}
+        currentCheckboxes={lastMessageAnnotations}
       />
     );
   } else {
@@ -189,7 +189,7 @@ function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
       <CheckboxTextResponse 
         onMessageSend={onMessageSend}
         active={computedActive}
-        currentCheckboxes={currentCheckboxes}
+        currentCheckboxes={lastMessageAnnotations}
       />
     );
   }
