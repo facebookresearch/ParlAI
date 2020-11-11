@@ -23,7 +23,14 @@ class TurnAnnotationsStaticResultsCompiler:
     you are asking crowdsource workers to annotate with.
     """
 
-    PROBLEM_BUCKETS = ['bucket_0', 'bucket_1', 'bucket_2', 'bucket_3', 'bucket_4']
+    PROBLEM_BUCKETS = [
+        'bucket_0',
+        'bucket_1',
+        'bucket_2',
+        'bucket_3',
+        'bucket_4',
+        'none_all_good',
+    ]
 
     NUM_SUBTASKS = 7
     LIVE_ONBOARDING_IS_LAST_SUBTASK = True
@@ -368,9 +375,10 @@ class TurnAnnotationsStaticResultsCompiler:
                 one_annotator + two_annotators + three_annotators
             )
             total_utterances = len(summed_df[k])
-            print(
-                f'Bucket: {k}, total unique problem utterances: {total_problem_annotations} ({total_problem_annotations/total_utterances:.1%} of all), one annotator: {one_annotator} ({one_annotator/total_problem_annotations:.1%}), two_annotators: {two_annotators} ({two_annotators/total_problem_annotations:.1%}), three+ annotators: {three_annotators} ({three_annotators/total_problem_annotations:.1%})'
-            )
+            if total_problem_annotations > 0:
+                print(
+                    f'Bucket: {k}, total unique problem utterances: {total_problem_annotations} ({total_problem_annotations/total_utterances:.1%} of all), one annotator: {one_annotator} ({one_annotator/total_problem_annotations:.1%}), two_annotators: {two_annotators} ({two_annotators/total_problem_annotations:.1%}), three+ annotators: {three_annotators} ({three_annotators/total_problem_annotations:.1%})'
+                )
 
     def _problem_bucket_specific_filtering(
         self, bot_only_df: pd.DataFrame

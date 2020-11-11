@@ -16,7 +16,7 @@
       {"turn_idx": 2, "text": "Line 2/0/2", "agent_idx": 0, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null, "none_all_good": null},
       {"turn_idx": 3, "text": "Line 2/0/3", "agent_idx": 1, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null, "none_all_good": null},
       {"turn_idx": 4, "text": "Line 2/0/4", "agent_idx": 0, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null, "none_all_good": null},
-      {"turn_idx": 5, "text": "Line 2/0/5", "agent_idx": 1, "bucket_0": false, "bucket_1": true, "bucket_2": true, "bucket_3": false, "bucket_4": false, "none_all_good": false, "input_reason": ""}
+      {"turn_idx": 5, "text": "Line 2/0/5", "agent_idx": 1, "bucket_0": false, "bucket_1": true, "bucket_2": true, "bucket_3": false, "bucket_4": false, "none_all_good": true, "input_reason": ""}
     ]},
   {"subtask_index": 1, "data": [
       {"turn_idx": 0, "text": "Line 2/1/0", "agent_idx": 0, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null, "none_all_good": null},

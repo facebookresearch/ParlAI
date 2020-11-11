@@ -91,29 +91,61 @@ class TestAnalysis(unittest.TestCase):
             with testing_utils.capture_output() as output:
                 compiler = TurnAnnotationsStaticResultsCompiler(opt)
                 compiler.NUM_SUBTASKS = 3
-                compiler.NUM_ANNOTATIONS = 2
+                compiler.NUM_ANNOTATIONS = 3
                 compiler.compile_results()
                 actual_stdout = output.getvalue()
 
-                # Check the output against what it should be
-                desired_stdout = f"""\
-I AM OBVIOUSLY WRONG\
+            # Check the output against what it should be
+            desired_stdout = f"""\
+Got 4 folders to read.
+Average task completion time (seconds) was: 300.0
+Returning master dataframe with 48 annotations.
+Dropped 1 inconsistently annotated utterances (none_all_good and a problem bucket). Now have 7 utterances.
+Removed 1 that did not have annotations by 3 workers. 6 annotations remaining.
+summed_df has length 2; bot_only_df: 4
+Number of unique utterance_ids: 2.
+Bucket: bucket_0, total unique problem utterances: 1 (50.0% of all), one annotator: 1 (100.0%), two_annotators: 0 (0.0%), three+ annotators: 0 (0.0%)
+Bucket: bucket_4, total unique problem utterances: 1 (50.0% of all), one annotator: 0 (0.0%), two_annotators: 1 (100.0%), three+ annotators: 0 (0.0%)
+Bucket: none_all_good, total unique problem utterances: 1 (50.0% of all), one annotator: 1 (100.0%), two_annotators: 0 (0.0%), three+ annotators: 0 (0.0%)
+Bucket: any_problem, total unique problem utterances: 2 (100.0% of all), one annotator: 1 (50.0%), two_annotators: 1 (50.0%), three+ annotators: 0 (0.0%)
+Got 4 utterances with gold annotations. Found 8 utterances matching gold annotations from DataFrame.
+Average agreement with 4 total gold utterances annotated was:
+bucket_0: 91.7% (0 gold problem samples)
+bucket_1: 100.0% (1 gold problem samples)
+bucket_2: 75.0% (0 gold problem samples)
+bucket_3: 91.7% (0 gold problem samples)
+bucket_4: 100.0% (2 gold problem samples)
+none_all_good: 58.3% (1 gold problem samples)
+Average agreement problem samples only with 4 total gold utterances annotated was:
+bucket_0: nan% (0 gold problem samples)
+bucket_1: 100.0% (1 gold problem samples)
+bucket_2: nan% (0 gold problem samples)
+bucket_3: nan% (0 gold problem samples)
+bucket_4: 100.0% (2 gold problem samples)
+none_all_good: 33.3% (1 gold problem samples)
+Calculating agreement on 8 annotations.
+Fleiss' kappa for bucket_0 is: -0.40984877859635516.
+Fleiss' kappa for bucket_1 is: -0.3846153846153846.
+Fleiss' kappa for bucket_2 is: -0.3846153846153846.
+Fleiss' kappa for bucket_3 is: -0.40984877859635516.
+Fleiss' kappa for bucket_4 is: -0.3797909407665505.
+Fleiss' kappa for none_all_good is: -0.40984877859635516.\
 """
-            import pdb
-
-            pdb.set_trace()
-            self.assertEqual(actual_stdout, desired_stdout)
+            actual_stdout_lines = actual_stdout.split('\n')
+            for desired_line in desired_stdout.split('\n'):
+                self.assertTrue(desired_line in actual_stdout_lines)
 
             # Check that the saved results file is what it should be
             desired_results_path = os.path.join(
                 analysis_config_folder, 'desired_results.csv'
             )
-            desired_results = pd.read_csv(desired_results_path)
-            actual_results_path = [obj for obj in os.listdir(tmpdir)][0]
-            actual_results = pd.read_csv(actual_results_path)
-            import pdb
-
-            pdb.set_trace()
+            desired_results = pd.read_csv(desired_results_path).drop('folder', axis=1)
+            # Drop the 'folder' column, which contains a system-dependent path string
+            actual_results_rel_path = [
+                obj for obj in os.listdir(tmpdir) if obj.startswith('results')
+            ][0]
+            actual_results_path = os.path.join(tmpdir, actual_results_rel_path)
+            actual_results = pd.read_csv(actual_results_path).drop('folder', axis=1)
             self.assertTrue(actual_results.equals(desired_results))
 
 
