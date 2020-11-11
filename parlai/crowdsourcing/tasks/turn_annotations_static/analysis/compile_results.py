@@ -393,8 +393,8 @@ class TurnAnnotationsStaticResultsCompiler:
             bot_only_df[non_none_problem_buckets[0]] + bot_only_df['none_all_good']
         ) < 2
         for bucket in non_none_problem_buckets[1:]:
-            is_consistent = (
-                is_consistent & (bot_only_df[bucket] + bot_only_df['none_all_good']) < 2
+            is_consistent = is_consistent & (
+                (bot_only_df[bucket] + bot_only_df['none_all_good']) < 2
             )
         bot_only_df['is_consistent'] = is_consistent
         bot_only_df = bot_only_df[bot_only_df['is_consistent']]
