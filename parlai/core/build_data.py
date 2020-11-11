@@ -236,7 +236,7 @@ def remove_dir(path):
     shutil.rmtree(path, ignore_errors=True)
 
 
-def untar(path, fname, delete=True, flatten=False):
+def untar(path, fname, delete=True, flatten_tar=False):
     """
     Unpack the given archive file to the same directory.
 
@@ -250,9 +250,9 @@ def untar(path, fname, delete=True, flatten=False):
         If true, the archive will be deleted after extraction.
     """
     if ".zip" in fname:
-        return _unzip(path, fname, delete=delete, flatten=flatten)
+        return _unzip(path, fname, delete=delete)
     else:
-        return _untar(path, fname, delete=delete, flatten=flatten)
+        return _untar(path, fname, delete=delete, flatten=flatten_tar)
 
 
 def _untar(path, fname, delete=True, flatten=False):
@@ -441,7 +441,7 @@ def download_models(
                 url = path + '/' + fname
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
-                untar(dpath, fname, flatten=flatten_tar)
+                untar(dpath, fname, flatten_tar=flatten_tar)
         # Mark the data as built.
         mark_done(dpath, version)
 
