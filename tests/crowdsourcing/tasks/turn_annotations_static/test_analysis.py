@@ -132,17 +132,13 @@ Fleiss' kappa for bucket_4 is: -0.380.
 Fleiss' kappa for none_all_good is: -0.410.\
 """
             actual_stdout_lines = actual_stdout.split('\n')
-            all_lines_found = True
             for desired_line in desired_stdout.split('\n'):
-                self.assertTrue(
-                    desired_line in actual_stdout_lines,
-                    f'\n\tThe following line was not found in the actual stdout: '
-                    f'{desired_line}',
-                )
                 if desired_line not in actual_stdout_lines:
-                    all_lines_found = False
-            if not all_lines_found:
-                print(f'\n\n\tActual stdout:\n{actual_stdout}')
+                    raise ValueError(
+                        desired_line in actual_stdout_lines,
+                        f'\n\tThe following line:\n\n{desired_line}\n\n\twas not found '
+                        f'in the actual stdout:\n\n{actual_stdout}',
+                    )
 
             # Check that the saved results file is what it should be
             desired_results_path = os.path.join(
@@ -155,12 +151,10 @@ Fleiss' kappa for none_all_good is: -0.410.\
             ][0]
             actual_results_path = os.path.join(tmpdir, actual_results_rel_path)
             actual_results = pd.read_csv(actual_results_path).drop('folder', axis=1)
-            with open(actual_results_path) as f:
-                actual_results_text = '\n'.join(f.readlines())
-            self.assertTrue(
-                actual_results.equals(desired_results),
-                f'\n\n\tActual results:\n{actual_results_text}',
-            )
+            if not actual_results.equals(desired_results):
+                with open(actual_results_path) as f:
+                    actual_results_text = '\n'.join(f.readlines())
+                raise ValueError(f'\n\n\tActual results:\n{actual_results_text}')
 
 
 if __name__ == "__main__":
