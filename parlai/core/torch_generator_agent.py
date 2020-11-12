@@ -55,7 +55,7 @@ except ImportError:
     nltkbleu = None
 
 try:
-    from fairseq import bleu as fairseq_bleu
+    from fairseq.scoring import bleu as fairseq_bleu
 
 except ImportError:
     fairseq_bleu = None
