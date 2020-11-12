@@ -98,7 +98,7 @@ class TestAnalysis(unittest.TestCase):
             # Check the output against what it should be
             desired_stdout = f"""\
 Got 4 folders to read.
-Average task completion time (seconds) was: 300.0
+Average task completion time (seconds) was: 187.5
 Returning master dataframe with 48 annotations.
 Dropped 1 inconsistently annotated utterances (none_all_good and a problem bucket). Now have 7 utterances.
 Removed 1 that did not have annotations by 3 workers. 6 annotations remaining.
@@ -135,9 +135,8 @@ Fleiss' kappa for none_all_good is: -0.410.\
             for desired_line in desired_stdout.split('\n'):
                 if desired_line not in actual_stdout_lines:
                     raise ValueError(
-                        desired_line in actual_stdout_lines,
                         f'\n\tThe following line:\n\n{desired_line}\n\n\twas not found '
-                        f'in the actual stdout:\n\n{actual_stdout}',
+                        f'in the actual stdout:\n\n{actual_stdout}'
                     )
 
             # Check that the saved results file is what it should be

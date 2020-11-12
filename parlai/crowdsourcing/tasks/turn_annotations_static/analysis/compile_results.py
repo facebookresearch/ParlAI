@@ -218,7 +218,6 @@ class TurnAnnotationsStaticResultsCompiler:
 
         conversations = []
         task_completion_times = []
-        task_completion_time_seconds = None
         for dp in all_data_paths:
             # Read in file
             with open(os.path.join(dp), 'rb') as f:
@@ -273,7 +272,6 @@ class TurnAnnotationsStaticResultsCompiler:
                 subtask_data['qc_success_pct'] = qc_success_pct
                 conversations.append(subtask_data)
 
-        if task_completion_time_seconds:
             task_completion_times.append(task_completion_time_seconds)
 
         if len(task_completion_times) > 0:
