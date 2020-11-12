@@ -124,12 +124,12 @@ bucket_3: nan% (0 gold problem samples)
 bucket_4: 100.0% (2 gold problem samples)
 none_all_good: 33.3% (1 gold problem samples)
 Calculating agreement on 8 annotations.
-Fleiss' kappa for bucket_0 is: -0.40984877859635516.
-Fleiss' kappa for bucket_1 is: -0.3846153846153846.
-Fleiss' kappa for bucket_2 is: -0.3846153846153846.
-Fleiss' kappa for bucket_3 is: -0.40984877859635516.
-Fleiss' kappa for bucket_4 is: -0.3797909407665505.
-Fleiss' kappa for none_all_good is: -0.40984877859635516.\
+Fleiss' kappa for bucket_0 is: -0.410.
+Fleiss' kappa for bucket_1 is: -0.385.
+Fleiss' kappa for bucket_2 is: -0.385.
+Fleiss' kappa for bucket_3 is: -0.410.
+Fleiss' kappa for bucket_4 is: -0.380.
+Fleiss' kappa for none_all_good is: -0.410.\
 """
             actual_stdout_lines = actual_stdout.split('\n')
             all_lines_found = True

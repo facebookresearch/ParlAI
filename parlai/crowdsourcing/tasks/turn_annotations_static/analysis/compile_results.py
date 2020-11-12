@@ -278,7 +278,8 @@ class TurnAnnotationsStaticResultsCompiler:
 
         if len(task_completion_times) > 0:
             print(
-                f'Average task completion time (seconds) was: {np.average(task_completion_times)}'
+                f'Average task completion time (seconds) was: '
+                f'{np.average(task_completion_times):0.1f}'
             )
 
         if len(conversations) == 0:
@@ -504,7 +505,7 @@ class TurnAnnotationsStaticResultsCompiler:
             except Exception as exc:
                 print(f'Exception calculating Fleiss Kappa: {exc}. Skipping.')
                 continue
-            print(f'Fleiss\' kappa for {pb} is: {fleiss_kappa}.')
+            print(f'Fleiss\' kappa for {pb} is: {fleiss_kappa:0.3f}.')
 
     def compute_fleiss_kappa(
         self, df: pd.DataFrame, categories: list, number_of_raters: int
