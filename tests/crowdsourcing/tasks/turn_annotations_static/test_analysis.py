@@ -155,10 +155,11 @@ Fleiss' kappa for none_all_good is: -0.40984877859635516.\
             ][0]
             actual_results_path = os.path.join(tmpdir, actual_results_rel_path)
             actual_results = pd.read_csv(actual_results_path).drop('folder', axis=1)
-            self.assertTrue(
-                actual_results.equals(desired_results),
-                f'Actual results:\n{actual_results}',
-            )
+            self.assertTrue(actual_results.equals(desired_results))
+            if not actual_results.equals(desired_results):
+                with open(actual_results_path) as f:
+                    actual_results_text = '\n'.join(f.readlines())
+                print(f'\n\n\tActual results:\n{actual_results_text}')
 
 
 if __name__ == "__main__":
