@@ -8,6 +8,7 @@ from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.utils.io import PathManager
 import parlai.tasks.md_gender.utils as gend_utils
+import parlai.utils.logging as logging
 
 from copy import deepcopy
 import os
@@ -41,6 +42,7 @@ class YelpTeacher(FixedDialogTeacher):
 
     def _check_data_downloaded(self, opt):
         # Checks whether the data is downloaded properly
+        # Also checks whether data is built, and builds it if so
         RESET = '\033[0m'
         RED = '\033[1;91m'
         YELLOW = '\033[1;93m'
@@ -63,7 +65,9 @@ class YelpTeacher(FixedDialogTeacher):
         self.data_path = os.path.join(opt['datapath'], 'md_gender', 'yelp')
         if not os.path.exists(self.data_path):
             PathManager.mkdirs(self.data_path)
-        if not PathManager.exists(os.path.join(self.data_path, 'classtrain.txt')):
+        if not PathManager.exists(
+            os.path.join(self.data_path, 'valid.fader.with_cat.40000')
+        ):
             raise RuntimeError(
                 f'\n\n{stars}\nThis data must be downloaded following instructions in '
                 'the README here:'
@@ -73,6 +77,45 @@ class YelpTeacher(FixedDialogTeacher):
                 'Once downloaded, please put the data in the following '
                 f'directory: \n{self.data_path}\n{stars}'
             )
+        elif not PathManager.exists(os.path.join(self.data_path, 'classtrain.txt')):
+            logging.info('[ Building data ... ]')
+            # build train
+            with open(os.path.join(self.data_path, 'classtrain.txt'), 'w') as f:
+                for fle_num in [4000, 6000, 8000]:
+                    train_fle = f'train.fader.with_cat.{fle_num}'
+                    with open(os.path.join(self.data_path, train_fle)) as g:
+                        lines = g.readlines()
+                        for line in lines:
+                            tabs = line.split('\t')
+                            text = tabs[0]
+                            gend = tabs[1]
+                            if gend == '0':
+                                f.write(f'male\t{text}\n')
+                            elif gend == '1':
+                                f.write(f'female\t{text}\n')
+
+            # build valid and test
+            for pair in [('dev', 'valid'), ('test', 'test')]:
+                with open(
+                    os.path.join(self.data_path, f'female_only.{pair[0]}.en'), 'w'
+                ) as fem_val:
+                    with open(
+                        os.path.join(self.data_path, f'male_only.{pair[0]}.en'), 'w'
+                    ) as masc_val:
+                        for fle_num in [4000, 6000, 8000]:
+                            valid_fle = f'{pair[1]}.fader.with_cat.{fle_num}'
+                            with open(
+                                os.path.join(self.data_path, valid_fle), 'r'
+                            ) as g:
+                                lines = g.readlines()
+                                for line in lines:
+                                    tabs = line.split('\t')
+                                    text = tabs[0]
+                                    gend = tabs[1]
+                                    if gend == '0':
+                                        masc_val.write(f'{text}\n')
+                                    elif gend == '1':
+                                        fem_val.write(f'{text}\n')
 
     def _load_gender_data(self, datatype):
         """
