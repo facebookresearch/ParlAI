@@ -108,7 +108,7 @@ commands:
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off transformers
-            python -m pip install --progress-bar off fairseq
+            python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
