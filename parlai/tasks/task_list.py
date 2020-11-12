@@ -1341,4 +1341,16 @@ task_list = [
         ),
         "links": {"arXiv": "https://arxiv.org/abs/2005.00614"},
     },
+    {
+        "id": "Sensitive Topics Evaluation Topics Valid Teacher",
+        "display_name": "Sensitive Topics Evaluation Topics Valid Teacher",
+        "task": "sensitive_topics_evaluation",
+        "tags": ["All"],
+        "description": (
+            "Task for evaluating a classifier trained to identify conversational messages "
+            "on the following sensitive topics: Politics, Drugs, Medical Advice, Religion, "
+            "Relationships & Dating / NSFW."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2010.07079"},
+    },
 ]

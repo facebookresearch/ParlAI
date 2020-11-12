@@ -13,6 +13,7 @@ from abc import ABC, abstractmethod
 from functools import lru_cache
 import json
 import os
+import random
 import re
 from typing import Dict, List, Optional, Set, Tuple
 from typing_extensions import final
@@ -107,6 +108,9 @@ class BPEHelper(ABC):
         self.opt = opt
         self.debug = opt.get('bpe_debug', False)
         self.add_prefix_space = opt.get('bpe_add_prefix_space', False)
+        self._special_tokens: Dict[str, int] = {}
+        self.bpe_dropout: Optional[float] = opt.get('bpe_dropout')
+        self._bpe_dropout_enabled = False
 
     @staticmethod
     def add_cmdline_args(argparser):
@@ -124,13 +128,18 @@ class BPEHelper(ABC):
             help='add prefix space before encoding',
         )
         parser.add_argument(
-            '--hf-skip-special-tokens',
-            hidden=True,
-            type='bool',
-            default=True,
-            help='do not decode special tokens with bytelevelbpe',
+            '--bpe-dropout',
+            type=float,
+            default=None,
+            help='Use BPE dropout during training.',
         )
         return parser
+
+    def enable_bpe_dropout(self, enabled: bool):
+        """
+        Used to toggle BPE dropout on (True) or off (False).
+        """
+        self._bpe_dropout_enabled = enabled
 
     @final
     def encode(self, text: str) -> List[str]:
@@ -147,6 +156,15 @@ class BPEHelper(ABC):
         :return tokens:
             A list of tokens
         """
+        for special_token in self._special_tokens.keys():
+            split = text.split(special_token)
+            if len(split) > 1:
+                output = []
+                for i, piece in enumerate(split):
+                    if i > 0:
+                        output.append(special_token)
+                    output += self.encode(piece)
+                return output
         if self.add_prefix_space and not isinstance(self, HuggingFaceBpeHelper):
             text = f' {text}'
         return self.helper_encode(text)
@@ -166,7 +184,9 @@ class BPEHelper(ABC):
         """
 
     @final
-    def decode(self, tokens: List[str], token_ids: List[int], delimiter: str) -> str:
+    def decode(
+        self, tokens: List[str], token_ids: List[int], delimiter: str = ' '
+    ) -> str:
         """
         Decode list of tokens into a text string.
 
@@ -182,12 +202,30 @@ class BPEHelper(ABC):
         :return text:
             decoded text
         """
-        text = delimiter.join(tokens)
-        if not self.debug:
-            text = self.helper_decode(tokens, token_ids, delimiter)
-            if self.add_prefix_space:
-                assert text.startswith(' ')
-                text = text.lstrip(' ')
+        if self.debug:
+            return delimiter.join(tokens)
+
+        for i, token in enumerate(tokens):
+            # note, HF ByteLevelBPE tokenizer handles special tokens itself in
+            # a special way, so this will be skipped
+            if token in self._special_tokens:
+                # special token found. to the left, we've already cleared
+                left = self.helper_decode(tokens[:i], token_ids[:i], delimiter)
+                # token itself is easy to map to a string
+                center = token
+                # to the right, there may stil be special tokens
+                right = self.decode(
+                    tokens[min(len(token_ids), i + 1) :],
+                    token_ids[min(len(token_ids), i + 1) :],
+                    delimiter,
+                )
+                return left + center + right
+
+        # no special tokens found, we can fall back
+        text = self.helper_decode(tokens, token_ids, delimiter)
+        if self.add_prefix_space:
+            assert text.startswith(' ')
+            text = text.lstrip(' ')
         return text
 
     @abstractmethod
@@ -218,6 +256,18 @@ class BPEHelper(ABC):
         :param dict_agent:
             agent with which we are syncing the dictionary
         """
+
+    def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        """
+        Add special tokens to the tokenizer.
+
+        These tokens are never split, and prioritized over the BPE tokenization.
+        """
+        # note, HF ByteLevelBPE tokenizer handles special tokens itself in
+        # a special way, so this will be skipped
+        for token in special_tokens:
+            # exploiting dictionaries' insertion ordering to emulate ordered sets
+            self._special_tokens[token] = 1
 
     def finalize(
         self, frequencies: Dict[str, int], num_symbols: int, minfreq: int
@@ -299,6 +349,11 @@ class SubwordBPEHelper(BPEHelper):
         self.codecs = f"{opt['dict_file']}.codecs"
         if PathManager.exists(self.codecs):
             self._load_from_codecs()
+
+    def add_special_tokens(self, dict_agent, special_tokens: List[str]):
+        raise NotImplementedError(
+            "--dict-tokenizer BPE does not support special tokens."
+        )
 
     def helper_encode(self, text: str) -> List[str]:
         """
@@ -570,14 +625,31 @@ class Gpt2BpeHelper(BPEHelper):
         :return pairs:
             set of tuples of symbols
         """
-        pairs = set()
+        pairs = []
         prev_char = word[0]
         for char in word[1:]:
-            pairs.add((prev_char, char))
+            pairs.append((prev_char, char))
             prev_char = char
         return pairs
 
-    @lru_cache(maxsize=10240)
+    def _dropout_pairs(self, pairs):
+        """
+        Implements BPE dropout (Provlikov et al., 2019).
+
+        https://arxiv.org/abs/1910.13267
+
+        Randomly removes merges from the list of possible merges. This can
+        result in different subwords being used to realized the same string,
+        and effectively regularizes representations.
+        """
+        if not self.bpe_dropout or not self._bpe_dropout_enabled:
+            return pairs
+
+        dropped_pairs = [p for p in pairs if random.random() > self.bpe_dropout]
+        if not dropped_pairs:
+            dropped_pairs = [random.choice(pairs)]
+        return dropped_pairs
+
     def bpe(self, token: str) -> str:
         """
         Convert token to BPE.
@@ -595,7 +667,10 @@ class Gpt2BpeHelper(BPEHelper):
             return token
 
         while True:
-            bigram = min(pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf')))
+            dropped_pairs = self._dropout_pairs(pairs)
+            bigram = min(
+                dropped_pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf'))
+            )
             if bigram not in self.bpe_ranks:
                 break
             first, second = bigram
@@ -716,7 +791,6 @@ class HuggingFaceBpeHelper(BPEHelper):
         # Default true for HF
         self.special_tok_map = {}  # map from HF
         self.add_prefix_space = opt.get('bpe_add_prefix_space', True)
-        self.skip_special_tokens = opt.get('hf_skip_special_tokens', True)
         if self.add_prefix_space is None:
             self.add_prefix_space = True
         if opt.get('dict_loaded'):
@@ -730,6 +804,13 @@ class HuggingFaceBpeHelper(BPEHelper):
         except ImportError:
             raise ImportError(
                 'Please install HuggingFace tokenizer with: pip install tokenizers'
+            )
+
+        if self.bpe_dropout:
+            raise NotImplementedError(
+                '--bpe-dropout is not supported with ByteLevelBPE because tokenizers '
+                'library does not allow dynamically turning BPE on/off. You can use '
+                '--dict-tokenizer slow_bytelevel_bpe to gain this feature.'
             )
 
         if self.lower:
@@ -796,9 +877,7 @@ class HuggingFaceBpeHelper(BPEHelper):
         :return text:
             decoded text
         """
-        text = self.tokenizer.decode(
-            token_ids, skip_special_tokens=self.skip_special_tokens
-        )
+        text = self.tokenizer.decode(token_ids, skip_special_tokens=False)
 
         return text
 

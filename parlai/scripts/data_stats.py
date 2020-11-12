@@ -13,9 +13,10 @@ parlai data_stats -t convai2 -dt train:ordered
 ```
 """
 from parlai.core.params import ParlaiParser
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.core.worlds import create_task
-from parlai.utils.misc import TimeLogger
+from parlai.utils.misc import TimeLogger, nice_report
+from parlai.core.metrics import AverageMetric
 from parlai.core.dict import DictionaryAgent
 from parlai.core.script import ParlaiScript, register_script
 
@@ -27,7 +28,7 @@ def setup_args(parser=None):
         parser = ParlaiParser(True, False, 'Compute data statistics')
     # Get command line arguments
     parser.add_argument('-n', '-ne', '--num-examples', type=int, default=-1)
-    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
+    parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
     parser.add_argument(
         '--agent',
         type=int,
@@ -52,24 +53,12 @@ def setup_args(parser=None):
     return parser
 
 
-def report(world, counts, log_time):
+def _report(world, counts):
     report = world.report()
-    stats = '\n'
-    for t in ['input', 'labels', 'both']:
-        stats += t + ":\n"
-        for s in [
-            'utterances_in_',
-            'avg_utterance_length_in_',
-            'tokens_in_',
-            'unique_tokens_in_',
-            'unique_utterances_in_',
-        ]:
-            snice = s.replace('_in_', '').replace('_', ' ')
-            stats += "   " + snice + ': ' + str(counts[s + t]) + '\n'
-    log = {}
-    log['stats'] = stats
-    text, log = log_time.log(report['exs'], world.num_examples(), log)
-    return text, log
+    for k, v in counts.items():
+        if not isinstance(v, dict):
+            report[k] = v
+    return report
 
 
 def verify(opt):
@@ -78,7 +67,8 @@ def verify(opt):
         opt['datatype'] = 'train:ordered'
 
     # create repeat label agent and assign it to the specified task
-    agent = RepeatLabelAgent(opt)
+    opt['fixed_response'] = None
+    agent = FixedResponseAgent(opt)
     world = create_task(opt, agent)
     opt.log()
 
@@ -92,14 +82,14 @@ def verify(opt):
 
     counts = {}
     for t in {'input', 'labels', 'both'}:
-        counts['tokens_in_' + t] = 0
-        counts['utterances_in_' + t] = 0
-        counts['avg_utterance_length_in_' + t] = 0
-        counts['unique_tokens_in_' + t] = 0
-        counts['unique_utterances_in_' + t] = 0
+        counts[f'{t}/tokens'] = 0
+        counts[f'{t}/utterances'] = 0
+        counts[f'{t}/avg_utterance_length'] = None
+        counts[f'{t}/unique_tokens'] = 0
+        counts[f'{t}/unique_utterances'] = 0
         # for counting the stats..
-        counts['token_dict_' + t] = {}
-        counts['utterance_dict_' + t] = {}
+        counts[f'{t}/token_dict'] = {}
+        counts[f'{t}/utterance_dict'] = {}
 
     def tokenize(txt):
         return dictionary.tokenize(txt)
@@ -115,8 +105,7 @@ def verify(opt):
     cnt = 0
 
     # Show some example dialogs.
-    while not world.epoch_done() and cnt < max_cnt:
-        cnt += opt.get('batchsize', 1)
+    while not world.epoch_done() and world.total_exs < max_cnt:
         world.parley()
         act = world.get_acts()[opt.get('agent')]
         for itype in {'input', 'labels'}:
@@ -130,37 +119,32 @@ def verify(opt):
 
             for txt in txts:
                 tokens = tokenize(txt)
-                retxt = []
-                for t in tokens:
-                    if keep_token(t):
-                        retxt.append(t)
-                counts['tokens_in_' + itype] += len(retxt)
-                counts['tokens_in_' + 'both'] += len(retxt)
-                counts['utterances_in_' + itype] += 1
-                counts['utterances_in_' + 'both'] += 1
-                counts['avg_utterance_length_in_' + itype] = (
-                    counts['tokens_in_' + itype] / counts['utterances_in_' + itype]
-                )
-                counts['avg_utterance_length_in_' + 'both'] = (
-                    counts['tokens_in_' + 'both'] / counts['utterances_in_' + 'both']
-                )
+                retxt = [t for t in tokens if keep_token(t)]
+                counts[f'{itype}/tokens'] += len(retxt)
+                counts['both/tokens'] += len(retxt)
+                counts[f'{itype}/utterances'] += 1
+                counts['both/utterances'] += 1
+                counts[f'{itype}/avg_utterance_length'] += AverageMetric(len(retxt), 1)
+                counts[f'both/avg_utterance_length'] += AverageMetric(len(retxt), 1)
                 for t in retxt:
-                    if t not in counts['token_dict_' + itype]:
-                        counts['unique_tokens_in_' + itype] += 1
-                        counts['token_dict_' + itype][t] = True
-                    if t not in counts['token_dict_' + 'both']:
-                        counts['unique_tokens_in_' + 'both'] += 1
-                        counts['token_dict_' + 'both'][t] = True
+                    if t not in counts[f'{itype}/token_dict']:
+                        counts[f'{itype}/unique_tokens'] += 1
+                        counts[f'{itype}/token_dict'][t] = True
+                    if t not in counts['both/token_dict']:
+                        counts['both/unique_tokens'] += 1
+                        counts['both/token_dict'][t] = True
                 retxt = ' '.join(retxt)
-                if retxt not in counts['utterance_dict_' + itype]:
-                    counts['unique_utterances_in_' + itype] += 1
-                    counts['utterance_dict_' + itype][retxt] = True
-                if retxt not in counts['utterance_dict_' + 'both']:
-                    counts['unique_utterances_in_' + 'both'] += 1
-                    counts['utterance_dict_' + 'both'][retxt] = True
+                if retxt not in counts[f'{itype}/utterance_dict']:
+                    counts[f'{itype}/unique_utterances'] += 1
+                    counts[f'{itype}/utterance_dict'][retxt] = True
+                if retxt not in counts['both/utterance_dict']:
+                    counts['both/unique_utterances'] += 1
+                    counts['both/utterance_dict'][retxt] = True
 
         if log_time.time() > log_every_n_secs:
-            text, log = report(world, counts, log_time)
+            report = _report(world, counts)
+            cnt = report.pop('exs')
+            text, log = log_time.log(cnt, world.num_examples(), report)
             logging.info(text)
 
     try:
@@ -169,14 +153,18 @@ def verify(opt):
             f'loaded {world.num_episodes()} episodes with a total '
             f'of {world.num_examples()} examples'
         )
-    except Exception:
+    except AttributeError:
         pass
-    return report(world, counts, log_time)
+
+    retval = _report(world, counts)
+    retval.pop('exs')
+    return retval
 
 
-def obtain_stats(opt, parser):
-    report_text, report_log = verify(opt)
-    print(report_text.replace('\\n', '\n'))
+def obtain_stats(opt):
+    report = verify(opt)
+    print(nice_report(report))
+    return report
 
 
 @register_script('data_stats', hidden=True)
@@ -186,7 +174,7 @@ class DataStats(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return obtain_stats(self.opt, self.parser)
+        return obtain_stats(self.opt)
 
 
 if __name__ == '__main__':
