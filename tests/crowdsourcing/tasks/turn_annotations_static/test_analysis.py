@@ -146,8 +146,9 @@ Fleiss' kappa for none_all_good is: -0.410.\
             )
             desired_results = (
                 pd.read_csv(desired_results_path)
-                .sort_values(sort_columns)
                 .drop('folder', axis=1)
+                .sort_values(sort_columns)
+                .reset_index()
             )
             # Drop the 'folder' column, which contains a system-dependent path string
             actual_results_rel_path = [
@@ -156,11 +157,15 @@ Fleiss' kappa for none_all_good is: -0.410.\
             actual_results_path = os.path.join(tmpdir, actual_results_rel_path)
             actual_results = (
                 pd.read_csv(actual_results_path)
-                .sort_values(sort_columns)
                 .drop('folder', axis=1)
+                .sort_values(sort_columns)
+                .reset_index()
             )
             if not actual_results.equals(desired_results):
-                raise ValueError(f'\n\n\tActual results:\n{actual_results.to_csv()}')
+                raise ValueError(
+                    f'\n\n\tDesired results:\n{desired_results.to_csv()}'
+                    f'\n\n\tActual results:\n{actual_results.to_csv()}'
+                )
 
 
 if __name__ == "__main__":
