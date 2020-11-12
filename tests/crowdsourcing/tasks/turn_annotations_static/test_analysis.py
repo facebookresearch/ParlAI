@@ -132,8 +132,17 @@ Fleiss' kappa for bucket_4 is: -0.3797909407665505.
 Fleiss' kappa for none_all_good is: -0.40984877859635516.\
 """
             actual_stdout_lines = actual_stdout.split('\n')
+            all_lines_found = True
             for desired_line in desired_stdout.split('\n'):
-                self.assertTrue(desired_line in actual_stdout_lines)
+                self.assertTrue(
+                    desired_line in actual_stdout_lines,
+                    f'\n\tThe following line was not found in the actual stdout: '
+                    f'{desired_line}',
+                )
+                if desired_line not in actual_stdout_lines:
+                    all_lines_found = False
+            if not all_lines_found:
+                print(f'\n\n\tActual stdout:\n{actual_stdout}')
 
             # Check that the saved results file is what it should be
             desired_results_path = os.path.join(
