@@ -134,7 +134,8 @@ class TurnAnnotationsStaticResultsCompiler:
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
         """
-        Validate an entire HIT
+        Validate an entire HIT.
+
         :return: tuple (is_valid, reason)
         """
         if 'outputs' not in hit_data or hit_data['outputs'] is None:
@@ -148,7 +149,8 @@ class TurnAnnotationsStaticResultsCompiler:
 
     def _validate_subtask(self, subtask_data) -> Tuple[bool, Optional[str]]:
         """
-        Validate a conversation subtask within the HIT
+        Validate a conversation subtask within the HIT.
+
         :return: tuple (is_valid, reason)
         """
         # Check that the conversation consists of pairs of comments between
