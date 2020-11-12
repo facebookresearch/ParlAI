@@ -144,13 +144,21 @@ Fleiss' kappa for none_all_good is: -0.410.\
             desired_results_path = os.path.join(
                 analysis_config_folder, 'desired_results.csv'
             )
-            desired_results = pd.read_csv(desired_results_path).drop('folder', axis=1)
+            desired_results = (
+                pd.read_csv(desired_results_path)
+                .sort_values('annotation_id')
+                .drop('folder', axis=1)
+            )
             # Drop the 'folder' column, which contains a system-dependent path string
             actual_results_rel_path = [
                 obj for obj in os.listdir(tmpdir) if obj.startswith('results')
             ][0]
             actual_results_path = os.path.join(tmpdir, actual_results_rel_path)
-            actual_results = pd.read_csv(actual_results_path).drop('folder', axis=1)
+            actual_results = (
+                pd.read_csv(actual_results_path)
+                .sort_values('annotation_id')
+                .drop('folder', axis=1)
+            )
             if not actual_results.equals(desired_results):
                 with open(actual_results_path) as f:
                     actual_results_text = '\n'.join(f.readlines())
