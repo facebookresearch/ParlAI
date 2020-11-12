@@ -79,8 +79,8 @@ class TurnAnnotationsStaticResultsCompiler:
 
     def get_data_paths_mephisto(self, task_run_id_folder):
         """
-        Get all the individual folders with data from the <task_run_id> path we are given as
-        input.
+        Get all the individual folders with data from the <task_run_id> path we are
+        given as input.
 
         In Mephisto the structure is:
         /<project_id>/<task_run_id>/<assignment_id>/<agent_id>/
@@ -166,7 +166,7 @@ class TurnAnnotationsStaticResultsCompiler:
         except Exception:
             return False, f'Data not in form expected. Length is: {len(subtask_data)}'
 
-        for turn_idx, utterance_data in enumerate(subtask_data):
+        for utterance_data in subtask_data:
             if (
                 utterance_data['agent_idx'] == 1
                 and self.PROBLEM_BUCKETS[0] not in utterance_data
@@ -197,9 +197,9 @@ class TurnAnnotationsStaticResultsCompiler:
 
     def compile_initial_results(self, results_folders) -> list:
         """
-        Do initial loading and processing of crowdsource data
-        Loads data from all the worker ID files and gets rid of incomplete or malformed
-        convos.
+        Do initial loading and processing of crowdsource data Loads data from all the
+        worker ID files and gets rid of incomplete or malformed convos.
+
         Also adds fields such as worker_id, assignment_id, etc for convenience
         :return: list of JSON objects which represent a conversation with
         annotations d["data"] of each has an array of utterance level data
@@ -286,8 +286,8 @@ class TurnAnnotationsStaticResultsCompiler:
 
     def process_data_into_dataframe(self, conversations) -> pd.DataFrame:
         """
-        Return one big dataframe of all conversations where a row is an utterance and its
-        problem annotations.
+        Return one big dataframe of all conversations where a row is an utterance and
+        its problem annotations.
         """
         print('Starting process_data_into_dataframe...')
         rows = []
@@ -508,8 +508,8 @@ class TurnAnnotationsStaticResultsCompiler:
         self, df: pd.DataFrame, categories: list, number_of_raters: int
     ) -> float:
         """
-        Expects a df of index, rater_id, item_id and "data" column with each row a label of
-        one of the categories.
+        Expects a df of index, rater_id, item_id and "data" column with each row a label
+        of one of the categories.
         """
 
         # categories are "True" and "False"
