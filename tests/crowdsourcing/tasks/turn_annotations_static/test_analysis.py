@@ -140,12 +140,13 @@ Fleiss' kappa for none_all_good is: -0.410.\
                     )
 
             # Check that the saved results file is what it should be
+            sort_columns = ['hit_id', 'worker_id', 'conversation_id', 'turn_idx']
             desired_results_path = os.path.join(
                 analysis_config_folder, 'desired_results.csv'
             )
             desired_results = (
                 pd.read_csv(desired_results_path)
-                .sort_values('annotation_id')
+                .sort_values(sort_columns)
                 .drop('folder', axis=1)
             )
             # Drop the 'folder' column, which contains a system-dependent path string
@@ -155,13 +156,11 @@ Fleiss' kappa for none_all_good is: -0.410.\
             actual_results_path = os.path.join(tmpdir, actual_results_rel_path)
             actual_results = (
                 pd.read_csv(actual_results_path)
-                .sort_values('annotation_id')
+                .sort_values(sort_columns)
                 .drop('folder', axis=1)
             )
             if not actual_results.equals(desired_results):
-                with open(actual_results_path) as f:
-                    actual_results_text = '\n'.join(f.readlines())
-                raise ValueError(f'\n\n\tActual results:\n{actual_results_text}')
+                raise ValueError(f'\n\n\tActual results:\n{actual_results.to_csv()}')
 
 
 if __name__ == "__main__":
