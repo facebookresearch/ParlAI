@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-import os
-
 # Copyright (c) Facebook, Inc. and its affiliates.
-from abc import ABC, abstractmethod
-
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
+import os
+
+from abc import ABC, abstractmethod
+from typing import List
+
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.io import PathManager
 
@@ -34,6 +36,10 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
         # initialize from vocab path
         self.tokenizer = self.get_tokenizer(opt)
         self.override_special_tokens(opt)
+        for i in range(self.tokenizer.vocab_size):
+            token = self.tokenizer._convert_id_to_token(i)
+            self.add_token(token)
+            self.freq[token] = 1
 
     @abstractmethod
     def get_tokenizer(self, opt):
@@ -55,7 +61,9 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
         return tokens_id
 
     def vec2txt(self, vec):
-        return self.tokenizer.decode(vec, clean_up_tokenization_spaces=True)
+        return self.tokenizer.decode(
+            vec, skip_special_tokens=False, clean_up_tokenization_spaces=True
+        )
 
     def act(self):
         """
@@ -93,6 +101,17 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         else:
             fle_key = model_key
         return GPT2Tokenizer.from_pretrained(fle_key)
+
+    def add_additional_special_tokens(self, additional_special_tokens: List[str]):
+        """
+        Add additional special tokens to the dictionary.
+        """
+        self.additional_special_tokens = additional_special_tokens
+        self.tokenizer.add_special_tokens(
+            {'additional_special_tokens': additional_special_tokens}
+        )
+        for tok in self.additional_special_tokens:
+            self.add_token(tok)
 
     def _define_special_tokens(self, opt):
         if opt["add_special_tokens"]:

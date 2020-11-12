@@ -14,6 +14,27 @@ import os
 import copy
 
 
+class TestHuggingFaceDict(unittest.TestCase):
+    def test_custom_special_tokens(self):
+        from parlai.agents.hugging_face.dict import Gpt2DictionaryAgent
+        from parlai.core.params import ParlaiParser
+
+        parser = ParlaiParser(False, False)
+        parser.set_defaults(gpt2_size="small", add_special_tokens=True)
+        Gpt2DictionaryAgent.add_cmdline_args(parser)
+        with testing_utils.tempdir() as tmpdir:
+            opt = parser.parse_kwargs(dict_file=os.path.join(tmpdir, 'dict'))
+            dict_agent = Gpt2DictionaryAgent(opt)
+            oldtokens = dict_agent.txt2vec("Hi VOLDEMORT")
+            prevlen = len(dict_agent)
+            dict_agent.add_additional_special_tokens(["VOLDEMORT"])
+            newlen = len(dict_agent)
+            assert newlen == prevlen + 1
+            tokens = dict_agent.txt2vec("Hi VOLDEMORT")
+            assert tokens != oldtokens
+            assert len(tokens) < len(oldtokens)
+
+
 class TestGpt2(unittest.TestCase):
     def _test_batchsize(self, batchsize, add_start_token):
         utterances = [
@@ -103,9 +124,6 @@ class TestGpt2(unittest.TestCase):
         assert response['text'] == " John. I'm a man of"
 
 
-BATCHSIZE = 4
-
-
 @testing_utils.skipUnlessGPU
 class TestDistributed(unittest.TestCase):
     _base_config = {
@@ -117,7 +135,7 @@ class TestDistributed(unittest.TestCase):
         'beam_min_length': 8,
         'inference': 'beam',
         'beam_size': 1,
-        'batchsize': BATCHSIZE,
+        'batchsize': 4,
         'add_special_tokens': True,
         'validation_metric': 'ppl',
     }
