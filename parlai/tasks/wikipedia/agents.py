@@ -174,14 +174,24 @@ class CompletionTeacher(FullSplitTeacher):
         super().__init__(opt, shared)
         self._current_item = None
 
-    def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
-        title, text = queue_output
-        return (title + "\n\n" + text).split("\n\n")
+    def load_from_chunk(self, chunk_idx: int):
+        output = []
+        for _title, article in super().load_from_chunk(chunk_idx):
+            paragraphs = article.split("\n\n")
+            if len(paragraphs) % 2 == 1:
+                paragraphs.pop(-1)
+            output.append(paragraphs)
+        return output
 
-    def get(self, episode_idx, entry_idx=0):
+    def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
+        assert len(queue_output) >= 2
+        prompt = queue_output.pop(0).strip()
+        response = queue_output.pop(0).strip()
+        return {'text': prompt, 'labels': [response], 'episode_done': not queue_output}
+
+    def _get(self, episode_idx, entry_idx=0):
         if not self._current_item or len(self._current_item) <= 1:
-            __import__("ipdb").set_trace()  # FIXME
-            self._current_item = super().get(episode_idx, entry_idx).split("\n\n")
+            self._current_item = super().get(episode_idx, entry_idx)
         text = self._current_item.pop(0)
         return {
             'text': text,
