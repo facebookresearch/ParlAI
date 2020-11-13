@@ -289,15 +289,19 @@ def validate_args(opt):
         raise Exception(
             "Extension not specified/supported. Specify one of '.html', '.pdf' or '.png' output files"
         )
-    opt['user_icon'] = check_icon_arg(opt['user_icon'], HUMAN_EMOJI_IMG)
-    opt['alt_icon'] = check_icon_arg(opt['alt_icon'], ALT_EMOJI_IMG)
-    return extension
+    opt = opt.fork(
+        user_icon=check_icon_arg(opt['user_icon'], HUMAN_EMOJI_IMG),
+        alt_icon=check_icon_arg(opt['alt_icon'], ALT_EMOJI_IMG),
+        extension=extension,
+    )
+    return opt
 
 
 def render_convo(opt):
     # Run
     opt.log()
-    extension = validate_args(opt)
+    opt = validate_args(opt)
+    extension = opt['extension']
     input_file, output_file = opt['input'], opt['output']
     height, width = opt['height'], opt['width']
     alt_speaker = input_file.split('/')[-1][:-6]

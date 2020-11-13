@@ -527,8 +527,6 @@ class MultiWorld(World):
                     self.worlds.append(s['world_class'](s['opt'], None, s))
                 else:
                     # Agents are already specified.
-                    opt_singletask = copy.deepcopy(opt)
-                    opt_singletask['task'] = k
                     self.worlds.append(
                         create_task_world(
                             opt_singletask, agents, default_world=default_world
