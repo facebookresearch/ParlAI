@@ -44,15 +44,7 @@ def get_class_name(item):
 def filter_tests_with_circleci(test_list):
     circleci_input = "\n".join(test_list).encode("utf-8")
     p = subprocess.Popen(
-        [
-            "circleci",
-            "tests",
-            "split",
-            "--split-by=timings",
-            "--timings-type=classname",
-        ],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
+        ["circleci", "tests", "split"], stdin=subprocess.PIPE, stdout=subprocess.PIPE
     )
     circleci_output, _ = p.communicate(circleci_input)
     return [
@@ -63,9 +55,11 @@ def filter_tests_with_circleci(test_list):
 # -----------------------------------------------------------------------
 MARKER_RULES = [
     ('parlai_internal', 'internal'),
+    ('crowdsourcing/', 'crowdsourcing'),
     ('nightly/gpu', 'nightly_gpu'),
     ('nightly/cpu/', 'nightly_cpu'),
     ('datatests/', 'data'),
+    ('parlai/tasks/', 'teacher'),
     ('tasks/', 'tasks'),
     ('parlai/mturk/core/test/', 'mturk'),
 ]

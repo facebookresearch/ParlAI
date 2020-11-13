@@ -6,6 +6,7 @@
 
 import os
 
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.tasks.style_gen.build import (
@@ -14,6 +15,7 @@ from parlai.tasks.style_gen.build import (
     get_style_labeled_data_folder,
     TASK_FOLDER_NAME,
 )
+from parlai.tasks.wrapper.agents import AbstractWrapperTeacher
 
 
 def get_style_labeled_data_path(opt: Opt, base_task: str) -> str:
@@ -88,3 +90,37 @@ class LabeledWoWPersonaTopicifierTeacher(ParlAIDialogTeacher):
             opt=opt, base_task='blended_skill_talk:WoWPersonaTopicifierTeacher'
         )
         super().__init__(opt, shared=shared)
+
+
+class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
+    """
+    Serving examples for use with projects.style_gen.classifier:ClassifierAgent.
+
+    This teacher will replace message['text'] with a concatenation of the last utterance
+    in message['text'] and message['labels'][0], and it will replace message['labels']
+    with [message['personality']]. This is to allow for training/evaluation of
+    projects.style_gen.classifier:ClassifierAgent, which typically classifies the style
+    of an utterance given that utterance and the previous one as context.
+
+    Because the dialogue history is effectively overwritten by this action, all episodes
+    will be flattened into one example each.
+    """
+
+    def _edit_action(self, act: Message) -> Message:
+        """
+        Edit the fields of the action manually.
+        """
+        if 'labels' in act:
+            labels = act['labels']
+            if len(labels) != 1:
+                raise ValueError(
+                    f'{type(self).__name__} can only be used with one label!'
+                )
+            assert '\n' not in labels[0]
+            # Classifier will not expect more than 1 newline in context
+            act.force_set('text', act['text'].split('\n')[-1] + '\n' + labels[0])
+            act.force_set('labels', [act['personality']])
+        else:
+            assert 'text' not in act and act['episode_done'] is True
+        act.force_set('episode_done', True)  # Clear the dialogue history
+        return act

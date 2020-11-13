@@ -92,7 +92,7 @@ candidate labels to choose from).
 Dataset-specific fields are available in some cases in order to support
 reproducing paper results. For example, SQuAD has an `answer_starts`
 field, which is available in the "squad:index" task.
-
+To display all fields of a message just add `--verbose True` to your command.
 
 :::{note} Automatic Processing
 During validation and testing, the `labels` field is renamed
@@ -171,15 +171,13 @@ Another simple world we include is MultiAgentDialogWorld, which is
 similar but generalizes this to cycle between any number of agents in a
 round robin fashion.
 
-### Advanced Worlds
+:::{note} Advanced Worlds
+We also include a few more advanced "container" worlds: in particular, we
+include both a BatchWorld and a DynamicBatchWorld. These worlds may be used when
+certain options are sent. See the [Worlds](tutorial_worlds) tutorial to
+understand how these work.
+:::
 
-We also include a few more advanced "container" worlds: in particular,
-we include both a BatchWorld and a HogwildWorld. These worlds are
-automatically used when either the `numthreads` parameter or the
-`batchsize` parameter are set to greater than one. Some extra
-functionality is needed to get these to work on the side of both the
-teacher and the learner, but we'll cover that in a different tutorial
-(see: tutorial\_worlds).
 
 Using ParlAI
 ------------
@@ -187,7 +185,7 @@ Using ParlAI
 ### Concepts in Action: Simple Display Data Script
 
 Now that we understand the basics, let's set up a simple script which
-displays any specified task. A complete version of this for utility is
+displays any specified task. A complete version of this utility is
 included at `parlai/scripts/display_data.py`, but we'll do this from
 scratch to demonstrate the concepts we just introduced.
 
@@ -410,6 +408,12 @@ parlai interactive -mf zoo:pretrained_transformers/model_poly/model -t convai2
 # Interact with a Wizard Of Wikipedia (Full Dialogue Retrieval Model).
 parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
 ```
+
+To view additional fields from the model output, try use the flag `--display-add-fields`. For example, 
+```
+parlai interactive -mf zoo:blender/blender_90M/model -t convai2 --display-add-fields beam_texts
+```
+to display all beam texts.
 
 __Model Zoo__
 

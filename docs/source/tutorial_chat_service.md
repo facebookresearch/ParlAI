@@ -11,13 +11,15 @@ We currently support the following chat services:
 
 You can find more information on how to set up these services below.
 
-Please read here [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service) for information on how to set up a new chat service.
+:::{note}
+If you'd like to use a service outside of the 4 listed above, please read [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service) for information on how to set up a new chat service.
+:::
 
 ## Overview
 
-As stated, humans messaging on chat services can be viewed as a type of agent in ParlAI, communicating with models via observations and action dicts. See [here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/core/agents.py) for the basic implementation. Human agents are placed in worlds with ParlAI agent(s) and possibly other humans, and the world defines how each of these agents interacts.
+As stated, humans messaging on chat services can be viewed as a type of agent in ParlAI, communicating with models via observations and action dicts. Human agents, which are [`ChatServiceAgents`](parlai.chat_service.core.agents.ChatServiceAgent) are placed in worlds with ParlAI agent(s) and possibly other humans, and the world defines how each of these agents interacts.
 
-The chat environment is defined by the **task**. A task typically consists of an `Overworld`, which can spawn subtasks (subworlds) or serve as a "main menu", allowing people to pick from multiple conversation options. The task definition resides in a config file, `config.yml`, in which all all available worlds and any additional commandline arguments.
+The chat environment is defined by the **task**. A task typically consists of an `Overworld`, which can spawn subtasks (subworlds) or serve as a "main menu", allowing people to pick from multiple conversation options. The task definition resides in a config file, `config.yml`, which contains all available worlds and any additional commandline arguments.
 
 Here is an example config file for a Messenger chatbot:
 
@@ -43,6 +45,54 @@ opt:  # Additional model opts go here
 additional_args:
   page_id: 1 # configure your own page
 ```
+
+Let's walk through each of these keys:
+
+- **`tasks`** - the `tasks` key defines the options that are presented to a user upon entering an `Overworld`. In this case, there is only one `task` defined: `default`. The `default` key specifies the following subkeys:
+    - `onboard_world` - the world used for agent onboarding
+    - `task_world` - the world that defines that logic for handling users in the main task
+    - `timeout` - the timeout for human responses in the world
+    - `agents_required` - how many *human* agents are required to run this world. Specify > 1 if you'd like more than one human to interact.
+- **`task_name`** - the name of your task. not super important to define, but good to have nonetheless
+- **`world_module`** - this is a module path to the module in which **all** of the task worlds are defined. If you have worlds in separate files, simply importing them into this file will suffice.
+- **`overworld`** - The name of the overworld class.
+- **`max_workers`** - How many max human connections you plan on supporting for your service
+- **`opt`** - any task-specific options you need to define.
+    - **`models`** - Perhaps **the most important** key in this config. This is where you define the models that you'll be using. Each entry under this is a mapping from custom model name to model params. So, in this example, we have defined a model `blender_90M` that we would like to access in their task. For this model, we then specify the actual model arguments necessary to create a ParlAI agent.
+- **`additional_args`** - These are for any specific service-specific args you might want to specify - e.g. if using Facebook Messenger, you would specify your page ID here.
+
+:::{important}
+**ON THE SUBJECT OF MODELS**
+
+The `models` key defines all models you'd like to load in your service - the respective chat service managers load models according to these parameters, and then put a shared copy of the agent in `opt['shared_bot_params'][model_key]`. The following snippet is copied from the `MessengerBotChatTaskWorld`:
+
+
+```python
+from parlai.core.agents import create_agent_from_shared
+from parlai.core.worlds import World
+
+class MessengerBotChatTaskWorld(World):
+    """
+    Example one person world that talks to a provided agent (bot).
+    """
+
+    MAX_AGENTS = 1
+    MODEL_KEY = 'blender_90M'
+
+    def __init__(self, opt, agent, bot):
+        self.agent = agent
+        self.episodeDone = False
+        self.model = bot
+        self.first_time = True
+
+    @staticmethod
+    def generate_world(opt, agents):
+        copy_of_model = create_agent_from_shared(
+            opt['shared_bot_params'][MessengerBotChatTaskWorld.MODEL_KEY]
+        )
+        return MessengerBotChatTaskWorld(opt, agents[0], copy_of_model)
+```
+:::
 
 After following the set-up instructions (detailed below) and filling in your own page id, this task could be run with the following command from the `parlai/chat_service/services/messenger` directory:
 ```

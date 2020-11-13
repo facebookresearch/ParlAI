@@ -110,10 +110,11 @@ class World(object):
             return ''
         return display_messages(
             self.acts,
-            ignore_fields=self.opt.get('display_ignore_fields', ''),
+            ignore_agent_reply=self.opt.get('ignore_agent_reply', False),
+            add_fields=self.opt.get('display_add_fields', ''),
             prettify=self.opt.get('display_prettify', False),
             max_len=self.opt.get('max_display_len', 1000),
-            verbose=self.opt.get('display_verbose', False),
+            verbose=self.opt.get('verbose', False),
         )
 
     def episode_done(self):
@@ -526,6 +527,8 @@ class MultiWorld(World):
                     self.worlds.append(s['world_class'](s['opt'], None, s))
                 else:
                     # Agents are already specified.
+                    opt_singletask = copy.deepcopy(opt)
+                    opt_singletask['task'] = k
                     self.worlds.append(
                         create_task_world(
                             opt_singletask, agents, default_world=default_world

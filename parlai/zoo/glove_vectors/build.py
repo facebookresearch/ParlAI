@@ -14,5 +14,5 @@ import torchtext.vocab as vocab
 def download(datapath):
     vocab.GloVe.url['840B'] = 'https://parl.ai/downloads/_models/glove.840B.300d.zip'
     return vocab.GloVe(
-        name='840B', dim=300, cache=os.path.join(datapath, 'models', 'glove_vectors'),
+        name='840B', dim=300, cache=os.path.join(datapath, 'models', 'glove_vectors')
     )

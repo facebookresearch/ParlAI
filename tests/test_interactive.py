@@ -12,7 +12,8 @@ Tests that interactive.py is behaving well.
 import unittest
 from unittest import mock
 import os
-import parlai.scripts.interactive as interactive
+from parlai.scripts.interactive import Interactive
+from parlai.scripts.safe_interactive import SafeInteractive
 import parlai.utils.conversations as conversations
 import parlai.utils.testing as testing_utils
 
@@ -48,9 +49,10 @@ class TestInteractive(unittest.TestCase):
         patcher.start()
 
     def test_repeat(self):
-        pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query'])
-        interactive.interactive(opt)
+        Interactive.main(model='repeat_query')
+
+    def test_safe_interactive(self):
+        SafeInteractive.main(model='repeat_query')
 
 
 class TestInteractiveConvai2(unittest.TestCase):
@@ -61,9 +63,7 @@ class TestInteractiveConvai2(unittest.TestCase):
         patcher.start()
 
     def test_repeat(self):
-        pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query', '-t', 'convai2', '-dt', 'valid'])
-        interactive.interactive(opt)
+        Interactive.main(model='repeat_query', task='convai2', datatype='valid')
 
 
 class TestInteractiveLogging(unittest.TestCase):
@@ -76,14 +76,61 @@ class TestInteractiveLogging(unittest.TestCase):
 
     def _run_test_repeat(self, tmpdir: str, fake_input: FakeInput):
         outfile = os.path.join(tmpdir, 'log.jsonl')
-        pp = interactive.setup_args()
-        opt = pp.parse_args(['-m', 'repeat_query', '--outfile', outfile])
-        interactive.interactive(opt)
+        Interactive.main(model='repeat_query', outfile=outfile)
 
         log = conversations.Conversations(outfile)
         self.assertEqual(len(log), fake_input.max_episodes)
         for entry in log:
             self.assertEqual(len(entry), 2 * fake_input.max_turns)
+
+
+class TestInteractiveWeb(unittest.TestCase):
+    def test_iweb(self):
+        import threading
+        import random
+        import requests
+        import json
+        import parlai.scripts.interactive_web as iweb
+
+        port = random.randint(30000, 40000)
+        thread = threading.Thread(
+            target=iweb.InteractiveWeb.main,
+            kwargs={'model': 'repeat_query', 'port': port},
+            daemon=True,
+        )
+        thread.start()
+        iweb.wait()
+
+        r = requests.get(f'http://localhost:{port}/')
+        assert '<html>' in r.text
+
+        r = requests.post(f'http://localhost:{port}/interact', data='This is a test')
+        assert r.status_code == 200
+        response = json.loads(r.text)
+        assert 'text' in response
+        assert response['text'] == 'This is a test'
+
+        r = requests.post(f'http://localhost:{port}/reset')
+        assert r.status_code == 200
+        response = json.loads(r.text)
+        assert response == {}
+
+        r = requests.get(f'http://localhost:{port}/bad')
+        assert r.status_code == 500
+
+        r = requests.post(f'http://localhost:{port}/bad')
+        assert r.status_code == 500
+
+        iweb.shutdown()
+
+
+class TestProfileInteractive(unittest.TestCase):
+    def test_profile_interactive(self):
+        from parlai.scripts.profile_interactive import ProfileInteractive
+
+        fake_input = FakeInput(max_episodes=2)
+        with mock.patch('builtins.input', new=fake_input):
+            ProfileInteractive.main(model='repeat_query')
 
 
 if __name__ == '__main__':

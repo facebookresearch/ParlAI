@@ -13,6 +13,8 @@ from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import maintain_dialog_history, load_cands
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
+import parlai.utils.logging as logging
 from .modules import Starspace
 
 import torch
@@ -189,13 +191,12 @@ class StarspaceAgent(Agent):
         self.ys_cache_sz = opt['cache_size']
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
-        self.debugMode = False
         if shared:
             # set up shared properties
             self.dict = shared['dict']
             self.model = shared['model']
         else:
-            print("[ creating StarspaceAgent ]")
+            logging.info("creating StarspaceAgent")
             # this is not a shared instance of this class, so do full init
             if opt.get('model_file') and (
                 PathManager.exists(opt.get('model_file') + '.dict')
@@ -226,9 +227,9 @@ class StarspaceAgent(Agent):
             for c in self.fixedCands_txt:
                 fcs.append(torch.LongTensor(self.parse(c)).unsqueeze(0))
             self.fixedCands = fcs
-            print("[loaded candidates]")
+            logging.info("loaded candidates")
 
-    def _init_embeddings(self, log=True):
+    def _init_embeddings(self):
         """
         Copy embeddings from the pretrained embeddings to the lookuptable.
 
@@ -248,11 +249,10 @@ class StarspaceAgent(Agent):
                 )
                 weight.data[i] = vec
                 cnt += 1
-        if log:
-            print(
-                'Initialized embeddings for {} tokens ({}%) from {}.'
-                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
-            )
+        logging.info(
+            'Initialized embeddings for {} tokens ({}%) from {}.'
+            ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+        )
 
     def reset(self):
         """
@@ -288,9 +288,9 @@ class StarspaceAgent(Agent):
                 # skip non-model args
                 continue
             if k not in self.opt:
-                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
+                logging.warning('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
             elif self.opt[k] != v:
-                print(
+                logging.warning(
                     'Overriding option [ {k}: {old} => {v}]'.format(
                         k=k, old=self.opt[k], v=v
                     )
@@ -306,10 +306,6 @@ class StarspaceAgent(Agent):
         if vec == []:
             vec = [self.dict[self.dict.null_token]]
         return vec
-
-    def t2v(self, text):
-        p = self.dict.txt2vec(text)
-        return torch.LongTensor(p).unsqueeze(1)
 
     def v2t(self, vec):
         """
@@ -362,25 +358,6 @@ class StarspaceAgent(Agent):
                 negs.append(query)
         return negs
 
-    def dict_neighbors(self, word, useRHS=False):
-        input = self.t2v(word)
-        W = self.model.encoder.lt.weight
-        q = W[input.data[0][0]]
-        if useRHS:
-            W = self.model.encoder2.lt.weight
-        score = torch.Tensor(W.size(0))
-        for i in range(W.size(0)):
-            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).item()
-        val, ind = score.sort(descending=True)
-        for i in range(20):
-            print(
-                str(ind[i])
-                + " ["
-                + str(val[i])
-                + "]: "
-                + self.v2t(torch.Tensor([ind[i]]))
-            )
-
     def compute_metrics(self, loss, scores):
         metrics = {}
         pos = scores[0]
@@ -427,13 +404,6 @@ class StarspaceAgent(Agent):
                 if self.opt.get('input_dropout', 0) > 0:
                     xs, ys, negs = self.input_dropout(xs, ys, negs)
                 xe, ye = self.model(xs, ys, negs)
-                if self.debugMode:
-                    # print example
-                    print("inp: " + self.v2t(xs.squeeze()))
-                    print("pos: " + self.v2t(ys.squeeze()))
-                    for c in negs:
-                        print("neg: " + self.v2t(c.squeeze()))
-                    print("---")
                 y = -(torch.ones(xe.size(0)))
                 y[0] = 1
                 loss = self.criterion(xe, ye, y)
@@ -571,10 +541,6 @@ class StarspaceAgent(Agent):
         # call batch_act with this batch of one
         return self.batch_act([self.observation])[0]
 
-    def shutdown(self):
-        # """Save the state of the model when shutdown."""
-        super().shutdown()
-
     def save(self, path=None):
         """
         Save model parameters if model_file is set.
@@ -585,8 +551,7 @@ class StarspaceAgent(Agent):
             data['model'] = self.model.state_dict()
             data['optimizer'] = self.optimizer.state_dict()
             data['opt'] = self.opt
-            with PathManager.open(path, 'wb') as handle:
-                torch.save(data, handle)
+            torch_utils.atomic_save(data, path)
             with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
@@ -597,9 +562,10 @@ class StarspaceAgent(Agent):
         print('Loading existing model params from ' + path)
         import parlai.utils.pickle
 
-        data = torch.load(
-            path, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
-        )
+        with PathManager.open(path, 'rb') as f:
+            data = torch.load(
+                f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+            )
         self.model.load_state_dict(data['model'])
         self.reset()
         self.optimizer.load_state_dict(data['optimizer'])

@@ -28,13 +28,16 @@ parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
 import json
 import numpy as np
 import signal
-from typing import Dict
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger
-from parlai.core.metrics import aggregate_named_reports, aggregate_unnamed_reports
+from parlai.core.metrics import (
+    aggregate_named_reports,
+    aggregate_unnamed_reports,
+    dict_report,
+)
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
@@ -382,9 +385,6 @@ class TrainLoop:
             except KeyboardInterrupt:
                 pass
 
-    def _safe_report(self, report: Dict[str, Metric]):
-        return {k: v.value() if isinstance(v, Metric) else v for k, v in report.items()}
-
     def _save_train_stats(self, suffix=None):
         fn = self.opt['model_file']
         if suffix:
@@ -421,7 +421,7 @@ class TrainLoop:
         valid_report = self._run_eval(
             self.valid_worlds, opt, 'valid', opt['validation_max_exs']
         )
-        v = self._safe_report(valid_report.copy())
+        v = dict_report(valid_report)
         v['train_time'] = self.train_time.time()
         v['parleys'] = self.parleys
         v['total_exs'] = self._total_exs
@@ -473,8 +473,11 @@ class TrainLoop:
                 self.save_model()
                 self.saved = True
             if (
-                opt['validation_metric'] == 'accuracy'
+                opt['validation_metric_mode'] == 'max'
                 and self.best_valid >= opt['validation_cutoff']
+            ) or (
+                opt['validation_metric_mode'] == 'min'
+                and self.best_valid <= opt['validation_cutoff']
             ):
                 logging.info('task solved! stopping.')
                 return True
@@ -511,7 +514,8 @@ class TrainLoop:
             cnt = valid_world.report().get('exs') or 0
 
         valid_report = valid_world.report()
-        valid_world.reset()  # make sure world doesn't remember valid data
+        if opt.get('validation_share_agent', False):
+            valid_world.reset()  # make sure world doesn't remember valid data
 
         return valid_report
 
@@ -555,7 +559,7 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            with PathManager.open(opt['model_file'] + '.' + datatype, 'a+') as f:
+            with PathManager.open(opt['model_file'] + '.' + datatype, 'a') as f:
                 f.write(f'{metrics}\n')
 
         return report
@@ -611,7 +615,7 @@ class TrainLoop:
         train_report = self._sync_metrics(train_report)
         self.world.reset_metrics()
 
-        train_report_trainstats = self._safe_report(train_report)
+        train_report_trainstats = dict_report(train_report)
         train_report_trainstats['total_epochs'] = self._total_epochs
         train_report_trainstats['total_exs'] = self._total_exs
         train_report_trainstats['parleys'] = self.parleys
@@ -651,7 +655,8 @@ class TrainLoop:
                 # do one example / batch of examples
                 try:
                     world.parley()
-                except StopTrainException:
+                except StopTrainException as e:
+                    logging.info(f"Stopping from {e}")
                     break
 
                 self.parleys += 1

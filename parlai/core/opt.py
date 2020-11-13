@@ -25,9 +25,10 @@ __AUTOCLEAN_KEYS__: List[str] = [
     "batchindex",
     "download_path",
     "datapath",
-    "batchindex",
-    # we don't save interactive mode, it's only decided by scripts or CLI
+    "verbose",
+    # we don't save interactive mode or load from checkpoint, it's only decided by scripts or CLI
     "interactive_mode",
+    "load_from_checkpoint",
 ]
 
 
@@ -83,7 +84,6 @@ class Opt(dict):
         """
         Override deepcopy so that history is copied over to new object.
         """
-        # track location of deepcopy
         # copy all our children
         memo = Opt({k: copy.deepcopy(v) for k, v in self.items()})
         # deepcopy the history. history is only tuples, so we can do it shallow

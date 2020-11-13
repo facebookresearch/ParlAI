@@ -16,11 +16,12 @@ import torch
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.torch import atomic_save
+from parlai.utils.io import PathManager
 import parlai.utils.pickle
 import parlai.utils.logging as logging
 
 
-@register_script("vacuum")
+@register_script("vacuum", hidden=True)
 class Vacuum(ParlaiScript):
     @classmethod
     def setup_args(cls):
@@ -45,11 +46,10 @@ class Vacuum(ParlaiScript):
         if not os.path.isfile(model_file):
             raise RuntimeError(f"'{model_file}' does not exist")
         logging.info(f"Loading {model_file}")
-        states = torch.load(
-            model_file,
-            map_location=lambda cpu, _: cpu,
-            pickle_module=parlai.utils.pickle,
-        )
+        with PathManager.open(model_file, 'rb') as f:
+            states = torch.load(
+                f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+            )
         logging.info(f"Backing up {model_file} to {model_file}.unvacuumed")
         os.rename(model_file, model_file + ".unvacuumed")
         for key in [

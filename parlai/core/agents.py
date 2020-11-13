@@ -322,6 +322,11 @@ def create_agent_from_opt_file(opt: Opt):
     # add model arguments to opt_from_file if they aren't in opt_from_file already
     to_update = {k: v for k, v in opt.items() if k not in opt_from_file}
     to_update['model_file'] = model_file  # update model file path
+    # update init model path to the one set by opt
+    # NOTE: this step is necessary when for example the 'init_model' is
+    # set by the Train Loop (as is the case when loading from checkpoint)
+    if opt.get('init_model') is not None:
+        to_update['init_model'] = opt['init_model']
     opt_from_file = opt_from_file.fork(**to_update)
 
     # update dict file path

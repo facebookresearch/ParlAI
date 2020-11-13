@@ -14,6 +14,9 @@ import torch
 
 from parlai.core.opt import Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.utils.misc import recursive_getattr
+from parlai.utils.logging import logging
+
 from .biencoder import AddLabelFixedCandsTRA
 from .modules import (
     BasicAttention,
@@ -235,6 +238,35 @@ class PolyencoderAgent(TorchRankerAgent):
         if self.model.type == 'codes' and 'codes' not in state_dict:
             state_dict['codes'] = self.model.codes
         super().load_state_dict(state_dict)
+
+    def _resize_token_embeddings(self, state_dict, msg=None):
+        """
+        Resize the token embeddings when adding extra special tokens.
+
+        H/t TransformerGenerator._resize_token_embeddings for inspiration.
+        """
+        # map extra special tokens carefully
+        new_size = self.model.encoder_ctxt.embeddings.weight.size()[0]
+        orig_size = state_dict['encoder_ctxt.embeddings.weight'].size()[0]
+        logging.info(f'Resizing token embeddings from {orig_size} to {new_size}')
+        if new_size <= orig_size:
+            # new size should be greater than original size,
+            # as we are adding special tokens
+            raise RuntimeError(msg)
+
+        for emb_weights in [
+            'encoder_ctxt.embeddings.weight',
+            'encoder_cand.embeddings.weight',
+        ]:
+            # get new_embs
+            old_embs = state_dict[emb_weights]
+            new_embs = recursive_getattr(self.model, emb_weights).to(old_embs.device)
+            # copy over old weights
+            new_embs.data[:orig_size, :] = old_embs.data[:orig_size, :]
+            # reset in state dict
+            state_dict[emb_weights] = new_embs
+
+        return state_dict
 
 
 class PolyEncoderModule(torch.nn.Module):

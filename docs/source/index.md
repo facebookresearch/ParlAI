@@ -16,23 +16,24 @@ tutorial_metrics
 tutorial_fast
 tutorial_mturk
 tutorial_chat_service
+tutorial_tests
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: FAQ & Troubleshooting
+
+faq
 tutorial_tipsntricks
 ```
 
 ```{toctree}
 :maxdepth: 1
-:caption: Tasks & Model Zoo
-
-tasks
-zoo
-```
-
-```{toctree}
-:maxdepth: 2
-:caption: Agents
-:includehidden:
+:caption: Agents, Tasks & Zoo
 
 agents_list
+tasks
+zoo
 ```
 
 ```{toctree}
@@ -41,12 +42,14 @@ agents_list
 
 cli_usage
 cli_advanced
+cli_custom
 ```
 
 ```{toctree}
 :maxdepth: 2
 :caption: API Reference
 
+chat_service
 core
 utils
 ```

@@ -31,14 +31,15 @@ class _AbstractTRATest(unittest.TestCase):
         # Add arguments for the Torch Ranker Agent to test
         # Override in child classes
         return Opt(
-            task='integration_tests:candidate',
-            optimizer='adamax',
-            candidates='batch',
-            learningrate=7e-3,
-            batchsize=16,
-            embedding_size=16,
-            num_epochs=4,
-            gradient_clip=0.0,
+            task='integration_tests:overfit',
+            optimizer='adam',
+            learningrate=1e-2,
+            batchsize=4,
+            validation_every_n_epochs=5,
+            validation_patience=10,
+            lr_scheduler='none',
+            embedding_size=8,
+            gradient_clip=0.5,
         )
 
     def _get_threshold(self):
@@ -48,7 +49,7 @@ class _AbstractTRATest(unittest.TestCase):
     # test train inline cands
     @testing_utils.retry(ntries=3)
     def test_train_inline(self):
-        args = self._get_args().fork(candidates='inline')
+        args = self._get_args().fork(candidates='inline', eval_candidates='inline')
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
@@ -57,7 +58,7 @@ class _AbstractTRATest(unittest.TestCase):
     # test train batch cands
     @testing_utils.retry(ntries=3)
     def test_train_batch(self):
-        args = self._get_args().fork(candidates='batch')
+        args = self._get_args().fork(candidates='batch', eval_candidates='batch')
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
@@ -67,7 +68,9 @@ class _AbstractTRATest(unittest.TestCase):
     @pytest.mark.nofbcode
     @testing_utils.retry(ntries=3)
     def test_train_fixed(self):
-        args = self._get_args().fork(candidates='fixed', encode_candidate_vecs=False)
+        args = self._get_args().fork(
+            candidates='fixed', eval_candidates='fixed', encode_candidate_vecs=False
+        )
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
@@ -76,7 +79,9 @@ class _AbstractTRATest(unittest.TestCase):
     # test train batch all cands
     @testing_utils.retry(ntries=3)
     def test_train_batch_all(self):
-        args = self._get_args().fork(candidates='batch-all-cands')
+        args = self._get_args().fork(
+            candidates='batch-all-cands', eval_candidates='batch-all-cands'
+        )
         valid, test = testing_utils.train_model(args)
         threshold = self._get_threshold()
 
@@ -92,18 +97,16 @@ class _AbstractTRATest(unittest.TestCase):
         self.assertGreaterEqual(valid['hits@1'], threshold)
 
     # test eval batch ecands
-    @testing_utils.retry(ntries=3)
     def test_eval_batch(self):
         args = self._get_args().fork(eval_candidates='batch')
         valid, test = testing_utils.train_model(args)
-        threshold = self._get_threshold()
-
-        self.assertGreaterEqual(valid['hits@1'], threshold)
+        # no threshold, the model won't generalize on :overfit
 
     # test eval fixed ecands
     @testing_utils.retry(ntries=3)
     def test_eval_fixed(self):
         args = self._get_args().fork(
+            evaltask='integration_tests',
             eval_candidates='fixed',
             encode_candidate_vecs=True,
             ignore_bad_candidates=True,
@@ -210,7 +213,12 @@ class TestPolyRanker(_AbstractTRATest):
             # Evaluate model where label is not in fixed candidates
             args = args.fork(fixed_candidates_path=tmp_train_val_cands_file)
 
-            del args['num_epochs']  # need this arg dropped, it was for train only
+            # need these args dropped, it was for train only
+            del args['num_epochs']
+            del args['validation_patience']
+            del args['validation_every_n_epochs']
+            # use validation set that doesn't overlap
+            args['task'] = 'integration_tests'
 
             # Will fail without appropriate arg set
             with self.assertRaises(RuntimeError):

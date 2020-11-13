@@ -20,9 +20,9 @@ _TASK = 'integration_tests:variable_length'
 _DEFAULT_OPTIONS = {
     'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
     'dict_tokenizer': 'space',
-    'batchsize': 16,
+    'batchsize': 64,
     'dynamic_batching': 'full',
-    'num_epochs': 1,
+    'num_epochs': 0.1,
     'truncate': 8,
     'model': 'parlai.agents.test_agents.test_agents:SilentTorchAgent',
     'task': _TASK,

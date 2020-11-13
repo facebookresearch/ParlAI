@@ -51,7 +51,7 @@ class TestWizardModel(unittest.TestCase):
         parser.set_defaults(**END2END_OPTIONS)
         opt = parser.parse_args([])
         opt['num_examples'] = 1
-        opt['display_verbose'] = True
+        opt['verbose'] = True
         display_data.display_data(opt)
 
     def test_end2end(self):

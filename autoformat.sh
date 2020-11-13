@@ -28,6 +28,7 @@ Optional Arguments
   -f, --flake8       only run flake8.
   -h, --help         print this help message and exit
   -i, --internal     run within parlai_internal
+  -z, --fb     run within parlai_fb
 EOF
 }
 
@@ -53,6 +54,7 @@ onlyexists() {
 RUN_ALL_FILES=0
 RUNALL=1
 INTERNAL=0
+FB=0
 CHECK=0
 CMD=""
 while true; do
@@ -80,6 +82,9 @@ while true; do
     -i | --internal)
       INTERNAL=1
       ;;
+    -z | --fb)
+      FB=1
+      ;;
     -b | --black)
       [[ "$CMD" != "" ]] && (echo "Don't mix args." && false);
       CMD="black"
@@ -103,6 +108,9 @@ done
 if [[ $INTERNAL -eq 1 ]]; then
     ROOT="$(git -C ./parlai_internal/ rev-parse --show-toplevel)"
     REPO="-C ./parlai_internal"
+elif [[ $FB -eq 1 ]]; then
+    ROOT="$(git -C ./parlai_fb/ rev-parse --show-toplevel)"
+    REPO="-C ./parlai_fb"
 else
     ROOT=""
     REPO=""
@@ -120,6 +128,7 @@ if [[ $RUNALL -eq 1 ]]
 then
     if [[ $CHECK -eq 1 ]]; then A="$A --check"; fi
     if [[ $INTERNAL -eq 1 ]]; then A="$A --internal"; fi
+    if [[ $FB -eq 1 ]]; then A="$A --fb"; fi
     if [[ $RUN_ALL_FILES -eq 1 ]]; then A="$A --all"; fi
     bash $0 --black $A
     bash $0 --doc $A
