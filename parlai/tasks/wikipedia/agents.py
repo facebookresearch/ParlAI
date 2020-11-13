@@ -180,7 +180,8 @@ class CompletionTeacher(FullSplitTeacher):
             paragraphs = article.split("\n\n")
             if len(paragraphs) % 2 == 1:
                 paragraphs.pop(-1)
-            output.append(paragraphs)
+            if len(paragraphs) >= 2:
+                output.append(paragraphs)
         return output
 
     def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':

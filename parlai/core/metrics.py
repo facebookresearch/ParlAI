@@ -373,6 +373,11 @@ class GlobalAverageMetric(GlobalMetric, AverageMetric):
     pass
 
 
+class GlobalMaxMetric(GlobalMetric, SumMetric):
+    def __add__(self, other):
+        return type(self)(max(self._sum, other._sum))
+
+
 class LegacyMetric(GlobalAverageMetric):
     """
     Legacy Metrics are reported by agent as float.

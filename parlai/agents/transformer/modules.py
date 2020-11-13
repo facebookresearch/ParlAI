@@ -30,6 +30,8 @@ from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
+PERFORMER = True
+
 try:
     from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
 
@@ -645,12 +647,21 @@ class TransformerEncoderLayer(nn.Module):
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = PerformerAttention(
-            n_heads,
-            embedding_size,
-            dropout=attention_dropout,  # --attention-dropout
-            is_self_attention=True,
-        )
+
+        if PERFORMER:
+            self.attention = PerformerAttention(
+                n_heads,
+                embedding_size,
+                dropout=attention_dropout,  # --attention-dropout
+                is_self_attention=True,
+            )
+        else:
+            self.attention = MultiHeadAttention(
+                n_heads,
+                embedding_size,
+                dropout=attention_dropout,  # --attention-dropout
+            )
+
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = TransformerFFN(
             embedding_size,
@@ -960,14 +971,30 @@ class TransformerDecoderLayer(nn.Module):
         self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
-        self.self_attention = PerformerAttention(
-            n_heads, embedding_size, dropout=attention_dropout, is_self_attention=True
-        )
+        if PERFORMER:
+            self.self_attention = PerformerAttention(
+                n_heads,
+                embedding_size,
+                dropout=attention_dropout,
+                is_self_attention=True,
+            )
+        else:
+            self.self_attention = MultiHeadAttention(
+                n_heads, embedding_size, dropout=attention_dropout
+            )
         self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.encoder_attention = PerformerAttention(
-            n_heads, embedding_size, dropout=attention_dropout, is_self_attention=False
-        )
+        if PERFORMER:
+            self.encoder_attention = PerformerAttention(
+                n_heads,
+                embedding_size,
+                dropout=attention_dropout,
+                is_self_attention=False,
+            )
+        else:
+            self.encoder_attention = MultiHeadAttention(
+                n_heads, embedding_size, dropout=attention_dropout
+            )
         self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = TransformerFFN(
@@ -1297,7 +1324,7 @@ class PerformerAttention(nn.Module):
         self.v_lin = nn.Linear(dim, dim)
         dim_per_head = dim // n_heads
         omegas = []
-        for x in range(int(np.ceil(np.log2(dim_per_head)))):
+        for x in range(int(np.ceil(np.log2(dim_per_head))) - 1):
             omega, _ = torch.qr(torch.randn(dim_per_head, dim_per_head))
             omegas.append(omega)
         omegas = torch.cat(omegas, dim=1)
@@ -1537,6 +1564,7 @@ class MultiHeadAttention(nn.Module):
         assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
+        scale = math.sqrt(dim_per_head)
 
         def prepare_head(tensor):
             # input is [batch_size, seq_len, n_heads * dim_per_head]

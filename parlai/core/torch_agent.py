@@ -1955,6 +1955,10 @@ class TorchAgent(ABC, Agent):
 
             ct = (batch.text_vec != self.NULL_IDX).sum().item()
             ctpb = GlobalAverageMetric(ct, float(is_primary_worker()))
+            from parlai.core.metrics import GlobalMaxMetric
+
+            width = GlobalMaxMetric(batch.text_vec.shape[1])
+            self.global_metrics.add('width', width)
             self.global_metrics.add('ctpb', ctpb)
             self.global_metrics.add('ctps', GlobalTimerMetric(ct))
 
