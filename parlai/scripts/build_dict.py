@@ -25,6 +25,7 @@ from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 import copy
 import tqdm
+import sys
 
 
 def setup_args(parser=None, hidden=True):
@@ -55,7 +56,14 @@ def setup_args(parser=None, hidden=True):
     dict_loop.add_argument(
         '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
-    DictionaryAgent.add_cmdline_args(parser)
+
+    # If dictionay agent class is specified
+    if '--dict-class' in sys.argv:
+        idx = sys.argv.index('--dict-class') + 1
+        str2class(sys.argv[idx]).add_cmdline_args(parser)
+    else:
+        DictionaryAgent.add_cmdline_args(parser)
+
     return parser
 
 
