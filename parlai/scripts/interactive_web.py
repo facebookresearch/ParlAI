@@ -267,7 +267,7 @@ def wait():
 def interactive_web(opt):
     global SHARED
 
-    opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+    opt = opt.fork(task='parlai.agents.local_human.local_human:LocalHumanAgent')
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
