@@ -971,7 +971,7 @@ class TransformerDecoderLayer(nn.Module):
         self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
-        if PERFORMER:
+        if False:
             self.self_attention = PerformerAttention(
                 n_heads,
                 embedding_size,
@@ -1324,8 +1324,9 @@ class PerformerAttention(nn.Module):
         self.v_lin = nn.Linear(dim, dim)
         dim_per_head = dim // n_heads
         omegas = []
-        for x in range(int(np.ceil(np.log2(dim_per_head))) - 1):
-            omega, _ = torch.qr(torch.randn(dim_per_head, dim_per_head))
+        for x in range(int(np.ceil(np.log2(dim_per_head)))):
+            q, r = torch.qr(torch.randn(dim_per_head, dim_per_head))
+            omega = q * torch.sign(torch.diag(r))
             omegas.append(omega)
         omegas = torch.cat(omegas, dim=1)
         self.m = omegas.size(1)
@@ -1445,9 +1446,9 @@ class PerformerAttention(nn.Module):
         }
         full_key_len = k.size(1)
 
-        qprime = self._kernel_proj(q) / (np.sqrt(self.m) * np.sqrt(dim_per_head))
-        kprime = self._kernel_proj(k) / (np.sqrt(self.m) * np.sqrt(dim_per_head))
-        v = torch.cat([v, torch.ones_like(v[:, :, :1])], dim=2)
+        qprime = self._kernel_proj(q, is_query=True)
+        kprime = self._kernel_proj(k, is_query=False)
+        # v = torch.cat([v, torch.ones_like(v[:, :, :1])], dim=2)
         if (self.is_self_attention and mask.ndim == 2) or not self.is_self_attention:
             # null out values which should be masked. Don't have
             # to stress about query mask, it will be handled via upstream
@@ -1472,8 +1473,8 @@ class PerformerAttention(nn.Module):
                 attentioned.append(torch.bmm(qprime[:, i, :].unsqueeze(1), Gps))
             attentioned = torch.cat(attentioned, dim=1)
 
-        attentioned, norm = attentioned[:, :, :-1], attentioned[:, :, -1:]
-        attentioned = attentioned / (norm + 1e-6)
+        # attentioned, norm = attentioned[:, :, :-1], attentioned[:, :, -1:]
+        # attentioned = attentioned  # / (norm + 1e-6)
 
         attentioned = (
             attentioned.view(batch_size, n_heads, query_len, dim_per_head)
@@ -1484,12 +1485,20 @@ class PerformerAttention(nn.Module):
 
         return out, new_incr_state
 
-    def _h(self, x):
-        return torch.exp(-torch.norm(x, p=2, dim=-1, keepdim=True) / 2) / np.sqrt(2)
-
-    def _kernel_proj(self, x):
-        xprime = torch.matmul(x, self.omegas)
-        return torch.cat([torch.exp(xprime), torch.exp(-xprime)], dim=-1)
+    def _kernel_proj(self, x, is_query):
+        data_normalizer = x.shape[-1] ** -0.25
+        ratio = self.omegas.shape[1] ** -0.5
+        xprime = torch.matmul(x, data_normalizer * self.omegas)
+        diag_data = (torch.sum(x ** 2, dim=-1, keepdim=True) / 2) * (
+            data_normalizer ** 2
+        )
+        eps = 1e-4
+        normalizer = (
+            xprime.max(dim=-1, keepdim=True).values if is_query else xprime.max()
+        )
+        normalizer = 0
+        alpha = xprime - diag_data - normalizer
+        return ratio * (torch.exp(alpha) + eps)
 
     def reorder_incremental_state(
         self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
