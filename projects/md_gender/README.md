@@ -22,6 +22,7 @@ The following tasks are available right now:
 - `md_gender:md_gender` (new evaluation dataset)
 - `md_gender:wikipedia` (uses the Wikipedia task)
 - `md_gender:wizard` (uses the Wizard of Wikipedia task)
+- `md_gender:yelp` (uses data from Yelp)
 
 View any of the tasks above with the following command:
 ```
@@ -29,8 +30,11 @@ parlai dd -t <taskname>
 ```
 
 
-NOTE: data for the Yelp and Opensubtitles tasks has yet to be released; data will be coming soon.
+NOTE: data for the Opensubtitles tasks has yet to be released; data will be coming soon.
 
 ## Models
 
-Coming soon!
+Try interacting the the multi-tasked classifier by running the following command:
+```
+parlai interactive -t md_gender -m projects.md_gender.bert_ranker_classifier.agents:BertRankerClassifierAgent -mf zoo:md_gender/model -ecands inline -cands inline --interactive_mode False --data-parallel False
+```

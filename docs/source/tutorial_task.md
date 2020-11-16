@@ -334,6 +334,8 @@ class SquadTeacher(DialogTeacher):
         self.datatype = opt['datatype']
         build(opt)  # NOTE: the call to build here
         suffix = 'train' if opt['datatype'].startswith('train') else 'dev'
+        # whatever is placed into datafile will be passed as the argument to
+        # setup_data in the next section.
         opt['datafile'] = os.path.join(opt['datapath'], 'SQuAD', suffix + '-v1.1.json')
         self.id = 'squad'
         super().__init__(opt, shared)
@@ -361,6 +363,7 @@ The sample `setup_data` method for our task is presented below.
 
 ```python
 def setup_data(self, path):
+    # note that path is the value provided by opt['datafile']
     print('loading: ' + path)
     with PathManager.open(path) as data_file:
         self.squad = json.load(data_file)['data']

@@ -43,6 +43,7 @@ tornado==6.0.4
 tqdm==4.36.1
 typing-extensions==3.7.4.1
 Unidecode==1.1.1
+urllib3~=1.25.9
 websocket-client==0.56.0
 websocket-server==0.4
 jsonlines==1.2.0
