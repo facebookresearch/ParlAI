@@ -339,6 +339,11 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 self.task_turn_idx += 1
 
     def shutdown(self):
+
+        if self.chat_done:
+            self.opt['run_statistics'][self.bot.worker_id] += 1
+            # {{{TODO: print run stats now}}}
+
         self.agent.shutdown()
 
     def episode_done(self):
