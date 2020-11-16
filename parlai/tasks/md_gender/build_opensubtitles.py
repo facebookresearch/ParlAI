@@ -59,7 +59,7 @@ def clean_text(words):
 
 def extract_data_from_xml_characters(xml_object):
     """
-    Extract data from XML
+    Extract data from XML.
     """
     previous_end_time = -1000
     conversation = []
@@ -135,7 +135,7 @@ def extract_data_from_xml_characters(xml_object):
 class OSCharDataProcessor(os_build.DataProcessor):
     def xml_extract(self, xml_object):
         """
-        Override to save character information
+        Override to save character information.
         """
         return extract_data_from_xml_characters(xml_object)
 

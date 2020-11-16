@@ -11,6 +11,7 @@ import parlai.tasks.md_gender.utils as gend_utils
 from parlai.tasks.md_gender.build_opensubtitles import build
 
 from copy import deepcopy
+import os
 import random
 import re
 
@@ -101,8 +102,8 @@ class OpensubtitlesTeacher(FixedDialogTeacher):
 
     def _load_orig_data(self, opt):
         """
-        Load the original data, combining all consecutive
-        examples from a single speaker into one example.
+        Load the original data, combining all consecutive examples from a single speaker
+        into one example.
 
         Return a list of episodes.
         """
