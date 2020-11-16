@@ -7,8 +7,6 @@
 import time
 import os
 import json
-import datetime
-from joblib import Parallel, delayed
 from typing import List, Optional
 
 import numpy as np
@@ -20,12 +18,8 @@ from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
 
 from parlai.crowdsourcing.tasks.turn_annotations.constants import (
-    AGENT_1,
-    WAITING_MSG,
     ONBOARD_CONFIG,
-    ONBOARD_TRY_AGAIN,
     ONBOARD_FAIL,
-    ONBOARD_SUBMIT,
     ONBOARD_SUCCESS,
 )
 
@@ -57,10 +51,6 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
         super().__init__(opt, agent)
         self.min_correct = ONBOARD_CONFIG['min_correct']
         self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
-        self.onboard_failures_max_allowed = ONBOARD_CONFIG[
-            'onboard_failures_max_allowed'
-        ]
-        self.onboard_failure_count = 0
         self.onboard_task_data = opt['onboard_task_data']
         self.status = 'DISCONNECT'
         self.onboard_statistics = opt['onboard_statistics']
@@ -127,7 +117,7 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
             # After soft ban, we just block in while loop until worker goes
             # away (Disconnects or returns the HIT as asked on the frontend)
             while time.time() - start_time < self.max_onboard_time:
-                act = self.agent.act(timeout=self.max_onboard_time)
+                _ = self.agent.act(timeout=self.max_onboard_time)
                 time.sleep(0.5)
         return None
 
@@ -209,10 +199,6 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
         # now will be from bot's prior utterance (turn_idx
         # is also present to be safe that data matches)
         print(p)
-        is_fake_utterance = (
-            'fake_start' in self.dialog[turn_idx]
-            and self.dialog[turn_idx]['fake_start']
-        )
         self.dialog[turn_idx]['problem_data'] = p
 
     def parley(self):
@@ -229,7 +215,7 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 # first utterance in the history.
                 # Previously for BST task, we also had a big first utterance
                 # that gave instructions. Removing that for this task.
-                persona_strings = [s.strip() for s in self.personas[agent_idx]]
+                persona_strings = [s.strip() for s in self.personas[1]]
                 persona_utterance = self._get_persona_utterance(
                     persona_strings=persona_strings,
                     context_dataset=self.context_info['context_dataset'],
@@ -522,7 +508,6 @@ def validate_onboarding(data):
 def make_world(opt, agents):
     # Extract important components from opt
     semaphore = opt['semaphore']
-    run_statistics = opt['run_statistics']
     shared_bot_agents = opt['shared_bot_agents']
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
