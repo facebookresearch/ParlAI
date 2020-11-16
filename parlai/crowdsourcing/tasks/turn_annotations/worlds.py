@@ -151,14 +151,7 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
 
 
 class TurnAnnotationsChatWorld(CrowdTaskWorld):
-    def __init__(
-        self,
-        opt,
-        agent=None,
-        bot=None,
-        agent_timeout_shutdown=120,
-        context_info: Optional[dict] = None,
-    ):
+    def __init__(self, opt, agent=None, bot=None, context_info: Optional[dict] = None):
         super().__init__(opt, agent)
 
         # num_turns turns for a single side, and really it appears to be
@@ -186,10 +179,10 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             self.personas = None
         self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
+        self.block_qualification = opt['block_qualification']
 
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
-        self.agent_timeout_shutdown = agent_timeout_shutdown
         print(
             f'Creating {self.__class__.__name__} for tag {self.tag} with {num_turns} turns.'
         )
@@ -400,17 +393,6 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
 
     def save_data(self):
         # TODO move to agent state
-        convo_finished = True
-        bad_workers = []
-        if (
-            self.agent.hit_is_abandoned
-            or self.agent.hit_is_returned
-            or self.agent.disconnected
-            or self.agent.hit_is_expired
-        ):
-            bad_workers.append(self.worker_id)
-            convo_finished = False
-            self.agent.not_approve = True
 
         if self.check_acceptability:
             human_texts = [
@@ -422,28 +404,20 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 # there should be no new greeting
                 violation_types.append('penalize_greetings')
 
-            violations_agent_0 = self.acceptability_checker.check_messages(
+            violations_string = self.acceptability_checker.check_messages(
                 messages=human_texts, is_worker_0=False, violation_types=violation_types
             )
         else:
-            violations_agent_0 = None
+            violations_string = None
 
         time_string = time.strftime('%Y%m%d_%H%M%S')
         data_path = self.opt['save_folder']
-        if convo_finished:
-            filename = os.path.join(
-                data_path,
-                '{}_{}_{}.json'.format(
-                    time_string, np.random.randint(0, 1000), self.task_type
-                ),
-            )
-        else:
-            filename = os.path.join(
-                data_path,
-                '{}_{}_{}_incomplete.json'.format(
-                    time_string, np.random.randint(0, 1000), self.task_type
-                ),
-            )
+        filename = os.path.join(
+            data_path,
+            '{}_{}_{}.json'.format(
+                time_string, np.random.randint(0, 1000), self.task_type
+            ),
+        )
         with open(os.path.join(filename), 'w+') as f_json:
             data = {
                 'personas': self.personas,
@@ -456,33 +430,38 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 ),
                 'additional_context': self.context_info.get('additional_context'),
                 'dialog': self.dialog,
-                'workers': [self.worker_id],
-                'bad_workers': bad_workers,
-                'acceptability_violations': (violations_agent_0,),
+                'workers': [get_mturk_id_from_mephisto_wrapper(self.agent)],
+                'bad_workers': [],
+                'acceptability_violations': (violations_string,),
                 'hit_ids': [ag.hit_id for ag in self.agents],
                 'assignment_ids': [ag.assignment_id for ag in self.agents],
                 'task_description': {
                     'annotations_config': self.opt['annotations_config'],
-                    'model_nickname': self.agents[1].worker_id,
-                    'model_file': self.agents[1].model_agent.opt.get('model_file'),
-                    'model_opt': self.agents[1].model_agent.opt,
+                    'model_nickname': self.bot.worker_id,
+                    'model_file': self.bot.model_agent.opt.get('model_file'),
+                    'model_opt': self.bot.model_agent.opt,
                 },
             }
+            # 'bad_workers' is for compatibility. Before, it was only non-empty if a
+            # worker abandoned, returned, etc. a HIT, but now we don't even save chat
+            # data in that case
             if self.check_acceptability:
-                data['acceptability_violations'] = (violations_agent_0,)
+                data['acceptability_violations'] = (violations_string,)
                 # Make a tuple for compatibility with a human/human conversation in
                 # which we check both sides for acceptability
             data_str = json.dumps(data)
             f_json.write(data_str)
         print(
             f'{self.__class__.__name__}:{self.tag}: Data successfully saved at '
-            f'{filename} for model: {self.agents[1].worker_id}.'
+            f'{filename} for model: {self.bot.worker_id}.'
         )
         if self.check_acceptability:
-            print(f'Acceptability violations for agent 0: ' f'{violations_agent_0}')
-            return self.agents[1].worker_id, violations_agent_0 != '', convo_finished
-        else:
-            return self.agents[1].worker_id, False, convo_finished
+            print(f'Acceptability violations: {violations_string}')
+            if violations_string != '':
+                # Grant the failed qualification
+                self.agent.mephisto_agent.get_worker().grant_qualification(
+                    self.block_qualification, 1
+                )
 
 
 def make_onboarding_world(opt, agent):

@@ -317,6 +317,7 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
         )
         shared_state.world_opt.update(
             {
+                'block_qualification': args.blueprint.block_qualification,
                 'conversations_needed': conversations_needed,
                 'run_statistics': shared_state.run_statistics,
                 'context_generator': context_generator,

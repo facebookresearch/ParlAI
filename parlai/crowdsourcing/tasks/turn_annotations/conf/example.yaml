@@ -1,7 +1,8 @@
 #@package _global_
 mephisto:
   blueprint:
-    onboarding_qualification: turn_annotations
+    onboarding_qualification: turn_annotations_onboarding
+    block_qualification: turn_annotations
     base_model_folder: ~/ParlAI/data/models/
     num_turns: 6
     task_model_parallel: true
