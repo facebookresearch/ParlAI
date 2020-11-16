@@ -167,6 +167,7 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
 
         self.dialog = []
         self.tag = f'conversation_id {agent.mephisto_agent.db_id}'
+        self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
         if context_info is not None:
             self.context_info = context_info

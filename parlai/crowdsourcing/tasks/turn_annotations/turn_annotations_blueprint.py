@@ -325,6 +325,7 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
                 'shared_bot_agents': shared_bot_agents,
                 'num_turns': args.blueprint.num_turns,
                 'max_resp_time': args.blueprint.max_resp_time,
+                'is_sandbox': args.provider.requester_name == 'MOCK_REQUESTER',
                 'statistics_condition': statistics_condition,
                 'check_acceptability': args.blueprint.check_acceptability,
                 'include_persona': args.blueprint.include_persona,
