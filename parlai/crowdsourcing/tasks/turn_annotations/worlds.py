@@ -413,7 +413,7 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             )
 
     def save_data(self):
-        # TODO revisit with agent states
+        # TODO move to agent state
         convo_finished = True
         bad_workers = []
         if (
@@ -497,9 +497,6 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             return self.agents[1].worker_id, violations_agent_0 != '', convo_finished
         else:
             return self.agents[1].worker_id, False, convo_finished
-
-    def review_work(self):
-        pass
 
 
 def make_onboarding_world(opt, agent):

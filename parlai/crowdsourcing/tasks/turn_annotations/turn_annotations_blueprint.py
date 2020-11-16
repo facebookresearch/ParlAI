@@ -5,28 +5,28 @@
 # LICENSE file in the root directory of this source tree.
 
 import json
-import logging
-import math
 import os
 import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
-
-from parlai.core.params import ParlaiParser
-from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
-from parlai.tasks.blended_skill_talk.agents import ContextGenerator
+from threading import Semaphore, Condition
+from typing import Any, ClassVar, Dict, Optional, Type, TYPE_CHECKING
 
 import numpy as np
-from threading import Semaphore, Condition
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
     ParlAIChatBlueprint,
-    ParlAIChatAgentState,
     SharedParlAITaskState,
     ParlAIChatBlueprintArgs,
 )
 from omegaconf import DictConfig, MISSING
+
+from parlai.core.params import ParlaiParser
+from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
+from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_agent_state import (
+    TurnAnnotationsAgentState,
+)
+from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun
@@ -159,9 +159,6 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
     )
 
 
-# TODO make an AgentState for this blueprint that will save/load data in the expected formats.
-
-
 @register_mephisto_abstraction()
 class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
     """
@@ -173,6 +170,7 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
     definitions.
     """
 
+    AgentStateClass: ClassVar[Type["AgentState"]] = TurnAnnotationsAgentState
     ArgsClass = TurnAnnotationsBlueprintArgs
     SharedStateClass = SharedTurnAnnotationsTaskState
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
