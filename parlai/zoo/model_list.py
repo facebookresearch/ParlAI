@@ -1568,7 +1568,7 @@ model_list = [
     },
     {
         "title": "MDGender Bert Ranker Classifier",
-        "id": "mdgender_ranker",
+        "id": "md_gender",
         "path": "zoo:md_gender/model",
         "agent": "projects.md_gender.bert_ranker_classifier.agents:BertRankerClassifierAgent",
         "task": "md_gender",
