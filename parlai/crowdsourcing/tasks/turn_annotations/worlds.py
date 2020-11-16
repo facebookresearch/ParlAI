@@ -433,8 +433,8 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 'workers': [get_mturk_id_from_mephisto_wrapper(self.agent)],
                 'bad_workers': [],
                 'acceptability_violations': (violations_string,),
-                'hit_ids': [ag.hit_id for ag in self.agents],
-                'assignment_ids': [ag.assignment_id for ag in self.agents],
+                'hit_ids': [self.agent.mephisto_agent.task_run_id],
+                'assignment_ids': [self.agent.mephisto_agent.assignment_id],
                 'task_description': {
                     'annotations_config': self.opt['annotations_config'],
                     'model_nickname': self.bot.worker_id,
