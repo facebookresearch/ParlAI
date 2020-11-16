@@ -20,6 +20,7 @@ The following tasks are available right now:
 - `md_gender:image_chat` (uses the Image Chat task)
 - `md_gender:light` (uses the LIGHT task)
 - `md_gender:md_gender` (new evaluation dataset)
+- `md_gender:opensubtitles` (uses the Opensubtitles 2018 task)
 - `md_gender:wikipedia` (uses the Wikipedia task)
 - `md_gender:wizard` (uses the Wizard of Wikipedia task)
 - `md_gender:yelp` (uses data from Yelp)
@@ -28,9 +29,11 @@ View any of the tasks above with the following command:
 ```
 parlai dd -t <taskname>
 ```
+In the case of `-t md_gender:wikipedia` be sure to add `:stream` to the datatype, as in:
+```
+parlai dd -t md_gender:wikipedia -dt train:stream
+```
 
-
-NOTE: data for the Opensubtitles tasks has yet to be released; data will be coming soon.
 
 ## Models
 

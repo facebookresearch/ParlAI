@@ -255,13 +255,16 @@ class DataProcessor(object):
     def __init__(self, use_history):
         self.use_history = use_history
 
+    def xml_extract(self, xml_object):
+        return extract_data_from_xml(xml_object)
+
     def __call__(self, movie_id_with_files):
         movie_id, files = movie_id_with_files
         data = set()
         for filepath in files:
             try:
                 xml_object = parse_xml(filepath)
-                for conversation in extract_data_from_xml(xml_object):
+                for conversation in self.xml_extract(xml_object):
                     if self.use_history:
                         data.add(conversation_to_fb_format(conversation))
                     else:
@@ -341,7 +344,8 @@ def build(datapath, use_history):
             for downloadable_file in RESOURCES:
                 downloadable_file.download_file(dpath)
 
-        create_fb_format(untar_path, dpath, use_history)
+        processor = DataProcessor(use_history)
+        create_fb_format(untar_path, dpath, processor)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
