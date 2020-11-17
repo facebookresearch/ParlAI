@@ -315,9 +315,10 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
 
                 # Save the final chat data
                 time_string = time.strftime('%Y%m%d_%H%M%S')
-                data_path = self.opt['chat_data_folder']
+                chat_data_folder = self.opt['chat_data_folder']
+                os.makedirs(chat_data_folder, exist_ok=True)
                 chat_data_path = os.path.join(
-                    data_path,
+                    chat_data_folder,
                     f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
                 )
                 final_chat_data = self.get_final_chat_data()

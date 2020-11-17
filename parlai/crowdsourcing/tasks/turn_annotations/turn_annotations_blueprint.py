@@ -9,7 +9,7 @@ import os
 import random
 from dataclasses import dataclass, field
 from threading import Semaphore, Condition
-from typing import Any, ClassVar, Dict, Optional, Type, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
@@ -23,9 +23,6 @@ from omegaconf import DictConfig, MISSING
 
 from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
-from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_agent_state import (
-    TurnAnnotationsAgentState,
-)
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 if TYPE_CHECKING:
@@ -100,6 +97,10 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
     base_model_folder: str = field(
         default=MISSING, metadata={"help": "base folder for loading model files from"}
     )
+    chat_data_folder: str = field(
+        default=MISSING,
+        metadata={"help": "Folder in which to save collected conversation data"},
+    )
     check_acceptability: bool = field(
         default=False,
         metadata={
@@ -170,7 +171,6 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
     definitions.
     """
 
-    AgentStateClass: ClassVar[Type["AgentState"]] = TurnAnnotationsAgentState
     ArgsClass = TurnAnnotationsBlueprintArgs
     SharedStateClass = SharedTurnAnnotationsTaskState
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
@@ -240,7 +240,6 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
     ):
         # Set the number of conversations needed
         conversations_needed_string = args.blueprint.conversations_needed_string
-        parts = conversations_needed_string.split(',')
         conversations_needed = {}
         parts = conversations_needed_string.split(',')
         for part in parts:
@@ -283,7 +282,7 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
         argparser = ParlaiParser(False, False)
         argparser.add_parlai_data_path()
         if len(args.blueprint.override_opt) > 0:
-            argparser.set_params(**override_opt)
+            argparser.set_params(**args.blueprint.override_opt)
         opt = argparser.parse_args([])
 
         if (
@@ -331,6 +330,7 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
                 'check_acceptability': args.blueprint.check_acceptability,
                 'include_persona': args.blueprint.include_persona,
                 'conversation_start_mode': args.blueprint.conversation_start_mode,
+                'chat_data_folder': args.blueprint.chat_data_folder,
             }
         )
 
