@@ -322,6 +322,11 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                     f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
                 )
                 final_chat_data = self.get_final_chat_data()
+                self.agent.mephisto_agent.state.messages.append(
+                    {'final_chat_data': final_chat_data}
+                )
+                # Append the chat data directly to the agent state's message list in
+                # order to prevent the worker from seeing a new text response in the UI
                 with open(chat_data_path, 'w+') as f_json:
                     data_str = json.dumps(final_chat_data)
                     f_json.write(data_str)
@@ -331,10 +336,15 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 )
 
                 # Soft-block the worker if there were acceptability violations
-                if final_chat_data.get('acceptability_violations', '') != '':
+                acceptability_violations = final_chat_data['acceptability_violations'][
+                    0
+                ]
+                if (
+                    acceptability_violations is not None
+                    and acceptability_violations != ''
+                ):
                     print(
-                        f'**NOTE** Acceptability violations detected: '
-                        + final_chat_data['acceptability_violations']
+                        f'**NOTE** Acceptability violations detected: {acceptability_violations}'
                     )
                     # Grant the failed qualification
                     self.agent.mephisto_agent.get_worker().grant_qualification(
@@ -376,7 +386,8 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             print(
                 'Runs completed per model: '
                 + ', '.join(
-                    f'{model}: {count:d}' for model, count in self.opt['run_statistics']
+                    f'{model}: {count:d}'
+                    for model, count in self.opt['run_statistics'].items()
                 )
             )
 
