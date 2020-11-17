@@ -7,7 +7,7 @@
 import time
 import os
 import json
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -302,14 +302,44 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 )
 
             if acts[idx].get('task_data', {}).get('final_rating') is not None:
+
                 self.chat_done = True
                 # agent ends chat after exceeding minimum number of turns
+
                 if self.task_turn_idx > self.num_turns:
                     # Human has just responded. Problem data received
                     # now will be from bot's prior utterance (turn_idx
                     # is a also present to be safe that data matches)
                     p = acts[idx]['task_data']['problem_data_for_prior_message']
                     self.__add_problem_data_to_utterance(p, idx - 1)
+
+                # Save the final chat data
+                time_string = time.strftime('%Y%m%d_%H%M%S')
+                data_path = self.opt['chat_data_folder']
+                chat_data_path = os.path.join(
+                    data_path,
+                    f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
+                )
+                final_chat_data = self.get_final_chat_data()
+                with open(chat_data_path, 'w+') as f_json:
+                    data_str = json.dumps(final_chat_data)
+                    f_json.write(data_str)
+                print(
+                    f'{self.__class__.__name__}:{self.tag}: Data saved at '
+                    f'{chat_data_path} for model: {self.bot.worker_id}.'
+                )
+
+                # Soft-block the worker if there were acceptability violations
+                if final_chat_data.get('acceptability_violations', '') != '':
+                    print(
+                        f'**NOTE** Acceptability violations detected: '
+                        + final_chat_data['acceptability_violations']
+                    )
+                    # Grant the failed qualification
+                    self.agent.mephisto_agent.get_worker().grant_qualification(
+                        self.block_qualification, 1
+                    )
+
                 return
 
             else:
@@ -402,8 +432,10 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 f'{last_sentence}'
             )
 
-    def save_data(self):
-        # TODO move to agent state
+    def get_final_chat_data(self) -> Dict[str, Any]:
+        """
+        Return specific info about the conversation, the context, acceptability, etc.
+        """
 
         if self.check_acceptability:
             human_texts = [
@@ -421,58 +453,34 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
         else:
             violations_string = None
 
-        time_string = time.strftime('%Y%m%d_%H%M%S')
-        data_path = self.opt['save_folder']
-        filename = os.path.join(
-            data_path,
-            '{}_{}_{}.json'.format(
-                time_string, np.random.randint(0, 1000), self.task_type
-            ),
-        )
-        with open(os.path.join(filename), 'w+') as f_json:
-            data = {
-                'personas': self.personas,
-                'context_dataset': self.context_info.get('context_dataset'),
-                'person1_seed_utterance': self.context_info.get(
-                    'person1_seed_utterance'
-                ),
-                'person2_seed_utterance': self.context_info.get(
-                    'person2_seed_utterance'
-                ),
-                'additional_context': self.context_info.get('additional_context'),
-                'dialog': self.dialog,
-                'workers': [get_mturk_id_from_mephisto_wrapper(self.agent)],
-                'bad_workers': [],
-                'acceptability_violations': (violations_string,),
-                'hit_ids': [self.agent.mephisto_agent.task_run_id],
-                'assignment_ids': [self.agent.mephisto_agent.assignment_id],
-                'task_description': {
-                    'annotations_config': self.opt['annotations_config'],
-                    'model_nickname': self.bot.worker_id,
-                    'model_file': self.bot.model_agent.opt.get('model_file'),
-                    'model_opt': self.bot.model_agent.opt,
-                },
-            }
-            # 'bad_workers' is for compatibility. Before, it was only non-empty if a
-            # worker abandoned, returned, etc. a HIT, but now we don't even save chat
-            # data in that case
-            if self.check_acceptability:
-                data['acceptability_violations'] = (violations_string,)
-                # Make a tuple for compatibility with a human/human conversation in
-                # which we check both sides for acceptability
-            data_str = json.dumps(data)
-            f_json.write(data_str)
-        print(
-            f'{self.__class__.__name__}:{self.tag}: Data successfully saved at '
-            f'{filename} for model: {self.bot.worker_id}.'
-        )
+        data = {
+            'personas': self.personas,
+            'context_dataset': self.context_info.get('context_dataset'),
+            'person1_seed_utterance': self.context_info.get('person1_seed_utterance'),
+            'person2_seed_utterance': self.context_info.get('person2_seed_utterance'),
+            'additional_context': self.context_info.get('additional_context'),
+            'dialog': self.dialog,
+            'workers': [get_mturk_id_from_mephisto_wrapper(self.agent)],
+            'bad_workers': [],
+            'acceptability_violations': (violations_string,),
+            'hit_ids': [self.agent.mephisto_agent.task_run_id],
+            'assignment_ids': [self.agent.mephisto_agent.assignment_id],
+            'task_description': {
+                'annotations_config': self.opt['annotations_config'],
+                'model_nickname': self.bot.worker_id,
+                'model_file': self.bot.model_agent.opt.get('model_file'),
+                'model_opt': self.bot.model_agent.opt,
+            },
+        }
+        # 'bad_workers' is for compatibility. Before, it was only non-empty if a
+        # worker abandoned, returned, etc. a HIT, but now we don't even save chat
+        # data in that case
         if self.check_acceptability:
-            print(f'Acceptability violations: {violations_string}')
-            if violations_string != '':
-                # Grant the failed qualification
-                self.agent.mephisto_agent.get_worker().grant_qualification(
-                    self.block_qualification, 1
-                )
+            data['acceptability_violations'] = (violations_string,)
+            # Make a tuple for compatibility with a human/human conversation in
+            # which we check both sides for acceptability
+
+        return data
 
 
 def make_onboarding_world(opt, agent):
