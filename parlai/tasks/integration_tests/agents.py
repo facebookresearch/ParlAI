@@ -28,6 +28,7 @@ import string
 import json
 from abc import ABC
 from typing import Tuple, List
+import time
 from parlai.utils.io import PathManager
 
 # default parameters
@@ -490,6 +491,21 @@ class InfiniteTrainTeacher(ChunkyTeacher):
             return NUM_TEST, NUM_TEST
         elif 'test' in datatype:
             return NUM_TEST, NUM_TEST
+
+
+class ChunkyUniqueSlowTeacher(ChunkyTeacher):
+    """
+    Unique examples that load slowly.
+    """
+
+    def load_from_chunk(self, chunk_idx: int):
+        output = []
+        for i in range(10):
+            text = str(i + chunk_idx * 10)
+            resp = str(i + chunk_idx * 10)
+            output.append((text, resp))
+            time.sleep(0.1)
+        return output
 
 
 class ShortFixedTeacher(FixedDialogCandidateTeacher):

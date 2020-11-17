@@ -739,10 +739,10 @@ class ParlaiParser(argparse.ArgumentParser):
             help='Use dynamic batching',
         )
         parlai.add_argument(
+            '-v',
             '--verbose',
             dest='verbose',
-            type='bool',
-            default=False,
+            action='store_true',
             help='Print all messages',
         )
         self.add_parlai_data_path(parlai)
