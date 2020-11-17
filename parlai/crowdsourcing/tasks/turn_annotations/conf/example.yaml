@@ -2,7 +2,7 @@
 mephisto:
   blueprint:
     onboarding_qualification: turn_annotations_onboarding
-    block_qualification: turn_annotations
+    block_qualification: turn_annotations_block
     base_model_folder: ~/ParlAI/data/models/
     chat_data_folder: ~/ParlAI/data/crowdsourcing/turn_annotations/
     num_turns: 6
