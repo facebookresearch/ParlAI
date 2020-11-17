@@ -342,7 +342,12 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
 
         if self.chat_done:
             self.opt['run_statistics'][self.bot.worker_id] += 1
-            # {{{TODO: print run stats now}}}
+            print(
+                'Runs completed per model: '
+                + ', '.join(
+                    f'{model}: {count:d}' for model, count in self.opt['run_statistics']
+                )
+            )
 
         self.agent.shutdown()
 
@@ -508,7 +513,6 @@ def make_world(opt, agents):
         model_name = remaining_counts_needed[0][0]
         print(f'Remaining conversation counts needed: {remaining_counts_needed}')
         print(f'Choosing the "{model_name}" model for the bot.')
-        run_statistics[model_name] += 1
 
     # Create the bot
     bot_agent = create_agent_from_shared(shared_bot_agents[model_name])
