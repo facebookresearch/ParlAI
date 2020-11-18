@@ -9,19 +9,39 @@ Code for distilling a transformer/generator model.
 
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
 from parlai.agents.bart.bart import BartAgent
+from parlai.agents.transformer.modules import (
+    MultiHeadAttention,
+    TransformerDecoderLayer,
+    TransformerEncoderLayer,
+)
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import create_agent_from_model_file
 from parlai.core.metrics import AverageMetric
 from parlai.core.torch_agent import Batch
 from parlai.core.torch_generator_agent import PPLMetric
 from parlai.utils.misc import AttrDict
+
+
+class OutputRecorder:
+    """
+    Saves all outputs from modules that it is registered to.
+    """
+
+    def __init__(self):
+        self.outputs = []
+
+    def __call__(self, module: nn.Module, module_in: Any, module_out: Any):
+        self.outputs.append(module_out)
+
+    def clear(self):
+        self.outputs = []
 
 
 class ForwardPassOutputs(AttrDict):
@@ -123,13 +143,18 @@ class AbstractDistillTransformerAgentMixin(ABC):
         return agent
 
     def __init__(self, opt, shared=None):
+
+        # Define coefficients
         self.task_loss_coeff = opt['task_loss_coeff']
         self.encoder_loss_coeff = opt['encoder_loss_coeff']
         self.hidden_loss_coeff = opt['hidden_loss_coeff']
         self.pred_loss_coeff = opt['pred_loss_coeff']
+
         assert (
             opt.get('model_parallel', False) is False
         ), 'model_parallel is not currently supported for distillation!'
+
+        # Create teacher model
         if shared is None:
             to_copy = {'no_cuda', 'model_parallel', 'fp16', 'fp16_impl'}
             override = {k: opt[k] for k in to_copy}
@@ -140,6 +165,10 @@ class AbstractDistillTransformerAgentMixin(ABC):
             if hasattr(self.teacher_model, 'module'):
                 self.teacher_model = self.teacher_model.module
             self.teacher_model.eval()
+        else:
+            pass
+            # {{{TODO: add this}}}
+
         super().__init__(opt, shared)
 
     def build_model(self):
@@ -163,6 +192,29 @@ class AbstractDistillTransformerAgentMixin(ABC):
         for i in range(self.student_num_dec_layers):
             j = int((i + 1) * self.dec_layer_ratio) - 1
             self.mapped_dec_layers.append(j)
+
+        # Register hooks to record outputs
+        encoder_module_map = {
+            'embeddings': nn.Embedding,
+            'layers': TransformerEncoderLayer,
+            'attentions': MultiHeadAttention,
+        }
+        decoder_module_map = {
+            'embeddings': nn.Embedding,
+            'layers': TransformerDecoderLayer,
+            'attentions': MultiHeadAttention,
+        }
+        self.hooks = {'encoder': {}, 'decoder': {}}
+        for module_name, module_type in encoder_module_map.items():
+            self.hooks['encoder'][module_name] = OutputRecorder()
+            for module in model.encoder.modules():
+                if isinstance(module, module_type):
+                    module.register_forward_hook(self.hooks['encoder'][module_name])
+        for module_name, module_type in decoder_module_map.items():
+            self.hooks['decoder'][module_name] = OutputRecorder()
+            for module in model.decoder.modules():
+                if isinstance(module, module_type):
+                    module.register_forward_hook(self.hooks['decoder'][module_name])
 
         return model
 
