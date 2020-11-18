@@ -11,6 +11,8 @@ Test code for anti-scaling transformer/generator models.
 import unittest
 
 import parlai.utils.testing as testing_utils
+from parlai.zoo.bart.build import download as download_bart
+from parlai.zoo.blender.blender_90M import download as download_blender
 
 
 class TestDistillation(unittest.TestCase):
@@ -25,10 +27,18 @@ class TestDistillation(unittest.TestCase):
         Make sure that the sum of all distillation losses from one pass through the
         student and teacher models is as expected.
         """
-        blenderbot_model_file = 'zoo:blender/blender_90M/model'
-        bart_model_file = 'zoo:bart/bart_large/model'
+
+        # Download models in advance so that their opt files can be used with --init-opt
+        data_path = 'data'
+        download_blender(data_path)
+        download_bart(data_path)
+        blenderbot_model_file = 'data/models/blender/blender_90M/model'
+        bart_model_file = 'data/models/bart/bart_large/model'
+
         base_opt = {
-            'init_model': None,
+            'allow_missing_init_opts': True,
+            'init_model': '',
+            'model_file': '',
             'n_encoder_layers': 1,
             'n_decoder_layers': 1,
             'num_examples': 1,
@@ -56,21 +66,32 @@ class TestDistillation(unittest.TestCase):
             'enc_dec_attn_loss_coeff': 1,
         }
         opts_and_desired_losses = [
-            (transformer_opt, wide_distillation_opt, 'DistillTransformerAgent', 0),
-            (bart_opt, wide_distillation_opt, 'DistillBartAgent', 0),
             (
                 transformer_opt,
-                narrow_distillation_opt,
-                'DistillNarrowTransformerAgent',
-                0,
+                wide_distillation_opt,
+                'DistillTransformerAgent',
+                {
+                    'dec_hid_loss': 87.27,
+                    'enc_hid_loss': 0.8726,
+                    'enc_loss': 0.8726,
+                    'loss': 15.85,
+                    'pred_loss': 13.77,
+                },
             ),
-            (bart_opt, narrow_distillation_opt, 'DistillNarrowBartAgent', 0),
+            # (bart_opt, wide_distillation_opt, 'DistillBartAgent', 0),
+            # (
+            #     transformer_opt,
+            #     narrow_distillation_opt,
+            #     'DistillNarrowTransformerAgent',
+            #     0,
+            # ),
+            # (bart_opt, narrow_distillation_opt, 'DistillNarrowBartAgent', 0),
         ]  # TODO: change losses
         for (
             model_opt,
             distillation_opt,
             model_name,
-            desired_loss,
+            desired_losses,
         ) in opts_and_desired_losses:
             opt = {
                 **base_opt,
@@ -79,6 +100,9 @@ class TestDistillation(unittest.TestCase):
                 'model': f'projects.anti_scaling.distillation:{model_name}',
             }
             valid, _ = testing_utils.eval_model(opt, skip_test=True)
-            self.assertAlmostEqual(
-                valid['loss'], desired_loss, delta=0
-            )  # TODO: change delta
+            for loss_name, desired_loss in desired_losses.items():
+                self.assertAlmostEqual(valid[loss_name], desired_loss, delta=0.01)
+
+
+if __name__ == '__main__':
+    unittest.main()
