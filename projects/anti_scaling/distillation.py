@@ -298,9 +298,10 @@ class AbstractDistillTransformerAgentMixin(ABC):
         # TODO: remove the list comprehensions once you take the attentions out of the layer outputs
         # {{{TODO}}}
         hooks = self.hooks['student']
+        num_enc_layers = self.student_num_enc_layers
         assert (
             len(hooks['encoder']['attentions'].outputs)
-            == self.student_num_enc_layers
+            == num_enc_layers
         )
         assert (
             len(hooks['decoder']['attentions'].outputs)
@@ -316,7 +317,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                         layer_idx
                     ][output_idx]
                 }
-                for layer_idx in self.student_num_enc_layers
+                for layer_idx in num_enc_layers
             ],
             'decoder': [
                 {
