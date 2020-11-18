@@ -604,7 +604,6 @@ class TransformerEncoder(nn.Module):
         :param LongTensor[batch,seqlen] segments:
             If provided, additionally adds ``segments`` as extra embedding features.
         """
-
         # embed input
         tensor, mask = self.forward_embedding(input, positions, segments)
 
