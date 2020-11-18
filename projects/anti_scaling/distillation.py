@@ -299,13 +299,14 @@ class AbstractDistillTransformerAgentMixin(ABC):
         # {{{TODO}}}
         hooks = self.hooks['student']
         num_enc_layers = self.student_num_enc_layers
+        num_dec_layers = self.student_num_dec_layers
         assert (
             len(hooks['encoder']['attentions'].outputs)
             == num_enc_layers
         )
         assert (
             len(hooks['decoder']['attentions'].outputs)
-            == 2 * self.student_num_dec_layers
+            == 2 * num_dec_layers
         )
         output_idx = 1  # The position of the attention matrix among the outputs
         # TODO: make this the 2nd output, not the 1st, once I reorder the outputs from
@@ -328,7 +329,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                         'attentions'
                     ].outputs[2 * layer_idx + 1][output_idx],
                 }
-                for layer_idx in self.student_num_dec_layers
+                for layer_idx in num_dec_layers
             ],
         }
 
