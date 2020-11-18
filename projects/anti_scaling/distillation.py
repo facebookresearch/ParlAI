@@ -9,7 +9,7 @@ Code for distilling a transformer/generator model.
 
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Type
 
 import torch
 from torch import nn as nn
@@ -204,19 +204,44 @@ class AbstractDistillTransformerAgentMixin(ABC):
             'layers': TransformerDecoderLayer,
             'attentions': MultiHeadAttention,
         }
-        self.hooks = {'encoder': {}, 'decoder': {}}
-        for module_name, module_type in encoder_module_map.items():
-            self.hooks['encoder'][module_name] = OutputRecorder()
-            for module in model.encoder.modules():
-                if isinstance(module, module_type):
-                    module.register_forward_hook(self.hooks['encoder'][module_name])
-        for module_name, module_type in decoder_module_map.items():
-            self.hooks['decoder'][module_name] = OutputRecorder()
-            for module in model.decoder.modules():
-                if isinstance(module, module_type):
-                    module.register_forward_hook(self.hooks['decoder'][module_name])
+        self.hooks = {
+            'teacher': {
+                'encoder': self._register_series_of_hooks(
+                    model=self.teacher_model.encoder, module_map=encoder_module_map
+                ),
+                'decoder': self._register_series_of_hooks(
+                    model=self.teacher_model.decoder, module_map=decoder_module_map
+                ),
+            },
+            'student': {
+                'encoder': self._register_series_of_hooks(
+                    model=model.encoder, module_map=encoder_module_map
+                ),
+                'decoder': self._register_series_of_hooks(
+                    model=model.decoder, module_map=decoder_module_map
+                ),
+            },
+        }
 
         return model
+
+    def _register_series_of_hooks(
+        self, model: nn.Module, module_map: Dict[str, Type[nn.Module]]
+    ) -> Dict[str, OutputRecorder]:
+        """
+        Register hooks in modules of the model, given the mapping of module types.
+
+        `module_map` is a dict whose keys are module-type names and whose values are
+         module types. For each module type, during each forward pass of `model`, all
+        outputs of modules of that type will be saved to `hooks[module_type].outputs`.
+        """
+        hooks = {}
+        for module_name, module_type in module_map.items():
+            hooks[module_name] = OutputRecorder()
+            for module in model.modules():
+                if isinstance(module, module_type):
+                    module.register_forward_hook(hooks[module_name])
+        return hooks
 
     @abstractmethod
     def compute_loss(self, batch, return_output=False):
