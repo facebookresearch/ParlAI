@@ -297,12 +297,13 @@ class AbstractDistillTransformerAgentMixin(ABC):
         }
         # TODO: remove the list comprehensions once you take the attentions out of the layer outputs
         # {{{TODO}}}
+        hooks = self.hooks['student']
         assert (
-            len(self.hooks['student']['encoder']['attentions'].outputs)
+            len(hooks['encoder']['attentions'].outputs)
             == self.student_num_enc_layers
         )
         assert (
-            len(self.hooks['student']['decoder']['attentions'].outputs)
+            len(hooks['decoder']['attentions'].outputs)
             == 2 * self.student_num_dec_layers
         )
         output_idx = 1  # The position of the attention matrix among the outputs
@@ -311,7 +312,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         student_attention_matrices = {
             'encoder': [
                 {
-                    'self_attn': self.hooks['student']['encoder']['attentions'].outputs[
+                    'self_attn': hooks['encoder']['attentions'].outputs[
                         layer_idx
                     ][output_idx]
                 }
@@ -319,10 +320,10 @@ class AbstractDistillTransformerAgentMixin(ABC):
             ],
             'decoder': [
                 {
-                    'self_attn': self.hooks['student']['decoder']['attentions'].outputs[
+                    'self_attn': hooks['decoder']['attentions'].outputs[
                         2 * layer_idx
                     ][output_idx],
-                    'encoder_attn': self.hooks['student']['decoder'][
+                    'encoder_attn': hooks['decoder'][
                         'attentions'
                     ].outputs[2 * layer_idx + 1][output_idx],
                 }
