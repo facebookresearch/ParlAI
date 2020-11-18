@@ -605,10 +605,16 @@ class TransformerEncoder(nn.Module):
             If provided, additionally adds ``segments`` as extra embedding features.
         """
 
-        # Embed inputs
-        embedding_output, mask = self._embed_inputs(
-            input_=input, positions=positions, segments=segments
-        )
+        # embed input
+        tensor, mask = self.forward_embedding(input, positions, segments)
+
+        if self.variant == 'xlm' or self.variant == 'bart':
+            tensor = _normalize(tensor, self.norm_embeddings)
+
+        # --dropout on the embeddings
+        embedding_output = self.dropout(tensor)
+
+        embedding_output *= mask.unsqueeze(-1).type_as(embedding_output)
 
         # apply transformer layers
         layer_outputs, attention_matrices = self.forward_layers(embedding_output, mask)
@@ -624,32 +630,6 @@ class TransformerEncoder(nn.Module):
             return tensor, out_mask, embedding_output, layer_outputs, attention_matrices
         else:
             return tensor, embedding_output, layer_outputs, attention_matrices
-
-    def _embed_inputs(
-        self,
-        input_: torch.LongTensor,
-        positions: Optional[torch.LongTensor] = None,
-        segments: Optional[torch.LongTensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """
-        Embed the inputs and apply normalization, dropout, and masking.
-
-        In a separate function so that the embedding input can be registered by PyTorch
-        hooks.
-        """
-
-        # embed input
-        tensor, mask = self.forward_embedding(input_, positions, segments)
-
-        if self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm_embeddings)
-
-        # --dropout on the embeddings
-        embedding_output = self.dropout(tensor)
-
-        embedding_output *= mask.unsqueeze(-1).type_as(embedding_output)
-
-        return embedding_output, mask
 
     def _apply_model_parallel(self, tensor, mask):
         """
