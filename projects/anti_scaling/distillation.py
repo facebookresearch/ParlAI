@@ -265,7 +265,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 teacher_enc_states,
                 teacher_embedding_outputs,
                 _,
-                teacher_attention_matrices,
+                _,
             ) = self.teacher_model(*self._model_input(batch), ys=batch.label_vec)
             teacher_enc_output, context_mask = teacher_enc_states
 
@@ -277,7 +277,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
             student_enc_states,
             student_embedding_outputs,
             _,
-            student_attention_matrices,
+            _,
         ) = student_output
         student_enc_output, _ = student_enc_states
 
@@ -295,47 +295,22 @@ class AbstractDistillTransformerAgentMixin(ABC):
             ]
             for module_name in ['encoder', 'decoder']
         }
-        # TODO: remove the list comprehensions once you take the attentions out of the layer outputs
-        # {{{TODO}}}
-        hooks = self.hooks['student']
-        num_enc_layers = self.student_num_enc_layers
-        num_dec_layers = self.student_num_dec_layers
-        assert (
-            len(hooks['encoder']['attentions'].outputs)
-            == num_enc_layers
+        # TODO: remove the list comprehensions once you take the attentions out of the
+        #  layer outputs
+        teacher_attention_matrices = self._extract_attention_matrices(
+            hooks=self.hooks['teacher'],
+            num_enc_layers=self.teacher_num_enc_layers,
+            num_dec_layers=self.teacher_num_dec_layers,
         )
-        assert (
-            len(hooks['decoder']['attentions'].outputs)
-            == 2 * num_dec_layers
+        student_attention_matrices = self._extract_attention_matrices(
+            hooks=self.hooks['student'],
+            num_enc_layers=self.student_num_enc_layers,
+            num_dec_layers=self.student_num_dec_layers,
         )
-        output_idx = 1  # The position of the attention matrix among the outputs
-        # TODO: make this the 2nd output, not the 1st, once I reorder the outputs from
-        #  MHA
-        student_attention_matrices = {
-            'encoder': [
-                {
-                    'self_attn': hooks['encoder']['attentions'].outputs[
-                        layer_idx
-                    ][output_idx]
-                }
-                for layer_idx in num_enc_layers
-            ],
-            'decoder': [
-                {
-                    'self_attn': hooks['decoder']['attentions'].outputs[
-                        2 * layer_idx
-                    ][output_idx],
-                    'encoder_attn': hooks['decoder'][
-                        'attentions'
-                    ].outputs[2 * layer_idx + 1][output_idx],
-                }
-                for layer_idx in num_dec_layers
-            ],
-        }
 
-        import pdb
-
-        pdb.set_trace()
+        # import pdb
+        #
+        # pdb.set_trace()
 
         tokens_per_example = mask.sum(dim=-1)
         num_tokens = mask.sum()
@@ -377,10 +352,41 @@ class AbstractDistillTransformerAgentMixin(ABC):
             student_attention_matrices=student_attention_matrices,
         )
 
-    def _extract_attention_matrices(self):
-        # TODO: docstring
-        pass
-        # {{{TODO}}}
+    def _extract_attention_matrices(
+        self,
+        hooks: Dict[str, Dict[str, OutputRecorder]],
+        num_enc_layers: int,
+        num_dec_layers: int,
+    ) -> Dict[str, List[Dict[str, torch.Tensor]]]:
+        """
+        Extract out encoder/decoder attention matrices per layer and attention type.
+        """
+        assert len(hooks['encoder']['attentions'].outputs) == num_enc_layers
+        assert len(hooks['decoder']['attentions'].outputs) == 2 * num_dec_layers
+        output_idx = 1  # The position of the attention matrix among the outputs
+        # TODO: make this the 2nd output, not the 1st, once I reorder the outputs from
+        #  MHA
+        return {
+            'encoder': [
+                {
+                    'self_attn': hooks['encoder']['attentions'].outputs[layer_idx][
+                        output_idx
+                    ]
+                }
+                for layer_idx in num_enc_layers
+            ],
+            'decoder': [
+                {
+                    'self_attn': hooks['decoder']['attentions'].outputs[2 * layer_idx][
+                        output_idx
+                    ],
+                    'encoder_attn': hooks['decoder']['attentions'].outputs[
+                        2 * layer_idx + 1
+                    ][output_idx],
+                }
+                for layer_idx in num_dec_layers
+            ],
+        }
 
     def _get_encoder_loss(
         self, fwd_pass: ForwardPassOutputs
