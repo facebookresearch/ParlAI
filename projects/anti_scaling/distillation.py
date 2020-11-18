@@ -264,7 +264,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 teacher_preds,
                 teacher_enc_states,
                 teacher_embedding_outputs,
-                teacher_hidden_states,
+                _,
                 teacher_attention_matrices,
             ) = self.teacher_model(*self._model_input(batch), ys=batch.label_vec)
             teacher_enc_output, context_mask = teacher_enc_states
@@ -276,10 +276,63 @@ class AbstractDistillTransformerAgentMixin(ABC):
             student_preds,
             student_enc_states,
             student_embedding_outputs,
-            student_hidden_states,
+            _,
             student_attention_matrices,
         ) = student_output
         student_enc_output, _ = student_enc_states
+
+        # Compile all outputs given the hooks
+        # {{{TODO}}}
+        teacher_hidden_states = {
+            module_name: [
+                out_[0] for out_ in self.hooks['teacher'][module_name]['layers'].outputs
+            ]
+            for module_name in ['encoder', 'decoder']
+        }
+        student_hidden_states = {
+            module_name: [
+                out_[0] for out_ in self.hooks['student'][module_name]['layers'].outputs
+            ]
+            for module_name in ['encoder', 'decoder']
+        }
+        # TODO: remove the list comprehensions once you take the attentions out of the layer outputs
+        # {{{TODO}}}
+        assert (
+            len(self.hooks['student']['encoder']['attentions'].outputs)
+            == self.student_num_enc_layers
+        )
+        assert (
+            len(self.hooks['student']['decoder']['attentions'].outputs)
+            == 2 * self.student_num_dec_layers
+        )
+        output_idx = 1  # The position of the attention matrix among the outputs
+        # TODO: make this the 2nd output, not the 1st, once I reorder the outputs from
+        #  MHA
+        student_attention_matrices = {
+            'encoder': [
+                {
+                    'self_attn': self.hooks['student']['encoder']['attentions'].outputs[
+                        layer_idx
+                    ][output_idx]
+                }
+                for layer_idx in self.student_num_enc_layers
+            ],
+            'decoder': [
+                {
+                    'self_attn': self.hooks['student']['decoder']['attentions'].outputs[
+                        2 * layer_idx
+                    ][output_idx],
+                    'encoder_attn': self.hooks['student']['decoder'][
+                        'attentions'
+                    ].outputs[2 * layer_idx + 1][output_idx],
+                }
+                for layer_idx in self.student_num_dec_layers
+            ],
+        }
+
+        import pdb
+
+        pdb.set_trace()
 
         tokens_per_example = mask.sum(dim=-1)
         num_tokens = mask.sum()
@@ -320,6 +373,11 @@ class AbstractDistillTransformerAgentMixin(ABC):
             student_hidden_states=student_hidden_states,
             student_attention_matrices=student_attention_matrices,
         )
+
+    def _extract_attention_matrices(self):
+        # TODO: docstring
+        pass
+        # {{{TODO}}}
 
     def _get_encoder_loss(
         self, fwd_pass: ForwardPassOutputs
