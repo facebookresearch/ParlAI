@@ -14,6 +14,7 @@ import numpy as np
 import torch
 
 import parlai.utils.testing as testing_utils
+from parlai.core.opt import Opt
 from parlai.zoo.bart.build import download as download_bart
 from parlai.zoo.blender.blender_90M import download as download_blender
 
@@ -22,6 +23,25 @@ class TestDistillation(unittest.TestCase):
     """
     Test agents for distilling transformer/generator models.
     """
+
+    BLENDERBOT_MODEL_FILE = 'data/models/blender/blender_90M/model'
+    BART_MODEL_FILE = 'data/models/bart/bart_large/model'
+    BASE_OPT = {
+        'allow_missing_init_opts': True,
+        'init_model': '',
+        'model_file': '',
+        'n_encoder_layers': 1,
+        'n_decoder_layers': 1,
+        'task': 'blended_skill_talk',
+    }
+    TRANSFORMER_OPT = {
+        'init_opt': f'{BLENDERBOT_MODEL_FILE}.opt',
+        'teacher_model': BLENDERBOT_MODEL_FILE,
+    }
+    BART_OPT = {'init_opt': f'{BART_MODEL_FILE}.opt', 'teacher_model': BART_MODEL_FILE}
+    WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
+    NARROW_DISTILLATION_OPT = {'embedding_size': 64, 'ffn_size': 256}
+    DISTILLATION_MODEL_PREFIX = 'projects.anti_scaling.distillation'
 
     def test_distillation_losses(self):
         """
@@ -38,43 +58,11 @@ class TestDistillation(unittest.TestCase):
         data_path = 'data'
         download_blender(data_path)
         download_bart(data_path)
-        blenderbot_model_file = 'data/models/blender/blender_90M/model'
-        bart_model_file = 'data/models/bart/bart_large/model'
 
-        base_opt = {
-            'allow_missing_init_opts': True,
-            'init_model': '',
-            'model_file': '',
-            'n_encoder_layers': 1,
-            'n_decoder_layers': 1,
-            'num_examples': 1,
-            'skip_generation': False,
-            'task': 'blended_skill_talk',
-            'hidden_loss_coeff': 1,
-            'encoder_loss_coeff': 1,
-            'pred_loss_coeff': 1,
-            'task_loss_coeff': 1,
-        }
-        transformer_opt = {
-            'init_opt': f'{blenderbot_model_file}.opt',
-            'teacher_model': blenderbot_model_file,
-        }
-        bart_opt = {
-            'init_opt': f'{bart_model_file}.opt',
-            'teacher_model': bart_model_file,
-        }
-        wide_distillation_opt = {'copy_teacher_weights': True}
-        narrow_distillation_opt = {
-            'embedding_size': 64,
-            'ffn_size': 256,
-            'embedding_loss_coeff': 1,
-            'self_attn_loss_coeff': 1,
-            'enc_dec_attn_loss_coeff': 1,
-        }
         opts_and_desired_losses = [
             (
-                transformer_opt,
-                wide_distillation_opt,
+                self.TRANSFORMER_OPT,
+                self.WIDE_DISTILLATION_OPT,
                 'DistillTransformerAgent',
                 {
                     'dec_hid_loss': 87.27,
@@ -85,8 +73,8 @@ class TestDistillation(unittest.TestCase):
                 },
             ),
             (
-                bart_opt,
-                wide_distillation_opt,
+                self.BART_OPT,
+                self.WIDE_DISTILLATION_OPT,
                 'DistillBartAgent',
                 {
                     'dec_hid_loss': 2.731,
@@ -97,8 +85,8 @@ class TestDistillation(unittest.TestCase):
                 },
             ),
             (
-                transformer_opt,
-                narrow_distillation_opt,
+                self.TRANSFORMER_OPT,
+                self.NARROW_DISTILLATION_OPT,
                 'DistillNarrowTransformerAgent',
                 {
                     'dec_emb_loss': 1.625,
@@ -114,8 +102,8 @@ class TestDistillation(unittest.TestCase):
                 },
             ),
             (
-                bart_opt,
-                narrow_distillation_opt,
+                self.BART_OPT,
+                self.NARROW_DISTILLATION_OPT,
                 'DistillNarrowBartAgent',
                 {
                     'dec_emb_loss': 9.495,
@@ -138,17 +126,56 @@ class TestDistillation(unittest.TestCase):
             desired_losses,
         ) in opts_and_desired_losses:
             opt = {
-                **base_opt,
+                **self.BASE_OPT,
                 **model_opt,
                 **distillation_opt,
-                'model': f'projects.anti_scaling.distillation:{model_name}',
+                'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
+                'num_examples': 1,
+                'skip_generation': False,
+                'embedding_loss_coeff': 1,
+                'hidden_loss_coeff': 1,
+                'self_attn_loss_coeff': 1,
+                'enc_dec_attn_loss_coeff': 1,
+                'encoder_loss_coeff': 1,
+                'pred_loss_coeff': 1,
+                'task_loss_coeff': 1,
             }
-            valid, _ = testing_utils.eval_model(opt, skip_test=True)
+            valid, _ = testing_utils.eval_model(Opt(opt), skip_test=True)
             for loss_name, desired_loss in desired_losses.items():
                 if np.isinf(desired_loss):
                     self.assertTrue(np.isinf(valid[loss_name].value()))
                 else:
                     self.assertAlmostEqual(valid[loss_name], desired_loss, delta=0.1)
+
+    def test_distillation_ppl(self):
+        """
+        Check that distilling will quickly lead to a reasonable student model ppl.
+        """
+        opt = {
+            **self.BASE_OPT,
+            **self.TRANSFORMER_OPT,
+            **self.NARROW_DISTILLATION_OPT,
+            'model': f'{self.DISTILLATION_MODEL_PREFIX}:DistillNarrowTransformerAgent',
+            'batchsize': 4,
+            'fp16': True,
+            'gpu': -1,
+            'learningrate': 1e-3,
+            'lr_scheduler': 'reduceonplateau',
+            'max_train_time': -1,  # TODO: obviously change this
+            'skip_generation': False,
+            'veps': 100,  # TODO: change this?
+            'embedding_loss_coeff': 16,
+            'hidden_loss_coeff': 4,
+            'self_attn_loss_coeff': 1,
+            'enc_dec_attn_loss_coeff': 16,
+            'encoder_loss_coeff': 64,
+            'pred_loss_coeff': 512,
+            'task_loss_coeff': 1,
+        }
+        # Coefficient values are educated guesses based on what has worked well for
+        # other models
+        valid, _ = testing_utils.train_model(Opt(opt))
+        self.assertLess(valid['ppl'].value(), 1.0)  # TODO: obviously change this
 
 
 if __name__ == '__main__':
