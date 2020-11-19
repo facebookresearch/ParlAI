@@ -24,9 +24,11 @@ from parlai.agents.transformer.modules import (
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import create_agent_from_model_file
 from parlai.core.metrics import AverageMetric
+from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch
 from parlai.core.torch_generator_agent import PPLMetric
 from parlai.utils.misc import AttrDict
+from parlai.utils.typing import TShared
 
 
 class OutputRecorder:
@@ -899,25 +901,33 @@ class DistillNarrowTransformerAgent(
         return argparser
 
 
-class DistillBartAgent(DistillTransformerAgentMixin, BartAgent):
+class BartLikeAgent(BartAgent):
+    """
+    Subclass of the BART agent that prevents loading model weights from bart_large.
+    """
+
+    def __init__(self, opt: Opt, shared: TShared = None):
+        # Just skip BartAgent._initialize_bart(opt)
+        super(BartAgent).__init__(opt, shared)
+
+
+class DistillBartAgent(DistillTransformerAgentMixin, BartLikeAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """
         Add command-line arguments specifically for this agent.
         """
         DistillTransformerAgentMixin.add_cmdline_args(argparser)
-        BartAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(converting=True)
+        BartLikeAgent.add_cmdline_args(argparser)
         return argparser
 
 
-class DistillNarrowBartAgent(DistillNarrowTransformerAgentMixin, BartAgent):
+class DistillNarrowBartAgent(DistillNarrowTransformerAgentMixin, BartLikeAgent):
     @classmethod
     def add_cmdline_args(cls, argparser):
         """
         Add command-line arguments specifically for this agent.
         """
         DistillNarrowTransformerAgentMixin.add_cmdline_args(argparser)
-        BartAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(converting=True)
+        BartLikeAgent.add_cmdline_args(argparser)
         return argparser
