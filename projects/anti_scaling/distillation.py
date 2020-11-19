@@ -453,9 +453,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Compute the embedding loss for either the encoder or the decoder.
-
-        (The loss is averaged over the embedding dimension so that it doesn't get too
-        high for fp16 tensors.)
         """
         max_value = torch.finfo(student_emb_output.dtype).max
         raw_loss = F.mse_loss(
@@ -463,8 +460,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         )
         clamped_loss = torch.clamp(raw_loss, min=0, max=max_value)
         # TODO: revisit whether clamping could cause problems
-        masked_loss = clamped_loss.mean(dim=-1) * mask
-        # Avg over embedding dim
+        masked_loss = clamped_loss.sum(dim=-1) * mask
+        # Sum over embedding dim
         embedding_loss_per_example = masked_loss.sum(dim=-1)  # Sum over token dim
         embedding_loss = masked_loss.div(num_tokens).sum()
         # Divide before summing over examples so that values don't get too large
