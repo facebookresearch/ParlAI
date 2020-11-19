@@ -9,7 +9,7 @@ Code for distilling a transformer/generator model.
 
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Tuple, Type
+from typing import Any, Dict, List, Tuple, Type, Union
 
 import torch
 from torch import nn as nn
@@ -263,6 +263,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         mask = batch.label_vec != self.NULL_IDX
 
+        self._clear_hook_outputs(self.hooks)
+
         # Forward pass through teacher model
         with torch.no_grad():
             teacher_scores, teacher_preds, teacher_enc_states = self.teacher_model(
@@ -276,26 +278,22 @@ class AbstractDistillTransformerAgentMixin(ABC):
         student_enc_output, _ = student_enc_states
 
         # Compile all outputs given the hooks
-        teacher_embedding_outputs = {
-            'encoder': self.hooks['teacher']['embeddings'].outputs[0],
-            'decoder': self.hooks['teacher']['embeddings'].outputs[1],
-        }
-        student_embedding_outputs = {
-            'encoder': self.hooks['student']['embeddings'].outputs[0],
-            'decoder': self.hooks['student']['embeddings'].outputs[1],
-        }
-        teacher_hidden_states = {
-            'encoder': self.hooks['teacher']['encoder']['layers'].outputs,
-            'decoder': [
-                out_[0] for out_ in self.hooks['teacher']['decoder']['layers'].outputs
-            ],
-        }
-        student_hidden_states = {
-            'encoder': self.hooks['student']['encoder']['layers'].outputs,
-            'decoder': [
-                out_[0] for out_ in self.hooks['student']['decoder']['layers'].outputs
-            ],
-        }
+        teacher_embedding_outputs = self._extract_embedding_outputs(
+            hooks=self.hooks['teacher']
+        )
+        student_embedding_outputs = self._extract_embedding_outputs(
+            hooks=self.hooks['student']
+        )
+        teacher_hidden_states = self._extract_hidden_states(
+            hooks=self.hooks['teacher'],
+            num_enc_layers=self.teacher_num_enc_layers,
+            num_dec_layers=self.teacher_num_dec_layers,
+        )
+        student_hidden_states = self._extract_hidden_states(
+            hooks=self.hooks['student'],
+            num_enc_layers=self.student_num_enc_layers,
+            num_dec_layers=self.student_num_dec_layers,
+        )
         teacher_attention_matrices = self._extract_attention_matrices(
             hooks=self.hooks['teacher'],
             num_enc_layers=self.teacher_num_enc_layers,
@@ -306,6 +304,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
             num_enc_layers=self.student_num_enc_layers,
             num_dec_layers=self.student_num_dec_layers,
         )
+        self._clear_hook_outputs(self.hooks)
 
         tokens_per_example = mask.sum(dim=-1)
         num_tokens = mask.sum()
@@ -360,6 +359,34 @@ class AbstractDistillTransformerAgentMixin(ABC):
         else:
             return mask
 
+    def _extract_embedding_outputs(
+        self, hooks: Dict[str, Dict[str, OutputRecorder]]
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Extract out the encoder and decoder embedding outputs.
+        """
+        assert len(hooks['embeddings'].outputs) == 2
+        return {
+            'encoder': hooks['embeddings'].outputs[0],
+            'decoder': hooks['embeddings'].outputs[1],
+        }
+
+    def _extract_hidden_states(
+        self,
+        hooks: Dict[str, Dict[str, OutputRecorder]],
+        num_enc_layers: int,
+        num_dec_layers: int,
+    ) -> Dict[str, List[torch.Tensor]]:
+        """
+        Extract out encoder/decoder hidden states per layer.
+        """
+        assert len(hooks['encoder']['layers'].outputs) == num_enc_layers
+        assert len(hooks['decoder']['layers'].outputs) == num_dec_layers
+        return {
+            'encoder': hooks['encoder']['layers'].outputs,
+            'decoder': [out_[0] for out_ in hooks['decoder']['layers'].outputs],
+        }
+
     def _extract_attention_matrices(
         self,
         hooks: Dict[str, Dict[str, OutputRecorder]],
@@ -393,6 +420,17 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 for layer_idx in range(num_dec_layers)
             ],
         }
+
+    def _clear_hook_outputs(self, hooks: Union[Dict[str, Any], OutputRecorder]):
+        """
+        Recursively clear outputs from all hooks.
+        """
+        if isinstance(hooks, dict):
+            for subhooks in hooks.values():
+                self._clear_hook_outputs(subhooks)
+        else:
+            # `hooks` is an OutputRecorder
+            hooks.clear()
 
     def _get_encoder_loss(self, fwd_pass: ForwardPassOutputs) -> torch.Tensor:
         """
