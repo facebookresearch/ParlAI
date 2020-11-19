@@ -907,10 +907,7 @@ class DistillBartAgent(DistillTransformerAgentMixin, BartAgent):
         """
         DistillTransformerAgentMixin.add_cmdline_args(argparser)
         BartAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(converting=True)
-        # TODO: clean up this hack to prevent --init-model from being set to
-        #  os.path.join(opt['datapath'], 'models/bart/bart_large/model') in
-        #  _initialize_bart()
+        argparser.set_defaults(init_bart_large=False)
         return argparser
 
 
@@ -922,8 +919,5 @@ class DistillNarrowBartAgent(DistillNarrowTransformerAgentMixin, BartAgent):
         """
         DistillNarrowTransformerAgentMixin.add_cmdline_args(argparser)
         BartAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(converting=True)
-        # TODO: clean up this hack to prevent --init-model from being set to
-        #  os.path.join(opt['datapath'], 'models/bart/bart_large/model') in
-        #  _initialize_bart()
+        argparser.set_defaults(init_bart_large=False)
         return argparser

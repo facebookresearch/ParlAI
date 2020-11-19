@@ -131,7 +131,7 @@ class ConversionScript(ParlaiScript):
         self.agent = create_agent(opt)
         converted = self.convert_model_weight(opt)
         self.agent.model.load_state_dict(converted, True)
-        self.agent.opt['converting'] = False
+        self.agent.opt['init_bart_large'] = True
         self.agent.save(self.opt['output'])
         # 4. enjoy!
         self.print_agent_act()
@@ -211,7 +211,7 @@ class ConversionScript(ParlaiScript):
         opt['history_add_global_end_token'] = self.opt['history_add_global_end_token']
         # Makes model fp16 ready for fine-tuning, means 4 extra padding tokens.
         opt['force_fp16_tokens'] = True
-        opt['converting'] = True
+        opt['init_bart_large'] = False
 
         return opt
 

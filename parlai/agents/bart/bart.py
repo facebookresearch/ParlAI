@@ -63,10 +63,10 @@ class BartAgent(TransformerGeneratorAgent):
             help='where to save fairseq conversion',
         )
         group.add_argument(
-            '--converting',
+            '--init-bart-large',
             type='bool',
-            default=False,
-            help='converting model from fairseq to ParlAI',
+            default=True,
+            help='Initialize with bart_large. Set to False when converting a model from fairseq to ParlAI',
         )
         argparser.set_defaults(dict_tokenizer='gpt2')
         argparser.set_defaults(**BART_ARGS)
@@ -88,7 +88,7 @@ class BartAgent(TransformerGeneratorAgent):
         :return opt:
             return opt with BART-specific args.
         """
-        if not opt.get('converting') and (
+        if opt.get('init_bart_large') and (
             opt.get('init_model') is None
             or not PathManager.exists(opt.get('init_model', ''))
         ):
