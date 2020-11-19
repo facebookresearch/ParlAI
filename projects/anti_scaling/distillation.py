@@ -53,11 +53,11 @@ class ForwardPassOutputs(AttrDict):
 
     mask: torch.BoolTensor
     tokens_per_example: torch.Tensor
-    num_tokens: int  # TODO: check this type
+    num_tokens: torch.Tensor
     context_mask: torch.BoolTensor
     context_tokens_per_example: torch.Tensor
-    num_context_tokens: int  # TODO: check this type
-    task_loss: torch.Tensor  # TODO: check this type
+    num_context_tokens: torch.Tensor
+    task_loss: torch.Tensor
     teacher_scores: torch.Tensor
     teacher_enc_output: torch.Tensor
     teacher_embedding_outputs: Dict[str, torch.Tensor]
@@ -167,18 +167,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
             if hasattr(self.teacher_model, 'module'):
                 self.teacher_model = self.teacher_model.module
             self.teacher_model.eval()
-        else:
-            self.teacher_model = create_agent_from_shared(shared['teacher_model'])
 
         super().__init__(opt, shared)
-
-    def share(self):
-        """
-        Share the teacher model.
-        """
-        shared = super().share()
-        shared['teacher_model'] = self.teacher_model.share()
-        return shared
 
     def build_model(self):
 
@@ -362,10 +352,13 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         Needed for BART-based student models to add in an extra start token.
         """
-        _ = student_scores
-        _ = batch
-        # We are not using the extra inputs here
-        return mask
+        if hasattr(super(), '_manipulate_mask'):
+            # Defer to any agent-specific method for manipulating the mask
+            return super()._manipulate_mask(
+                mask=mask, student_scores=student_scores, batch=batch
+            )
+        else:
+            return mask
 
     def _extract_attention_matrices(
         self,
@@ -401,9 +394,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
             ],
         }
 
-    def _get_encoder_loss(
-        self, fwd_pass: ForwardPassOutputs
-    ) -> torch.Tensor:  # TODO: check type
+    def _get_encoder_loss(self, fwd_pass: ForwardPassOutputs) -> torch.Tensor:
         """
         Return the loss on the encoder's output layer.
         """
@@ -426,7 +417,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
     def _get_embedding_losses(
         self, fwd_pass: ForwardPassOutputs
-    ) -> Tuple[torch.Tensor, torch.Tensor]:  # TODO: check type
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Return the encoder and decoder embedding losses.
         """
@@ -459,7 +450,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         student_emb_output: torch.Tensor,
         teacher_emb_output: torch.Tensor,
         mask: torch.BoolTensor,
-        num_tokens: int,
+        num_tokens: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Compute the embedding loss for either the encoder or the decoder.
@@ -478,7 +469,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
     def _get_hidden_losses(
         self, fwd_pass: ForwardPassOutputs
-    ) -> Tuple[torch.Tensor, torch.Tensor]:  # TODO: check type
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Return the encoder and decoder hidden losses.
         """
@@ -515,7 +506,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         student_hidden_states: List[torch.Tensor],
         teacher_hidden_states: List[torch.Tensor],
         mask: torch.BoolTensor,
-        num_tokens: int,
+        num_tokens: torch.Tensor,
         mapped_layers: List[int],
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
@@ -549,7 +540,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
     def _get_attention_losses(
         self, fwd_pass: ForwardPassOutputs
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:  # TODO: check type
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Return attention losses.
 
@@ -594,11 +585,11 @@ class AbstractDistillTransformerAgentMixin(ABC):
         student_attention_matrices: List[Dict[str, torch.Tensor]],
         mask: torch.BoolTensor,
         tokens_per_example: torch.Tensor,
-        num_tokens: int,  # TODO: check this type
+        num_tokens: torch.Tensor,
         mapped_layers: List[int],
         attn_type: str,
         metric_name: str,
-    ) -> torch.Tensor:  # TODO: check type
+    ) -> torch.Tensor:
         """
         Calculate the given attention loss and register it as the given metric name.
         """
@@ -647,9 +638,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         return attn_loss
 
-    def _get_prediction_loss(
-        self, fwd_pass: ForwardPassOutputs
-    ) -> torch.Tensor:  # TODO: check type
+    def _get_prediction_loss(self, fwd_pass: ForwardPassOutputs) -> torch.Tensor:
         """
         Calculate and return the KL loss on the teacher's prediction layer.
 
@@ -922,7 +911,7 @@ class BartLikeAgent(BartAgent):
 
     def __init__(self, opt: Opt, shared: TShared = None):
         # Just skip BartAgent._initialize_bart(opt)
-        super(BartAgent).__init__(opt, shared)
+        super(BartAgent, self).__init__(opt, shared)
 
     def _manipulate_mask(
         self, mask: torch.BoolTensor, student_scores: torch.Tensor, batch: Batch
