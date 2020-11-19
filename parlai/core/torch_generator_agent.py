@@ -321,27 +321,12 @@ class TorchGeneratorModel(nn.Module, ABC):
         # we'll never produce longer ones than that during prediction
         self.longest_label = max(self.longest_label, ys.size(1))
 
-        embedding_states = {}
-        hidden_states = {}
-        attention_matrices = {}
-
         # use cached encoding if available
-        if prev_enc is not None:
-            raise NotImplementedError(
-                'Cannot yet use cached encoding, because we need to pass back hidden '
-                'states and attention matrices'
-            )
-        else:
-            encoder_states = self.encoder(*xs)
-            (
-                embedding_states['encoder'],
-                hidden_states['encoder'],
-                attention_matrices['encoder'],
-            ) = encoder_states[-3:]
+        encoder_states = prev_enc if prev_enc is not None else self.encoder(*xs)
 
         # use teacher forcing
-        scores, preds = self.decode_forced(encoder_states[:-3], ys)
-        return scores, preds, encoder_states[:-3]
+        scores, preds = self.decode_forced(encoder_states, ys)
+        return scores, preds, encoder_states
 
 
 class PPLMetric(AverageMetric):
@@ -1112,7 +1097,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model = self.model
         if isinstance(model, torch.nn.parallel.DistributedDataParallel):
             model = self.model.module
-        encoder_states = model.encoder(*self._encoder_input(batch))[:2]
+        encoder_states = model.encoder(*self._encoder_input(batch))
         if batch.text_vec is not None:
             dev = batch.text_vec.device
         else:

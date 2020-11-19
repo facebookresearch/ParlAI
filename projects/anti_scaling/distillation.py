@@ -286,19 +286,13 @@ class AbstractDistillTransformerAgentMixin(ABC):
             'decoder': self.hooks['student']['embeddings'].outputs[1],
         }
         teacher_hidden_states = {
-            module_name: [
-                out_[0] for out_ in self.hooks['teacher'][module_name]['layers'].outputs
-            ]
+            module_name: self.hooks['teacher'][module_name]['layers'].outputs
             for module_name in ['encoder', 'decoder']
         }
         student_hidden_states = {
-            module_name: [
-                out_[0] for out_ in self.hooks['student'][module_name]['layers'].outputs
-            ]
+            module_name: self.hooks['student'][module_name]['layers'].outputs
             for module_name in ['encoder', 'decoder']
         }
-        # TODO: remove the list comprehensions once you take the attentions out of the
-        #  layer outputs
         teacher_attention_matrices = self._extract_attention_matrices(
             hooks=self.hooks['teacher'],
             num_enc_layers=self.teacher_num_enc_layers,
@@ -361,9 +355,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         assert len(hooks['encoder']['attentions'].outputs) == num_enc_layers
         assert len(hooks['decoder']['attentions'].outputs) == 2 * num_dec_layers
-        output_idx = 1  # The position of the attention matrix among the outputs
-        # TODO: make this the 2nd output, not the 1st, once I reorder the outputs from
-        #  MHA
+        output_idx = 2  # The position of the attention matrix among the outputs
         return {
             'encoder': [
                 {

@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Tuple, Optional, Union
 
 import numpy as np
 import torch
@@ -514,7 +514,7 @@ class TransformerEncoder(nn.Module):
 
     def forward_layers(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> Tuple[List[torch.Tensor], List[Dict[str, torch.Tensor]]]:
+    ) -> torch.Tensor:
         """
         Apply transformer layers to input.
 
@@ -523,26 +523,18 @@ class TransformerEncoder(nn.Module):
         :param mask:
             mask of input
 
-        :return layer_outputs:
-            return outputs of all transformer layers
+        :return tensor:
+            return embedding after applying transformer layers
         """
-        # TODO: add attention_matrices to docstring
         if getattr(self.layers, 'is_model_parallel', False):
             # factored out for readability. It is equivalent to the other
             # condition
-            layer_outputs, attention_matrices = self._apply_model_parallel(tensor, mask)
+            tensor = self._apply_model_parallel(tensor, mask)
         else:
-            layer_output, layer_attention_matrices = self.layers[0](tensor, mask)
-            layer_outputs = [layer_output]
-            attention_matrices = [layer_attention_matrices]
-            for i in range(1, self.n_layers):
-                layer_output, layer_attention_matrices = self.layers[i](
-                    layer_outputs[i - 1], mask
-                )
-                layer_outputs.append(layer_output)
-                attention_matrices.append(layer_attention_matrices)
+            for i in range(self.n_layers):
+                tensor = self.layers[i](tensor, mask)
 
-        return layer_outputs, attention_matrices
+        return tensor
 
     def reduce_output(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
@@ -579,21 +571,7 @@ class TransformerEncoder(nn.Module):
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
-    ) -> Union[
-        Tuple[
-            torch.Tensor,
-            torch.BoolTensor,
-            torch.Tensor,
-            List[torch.Tensor],
-            List[Dict[str, torch.Tensor]],
-        ],
-        Tuple[
-            torch.Tensor,
-            torch.Tensor,
-            List[torch.Tensor],
-            List[Dict[str, torch.Tensor]],
-        ],
-    ]:
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
         """
         Forward pass.
 
@@ -611,44 +589,38 @@ class TransformerEncoder(nn.Module):
             tensor = _normalize(tensor, self.norm_embeddings)
 
         # --dropout on the embeddings
-        embedding_output = self.dropout(tensor)
+        tensor = self.dropout(tensor)
 
-        embedding_output *= mask.unsqueeze(-1).type_as(embedding_output)
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
 
         # apply transformer layers
-        layer_outputs, attention_matrices = self.forward_layers(embedding_output, mask)
+        tensor = self.forward_layers(tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(layer_outputs[-1], self.norm_embeddings)
-        else:
-            tensor = layer_outputs[-1]
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
         if out_mask is not None:
-            return tensor, out_mask, embedding_output, layer_outputs, attention_matrices
+            return tensor, out_mask
         else:
-            return tensor, embedding_output, layer_outputs, attention_matrices
+            return tensor
 
     def _apply_model_parallel(self, tensor, mask):
         """
         Pipeline application of model parallelism.
         """
-        raise NotImplementedError(
-            'This has not yet been changed to return layer outputs!'
-        )
-        # TODO: implement this, or just use hooks as a workaround
-        # chunks = PipelineHelper.split((tensor, mask))
-        # work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
-        #
-        # for chunk_idx, layer_nos, next_device in work_items:
-        #     s_tensor, s_mask = chunks[chunk_idx]
-        #     for layer_no in layer_nos:
-        #         s_tensor = self.layers[layer_no](s_tensor, s_mask)
-        #     chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
-        #
-        # tensor_out, mask_out = PipelineHelper.join(chunks)
-        # return layer_outputs
+        chunks = PipelineHelper.split((tensor, mask))
+        work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
+
+        for chunk_idx, layer_nos, next_device in work_items:
+            s_tensor, s_mask = chunks[chunk_idx]
+            for layer_no in layer_nos:
+                s_tensor = self.layers[layer_no](s_tensor, s_mask)
+            chunks[chunk_idx] = PipelineHelper.chunk_to((s_tensor, s_mask), next_device)
+
+        tensor_out, mask_out = PipelineHelper.join(chunks)
+        return tensor_out
 
 
 class TransformerEncoderLayer(nn.Module):
@@ -692,7 +664,7 @@ class TransformerEncoderLayer(nn.Module):
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm1)
-        attended_tensor, attention_matrix, _ = self.attention(tensor, mask=mask)
+        attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm1)
@@ -703,7 +675,7 @@ class TransformerEncoderLayer(nn.Module):
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm2)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
-        return tensor, {'self_attn': attention_matrix}
+        return tensor
 
 
 class TransformerDecoder(nn.Module):
@@ -878,7 +850,7 @@ class TransformerDecoder(nn.Module):
             )
         else:
             for idx, layer in enumerate(self.layers):
-                tensor, _, new_incr_state[idx] = layer(
+                tensor, new_incr_state[idx] = layer(
                     x=tensor,
                     encoder_output=encoder_output,
                     encoder_mask=encoder_mask,
@@ -1017,12 +989,12 @@ class TransformerDecoderLayer(nn.Module):
             x = _normalize(x, self.norm1)
 
         # don't peak into the future!
-        x, self_attention_matrix, final_self_attn_incr_state = self.self_attention(
+        x, final_self_attn_incr_state = self.self_attention(
             query=x,
             mask=decoder_mask,
             incr_state=incr_state.get('self_attn'),
             static_kv=False,
-        )
+        )[:2]
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
@@ -1032,18 +1004,14 @@ class TransformerDecoderLayer(nn.Module):
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
             x = _normalize(x, self.norm2)
-        (
-            x,
-            encoder_attention_matrix,
-            final_encoder_attn_incr_state,
-        ) = self.encoder_attention(
+        x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
             value=encoder_output,
             mask=encoder_mask,
             incr_state=incr_state.get('encoder_attn'),
             static_kv=True,
-        )
+        )[:2]
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
@@ -1059,15 +1027,11 @@ class TransformerDecoderLayer(nn.Module):
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             x = _normalize(x, self.norm3)
 
-        attention_matrices = {
-            'self_attn': self_attention_matrix,
-            'encoder_attn': encoder_attention_matrix,
-        }
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
             'encoder_attn': final_encoder_attn_incr_state,
         }
-        return x, attention_matrices, new_incr_state
+        return x, new_incr_state
 
     def _create_selfattn_mask(self, x):
         # figure out how many timestamps we need
@@ -1224,8 +1188,6 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             indices = torch.LongTensor(indices).to(enc.device)
         enc = torch.index_select(enc, 0, indices)
         mask = torch.index_select(mask, 0, indices)
-        # NOTE: the hidden states and attention matrices don't need to be reordered
-        #  because they are not used by the decoder
         return enc, mask
 
     def reorder_decoder_incremental_state(
@@ -1347,7 +1309,7 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
-    ) -> Tuple[torch.Tensor, torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
         Forward pass.
 
@@ -1363,7 +1325,11 @@ class MultiHeadAttention(nn.Module):
           the key, value, and mask
         :param static_kv: True if the key and value are held constant during decoding
           (as in encoder/decoder attention)
-        :return: (final attended tensor, key/value-multiplied tensor before softmax new incremental state)
+        :return: (
+          final attended tensor,
+          new incremental state,
+          key/value-multiplied tensor before softmax,
+        )
         """
 
         batch_size, query_len, dim = query.size()
@@ -1472,7 +1438,7 @@ class MultiHeadAttention(nn.Module):
 
         out = self.out_lin(attentioned)
 
-        return out, dot_prod, new_incr_state
+        return out, new_incr_state, dot_prod
 
     def reorder_incremental_state(
         self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
