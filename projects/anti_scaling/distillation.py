@@ -907,7 +907,7 @@ class DistillBartAgent(DistillTransformerAgentMixin, BartAgent):
         """
         DistillTransformerAgentMixin.add_cmdline_args(argparser)
         BartAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(init_bart_large=False)
+        argparser.set_defaults(converting=True)
         return argparser
 
 
@@ -919,5 +919,5 @@ class DistillNarrowBartAgent(DistillNarrowTransformerAgentMixin, BartAgent):
         """
         DistillNarrowTransformerAgentMixin.add_cmdline_args(argparser)
         BartAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(init_bart_large=False)
+        argparser.set_defaults(converting=True)
         return argparser
