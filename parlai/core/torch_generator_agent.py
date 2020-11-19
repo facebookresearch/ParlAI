@@ -194,9 +194,7 @@ class TorchGeneratorModel(nn.Module, ABC):
                 "you intended."
             )
         inputs = self._get_initial_forced_decoder_input(bsz, inputs)
-        latent, hidden_states, embedding_output, attention_matrices, _ = self.decoder(
-            inputs, encoder_states
-        )
+        latent, _ = self.decoder(inputs, encoder_states)
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
         return logits, preds
@@ -1149,9 +1147,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 # exit early if possible
                 break
 
-            score, _, _, _, incr_state = model.decoder(
-                decoder_input, encoder_states, incr_state
-            )
+            score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
             score = model.output(score)

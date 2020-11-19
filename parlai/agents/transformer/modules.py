@@ -878,7 +878,7 @@ class TransformerDecoder(nn.Module):
             )
         else:
             for idx, layer in enumerate(self.layers):
-                tensor, new_incr_state[idx] = layer(
+                tensor, _, new_incr_state[idx] = layer(
                     x=tensor,
                     encoder_output=encoder_output,
                     encoder_mask=encoder_mask,
@@ -915,41 +915,16 @@ class TransformerDecoder(nn.Module):
 
         tensor = self.forward_embedding(input, positions)
 
-        embedding_output = self.dropout(tensor)  # --dropout
+        tensor = self.dropout(tensor)  # --dropout
 
-        layer_outputs = []
-        attention_matrices = []
-        new_incr_state = {}
-        if getattr(self.layers, 'is_model_parallel', False):
-            # TODO: implement this
-            raise NotImplementedError('Cannot be used with model_parallel!')
-        else:
-            for idx, layer in enumerate(self.layers):
-                if idx == 0:
-                    input_tensor = embedding_output
-                else:
-                    input_tensor = layer_outputs[idx - 1]
-                output_tensor, layer_attention_matrices, new_incr_state[idx] = layer(
-                    x=input_tensor,
-                    encoder_output=encoder_output,
-                    encoder_mask=encoder_mask,
-                    incr_state=incr_state.get(idx),
-                )
-                layer_outputs.append(output_tensor)
-                attention_matrices.append(layer_attention_matrices)
+        tensor, new_incr_state = self.forward_layers(
+            tensor, encoder_output, encoder_mask, incr_state
+        )
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(layer_outputs[-1], self.norm_embeddings)
-        else:
-            tensor = layer_outputs[-1]
+            tensor = _normalize(tensor, self.norm_embeddings)
 
-        return (
-            tensor,
-            layer_outputs,
-            embedding_output,
-            attention_matrices,
-            new_incr_state,
-        )
+        return tensor, new_incr_state
 
     def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
