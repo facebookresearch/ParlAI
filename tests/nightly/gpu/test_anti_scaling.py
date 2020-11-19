@@ -41,7 +41,21 @@ class TestDistillation(unittest.TestCase):
     BART_OPT = {'init_opt': f'{BART_MODEL_FILE}.opt', 'teacher_model': BART_MODEL_FILE}
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
     NARROW_DISTILLATION_OPT = {'embedding_size': 64, 'ffn_size': 256}
+    NARROW_DISTILLATION_DUMMY_LOSS_OPT = {
+        **NARROW_DISTILLATION_OPT,
+        'embedding_loss_coeff': 1,
+        'self_attn_loss_coeff': 1,
+        'enc_dec_attn_loss_coeff': 1,
+    }
     DISTILLATION_MODEL_PREFIX = 'projects.anti_scaling.distillation'
+
+    def setUp(self):
+        """
+        Download models in advance so that their opt files can be used with --init-opt
+        """
+        data_path = 'data'
+        download_blender(data_path)
+        download_bart(data_path)
 
     def test_distillation_losses(self):
         """
@@ -53,11 +67,6 @@ class TestDistillation(unittest.TestCase):
 
         torch.manual_seed(0)
         np.random.seed(0)
-
-        # Download models in advance so that their opt files can be used with --init-opt
-        data_path = 'data'
-        download_blender(data_path)
-        download_bart(data_path)
 
         opts_and_desired_losses = [
             (
@@ -86,7 +95,7 @@ class TestDistillation(unittest.TestCase):
             ),
             (
                 self.TRANSFORMER_OPT,
-                self.NARROW_DISTILLATION_OPT,
+                self.NARROW_DISTILLATION_DUMMY_LOSS_OPT,
                 'DistillNarrowTransformerAgent',
                 {
                     'dec_emb_loss': 1.625,
@@ -103,7 +112,7 @@ class TestDistillation(unittest.TestCase):
             ),
             (
                 self.BART_OPT,
-                self.NARROW_DISTILLATION_OPT,
+                self.NARROW_DISTILLATION_DUMMY_LOSS_OPT,
                 'DistillNarrowBartAgent',
                 {
                     'dec_emb_loss': 9.495,
@@ -132,10 +141,7 @@ class TestDistillation(unittest.TestCase):
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
                 'num_examples': 1,
                 'skip_generation': False,
-                'embedding_loss_coeff': 1,
                 'hidden_loss_coeff': 1,
-                'self_attn_loss_coeff': 1,
-                'enc_dec_attn_loss_coeff': 1,
                 'encoder_loss_coeff': 1,
                 'pred_loss_coeff': 1,
                 'task_loss_coeff': 1,
@@ -151,19 +157,21 @@ class TestDistillation(unittest.TestCase):
         """
         Check that distilling will quickly lead to a reasonable student model ppl.
         """
+        # TODO: this isn't working currently, because the values from init_opt aren't being read in; this is because all of the input opt params below are getting set to opt['override'] within ParlaiParser._process_args_to_opts(args): the ParlaiParser seems to be overriding with args from the command-line even though this is a unit test, which doesn't make much sense in this context. I think this doesn't usually show up in other tests because other tests don't need to read params from init_opt.
         opt = {
             **self.BASE_OPT,
             **self.TRANSFORMER_OPT,
             **self.NARROW_DISTILLATION_OPT,
             'model': f'{self.DISTILLATION_MODEL_PREFIX}:DistillNarrowTransformerAgent',
             'batchsize': 4,
+            'dict_file': f'{self.BLENDERBOT_MODEL_FILE}.dict',  # TODO: remove this if you get params read in correctly from init_opt, because I think I had to add this due to init_opt params not being read correctly here
             'fp16': True,
             'gpu': -1,
             'learningrate': 1e-3,
             'lr_scheduler': 'reduceonplateau',
             'max_train_time': -1,  # TODO: obviously change this
             'skip_generation': False,
-            'veps': 100,  # TODO: change this?
+            'validation_every_n_epochs': 100,  # TODO: change this?
             'embedding_loss_coeff': 16,
             'hidden_loss_coeff': 4,
             'self_attn_loss_coeff': 1,
