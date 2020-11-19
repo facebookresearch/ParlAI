@@ -22,7 +22,7 @@ from parlai.agents.transformer.modules import (
     TransformerEncoderLayer,
 )
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
-from parlai.core.agents import create_agent_from_model_file
+from parlai.core.agents import create_agent_from_model_file, create_agent_from_shared
 from parlai.core.metrics import AverageMetric
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch
@@ -168,10 +168,17 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 self.teacher_model = self.teacher_model.module
             self.teacher_model.eval()
         else:
-            pass
-            # {{{TODO: add this}}}
+            self.teacher_model = create_agent_from_shared(shared['teacher_model'])
 
         super().__init__(opt, shared)
+
+    def share(self):
+        """
+        Share the teacher model.
+        """
+        shared = super().share()
+        shared['teacher_model'] = self.teacher_model.share()
+        return shared
 
     def build_model(self):
 
