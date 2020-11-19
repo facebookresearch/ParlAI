@@ -181,7 +181,7 @@ class TorchGeneratorModel(nn.Module, ABC):
             pair (logits, choices) containing the logits and MLE predictions
 
         :rtype:
-            (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys], List[FloatTensor[bsz, ys, hid]])
+            (FloatTensor[bsz, ys, vocab], LongTensor[bsz, ys])
         """
         bsz = ys.size(0)
         seqlen = ys.size(1)
@@ -199,7 +199,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         )
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
-        return logits, preds, embedding_output, hidden_states, attention_matrices
+        return logits, preds
 
     @abstractmethod
     def reorder_encoder_states(self, encoder_states, indices):
@@ -317,7 +317,6 @@ class TorchGeneratorModel(nn.Module, ABC):
             - encoder_states are the output of model.encoder. Model specific types.
               Feed this back in to skip encoding on the next call.
         """
-        # TODO: update docstring's outputs
         assert ys is not None, "Greedy decoding in TGModel.forward no longer supported."
         # TODO: get rid of longest_label
         # keep track of longest label we've ever seen
@@ -343,21 +342,8 @@ class TorchGeneratorModel(nn.Module, ABC):
             ) = encoder_states[-3:]
 
         # use teacher forcing
-        (
-            scores,
-            preds,
-            embedding_states['decoder'],
-            hidden_states['decoder'],
-            attention_matrices['decoder'],
-        ) = self.decode_forced(encoder_states[:-3], ys)
-        return (
-            scores,
-            preds,
-            encoder_states[:-3],
-            embedding_states,
-            hidden_states,
-            attention_matrices,
-        )
+        scores, preds = self.decode_forced(encoder_states[:-3], ys)
+        return scores, preds, encoder_states[:-3]
 
 
 class PPLMetric(AverageMetric):

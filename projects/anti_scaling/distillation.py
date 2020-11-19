@@ -266,19 +266,14 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         # Forward pass through teacher model
         with torch.no_grad():
-            (
-                teacher_scores,
-                teacher_preds,
-                teacher_enc_states,
-                _,
-                _,
-                _,
-            ) = self.teacher_model(*self._model_input(batch), ys=batch.label_vec)
+            teacher_scores, teacher_preds, teacher_enc_states = self.teacher_model(
+                *self._model_input(batch), ys=batch.label_vec
+            )
             teacher_enc_output, context_mask = teacher_enc_states
 
         # Forward pass through student model
         task_loss, student_output = super().compute_loss(batch, return_output=True)
-        (student_scores, student_preds, student_enc_states, _, _, _) = student_output
+        student_scores, student_preds, student_enc_states = student_output
         student_enc_output, _ = student_enc_states
 
         # Compile all outputs given the hooks
