@@ -310,3 +310,15 @@ class Gpt2Agent(TorchGeneratorAgent):
             left_padded=True,
             fp16friendly=False,
         )
+
+    def load_state_dict(self, state_dict):
+        # 2020-11-10: some very old transformer model points (pre v3.0.1) are
+        # missing a field called transformer.h.0.attn.masked_bias. This hacks
+        # around that. See
+        # https://github.com/huggingface/transformers/issues/4309.
+        current_sd = self.model.state_dict()
+        missing = set(current_sd.keys()) - set(state_dict.keys())
+        for m in missing:
+            if 'masked_bias' in m:
+                state_dict[m] = current_sd[m]
+        return super().load_state_dict(state_dict)
