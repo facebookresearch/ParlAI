@@ -15,7 +15,7 @@ import parlai.utils.testing as testing_utils
 @register_teacher('teacher1')
 class Teacher1(DialogTeacher):
     def __init__(self, opt, shared=None):
-        opt['datafile'] = 'filler'
+        opt = opt.fork(datafile='filler')
         self.id = 'teacher1'
         super().__init__(opt, shared)
 
@@ -28,7 +28,7 @@ class Teacher1(DialogTeacher):
 @register_teacher('teacher2')
 class Teacher2(DialogTeacher):
     def __init__(self, opt, shared=None):
-        opt['datafile'] = 'filler'
+        opt = opt.fork(datafile='filler')
         self.id = 'teacher2'
         super().__init__(opt, shared)
 

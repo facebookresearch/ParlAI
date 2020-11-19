@@ -46,14 +46,14 @@ class Opt(dict):
 
     def __setitem__(self, key, val):
         raise RuntimeError(
-            'Setting values in opt is no longer allowed. '
-            'Use opt = opt.fork(key=newvalue), or file a GitHub issue.'
+            f'Setting values in opt is no longer allowed. '
+            f'Use opt = opt.fork({key}={repr(val)}), or file a GitHub issue.'
         )
 
     def update(self, *args, **kwargs):
         raise RuntimeError(
-            'Setting values in opt is no longer allowed. '
-            'Use opt = opt.fork(key=newvalue), or file a GitHub issue.'
+            f'Setting values in opt is no longer allowed. '
+            f'Use opt = opt.fork({key}={repr(val)}), or file a GitHub issue.'
         )
 
     def todo__del__(self, key):
