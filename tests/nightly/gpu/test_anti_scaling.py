@@ -157,7 +157,7 @@ class TestDistillation(unittest.TestCase):
         """
         Check that distilling will quickly lead to a reasonable student model ppl.
         """
-        # TODO: this isn't working currently, because the values from init_opt aren't being read in; this is because all of the input opt params below are getting set to opt['override'] within ParlaiParser._process_args_to_opts(args): the ParlaiParser seems to be overriding with args from the command-line even though this is a unit test, which doesn't make much sense in this context. I think this doesn't usually show up in other tests because other tests don't need to read params from init_opt.
+        # TODO: fix this unit test! This isn't working currently, because the values from init_opt aren't being read in; this is because all of the input opt params below are getting set to opt['override'] within ParlaiParser._process_args_to_opts(args): the ParlaiParser seems to be overriding with args from the command-line even though this is a unit test, which doesn't make much sense in this context. I think this doesn't usually show up in other tests because other tests don't need to read params from init_opt.
         opt = {
             **self.BASE_OPT,
             **self.TRANSFORMER_OPT,
