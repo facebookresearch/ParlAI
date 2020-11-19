@@ -22,15 +22,13 @@ def load_openers(opt) -> Optional[List[str]]:
 
     print('[ loading conversation openers... ]')
     # create dummy task so we can get openers from the data
-    task_opt = copy.deepcopy(opt)
-    task_opt['task'] = base_task
+    task_opt = opt.fork(task=base_task, interactive_task=False, selfchat_task=False)
 
     # default train will loop forever, but evalmode will stop after one epoch
     datatype = task_opt['datatype']
     if 'train' in datatype and 'evalmode' not in datatype:
-        task_opt['datatype'] = f'{datatype}:evalmode'
-    task_opt['interactive_task'] = False
-    task_opt['selfchat_task'] = False
+        task_opt = task_opt.fork(datatype=f'{datatype}:evalmode')
+
     task_agent = RepeatLabelAgent(task_opt)
     task_world = create_task(task_opt, task_agent)
 

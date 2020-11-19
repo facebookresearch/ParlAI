@@ -64,10 +64,10 @@ def _report(world, counts):
 def verify(opt):
     if opt['datatype'] == 'train':
         logging.warn('changing datatype from train to train:ordered')
-        opt['datatype'] = 'train:ordered'
+        opt = opt.fork(datatype='train:ordered')
 
     # create repeat label agent and assign it to the specified task
-    opt['fixed_response'] = None
+    opt = opt.fork(fixed_response=None)
     agent = FixedResponseAgent(opt)
     world = create_task(opt, agent)
     opt.log()

@@ -48,9 +48,9 @@ class TokenStats(ParlaiScript):
         }
 
     def run(self):
-        self.opt['no_cuda'] = True
+        self.opt = self.opt.fork(no_cuda=True)
         if 'ordered' not in self.opt['datatype'] and 'train' in self.opt['datatype']:
-            self.opt['datatype'] = self.opt['datatype'] + ':ordered'
+            self.opt = self.opt.fork(datatype=self.opt['datatype'] + ':ordered')
         agent = create_agent(self.opt)
         agent.opt.log()
         num_examples = self.opt['num_examples']

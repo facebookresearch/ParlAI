@@ -117,7 +117,9 @@ def self_chat(opt):
                 partner_opt = json.load(f)
         else:
             partner_opt = Opt()
-        partner_opt['interactive_mode'] = opt.get('interactive_mode', True)
+        partner_opt = partner_opt.fork(
+            interactive_mode=opt.get('interactive_mode', True)
+        )
         print(
             f"WARNING: Setting partner interactive mode to: {partner_opt['interactive_mode']}"
         )
