@@ -153,38 +153,6 @@ class TestDistillation(unittest.TestCase):
                 else:
                     self.assertAlmostEqual(valid[loss_name], desired_loss, delta=0.1)
 
-    def test_distillation_ppl(self):
-        """
-        Check that distilling will quickly lead to a reasonable student model ppl.
-        """
-        # TODO: this isn't working currently, because the values from init_opt aren't being read in; this is because all of the input opt params below are getting set to opt['override'] within ParlaiParser._process_args_to_opts(args): the ParlaiParser seems to be overriding with args from the command-line even though this is a unit test, which doesn't make much sense in this context. I think this doesn't usually show up in other tests because other tests don't need to read params from init_opt.
-        opt = {
-            **self.BASE_OPT,
-            **self.TRANSFORMER_OPT,
-            **self.NARROW_DISTILLATION_OPT,
-            'model': f'{self.DISTILLATION_MODEL_PREFIX}:DistillNarrowTransformerAgent',
-            'batchsize': 4,
-            'dict_file': f'{self.BLENDERBOT_MODEL_FILE}.dict',  # TODO: remove this if you get params read in correctly from init_opt, because I think I had to add this due to init_opt params not being read correctly here
-            'fp16': True,
-            'gpu': -1,
-            'learningrate': 1e-3,
-            'lr_scheduler': 'reduceonplateau',
-            'max_train_time': -1,  # TODO: obviously change this
-            'skip_generation': False,
-            'validation_every_n_epochs': 100,  # TODO: change this?
-            'embedding_loss_coeff': 16,
-            'hidden_loss_coeff': 4,
-            'self_attn_loss_coeff': 1,
-            'enc_dec_attn_loss_coeff': 16,
-            'encoder_loss_coeff': 64,
-            'pred_loss_coeff': 512,
-            'task_loss_coeff': 1,
-        }
-        # Coefficient values are educated guesses based on what has worked well for
-        # other models
-        valid, _ = testing_utils.train_model(Opt(opt))
-        self.assertLess(valid['ppl'].value(), 1.0)  # TODO: obviously change this
-
 
 if __name__ == '__main__':
     unittest.main()
