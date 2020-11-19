@@ -6,8 +6,9 @@
 
 import os
 
+from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.teachers import FixedDialogTeacher, ParlAIDialogTeacher
+from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.tasks.style_gen.build import (
     build_personality_list,
     build_style_labeled_datasets,
@@ -105,17 +106,10 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
     will be flattened into one example each.
     """
 
-    def __init__(self, opt: Opt, shared=None):
-        super().__init__(opt, shared)
-        assert isinstance(self.task, FixedDialogTeacher)
-
-    def act(self):
+    def _edit_action(self, act: Message) -> Message:
         """
-        Act on the previous observation.
+        Edit the fields of the action manually.
         """
-        act = self.task.get_orig_action()
-
-        # Edit the fields of the action manually
         if 'labels' in act:
             labels = act['labels']
             if len(labels) != 1:
@@ -129,5 +123,4 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
         else:
             assert 'text' not in act and act['episode_done'] is True
         act.force_set('episode_done', True)  # Clear the dialogue history
-
-        return self.task.process_action(act)
+        return act

@@ -108,7 +108,7 @@ commands:
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off transformers
-            python -m pip install --progress-bar off fairseq
+            python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -172,7 +172,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout 7eb85dcbf8bee89a7ac9adc5f23b0f05a78bcb4b -b stable
+              cd Mephisto; git checkout 8f315bfe42ba9643164d3d3d61d7d22609b3ab10 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -236,19 +236,19 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20200921-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20201110-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20200921-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20201110-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20200904-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20201110-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
@@ -407,6 +407,7 @@ jobs:
       - runtests:
           more_installs:
             - installtorchgpu16
+            - installdetectrondeps
           install_cuda: true
           cachename: gpu16
           marker: unit
@@ -419,6 +420,7 @@ jobs:
       - runtests:
           more_installs:
             - installtorchgpu16
+            - installdetectrondeps
           install_cuda: true
           cachename: nightly
           marker: nightly_gpu

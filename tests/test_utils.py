@@ -10,6 +10,7 @@ import parlai.utils.strings as string_utils
 from copy import deepcopy
 import time
 import unittest
+from parlai.utils.data import DatatypeHelper
 
 
 class TestUtils(unittest.TestCase):
@@ -137,6 +138,58 @@ class TestStrings(unittest.TestCase):
     def test_uppercase(self):
         assert string_utils.uppercase("this is a test") == "This is a test"
         assert string_utils.uppercase("tEst") == "TEst"
+
+
+class TestDatatypeHelper(unittest.TestCase):
+    def test_fold(self):
+        assert DatatypeHelper.fold("train") == "train"
+        assert DatatypeHelper.fold("train:ordered") == "train"
+        assert DatatypeHelper.fold("train:stream") == "train"
+        assert DatatypeHelper.fold("train:stream:ordered") == "train"
+        assert DatatypeHelper.fold("train:evalmode") == "train"
+        assert DatatypeHelper.fold("train:stream:evalmode") == "train"
+
+        assert DatatypeHelper.fold("valid") == "valid"
+        assert DatatypeHelper.fold("valid:stream") == "valid"
+
+        assert DatatypeHelper.fold("test") == "test"
+        assert DatatypeHelper.fold("test:stream") == "test"
+
+    def test_should_cycle(self):
+        assert DatatypeHelper.should_cycle("train") is True
+        assert DatatypeHelper.should_cycle("train:evalmode") is False
+        assert DatatypeHelper.should_cycle("train:ordered") is False
+        assert DatatypeHelper.should_cycle("train:stream") is True
+
+        assert DatatypeHelper.should_cycle("valid") is False
+        assert DatatypeHelper.should_cycle("valid:stream") is False
+
+        assert DatatypeHelper.should_cycle("test") is False
+        assert DatatypeHelper.should_cycle("test:stream") is False
+
+    def test_should_shuffle(self):
+        assert DatatypeHelper.should_shuffle("train") is True
+        assert DatatypeHelper.should_shuffle("train:evalmode") is False
+        assert DatatypeHelper.should_shuffle("train:ordered") is False
+        assert DatatypeHelper.should_shuffle("train:stream") is False
+
+        assert DatatypeHelper.should_shuffle("valid") is False
+        assert DatatypeHelper.should_shuffle("valid:stream") is False
+
+        assert DatatypeHelper.should_shuffle("test") is False
+        assert DatatypeHelper.should_shuffle("test:stream") is False
+
+    def test_is_training(self):
+        assert DatatypeHelper.is_training("train") is True
+        assert DatatypeHelper.is_training("train:evalmode") is False
+        assert DatatypeHelper.is_training("train:ordered") is True
+        assert DatatypeHelper.is_training("train:stream") is True
+
+        assert DatatypeHelper.is_training("valid") is False
+        assert DatatypeHelper.is_training("valid:stream") is False
+
+        assert DatatypeHelper.is_training("test") is False
+        assert DatatypeHelper.is_training("test:stream") is False
 
 
 if __name__ == '__main__':
