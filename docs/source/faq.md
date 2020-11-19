@@ -23,7 +23,8 @@ bad at predicting the next token in a string of text.
 ## I changed my teacher and now its tests won't pass.
 
 Take a careful look at the diff outputs that those tests produce. If the results
-look expected, then you can update the regression fixtures with:
+look expected, then you can update the regression fixtures (stored, expected
+results) with:
 
 `pytest --force-regen parlai/tasks/TASK_NAME_HERE/test.py`
 

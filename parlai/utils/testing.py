@@ -424,7 +424,7 @@ class AutoTeacherTest:
         from parlai.core.worlds import create_task
         from parlai.core.params import ParlaiParser
 
-        basename = basename = f"{self.task}_{datatype}".replace(":", "_")
+        basename = f"{self.task}_{datatype}".replace(":", "_")
 
         if self.stream:
             datatype = datatype + ':stream'

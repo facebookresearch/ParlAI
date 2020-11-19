@@ -597,7 +597,7 @@ Next, run your test. __It will always fail the first time.__
 pytest parlai/tasks/myteacher/test.py
 ```
 
-You will see many error mesages about "Failed: File not found in data
+You will see many error messages about "Failed: File not found in data
 directory, created." This is expected the first time. You should now see a
 "test" folder appear in the same directory, containing several `.yml` files.
 Add these files to your git commit.
