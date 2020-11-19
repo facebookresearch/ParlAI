@@ -286,12 +286,16 @@ class AbstractDistillTransformerAgentMixin(ABC):
             'decoder': self.hooks['student']['embeddings'].outputs[1],
         }
         teacher_hidden_states = {
-            module_name: self.hooks['teacher'][module_name]['layers'].outputs
-            for module_name in ['encoder', 'decoder']
+            'encoder': self.hooks['teacher']['encoder']['layers'].outputs,
+            'decoder': [
+                out_[0] for out_ in self.hooks['teacher']['decoder']['layers'].outputs
+            ],
         }
         student_hidden_states = {
-            module_name: self.hooks['student'][module_name]['layers'].outputs
-            for module_name in ['encoder', 'decoder']
+            'encoder': self.hooks['student']['encoder']['layers'].outputs,
+            'decoder': [
+                out_[0] for out_ in self.hooks['student']['decoder']['layers'].outputs
+            ],
         }
         teacher_attention_matrices = self._extract_attention_matrices(
             hooks=self.hooks['teacher'],
