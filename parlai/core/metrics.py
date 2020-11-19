@@ -526,7 +526,8 @@ class RougeMetric(AverageMetric):
 
 class InterDistinctMetric(Metric):
     def __init__(self, counts):
-        """compute distinct metric over corpus-level (InterDistinct)
+        """
+        Compute inter-distinct metric over corpus-level.
 
         :param counts:
             collections.Counter of ngram -> frequency
