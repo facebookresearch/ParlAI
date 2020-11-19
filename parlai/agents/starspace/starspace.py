@@ -203,7 +203,7 @@ class StarspaceAgent(Agent):
                 or (opt['dict_file'] is None)
             ):
                 # set default dict-file if not set
-                opt['dict_file'] = opt['model_file'] + '.dict'
+                self.opt = opt = opt.fork(dict_fil=opt['model_file'] + '.dict')
             # load dictionary and basic tokens & vectors
             self.dict = DictionaryAgent(opt)
 
@@ -283,6 +283,7 @@ class StarspaceAgent(Agent):
         the model.
         """
         model_args = {'embeddingsize', 'optimizer'}
+        updates = {}
         for k, v in new_opt.items():
             if k not in model_args:
                 # skip non-model args
@@ -295,8 +296,8 @@ class StarspaceAgent(Agent):
                         k=k, old=self.opt[k], v=v
                     )
                 )
-            self.opt[k] = v
-        return self.opt
+            updates[k] = v
+        return self.opt.fork(**updates)
 
     def parse(self, text):
         """
