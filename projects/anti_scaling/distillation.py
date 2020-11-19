@@ -315,13 +315,10 @@ class AbstractDistillTransformerAgentMixin(ABC):
         context_tokens_per_example = context_mask.sum(dim=-1)
         num_context_tokens = context_mask.sum()
 
-        # If this is a BART model, ignore the start token (from
-        # BartAgent.compute_loss())
-        # TODO: it'd be better to put this in the BART-specific agents rather than in
-        #  this mixin
-        if student_scores.size(1) == batch.label_vec.size(1) + 1:
-            # Add one extra (masked-out) token to the mask
-            mask = torch.cat([mask.new_zeros([mask.size(0), 1]), mask], dim=1)
+        # If needed, perform further manipulation of the mask tensor
+        mask = self._manipulate_mask(
+            mask=mask, student_scores=student_scores, batch=batch
+        )
 
         # Record teacher accuracy
         teacher_acc = ((student_preds == teacher_preds) * mask).sum(dim=-1)
@@ -349,6 +346,19 @@ class AbstractDistillTransformerAgentMixin(ABC):
             student_hidden_states=student_hidden_states,
             student_attention_matrices=student_attention_matrices,
         )
+
+    def _manipulate_mask(
+        self, mask: torch.BoolTensor, student_scores: torch.Tensor, batch: Batch
+    ) -> torch.BoolTensor:
+        """
+        If necessary, perform further manipulations of the mask.
+
+        Needed for BART-based student models to add in an extra start token.
+        """
+        _ = student_scores
+        _ = batch
+        # We are not using the extra inputs here
+        return mask
 
     def _extract_attention_matrices(
         self,
@@ -452,7 +462,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
             input=student_emb_output, target=teacher_emb_output, reduction='none'
         )
         clamped_loss = torch.clamp(raw_loss, min=0, max=max_value)
-        # TODO: revisit whether clamping could cause problems
         masked_loss = clamped_loss.sum(dim=-1) * mask
         # Sum over embedding dim
         embedding_loss_per_example = masked_loss.sum(dim=-1)  # Sum over token dim
@@ -518,7 +527,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 reduction='none',
             )
             clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=max_value)
-            # TODO: revisit whether clamping could cause problems
             masked_layer_loss = clamped_layer_loss.mean(dim=-1) * mask
             # Avg over embedding dim
             layer_loss_per_example = masked_layer_loss.sum(dim=-1)  # Sum over token dim
@@ -607,7 +615,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 reduction='none',
             )
             clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=max_value)
-            # TODO: revisit whether clamping could cause problems
             reshaped_layer_loss = clamped_layer_loss.view(
                 batch_size, -1, clamped_layer_loss.size(-2), clamped_layer_loss.size(-1)
             )
@@ -909,6 +916,16 @@ class BartLikeAgent(BartAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         # Just skip BartAgent._initialize_bart(opt)
         super(BartAgent).__init__(opt, shared)
+
+    def _manipulate_mask(
+        self, mask: torch.BoolTensor, student_scores: torch.Tensor, batch: Batch
+    ) -> torch.BoolTensor:
+        """
+        Add one extra (masked-out) token to the mask, for compatibility with BART.
+        """
+        assert student_scores.size(1) == batch.label_vec.size(1) + 1
+        mask = torch.cat([mask.new_zeros([mask.size(0), 1]), mask], dim=1)
+        return mask
 
 
 class DistillBartAgent(DistillTransformerAgentMixin, BartLikeAgent):
