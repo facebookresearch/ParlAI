@@ -202,7 +202,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     """
     if opt.get('init_model') is None:
         return
-    opt['init_model'] = modelzoo_path(opt['datapath'], opt['init_model'])
+    opt = opt.fork(init_model=modelzoo_path(opt['datapath'], opt['init_model']))
     optfile = opt['init_model'] + '.opt'
     if not PathManager.exists(optfile):
         return
@@ -330,12 +330,12 @@ def create_agent_from_opt_file(opt: Opt):
     opt_from_file = opt_from_file.fork(**to_update)
 
     # update dict file path
+    old_dict_file = opt_from_file.get('dict_file')
     if not opt_from_file.get('dict_file'):
         opt_from_file = opt_from_file.fork(dict_file=model_file + '.dict')
     elif opt_from_file.get('dict_file') and not PathManager.exists(
         opt_from_file['dict_file']
     ):
-        old_dict_file = opt_from_file['dict_file']
         opt_from_file = opt_from_file.fork(dict_file=model_file + '.dict')
     if not PathManager.exists(opt_from_file['dict_file']):
         warn_once(

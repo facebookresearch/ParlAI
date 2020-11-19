@@ -865,7 +865,7 @@ class ParlaiParser(argparse.ArgumentParser):
         parsed = Opt(vars(self.parse_known_args(args, nohelp=True)[0]))
         # Also load extra args options if a file is given.
         if parsed.get('init_opt') is not None:
-            self._load_known_opts(parsed.get('init_opt'), parsed)
+            parsed = self._load_known_opts(parsed.get('init_opt'), parsed)
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -925,14 +925,17 @@ class ParlaiParser(argparse.ArgumentParser):
         opts after they are parsed.
         """
         new_opt = Opt.load(optfile)
+        overrides = {}
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
-                parsed[key] = value
+                overrides[key] = value
+        return new_opt.fork(**overrides)
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
         new_opt = Opt.load(optfile)
+        overrides = {}
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
@@ -946,8 +949,8 @@ class ParlaiParser(argparse.ArgumentParser):
                         'Trying to set opt from file that does not exist: ' + str(key)
                     )
             if key not in opt['override']:
-                opt[key] = value
-                opt['override'][key] = value
+                overrides[key] = value
+        return new_opt.fork(override=overrides, **overrides)
 
     def _infer_datapath(self, opt):
         """
@@ -1027,7 +1030,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         # load opts if a file is provided.
         if self.opt.get('init_opt', None) is not None:
-            self._load_opts(self.opt)
+            self.opt = self._load_opts(self.opt)
 
         # map filenames that start with 'zoo:' to point to the model zoo dir
         options_to_change = {'model_file', 'dict_file', 'bpe_vocab', 'bpe_merge'}
