@@ -195,12 +195,10 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         # Register hooks to record outputs
         encoder_module_map = {
-            'embeddings': nn.Embedding,
             'layers': TransformerEncoderLayer,
             'attentions': MultiHeadAttention,
         }
         decoder_module_map = {
-            'embeddings': nn.Embedding,
             'layers': TransformerDecoderLayer,
             'attentions': MultiHeadAttention,
         }
@@ -222,6 +220,15 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 ),
             },
         }
+
+        # Separately register hooks for the token embeddings, which are the same for
+        # the encoder and decoder
+        self.hooks['teacher']['embeddings'] = OutputRecorder()
+        self.teacher_model.embeddings.register_forward_hook(
+            self.hooks['teacher']['embeddings']
+        )
+        self.hooks['student']['embeddings'] = OutputRecorder()
+        model.embeddings.register_forward_hook(self.hooks['student']['embeddings'])
 
         return model
 
@@ -263,7 +270,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 teacher_scores,
                 teacher_preds,
                 teacher_enc_states,
-                teacher_embedding_outputs,
+                _,
                 _,
                 _,
             ) = self.teacher_model(*self._model_input(batch), ys=batch.label_vec)
@@ -271,18 +278,18 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         # Forward pass through student model
         task_loss, student_output = super().compute_loss(batch, return_output=True)
-        (
-            student_scores,
-            student_preds,
-            student_enc_states,
-            student_embedding_outputs,
-            _,
-            _,
-        ) = student_output
+        (student_scores, student_preds, student_enc_states, _, _, _) = student_output
         student_enc_output, _ = student_enc_states
 
         # Compile all outputs given the hooks
-        # {{{TODO}}}
+        teacher_embedding_outputs = {
+            'encoder': self.hooks['teacher']['embeddings'].outputs[0],
+            'decoder': self.hooks['teacher']['embeddings'].outputs[1],
+        }
+        student_embedding_outputs = {
+            'encoder': self.hooks['student']['embeddings'].outputs[0],
+            'decoder': self.hooks['student']['embeddings'].outputs[1],
+        }
         teacher_hidden_states = {
             module_name: [
                 out_[0] for out_ in self.hooks['teacher'][module_name]['layers'].outputs
@@ -307,10 +314,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
             num_enc_layers=self.student_num_enc_layers,
             num_dec_layers=self.student_num_dec_layers,
         )
-
-        # import pdb
-        #
-        # pdb.set_trace()
 
         tokens_per_example = mask.sum(dim=-1)
         num_tokens = mask.sum()
@@ -373,7 +376,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                         output_idx
                     ]
                 }
-                for layer_idx in num_enc_layers
+                for layer_idx in range(num_enc_layers)
             ],
             'decoder': [
                 {
@@ -384,7 +387,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                         2 * layer_idx + 1
                     ][output_idx],
                 }
-                for layer_idx in num_dec_layers
+                for layer_idx in range(num_dec_layers)
             ],
         }
 
