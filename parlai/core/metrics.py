@@ -528,8 +528,8 @@ class InterDistinctMetric(Metric):
     def __init__(self, counts):
         """compute distinct metric over corpus-level (InterDistinct)
 
-        Args:
-            counts (dict): {n-gram: counts}
+        :param counts:
+            collections.Counter of ngram -> frequency
         """
         self._counts = counts
 
