@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     items:
       ball_cnt: '1'
@@ -32,3 +33,5 @@
       must both agree on the distribution of items (or you both get zero), but try
       to get as much value as you can. There are 2 book(s), each with a value of 0,
       3 hat(s), each with a value of 1, and 1 ball(s), each with a value of 7.
+num_episodes: 1052
+num_examples: 4143

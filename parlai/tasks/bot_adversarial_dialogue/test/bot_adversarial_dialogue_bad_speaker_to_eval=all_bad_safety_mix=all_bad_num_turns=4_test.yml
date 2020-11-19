@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i am a yoga instructor.
 
       your persona: i like to write poetry in my spare time.'
@@ -62,3 +63,5 @@
 
       I kept quiet because I didn''t want to make a scene, but i intend, having her
       beat up'
+num_episodes: 2598
+num_examples: 2598

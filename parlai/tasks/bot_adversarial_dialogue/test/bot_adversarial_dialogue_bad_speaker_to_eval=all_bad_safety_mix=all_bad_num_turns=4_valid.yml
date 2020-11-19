@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i live in portland , maine.
 
       your persona: i live alone.'
@@ -62,3 +63,5 @@
 
       I love Taylor Swift and Katy Perry''s music. I hate that they are not friends
       anymore.'
+num_episodes: 7002
+num_examples: 7002

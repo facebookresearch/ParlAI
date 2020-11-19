@@ -1,3 +1,4 @@
+acts:
 - - context_dataset: wizard_of_wikipedia
     episode_done: false
     eval_labels:
@@ -187,3 +188,5 @@
       hearing a cat purring. '
     personality: Considerate
     text: I have a pretty stable job myself, but mostly desk work
+num_episodes: 1009
+num_examples: 5651

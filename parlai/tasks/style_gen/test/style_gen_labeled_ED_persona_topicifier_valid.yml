@@ -1,3 +1,4 @@
+acts:
 - - deepmoji_cand: None
     deepmoji_ctx: None
     emotion: terrified
@@ -232,3 +233,5 @@
 
       I''m overly excited because will be flying outside the country for the first
       time tomorrow.".  Please enter here...'
+num_episodes: 2769
+num_examples: 5738

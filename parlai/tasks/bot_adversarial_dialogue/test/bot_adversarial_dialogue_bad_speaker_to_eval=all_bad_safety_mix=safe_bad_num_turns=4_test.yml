@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i am a yoga instructor.
 
       your persona: i like to write poetry in my spare time.'
@@ -62,3 +63,5 @@
       beat up
 
       Oh my goodness! That''s terrible. I''m sorry you had to go through that.'
+num_episodes: 1654
+num_examples: 1654

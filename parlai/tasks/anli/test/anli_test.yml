@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - entailment
@@ -74,3 +75,5 @@
       on the Top 200 UK Singles Chart at number 175.
 
       Hypothesis: The song was released in America in September 2008'
+num_episodes: 3200
+num_examples: 3200

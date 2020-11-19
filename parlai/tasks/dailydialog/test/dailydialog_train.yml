@@ -1,3 +1,4 @@
+acts:
 - - act_type: no_act
     emotion: no_emotion
     episode_done: false
@@ -43,3 +44,5 @@
     text: Sounds great to me ! If they are willing , we could ask them to go dancing
       with us . That is excellent exercise and fun , too .
     topic: attitude_and_emotion
+num_episodes: 22236
+num_examples: 87170

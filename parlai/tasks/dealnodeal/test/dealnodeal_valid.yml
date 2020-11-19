@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     items:
       ball_cnt: '2'
@@ -28,3 +29,5 @@
     text: let me have two books and the hats
 - - episode_done: false
     text: cant do it
+num_episodes: 1087
+num_examples: 4326

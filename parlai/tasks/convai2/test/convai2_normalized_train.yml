@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: convai2:normalized
     label_candidates:
@@ -146,3 +147,5 @@
     - I like chicken or macaroni and cheese.
     reward: 0
     text: I would have to say its prime rib. Do you have any favorite foods?
+num_episodes: 17878
+num_examples: 131438

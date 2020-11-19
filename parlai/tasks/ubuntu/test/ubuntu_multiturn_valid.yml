@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - already is
@@ -25,3 +26,5 @@
     - planned Oct 18th according to this. https://wiki.ubuntu.com/QuantalQuetzal/ReleaseSchedule?action=show&redirect=QReleaseSchedul
     id: ubuntu:multiturn
     text: in my country its nearly the 27th . when will 12.10 be out?
+num_episodes: 39118
+num_examples: 93735

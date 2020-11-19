@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: cbt:NE
     label_candidates:
@@ -386,3 +387,5 @@
 
       -LCB- XXXXX reading a book : p11.jpg -RCB- Indeed , I can not tell you how the
       prince was hated by all !'
+num_episodes: 669343
+num_examples: 669343

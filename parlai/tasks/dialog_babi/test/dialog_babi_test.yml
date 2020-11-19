@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - hello what can i help you with today
@@ -133,3 +134,5 @@
     - you're welcome
     reward: 0
     text: for four please
+num_episodes: 6117
+num_examples: 58551

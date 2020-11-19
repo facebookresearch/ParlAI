@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: cornell_movie
     label_candidates:
@@ -116,3 +117,5 @@
     id: cornell_movie
     reward: 0
     text: That's a shame.
+num_episodes: 66478
+num_examples: 133125

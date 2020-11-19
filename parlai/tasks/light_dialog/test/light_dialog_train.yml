@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: light_dialog
     label_candidates:
@@ -220,3 +221,5 @@
     text: '_self_say Do you think someone is there?
 
       _partner_say I think there is a girl here too'
+num_episodes: 17075
+num_examples: 110877

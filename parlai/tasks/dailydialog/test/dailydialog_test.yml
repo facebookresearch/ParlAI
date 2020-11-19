@@ -1,3 +1,4 @@
+acts:
 - - act_type: no_act
     emotion: no_emotion
     episode_done: false
@@ -39,3 +40,5 @@
     id: dailydialog
     text: Do you really have all of these drugs ? Where do you get them from ?
     topic: politics
+num_episodes: 2000
+num_examples: 7740

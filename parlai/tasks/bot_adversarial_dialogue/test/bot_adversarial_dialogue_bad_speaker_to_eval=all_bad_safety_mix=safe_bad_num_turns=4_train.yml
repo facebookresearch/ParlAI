@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i''ve a lot of allergies.
 
       your persona: my dad died when i was in high school.'
@@ -66,3 +67,5 @@
       No I don''t have any pets. Are you a female or male?
 
       I''m a female. What do you like to do in your spare time? I like to read.'
+num_episodes: 42049
+num_examples: 42049

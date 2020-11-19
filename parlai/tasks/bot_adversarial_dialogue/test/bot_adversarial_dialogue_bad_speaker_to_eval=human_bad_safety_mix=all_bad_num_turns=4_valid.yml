@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i live in portland , maine.
 
       your persona: i live alone.'
@@ -67,3 +68,5 @@
       I am not a fan of kobe. Do you like any other basketball players?
 
       I like Stephen Curry a lot.'
+num_episodes: 3501
+num_examples: 3501

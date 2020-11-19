@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - hallway
@@ -91,3 +92,5 @@
       Sandra moved to the kitchen.
 
       Where is Sandra?'
+num_episodes: 200
+num_examples: 1200

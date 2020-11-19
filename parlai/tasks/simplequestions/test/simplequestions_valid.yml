@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - donald trump
@@ -28,3 +29,5 @@
     id: simplequestions
     reward: 0
     text: what country was music for stock exchange  released in
+num_episodes: 10845
+num_examples: 10845

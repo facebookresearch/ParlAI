@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: mnist_qa
     image_hex: AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/yP/mf/8//z//P/g//z/8f8//wD/AP8A/wD/AP8A/zD//P/8//z//P/8/1z/Uf83/wD/AP8A/wD/AP8A/wD/AP+b//z/zP8K/yr/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/iv+9/wH/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A//D/4P9r/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/UP/v//z/GP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/XP/8/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/Lf+2//z/Af8A/wD/AP8A/wD/AP8A/wD/AP8A/3H//P/8//z/Tf8A/wD/AP8A/wD/AP8A/wD/AP8A/0H//P/8//z/UP8A/wD/AP8A/wD/AP8A/wD/Nv/h//z//P/z/wr/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8=
@@ -138,3 +139,5 @@
     - '9'
     - nine
     text: Which number is in the image?
+num_episodes: 50000
+num_examples: 50000

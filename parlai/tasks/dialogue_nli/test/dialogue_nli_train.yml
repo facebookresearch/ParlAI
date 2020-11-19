@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: DNLI
     label_candidates:
@@ -54,3 +55,5 @@
     text: 'Premise: i was a college athlete .
 
       Hypothesis: i am athletic .'
+num_episodes: 310110
+num_examples: 310110

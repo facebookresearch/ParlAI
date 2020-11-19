@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Chuck
@@ -348,3 +349,5 @@
 
       `` Miss XXXXX is no better friends with her than she is with me and you , ''''
       retorted Felicity .'
+num_episodes: 8000
+num_examples: 8000

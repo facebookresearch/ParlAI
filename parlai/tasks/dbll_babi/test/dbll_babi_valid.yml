@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - garden
@@ -91,3 +92,5 @@
       John journeyed to the hallway.
 
       Where is John?'
+num_episodes: 20
+num_examples: 120

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: dialog_babi_plus:KB
     labels:
@@ -28,3 +29,5 @@
     - resto_seoul_cheap_korean_1stars_phone
     reward: 0
     text: resto_seoul_cheap_korean_1stars R_phone
+num_episodes: 8400
+num_examples: 8400

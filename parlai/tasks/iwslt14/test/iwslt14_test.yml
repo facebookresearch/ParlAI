@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - you know , one of the inten@@ se pleas@@ ures of travel and one of the deli@@
@@ -48,3 +49,5 @@
     - we go through initi@@ ation ri@@ tes .
     id: iwslt14
     text: wir durch@@ laufen initi@@ a@@ tions@@ ritu@@ ale .
+num_episodes: 6750
+num_examples: 6750

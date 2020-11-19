@@ -1,3 +1,4 @@
+acts:
 - - act_type: question
     emotion: no_emotion
     episode_done: false
@@ -40,3 +41,5 @@
     text: Oh , hello ! Sorry about that . I'm just calling to say that we've received
       your new Corporate Credit Card from HQ .
     topic: finance
+num_episodes: 1960
+num_examples: 7069

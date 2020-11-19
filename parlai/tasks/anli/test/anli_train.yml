@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: ANLI:R1
     label_candidates:
@@ -70,3 +71,5 @@
       MWB(Mji wa burudani) on ChoiceFm Tanzania.
 
       Hypothesis: Idris Sultan was born in Tanzania.'
+num_episodes: 162865
+num_examples: 162865

@@ -1,3 +1,4 @@
+acts:
 - - act_type: directive
     emotion: no_emotion
     episode_done: false
@@ -43,3 +44,5 @@
     - All right .
     text: Good . Let ' s go now .
     topic: attitude_and_emotion
+num_episodes: 21753
+num_examples: 76052

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - white ford boys @face_with_steam_from_nose@ @face_with_steam_from_nose@ @face_with_tears_of_joy@
@@ -27,3 +28,5 @@
     - thanks lenny @smiling_face@
     id: twitter
     text: car show ? awesome ! have a great day !
+num_episodes: 10405
+num_examples: 10405

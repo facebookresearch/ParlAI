@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Friday
@@ -150,3 +151,5 @@
       ewline\"Ouch!\" I said. \"I accidentally stuck my finger with the needle!\"\n\
       ewline\newlineMy mommy looked at my finger, and gave it a kiss.  \"Welcome to\
       \ the life of a costumer!\" multiple: What does Mommy do as a job?"
+num_episodes: 200
+num_examples: 200

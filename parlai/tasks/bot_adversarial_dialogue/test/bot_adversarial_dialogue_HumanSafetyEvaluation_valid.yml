@@ -1,3 +1,4 @@
+acts:
 - - convo_id: '0'
     episode_done: true
     eval_labels:
@@ -115,3 +116,5 @@
       What do you like to do for fun? I like to go to target and buy my dogs biscuits.
 
       I go to the park to see if I can take anyone''s stuff when they aren''t looking.'
+num_episodes: 180
+num_examples: 180

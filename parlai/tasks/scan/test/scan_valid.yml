@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - I_TURN_RIGHT I_TURN_RIGHT I_JUMP I_TURN_RIGHT I_TURN_RIGHT I_JUMP I_TURN_RIGHT
@@ -34,3 +35,5 @@
     id: scan
     reward: 0
     text: jump around right after walk around left twice
+num_episodes: 837
+num_examples: 837

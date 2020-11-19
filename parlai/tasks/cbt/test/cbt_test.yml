@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Keddah
@@ -365,3 +366,5 @@
       say , the first man of the ship ''s company , the one with the miraculous power
       of hearing , had overheard the King ''s words , and hastily reported them to
       the poor Simpleton .'
+num_episodes: 10000
+num_examples: 10000

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - 'looks like it used to be exported by lightdm, but the line had the comment
@@ -30,3 +31,5 @@
       how can i remove that passwrd, and just boot up normal. i did this at install,
       it works fine, just tired of having reboots where i need to be at terminal to
       type passwd in. help?
+num_episodes: 37840
+num_examples: 91680

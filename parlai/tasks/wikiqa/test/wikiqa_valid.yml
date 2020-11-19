@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Employing over 6,000, BMC is often credited with pioneering the BSM concept
@@ -171,3 +172,5 @@
       explosion occurred.
     reward: 0
     text: how many people were killed in the oklahoma city bombing
+num_episodes: 126
+num_examples: 126

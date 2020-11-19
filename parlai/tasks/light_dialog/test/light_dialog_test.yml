@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Good Evening. You must be the painter of this room.
@@ -242,3 +243,5 @@
       _partner_act get brush
 
       _self_emote smile'
+num_episodes: 2000
+num_examples: 13272

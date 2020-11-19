@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: twitter
     labels:
@@ -27,3 +28,5 @@
     - ', please , please ! the confirm that you will honor this promise :'
     text: my twitter mentions are flying by like a 60 fps movie ever since i busted
       hillary for the teleprompter . someone is scared .
+num_episodes: 2580433
+num_examples: 2580433

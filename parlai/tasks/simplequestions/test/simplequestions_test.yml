@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - classic rock
@@ -28,3 +29,5 @@
     id: simplequestions
     reward: 0
     text: Where did roger marquis die
+num_episodes: 21687
+num_examples: 21687

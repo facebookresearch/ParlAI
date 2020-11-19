@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i''ve a lot of allergies.
 
       your persona: my dad died when i was in high school.'
@@ -62,3 +63,5 @@
       I''m glad to hear that. Do you have any pets? I''ve a dog and cat.
 
       No I don''t have any pets. Are you a female or male?'
+num_episodes: 69274
+num_examples: 69274

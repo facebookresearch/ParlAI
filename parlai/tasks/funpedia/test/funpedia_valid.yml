@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - I wonder what went through Bill Tom Closs's mind when he played basketball?
@@ -51,3 +52,5 @@
       Objective (Detached, Impartial)
 
       Popovača is a town in Croatia in the Moslavina geographical region.'
+num_episodes: 10184
+num_examples: 10184

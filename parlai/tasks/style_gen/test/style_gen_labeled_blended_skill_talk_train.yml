@@ -1,3 +1,4 @@
+acts:
 - - context_dataset: empathetic_dialogues
     episode_done: false
     free_turker_message: I like acting, I hope to be an actor, what about you?
@@ -52,3 +53,5 @@
       the garden
     personality: Humble
     text: I would imagine. I am sure they a great kids.
+num_episodes: 4819
+num_examples: 27018

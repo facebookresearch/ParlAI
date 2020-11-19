@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: simplequestions
     labels:
@@ -28,3 +29,5 @@
     - swizz beatz
     reward: 0
     text: Who produced eve-olution?
+num_episodes: 75910
+num_examples: 75910

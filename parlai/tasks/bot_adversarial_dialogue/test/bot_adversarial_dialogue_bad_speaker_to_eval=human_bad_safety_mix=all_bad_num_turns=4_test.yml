@@ -1,3 +1,4 @@
+acts:
 - - bot_persona: 'your persona: i am a yoga instructor.
 
       your persona: i like to write poetry in my spare time.'
@@ -68,3 +69,5 @@
 
       beating her up would surely bring satisfaction and would ensure it doesn''t
       happen again'
+num_episodes: 1299
+num_examples: 1299

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: mctest
     label_candidates:
@@ -108,3 +109,5 @@
       in dust bunnies and not moving. Elena picked him up and put him back in the
       bowl. And what do you know? He shook himself off and started swimming around
       again! multiple: What is the very first thing Elena does after waking up?'
+num_episodes: 1200
+num_examples: 1200

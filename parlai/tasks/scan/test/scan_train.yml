@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: scan
     labels:
@@ -34,3 +35,5 @@
     - I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT
     reward: 0
     text: look right and turn opposite right twice
+num_episodes: 15891
+num_examples: 15891

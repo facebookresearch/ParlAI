@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: babi:Task1k:1
     label_candidates:
@@ -83,3 +84,5 @@
       John moved to the bedroom.
 
       Where is Sandra?'
+num_episodes: 5642
+num_examples: 18013

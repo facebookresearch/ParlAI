@@ -447,7 +447,14 @@ class AutoTeacherTest:
             world.parley()
             act = self._safe(world.get_acts())
             acts.append(act)
-        data_regression.check(acts, basename=basename)
+
+        teacher = world.get_task_agent()
+        output = {
+            'acts': acts,
+            'num_episodes': teacher.num_episodes(),
+            'num_examples': teacher.num_examples(),
+        }
+        data_regression.check(output, basename=basename)
 
     def test_train_stream_ordered(self, data_regression):
         """

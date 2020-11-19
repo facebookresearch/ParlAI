@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT
@@ -34,3 +35,5 @@
     id: scan
     reward: 0
     text: run thrice and walk opposite left
+num_episodes: 4182
+num_examples: 4182

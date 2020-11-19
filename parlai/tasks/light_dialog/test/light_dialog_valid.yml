@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Long time indeed! How have you been keeping?
@@ -247,3 +248,5 @@
       _partner_say Ahh, Let''s not make him too rusty.
 
       _self_act drop stone'
+num_episodes: 1000
+num_examples: 6623

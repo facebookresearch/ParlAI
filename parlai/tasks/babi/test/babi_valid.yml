@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - bedroom
@@ -83,3 +84,5 @@
       Daniel moved to the hallway.
 
       Where is Daniel?'
+num_episodes: 625
+num_examples: 1987

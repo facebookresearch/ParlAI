@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: wikiqa
     label_candidates:
@@ -128,3 +129,5 @@
       with no apparent symptoms.
     reward: 0
     text: how are cholera and typhus transmitted and prevented
+num_episodes: 873
+num_examples: 873

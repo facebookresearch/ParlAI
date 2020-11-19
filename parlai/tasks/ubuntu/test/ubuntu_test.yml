@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - nice thanks! .
@@ -127,3 +128,5 @@
       \ - can anyone help with usb printers? . \n firefox localhost:631 . \n firefox?\
       \ . \n yes . firefox localhost:631 . firefox http://localhost:631 . cups has\
       \ a web based interface ."
+num_episodes: 18920
+num_examples: 18920

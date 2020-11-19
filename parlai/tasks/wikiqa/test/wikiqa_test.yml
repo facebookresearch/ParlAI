@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - As such, African immigrants are to be distinguished from African American people,
@@ -148,3 +149,5 @@
       per U.S. dollar URL_http
     reward: 0
     text: HOW MUCH IS CENTAVOS IN MEXICO
+num_episodes: 243
+num_examples: 243

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - You're sweet.
@@ -124,3 +125,5 @@
     id: cornell_movie
     reward: 0
     text: All I know is -- I'd give up my private line to go out with a guy like Joey.
+num_episodes: 8309
+num_examples: 16611

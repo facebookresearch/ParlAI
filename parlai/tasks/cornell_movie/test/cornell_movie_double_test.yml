@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - You're sweet.
@@ -149,3 +150,5 @@
     reward: 0
     text: Bianca, I don't think the highlights of dating Joey Dorsey are going to
       include door-opening and coat-holding.
+num_episodes: 8309
+num_examples: 16611

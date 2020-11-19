@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: ubuntu
     labels:
@@ -105,3 +106,5 @@
       \ the bars are the right thing, but they're better than the current one. . ooh,\
       \ that'd be rad . \n not about waiting?  clearly you haven't tried to read a\
       \ site that's just made slashdot? ."
+num_episodes: 1000000
+num_examples: 1000000

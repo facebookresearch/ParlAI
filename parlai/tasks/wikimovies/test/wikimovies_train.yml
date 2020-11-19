@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: wikimovies
     label_candidates:
@@ -133,3 +134,5 @@
     - S. Darko
     reward: 0
     text: what movies are about donnie darko?
+num_episodes: 96185
+num_examples: 96185

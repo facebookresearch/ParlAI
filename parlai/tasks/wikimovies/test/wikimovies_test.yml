@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Before the Rain
@@ -133,3 +134,5 @@
     - Þórunn Arna Kristjánsdóttir
     reward: 0
     text: what films did Shahid Kapoor act in?
+num_episodes: 9952
+num_examples: 9952
