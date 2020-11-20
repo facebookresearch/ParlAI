@@ -35,10 +35,15 @@ class TestDistillation(unittest.TestCase):
         'task': 'blended_skill_talk',
     }
     TRANSFORMER_OPT = {
+        'dict_file': f'{BLENDERBOT_MODEL_FILE}.dict',
         'init_opt': f'{BLENDERBOT_MODEL_FILE}.opt',
         'teacher_model': BLENDERBOT_MODEL_FILE,
     }
-    BART_OPT = {'init_opt': f'{BART_MODEL_FILE}.opt', 'teacher_model': BART_MODEL_FILE}
+    BART_OPT = {
+        'dict_file': f'{BART_MODEL_FILE}.dict',
+        'init_opt': f'{BART_MODEL_FILE}.opt',
+        'teacher_model': BART_MODEL_FILE,
+    }
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
     NARROW_DISTILLATION_OPT = {'embedding_size': 64, 'ffn_size': 256}
     NARROW_DISTILLATION_DUMMY_LOSS_OPT = {
@@ -117,14 +122,14 @@ class TestDistillation(unittest.TestCase):
                 {
                     'dec_emb_loss': 9.495,
                     'dec_hid_loss': 0.6304,
-                    'dec_self_attn_loss': 513.2,
+                    'dec_self_attn_loss': 514.2,
                     'enc_dec_attn_loss': 137.6,
                     'enc_emb_loss': 6.642,
                     'enc_hid_loss': 0.05015,
                     'enc_loss': 0.05089,
                     'enc_self_attn_loss': 9.318,
                     'loss': 11.39,
-                    'pred_loss': 8.913,
+                    'pred_loss': 8.918,
                 },
             ),
         ]
