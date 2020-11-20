@@ -145,7 +145,7 @@ class TestDistillation(unittest.TestCase):
                 **distillation_opt,
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
                 'num_examples': 1,
-                'skip_generation': False,
+                'skip_generation': True,
                 'hidden_loss_coeff': 1,
                 'encoder_loss_coeff': 1,
                 'pred_loss_coeff': 1,
@@ -156,7 +156,9 @@ class TestDistillation(unittest.TestCase):
                 if np.isinf(desired_loss):
                     self.assertTrue(np.isinf(valid[loss_name].value()))
                 else:
-                    self.assertAlmostEqual(valid[loss_name], desired_loss, delta=0.1)
+                    self.assertAlmostEqual(
+                        valid[loss_name].value() / desired_loss, 1, delta=0.01
+                    )
 
 
 if __name__ == '__main__':
