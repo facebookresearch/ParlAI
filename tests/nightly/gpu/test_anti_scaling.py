@@ -51,7 +51,7 @@ class TestDistillation(unittest.TestCase):
 
     def setUp(self):
         """
-        Download models in advance so that their opt files can be used with --init-opt
+        Download models in advance so that their opt files can be used with --init-opt.
         """
         data_path = 'data'
         download_blender(data_path)

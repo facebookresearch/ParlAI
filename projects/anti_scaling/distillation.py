@@ -22,7 +22,7 @@ from parlai.agents.transformer.modules import (
     TransformerEncoderLayer,
 )
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
-from parlai.core.agents import create_agent_from_model_file, create_agent_from_shared
+from parlai.core.agents import create_agent_from_model_file
 from parlai.core.metrics import AverageMetric
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch
@@ -238,7 +238,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         Register hooks in modules of the model, given the mapping of module types.
 
         `module_map` is a dict whose keys are module-type names and whose values are
-         module types. For each module type, during each forward pass of `model`, all
+        module types. For each module type, during each forward pass of `model`, all
         outputs of modules of that type will be saved to `hooks[module_type].outputs`.
         """
         hooks = {}
