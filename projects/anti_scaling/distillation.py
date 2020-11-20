@@ -252,7 +252,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
     @abstractmethod
     def compute_loss(self, batch, return_output=False):
         """
-        Return the loss. This will likely call self._perform_forward_passes().
+        Return the loss.
+
+        This will likely call self._perform_forward_passes().
         """
         raise NotImplementedError('Abstract class: user must implement .compute_loss()')
 
