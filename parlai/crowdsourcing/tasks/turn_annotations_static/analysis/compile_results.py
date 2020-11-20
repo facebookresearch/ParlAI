@@ -87,6 +87,8 @@ class TurnAnnotationsStaticResultsCompiler:
 
         Side note: assignment_id == HIT ID
         """
+        # TODO: replace direct folder access with a call to
+        #  mephisto.tools.data_browser.DataBrowser
         read_folders = []
         for assignment_id in os.listdir(task_run_id_folder):
             if assignment_id in ['onboarding', 'reservations', 'build', '.', '..']:
