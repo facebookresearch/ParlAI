@@ -13,10 +13,10 @@ import time
 from typing import List, Optional
 
 from hydra.experimental import compose, initialize
-from mephisto.core.local_database import LocalMephistoDB
-from mephisto.core.operator import Operator
-from mephisto.data_model.blueprint import SharedTaskState
-from mephisto.utils.scripts import augment_config_from_db
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.operations.operator import Operator
+from mephisto.abstractions.blueprint import SharedTaskState
+from mephisto.tools.scripts import augment_config_from_db
 
 
 class CrowdsourcingTestMixin:
