@@ -148,7 +148,7 @@ Fleiss' kappa for none_all_good is: -0.410.\
                 pd.read_csv(desired_results_path)
                 .drop('folder', axis=1)
                 .sort_values(sort_columns)
-                .reset_index()
+                .reset_index(drop=True)
             )
             # Drop the 'folder' column, which contains a system-dependent path string
             actual_results_rel_path = [
@@ -159,7 +159,7 @@ Fleiss' kappa for none_all_good is: -0.410.\
                 pd.read_csv(actual_results_path)
                 .drop('folder', axis=1)
                 .sort_values(sort_columns)
-                .reset_index()
+                .reset_index(drop=True)
             )
             if not actual_results.equals(desired_results):
                 raise ValueError(
