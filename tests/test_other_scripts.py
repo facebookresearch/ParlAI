@@ -115,6 +115,28 @@ class TestParty(unittest.TestCase):
         Party.main(seconds=0.01)
 
 
+class TestDataStats(unittest.TestCase):
+    def test_simple(self):
+        from parlai.scripts.data_stats import DataStats
+
+        report = DataStats.main(task='integration_tests')
+        assert report['both/avg_utterance_length'] == 4
+        assert report['input/avg_utterance_length'] == 4
+        assert report['labels/avg_utterance_length'] == 4
+        assert report['both/tokens'] == 4000
+        assert report['input/tokens'] == 2000
+        assert report['labels/tokens'] == 2000
+        assert report['both/unique_tokens'] == 7
+        assert report['input/unique_tokens'] == 7
+        assert report['labels/unique_tokens'] == 7
+        assert report['both/unique_utterances'] == 500
+        assert report['input/unique_utterances'] == 500
+        assert report['labels/unique_utterances'] == 500
+        assert report['both/utterances'] == 1000
+        assert report['input/utterances'] == 500
+        assert report['labels/utterances'] == 500
+
+
 class TestProfileTrain(unittest.TestCase):
     """
     Test profile_train doesn't crash.

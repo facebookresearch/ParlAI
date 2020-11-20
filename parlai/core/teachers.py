@@ -62,6 +62,15 @@ import torch
 from typing import List, Tuple, Optional, TypeVar
 
 
+ERROR_MESSAGE_NO_DATAFILE = (
+    "{class_name} is expected to set self.opt['datafile'] inside `__init__` "
+    "before calling `super().__init__`. This will passed to setup_data, "
+    "indicating what data to load. If you don't know what to use, set "
+    "`opt['datafile'] = parlai.utils.data.DatatypeHelper.fold(opt['datatype'])` "
+    "to receive the fold name in setup_data."
+)
+
+
 ChunkOutput = TypeVar('ChunkOutput')
 
 
@@ -560,6 +569,10 @@ class DialogTeacher(FixedDialogTeacher):
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
+            if 'datafile' not in self.opt:
+                raise KeyError(
+                    ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
+                )
             self.data = data_class(
                 opt,
                 data_loader=self.setup_data,
@@ -568,6 +581,26 @@ class DialogTeacher(FixedDialogTeacher):
             )
 
         self.reset()
+
+    @abstractmethod
+    def setup_data(self, datafile: str):
+        """
+        The core method which the user should override.
+
+        Yields the data, one message at a time, as well as markers indicating
+        new episodes.
+
+        :param str datafile:
+            If the initializer set a 'datafile' field within the initalization,
+            this will be provided here. Otherwise, datafile will be the fold:
+            either "train", "valid", or "test".
+
+        :return:
+            Yields pairs (message, new_episode) containing a Message object
+            and whether the message marks the beginning of a totally new
+            episode.
+        """
+        pass
 
     def reset(self):
         """
@@ -696,6 +729,12 @@ class DialogData(object):
         else:
             self.image_loader = ImageLoader(opt)
             self.data = []
+
+            if 'datafile' not in opt:
+                raise KeyError(
+                    ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
+                )
+
             self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(c for c in cands)
 
@@ -914,6 +953,10 @@ class StreamDialogData(DialogData):
         else:
             # main instance holds the stream and shares pointer to it
             self.data_loader = data_loader
+            if 'datafile' not in opt:
+                raise KeyError(
+                    ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
+                )
             self.datafile = opt['datafile']
             self.reset_data = None
             self.is_reset = True
@@ -924,8 +967,8 @@ class StreamDialogData(DialogData):
 
         self.rank = get_rank()
         self.num_workers = num_workers()
-        self.is_distributed_and_is_eval = self.num_workers > 1 and any(
-            x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
+        self.is_distributed_and_is_eval = (
+            self.num_workers > 1 and not DatatypeHelper.is_training(opt['datatype'])
         )
 
     def share(self):
@@ -1599,7 +1642,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         self.task = opt['task'].split(':')[1] if ':' in opt['task'] else opt['task']
         self.data_path = self.get_data_path(opt)
         self.data = self.load_data(self.data_path, self.opt)
-        self.datatype = opt.get('datatype').split(':')[0]
+        self.datatype = DatatypeHelper.fold(opt['datatype'])
 
         # Example of available models: 'resnet152', 'resnext101_32x48d_wsl',
         # and ImageLoader supports other resnet and resnext models too
@@ -1779,7 +1822,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Can be override by subclass.
         """
 
-        dt = opt['datatype'].split(':')[0]
+        dt = DatatypeHelper.fold(opt['datatype'])
 
         # Sometimes file is named "val" instead of "valid"
         if dt not in ['train', 'valid', 'val', 'test']:
@@ -1977,7 +2020,7 @@ class MultiTaskTeacher(Teacher):
                     self.tasks.extend(create_task_agent_from_taskname(opt_singletask))
         self.task_idx = -1
         self.new_task = True
-        self.random = opt.get('datatype') == 'train'
+        self.random = DatatypeHelper.should_shuffle(opt['datatype'])
         # Make multi-task task probabilities.
         self.cum_task_weights = [1] * len(self.tasks)
         self.task_choices = range(len(self.tasks))
@@ -2158,7 +2201,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def _get_data_folder(self):
         if not self.opt.get('datafile'):
             raise RuntimeError(
-                'Must specify datafile or override this function '
+                'Must specify datafile or override this function (_get_data_folder) '
                 'to return the data folder.'
             )
 
