@@ -71,11 +71,9 @@ class TestDistillation(unittest.TestCase):
         """
 
         precise_mode = False
-        # Turn this on to match the losses more precisely. Won't work on CircleCI boxes
-        if precise_mode:
-            delta = 0.01
-        else:
-            delta = 0.3
+        # Turn this on to check the loss terms for TinyBERT-style distillation, which
+        # relies upon weights being initialized in a particular way. Won't work on
+        # CircleCI machines
 
         torch.manual_seed(0)
         np.random.seed(0)
@@ -85,6 +83,7 @@ class TestDistillation(unittest.TestCase):
                 self.TRANSFORMER_OPT,
                 self.WIDE_DISTILLATION_OPT,
                 'DistillTransformerAgent',
+                False,
                 {
                     'dec_hid_loss': 87.27,
                     'enc_hid_loss': 0.8726,
@@ -97,6 +96,7 @@ class TestDistillation(unittest.TestCase):
                 self.BART_OPT,
                 self.WIDE_DISTILLATION_OPT,
                 'DistillBartAgent',
+                False,
                 {
                     'dec_hid_loss': 2.731,
                     'enc_hid_loss': 0.0383,
@@ -109,6 +109,7 @@ class TestDistillation(unittest.TestCase):
                 self.TRANSFORMER_OPT,
                 self.NARROW_DISTILLATION_DUMMY_LOSS_OPT,
                 'DistillNarrowTransformerAgent',
+                True,
                 {
                     'dec_emb_loss': 1.625,
                     'dec_hid_loss': 49.08,
@@ -126,6 +127,7 @@ class TestDistillation(unittest.TestCase):
                 self.BART_OPT,
                 self.NARROW_DISTILLATION_DUMMY_LOSS_OPT,
                 'DistillNarrowBartAgent',
+                True,
                 {
                     'dec_emb_loss': 9.495,
                     'dec_hid_loss': 0.6304,
@@ -144,6 +146,7 @@ class TestDistillation(unittest.TestCase):
             model_opt,
             distillation_opt,
             model_name,
+            is_tinybert_style,
             desired_losses,
         ) in opts_and_desired_losses:
             opt = {
@@ -159,13 +162,18 @@ class TestDistillation(unittest.TestCase):
                 'task_loss_coeff': 1,
             }
             valid, _ = testing_utils.eval_model(Opt(opt), skip_test=True)
-            for loss_name, desired_loss in desired_losses.items():
-                if np.isinf(desired_loss) and precise_mode is True:
-                    self.assertTrue(np.isinf(valid[loss_name].value()))
-                else:
-                    self.assertAlmostEqual(
-                        valid[loss_name].value() / desired_loss, 1, delta=delta
-                    )
+            if not is_tinybert_style or precise_mode:
+                for loss_name, desired_loss in desired_losses.items():
+                    if np.isinf(desired_loss):
+                        self.assertTrue(np.isinf(valid[loss_name].value()))
+                    else:
+                        if abs(valid[loss_name].value() / desired_loss - 1) > 0.01:
+                            raise ValueError(
+                                f"""\
+Error in matching {loss_name} for {model_name}! \
+Desired value: {desired_loss} \
+Actual value: {valid[loss_name].value()}"""
+                            )
 
 
 if __name__ == '__main__':
