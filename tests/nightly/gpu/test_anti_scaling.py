@@ -160,7 +160,7 @@ class TestDistillation(unittest.TestCase):
             }
             valid, _ = testing_utils.eval_model(Opt(opt), skip_test=True)
             for loss_name, desired_loss in desired_losses.items():
-                if np.isinf(desired_loss):
+                if np.isinf(desired_loss) and precise_mode is True:
                     self.assertTrue(np.isinf(valid[loss_name].value()))
                 else:
                     self.assertAlmostEqual(
