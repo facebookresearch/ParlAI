@@ -386,13 +386,12 @@ try:
 
             # Set up the mock human agents
             agent_ids = self._register_mock_agents(num_agents=2)
-            agent_0_id, agent_1_id = agent_ids  # TODO: remove line
 
             # # Feed messages to the agents
 
             # Set initial data
-            self.server.request_init_data(agent_0_id)
-            self.server.request_init_data(agent_1_id)
+            for agent_id in agent_ids:
+                self.server.request_init_data(agent_id)
 
             # Have agents talk to each other
             for message_round in AGENT_MESSAGES:
