@@ -456,8 +456,10 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             violation_types = ['min_words', 'all_caps', 'exact_match', 'safety']
             if self.opt['conversation_start_mode'] == 'bst':
                 # The BST mode starts the conversation with two previous utterances, so
-                # there should be no new greeting
+                # there should be no new greeting. Also, the first human response is one
+                # of the previous utterances, so it shouldn't get checked.
                 violation_types.append('penalize_greetings')
+                human_texts = human_texts[1:]
 
             violations_string = self.acceptability_checker.check_messages(
                 messages=human_texts, is_worker_0=False, violation_types=violation_types
