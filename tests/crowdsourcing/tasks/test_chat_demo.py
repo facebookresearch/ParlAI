@@ -341,7 +341,7 @@ try:
 
     # From the Mephisto repo
     from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
-    from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
+    from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
         BLUEPRINT_TYPE,
     )
