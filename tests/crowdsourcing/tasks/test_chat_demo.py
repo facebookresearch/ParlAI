@@ -300,6 +300,7 @@ DESIRED_STATE_AGENT_1 = {
     },
     "inputs": {},
 }
+DESIRED_STATES = (DESIRED_STATE_AGENT_0, DESIRED_STATE_AGENT_1)
 AGENT_MESSAGES = [
     ("Hi! How are you?", "I'm pretty good - you?"),
     ("I'm okay - how was your weekend?", "I was fine. Did you do anything fun?"),
@@ -346,9 +347,9 @@ try:
         BLUEPRINT_TYPE,
     )
 
-    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
+    from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
-    class TestChatDemo(AbstractCrowdsourcingTest):
+    class TestChatDemo(AbstractParlAIChatTest):
         """
         Test the chat demo crowdsourcing task.
         """
@@ -385,7 +386,8 @@ try:
             self._set_up_server(shared_state=shared_state)
 
             # Set up the mock human agents
-            agent_0_id, agent_1_id = self._register_mock_agents(num_agents=2)
+            agent_ids = self._register_mock_agents(num_agents=2)
+            agent_0_id, agent_1_id = agent_ids  # TODO: remove line
 
             # # Feed messages to the agents
 
@@ -427,31 +429,20 @@ try:
             )
 
             # Submit the HIT
-            self.server.send_agent_act(
-                agent_id=agent_0_id,
-                act_content={
-                    'task_data': {'final_data': {}},
-                    'MEPHISTO_is_submit': True,
-                },
-            )
-            self.server.send_agent_act(
-                agent_id=agent_1_id,
-                act_content={
-                    'task_data': {'final_data': {}},
-                    'MEPHISTO_is_submit': True,
-                },
-            )
+            for agent_id in agent_ids:
+                self.server.send_agent_act(
+                    agent_id=agent_id,
+                    act_content={
+                        'task_data': {'final_data': {}},
+                        'MEPHISTO_is_submit': True,
+                    },
+                )
 
             # # Check that the inputs and outputs are as expected
 
-            state_0, state_1 = [
-                agent.state.get_data() for agent in self.db.find_agents()
-            ]
-            actual_and_desired_states = [
-                (state_0, DESIRED_STATE_AGENT_0),
-                (state_1, DESIRED_STATE_AGENT_1),
-            ]
-            for actual_state, desired_state in actual_and_desired_states:
+            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+            assert len(actual_states) == len(DESIRED_STATES)
+            for actual_state, desired_state in zip(actual_states, DESIRED_STATES):
                 assert actual_state['inputs'] == desired_state['inputs']
                 assert len(actual_state['outputs']['messages']) == len(
                     desired_state['outputs']['messages']
@@ -476,19 +467,6 @@ try:
                                     )
                         else:
                             self.assertEqual(actual_message[key], desired_value)
-
-        def _send_agent_message(self, agent_id: str, agent_display_id: str, text: str):
-            """
-            Have the agent specified by agent_id send the specified text with the given
-            display ID string.
-            """
-            act_content = {
-                "text": text,
-                "task_data": {},
-                "id": agent_display_id,
-                "episode_done": False,
-            }
-            self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
 
 
 except ImportError:

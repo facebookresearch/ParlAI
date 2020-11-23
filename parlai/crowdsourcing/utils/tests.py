@@ -156,3 +156,22 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         state = self.db.find_agents()[0].state.get_data()
         self.assertEqual(expected_state['inputs'], state['inputs'])
         self.assertEqual(expected_state['outputs'], state['outputs'])
+
+
+class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
+    """
+    Abstract class for end-to-end tests of one-turn ParlAIChatBlueprint tasks.
+    """
+
+    def _send_agent_message(self, agent_id: str, agent_display_id: str, text: str):
+        """
+        Have the agent specified by agent_id send the specified text with the given
+        display ID string.
+        """
+        act_content = {
+            "text": text,
+            "task_data": {},
+            "id": agent_display_id,
+            "episode_done": False,
+        }
+        self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
