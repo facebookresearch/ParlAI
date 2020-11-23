@@ -188,11 +188,17 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
             f'Creating {self.__class__.__name__} for tag {self.tag} with {num_turns} turns.'
         )
 
-    def __add_problem_data_to_utterance(self, p, turn_idx):
-        # Human has just responded. Problem data received
-        # now will be from bot's prior utterance (turn_idx
-        # is also present to be safe that data matches)
+    def __add_problem_data_to_utterance(self, p, turn_idx: int):
+        """
+        Attach problem data to the bot's prior utterance, given by turn_idx.
+        """
         print(p)
+        assert (
+            self.dialog[turn_idx]['agent_idx'] == 1
+        ), 'Problem data must be attached to a bot utterance.'
+        assert (
+            'problem_data' not in self.dialog[turn_idx]
+        ), "Don't overwrite existing problem data!"
         self.dialog[turn_idx]['problem_data'] = p
 
     def parley(self):
@@ -308,10 +314,12 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
 
                 if self.task_turn_idx > self.num_turns:
                     # Human has just responded. Problem data received
-                    # now will be from bot's prior utterance (turn_idx
-                    # is a also present to be safe that data matches)
+                    # now will be regarding the bot's prior utterance
                     p = acts[idx]['task_data']['problem_data_for_prior_message']
-                    self.__add_problem_data_to_utterance(p, idx - 1)
+                    turn_idx = -1
+                    # Attach the problem data to the last utterance, since the human
+                    # hasn't said anything since then
+                    self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
 
                 # Save the final chat data
                 time_string = time.strftime('%Y%m%d_%H%M%S')
@@ -365,10 +373,12 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
                 self.dialog.append(utterance_data)
                 if idx == 0:
                     # Human has just responded. Problem data received
-                    # now will be from bot's prior utterance (turn_idx
-                    # is a also present to be safe that data matches)
+                    # now will be regarding the bot's prior utterance
                     p = acts[idx]['task_data']['problem_data_for_prior_message']
-                    self.__add_problem_data_to_utterance(p, idx - 1)
+                    turn_idx = -2
+                    # Attach the problem data to the second-to-last utterance, since the
+                    # last utterance is what the human just said
+                    self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
 
                 for other_agent in [self.agent, self.bot]:
                     if other_agent != agent:
