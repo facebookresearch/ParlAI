@@ -40,6 +40,7 @@ def print_git_commit():
         return
     root = os.path.dirname(os.path.dirname(parlai.__file__))
     internal_root = os.path.join(root, 'parlai_internal')
+    fb_root = os.path.join(root, 'parlai_fb')
     try:
         git_ = git.Git(root)
         current_commit = git_.rev_parse('HEAD')
@@ -53,6 +54,15 @@ def print_git_commit():
         git_ = git.Git(internal_root)
         internal_commit = git_.rev_parse('HEAD')
         logging.info(f'Current internal commit: {internal_commit}')
+    except git.GitCommandNotFound:
+        pass
+    except git.GitCommandError:
+        pass
+
+    try:
+        git_ = git.Git(fb_root)
+        fb_commit = git_.rev_parse('HEAD')
+        logging.info(f'Current fb commit: {fb_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
