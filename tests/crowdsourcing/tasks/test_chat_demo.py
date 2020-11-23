@@ -305,14 +305,13 @@ AGENT_MESSAGES = [
     ("Hi! How are you?", "I'm pretty good - you?"),
     ("I'm okay - how was your weekend?", "I was fine. Did you do anything fun?"),
 ]
-AGENT_0_DISPLAY_ID = 'Chat Agent 1'
-AGENT_1_DISPLAY_ID = 'Chat Agent 2'
-FORM_PROMPTS = {
-    'agent_0': "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
-    'agent_1': "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
-}
-FORM_RESPONSES = {
-    'agent_0': [
+AGENT_DISPLAY_IDS = ('Chat Agent 1', 'Chat Agent 2')
+FORM_PROMPTS = (
+    "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
+    "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
+)
+FORM_RESPONSES = (
+    [
         {
             "question": "How much did you enjoy talking to this user?",
             "response": "A lot",
@@ -323,7 +322,7 @@ FORM_RESPONSES = {
         },
         {"question": "Enter any comment here", "response": "Yes"},
     ],
-    'agent_1': [
+    [
         {
             "question": "How much did you enjoy talking to this user?",
             "response": "Not at all",
@@ -334,7 +333,7 @@ FORM_RESPONSES = {
         },
         {"question": "Enter any comment here", "response": "No"},
     ],
-}
+)
 # TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
@@ -399,34 +398,26 @@ try:
             for agent_0_text, agent_1_text in AGENT_MESSAGES:
                 self._send_agent_message(
                     agent_id=agent_0_id,
-                    agent_display_id=AGENT_0_DISPLAY_ID,
+                    agent_display_id=AGENT_DISPLAY_IDS[0],
                     text=agent_0_text,
                 )
                 self._send_agent_message(
                     agent_id=agent_1_id,
-                    agent_display_id=AGENT_1_DISPLAY_ID,
+                    agent_display_id=AGENT_DISPLAY_IDS[1],
                     text=agent_1_text,
                 )
 
             # Have agents fill out the form
-            self.server.send_agent_act(
-                agent_id=agent_0_id,
-                act_content={
-                    'text': FORM_PROMPTS['agent_0'],
-                    'task_data': {'form_responses': FORM_RESPONSES['agent_0']},
-                    'id': AGENT_0_DISPLAY_ID,
-                    'episode_done': False,
-                },
-            )
-            self.server.send_agent_act(
-                agent_id=agent_1_id,
-                act_content={
-                    'text': FORM_PROMPTS['agent_1'],
-                    'task_data': {'form_responses': FORM_RESPONSES['agent_1']},
-                    'id': AGENT_1_DISPLAY_ID,
-                    'episode_done': False,
-                },
-            )
+            for agent_idx, agent_id in enumerate(agent_ids):
+                self.server.send_agent_act(
+                    agent_id=agent_id,
+                    act_content={
+                        'text': FORM_PROMPTS[agent_idx],
+                        'task_data': {'form_responses': FORM_RESPONSES[agent_idx]},
+                        'id': AGENT_DISPLAY_IDS[agent_idx],
+                        'episode_done': False,
+                    },
+                )
 
             # Submit the HIT
             for agent_id in agent_ids:
