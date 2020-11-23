@@ -6,11 +6,9 @@
 
 import os
 import random
-import shutil
-import subprocess
 
-from mephisto.core.operator import Operator
-from mephisto.utils.scripts import load_db_and_process_config
+from mephisto.operations.operator import Operator
+from mephisto.tools.scripts import load_db_and_process_config
 from omegaconf import DictConfig, OmegaConf
 
 from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
@@ -27,6 +25,7 @@ def run_task(cfg: DictConfig, task_directory: str):
 
     frontend_source_dir = os.path.join(task_directory, "webapp")
     frontend_build_dir = os.path.join(frontend_source_dir, "build")
+    _ = frontend_build_dir  # Unused at the moment
 
     db, cfg = load_db_and_process_config(cfg)
     print(f'\nHydra config:\n{OmegaConf.to_yaml(cfg)}')
