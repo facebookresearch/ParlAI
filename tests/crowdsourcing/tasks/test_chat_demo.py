@@ -395,17 +395,16 @@ try:
             self.server.request_init_data(agent_1_id)
 
             # Have agents talk to each other
-            for agent_0_text, agent_1_text in AGENT_MESSAGES:
-                self._send_agent_message(
-                    agent_id=agent_0_id,
-                    agent_display_id=AGENT_DISPLAY_IDS[0],
-                    text=agent_0_text,
-                )
-                self._send_agent_message(
-                    agent_id=agent_1_id,
-                    agent_display_id=AGENT_DISPLAY_IDS[1],
-                    text=agent_1_text,
-                )
+            for message_round in AGENT_MESSAGES:
+                assert len(message_round) == len(agent_ids)
+                for agent_id, agent_display_id, message in zip(
+                    agent_ids, AGENT_DISPLAY_IDS, message_round
+                ):
+                    self._send_agent_message(
+                        agent_id=agent_id,
+                        agent_display_id=agent_display_id,
+                        text=message,
+                    )
 
             # Have agents fill out the form
             for agent_idx, agent_id in enumerate(agent_ids):
