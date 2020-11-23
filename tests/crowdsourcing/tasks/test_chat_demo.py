@@ -10,7 +10,7 @@ End-to-end testing for the chat demo crowdsourcing task.
 import unittest
 
 # Desired inputs/outputs
-DESIRED_STATE_AGENT_0 = {
+EXPECTED_STATE_AGENT_0 = {
     "outputs": {
         "messages": [
             {
@@ -155,7 +155,7 @@ DESIRED_STATE_AGENT_0 = {
     },
     "inputs": {},
 }
-DESIRED_STATE_AGENT_1 = {
+EXPECTED_STATE_AGENT_1 = {
     "outputs": {
         "messages": [
             {
@@ -300,7 +300,7 @@ DESIRED_STATE_AGENT_1 = {
     },
     "inputs": {},
 }
-DESIRED_STATES = (DESIRED_STATE_AGENT_0, DESIRED_STATE_AGENT_1)
+EXPECTED_STATES = (EXPECTED_STATE_AGENT_0, EXPECTED_STATE_AGENT_1)
 AGENT_MESSAGES = [
     ("Hi! How are you?", "I'm pretty good - you?"),
     ("I'm okay - how was your weekend?", "I was fine. Did you do anything fun?"),
@@ -384,78 +384,14 @@ try:
             )
             self._set_up_server(shared_state=shared_state)
 
-            # Set up the mock human agents
-            agent_ids = self._register_mock_agents(num_agents=2)
-
-            # # Feed messages to the agents
-
-            # Set initial data
-            for agent_id in agent_ids:
-                self.server.request_init_data(agent_id)
-
-            # Have agents talk to each other
-            for message_round in AGENT_MESSAGES:
-                assert len(message_round) == len(agent_ids)
-                for agent_id, agent_display_id, message in zip(
-                    agent_ids, AGENT_DISPLAY_IDS, message_round
-                ):
-                    self._send_agent_message(
-                        agent_id=agent_id,
-                        agent_display_id=agent_display_id,
-                        text=message,
-                    )
-
-            # Have agents fill out the form
-            for agent_idx, agent_id in enumerate(agent_ids):
-                self.server.send_agent_act(
-                    agent_id=agent_id,
-                    act_content={
-                        'text': FORM_PROMPTS[agent_idx],
-                        'task_data': {'form_responses': FORM_RESPONSES[agent_idx]},
-                        'id': AGENT_DISPLAY_IDS[agent_idx],
-                        'episode_done': False,
-                    },
-                )
-
-            # Submit the HIT
-            for agent_id in agent_ids:
-                self.server.send_agent_act(
-                    agent_id=agent_id,
-                    act_content={
-                        'task_data': {'final_data': {}},
-                        'MEPHISTO_is_submit': True,
-                    },
-                )
-
-            # # Check that the inputs and outputs are as expected
-
-            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
-            assert len(actual_states) == len(DESIRED_STATES)
-            for actual_state, desired_state in zip(actual_states, DESIRED_STATES):
-                assert actual_state['inputs'] == desired_state['inputs']
-                assert len(actual_state['outputs']['messages']) == len(
-                    desired_state['outputs']['messages']
-                )
-                for actual_message, desired_message in zip(
-                    actual_state['outputs']['messages'],
-                    desired_state['outputs']['messages'],
-                ):
-                    for key, desired_value in desired_message.items():
-                        if key == 'timestamp':
-                            pass  # The timestamp will obviously be different
-                        elif key == 'data':
-                            for key_inner, desired_value_inner in desired_message[
-                                key
-                            ].items():
-                                if key_inner == 'message_id':
-                                    pass  # The message ID will be different
-                                else:
-                                    self.assertEqual(
-                                        actual_message[key][key_inner],
-                                        desired_value_inner,
-                                    )
-                        else:
-                            self.assertEqual(actual_message[key], desired_value)
+            # Check that the agent states are as they should be
+            self._test_agent_states(
+                agent_display_ids=AGENT_DISPLAY_IDS,
+                agent_messages=AGENT_MESSAGES,
+                form_prompts=FORM_PROMPTS,
+                form_responses=FORM_RESPONSES,
+                expected_states=EXPECTED_STATES,
+            )
 
 
 except ImportError:

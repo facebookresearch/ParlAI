@@ -11,13 +11,13 @@ import os
 import tempfile
 import time
 import unittest
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 from hydra.experimental import compose, initialize
-from mephisto.core.local_database import LocalMephistoDB
-from mephisto.core.operator import Operator
-from mephisto.data_model.blueprint import SharedTaskState
-from mephisto.utils.scripts import augment_config_from_db
+from mephisto.abstractions.blueprint import SharedTaskState
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.operations.operator import Operator
+from mephisto.tools.scripts import augment_config_from_db
 
 
 class AbstractCrowdsourcingTest(unittest.TestCase):
@@ -162,6 +162,93 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
     """
     Abstract class for end-to-end tests of one-turn ParlAIChatBlueprint tasks.
     """
+
+    def _test_agent_states(
+        self,
+        agent_display_ids: Sequence[str],
+        agent_messages: List[Sequence[str]],
+        form_prompts: Sequence[str],
+        form_responses: Sequence[Sequence[Dict[str, str]]],
+        expected_states: Sequence[Dict[str, Any]],
+    ):
+        """
+        Test that the actual agent states match the expected states.
+
+        Register mock human agents, request initial data to define the 'inputs' fields
+        of the agent states, make the agents have a conversation to define the 'outputs'
+        fields of the agent states, and then check that the agent states all match the
+        desired agent states.
+        """
+
+        # Set up the mock human agents
+        agent_ids = self._register_mock_agents(num_agents=2)
+
+        # # Feed messages to the agents
+
+        # Set initial data
+        for agent_id in agent_ids:
+            self.server.request_init_data(agent_id)
+
+        # Have agents talk to each other
+        for message_round in agent_messages:
+            assert len(message_round) == len(agent_ids)
+            for agent_id, agent_display_id, message in zip(
+                agent_ids, agent_display_ids, message_round
+            ):
+                self._send_agent_message(
+                    agent_id=agent_id, agent_display_id=agent_display_id, text=message
+                )
+
+        # Have agents fill out the form
+        for agent_idx, agent_id in enumerate(agent_ids):
+            self.server.send_agent_act(
+                agent_id=agent_id,
+                act_content={
+                    'text': form_prompts[agent_idx],
+                    'task_data': {'form_responses': form_responses[agent_idx]},
+                    'id': agent_display_ids[agent_idx],
+                    'episode_done': False,
+                },
+            )
+
+        # Submit the HIT
+        for agent_id in agent_ids:
+            self.server.send_agent_act(
+                agent_id=agent_id,
+                act_content={
+                    'task_data': {'final_data': {}},
+                    'MEPHISTO_is_submit': True,
+                },
+            )
+
+        # # Check that the inputs and outputs are as expected
+
+        actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+        assert len(actual_states) == len(expected_states)
+        for actual_state, desired_state in zip(actual_states, expected_states):
+            assert actual_state['inputs'] == desired_state['inputs']
+            assert len(actual_state['outputs']['messages']) == len(
+                desired_state['outputs']['messages']
+            )
+            for actual_message, desired_message in zip(
+                actual_state['outputs']['messages'],
+                desired_state['outputs']['messages'],
+            ):
+                for key, desired_value in desired_message.items():
+                    if key == 'timestamp':
+                        pass  # The timestamp will obviously be different
+                    elif key == 'data':
+                        for key_inner, desired_value_inner in desired_message[
+                            key
+                        ].items():
+                            if key_inner == 'message_id':
+                                pass  # The message ID will be different
+                            else:
+                                self.assertEqual(
+                                    actual_message[key][key_inner], desired_value_inner
+                                )
+                    else:
+                        self.assertEqual(actual_message[key], desired_value)
 
     def _send_agent_message(self, agent_id: str, agent_display_id: str, text: str):
         """
