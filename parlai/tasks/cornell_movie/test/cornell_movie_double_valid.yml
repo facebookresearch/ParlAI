@@ -165,5 +165,5 @@ acts:
     - '{baffled) I don''t follow you.'
     reward: 0
     text: I figured you'd get to the good stuff eventually.
-num_episodes: 8310
-num_examples: 16759
+num_episodes: 12806
+num_examples: 22349

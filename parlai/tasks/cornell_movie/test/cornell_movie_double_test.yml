@@ -150,5 +150,5 @@ acts:
     reward: 0
     text: Bianca, I don't think the highlights of dating Joey Dorsey are going to
       include door-opening and coat-holding.
-num_episodes: 8309
-num_examples: 16611
+num_episodes: 12790
+num_examples: 22013

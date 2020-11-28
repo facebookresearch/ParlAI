@@ -141,5 +141,5 @@ acts:
       then it was just like she got sick of it or something.
     reward: 0
     text: Why?
-num_episodes: 66478
-num_examples: 133125
+num_episodes: 102401
+num_examples: 176975
