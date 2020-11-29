@@ -1,0 +1,70 @@
+acts:
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sentimental
+    episode_done: false
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - Was this a friend you were in love with, or just a best friend?
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: I remember going to see the fireworks with my best friend. It was the first
+      time we ever spent time alone together. Although there was a lot of people,
+      we felt like the only people in the world.
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sentimental
+    episode_done: false
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - Where has she gone?
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: This was a best friend. I miss her.
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sentimental
+    episode_done: true
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - Oh was this something that happened because of an argument?
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: We no longer talk.
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sentimental
+    episode_done: false
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - This was a best friend. I miss her.
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: Was this a friend you were in love with, or just a best friend?
+- - deepmoji_cand: null
+    deepmoji_ctx: null
+    emotion: sentimental
+    episode_done: true
+    id: empathetic_dialogues
+    label_candidates: []
+    labels:
+    - We no longer talk.
+    prepend_cand: null
+    prepend_ctx: null
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: Where has she gone?
+num_episodes: 39057
+num_examples: 64636

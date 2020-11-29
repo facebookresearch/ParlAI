@@ -1,0 +1,33 @@
+acts:
+- - episode_done: true
+    id: dialog_babi_plus:KB
+    labels:
+    - korean
+    reward: 0
+    text: resto_seoul_cheap_korean_1stars R_cuisine
+- - episode_done: true
+    id: dialog_babi_plus:KB
+    labels:
+    - seoul
+    reward: 0
+    text: resto_seoul_cheap_korean_1stars R_location
+- - episode_done: true
+    id: dialog_babi_plus:KB
+    labels:
+    - cheap
+    reward: 0
+    text: resto_seoul_cheap_korean_1stars R_price
+- - episode_done: true
+    id: dialog_babi_plus:KB
+    labels:
+    - '1'
+    reward: 0
+    text: resto_seoul_cheap_korean_1stars R_rating
+- - episode_done: true
+    id: dialog_babi_plus:KB
+    labels:
+    - resto_seoul_cheap_korean_1stars_phone
+    reward: 0
+    text: resto_seoul_cheap_korean_1stars R_phone
+num_episodes: 8400
+num_examples: 8400

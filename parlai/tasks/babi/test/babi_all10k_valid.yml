@@ -1,0 +1,88 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - bathroom
+    id: babi:Task10k:1
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 0
+    text: 'Sandra travelled to the office.
+
+      Sandra went to the bathroom.
+
+      Where is Sandra?'
+- - episode_done: false
+    eval_labels:
+    - bathroom
+    id: babi:Task10k:1
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 0
+    text: 'Mary went to the bedroom.
+
+      Daniel moved to the hallway.
+
+      Where is Sandra?'
+- - episode_done: false
+    eval_labels:
+    - bathroom
+    id: babi:Task10k:1
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 0
+    text: 'John went to the garden.
+
+      John travelled to the office.
+
+      Where is Sandra?'
+- - episode_done: false
+    eval_labels:
+    - office
+    id: babi:Task10k:1
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 0
+    text: 'Daniel journeyed to the bedroom.
+
+      Daniel travelled to the hallway.
+
+      Where is John?'
+- - episode_done: true
+    eval_labels:
+    - hallway
+    id: babi:Task10k:1
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 0
+    text: 'John went to the bedroom.
+
+      John travelled to the office.
+
+      Where is Daniel?'
+num_episodes: 6265
+num_examples: 20002

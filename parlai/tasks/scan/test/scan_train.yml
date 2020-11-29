@@ -1,0 +1,39 @@
+acts:
+- - episode_done: true
+    id: scan
+    labels:
+    - I_TURN_RIGHT I_WALK I_TURN_LEFT I_TURN_LEFT I_RUN
+    reward: 0
+    text: run opposite left after walk right
+- - episode_done: true
+    id: scan
+    labels:
+    - I_TURN_RIGHT I_RUN I_TURN_RIGHT I_RUN I_TURN_RIGHT I_RUN I_TURN_RIGHT I_RUN
+      I_TURN_RIGHT I_RUN I_TURN_RIGHT I_RUN I_TURN_RIGHT I_RUN I_TURN_RIGHT I_RUN
+      I_WALK
+    reward: 0
+    text: walk after run around right twice
+- - episode_done: true
+    id: scan
+    labels:
+    - I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK
+      I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK
+      I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_LOOK
+      I_TURN_LEFT
+    reward: 0
+    text: look around right thrice and turn left
+- - episode_done: true
+    id: scan
+    labels:
+    - I_TURN_LEFT I_TURN_LEFT I_WALK I_TURN_LEFT I_TURN_LEFT I_WALK I_TURN_RIGHT I_TURN_RIGHT
+      I_WALK I_TURN_RIGHT I_TURN_RIGHT I_WALK I_TURN_RIGHT I_TURN_RIGHT I_WALK
+    reward: 0
+    text: walk opposite left twice and walk opposite right thrice
+- - episode_done: true
+    id: scan
+    labels:
+    - I_TURN_RIGHT I_LOOK I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT I_TURN_RIGHT
+    reward: 0
+    text: look right and turn opposite right twice
+num_episodes: 15891
+num_examples: 15891

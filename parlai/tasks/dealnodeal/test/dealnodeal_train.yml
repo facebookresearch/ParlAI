@@ -1,0 +1,46 @@
+acts:
+- - episode_done: false
+    items:
+      ball_cnt: '1'
+      ball_val: '2'
+      book_cnt: '1'
+      book_val: '4'
+      hat_cnt: '4'
+      hat_val: '1'
+    labels:
+    - deal
+    text: 'Negotiate with your opponent to decide who gets how many of each item.
+      You must both agree on the distribution of items (or you both get zero), but
+      try to get as much value as you can. There are 1 book(s), each with a value
+      of 4, 4 hat(s), each with a value of 1, and 1 ball(s), each with a value of
+      2.
+
+      i would like 4 hats and you can have the rest .'
+- - episode_done: true
+    labels:
+    - item0=1 item1=0 item2=1 item0=0 item1=4 item2=0
+    text: <selection>
+- - episode_done: false
+    items:
+      ball_cnt: '1'
+      ball_val: '2'
+      book_cnt: '1'
+      book_val: '0'
+      hat_cnt: '4'
+      hat_val: '2'
+    labels:
+    - i would like 4 hats and you can have the rest .
+    text: Negotiate with your opponent to decide who gets how many of each item. You
+      must both agree on the distribution of items (or you both get zero), but try
+      to get as much value as you can. There are 1 book(s), each with a value of 0,
+      4 hat(s), each with a value of 2, and 1 ball(s), each with a value of 2.
+- - episode_done: false
+    labels:
+    - <selection>
+    text: deal
+- - episode_done: true
+    labels:
+    - item0=0 item1=4 item2=0 item0=1 item1=0 item2=1
+    text: <selection>
+num_episodes: 10095
+num_examples: 40361
