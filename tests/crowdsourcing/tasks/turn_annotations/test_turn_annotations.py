@@ -7,10 +7,11 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import json
+import os
 import unittest
 
-# Desired inputs/outputs
-# {{{TODO: inputs/outputs}}}
+import parlai.utils.testing as testing_utils
 
 
 try:
@@ -30,34 +31,47 @@ try:
 
         def test_base_task(self):
 
-            # # Setup
+            with testing_utils.tempdir() as tmpdir:
 
-            # Set up the config and database
-            # {{{TODO: define overrides}}}
-            # TODO: remove all of these params once Hydra 1.1 is released with support
-            #  for recursive defaults
-            self._set_up_config(
-                blueprint_type=BLUEPRINT_TYPE,
-                task_directory=TASK_DIRECTORY,
-                overrides=overrides,
-            )
+                # Paths
+                expected_states_folder = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), 'expected_states'
+                )
+                expected_chat_data_path = os.path.join(
+                    expected_states_folder, 'final_chat_data.json'
+                )
+                # {{{TODO: define actual save folder}}}}
 
-            # Set up the operator and server
-            shared_state = SharedTurnAnnotationsTaskState(world_module=world_module)
-            self._set_up_server(shared_state=shared_state)
+                # # Setup
 
-            # Check that the agent states are as they should be
-            self._test_agent_states(
-                num_agents=1,
-                agent_display_ids=AGENT_DISPLAY_IDS,
-                agent_messages=AGENT_MESSAGES,
-                form_prompts=FORM_PROMPTS,
-                form_responses=FORM_RESPONSES,
-                expected_states=EXPECTED_STATES,
-            )
+                # Set up the config and database
+                # {{{TODO: define overrides}}}
+                # TODO: remove all of these params once Hydra 1.1 is released with support
+                #  for recursive defaults
+                self._set_up_config(
+                    blueprint_type=BLUEPRINT_TYPE,
+                    task_directory=TASK_DIRECTORY,
+                    overrides=overrides,
+                )
 
-            # Check that the contents of the chat data file are as expected
-            # {{{TODO}}}
+                # Set up the operator and server
+                shared_state = SharedTurnAnnotationsTaskState(world_module=world_module)
+                self._set_up_server(shared_state=shared_state)
+
+                # Check that the agent states are as they should be
+                self._test_agent_states(
+                    num_agents=1,
+                    agent_display_ids=AGENT_DISPLAY_IDS,
+                    agent_messages=AGENT_MESSAGES,
+                    form_prompts=FORM_PROMPTS,
+                    form_responses=FORM_RESPONSES,
+                    expected_states=EXPECTED_STATES,
+                )
+
+                # Check that the contents of the chat data file are as expected
+                with open(expected_chat_data_path) as f_expected:
+                    expected_chat_data = json.load(f_expected)
+                # {{{TODO: load expected + actual json files; compare}}}
 
 
 except ImportError:
