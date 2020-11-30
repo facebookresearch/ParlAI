@@ -18,8 +18,40 @@ from parlai.zoo.blender.blender_90M import download as download_blender
 
 # Inputs
 AGENT_DISPLAY_IDS = ('Worker',)
+AGENT_MESSAGES = [
+    ("What are you nervous about?",),
+    ("Do you have any plans for the weekend?",),
+    ("Yeah that sounds great! I like to bike and try new restaurants.",),
+    ("Oh, Italian food is great. I also love Thai and Indian.",),
+    (
+        "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
+    ),
+]
+AGENT_TASK_DATA = [
+    (
+        {
+            "bucket_0": False,
+            "bucket_1": False,
+            "bucket_2": True,
+            "bucket_3": False,
+            "bucket_4": True,
+        },
+    )
+] * len(AGENT_MESSAGES)
 FORM_MESSAGES = ("",)
 # No info is sent through the 'text' field when submitting the form
+FORM_TASK_DATA = (
+    {
+        "final_rating": 4,
+        "problem_data_for_prior_message": {
+            "bucket_0": False,
+            "bucket_1": False,
+            "bucket_2": True,
+            "bucket_3": False,
+            "bucket_4": True,
+        },
+    },
+)
 
 
 try:
