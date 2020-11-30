@@ -93,8 +93,13 @@ class AbstractCrowdsourcingTest(unittest.TestCase):
         self.operator.validate_and_run_config(
             self.config.mephisto, shared_state=shared_state
         )
-        channel_info = list(self.operator.supervisor.channels.values())[0]
-        self.server = channel_info.job.architect.server
+        self.server = self._get_channel_info().job.architect.server
+
+    def _get_channel_info(self):
+        """
+        Return channel info for the currently running job.
+        """
+        return list(self.operator.supervisor.channels.values())[0]
 
     def _register_mock_agents(self, num_agents: int = 1) -> List[str]:
         """

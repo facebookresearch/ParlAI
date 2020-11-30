@@ -30,11 +30,13 @@ AGENT_MESSAGES = [
 AGENT_TASK_DATA = [
     (
         {
-            "bucket_0": False,
-            "bucket_1": False,
-            "bucket_2": True,
-            "bucket_3": False,
-            "bucket_4": True,
+            'problem_data_for_prior_message': {
+                "bucket_0": False,
+                "bucket_1": False,
+                "bucket_2": True,
+                "bucket_3": False,
+                "bucket_4": True,
+            }
         },
     )
 ] * len(AGENT_MESSAGES)
@@ -60,6 +62,7 @@ try:
     from parlai.crowdsourcing.tasks.turn_annotations.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_blueprint import (
         SharedTurnAnnotationsTaskState,
+        TurnAnnotationsBlueprintArgs,
         BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
@@ -91,13 +94,31 @@ try:
                 download_blender(parlai_data_folder)
 
                 # Set up the config and database
+                num_blender_convos = 10
+                args = TurnAnnotationsBlueprintArgs()
                 overrides = [
-                    f'+mephisto.blueprint.base_model_folder={model_folder}',
-                    r'+mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:10\"',
-                    f'+mephisto.blueprint.chat_data_folder={chat_data_folder}',
+                    f'+mephisto.blueprint.{key}={val}'
+                    for key, val in args.__dict__.items()
+                    if key
+                    in [
+                        'max_onboard_time',
+                        'max_resp_time',
+                        'override_opt',
+                        'random_seed',
+                        'world_file',
+                    ]
+                ] + [
+                    '+mephisto.blueprint.annotations_config_path=${task_dir}/task_config/annotations_config.json',
+                    f'mephisto.blueprint.base_model_folder={model_folder}',
+                    f'mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:{num_blender_convos:d}\"',
+                    f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
+                    '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
+                    f'+mephisto.blueprint.num_conversations={num_blender_convos:d}',
+                    '+mephisto.blueprint.onboard_task_data_path=${task_dir}/task_config/onboard_task_data.json',
+                    '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
                 ]
-                # TODO: remove all of these params once Hydra 1.1 is released with support
-                #  for recursive defaults
+                # TODO: remove all of these params once Hydra 1.1 is released with
+                #  support for recursive defaults
                 self._set_up_config(
                     blueprint_type=BLUEPRINT_TYPE,
                     task_directory=TASK_DIRECTORY,
@@ -109,6 +130,10 @@ try:
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be
+                self._get_channel_info().job.task_runner.task_run.get_blueprint().use_onboarding = (
+                    False
+                )
+                # Don't require onboarding for this test agent
                 with open(expected_state_path) as f:
                     expected_state = json.load(f)['outputs']
                 self._test_agent_states(
