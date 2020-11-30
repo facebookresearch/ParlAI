@@ -168,6 +168,7 @@ For more detailed instructions and features, see the
 
 Contributing
 ------------
+(contributing)=
 
 ParlAI is maintained by a small team, so we rely heavily on community contributions. We welcome pull requests with open wings!
 

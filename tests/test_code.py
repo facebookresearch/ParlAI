@@ -27,6 +27,9 @@ class TestInit(unittest.TestCase):
             # task_config: contains JSONs, HTML files, etc. for MTurk/Mephisto tasks
             if any(folder_name in folder_path for folder_name in excluded_folders):
                 continue
+            if folder_path.endswith("test") and folder_path.startswith("parlai/tasks/"):
+                # yml regression files in parlai/tasks/X/test/
+                continue
             self.assertIn(
                 '__init__.py',
                 os.listdir(folder_path),

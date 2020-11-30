@@ -1,0 +1,33 @@
+acts:
+- - episode_done: false
+    items:
+      ball_cnt: '2'
+      ball_val: '2'
+      book_cnt: '1'
+      book_val: '6'
+      hat_cnt: '3'
+      hat_val: '0'
+    text: Negotiate with your opponent to decide who gets how many of each item. You
+      must both agree on the distribution of items (or you both get zero), but try
+      to get as much value as you can. There are 1 book(s), each with a value of 6,
+      3 hat(s), each with a value of 0, and 2 ball(s), each with a value of 2.
+- - episode_done: true
+    text: <selection>
+- - episode_done: false
+    items:
+      ball_cnt: '1'
+      ball_val: '1'
+      book_cnt: '3'
+      book_val: '3'
+      hat_cnt: '3'
+      hat_val: '0'
+    text: Negotiate with your opponent to decide who gets how many of each item. You
+      must both agree on the distribution of items (or you both get zero), but try
+      to get as much value as you can. There are 3 book(s), each with a value of 3,
+      3 hat(s), each with a value of 0, and 1 ball(s), each with a value of 1.
+- - episode_done: false
+    text: let me have two books and the hats
+- - episode_done: false
+    text: cant do it
+num_episodes: 1087
+num_examples: 4326
