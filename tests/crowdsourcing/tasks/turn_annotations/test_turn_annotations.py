@@ -13,6 +13,13 @@ import os
 import unittest
 
 import parlai.utils.testing as testing_utils
+from parlai.zoo.blender.blender_90M import download as download_blender
+
+
+# Inputs
+AGENT_DISPLAY_IDS = ('Worker',)
+FORM_MESSAGES = ("",)
+# No info is sent through the 'text' field when submitting the form
 
 
 try:
@@ -41,12 +48,22 @@ try:
                 expected_chat_data_path = os.path.join(
                     expected_states_folder, 'final_chat_data.json'
                 )
+                expected_state_path = os.path.join(expected_states_folder, 'state.json')
+                parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
+                model_folder = os.path.join(parlai_data_folder, 'models')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
 
                 # # Setup
 
+                # Download the Blender 90M model
+                download_blender(parlai_data_folder)
+
                 # Set up the config and database
-                # {{{TODO: define overrides}}}
+                overrides = [
+                    f'+mephisto.blueprint.base_model_folder={model_folder}',
+                    r'+mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:10\"',
+                    f'+mephisto.blueprint.chat_data_folder={chat_data_folder}',
+                ]
                 # TODO: remove all of these params once Hydra 1.1 is released with support
                 #  for recursive defaults
                 self._set_up_config(
@@ -60,18 +77,21 @@ try:
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be
+                with open(expected_state_path) as f:
+                    expected_state = json.load(f)['outputs']
                 self._test_agent_states(
                     num_agents=1,
                     agent_display_ids=AGENT_DISPLAY_IDS,
                     agent_messages=AGENT_MESSAGES,
-                    form_prompts=FORM_PROMPTS,
-                    form_responses=FORM_RESPONSES,
-                    expected_states=EXPECTED_STATES,
+                    form_messages=FORM_MESSAGES,
+                    form_task_data=FORM_TASK_DATA,
+                    expected_states=(expected_state,),
+                    agent_task_data=AGENT_TASK_DATA,
                 )
 
                 # Check that the contents of the chat data file are as expected
-                with open(expected_chat_data_path) as f_expected:
-                    expected_chat_data = json.load(f_expected)
+                with open(expected_chat_data_path) as f:
+                    expected_chat_data = json.load(f)
                 results_path = list(
                     glob.glob(os.path.join(tmpdir, '*_*_sandbox.json'))
                 )[0]

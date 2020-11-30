@@ -168,9 +168,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         num_agents: int,
         agent_display_ids: Sequence[str],
         agent_messages: List[Sequence[str]],
-        form_prompts: Sequence[str],
-        form_responses: Sequence[Sequence[Dict[str, str]]],
+        form_messages: Sequence[str],
+        form_task_data: Sequence[Dict[str, Any]],
         expected_states: Sequence[Dict[str, Any]],
+        agent_task_data: Optional[List[Sequence[Dict[str, Any]]]] = None,
     ):
         """
         Test that the actual agent states match the expected states.
@@ -180,6 +181,12 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         fields of the agent states, and then check that the agent states all match the
         desired agent states.
         """
+
+        # If no task data was supplied, create empty task data
+        if agent_task_data is None:
+            agent_task_data = []
+            for message_round in agent_messages:
+                agent_task_data.append([{}] * len(message_round))
 
         # Set up the mock human agents
         agent_ids = self._register_mock_agents(num_agents=num_agents)
@@ -191,13 +198,17 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             self.server.request_init_data(agent_id)
 
         # Have agents talk to each other
-        for message_round in agent_messages:
-            assert len(message_round) == len(agent_ids)
-            for agent_id, agent_display_id, message in zip(
-                agent_ids, agent_display_ids, message_round
+        assert len(agent_messages) == len(agent_task_data)
+        for message_round, task_data_round in zip(agent_messages, agent_task_data):
+            assert len(message_round) == len(task_data_round) == len(agent_ids)
+            for agent_id, agent_display_id, message, task_data in zip(
+                agent_ids, agent_display_ids, message_round, task_data_round
             ):
                 self._send_agent_message(
-                    agent_id=agent_id, agent_display_id=agent_display_id, text=message
+                    agent_id=agent_id,
+                    agent_display_id=agent_display_id,
+                    text=message,
+                    task_data=task_data,
                 )
 
         # Have agents fill out the form
@@ -205,8 +216,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             self.server.send_agent_act(
                 agent_id=agent_id,
                 act_content={
-                    'text': form_prompts[agent_idx],
-                    'task_data': {'form_responses': form_responses[agent_idx]},
+                    'text': form_messages[agent_idx],
+                    'task_data': form_task_data[agent_idx],
                     'id': agent_display_ids[agent_idx],
                     'episode_done': False,
                 },
@@ -242,7 +253,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         for key_inner, desired_value_inner in desired_message[
                             key
                         ].items():
-                            if key_inner == 'message_id':
+                            if key_inner in ['beam_texts', 'message_id']:
                                 pass  # The message ID will be different
                             else:
                                 self.assertEqual(
@@ -251,14 +262,16 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     else:
                         self.assertEqual(actual_message[key], desired_value)
 
-    def _send_agent_message(self, agent_id: str, agent_display_id: str, text: str):
+    def _send_agent_message(
+        self, agent_id: str, agent_display_id: str, text: str, task_data: Dict[str, Any]
+    ):
         """
-        Have the agent specified by agent_id send the specified text with the given
-        display ID string.
+        Have the agent specified by agent_id send the specified text and task data with
+        the given display ID string.
         """
         act_content = {
             "text": text,
-            "task_data": {},
+            "task_data": task_data,
             "id": agent_display_id,
             "episode_done": False,
         }

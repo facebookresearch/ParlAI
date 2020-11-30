@@ -306,7 +306,7 @@ AGENT_MESSAGES = [
     ("I'm okay - how was your weekend?", "I was fine. Did you do anything fun?"),
 ]
 AGENT_DISPLAY_IDS = ('Chat Agent 1', 'Chat Agent 2')
-FORM_PROMPTS = (
+FORM_MESSAGES = (
     "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
     "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
 )
@@ -334,6 +334,7 @@ FORM_RESPONSES = (
         {"question": "Enter any comment here", "response": "No"},
     ],
 )
+FORM_TASK_DATA = {'form_reponses': response for response in FORM_RESPONSES}
 # TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
@@ -389,8 +390,8 @@ try:
                 num_agents=2,
                 agent_display_ids=AGENT_DISPLAY_IDS,
                 agent_messages=AGENT_MESSAGES,
-                form_prompts=FORM_PROMPTS,
-                form_responses=FORM_RESPONSES,
+                form_messages=FORM_MESSAGES,
+                form_task_data=FORM_TASK_DATA,
                 expected_states=EXPECTED_STATES,
             )
 
