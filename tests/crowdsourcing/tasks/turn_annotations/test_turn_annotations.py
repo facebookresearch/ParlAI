@@ -11,7 +11,6 @@ import unittest
 
 # Desired inputs/outputs
 # {{{TODO: inputs/outputs}}}
-# TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
 try:
