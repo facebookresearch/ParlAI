@@ -7,6 +7,7 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import glob
 import json
 import os
 import unittest
@@ -40,7 +41,7 @@ try:
                 expected_chat_data_path = os.path.join(
                     expected_states_folder, 'final_chat_data.json'
                 )
-                # {{{TODO: define actual save folder}}}}
+                chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
 
                 # # Setup
 
@@ -71,7 +72,17 @@ try:
                 # Check that the contents of the chat data file are as expected
                 with open(expected_chat_data_path) as f_expected:
                     expected_chat_data = json.load(f_expected)
-                # {{{TODO: load expected + actual json files; compare}}}
+                results_path = list(
+                    glob.glob(os.path.join(tmpdir, '*_*_sandbox.json'))
+                )[0]
+                with open(results_path) as f:
+                    actual_results = json.load(f)
+                for k, v in expected_chat_data.items():
+                    if k == 'task_description':
+                        for k2, v2 in expected_chat_data[k].items():
+                            self.assertEqual(actual_results[k].get(k2), v2)
+                    else:
+                        self.assertEqual(actual_results.get(k), v)
 
 
 except ImportError:
