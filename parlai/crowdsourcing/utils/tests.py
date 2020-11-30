@@ -165,6 +165,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
     def _test_agent_states(
         self,
+        num_agents: int,
         agent_display_ids: Sequence[str],
         agent_messages: List[Sequence[str]],
         form_prompts: Sequence[str],
@@ -181,7 +182,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         """
 
         # Set up the mock human agents
-        agent_ids = self._register_mock_agents(num_agents=2)
+        agent_ids = self._register_mock_agents(num_agents=num_agents)
 
         # # Feed messages to the agents
 

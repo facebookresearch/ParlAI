@@ -386,6 +386,7 @@ try:
 
             # Check that the agent states are as they should be
             self._test_agent_states(
+                num_agents=2,
                 agent_display_ids=AGENT_DISPLAY_IDS,
                 agent_messages=AGENT_MESSAGES,
                 form_prompts=FORM_PROMPTS,
