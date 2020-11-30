@@ -116,7 +116,7 @@
                     "text": "What are you nervous about?"
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748750.6269932
             },
@@ -196,7 +196,7 @@
                     "text": "Do you have any plans for the weekend?"
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748767.7324872
             },
@@ -272,7 +272,7 @@
                     "text": "Yeah that sounds great! I like to bike and try new restaurants."
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748790.1551545
             },
@@ -348,7 +348,7 @@
                     "text": "Oh, Italian food is great. I also love Thai and Indian."
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748803.546519
             },
@@ -432,7 +432,7 @@
                     "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748820.3473911
             },
@@ -509,7 +509,7 @@
                     "text": ""
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748839.8552907
             },
@@ -520,7 +520,7 @@
                     ],
                     "additional_context": null,
                     "assignment_ids": [
-                        "33827"
+                        "1"
                     ],
                     "bad_workers": [],
                     "context_dataset": null,
@@ -632,7 +632,7 @@
                         }
                     ],
                     "hit_ids": [
-                        "360"
+                        "1"
                     ],
                     "person1_seed_utterance": null,
                     "person2_seed_utterance": null,
@@ -802,7 +802,7 @@
                         }
                     },
                     "workers": [
-                        "--NOT-MTURK-AGENT-x"
+                        "--NOT-MTURK-AGENT-MOCK_WORKER_0"
                     ]
                 }
             },
@@ -829,7 +829,7 @@
                     }
                 },
                 "packet_type": "agent_action",
-                "receiver_id": "mephisto",
+                "receiver_id": "Mephisto",
                 "sender_id": "1",
                 "timestamp": 1606748846.5838857
             }

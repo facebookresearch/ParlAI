@@ -11,6 +11,7 @@ import glob
 import json
 import os
 import unittest
+from typing import Any, Dict
 
 import parlai.utils.testing as testing_utils
 from parlai.zoo.blender.blender_90M import download as download_blender
@@ -135,7 +136,7 @@ try:
                 )
                 # Don't require onboarding for this test agent
                 with open(expected_state_path) as f:
-                    expected_state = json.load(f)['outputs']
+                    expected_state = json.load(f)
                 self._test_agent_states(
                     num_agents=1,
                     agent_display_ids=AGENT_DISPLAY_IDS,
@@ -150,16 +151,85 @@ try:
                 with open(expected_chat_data_path) as f:
                     expected_chat_data = json.load(f)
                 results_path = list(
-                    glob.glob(os.path.join(tmpdir, '*_*_sandbox.json'))
+                    glob.glob(os.path.join(chat_data_folder, '*_*_*_sandbox.json'))
                 )[0]
                 with open(results_path) as f:
-                    actual_results = json.load(f)
-                for k, v in expected_chat_data.items():
-                    if k == 'task_description':
-                        for k2, v2 in expected_chat_data[k].items():
-                            self.assertEqual(actual_results[k].get(k2), v2)
-                    else:
-                        self.assertEqual(actual_results.get(k), v)
+                    actual_chat_data = json.load(f)
+                self._check_final_chat_data(
+                    actual_value=actual_chat_data, expected_value=expected_chat_data
+                )
+
+        def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
+            """
+            Special logic for handling the 'final_chat_data' key.
+            """
+            if key == 'final_chat_data':
+                self._check_final_chat_data(
+                    actual_value=actual_value, expected_value=expected_value
+                )
+            else:
+                super()._check_output_key(
+                    key=key, actual_value=actual_value, expected_value=expected_value
+                )
+
+        def _check_final_chat_data(
+            self, actual_value: Dict[str, Any], expected_value: Dict[str, Any]
+        ):
+            """
+            Check the actual and expected values of the final chat data.
+            """
+            for key_inner, expected_value_inner in expected_value.items():
+                if key_inner == 'dialog':
+                    assert len(actual_value[key_inner]) == len(expected_value_inner)
+                    for actual_message, expected_message in zip(
+                        actual_value[key_inner], expected_value_inner
+                    ):
+                        self.assertEqual(
+                            {
+                                k: v
+                                for k, v in actual_message.items()
+                                if k != 'message_id'
+                            },
+                            {
+                                k: v
+                                for k, v in expected_message.items()
+                                if k != 'message_id'
+                            },
+                        )
+                elif key_inner == 'task_description':
+                    for (
+                        key_inner2,
+                        expected_value_inner2,
+                    ) in expected_value_inner.items():
+                        if key_inner2 == 'model_file':
+                            pass
+                            # The path to the model file depends on the random
+                            # tmpdir
+                        elif key_inner2 == 'model_opt':
+                            keys_to_ignore = ['dict_file', 'model_file']
+                            # The paths to the dict and model files depend on the
+                            # random tmpdir
+                            self.assertEqual(
+                                {
+                                    k: v
+                                    for k, v in actual_value[key_inner][
+                                        key_inner2
+                                    ].items()
+                                    if k not in keys_to_ignore
+                                },
+                                {
+                                    k: v
+                                    for k, v in expected_value_inner2.items()
+                                    if k not in keys_to_ignore
+                                },
+                            )
+                        else:
+                            self.assertEqual(
+                                actual_value[key_inner][key_inner2],
+                                expected_value_inner2,
+                            )
+                else:
+                    self.assertEqual(actual_value[key_inner], expected_value_inner)
 
 
 except ImportError:

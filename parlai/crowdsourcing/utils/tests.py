@@ -240,32 +240,63 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # # Check that the inputs and outputs are as expected
 
-        actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
-        assert len(actual_states) == len(expected_states)
-        for actual_state, desired_state in zip(actual_states, expected_states):
-            assert actual_state['inputs'] == desired_state['inputs']
-            assert len(actual_state['outputs']['messages']) == len(
-                desired_state['outputs']['messages']
+        # Wait until all messages have arrived
+        wait_time = 1  # In seconds
+        max_num_tries = 60  # max_num_tries * wait_time is the max time to wait
+        num_tries = 0
+        while num_tries < max_num_tries:
+            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+            assert len(actual_states) == len(expected_states)
+            expected_num_messages = sum(
+                len(state['outputs']['messages']) for state in expected_states
             )
-            for actual_message, desired_message in zip(
+            actual_num_messages = sum(
+                len(state['outputs']['messages']) for state in actual_states
+            )
+            if expected_num_messages == actual_num_messages:
+                break
+            else:
+                print(
+                    f'The expected number of messages is '
+                    f'{expected_num_messages:d}, but the actual number of messages '
+                    f'is {actual_num_messages:d}! Waiting for more messages to '
+                    f'arrive...'
+                )
+                num_tries += 1
+                time.sleep(wait_time)
+        else:
+            raise ValueError('The expected number of messages never arrived!')
+
+        # Check the contents of each message
+        for actual_state, expected_state in zip(actual_states, expected_states):
+            assert actual_state['inputs'] == expected_state['inputs']
+            for actual_message, expected_message in zip(
                 actual_state['outputs']['messages'],
-                desired_state['outputs']['messages'],
+                expected_state['outputs']['messages'],
             ):
-                for key, desired_value in desired_message.items():
-                    if key == 'timestamp':
-                        pass  # The timestamp will obviously be different
-                    elif key == 'data':
-                        for key_inner, desired_value_inner in desired_message[
-                            key
-                        ].items():
-                            if key_inner in ['beam_texts', 'message_id']:
-                                pass  # The message ID will be different
-                            else:
-                                self.assertEqual(
-                                    actual_message[key][key_inner], desired_value_inner
-                                )
-                    else:
-                        self.assertEqual(actual_message[key], desired_value)
+                for key, expected_value in expected_message.items():
+                    self._check_output_key(
+                        key=key,
+                        actual_value=actual_message[key],
+                        expected_value=expected_value,
+                    )
+
+    def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
+        """
+        Check the actual and expected values, given that they come from the specified
+        key of the output message dictionary. This function can be extended to handle
+        special cases for subclassed Mephisto tasks.
+        """
+        if key == 'timestamp':
+            pass  # The timestamp will obviously be different
+        elif key == 'data':
+            for key_inner, expected_value_inner in expected_value.items():
+                if key_inner in ['beam_texts', 'message_id']:
+                    pass  # The message ID will be different
+                else:
+                    self.assertEqual(actual_value[key_inner], expected_value_inner)
+        else:
+            self.assertEqual(actual_value, expected_value)
 
     def _send_agent_message(
         self, agent_id: str, agent_display_id: str, text: str, task_data: Dict[str, Any]
