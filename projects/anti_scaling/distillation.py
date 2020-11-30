@@ -500,6 +500,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
             input=student_emb_output, target=teacher_emb_output, reduction='none'
         )
         clamped_loss = torch.clamp(raw_loss, min=0, max=max_value)
+        # Prevent infs from appearing in the loss term. Especially important with fp16
         masked_loss = clamped_loss.sum(dim=-1) * mask
         # Sum over embedding dim
         embedding_loss_per_example = masked_loss.sum(dim=-1)  # Sum over token dim
@@ -565,6 +566,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 reduction='none',
             )
             clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=max_value)
+            # Prevent infs from appearing in the loss term. Especially important with
+            # fp16
             masked_layer_loss = clamped_layer_loss.mean(dim=-1) * mask
             # Avg over embedding dim
             layer_loss_per_example = masked_layer_loss.sum(dim=-1)  # Sum over token dim
@@ -653,6 +656,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 reduction='none',
             )
             clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=max_value)
+            # Prevent infs from appearing in the loss term. Especially important with
+            # fp16
             reshaped_layer_loss = clamped_layer_loss.view(
                 batch_size, -1, clamped_layer_loss.size(-2), clamped_layer_loss.size(-1)
             )
