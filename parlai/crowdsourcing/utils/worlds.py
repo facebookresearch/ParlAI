@@ -25,7 +25,7 @@ class CrowdDataWorld(World):
                     'worker_id': agent.worker_id,
                     'agent_id': agent.id,
                     'assignment_id': agent.assignment_id,
-                    'messages': save_messages,
+                    'messages': messages,
                     'given_feedback': agent.feedback,
                 }
 
