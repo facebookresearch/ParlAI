@@ -522,10 +522,7 @@ workflows:
           requires:
             - unittests_gpu16
             - unittests_37
-      - crowdsourcing_tests:
-          requires:
-            - unittests_gpu16
-            - unittests_37
+      - crowdsourcing_tests
       - teacher_tests:
           requires:
             - unittests_gpu16

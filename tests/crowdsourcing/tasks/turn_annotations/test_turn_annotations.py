@@ -68,9 +68,9 @@ try:
     )
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
-    class TestChatDemo(AbstractParlAIChatTest):
+    class TestTurnAnnotations(AbstractParlAIChatTest):
         """
-        Test the chat demo crowdsourcing task.
+        Test the turn annotations crowdsourcing task.
         """
 
         def test_base_task(self):
