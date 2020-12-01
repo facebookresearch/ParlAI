@@ -163,9 +163,8 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
 @register_mephisto_abstraction()
 class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
     """
-    This Blueprint uses somewhat specialized arguments for Turn Annotations, 
-    manages their validation, and also has specialized data storage for the 
-    result format.
+    This Blueprint uses somewhat specialized arguments for Turn Annotations, manages
+    their validation, and also has specialized data storage for the result format.
 
     It also has options for the onboarding data answers and the annotation bucket
     definitions.
@@ -179,7 +178,9 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
     def assert_task_args(
         cls, args: "DictConfig", shared_state: "SharedTaskState"
     ) -> None:
-        """Ensure that arguments are properly configured to launch this task"""
+        """
+        Ensure that arguments are properly configured to launch this task.
+        """
         if len(shared_state.conversations_needed) == 0:
             assert (
                 args.blueprint.get('conversations_needed_string', None) is not None

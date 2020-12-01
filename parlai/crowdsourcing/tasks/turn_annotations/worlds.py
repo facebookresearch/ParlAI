@@ -75,7 +75,7 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
         """
         Calculate how many correct answers the user gave.
 
-        :param worker_answers: list of dicts containing mappings between an 
+        :param worker_answers: list of dicts containing mappings between an
         annotation value and whether it was selected for each bucket.
         :return: boolean as to whether the worker passed or failed the task
         """
@@ -512,7 +512,9 @@ def make_onboarding_world(opt, agent):
 
 
 def validate_onboarding(data):
-    """Check the contents of the data to ensure they are valid"""
+    """
+    Check the contents of the data to ensure they are valid.
+    """
     print(f"Validating onboarding data {data}")
     messages = data['outputs']['messages']
     if len(messages) == 0:

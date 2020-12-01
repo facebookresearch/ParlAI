@@ -36,10 +36,10 @@ class CrowdDataWorld(World):
         This function should take the contents of whatever was collected during this
         task that should be saved and return it in some format, preferrably a dict
         containing acts.
-        
-        If you need some extraordinary data storage that this doesn't cover, 
-        you can extend the ParlAIChatBlueprint and write your own ParlAIChatAgentState
-        that defines the behavior you want.
+
+        If you need some extraordinary data storage that this doesn't cover, you can
+        extend the ParlAIChatBlueprint and write your own ParlAIChatAgentState that
+        defines the behavior you want.
         """
         # return {
         #     'acts': [self.important_turn1, self.important_turn2]
@@ -96,8 +96,8 @@ class CrowdTaskWorld(CrowdDataWorld):
 
     def episode_done(self):
         """
-        A ParlAI-Mephisto task ends and allows workers to be marked complete when the world
-        is finished.
+        A ParlAI-Mephisto task ends and allows workers to be marked complete when the
+        world is finished.
         """
         return self.episodeDone
 
@@ -109,8 +109,8 @@ class CrowdTaskWorld(CrowdDataWorld):
 
     def review_work(self):
         """
-        Programmatically approve/reject this work. Doing this now (if possible)
-        means that you don't need to do the work of reviewing later on.
+        Programmatically approve/reject this work. Doing this now (if possible) means
+        that you don't need to do the work of reviewing later on.
 
         For example:
         .. code-block:: python

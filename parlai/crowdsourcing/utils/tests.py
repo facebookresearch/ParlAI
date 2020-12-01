@@ -284,8 +284,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
     def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
         """
         Check the actual and expected values, given that they come from the specified
-        key of the output message dictionary. This function can be extended to handle
-        special cases for subclassed Mephisto tasks.
+        key of the output message dictionary.
+
+        This function can be extended to handle special cases for subclassed Mephisto
+        tasks.
         """
         if key == 'timestamp':
             pass  # The timestamp will obviously be different
