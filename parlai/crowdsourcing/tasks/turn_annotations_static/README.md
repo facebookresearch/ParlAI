@@ -1,5 +1,5 @@
 # Turn Annotations Static Task
-This task renders conversations from a file and asks for turn-by-turn annotations of them. This is in contrast to the crowdsourcing task `parlai.mturk.tasks.turn_annotations`, which collects turn-by-turn annotations from a live human/model conversation.
+This task renders conversations from a file and asks for turn-by-turn annotations of them. This is in contrast to the crowdsourcing task `parlai.crowdsourcing.tasks.turn_annotations`, which collects turn-by-turn annotations from a live human/model conversation.
 
 Two variants of the blueprint are supported:
 - `TurnAnnotationStaticBlueprint`
