@@ -172,7 +172,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout c24bc29ef6f6508fa6b5fb3a3f21def7e1afd0ae -b stable
+              cd Mephisto; git checkout v0.3.0 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
