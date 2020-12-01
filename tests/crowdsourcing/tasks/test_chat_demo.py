@@ -7,6 +7,7 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import os
 import unittest
 
 # Desired inputs/outputs
@@ -334,20 +335,25 @@ FORM_RESPONSES = (
         {"question": "Enter any comment here", "response": "No"},
     ],
 )
-FORM_TASK_DATA = {'form_reponses': response for response in FORM_RESPONSES}
+FORM_TASK_DATA = [{'form_responses': responses} for responses in FORM_RESPONSES]
 # TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
 try:
 
-    # From the Mephisto repo
-    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
+    import mephisto
     from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
         BLUEPRINT_TYPE,
     )
 
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
+
+    TASK_DIRECTORY = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(mephisto.__file__))),
+        'examples',
+        'parlai_chat_task_demo',
+    )
 
     class TestChatDemo(AbstractParlAIChatTest):
         """
