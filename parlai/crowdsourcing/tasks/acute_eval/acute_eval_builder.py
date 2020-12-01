@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from mephisto.data_model.blueprint import TaskBuilder
+from mephisto.abstractions.blueprint import TaskBuilder
 
 import os
 import shutil

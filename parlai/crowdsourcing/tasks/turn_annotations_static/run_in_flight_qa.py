@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from mephisto.core.hydra_config import register_script_config
+from mephisto.operations.hydra_config import register_script_config
 from omegaconf import DictConfig
 
 from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (

@@ -1,0 +1,145 @@
+acts:
+- - episode_done: true
+    id: cornell_movie:double
+    label_candidates:
+    - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+      ourselves.'
+    - '  DELETE IN CUTTING'
+    - '  I''ve got the real thing!'
+    - '  Oh, we''re screwed, Night...'
+    - ' ...Mason.  I can barely hear you.'
+    - ' ...checked.'
+    - ' ...or it''ll ignite.'
+    - ' ...shit!'
+    - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a tomorrow...'
+    - ' All right.  Hey.'
+    - xxxxxx
+    - y-y-yes--
+    - yeah, yes, hi, hello.
+    - yeah.
+    - yeah?
+    - yet cannot love nor write it.
+    - you'll need one more hit.
+    - '{suddenly unctious) Oh, but of course ...'
+    - '|      It''s not working. You''re not doing it properly.  Ni!'
+    - ~Don't shoot, G-Men..."
+    labels:
+    - Forget it.
+    reward: 0
+    text: You're asking me out.  That's so cute. What's your name again?
+- - episode_done: false
+    id: cornell_movie:double
+    label_candidates:
+    - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+      ourselves.'
+    - '  DELETE IN CUTTING'
+    - '  I''ve got the real thing!'
+    - '  Oh, we''re screwed, Night...'
+    - ' ...Mason.  I can barely hear you.'
+    - ' ...checked.'
+    - ' ...or it''ll ignite.'
+    - ' ...shit!'
+    - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a tomorrow...'
+    - ' All right.  Hey.'
+    - xxxxxx
+    - y-y-yes--
+    - yeah, yes, hi, hello.
+    - yeah.
+    - yeah?
+    - yet cannot love nor write it.
+    - you'll need one more hit.
+    - '{suddenly unctious) Oh, but of course ...'
+    - '|      It''s not working. You''re not doing it properly.  Ni!'
+    - ~Don't shoot, G-Men..."
+    labels:
+    - Cameron.
+    reward: 0
+    text: No, no, it's my fault -- we didn't have a proper introduction ---
+- - episode_done: true
+    id: cornell_movie:double
+    label_candidates:
+    - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+      ourselves.'
+    - '  DELETE IN CUTTING'
+    - '  I''ve got the real thing!'
+    - '  Oh, we''re screwed, Night...'
+    - ' ...Mason.  I can barely hear you.'
+    - ' ...checked.'
+    - ' ...or it''ll ignite.'
+    - ' ...shit!'
+    - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a tomorrow...'
+    - ' All right.  Hey.'
+    - xxxxxx
+    - y-y-yes--
+    - yeah, yes, hi, hello.
+    - yeah.
+    - yeah?
+    - yet cannot love nor write it.
+    - you'll need one more hit.
+    - '{suddenly unctious) Oh, but of course ...'
+    - '|      It''s not working. You''re not doing it properly.  Ni!'
+    - ~Don't shoot, G-Men..."
+    labels:
+    - Seems like she could get a date easy enough...
+    reward: 0
+    text: The thing is, Cameron -- I'm at the mercy of a particularly hideous breed
+      of loser.  My sister.  I can't date until she does.
+- - episode_done: true
+    id: cornell_movie:double
+    label_candidates:
+    - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+      ourselves.'
+    - '  DELETE IN CUTTING'
+    - '  I''ve got the real thing!'
+    - '  Oh, we''re screwed, Night...'
+    - ' ...Mason.  I can barely hear you.'
+    - ' ...checked.'
+    - ' ...or it''ll ignite.'
+    - ' ...shit!'
+    - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a tomorrow...'
+    - ' All right.  Hey.'
+    - xxxxxx
+    - y-y-yes--
+    - yeah, yes, hi, hello.
+    - yeah.
+    - yeah?
+    - yet cannot love nor write it.
+    - you'll need one more hit.
+    - '{suddenly unctious) Oh, but of course ...'
+    - '|      It''s not working. You''re not doing it properly.  Ni!'
+    - ~Don't shoot, G-Men..."
+    labels:
+    - The thing is, Cameron -- I'm at the mercy of a particularly hideous breed of
+      loser.  My sister.  I can't date until she does.
+    text: Cameron.
+- - episode_done: true
+    id: cornell_movie:double
+    label_candidates:
+    - '   We have twenty-one minutes. Captain,    we can still save V''ger... and
+      ourselves.'
+    - '  DELETE IN CUTTING'
+    - '  I''ve got the real thing!'
+    - '  Oh, we''re screwed, Night...'
+    - ' ...Mason.  I can barely hear you.'
+    - ' ...checked.'
+    - ' ...or it''ll ignite.'
+    - ' ...shit!'
+    - ' ...the night is a tunnel... a hole into tomorrow... if we''re to have a tomorrow...'
+    - ' All right.  Hey.'
+    - xxxxxx
+    - y-y-yes--
+    - yeah, yes, hi, hello.
+    - yeah.
+    - yeah?
+    - yet cannot love nor write it.
+    - you'll need one more hit.
+    - '{suddenly unctious) Oh, but of course ...'
+    - '|      It''s not working. You''re not doing it properly.  Ni!'
+    - ~Don't shoot, G-Men..."
+    labels:
+    - Unsolved mystery.  She used to be really popular when she started high school,
+      then it was just like she got sick of it or something.
+    reward: 0
+    text: Why?
+num_episodes: 102401
+num_examples: 176975

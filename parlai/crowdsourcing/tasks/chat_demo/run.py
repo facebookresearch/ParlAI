@@ -15,12 +15,12 @@ from examples.parlai_chat_task_demo.parlai_test_script import (
     TestScriptConfig,
     TASK_DIRECTORY,
 )
-from mephisto.core.hydra_config import register_script_config
-from mephisto.core.operator import Operator
-from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
+from mephisto.operations.hydra_config import register_script_config
+from mephisto.operations.operator import Operator
+from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
     SharedParlAITaskState,
 )
-from mephisto.utils.scripts import load_db_and_process_config
+from mephisto.tools.scripts import load_db_and_process_config
 
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfigMixin
 

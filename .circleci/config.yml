@@ -236,19 +236,19 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20201110-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20201119-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20201110-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20201119-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20201110-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20201119-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m

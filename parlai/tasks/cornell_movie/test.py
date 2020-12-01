@@ -5,12 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.utils.testing import AutoTeacherTest  # noqa: F401
-import unittest
 
 
-class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
+class TestDefaultTeacher(AutoTeacherTest):
     task = 'cornell_movie'
 
 
-class TestAll1kTeacher(unittest.TestCase, AutoTeacherTest):
+class TestAll1kTeacher(AutoTeacherTest):
     task = 'cornell_movie:double'
