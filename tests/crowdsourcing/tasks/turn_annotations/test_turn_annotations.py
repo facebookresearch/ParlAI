@@ -206,9 +206,9 @@ try:
                             # The path to the model file depends on the random
                             # tmpdir
                         elif key_inner2 == 'model_opt':
-                            keys_to_ignore = ['dict_file', 'model_file']
-                            # The paths to the dict and model files depend on the
-                            # random tmpdir
+                            keys_to_ignore = ['datapath', 'dict_file', 'model_file']
+                            # These paths depend on the random tmpdir and the host
+                            # machine
                             for (
                                 key_inner3,
                                 expected_value_inner3,

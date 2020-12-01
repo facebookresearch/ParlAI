@@ -23,10 +23,8 @@ from parlai.crowdsourcing.tasks.turn_annotations.constants import (
     ONBOARD_SUCCESS,
 )
 
-from parlai.crowdsourcing.tasks.turn_annotations.utils import (
-    Compatibility,
-    get_mturk_id_from_mephisto_wrapper,
-)
+from parlai.crowdsourcing.tasks.turn_annotations.utils import Compatibility
+from parlai.crowdsourcing.utils.mturk import get_mturk_id_from_mephisto_wrapper
 
 from typing import TYPE_CHECKING
 
