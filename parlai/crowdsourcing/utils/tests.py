@@ -99,18 +99,9 @@ class AbstractCrowdsourcingTest(unittest.TestCase):
         """
         Return channel info for the currently running job.
         """
-        # Wait until the channel can be detected
-        wait_time = 1  # In seconds
-        max_num_tries = 5  # max_num_tries * wait_time is the max time to wait
-        num_tries = 0
-        while num_tries < max_num_tries:
-            channels = list(self.operator.supervisor.channels.values())
-            if len(channels) > 0:
-                return channels[0]
-            else:
-                print('No channels found! Waiting..')
-                num_tries += 1
-                time.sleep(wait_time)
+        channels = list(self.operator.supervisor.channels.values())
+        if len(channels) > 0:
+            return channels[0]
         else:
             raise ValueError('No channel could be detected!')
 
