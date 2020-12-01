@@ -209,27 +209,30 @@ try:
                             keys_to_ignore = ['dict_file', 'model_file']
                             # The paths to the dict and model files depend on the
                             # random tmpdir
-                            self.assertEqual(
-                                {
-                                    k: v
-                                    for k, v in actual_value[key_inner][
-                                        key_inner2
-                                    ].items()
-                                    if k not in keys_to_ignore
-                                },
-                                {
-                                    k: v
-                                    for k, v in expected_value_inner2.items()
-                                    if k not in keys_to_ignore
-                                },
-                            )
+                            for (
+                                key_inner3,
+                                expected_value_inner3,
+                            ) in expected_value_inner2.items():
+                                if key_inner3 in keys_to_ignore:
+                                    pass
+                                else:
+                                    self.assertEqual(
+                                        actual_value[key_inner][key_inner2][key_inner3],
+                                        expected_value_inner3,
+                                        f'Error in key {key_inner3}!',
+                                    )
                         else:
                             self.assertEqual(
                                 actual_value[key_inner][key_inner2],
                                 expected_value_inner2,
+                                f'Error in key {key_inner2}!',
                             )
                 else:
-                    self.assertEqual(actual_value[key_inner], expected_value_inner)
+                    self.assertEqual(
+                        actual_value[key_inner],
+                        expected_value_inner,
+                        f'Error in key {key_inner}!',
+                    )
 
 
 except ImportError:
