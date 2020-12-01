@@ -22,6 +22,8 @@ With TinyBERT-style distillation, the student model can have smaller hidden and 
 
 In addition to the losses of DistilBERT-style distillation above, losses are also included on the embedding layer and on the per-layer query/key product matrices from encoder self-attention, decoder self-attention, and encoder/decoder attention. `DistillNarrowTransformerAgent` is used for distilling `transformer/generator` models, and `DistillNarrowBartAgent` is used for distilling `bart` models.
 
+After distillation, the projection matrices will still be included in the saved model file; run `scripts/remove_projection_matrices.py` to remove them. This is necessary for loading the model file as a `transformer/generator` or `bart` model.
+
 ### Sample command
 
 The following command can be used to launch TinyBERT-style distillation of the BlenderBot3B model, with 15 of 24 decoder layers removed. The best values for the loss coefficients will likely vary depending which model is used as the teacher model, the dataset being fine-tuned, etc.
