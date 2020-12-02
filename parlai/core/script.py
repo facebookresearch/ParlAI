@@ -156,7 +156,7 @@ class _SupercommandParser(ParlaiParser):
             # the add extra args, to prevent parse errors in other commands.
             sa.choices[args[0]].add_extra_args(args)
         else:
-            for k, v in sa.choices.items():
+            for _, v in sa.choices.items():
                 v.add_extra_args(args)
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
