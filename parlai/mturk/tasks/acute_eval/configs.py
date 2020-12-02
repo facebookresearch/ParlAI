@@ -40,7 +40,7 @@ CONFIG: Dict[str, Dict] = {
         'topp': 0.9,
     },
     'example_model_log': {
-        'log_path': f"{os.path.dirname(os.path.realpath(__file__))}/example/chat_log.jsonl"
+        'log_path': "/private/home/mpchen/ParlAI/parlai_fb/projects/taskoriented/user_generator/scripts/google_sgd_conversation_outfile.jsonl"
     },
     'example_dataset': {'task': 'convai2', 'prepended_context': True},
 }

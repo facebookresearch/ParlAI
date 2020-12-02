@@ -216,7 +216,7 @@ class ParlAIQuickAcute(object):
                 raise RuntimeError(
                     f'ID {config_id} not specified in the config (`configs.py`).'
                 )
-        assert len(self.config_ids) > 1, 'Must specify least 2 ids'
+        # assert len(self.config_ids) > 1, 'Must specify least 2 ids'
 
     def _print_progress(self, msg: str):
         """
@@ -457,10 +457,10 @@ class ParlAIQuickAcute(object):
         """
         Build and save pairings to pairings file.
         """
-        onboarding_pairs = []
-        with open(self.onboarding_path) as f:
-            for line in f:
-                onboarding_pairs.append(json.loads(line))
+        # onboarding_pairs = []
+        # with open(self.onboarding_path) as f:
+        #    for line in f:
+        #         onboarding_pairs.append(json.loads(line))
 
         pairings_filepath = self._get_vs_path('pairings_files')
 
@@ -473,7 +473,7 @@ class ParlAIQuickAcute(object):
 
         with open(pairings_filepath, 'w') as f:
             # Write the onboarding convo
-            pairs = onboarding_pairs + pairs
+            # pairs = onboarding_pairs + pairs
             for pair in pairs:
                 f.write(json.dumps(pair) + "\n")
 
@@ -636,9 +636,10 @@ if __name__ == '__main__':
 
     # Compile Chat Logs
     runner.compile_chat_logs()
+    runner._load_pairings_file()
 
     # Run ACUTE Eval
-    runner.run_acute_eval()
+    # runner.run_acute_eval()
 
     # Analyze the Results
-    runner.analyze_results()
+#   runner.analyze_results()
