@@ -10,7 +10,8 @@ Utilities for running tests.
 import os
 import tempfile
 import time
-from typing import List, Optional
+import unittest
+from typing import Any, Dict, List, Optional
 
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
@@ -19,9 +20,9 @@ from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.tools.scripts import augment_config_from_db
 
 
-class CrowdsourcingTestMixin:
+class AbstractCrowdsourcingTest(unittest.TestCase):
     """
-    Mixin for end-to-end tests of Mephisto-based crowdsourcing tasks.
+    Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
 
     Allows for setup and teardown of the operator, as well as for config specification
     and agent registration.
@@ -119,3 +120,39 @@ class CrowdsourcingTestMixin:
         agent_ids = [agent.db_id for agent in agents]
 
         return agent_ids
+
+
+class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
+    """
+    Abstract class for end-to-end tests of one-turn crowdsourcing tasks.
+
+    Useful for Blueprints such as AcuteEvalBlueprint and StaticReactBlueprint for which
+    all of the worker's responses are sent to the backend code at once.
+    """
+
+    def _test_agent_state(self, expected_state: Dict[str, Any]):
+        """
+        Test that the actual agent state matches the expected state.
+
+        Register a mock human agent, request initial data to define the 'inputs' field
+        of the agent state, make the agent act to define the 'outputs' field of the
+        agent state, and then check that the agent state matches the desired agent
+        state.
+        """
+
+        # Set up the mock human agent
+        agent_id = self._register_mock_agents(num_agents=1)[0]
+
+        # Set initial data
+        self.server.request_init_data(agent_id)
+
+        # Make agent act
+        self.server.send_agent_act(
+            agent_id,
+            {"MEPHISTO_is_submit": True, "task_data": expected_state['outputs']},
+        )
+
+        # Check that the inputs and outputs are as expected
+        state = self.db.find_agents()[0].state.get_data()
+        self.assertEqual(expected_state['inputs'], state['inputs'])
+        self.assertEqual(expected_state['outputs'], state['outputs'])
