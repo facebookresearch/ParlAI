@@ -35,6 +35,18 @@ class TestParlaiParser(unittest.TestCase):
     Test ParlaiParser.
     """
 
+    def test_shortopt(self):
+        """
+        Tests whether short opts like -mtw work.
+
+        Known to be tricky in python 3.8.
+        """
+        pp = ParlaiParser(False, False)
+        pp.add_argument("-m", "--model")
+        pp.add_argument("-mtw", "--multitask-weights")
+        opt = pp.parse_args(["-m", "memnn"])
+        print(opt)
+
     def test_upgrade_opt(self):
         """
         Test whether upgrade_opt works.
