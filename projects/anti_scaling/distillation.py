@@ -158,25 +158,25 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         # Create teacher model
         if shared is None:
-            to_copy = {'no_cuda', 'model_parallel', 'fp16', 'fp16_impl'}
+            to_copy = {'no_cuda', 'model_parallel', 'fp16', 'fp16_impl', 'gpu'}
             override = {k: opt[k] for k in to_copy}
             override['datatype'] = 'train:evalmode'  # Don't initialize the optimizer
             teacher_agent = create_agent_from_model_file(opt['teacher_model'], override)
             self.teacher_model = teacher_agent.model
             assert teacher_agent.opt['n_heads'] == opt['n_heads']
-            if hasattr(self.teacher_model, 'module'):
-                self.teacher_model = self.teacher_model.module
             self.teacher_model.eval()
 
         super().__init__(opt, shared)
 
     def build_model(self):
 
-        model = super().build_model()
+        student_model = super().build_model()
+
+        teacher_model = self._get_teacher_model()
 
         # Define the mapping between teacher and student encoder layers
-        self.student_num_enc_layers = len(model.encoder.layers)
-        self.teacher_num_enc_layers = len(self.teacher_model.encoder.layers)
+        self.student_num_enc_layers = len(student_model.encoder.layers)
+        self.teacher_num_enc_layers = len(teacher_model.encoder.layers)
         self.enc_layer_ratio = self.teacher_num_enc_layers / self.student_num_enc_layers
         self.mapped_enc_layers = []
         for i in range(self.student_num_enc_layers):
@@ -184,8 +184,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
             self.mapped_enc_layers.append(j)
 
         # Define the mapping between teacher and student decoder layers
-        self.student_num_dec_layers = len(model.decoder.layers)
-        self.teacher_num_dec_layers = len(self.teacher_model.decoder.layers)
+        self.student_num_dec_layers = len(student_model.decoder.layers)
+        self.teacher_num_dec_layers = len(teacher_model.decoder.layers)
         self.dec_layer_ratio = self.teacher_num_dec_layers / self.student_num_dec_layers
         self.mapped_dec_layers = []
         for i in range(self.student_num_dec_layers):
@@ -204,18 +204,18 @@ class AbstractDistillTransformerAgentMixin(ABC):
         self.hooks = {
             'teacher': {
                 'encoder': self._register_series_of_hooks(
-                    model=self.teacher_model.encoder, module_map=encoder_module_map
+                    model=teacher_model.encoder, module_map=encoder_module_map
                 ),
                 'decoder': self._register_series_of_hooks(
-                    model=self.teacher_model.decoder, module_map=decoder_module_map
+                    model=teacher_model.decoder, module_map=decoder_module_map
                 ),
             },
             'student': {
                 'encoder': self._register_series_of_hooks(
-                    model=model.encoder, module_map=encoder_module_map
+                    model=student_model.encoder, module_map=encoder_module_map
                 ),
                 'decoder': self._register_series_of_hooks(
-                    model=model.decoder, module_map=decoder_module_map
+                    model=student_model.decoder, module_map=decoder_module_map
                 ),
             },
         }
@@ -223,13 +223,27 @@ class AbstractDistillTransformerAgentMixin(ABC):
         # Separately register hooks for the token embeddings, which are the same for
         # the encoder and decoder
         self.hooks['teacher']['embeddings'] = OutputRecorder()
-        self.teacher_model.embeddings.register_forward_hook(
+        teacher_model.embeddings.register_forward_hook(
             self.hooks['teacher']['embeddings']
         )
         self.hooks['student']['embeddings'] = OutputRecorder()
-        model.embeddings.register_forward_hook(self.hooks['student']['embeddings'])
+        student_model.embeddings.register_forward_hook(
+            self.hooks['student']['embeddings']
+        )
 
-        return model
+        return student_model
+
+    def _get_teacher_model(self) -> nn.Module:
+        """
+        Return the teacher model.
+        
+        This logic is needed because the teacher model may be wrapped by
+        torch.nn.parallel.DistributedDataParallel.
+        """
+        if hasattr(self.teacher_model, 'module'):
+            return self.teacher_model.module
+        else:
+            return self.teacher_model
 
     def _register_series_of_hooks(
         self, model: nn.Module, module_map: Dict[str, Type[nn.Module]]
@@ -735,35 +749,37 @@ class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
 
     def build_model(self):
 
-        model = super().build_model()
+        student_model = super().build_model()
 
         if self.copy_teacher_weights:
 
+            teacher_model = self._get_teacher_model()
+
             # Initialize the embeddings
-            model.encoder.embeddings.load_state_dict(
-                self.teacher_model.encoder.embeddings.state_dict()
+            student_model.encoder.embeddings.load_state_dict(
+                teacher_model.encoder.embeddings.state_dict()
             )
-            model.encoder.position_embeddings.load_state_dict(
-                self.teacher_model.encoder.position_embeddings.state_dict()
+            student_model.encoder.position_embeddings.load_state_dict(
+                teacher_model.encoder.position_embeddings.state_dict()
             )
-            model.decoder.embeddings.load_state_dict(
-                self.teacher_model.decoder.embeddings.state_dict()
+            student_model.decoder.embeddings.load_state_dict(
+                teacher_model.decoder.embeddings.state_dict()
             )
-            model.decoder.position_embeddings.load_state_dict(
-                self.teacher_model.decoder.position_embeddings.state_dict()
+            student_model.decoder.position_embeddings.load_state_dict(
+                teacher_model.decoder.position_embeddings.state_dict()
             )
 
             # Initialize the encoder and decoder layers
             for student_idx, teacher_idx in enumerate(self.mapped_enc_layers):
-                model.encoder.layers[student_idx].load_state_dict(
-                    self.teacher_model.encoder.layers[teacher_idx].state_dict()
+                student_model.encoder.layers[student_idx].load_state_dict(
+                    teacher_model.encoder.layers[teacher_idx].state_dict()
                 )
             for student_idx, teacher_idx in enumerate(self.mapped_dec_layers):
-                model.decoder.layers[student_idx].load_state_dict(
-                    self.teacher_model.decoder.layers[teacher_idx].state_dict()
+                student_model.decoder.layers[student_idx].load_state_dict(
+                    teacher_model.decoder.layers[teacher_idx].state_dict()
                 )
 
-        return model
+        return student_model
 
     def compute_loss(self, batch, return_output=False):
 
@@ -823,39 +839,47 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         super().__init__(opt, shared)
 
     def build_model(self):
-        model = super().build_model()
+        student_model = super().build_model()
 
         # Build projection layers from the student to teacher hidden dim
-        model.encoder_proj_layer = self._get_projection_layer(model)
-        model.embedding_proj_layers = nn.ModuleDict(
+        student_model.encoder_proj_layer = self._get_projection_layer(student_model)
+        student_model.embedding_proj_layers = nn.ModuleDict(
             {
-                'encoder': self._get_projection_layer(model),
-                'decoder': self._get_projection_layer(model),
+                'encoder': self._get_projection_layer(student_model),
+                'decoder': self._get_projection_layer(student_model),
             }
         )
-        model.hidden_proj_layers = nn.ModuleDict(
+        student_model.hidden_proj_layers = nn.ModuleDict(
             {
                 'encoder': nn.ModuleList(
-                    [self._get_projection_layer(model) for _ in model.encoder.layers]
+                    [
+                        self._get_projection_layer(student_model)
+                        for _ in student_model.encoder.layers
+                    ]
                 ),
                 'decoder': nn.ModuleList(
-                    [self._get_projection_layer(model) for _ in model.decoder.layers]
+                    [
+                        self._get_projection_layer(student_model)
+                        for _ in student_model.decoder.layers
+                    ]
                 ),
             }
         )
 
-        return model
+        return student_model
 
-    def _get_projection_layer(self, model):
+    def _get_projection_layer(self, student_model):
         """
         Return a projection layer from the student hidden dim to the teacher hidden dim.
         """
 
-        student_hidden_dim = model.encoder.dim
-        teacher_hidden_dim = self.teacher_model.encoder.dim
+        teacher_model = self._get_teacher_model()
+
+        student_hidden_dim = student_model.encoder.dim
+        teacher_hidden_dim = teacher_model.encoder.dim
         assert (
-            student_hidden_dim == model.decoder.dim
-            and teacher_hidden_dim == self.teacher_model.decoder.dim
+            student_hidden_dim == student_model.decoder.dim
+            and teacher_hidden_dim == teacher_model.decoder.dim
         )
 
         layer = nn.Linear(student_hidden_dim, teacher_hidden_dim)
@@ -871,8 +895,13 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
 
         fwd_pass = self._perform_forward_passes(batch)
 
+        if hasattr(self.model, 'module'):
+            student_model = self.model.module
+        else:
+            student_model = self.model
+
         # Calculate the loss on the encoder's output layer
-        fwd_pass.student_enc_output = self.model.encoder_proj_layer(
+        fwd_pass.student_enc_output = student_model.encoder_proj_layer(
             fwd_pass.student_enc_output
         )
         # Pass encoder output through the corresponding projection layer
@@ -883,19 +912,21 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
             # Loop over the encoder and the decoder
             fwd_pass.student_embedding_outputs[
                 module
-            ] = self.model.embedding_proj_layers[module](embedding_output)
+            ] = student_model.embedding_proj_layers[module](embedding_output)
             # Pass embedding output through the corresponding projection layer
         enc_emb_loss, dec_emb_loss = self._get_embedding_losses(fwd_pass)
 
         # Calculate the loss on the encoder and decoder's hidden states
         for module, per_layer_states in fwd_pass.student_hidden_states.items():
             # Loop over the encoder and the decoder
-            assert len(per_layer_states) == len(self.model.hidden_proj_layers[module])
+            assert len(per_layer_states) == len(
+                student_model.hidden_proj_layers[module]
+            )
             for layer_idx, hidden_state in enumerate(per_layer_states):
                 # Loop over Transformer layers
                 fwd_pass.student_hidden_states[module][
                     layer_idx
-                ] = self.model.hidden_proj_layers[module][layer_idx](hidden_state)
+                ] = student_model.hidden_proj_layers[module][layer_idx](hidden_state)
                 # Pass hidden state through the corresponding projection layer
         enc_hidden_loss, dec_hidden_loss = self._get_hidden_losses(fwd_pass)
 
