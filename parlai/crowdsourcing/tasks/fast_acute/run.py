@@ -141,13 +141,21 @@ class FastAcuteExecutor(object):
     Execute fast ACUTE runs.
     """
 
-    def __init__(self, args: DictConfig):
+    def __init__(self, args: DictConfig, model_config: Optional[Dict[str, Any]] = None):
+        """
+        Pass in model_config directly to override the model config file,
+        args.mephisto.blueprint, that would be read in otherwise.
+        """
+
         self.args = args
         self.fast_acute_args = self.args.mephisto.blueprint
 
         # Load configs for models
-        with open(self.args.mephisto.config_path) as f:
-            self.model_config = json.load(f)
+        if model_config is not None:
+            self.model_config = model_config
+        else:
+            with open(self.args.mephisto.config_path) as f:
+                self.model_config = json.load(f)
 
         # models + task
         self._build_model_pairs()
