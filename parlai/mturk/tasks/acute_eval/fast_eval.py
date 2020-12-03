@@ -26,7 +26,7 @@ try:
     from parlai_internal.projects.fast_acute.model_configs import (
         CONFIG as internal_conf,
     )
-    from parlai_internal.projects.fast_acute.fast_eval import (
+    from parlai.crowdsourcing.tasks.fast_acute.run import (
         ACUTE_EVAL_TYPES as internal_types,
     )
 

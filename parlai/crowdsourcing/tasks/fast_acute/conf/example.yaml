@@ -1,0 +1,9 @@
+#@package _global_
+mephisto:
+  blueprint:
+    acute_eval_type: engaging
+    config_path: TODO_FIXME
+    model_pairs: TODO_FIXME
+    num_self_chats: 100
+    root_dir: TODO_FIXME
+    task: TODO_FIXME
