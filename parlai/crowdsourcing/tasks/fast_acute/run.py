@@ -109,8 +109,8 @@ class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
         default=60,
         metadata={"help": "How many matchups to generate for each pair of models"},
     )
-    task: str = field(
-        default=MISSING, metadata={'help': 'The ParlAI task used for self-chat'}
+    task: Optional[str] = field(
+        default=None, metadata={'help': 'The ParlAI task used for self-chat'}
     )
     sufficient_matchups_multiplier: int = field(
         default=2,
