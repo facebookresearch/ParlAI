@@ -1,0 +1,106 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Dancing is my favorite activity.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Other forms of human movement can be related to dance such as gymnastics, cheerleading, figure skaing and martial arts.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "not_empathetic"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I never thought of it that way,",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Do you have any hobbies aside from cheerleading?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "not_empathetic"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I was forced to marry at 17 so I don't have much hobbies aside from family.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "How sad! What are your hobbies? I like teaching kids cheerleading.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "empathetic"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I love to dance if I'm free.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "A cheerleader should know how to defend herself! Do you like charity work?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "not_empathetic"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I've done charity work in the past.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "That's great. Did you raise a good amount of money? What charity did it go to?",
+                "agent_idx": 1,
+                "episode_done": true,
+                "id": "model",
+                "answers": [
+                    "empathetic"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I don't recall the name but I donated clothes to it.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Oh, neat! What kind of clothes?",
+                "agent_idx": 1,
+                "episode_done": true,
+                "id": "model",
+                "answers": [
+                    "empathetic"
+                ]
+            }
+        ]
+    ]
+}

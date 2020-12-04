@@ -1,0 +1,39 @@
+#@package _global_
+mephisto:
+  blueprint:
+    conversation_count: 300
+    subtasks_per_unit: 5
+    task_source: ${task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${task_dir}/webapp/src/static
+    units_per_assignment: 1
+    data_jsonl: ${task_dir}/data/generations_test.jsonl
+    annotation_buckets: ${task_dir}/task_config/annotation_buckets_radio.json
+    onboarding_data: ${task_dir}/task_config/onboarding.json
+    onboarding_qualification: utt-level-labels
+    annotation_question: |
+      <b><Does the listener's response show an understanding of the speaker's feelings?/b>
+    annotations_file: ${task_dir}/data/annotations_test.jsonl
+  task:
+    task_name: empathy_sandbox
+    allowed_concurrent: 3
+    maximum_units_per_worker: 3
+    task_description: |
+      The conversation below is between a speaker and a listener. A sample conversation is displayed below, broken into a series of speaker/listener exchange. For each exchange, decide whether the listener’s response showed an understanding of the speaker’s feelings. If the speaker is not saying something that relates to how they feel, put “n/a”.<br><br>
+      <br>
+      <ul>
+      <li>&bull; <span style="color: green;font-weight: bold;">empathetic</span>: listener's response <b> does show </b>an understanding of speaker's feeling
+      <li>&bull; <span style="color: red;font-weight: bold;">not empathetic</span>: listener's response <b>does not show</b> an understanding of speaker's feeling
+      <li>&bull; <span style="color: lightsalmon;font-weight: bold;">not applicable (n/a)</span>: speaker's feelings were not relevant or needed for listener's response
+      </ul>
+      Notes:
+      <ul>
+        <li>&bull;You will evaluate each set of speaker/listener exchanges.</li>
+        <li>&bull;You are evaluating the listener's response only.</li>
+        <li>&bull;Please <b>DISREGARD</b> any <b>spelling</b>, <b>grammatical</b> or <b>factual</b> errors when making your decisions.</li>
+      </ul>
+    task_reward: 0.3
+    task_tags: "chat,conversation,dialog,label,annotate"
+    task_title: "Label Conversations"
+mturk:
+  worker_blocklist_paths: null
+monitoring_log_rate: 180

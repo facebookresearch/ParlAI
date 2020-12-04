@@ -1,0 +1,20 @@
+{
+    "config": {
+        "empathetic": {
+            "name": "empathetic",
+            "prettyName": "<span style='color: green;font-weight: bold;'>EMPATHETIC</span>",
+            "description": "the listener understands and is responding to the speaker's feelings"
+        },
+        "not_empathetic": {
+            "name": "not empathetic",
+            "prettyName": "<span style='color: red;font-weight: bold;'>NOT EMPATHETIC</span>",
+            "description": "the listener <b>does not</b> understand or is not responding to the speaker's feelings"
+        },
+        "n/a": {
+            "name": "not applicable (n/a)",
+            "prettyName": "<span style='color: salmon;font-weight: bold;'>N/A</span>",
+            "description": "the speaker's feelings are not relevant for the listener's response"
+        }
+    },
+    "type": "radio"
+}
