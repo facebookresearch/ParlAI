@@ -11,23 +11,24 @@ configurations should go in the `model_configs.py` file found in this directory.
 """
 
 import os
-import time
+import json
 from dataclasses import dataclass, field
-from typing import Dict, Any, List
+from typing import Any, Dict, List, Optional
 
 import hydra
-from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
+from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.registry import register_mephisto_abstraction
-from omegaconf import DictConfig
+from omegaconf import DictConfig, MISSING
 
 import parlai.crowdsourcing.tasks.fast_acute.run as acute_eval
 from parlai.crowdsourcing.tasks.acute_eval import run
-from parlai.utils.strings import normalize_reply
 from parlai.crowdsourcing.tasks.fast_acute.run import (
     FastAcuteBlueprint,
     FastAcuteBlueprintArgs,
     FastAcuteExecutor,
 )
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
+from parlai.utils.strings import normalize_reply
 
 BLUEPRINT_TYPE = "fast_acute_q_function"
 
@@ -163,10 +164,9 @@ defaults = [
 
 
 @dataclass
-class TestScriptConfig(RunScriptConfig):
+class TestScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    current_time: int = int(time.time())
     monitoring_log_rate: int = field(
         default=30,
         metadata={

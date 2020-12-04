@@ -24,7 +24,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import hydra
 import torch
-from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
+from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.operator import Operator
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.tools.scripts import load_db_and_process_config
@@ -40,6 +40,7 @@ from parlai.crowdsourcing.tasks.fast_acute.analysis import (
     setup_args as analysis_setup_args,
 )
 from parlai.crowdsourcing.tasks.fast_acute.util import get_hashed_combo_path
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_args
 from parlai.utils.strings import normalize_reply
 from parlai.utils.testing import capture_output
@@ -514,10 +515,9 @@ defaults = [
 
 
 @dataclass
-class TestScriptConfig(RunScriptConfig):
+class TestScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
-    current_time: int = int(time.time())
     monitoring_log_rate: int = field(
         default=30,
         metadata={
