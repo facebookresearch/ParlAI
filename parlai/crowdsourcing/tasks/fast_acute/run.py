@@ -502,7 +502,7 @@ class FastAcuteExecutor(object):
         self._print_progress(f'ACUTE results saved to {self.results_path}')
 
 
-TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
+ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
 # Read in any task config JSON/HTML files from the ACUTE-Eval directory
 
 defaults = [
@@ -517,7 +517,7 @@ defaults = [
 @dataclass
 class TestScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
-    task_dir: str = TASK_DIRECTORY
+    task_dir: str = ACUTE_EVAL_TASK_DIRECTORY
     monitoring_log_rate: int = field(
         default=30,
         metadata={
