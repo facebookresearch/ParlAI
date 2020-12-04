@@ -1,0 +1,8 @@
+batch_size : 64
+eval_splits :  [valid, test]
+data_prefix : relabeled_second_pass_prev_curr_future 
+classes_file : /checkpoint/ccross/data/empathy_labeled_joint_datasets/binary_labels/classes.txt
+generate_future: True
+# future-looking classifier, after relabeling
+classifier_path : /checkpoint/ccross/sweeps/style_controlled_classifier/005/ee0_jobid=1/model
+results_dir : /checkpoint/ccross/results

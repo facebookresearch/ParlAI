@@ -1,0 +1,13 @@
+# dataset args
+task_name : prev_curr
+data_prefix_in : relabeled_prev_curr_upsampled
+data_prefix_out: relabeled_second_pass_prev_curr_upsampled
+classifier_path : /checkpoint/ccross/sweeps/style_controlled_classifier/004/local_run/model
+report_dir : /checkpoint/ccross/sweeps/style_controlled_classifier/004/local_run/reports
+
+# classifier args
+batch_size : 256
+relabeling_threshold : 0.75
+exclude_from_eval : [style_gen, wow, convai2] # since these come from bots
+output_file_prefix : /checkpoint/ccross/data/empathy_labeled_joint_datasets/binary_labels/relabeled_second_pass
+results_file_prefix : /checkpoint/ccross/results/results_two_relabel_prev_curr_utt

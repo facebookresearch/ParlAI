@@ -1,0 +1,10 @@
+batch_size: 16
+data_prefix: relabeled_second_pass_prev_curr_future_upsampled
+#generator_path: /checkpoint/ccross/sweeps/style_controlled_generator/000/1a1_jobid=1/model
+#report_dir: /checkpoint/ccross/sweeps/style_controlled_generator/000/1a1_jobid=1/reports
+#generation_dir: /checkpoint/ccross/sweeps/style_controlled_generator/000/1a1_jobid=1/generations
+dict_path: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_002/model.dict
+generator_path: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_002/model
+report_dir: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_002/reports
+generation_dir: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_002/generations
+style_frac : 1

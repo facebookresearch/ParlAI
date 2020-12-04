@@ -1,0 +1,4 @@
+gpus : 8
+sweep_idx : 4
+save_folder : /checkpoint/ccross/sweeps/style_controlled_generator/updated_labeling
+num_jobs : 1

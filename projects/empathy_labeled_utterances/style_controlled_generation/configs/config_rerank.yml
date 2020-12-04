@@ -1,0 +1,7 @@
+batch_size: 16
+data_prefix: relabeled_second_pass_prev_curr_future_upsampled
+generator_path: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_003/model
+classifier_path: /checkpoint/ccross/sweeps/style_controlled_classifier/005/ee0_jobid=1/model
+report_dir: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_003/reports
+generation_dir: /private/home/ccross/ParlAI/parlai_internal/projects/empathy_generation/generator_003/generations
+class_path: /checkpoint/ccross/data/empathy_labeled_joint_datasets/binary_labels/classes.txt
