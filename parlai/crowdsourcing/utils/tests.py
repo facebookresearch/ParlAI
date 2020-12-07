@@ -8,11 +8,14 @@ Utilities for running tests.
 """
 
 import os
+import random
 import tempfile
 import time
 import unittest
 from typing import Any, Dict, List, Optional
 
+import numpy as np
+import torch
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.operations.operator import Operator
@@ -29,10 +32,15 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    def setup_class(self):
+    def setup_method(self):
+
+        random.seed(0)
+        np.random.seed(0)
+        torch.manual_seed(0)
+
         self.operator = None
 
-    def teardown_class(self):
+    def teardown_method(self):
         if self.operator is not None:
             self.operator.shutdown()
 
@@ -133,8 +141,8 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
 
     def _test_agent_state(
         self,
+        expected_state: Dict[str, Any],
         data_regression: Optional[DataRegressionFixture] = None,
-        expected_state: Optional[Dict[str, Any]] = None,
     ):
         """
         Test that the actual agent state matches the expected state.
@@ -145,7 +153,8 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         state.
 
         TODO: deprecate the expected_state arg when all tests are ported over to pytest
-         regressions, and then make data_regression a mandatory arg
+         regressions, and make it instead just the task data to send. Then, make
+         data_regression a mandatory arg. 
         """
 
         # Set up the mock human agent
@@ -162,6 +171,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
 
         # Check that the inputs and outputs are as expected
         state = self.db.find_agents()[0].state.get_data()
+        del state['times']  # Delete variable timestamps
         if data_regression is not None:
             data_regression.check(state)
         else:

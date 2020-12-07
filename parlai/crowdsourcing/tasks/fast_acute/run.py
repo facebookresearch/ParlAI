@@ -456,6 +456,15 @@ class FastAcuteExecutor(object):
         """
         Run ACUTE Eval.
         """
+        self.set_up_acute_eval()
+        db, cfg = load_db_and_process_config(self.args)
+        operator = Operator(db)
+        operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
+        operator.wait_for_runs_then_shutdown(
+            skip_input=True, log_rate=cfg.monitoring_log_rate
+        )
+
+    def set_up_acute_eval(self):
         self._build_pairings_file()
 
         total_convos = self.fast_acute_args.matchups_per_pair * len(self.combos)
@@ -478,12 +487,6 @@ class FastAcuteExecutor(object):
                 f"The following ACUTE-Eval parameters will be overwritten to the following:\n"
                 f"{overwritten_param_output}"
             )
-        db, cfg = load_db_and_process_config(self.args)
-        operator = Operator(db)
-        operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
-        operator.wait_for_runs_then_shutdown(
-            skip_input=True, log_rate=cfg.monitoring_log_rate
-        )
 
     def analyze_results(self):
         """
