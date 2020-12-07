@@ -488,15 +488,19 @@ class FastAcuteExecutor(object):
                 f"{overwritten_param_output}"
             )
 
-    def analyze_results(self):
+    def analyze_results(self, args: Optional[str] = None):
         """
-        Analyze results of ACUTE Eval run.
+        Analyze results of ACUTE Eval run, using the optional input args.
 
         Save results to appropriate filepath.
         """
         self._print_progress(f'Analyzing Results for run id {self.run_id}')
         parser = analysis_setup_args()
-        opt = parser.parse_args([])
+        if args is not None:
+            arg_string = args.split()
+        else:
+            arg_string = []
+        opt = parser.parse_args(arg_string)
         today = datetime.date.today().isoformat()
         self.results_path = get_hashed_combo_path(
             root_dir=self.fast_acute_args.root_dir,

@@ -116,7 +116,9 @@ if True:
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
             # Run analysis
-            self.base_task_runner.analyze_results()
+            self.base_task_runner.analyze_results(
+                args=f'--mephisto-root {self.database_path}'
+            )
 
         def test_q_function_task(self, data_regression: DataRegressionFixture):
 
@@ -177,7 +179,7 @@ if True:
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
             # Run analysis
-            runner.analyze_results()
+            runner.analyze_results(args=f'--mephisto-root {self.database_path}')
 
         def teardown_method(self):
 

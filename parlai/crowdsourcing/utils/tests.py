@@ -89,8 +89,8 @@ class AbstractCrowdsourcingTest:
             #  https://github.com/facebookresearch/hydra/pull/1044.
 
         self.data_dir = tempfile.mkdtemp()
-        database_path = os.path.join(self.data_dir, "mephisto.db")
-        self.db = LocalMephistoDB(database_path)
+        self.database_path = os.path.join(self.data_dir, "mephisto.db")
+        self.db = LocalMephistoDB(self.database_path)
         self.config = augment_config_from_db(self.config, self.db)
         self.config.mephisto.architect.should_run_server = True
 
@@ -140,9 +140,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
     """
 
     def _test_agent_state(
-        self,
-        task_data: Dict[str, Any],
-        data_regression: DataRegressionFixture,
+        self, task_data: Dict[str, Any], data_regression: DataRegressionFixture
     ):
         """
         Test that the actual agent state matches the expected state.
