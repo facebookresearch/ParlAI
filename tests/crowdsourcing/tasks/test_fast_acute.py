@@ -7,6 +7,7 @@
 End-to-end testing for the Fast ACUTE crowdsourcing task.
 """
 
+import json
 import os
 import shutil
 import tempfile
@@ -23,7 +24,10 @@ try:
     from parlai.crowdsourcing.tasks.fast_acute.run_q_function import (
         BLUEPRINT_TYPE as Q_FUNCTION_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.tasks.fast_acute.run import TASK_DIRECTORY
+    from parlai.crowdsourcing.tasks.fast_acute.run import (
+        FastAcuteExecutor,
+        TASK_DIRECTORY,
+    )
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
     class TestFastAcute(AbstractOneTurnCrowdsourcingTest):
@@ -36,32 +40,42 @@ try:
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
 
+            # Params
             self.common_overrides = [
                 'mephisto.blueprint.block_on_onboarding_fail=False',
                 'mephisto.blueprint.num_self_chats=5',
                 f'mephisto.blueprint.root_dir={self.root_dir}',
             ]
+            self.models = ['blender_90m_copy1', 'blender_90m_copy2']
+            model_string = ','.join(self.models)
+            self.base_task_overrides = [
+                f'mephisto.blueprint.config_path={TASK_DIRECTORY}/task_config/model_config.json',
+                f'mephisto.blueprint.models=\"{model_string}\"',
+                'mephisto.blueprint.task=blended_skill_talk',
+                'mephisto.blueprint.use_existing_self_chat_files=True',
+            ]
 
             # Save expected self-chat files
-            # {{{TODO}}}
+            self._set_up_config(
+                blueprint_type=BASE_BLUEPRINT_TYPE,
+                task_directory=TASK_DIRECTORY,
+                overrides=self.common_overrides + self.base_task_overrides,
+            )
+            self.base_task_runner = FastAcuteExecutor(self.config)
+            self.base_task_runner.run_selfchat()
 
-        def test_self_chat_files(self):
-            pass
-            # {{{TODO: compare to expected using regressions}}}
+        def test_self_chat_files(self, data_regression: DataRegressionFixture):
+            for model in self.models:
+                outfile = self.base_task_runner._get_selfchat_log_path(model)
+                data_regression.check(outfile)
 
         def test_base_task(self, data_regression: DataRegressionFixture):
 
             # Set up the config, database, operator, and server
-            overrides = self.common_overrides + [
-                f'mephisto.blueprint.config_path={TASK_DIRECTORY}/task_config/model_config.json',
-                'mephisto.blueprint.models=\"blender_90m_copy1,blender_90m_copy2\"',
-                'mephisto.blueprint.task=blended_skill_talk',
-                'mephisto.blueprint.use_existing_self_chat_files=True',
-            ]
             self._set_up_config(
                 blueprint_type=BASE_BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
-                overrides=overrides,
+                overrides=self.common_overrides + self.base_task_overrides,
             )
             self._set_up_server()
 
@@ -72,12 +86,20 @@ try:
 
             # Save the config file
             config_path = os.path.join(self.root_dir, 'config.json')
-            # {{{TODO: save config file, referring to self-chat files}}}
+            config = {}
+            for model in self.models:
+                config[model] = {
+                    'log_path': self.base_task_runner._get_selfchat_log_path(model),
+                    'is_selfchat': True,
+                }
+            with open(config_path, 'w') as f:
+                json.dump(config, f)
 
             # Set up the config, database, operator, and server
+            assert len(self.models) == 2
             overrides = self.common_overrides + [
                 f'mephisto.blueprint.config_path={config_path}',
-                'mephisto.blueprint.model_pairs=blender_90m_copy1:blender_90m_copy2',
+                f'mephisto.blueprint.model_pairs={self.models[0]}:{self.models[1]}',
             ]
             self._set_up_config(
                 blueprint_type=Q_FUNCTION_BLUEPRINT_TYPE,
