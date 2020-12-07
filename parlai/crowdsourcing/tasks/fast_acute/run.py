@@ -129,6 +129,10 @@ class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
         default=6,
         metadata={'help': "The number of dialogue turns before self chat ends"},
     )
+    use_existing_self_chat_files: bool = field(
+        default=False,
+        metadata={'help': "Use any existing self-chat files without prompting"},
+    )
 
 
 @register_mephisto_abstraction()
@@ -399,20 +403,21 @@ class FastAcuteExecutor(object):
             self._print_progress(
                 f'Pairings already exist {pairings_filepath}. Last modified {time.ctime(modify_time)}'
             )
-            answer = ''
-            while answer.lower().strip() != 'y' and answer.lower().strip() != 'o':
-                answer = input('Enter y to use, o to overwrite:')
-                if answer.lower().strip() == 'o':
-                    self._print_progress(
-                        f'building pairings file, saving at {pairings_filepath}'
-                    )
-                    conversations = self._load_selfchats()
-                    pairs = self._build_conversation_pairs(conversations)
-                    with open(pairings_filepath, 'w') as f:
-                        # Write the onboarding convo
-                        f.write(json.dumps(onboarding_convo_pair) + "\n")
-                        for pair in pairs:
-                            f.write(json.dumps(pair) + "\n")
+            if not self.fast_acute_args.use_existing_self_chat_files:
+                answer = ''
+                while answer.lower().strip() != 'y' and answer.lower().strip() != 'o':
+                    answer = input('Enter y to use, o to overwrite:')
+                    if answer.lower().strip() == 'o':
+                        self._print_progress(
+                            f'building pairings file, saving at {pairings_filepath}'
+                        )
+                        conversations = self._load_selfchats()
+                        pairs = self._build_conversation_pairs(conversations)
+                        with open(pairings_filepath, 'w') as f:
+                            # Write the onboarding convo
+                            f.write(json.dumps(onboarding_convo_pair) + "\n")
+                            for pair in pairs:
+                                f.write(json.dumps(pair) + "\n")
 
         self._print_progress(f'loading pairings file from {pairings_filepath}')
         self.pairings_filepath = pairings_filepath
