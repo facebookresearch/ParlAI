@@ -13,7 +13,7 @@ import unittest
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
-try:
+if True:
 
     from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
         BLUEPRINT_TYPE,
@@ -51,8 +51,8 @@ try:
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass
 
 if __name__ == "__main__":
     unittest.main()

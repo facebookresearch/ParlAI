@@ -16,7 +16,7 @@ import unittest
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
-try:
+if True:
 
     from parlai.crowdsourcing.tasks.fast_acute.run import (
         FastAcuteExecutor,
@@ -115,6 +115,9 @@ try:
             # Check that the agent state is as it should be
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
+            # Run analysis
+            self.base_task_runner.analyze_results()
+
         def test_q_function_task(self, data_regression: DataRegressionFixture):
 
             task_data = {
@@ -173,6 +176,9 @@ try:
             # Check that the agent state is as it should be
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
+            # Run analysis
+            runner.analyze_results()
+
         def teardown_method(self):
 
             super().teardown_method()
@@ -181,8 +187,8 @@ try:
             shutil.rmtree(self.root_dir)
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass
 
 if __name__ == "__main__":
     unittest.main()
