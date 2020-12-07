@@ -206,7 +206,7 @@ class AcuteAnalyzer(object):
         Extract the data from the run to a pandas dataframe.
         """
         units = self.mephisto_data_browser.get_units_for_task_name(self.run_id)
-        dataframe: List[Dict[str, Any]] = []
+        responses: List[Dict[str, Any]] = []
         for unit in units:
             unit_details = self._parse_unit(unit)
             if unit_details is None:
@@ -214,9 +214,12 @@ class AcuteAnalyzer(object):
             for idx in range(len(unit_details['data'])):
                 response = self._extract_response_by_index(unit_details, idx)
                 if response is not None:
-                    dataframe.append(response)
+                    responses.append(response)
 
-        return pd.DataFrame(dataframe)
+        if len(responses) == 0:
+            raise ValueError('No valid results found!')
+        else:
+            return pd.DataFrame(responses)
 
     def _remove_failed_onboarding(self):
         """
@@ -235,6 +238,9 @@ class AcuteAnalyzer(object):
         self.dataframe = df[
             ~df["worker"].isin(workers_failing_onboarding) & ~df["is_onboarding"]
         ]
+        print(
+            f'{self.dataframe.size:d} dataframe entries remaining after removing users who failed onboarding.'
+        )
 
     def _load_pairing_files(self):
         df = self.dataframe
@@ -245,6 +251,9 @@ class AcuteAnalyzer(object):
             combos=self.combos,
         )
         if not os.path.exists(self.pairings_filepath):
+            print(
+                f'WARNING: Pairings filepath {self.pairings_filepath} could not be found.'
+            )
             self.pairings_filepath = os.path.join(
                 self.root_dir,
                 'pairings_files',
@@ -256,6 +265,9 @@ class AcuteAnalyzer(object):
             )
         if not os.path.exists(self.pairings_filepath):
             # For backward compatibility
+            print(
+                f'WARNING: Pairings filepath {self.pairings_filepath} could not be found.'
+            )
             self.pairings_filepath = os.path.join(
                 self.root_dir,
                 'pairings_files',
@@ -264,7 +276,9 @@ class AcuteAnalyzer(object):
                 ),
             )
         if not os.path.exists(self.pairings_filepath):
-            print("NOTE: pairings filepath could not be found!")
+            print(
+                f'NOTE: Pairings filepath {self.pairings_filepath} could not be found!'
+            )
             return
         self.pairings = []
         with open(self.pairings_filepath, 'r') as f:

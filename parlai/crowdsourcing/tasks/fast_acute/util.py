@@ -32,7 +32,7 @@ def get_hashed_combo_path(
     sorted_combos = sorted(sorted_combos)
 
     os.makedirs(os.path.join(root_dir, subdir), exist_ok=True)
-    return os.path.join(
+    path = os.path.join(
         root_dir,
         subdir,
         hashlib.sha1(
@@ -41,3 +41,4 @@ def get_hashed_combo_path(
             ).encode('utf-8')
         ).hexdigest()[:10],
     )
+    return path

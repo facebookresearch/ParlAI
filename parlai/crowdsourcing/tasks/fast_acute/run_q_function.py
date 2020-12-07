@@ -74,7 +74,7 @@ class QLearningFastAcuteExecutor(FastAcuteExecutor):
         if model_config is not None:
             self.model_config = model_config
         else:
-            with open(self.args.mephisto.config_path) as f:
+            with open(self.fast_acute_args.config_path) as f:
                 self.model_config = json.load(f)
 
         # models + task

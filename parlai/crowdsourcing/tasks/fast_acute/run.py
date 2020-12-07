@@ -90,6 +90,10 @@ class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
         metadata={'help': 'Path to JSON of model types and their parameters'},
     )
     root_dir: str = field(default=MISSING, metadata={'help': 'Root save folder'})
+    onboarding_path: Optional[str] = field(
+        default=None,
+        metadata={'help': 'Path to JSON file of settings for running onboarding'},
+    )
     models: Optional[str] = field(
         default=None,
         metadata={
@@ -155,7 +159,7 @@ class FastAcuteExecutor(object):
         if model_config is not None:
             self.model_config = model_config
         else:
-            with open(self.args.mephisto.config_path) as f:
+            with open(self.fast_acute_args.config_path) as f:
                 self.model_config = json.load(f)
 
         # models + task
@@ -253,9 +257,10 @@ class FastAcuteExecutor(object):
         :param model:
             model string
         """
+        self_chats_folder = os.path.join(self.fast_acute_args.root_dir, 'self_chats')
+        os.makedirs(self_chats_folder, exist_ok=True)
         return os.path.join(
-            self.fast_acute_args.root_dir,
-            f"self_chats/{model}.{self.task.replace(':', '_')}.jsonl",
+            self_chats_folder, f"{model}.{self.task.replace(':', '_')}.jsonl"
         )
 
     def _acutify_convo(
@@ -360,7 +365,14 @@ class FastAcuteExecutor(object):
         """
         Build the pairings file for the two models.
         """
-        with open(os.path.join(self.fast_acute_args.root_dir, 'onboarding.json')) as f:
+        if self.fast_acute_args.onboarding_path is not None:
+            onboarding_path = self.fast_acute_args.onboarding_path
+        else:
+            # Default onboarding location
+            onboarding_path = os.path.join(
+                self.fast_acute_args.root_dir, 'onboarding.json'
+            )
+        with open(onboarding_path) as f:
             onboarding_convo_pair: Dict[str, Any] = json.load(f)
 
         pairings_filepath = get_hashed_combo_path(
