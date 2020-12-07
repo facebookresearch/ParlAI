@@ -1,3 +1,4 @@
+acts:
 - - checked_sentence: Gardening is considered by many people to be a relaxing activity.
     chosen_topic: Gardening
     episode_done: false
@@ -1291,3 +1292,5 @@
 
       I would like to know more about bob ross'
     title: Bob Ross
+num_episodes: 981
+num_examples: 3939

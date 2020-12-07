@@ -1,3 +1,4 @@
+acts:
 - - answer_starts:
     - 422
     context: Architecturally, the school has a Catholic character. Atop the Main Building's
@@ -146,3 +147,5 @@
     labels:
     - Atop the Main Building's gold dome is a golden statue of the Virgin Mary.
     text: What sits on top of the Main Building at Notre Dame?
+num_episodes: 87599
+num_examples: 87599

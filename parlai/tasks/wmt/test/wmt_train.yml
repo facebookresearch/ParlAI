@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: wmt
     labels:
@@ -39,3 +40,5 @@
     - Bingo ist ein auf 90 Nummern ( 1 bis 90 ) beruhendes Lotterie __AT__ Spiel .
     reward: 0
     text: Bingo is a lottery game using 90 numbers ( 1 to 90 ) .
+num_episodes: 4438840
+num_examples: 4438840

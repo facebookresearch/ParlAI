@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - area:south
@@ -41,3 +42,5 @@
     text: 'Looking for the address and phone of a spanish in the centre of town.
 
       What is the change in the dialogue state?'
+num_episodes: 563
+num_examples: 563

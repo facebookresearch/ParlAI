@@ -1,3 +1,4 @@
+acts:
 - - checked_passage:
       chosen_topic_0_Science_fiction: Science fiction
     checked_sentence:
@@ -604,3 +605,5 @@
     text: It's not quite sci-fi, but my favorite version of time travel is in Harry
       Potter and the Prisoner of Azkaban. Breaks zero logical rules.
     wizard_eval: 5
+num_episodes: 18430
+num_examples: 166787

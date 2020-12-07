@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - I have 133 trains matching your request. Is there a specific day and time you
@@ -29,3 +30,5 @@
     - Thank you for using our system.
     id: multiwoz_v20
     text: Yes, that was all I needed. Thank you very much!
+num_episodes: 1000
+num_examples: 7372

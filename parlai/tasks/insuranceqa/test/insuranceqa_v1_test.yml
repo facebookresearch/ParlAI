@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - retirement planning be pay yourself first whether you use a qualified plan or
@@ -787,3 +788,5 @@
       , the cash value be not taxable
     reward: 0
     text: do CA 50/50 marriage law play into party when it come to life insurance
+num_episodes: 1800
+num_examples: 1800

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Orlando Bloom und Miranda Kerr lieben sich noch immer
@@ -35,3 +36,5 @@
     reward: 0
     text: Actor Orlando Bloom announced his separation from his wife , supermodel
       Miranda Kerr .
+num_episodes: 2737
+num_examples: 2737

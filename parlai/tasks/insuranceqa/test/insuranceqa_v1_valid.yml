@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - borrowing against a life insurance policy require cash value inside that policy
@@ -809,3 +810,5 @@
       the effect that a claim may have on your rate
     reward: 0
     text: what be car insurance base on
+num_episodes: 1000
+num_examples: 1000

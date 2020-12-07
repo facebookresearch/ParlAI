@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - That sounds great.  I've always thought that I would love living in a farm,
@@ -33,3 +34,5 @@
     - I live on a farm, we garden all year long, it is very relaxing.
     id: wizard_of_wikipedia:BasicWizardDialog
     text: I like Gardening, even when I've only been doing it for a short time.
+num_episodes: 1962
+num_examples: 7928

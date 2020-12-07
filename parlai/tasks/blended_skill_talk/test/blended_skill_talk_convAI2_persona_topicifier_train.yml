@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: blended_skill_talk:convAI2_persona_topicifier
     label_candidates:
@@ -151,3 +152,5 @@
     - i like chicken or macaroni and cheese .
     reward: 0
     text: i would have to say its prime rib . do you have any favorite foods ?
+num_episodes: 17878
+num_examples: 131438

@@ -1,3 +1,4 @@
+acts:
 - - context_dataset: wizard_of_wikipedia
     convai2: i'm a grandmaster . i think they rank bridge players like chess .
     empathetic_dialogues: K, 4, 5, 10th
@@ -200,3 +201,5 @@
     text: I have a pretty stable job myself, but mostly desk work
     wizard_of_wikipedia: Thats unfair, you should be paid well for completing many
       different tasks throughout your shifts
+num_episodes: 1009
+num_examples: 5651

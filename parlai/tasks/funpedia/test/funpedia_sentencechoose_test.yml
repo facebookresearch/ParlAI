@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - The Case of Mines or "R v Earl of Northumberland" was decided in 1568.
@@ -61,3 +62,5 @@
     reward: 0
     text: 'Kurper is a generic name for certain fish in South Africa. It may refer
       to:'
+num_episodes: 9974
+num_examples: 9974

@@ -1,3 +1,4 @@
+acts:
 - - did_continue: 'True'
     episode_done: false
     eval_labels:
@@ -201,3 +202,5 @@
       _partner_say Dont worry, I know I cant have you just because I am a stable boy
       but I will tell my master the knight of lakeside house about you. I want to
       serve you'
+num_episodes: 500
+num_examples: 2968

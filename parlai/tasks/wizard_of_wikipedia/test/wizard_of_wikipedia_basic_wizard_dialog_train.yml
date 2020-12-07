@@ -1,3 +1,4 @@
+acts:
 - - chosen_topic: Science fiction
     episode_done: false
     id: wizard_of_wikipedia:basic_wizard_dialog
@@ -36,3 +37,5 @@
     - No I could not! I couldn't imagine living when internet access was rare and
       very few people had it!
     text: 'Can you imagine the world without internet access? '
+num_episodes: 18430
+num_examples: 74092

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Southern NYC, maybe the East Village
@@ -50,3 +51,5 @@
     - - restaurant_reservation.time.reservation
       - restaurant_reservation.time.reservation
     text: 5 or 8.
+num_episodes: 7691
+num_examples: 68228

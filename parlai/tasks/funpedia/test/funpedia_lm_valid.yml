@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - I wonder what went through Bill Tom Closs's mind when he played basketball?
@@ -30,3 +31,5 @@
     id: funpedia:lm
     reward: 0
     text: ''
+num_episodes: 10184
+num_examples: 10184

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - What city do you want to dine in? Do you have a preferred restaurant?
@@ -65,3 +66,5 @@
     text: 'What''s their address? Do they have vegetarian options on their menu? api_resp:
       has_vegetarian_options = [''True''] ; address = [''377 Santana Row #1000'']'
     type: apiresp
+num_episodes: 2482
+num_examples: 31825

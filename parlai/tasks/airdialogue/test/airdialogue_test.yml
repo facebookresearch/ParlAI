@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Hello.
@@ -24,3 +25,5 @@
     - Let me know about affordable price please.
     id: airdialogue
     text: My travelling dates are from Apr 27 to Apr 29.
+num_episodes: 20182
+num_examples: 128404

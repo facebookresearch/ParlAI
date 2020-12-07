@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - negative
@@ -51,3 +52,5 @@
     text: 'This is one of Polanski''s best films.
 
       Is this sentence positive or negative?'
+num_episodes: 1821
+num_examples: 1821

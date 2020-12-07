@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: squad2
     label_candidates:
@@ -99,3 +100,5 @@
       R&B girl-group Destiny's Child.
     plausible_answers: []
     text: In which decade did Beyonce become famous?
+num_episodes: 130319
+num_examples: 130319

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: google_sgd
     labels:
@@ -49,3 +50,5 @@
     text: 'Can you give me the address of this restaurant. api_resp: street_address
       = [''71 North San Pedro Street'']'
     type: apiresp
+num_episodes: 56678
+num_examples: 113356

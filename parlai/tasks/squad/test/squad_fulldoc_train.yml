@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: squad-fulldoc
     labels:
@@ -3783,3 +3784,5 @@
       \ of the main drive (and in a direct line that connects through 3 statues and\
       \ the Gold Dome), is a simple, modern stone statue of Mary.\nWhat sits on top\
       \ of the Main Building at Notre Dame?"
+num_episodes: 87599
+num_examples: 87599

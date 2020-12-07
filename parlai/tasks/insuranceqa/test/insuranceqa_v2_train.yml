@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: insuranceqa:v2
     label_candidates:
@@ -1138,3 +1139,5 @@
       pay yourself back on the loan . Good Luck .
     reward: 0
     text: Is The Cash Surrender Value Of Life Insurance Taxable ?
+num_episodes: 12889
+num_examples: 12889

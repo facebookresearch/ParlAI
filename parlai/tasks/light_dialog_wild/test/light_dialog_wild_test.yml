@@ -1,3 +1,4 @@
+acts:
 - - did_continue: 'False'
     episode_done: false
     eval_labels:
@@ -204,3 +205,5 @@
 
       _partner_say I am a jester, I entertain the king and his royal court. I entertain
       the king and his royal court.'
+num_episodes: 1000
+num_examples: 5911

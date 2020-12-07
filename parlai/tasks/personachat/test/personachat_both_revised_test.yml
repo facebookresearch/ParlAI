@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - i am well an loving this interaction how are you ?
@@ -160,3 +161,5 @@
     - we watched a show about animals like him
     reward: 0
     text: do you live in a house or apartment ?
+num_episodes: 968
+num_examples: 7512

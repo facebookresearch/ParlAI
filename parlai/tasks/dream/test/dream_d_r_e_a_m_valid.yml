@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - To change her job.
@@ -78,3 +79,5 @@
       W: That''s a good idea.
 
       What season is it now?'
+num_episodes: 1288
+num_examples: 2040

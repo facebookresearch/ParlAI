@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Ok, what area are you thinking about?
@@ -24,3 +25,5 @@
     - Ok, do you have a second choice?
     id: taskmaster:self_dialogue
     text: Yikes, we can't do those times.
+num_episodes: 15416
+num_examples: 161761

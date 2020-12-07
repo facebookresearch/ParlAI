@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - neutral
@@ -60,3 +61,5 @@
     text: 'Premise: i don''t know um do you do a lot of camping
 
       Hypothesis: I know exactly.'
+num_episodes: 9815
+num_examples: 9815

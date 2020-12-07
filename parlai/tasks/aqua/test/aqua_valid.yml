@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - A ) 32400
@@ -77,3 +78,5 @@
       rectangular pieces . The shorter piece was one - third of the length of the
       longer of the 2 new pieces and had an area of 12 square feet . What was the
       length Q in feet of the original piece of cloth before cutting ?
+num_episodes: 254
+num_examples: 508

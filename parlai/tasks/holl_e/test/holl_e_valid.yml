@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - I liked the one in which Caesar talks to MacDonald about the apes' revolt in
@@ -126,3 +127,5 @@
       subtle visual gags. The cutaway tour of the ship was a classic.
     id: holl_e
     text: Its pure crazy fantastical stuff and I was completely taken with it.
+num_episodes: 456
+num_examples: 915

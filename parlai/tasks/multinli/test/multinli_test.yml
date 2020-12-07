@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - contradiction
@@ -66,3 +67,5 @@
       reason, I just don''t know what it is yet.
 
       Hypothesis: I don''t yet know the reason why I have lived on earth. '
+num_episodes: 9832
+num_examples: 9832

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - neutral
@@ -58,3 +59,5 @@
       their hands in a sink.
 
       Hypothesis: Two kids at a ballgame wash their hands.'
+num_episodes: 9842
+num_examples: 9842

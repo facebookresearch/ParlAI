@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Blue is one of the three primary colours of pigments in painting and traditional
@@ -95,3 +96,5 @@
       ("graphein") meaning "to record", together meaning "recording motion."
 
       Cinematography'
+num_episodes: 965
+num_examples: 4087

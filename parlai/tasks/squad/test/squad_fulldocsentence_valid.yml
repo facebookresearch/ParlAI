@@ -1,3 +1,4 @@
+acts:
 - - answer_starts:
     - 130
     - 3708
@@ -2853,3 +2854,5 @@
     - The Broncos prevailed 21-20 as Carolina missed a field goal attempt to end the
       game.
     text: What color was used to emphasize the 50th anniversary of the Super Bowl?
+num_episodes: 10570
+num_examples: 10570

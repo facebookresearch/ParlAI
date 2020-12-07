@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: SNLI
     label_candidates:
@@ -53,3 +54,5 @@
     text: 'Premise: Children smiling and waving at camera
 
       Hypothesis: There are children present'
+num_episodes: 549367
+num_examples: 549367

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: google_sgd:text2_text
     labels:
@@ -29,3 +30,5 @@
     - If you want to phone them you can at 408-971-8523.
     text: Can you give me the phone number that I can contact them with?
     type: text
+num_episodes: 56678
+num_examples: 113356

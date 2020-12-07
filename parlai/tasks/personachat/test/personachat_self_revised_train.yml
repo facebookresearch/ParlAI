@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: personachat:self_revised
     label_candidates:
@@ -149,3 +150,5 @@
     - i like chicken or macaroni and cheese .
     reward: 0
     text: i would have to say its prime rib . do you have any favorite foods ?
+num_episodes: 8939
+num_examples: 65719

@@ -1,3 +1,4 @@
+acts:
 - - answer_starts:
     - 129
     context: Super Bowl 50 was an American football game to determine the champion
@@ -162,3 +163,5 @@
       game would have been known as "Super Bowl L"), so that the logo could prominently
       feature the Arabic numerals 50.
     text: What color was used to emphasize the 50th anniversary of the Super Bowl?
+num_episodes: 10570
+num_examples: 10570

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - 'You should watch Police Academy '
@@ -25,3 +26,5 @@
     - and also Beverly Hills Cop
     id: redial
     text: Thank you i will watch that too
+num_episodes: 1342
+num_examples: 7505

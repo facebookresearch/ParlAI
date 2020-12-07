@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - 'Es gibt mindestens zwei Handlungsstrategien , die wir voranbringen wollen :
@@ -54,3 +55,5 @@
     reward: 0
     text: According to the information you give us we will compose the right system
       for your presentation , based on your wishes and the available budget .
+num_episodes: 30000
+num_examples: 30000

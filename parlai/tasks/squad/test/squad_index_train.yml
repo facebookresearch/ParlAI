@@ -1,3 +1,4 @@
+acts:
 - - answer_starts:
     - 515
     episode_done: true
@@ -83,3 +84,5 @@
       and the Gold Dome), is a simple, modern stone statue of Mary.
 
       What sits on top of the Main Building at Notre Dame?'
+num_episodes: 87599
+num_examples: 87599

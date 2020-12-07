@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Blue is always nice. I like royal blue.
@@ -26,3 +27,5 @@
     id: wizard_of_wikipedia:basic_apprentice_dialog
     text: 'Cinematography,is a type of motion picture , captured electronically by
       means of an image '
+num_episodes: 965
+num_examples: 3885

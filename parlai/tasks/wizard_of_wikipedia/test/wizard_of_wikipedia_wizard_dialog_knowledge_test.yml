@@ -1,3 +1,4 @@
+acts:
 - - checked_sentence: Blue is one of the three primary colours of pigments in painting
       and traditional colour theory, as well as in the RGB colour model.
     chosen_topic: Blue
@@ -1121,3 +1122,5 @@
       electrical charge.The word "cinematography" is based on the Greek words  meaning
       movement, motion.
     title: Cinematography
+num_episodes: 965
+num_examples: 3865

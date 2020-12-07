@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - 丈夫
@@ -68,3 +69,5 @@
       男：没办法，手上拿的袋子实在太重了。
 
       男的为什么停下来?'
+num_episodes: 1627
+num_examples: 1890

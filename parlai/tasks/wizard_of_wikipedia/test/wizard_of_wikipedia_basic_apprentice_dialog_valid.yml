@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - That sounds great.  I've always thought that I would love living in a farm,
@@ -32,3 +33,5 @@
     - thats cool what else?
     id: wizard_of_wikipedia:basic_apprentice_dialog
     text: Ross was an American painter and television host
+num_episodes: 981
+num_examples: 3989

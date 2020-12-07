@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: holl_e
     labels:
@@ -205,3 +206,5 @@
       \ die? Do you remember what happened to the psychiatrist? Do you remember the\
       \ type of cell phone the first enemy is using? \nWhat do you think about the\
       \ movie?"
+num_episodes: 7225
+num_examples: 14643

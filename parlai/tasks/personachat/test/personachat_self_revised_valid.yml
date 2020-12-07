@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - i am good , i just got off work and tired , i have two jobs .
@@ -154,3 +155,5 @@
     - yes it is neat , i stunt double , it is so much fun and hard work .
     reward: 0
     text: neat ! ! i used to work in the human services field
+num_episodes: 1000
+num_examples: 7801

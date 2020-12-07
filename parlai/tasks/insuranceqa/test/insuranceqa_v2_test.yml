@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Actually term life insurance can not be paid up . It just expires or has a steep
@@ -1449,3 +1450,5 @@
       it . Thank you for asking !
     reward: 0
     text: Will Medicare Pay For Smoking Cessation ?
+num_episodes: 2000
+num_examples: 2000

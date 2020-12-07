@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: wizard_of_wikipedia:basicdialog
     labels:
@@ -31,3 +32,5 @@
     - Always looking for more science fiction to digest!
     text: It blends science fiction and paranormal/psychological/MK Ultra type stuff
       together, but it's science fiction at its core.
+num_episodes: 18430
+num_examples: 82965

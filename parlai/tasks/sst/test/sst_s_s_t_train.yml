@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: sst
     label_candidates:
@@ -54,3 +55,5 @@
       modern-office anomie films.
 
       Is this sentence positive or negative?'
+num_episodes: 6920
+num_examples: 6920

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - SELECT  Nationality FROM table WHERE Player = Terrence Ross
@@ -38,3 +39,5 @@
       Lap, Race winner and Report.
 
       Where was Assen held?'
+num_episodes: 56355
+num_examples: 56355

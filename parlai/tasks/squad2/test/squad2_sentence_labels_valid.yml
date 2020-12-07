@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - 'The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were the
@@ -106,3 +107,5 @@
       centuries.
     plausible_answers: []
     text: What century did the Normans first gain their separate identity?
+num_episodes: 11873
+num_examples: 11873

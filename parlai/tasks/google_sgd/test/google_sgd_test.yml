@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Any preference on the restaurant, location and time?
@@ -72,3 +73,5 @@
       = [''Benissimo Restaurant & Bar''] ; location = [''Corte Madera''] ; time =
       [''12:00''] ; date = [''2019-03-08''] ; number_of_seats = [''2'']'
     type: apiresp
+num_episodes: 4201
+num_examples: 54970

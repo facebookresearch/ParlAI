@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Hello.
@@ -24,3 +25,5 @@
     - Ok, please wait a moment.
     id: airdialogue
     text: The airport codes are from DFW to IAD.
+num_episodes: 20181
+num_examples: 128413

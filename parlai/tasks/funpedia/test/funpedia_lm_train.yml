@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: funpedia:lm
     labels:
@@ -29,3 +30,5 @@
       remake songs.
     reward: 0
     text: ''
+num_episodes: 81467
+num_examples: 81467

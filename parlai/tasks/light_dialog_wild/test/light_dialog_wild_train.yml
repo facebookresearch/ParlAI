@@ -1,3 +1,4 @@
+acts:
 - - did_continue: 'True'
     episode_done: false
     id: light_dialog_wild
@@ -184,3 +185,5 @@
     text: '_self_say What are we doing now?
 
       _partner_say Playing.'
+num_episodes: 41131
+num_examples: 230992

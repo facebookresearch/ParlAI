@@ -1,3 +1,4 @@
+acts:
 - - answer_starts: 0|0|0|0
     episode_done: false
     eval_labels:
@@ -83,3 +84,5 @@
     id: quac
     text: what influences does he have in her music?
     yesno: __NEITHER__
+num_episodes: 1000
+num_examples: 7354

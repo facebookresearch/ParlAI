@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - negative
@@ -53,3 +54,5 @@
       deepen them."
 
       Is this sentence positive or negative?'
+num_episodes: 872
+num_examples: 872

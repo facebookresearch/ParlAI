@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - I have restaurants matching your criteria in all price ranges. Do you have a
@@ -29,3 +30,5 @@
       help you with today?
     id: multiwoz_v21
     text: book for 5 people and get me the reference number
+num_episodes: 1000
+num_examples: 7374

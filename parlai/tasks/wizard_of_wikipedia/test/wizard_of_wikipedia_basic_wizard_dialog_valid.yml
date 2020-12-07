@@ -1,3 +1,4 @@
+acts:
 - - chosen_topic: Gardening
     episode_done: false
     eval_labels:
@@ -36,3 +37,5 @@
     - Ross was an American painter and television host
     id: wizard_of_wikipedia:basic_wizard_dialog
     text: I would like to know more about bob ross
+num_episodes: 981
+num_examples: 3939

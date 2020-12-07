@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - Any preference on the restaurant, location and time?
@@ -33,3 +34,5 @@
     text: Sure, may I know if they have vegetarian options and how expensive is their
       food?
     type: text
+num_episodes: 4201
+num_examples: 54970

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - I am doing okay. What kind of movies do you like?
@@ -28,3 +29,5 @@
     - It is animated, sci fi, and has action Glad I could help
     id: redial
     text: Ooh that seems cool! Thanks for the input. I'm ready to submit if you are.
+num_episodes: 1341
+num_examples: 8287

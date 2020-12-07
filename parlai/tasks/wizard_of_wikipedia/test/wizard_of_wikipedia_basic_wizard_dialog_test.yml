@@ -1,3 +1,4 @@
+acts:
 - - chosen_topic: Blue
     episode_done: false
     eval_labels:
@@ -32,3 +33,5 @@
     text: Yes buddy,  Images captured with an electronic image-sensor, produces an
       electrical charge.The word "cinematography" is based on the Greek words  meaning
       movement, motion.
+num_episodes: 965
+num_examples: 3865

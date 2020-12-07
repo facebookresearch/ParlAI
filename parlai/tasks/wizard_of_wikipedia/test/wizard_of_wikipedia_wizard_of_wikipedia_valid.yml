@@ -1,3 +1,4 @@
+acts:
 - - checked_passage: null
     checked_sentence: null
     chosen_topic: Gardening
@@ -616,3 +617,5 @@
     text: Great, I love the idea of growing my own vegetables and fruits! Do you have
       animals in the farm?
     wizard_eval: 5
+num_episodes: 981
+num_examples: 8909

@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: woz
     labels:
@@ -35,3 +36,5 @@
     text: 'Hi, I''m looking for a nice German restaurant.
 
       What is the change in the dialogue state?'
+num_episodes: 1723
+num_examples: 1723

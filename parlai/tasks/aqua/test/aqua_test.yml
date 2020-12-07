@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     eval_labels:
     - A ) 5 ( √ 3 + 1 )
@@ -128,3 +129,5 @@
     - E ) 7
     text: Find out which of the following values is the multiple of X , if it is divisible
       by 9 and 12 ?
+num_episodes: 254
+num_examples: 508

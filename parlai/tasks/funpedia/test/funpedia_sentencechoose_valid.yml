@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball player.
@@ -66,3 +67,5 @@
     text: Popovača is a town in Croatia in the Moslavina geographical region. Administratively
       it is part of the Sisak-Moslavina County. The town has a population of 11,905
       (2011 census), 96% of which are ethnic Croats.
+num_episodes: 9974
+num_examples: 9974

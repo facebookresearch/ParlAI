@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: hotpotqa:fullwiki
     labels:
@@ -384,3 +385,5 @@
       \ the standard name chloromethane (see IUPAC books) is an organic compound with\
       \ a covalent C−Cl bond in which the chlorine is not an anion.\n\nCadmium Chloride\
       \ is slightly soluble in this chemical, it is also called what?"
+num_episodes: 90447
+num_examples: 90447

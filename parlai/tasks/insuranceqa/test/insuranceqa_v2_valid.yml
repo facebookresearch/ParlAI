@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Sadly no . Medicare does cover a lot of the medical and hospital expenses incurred
@@ -1440,3 +1441,5 @@
       the policy that you need at the price you can afford .
     reward: 0
     text: How Does Medicare And Tricare Work Together ?
+num_episodes: 2000
+num_examples: 2000

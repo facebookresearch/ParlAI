@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Denver Broncos
@@ -3303,3 +3304,5 @@
 
 
       What color was used to emphasize the 50th anniversary of the Super Bowl?'
+num_episodes: 10570
+num_examples: 10570

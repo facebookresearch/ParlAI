@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: funpedia:sentencechoose
     label_candidates:
@@ -99,3 +100,5 @@
       - "You Were The One" - was co-written by David Cassidy and Tony Romeo who wrote
       many of the most popular songs for Cassidy and The Partridge Family in the 1970s,
       including I Think I Love You, "Summer Days", "I Am A Clown" and "Sing Me".
+num_episodes: 79791
+num_examples: 79791

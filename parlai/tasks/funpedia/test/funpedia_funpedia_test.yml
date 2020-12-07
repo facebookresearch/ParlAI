@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - For those interested, in 1568, they decided the Case of Mines, or "R v Earl
@@ -51,3 +52,5 @@
       Articulate (Well-spoken, Expressive)
 
       Kurper is a generic name for certain fish in South Africa.'
+num_episodes: 10184
+num_examples: 10184

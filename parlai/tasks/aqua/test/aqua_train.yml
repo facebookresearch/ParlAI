@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: AQuA
     label_candidates:
@@ -87,3 +88,5 @@
       II . ( xy ) @ y
 
       III . x @ ( x + y )'
+num_episodes: 97467
+num_examples: 194934

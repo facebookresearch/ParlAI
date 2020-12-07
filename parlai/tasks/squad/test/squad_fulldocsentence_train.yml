@@ -1,3 +1,4 @@
+acts:
 - - answer_starts:
     - 40334
     context: ' The University of Notre Dame du Lac (or simply Notre Dame ) is a Catholic
@@ -3943,3 +3944,5 @@
     labels:
     - Atop the Main Building's gold dome is a golden statue of the Virgin Mary.
     text: What sits on top of the Main Building at Notre Dame?
+num_episodes: 87599
+num_examples: 87599

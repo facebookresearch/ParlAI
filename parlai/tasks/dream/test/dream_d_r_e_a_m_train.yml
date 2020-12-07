@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     id: dream
     label_candidates:
@@ -73,3 +74,5 @@
       W: I don''t play very well, but I will give it a try.
 
       What does the man want the woman to do?'
+num_episodes: 3869
+num_examples: 6116

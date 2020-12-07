@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: taskmaster:self_dialogue_segment
     label_types:
@@ -50,3 +51,5 @@
     - '5'
     - '8'
     text: 5 or 8.
+num_episodes: 7691
+num_examples: 68228

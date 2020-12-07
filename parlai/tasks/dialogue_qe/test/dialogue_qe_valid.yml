@@ -1,3 +1,4 @@
+acts:
 - - episode_done: true
     eval_labels:
     - Bob:1;Alice:0
@@ -147,3 +148,5 @@
       Bob(Human): ?
 
       Alice(Bot): What?'
+num_episodes: 263
+num_examples: 263

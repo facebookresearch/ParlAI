@@ -1,3 +1,4 @@
+acts:
 - - episode_done: false
     id: wizard_of_wikipedia:docreader
     labels:
@@ -104,3 +105,5 @@
       use of the Internet to carry commercial traffic were lifted.
 
       Internet access'
+num_episodes: 18430
+num_examples: 77526
