@@ -18,6 +18,7 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.operations.operator import Operator
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.tools.scripts import augment_config_from_db
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
 class AbstractCrowdsourcingTest(unittest.TestCase):
@@ -130,7 +131,11 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
     all of the worker's responses are sent to the backend code at once.
     """
 
-    def _test_agent_state(self, expected_state: Dict[str, Any]):
+    def _test_agent_state(
+        self,
+        data_regression: Optional[DataRegressionFixture] = None,
+        expected_state: Optional[Dict[str, Any]] = None,
+    ):
         """
         Test that the actual agent state matches the expected state.
 
@@ -138,6 +143,9 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         of the agent state, make the agent act to define the 'outputs' field of the
         agent state, and then check that the agent state matches the desired agent
         state.
+
+        TODO: deprecate the expected_state arg when all tests are ported over to pytest
+         regressions, and then make data_regression a mandatory arg
         """
 
         # Set up the mock human agent
@@ -154,5 +162,8 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
 
         # Check that the inputs and outputs are as expected
         state = self.db.find_agents()[0].state.get_data()
-        self.assertEqual(expected_state['inputs'], state['inputs'])
-        self.assertEqual(expected_state['outputs'], state['outputs'])
+        if data_regression is not None:
+            data_regression.check(state)
+        else:
+            self.assertEqual(expected_state['inputs'], state['inputs'])
+            self.assertEqual(expected_state['outputs'], state['outputs'])

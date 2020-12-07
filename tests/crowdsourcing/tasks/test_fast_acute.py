@@ -12,6 +12,8 @@ import shutil
 import tempfile
 import unittest
 
+from pytest_regressions.data_regression import DataRegressionFixture
+
 
 try:
 
@@ -42,9 +44,12 @@ try:
 
             # Save expected self-chat files
             # {{{TODO}}}
+
+        def test_self_chat_files(self):
+            pass
             # {{{TODO: compare to expected using regressions}}}
 
-        def test_base_task(self):
+        def test_base_task(self, data_regression: DataRegressionFixture):
 
             # Set up the config, database, operator, and server
             overrides = self.common_overrides + [
@@ -61,10 +66,9 @@ try:
             self._set_up_server()
 
             # Check that the agent state is as it should be
-            expected_state = {'inputs': DESIRED_INPUTS, 'outputs': DESIRED_OUTPUTS}
-            self._test_agent_state(expected_state=expected_state)
+            self._test_agent_state(data_regression=data_regression)
 
-        def test_q_function_task(self):
+        def test_q_function_task(self, data_regression: DataRegressionFixture):
 
             # Save the config file
             config_path = os.path.join(self.root_dir, 'config.json')
@@ -83,8 +87,7 @@ try:
             self._set_up_server()
 
             # Check that the agent state is as it should be
-            expected_state = {'inputs': DESIRED_INPUTS, 'outputs': DESIRED_OUTPUTS}
-            self._test_agent_state(expected_state=expected_state)
+            self._test_agent_state(data_regression=data_regression)
 
         def tearDown(self):
 
