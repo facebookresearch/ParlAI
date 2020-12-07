@@ -164,7 +164,7 @@ def all_gather_list(data):
         except pickle.UnpicklingError:
             raise RuntimeError(
                 'There was an unpickling error in all_gather_list. This likely '
-                'means your workers got out of syncronization (e.g. one is '
+                'means your workers got out of synchronization (e.g. one is '
                 'expecting to sync and another is not.)'
             )
 
