@@ -141,7 +141,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
 
     def _test_agent_state(
         self,
-        expected_state: Dict[str, Any],
+        task_data: Dict[str, Any],
         data_regression: Optional[DataRegressionFixture] = None,
     ):
         """
@@ -151,10 +151,6 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         of the agent state, make the agent act to define the 'outputs' field of the
         agent state, and then check that the agent state matches the desired agent
         state.
-
-        TODO: deprecate the expected_state arg when all tests are ported over to pytest
-         regressions, and make it instead just the task data to send. Then, make
-         data_regression a mandatory arg. 
         """
 
         # Set up the mock human agent
@@ -165,8 +161,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
 
         # Make agent act
         self.server.send_agent_act(
-            agent_id,
-            {"MEPHISTO_is_submit": True, "task_data": expected_state['outputs']},
+            agent_id, {"MEPHISTO_is_submit": True, "task_data": task_data}
         )
 
         # Check that the inputs and outputs are as expected

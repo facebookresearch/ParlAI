@@ -113,9 +113,7 @@ try:
             self._set_up_server()
 
             # Check that the agent state is as it should be
-            self._test_agent_state(
-                expected_state={'outputs': task_data}, data_regression=data_regression
-            )
+            self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
         def test_q_function_task(self, data_regression: DataRegressionFixture):
 
@@ -173,9 +171,7 @@ try:
             self._set_up_server()
 
             # Check that the agent state is as it should be
-            self._test_agent_state(
-                expected_state={'outputs': task_data}, data_regression=data_regression
-            )
+            self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
         def teardown_method(self):
 
