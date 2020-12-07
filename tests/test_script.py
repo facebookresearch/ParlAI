@@ -25,6 +25,25 @@ class _TestScript(script.ParlaiScript):
         return self.opt
 
 
+@script.register_script("short_opt")
+class _TestShortOptScript(script.ParlaiScript):
+    """
+    Tests whether short opts with multiple letters parse correctly.
+
+    Known tricky in python 3.8.
+    """
+
+    @classmethod
+    def setup_args(cls):
+        parser = ParlaiParser(False, False, description="Short opt test")
+        parser.add_argument('-m', '--model')
+        parser.add_argument('-mxx', '--my-other-option')
+        return parser
+
+    def run(self):
+        return self.opt
+
+
 @script.register_script("hidden_script", hidden=True)
 class _HiddenScript(_TestScript):
     pass
@@ -79,6 +98,15 @@ class TestScriptRegistry(unittest.TestCase):
 
 
 class TestSuperCommand(unittest.TestCase):
+    def test_shortopt(self):
+        """
+        Tests whether short opts with multiple letters parse correctly.
+
+        Known tricky in python 3.8.
+        """
+        opt = script.superscript_main(args=['short_opt', '-m', 'repeat_query'])
+        assert opt.get('model') == 'repeat_query'
+
     def test_supercommand(self):
         opt = script.superscript_main(args=['test_script', '--foo', 'test'])
         assert opt.get('foo') == 'test'

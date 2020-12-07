@@ -142,7 +142,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
     def _test_agent_state(
         self,
         task_data: Dict[str, Any],
-        data_regression: Optional[DataRegressionFixture] = None,
+        data_regression: DataRegressionFixture,
     ):
         """
         Test that the actual agent state matches the expected state.
@@ -167,8 +167,4 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         # Check that the inputs and outputs are as expected
         state = self.db.find_agents()[0].state.get_data()
         del state['times']  # Delete variable timestamps
-        if data_regression is not None:
-            data_regression.check(state)
-        else:
-            self.assertEqual(expected_state['inputs'], state['inputs'])
-            self.assertEqual(expected_state['outputs'], state['outputs'])
+        data_regression.check(state)
