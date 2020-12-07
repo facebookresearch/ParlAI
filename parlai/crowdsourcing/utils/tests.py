@@ -29,10 +29,10 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    def setUp(self):
+    def setup_class(self):
         self.operator = None
 
-    def tearDown(self):
+    def teardown_class(self):
         if self.operator is not None:
             self.operator.shutdown()
 

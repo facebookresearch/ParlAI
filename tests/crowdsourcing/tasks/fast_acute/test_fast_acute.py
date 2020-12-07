@@ -13,8 +13,10 @@ import shutil
 import tempfile
 import unittest
 
-import pytest
-from pytest_regressions.data_regression import DataRegressionFixture
+from pytest_regressions.data_regression import (
+    DataRegressionFixture,
+    FileRegressionFixture,
+)
 
 
 try:
@@ -35,9 +37,9 @@ try:
         Test the Fast ACUTE crowdsourcing task.
         """
 
-        def setUp(self):
+        def setup_class(self):
 
-            super().setUp()
+            super().setup_class()
 
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
@@ -45,7 +47,7 @@ try:
             # Params
             self.common_overrides = [
                 '+mephisto.blueprint.block_on_onboarding_fail=False',
-                'mephisto.blueprint.num_self_chats=5',
+                'mephisto.blueprint.num_self_chats=1',   # TODO: change back to 5!!
                 f'mephisto.blueprint.root_dir={self.root_dir}',
             ]
             self.models = ['blender_90m_copy1', 'blender_90m_copy2']
@@ -72,10 +74,10 @@ try:
             self.base_task_runner = run.FastAcuteExecutor(self.config)
             self.base_task_runner.run_selfchat()
 
-        def test_self_chat_files(self, data_regression: DataRegressionFixture):
+        def test_self_chat_files(self, file_regression: FileRegressionFixture):
             for model in self.models:
                 outfile = self.base_task_runner._get_selfchat_log_path(model)
-                data_regression.check(outfile)
+                file_regression.check(outfile)
 
         def test_base_task(self, data_regression: DataRegressionFixture):
 
@@ -119,9 +121,9 @@ try:
             # Check that the agent state is as it should be
             self._test_agent_state(data_regression=data_regression)
 
-        def tearDown(self):
+        def teardown_class(self):
 
-            super().tearDown()
+            super().teardown_class()
 
             # Tear down temp file
             shutil.rmtree(self.root_dir)
