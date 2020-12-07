@@ -12,13 +12,13 @@ import os
 import unittest
 from typing import List
 
+from pytest_regressions.data_regression import DataRegressionFixture
+
 
 TASK_CONFIG_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'task_config'
 )
-EXPECTED_STATES_FOLDER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), 'expected_states'
-)
+TASK_DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'task_data')
 
 
 try:
@@ -36,11 +36,11 @@ try:
         Test the turn annotations crowdsourcing tasks.
         """
 
-        def setUp(self):
-            super().setUp()
+        def setup_method(self):
+            super().setup_method()
             build_task(task_directory=TASK_DIRECTORY)
 
-        def test_no_in_flight_qa(self):
+        def test_no_in_flight_qa(self, data_regression: DataRegressionFixture):
             """
             Test static turn annotations without in-flight QA.
             """
@@ -50,13 +50,12 @@ try:
             ]
             self._test_turn_annotations_static_task(
                 blueprint_type=STATIC_BLUEPRINT_TYPE,
-                expected_state_path=os.path.join(
-                    EXPECTED_STATES_FOLDER, 'no_in_flight_qa.json'
-                ),
+                task_data_path=os.path.join(TASK_DATA_FOLDER, 'no_in_flight_qa.json'),
                 overrides=overrides,
+                data_regression=data_regression,
             )
 
-        def test_in_flight_qa(self):
+        def test_in_flight_qa(self, data_regression: DataRegressionFixture):
             """
             Test static turn annotations with in-flight QA.
             """
@@ -67,13 +66,14 @@ try:
             ]
             self._test_turn_annotations_static_task(
                 blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
-                expected_state_path=os.path.join(
-                    EXPECTED_STATES_FOLDER, 'in_flight_qa.json'
-                ),
+                task_data_path=os.path.join(TASK_DATA_FOLDER, 'in_flight_qa.json'),
                 overrides=overrides,
+                data_regression=data_regression,
             )
 
-        def test_in_flight_qa_annotation_file(self):
+        def test_in_flight_qa_annotation_file(
+            self, data_regression: DataRegressionFixture
+        ):
             """
             Test static turn annotations with in-flight QA and with an annotation file.
 
@@ -88,14 +88,19 @@ try:
             ]
             self._test_turn_annotations_static_task(
                 blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
-                expected_state_path=os.path.join(
-                    EXPECTED_STATES_FOLDER, 'in_flight_qa_annotation_file.json'
+                task_data_path=os.path.join(
+                    TASK_DATA_FOLDER, 'in_flight_qa_annotation_file.json'
                 ),
                 overrides=overrides,
+                data_regression=data_regression,
             )
 
         def _test_turn_annotations_static_task(
-            self, blueprint_type: str, expected_state_path: str, overrides: List[str]
+            self,
+            blueprint_type: str,
+            task_data_path: str,
+            overrides: List[str],
+            data_regression: DataRegressionFixture,
         ):
             """
             Test the static turn annotations task under specific conditions.
@@ -104,9 +109,9 @@ try:
             static turn annotations task.
             """
 
-            # # Load the .json of the expected state
-            with open(expected_state_path) as f:
-                expected_state = json.load(f)
+            # # Load the .json of the task data
+            with open(task_data_path) as f:
+                task_data = json.load(f)
 
             # # Setup
 
@@ -129,7 +134,7 @@ try:
             # Set up the operator and server
             self._set_up_server()
 
-            self._test_agent_state(expected_state=expected_state)
+            self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
 
 except ImportError:
