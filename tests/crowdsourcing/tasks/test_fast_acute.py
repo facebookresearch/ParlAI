@@ -13,6 +13,7 @@ import shutil
 import tempfile
 import unittest
 
+import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
@@ -24,11 +25,10 @@ try:
     from parlai.crowdsourcing.tasks.fast_acute.run_q_function import (
         BLUEPRINT_TYPE as Q_FUNCTION_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.tasks.fast_acute.run import (
-        FastAcuteExecutor,
-        TASK_DIRECTORY,
-    )
+    from parlai.crowdsourcing.tasks.fast_acute import run
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
+
+    TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
 
     class TestFastAcute(AbstractOneTurnCrowdsourcingTest):
         """
@@ -37,12 +37,14 @@ try:
 
         def setUp(self):
 
+            super().setUp()
+
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
 
             # Params
             self.common_overrides = [
-                'mephisto.blueprint.block_on_onboarding_fail=False',
+                '+mephisto.blueprint.block_on_onboarding_fail=False',
                 'mephisto.blueprint.num_self_chats=5',
                 f'mephisto.blueprint.root_dir={self.root_dir}',
             ]
@@ -50,9 +52,12 @@ try:
             model_string = ','.join(self.models)
             self.base_task_overrides = [
                 f'mephisto.blueprint.config_path={TASK_DIRECTORY}/task_config/model_config.json',
-                f'mephisto.blueprint.models=\"{model_string}\"',
-                'mephisto.blueprint.task=blended_skill_talk',
-                'mephisto.blueprint.use_existing_self_chat_files=True',
+                f'+mephisto.blueprint.models=\"{model_string}\"',
+                '+mephisto.blueprint.model_pairs=""',
+                '+mephisto.blueprint.selfchat_max_turns=6',
+                '+mephisto.blueprint.task=blended_skill_talk',
+                '+mephisto.blueprint.use_existing_self_chat_files=True',
+                '+mephisto.task.task_name=acute_eval_test',
             ]
 
             # Save expected self-chat files
@@ -61,7 +66,10 @@ try:
                 task_directory=TASK_DIRECTORY,
                 overrides=self.common_overrides + self.base_task_overrides,
             )
-            self.base_task_runner = FastAcuteExecutor(self.config)
+            self.config.mephisto.blueprint.model_pairs = None
+            # TODO: hack to manually set mephisto.blueprint.model_pairs to None. Remove
+            #  when Hydra releases support for recursive defaults
+            self.base_task_runner = run.FastAcuteExecutor(self.config)
             self.base_task_runner.run_selfchat()
 
         def test_self_chat_files(self, data_regression: DataRegressionFixture):
@@ -112,6 +120,8 @@ try:
             self._test_agent_state(data_regression=data_regression)
 
         def tearDown(self):
+
+            super().tearDown()
 
             # Tear down temp file
             shutil.rmtree(self.root_dir)

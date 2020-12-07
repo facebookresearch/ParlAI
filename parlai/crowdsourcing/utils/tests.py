@@ -21,7 +21,7 @@ from mephisto.tools.scripts import augment_config_from_db
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
-class AbstractCrowdsourcingTest(unittest.TestCase):
+class AbstractCrowdsourcingTest:
     """
     Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
 
