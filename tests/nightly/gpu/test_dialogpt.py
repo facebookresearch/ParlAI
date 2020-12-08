@@ -13,8 +13,6 @@ from parlai.core.agents import create_agent
 class TestDialogptModel(unittest.TestCase):
     """
     Test of DialoGPT model.
-
-    Checks that DialoGPT gets a certain performance on the integration test task.
     """
 
     def _test_batchsize(self, batchsize, add_start_token):
@@ -79,7 +77,9 @@ class TestDialogptModel(unittest.TestCase):
                     self._test_batchsize(batchsize, add_start_token)
 
     def test_start_token(self):
-        # Test throwing the RuntimeError with add_start_token = True and yet add_special_tokens = False
+        """
+        Test RuntimeError is thrown when add_start_token = True and yet add_special_tokens = False
+        """
         with self.assertRaises(RuntimeError):
             create_agent(
                 {
@@ -90,6 +90,9 @@ class TestDialogptModel(unittest.TestCase):
             )
 
     def test_nospecialtok(self):
+        """
+        Test generation consistency for off-the-shelf dialogpt models.
+        """
         test_cases = [
             ("What a nice weather!", "I'm in the UK and it's raining here."),
             ("Nice to meet you!", "Hello! I'm from the future!"),
@@ -110,3 +113,32 @@ class TestDialogptModel(unittest.TestCase):
             dialogpt.observe({'text': text, 'episode_done': True})
             response = dialogpt.act()
             assert response['text'] == label
+
+    @testing_utils.retry(ntries=3, log_retry=True)
+    def test_dialogpt(self):
+        """
+        Checks that DialoGPT gets a certain performance on the integration test task.
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:overfit',
+                model='hugging_face/dialogpt',
+                add_special_tokens=True,
+                add_start_token=True,
+                optimizer='adam',
+                learningrate=1e-3,
+                batchsize=4,
+                num_epochs=100,
+                validation_every_n_epochs=5,
+                validation_metric='ppl',
+                short_final_eval=True,
+                skip_generation=True,
+            )
+        )
+
+        self.assertLessEqual(valid['ppl'], 4.0)
+        self.assertLessEqual(test['ppl'], 4.0)
+
+
+if __name__ == '__main__':
+    unittest.main()
