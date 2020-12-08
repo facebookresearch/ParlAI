@@ -12,9 +12,14 @@ import parlai.scripts.multiprocessing_train as mp_train
 import parlai.scripts.build_dict as build_dict
 import os
 import copy
+from parlai.utils.misc import warn_once
 
 
 class TestGpt2(unittest.TestCase):
+    warn_once(
+        'WARNING: DID YOU IMPLEMENT A TEST FOR DIALOGPT TOO? YOU KNOW YOU NEED TO TEST IT TOO!'
+    )
+
     def _test_batchsize(self, batchsize, add_start_token):
         utterances = [
             'Just keep swimming -',

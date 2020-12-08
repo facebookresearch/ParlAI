@@ -7,11 +7,6 @@
 import unittest
 import parlai.utils.testing as testing_utils
 from parlai.core.agents import create_agent
-import sys
-import warnings
-
-if not sys.warnoptions:
-    warnings.simplefilter("ignore")
 
 
 @testing_utils.skipUnlessGPU
@@ -22,7 +17,7 @@ class TestDialogptModel(unittest.TestCase):
     Checks that DialoGPT gets a certain performance on the integration test task.
     """
 
-    def _test_batchsize(self, batchsize, add_special_tokens):
+    def _test_batchsize(self, batchsize, add_start_token):
         utterances = [
             'How is your day so far?',
             'I hope you you have a good day.',
@@ -37,9 +32,9 @@ class TestDialogptModel(unittest.TestCase):
             'beam_min_length': 1,
             'inference': 'beam',
             'beam_size': 1,
-            'add_special_tokens': add_special_tokens,
+            'add_special_tokens': True,
             'batchsize': batchsize,
-            'add_start_token': False,
+            'add_start_token': add_start_token,
         }
         dialogpt = create_agent(opt)
 
@@ -60,47 +55,61 @@ class TestDialogptModel(unittest.TestCase):
             generations = [x['text'] for x in dialogpt.batch_act(obs)]
             results_batched += generations
 
-        print(f'results_single = {results_single}')
-        print(f'results_batched = {results_batched}')
         assert results_single == results_batched
 
     def test_batchsize(self):
         """
         Ensures dialogpt provides the same generation results regardless of batchsize.
         """
-        for batchsize in [2, 2, 4, 2]:
-            for add_special_tokens in [True]:
-                if batchsize > 1 and not add_special_tokens:
-                    continue
-                with self.subTest(
-                    f'test_batchsize with bs={batchsize} and add_special_token={add_special_tokens}'
-                ):
-                    print(
-                        f'_____________test_batchsize with bs={batchsize} and add_special_token={add_special_tokens}'
-                    )
-                    self._test_batchsize(batchsize, add_special_tokens)
-
-    @testing_utils.retry(ntries=3, log_retry=True)
-    def test_dialogpt(self):
-        valid, test = testing_utils.train_model(
-            dict(
-                task='integration_tests:overfit',
-                model='hugging_face/dialogpt',
-                add_special_tokens=True,
-                add_start_token=True,
-                optimizer='adam',
-                learningrate=1e-3,
-                batchsize=4,
-                num_epochs=100,
-                validation_every_n_epochs=5,
-                validation_metric='ppl',
-                short_final_eval=True,
-                skip_generation=True,
+        # Test throwing the RuntimeError with add_special_tokens = False and batchsize > 1
+        with self.assertRaises(RuntimeError):
+            create_agent(
+                {
+                    'model': 'hugging_face/dialogpt',
+                    'add_special_tokens': False,
+                    'batchsize': 2,
+                }
             )
-        )
 
-        self.assertLessEqual(valid['ppl'], 4.0)
-        self.assertLessEqual(test['ppl'], 4.0)
+        for batchsize in [1, 2, 4]:
+            for add_start_token in [True, False]:
+                with self.subTest(
+                    f'test_batchsize with bs={batchsize} and add_start_token={add_start_token}'
+                ):
+                    self._test_batchsize(batchsize, add_start_token)
+
+    def test_start_token(self):
+        # Test throwing the RuntimeError with add_start_token = True and yet add_special_tokens = False
+        with self.assertRaises(RuntimeError):
+            create_agent(
+                {
+                    'model': 'hugging_face/dialogpt',
+                    'add_special_tokens': False,
+                    'add_start_token': True,
+                }
+            )
+
+    def test_nospecialtok(self):
+        test_cases = [
+            ("What a nice weather!", "I'm in the UK and it's raining here."),
+            ("Nice to meet you!", "Hello! I'm from the future!"),
+        ]
+        opt = {
+            'model': 'hugging_face/dialogpt',
+            'gpt2_size': 'small',
+            'text_truncate': 100,
+            'label_truncate': 20,
+            'beam_min_length': 1,
+            'inference': 'beam',
+            'beam_size': 1,
+            'add_special_tokens': False,
+            'batchsize': 1,
+        }
+        dialogpt = create_agent(opt)
+        for text, label in test_cases:
+            dialogpt.observe({'text': text, 'episode_done': True})
+            response = dialogpt.act()
+            assert response['text'] == label
 
 
 if __name__ == '__main__':

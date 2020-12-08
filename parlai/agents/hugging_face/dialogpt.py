@@ -28,9 +28,22 @@ class DialoGPTDecoder(GPT2Decoder):
 
     def __init__(self, opt, dict):
         super().__init__(opt, dict)
-        if opt.get('batchsize', 1) == 1 and self.END_IDX == self.NULL_IDX:
+        self.NULL_IDX, self.START_IDX, self.END_IDX = self._get_special_tokens(
+            opt, dict
+        )
+
+    @staticmethod
+    def _get_special_tokens(opt, dict):
+        null_idx = dict.null_idx
+        if (
+            opt.get('batchsize', 1) == 1
+            and not opt['add_special_tokens']
+            and null_idx == dict.end_idx
+        ):
             # get around the dual usage of end_idx that would otherwise mask endtoken during forward pass.
-            self.NULL_IDX = -1
+            null_idx = -1
+            warn_once("WARNING: null_idx is set to -1 otherwise null_idx = end_idx")
+        return null_idx, dict.start_idx, dict.end_idx
 
     def _init_from_pretrained(self, opt):
         # load model
@@ -43,6 +56,10 @@ class DialoGPTModel(HFGPT2Model):
     """
     Hugging Face DialoGPT Model.
     """
+
+    def _get_special_tokens(self, opt, dict):
+        # keep it consistent between DialoGPTModel and DialoGPTDecoder on start_idx, end_idx, null_idx
+        return DialoGPTDecoder._get_special_tokens(opt, dict)
 
     def _get_decoder(self, opt, dict):
         return DialoGPTDecoder(opt, dict)

@@ -85,7 +85,8 @@ class GPT2Decoder(torch.nn.Module):
                 and int(input[0][0]) == self.START_IDX
             ):
                 # generating: ignore the start token
-                model_input = encoder_state
+                # without deep copy, the padding_idx (-1) in encoder_state can be reset to 0 with clamp_ inplace operation
+                model_input = encoder_state.clone()
             else:
                 # forced decoding: concatenate the context
                 # with the labels
