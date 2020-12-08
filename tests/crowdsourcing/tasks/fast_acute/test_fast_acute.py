@@ -132,7 +132,7 @@ if True:
 
             # Run analysis
             base_runner.analyze_results(args=f'--mephisto-root {self.database_path}')
-            outputs['base_results_path'] = base_runner.results_path
+            outputs['base_results_folder'] = base_runner.results_path
 
             # # Run Q-function Fast ACUTEs and analysis on the base task
 
@@ -177,7 +177,7 @@ if True:
             q_function_runner.analyze_results(
                 args=f'--mephisto-root {self.database_path}'
             )
-            outputs['q_function_results_path'] = q_function_runner.results_path
+            outputs['q_function_results_folder'] = q_function_runner.results_path
 
             yield outputs
             # All code after this will be run upon teardown
@@ -195,7 +195,27 @@ if True:
                 state=outputs['base_state'], data_regression=data_regression
             )
 
-        def test_
+        def test_base_all_convo_pairs(
+            self, setup_teardown, file_regression: FileRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_file_contents(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='all_convo_pairs.txt',
+                file_regression=file_regression,
+            )
+
+        def test_base_all_html(
+            self, setup_teardown, file_regression: FileRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_file_contents(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='all.html',
+                file_regression=file_regression,
+            )
+
+        # {{{TODO: more tests}}}
 
         def test_q_function_agent_state(
             self, setup_teardown, data_regression: DataRegressionFixture
@@ -205,63 +225,39 @@ if True:
                 state=outputs['q_function_state'], data_regression=data_regression
             )
 
-        def test_base_task(
+        # {{{TODO: more tests}}}
+
+        def _check_dataframe(
             self,
-            setup_teardown,
-            data_regression: DataRegressionFixture,
+            results_folder: str,
+            file_suffix: str,
             dataframe_regression: DataFrameRegressionFixture,
-            file_regression: FileRegressionFixture,
         ):
-
-            outputs = setup_teardown
-
-            self._check_agent_state()
-
-            self._check_analysis_outputs(
-                outputs_folder=self.base_task_runner.results_path,
-                save_prefix='base',
-                dataframe_regression=dataframe_regression,
-                file_regression=file_regression,
+            file_path = self._get_matching_file_path(
+                results_folder=results_folder, file_suffix=file_suffix
             )
+            df = pd.read_csv(file_path)
+            dataframe_regression.check(data_frame=df)
 
-        def test_q_function_task(
+        def _check_file_contents(
             self,
-            setup_teardown,
-            data_regression: DataRegressionFixture,
-            dataframe_regression: DataFrameRegressionFixture,
+            results_folder: str,
+            file_suffix: str,
             file_regression: FileRegressionFixture,
         ):
-
-            outputs = setup_teardown
-
-            self._check_agent_state()
-
-            # Run analysis and check outputs
-            self._check_analysis_outputs(
-                outputs_folder=runner.results_path,
-                save_prefix='q_function',
-                dataframe_regression=dataframe_regression,
-                file_regression=file_regression,
+            file_path = self._get_matching_file_path(
+                results_folder=results_folder, file_suffix=file_suffix
             )
+            with open(file_path) as f:
+                contents = f.read()
+            file_regression.check(contents=contents)
 
-        def _check_analysis_outputs(
-            self,
-            outputs_folder: str,
-            save_prefix: str,
-            dataframe_regression: DataFrameRegressionFixture,
-            file_regression: FileRegressionFixture,
-        ):
-            filenames = os.listdir(outputs_folder)
-            for filename in filenames:
-                parts = filename.split('.')
-                save_name = save_prefix + '__' + '.'.join(parts[:-1])
-                if parts[-1] == 'csv':
-                    df = pd.read_csv(os.path.join(outputs_folder, filename))
-                    dataframe_regression.check(data_frame=df, basename=save_name)
-                else:
-                    with open(os.path.join(outputs_folder, filename)) as f:
-                        contents = f.read()
-                    file_regression.check(contents=contents, basename=save_name)
+        def _get_matching_file_path(self, results_folder: str, file_suffix: str) -> str:
+            matching_files = [
+                obj for obj in os.listdir(results_folder) if obj.endswith(file_suffix)
+            ]
+            assert len(matching_files) == 1
+            return os.path.join(results_folder, matching_files[0])
 
 
 # except ImportError:
