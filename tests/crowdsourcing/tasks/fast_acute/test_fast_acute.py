@@ -134,50 +134,50 @@ if True:
             base_runner.analyze_results(args=f'--mephisto-root {self.database_path}')
             outputs['base_results_folder'] = base_runner.results_path
 
-            # # Run Q-function Fast ACUTEs and analysis on the base task
+            # # # Run Q-function Fast ACUTEs and analysis on the base task
 
-            # Save the config file
-            config_path = os.path.join(root_dir, 'config.json')
-            config = {}
-            for model in models:
-                config[model] = {
-                    'log_path': base_runner._get_selfchat_log_path(model),
-                    'is_selfchat': True,
-                }
-            with open(config_path, 'w') as f:
-                json.dump(config, f)
+            # # Save the config file
+            # config_path = os.path.join(root_dir, 'config.json')
+            # config = {}
+            # for model in models:
+            #     config[model] = {
+            #         'log_path': base_runner._get_selfchat_log_path(model),
+            #         'is_selfchat': True,
+            #     }
+            # with open(config_path, 'w') as f:
+            #     json.dump(config, f)
 
-            # Set up config
-            assert len(models) == 2
-            q_function_overrides = common_overrides + [
-                f'+mephisto.blueprint.config_path={config_path}',
-                '+mephisto.blueprint.models=""',
-                f'+mephisto.blueprint.model_pairs={models[0]}:{models[1]}',
-            ]
-            # TODO: clean this up when Hydra has support for recursive defaults
-            self._set_up_config(
-                blueprint_type=Q_FUNCTION_BLUEPRINT_TYPE,
-                task_directory=ACUTE_EVAL_TASK_DIRECTORY,
-                overrides=q_function_overrides,
-            )
-            self.config.mephisto.blueprint.models = None
-            # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
-            #  Hydra releases support for recursive defaults
+            # # Set up config
+            # assert len(models) == 2
+            # q_function_overrides = common_overrides + [
+            #     f'+mephisto.blueprint.config_path={config_path}',
+            #     '+mephisto.blueprint.models=""',
+            #     f'+mephisto.blueprint.model_pairs={models[0]}:{models[1]}',
+            # ]
+            # # TODO: clean this up when Hydra has support for recursive defaults
+            # self._set_up_config(
+            #     blueprint_type=Q_FUNCTION_BLUEPRINT_TYPE,
+            #     task_directory=ACUTE_EVAL_TASK_DIRECTORY,
+            #     overrides=q_function_overrides,
+            # )
+            # self.config.mephisto.blueprint.models = None
+            # # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
+            # #  Hydra releases support for recursive defaults
 
-            # Run Fast ACUTEs
-            q_function_runner = QLearningFastAcuteExecutor(self.config)
-            q_function_runner.set_up_acute_eval()
-            self.config.mephisto.blueprint = q_function_runner.fast_acute_args
-            self._set_up_server()
-            outputs['q_function_task_state'] = self._get_agent_state(
-                task_data=self.TASK_DATA
-            )
+            # # Run Fast ACUTEs
+            # q_function_runner = QLearningFastAcuteExecutor(self.config)
+            # q_function_runner.set_up_acute_eval()
+            # self.config.mephisto.blueprint = q_function_runner.fast_acute_args
+            # self._set_up_server()
+            # outputs['q_function_task_state'] = self._get_agent_state(
+            #     task_data=self.TASK_DATA
+            # )
 
-            # Run analysis
-            q_function_runner.analyze_results(
-                args=f'--mephisto-root {self.database_path}'
-            )
-            outputs['q_function_results_folder'] = q_function_runner.results_path
+            # # Run analysis
+            # q_function_runner.analyze_results(
+            #     args=f'--mephisto-root {self.database_path}'
+            # )
+            # outputs['q_function_results_folder'] = q_function_runner.results_path
 
             yield outputs
             # All code after this will be run upon teardown
@@ -275,93 +275,93 @@ if True:
                 dataframe_regression=dataframe_regression,
             )
 
-        def test_q_function_agent_state(
-            self, setup_teardown, data_regression: DataRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_agent_state(
-                state=outputs['q_function_state'], data_regression=data_regression
-            )
+        # def test_q_function_agent_state(
+        #     self, setup_teardown, data_regression: DataRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_agent_state(
+        #         state=outputs['q_function_state'], data_regression=data_regression
+        #     )
 
-        def test_q_function_all_convo_pairs_txt(
-            self, setup_teardown, file_regression: FileRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_file_contents(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='all_convo_pairs.txt',
-                file_regression=file_regression,
-            )
+        # def test_q_function_all_convo_pairs_txt(
+        #     self, setup_teardown, file_regression: FileRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_file_contents(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='all_convo_pairs.txt',
+        #         file_regression=file_regression,
+        #     )
 
-        def test_q_function_all_html(
-            self, setup_teardown, file_regression: FileRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_file_contents(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='all.html',
-                file_regression=file_regression,
-            )
+        # def test_q_function_all_html(
+        #     self, setup_teardown, file_regression: FileRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_file_contents(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='all.html',
+        #         file_regression=file_regression,
+        #     )
 
-        def test_q_function_full_csv(
-            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_dataframe(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='full.csv',
-                dataframe_regression=dataframe_regression,
-            )
+        # def test_q_function_full_csv(
+        #     self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_dataframe(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='full.csv',
+        #         dataframe_regression=dataframe_regression,
+        #     )
 
-        def test_q_function_grid_csv(
-            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_dataframe(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='grid.csv',
-                dataframe_regression=dataframe_regression,
-            )
+        # def test_q_function_grid_csv(
+        #     self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_dataframe(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='grid.csv',
+        #         dataframe_regression=dataframe_regression,
+        #     )
 
-        def test_q_function_grid_winners_as_rows_csv(
-            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_dataframe(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='grid.winners_as_rows.csv',
-                dataframe_regression=dataframe_regression,
-            )
+        # def test_q_function_grid_winners_as_rows_csv(
+        #     self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_dataframe(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='grid.winners_as_rows.csv',
+        #         dataframe_regression=dataframe_regression,
+        #     )
 
-        def test_q_function_ratings_per_worker_csv(
-            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_dataframe(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='ratings_per_worker.csv',
-                dataframe_regression=dataframe_regression,
-            )
+        # def test_q_function_ratings_per_worker_csv(
+        #     self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_dataframe(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='ratings_per_worker.csv',
+        #         dataframe_regression=dataframe_regression,
+        #     )
 
-        def test_q_function_reason_html(
-            self, setup_teardown, file_regression: FileRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_file_contents(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='reason.html',
-                file_regression=file_regression,
-            )
+        # def test_q_function_reason_html(
+        #     self, setup_teardown, file_regression: FileRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_file_contents(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='reason.html',
+        #         file_regression=file_regression,
+        #     )
 
-        def test_q_function_significance_csv(
-            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
-        ):
-            outputs = setup_teardown
-            self._check_dataframe(
-                results_folder=outputs['q_function_results_folder'],
-                file_suffix='significance.csv',
-                dataframe_regression=dataframe_regression,
-            )
+        # def test_q_function_significance_csv(
+        #     self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        # ):
+        #     outputs = setup_teardown
+        #     self._check_dataframe(
+        #         results_folder=outputs['q_function_results_folder'],
+        #         file_suffix='significance.csv',
+        #         dataframe_regression=dataframe_regression,
+        #     )
 
         def _check_dataframe(
             self,
