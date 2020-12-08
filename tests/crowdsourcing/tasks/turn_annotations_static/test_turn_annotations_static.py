@@ -40,9 +40,12 @@ if True:
         @pytest.fixture(scope="function")
         def setup_teardown(self):
             """
-            Call the default setup/teardown function.
+            Call code to set up and tear down tests.
             """
-            self._setup_teardown()
+            self._setup()
+            yield self.operator
+            # All code after this will be run upon teardown
+            self._teardown()
 
         def test_no_in_flight_qa(
             self, setup_teardown, data_regression: DataRegressionFixture

@@ -31,17 +31,6 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    def _setup_teardown(self):
-        """
-        Call code to set up and tear down tests.
-
-        In subclasses, subclass this function and add a @pytest.fixture decorator.
-        """
-        self._setup()
-        yield self.operator
-        # All code after this will be run upon teardown
-        self._teardown()
-
     def _setup(self):
         """
         To be run before a test.
