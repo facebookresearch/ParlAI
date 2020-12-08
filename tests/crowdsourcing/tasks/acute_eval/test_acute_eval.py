@@ -29,7 +29,10 @@ if True:
 
         @pytest.fixture(scope="function")
         def setup_teardown(self):
-            self.setup_teardown()
+            """
+            Call the default setup/teardown function.
+            """
+            self._setup_teardown()
 
         def test_base_task(
             self, setup_teardown, data_regression: DataRegressionFixture

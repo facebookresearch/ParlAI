@@ -31,7 +31,7 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    def setup_teardown(self):
+    def _setup_teardown(self):
         """
         Call code to set up and tear down tests.
 
