@@ -42,8 +42,6 @@ if True:
 
         def setup_method(self):
 
-            super().setup_method()
-
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
 
@@ -129,6 +127,7 @@ if True:
             )
             self._check_analysis_outputs(
                 outputs_folder=self.base_task_runner.results_path,
+                save_prefix='base',
                 dataframe_regression=dataframe_regression,
                 file_regression=file_regression,
             )
@@ -200,9 +199,29 @@ if True:
             runner.analyze_results(args=f'--mephisto-root {self.database_path}')
             self._check_analysis_outputs(
                 outputs_folder=runner.results_path,
+                save_prefix='q_function',
                 dataframe_regression=dataframe_regression,
                 file_regression=file_regression,
             )
+
+        def _check_analysis_outputs(
+            self,
+            outputs_folder: str,
+            save_prefix: str,
+            dataframe_regression: DataFrameRegressionFixture,
+            file_regression: FileRegressionFixture,
+        ):
+            filenames = os.listdir(outputs_folder)
+            for filename in filenames:
+                parts = filename.split('.')
+                save_name = save_prefix + '__' + '.'.join(parts[:-1])
+                if parts[-1] == 'csv':
+                    df = pd.read_csv(os.path.join(outputs_folder, filename))
+                    dataframe_regression.check(data_frame=df, basename=save_name)
+                else:
+                    with open(os.path.join(outputs_folder, filename)) as f:
+                        contents = f.read()
+                    file_regression.check(contents=contents, basename=save_name)
 
         def teardown_method(self):
 
@@ -210,24 +229,6 @@ if True:
 
             # Tear down temp file
             shutil.rmtree(self.root_dir)
-
-    def _check_analysis_outputs(
-        outputs_folder: str,
-        dataframe_regression: DataFrameRegressionFixture,
-        file_regression: FileRegressionFixture,
-    ):
-        files = os.listdir(outputs_folder)
-        for file in files:
-            extension = '.' + file.split('.')[-1]
-            if extension == '.csv':
-                df = pd.read_csv(os.path.join(outputs_folder, file))
-                dataframe_regression.check(data_frame=df, basename=file)
-            else:
-                with open(os.path.join(outputs_folder, file)) as f:
-                    contents = f.read()
-                file_regression.check(
-                    contents=contents, extension=extension, basename=file
-                )
 
 
 # except ImportError:
