@@ -348,10 +348,12 @@ try:
 
     from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
 
-    class TestChatDemo(AbstractCrowdsourcingTest):
+    class TestChatDemo(AbstractCrowdsourcingTest, unittest.TestCase):
         """
         Test the chat demo crowdsourcing task.
         """
+        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
+        #  regressions
 
         def test_base_task(self):
 

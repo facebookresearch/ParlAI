@@ -75,21 +75,35 @@ if True:
             self._setup()
 
             # Set up common temp directory
-            self.root_dir = tempfile.mkdtemp()
+            root_dir = tempfile.mkdtemp()
 
             # Params
-            self.common_overrides = [
+            common_overrides = [
                 '+mephisto.blueprint.acute_eval_type=engaging',
                 'mephisto.blueprint.block_on_onboarding_fail=False',
                 '+mephisto.blueprint.matchups_per_pair=60',
                 '+mephisto.blueprint.num_self_chats=5',
                 f'+mephisto.blueprint.onboarding_path={FAST_ACUTE_TASK_DIRECTORY}/task_config/onboarding.json',
-                f'+mephisto.blueprint.root_dir={self.root_dir}',
+                f'+mephisto.blueprint.root_dir={root_dir}',
                 '+mephisto.blueprint.sufficient_matchups_multiplier=2',
                 '+mephisto.task.task_name=acute_eval_test',
             ]
-            self.models = ['blender_90m_copy1', 'blender_90m_copy2']
-            model_string = ','.join(self.models)
+            # TODO: clean this up when Hydra has support for recursive defaults
+            models = ['blender_90m_copy1', 'blender_90m_copy2']
+            model_string = ','.join(models)
+
+            # Copy over expected self-chat files
+            shutil.copytree(
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'self_chats'),
+                os.path.join(root_dir, 'self_chats'),
+            )
+
+            # Define output structure
+            outputs = {}
+
+            # # Run Fast ACUTEs and analysis on the base task
+
+            # Set up config
             base_task_overrides = [
                 f'+mephisto.blueprint.config_path={FAST_ACUTE_TASK_DIRECTORY}/task_config/model_config.json',
                 f'+mephisto.blueprint.models=\"{model_string}\"',
@@ -99,30 +113,97 @@ if True:
                 '+mephisto.blueprint.use_existing_self_chat_files=True',
             ]
             # TODO: clean this up when Hydra has support for recursive defaults
-
-            # Copy over expected self-chat files
-            shutil.copytree(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)), 'self_chats'),
-                os.path.join(self.root_dir, 'self_chats'),
-            )
-
             self._set_up_config(
                 blueprint_type=BASE_BLUEPRINT_TYPE,
                 task_directory=ACUTE_EVAL_TASK_DIRECTORY,
-                overrides=self.common_overrides + base_task_overrides,
+                overrides=common_overrides + base_task_overrides,
             )
             self.config.mephisto.blueprint.model_pairs = None
             # TODO: hack to manually set mephisto.blueprint.model_pairs to None. Remove
             #  when Hydra releases support for recursive defaults
-            self.base_task_runner = FastAcuteExecutor(self.config)
 
-            yield self.operator, self.root_dir, self.models, self.common_overrides, self.database_path, self.config, self.db, self.base_task_runner  # TODO: change this once all fast ACUTE code is moved upwards
+            # Run Fast ACUTEs
+            base_runner = FastAcuteExecutor(self.config)
+            base_runner.run_selfchat()
+            base_runner.set_up_acute_eval()
+            self.config.mephisto.blueprint = base_runner.fast_acute_args
+            self._set_up_server()
+            outputs['base_state'] = self._get_agent_state(task_data=self.TASK_DATA)
+
+            # Run analysis
+            base_runner.analyze_results(args=f'--mephisto-root {self.database_path}')
+            outputs['base_results_path'] = base_runner.results_path
+
+            # # Run Q-function Fast ACUTEs and analysis on the base task
+
+            # Save the config file
+            config_path = os.path.join(root_dir, 'config.json')
+            config = {}
+            for model in models:
+                config[model] = {
+                    'log_path': base_runner._get_selfchat_log_path(model),
+                    'is_selfchat': True,
+                }
+            with open(config_path, 'w') as f:
+                json.dump(config, f)
+
+            # Set up config
+            assert len(models) == 2
+            q_function_overrides = common_overrides + [
+                f'+mephisto.blueprint.config_path={config_path}',
+                '+mephisto.blueprint.models=""',
+                f'+mephisto.blueprint.model_pairs={models[0]}:{models[1]}',
+            ]
+            # TODO: clean this up when Hydra has support for recursive defaults
+            self._set_up_config(
+                blueprint_type=Q_FUNCTION_BLUEPRINT_TYPE,
+                task_directory=ACUTE_EVAL_TASK_DIRECTORY,
+                overrides=q_function_overrides,
+            )
+            self.config.mephisto.blueprint.models = None
+            # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
+            #  Hydra releases support for recursive defaults
+
+            # Run Fast ACUTEs
+            q_function_runner = QLearningFastAcuteExecutor(self.config)
+            q_function_runner.set_up_acute_eval()
+            self.config.mephisto.blueprint = q_function_runner.fast_acute_args
+            self._set_up_server()
+            outputs['q_function_task_state'] = self._get_agent_state(
+                task_data=self.TASK_DATA
+            )
+
+            # Run analysis
+            q_function_runner.analyze_results(
+                args=f'--mephisto-root {self.database_path}'
+            )
+            outputs['q_function_results_path'] = q_function_runner.results_path
+
+            yield outputs
             # All code after this will be run upon teardown
 
             self._teardown()
 
             # Tear down temp file
-            shutil.rmtree(self.root_dir)
+            shutil.rmtree(root_dir)
+
+        def test_base_agent_state(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_agent_state(
+                state=outputs['base_state'], data_regression=data_regression
+            )
+
+        def test_
+
+        def test_q_function_agent_state(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_agent_state(
+                state=outputs['q_function_state'], data_regression=data_regression
+            )
 
         def test_base_task(
             self,
@@ -132,31 +213,10 @@ if True:
             file_regression: FileRegressionFixture,
         ):
 
-            (
-                self.operator,
-                self.root_dir,
-                self.models,
-                self.common_overrides,
-                self.database_path,
-                self.config,
-                self.db,
-                self.base_task_runner,
-            ) = setup_teardown
+            outputs = setup_teardown
 
-            self.base_task_runner.run_selfchat()
-            self.base_task_runner.set_up_acute_eval()
-            self.config.mephisto.blueprint = self.base_task_runner.fast_acute_args
-            self._set_up_server()
+            self._check_agent_state()
 
-            # Check that the agent state is as it should be
-            self._test_agent_state(
-                task_data=self.TASK_DATA, data_regression=data_regression
-            )
-
-            # Run analysis and check outputs
-            self.base_task_runner.analyze_results(
-                args=f'--mephisto-root {self.database_path}'
-            )
             self._check_analysis_outputs(
                 outputs_folder=self.base_task_runner.results_path,
                 save_prefix='base',
@@ -172,55 +232,11 @@ if True:
             file_regression: FileRegressionFixture,
         ):
 
-            (
-                self.operator,
-                self.root_dir,
-                self.models,
-                self.common_overrides,
-                self.database_path,
-                self.config,
-                self.db,
-                self.base_task_runner,
-            ) = setup_teardown
+            outputs = setup_teardown
 
-            # Save the config file
-            config_path = os.path.join(self.root_dir, 'config.json')
-            config = {}
-            for model in self.models:
-                config[model] = {
-                    'log_path': self.base_task_runner._get_selfchat_log_path(model),
-                    'is_selfchat': True,
-                }
-            with open(config_path, 'w') as f:
-                json.dump(config, f)
-
-            # Set up the config, database, operator, and server
-            assert len(self.models) == 2
-            overrides = self.common_overrides + [
-                f'+mephisto.blueprint.config_path={config_path}',
-                '+mephisto.blueprint.models=""',
-                f'+mephisto.blueprint.model_pairs={self.models[0]}:{self.models[1]}',
-            ]
-            self._set_up_config(
-                blueprint_type=Q_FUNCTION_BLUEPRINT_TYPE,
-                task_directory=ACUTE_EVAL_TASK_DIRECTORY,
-                overrides=overrides,
-            )
-            self.config.mephisto.blueprint.models = None
-            # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
-            #  Hydra releases support for recursive defaults
-            runner = QLearningFastAcuteExecutor(self.config)
-            runner.set_up_acute_eval()
-            self.config.mephisto.blueprint = runner.fast_acute_args
-            self._set_up_server()
-
-            # Check that the agent state is as it should be
-            self._test_agent_state(
-                task_data=self.TASK_DATA, data_regression=data_regression
-            )
+            self._check_agent_state()
 
             # Run analysis and check outputs
-            runner.analyze_results(args=f'--mephisto-root {self.database_path}')
             self._check_analysis_outputs(
                 outputs_folder=runner.results_path,
                 save_prefix='q_function',

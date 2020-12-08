@@ -166,10 +166,19 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         """
         Test that the actual agent state matches the expected state.
 
+        Get the final agent state given the input task data and check that it is as
+        expected.
+        """
+        state = self._get_agent_state(task_data=task_data)
+        self._check_agent_state(state=state, data_regression=data_regression)
+
+    def _get_agent_state(self, task_data: Dict[str, Any]):
+        """
+        Submit user task data and return the final agent state.
+
         Register a mock human agent, request initial data to define the 'inputs' field
         of the agent state, make the agent act to define the 'outputs' field of the
-        agent state, and then check that the agent state matches the desired agent
-        state.
+        agent state, and return the agent state.
         """
 
         # Set up the mock human agent
@@ -183,7 +192,13 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
             agent_id, {"MEPHISTO_is_submit": True, "task_data": task_data}
         )
 
-        # Check that the inputs and outputs are as expected
-        state = self.db.find_agents()[0].state.get_data()
+        return self.db.find_agents()[0].state.get_data()
+
+    def _check_agent_state(
+        self, state: Dict[str, Any], data_regression: DataRegressionFixture
+    ):
+        """
+        Given an agent state, test that it is as expected.
+        """
         del state['times']  # Delete variable timestamps
         data_regression.check(state)

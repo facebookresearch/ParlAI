@@ -36,10 +36,6 @@ if True:
         Test the turn annotations crowdsourcing tasks.
         """
 
-        def _setup(self):
-            super()._setup()
-            build_task(task_directory=TASK_DIRECTORY)
-
         def test_no_in_flight_qa(
             self, setup_teardown, data_regression: DataRegressionFixture
         ):
@@ -127,6 +123,8 @@ if True:
                 task_data = json.load(f)
 
             # # Setup
+
+            build_task(task_directory=TASK_DIRECTORY)
 
             # Set up the config and database
             overrides += [
