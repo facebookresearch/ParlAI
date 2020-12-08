@@ -40,6 +40,28 @@ if True:
         Test the Fast ACUTE crowdsourcing task.
         """
 
+        TASK_DATA = {
+            "final_data": [
+                {"speakerChoice": "model_2", "textReason": "Makes more sense"},
+                {
+                    "speakerChoice": "blender_90m_copy1",
+                    "textReason": "Makes more sense",
+                },
+                {
+                    "speakerChoice": "blender_90m_copy2",
+                    "textReason": "Makes more sense",
+                },
+                {
+                    "speakerChoice": "blender_90m_copy1",
+                    "textReason": "Makes more sense",
+                },
+                {
+                    "speakerChoice": "blender_90m_copy2",
+                    "textReason": "Makes more sense",
+                },
+            ]
+        }
+
         def setup_method(self):
 
             super().setup_method()
@@ -93,35 +115,15 @@ if True:
             file_regression: FileRegressionFixture,
         ):
 
-            task_data = {
-                "final_data": [
-                    {"speakerChoice": "model_2", "textReason": "Makes more sense"},
-                    {
-                        "speakerChoice": "blender_90m_copy1",
-                        "textReason": "Makes more sense",
-                    },
-                    {
-                        "speakerChoice": "blender_90m_copy2",
-                        "textReason": "Makes more sense",
-                    },
-                    {
-                        "speakerChoice": "blender_90m_copy1",
-                        "textReason": "Makes more sense",
-                    },
-                    {
-                        "speakerChoice": "blender_90m_copy2",
-                        "textReason": "Makes more sense",
-                    },
-                ]
-            }
-
             self.base_task_runner.run_selfchat()
             self.base_task_runner.set_up_acute_eval()
             self.config.mephisto.blueprint = self.base_task_runner.fast_acute_args
             self._set_up_server()
 
             # Check that the agent state is as it should be
-            self._test_agent_state(task_data=task_data, data_regression=data_regression)
+            self._test_agent_state(
+                task_data=self.TASK_DATA, data_regression=data_regression
+            )
 
             # Run analysis and check outputs
             self.base_task_runner.analyze_results(
@@ -140,28 +142,6 @@ if True:
             dataframe_regression: DataFrameRegressionFixture,
             file_regression: FileRegressionFixture,
         ):
-
-            task_data = {
-                "final_data": [
-                    {"speakerChoice": "model_2", "textReason": "Makes more sense"},
-                    {
-                        "speakerChoice": "blender_90m_copy1",
-                        "textReason": "Makes more sense",
-                    },
-                    {
-                        "speakerChoice": "blender_90m_copy1",
-                        "textReason": "Makes more sense",
-                    },
-                    {
-                        "speakerChoice": "blender_90m_copy2",
-                        "textReason": "Makes more sense",
-                    },
-                    {
-                        "speakerChoice": "blender_90m_copy1",
-                        "textReason": "Makes more sense",
-                    },
-                ]
-            }
 
             # Save the config file
             config_path = os.path.join(self.root_dir, 'config.json')
@@ -195,7 +175,9 @@ if True:
             self._set_up_server()
 
             # Check that the agent state is as it should be
-            self._test_agent_state(task_data=task_data, data_regression=data_regression)
+            self._test_agent_state(
+                task_data=self.TASK_DATA, data_regression=data_regression
+            )
 
             # Run analysis and check outputs
             runner.analyze_results(args=f'--mephisto-root {self.database_path}')
