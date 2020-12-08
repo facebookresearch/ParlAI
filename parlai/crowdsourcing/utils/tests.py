@@ -126,7 +126,7 @@ class AbstractCrowdsourcingTest:
 
             # Register the worker
             mock_worker_name = f"MOCK_WORKER_{idx:d}"
-            wait_time = 1  # In seconds
+            wait_time = 15  # In seconds
             max_num_tries = 10  # max_num_tries * wait_time is the max time to wait
             num_tries = 0
             while num_tries < max_num_tries:
@@ -137,7 +137,7 @@ class AbstractCrowdsourcingTest:
                     num_tries += 1
                     print(
                         f'A subscriber could not be found after {num_tries:d} '
-                        f'attempt(s). Retrying...'
+                        f'attempt(s). Waiting for {wait_time} seconds...'
                     )
                     time.sleep(wait_time)
             else:
