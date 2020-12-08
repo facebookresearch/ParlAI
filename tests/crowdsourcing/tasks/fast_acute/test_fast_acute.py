@@ -62,9 +62,9 @@ if True:
             ]
         }
 
-        def setup_method(self):
+        def _setup(self):
 
-            super().setup_method()
+            super()._setup()
 
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
@@ -107,6 +107,13 @@ if True:
             # TODO: hack to manually set mephisto.blueprint.model_pairs to None. Remove
             #  when Hydra releases support for recursive defaults
             self.base_task_runner = FastAcuteExecutor(self.config)
+
+        def _teardown(self):
+
+            super()._teardown()
+
+            # Tear down temp file
+            shutil.rmtree(self.root_dir)
 
         def test_base_task(
             self,
@@ -206,13 +213,6 @@ if True:
                     with open(os.path.join(outputs_folder, filename)) as f:
                         contents = f.read()
                     file_regression.check(contents=contents, basename=save_name)
-
-        def teardown_method(self):
-
-            super().teardown_method()
-
-            # Tear down temp file
-            shutil.rmtree(self.root_dir)
 
 
 # except ImportError:

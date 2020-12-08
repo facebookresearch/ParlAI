@@ -36,8 +36,8 @@ if True:
         Test the turn annotations crowdsourcing tasks.
         """
 
-        def setup_method(self):
-            super().setup_method()
+        def _setup(self):
+            super()._setup()
             build_task(task_directory=TASK_DIRECTORY)
 
         def test_no_in_flight_qa(self, data_regression: DataRegressionFixture):

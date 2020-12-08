@@ -11,10 +11,10 @@ import os
 import random
 import tempfile
 import time
-import unittest
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+import pytest
 import torch
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
@@ -32,7 +32,21 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    def setup_method(self):
+    @pytest.fixture(scope="module")
+    def setup_teardown(self):
+        """
+        Call code to set up and tear down tests.
+        """
+        self._setup()
+        yield 'Setup complete.'  # All code after this will be run upon teardown
+        self._teardown()
+
+    def _setup(self):
+        """
+        To be run before all tests.
+
+        Should be called in a pytest setup/teardown fixture.
+        """
 
         random.seed(0)
         np.random.seed(0)
@@ -40,7 +54,13 @@ class AbstractCrowdsourcingTest:
 
         self.operator = None
 
-    def teardown_method(self):
+    def _teardown(self):
+        """
+        To be run after all tests.
+
+        Should be called in a pytest setup/teardown fixture.
+        """
+
         if self.operator is not None:
             self.operator.shutdown()
 
