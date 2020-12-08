@@ -10,6 +10,7 @@ End-to-end testing for the ACUTE-Eval crowdsourcing task.
 
 import unittest
 
+import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
@@ -25,6 +26,10 @@ if True:
         """
         Test the ACUTE-Eval crowdsourcing task.
         """
+
+        @pytest.fixture(scope="function")
+        def setup_teardown(self):
+            self.setup_teardown()
 
         def test_base_task(
             self, setup_teardown, data_regression: DataRegressionFixture

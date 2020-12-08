@@ -12,6 +12,7 @@ import os
 import unittest
 from typing import List
 
+import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
@@ -35,6 +36,10 @@ if True:
         """
         Test the turn annotations crowdsourcing tasks.
         """
+
+        @pytest.fixture(scope="function")
+        def setup_teardown(self):
+            self.setup_teardown()
 
         def test_no_in_flight_qa(
             self, setup_teardown, data_regression: DataRegressionFixture

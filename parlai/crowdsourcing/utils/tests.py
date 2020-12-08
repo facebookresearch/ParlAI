@@ -14,7 +14,6 @@ import time
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-import pytest
 import torch
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
@@ -32,10 +31,11 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    @pytest.fixture(scope="function")
     def setup_teardown(self):
         """
         Call code to set up and tear down tests.
+
+        In subclasses, subclass this function and add a @pytest.fixture decorator.
         """
         self._setup()
         yield self.operator

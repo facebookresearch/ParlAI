@@ -195,7 +195,7 @@ if True:
                 state=outputs['base_state'], data_regression=data_regression
             )
 
-        def test_base_all_convo_pairs(
+        def test_base_all_convo_pairs_txt(
             self, setup_teardown, file_regression: FileRegressionFixture
         ):
             outputs = setup_teardown
@@ -215,7 +215,65 @@ if True:
                 file_regression=file_regression,
             )
 
-        # {{{TODO: more tests}}}
+        def test_base_full_csv(
+            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_dataframe(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='full.csv',
+                dataframe_regression=dataframe_regression,
+            )
+
+        def test_base_grid_csv(
+            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_dataframe(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='grid.csv',
+                dataframe_regression=dataframe_regression,
+            )
+
+        def test_base_grid_winners_as_rows_csv(
+            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_dataframe(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='grid.winners_as_rows.csv',
+                dataframe_regression=dataframe_regression,
+            )
+
+        def test_base_ratings_per_worker_csv(
+            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_dataframe(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='ratings_per_worker.csv',
+                dataframe_regression=dataframe_regression,
+            )
+
+        def test_base_reason_html(
+            self, setup_teardown, file_regression: FileRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_file_contents(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='reason.html',
+                file_regression=file_regression,
+            )
+
+        def test_base_significance_csv(
+            self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+        ):
+            outputs = setup_teardown
+            self._check_dataframe(
+                results_folder=outputs['base_results_folder'],
+                file_suffix='significance.csv',
+                dataframe_regression=dataframe_regression,
+            )
 
         def test_q_function_agent_state(
             self, setup_teardown, data_regression: DataRegressionFixture
