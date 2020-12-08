@@ -1,0 +1,213 @@
+inputs:
+- pair_id: 0
+  pairing_dict:
+    correct_answer: modela
+    dialogue_dicts:
+    - dialogue:
+      - id: modela
+        text: Hello how are you?
+      - id: human_evaluator
+        text: I'm well, how about yourself?
+      - id: modela
+        text: Good, just reading a book.
+      - id: human_evaluator
+        text: What book are you reading?
+      - id: modela
+        text: An English textbook. Do you like to read?
+      - id: human_evaluator
+        text: Yes, I really enjoy reading, but my favorite thing to do is dog walking.
+      - id: modela
+        text: Do you have a dog? I don't have any pets
+      - id: human_evaluator
+        text: Yes, I have a labrador poodle mix.
+      evaluator_id_hashed: HUMAN1
+      id: ABCDEF
+      oz_id_hashed: null
+      speakers:
+      - modela
+      - human_evaluator
+    - dialogue:
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: How are you?
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: Hello back
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: You must really like that word
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: Ok
+      evaluator_id_hashed: HUMAN3
+      id: ZYX
+      oz_id_hashed: null
+      speakers:
+      - modelc
+      - human_evaluator
+    is_onboarding: true
+    speakers_to_eval:
+    - modela
+    - modelc
+    tags:
+    - onboarding1
+  task_specs:
+    is_onboarding: true
+    model_left:
+      dialogue:
+      - id: modela
+        text: Hello how are you?
+      - id: human_evaluator
+        text: I'm well, how about yourself?
+      - id: modela
+        text: Good, just reading a book.
+      - id: human_evaluator
+        text: What book are you reading?
+      - id: modela
+        text: An English textbook. Do you like to read?
+      - id: human_evaluator
+        text: Yes, I really enjoy reading, but my favorite thing to do is dog walking.
+      - id: modela
+        text: Do you have a dog? I don't have any pets
+      - id: human_evaluator
+        text: Yes, I have a labrador poodle mix.
+      name: modela
+    model_right:
+      dialogue:
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: How are you?
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: Hello back
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: You must really like that word
+      - id: modelc
+        text: Hello hello hello
+      - id: human_evaluator
+        text: Ok
+      name: modelc
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+- pair_id: 1
+  pairing_dict:
+    dialogue_dicts:
+    - dialogue:
+      - id: human_evaluator
+        text: Hi, I love food, what about you?
+      - id: modelb
+        text: I love food too, what's your favorite? Mine is burgers.
+      - id: human_evaluator
+        text: I'm a chef and I love all foods. What do you do?
+      - id: modelb
+        text: I'm retired now, but I was a nurse.
+      - id: human_evaluator
+        text: Wow, that's really admirable. My sister is a nurse.
+      - id: modelb
+        text: Do you have any hobbies?
+      - id: human_evaluator
+        text: I like to paint and play piano
+      - id: modelb
+        text: You're very artistic. I wish I could be so creative.
+      evaluator_id_hashed: HUMAN2
+      id: AGHIJK
+      oz_id_hashed: null
+      speakers:
+      - modelb
+      - human_evaluator
+    - dialogue:
+      - id: modela
+        text: Hi how are you doing?
+      - id: human_evaluator
+        text: I'm doing ok.
+      - id: modela
+        text: Oh, what's wrong?
+      - id: human_evaluator
+        text: Feeling a bit sick after my workout
+      - id: modela
+        text: Do you workout a lot?
+      - id: human_evaluator
+        text: Yes, I go to the gym every day. I do a lot of lifting.
+      - id: modela
+        text: That's cool, I like to climb.
+      - id: human_evaluator
+        text: I've never been.
+      evaluator_id_hashed: HUMAN1
+      id: '123456'
+      oz_id_hashed: null
+      speakers:
+      - modela
+      - human_evaluator
+    dialogue_ids:
+    - 0
+    - 1
+    is_onboarding: false
+    speakers_to_eval:
+    - modelb
+    - modela
+    tags:
+    - example1
+  task_specs:
+    is_onboarding: false
+    model_left:
+      dialogue:
+      - id: human_evaluator
+        text: Hi, I love food, what about you?
+      - id: modelb
+        text: I love food too, what's your favorite? Mine is burgers.
+      - id: human_evaluator
+        text: I'm a chef and I love all foods. What do you do?
+      - id: modelb
+        text: I'm retired now, but I was a nurse.
+      - id: human_evaluator
+        text: Wow, that's really admirable. My sister is a nurse.
+      - id: modelb
+        text: Do you have any hobbies?
+      - id: human_evaluator
+        text: I like to paint and play piano
+      - id: modelb
+        text: You're very artistic. I wish I could be so creative.
+      name: modelb
+    model_right:
+      dialogue:
+      - id: modela
+        text: Hi how are you doing?
+      - id: human_evaluator
+        text: I'm doing ok.
+      - id: modela
+        text: Oh, what's wrong?
+      - id: human_evaluator
+        text: Feeling a bit sick after my workout
+      - id: modela
+        text: Do you workout a lot?
+      - id: human_evaluator
+        text: Yes, I go to the gym every day. I do a lot of lifting.
+      - id: modela
+        text: That's cool, I like to climb.
+      - id: human_evaluator
+        text: I've never been.
+      name: modela
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+outputs:
+  final_data:
+  - speakerChoice: modela
+    textReason: Turn 1
+  - speakerChoice: modelb
+    textReason: Turn 2
+  - speakerChoice: modelb
+    textReason: Turn 3
+  - speakerChoice: modelb
+    textReason: Turn 4
+  - speakerChoice: modelb
+    textReason: Turn 5
