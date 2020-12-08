@@ -42,6 +42,8 @@ if True:
 
         def setup_method(self):
 
+            super().setup_method()
+
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
 
