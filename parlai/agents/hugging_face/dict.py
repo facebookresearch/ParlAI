@@ -20,6 +20,7 @@ except ImportError:
     )
 
 SPECIAL_TOKENS = {"bos_token": "<bos>", "eos_token": "<eos>", "pad_token": "<pad>"}
+
 NO_OP = "x"
 
 

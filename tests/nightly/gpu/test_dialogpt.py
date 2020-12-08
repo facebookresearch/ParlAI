@@ -110,7 +110,3 @@ class TestDialogptModel(unittest.TestCase):
             dialogpt.observe({'text': text, 'episode_done': True})
             response = dialogpt.act()
             assert response['text'] == label
-
-
-if __name__ == '__main__':
-    unittest.main()
