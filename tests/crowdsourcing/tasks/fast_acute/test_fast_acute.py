@@ -14,6 +14,7 @@ import tempfile
 import unittest
 
 import pandas as pd
+import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
 from pytest_regressions.dataframe_regression import DataFrameRegressionFixture
 from pytest_regressions.file_regression import FileRegressionFixture
@@ -62,9 +63,16 @@ if True:
             ]
         }
 
-        def _setup(self):
+        @pytest.fixture(scope="class")
+        def setup_teardown(self):
+            """
+            Call code to set up and tear down tests.
 
-            super()._setup()
+            Run this only once because we'll be running all Fast ACUTE code before
+            checking any results.
+            """
+
+            self._setup()
 
             # Set up common temp directory
             self.root_dir = tempfile.mkdtemp()
@@ -108,19 +116,32 @@ if True:
             #  when Hydra releases support for recursive defaults
             self.base_task_runner = FastAcuteExecutor(self.config)
 
-        def _teardown(self):
+            yield self.operator, self.root_dir, self.models, self.common_overrides, self.database_path, self.config, self.db, self.base_task_runner  # TODO: change this once all fast ACUTE code is moved upwards
+            # All code after this will be run upon teardown
 
-            super()._teardown()
+            self._teardown()
 
             # Tear down temp file
             shutil.rmtree(self.root_dir)
 
         def test_base_task(
             self,
+            setup_teardown,
             data_regression: DataRegressionFixture,
             dataframe_regression: DataFrameRegressionFixture,
             file_regression: FileRegressionFixture,
         ):
+
+            (
+                self.operator,
+                self.root_dir,
+                self.models,
+                self.common_overrides,
+                self.database_path,
+                self.config,
+                self.db,
+                self.base_task_runner,
+            ) = setup_teardown
 
             self.base_task_runner.run_selfchat()
             self.base_task_runner.set_up_acute_eval()
@@ -145,10 +166,22 @@ if True:
 
         def test_q_function_task(
             self,
+            setup_teardown,
             data_regression: DataRegressionFixture,
             dataframe_regression: DataFrameRegressionFixture,
             file_regression: FileRegressionFixture,
         ):
+
+            (
+                self.operator,
+                self.root_dir,
+                self.models,
+                self.common_overrides,
+                self.database_path,
+                self.config,
+                self.db,
+                self.base_task_runner,
+            ) = setup_teardown
 
             # Save the config file
             config_path = os.path.join(self.root_dir, 'config.json')

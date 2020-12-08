@@ -40,10 +40,15 @@ if True:
             super()._setup()
             build_task(task_directory=TASK_DIRECTORY)
 
-        def test_no_in_flight_qa(self, data_regression: DataRegressionFixture):
+        def test_no_in_flight_qa(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
             """
             Test static turn annotations without in-flight QA.
             """
+
+            self.operator = setup_teardown
+
             overrides = [
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
@@ -55,10 +60,15 @@ if True:
                 data_regression=data_regression,
             )
 
-        def test_in_flight_qa(self, data_regression: DataRegressionFixture):
+        def test_in_flight_qa(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
             """
             Test static turn annotations with in-flight QA.
             """
+
+            self.operator = setup_teardown
+
             overrides = [
                 '+mephisto.blueprint.annotation_indices_jsonl=null',
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
@@ -72,7 +82,7 @@ if True:
             )
 
         def test_in_flight_qa_annotation_file(
-            self, data_regression: DataRegressionFixture
+            self, setup_teardown, data_regression: DataRegressionFixture
         ):
             """
             Test static turn annotations with in-flight QA and with an annotation file.
@@ -80,6 +90,9 @@ if True:
             The annotation file will list which turns of which conversations should
             receive annotations.
             """
+
+            self.operator = setup_teardown
+
             overrides = [
                 f'+mephisto.blueprint.annotation_indices_jsonl={TASK_DIRECTORY}/task_config/annotation_indices_example.jsonl',
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations_annotation_file.jsonl',

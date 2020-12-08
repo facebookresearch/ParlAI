@@ -26,7 +26,11 @@ if True:
         Test the ACUTE-Eval crowdsourcing task.
         """
 
-        def test_base_task(self, data_regression: DataRegressionFixture):
+        def test_base_task(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
+
+            self.operator = setup_teardown
 
             task_data = {
                 "final_data": [

@@ -32,18 +32,19 @@ class AbstractCrowdsourcingTest:
     and agent registration.
     """
 
-    @pytest.fixture(scope="module")
+    @pytest.fixture(scope="function")
     def setup_teardown(self):
         """
         Call code to set up and tear down tests.
         """
         self._setup()
-        yield 'Setup complete.'  # All code after this will be run upon teardown
+        yield self.operator
+        # All code after this will be run upon teardown
         self._teardown()
 
     def _setup(self):
         """
-        To be run before all tests.
+        To be run before a test.
 
         Should be called in a pytest setup/teardown fixture.
         """
@@ -56,7 +57,7 @@ class AbstractCrowdsourcingTest:
 
     def _teardown(self):
         """
-        To be run after all tests.
+        To be run after a test.
 
         Should be called in a pytest setup/teardown fixture.
         """
