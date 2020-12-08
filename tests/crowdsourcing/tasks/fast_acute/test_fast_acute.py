@@ -13,7 +13,10 @@ import shutil
 import tempfile
 import unittest
 
+import pandas as pd
 from pytest_regressions.data_regression import DataRegressionFixture
+from pytest_regressions.dataframe_regression import DataFrameRegressionFixture
+from pytest_regressions.file_regression import FileRegressionFixture
 
 
 if True:
@@ -83,7 +86,12 @@ if True:
             #  when Hydra releases support for recursive defaults
             self.base_task_runner = FastAcuteExecutor(self.config)
 
-        def test_base_task(self, data_regression: DataRegressionFixture):
+        def test_base_task(
+            self,
+            data_regression: DataRegressionFixture,
+            dataframe_regression: DataFrameRegressionFixture,
+            file_regression: FileRegressionFixture,
+        ):
 
             task_data = {
                 "final_data": [
@@ -115,12 +123,22 @@ if True:
             # Check that the agent state is as it should be
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
-            # Run analysis
+            # Run analysis and check outputs
             self.base_task_runner.analyze_results(
                 args=f'--mephisto-root {self.database_path}'
             )
+            self._check_analysis_outputs(
+                outputs_folder=self.base_task_runner.results_path,
+                dataframe_regression=dataframe_regression,
+                file_regression=file_regression,
+            )
 
-        def test_q_function_task(self, data_regression: DataRegressionFixture):
+        def test_q_function_task(
+            self,
+            data_regression: DataRegressionFixture,
+            dataframe_regression: DataFrameRegressionFixture,
+            file_regression: FileRegressionFixture,
+        ):
 
             task_data = {
                 "final_data": [
@@ -178,8 +196,13 @@ if True:
             # Check that the agent state is as it should be
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
-            # Run analysis
+            # Run analysis and check outputs
             runner.analyze_results(args=f'--mephisto-root {self.database_path}')
+            self._check_analysis_outputs(
+                outputs_folder=runner.results_path,
+                dataframe_regression=dataframe_regression,
+                file_regression=file_regression,
+            )
 
         def teardown_method(self):
 
@@ -187,6 +210,24 @@ if True:
 
             # Tear down temp file
             shutil.rmtree(self.root_dir)
+
+    def _check_analysis_outputs(
+        outputs_folder: str,
+        dataframe_regression: DataFrameRegressionFixture,
+        file_regression: FileRegressionFixture,
+    ):
+        files = os.listdir(outputs_folder)
+        for file in files:
+            extension = '.' + file.split('.')[-1]
+            if extension == '.csv':
+                df = pd.read_csv(os.path.join(outputs_folder, file))
+                dataframe_regression.check(data_frame=df, basename=file)
+            else:
+                with open(os.path.join(outputs_folder, file)) as f:
+                    contents = f.read()
+                file_regression.check(
+                    contents=contents, extension=extension, basename=file
+                )
 
 
 # except ImportError:
