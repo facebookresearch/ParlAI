@@ -126,7 +126,22 @@ class AbstractCrowdsourcingTest:
 
             # Register the worker
             mock_worker_name = f"MOCK_WORKER_{idx:d}"
-            self.server.register_mock_worker(mock_worker_name)
+            wait_time = 1  # In seconds
+            max_num_tries = 10  # max_num_tries * wait_time is the max time to wait
+            num_tries = 0
+            while num_tries < max_num_tries:
+                try:
+                    self.server.register_mock_worker(mock_worker_name)
+                    break
+                except IndexError:
+                    num_tries += 1
+                    print(
+                        f'A subscriber could not be found after {num_tries:d} '
+                        f'attempt(s). Retrying...'
+                    )
+                    time.sleep(wait_time)
+            else:
+                raise ValueError('The worker could not be registered!')
             workers = self.db.find_workers(worker_name=mock_worker_name)
             worker_id = workers[0].db_id
 
