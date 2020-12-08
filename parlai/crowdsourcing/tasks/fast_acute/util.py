@@ -8,6 +8,17 @@ import hashlib
 import os
 from typing import Iterable, List, Tuple, Union
 
+import pandas as pd
+from pytest_regressions.data_regression import DataRegressionFixture
+from pytest_regressions.dataframe_regression import DataFrameRegressionFixture
+from pytest_regressions.file_regression import FileRegressionFixture
+
+from parlai.crowdsourcing.tasks.fast_acute.run import (
+    __file__ as base_task_run_file,
+    ACUTE_EVAL_TASK_DIRECTORY,
+)
+from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
+
 
 def get_hashed_combo_path(
     root_dir: str,
@@ -42,3 +53,151 @@ def get_hashed_combo_path(
         ).hexdigest()[:10],
     )
     return path
+
+
+class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
+    """
+    Abstract test class for testing Fast ACUTE code.
+    """
+
+    FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(base_task_run_file))
+    ACUTE_EVAL_TASK_DIRECTORY = ACUTE_EVAL_TASK_DIRECTORY
+    MODELS = ['blender_90m_copy1', 'blender_90m_copy2']
+    MODEL_STRING = ','.join(MODELS)
+    TASK_DATA = {
+        "final_data": [
+            {"speakerChoice": "model_2", "textReason": "Makes more sense"},
+            {"speakerChoice": "blender_90m_copy1", "textReason": "Makes more sense"},
+            {"speakerChoice": "blender_90m_copy2", "textReason": "Makes more sense"},
+            {"speakerChoice": "blender_90m_copy1", "textReason": "Makes more sense"},
+            {"speakerChoice": "blender_90m_copy2", "textReason": "Makes more sense"},
+        ]
+    }
+
+    def _get_common_overrides(self, root_dir: str) -> List[str]:
+        """
+        Return overrides for all subclassed Fast ACUTE test code.
+        """
+        # TODO: clean this up when Hydra has support for recursive defaults
+        return [
+            '+mephisto.blueprint.acute_eval_type=engaging',
+            'mephisto.blueprint.block_on_onboarding_fail=False',
+            '+mephisto.blueprint.matchups_per_pair=60',
+            '+mephisto.blueprint.num_self_chats=5',
+            f'+mephisto.blueprint.onboarding_path={self.FAST_ACUTE_TASK_DIRECTORY}/task_config/onboarding.json',
+            f'+mephisto.blueprint.root_dir={root_dir}',
+            '+mephisto.blueprint.sufficient_matchups_multiplier=2',
+            '+mephisto.task.task_name=acute_eval_test',
+        ]
+
+    def test_agent_state(self, setup_teardown, data_regression: DataRegressionFixture):
+        outputs = setup_teardown
+        self._check_agent_state(state=outputs['state'], data_regression=data_regression)
+
+    def test_all_convo_pairs_txt(
+        self, setup_teardown, file_regression: FileRegressionFixture
+    ):
+        outputs = setup_teardown
+        self._check_file_contents(
+            results_folder=outputs['results_folder'],
+            file_suffix='all_convo_pairs.txt',
+            file_regression=file_regression,
+        )
+
+    def test_all_html(self, setup_teardown, file_regression: FileRegressionFixture):
+        outputs = setup_teardown
+        self._check_file_contents(
+            results_folder=outputs['results_folder'],
+            file_suffix='all.html',
+            file_regression=file_regression,
+        )
+
+    def test_full_csv(
+        self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+    ):
+        outputs = setup_teardown
+        self._check_dataframe(
+            results_folder=outputs['results_folder'],
+            file_suffix='full.csv',
+            dataframe_regression=dataframe_regression,
+        )
+
+    def test_grid_csv(
+        self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+    ):
+        outputs = setup_teardown
+        self._check_dataframe(
+            results_folder=outputs['results_folder'],
+            file_suffix='grid.csv',
+            dataframe_regression=dataframe_regression,
+        )
+
+    def test_grid_winners_as_rows_csv(
+        self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+    ):
+        outputs = setup_teardown
+        self._check_dataframe(
+            results_folder=outputs['results_folder'],
+            file_suffix='grid.winners_as_rows.csv',
+            dataframe_regression=dataframe_regression,
+        )
+
+    def test_ratings_per_worker_csv(
+        self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+    ):
+        outputs = setup_teardown
+        self._check_dataframe(
+            results_folder=outputs['results_folder'],
+            file_suffix='ratings_per_worker.csv',
+            dataframe_regression=dataframe_regression,
+        )
+
+    def test_reason_html(self, setup_teardown, file_regression: FileRegressionFixture):
+        outputs = setup_teardown
+        self._check_file_contents(
+            results_folder=outputs['results_folder'],
+            file_suffix='reason.html',
+            file_regression=file_regression,
+        )
+
+    def test_significance_csv(
+        self, setup_teardown, dataframe_regression: DataFrameRegressionFixture
+    ):
+        outputs = setup_teardown
+        self._check_dataframe(
+            results_folder=outputs['results_folder'],
+            file_suffix='significance.csv',
+            dataframe_regression=dataframe_regression,
+        )
+
+    def _check_dataframe(
+        self,
+        results_folder: str,
+        file_suffix: str,
+        dataframe_regression: DataFrameRegressionFixture,
+    ):
+        file_path = self._get_matching_file_path(
+            results_folder=results_folder, file_suffix=file_suffix
+        )
+        df = pd.read_csv(file_path)
+        dataframe_regression.check(data_frame=df)
+
+    def _check_file_contents(
+        self,
+        results_folder: str,
+        file_suffix: str,
+        file_regression: FileRegressionFixture,
+    ):
+        file_path = self._get_matching_file_path(
+            results_folder=results_folder, file_suffix=file_suffix
+        )
+        with open(file_path) as f:
+            contents = f.read()
+        file_regression.check(contents=contents)
+
+    def _get_matching_file_path(self, results_folder: str, file_suffix: str) -> str:
+        matching_files = [
+            obj for obj in os.listdir(results_folder) if obj.endswith(file_suffix)
+        ]
+        assert len(matching_files) == 1
+        return os.path.join(results_folder, matching_files[0])
