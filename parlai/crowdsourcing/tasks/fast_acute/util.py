@@ -13,11 +13,12 @@ from pytest_regressions.data_regression import DataRegressionFixture
 from pytest_regressions.dataframe_regression import DataFrameRegressionFixture
 from pytest_regressions.file_regression import FileRegressionFixture
 
-from parlai.crowdsourcing.tasks.fast_acute.run import (
-    __file__ as base_task_run_file,
-    ACUTE_EVAL_TASK_DIRECTORY,
-)
+from parlai.crowdsourcing.tasks.acute_eval import run
 from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
+
+
+ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
+# Read in any task config JSON/HTML files from the ACUTE-Eval directory
 
 
 def get_hashed_combo_path(
@@ -60,7 +61,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
     Abstract test class for testing Fast ACUTE code.
     """
 
-    FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(base_task_run_file))
+    FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
     ACUTE_EVAL_TASK_DIRECTORY = ACUTE_EVAL_TASK_DIRECTORY
     MODELS = ['blender_90m_copy1', 'blender_90m_copy2']
     MODEL_STRING = ','.join(MODELS)
@@ -87,6 +88,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             f'+mephisto.blueprint.onboarding_path={self.FAST_ACUTE_TASK_DIRECTORY}/task_config/onboarding.json',
             f'+mephisto.blueprint.root_dir={root_dir}',
             '+mephisto.blueprint.sufficient_matchups_multiplier=2',
+            '+mephisto.blueprint.task=blended_skill_talk',
             '+mephisto.task.task_name=acute_eval_test',
         ]
 

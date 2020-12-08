@@ -74,19 +74,22 @@ if True:
             # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
             #  Hydra releases support for recursive defaults
 
-            runner = QLearningFastAcuteExecutor(self.config)
-
             # Save the config file
             config = {}
             for model in self.MODELS:
                 config[model] = {
-                    'log_path': runner._get_selfchat_log_path(model),
+                    'log_path': QLearningFastAcuteExecutor.get_relative_selfchat_log_path(
+                        root_dir=self.config.mephisto.blueprint.root_dir,
+                        model=model,
+                        task=self.config.mephisto.blueprint.task,
+                    ),
                     'is_selfchat': True,
                 }
             with open(config_path, 'w') as f:
                 json.dump(config, f)
 
             # Run Fast ACUTEs
+            runner = QLearningFastAcuteExecutor(self.config)
             runner.set_up_acute_eval()
             self.config.mephisto.blueprint = runner.fast_acute_args
             self._set_up_server()

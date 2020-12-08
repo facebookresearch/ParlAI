@@ -59,7 +59,6 @@ if True:
                 f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
                 '+mephisto.blueprint.model_pairs=""',
                 '+mephisto.blueprint.selfchat_max_turns=6',
-                '+mephisto.blueprint.task=blended_skill_talk',
                 '+mephisto.blueprint.use_existing_self_chat_files=True',
             ]
             # TODO: clean this up when Hydra has support for recursive defaults

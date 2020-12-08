@@ -34,12 +34,14 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
     AcuteEvalBlueprint,
     AcuteEvalBlueprintArgs,
 )
-from parlai.crowdsourcing.tasks.acute_eval import run
 from parlai.crowdsourcing.tasks.fast_acute.analysis import (
     AcuteAnalyzer,
     setup_args as analysis_setup_args,
 )
-from parlai.crowdsourcing.tasks.fast_acute.util import get_hashed_combo_path
+from parlai.crowdsourcing.tasks.fast_acute.util import (
+    get_hashed_combo_path,
+    ACUTE_EVAL_TASK_DIRECTORY,
+)
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_args
 from parlai.utils.strings import normalize_reply
@@ -261,10 +263,21 @@ class FastAcuteExecutor(object):
         :param model:
             model string
         """
-        self_chats_folder = os.path.join(self.fast_acute_args.root_dir, 'self_chats')
+        return self.get_relative_selfchat_log_path(
+            root_dir=self.fast_acute_args.root_dir, model=model, task=self.task
+        )
+
+    @staticmethod
+    def get_relative_selfchat_log_path(root_dir: str, model: str, task: str) -> str:
+        """
+        Return path to selfchat log for a given model, given inputs.
+
+        Useful for getting selfchat log path without instantiating the exector.
+        """
+        self_chats_folder = os.path.join(root_dir, 'self_chats')
         os.makedirs(self_chats_folder, exist_ok=True)
         return os.path.join(
-            self_chats_folder, f"{model}.{self.task.replace(':', '_')}.jsonl"
+            self_chats_folder, f"{model}.{task.replace(':', '_')}.jsonl"
         )
 
     def _acutify_convo(
@@ -525,9 +538,6 @@ class FastAcuteExecutor(object):
         self._print_progress(f'ACUTE Results: {self.results}')
         self._print_progress(f'ACUTE results saved to {self.results_path}')
 
-
-ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
-# Read in any task config JSON/HTML files from the ACUTE-Eval directory
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
