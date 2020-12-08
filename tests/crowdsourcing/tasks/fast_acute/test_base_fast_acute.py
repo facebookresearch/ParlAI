@@ -28,10 +28,13 @@ if True:
         Test the base Fast ACUTE crowdsourcing task.
         """
 
-        @pytest.fixture(scope="function")
+        @pytest.fixture(scope="module")
         def setup_teardown(self):
             """
             Call code to set up and tear down tests.
+
+            Run this only once because we'll be running all Fast ACUTE code before
+            checking any results.
             """
 
             self._setup()
