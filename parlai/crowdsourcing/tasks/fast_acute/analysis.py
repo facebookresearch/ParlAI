@@ -92,7 +92,7 @@ class AcuteAnalyzer(object):
         assert os.path.isdir(self.root_dir), '--root-dir must be a real directory!'
         self.run_id = opt['run_id']
         self.outdir = opt['outdir']
-        # Get task for loading pairing files, by default we use q as used in Q function project
+        # Get task for loading pairing files
         self.task = opt.get('task', 'q')
         if opt.get('model_ordering') is not None:
             self.custom_model_ordering = opt['model_ordering'].split(',')

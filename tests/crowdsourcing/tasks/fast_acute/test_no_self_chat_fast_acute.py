@@ -18,15 +18,15 @@ import pytest
 
 try:
 
-    from parlai.crowdsourcing.tasks.fast_acute.run_q_function import (
-        QLearningFastAcuteExecutor,
+    from parlai.crowdsourcing.tasks.fast_acute.run_no_self_chat import (
+        NoSelfChatFastAcuteExecutor,
         BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.fast_acute.util import AbstractFastAcuteTest
 
-    class TestQFunctionFastAcute(AbstractFastAcuteTest):
+    class TestNoSelfChatFastAcute(AbstractFastAcuteTest):
         """
-        Test the Q-function Fast ACUTE crowdsourcing task.
+        Test the Fast ACUTE crowdsourcing task without running model self-chats.
         """
 
         @pytest.fixture(scope="module")
@@ -57,11 +57,11 @@ try:
             # Define output structure
             outputs = {}
 
-            # # Run Q-function Fast ACUTEs and analysis on the base task
+            # # Run Fast ACUTEs and analysis on the base task
 
             # Set up config
             assert len(self.MODELS) == 2
-            q_function_overrides = [
+            no_self_chat_overrides = [
                 f'+mephisto.blueprint.config_path={config_path}',
                 '+mephisto.blueprint.models=""',
                 f'+mephisto.blueprint.model_pairs={self.MODELS[0]}:{self.MODELS[1]}',
@@ -70,7 +70,7 @@ try:
             self._set_up_config(
                 blueprint_type=BLUEPRINT_TYPE,
                 task_directory=self.ACUTE_EVAL_TASK_DIRECTORY,
-                overrides=self._get_common_overrides(root_dir) + q_function_overrides,
+                overrides=self._get_common_overrides(root_dir) + no_self_chat_overrides,
             )
             self.config.mephisto.blueprint.models = None
             # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
@@ -80,7 +80,7 @@ try:
             config = {}
             for model in self.MODELS:
                 config[model] = {
-                    'log_path': QLearningFastAcuteExecutor.get_relative_selfchat_log_path(
+                    'log_path': NoSelfChatFastAcuteExecutor.get_relative_selfchat_log_path(
                         root_dir=self.config.mephisto.blueprint.root_dir,
                         model=model,
                         task=self.config.mephisto.blueprint.task,
@@ -91,7 +91,7 @@ try:
                 json.dump(config, f)
 
             # Run Fast ACUTEs
-            runner = QLearningFastAcuteExecutor(self.config)
+            runner = NoSelfChatFastAcuteExecutor(self.config)
             runner.set_up_acute_eval()
             self.config.mephisto.blueprint = runner.fast_acute_args
             self._set_up_server()

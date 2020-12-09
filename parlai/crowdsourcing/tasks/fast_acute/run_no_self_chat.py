@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Execute a Fast ACUTE run with Q-learning.
+Execute a Fast ACUTE run without model self-chats.
 """
 
 import os
@@ -27,15 +27,15 @@ from parlai.crowdsourcing.tasks.fast_acute.run import (
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.utils.strings import normalize_reply
 
-BLUEPRINT_TYPE = "fast_acute_q_function"
+BLUEPRINT_TYPE = "fast_acute_no_self_chat"
 
 
 @dataclass
-class FastAcuteQFunctionBlueprintArgs(FastAcuteBlueprintArgs):
+class FastAcuteNoSelfChatBlueprintArgs(FastAcuteBlueprintArgs):
     _blueprint_type: str = BLUEPRINT_TYPE
     _group: str = field(
-        default="FastAcuteQFunctionBlueprint",
-        metadata={'help': "Execute a fast ACUTE run with Q-learning"},
+        default="FastAcuteNoSelfChatBlueprint",
+        metadata={'help': "Execute a Fast ACUTE run without launching model self-chats"},
     )
     config_path: str = field(
         default=MISSING,
@@ -44,18 +44,18 @@ class FastAcuteQFunctionBlueprintArgs(FastAcuteBlueprintArgs):
 
 
 @register_mephisto_abstraction()
-class FastAcuteQFunctionBlueprint(FastAcuteBlueprint):
+class FastAcuteNoSelfChatBlueprint(FastAcuteBlueprint):
     """
-    Subclass of FastAcuteBlueprint with Q-function conversations.
+    Subclass of FastAcuteBlueprint without launching model self-chats first.
     """
 
-    ArgsClass = FastAcuteQFunctionBlueprintArgs
+    ArgsClass = FastAcuteNoSelfChatBlueprintArgs
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
 
-class QLearningFastAcuteExecutor(FastAcuteExecutor):
+class NoSelfChatFastAcuteExecutor(FastAcuteExecutor):
     """
-    Execute fast ACUTE runs with Q-function learning.
+    Execute Fast ACUTE runs without launching model self-chats first.
     """
 
     def __init__(self, args: DictConfig, model_config: Optional[Dict[str, Any]] = None):
@@ -155,8 +155,8 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    'conf/base_q_function',
-    {"conf": "example_q_function"},
+    'conf/base_no_self_chat',
+    {"conf": "example_no_self_chat"},
 ]
 
 
@@ -172,13 +172,13 @@ class TestScriptConfig(MTurkRunScriptConfig):
     )
 
 
-register_script_config(name='fast_acute_q_function', module=TestScriptConfig)
+register_script_config(name='fast_acute_no_self_chat', module=TestScriptConfig)
 
 
-@hydra.main(config_name="fast_acute_q_function")
+@hydra.main(config_name="fast_acute_no_self_chat")
 def main(cfg: DictConfig) -> None:
 
-    runner = QLearningFastAcuteExecutor(cfg)
+    runner = NoSelfChatFastAcuteExecutor(cfg)
 
     # Run ACUTE-Evals
     runner.run_acute_eval()

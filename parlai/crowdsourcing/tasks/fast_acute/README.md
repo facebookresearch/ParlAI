@@ -2,7 +2,7 @@
 
 The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. Two types of Fast ACUTE can be run:
 1. The base version (`run.py`), which includes having models chat with each other (known as "self-chats")
-1. A variant that skips self-chats (`run_q_function.py`), useful for the Q-function project where crowdsourcing raters annotate turns of a conversation
+1. A variant that skips self-chats (`run_no_self_chat.py`)
 
 Both types are discussed below.
 
@@ -89,7 +89,7 @@ See `task_config/self_chats/` for examples of what these self-chat files should 
 
 Launch Fast ACUTEs with a command like the following:
 ```
-python parlai/crowdsourcing/tasks/fast_acute/run_q_function.py \
+python parlai/crowdsourcing/tasks/fast_acute/run_no_self_chat.py \
 mephisto.blueprint.config_path=${PATH_TO_MODEL_SELFCHAT_JSON} \
 mephisto.blueprint.models=\'model1,model2,model3\' \
 mephisto.blueprint.num_self_chats=100 \
