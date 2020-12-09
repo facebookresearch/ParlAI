@@ -48,7 +48,9 @@ try:
 
             # Copy over expected self-chat files
             shutil.copytree(
-                os.path.join(self.FAST_ACUTE_TASK_DIRECTORY, 'self_chats'),
+                os.path.join(
+                    self.FAST_ACUTE_TASK_DIRECTORY, 'task_config', 'self_chats'
+                ),
                 os.path.join(root_dir, 'self_chats'),
             )
 
