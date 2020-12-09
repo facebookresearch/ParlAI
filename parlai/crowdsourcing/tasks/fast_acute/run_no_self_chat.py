@@ -35,7 +35,9 @@ class FastAcuteNoSelfChatBlueprintArgs(FastAcuteBlueprintArgs):
     _blueprint_type: str = BLUEPRINT_TYPE
     _group: str = field(
         default="FastAcuteNoSelfChatBlueprint",
-        metadata={'help': "Execute a Fast ACUTE run without launching model self-chats"},
+        metadata={
+            'help': "Execute a Fast ACUTE run without launching model self-chats"
+        },
     )
     config_path: str = field(
         default=MISSING,
