@@ -353,6 +353,7 @@ try:
         """
         Test the chat demo crowdsourcing task.
         """
+
         # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
         #  regressions. Also use a pytest.fixture to call self._setup() and
         #  self._teardown(), like the other tests use, instead of calling them with
