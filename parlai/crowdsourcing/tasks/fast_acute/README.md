@@ -1,12 +1,12 @@
-# *** TODO: rewrite all this! ***
-
 # Fast ACUTE
 
-The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. These scripts launch ACUTE-Eval via [Mephisto](https://github.com/facebookresearch/Mephisto), so be sure to clone the Mephisto repo and follow the instructions in its Quick Start guide first.
+The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command.
 
 ## Setup
 
 ### 1. Add the model to the model config
+
+# *** TODO: rewrite all this! ***
 
 In the `model_configs.py` file, you will find a `CONFIG` dictionary that maps a _unique_ model identifier to the appropriate configuration arguments. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc.
 
