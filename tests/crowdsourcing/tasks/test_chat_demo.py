@@ -9,6 +9,7 @@ End-to-end testing for the chat demo crowdsourcing task.
 
 import unittest
 
+
 # Desired inputs/outputs
 DESIRED_STATE_AGENT_0 = {
     "outputs": {
@@ -353,7 +354,15 @@ try:
         Test the chat demo crowdsourcing task.
         """
         # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
-        #  regressions
+        #  regressions. Also use a pytest.fixture to call self._setup() and
+        #  self._teardown(), like the other tests use, instead of calling them with
+        #  self.setUp() and self.tearDown()
+
+        def setUp(self) -> None:
+            self._setup()
+
+        def tearDown(self) -> None:
+            self._teardown()
 
         def test_base_task(self):
 

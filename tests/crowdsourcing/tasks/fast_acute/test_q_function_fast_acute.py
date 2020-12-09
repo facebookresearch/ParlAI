@@ -24,7 +24,7 @@ if True:
     )
     from parlai.crowdsourcing.tasks.fast_acute.util import AbstractFastAcuteTest
 
-    class TestBBQFunctionFastAcute(AbstractFastAcuteTest):
+    class TestQFunctionFastAcute(AbstractFastAcuteTest):
         """
         Test the Q-function Fast ACUTE crowdsourcing task.
         """
