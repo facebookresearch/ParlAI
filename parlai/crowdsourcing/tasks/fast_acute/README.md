@@ -1,16 +1,16 @@
 # Fast ACUTE
 
-The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. Two variants of the Fast ACUTE task can be run:
-1. The base task (`run.py`), which includes having models chat with each other (known as "self-chats")
+The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. Two types of Fast ACUTE can be run:
+1. The base version (`run.py`), which includes having models chat with each other (known as "self-chats")
 1. A variant that skips self-chats (`run_q_function.py`), useful for the Q-function project where crowdsourcing raters annotate turns of a conversation
 
-Both variants are discussed in their own section below.
+Both types are discussed below.
 
 ## How to run Fast ACUTE if you need to produce model self-chats
 
 ### 1. Choose the self-chat task
 
-First, determine which task you will use to run model self-chat on. This task must have been set up for self-chat, i.e. it must have the appropriate worlds (typically called with the `parlai self_chat` command) used for conducting self-chat.
+First, determine which ParlAI task you will use to run model self-chat on. This task must have been set up for self-chat, i.e. it must have the appropriate worlds (typically called with the `parlai self_chat` command) used for conducting self-chat.
 
 ### 2. Create a file that specifies model configurations
 
@@ -18,11 +18,11 @@ Create a JSON file of the ParlAI parameters used for running self-chat on all mo
 
 ### 3. Define settings for running onboarding
 
-Create a JSON file of onboarding settings used to make sure that crowdsourcing workers perform necessary quality checks. See `task_config/onboarding.json` for an example file, and see [the ACUTE-Eval README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/README.md) for more details.
+Create a JSON file of onboarding settings used to make sure that crowdsourcing workers perform necessary quality checks. See `task_config/onboarding.json` for an example file, and see the [ACUTE-Eval README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/README.md) for more details.
 
 ### 4. Run Fast ACUTEs
 
-Now that you've set up everything, launch Fast ACUTEs with a command like the following:
+Now that you've set up everything, launch Fast ACUTEs in the sandbox with a command like the following:
 ```
 python parlai/crowdsourcing/tasks/fast_acute/run.py \
 mephisto.blueprint.config_path=${PATH_TO_MODEL_CONFIG_JSON} \
@@ -33,7 +33,7 @@ mephisto.blueprint.onboarding_path=${PATH_TO_ONBOARDING_JSON} \
 mephisto.blueprint.task=${SELF_CHAT_TASK}
 ```
 
-You can also specify running Fast ACUTEs between only specific model pairs, with a syntax like `mephisto.blueprint.model_pairs=model1:model2`. In this case, the `mephisto.blueprint.models` flag is not needed.
+You can also specify running Fast ACUTEs between only specific model pairs, with a syntax like `mephisto.blueprint.model_pairs=model1:model2`. In this case, the `mephisto.blueprint.models` flag is not used.
 
 When you are ready to run a **live** ACUTE-Eval, add `mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku` to this command, where `${REQUESTER_NAME}` is the MTurk requester name that you specified when setting up Mephisto.
 
@@ -45,11 +45,11 @@ First, the script attempts to run self-chat with all models; each models' self-c
 
 #### 4b. ACUTE-Eval
 
-The script will then prepare the conversation-pairs file and save it in `${ROOT_DIR}/pairings_files/`, with a unique string according to which two self-chat files were used to create it. It will then run ACUTE-Eval with appropriate arguments.
+The script will then prepare each conversation-pairs file and save it in `${ROOT_DIR}/pairings_files/`, with a unique string according to which two self-chat files were used to create it. It will then run ACUTE-Eval with appropriate arguments.
 
 #### 4c. Analysis
 
-After finishing ACUTE-Eval, the script will analyze the results and save files with information such as the win/loss table and significance scores. Tables of results are saved to `${ROOT_DIR}/acute_results/<date>/` by default.
+After finishing ACUTE-Eval, the script will analyze the results, and save files with information such as the win/loss rate and significance scores. Tables of results are saved to `${ROOT_DIR}/acute_results/<date>/`.
 
 Generated result files include the following:
 1. A CSV file of the win rates of all model pairs, as is typically shown when displaying ACUTE-Eval results in papers. These can be viewed by running a command like `cat acute_eval_<timestamp>.grid.csv | column -t -s, | less -S`.
@@ -96,5 +96,4 @@ mephisto.blueprint.num_self_chats=100 \
 mephisto.blueprint.root_dir=${DIR_TO_SAVE_IN} \
 mephisto.blueprint.onboarding_path=${PATH_TO_ONBOARDING_JSON}
 ```
-
 Here, the `mephisto.blueprint.task` parameter is not needed because we are not running self-chats.
