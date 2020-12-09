@@ -22,7 +22,7 @@ TASK_CONFIG_FOLDER = os.path.join(
 TASK_DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'task_data')
 
 
-if True:
+try:
 
     from parlai.crowdsourcing.tasks.turn_annotations_static.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
@@ -159,8 +159,8 @@ if True:
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
 
-# except ImportError:
-#     pass
+except ImportError:
+    pass
 
 if __name__ == "__main__":
     unittest.main()

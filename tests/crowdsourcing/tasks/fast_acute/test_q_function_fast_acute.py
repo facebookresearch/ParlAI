@@ -16,7 +16,7 @@ import unittest
 import pytest
 
 
-if True:
+try:
 
     from parlai.crowdsourcing.tasks.fast_acute.run_q_function import (
         QLearningFastAcuteExecutor,
@@ -108,8 +108,8 @@ if True:
             shutil.rmtree(root_dir)
 
 
-# except ImportError:
-#     pass
+except ImportError:
+    pass
 
 if __name__ == "__main__":
     unittest.main()
