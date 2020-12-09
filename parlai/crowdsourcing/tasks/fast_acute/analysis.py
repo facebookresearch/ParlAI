@@ -52,12 +52,6 @@ def setup_args():
         '--root-dir', type=str, default=None, help='root ACUTE-Eval save directory'
     )
     parser.add_argument(
-        '--is-qfunction-eval',
-        type='bool',
-        default=False,
-        help='whether the run is a q function run or not, this will decide where to look for the result',
-    )
-    parser.add_argument(
         '--outdir', type=str, default=None, help='where to save the results'
     )
     parser.add_argument(
