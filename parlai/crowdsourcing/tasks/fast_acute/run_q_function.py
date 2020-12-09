@@ -5,9 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 """
 Execute a Fast ACUTE run with Q-learning.
-
-Run mturk/tasks/q_function/scripts/compile_results.py to parse the latest logs. Model
-configurations should go in the `model_configs.py` file found in this directory.
 """
 
 import os
@@ -90,8 +87,8 @@ class QLearningFastAcuteExecutor(FastAcuteExecutor):
         self.question_config: Dict[str, str] = acute_eval.ACUTE_EVAL_TYPES[
             self.fast_acute_args.acute_eval_type
         ]
-        # prepare 2x convo pairs so we don't run out of them (the same logic as in _build_conversation_pairs in fast_acute/fast_eval.py)
-        # The logic of calculating num_matchup_pairs and num_conversations in acute_args is the same as that in fast_eval/fast_acute.py therefore hidden here.
+        # prepare 2x convo pairs so we don't run out of them (the same logic as in _build_conversation_pairs in fast_acute/run.py)
+        # The logic of calculating num_matchup_pairs and num_conversations in acute_args is the same as that in fast_eval/run.py therefore hidden here.
 
         self.run_id = self.args.mephisto.task.task_name
 
@@ -129,7 +126,7 @@ class QLearningFastAcuteExecutor(FastAcuteExecutor):
                     conversation['context'].append(ex)
                     continue
                 else:
-                    # from Mary's log agent 1 is the model, agent 0 is human
+                    # agent 1 is the model, agent 0 is human
                     convo = {'id': ex['id'], 'text': normalize_reply(ex['text'])}
                     if (
                         'is_selfchat' in self.model_config[model]

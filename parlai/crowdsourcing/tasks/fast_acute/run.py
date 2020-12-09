@@ -3,14 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-r"""
+"""
 Execute a Fast ACUTE run.
-
-You only need to specify two arguments:
-- `mephisto.blueprint.models`: the models to compare, written on the command line as
-    mephisto.blueprint.models='\model1,model2\'
-- `mephisto.blueprint.task`: the self-chat task
-Model configurations should go in the `model_configs.py` file found in this directory.
 """
 
 import datetime

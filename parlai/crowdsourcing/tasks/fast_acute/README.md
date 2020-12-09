@@ -1,12 +1,12 @@
 # Fast ACUTE
 
-The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command.
-
-## Setup
-
-### 1. Add the model to the model config
+The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. Two variants of the Fast ACUTE task can be run: the standard base task (`run.py`) and a variant that skips self-chats (`run_q_function.py`), useful for the Q-function project where crowdsourcing raters annotate turns of a conversation.
 
 # *** TODO: rewrite all this! ***
+
+## How to run the base Fast ACUTE task
+
+### 1. Add the model to the model config
 
 In the `model_configs.py` file, you will find a `CONFIG` dictionary that maps a _unique_ model identifier to the appropriate configuration arguments. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc.
 
@@ -35,9 +35,23 @@ mephisto.blueprint.task=blended_skill_talk
 
 When you are ready to run a **live** ACUTE-Eval, add `mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku` to this command, where `${REQUESTER_NAME}` is the MTurk requester name that you specified when setting up Mephisto.
 
-## So what does this script do?
 
-The script operates in three phases:
+## How to run Fast ACUTE for the Q-function project
+
+### Build ACUTE-Eval pairs and run
+
+Run a command like `python ${TODO FIX ME BEFORE PR}/fast_acute_q_function/fast_eval.py mephisto.blueprint.model_pairs=\'generative32.6B_bst_selfchat:generative2.7B_bst_0331_selfchat\'`
+
+By default, the pairing file is saved at `${TODO FIX ME BEFORE PR}` with a hashed name. The default root save folder, `${TODO FIX ME BEFORE PR}`, can be changed by modifying the `mephisto.blueprint.root_dir` parameter.
+
+### Analyze results
+
+Your ACUTE-Eval results should be analyzed automatically at the end of HIT collection. To launch analysis manually, run a command like `python ${TODO FIX ME BEFORE PR}/fast_acute/analysis.py --run-id acute_eval_1584577685 --is-qfunction-eval True`. See the README for the base Fast ACUTE task {TODO add link} for more details.
+
+
+## So what does Fast ACUTE do?
+
+Fast ACUTE operates in three phases:
 
 ##### Phase 1: Self-chat
 
@@ -57,15 +71,3 @@ Generated result files include the following:
 3. HTML files of nicely visualized conversations. To view these, `scp` them to your local machine.
 
 **NOTE**: Analysis can be run on its own by running `analysis.py`, as long as you specify the ACUTE-Eval `run_id` and whether the run is a Q-function evaluation or not.
-
-## How to run Fast ACUTE for the Q-function project
-
-### Build ACUTE-Eval pairs and run
-
-Run a command like `python ${TODO FIX ME BEFORE PR}/fast_acute_q_function/fast_eval.py mephisto.blueprint.model_pairs=\'generative32.6B_bst_selfchat:generative2.7B_bst_0331_selfchat\'`
-
-By default, the pairing file is saved at `${TODO FIX ME BEFORE PR}` with a hashed name. The default root save folder, `${TODO FIX ME BEFORE PR}`, can be changed by modifying the `mephisto.blueprint.root_dir` parameter.
-
-### Analyze results
-
-Your ACUTE-Eval results should be analyzed automatically at the end of HIT collection. To launch analysis manually, run a command like `python ${TODO FIX ME BEFORE PR}/fast_acute/analysis.py --run-id acute_eval_1584577685 --is-qfunction-eval True`. See the README for the base Fast ACUTE task {TODO add link} for more details.

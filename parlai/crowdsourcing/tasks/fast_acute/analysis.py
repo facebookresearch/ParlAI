@@ -705,7 +705,6 @@ def render_row(row):
 
 
 def render_many_conversations(table):
-    #     html_rows = '<tr><td>January</td><td>$100</td></tr>'
     return HTML(
         '<table><tr><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{}</table>'.format(
             ''.join(render_row(row).data for i, row in table.iterrows())
@@ -714,7 +713,6 @@ def render_many_conversations(table):
 
 
 def render_conversations_per_matchups(table, force_reasons=True):
-    #     html_rows = '<tr><td>January</td><td>$100</td></tr>'
     matchups = list(table.matchup.unique())
     result = ''
     if force_reasons:
