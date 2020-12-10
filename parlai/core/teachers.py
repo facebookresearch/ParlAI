@@ -2379,8 +2379,11 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return msg
 
     def _drain(self, q):
-        with q.mutex:
-            q.queue.clear()
+        while not q.empty():
+            try:
+                q.get()
+            except queue.Empty:
+                return
 
     def reset(self):
         super().reset()
