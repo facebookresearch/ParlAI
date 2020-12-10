@@ -35,7 +35,7 @@ _ = BLUEPRINT_TYPE
 AGREEMENT_THRESHOLD = 0.8
 # do we count ties as agreements?
 AGREEMENT_TIES_OKAY = False
-# TODO: add these as flags if desired
+# NOTE: these could be added as flags if desired
 
 # Prepended to checkbox columns in self.dataframe
 CHECKBOX_PREFIX = 'checkbox: '
