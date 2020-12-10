@@ -24,6 +24,7 @@ from parlai.crowdsourcing.tasks.fast_acute.run import (
     FastAcuteBlueprintArgs,
     FastAcuteExecutor,
 )
+from parlai.crowdsourcing.tasks.fast_acute.util import FAST_ACUTE_TASK_DIRECTORY
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.utils.strings import normalize_reply
 
@@ -166,6 +167,7 @@ defaults = [
 class TestScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = ACUTE_EVAL_TASK_DIRECTORY
+    fast_acute_task_dir: str = FAST_ACUTE_TASK_DIRECTORY
     monitoring_log_rate: int = field(
         default=30,
         metadata={

@@ -35,6 +35,7 @@ from parlai.crowdsourcing.tasks.fast_acute.analysis import (
 from parlai.crowdsourcing.tasks.fast_acute.util import (
     get_hashed_combo_path,
     ACUTE_EVAL_TASK_DIRECTORY,
+    FAST_ACUTE_TASK_DIRECTORY,
 )
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_args
@@ -546,6 +547,7 @@ defaults = [
 class TestScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = ACUTE_EVAL_TASK_DIRECTORY
+    fast_acute_task_dir: str = FAST_ACUTE_TASK_DIRECTORY
     monitoring_log_rate: int = field(
         default=30,
         metadata={

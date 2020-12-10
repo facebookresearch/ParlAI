@@ -19,6 +19,7 @@ from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
 ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
 # Read in any task config JSON/HTML files from the ACUTE-Eval directory
+FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_hashed_combo_path(
@@ -61,7 +62,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
     Abstract test class for testing Fast ACUTE code.
     """
 
-    FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+    FAST_ACUTE_TASK_DIRECTORY = FAST_ACUTE_TASK_DIRECTORY
     ACUTE_EVAL_TASK_DIRECTORY = ACUTE_EVAL_TASK_DIRECTORY
     MODELS = ['model1', 'model2']
     MODEL_STRING = ','.join(MODELS)
