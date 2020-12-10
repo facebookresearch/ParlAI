@@ -63,15 +63,15 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
 
     FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
     ACUTE_EVAL_TASK_DIRECTORY = ACUTE_EVAL_TASK_DIRECTORY
-    MODELS = ['blender_90m_copy1', 'blender_90m_copy2']
+    MODELS = ['model1', 'model2']
     MODEL_STRING = ','.join(MODELS)
     TASK_DATA = {
         "final_data": [
             {"speakerChoice": "model_2", "textReason": "Makes more sense"},
-            {"speakerChoice": "blender_90m_copy1", "textReason": "Makes more sense"},
-            {"speakerChoice": "blender_90m_copy2", "textReason": "Makes more sense"},
-            {"speakerChoice": "blender_90m_copy1", "textReason": "Makes more sense"},
-            {"speakerChoice": "blender_90m_copy2", "textReason": "Makes more sense"},
+            {"speakerChoice": "model1", "textReason": "Makes more sense"},
+            {"speakerChoice": "model2", "textReason": "Makes more sense"},
+            {"speakerChoice": "model1", "textReason": "Makes more sense"},
+            {"speakerChoice": "model2", "textReason": "Makes more sense"},
         ]
     }
 
