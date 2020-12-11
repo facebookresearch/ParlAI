@@ -124,6 +124,8 @@ class AcuteAnalyzer(object):
         self.dataframe = self._extract_to_dataframe()
         if remove_failed:
             self._remove_failed_onboarding()
+        if self.dataframe.index.size == 0:
+            raise ValueError('No valid results found!')
         self._get_model_nick_names()
         self._load_pairing_files()
 
