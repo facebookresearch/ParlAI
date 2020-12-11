@@ -679,7 +679,7 @@ class MultiRunAcuteAnalyzer(AcuteAnalyzer):
         self.dataframe = pd.concat(dataframes.values(), axis=0)
 
 
-def get_multi_run_analyzer(args) -> MultiRunAcuteAnalyzer:
+def get_multi_run_analyzer(opt) -> MultiRunAcuteAnalyzer:
     """
     Return an object to analyze the results of multiple runs simultaneously.
 
@@ -687,16 +687,16 @@ def get_multi_run_analyzer(args) -> MultiRunAcuteAnalyzer:
     a separate analyzer class that will concatenate them.
     """
 
-    run_ids = args.run_id.split(',')
+    run_ids = opt['run_id'].split(',')
 
     # Define paths
     assert (
-        args.outdir is not None
+        opt['outdir'] is not None
     ), '--outdir must be specified when combining results of multiple runs!'
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    args.outdir = os.path.join(args.outdir, f'combined_runs_{timestamp}')
-    os.makedirs(args.outdir, exist_ok=True)
-    run_id_list_path = os.path.join(args.outdir, 'run_ids.txt')
+    opt['outdir'] = os.path.join(opt['outdir'], f'combined_runs_{timestamp}')
+    os.makedirs(opt['outdir'], exist_ok=True)
+    run_id_list_path = os.path.join(opt['outdir'], 'run_ids.txt')
 
     # Save a simple list of all run IDs stitched together
     with open(run_id_list_path, 'w') as f:
@@ -706,11 +706,12 @@ def get_multi_run_analyzer(args) -> MultiRunAcuteAnalyzer:
     # Loop loading HITs over all run ids into dataframes
     dataframes = {}
     for run_id in run_ids:
-        args_copy = deepcopy(args)
-        args_copy.run_id = run_id
-        dataframes[run_id] = AcuteAnalyzer(args_copy).dataframe
+        print(f'\nStarting to load HITs for run ID {run_id}.')
+        opt_copy = deepcopy(opt)
+        opt_copy['run_id'] = run_id
+        dataframes[run_id] = AcuteAnalyzer(opt_copy).dataframe
 
-    return MultiRunAcuteAnalyzer(opt=args, dataframes=dataframes)
+    return MultiRunAcuteAnalyzer(opt=opt, dataframes=dataframes)
 
 
 def render_row(row):
@@ -806,12 +807,12 @@ def render_conversations_per_matchups(table, force_reasons=True):
 if __name__ == "__main__":
 
     parser = setup_args()
-    args_ = parser.parse_args()
+    opt_ = parser.parse_args()
 
-    if ',' not in args_.run_id:
-        analyzer = AcuteAnalyzer(args_)
+    if ',' not in opt_['run_id']:
+        analyzer = AcuteAnalyzer(opt_)
     else:
-        analyzer = get_multi_run_analyzer(args_)
+        analyzer = get_multi_run_analyzer(opt_)
     analyzer.save_results()
 
     # Print win fractions
