@@ -27,7 +27,9 @@ from parlai.crowdsourcing.tasks.fast_acute.analysis import (
     AcuteAnalyzer,
     setup_args as analysis_setup_args,
 )
-from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import FAST_ACUTE_BLUEPRINT_TYPE
+from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+    FAST_ACUTE_BLUEPRINT_TYPE,
+)
 from parlai.crowdsourcing.tasks.fast_acute.util import (
     get_hashed_combo_path,
     ACUTE_EVAL_TASK_DIRECTORY,
