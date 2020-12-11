@@ -9,9 +9,9 @@ from dataclasses import dataclass, field
 from typing import Any, List
 
 import hydra
-from mephisto.core.hydra_config import register_script_config
-from mephisto.core.operator import Operator
-from mephisto.utils.scripts import load_db_and_process_config
+from mephisto.operations.hydra_config import register_script_config
+from mephisto.operations.operator import Operator
+from mephisto.tools.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE

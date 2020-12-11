@@ -9,8 +9,8 @@ import math
 from dataclasses import dataclass, field
 from typing import ClassVar, List, Type, Any, Dict, Iterable, TYPE_CHECKING
 
-from mephisto.core.registry import register_mephisto_abstraction
-from mephisto.data_model.blueprint import Blueprint, BlueprintArgs, SharedTaskState
+from mephisto.operations.registry import register_mephisto_abstraction
+from mephisto.abstractions.blueprint import Blueprint, BlueprintArgs, SharedTaskState
 from mephisto.data_model.assignment import InitializationData
 from omegaconf import MISSING, DictConfig
 
@@ -21,7 +21,7 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_builder import AcuteEvalBu
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_runner import AcuteEvalRunner
 
 if TYPE_CHECKING:
-    from mephisto.data_model.blueprint import AgentState, TaskRunner, TaskBuilder
+    from mephisto.abstractions.blueprint import AgentState, TaskRunner, TaskBuilder
 
 BLUEPRINT_TYPE = "acute_eval"
 

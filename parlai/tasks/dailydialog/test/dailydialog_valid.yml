@@ -1,0 +1,43 @@
+acts:
+- - act_type: no_act
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - Good morning , sir . Is there a bank near here ?
+    id: dailydialog
+    text: __SILENCE__
+    topic: tourism
+- - act_type: inform
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - Well , that's too far . Can you change some money for me ?
+    id: dailydialog
+    text: There is one . 5 blocks away from here ?
+    topic: tourism
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - RIB .
+    id: dailydialog
+    text: Surely , of course . What kind of currency have you got ?
+    topic: tourism
+- - act_type: question
+    emotion: no_emotion
+    episode_done: true
+    eval_labels:
+    - 1000 Yuan . Here you are .
+    id: dailydialog
+    text: How much would you like to change ?
+    topic: tourism
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - There is one . 5 blocks away from here ?
+    id: dailydialog
+    text: Good morning , sir . Is there a bank near here ?
+    topic: tourism
+num_episodes: 2000
+num_examples: 8069

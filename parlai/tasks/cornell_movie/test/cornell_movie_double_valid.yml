@@ -1,0 +1,169 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Well, I thought we'd start with pronunciation, if that's okay with you.
+    id: cornell_movie:double
+    label_candidates:
+    - '  Hey, actually...'
+    - ' ...-onds...with just a fraction of what''s in...'
+    - ' No...'
+    - ' That''s why I didn''t give it...'
+    - ' Yeah...'
+    - '"A faithful heart makes wishes come true."'
+    - '"Age of Enlightenment". Shit. Like some waitress in a Las Vegas coffee shop
+      is going to get an obscure French philosophical reference. How demeaning. I
+      may as well have just said "Let me jump your ignorant bones."...'
+    - '"Are not capable of love" is what you mean.'
+    - '"At first I thought it was infatuation ...But oh it''s lasted so long..."'
+    - '"At the center of the investigation are well-known Washington-area attorneys
+      Robert Dean and Rachel Banks."'
+    - think that's, uh-
+    - uh uh.
+    - wHAT'S My status?! I've lost three men and your worthless fuck! After I kill
+      this asshole I'm coming your Yllo!
+    - was fascinated with you....  a real live detective....  You used to tell me
+      the most wonderful stories.  Were they true?
+    - we've got kidnapping, grand theft auto, burglary, and two counts of murder on
+      you, and I'm gonna see to it personally that it sticks!
+    - xxxxxx
+    - yeah, good, ok.
+    - you woke me up to tell me that?
+    - you're gonna like night clubs, they're really a lotta fun.
+    - '{baffled) I don''t follow you.'
+    reward: 0
+    text: Can we make this quick?  Roxanne Korrine and Andrew Barrett are having an
+      incredibly horrendous public break- up on the quad.  Again.
+- - episode_done: true
+    eval_labels:
+    - Okay... then how 'bout we try out some French cuisine.  Saturday?  Night?
+    id: cornell_movie:double
+    label_candidates:
+    - '  Hey, actually...'
+    - ' ...-onds...with just a fraction of what''s in...'
+    - ' No...'
+    - ' That''s why I didn''t give it...'
+    - ' Yeah...'
+    - '"A faithful heart makes wishes come true."'
+    - '"Age of Enlightenment". Shit. Like some waitress in a Las Vegas coffee shop
+      is going to get an obscure French philosophical reference. How demeaning. I
+      may as well have just said "Let me jump your ignorant bones."...'
+    - '"Are not capable of love" is what you mean.'
+    - '"At first I thought it was infatuation ...But oh it''s lasted so long..."'
+    - '"At the center of the investigation are well-known Washington-area attorneys
+      Robert Dean and Rachel Banks."'
+    - think that's, uh-
+    - uh uh.
+    - wHAT'S My status?! I've lost three men and your worthless fuck! After I kill
+      this asshole I'm coming your Yllo!
+    - was fascinated with you....  a real live detective....  You used to tell me
+      the most wonderful stories.  Were they true?
+    - we've got kidnapping, grand theft auto, burglary, and two counts of murder on
+      you, and I'm gonna see to it personally that it sticks!
+    - xxxxxx
+    - yeah, good, ok.
+    - you woke me up to tell me that?
+    - you're gonna like night clubs, they're really a lotta fun.
+    - '{baffled) I don''t follow you.'
+    reward: 0
+    text: Not the hacking and gagging and spitting part.  Please.
+- - episode_done: true
+    eval_labels:
+    - Not the hacking and gagging and spitting part.  Please.
+    id: cornell_movie:double
+    label_candidates:
+    - '  Hey, actually...'
+    - ' ...-onds...with just a fraction of what''s in...'
+    - ' No...'
+    - ' That''s why I didn''t give it...'
+    - ' Yeah...'
+    - '"A faithful heart makes wishes come true."'
+    - '"Age of Enlightenment". Shit. Like some waitress in a Las Vegas coffee shop
+      is going to get an obscure French philosophical reference. How demeaning. I
+      may as well have just said "Let me jump your ignorant bones."...'
+    - '"Are not capable of love" is what you mean.'
+    - '"At first I thought it was infatuation ...But oh it''s lasted so long..."'
+    - '"At the center of the investigation are well-known Washington-area attorneys
+      Robert Dean and Rachel Banks."'
+    - think that's, uh-
+    - uh uh.
+    - wHAT'S My status?! I've lost three men and your worthless fuck! After I kill
+      this asshole I'm coming your Yllo!
+    - was fascinated with you....  a real live detective....  You used to tell me
+      the most wonderful stories.  Were they true?
+    - we've got kidnapping, grand theft auto, burglary, and two counts of murder on
+      you, and I'm gonna see to it personally that it sticks!
+    - xxxxxx
+    - yeah, good, ok.
+    - you woke me up to tell me that?
+    - you're gonna like night clubs, they're really a lotta fun.
+    - '{baffled) I don''t follow you.'
+    text: Well, I thought we'd start with pronunciation, if that's okay with you.
+- - episode_done: true
+    eval_labels:
+    - Eber's Deep Conditioner every two days. And I never, ever use a blowdryer without
+      the diffuser attachment.
+    id: cornell_movie:double
+    label_candidates:
+    - '  Hey, actually...'
+    - ' ...-onds...with just a fraction of what''s in...'
+    - ' No...'
+    - ' That''s why I didn''t give it...'
+    - ' Yeah...'
+    - '"A faithful heart makes wishes come true."'
+    - '"Age of Enlightenment". Shit. Like some waitress in a Las Vegas coffee shop
+      is going to get an obscure French philosophical reference. How demeaning. I
+      may as well have just said "Let me jump your ignorant bones."...'
+    - '"Are not capable of love" is what you mean.'
+    - '"At first I thought it was infatuation ...But oh it''s lasted so long..."'
+    - '"At the center of the investigation are well-known Washington-area attorneys
+      Robert Dean and Rachel Banks."'
+    - think that's, uh-
+    - uh uh.
+    - wHAT'S My status?! I've lost three men and your worthless fuck! After I kill
+      this asshole I'm coming your Yllo!
+    - was fascinated with you....  a real live detective....  You used to tell me
+      the most wonderful stories.  Were they true?
+    - we've got kidnapping, grand theft auto, burglary, and two counts of murder on
+      you, and I'm gonna see to it personally that it sticks!
+    - xxxxxx
+    - yeah, good, ok.
+    - you woke me up to tell me that?
+    - you're gonna like night clubs, they're really a lotta fun.
+    - '{baffled) I don''t follow you.'
+    reward: 0
+    text: How do you get your hair to look like that?
+- - episode_done: false
+    eval_labels:
+    - What good stuff?
+    id: cornell_movie:double
+    label_candidates:
+    - '  Hey, actually...'
+    - ' ...-onds...with just a fraction of what''s in...'
+    - ' No...'
+    - ' That''s why I didn''t give it...'
+    - ' Yeah...'
+    - '"A faithful heart makes wishes come true."'
+    - '"Age of Enlightenment". Shit. Like some waitress in a Las Vegas coffee shop
+      is going to get an obscure French philosophical reference. How demeaning. I
+      may as well have just said "Let me jump your ignorant bones."...'
+    - '"Are not capable of love" is what you mean.'
+    - '"At first I thought it was infatuation ...But oh it''s lasted so long..."'
+    - '"At the center of the investigation are well-known Washington-area attorneys
+      Robert Dean and Rachel Banks."'
+    - think that's, uh-
+    - uh uh.
+    - wHAT'S My status?! I've lost three men and your worthless fuck! After I kill
+      this asshole I'm coming your Yllo!
+    - was fascinated with you....  a real live detective....  You used to tell me
+      the most wonderful stories.  Were they true?
+    - we've got kidnapping, grand theft auto, burglary, and two counts of murder on
+      you, and I'm gonna see to it personally that it sticks!
+    - xxxxxx
+    - yeah, good, ok.
+    - you woke me up to tell me that?
+    - you're gonna like night clubs, they're really a lotta fun.
+    - '{baffled) I don''t follow you.'
+    reward: 0
+    text: I figured you'd get to the good stuff eventually.
+num_episodes: 12806
+num_examples: 22349

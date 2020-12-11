@@ -1,0 +1,138 @@
+acts:
+- - episode_done: true
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    labels:
+    - Top Hat, Kitty Foyle, The Barkleys of Broadway
+    reward: 0
+    text: what movies are about ginger rogers?
+- - episode_done: true
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    labels:
+    - Fahrenheit 9/11, Far from Heaven
+    reward: 0
+    text: which movies can be described by moore?
+- - episode_done: true
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    labels:
+    - Red Dawn, The Teahouse of the August Moon
+    reward: 0
+    text: what films can be described by occupation?
+- - episode_done: true
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    labels:
+    - Mon Oncle, Playtime, Trafic
+    reward: 0
+    text: which films are about jacques tati?
+- - episode_done: true
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    labels:
+    - S. Darko
+    reward: 0
+    text: what movies are about donnie darko?
+num_episodes: 96185
+num_examples: 96185
