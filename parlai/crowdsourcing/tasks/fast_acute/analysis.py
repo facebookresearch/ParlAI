@@ -694,7 +694,7 @@ def get_multi_run_analyzer(args) -> MultiRunAcuteAnalyzer:
         args.outdir is not None
     ), '--outdir must be specified when combining results of multiple runs!'
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    args.outdir = os.path.join(args.outdir, timestamp)
+    args.outdir = os.path.join(args.outdir, f'combined_runs_{timestamp}')
     os.makedirs(args.outdir, exist_ok=True)
     run_id_list_path = os.path.join(args.outdir, 'run_ids.txt')
 
