@@ -14,46 +14,17 @@ from typing import Any, Dict, List, Optional
 
 import hydra
 from mephisto.operations.hydra_config import register_script_config
-from mephisto.operations.registry import register_mephisto_abstraction
-from omegaconf import DictConfig, MISSING
+from omegaconf import DictConfig
 
 import parlai.crowdsourcing.tasks.fast_acute.run as acute_eval
 from parlai.crowdsourcing.tasks.acute_eval import run
-from parlai.crowdsourcing.tasks.fast_acute.run import (
-    FastAcuteBlueprint,
-    FastAcuteBlueprintArgs,
-    FastAcuteExecutor,
+from parlai.crowdsourcing.tasks.fast_acute.run import FastAcuteExecutor
+from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+    FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
 )
 from parlai.crowdsourcing.tasks.fast_acute.util import FAST_ACUTE_TASK_DIRECTORY
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.utils.strings import normalize_reply
-
-BLUEPRINT_TYPE = "fast_acute_no_self_chat"
-
-
-@dataclass
-class FastAcuteNoSelfChatBlueprintArgs(FastAcuteBlueprintArgs):
-    _blueprint_type: str = BLUEPRINT_TYPE
-    _group: str = field(
-        default="FastAcuteNoSelfChatBlueprint",
-        metadata={
-            'help': "Execute a Fast ACUTE run without launching model self-chats"
-        },
-    )
-    config_path: str = field(
-        default=MISSING,
-        metadata={'help': 'Path to JSON of model types and their parameters'},
-    )
-
-
-@register_mephisto_abstraction()
-class FastAcuteNoSelfChatBlueprint(FastAcuteBlueprint):
-    """
-    Subclass of FastAcuteBlueprint without launching model self-chats first.
-    """
-
-    ArgsClass = FastAcuteNoSelfChatBlueprintArgs
-    BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
 
 class NoSelfChatFastAcuteExecutor(FastAcuteExecutor):
@@ -155,7 +126,7 @@ ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
 # Read in any task config JSON/HTML files from the ACUTE-Eval directory
 
 defaults = [
-    {"mephisto/blueprint": BLUEPRINT_TYPE},
+    {"mephisto/blueprint": FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
     'conf/base_no_self_chat',

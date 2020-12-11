@@ -20,18 +20,14 @@ import hydra
 import torch
 from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.operator import Operator
-from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.tools.scripts import load_db_and_process_config
-from omegaconf import DictConfig, MISSING
+from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
-    AcuteEvalBlueprint,
-    AcuteEvalBlueprintArgs,
-)
 from parlai.crowdsourcing.tasks.fast_acute.analysis import (
     AcuteAnalyzer,
     setup_args as analysis_setup_args,
 )
+from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import FAST_ACUTE_BLUEPRINT_TYPE
 from parlai.crowdsourcing.tasks.fast_acute.util import (
     get_hashed_combo_path,
     ACUTE_EVAL_TASK_DIRECTORY,
@@ -41,9 +37,6 @@ from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_args
 from parlai.utils.strings import normalize_reply
 from parlai.utils.testing import capture_output
-
-
-BLUEPRINT_TYPE = "fast_acute"
 
 ########################
 # ACUTE EVAL CONSTANTS #
@@ -71,75 +64,6 @@ ACUTE_EVAL_TYPES = {
         "s2_choice": "<Speaker 2> talks about the image better",
     },
 }
-
-
-@dataclass
-class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
-    _blueprint_type: str = BLUEPRINT_TYPE
-    _group: str = field(
-        default="FastAcuteBlueprint",
-        metadata={
-            'help': """Run all the steps of ACUTE-Eval with one simple command"""
-        },
-    )
-    config_path: str = field(
-        default=MISSING,
-        metadata={'help': 'Path to JSON of model types and their parameters'},
-    )
-    root_dir: str = field(default=MISSING, metadata={'help': 'Root save folder'})
-    onboarding_path: Optional[str] = field(
-        default=None,
-        metadata={'help': 'Path to JSON file of settings for running onboarding'},
-    )
-    models: Optional[str] = field(
-        default=None,
-        metadata={
-            "help": "Comma separated list of models for round robin evaluation (must be at least 2)"
-        },
-    )
-    model_pairs: Optional[str] = field(
-        default=None,
-        metadata={
-            "help": "Comma separated list of model pairs for evaluation, model1:model2,model1:model3"
-        },
-    )
-    acute_eval_type: str = field(
-        default='engaging', metadata={"help": "Which evaluation to run for ACUTEs"}
-    )
-    matchups_per_pair: int = field(
-        default=60,
-        metadata={"help": "How many matchups to generate for each pair of models"},
-    )
-    task: Optional[str] = field(
-        default=None, metadata={'help': 'The ParlAI task used for self-chat'}
-    )
-    sufficient_matchups_multiplier: int = field(
-        default=2,
-        metadata={
-            'help': "Multiplier on how many conversation pairs to build. Probably doesn't need to be changed"
-        },
-    )
-    num_self_chats: int = field(
-        default=100, metadata={'help': "Number of self-chats to run per model"}
-    )
-    selfchat_max_turns: int = field(
-        default=6,
-        metadata={'help': "The number of dialogue turns before self chat ends"},
-    )
-    use_existing_self_chat_files: bool = field(
-        default=False,
-        metadata={'help': "Use any existing self-chat files without prompting"},
-    )
-
-
-@register_mephisto_abstraction()
-class FastAcuteBlueprint(AcuteEvalBlueprint):
-    """
-    Subclass of AcuteEvalBlueprint with params for fast ACUTE runs.
-    """
-
-    ArgsClass = FastAcuteBlueprintArgs
-    BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
 
 class FastAcuteExecutor(object):
@@ -535,7 +459,7 @@ class FastAcuteExecutor(object):
 
 
 defaults = [
-    {"mephisto/blueprint": BLUEPRINT_TYPE},
+    {"mephisto/blueprint": FAST_ACUTE_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
     'conf/base',

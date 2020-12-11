@@ -17,9 +17,9 @@ import pytest
 
 try:
 
-    from parlai.crowdsourcing.tasks.fast_acute.run import (
-        FastAcuteExecutor,
-        BLUEPRINT_TYPE,
+    from parlai.crowdsourcing.tasks.fast_acute.run import FastAcuteExecutor
+    from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+        FAST_ACUTE_BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.fast_acute.util import AbstractFastAcuteTest
 
@@ -65,7 +65,7 @@ try:
             ]
             # TODO: clean this up when Hydra has support for recursive defaults
             self._set_up_config(
-                blueprint_type=BLUEPRINT_TYPE,
+                blueprint_type=FAST_ACUTE_BLUEPRINT_TYPE,
                 task_directory=self.ACUTE_EVAL_TASK_DIRECTORY,
                 overrides=self._get_common_overrides(root_dir) + base_task_overrides,
             )

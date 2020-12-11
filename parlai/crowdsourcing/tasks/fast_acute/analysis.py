@@ -26,11 +26,9 @@ from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
     BLUEPRINT_TYPE as ACUTE_EVAL_BLUEPRINT_TYPE,
 )
-from parlai.crowdsourcing.tasks.fast_acute.run import (
-    BLUEPRINT_TYPE as FAST_ACUTE_BLUEPRINT_TYPE,
-)
-from parlai.crowdsourcing.tasks.fast_acute.run_no_self_chat import (
-    BLUEPRINT_TYPE as FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
+from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+    FAST_ACUTE_BLUEPRINT_TYPE,
+    FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
 )
 
 # To register the ACUTE-Eval and Fast ACUTE blueprints
