@@ -12,6 +12,8 @@ FOR ANALYSIS!!
 import hashlib
 import json
 import os
+from copy import deepcopy
+from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 import numpy as np
@@ -46,9 +48,6 @@ AGREEMENT_THRESHOLD = 0.8
 AGREEMENT_TIES_OKAY = False
 # NOTE: these could be added as flags if desired
 
-# Prepended to checkbox columns in self.dataframe
-CHECKBOX_PREFIX = 'checkbox: '
-
 
 def setup_args():
     """
@@ -56,7 +55,11 @@ def setup_args():
     """
     parser = ParlaiParser(False, False)
     parser.add_argument(
-        '-id', '--run-id', type=str, default=None, help='run id to analyze'
+        '-id',
+        '--run-id',
+        type=str,
+        default=None,
+        help='Comma-separated list of run IDs to analyze',
     )
     parser.add_argument(
         '--root-dir', type=str, default=None, help='root ACUTE-Eval save directory'
@@ -85,6 +88,9 @@ class AcuteAnalyzer(object):
 
     Given a run_id, we can do lots of fun things!
     """
+
+    CHECKBOX_PREFIX = 'checkbox: '
+    # Prepended to checkbox columns in self.dataframe
 
     def __init__(self, opt: Dict, remove_failed: bool = True):
         """
@@ -119,7 +125,7 @@ class AcuteAnalyzer(object):
             mephisto_root_path = None
         mephisto_db = LocalMephistoDB(database_path=mephisto_root_path)
         self.mephisto_data_browser = MephistoDataBrowser(db=mephisto_db)
-        self.checkbox_prefix = CHECKBOX_PREFIX
+        self.checkbox_prefix = self.CHECKBOX_PREFIX
         # Prepended to checkbox columns in self.dataframe
         self.dataframe = self._extract_to_dataframe()
         if remove_failed:
@@ -648,6 +654,65 @@ REASON: {pairing_sr['reason']}
                 f.write(compiled_text)
 
 
+class MultiRunAcuteAnalyzer(AcuteAnalyzer):
+    """
+    Combine results from different ACUTE-Eval runs.
+    """
+
+    def __init__(self, opt: Dict, dataframes: Dict[str, pd.DataFrame]):
+        """
+        Read in and combine the dataframes of other already-analyzed ACUTE-Eval runs.
+        """
+
+        self.outdir = opt['outdir']
+        if opt.get('model_ordering') is not None:
+            self.custom_model_ordering = opt['model_ordering'].split(',')
+        else:
+            self.custom_model_ordering = None
+        self.run_id = 'combined'
+        self.checkbox_prefix = self.CHECKBOX_PREFIX
+        # Prepended to checkbox columns in self.dataframe
+
+        for dataframe in dataframes.values():
+            dataframe.loc[:, 'run_id'] = self.run_id
+            # Overwrite the run_id so that results will combine across runs
+        self.dataframe = pd.concat(dataframes.values(), axis=0)
+
+
+def get_multi_run_analyzer(args) -> MultiRunAcuteAnalyzer:
+    """
+    Return an object to analyze the results of multiple runs simultaneously.
+
+    Load HITs from each run into a separate dataframe, and then pass all dataframes into
+    a separate analyzer class that will concatenate them.
+    """
+
+    run_ids = args.run_id.split(',')
+
+    # Define paths
+    assert (
+        args.outdir is not None
+    ), '--outdir must be specified when combining results of multiple runs!'
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    args.outdir = os.path.join(args.outdir, timestamp)
+    os.makedirs(args.outdir, exist_ok=True)
+    run_id_list_path = os.path.join(args.outdir, 'run_ids.txt')
+
+    # Save a simple list of all run IDs stitched together
+    with open(run_id_list_path, 'w') as f:
+        for run_id in run_ids:
+            f.write(run_id + '\n')
+
+    # Loop loading HITs over all run ids into dataframes
+    dataframes = {}
+    for run_id in run_ids:
+        args_copy = deepcopy(args)
+        args_copy.run_id = run_id
+        dataframes[run_id] = AcuteAnalyzer(args_copy).dataframe
+
+    return MultiRunAcuteAnalyzer(opt=args, dataframes=dataframes)
+
+
 def render_row(row):
     result = []
     for i, turn in enumerate(row['winner_dialogue']['dialogue']):
@@ -741,7 +806,12 @@ def render_conversations_per_matchups(table, force_reasons=True):
 if __name__ == "__main__":
 
     parser = setup_args()
-    analyzer = AcuteAnalyzer(parser.parse_args())
+    args_ = parser.parse_args()
+
+    if ',' not in args_.run_id:
+        analyzer = AcuteAnalyzer(args_)
+    else:
+        analyzer = get_multi_run_analyzer(args_)
     analyzer.save_results()
 
     # Print win fractions
