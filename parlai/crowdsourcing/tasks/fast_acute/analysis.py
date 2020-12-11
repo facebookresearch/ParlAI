@@ -23,13 +23,24 @@ from mephisto.data_model.unit import Unit as MephistoUnit
 from scipy.stats import binom_test
 
 from parlai.core.params import ParlaiParser
-from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
+from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
+    BLUEPRINT_TYPE as ACUTE_EVAL_BLUEPRINT_TYPE,
+)
+from parlai.crowdsourcing.tasks.fast_acute.run import (
+    BLUEPRINT_TYPE as FAST_ACUTE_BLUEPRINT_TYPE,
+)
+from parlai.crowdsourcing.tasks.fast_acute.run_no_self_chat import (
+    BLUEPRINT_TYPE as FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
+)
 
-# To register the ACUTE-Eval blueprint
+# To register the ACUTE-Eval and Fast ACUTE blueprints
 from parlai.crowdsourcing.tasks.fast_acute.util import get_hashed_combo_path
 
-_ = BLUEPRINT_TYPE
-# NOTE: BLUEPRINT_TYPE needs to be imported here to register the blueprint
+_ = ACUTE_EVAL_BLUEPRINT_TYPE
+_ = FAST_ACUTE_BLUEPRINT_TYPE
+_ = FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE
+# TODO: blueprint type strings need to be imported here to register the blueprints -
+# find a better way to scale up when there are many more subclassed ACUTE blueprints
 
 # throw away turkers below this threshold
 AGREEMENT_THRESHOLD = 0.8
