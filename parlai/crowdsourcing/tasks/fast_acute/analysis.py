@@ -102,9 +102,9 @@ class AcuteAnalyzer(object):
         if not self.outdir:
             self.outdir = os.path.join(self.root_dir, f'{self.run_id}-results')
         if not os.path.exists(self.root_dir):
-            os.mkdir(self.root_dir)
+            os.makedirs(self.root_dir, exist_ok=True)
         if not os.path.exists(self.outdir):
-            os.mkdir(self.outdir)
+            os.makedirs(self.outdir, exist_ok=True)
         mephisto_root_path = opt['mephisto_root']
         if not mephisto_root_path:
             mephisto_root_path = None
