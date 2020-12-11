@@ -1,5 +1,7 @@
 # Fast ACUTE
 
+**NOTE**: this code is a nearly feature-complete version of the code in [`parlai.mturk.tasks.acute_eval`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval), which will be deprecated soon. The only missing features in this version are the ability to run ACUTE-Evals on ParlAI tasks (datasets), as well as minor differences with rendering conversations in HTML using the analysis script. Use the old version of this task if those features are needed.
+
 The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. Two types of Fast ACUTE can be run:
 1. The base version (`run.py`), which includes having models chat with each other (known as "self-chats")
 1. A variant that skips self-chats (`run_no_self_chat.py`)
