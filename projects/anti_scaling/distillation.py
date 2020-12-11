@@ -236,7 +236,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
     def _get_teacher_model(self) -> nn.Module:
         """
         Return the teacher model.
-        
+
         This logic is needed because the teacher model may be wrapped by
         torch.nn.parallel.DistributedDataParallel.
         """
