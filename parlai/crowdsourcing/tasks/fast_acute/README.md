@@ -1,3 +1,5 @@
+# *** TODO: revise to merge this in with ACUTE-Eval code ***
+
 # Fast ACUTE
 
 The scripts in this directory will allow you to run all the steps of [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) with one simple command. Two types of Fast ACUTE can be run:
