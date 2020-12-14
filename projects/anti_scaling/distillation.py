@@ -26,7 +26,7 @@ from parlai.core.agents import create_agent_from_model_file
 from parlai.core.metrics import AverageMetric
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch
-from parlai.core.torch_generator_agent import PPLMetric
+from parlai.core.torch_generator_agent import PPLMetric, TorchGeneratorAgent
 from parlai.utils.misc import AttrDict
 from parlai.utils.torch import NEAR_INF_FP16
 from parlai.utils.typing import TShared
@@ -146,6 +146,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
         return agent
 
     def __init__(self, opt, shared=None):
+
+        assert type(self) is TorchGeneratorAgent
+        # Code relies on methods
 
         # Define coefficients
         self.task_loss_coeff = opt['task_loss_coeff']
