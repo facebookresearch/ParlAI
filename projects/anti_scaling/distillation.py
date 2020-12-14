@@ -502,8 +502,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         )
         return enc_emb_loss, dec_emb_loss
 
-    @staticmethod
     def _get_component_embedding_loss(
+        self,
         student_emb_output: torch.Tensor,
         teacher_emb_output: torch.Tensor,
         mask: torch.BoolTensor,
@@ -558,8 +558,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         )
         return enc_hidden_loss, dec_hidden_loss
 
-    @staticmethod
     def _get_component_hidden_loss(
+        self,
         student_hidden_states: List[torch.Tensor],
         teacher_hidden_states: List[torch.Tensor],
         mask: torch.BoolTensor,
