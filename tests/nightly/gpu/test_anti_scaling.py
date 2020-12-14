@@ -17,9 +17,47 @@ import numpy as np
 import torch
 
 import parlai.utils.testing as testing_utils
+from parlai.core.message import Message
 from parlai.core.opt import Opt
+from parlai.core.teachers import register_teacher, Teacher
 from parlai.zoo.bart.build import download as download_bart
 from parlai.zoo.blender.blender_90M import download as download_blender
+
+
+FIXED_MESSAGE_TASK = 'fixed_message'
+
+
+@register_teacher(FIXED_MESSAGE_TASK)
+class FixedMessageTeacher(Teacher):
+    """
+    Teacher agent that returns one fixed message.
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.id = FIXED_MESSAGE_TASK
+
+    def observe(self, observation):
+        """
+        No need to do anything here.
+        """
+        _ = observation
+        pass
+
+    def act(self):
+        """
+        Just respond with the sample message for the model agent to respond to.
+
+        There's only one "turn" to this conversation.
+        """
+        return Message(
+            {
+                'id': self.id,
+                'text': 'This is a test message.',
+                'eval_labels': ['(NONE)'],
+                'episode_done': True,
+            }
+        )
 
 
 class AbstractTestDistillation(ABC, unittest.TestCase):
@@ -33,7 +71,7 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         'model_file': '',
         'n_encoder_layers': 1,
         'n_decoder_layers': 1,
-        'task': 'blended_skill_talk',
+        'task': FIXED_MESSAGE_TASK,
     }
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
     NARROW_DISTILLATION_OPT = {
