@@ -8,6 +8,7 @@
 Test code for anti-scaling transformer/generator models.
 """
 
+import random
 import unittest
 
 import numpy as np
@@ -75,8 +76,9 @@ class TestDistillation(unittest.TestCase):
         # relies upon weights being initialized in a particular way. Won't work on
         # CircleCI machines
 
-        torch.manual_seed(0)
+        random.seed()
         np.random.seed(0)
+        torch.manual_seed(0)
 
         opts_and_desired_losses = [
             (
@@ -170,8 +172,8 @@ class TestDistillation(unittest.TestCase):
                         if abs(valid[loss_name].value() / desired_loss - 1) > 0.01:
                             raise ValueError(
                                 f"""\
-Error in matching {loss_name} for {model_name}! \
-Desired value: {desired_loss} \
+Error in matching {loss_name} for {model_name}!
+Desired value: {desired_loss}
 Actual value: {valid[loss_name].value()}"""
                             )
 
