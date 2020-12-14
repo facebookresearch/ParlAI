@@ -28,6 +28,7 @@ from parlai.core.opt import Opt
 from parlai.core.torch_agent import Batch
 from parlai.core.torch_generator_agent import PPLMetric
 from parlai.utils.misc import AttrDict
+from parlai.utils.torch import NEAR_INF_FP16
 from parlai.utils.typing import TShared
 
 
@@ -509,11 +510,10 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         Compute the embedding loss for either the encoder or the decoder.
         """
-        max_value = torch.finfo(student_emb_output.dtype).max
         raw_loss = F.mse_loss(
             input=student_emb_output, target=teacher_emb_output, reduction='none'
         )
-        clamped_loss = torch.clamp(raw_loss, min=0, max=max_value)
+        clamped_loss = torch.clamp(raw_loss, min=0, max=NEAR_INF_FP16)
         # Prevent infs from appearing in the loss term. Especially important with fp16
         masked_loss = clamped_loss.sum(dim=-1) * mask
         # Sum over embedding dim
@@ -570,7 +570,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
         (The loss is averaged across all hidden layers and over the embedding dimension
         so that it doesn't get too high for fp16 tensors.)
         """
-        max_value = torch.finfo(student_hidden_states[0].dtype).max
         per_layer_losses = []
         per_layer_per_example_losses = []
         for student_layer_idx, teacher_layer_idx in enumerate(mapped_layers):
@@ -579,7 +578,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 target=teacher_hidden_states[teacher_layer_idx],
                 reduction='none',
             )
-            clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=max_value)
+            clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=NEAR_INF_FP16)
             # Prevent infs from appearing in the loss term. Especially important with
             # fp16
             masked_layer_loss = clamped_layer_loss.mean(dim=-1) * mask
@@ -660,7 +659,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
         ]
 
         batch_size = mask.size(0)
-        max_value = torch.finfo(selected_student_attn_matrices[0].dtype).max
         per_layer_losses = []
         per_layer_per_example_losses = []
         for student_layer_idx, teacher_layer_idx in enumerate(mapped_layers):
@@ -669,7 +667,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
                 target=selected_teacher_attn_matrices[teacher_layer_idx],
                 reduction='none',
             )
-            clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=max_value)
+            clamped_layer_loss = torch.clamp(raw_layer_loss, min=0, max=NEAR_INF_FP16)
             # Prevent infs from appearing in the loss term. Especially important with
             # fp16
             reshaped_layer_loss = clamped_layer_loss.view(
