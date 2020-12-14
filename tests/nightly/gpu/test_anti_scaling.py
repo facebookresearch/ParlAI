@@ -131,65 +131,55 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         'wide_distillation' and 'narrow_distillation' keys required.
         """
 
-    def test_distillation_losses(self):
+    def test_wide_distillation_losses(self):
         """
-        Check the sum of distillation losses.
-
-        Make sure that the sum of all distillation losses from one pass through the
-        student and teacher models is as expected.
+        Check losses for a model with "wide" (DistilBART-style) distillation loss terms.
         """
-
-        precise_mode = False
-        # Turn this on to check the loss terms for TinyBERT-style distillation, which
-        # relies upon weights being initialized in a particular way. Won't work on
-        # CircleCI machines
-
-        opts_and_expected_losses = [
-            (
-                self._get_model_opt(),
-                self.WIDE_DISTILLATION_OPT,
-                self._get_agents()['wide_distillation'],
-                False,
-                DESIRED_LOSSES,
-            ),
-            (
-                self._get_model_opt(),
-                self.NARROW_DISTILLATION_OPT,
-                self._get_agents()['narrow_distillation'],
-                True,
-                DESIRED_LOSSES,
-            ),
-        ]
-        for (
-            model_opt,
-            distillation_opt,
-            model_name,
-            is_tinybert_style,
-            expected_losses,
-        ) in opts_and_expected_losses:
-            opt = {
+        model_name = self._get_agents()['wide_distillation']
+        opt = Opt(
+            {
                 **self.BASE_OPT,
-                **model_opt,
-                **distillation_opt,
+                **self._get_model_opt(),
+                **self.WIDE_DISTILLATION_OPT,
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
             }
-            valid, _ = testing_utils.eval_model(Opt(opt), skip_test=True)
-            actual_losses = {
-                loss_name: metric.value() for loss_name, metric in valid.items()
-            }
-            if not is_tinybert_style or precise_mode:
-                self._check_losses(
-                    actual_losses=actual_losses, expected_losses=expected_losses
-                )
+        )
+        self._check_losses(opt=opt, expected_losses=EXPECTED_LOSSES)
 
-    def _check_losses(
-        self,
-        actual_losses: Dict[str, Union[float, np.inf]],
-        expected_losses: Dict[str, Union[float, np.inf]],
-    ):
+    def test_narrow_distillation_losses(self):
         """
-        Check each of the expected losses to make sure they match the actual loss.
+        Check losses for a model with "narrow" (TinyBERT-style) distillation loss terms.
         """
+
+        # precise_mode = False
+        # # Turn this on to check the loss terms for TinyBERT-style distillation, which
+        # # relies upon weights being initialized in a particular way. Won't work on
+        # # CircleCI machines
+        # TODO: either reenable or remove
+
+        model_name = self._get_agents()['narrow_distillation']
+        opt = Opt(
+            {
+                **self.BASE_OPT,
+                **self._get_model_opt(),
+                **self.NARROW_DISTILLATION_OPT,
+                'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
+            }
+        )
+        self._check_losses(opt=opt, expected_losses=EXPECTED_LOSSES)
+
+    def _check_losses(self, opt: Opt, expected_losses: Dict[str, Union[float, np.inf]]):
+        """
+        Calculate and check distillation loss terms.
+
+        Given the input opt, run eval and check each of the loss terms to make sure that
+        they match what is expected.
+        """
+        # TODO: revise docstring given pytest regression
+        valid, _ = testing_utils.eval_model(opt, skip_test=True)
+        actual_losses = {
+            loss_name: metric.value() for loss_name, metric in valid.items()
+        }
         for loss_name, expected_loss in expected_losses.items():
             if np.isinf(expected_loss):
                 self.assertTrue(np.isinf(actual_losses[loss_name]))
