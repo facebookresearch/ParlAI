@@ -10,13 +10,14 @@ fvcore==0.1.1.post20200716
 gitdb2==2.0.5
 GitPython==3.0.3
 hydra-core==1.0.3
+ipython==7.19.0
 torch>=1.4.0
 joblib==0.14.1
 nltk==3.4.5
 numpy==1.17.5
 omegaconf==2.0.2
 pandas==1.1.1
-pytest_regressions==2.0.2
+pytest_regressions==2.1.1
 pytest==5.3.2
 pexpect==4.7.0
 Pillow==7.2.0

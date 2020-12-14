@@ -1,0 +1,26 @@
+{
+  "model1": {
+    "model_file": "zoo:blender/blender_90M/model",
+    "model": "transformer/generator",
+    "beam_min_length": 20,
+    "batchsize": 1,
+    "skip_generation": false,
+    "interactive_mode": false,
+    "beam_size": 10,
+    "inference": "beam",
+    "beam_block_ngram": 3,
+    "beam_context_block_ngram": 3
+  },
+  "model2": {
+    "model_file": "zoo:blender/blender_90M/model",
+    "model": "transformer/generator",
+    "beam_min_length": 20,
+    "batchsize": 1,
+    "skip_generation": false,
+    "interactive_mode": false,
+    "beam_size": 10,
+    "inference": "beam",
+    "beam_block_ngram": 3,
+    "beam_context_block_ngram": 3
+  }
+}

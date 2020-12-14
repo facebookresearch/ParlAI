@@ -1,39 +1,4 @@
-{"inputs": [
-    [
-        {"text": "Hi!", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I'm not sure if I should upvote you or downvote you. I'll go with upvote.", "agent_idx": 1, "do_annotate": true, "other_metadata": null}
-    ], [
-        {"text": "Hi!", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I'm not sure if I should upvote you or downvote you. I'll go with upvote.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "I haven't done anything wrong, we barely just met.", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I don't know why you're being downvoted, but I'm upvoting you anyway.", "agent_idx": 1, "do_annotate": true, "other_metadata": null}
-    ], [
-        {"text": "Hi!", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I'm not sure if I should upvote you or downvote you. I'll go with upvote.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "Upvotes are good - please go ahead if you like. ", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "Upvoted. Appreciated if you upvote me as well. Thank you very much.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "OK, I will. What else would you like to talk about? ", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I don't know what else to say, but I will upvote your comment. Thank you.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "You're welcome, and thanks. What do you do for a living? ", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I'm a software engineer, but I have a lot of free time in my free time. I work in it.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "That sounds like you have a recursion problem with your free time!", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "It's not recursion, it's recursion. Recursion is a type of recursion!", "agent_idx": 1, "do_annotate": true, "other_metadata": null}
-    ], [
-        {"text": "Hi!", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I'm not sure if I should upvote you or downvote you. I'll go with upvote.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "I haven't done anything wrong, we barely just met.", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I don't know why you're being downvoted, but I'm upvoting you anyway.", "agent_idx": 1, "do_annotate": false, "other_metadata": null},
-{"text": "It must be because I'm so controversial. Thanks for the upvote. I would upvote you too.", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "I upvoted you as well. Thank you for your upvote. Have a nice day.", "agent_idx": 1, "do_annotate": true, "other_metadata": null}
-    ], [
-        {"text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 1, "do_annotate": true, "other_metadata": null},
-{"text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 1, "do_annotate": true, "other_metadata": null},
-{"text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 0, "do_annotate": false, "other_metadata": null},
-{"text": "Last utterance where user should select bucket_1 and bucket_3", "agent_idx": 1, "do_annotate": true, "other_metadata": null}
-    ]
-], "outputs": {"final_data": [{"subtask_index": 0, "data": [{"turn_idx": 0, "text": "Hi!", "agent_idx": 0, "other_metadata": null, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null},
+{"final_data": [{"subtask_index": 0, "data": [{"turn_idx": 0, "text": "Hi!", "agent_idx": 0, "other_metadata": null, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null},
 {"turn_idx": 1, "text": "I'm not sure if I should upvote you or downvote you. I'll go with upvote.", "agent_idx": 1, "other_metadata": null, "bucket_0": true, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false}]},
 {"subtask_index": 1, "data": [{"turn_idx": 0, "text": "Hi!", "agent_idx": 0, "other_metadata": null, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null},
 {"turn_idx": 1, "text": "I'm not sure if I should upvote you or downvote you. I'll go with upvote.", "agent_idx": 1, "other_metadata": null, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null},
@@ -60,5 +25,4 @@
 {"turn_idx": 2, "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 0, "other_metadata": null, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null},
 {"turn_idx": 3, "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 1, "other_metadata": null, "bucket_0": false, "bucket_1": true, "bucket_2": false, "bucket_3": false, "bucket_4": false},
 {"turn_idx": 4, "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro", "agent_idx": 0, "other_metadata": null, "bucket_0": null, "bucket_1": null, "bucket_2": null, "bucket_3": null, "bucket_4": null},
-{"turn_idx": 5, "text": "Last utterance where user should select bucket_1 and bucket_3", "agent_idx": 1, "other_metadata": null, "bucket_0": false, "bucket_1": true, "bucket_2": false, "bucket_3": true, "bucket_4": false}]}]},
-"times": {"task_start": 1603134394.7614357, "task_end": 1603134434.4986851}}
+{"turn_idx": 5, "text": "Last utterance where user should select bucket_1 and bucket_3", "agent_idx": 1, "other_metadata": null, "bucket_0": false, "bucket_1": true, "bucket_2": false, "bucket_3": true, "bucket_4": false}]}]}
