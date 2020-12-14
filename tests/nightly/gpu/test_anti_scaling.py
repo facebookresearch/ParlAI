@@ -11,7 +11,7 @@ Test code for anti-scaling transformer/generator models.
 import random
 import unittest
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Union
 
 import numpy as np
 import torch
@@ -72,6 +72,12 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         'n_encoder_layers': 1,
         'n_decoder_layers': 1,
         'task': FIXED_MESSAGE_TASK,
+        'num_examples': 1,
+        'skip_generation': True,
+        'hidden_loss_coeff': 1,
+        'encoder_loss_coeff': 1,
+        'pred_loss_coeff': 1,
+        'task_loss_coeff': 1,
     }
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
     NARROW_DISTILLATION_OPT = {
@@ -87,6 +93,11 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         """
         Download models in advance so that their opt files can be used with --init-opt.
         """
+
+        random.seed()
+        np.random.seed(0)
+        torch.manual_seed(0)
+
         datapath = 'data'
         self._download_model(datapath)
 
@@ -133,11 +144,7 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         # relies upon weights being initialized in a particular way. Won't work on
         # CircleCI machines
 
-        random.seed()
-        np.random.seed(0)
-        torch.manual_seed(0)
-
-        opts_and_desired_losses = [
+        opts_and_expected_losses = [
             (
                 self._get_model_opt(),
                 self.WIDE_DISTILLATION_OPT,
@@ -158,33 +165,42 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
             distillation_opt,
             model_name,
             is_tinybert_style,
-            desired_losses,
-        ) in opts_and_desired_losses:
+            expected_losses,
+        ) in opts_and_expected_losses:
             opt = {
                 **self.BASE_OPT,
                 **model_opt,
                 **distillation_opt,
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
-                'num_examples': 1,
-                'skip_generation': True,
-                'hidden_loss_coeff': 1,
-                'encoder_loss_coeff': 1,
-                'pred_loss_coeff': 1,
-                'task_loss_coeff': 1,
             }
             valid, _ = testing_utils.eval_model(Opt(opt), skip_test=True)
+            actual_losses = {
+                loss_name: metric.value() for loss_name, metric in valid.items()
+            }
             if not is_tinybert_style or precise_mode:
-                for loss_name, desired_loss in desired_losses.items():
-                    if np.isinf(desired_loss):
-                        self.assertTrue(np.isinf(valid[loss_name].value()))
-                    else:
-                        if abs(valid[loss_name].value() / desired_loss - 1) > 0.01:
-                            raise ValueError(
-                                f"""\
-Error in matching {loss_name} for {model_name}!
-Desired value: {desired_loss}
-Actual value: {valid[loss_name].value()}"""
-                            )
+                self._check_losses(
+                    actual_losses=actual_losses, expected_losses=expected_losses
+                )
+
+    def _check_losses(
+        self,
+        actual_losses: Dict[str, Union[float, np.inf]],
+        expected_losses: Dict[str, Union[float, np.inf]],
+    ):
+        """
+        Check each of the expected losses to make sure they match the actual loss.
+        """
+        for loss_name, expected_loss in expected_losses.items():
+            if np.isinf(expected_loss):
+                self.assertTrue(np.isinf(actual_losses[loss_name]))
+            else:
+                if abs(actual_losses[loss_name] / expected_loss - 1) > 0.01:
+                    raise ValueError(
+                        f"""\
+Error in matching the {loss_name} loss!
+Expected value: {expected_loss}
+Actual value: {actual_losses[loss_name]}"""
+                    )
 
 
 class TestTransformerDistillation(AbstractTestDistillation):
