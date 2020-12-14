@@ -10,6 +10,8 @@ Test code for anti-scaling transformer/generator models.
 
 import random
 import unittest
+from abc import ABC, abstractmethod
+from typing import Dict
 
 import numpy as np
 import torch
@@ -20,13 +22,11 @@ from parlai.zoo.bart.build import download as download_bart
 from parlai.zoo.blender.blender_90M import download as download_blender
 
 
-class TestDistillation(unittest.TestCase):
+class AbstractTestDistillation(ABC, unittest.TestCase):
     """
-    Test agents for distilling transformer/generator models.
+    Test agents for distilling Transformer generator models.
     """
 
-    BLENDERBOT_MODEL_FILE = 'data/models/blender/blender_90M/model'
-    BART_MODEL_FILE = 'data/models/bart/bart_large/model'
     BASE_OPT = {
         'allow_missing_init_opts': True,
         'init_model': '',
@@ -35,20 +35,10 @@ class TestDistillation(unittest.TestCase):
         'n_decoder_layers': 1,
         'task': 'blended_skill_talk',
     }
-    TRANSFORMER_OPT = {
-        'dict_file': f'{BLENDERBOT_MODEL_FILE}.dict',
-        'init_opt': f'{BLENDERBOT_MODEL_FILE}.opt',
-        'teacher_model': BLENDERBOT_MODEL_FILE,
-    }
-    BART_OPT = {
-        'dict_file': f'{BART_MODEL_FILE}.dict',
-        'init_opt': f'{BART_MODEL_FILE}.opt',
-        'teacher_model': BART_MODEL_FILE,
-    }
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
-    NARROW_DISTILLATION_OPT = {'embedding_size': 64, 'ffn_size': 256}
-    NARROW_DISTILLATION_DUMMY_LOSS_OPT = {
-        **NARROW_DISTILLATION_OPT,
+    NARROW_DISTILLATION_OPT = {
+        'embedding_size': 64,
+        'ffn_size': 256,
         'embedding_loss_coeff': 1,
         'self_attn_loss_coeff': 1,
         'enc_dec_attn_loss_coeff': 1,
@@ -59,9 +49,38 @@ class TestDistillation(unittest.TestCase):
         """
         Download models in advance so that their opt files can be used with --init-opt.
         """
-        data_path = 'data'
-        download_blender(data_path)
-        download_bart(data_path)
+        datapath = 'data'
+        self._download_model(datapath)
+
+    @abstractmethod
+    def _download_model(self, datapath: str):
+        """
+        Download the model to calculate distillation losses from.
+        """
+
+    def _get_model_file(self) -> str:
+        """
+        Return the model file for this model type.
+        """
+
+    def _get_model_opt(self) -> Dict[str, str]:
+        """
+        Return opt specifically for this model type.
+        """
+        model_file = self._get_model_file()
+        return {
+            'dict_file': f'{model_file}.dict',
+            'init_opt': f'{model_file}.opt',
+            'teacher_model': model_file,
+        }
+
+    @abstractmethod
+    def _get_agents(self) -> Dict[str, str]:
+        """
+        Return a dict of strings of agent classes specifically for this model type.
+
+        'wide_distillation' and 'narrow_distillation' keys required.
+        """
 
     def test_distillation_losses(self):
         """
@@ -82,66 +101,18 @@ class TestDistillation(unittest.TestCase):
 
         opts_and_desired_losses = [
             (
-                self.TRANSFORMER_OPT,
+                self._get_model_opt(),
                 self.WIDE_DISTILLATION_OPT,
-                'DistillTransformerAgent',
+                self._get_agents()['wide_distillation'],
                 False,
-                {
-                    'dec_hid_loss': 87.27,
-                    'enc_hid_loss': 0.8726,
-                    'enc_loss': 0.8726,
-                    'loss': 15.85,
-                    'pred_loss': 13.77,
-                },
+                DESIRED_LOSSES,
             ),
             (
-                self.BART_OPT,
-                self.WIDE_DISTILLATION_OPT,
-                'DistillBartAgent',
-                False,
-                {
-                    'dec_hid_loss': 2.731,
-                    'enc_hid_loss': 0.0383,
-                    'enc_loss': 0.0383,
-                    'loss': 32.16,
-                    'pred_loss': 29.35,
-                },
-            ),
-            (
-                self.TRANSFORMER_OPT,
-                self.NARROW_DISTILLATION_DUMMY_LOSS_OPT,
-                'DistillNarrowTransformerAgent',
+                self._get_model_opt(),
+                self.NARROW_DISTILLATION_OPT,
+                self._get_agents()['narrow_distillation'],
                 True,
-                {
-                    'dec_emb_loss': 1.625,
-                    'dec_hid_loss': 49.08,
-                    'dec_self_attn_loss': 3.609,
-                    'enc_dec_attn_loss': 29.65,
-                    'enc_emb_loss': 1.027,
-                    'enc_hid_loss': 0.5528,
-                    'enc_loss': 0.5478,
-                    'enc_self_attn_loss': np.inf,
-                    'loss': 11.41,
-                    'pred_loss': 9.238,
-                },
-            ),
-            (
-                self.BART_OPT,
-                self.NARROW_DISTILLATION_DUMMY_LOSS_OPT,
-                'DistillNarrowBartAgent',
-                True,
-                {
-                    'dec_emb_loss': 9.495,
-                    'dec_hid_loss': 0.6304,
-                    'dec_self_attn_loss': 514.2,
-                    'enc_dec_attn_loss': 137.6,
-                    'enc_emb_loss': 6.642,
-                    'enc_hid_loss': 0.05015,
-                    'enc_loss': 0.05089,
-                    'enc_self_attn_loss': 9.318,
-                    'loss': 11.39,
-                    'pred_loss': 8.918,
-                },
+                DESIRED_LOSSES,
             ),
         ]
         for (
@@ -176,6 +147,42 @@ Error in matching {loss_name} for {model_name}!
 Desired value: {desired_loss}
 Actual value: {valid[loss_name].value()}"""
                             )
+
+
+class TestTransformerDistillation(AbstractTestDistillation):
+    """
+    Test agents for distilling 'transformer/generator' models specifically.
+    """
+
+    def _download_model(self, datapath: str):
+        download_blender(datapath)
+
+    def _get_model_file(self) -> str:
+        return 'data/models/blender/blender_90M/model'  # BlenderBot90M
+
+    def _get_agents(self) -> Dict[str, str]:
+        return {
+            'wide_distillation': 'DistillTransformerAgent',
+            'narrow_distillation': 'DistillNarrowTransformerAgent',
+        }
+
+
+class TestBartDistillation(AbstractTestDistillation):
+    """
+    Test agents for distilling 'transformer/generator' models specifically.
+    """
+
+    def _download_model(self, datapath: str):
+        download_bart(datapath)
+
+    def _get_model_file(self) -> str:
+        return 'data/models/bart/bart_large/model'
+
+    def _get_agents(self) -> Dict[str, str]:
+        return {
+            'wide_distillation': 'DistillBartAgent',
+            'narrow_distillation': 'DistillNarrowBartAgent',
+        }
 
 
 if __name__ == '__main__':
