@@ -722,7 +722,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
     @classmethod
     def add_cmdline_args(cls, argparser):
-        super(DistillTransformerAgentMixin, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('DistillTransformer arguments')
         agent.add_argument(
             '--copy-teacher-weights',
@@ -808,7 +808,7 @@ class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
 class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
     @classmethod
     def add_cmdline_args(cls, argparser):
-        super(DistillNarrowTransformerAgentMixin, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(argparser)
         agent = argparser.add_argument_group('DistillNarrowTransformer arguments')
         agent.add_argument(
             '--embedding-loss-coeff',
