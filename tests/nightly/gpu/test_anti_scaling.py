@@ -11,10 +11,12 @@ Test code for anti-scaling transformer/generator models.
 import random
 import unittest
 from abc import ABC, abstractmethod
-from typing import Dict, Union
+from typing import Dict
 
 import numpy as np
+import pytest
 import torch
+from pytest_regressions.data_regression import DataRegressionFixture
 
 import parlai.utils.testing as testing_utils
 from parlai.core.message import Message
@@ -89,7 +91,8 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
     }
     DISTILLATION_MODEL_PREFIX = 'projects.anti_scaling.distillation'
 
-    def setUp(self):
+    @pytest.fixture(scope="function")
+    def setup(self):
         """
         Download models in advance so that their opt files can be used with --init-opt.
         """
@@ -100,6 +103,8 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
 
         datapath = 'data'
         self._download_model(datapath)
+
+        yield 'Setup complete'
 
     @abstractmethod
     def _download_model(self, datapath: str):
@@ -131,7 +136,9 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         'wide_distillation' and 'narrow_distillation' keys required.
         """
 
-    def test_wide_distillation_losses(self):
+    def test_wide_distillation_losses(
+        self, setup, data_regression: DataRegressionFixture
+    ):
         """
         Check losses for a model with "wide" (DistilBART-style) distillation loss terms.
         """
@@ -144,9 +151,11 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
             }
         )
-        self._check_losses(opt=opt, expected_losses=EXPECTED_LOSSES)
+        self._check_losses(opt=opt, data_regression=data_regression)
 
-    def test_narrow_distillation_losses(self):
+    def test_narrow_distillation_losses(
+        self, setup, data_regression: DataRegressionFixture
+    ):
         """
         Check losses for a model with "narrow" (TinyBERT-style) distillation loss terms.
         """
@@ -166,31 +175,18 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
             }
         )
-        self._check_losses(opt=opt, expected_losses=EXPECTED_LOSSES)
+        self._check_losses(opt=opt, data_regression=data_regression)
 
-    def _check_losses(self, opt: Opt, expected_losses: Dict[str, Union[float, np.inf]]):
+    def _check_losses(self, opt: Opt, data_regression: DataRegressionFixture):
         """
         Calculate and check distillation loss terms.
 
         Given the input opt, run eval and check each of the loss terms to make sure that
         they match what is expected.
         """
-        # TODO: revise docstring given pytest regression
         valid, _ = testing_utils.eval_model(opt, skip_test=True)
-        actual_losses = {
-            loss_name: metric.value() for loss_name, metric in valid.items()
-        }
-        for loss_name, expected_loss in expected_losses.items():
-            if np.isinf(expected_loss):
-                self.assertTrue(np.isinf(actual_losses[loss_name]))
-            else:
-                if abs(actual_losses[loss_name] / expected_loss - 1) > 0.01:
-                    raise ValueError(
-                        f"""\
-Error in matching the {loss_name} loss!
-Expected value: {expected_loss}
-Actual value: {actual_losses[loss_name]}"""
-                    )
+        losses = {loss_name: metric.value() for loss_name, metric in valid.items()}
+        data_regression.check(losses)
 
 
 class TestTransformerDistillation(AbstractTestDistillation):
