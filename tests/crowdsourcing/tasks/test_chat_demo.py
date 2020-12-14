@@ -356,7 +356,7 @@ try:
         'parlai_chat_task_demo',
     )
 
-    class TestChatDemo(AbstractCrowdsourcingTest, unittest.TestCase):
+    class TestChatDemo(AbstractParlAIChatTest, unittest.TestCase):
         """
         Test the chat demo crowdsourcing task.
         """

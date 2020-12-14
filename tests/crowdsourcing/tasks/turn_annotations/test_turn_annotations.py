@@ -68,10 +68,21 @@ try:
     )
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
-    class TestTurnAnnotations(AbstractParlAIChatTest):
+    class TestTurnAnnotations(AbstractParlAIChatTest, unittest.TestCase):
         """
         Test the turn annotations crowdsourcing task.
         """
+
+        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
+        #  regressions. Also use a pytest.fixture to call self._setup() and
+        #  self._teardown(), like the other tests use, instead of calling them with
+        #  self.setUp() and self.tearDown()
+
+        def setUp(self) -> None:
+            self._setup()
+
+        def tearDown(self) -> None:
+            self._teardown()
 
         def test_base_task(self):
 
