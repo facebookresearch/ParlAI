@@ -148,4 +148,4 @@ outputs/
 .mypy_cache
 
 # npm compilation
-package-lock.json
+crowdsourcing/**/package-lock.json
