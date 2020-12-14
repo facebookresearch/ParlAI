@@ -271,7 +271,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         This will likely call self._perform_forward_passes().
         """
-        raise NotImplementedError('Abstract class: user must implement .compute_loss()')
 
     def _perform_forward_passes(self, batch: Batch) -> ForwardPassOutputs:
         """

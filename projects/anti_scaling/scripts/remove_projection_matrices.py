@@ -43,7 +43,6 @@ def remove_projection_matrices(model_file: str):
 
 
 if __name__ == '__main__':
-    random.seed(42)
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'model_file', type=str, help='Path to model to remove projection matrices from'
