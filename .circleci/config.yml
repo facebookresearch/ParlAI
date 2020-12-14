@@ -25,13 +25,6 @@ executors:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
-  standard_cpu36:
-    docker:
-      - image: circleci/python:3.6.9-buster-node
-    environment:
-      PYTHONUNBUFFERED: 1
-    resource_class: xlarge
-
   osx_cpu37:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
@@ -317,8 +310,8 @@ commands:
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  cleaninstall_36:
-    executor: standard_cpu36
+  cleaninstall_37:
+    executor: standard_cpu37
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -340,17 +333,6 @@ jobs:
     steps:
       - runtests:
           cachename: osx
-          marker: unit
-
-  unittests_36:
-    executor: standard_cpu36
-    working_directory: ~/ParlAI
-    parallelism: 8
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchcpu
-          cachename: ut36
           marker: unit
 
   unittests_37:
@@ -494,7 +476,7 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_36
+      - cleaninstall_37
       - unittests_gpu16
       - unittests_gpu15:
           requires:
@@ -509,10 +491,6 @@ workflows:
             - unittests_37
             - unittests_gpu16
       - unittests_37
-      - unittests_36:
-          requires:
-            - unittests_37
-            - unittests_gpu16
       - mturk_tests
       - unittests_osx:
           requires:
