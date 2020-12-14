@@ -10,6 +10,7 @@ End-to-end testing for the chat demo crowdsourcing task.
 import os
 import unittest
 
+
 # Desired inputs/outputs
 EXPECTED_STATE_AGENT_0 = {
     "outputs": {
@@ -355,10 +356,21 @@ try:
         'parlai_chat_task_demo',
     )
 
-    class TestChatDemo(AbstractParlAIChatTest):
+    class TestChatDemo(AbstractCrowdsourcingTest, unittest.TestCase):
         """
         Test the chat demo crowdsourcing task.
         """
+
+        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
+        #  regressions. Also use a pytest.fixture to call self._setup() and
+        #  self._teardown(), like the other tests use, instead of calling them with
+        #  self.setUp() and self.tearDown()
+
+        def setUp(self) -> None:
+            self._setup()
+
+        def tearDown(self) -> None:
+            self._teardown()
 
         def test_base_task(self):
 

@@ -8,19 +8,23 @@ Utilities for running tests.
 """
 
 import os
+import random
 import tempfile
 import time
 import unittest
 from typing import Any, Dict, List, Optional, Sequence
 
+import numpy as np
+import torch
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import augment_config_from_db
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
-class AbstractCrowdsourcingTest(unittest.TestCase):
+class AbstractCrowdsourcingTest:
     """
     Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
 
@@ -28,10 +32,26 @@ class AbstractCrowdsourcingTest(unittest.TestCase):
     and agent registration.
     """
 
-    def setUp(self):
+    def _setup(self):
+        """
+        To be run before a test.
+
+        Should be called in a pytest setup/teardown fixture.
+        """
+
+        random.seed(0)
+        np.random.seed(0)
+        torch.manual_seed(0)
+
         self.operator = None
 
-    def tearDown(self):
+    def _teardown(self):
+        """
+        To be run after a test.
+
+        Should be called in a pytest setup/teardown fixture.
+        """
+
         if self.operator is not None:
             self.operator.shutdown()
 
@@ -80,8 +100,8 @@ class AbstractCrowdsourcingTest(unittest.TestCase):
             #  https://github.com/facebookresearch/hydra/pull/1044.
 
         self.data_dir = tempfile.mkdtemp()
-        database_path = os.path.join(self.data_dir, "mephisto.db")
-        self.db = LocalMephistoDB(database_path)
+        self.database_path = os.path.join(self.data_dir, "mephisto.db")
+        self.db = LocalMephistoDB(self.database_path)
         self.config = augment_config_from_db(self.config, self.db)
         self.config.mephisto.architect.should_run_server = True
 
@@ -116,7 +136,25 @@ class AbstractCrowdsourcingTest(unittest.TestCase):
 
             # Register the worker
             mock_worker_name = f"MOCK_WORKER_{idx:d}"
-            self.server.register_mock_worker(mock_worker_name)
+            max_num_tries = 6
+            initial_wait_time = 0.5  # In seconds
+            num_tries = 0
+            wait_time = initial_wait_time
+            while num_tries < max_num_tries:
+                try:
+                    self.server.register_mock_worker(mock_worker_name)
+                    break
+                except IndexError:
+                    num_tries += 1
+                    print(
+                        f'A subscriber could not be found after {num_tries:d} '
+                        f'attempt(s), out of {max_num_tries:d} attempts total. Waiting '
+                        f'for {wait_time:0.1f} seconds...'
+                    )
+                    time.sleep(wait_time)
+                    wait_time *= 2  # Wait for longer next time
+            else:
+                raise ValueError('The worker could not be registered!')
             workers = self.db.find_workers(worker_name=mock_worker_name)
             worker_id = workers[0].db_id
 
@@ -139,14 +177,25 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
     all of the worker's responses are sent to the backend code at once.
     """
 
-    def _test_agent_state(self, expected_state: Dict[str, Any]):
+    def _test_agent_state(
+        self, task_data: Dict[str, Any], data_regression: DataRegressionFixture
+    ):
         """
         Test that the actual agent state matches the expected state.
 
+        Get the final agent state given the input task data and check that it is as
+        expected.
+        """
+        state = self._get_agent_state(task_data=task_data)
+        self._check_agent_state(state=state, data_regression=data_regression)
+
+    def _get_agent_state(self, task_data: Dict[str, Any]):
+        """
+        Submit user task data and return the final agent state.
+
         Register a mock human agent, request initial data to define the 'inputs' field
         of the agent state, make the agent act to define the 'outputs' field of the
-        agent state, and then check that the agent state matches the desired agent
-        state.
+        agent state, and return the agent state.
         """
 
         # Set up the mock human agent
@@ -157,14 +206,19 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
 
         # Make agent act
         self.server.send_agent_act(
-            agent_id,
-            {"MEPHISTO_is_submit": True, "task_data": expected_state['outputs']},
+            agent_id, {"MEPHISTO_is_submit": True, "task_data": task_data}
         )
 
-        # Check that the inputs and outputs are as expected
-        state = self.db.find_agents()[0].state.get_data()
-        self.assertEqual(expected_state['inputs'], state['inputs'])
-        self.assertEqual(expected_state['outputs'], state['outputs'])
+        return self.db.find_agents()[0].state.get_data()
+
+    def _check_agent_state(
+        self, state: Dict[str, Any], data_regression: DataRegressionFixture
+    ):
+        """
+        Given an agent state, test that it is as expected.
+        """
+        del state['times']  # Delete variable timestamps
+        data_regression.check(state)
 
 
 class AbstractParlAIChatTest(AbstractCrowdsourcingTest):

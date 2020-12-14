@@ -1,5 +1,7 @@
 # ACUTE-Eval
 
+**NOTE**: this code will be removed very soon, and we advise that the nearly identical crowdsourcing tasks at [`parlai.crowdsourcing.tasks.acute_eval`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) and [`parlai.crowdsourcing.tasks.fast_acute`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/fast_acute) be used instead. Use `parlai.crowdsourcing.tasks.acute_eval.run` for regular ACUTE-Evals, `parlai.crowdsourcing.tasks.fast_acute.run` for Fast ACUTEs in which self-chats will be produced, and `parlai.crowdsourcing.tasks.fast_acute.run_no_self_chat` for Fast ACUTEs in which self-chat files are already available. The ability to run Fast ACUTEs on ParlAI tasks (datasets) will be available in that version of the Fast ACUTE code shortly.
+
 ## Paper information
 
 Margaret Li, Jason Weston, Stephen Roller.
