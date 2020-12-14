@@ -893,6 +893,8 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
 
         fwd_pass = self._perform_forward_passes(batch)
 
+        # Access the student model, which may be wrapped by
+        # `torch.nn.parallel.DistributedDataParallel`
         if hasattr(self.model, 'module'):
             student_model = self.model.module
         else:
