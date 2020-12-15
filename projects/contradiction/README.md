@@ -1,5 +1,5 @@
-# *I like fish :fish:, especially dolphins :dolphin::*<sup>[∗](#dolphion)</sup>  
-Addressing Contradictions in Dialogue Modelling  
+# *I like fish :fish:, especially dolphins :dolphin::*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modelling
+
 
 
 ## Abstract
