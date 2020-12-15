@@ -42,7 +42,6 @@ class DialoGPTDecoder(GPT2Decoder):
         ):
             # get around the dual usage of end_idx that would otherwise mask endtoken during forward pass.
             null_idx = -1
-            warn_once("WARNING: null_idx is set to -1 otherwise null_idx = end_idx")
         return null_idx, dict.start_idx, dict.end_idx
 
     def _init_from_pretrained(self, opt):
