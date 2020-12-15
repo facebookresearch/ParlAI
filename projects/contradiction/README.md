@@ -1,6 +1,7 @@
 # *I like fish :fish:, especially dolphins :dolphin::*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modelling
 
-
+A study on *contradiction* detection and *non-contradiction* generation in dialogue modelling.  
+The paper can be found in [Nie et al. (2020)]().
 
 ## Abstract
 
