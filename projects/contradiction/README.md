@@ -87,8 +87,13 @@ A example `JSON` is shown below:
 ```
 
 ## Load Data from ParlAI
-The **DECODE** can also be loaded directly from ParlAI.
-Coming soon.
+The **DECODE** can also be loaded directly from ParlAI.  
+--- Coming soon.
+
+## Citation
+```
+
+```
 
 
 _________________
