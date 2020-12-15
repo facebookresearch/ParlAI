@@ -1,4 +1,5 @@
-# *I like fish:fish:, especially dolphins:dolphin::*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modelling  
+# *I like fish :fish:, especially dolphins :dolphin::*<sup>[∗](#dolphion)</sup>  
+Addressing Contradictions in Dialogue Modelling  
 
 
 ## Abstract
@@ -13,4 +14,4 @@ We also show that our best contradiction detection model correlates well with hu
 
 
 _________________
-<a name="dolphion"><sup>∗</sup></a>: Dolphins are mammals, not fish.
+<a name="dolphion"><sup>∗</sup></a> Dolphins :dolphin: are mammals, not fish :fish:.
