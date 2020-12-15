@@ -11,7 +11,7 @@ Test code for anti-scaling transformer/generator models.
 import random
 from abc import ABC, abstractmethod
 from math import floor, log10
-from typing import Dict, List
+from typing import Dict
 
 import numpy as np
 import pytest
@@ -19,7 +19,6 @@ import torch
 from pytest_regressions.data_regression import DataRegressionFixture
 
 import parlai.utils.testing as testing_utils
-from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.teachers import register_teacher, DialogTeacher
 from parlai.utils.data import DatatypeHelper
@@ -246,6 +245,6 @@ def round_sig(num, sig: int):
     """
     Round num to the input number of significant figures.
 
-    From https://stackoverflow.com/a/3413529.  
+    From https://stackoverflow.com/a/3413529.
     """
     return round(num, sig - int(floor(log10(abs(num)))) - 1)
