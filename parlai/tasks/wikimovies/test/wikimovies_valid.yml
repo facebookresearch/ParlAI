@@ -1,0 +1,138 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Once Were Warriors, Tracker, River Queen
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    reward: 0
+    text: what movies did Temuera Morrison act in?
+- - episode_done: true
+    eval_labels:
+    - Alice Adams, Death Takes a Holiday, The Little Colonel
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    reward: 0
+    text: what movies did Evelyn Venable act in?
+- - episode_done: true
+    eval_labels:
+    - Weekend
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    reward: 0
+    text: what does Tom Cullen act in?
+- - episode_done: true
+    eval_labels:
+    - Half Nelson
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    reward: 0
+    text: what movies was Shareeka Epps an actor in?
+- - episode_done: true
+    eval_labels:
+    - Ambush, Dog Nail Clipper, On the Road to Emmaus
+    id: wikimovies
+    label_candidates:
+    - '"""damn dirty apes"""'
+    - '"""found footage"""'
+    - '"""the hunter"""'
+    - '"""underaged sex""=child porn"'
+    - '"5'
+    - '"dope"""'
+    - '"dwayne ""the rock"" johnson"'
+    - '#1 prediction'
+    - $
+    - $9.99
+    - Özge Özberk
+    - Özgü Namal
+    - Özgür Yildirim
+    - Özhan Eren
+    - Özkan Ugur
+    - Þorsteinn Bachmann
+    - Þröstur Leó Gunnarsson
+    - Þrúður Kristjánsdóttir
+    - Þrúður Vilhjálmsdóttir
+    - Þórunn Arna Kristjánsdóttir
+    reward: 0
+    text: what does Peter Franzén appear in?
+num_episodes: 10000
+num_examples: 10000

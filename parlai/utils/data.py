@@ -14,6 +14,21 @@ class DatatypeHelper:
     """
 
     @classmethod
+    def fold(cls, datatype: str) -> str:
+        """
+        Extract the fold part of the datatype.
+
+        :param datatype:
+            parlai datatype
+
+        :return: the fold
+
+        >>> DatatypeHelper.fold("train:ordered")
+        ... "train"
+        """
+        return datatype.split(':')[0]
+
+    @classmethod
     def should_cycle(cls, datatype: str) -> bool:
         """
         Return whether we should cycle data based on the datatype.

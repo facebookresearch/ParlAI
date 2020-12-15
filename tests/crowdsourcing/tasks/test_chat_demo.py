@@ -7,7 +7,9 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import os
 import unittest
+
 
 # Desired inputs/outputs
 DESIRED_STATE_AGENT_0 = {
@@ -339,19 +341,35 @@ FORM_RESPONSES = {
 
 try:
 
-    # From the Mephisto repo
-    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
-    from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
+    import mephisto
+    from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
         BLUEPRINT_TYPE,
     )
 
-    from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
+    from parlai.crowdsourcing.utils.tests import AbstractCrowdsourcingTest
 
-    class TestChatDemo(CrowdsourcingTestMixin, unittest.TestCase):
+    TASK_DIRECTORY = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(mephisto.__file__))),
+        'examples',
+        'parlai_chat_task_demo',
+    )
+
+    class TestChatDemo(AbstractCrowdsourcingTest, unittest.TestCase):
         """
         Test the chat demo crowdsourcing task.
         """
+
+        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
+        #  regressions. Also use a pytest.fixture to call self._setup() and
+        #  self._teardown(), like the other tests use, instead of calling them with
+        #  self.setUp() and self.tearDown()
+
+        def setUp(self) -> None:
+            self._setup()
+
+        def tearDown(self) -> None:
+            self._teardown()
 
         def test_base_task(self):
 

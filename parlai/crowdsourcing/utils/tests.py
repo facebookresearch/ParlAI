@@ -8,29 +8,49 @@ Utilities for running tests.
 """
 
 import os
+import random
 import tempfile
 import time
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
+import numpy as np
+import torch
 from hydra.experimental import compose, initialize
-from mephisto.core.local_database import LocalMephistoDB
-from mephisto.core.operator import Operator
-from mephisto.data_model.blueprint import SharedTaskState
-from mephisto.utils.scripts import augment_config_from_db
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.operations.operator import Operator
+from mephisto.abstractions.blueprint import SharedTaskState
+from mephisto.tools.scripts import augment_config_from_db
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
-class CrowdsourcingTestMixin:
+class AbstractCrowdsourcingTest:
     """
-    Mixin for end-to-end tests of Mephisto-based crowdsourcing tasks.
+    Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
 
     Allows for setup and teardown of the operator, as well as for config specification
     and agent registration.
     """
 
-    def setUp(self):
+    def _setup(self):
+        """
+        To be run before a test.
+
+        Should be called in a pytest setup/teardown fixture.
+        """
+
+        random.seed(0)
+        np.random.seed(0)
+        torch.manual_seed(0)
+
         self.operator = None
 
-    def tearDown(self):
+    def _teardown(self):
+        """
+        To be run after a test.
+
+        Should be called in a pytest setup/teardown fixture.
+        """
+
         if self.operator is not None:
             self.operator.shutdown()
 
@@ -79,8 +99,8 @@ class CrowdsourcingTestMixin:
             #  https://github.com/facebookresearch/hydra/pull/1044.
 
         self.data_dir = tempfile.mkdtemp()
-        database_path = os.path.join(self.data_dir, "mephisto.db")
-        self.db = LocalMephistoDB(database_path)
+        self.database_path = os.path.join(self.data_dir, "mephisto.db")
+        self.db = LocalMephistoDB(self.database_path)
         self.config = augment_config_from_db(self.config, self.db)
         self.config.mephisto.architect.should_run_server = True
 
@@ -106,7 +126,25 @@ class CrowdsourcingTestMixin:
 
             # Register the worker
             mock_worker_name = f"MOCK_WORKER_{idx:d}"
-            self.server.register_mock_worker(mock_worker_name)
+            max_num_tries = 6
+            initial_wait_time = 0.5  # In seconds
+            num_tries = 0
+            wait_time = initial_wait_time
+            while num_tries < max_num_tries:
+                try:
+                    self.server.register_mock_worker(mock_worker_name)
+                    break
+                except IndexError:
+                    num_tries += 1
+                    print(
+                        f'A subscriber could not be found after {num_tries:d} '
+                        f'attempt(s), out of {max_num_tries:d} attempts total. Waiting '
+                        f'for {wait_time:0.1f} seconds...'
+                    )
+                    time.sleep(wait_time)
+                    wait_time *= 2  # Wait for longer next time
+            else:
+                raise ValueError('The worker could not be registered!')
             workers = self.db.find_workers(worker_name=mock_worker_name)
             worker_id = workers[0].db_id
 
@@ -119,3 +157,55 @@ class CrowdsourcingTestMixin:
         agent_ids = [agent.db_id for agent in agents]
 
         return agent_ids
+
+
+class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
+    """
+    Abstract class for end-to-end tests of one-turn crowdsourcing tasks.
+
+    Useful for Blueprints such as AcuteEvalBlueprint and StaticReactBlueprint for which
+    all of the worker's responses are sent to the backend code at once.
+    """
+
+    def _test_agent_state(
+        self, task_data: Dict[str, Any], data_regression: DataRegressionFixture
+    ):
+        """
+        Test that the actual agent state matches the expected state.
+
+        Get the final agent state given the input task data and check that it is as
+        expected.
+        """
+        state = self._get_agent_state(task_data=task_data)
+        self._check_agent_state(state=state, data_regression=data_regression)
+
+    def _get_agent_state(self, task_data: Dict[str, Any]):
+        """
+        Submit user task data and return the final agent state.
+
+        Register a mock human agent, request initial data to define the 'inputs' field
+        of the agent state, make the agent act to define the 'outputs' field of the
+        agent state, and return the agent state.
+        """
+
+        # Set up the mock human agent
+        agent_id = self._register_mock_agents(num_agents=1)[0]
+
+        # Set initial data
+        self.server.request_init_data(agent_id)
+
+        # Make agent act
+        self.server.send_agent_act(
+            agent_id, {"MEPHISTO_is_submit": True, "task_data": task_data}
+        )
+
+        return self.db.find_agents()[0].state.get_data()
+
+    def _check_agent_state(
+        self, state: Dict[str, Any], data_regression: DataRegressionFixture
+    ):
+        """
+        Given an agent state, test that it is as expected.
+        """
+        del state['times']  # Delete variable timestamps
+        data_regression.check(state)

@@ -34,7 +34,7 @@ except ImportError:
     nltkbleu = None
 
 try:
-    from fairseq import bleu as fairseqbleu
+    from fairseq.scoring import bleu as fairseqbleu
 except ImportError:
     fairseqbleu = None
 

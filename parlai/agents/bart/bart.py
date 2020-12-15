@@ -82,9 +82,9 @@ class BartAgent(TransformerGeneratorAgent):
         :return opt:
             return opt with BART-specific args.
         """
+        init_model, _ = self._get_init_model(opt, None)
         if not opt.get('converting') and (
-            opt.get('init_model') is None
-            or not PathManager.exists(opt.get('init_model', ''))
+            init_model is None or not PathManager.exists(init_model)
         ):
             download(opt['datapath'])
             opt['init_model'] = os.path.join(

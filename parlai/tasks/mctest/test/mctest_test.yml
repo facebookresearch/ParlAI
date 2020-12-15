@@ -1,0 +1,132 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - '1'
+    id: mctest
+    label_candidates:
+    - '10'
+    - '2'
+    - '11'
+    - '1'
+    reward: 0
+    text: 'It was Sally''s birthday. She was very excited. She was going to have a
+      sleepover at her house for her birthday. She invited all of her best friends.
+      The party was at 1 on Saturday. Jessica, Erin, and Cathy all arrived at 1, but
+      Jennifer was late. She did not come until 2, because she could not find her
+      other shoe. The first thing they all did was go swimming in her pool. They had
+      so much fun. They played with the foam noodles in the pool. Erin accidentally
+      kicked Jennifer''s leg in the pool. After they swam, everyone rinsed off and
+      went inside. They ate cake, opened presents, and watched TV. After it got dark,
+      they ran up and down the stairway, played telephone, and told spooky stories.
+      Sally tripped going down the stairs and hurt her foot, but it felt better soon
+      after. Cathy got scared when they were telling stories, and wanted to call her
+      mom to go home. The other girls told her that it is only a story. She felt better.
+      They all fell asleep at 11. Sally was the first to wake up at 8 in the morning.
+      She made pancakes for her and her friends. They all loved the pancakes, except
+      Erin. She ate some fruit instead. At 10, all the girls went back home. Sally
+      was happy that she had such a great birthday party. one: What time did the party
+      start?'
+- - episode_done: true
+    eval_labels:
+    - Jennifer and Sally
+    id: mctest
+    label_candidates:
+    - Erin and Jennifer
+    - Cathy and Erin
+    - Jennifer and Sally
+    - Erin and Sally
+    reward: 0
+    text: 'It was Sally''s birthday. She was very excited. She was going to have a
+      sleepover at her house for her birthday. She invited all of her best friends.
+      The party was at 1 on Saturday. Jessica, Erin, and Cathy all arrived at 1, but
+      Jennifer was late. She did not come until 2, because she could not find her
+      other shoe. The first thing they all did was go swimming in her pool. They had
+      so much fun. They played with the foam noodles in the pool. Erin accidentally
+      kicked Jennifer''s leg in the pool. After they swam, everyone rinsed off and
+      went inside. They ate cake, opened presents, and watched TV. After it got dark,
+      they ran up and down the stairway, played telephone, and told spooky stories.
+      Sally tripped going down the stairs and hurt her foot, but it felt better soon
+      after. Cathy got scared when they were telling stories, and wanted to call her
+      mom to go home. The other girls told her that it is only a story. She felt better.
+      They all fell asleep at 11. Sally was the first to wake up at 8 in the morning.
+      She made pancakes for her and her friends. They all loved the pancakes, except
+      Erin. She ate some fruit instead. At 10, all the girls went back home. Sally
+      was happy that she had such a great birthday party. multiple: Who got hurt at
+      the party?'
+- - episode_done: true
+    eval_labels:
+    - Sally
+    id: mctest
+    label_candidates:
+    - Cathy
+    - Jessica
+    - Sally
+    - Jennifer
+    reward: 0
+    text: 'It was Sally''s birthday. She was very excited. She was going to have a
+      sleepover at her house for her birthday. She invited all of her best friends.
+      The party was at 1 on Saturday. Jessica, Erin, and Cathy all arrived at 1, but
+      Jennifer was late. She did not come until 2, because she could not find her
+      other shoe. The first thing they all did was go swimming in her pool. They had
+      so much fun. They played with the foam noodles in the pool. Erin accidentally
+      kicked Jennifer''s leg in the pool. After they swam, everyone rinsed off and
+      went inside. They ate cake, opened presents, and watched TV. After it got dark,
+      they ran up and down the stairway, played telephone, and told spooky stories.
+      Sally tripped going down the stairs and hurt her foot, but it felt better soon
+      after. Cathy got scared when they were telling stories, and wanted to call her
+      mom to go home. The other girls told her that it is only a story. She felt better.
+      They all fell asleep at 11. Sally was the first to wake up at 8 in the morning.
+      She made pancakes for her and her friends. They all loved the pancakes, except
+      Erin. She ate some fruit instead. At 10, all the girls went back home. Sally
+      was happy that she had such a great birthday party. one: Whose birthday is it?'
+- - episode_done: true
+    eval_labels:
+    - '2'
+    id: mctest
+    label_candidates:
+    - '1'
+    - '2'
+    - '8'
+    - '10'
+    reward: 0
+    text: 'It was Sally''s birthday. She was very excited. She was going to have a
+      sleepover at her house for her birthday. She invited all of her best friends.
+      The party was at 1 on Saturday. Jessica, Erin, and Cathy all arrived at 1, but
+      Jennifer was late. She did not come until 2, because she could not find her
+      other shoe. The first thing they all did was go swimming in her pool. They had
+      so much fun. They played with the foam noodles in the pool. Erin accidentally
+      kicked Jennifer''s leg in the pool. After they swam, everyone rinsed off and
+      went inside. They ate cake, opened presents, and watched TV. After it got dark,
+      they ran up and down the stairway, played telephone, and told spooky stories.
+      Sally tripped going down the stairs and hurt her foot, but it felt better soon
+      after. Cathy got scared when they were telling stories, and wanted to call her
+      mom to go home. The other girls told her that it is only a story. She felt better.
+      They all fell asleep at 11. Sally was the first to wake up at 8 in the morning.
+      She made pancakes for her and her friends. They all loved the pancakes, except
+      Erin. She ate some fruit instead. At 10, all the girls went back home. Sally
+      was happy that she had such a great birthday party. multiple: What time did
+      Jennifer arrive to the party?'
+- - episode_done: true
+    eval_labels:
+    - play games and eat dinner
+    id: mctest
+    label_candidates:
+    - play games and eat dinner
+    - play in the mud and go for a walk
+    - swim in the river and play games
+    - go for a walk and look at flowers
+    reward: 0
+    text: 'On the farm there was a little piggy named Andy. Andy was very sweet, but
+      he was always dirty. He loved to roll around in the mud. None of the other piggies
+      wanted to play with him. He wished they would be his friends. One day he was
+      going on a walk on the farm. He walked by and saw his favorite big tree. He
+      walked farther than he ever had before. He saw a bunch of pretty flowers. Then
+      he saw something that he had never seen before. It was a river! He ran down
+      to the river, shouting with joy. He got down low in the cool water swam around
+      for a bit. He ran back to the farm where the other piggies were. He was finally
+      clean. They all played games until dinner time. When it was time for dessert
+      the piggies each got a cupcake. Looking at all his new friends, Andy smiled
+      and took a big bite of his tasty treat. multiple: What did the piggies do when
+      Andy got back from his walk?'
+num_episodes: 600
+num_examples: 600

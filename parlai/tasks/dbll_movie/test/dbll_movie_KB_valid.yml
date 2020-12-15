@@ -1,0 +1,73 @@
+acts:
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'Kismet directed_by William Dieterle
+
+      Kismet written_by Edward Knoblock
+
+      Kismet starred_actors Marlene Dietrich, Edward Arnold, Ronald Colman, James
+      Craig
+
+      Kismet release_year 1944
+
+      Kismet in_language English
+
+      Kismet has_tags bd-r'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'Flags of Our Fathers directed_by Clint Eastwood
+
+      Flags of Our Fathers written_by Paul Haggis, Ron Powers, James Bradley
+
+      Flags of Our Fathers release_year 2006
+
+      Flags of Our Fathers has_genre War
+
+      Flags of Our Fathers has_imdb_votes famous
+
+      Flags of Our Fathers has_tags world war ii, war, r, clint eastwood, american,
+      iwo jima, flag'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'The Bride Wore Black directed_by François Truffaut
+
+      The Bride Wore Black written_by Cornell Woolrich, François Truffaut
+
+      The Bride Wore Black starred_actors Jeanne Moreau, Michel Bouquet, Charles Denner
+
+      The Bride Wore Black release_year 1968
+
+      The Bride Wore Black in_language French
+
+      The Bride Wore Black has_tags bd-r, revenge, wedding, françois truffaut, black,
+      bride'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'Dirty Filthy Love directed_by Adrian Shergold
+
+      Dirty Filthy Love written_by Jeff Pope
+
+      Dirty Filthy Love starred_actors Michael Sheen, Claudie Blakley, Anastasia Griffith,
+      Adrian Bower
+
+      Dirty Filthy Love release_year 2004
+
+      Dirty Filthy Love has_genre Drama'
+- - episode_done: true
+    id: dbll_movie:KB
+    reward: 0
+    text: 'The Dark Horse directed_by Alfred E. Green
+
+      The Dark Horse starred_actors Bette Davis, Warren William
+
+      The Dark Horse release_year 1932
+
+      The Dark Horse has_genre Comedy
+
+      The Dark Horse has_tags alfred e. green'
+num_episodes: 17341
+num_examples: 17341

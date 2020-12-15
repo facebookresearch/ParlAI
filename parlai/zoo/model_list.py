@@ -1549,4 +1549,39 @@ model_list = [
             "{'exs': 2598, 'accuracy': 0.8507, 'f1': 0.8507, 'loss': 0.3878, 'bleu-4': 8.507e-10, 'class___notok___recall': 0.8633, 'class___notok___prec': 0.7588, 'class___notok___f1': 0.8077, 'class___ok___recall': 0.8434, 'class___ok___prec': 0.9154, 'class___ok___f1': 0.8779, 'weighted_f1': 0.8524}"
         ),
     },
+    {
+        "title": "Transformer Classifier Sensitive Topics Detection",
+        "id": "sensitive_topics_classifier",
+        "path": "zoo:sensitive_topics_classifier/model",
+        "agent": "transformer/classifier",
+        "task": "sensitive_topics_evaluation",
+        "project": "",
+        "description": (
+            "Pretrained Transformer-based classifier for classification of sensitive topics."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:sensitive_topics_classifier/model -t sensitive_topics_evaluation -dt valid -bs 16"
+        ),
+        "result": (
+            "{'exs': 1811, 'accuracy': 0.7332965212589729, 'f1': 0.7332965212589729, 'bleu-4': 7.332965212589829e-10, 'loss': 0.8489562001990587, 'class_none_prec': 0.0, 'class_none_recall': 0.0, 'class_none_f1': 0.0, 'class_politics_prec': 0.8762376237623762, 'class_politics_recall': 0.885, 'class_politics_f1': 0.8805970149253731, 'class_religion_prec': 0.8829568788501027, 'class_religion_recall': 0.8669354838709677, 'class_religion_f1': 0.8748728382502543, 'class_medical_prec': 0.8237704918032787, 'class_medical_recall': 0.7077464788732394, 'class_medical_f1': 0.7613636363636364, 'class_nsfw_prec': 0.7769784172661871, 'class_nsfw_recall': 0.32142857142857145, 'class_nsfw_f1': 0.45473684210526316, 'class_drugs_prec': 0.8901515151515151, 'class_drugs_recall': 0.7966101694915254, 'class_drugs_f1': 0.8407871198568873, 'weighted_f1': 0.774835331736443}"
+        ),
+    },
+    {
+        "title": "MDGender Bert Ranker Classifier",
+        "id": "md_gender",
+        "path": "zoo:md_gender/model",
+        "agent": "projects.md_gender.bert_ranker_classifier.agents:BertRankerClassifierAgent",
+        "task": "md_gender",
+        "project": "",
+        "description": (
+            "Ranker/classifier agent trained to predict gender bias along several axes using the MD Gender task."
+        ),
+        "example": (
+            "parlai interactive -t md_gender -m projects.md_gender.bert_ranker_classifier.agents:BertRankerClassifierAgent -mf zoo:md_gender/model -ecands inline -cands inline --interactive_mode False --data-parallel False"
+        ),
+        "result": (
+            "Enter Your Message: Hi my name is Emily!\n"
+            "[MDGender Classifier]: SELF: female"
+        ),
+    },
 ]

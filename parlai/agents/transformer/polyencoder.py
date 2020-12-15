@@ -411,7 +411,7 @@ class PolyEncoderModule(torch.nn.Module):
         if isinstance(attention_layer, PolyBasicAttention):
             return attention_layer(queries, keys, mask_ys=mask, values=values)
         elif isinstance(attention_layer, MultiHeadAttention):
-            return attention_layer(queries, keys, values, mask)
+            return attention_layer(queries, keys, values, mask)[0]
         else:
             raise Exception('Unrecognized type of attention')
 

@@ -10,12 +10,14 @@ fvcore==0.1.1.post20200716
 gitdb2==2.0.5
 GitPython==3.0.3
 hydra-core==1.0.3
+ipython==7.19.0
 torch>=1.4.0
 joblib==0.14.1
 nltk==3.4.5
 numpy==1.17.5
 omegaconf==2.0.2
 pandas==1.1.1
+pytest_regressions==2.1.1
 pytest==5.3.2
 pexpect==4.7.0
 Pillow==7.2.0
@@ -24,7 +26,7 @@ py-rouge==1.1
 pyyaml==5.3.1
 pyzmq==18.1.0
 regex==2020.1.8
-myst-parser==0.12.2
+myst-parser~=0.12.2
 attrs~=19.3
 requests-mock==1.7.0
 requests<3,>=2.21.0
@@ -43,6 +45,7 @@ tornado==6.0.4
 tqdm==4.36.1
 typing-extensions==3.7.4.1
 Unidecode==1.1.1
+urllib3~=1.25.9
 websocket-client==0.56.0
 websocket-server==0.4
 jsonlines==1.2.0
