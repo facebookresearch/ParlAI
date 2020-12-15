@@ -8,6 +8,7 @@
 Test code for anti-scaling transformer/generator models.
 """
 
+import os
 import random
 from abc import ABC, abstractmethod
 from math import floor, log10
@@ -94,9 +95,17 @@ class AbstractTestDistillation(ABC):
         Download models in advance so that their opt files can be used with --init-opt.
         """
 
-        random.seed(0)
-        np.random.seed(0)
-        torch.manual_seed(0)
+        seed = 0
+        random.seed(seed)
+        os.environ['PYTHONHASHSEED'] = str(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.enabled = False
+        # TODO: remove the ones that aren't needed
 
         datapath = 'data'
         self._download_model(datapath)
