@@ -147,9 +147,6 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
     def __init__(self, opt, shared=None):
 
-        assert isinstance(self, TorchGeneratorAgent)
-        # Code relies on methods
-
         # Define coefficients
         self.task_loss_coeff = opt['task_loss_coeff']
         self.encoder_loss_coeff = opt['encoder_loss_coeff']
@@ -279,6 +276,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         Perform forward passes through the student and teacher and pass back outputs.
         """
+
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
 
         mask = batch.label_vec != self.NULL_IDX
 
@@ -455,6 +455,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         Return the loss on the encoder's output layer.
         """
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
         encoder_loss = F.mse_loss(
             input=fwd_pass.student_enc_output,
             target=fwd_pass.teacher_enc_output,
@@ -478,6 +480,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         Return the encoder and decoder embedding losses.
         """
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
         enc_emb_loss, enc_emb_loss_per_example = self._get_component_embedding_loss(
             student_emb_output=fwd_pass.student_embedding_outputs['encoder'],
             teacher_emb_output=fwd_pass.teacher_embedding_outputs['encoder'],
@@ -512,6 +516,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         Compute the embedding loss for either the encoder or the decoder.
         """
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
         raw_loss = F.mse_loss(
             input=student_emb_output, target=teacher_emb_output, reduction='none'
         )
@@ -530,6 +536,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         """
         Return the encoder and decoder hidden losses.
         """
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
         enc_hidden_loss, enc_hidden_loss_per_example = self._get_component_hidden_loss(
             student_hidden_states=fwd_pass.student_hidden_states['encoder'],
             teacher_hidden_states=fwd_pass.teacher_hidden_states['encoder'],
@@ -652,6 +660,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
         Calculate the given attention loss and register it as the given metric name.
         """
 
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
+
         # Select the right attention matrices
         selected_student_attn_matrices = [
             layer_matrices[attn_type] for layer_matrices in student_attention_matrices
@@ -703,6 +714,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         Also record prediction-loss metrics.
         """
+        assert isinstance(self, TorchGeneratorAgent)
+        # Code relies on methods
         pred_loss = F.kl_div(
             F.log_softmax(fwd_pass.student_scores, dim=-1, dtype=torch.float),
             F.softmax(fwd_pass.teacher_scores, dim=-1, dtype=torch.float),
