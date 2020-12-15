@@ -15,8 +15,8 @@ We also show that our best contradiction detection model correlates well with hu
 
 ## Data
 
-The dataset (DECODE) can be download in [s3_link]().  
-As described in the paper, DECODE includes 6 groups of dialogues: *Train*, *Dev*, *Test*, *Human-Bot*, *A2T*, *RCT*.
+The dataset (**DECODE**) can be download in [s3_link]().  
+As described in the paper, **DECODE** includes 6 groups of dialogues: *Train*, *Dev*, *Test*, *Human-Bot*, *A2T*, *RCT*.
 
 | Group Name    | Count         | Description  |
 | ------------- |---------------| -------------|
@@ -27,14 +27,27 @@ As described in the paper, DECODE includes 6 groups of dialogues: *Train*, *Dev*
 | *A2T*         | 2,079      | Auxiliary test set created by transforming examples in *Test* |
 | *RCT*         | 2,011      | Auxiliary test set created by transforming examples in *Test* |
 
-The details of each group can be found in the [paper]().
+The details of each group can be found in the [Nie et al. (2020)]().
 
 ### Format
+The format of the file is `JSONL`. Each line in the file is one dialogue example saved in a `JSON`.  
+Primary fields that are required for the contradiction detection task:
+- `record_id`: It is the unique ID for the example.
+- `turns`: The field contains a list of turns that presents a conversation between two speaker.
+- `is_contradiction`: The field indicates the label of the example. `true` means that the last turn (`turns[-1]`) contradicts some turns in the dialogue history. `false` means that the last turn is not a contradiction.
+- `aggregated_contradiction_indices`: The field is a list of the indices that gives the location of the supporting evidence for the contradiction (w.r.t. to the `turns` list). Notices that the `turn_id` of the last turn (`turns[-1]`) will always be in this list.
 
+Other fields that is related to the contradiction task:
+- `num_of_turns_by_writer`: The field indicates how many turns the annotator created for providing a contradiction utterance.
+- `writer_contradiction_indices`: The original contradiction indicates provided by the annotator.
+- `verifications`: For each examples, we asked another three annotator for verification. This field gives the results of the verification.
+
+Field not described are not required for the contradiction detection task.
+
+A example `JSON` is shown below:
 ```
 {
     # Primary field needed for contradiction detection task.
-    "conversation_id": "9cb462d9-86f1-4296-af36-009d2e4d90f8#truncated#4",
     "record_id": "1f47fe86-cfc3-469a-bae3-506c81871bf5",
 
     "turns": [
@@ -69,9 +82,13 @@ The details of each group can be found in the [paper]().
         "hit_ids": ["344M16OZKKC72DJEMGBHJUCXCGTNET", "35XW21VSVIBIOWLBBYF7VJCN8C2LSQ"], 
         "source": "BST_test"
     },
+    "conversation_id": "9cb462d9-86f1-4296-af36-009d2e4d90f8#truncated#4",
 }
 ```
 
+## Load Data from ParlAI
+The **DECODE** can also be loaded directly from ParlAI.
+Coming soon.
 
 
 _________________
