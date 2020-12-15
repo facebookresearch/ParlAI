@@ -69,6 +69,7 @@ class AbstractTestDistillation(ABC):
         'encoder_loss_coeff': 1,
         'pred_loss_coeff': 1,
         'task_loss_coeff': 1,
+        'fp16_impl': 'mem_efficient',  # --fp16-impl apex is not available on the CI box
     }
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
     NARROW_DISTILLATION_OPT = {
@@ -97,15 +98,8 @@ class AbstractTestDistillation(ABC):
 
         seed = 0
         random.seed(seed)
-        os.environ['PYTHONHASHSEED'] = str(seed)
         np.random.seed(seed)
         torch.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.enabled = False
-        # TODO: remove the ones that aren't needed
 
         datapath = 'data'
         self._download_model(datapath)
