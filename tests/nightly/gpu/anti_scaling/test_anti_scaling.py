@@ -69,8 +69,10 @@ class AbstractTestDistillation(ABC):
         'encoder_loss_coeff': 1,
         'pred_loss_coeff': 1,
         'task_loss_coeff': 1,
-        'fp16_impl': 'mem_efficient',  # --fp16-impl apex is not available on the CI box
+        'fp16': False,
     }
+    # fp16-impl is set to apex in the bart_large model opt, but the CircleCI box doesn't
+    # support APEX. As a workaround, test in fp32 mode.
     WIDE_DISTILLATION_OPT = {'copy_teacher_weights': True}
     NARROW_DISTILLATION_OPT = {
         'embedding_size': 64,
