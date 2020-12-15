@@ -169,12 +169,6 @@ class AbstractTestDistillation(ABC):
         Check losses for a model with "narrow" (TinyBERT-style) distillation loss terms.
         """
 
-        # precise_mode = False
-        # # Turn this on to check the loss terms for TinyBERT-style distillation, which
-        # # relies upon weights being initialized in a particular way. Won't work on
-        # # CircleCI machines
-        # TODO: either reenable or remove
-
         model_name = self._get_agents()['narrow_distillation']
         opt = Opt(
             {
