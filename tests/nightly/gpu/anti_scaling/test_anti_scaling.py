@@ -94,7 +94,7 @@ class AbstractTestDistillation(ABC):
         Download models in advance so that their opt files can be used with --init-opt.
         """
 
-        random.seed()
+        random.seed(0)
         np.random.seed(0)
         torch.manual_seed(0)
 
