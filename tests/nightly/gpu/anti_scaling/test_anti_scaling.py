@@ -8,7 +8,6 @@
 Test code for anti-scaling transformer/generator models.
 """
 
-import os
 import random
 from abc import ABC, abstractmethod
 from math import floor, log10
