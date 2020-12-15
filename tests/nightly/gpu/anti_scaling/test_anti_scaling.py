@@ -9,9 +9,9 @@ Test code for anti-scaling transformer/generator models.
 """
 
 import random
-import unittest
 from abc import ABC, abstractmethod
-from typing import Dict
+from math import floor, log10
+from typing import Dict, List
 
 import numpy as np
 import pytest
@@ -21,7 +21,8 @@ from pytest_regressions.data_regression import DataRegressionFixture
 import parlai.utils.testing as testing_utils
 from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.teachers import register_teacher, Teacher
+from parlai.core.teachers import register_teacher, DialogTeacher
+from parlai.utils.data import DatatypeHelper
 from parlai.zoo.bart.build import download as download_bart
 from parlai.zoo.blender.blender_90M import download as download_blender
 
@@ -30,39 +31,27 @@ FIXED_MESSAGE_TASK = 'fixed_message'
 
 
 @register_teacher(FIXED_MESSAGE_TASK)
-class FixedMessageTeacher(Teacher):
+class FixedMessageTeacher(DialogTeacher):
     """
     Teacher agent that returns one fixed message.
     """
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
+        opt['datafile'] = DatatypeHelper.fold(opt['datatype'])
         self.id = FIXED_MESSAGE_TASK
+        super().__init__(opt, shared)
 
-    def observe(self, observation):
-        """
-        No need to do anything here.
-        """
-        _ = observation
-        pass
-
-    def act(self):
+    def setup_data(self, path):
         """
         Just respond with the sample message for the model agent to respond to.
 
         There's only one "turn" to this conversation.
         """
-        return Message(
-            {
-                'id': self.id,
-                'text': 'This is a test message.',
-                'eval_labels': ['(NONE)'],
-                'episode_done': True,
-            }
-        )
+        _ = path  # Unused here
+        yield {'text': 'This is a test message.', 'labels': ['(NONE)']}, True
 
 
-class AbstractTestDistillation(ABC, unittest.TestCase):
+class AbstractTestDistillation(ABC):
     """
     Test agents for distilling Transformer generator models.
     """
@@ -90,6 +79,15 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         'enc_dec_attn_loss_coeff': 1,
     }
     DISTILLATION_MODEL_PREFIX = 'projects.anti_scaling.distillation'
+    BASE_LOSSES = ['dec_hid_loss', 'enc_hid_loss', 'enc_loss', 'loss', 'pred_loss']
+    ADDITIONAL_LOSSES = [
+        'dec_emb_loss',
+        'dec_self_attn_loss',
+        'enc_dec_attn_loss',
+        'enc_emb_loss',
+        'enc_self_attn_loss',
+    ]
+    LOSS_TYPES = {'wide': BASE_LOSSES, 'narrow': BASE_LOSSES + ADDITIONAL_LOSSES}
 
     @pytest.fixture(scope="function")
     def setup(self):
@@ -112,6 +110,7 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         Download the model to calculate distillation losses from.
         """
 
+    @abstractmethod
     def _get_model_file(self) -> str:
         """
         Return the model file for this model type.
@@ -127,6 +126,12 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
             'init_opt': f'{model_file}.opt',
             'teacher_model': model_file,
         }
+
+    @abstractmethod
+    def _get_model_identifier(self) -> str:
+        """
+        Return a string identifying this model, used in output files.
+        """
 
     @abstractmethod
     def _get_agents(self) -> Dict[str, str]:
@@ -151,7 +156,7 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
             }
         )
-        self._check_losses(opt=opt, data_regression=data_regression)
+        self._check_losses(opt=opt, test_name='wide', data_regression=data_regression)
 
     def test_narrow_distillation_losses(
         self, setup, data_regression: DataRegressionFixture
@@ -175,9 +180,11 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
                 'model': f'{self.DISTILLATION_MODEL_PREFIX}:{model_name}',
             }
         )
-        self._check_losses(opt=opt, data_regression=data_regression)
+        self._check_losses(opt=opt, test_name='narrow', data_regression=data_regression)
 
-    def _check_losses(self, opt: Opt, data_regression: DataRegressionFixture):
+    def _check_losses(
+        self, opt: Opt, test_name: str, data_regression: DataRegressionFixture
+    ):
         """
         Calculate and check distillation loss terms.
 
@@ -185,8 +192,12 @@ class AbstractTestDistillation(ABC, unittest.TestCase):
         they match what is expected.
         """
         valid, _ = testing_utils.eval_model(opt, skip_test=True)
-        losses = {loss_name: metric.value() for loss_name, metric in valid.items()}
-        data_regression.check(losses)
+        losses = {}
+        loss_types = self.LOSS_TYPES[test_name]
+        for loss_type in loss_types:
+            losses[loss_type] = round_sig(valid[loss_type].value(), sig=6)
+        basename = self._get_model_identifier() + '_' + test_name
+        data_regression.check(losses, basename=basename)
 
 
 class TestTransformerDistillation(AbstractTestDistillation):
@@ -206,6 +217,9 @@ class TestTransformerDistillation(AbstractTestDistillation):
             'narrow_distillation': 'DistillNarrowTransformerAgent',
         }
 
+    def _get_model_identifier(self) -> str:
+        return 'transformer'
+
 
 class TestBartDistillation(AbstractTestDistillation):
     """
@@ -224,6 +238,14 @@ class TestBartDistillation(AbstractTestDistillation):
             'narrow_distillation': 'DistillNarrowBartAgent',
         }
 
+    def _get_model_identifier(self) -> str:
+        return 'bart'
 
-if __name__ == '__main__':
-    unittest.main()
+
+def round_sig(num, sig: int):
+    """
+    Round num to the input number of significant figures.
+
+    From https://stackoverflow.com/a/3413529.  
+    """
+    return round(num, sig - int(floor(log10(abs(num)))) - 1)

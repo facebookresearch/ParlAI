@@ -1,0 +1,5 @@
+dec_hid_loss: 76.125
+enc_hid_loss: 0.440755
+enc_loss: 0.440755
+loss: 21.234
+pred_loss: 16.9844

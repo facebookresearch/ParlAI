@@ -147,7 +147,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
     def __init__(self, opt, shared=None):
 
-        assert type(self) is TorchGeneratorAgent
+        assert isinstance(self, TorchGeneratorAgent)
         # Code relies on methods
 
         # Define coefficients
