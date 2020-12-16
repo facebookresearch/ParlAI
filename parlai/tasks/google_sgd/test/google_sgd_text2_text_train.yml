@@ -30,5 +30,5 @@ acts:
     - If you want to phone them you can at 408-971-8523.
     text: Can you give me the phone number that I can contact them with?
     type: text
-num_episodes: 56678
-num_examples: 113356
+num_episodes: 16142
+num_examples: 215128
