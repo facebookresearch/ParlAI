@@ -32,7 +32,15 @@ We also provide two smaller variants of the 2.7B-parameter model that were creat
 python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_90M/model
 ```
 
-(((TODO: add + revise)))
+**360M** (distilled from 2.7B)
+```
+python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_3B_5x/model -m transformer/generator
+```
+
+**1.4B** (distilled from 2.7B)
+```
+python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_3B_2x/model -m transformer/generator
+```
 
 **2.7B**
 ```

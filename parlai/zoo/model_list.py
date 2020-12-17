@@ -1175,7 +1175,7 @@ model_list = [
             "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to 1.4B parameters and roughly 2x the inference speed."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_2x/model -t blended_skill_talk"
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_2x/model -t blended_skill_talk -m transformer/generator"
         ),
         "result": (None),  # TODO: add
     },
@@ -1190,7 +1190,7 @@ model_list = [
             "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to 360M parameters and roughly 5x the inference speed."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_5x/model -t blended_skill_talk"
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_5x/model -t blended_skill_talk -m transformer/generator"
         ),
         "result": (None),  # TODO: add
     },
