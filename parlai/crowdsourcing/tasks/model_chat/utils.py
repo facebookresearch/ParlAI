@@ -4,6 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import datetime
+import json
+import os
+import random
+import threading
+import time
+from typing import Any, Dict, Optional, Tuple
+
 from parlai.core.message import Message
 from parlai.core.metrics import Metric
 
@@ -44,26 +52,24 @@ class Compatibility(object):
 
 
 class ContextStack:
-    # TODO: revise
     """
-    Stack of contexts to run through.
+    Stack of images and contexts to run through.
 
     Each element of the stack contains the image to show, context information such as
-    persona strings and BST-style seed utterances, and a list of the workers who have
-    seen the given pairing of image+context for a given test case. Stack ensures that no
-    worker will see the same image+context twice.
+    persona strings and BlendedSkillTalk-style seed utterances, and a list of the
+    workers who have seen the given pairing of image+context for a given model. Stack
+    ensures that no worker will see the same image+context twice.
     """
 
     def __init__(self, opt):
 
         # Input params
-        self.test_cases = list(TEST_CASES_TO_TOP_LEVEL_OPTS.keys())
-        self.is_local = opt['is_local']
-        self.version_num = opt['version_num']
+        self.models = opt['models']
         self.evals_per_context = opt['evals_per_context']
 
         # Paths
-        save_dir = opt['save_dir']
+        save_dir = opt['stack_folder']
+        # TODO: revise below
         if self.is_local:
             self.save_folder = os.path.join(save_dir, 'local')
             self.save_name = 'image_and_context_stack.json'
@@ -95,22 +101,22 @@ class ContextStack:
 
         pointer = self.get_pointer()
 
-        # Make sure that the test cases are correct (i.e. in case we are loading in an
+        # Make sure that the set of models is correct (i.e. in case we are loading in an
         # older obsolete version of the stack)
-        if set(self.stack[0]['workers_by_test_case'].keys()) == set(self.test_cases):
+        if set(self.stack[0]['workers_by_model'].keys()) == set(self.models):
             return pointer
         else:
             input_ = input(
                 '\n\nWARNING: the currently saved stack has a different set of test '
                 'cases than what is currently being used. Do you want to back up this '
-                'stack file and stretch the stack to fit the new set of test cases? '
+                'stack file and stretch the stack to fit the new set of models? '
                 '(y/n) '
             )
             if input_.lower().strip() == 'y':
                 self.save_stack_backup()
                 return self.stretch_stack()
             else:
-                raise ValueError('Mismatch in set of test cases in stack!')
+                raise ValueError('Mismatch in set of models in stack!')
 
     def get_pointer(self) -> int:
         """
@@ -127,44 +133,41 @@ class ContextStack:
 
     def stretch_stack(self) -> int:
         """
-        "Stretch" the stack to handle the current set of test cases.
+        "Stretch" the stack to handle the current set of models.
 
         The goal is to preserve as many existing stack entries as possible while
-          matching the set of test cases in the stack with the new set of test cases in
-          self.test_cases:
-        (1) All stack entries belonging to test cases that are still in self.test_cases
-          will be kept
-        (2) All test cases not in self.test_cases will be removed from the stack
-        (3) All test cases in self.test_cases not in the stack will be added to the
-          stack
+          matching the set of models in the stack with the new set of models in
+          self.models:
+        (1) All stack entries belonging to models that are still in self.models will
+          be kept
+        (2) All models not in self.models will be removed from the stack
+        (3) All models in self.models not in the stack will be added to the stack
 
         Return the new pointer value.
         """
 
         # Stretch the stack
-        existing_test_cases = set(self.stack[0]['workers_by_test_case'].keys())
-        new_test_cases = set(self.test_cases)
-        test_cases_to_add = new_test_cases.difference(existing_test_cases)
-        test_cases_to_remove = existing_test_cases.difference(new_test_cases)
+        existing_models = set(self.stack[0]['workers_by_model'].keys())
+        new_models = set(self.models)
+        models_to_add = new_models.difference(existing_models)
+        models_to_remove = existing_models.difference(new_models)
         print('\nStarting to stretch the stack.')
-        print('Test cases to add: ', test_cases_to_add)
-        print('Test cases to remove: ', test_cases_to_remove)
-        test_cases_to_add_list = sorted(list(test_cases_to_add))
+        print('Models to add: ', models_to_add)
+        print('Models to remove: ', models_to_remove)
+        models_to_add_list = sorted(list(models_to_add))
         for stack_entry in self.stack:
-            orig_workers_by_test_case = stack_entry['workers_by_test_case']
-            surviving_workers_by_test_case = {
-                test_case: workers
-                for test_case, workers in orig_workers_by_test_case.items()
-                if test_case in new_test_cases
+            orig_workers_by_model = stack_entry['workers_by_model']
+            surviving_workers_by_model = {
+                model: workers
+                for model, workers in orig_workers_by_model.items()
+                if model in new_models
             }
-            new_workers_by_test_case = {
-                test_case: [] for test_case in test_cases_to_add_list
+            new_workers_by_model = {model: [] for model in models_to_add_list}
+            stack_entry['workers_by_model'] = {
+                **surviving_workers_by_model,
+                **new_workers_by_model,
             }
-            stack_entry['workers_by_test_case'] = {
-                **surviving_workers_by_test_case,
-                **new_workers_by_test_case,
-            }
-            assert set(stack_entry['workers_by_test_case']) == new_test_cases
+            assert set(stack_entry['workers_by_model']) == new_models
 
         pointer = self.get_pointer()
 
@@ -204,11 +207,11 @@ class ContextStack:
     def _need_more_convos(self, context_info: Dict[str, Any]) -> bool:
         """
         Returns True if, for the given pairing of image+context (`context_info`), we
-        need at least 1 more conversation with any of the test cases that we're testing.
+        need at least 1 more conversation with any of the models that we're testing.
         """
         return any(
             len(workers) < self.evals_per_context
-            for workers in context_info['workers_by_test_case'].values()
+            for workers in context_info['workers_by_model'].values()
         )
 
     def build_stack(self) -> int:
@@ -226,9 +229,7 @@ class ContextStack:
             self.stack.append(
                 {
                     'image_filename': image_name,
-                    'workers_by_test_case': {
-                        test_case: [] for test_case in self.test_cases
-                    },
+                    'workers_by_model': {model: [] for model in self.models},
                     **context_info,
                 }
             )
@@ -254,13 +255,13 @@ class ContextStack:
 
     def get_next_context(self, worker: str) -> Tuple[int, Dict[str, Any], str, bool]:
         """
-        Returns the image name, persona strings, test case name, etc. for the next HIT.
+        Returns the image name, persona strings, model name, etc. for the next HIT.
 
         Finds a pairing of image+context that we don't currently have enough
         conversations for, ensuring that the given worker will not have had a
-        conversation employing this image+context before using any test case. Returns
+        conversation employing this image+context before using any model. Returns
         the index of the given input+context, the context info itself, the name of the
-        test case under which to have a conversation, and a flag indicating whether
+        model under which to have a conversation, and a flag indicating whether
         there are no more image+context pairs to show this worker.
         """
         with self.next_context_lock:
@@ -278,7 +279,7 @@ class ContextStack:
             while context_info is not None and (
                 any(
                     worker in workers
-                    for workers in context_info['workers_by_test_case'].values()
+                    for workers in context_info['workers_by_model'].values()
                 )
                 or not self._need_more_convos(context_info)
             ):
@@ -296,42 +297,42 @@ class ContextStack:
 
             self.conditionally_save_stack()
 
-            # Pick out a test case for this worker, among the ones that we need more
+            # Pick out a model for this worker, among the ones that we need more
             # conversations for
-            available_test_cases = [
-                test_case
-                for test_case, workers in context_info['workers_by_test_case'].items()
+            available_models = [
+                model
+                for model, workers in context_info['workers_by_model'].items()
                 if len(workers) < self.evals_per_context
             ]
-            if len(available_test_cases) == 0:
+            if len(available_models) == 0:
                 print(
-                    f'WARNING: no more convos needed for any test case for '
-                    f'{worker_pointer:d}. Picking a random test case for worker '
+                    f'WARNING: no more convos needed for any model for '
+                    f'{worker_pointer:d}. Picking a random model for worker '
                     f'{worker}.'
                 )
-                available_test_cases = list(context_info['workers_by_test_case'].keys())
-            print(f'Available test cases: ' + ', '.join(available_test_cases))
-            chosen_test_case = random.choice(available_test_cases)
+                available_models = list(context_info['workers_by_model'].keys())
+            print(f'Available models: ' + ', '.join(available_models))
+            chosen_model = random.choice(available_models)
             print(
                 f'Retrieving stack {worker_pointer:d} for worker {worker} and test '
-                f'case {chosen_test_case}.'
+                f'case {chosen_model}.'
             )
-            context_info['workers_by_test_case'][chosen_test_case].append(worker)
+            context_info['workers_by_model'][chosen_model].append(worker)
 
-            return worker_pointer, context_info, chosen_test_case, no_more_work
+            return worker_pointer, context_info, chosen_model, no_more_work
 
     def remove_worker_from_stack(self, worker: str, stack_idx: int):
         if any(
             worker in workers
-            for workers in self.stack[stack_idx]['workers_by_test_case'].values()
+            for workers in self.stack[stack_idx]['workers_by_model'].values()
         ):
             removed = False
             print(f'Removing worker {worker} from stack {stack_idx:d}.')
-            for this_test_cases_workers in self.stack[stack_idx][
-                'workers_by_test_case'
+            for this_models_workers in self.stack[stack_idx][
+                'workers_by_model'
             ].values():
-                if worker in this_test_cases_workers:
-                    this_test_cases_workers.remove(worker)
+                if worker in this_models_workers:
+                    this_models_workers.remove(worker)
                     removed = True
             assert removed is True
             if stack_idx < self.pointer:
