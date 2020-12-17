@@ -34,6 +34,7 @@ def get_task_path():
 
 
 BLUEPRINT_TYPE = 'model_chat_blueprint'
+IMAGE_CHAT_BLUEPRINT_TYPE = 'model_image_chat_blueprint'
 
 
 @dataclass
@@ -366,3 +367,29 @@ class ModelChatBlueprint(ParlAIChatBlueprint):
             "final_rating_question": self.args.blueprint.final_rating_question,
             "block_mobile": True,
         }
+
+
+@dataclass
+class ModelImageChatBlueprintArgs(ModelChatBlueprintArgs):
+    _blueprint_type: str = IMAGE_CHAT_BLUEPRINT_TYPE
+    _group: str = field(
+        default="ModelImageChatBlueprint",
+        metadata={
+            'help': "This task runs conversations between a human and one of a set of "
+            "provided models, asking workers chat about a provided image."
+        },
+    )
+
+
+@register_mephisto_abstraction()
+class ModelImageChatBlueprint(ModelChatBlueprint):
+    """
+    Subclass of ModelChatBlueprint to show the speakers an image on the first turn.
+
+    The image is drawn from a stack that keeps track of how many HITs have been
+    launched for a given combination of image and model.
+    """
+
+    ArgsClass = ModelImageChatBlueprintArgs
+    SharedStateClass = SharedModelChatTaskState
+    BLUEPRINT_TYPE = IMAGE_CHAT_BLUEPRINT_TYPE
