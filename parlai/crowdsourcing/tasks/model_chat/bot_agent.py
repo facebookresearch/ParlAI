@@ -12,8 +12,8 @@ import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.utils.strings import normalize_reply
-from parlai.crowdsourcing.tasks.turn_annotations.constants import AGENT_1
-from parlai.crowdsourcing.tasks.turn_annotations.utils import Compatibility
+from parlai.crowdsourcing.tasks.model_chat.constants import AGENT_1
+from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility
 
 
 class TurkLikeAgent:

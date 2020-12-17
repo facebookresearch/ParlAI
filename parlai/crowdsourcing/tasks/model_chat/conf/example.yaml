@@ -1,10 +1,10 @@
 #@package _global_
 mephisto:
   blueprint:
-    onboarding_qualification: turn_annotations_onboarding
-    block_qualification: turn_annotations_block
+    onboarding_qualification: model_chat_onboarding
+    block_qualification: model_chat_block
     base_model_folder: ~/ParlAI/data/models/
-    chat_data_folder: ~/ParlAI/data/crowdsourcing/turn_annotations/
+    chat_data_folder: ~/ParlAI/data/crowdsourcing/model_chat/
     num_turns: 6
     task_model_parallel: true
     check_acceptability: false
@@ -22,7 +22,7 @@ mephisto:
 
       Lorem ipsum.
       <br><br>
-    task_name: turn_annotations
+    task_name: model_chat
     task_reward: 3
     task_tags: "chat,conversation,dialog,partner"
     task_title: "Chat with a fellow conversationalist!"

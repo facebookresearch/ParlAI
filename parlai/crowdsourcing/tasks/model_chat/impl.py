@@ -12,10 +12,10 @@ from mephisto.tools.scripts import load_db_and_process_config
 from omegaconf import DictConfig, OmegaConf
 
 from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
-from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_blueprint import (
-    SharedTurnAnnotationsTaskState,
+from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
+    SharedModelChatTaskState,
 )
-import parlai.crowdsourcing.tasks.turn_annotations.worlds as world_module
+import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 
 
 def run_task(cfg: DictConfig, task_directory: str):
@@ -33,7 +33,7 @@ def run_task(cfg: DictConfig, task_directory: str):
     random.seed(42)
 
     # Update task name when on sandbox or local to ensure data is split.
-    task_name = cfg.mephisto.task.get('task_name', 'turn_annotations')
+    task_name = cfg.mephisto.task.get('task_name', 'model_chat')
     architect_type = cfg.mephisto.architect._architect_type
     if architect_type == 'local':
         task_name = f"{task_name}_local"
@@ -46,7 +46,7 @@ def run_task(cfg: DictConfig, task_directory: str):
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
     # Init
-    shared_state = SharedTurnAnnotationsTaskState(world_module=world_module)
+    shared_state = SharedModelChatTaskState(world_module=world_module)
 
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)

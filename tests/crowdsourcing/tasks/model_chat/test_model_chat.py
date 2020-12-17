@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-End-to-end testing for the chat demo crowdsourcing task.
+End-to-end testing for the model chat crowdsourcing task.
 """
 
 import glob
@@ -59,18 +59,18 @@ FORM_TASK_DATA = (
 
 try:
 
-    import parlai.crowdsourcing.tasks.turn_annotations.worlds as world_module
-    from parlai.crowdsourcing.tasks.turn_annotations.run import TASK_DIRECTORY
-    from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_blueprint import (
-        SharedTurnAnnotationsTaskState,
-        TurnAnnotationsBlueprintArgs,
+    import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
+    from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
+    from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
+        SharedModelChatTaskState,
+        ModelChatBlueprintArgs,
         BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
-    class TestTurnAnnotations(AbstractParlAIChatTest, unittest.TestCase):
+    class TestModelChat(AbstractParlAIChatTest, unittest.TestCase):
         """
-        Test the turn annotations crowdsourcing task.
+        Test the model chat crowdsourcing task.
         """
 
         # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
@@ -107,7 +107,7 @@ try:
 
                 # Set up the config and database
                 num_blender_convos = 10
-                args = TurnAnnotationsBlueprintArgs()
+                args = ModelChatBlueprintArgs()
                 overrides = [
                     f'+mephisto.blueprint.{key}={val}'
                     for key, val in args.__dict__.items()
@@ -138,7 +138,7 @@ try:
                 )
 
                 # Set up the operator and server
-                shared_state = SharedTurnAnnotationsTaskState(world_module=world_module)
+                shared_state = SharedModelChatTaskState(world_module=world_module)
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be

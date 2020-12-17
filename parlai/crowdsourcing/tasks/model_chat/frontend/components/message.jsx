@@ -40,7 +40,7 @@ function RenderChatMessage({ message, mephistoContext, appContext, idx }) {
   const annotationIntro = taskConfig.annotation_question;
 
   var checkboxes = null;
-  if (!isHuman) {
+  if (!isHuman && annotationBuckets !== null) {
     let thisBoxAnnotations = checkboxValues[idx];
     if (!thisBoxAnnotations) {
       thisBoxAnnotations = Object.fromEntries(

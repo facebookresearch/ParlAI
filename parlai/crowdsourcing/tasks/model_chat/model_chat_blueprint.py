@@ -22,7 +22,7 @@ from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
 from omegaconf import DictConfig, MISSING
 
 from parlai.core.params import ParlaiParser
-from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
+from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 if TYPE_CHECKING:
@@ -33,11 +33,11 @@ def get_task_path():
     return os.path.dirname(os.path.realpath(__file__))
 
 
-BLUEPRINT_TYPE = 'turn_annotations_blueprint'
+BLUEPRINT_TYPE = 'model_chat_blueprint'
 
 
 @dataclass
-class SharedTurnAnnotationsTaskState(SharedParlAITaskState):
+class SharedModelChatTaskState(SharedParlAITaskState):
     shared_models: Dict[str, Any] = field(default_factory=dict)
     conversations_needed: Dict[str, Any] = field(default_factory=dict)
     run_statistics: Dict[str, int] = field(default_factory=dict)
@@ -48,10 +48,10 @@ class SharedTurnAnnotationsTaskState(SharedParlAITaskState):
 
 
 @dataclass
-class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
+class ModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     _blueprint_type: str = BLUEPRINT_TYPE
     _group: str = field(
-        default="TurnAnnotationsBlueprint",
+        default="ModelChatBlueprint",
         metadata={
             'help': "This task runs conversations between a human and one of a set of "
             "provided models, asking workers to evaluate individual turns and "
@@ -60,11 +60,11 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     world_file: str = field(
         default=os.path.join(get_task_path(), 'worlds.py'),
-        metadata={"help": "Path to file containing turn annotations parlai world"},
+        metadata={"help": "Path to file containing parlai world"},
     )
     custom_source_dir: str = field(
         default=os.path.join(get_task_path(), 'frontend'),
-        metadata={"help": "Path to turn annotations frontend code"},
+        metadata={"help": "Path to frontend code"},
     )
     num_turns: int = field(default=6, metadata={"help": 'minimum number of turns'})
     random_seed: int = field(
@@ -137,11 +137,15 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     annotations_config_path: str = field(
         default="${mephisto.blueprint.task_config_path}/annotations_config.json",
-        metadata={"help": "Path to JSON of annotation categories"},
+        metadata={
+            "help": 'Path to JSON of annotation categories. Set to "" to disable annotations'
+        },
     )
     onboard_task_data_path: str = field(
         default="${mephisto.blueprint.task_config_path}/onboard_task_data.json",
-        metadata={"help": "Path to JSON containing settings for running onboarding"},
+        metadata={
+            "help": "Path to JSON containing settings for running onboarding. Not used if not annotating model responses"
+        },
     )
     final_rating_question: str = field(
         default='Please rate your partner on a scale of 1-5.',
@@ -161,17 +165,17 @@ class TurnAnnotationsBlueprintArgs(ParlAIChatBlueprintArgs):
 
 
 @register_mephisto_abstraction()
-class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
+class ModelChatBlueprint(ParlAIChatBlueprint):
     """
-    This Blueprint uses somewhat specialized arguments for Turn Annotations, manages
+    This Blueprint uses somewhat specialized arguments for turn annotations, manages
     their validation, and also has specialized data storage for the result format.
 
     It also has options for the onboarding data answers and the annotation bucket
     definitions.
     """
 
-    ArgsClass = TurnAnnotationsBlueprintArgs
-    SharedStateClass = SharedTurnAnnotationsTaskState
+    ArgsClass = ModelChatBlueprintArgs
+    SharedStateClass = SharedModelChatTaskState
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
     @classmethod
@@ -220,21 +224,19 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
             full_path
         ), f"Target left pane text path {full_path} doesn't exist"
 
-        assert (
-            args.blueprint.get("annotations_config_path", None) is not None
-        ), "Must provide an annotation config file"
-        full_path = os.path.expanduser(args.blueprint.annotations_config_path)
-        assert os.path.exists(
-            full_path
-        ), f"Target annotation config path {full_path} doesn't exist"
+        if args.blueprint.get("annotations_config_path", "") != "":
+            full_path = os.path.expanduser(args.blueprint.annotations_config_path)
+            assert os.path.exists(
+                full_path
+            ), f"Target annotation config path {full_path} doesn't exist"
 
-        assert (
-            args.blueprint.get("onboard_task_data_path", None) is not None
-        ), "Must provide an onboarding data file"
-        full_path = os.path.expanduser(args.blueprint.onboard_task_data_path)
-        assert os.path.exists(
-            full_path
-        ), f"Target onboarding data path {full_path} doesn't exist"
+            assert (
+                args.blueprint.get("onboard_task_data_path", None) is not None
+            ), "Must provide an onboarding data file"
+            full_path = os.path.expanduser(args.blueprint.onboard_task_data_path)
+            assert os.path.exists(
+                full_path
+            ), f"Target onboarding data path {full_path} doesn't exist"
 
     def __init__(
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
@@ -259,16 +261,20 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
         left_pane_path = os.path.expanduser(args.blueprint.left_pane_text_path)
         with open(left_pane_path, "r") as left_pane_file:
             self.left_pane_text = left_pane_file.read()
-        annotations_config_path = os.path.expanduser(
-            args.blueprint.annotations_config_path
-        )
-        with open(annotations_config_path, "r") as annotations_config_file:
-            self.annotations_config = annotations_config_file.read()
-        onboard_task_data_path = os.path.expanduser(
-            args.blueprint.onboard_task_data_path
-        )
-        with open(onboard_task_data_path, "r") as onboard_task_data_file:
-            self.onboard_task_data = json.load(onboard_task_data_file)
+        if args.blueprint.get("annotations_config_path", "") != "":
+            annotations_config_path = os.path.expanduser(
+                args.blueprint.annotations_config_path
+            )
+            with open(annotations_config_path, "r") as annotations_config_file:
+                self.annotations_config = annotations_config_file.read()
+            onboard_task_data_path = os.path.expanduser(
+                args.blueprint.onboard_task_data_path
+            )
+            with open(onboard_task_data_path, "r") as onboard_task_data_file:
+                self.onboard_task_data = json.load(onboard_task_data_file)
+        else:
+            self.annotations_config = None
+            self.onboard_task_data = None
 
         run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
         shared_state.run_statistics = run_statistics
@@ -340,10 +346,13 @@ class TurnAnnotationsBlueprint(ParlAIChatBlueprint):
         Specifies what options within a task_config should be forwarded to the client
         for use by the task's frontend.
         """
-        with open(
-            self.args.blueprint.annotations_config_path, "r", encoding="utf-8-sig"
-        ) as f:
-            annotation_buckets = json.loads(f.read())
+        if self.args.blueprint.get('annotations_config_path', '') != '':
+            with open(
+                self.args.blueprint.annotations_config_path, "r", encoding="utf-8-sig"
+            ) as f:
+                annotation_buckets = json.loads(f.read())
+        else:
+            annotation_buckets = None
 
         return {
             "min_num_turns": self.args.blueprint.num_turns,

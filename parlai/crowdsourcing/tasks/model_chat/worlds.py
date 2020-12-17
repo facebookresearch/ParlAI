@@ -15,15 +15,15 @@ from parlai.core.worlds import validate
 from parlai.core.agents import create_agent_from_shared
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
-from parlai.crowdsourcing.tasks.turn_annotations.bot_agent import TurkLikeAgent
+from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
 
-from parlai.crowdsourcing.tasks.turn_annotations.constants import (
+from parlai.crowdsourcing.tasks.model_chat.constants import (
     ONBOARD_CONFIG,
     ONBOARD_FAIL,
     ONBOARD_SUCCESS,
 )
 
-from parlai.crowdsourcing.tasks.turn_annotations.utils import Compatibility
+from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility
 from parlai.crowdsourcing.utils.mturk import get_mturk_id_from_mephisto_wrapper
 
 from typing import TYPE_CHECKING
@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     )
 
 
-class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
+class ModelChatOnboardWorld(CrowdOnboardWorld):
     """
     This onboarding world displays a sample conversation with checkboxes of the same
     annotations as in the real HIT, but it is not a live conversation (all utterances
@@ -47,6 +47,11 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
 
     def __init__(self, opt, agent: "MephistoAgentWrapper"):
         super().__init__(opt, agent)
+
+        self.skip_onboarding = opt['annotations_config'] is None
+        # The onboarding checks how well workers annotate conversations, so it should be
+        # skipped if we are not annotating
+
         self.min_correct = ONBOARD_CONFIG['min_correct']
         self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
         self.onboard_task_data = opt['onboard_task_data']
@@ -101,23 +106,31 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
         return False
 
     def parley(self):
-        print(
-            f'{self.__class__.__name__}: starting parley for worker_id: {self.worker_id}'
-        )
 
-        # We are rendering a frontend based on the initial task data, so we just
-        # wait for the results to come in
-        act = self.agent.act(timeout=self.max_onboard_time)
-        self.status = self._handle_act(act)
-        self.agent.observe({'id': 'SYSTEM', 'text': '', 'final_status': self.status})
-        if self.status == ONBOARD_FAIL:
-            start_time = time.time()
-            # After soft ban, we just block in while loop until worker goes
-            # away (Disconnects or returns the HIT as asked on the frontend)
-            while time.time() - start_time < self.max_onboard_time:
-                _ = self.agent.act(timeout=self.max_onboard_time)
-                time.sleep(0.5)
-        return None
+        if not self.skip_onboarding:
+
+            print(
+                f'{self.__class__.__name__}: starting parley for worker_id: {self.worker_id}'
+            )
+
+            # We are rendering a frontend based on the initial task data, so we just
+            # wait for the results to come in
+            act = self.agent.act(timeout=self.max_onboard_time)
+            self.status = self._handle_act(act)
+            self.agent.observe({'id': 'SYSTEM', 'text': '', 'final_status': self.status})
+            if self.status == ONBOARD_FAIL:
+                start_time = time.time()
+                # After soft ban, we just block in while loop until worker goes
+                # away (Disconnects or returns the HIT as asked on the frontend)
+                while time.time() - start_time < self.max_onboard_time:
+                    _ = self.agent.act(timeout=self.max_onboard_time)
+                    time.sleep(0.5)
+            return None
+
+        else:
+
+            self.episodeDone = True  # Send the user directly to the HIT
+            self.status = ONBOARD_SUCCESS  # Approve user by default
 
     def _handle_act(self, act):
         if 'task_data' not in act:
@@ -148,7 +161,7 @@ class TurnAnnotationsOnboardWorld(CrowdOnboardWorld):
             self.onboard_statistics[self.status] += 1
 
 
-class TurnAnnotationsChatWorld(CrowdTaskWorld):
+class ModelChatChatWorld(CrowdTaskWorld):
     def __init__(self, opt, agent=None, bot=None, context_info: Optional[dict] = None):
         super().__init__(opt, agent)
 
@@ -506,7 +519,7 @@ class TurnAnnotationsChatWorld(CrowdTaskWorld):
 
 
 def make_onboarding_world(opt, agent):
-    return TurnAnnotationsOnboardWorld(opt, agent)
+    return ModelChatOnboardWorld(opt, agent)
 
 
 def validate_onboarding(data):
@@ -564,7 +577,7 @@ def make_world(opt, agents):
 
     agents[0].agent_id = "Worker"
 
-    return TurnAnnotationsChatWorld(
+    return ModelChatChatWorld(
         opt, agent=agents[0], bot=bot_worker, context_info=context_info
     )
 
