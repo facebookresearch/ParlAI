@@ -12,10 +12,13 @@ Please see <parl.ai/project/blender>.
 
 from .build import build
 
-VERSION = 'v1.0'
+VERSION = 'v1.1'
 
 
 def download(datapath):
     build(
-        datapath, f'BST3B5x_{VERSION}.tgz', model_type='blender_3B_5x', version=VERSION
+        datapath,
+        f'BST400Mdistill_{VERSION}.tgz',
+        model_type='blender_400Mdistill',
+        version=VERSION,
     )
