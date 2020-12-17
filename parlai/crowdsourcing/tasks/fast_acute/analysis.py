@@ -55,8 +55,8 @@ def setup_args():
     """
     parser = ParlaiParser(False, False)
     parser.add_argument(
-        '-id',
-        '--run-id',
+        '-ids',
+        '--run-ids',
         type=str,
         default=None,
         help='Comma-separated list of run IDs to analyze',
