@@ -36,6 +36,8 @@ class TestHuggingFaceDict(unittest.TestCase):
 
 
 class TestGpt2(unittest.TestCase):
+    # Did you implement a test for DialoGPT too if your changes affect it?
+
     def _test_batchsize(self, batchsize, add_start_token):
         utterances = [
             'Just keep swimming -',

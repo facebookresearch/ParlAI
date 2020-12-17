@@ -25,13 +25,6 @@ executors:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
-  standard_cpu36:
-    docker:
-      - image: circleci/python:3.6.9-buster-node
-    environment:
-      PYTHONUNBUFFERED: 1
-    resource_class: xlarge
-
   osx_cpu37:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
@@ -107,7 +100,7 @@ commands:
             python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off transformers
+            python -m pip install --progress-bar off 'transformers<4.0.0'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -236,26 +229,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20201119-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20201214-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20201119-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20201214-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20201119-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20201214-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20200904-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20201214-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -272,12 +265,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
+          key: deps-20201214-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu16
       - save_cache:
-          key: deps-20200921-bw-{{ checksum "requirements.txt" }}
+          key: deps-20201214-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -317,8 +310,8 @@ commands:
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  cleaninstall_36:
-    executor: standard_cpu36
+  cleaninstall_37:
+    executor: standard_cpu37
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -340,17 +333,6 @@ jobs:
     steps:
       - runtests:
           cachename: osx
-          marker: unit
-
-  unittests_36:
-    executor: standard_cpu36
-    working_directory: ~/ParlAI
-    parallelism: 8
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchcpu
-          cachename: ut36
           marker: unit
 
   unittests_37:
@@ -494,7 +476,7 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_36
+      - cleaninstall_37
       - unittests_gpu16
       - unittests_gpu15:
           requires:
@@ -509,10 +491,6 @@ workflows:
             - unittests_37
             - unittests_gpu16
       - unittests_37
-      - unittests_36:
-          requires:
-            - unittests_37
-            - unittests_gpu16
       - mturk_tests
       - unittests_osx:
           requires:
