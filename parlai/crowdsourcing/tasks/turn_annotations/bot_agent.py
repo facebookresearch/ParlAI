@@ -7,15 +7,13 @@
 import copy
 import os
 
+from omegaconf import DictConfig
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.utils.strings import normalize_reply
-from parlai.mturk.tasks.turn_annotations.constants import AGENT_1
-from parlai.mturk.tasks.turn_annotations.utils import (
-    Compatibility,
-    construct_annotations_html,
-)
+from parlai.crowdsourcing.tasks.turn_annotations.constants import AGENT_1
+from parlai.crowdsourcing.tasks.turn_annotations.utils import Compatibility
 
 
 class TurkLikeAgent:
@@ -47,32 +45,11 @@ class TurkLikeAgent:
         else:
             act_out = self.model_agent.act()
 
-        annotations_html = construct_annotations_html(
-            annotations_intro=self.opt['annotations_intro'],
-            annotations_config=self.opt['annotations_config'],
-            turn_idx=self.turn_idx,
-        )
-
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
             final_message_text = act_out['text']
         else:
-            normalized_act_text = normalize_reply(act_out['text'])
-            final_message_text = normalized_act_text + annotations_html
-
-        if self.turn_idx >= self.num_turns * 2:
-            radio_css_style = 'margin-left:5px;margin-right:15px;'
-            radio_buttons_html = ''
-            for i in range(1, 6):
-                radio_buttons_html += f"""<input type="radio" id="radio_rating_{i}" name="radio_final_rating_group" value="{i}" /><span style={radio_css_style}>{i}</span>"""
-            final_scoring_question = self.opt['final_rating_question']
-            exceeds_min_turns = f"""<br><br><div>{self.num_turns} chat turns finished! {final_scoring_question}</div>
-            {radio_buttons_html}
-            <br>Then, please click the "Done" button to end the chat."""
-            final_message_text += exceeds_min_turns
-            act_out = Compatibility.backward_compatible_force_set(
-                act_out, 'exceed_min_turns', True
-            )
+            final_message_text = normalize_reply(act_out['text'])
 
         act_out = Compatibility.backward_compatible_force_set(
             act_out, 'text', final_message_text
@@ -109,12 +86,13 @@ class TurkLikeAgent:
         self.model_agent.reset()
 
     @staticmethod
-    def get_bot_agents(opt: dict, active_models: list, no_cuda=False):
+    def get_bot_agents(args: DictConfig, active_models: list, no_cuda=False):
+        # return {}
         model_overrides = {
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands
             'interactive_mode': True,
-            'model_parallel': opt['task_model_parallel'],
+            'model_parallel': args.blueprint.task_model_parallel,
         }
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU
@@ -126,7 +104,7 @@ class TurkLikeAgent:
 
         # Get the model nicknames from common folder and use them to load opts
         # from file, and add options specified in MODEL_CONFIGS
-        base_model_folder = opt.get('base_model_folder', None)
+        base_model_folder = os.path.expanduser(args.blueprint.base_model_folder)
         models_available = []
         for obj in os.listdir(base_model_folder):
             if os.path.isdir(os.path.join(base_model_folder, obj)):

@@ -136,6 +136,8 @@ heroku-cli-*
 *.db
 # Hydra
 outputs/
+# Mephisto
+_generated/
 
 # IntelliJ IDEA
 .idea
