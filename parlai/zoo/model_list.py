@@ -1177,7 +1177,10 @@ model_list = [
         "example": (
             "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_2x/model -t blended_skill_talk -m transformer/generator"
         ),
-        "result": (None),  # TODO: add
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm good. Just playing some video games and relaxing. How about you? What are you up to?"
+        ),
     },
     {
         "title": "Blender 2.7B 5x",
@@ -1192,7 +1195,10 @@ model_list = [
         "example": (
             "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_5x/model -t blended_skill_talk -m transformer/generator"
         ),
-        "result": (None),  # TODO: add
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How about you? What do you like to do in your spare time?"
+        ),
     },
     {
         "title": "Blender 9.4B",
