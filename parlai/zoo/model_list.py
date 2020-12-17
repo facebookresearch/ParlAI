@@ -1165,17 +1165,17 @@ model_list = [
         ),
     },
     {
-        "title": "Blender 2.7B 2x",
+        "title": "Blender 1B distilled",
         "id": "blender",
-        "path": "zoo:blender/blender_3B_2x/model",
+        "path": "zoo:blender/blender_1Bdistill/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
-            "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to 1.4B parameters and roughly 2x the inference speed."
+            "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to ~1.4B parameters and roughly 2x the inference speed."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_2x/model -t blended_skill_talk -m transformer/generator"
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_1Bdistill/model -t blended_skill_talk"
         ),
         "result": (
             "Enter Your Message: Hi how are you?\n"
@@ -1183,17 +1183,17 @@ model_list = [
         ),
     },
     {
-        "title": "Blender 2.7B 5x",
+        "title": "Blender 400M distilled",
         "id": "blender",
-        "path": "zoo:blender/blender_3B_5x/model",
+        "path": "zoo:blender/blender_400Mdistill/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
         "description": (
-            "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to 360M parameters and roughly 5x the inference speed."
+            "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to ~360M parameters and roughly 5x the inference speed."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_3B_5x/model -t blended_skill_talk -m transformer/generator"
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_400Mdistill/model -t blended_skill_talk"
         ),
         "result": (
             "Enter Your Message: Hi how are you?\n"

@@ -44,12 +44,12 @@ python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/
 
 **2.7B distilled to 1.4B**
 ```
-python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_3B_2x/model -m transformer/generator
+python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_1Bdistill/model
 ```
 
 **2.7B distilled to 360M**
 ```
-python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_3B_5x/model -m transformer/generator
+python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_400Mdistill/model
 ```
 
 ## Fine-tuning your own models
