@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-2.7B parameter Blender model distilled to 365M parameters (~5x inference speedup).
+2.7B parameter Blender model distilled to 360M parameters (~5x inference speedup).
 
 Please see <parl.ai/project/blender>.
 """
@@ -16,4 +16,6 @@ VERSION = 'v1.0'
 
 
 def download(datapath):
-    build(datapath, 'BST3B5x.tgz', model_type='blender_3B_5x', version=VERSION)
+    build(
+        datapath, f'BST3B5x_{VERSION}.tgz', model_type='blender_3B_5x', version=VERSION
+    )
