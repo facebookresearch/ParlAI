@@ -379,6 +379,19 @@ class ModelImageChatBlueprintArgs(ModelChatBlueprintArgs):
             "provided models, asking workers chat about a provided image."
         },
     )
+    stack_folder: str = field(
+        default=os.path.join(get_task_path(), 'stack_folder'),
+        metadata={
+            "help": 'Folder in which to save backups of the stack of which image-and-model combinations have had HITs launched'
+        },
+    )
+    images_and_contexts_path: str = field(
+        default="${mephisto.blueprint.task_config_path}/images_and_contexts.json",
+        metadata={
+            "help": "Path to JSON containing images and the context information that goes with each one"
+        },
+    )
+
 
 
 @register_mephisto_abstraction()
