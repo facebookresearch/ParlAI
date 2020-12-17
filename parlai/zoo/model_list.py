@@ -1179,7 +1179,7 @@ model_list = [
         ),
         "result": (
             "Enter Your Message: Hi how are you?\n"
-            "[TransformerGenerator]: I'm good. Just playing some video games and relaxing. How about you? What are you up to?"
+            "[TransformerGenerator]: I'm doing well. How about yourself? What do you do for a living? I'm a creative writer."
         ),
     },
     {
@@ -1197,7 +1197,7 @@ model_list = [
         ),
         "result": (
             "Enter Your Message: Hi how are you?\n"
-            "[TransformerGenerator]: I'm doing well. How about you? What do you like to do in your spare time?"
+            "[TransformerGenerator]: I'm doing well. How about you? What do you like to do in your free time?"
         ),
     },
     {
