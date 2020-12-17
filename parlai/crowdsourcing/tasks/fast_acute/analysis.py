@@ -106,7 +106,8 @@ class AcuteAnalyzer(object):
         """
         self.root_dir = opt['root_dir']
         assert os.path.isdir(self.root_dir), '--root-dir must be a real directory!'
-        self.run_id = opt['run_id']
+        assert ',' not in opt['run_ids'], "AcuteAnalyzer can only handle one run ID!"
+        self.run_id = opt['run_ids']
         self.outdir = opt['outdir']
         # Get task for loading pairing files
         self.task = opt.get('task', 'q')
@@ -128,6 +129,7 @@ class AcuteAnalyzer(object):
         self.checkbox_prefix = self.CHECKBOX_PREFIX
         # Prepended to checkbox columns in self.dataframe
         self.dataframe = self._extract_to_dataframe()
+        self._check_eval_question()
         if remove_failed:
             self._remove_failed_onboarding()
         if self.dataframe.index.size == 0:
@@ -232,6 +234,15 @@ class AcuteAnalyzer(object):
             raise ValueError('No valid results found!')
         else:
             return pd.DataFrame(responses)
+
+    def _check_eval_question(self):
+        """
+        Check that the same eval question has been used for all results.
+        """
+        if len(set(self.dataframe['question'].unique())) > 1:
+            raise ValueError(
+                'All results must share the same eval question for consistency!'
+            )
 
     def _remove_failed_onboarding(self):
         """
@@ -678,6 +689,9 @@ class MultiRunAcuteAnalyzer(AcuteAnalyzer):
             # Overwrite the run_id so that results will combine across runs
         self.dataframe = pd.concat(dataframes.values(), axis=0)
 
+        # Check that all results across all runs share the same eval question
+        self._check_eval_question()
+
 
 def get_multi_run_analyzer(opt) -> MultiRunAcuteAnalyzer:
     """
@@ -687,7 +701,7 @@ def get_multi_run_analyzer(opt) -> MultiRunAcuteAnalyzer:
     a separate analyzer class that will concatenate them.
     """
 
-    run_ids = opt['run_id'].split(',')
+    run_ids = opt['run_ids'].split(',')
 
     # Define paths
     assert (
@@ -708,7 +722,7 @@ def get_multi_run_analyzer(opt) -> MultiRunAcuteAnalyzer:
     for run_id in run_ids:
         print(f'\nStarting to load HITs for run ID {run_id}.')
         opt_copy = deepcopy(opt)
-        opt_copy['run_id'] = run_id
+        opt_copy['run_ids'] = run_id
         dataframes[run_id] = AcuteAnalyzer(opt_copy).dataframe
 
     return MultiRunAcuteAnalyzer(opt=opt, dataframes=dataframes)
@@ -809,7 +823,7 @@ if __name__ == "__main__":
     parser = setup_args()
     opt_ = parser.parse_args()
 
-    if ',' not in opt_['run_id']:
+    if ',' not in opt_['run_ids']:
         analyzer = AcuteAnalyzer(opt_)
     else:
         analyzer = get_multi_run_analyzer(opt_)
