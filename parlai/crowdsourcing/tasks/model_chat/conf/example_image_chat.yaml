@@ -1,0 +1,29 @@
+#@package _global_
+mephisto:
+  blueprint:
+    onboarding_qualification: model_image_chat_onboarding
+    block_qualification: model_image_chat_block
+    base_model_folder: ~/ParlAI/data/models/
+    chat_data_folder: ~/ParlAI/data/crowdsourcing/model_image_chat/
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: false
+    include_persona: false
+    conversation_start_mode: 'hi'
+    conversations_needed_string: "dodecadialogue/image_chat_ft:10"
+  task:
+    allowed_concurrent: 1
+    maximum_units_per_worker: 3
+    task_description: |
+      <b><h4>Task Description</h4></b>
+      <br>
+      Dummy Task Description.
+
+      Lorem ipsum.
+      <br><br>
+    task_name: model_image_chat
+    task_reward: 3
+    task_tags: "chat,conversation,dialog,partner,image"
+    task_title: "Chat with a fellow conversationalist about an image!"
+mturk:
+  worker_blocklist_paths: null
