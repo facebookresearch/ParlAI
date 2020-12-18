@@ -8,6 +8,7 @@ Save a JSON of image IDs and associated contexts for the model image chat task.
 """
 
 import json
+import os
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.params import ParlaiParser
@@ -22,11 +23,12 @@ def save_image_contexts():
 
     print('Creating teacher to loop over images and personalities.')
     task_parser = ParlaiParser(add_parlai_args=True, add_model_args=False)
-    task_args = f"""\
---task internal:multimodal_blender:imageDialogFirstTurnSelectedImages \
---datatype test \
-"""  # TODO remove
-    task_opt = task_parser.parse_args(task_args.split())
+    task_parser.add_argument(
+        '--image-context-path', type=str, help='Save path for image context file'
+    )
+    task_opt = task_parser.parse_args()
+    if task_opt['image_context_path'] is None:
+        raise ValueError('--image-context-path must be specified!')
     agent = RepeatLabelAgent(task_opt)
     world = create_task(task_opt, agent)
 
@@ -58,7 +60,7 @@ def save_image_contexts():
         context_info['bot_personality'] = personality
 
     # Save
-    with open(IMAGES_AND_CONTEXTS_PATH, 'w') as f:  # TODO: change
+    with open(task_opt['image_context_path'], 'w') as f:
         json.dump(image_names_to_context_info, f)
 
 
