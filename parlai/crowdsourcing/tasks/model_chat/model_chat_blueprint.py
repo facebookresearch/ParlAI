@@ -261,9 +261,10 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint):
 
         # Initialize models
         models_needed = list(conversations_needed.keys())
-        self.active_models = [m for m in models_needed if conversations_needed[m] > 0]
-        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, self.active_models)
+        active_models = [m for m in models_needed if conversations_needed[m] > 0]
+        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, active_models)
         shared_state.shared_models = shared_bot_agents
+        # TODO: only the last 2 lines of this should go in the base blueprint
 
         # Context need parlai options
         argparser = ParlaiParser(False, False)
@@ -424,6 +425,12 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
             "help": "Path to JSON containing images and the context information that goes with each one"
         },
     )
+    models: str = field(
+        default=MISSING,
+        metadata={
+            "help": "Comma-separated list of models to collect conversations on"
+        },
+    )
     stack_folder: str = field(
         default=os.path.join(get_task_path(), 'stack_folder'),
         metadata={
@@ -455,12 +462,14 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
 
+        models = args.blueprint.models.split(',')
+
         # Create the stack to keep track of how many workers have seen which
         # combinations of images and models
         image_opt = {
             'evals_per_image_model_combo': args.blueprint.evals_per_image_model_combo,
             'images_and_contexts_path': args.blueprint.images_and_contexts_path,
-            'models': self.active_models,
+            'models': models,
             'stack_folder': args.blueprint.stack_folder,
         }
         shared_state.image_stack = ImageStack(image_opt)
