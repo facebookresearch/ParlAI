@@ -7,9 +7,10 @@
 import json
 import os
 import random
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from threading import Semaphore, Condition
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
@@ -48,11 +49,11 @@ class SharedBaseModelChatTaskState(SharedParlAITaskState):
 
 
 class SharedModelChatTaskState(SharedBaseModelChatTaskState):
+    context_generator: Optional[ContextGenerator] = None
     conversations_needed: Dict[str, Any] = field(default_factory=dict)
     run_statistics: Dict[str, int] = field(default_factory=dict)
     onboard_statistics: Dict[str, int] = field(default_factory=dict)
     statistics_condition: Optional[Condition] = None
-    context_generator: Optional[Any] = None
 
 
 class SharedModelImageChatTaskState(SharedBaseModelChatTaskState):
@@ -145,7 +146,7 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
 
 
-class BaseModelChatBlueprint(ParlAIChatBlueprint):
+class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
     """
     This Blueprint uses somewhat specialized arguments for turn annotations, manages
     their validation, and also has specialized data storage for the result format.
@@ -190,16 +191,6 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint):
     def __init__(
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
-        # Set the number of conversations needed
-        conversations_needed_string = args.blueprint.conversations_needed_string
-        conversations_needed = {}
-        parts = conversations_needed_string.split(',')
-        for part in parts:
-            model_name, num_string = part.split(':')
-            conversations_needed[model_name] = int(num_string)
-        self.conversations_needed = conversations_needed
-        shared_state.conversations_needed = conversations_needed
-        args.blueprint.num_conversations = sum(conversations_needed.values())
 
         # Default conversation initialization
         super().__init__(task_run, args=args, shared_state=shared_state)
@@ -217,80 +208,38 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint):
             )
             with open(annotations_config_path, "r") as annotations_config_file:
                 self.annotations_config = annotations_config_file.read()
-            onboard_task_data_path = os.path.expanduser(
-                args.blueprint.onboard_task_data_path
-            )
-            with open(onboard_task_data_path, "r") as onboard_task_data_file:
-                self.onboard_task_data = json.load(onboard_task_data_file)
         else:
             self.annotations_config = None
-            self.onboard_task_data = None
-
-        run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
-        shared_state.run_statistics = run_statistics
 
         # Initialize models
-        models_needed = list(conversations_needed.keys())
-        active_models = [m for m in models_needed if conversations_needed[m] > 0]
-        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, active_models)
+        self.models = self._get_model_list(args)
+        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, self.models)
         shared_state.shared_models = shared_bot_agents
-        # TODO: only the last 2 lines of this should go in the base blueprint
-
-        # Context need parlai options
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        if len(args.blueprint.override_opt) > 0:
-            argparser.set_params(**args.blueprint.override_opt)
-        opt = argparser.parse_args([])
-
-        if (
-            args.blueprint.include_persona
-            or args.blueprint.conversation_start_mode == 'bst'
-        ):
-            context_generator = ContextGenerator(opt, datatype='test', seed=0)
-            # We pull from the test set so that the model can't regurgitate
-            # memorized conversations
-        else:
-            context_generator = None
-        shared_state.context_generator = context_generator
 
         # Limits the number of models that can generate at once
         max_concurrent_responses = 1
         semaphore = Semaphore(max_concurrent_responses)
 
-        # Lock for editing run statistics between threads
-        statistics_condition = Condition()
-
-        # Move shared state into the world and onboarding opts, such that these
-        # can be used by the worlds
-        shared_state.onboarding_world_opt.update(
-            {
-                'onboard_statistics': shared_state.onboard_statistics,
-                'statistics_condition': statistics_condition,
-                'max_onboard_time': args.blueprint.max_onboard_time,
-                'onboard_task_data': self.onboard_task_data,
-                'onboarding_qualification': args.blueprint.onboarding_qualification,
-            }
-        )
+        # Move shared state into the world opt, so that it can be used by the world
         shared_state.world_opt.update(
             {
                 'annotations_config': self.annotations_config,
-                'block_qualification': args.blueprint.block_qualification,
-                'conversations_needed': conversations_needed,
-                'run_statistics': shared_state.run_statistics,
-                'context_generator': context_generator,
                 'semaphore': semaphore,
                 'shared_bot_agents': shared_bot_agents,
                 'num_turns': args.blueprint.num_turns,
                 'max_resp_time': args.blueprint.max_resp_time,
                 'is_sandbox': args.provider.requester_name == 'MOCK_REQUESTER',
-                'statistics_condition': statistics_condition,
                 'check_acceptability': args.blueprint.check_acceptability,
                 'include_persona': args.blueprint.include_persona,
-                'conversation_start_mode': args.blueprint.conversation_start_mode,
                 'chat_data_folder': args.blueprint.chat_data_folder,
             }
         )
+
+    @abstractmethod
+    def _get_model_list(self, args: "DictConfig") -> List[str]:
+        """
+        Return a list of models to create shared agents for.
+        """
 
     def get_frontend_args(self) -> Dict[str, Any]:
         """
@@ -311,7 +260,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint):
             "task_title": self.args.task.get('task_title', None),
             "annotation_question": self.args.blueprint.annotation_question,
             "annotation_buckets": annotation_buckets,
-            "onboarding_data": self.onboard_task_data,
+            "onboarding_data": getattr(self, 'onboard_task_data', None),
             "left_pane_text": self.left_pane_text,
             "frame_height": '650px',
             "final_rating_question": self.args.blueprint.final_rating_question,
@@ -416,7 +365,78 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
 
+        # Set the number of conversations needed
+        conversations_needed_string = args.blueprint.conversations_needed_string
+        conversations_needed = {}
+        parts = conversations_needed_string.split(',')
+        for part in parts:
+            model_name, num_string = part.split(':')
+            conversations_needed[model_name] = int(num_string)
+        self.conversations_needed = conversations_needed
+        shared_state.conversations_needed = conversations_needed
+        args.blueprint.num_conversations = sum(conversations_needed.values())
+
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
+
+        if args.blueprint.get("annotations_config_path", "") != "":
+            onboard_task_data_path = os.path.expanduser(
+                args.blueprint.onboard_task_data_path
+            )
+            with open(onboard_task_data_path, "r") as onboard_task_data_file:
+                self.onboard_task_data = json.load(onboard_task_data_file)
+        else:
+            self.onboard_task_data = None
+
+        run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
+        shared_state.run_statistics = run_statistics
+
+        # Context need parlai options
+        argparser = ParlaiParser(False, False)
+        argparser.add_parlai_data_path()
+        if len(args.blueprint.override_opt) > 0:
+            argparser.set_params(**args.blueprint.override_opt)
+        opt = argparser.parse_args([])
+
+        if (
+            args.blueprint.include_persona
+            or args.blueprint.conversation_start_mode == 'bst'
+        ):
+            context_generator = ContextGenerator(opt, datatype='test', seed=0)
+            # We pull from the test set so that the model can't regurgitate
+            # memorized conversations
+        else:
+            context_generator = None
+        shared_state.context_generator = context_generator
+
+        # Lock for editing run statistics between threads
+        statistics_condition = Condition()
+
+        # Move shared state into the world and onboarding opts, such that these
+        # can be used by the worlds
+        shared_state.onboarding_world_opt.update(
+            {
+                'onboard_statistics': shared_state.onboard_statistics,
+                'statistics_condition': statistics_condition,
+                'max_onboard_time': args.blueprint.max_onboard_time,
+                'onboard_task_data': self.onboard_task_data,
+                'onboarding_qualification': args.blueprint.onboarding_qualification,
+            }
+        )
+        shared_state.world_opt.update(
+            {
+                'block_qualification': args.blueprint.block_qualification,
+                'conversations_needed': conversations_needed,
+                'run_statistics': shared_state.run_statistics,
+                'context_generator': context_generator,
+                'statistics_condition': statistics_condition,
+                'conversation_start_mode': args.blueprint.conversation_start_mode,
+            }
+        )
+
+    def _get_model_list(self, args: "DictConfig") -> List[str]:
+        _ = args  # Not needed
+        models_needed = list(self.conversations_needed.keys())
+        return [m for m in models_needed if self.conversations_needed[m] > 0]
 
 
 @dataclass
@@ -488,16 +508,17 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
 
-        models = args.blueprint.models.split(',')
-
         # Create the stack to keep track of how many workers have seen which
         # combinations of images and models
         image_opt = {
             'evals_per_image_model_combo': args.blueprint.evals_per_image_model_combo,
             'images_and_contexts_path': args.blueprint.images_and_contexts_path,
-            'models': models,
+            'models': self.models,
             'stack_folder': args.blueprint.stack_folder,
         }
         shared_state.image_stack = ImageStack(image_opt)
 
         shared_state.world_opt.update({'image_stack': shared_state.image_stack})
+
+    def _get_model_list(self, args: "DictConfig") -> List[str]:
+        return args.blueprint.models.split(',')
