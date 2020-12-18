@@ -18,7 +18,6 @@ python parlai/agents/bart/convert_fairseq_to_parlai.py \
 """
 
 from collections import OrderedDict
-import os
 import torch
 from torch.serialization import default_restore_location
 from typing import Any, Dict, List
@@ -248,17 +247,14 @@ class ConversionScript(ParlaiScript):
             loaded fairseq state
         """
         with PathManager.open(path, "rb") as f:
-            state = torch.load(
-                f, map_location=lambda s, l: default_restore_location(s, "cpu")
-            )
-            # try:
-            #     state = torch.load(
-            #         f, map_location=lambda s, l: default_restore_location(s, "cpu")
-            #     )
-            # except ModuleNotFoundError:
-            #     raise ModuleNotFoundError(
-            #         "Please install fairseq: https://github.com/pytorch/fairseq#requirements-and-installation"
-            #     )
+            try:
+                state = torch.load(
+                    f, map_location=lambda s, l: default_restore_location(s, "cpu")
+                )
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError(
+                    "Please install fairseq: https://github.com/pytorch/fairseq#requirements-and-installation"
+                )
 
         return state
 
