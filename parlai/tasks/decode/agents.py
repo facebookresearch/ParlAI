@@ -31,7 +31,6 @@ def _path(opt, test_type):
     else:
         raise RuntimeError('Not valid datatype.')
 
-    # data_directory = "/Users/yixin/projects/parlai_external/projects/contradiction_detection/probing_conv_errors/data/dialogue_datasets/saved_updated_data/decode_v0.1"
     data_directory = os.path.join(opt['datapath'], DECODE, DECODE_PREFIX + DECODE_VERSION)
 
     data_path = os.path.join(
