@@ -16,13 +16,11 @@ from parlai.core.agents import create_agent_from_shared
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
-
 from parlai.crowdsourcing.tasks.model_chat.constants import (
     ONBOARD_CONFIG,
     ONBOARD_FAIL,
     ONBOARD_SUCCESS,
 )
-
 from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility
 from parlai.crowdsourcing.utils.mturk import get_mturk_id_from_mephisto_wrapper
 
@@ -133,6 +131,9 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
 
             self.episodeDone = True  # Send the user directly to the HIT
             self.status = ONBOARD_SUCCESS  # Approve user by default
+            self.agent.observe(
+                {'id': 'SYSTEM', 'text': '', 'final_status': self.status}
+            )
 
     def _handle_act(self, act):
         if 'task_data' not in act:
@@ -163,7 +164,7 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
             self.onboard_statistics[self.status] += 1
 
 
-class ModelChatChatWorld(CrowdTaskWorld):
+class ModelChatWorld(CrowdTaskWorld):
     def __init__(self, opt, agent, bot, context_info: Optional[dict] = None):
         super().__init__(opt, agent)
 
@@ -520,20 +521,6 @@ class ModelChatChatWorld(CrowdTaskWorld):
         return data
 
 
-class ModelImageChatChatWorld(ModelChatChatWorld):
-    """
-    A chat world in which an image is shown to the worker and bot at the beginning.
-    """
-
-    def __init__(self, opt, agent, bot, context_info: dict, image_idx: int):
-        super().__init__(opt, agent=agent, bot=bot, context_info=context_info)
-
-        self.image_stack = opt['image_stack']
-        self.image_idx = image_idx
-
-        # {{{TODO}}}
-
-
 def make_onboarding_world(opt, agent):
     return ModelChatOnboardWorld(opt, agent)
 
@@ -556,13 +543,39 @@ def validate_onboarding(data):
     return final_status == ONBOARD_SUCCESS
 
 
-def make_world(opt, agents):
-    # Extract important components from opt
+def get_bot_worker(opt: Dict[str, Any], model_name: str) -> TurkLikeAgent:
+    """
+    Return a bot agent.
+
+    Agent behaves like a crowdsource worker but actually wraps around a dialogue model.
+    """
     semaphore = opt['semaphore']
     shared_bot_agents = opt['shared_bot_agents']
+    num_turns = opt['num_turns']
+    bot_agent = create_agent_from_shared(shared_bot_agents[model_name])
+    bot_worker = TurkLikeAgent(
+        opt,
+        model_name=model_name,
+        model_agent=bot_agent,
+        num_turns=num_turns,
+        semaphore=semaphore,
+    )
+    return bot_worker
+
+
+def make_world(opt, agents):
+
+    # Extract important components from opt
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
-    num_turns = opt['num_turns']
+
+    agents[0].agent_id = "Worker"
+
+    # Get context: personas, previous utterances, etc.
+    if context_generator is not None:
+        context_info = context_generator.get_context()
+    else:
+        context_info = None
 
     # Decide on a bot to use
     run_statistics = opt['run_statistics']
@@ -574,45 +587,9 @@ def make_world(opt, agents):
         model_name = remaining_counts_needed[0][0]
         print(f'Remaining conversation counts needed: {remaining_counts_needed}')
         print(f'Choosing the "{model_name}" model for the bot.')
+    bot_worker = get_bot_worker(opt=opt, model_name=model_name)
 
-    # Create the bot
-    bot_agent = create_agent_from_shared(shared_bot_agents[model_name])
-    bot_worker = TurkLikeAgent(
-        opt,
-        model_name=model_name,
-        model_agent=bot_agent,
-        num_turns=num_turns,
-        semaphore=semaphore,
-    )
-
-    if 'image_stack' in opt:
-        # We are showing an image to the worker and bot, so grab the image path and
-        # other context info
-        image_idx, context_info, model_name, no_more_work = opt[
-            'image_stack'
-        ].get_next_image(agents[0].mephisto_agent.get_worker().db_id)
-        if no_more_work:
-            # There are no more HITs for this worker to do, so give them a qualification
-            agents[0].mephisto_agent.get_worker().grant_qualification(
-                qualification_name=opt['block_qualification'], value=1
-            )
-        return ModelImageChatChatWorld(
-            opt=opt,
-            agent=agents[0],
-            bot=bot_worker,
-            context_info=context_info,
-            image_idx=image_idx,
-        )
-    else:
-        # Get context: personas, previous utterances, etc.
-        if context_generator is not None:
-            context_info = context_generator.get_context()
-        else:
-            context_info = None
-
-    agents[0].agent_id = "Worker"
-
-    return ModelChatChatWorld(
+    return ModelChatWorld(
         opt, agent=agents[0], bot=bot_worker, context_info=context_info
     )
 
