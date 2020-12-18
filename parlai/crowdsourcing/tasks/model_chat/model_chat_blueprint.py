@@ -65,10 +65,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
         default="BaseModelChatBlueprint",
         metadata={'help': "Args that are common to all model-chat tasks"},
     )
-    world_file: str = field(
-        default=os.path.join(get_task_path(), 'worlds.py'),
-        metadata={"help": "Path to file containing parlai world"},
-    )
     custom_source_dir: str = field(
         default=os.path.join(get_task_path(), 'frontend'),
         metadata={"help": "Path to frontend code"},
@@ -83,12 +79,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
             "help": "The string displayed above the checkboxes for each annotation in the task."
         },
     )
-    conversations_needed_string: str = field(
-        default=MISSING,
-        metadata={
-            "help": 'Number of convos needed for each model. For example: "modelA:50,modelB:20"'
-        },
-    )
     task_model_parallel: bool = field(
         default=True,
         metadata={
@@ -97,9 +87,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     max_resp_time: int = field(
         default=180, metadata={"help": "time limit for entering a dialog message"}
-    )
-    max_onboard_time: int = field(
-        default=300, metadata={"help": "time limit accepting onboarding"}
     )
     base_model_folder: str = field(
         default=MISSING, metadata={"help": "base folder for loading model files from"}
@@ -116,13 +103,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     include_persona: bool = field(
         default=False, metadata={"help": "Show persona to the bot"}
-    )
-    conversation_start_mode: str = field(
-        default='hi',
-        metadata={
-            "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
-            "choices": ['hi', 'bst'],
-        },
     )
     context_seed: int = field(
         default=MISSING,
@@ -146,12 +126,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
         default="${mephisto.blueprint.task_config_path}/annotations_config.json",
         metadata={
             "help": 'Path to JSON of annotation categories. Set to "" to disable annotations'
-        },
-    )
-    onboard_task_data_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/onboard_task_data.json",
-        metadata={
-            "help": "Path to JSON containing settings for running onboarding. Not used if not annotating model responses"
         },
     )
     final_rating_question: str = field(
@@ -385,6 +359,32 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
             "the overall model quality."
         },
     )
+    conversation_start_mode: str = field(
+        default='hi',
+        metadata={
+            "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
+            "choices": ['hi', 'bst'],
+        },
+    )
+    conversations_needed_string: str = field(
+        default=MISSING,
+        metadata={
+            "help": 'Number of convos needed for each model. For example: "modelA:50,modelB:20"'
+        },
+    )
+    max_onboard_time: int = field(
+        default=300, metadata={"help": "time limit accepting onboarding"}
+    )
+    onboard_task_data_path: str = field(
+        default="${mephisto.blueprint.task_config_path}/onboard_task_data.json",
+        metadata={
+            "help": "Path to JSON containing settings for running onboarding. Not used if not annotating model responses"
+        },
+    )
+    world_file: str = field(
+        default=os.path.join(get_task_path(), 'worlds.py'),
+        metadata={"help": "Path to file containing parlai world"},
+    )
 
 
 @register_mephisto_abstraction()
@@ -429,6 +429,10 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         metadata={
             "help": 'Folder in which to save backups of the stack of which image-and-model combinations have had HITs launched'
         },
+    )
+    world_file: str = field(
+        default=os.path.join(get_task_path(), 'worlds_image_chat.py'),
+        metadata={"help": "Path to file containing ParlAI world for image chat"},
     )
 
 
