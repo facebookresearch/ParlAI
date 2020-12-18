@@ -26,7 +26,7 @@ CONVERSION_ARGS = {
     'history_add_global_end_token': None,
 }
 
-BART_ARGS = {
+BART_LARGE_ARGS = {
     'embedding_size': 1024,
     'ffn_size': 4096,
     'dropout': 0.1,
@@ -45,8 +45,16 @@ BART_ARGS = {
     'learn_positional_embeddings': True,
 }
 
+base_args = BART_LARGE_ARGS.copy()
+base_args['embedding_size'] = 768
+base_args['n_positions'] = 1024
+base_args['ffn_size'] = 3072
+base_args['n_encoder_layers'] = 6
+base_args['n_decoder_layers'] = 6
+BART_BASE_ARGS = base_args
 
-def download(datapath, version='v1.0'):
+
+def download(datapath, version='v2.0'):
     dpath = os.path.join(datapath, 'models', 'bart')
 
     if not build_data.built(dpath, version):
@@ -57,14 +65,18 @@ def download(datapath, version='v1.0'):
         build_data.make_dir(dpath)
 
         # Download the data.
-        model_name = 'bart.large'
-        url = f'http://dl.fbaipublicfiles.com/fairseq/models/{model_name}.tar.gz'
-        build_data.download(url, dpath, f'{model_name}.tar.gz')
-        build_data.untar(dpath, f'{model_name}.tar.gz')
-        args = CONVERSION_ARGS.copy()
-        args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
-        args['output'] = os.path.join(dpath, model_name.replace('.', '_'), 'model')
-        ConversionScript.main(**args)
+        models = ['bart.large', 'bart.base']
+        for model_name in models:
+            # url = f'http://dl.fbaipublicfiles.com/fairseq/models/{model_name}.tar.gz'
+            # build_data.download(url, dpath, f'{model_name}.tar.gz')
+            # build_data.untar(dpath, f'{model_name}.tar.gz')
+            args = CONVERSION_ARGS.copy()
+            if model_name == 'bart.base':
+                args['model'] = 'bart/base'
+            args['orig_dict_file'] = os.path.join(dpath, 'bart.large/dict.txt')
+            args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
+            args['output'] = os.path.join(dpath, model_name.replace('.', '_'), 'model')
+            ConversionScript.main(**args)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version)

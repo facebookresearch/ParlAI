@@ -105,6 +105,9 @@ class ConversionScript(ParlaiScript):
             help='Which ParlAI agent to use.',
         )
         parser.add_argument(
+            '--orig-dict-file', type=str, default=None, help='Dict file to convert'
+        )
+        parser.add_argument(
             '--fp16', type='bool', default=False, help='Whether to initialize with fp16'
         )
         parser.add_argument(
@@ -173,6 +176,7 @@ class ConversionScript(ParlaiScript):
                 'n_encoder_layers': fairseq_args['encoder_layers'],
                 'n_decoder_layers': fairseq_args['decoder_layers'],
                 # tokenization args
+                'orig_dict_file': self.opt['orig_dict_file'],
                 'dict_tokenizer': self.opt['tokenizer'],
                 'bpe_vocab': self.opt['vocab'],
                 'bpe_merge': self.opt['merge'],
@@ -200,6 +204,7 @@ class ConversionScript(ParlaiScript):
 
         if self.opt['add_prefix_space']:
             transformer_common_config['bpe_add_prefix_space'] = True
+
         parser = ParlaiParser()
         parser.set_params(**transformer_common_config)
         opt = parser.parse_args([])
@@ -243,14 +248,17 @@ class ConversionScript(ParlaiScript):
             loaded fairseq state
         """
         with PathManager.open(path, "rb") as f:
-            try:
-                state = torch.load(
-                    f, map_location=lambda s, l: default_restore_location(s, "cpu")
-                )
-            except ModuleNotFoundError:
-                raise ModuleNotFoundError(
-                    "Please install fairseq: https://github.com/pytorch/fairseq#requirements-and-installation"
-                )
+            state = torch.load(
+                f, map_location=lambda s, l: default_restore_location(s, "cpu")
+            )
+            # try:
+            #     state = torch.load(
+            #         f, map_location=lambda s, l: default_restore_location(s, "cpu")
+            #     )
+            # except ModuleNotFoundError:
+            #     raise ModuleNotFoundError(
+            #         "Please install fairseq: https://github.com/pytorch/fairseq#requirements-and-installation"
+            #     )
 
         return state
 
@@ -320,6 +328,14 @@ class ConversionScript(ParlaiScript):
         agent = self.agent
         state_dict = state['model']
         return_dict = OrderedDict()
+        # 0. For BART-base, we truncate the embeddings
+        # See issues: https://github.com/pytorch/fairseq/issues/2242 for more details
+        if opt['model'] == 'bart/base':
+            for key in ['encoder.embed_tokens.weight', 'decoder.embed_tokens.weight']:
+                orig_value = state_dict[key]
+                assert len(orig_value) == 51_201
+                state_dict[key] = orig_value[:50_264]
+
         for each_key in state_dict.keys():
             mapped_key = each_key
             if mapped_key == 'encoder.version' or mapped_key == 'decoder.version':
@@ -398,7 +414,8 @@ class ConversionScript(ParlaiScript):
 
         # 6. Shuffle embedding matrix given dictionary.
         enc_emb_key = 'encoder.embeddings.weight'
-        bart_dict = os.path.join(opt['datapath'], 'models/bart/bart.large/dict.txt')
+        bart_dict = opt['orig_dict_file']
+        assert opt['orig_dict_file'] is not None
         with PathManager.open(bart_dict) as f:
             offset_dict = {i: l.split()[0] for i, l in enumerate(f.readlines())}
         new_embs = return_dict[enc_emb_key].clone()

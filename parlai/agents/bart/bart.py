@@ -29,7 +29,12 @@ from parlai.core.torch_generator_agent import PPLMetric
 from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
 from parlai.utils.io import PathManager
-from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
+from parlai.zoo.bart.build import (
+    download,
+    CONVERSION_ARGS,
+    BART_LARGE_ARGS,
+    BART_BASE_ARGS,
+)
 
 
 class BartAgent(TransformerGeneratorAgent):
@@ -63,14 +68,14 @@ class BartAgent(TransformerGeneratorAgent):
             help='where to save fairseq conversion',
         )
         argparser.set_defaults(dict_tokenizer='gpt2')
-        argparser.set_defaults(**BART_ARGS)
+        argparser.set_defaults(**BART_LARGE_ARGS)
 
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
             opt = self._initialize_bart(opt)
         super().__init__(opt, shared)
 
-    def _initialize_bart(self, opt: Opt) -> Opt:
+    def _initialize_bart(self, opt: Opt, model_sz: str = 'large') -> Opt:
         """
         Download and convert BART pre-trained models.
 
@@ -88,7 +93,7 @@ class BartAgent(TransformerGeneratorAgent):
         ):
             download(opt['datapath'])
             opt['init_model'] = os.path.join(
-                opt['datapath'], 'models/bart/bart_large/model'
+                opt['datapath'], f'models/bart/bart_{model_sz}/model'
             )
         if opt.get('init_fairseq_model'):
             opt = self._convert_model(opt)
@@ -237,3 +242,24 @@ class BartAgent(TransformerGeneratorAgent):
                 )
             )
         return token_losses
+
+
+class BartBaseAgent(BartAgent):
+    """
+    BART Base Agent.
+
+    Relies on the BART model implemented in fairseq.
+    """
+
+    @staticmethod
+    def add_cmdline_args(argparser: ParlaiParser):
+        """
+        Override to add init-fairseq-model arg.
+        """
+        BartAgent.add_cmdline_args(argparser)
+        argparser.set_defaults(**BART_BASE_ARGS)
+
+    def __init__(self, opt: Opt, shared: TShared = None):
+        if not shared:
+            opt = self._initialize_bart(opt, model_sz='base')
+        TransformerGeneratorAgent.__init__(self, opt, shared)
