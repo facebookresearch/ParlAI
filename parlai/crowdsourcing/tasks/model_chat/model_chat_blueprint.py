@@ -23,6 +23,7 @@ from omegaconf import DictConfig, MISSING
 
 from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
+from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 if TYPE_CHECKING:
@@ -282,8 +283,8 @@ class ModelChatBlueprint(ParlAIChatBlueprint):
 
         # Initialize models
         models_needed = list(conversations_needed.keys())
-        active_models = [m for m in models_needed if conversations_needed[m] > 0]
-        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, active_models)
+        self.active_models = [m for m in models_needed if conversations_needed[m] > 0]
+        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, self.active_models)
         shared_state.shared_models = shared_bot_agents
 
         # Context need parlai options
@@ -379,10 +380,10 @@ class ModelImageChatBlueprintArgs(ModelChatBlueprintArgs):
             "provided models, asking workers chat about a provided image."
         },
     )
-    stack_folder: str = field(
-        default=os.path.join(get_task_path(), 'stack_folder'),
+    evals_per_image_model_combo: int = field(
+        default=1,
         metadata={
-            "help": 'Folder in which to save backups of the stack of which image-and-model combinations have had HITs launched'
+            "help": "The number of HITs to perform per combination of image and model"
         },
     )
     images_and_contexts_path: str = field(
@@ -391,7 +392,12 @@ class ModelImageChatBlueprintArgs(ModelChatBlueprintArgs):
             "help": "Path to JSON containing images and the context information that goes with each one"
         },
     )
-
+    stack_folder: str = field(
+        default=os.path.join(get_task_path(), 'stack_folder'),
+        metadata={
+            "help": 'Folder in which to save backups of the stack of which image-and-model combinations have had HITs launched'
+        },
+    )
 
 
 @register_mephisto_abstraction()
@@ -406,3 +412,21 @@ class ModelImageChatBlueprint(ModelChatBlueprint):
     ArgsClass = ModelImageChatBlueprintArgs
     SharedStateClass = SharedModelChatTaskState
     BLUEPRINT_TYPE = IMAGE_CHAT_BLUEPRINT_TYPE
+
+    def __init__(
+        self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
+    ):
+
+        super().__init__(task_run=task_run, args=args, shared_state=shared_state)
+
+        # Create the stack to keep track of how many workers have seen which
+        # combinations of images and models
+        image_opt = {
+            'evals_per_image_model_combo': args.blueprint.evals_per_image_model_combo,
+            'images_and_contexts_path': args.blueprint.images_and_contexts_path,
+            'models': self.active_models,
+            'stack_folder': args.blueprint.stack_folder,
+        }
+        stack = ImageStack(image_opt)
+
+        shared_state.world_opt.update({'image_stack': stack})
