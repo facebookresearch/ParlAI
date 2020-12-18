@@ -68,14 +68,9 @@ class ContextStack:
         self.evals_per_context = opt['evals_per_context']
 
         # Paths
-        save_dir = opt['stack_folder']
-        # TODO: revise below
-        if self.is_local:
-            self.save_folder = os.path.join(save_dir, 'local')
-            self.save_name = 'image_and_context_stack.json'
-        else:
-            self.save_folder = save_dir
-            self.save_name = f'image_and_context_stack_v{self.version_num}.json'
+        self.contexts_path = opt['images_and_contexts_path']
+        self.save_folder = opt['stack_folder']
+        self.save_name = 'stack.json'
         self.backup_save_folder = os.path.join(self.save_folder, '_stack_backups')
         for folder in [self.save_folder, self.backup_save_folder]:
             os.makedirs(folder, exist_ok=True)
@@ -216,12 +211,7 @@ class ContextStack:
 
     def build_stack(self) -> int:
         print('[ Building stack from original file... ]')
-        data_file = {
-            0: IMAGES_AND_CONTEXTS_PATH,
-            1: IMAGES_AND_CONTEXTS_PATH,
-            2: IMAGES_AND_CONTEXTS_PATH,
-        }.get(self.version_num, IMAGES_AND_CONTEXTS_PATH)
-        with open(data_file, 'r') as f:
+        with open(self.contexts_path, 'r') as f:
             image_names_to_context_info = json.load(f)
 
         self.stack = []
