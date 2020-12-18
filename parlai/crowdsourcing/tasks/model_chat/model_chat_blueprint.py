@@ -60,15 +60,10 @@ class SharedModelImageChatTaskState(SharedBaseModelChatTaskState):
 
 
 @dataclass
-class ModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
-    _blueprint_type: str = BLUEPRINT_TYPE
+class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     _group: str = field(
-        default="ModelChatBlueprint",
-        metadata={
-            'help': "This task runs conversations between a human and one of a set of "
-            "provided models, asking workers to evaluate individual turns and "
-            "the overall model quality."
-        },
+        default="BaseModelChatBlueprint",
+        metadata={'help': "Args that are common to all model-chat tasks"},
     )
     world_file: str = field(
         default=os.path.join(get_task_path(), 'worlds.py'),
@@ -176,8 +171,7 @@ class ModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
 
 
-@register_mephisto_abstraction()
-class ModelChatBlueprint(ParlAIChatBlueprint):
+class BaseModelChatBlueprint(ParlAIChatBlueprint):
     """
     This Blueprint uses somewhat specialized arguments for turn annotations, manages
     their validation, and also has specialized data storage for the result format.
@@ -186,9 +180,8 @@ class ModelChatBlueprint(ParlAIChatBlueprint):
     definitions.
     """
 
-    ArgsClass = ModelChatBlueprintArgs
-    SharedStateClass = SharedModelChatTaskState
-    BLUEPRINT_TYPE = BLUEPRINT_TYPE
+    ArgsClass = BaseModelChatBlueprintArgs
+    SharedStateClass = SharedBaseModelChatTaskState
 
     @classmethod
     def assert_task_args(
@@ -382,7 +375,35 @@ class ModelChatBlueprint(ParlAIChatBlueprint):
 
 
 @dataclass
-class ModelImageChatBlueprintArgs(ModelChatBlueprintArgs):
+class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
+    _blueprint_type: str = BLUEPRINT_TYPE
+    _group: str = field(
+        default="ModelChatBlueprint",
+        metadata={
+            'help': "This task runs conversations between a human and one of a set of "
+            "provided models, asking workers to evaluate individual turns and "
+            "the overall model quality."
+        },
+    )
+
+
+@register_mephisto_abstraction()
+class ModelChatBlueprint(BaseModelChatBlueprint):
+    """
+    Blueprint for model chat without images.
+
+    This blueprint subclasses BaseModelChatBlueprint to provide logic for keeping track
+    of how many more conversations are needed per model; this logic is not shared with
+    other model-chat blueprints.
+    """
+
+    ArgsClass = ModelChatBlueprintArgs
+    SharedStateClass = SharedModelChatTaskState
+    BLUEPRINT_TYPE = BLUEPRINT_TYPE
+
+
+@dataclass
+class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
     _blueprint_type: str = IMAGE_CHAT_BLUEPRINT_TYPE
     _group: str = field(
         default="ModelImageChatBlueprint",
@@ -412,9 +433,9 @@ class ModelImageChatBlueprintArgs(ModelChatBlueprintArgs):
 
 
 @register_mephisto_abstraction()
-class ModelImageChatBlueprint(ModelChatBlueprint):
+class ModelImageChatBlueprint(BaseModelChatBlueprint):
     """
-    Subclass of ModelChatBlueprint to show the speakers an image on the first turn.
+    Subclass of BaseModelChatBlueprint to show the speakers an image on the first turn.
 
     The image is drawn from a stack that keeps track of how many HITs have been
     launched for a given combination of image and model.
