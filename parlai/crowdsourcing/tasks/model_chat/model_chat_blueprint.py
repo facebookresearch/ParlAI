@@ -456,7 +456,7 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         },
     )
     image_context_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/image_context.json",
+        default="${mephisto.blueprint.task_config_path}/image_contexts.json",
         metadata={
             "help": "Path to JSON containing images and the context information that goes with each one"
         },
