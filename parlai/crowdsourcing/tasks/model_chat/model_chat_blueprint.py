@@ -23,7 +23,10 @@ from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
 from omegaconf import DictConfig, MISSING
 
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
-from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack, get_context_generator
+from parlai.crowdsourcing.tasks.model_chat.utils import (
+    ImageStack,
+    get_context_generator,
+)
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 if TYPE_CHECKING:
@@ -208,9 +211,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             self.annotations_config = None
 
         # Initialize models
-        self.models = self._get_model_list(args)
-        shared_bot_agents = TurkLikeAgent.get_bot_agents(args, self.models)
-        shared_state.shared_models = shared_bot_agents
+        shared_state.shared_models = self._get_shared_models(args)
 
         # Limits the number of models that can generate at once
         max_concurrent_responses = 1
@@ -222,7 +223,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
                 'block_qualification': args.blueprint.block_qualification,
                 'annotations_config': self.annotations_config,
                 'semaphore': semaphore,
-                'shared_bot_agents': shared_bot_agents,
+                'shared_bot_agents': shared_state.shared_models,
                 'num_turns': args.blueprint.num_turns,
                 'max_resp_time': args.blueprint.max_resp_time,
                 'is_sandbox': args.provider.requester_name == 'MOCK_REQUESTER',
@@ -233,9 +234,9 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         )
 
     @abstractmethod
-    def _get_model_list(self, args: "DictConfig") -> List[str]:
+    def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         """
-        Return a list of models to create shared agents for.
+        Return a dictionary whose values are the shared model files.
         """
 
     def get_frontend_args(self) -> Dict[str, Any]:
@@ -423,10 +424,11 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
             }
         )
 
-    def _get_model_list(self, args: "DictConfig") -> List[str]:
+    def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         _ = args  # Not needed
         models_needed = list(self.conversations_needed.keys())
-        return [m for m in models_needed if self.conversations_needed[m] > 0]
+        active_models = [m for m in models_needed if self.conversations_needed[m] > 0]
+        return TurkLikeAgent.get_bot_agents(args=args, active_models=active_models)
 
 
 @dataclass
@@ -495,6 +497,10 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
         assert os.path.exists(
             image_context_path
         ), f"The image context path {image_context_path} doesn't exist!"
+        model_opt_path = os.path.expanduser(args.blueprint.model_opt_path)
+        assert os.path.exists(
+            model_opt_path
+        ), f"The model opt path {model_opt_path} doesn't exist!"
 
     def __init__(
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
@@ -514,5 +520,7 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
         shared_state.world_opt.update({'image_stack': shared_state.image_stack})
 
-    def _get_model_list(self, args: "DictConfig") -> List[str]:
-        return args.blueprint.models.split(',')
+    def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
+        with open(args.blueprint.model_opt_path) as f:
+            model_opts = json.load(f)
+        return TurkLikeAgent.get_bot_agents(args=args, model_opts=model_opts)

@@ -92,8 +92,14 @@ class TurkLikeAgent:
         active_models: Optional[List[str]] = None,
         model_opts: Optional[Dict[str, Dict]] = None,
         no_cuda=False,
-    ):
-        # TODO: docstring
+    ) -> Dict[str, dict]:
+        """
+        Return shared bot agents.
+
+        Pass in model opts with the `model_opts` arg; otherwise, pass in a list of model
+        names with the `active_models` arg, and those models' opts will be read from
+        args.blueprint.base_model_folder.
+        """
 
         model_overrides = {
             'datatype': 'valid',  # So we don't have to load the optimizer
