@@ -20,6 +20,17 @@ class ModelImageChatWorld(ModelChatWorld):
 
         # {{{TODO}}}
 
+    def shutdown(self):
+
+        if not self.chat_done:
+            # If the HIT was not completed, remove this worker from the stack
+            worker = self.agents[0].mephisto_agent.get_worker().db_id
+            self.image_stack.remove_worker_from_stack(
+                worker=worker, stack_idx=self.image_idx
+            )
+
+        self.agent.shutdown()
+
 
 def make_world(opt, agents):
 

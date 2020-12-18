@@ -223,6 +223,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         # Move shared state into the world opt, so that it can be used by the world
         shared_state.world_opt.update(
             {
+                'block_qualification': args.blueprint.block_qualification,
                 'annotations_config': self.annotations_config,
                 'semaphore': semaphore,
                 'shared_bot_agents': shared_bot_agents,
@@ -424,7 +425,6 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         )
         shared_state.world_opt.update(
             {
-                'block_qualification': args.blueprint.block_qualification,
                 'conversations_needed': conversations_needed,
                 'run_statistics': shared_state.run_statistics,
                 'context_generator': context_generator,
