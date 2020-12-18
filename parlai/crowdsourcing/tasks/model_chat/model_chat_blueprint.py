@@ -39,14 +39,24 @@ IMAGE_CHAT_BLUEPRINT_TYPE = 'model_image_chat_blueprint'
 
 
 @dataclass
-class SharedModelChatTaskState(SharedParlAITaskState):
+class SharedBaseModelChatTaskState(SharedParlAITaskState):
+    """
+    Base shared-state class from which all model-chat tasks inherit.
+    """
+
     shared_models: Dict[str, Any] = field(default_factory=dict)
+
+
+class SharedModelChatTaskState(SharedBaseModelChatTaskState):
     conversations_needed: Dict[str, Any] = field(default_factory=dict)
     run_statistics: Dict[str, int] = field(default_factory=dict)
     onboard_statistics: Dict[str, int] = field(default_factory=dict)
     statistics_condition: Optional[Condition] = None
-    generation_semaphore: Optional[Semaphore] = None
     context_generator: Optional[Any] = None
+
+
+class SharedModelImageChatTaskState(SharedBaseModelChatTaskState):
+    image_stack: ImageStack = None
 
 
 @dataclass
@@ -259,7 +269,8 @@ class ModelChatBlueprint(ParlAIChatBlueprint):
         random.seed(self.args.blueprint.random_seed)
         np.random.seed(self.args.blueprint.random_seed)
 
-        # Load task configuration data beyond the task desscription, as the super does that
+        # Load task configuration data beyond the task description, as the super does
+        # that
         left_pane_path = os.path.expanduser(args.blueprint.left_pane_text_path)
         with open(left_pane_path, "r") as left_pane_file:
             self.left_pane_text = left_pane_file.read()
@@ -410,7 +421,7 @@ class ModelImageChatBlueprint(ModelChatBlueprint):
     """
 
     ArgsClass = ModelImageChatBlueprintArgs
-    SharedStateClass = SharedModelChatTaskState
+    SharedStateClass = SharedModelImageChatTaskState
     BLUEPRINT_TYPE = IMAGE_CHAT_BLUEPRINT_TYPE
 
     def __init__(
@@ -427,6 +438,6 @@ class ModelImageChatBlueprint(ModelChatBlueprint):
             'models': self.active_models,
             'stack_folder': args.blueprint.stack_folder,
         }
-        stack = ImageStack(image_opt)
+        shared_state.image_stack = ImageStack(image_opt)
 
-        shared_state.world_opt.update({'image_stack': stack})
+        shared_state.world_opt.update({'image_stack': shared_state.image_stack})
