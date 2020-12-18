@@ -13,6 +13,7 @@ import os
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
+from parlai.crowdsourcing.tasks.model_chat import run
 from parlai.crowdsourcing.tasks.model_chat.utils import get_context_generator
 
 
@@ -23,8 +24,14 @@ def save_image_contexts():
 
     print('Creating teacher to loop over images and personalities.')
     task_parser = ParlaiParser(add_parlai_args=True, add_model_args=False)
+    default_image_context_path = os.path.join(
+        os.path.dirname(run.__file__), 'task_config', 'image_contexts.json'
+    )
     task_parser.add_argument(
-        '--image-context-path', type=str, help='Save path for image context file'
+        '--image-context-path',
+        type=str,
+        default=default_image_context_path,
+        help='Save path for image context file',
     )
     task_opt = task_parser.parse_args()
     if task_opt['image_context_path'] is None:

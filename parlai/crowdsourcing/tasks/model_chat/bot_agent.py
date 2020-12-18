@@ -6,6 +6,7 @@
 
 import copy
 import os
+from typing import Dict, List, Optional
 
 from omegaconf import DictConfig
 import parlai.utils.logging as logging
@@ -86,13 +87,20 @@ class TurkLikeAgent:
         self.model_agent.reset()
 
     @staticmethod
-    def get_bot_agents(args: DictConfig, active_models: list, no_cuda=False):
-        # return {}
+    def get_bot_agents(
+        args: DictConfig,
+        active_models: Optional[List[str]] = None,
+        model_opts: Optional[Dict[str, Dict]] = None,
+        no_cuda=False,
+    ):
+        # TODO: docstring
+
         model_overrides = {
             'datatype': 'valid',  # So we don't have to load the optimizer
             'encode_candidate_vecs': True,  # For pulling from fixed list cands
             'interactive_mode': True,
             'model_parallel': args.blueprint.task_model_parallel,
+            'skip_generation': False,
         }
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU
@@ -102,43 +110,62 @@ class TurkLikeAgent:
                 'WARNING: MTurk task has no_cuda FALSE. Models will run on GPU. Will not work if loading many models at once.'
             )
 
-        # Get the model nicknames from common folder and use them to load opts
-        # from file, and add options specified in MODEL_CONFIGS
-        base_model_folder = os.path.expanduser(args.blueprint.base_model_folder)
-        models_available = []
-        for obj in os.listdir(base_model_folder):
-            if os.path.isdir(os.path.join(base_model_folder, obj)):
-                models_available.append(obj)
+        if active_models is not None:
+
+            # Get the model nicknames from common folder and use them to load opts
+            # from file
+            base_model_folder = os.path.expanduser(args.blueprint.base_model_folder)
+            models_available = []
+            for obj in os.listdir(base_model_folder):
+                if os.path.isdir(os.path.join(base_model_folder, obj)):
+                    models_available.append(obj)
+            print(
+                f'Found {len(models_available)} models available for Mturk task in {base_model_folder}: {models_available}'
+            )
+
+            all_model_opts = {}
+            print(f'Active models to use are: {active_models}')
+            for model_nickname in active_models:
+                model_overrides_copy = copy.deepcopy(model_overrides)
+                model_path = os.path.join(base_model_folder, model_nickname, 'model')
+                if os.path.isfile(model_path):
+                    model_opt = {
+                        'model_file': model_path,
+                        'override': model_overrides_copy,
+                    }
+                else:
+                    model_opt_path = model_path + '.opt'
+                    print(
+                        f'Model file for model {model_nickname} does not exist! Instead, '
+                        f'loading opt from {model_opt_path}.'
+                    )
+                    model_opt = Opt.load(model_opt_path)
+                    if 'override' not in model_opt:
+                        model_opt['override'] = {}
+                    model_opt['override'].update(model_overrides_copy)
+                all_model_opts[model_nickname] = model_opt
+
+            final_model_opts = {m: all_model_opts[m] for m in active_models}
+
+        elif model_opts is not None:
+
+            final_model_opts = {}
+            for name, opt in model_opts.items():
+                model_overrides_copy = copy.deepcopy(model_overrides)
+                if 'override' not in opt:
+                    opt['override'] = {}
+                opt['override'].update(model_overrides_copy)
+                final_model_opts[name] = opt
+
+        else:
+
+            raise ValueError('Either active_models or model_opts must be supplied!')
+
         print(
-            f'Found {len(models_available)} models available for Mturk task in {base_model_folder}: {models_available}'
-        )
-
-        all_model_opts = {}
-        print(f'Active models to use are: {active_models}')
-        for model_nickname in active_models:
-            model_overrides_copy = copy.deepcopy(model_overrides)
-            model_path = os.path.join(base_model_folder, model_nickname, 'model')
-            if os.path.isfile(model_path):
-                model_opt = {'model_file': model_path, 'override': model_overrides_copy}
-            else:
-                model_opt_path = model_path + '.opt'
-                print(
-                    f'Model file for model {model_nickname} does not exist! Instead, '
-                    f'loading opt from {model_opt_path}.'
-                )
-                model_opt = Opt.load(model_opt_path)
-                if 'override' not in model_opt:
-                    model_opt['override'] = {}
-                model_opt['override'].update(model_overrides_copy)
-            all_model_opts[model_nickname] = model_opt
-
-        active_model_opt_dicts = {m: all_model_opts[m] for m in active_models}
-
-        print(
-            f'Got {len(list(active_model_opt_dicts.keys()))} active models with keys: {active_model_opt_dicts.keys()}.'
+            f'Got {len(list(final_model_opts.keys()))} active models with keys: {final_model_opts.keys()}.'
         )
         shared_bot_agents = {}
-        for model_name, model_opt in active_model_opt_dicts.items():
+        for model_name, model_opt in final_model_opts.items():
             print('\n\n--------------------------------')
             print(f'model_name: {model_name}, opt_dict: {model_opt}')
             copied_opt_dict = copy.deepcopy(model_opt)

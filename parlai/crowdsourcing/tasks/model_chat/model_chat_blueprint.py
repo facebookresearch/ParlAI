@@ -88,9 +88,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     max_resp_time: int = field(
         default=180, metadata={"help": "time limit for entering a dialog message"}
     )
-    base_model_folder: str = field(
-        default=MISSING, metadata={"help": "base folder for loading model files from"}
-    )
     chat_data_folder: str = field(
         default=MISSING,
         metadata={"help": "Folder in which to save collected conversation data"},
@@ -286,6 +283,9 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
             "choices": ['hi', 'bst'],
         },
     )
+    base_model_folder: str = field(
+        default=MISSING, metadata={"help": "base folder for loading model files from"}
+    )
     conversations_needed_string: str = field(
         default=MISSING,
         metadata={
@@ -451,9 +451,9 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
             "help": "Path to JSON containing images and the context information that goes with each one"
         },
     )
-    models: str = field(
-        default=MISSING,
-        metadata={"help": "Comma-separated list of models to collect conversations on"},
+    model_opt_path: str = field(
+        default="${mephisto.blueprint.task_config_path}/image_model_opts.json",
+        metadata={"help": "Path to JSON of opts for each model"},
     )
     num_conversations: int = field(
         default=10, metadata={'help': 'The number of conversations to collect'}
@@ -491,6 +491,10 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
         Ensure that arguments are properly configured to launch this task.
         """
         super().assert_task_args(args=args, shared_state=shared_state)
+        image_context_path = os.path.expanduser(args.blueprint.image_context_path)
+        assert os.path.exists(
+            image_context_path
+        ), f"The image context path {image_context_path} doesn't exist!"
 
     def __init__(
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"

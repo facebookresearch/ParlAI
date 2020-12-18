@@ -2,13 +2,11 @@
 mephisto:
   blueprint:
     block_qualification: model_image_chat_block
-    base_model_folder: ~/ParlAI/data/models/
     chat_data_folder: ~/ParlAI/data/crowdsourcing/model_image_chat/
     num_turns: 6
-    task_model_parallel: true
+    task_model_parallel: false
     check_acceptability: false
     include_persona: false
-    models: "dodecadialogue/image_chat_ft"
     num_conversations: 10
   task:
     allowed_concurrent: 1

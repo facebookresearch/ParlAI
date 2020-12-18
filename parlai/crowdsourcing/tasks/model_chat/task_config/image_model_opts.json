@@ -1,0 +1,17 @@
+{
+      "dodeca_ic": {
+        "model": "image_seq2seq",
+        "model_file": "zoo:dodecadialogue/image_chat_ft/model",
+        "override": {
+            "model": "image_seq2seq",
+            "beam_block_ngram": 3,
+            "beam_context_block_ngram": 3,
+            "beam_min_length": 5,
+            "beam_size": 10,
+            "inference": "beam",
+            "include_image_token": false,
+            "data_parallel": false,
+            "fp16": true
+        }
+    }
+}
