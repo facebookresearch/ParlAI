@@ -27,15 +27,15 @@ def _path(opt, test_type):
         if test_type == 'vanilla':
             suffix = "test"
         else:
-            suffix = test_type      # human-bot, act, or rct
+            suffix = test_type  # human-bot, act, or rct
     else:
         raise RuntimeError('Not valid datatype.')
 
-    data_directory = os.path.join(opt['datapath'], DECODE, DECODE_PREFIX + DECODE_VERSION)
-
-    data_path = os.path.join(
-        data_directory, suffix + '.jsonl'
+    data_directory = os.path.join(
+        opt['datapath'], DECODE, DECODE_PREFIX + DECODE_VERSION
     )
+
+    data_path = os.path.join(data_directory, suffix + '.jsonl')
 
     return data_path
 
@@ -82,7 +82,11 @@ class DecodeTeacher(DialogTeacher):
                             turn['labels'] = 'contradiction'
                         else:
                             turn['labels'] = 'non_contradiction'
-                        turn['auxiliary'] = {"contradiction_indices": data_item['aggregated_contradiction_indices']}
+                        turn['auxiliary'] = {
+                            "contradiction_indices": data_item[
+                                'aggregated_contradiction_indices'
+                            ]
+                        }
 
                     yield turn, new_episode
 

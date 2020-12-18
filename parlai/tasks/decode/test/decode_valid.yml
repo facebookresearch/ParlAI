@@ -1,0 +1,49 @@
+acts:
+- - agent_id: 0
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: The other weekend I really wanted to go out,  but I realized I don't have
+      any good friends left.
+    turn_context: ''
+    turn_id: 0
+- - agent_id: 1
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: That is a bad realization to come to.  Where did they all go?
+    turn_context: ''
+    turn_id: 1
+- - agent_id: 0
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: Well I used to hang out with a lot of my coworkers but I left that job.
+      And just kind of drifted away from everyone else. I definitely need to find
+      a new sport or something and make new friends.
+    turn_context: ''
+    turn_id: 2
+- - agent_id: 1
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: Yeah,  that is tough.  Once you get to a certain age you have to work pretty
+      hard to meet people.  Maybe you could join a softball league,  that's what I
+      did.
+    turn_context: ''
+    turn_id: 3
+- - agent_id: 0
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: I would join softball league, how was your experience there? did you make
+      some friends there?
+    turn_context: ''
+    turn_id: 4
+num_episodes: 4026
+num_examples: 32764
