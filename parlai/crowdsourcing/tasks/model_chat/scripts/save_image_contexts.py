@@ -12,7 +12,7 @@ import json
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
-from parlai.tasks.blended_skill_talk.agents import ContextGenerator
+from parlai.crowdsourcing.tasks.model_chat.utils import get_context_generator
 
 
 def save_image_contexts():
@@ -46,12 +46,7 @@ def save_image_contexts():
     print(f'{len(image_names):d} sets of images and personalities looped over.')
 
     print('Picking out a context to use for each image.')
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    context_opt = argparser.parse_args()
-    context_generator = ContextGenerator(context_opt, datatype='test', seed=0)
-    # We pull from the test set so that the model can't regurgitate memorized
-    # conversations
+    context_generator = get_context_generator()
     image_names_to_context_info = {
         image_name: context_generator.get_context() for image_name in image_names
     }

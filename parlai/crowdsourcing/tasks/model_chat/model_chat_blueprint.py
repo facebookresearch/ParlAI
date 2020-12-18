@@ -22,9 +22,8 @@ from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
 )
 from omegaconf import DictConfig, MISSING
 
-from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
-from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
+from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack, get_context_generator
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 if TYPE_CHECKING:
@@ -391,20 +390,11 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
         shared_state.run_statistics = run_statistics
 
-        # Context need parlai options
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        if len(args.blueprint.override_opt) > 0:
-            argparser.set_params(**args.blueprint.override_opt)
-        opt = argparser.parse_args([])
-
         if (
             args.blueprint.include_persona
             or args.blueprint.conversation_start_mode == 'bst'
         ):
-            context_generator = ContextGenerator(opt, datatype='test', seed=0)
-            # We pull from the test set so that the model can't regurgitate
-            # memorized conversations
+            context_generator = get_context_generator(args.blueprint.override_opt)
         else:
             context_generator = None
         shared_state.context_generator = context_generator

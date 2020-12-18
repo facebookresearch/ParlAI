@@ -18,6 +18,8 @@ from PIL import Image
 
 from parlai.core.message import Message
 from parlai.core.metrics import Metric
+from parlai.core.params import ParlaiParser
+from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
 
 class Compatibility(object):
@@ -334,6 +336,23 @@ class ImageStack:
                 self.pointer = stack_idx
         else:
             raise ValueError(f'Worker {worker} not found in stack {stack_idx:d}!')
+
+
+def get_context_generator(
+    override_opt: Optional[Dict[str, Any]] = None
+) -> ContextGenerator:
+    """
+    Return an object to return BlendedSkillTalk-style context info (personas, etc.).
+    """
+    argparser = ParlaiParser(False, False)
+    argparser.add_parlai_data_path()
+    if override_opt is not None:
+        argparser.set_params(**override_opt)
+    opt = argparser.parse_args([])
+    context_generator = ContextGenerator(opt, datatype='test', seed=0)
+    # We pull from the test set so that the model can't regurgitate
+    # memorized conversations
+    return context_generator
 
 
 def get_image_src(path: str) -> str:
