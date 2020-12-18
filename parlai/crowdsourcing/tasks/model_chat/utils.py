@@ -4,13 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import base64
 import datetime
 import json
 import os
 import random
 import threading
 import time
+from io import BytesIO
 from typing import Any, Dict, Optional, Tuple
+
+from PIL import Image
 
 from parlai.core.message import Message
 from parlai.core.metrics import Metric
@@ -68,7 +72,7 @@ class ImageStack:
         self.evals_per_combo = opt['evals_per_image_model_combo']
 
         # Paths
-        self.images_and_contexts_path = opt['images_and_contexts_path']
+        self.image_context_path = opt['image_context_path']
         self.save_folder = opt['stack_folder']
         self.save_name = 'stack.json'
         self.backup_save_folder = os.path.join(self.save_folder, '_stack_backups')
@@ -211,7 +215,7 @@ class ImageStack:
 
     def build_stack(self) -> int:
         print('[ Building stack from original file... ]')
-        with open(self.images_and_contexts_path, 'r') as f:
+        with open(self.image_context_path, 'r') as f:
             image_names_to_image_info = json.load(f)
 
         self.stack = []
@@ -330,3 +334,16 @@ class ImageStack:
                 self.pointer = stack_idx
         else:
             raise ValueError(f'Worker {worker} not found in stack {stack_idx:d}!')
+
+
+def get_image_src(path: str) -> str:
+    """
+    Given the path to an image, return a string of the encoded image that can be used as
+    the src field in an HTML img tag.
+    """
+    img = Image.open(path).convert('RGB')
+    buffered = BytesIO()
+    img.save(buffered, format='JPEG')
+    encoded = str(base64.b64encode(buffered.getvalue()).decode('ascii'))
+    image_src = 'data:image/jpeg;base64,' + encoded
+    return image_src

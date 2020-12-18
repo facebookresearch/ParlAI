@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Any, Dict
+
 from parlai.crowdsourcing.tasks.model_chat.worlds import ModelChatWorld, get_bot_worker
 
 
@@ -19,6 +21,14 @@ class ModelImageChatWorld(ModelChatWorld):
         self.image_idx = image_idx
 
         # {{{TODO}}}
+
+    def get_final_chat_data(self) -> Dict[str, Any]:
+        """
+        Add image-specific fields to the final chat data.
+        """
+        data = super().get_final_chat_data()
+        data['image_idx'] = self.image_idx
+        return data
 
     def shutdown(self):
 

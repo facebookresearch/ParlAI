@@ -455,8 +455,8 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
             "help": "The number of HITs to perform per combination of image and model"
         },
     )
-    images_and_contexts_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/images_and_contexts.json",
+    image_context_path: str = field(
+        default="${mephisto.blueprint.task_config_path}/image_context.json",
         metadata={
             "help": "Path to JSON containing images and the context information that goes with each one"
         },
@@ -512,7 +512,7 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
         # combinations of images and models
         image_opt = {
             'evals_per_image_model_combo': args.blueprint.evals_per_image_model_combo,
-            'images_and_contexts_path': args.blueprint.images_and_contexts_path,
+            'image_context_path': args.blueprint.image_context_path,
             'models': self.models,
             'stack_folder': args.blueprint.stack_folder,
         }
