@@ -865,7 +865,10 @@ class TorchAgent(ABC, Agent):
         Made easily overridable for special cases.
         """
         if self.opt.get('special_tok_lst'):
-            return self.opt['special_tok_lst'].split(',')
+            special_tok_lst = self.opt['special_tok_lst'].split(',')
+            # sort the tokens by length
+            special_tok_lst = sorted(special_tok_lst, key=len, reverse=True)
+            return special_tok_lst
         return []
 
     @abstractmethod
