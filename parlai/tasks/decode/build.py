@@ -13,16 +13,6 @@ DECODE_PREFIX = 'decode_'
 DECODE_VERSION = 'v0.1'
 
 
-# RESOURCES = [
-#     DownloadableFile(
-#         'https://drive.google.com/file/d/1z7UZ56Pt0VJYs_KzqDmOxBcoj-XbV7vJ/view?usp=sharing',
-#         'decode_v0.1.zip',
-#         'c25bba2d48f3930e955f6bf1403a9a6fc02cc34617145b6bb4fbea839e0fa022',
-#         True,
-#         True,
-#     )
-# ]
-
 RESOURCES = [
     DownloadableFile(
         'https://sharenlpfile-01.s3.amazonaws.com/data/decode_v0.1.zip',
