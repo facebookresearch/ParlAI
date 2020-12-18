@@ -325,7 +325,7 @@ class ConversionScript(ParlaiScript):
         state_dict = state['model']
         return_dict = OrderedDict()
         # 0. For BART-base, we truncate the embeddings
-        # See issues: https://github.com/pytorch/fairseq/issues/2242 for more details
+        # See issue: https://github.com/pytorch/fairseq/issues/2242 for more details
         if opt['model'] == 'bart/base':
             for key in ['encoder.embed_tokens.weight', 'decoder.embed_tokens.weight']:
                 orig_value = state_dict[key]

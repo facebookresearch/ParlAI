@@ -248,7 +248,8 @@ class BartBaseAgent(BartAgent):
     """
     BART Base Agent.
 
-    Relies on the BART model implemented in fairseq.
+    Relies on the BART model implemented in fairseq. Compared to the BART large model (`BartAgent`),
+    it has only 6 encoder/decoder layer and an embedding size of 768.
     """
 
     @staticmethod
