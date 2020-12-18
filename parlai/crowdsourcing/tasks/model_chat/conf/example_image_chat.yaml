@@ -9,6 +9,7 @@ mephisto:
     check_acceptability: false
     include_persona: false
     models: "dodecadialogue/image_chat_ft"
+    num_conversations: 10
   task:
     allowed_concurrent: 1
     maximum_units_per_worker: 3

@@ -164,28 +164,6 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint):
         """
         Ensure that arguments are properly configured to launch this task.
         """
-        if len(shared_state.conversations_needed) == 0:
-            assert (
-                args.blueprint.get('conversations_needed_string', None) is not None
-            ), (
-                "Must provide a string of needed conversations per model if not providing "
-                "a conversations needed dict"
-            )
-            try:
-                conversations_needed = {}
-                parts = args.blueprint.conversations_needed_string.split(',')
-                for part in parts:
-                    model_name, num_string = part.split(':')
-                    conversations_needed[model_name] = int(num_string)
-            except Exception as e:
-                raise Exception(
-                    "Could not create conversations needed dict from given string. "
-                    f"Error was {e}.\n"
-                    "Be sure the format is like modelA:50,modelB:20"
-                )
-        else:
-            conversations_needed = shared_state.conversations_needed
-        args.blueprint.num_conversations = sum(conversations_needed.values())
         super().assert_task_args(args, shared_state)
         assert (
             args.blueprint.get("task_description_file", None) is not None
@@ -208,14 +186,6 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint):
             assert os.path.exists(
                 full_path
             ), f"Target annotation config path {full_path} doesn't exist"
-
-            assert (
-                args.blueprint.get("onboard_task_data_path", None) is not None
-            ), "Must provide an onboarding data file"
-            full_path = os.path.expanduser(args.blueprint.onboard_task_data_path)
-            assert os.path.exists(
-                full_path
-            ), f"Target onboarding data path {full_path} doesn't exist"
 
     def __init__(
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
@@ -402,6 +372,52 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
     SharedStateClass = SharedModelChatTaskState
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
+    @classmethod
+    def assert_task_args(
+        cls, args: "DictConfig", shared_state: "SharedTaskState"
+    ) -> None:
+        """
+        Ensure that arguments are properly configured to launch this task.
+        """
+        if len(shared_state.conversations_needed) == 0:
+            assert (
+                args.blueprint.get('conversations_needed_string', None) is not None
+            ), (
+                "Must provide a string of needed conversations per model if not providing "
+                "a conversations needed dict"
+            )
+            try:
+                conversations_needed = {}
+                parts = args.blueprint.conversations_needed_string.split(',')
+                for part in parts:
+                    model_name, num_string = part.split(':')
+                    conversations_needed[model_name] = int(num_string)
+            except Exception as e:
+                raise Exception(
+                    "Could not create conversations needed dict from given string. "
+                    f"Error was {e}.\n"
+                    "Be sure the format is like modelA:50,modelB:20"
+                )
+        else:
+            conversations_needed = shared_state.conversations_needed
+        args.blueprint.num_conversations = sum(conversations_needed.values())
+        super().assert_task_args(args=args, shared_state=shared_state)
+
+        if args.blueprint.get("annotations_config_path", "") != "":
+            assert (
+                args.blueprint.get("onboard_task_data_path", None) is not None
+            ), "Must provide an onboarding data file"
+            full_path = os.path.expanduser(args.blueprint.onboard_task_data_path)
+            assert os.path.exists(
+                full_path
+            ), f"Target onboarding data path {full_path} doesn't exist"
+
+    def __init__(
+        self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
+    ):
+
+        super().__init__(task_run=task_run, args=args, shared_state=shared_state)
+
 
 @dataclass
 class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
@@ -427,9 +443,10 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
     )
     models: str = field(
         default=MISSING,
-        metadata={
-            "help": "Comma-separated list of models to collect conversations on"
-        },
+        metadata={"help": "Comma-separated list of models to collect conversations on"},
+    )
+    num_conversations: int = field(
+        default=10, metadata={'help': 'The number of conversations to collect'}
     )
     stack_folder: str = field(
         default=os.path.join(get_task_path(), 'stack_folder'),
@@ -455,6 +472,15 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
     ArgsClass = ModelImageChatBlueprintArgs
     SharedStateClass = SharedModelImageChatTaskState
     BLUEPRINT_TYPE = IMAGE_CHAT_BLUEPRINT_TYPE
+
+    @classmethod
+    def assert_task_args(
+        cls, args: "DictConfig", shared_state: "SharedTaskState"
+    ) -> None:
+        """
+        Ensure that arguments are properly configured to launch this task.
+        """
+        super().assert_task_args(args=args, shared_state=shared_state)
 
     def __init__(
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
