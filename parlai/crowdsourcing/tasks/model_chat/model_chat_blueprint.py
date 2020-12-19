@@ -60,6 +60,7 @@ class SharedModelChatTaskState(SharedBaseModelChatTaskState):
 
 
 class SharedModelImageChatTaskState(SharedBaseModelChatTaskState):
+    image_contexts: List[Dict[str, Any]] = None
     image_stack: ImageStack = None
 
 
@@ -102,9 +103,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
             "help": "Check worker's responses against several metrics of acceptability"
         },
     )
-    include_persona: bool = field(
-        default=False, metadata={"help": "Show persona to the bot"}
-    )
     context_seed: int = field(
         default=MISSING,
         metadata={"help": "Set seed for pulling the context info (for testing)"},
@@ -140,7 +138,7 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     override_opt: Dict[str, Any] = field(
         default_factory=dict,
         metadata={
-            "help": "Additional args to pass to initialize the models and persona generator "
+            "help": "Additional args to pass to initialize the context generator "
             "in order to override the parlai parser defaults."
         },
     )
@@ -229,7 +227,6 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
                 'max_resp_time': args.blueprint.max_resp_time,
                 'is_sandbox': args.provider.requester_name == 'MOCK_REQUESTER',
                 'check_acceptability': args.blueprint.check_acceptability,
-                'include_persona': args.blueprint.include_persona,
                 'chat_data_folder': args.blueprint.chat_data_folder,
             }
         )
@@ -284,6 +281,9 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
             "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
             "choices": ['hi', 'bst'],
         },
+    )
+    include_persona: bool = field(
+        default=False, metadata={"help": "Show persona to the bot"}
     )
     base_model_folder: str = field(
         default=MISSING, metadata={"help": "base folder for loading model files from"}
@@ -422,6 +422,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'context_generator': context_generator,
                 'statistics_condition': statistics_condition,
                 'conversation_start_mode': args.blueprint.conversation_start_mode,
+                'include_persona': args.blueprint.include_persona,
             }
         )
 
@@ -509,12 +510,15 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
 
+        with open(args.blueprint.image_context_path, 'rb') as f:
+            shared_state.image_contexts = pickle.load(f)
+
         # Create the stack to keep track of how many workers have seen which
         # combinations of images and models
         image_opt = {
             'evals_per_image_model_combo': args.blueprint.evals_per_image_model_combo,
-            'image_context_path': args.blueprint.image_context_path,
-            'models': self.models,
+            'num_images': len(shared_state.image_contexts),
+            'models': list(shared_state.shared_models.keys()),
             'stack_folder': args.blueprint.stack_folder,
         }
         shared_state.image_stack = ImageStack(image_opt)
@@ -522,6 +526,6 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
         shared_state.world_opt.update({'image_stack': shared_state.image_stack})
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
-        with open(args.blueprint.model_opt_path, 'rb') as f:
-            model_opts = pickle.load(f)
+        with open(args.blueprint.model_opt_path) as f:
+            model_opts = json.load(f)
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=model_opts)

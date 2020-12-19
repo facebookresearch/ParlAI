@@ -59,22 +59,21 @@ class Compatibility(object):
 
 class ImageStack:
     """
-    Stack of images and contexts to run through.
+    Represents a stack of images to run through.
 
-    Each element of the stack contains the image to show, context information such as
-    persona strings and BlendedSkillTalk-style seed utterances, and a list of the
-    workers who have seen the given pairing of image+context for a given model. Stack
-    ensures that no worker will see the same image+context twice.
+    Each element of the stack contains a list of the workers who have seen the given
+    image for a given model. The stack ensures that no worker will see the same
+    image twice.
     """
 
     def __init__(self, opt):
 
         # Input params
+        self.num_images = opt['num_images']
         self.models = opt['models']
         self.evals_per_combo = opt['evals_per_image_model_combo']
 
         # Paths
-        self.image_context_path = opt['image_context_path']
         self.save_folder = opt['stack_folder']
         self.save_name = 'stack.json'
         self.backup_save_folder = os.path.join(self.save_folder, '_stack_backups')
@@ -104,7 +103,7 @@ class ImageStack:
 
         # Make sure that the set of models is correct (i.e. in case we are loading in an
         # older obsolete version of the stack)
-        if set(self.stack[0]['workers_by_model'].keys()) == set(self.models):
+        if set(self.stack[0].keys()) == set(self.models):
             return pointer
         else:
             input_ = input(
@@ -148,7 +147,7 @@ class ImageStack:
         """
 
         # Stretch the stack
-        existing_models = set(self.stack[0]['workers_by_model'].keys())
+        existing_models = set(self.stack[0].keys())
         new_models = set(self.models)
         models_to_add = new_models.difference(existing_models)
         models_to_remove = existing_models.difference(new_models)
@@ -156,19 +155,18 @@ class ImageStack:
         print('Models to add: ', models_to_add)
         print('Models to remove: ', models_to_remove)
         models_to_add_list = sorted(list(models_to_add))
-        for stack_entry in self.stack:
-            orig_workers_by_model = stack_entry['workers_by_model']
+        for stack_idx, orig_workers_by_model in enumerate(self.stack):
             surviving_workers_by_model = {
                 model: workers
                 for model, workers in orig_workers_by_model.items()
                 if model in new_models
             }
             new_workers_by_model = {model: [] for model in models_to_add_list}
-            stack_entry['workers_by_model'] = {
+            self.stack[stack_idx] = {
                 **surviving_workers_by_model,
                 **new_workers_by_model,
             }
-            assert set(stack_entry['workers_by_model']) == new_models
+            assert set(self.stack[stack_idx]) == new_models
 
         pointer = self.get_pointer()
 
@@ -205,31 +203,18 @@ class ImageStack:
             with open(path, 'w') as f:
                 f.write(data)
 
-    def _need_more_convos(self, image_info: Dict[str, Any]) -> bool:
+    def _need_more_convos(self, workers_by_model: Dict[str, list]) -> bool:
         """
-        Returns True if, for the given pairing of image+context (`image_info`), we
-        need at least 1 more conversation with any of the models that we're testing.
+        Returns True if, for the given image, we need at least 1 more conversation with
+        any of the models that we're testing.
         """
         return any(
-            len(workers) < self.evals_per_combo
-            for workers in image_info['workers_by_model'].values()
+            len(workers) < self.evals_per_combo for workers in workers_by_model.values()
         )
 
     def build_stack(self) -> int:
-        print('[ Building stack from original file... ]')
-        with open(self.image_context_path, 'r') as f:
-            image_names_to_image_info = json.load(f)
-
-        self.stack = []
-        for image_name, image_info in image_names_to_image_info.items():
-            self.stack.append(
-                {
-                    'image_filename': image_name,
-                    'workers_by_model': {model: [] for model in self.models},
-                    **image_info,
-                }
-            )
-
+        print('[ Building stack... ]')
+        self.stack = [{model: [] for model in self.models}] * self.num_images
         return 0  # The pointer starts at 0
 
     def build_or_load_stack(self) -> int:
@@ -249,45 +234,43 @@ class ImageStack:
         else:
             return None
 
-    def get_next_image(self, worker: str) -> Tuple[int, Dict[str, Any], str, bool]:
+    def get_next_image(self, worker: str) -> Tuple[int, str, bool]:
         """
         Returns the image name, persona strings, model name, etc. for the next HIT.
 
-        Finds a pairing of image+context that we don't currently have enough
-        conversations for, ensuring that the given worker will not have had a
-        conversation employing this image+context before using any model. Returns
-        the index of the given input+context, the context info itself, the name of the
-        model under which to have a conversation, and a flag indicating whether
-        there are no more image+context pairs to show this worker.
+        Finds an image that we don't currently have enough conversations for, ensuring
+        that the given worker will not have had a conversation employing this image
+        before, with any model. Returns the index of the given image, the name of the
+        model with which to have a conversation, and a flag indicating whether there are
+        no more image pairs to show this worker.
         """
         with self.next_image_lock:
             no_more_work = False
 
             # Find the next entry in the stack that needs more workers
-            image_info = self._get_stack_entry(self.pointer)
-            while image_info is not None and not self._need_more_convos(image_info):
+            workers_by_model = self._get_stack_entry(self.pointer)
+            while workers_by_model is not None and not self._need_more_convos(
+                workers_by_model
+            ):
                 self.pointer += 1
                 print(f'Pointer at {self.pointer}')
-                image_info = self._get_stack_entry(self.pointer)
+                workers_by_model = self._get_stack_entry(self.pointer)
 
             # Find the next entry in the stack that the worker hasn't completed before
             worker_pointer = self.pointer
-            while image_info is not None and (
-                any(
-                    worker in workers
-                    for workers in image_info['workers_by_model'].values()
-                )
-                or not self._need_more_convos(image_info)
+            while workers_by_model is not None and (
+                any(worker in workers for workers in workers_by_model.values())
+                or not self._need_more_convos(workers_by_model)
             ):
                 print(f'Pointer for worker {worker} at {self.pointer}')
                 worker_pointer += 1
-                image_info = self._get_stack_entry(worker_pointer)
+                workers_by_model = self._get_stack_entry(worker_pointer)
 
             # Deal with the case in which no entry is suitable for the worker
-            if image_info is None:
+            if workers_by_model is None:
                 print(f'WARNING: getting a random stack for worker {worker}.')
                 worker_pointer = random.randrange(len(self.stack))
-                image_info = self.stack[worker_pointer]
+                workers_by_model = self.stack[worker_pointer]
                 no_more_work = True
                 # We'll want to assign this worker a qualification to prevent more work
 
@@ -297,7 +280,7 @@ class ImageStack:
             # conversations for
             available_models = [
                 model
-                for model, workers in image_info['workers_by_model'].items()
+                for model, workers in workers_by_model.items()
                 if len(workers) < self.evals_per_combo
             ]
             if len(available_models) == 0:
@@ -306,27 +289,22 @@ class ImageStack:
                     f'{worker_pointer:d}. Picking a random model for worker '
                     f'{worker}.'
                 )
-                available_models = list(image_info['workers_by_model'].keys())
+                available_models = list(workers_by_model.keys())
             print(f'Available models: ' + ', '.join(available_models))
             chosen_model = random.choice(available_models)
             print(
                 f'Retrieving stack {worker_pointer:d} for worker {worker} and test '
                 f'case {chosen_model}.'
             )
-            image_info['workers_by_model'][chosen_model].append(worker)
+            workers_by_model[chosen_model].append(worker)
 
-            return worker_pointer, image_info, chosen_model, no_more_work
+            return worker_pointer, chosen_model, no_more_work
 
     def remove_worker_from_stack(self, worker: str, stack_idx: int):
-        if any(
-            worker in workers
-            for workers in self.stack[stack_idx]['workers_by_model'].values()
-        ):
+        if any(worker in workers for workers in self.stack[stack_idx].values()):
             removed = False
             print(f'Removing worker {worker} from stack {stack_idx:d}.')
-            for this_models_workers in self.stack[stack_idx][
-                'workers_by_model'
-            ].values():
+            for this_models_workers in self.stack[stack_idx].values():
                 if worker in this_models_workers:
                     this_models_workers.remove(worker)
                     removed = True

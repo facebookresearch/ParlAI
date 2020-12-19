@@ -6,7 +6,6 @@ mephisto:
     num_turns: 6
     task_model_parallel: false
     check_acceptability: false
-    include_persona: false
     num_conversations: 10
   task:
     allowed_concurrent: 1

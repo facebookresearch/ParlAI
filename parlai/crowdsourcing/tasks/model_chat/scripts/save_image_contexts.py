@@ -22,7 +22,7 @@ def save_image_contexts():
     Save a JSON of images and associated contexts for the model image chat task.
     """
 
-    print('Creating teacher to loop over images and personalities.')
+    print('Creating teacher to loop over images.')
     task_parser = setup_args()
     default_image_context_path = os.path.join(
         os.path.dirname(run.__file__), 'task_config', 'image_contexts'
@@ -48,7 +48,6 @@ def save_image_contexts():
         image_context = {
             'image_act': teacher_act,
             'context_info': context_generator.get_context(),
-            'image_task': task_opt['task'],
         }
         image_contexts.append(image_context)
     print(f'{len(image_contexts):d} image contexts created.')
