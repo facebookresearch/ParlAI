@@ -4,11 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Save a JSON of images and associated contexts for the model image chat task.
+Save a pickle of images and associated contexts for the model image chat task.
 """
 
-import json
 import os
+import pickle
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
@@ -25,7 +25,7 @@ def save_image_contexts():
     print('Creating teacher to loop over images and personalities.')
     task_parser = setup_args()
     default_image_context_path = os.path.join(
-        os.path.dirname(run.__file__), 'task_config', 'image_contexts.json'
+        os.path.dirname(run.__file__), 'task_config', 'image_contexts'
     )
     task_parser.add_argument(
         '--image-context-path',
@@ -42,7 +42,7 @@ def save_image_contexts():
 
     print('Looping over images and pulling a context for each one.')
     image_contexts = []
-    while not world.epoch_done():
+    for _ in range(task_opt['num_examples']):
         world.parley()
         teacher_act = world.get_acts()[0]
         image_context = {
@@ -54,8 +54,8 @@ def save_image_contexts():
     print(f'{len(image_contexts):d} image contexts created.')
 
     # Save
-    with open(task_opt['image_context_path'], 'w') as f:
-        json.dump(image_contexts, f)
+    with open(task_opt['image_context_path'], 'wb') as f:
+        pickle.dump(image_contexts, f)
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@
 
 import json
 import os
+import pickle
 import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -448,9 +449,9 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         },
     )
     image_context_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/image_contexts.json",
+        default="${mephisto.blueprint.task_config_path}/image_contexts",
         metadata={
-            "help": "Path to JSON containing images and the context information that goes with each one"
+            "help": "Path to pickle file containing images and the context information that goes with each one"
         },
     )
     model_opt_path: str = field(
@@ -521,6 +522,6 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
         shared_state.world_opt.update({'image_stack': shared_state.image_stack})
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
-        with open(args.blueprint.model_opt_path) as f:
-            model_opts = json.load(f)
+        with open(args.blueprint.model_opt_path, 'rb') as f:
+            model_opts = pickle.load(f)
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=model_opts)
