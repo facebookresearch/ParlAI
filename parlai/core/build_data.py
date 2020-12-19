@@ -74,7 +74,8 @@ class DownloadableFile:
                 # remove_dir(dpath)
                 raise AssertionError(
                     f"Checksum for {self.file_name} from \n{self.url}\n"
-                    "does not match the expected checksum. Please try again."
+                    f"does not match the expected checksum:\n{sha256_hash.hexdigest()} != {self.hashcode}"
+                    "\n\nPlease try again."
                 )
             else:
                 logging.debug("Checksum Successful")
@@ -235,7 +236,7 @@ def remove_dir(path):
     shutil.rmtree(path, ignore_errors=True)
 
 
-def untar(path, fname, delete=True):
+def untar(path, fname, delete=True, flatten_tar=False):
     """
     Unpack the given archive file to the same directory.
 
@@ -251,10 +252,10 @@ def untar(path, fname, delete=True):
     if ".zip" in fname:
         return _unzip(path, fname, delete=delete)
     else:
-        return _untar(path, fname, delete=delete)
+        return _untar(path, fname, delete=delete, flatten=flatten_tar)
 
 
-def _untar(path, fname, delete=True):
+def _untar(path, fname, delete=True, flatten=False):
     """
     Unpack the given archive file to the same directory.
 
@@ -281,7 +282,11 @@ def _untar(path, fname, delete=True):
                 # internal file systems will actually create a literal "."
                 # directory, so we gotta watch out for that
                 item_name = item_name[2:]
-            fn = os.path.join(path, item_name)
+            if flatten:
+                # flatten the tar file if there are subdirectories
+                fn = os.path.join(path, os.path.split(item_name)[-1])
+            else:
+                fn = os.path.join(path, item_name)
             logging.debug(f"Extracting to {fn}")
             if item.isdir():
                 PathManager.mkdirs(fn)
@@ -394,7 +399,13 @@ def get_model_dir(datapath):
 
 
 def download_models(
-    opt, fnames, model_folder, version='v1.0', path='aws', use_model_type=False
+    opt,
+    fnames,
+    model_folder,
+    version='v1.0',
+    path='aws',
+    use_model_type=False,
+    flatten_tar=False,
 ):
     """
     Download models into the ParlAI model zoo from a url.
@@ -430,7 +441,7 @@ def download_models(
                 url = path + '/' + fname
             download(url, dpath, fname)
             if '.tgz' in fname or '.gz' in fname or '.zip' in fname:
-                untar(dpath, fname)
+                untar(dpath, fname, flatten_tar=flatten_tar)
         # Mark the data as built.
         mark_done(dpath, version)
 

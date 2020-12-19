@@ -153,6 +153,7 @@ class SelfChatWorld(DialogPartnerWorld):
                 if len(utts) > i:
                     self.acts[i] = utts[i]
                     if hasattr(self.agents[i], 'self_observe'):
+                        self.agents[i].observe({'episode_done': False})
                         self.agents[i].self_observe(self.acts[i])
                 else:
                     self.acts[i] = self.agents[i].act()

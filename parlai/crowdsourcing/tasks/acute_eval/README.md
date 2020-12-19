@@ -20,18 +20,16 @@ following BibTex entry:
 
 # Code Instructions
 
-**NOTE: this code is incompatable with the latest version of Mephisto, beginning with the changes made in [PR #246](https://github.com/facebookresearch/Mephisto/pull/246). This task will be upgraded shortly to regain compatibility with the latest version; in the meantime, please use the last version release of Mephisto prior to that PR, [v0.1](https://github.com/facebookresearch/Mephisto/releases/tag/v0.1).**
-
 Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#installing-parlai) and [Mephisto](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md), follow the instructions below.
 
-The `example_script.py` script is designed to allow you to run this entire task from command line with an invocation like
+The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
-    python parlai/crowdsourcing/tasks/acute_eval/example_script.py \
-    --pairings-filepath parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
+    python parlai/crowdsourcing/tasks/acute_eval/run.py \
+    mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
 
 ## Formatting conversation data
 
-This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format. The path to this file should be passed in as `--pairings-filepath`.
+This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format. The path to this file should be passed in as `mephisto.blueprint.pairings_filepath=${PATH_TO_FILE}`.
 
 This is a template of the expected format with the minimal expected fields:
 
@@ -76,29 +74,19 @@ Note that we assume that "dialogue" consists of strictly alternating turns (e.g.
 
 ## Question phrasing
 
-In our paper, we address the problem of wording the questions and binary choices in order to elicit the highest signal responses. The default question and choices correspond to our highest signal 'engagingness' phrasing, but it's very easy to customize this by changing `extra_args['eval_question'], extra_args['s1_choice'], extra_args['s2_choice']` in `example_script.py`. The special strings `<Speaker 1>` and `<Speaker 2>` are replaced when showing these questions to the user, and the Speaker's utterances in each conversation will be colored to identify that Speaker.
+In our paper, we address the problem of wording the questions and binary choices in order to elicit the highest signal responses. The default question and choices correspond to our highest signal 'engagingness' phrasing, but it's very easy to customize this by changing `eval_question`, `s1_choice`, and `s2_choice` in `conf/example.yaml`. The special strings `<Speaker 1>` and `<Speaker 2>` are replaced when showing these questions to the user, and the Speaker's utterances in each conversation will be colored to identify that Speaker.
 
 
 ## Onboarding tasks
 
 As discussed in the paper, we found that we had better annotation quality if we screened Turkers with an 'onboarding' comparison, consisting of a weak baseline conversation and a human-human conversation. Our code is set up so that this is optional.
 
-By default, `extra_args['block_on_onboarding_fail']` is set to `True`, which means that workers who fail onboarding will be soft-blocked. In other words, they won't be able to see or complete any more hits from you, but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `extra_args['block_qualification']`.
+By default, `block_on_onboarding_fail` in `conf/example.yaml` is set to `true`, which means that workers who fail onboarding will be soft-blocked. In other words, they won't be able to see or complete any more HITs from you, but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `block_qualification`.
 
-By setting `extra_args['onboarding_threshold']`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) that must be answered correctly to pass onboarding.
-
-
-## Other settings
-
-### Task configuration on MTurk
-
-The title, description, and keywords of the task as shown on MTurk default to values in `ARG_STRING` in `example_script.py`. These values are used as follows:
-- `--task-title`: A short and descriptive title about the kind of task that the HIT contains. On the Amazon Mechanical Turk web site, the HIT title appears in search results and everywhere that the HIT is mentioned.
-- `--task-description`: Includes detailed information about the kind of task that the HIT contains. On the Amazon Mechanical Turk web site, the HIT description appears in the expanded view of search results, and in the HIT and assignment screens.
-- `--task-tags`: One or more words or phrases that describe the HIT, separated by commas. On MTurk website, these words are used in searches to find HITs.
-- `--additional-task-description`: Additional text to show in the left-hand pane of the chat window.
+By setting `onboarding_threshold`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) that must be answered correctly to pass onboarding.
 
 
-### CLI arguments
+## YAML and CLI arguments
 
-A comprehensive list of settings specific to ACUTE-Eval can be found in `add_args_to_group()` in `acute_eval_blueprint.py`. For the arguments most likely to be useful for running ACUTE-Eval, see `example_script.py`.
+A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEvalBlueprintArgs` in [`acute_eval_blueprint.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/acute_eval_blueprint.py). For examples of how these arguments can be set in practice, see [`conf/example.yaml`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval/conf/example.yaml). For instance, `additional_task_description` gives additional text to show in the left-hand pane of the chat window.
+

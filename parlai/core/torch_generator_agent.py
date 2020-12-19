@@ -55,7 +55,7 @@ except ImportError:
     nltkbleu = None
 
 try:
-    from fairseq import bleu as fairseq_bleu
+    from fairseq.scoring import bleu as fairseq_bleu
 
 except ImportError:
     fairseq_bleu = None
@@ -481,7 +481,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.beam_block_full_context = opt.get('beam_block_full_context', False)
         self.temperature = opt.get('temperature', 1.0)
         assert self.temperature > 0, '--temperature must be greater than 0'
-        self.output_token_losses = opt.get('verbose', False)
+        self.output_token_losses = opt.get(
+            'verbose', False
+        ) or 'token_losses' in opt.get('display_add_fields', '')
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
         self.beam_block_list: Optional[SearchBlocklist] = None
 
@@ -886,9 +888,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
+            beam_preds_scores, beams = self._generate(batch, self.beam_size, maxlen)
             preds, scores = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
+
+            # bsz x beamsize
+            beam_texts: List[List[Tuple[str, float]]] = []
+            for beam in beams:
+                beam_texts.append([])
+                for tokens, score in beam.get_rescored_finished():
+                    try:
+                        beam_texts[-1].append((self._v2t(tokens), score.item()))
+                    except KeyError:
+                        logging.error("Decoding error: %s", tokens)
+                        continue
 
         cand_choices = None
         # TODO: abstract out the scoring here
@@ -918,7 +931,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
             self._compute_nltk_bleu(batch, text)
-        return Output(text, cand_choices, token_losses=token_losses)
+        retval = Output(text, cand_choices, token_losses=token_losses)
+        if not self.skip_generation:
+            retval.beam_texts = beam_texts
+        return retval
 
     def _treesearch_factory(self, device):
         method = self.opt.get('inference', 'greedy')
@@ -1167,12 +1183,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
-        if self.opt.get('verbose'):
-            for i, beams in enumerate(n_best_beam_preds_scores):
-                for b, (tokens, score) in enumerate(beams):
-                    gen = self._v2t(tokens)
-                    logging.debug(f"Batch[{i:3d}] Beam[{b:3d}]: ({score:4.2f}): {gen}")
-                logging.debug('-')
 
         return beam_preds_scores, beams
 
@@ -1544,10 +1554,10 @@ class TreeSearch(object):
             len(n_best_list) >= 1
         ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
         for (pred, score) in n_best_list:
-            assert (
-                pred == self.eos
-            ).sum() == 1, f'TreeSearch returned a finalized hypo with multiple end tokens \
-            with score {score.item():.2f}'
+            assert (pred == self.eos).sum() == 1, (
+                f'TreeSearch returned a finalized hypo with multiple end tokens '
+                f'with score {score.item():.2f}'
+            )
 
         return n_best_list
 

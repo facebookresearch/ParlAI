@@ -46,6 +46,10 @@ _Deploying the LIGHT game for lifelong learning of models_:
 - **[Deploying Lifelong Open-Domain Dialogue Learning](https://arxiv.org/abs/2008.08076)**
 Kurt Shuster, Jack Urbanek, Emily Dinan, Arthur Szlam, Jason Weston.
 
+_Training situated RL agents on natural language LIGHT quests_:
+
+- **[How to Motivate Your Dragon: Teaching Goal-driven Agents to Speak and Act in Fantasy Worlds](https://arxiv.org/abs/2010.00685)**
+Prithviraj Ammanabrolu, Jack Urbanek, Margaret Li, Arthur Szlam, Tim Rocktaschel, Jason Weston.
 
 ## Datasets
 
@@ -59,6 +63,8 @@ You can view the data or train your own ParlAI agent on the LIGHT tasks with
 An additional WILD dataset featuring 41,131 training episodes of dialogue from [deploying as a game](https://arxiv.org/abs/2008.08076)
 is available, using:
 `-t light_dialog_wild`. 
+
+Data containing annotated quests used in How to Motivate Your Dragon can be found [here](http://parl.ai/downloads/light_project/quests/quest_stems.tar.gz), their completions are available as part of the WILD dataset above, and the ATOMIC-LIGHT dataset can be found [here](http://parl.ai/downloads/light_project/light_atomic/atomic_tuned.tar.gz).
 
 ## Pretrained Models
 

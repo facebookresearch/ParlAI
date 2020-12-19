@@ -134,6 +134,10 @@ tmp/
 # Heroku things
 heroku-cli-*
 *.db
+# Hydra
+outputs/
+# Mephisto
+_generated/
 
 # IntelliJ IDEA
 .idea
@@ -144,3 +148,6 @@ heroku-cli-*
 
 # mypy cache
 .mypy_cache
+
+# npm compilation
+crowdsourcing/**/package-lock.json

@@ -34,7 +34,7 @@ except ImportError:
     nltkbleu = None
 
 try:
-    from fairseq import bleu as fairseqbleu
+    from fairseq.scoring import bleu as fairseqbleu
 except ImportError:
     fairseqbleu = None
 
@@ -641,6 +641,16 @@ class Metrics(object):
 
     def share(self):
         return {'data': self._data}
+
+    def add_metrics(self, other: "Metrics") -> None:
+        """
+        Aggregate another Metrics objects metrics into this one.
+
+        Note that it is assumed that the keys for metrics are disjoint between Metrics
+        objects.
+        """
+        for k, v in other._data.items():
+            self.add(k, v)
 
 
 class TeacherMetrics(Metrics):

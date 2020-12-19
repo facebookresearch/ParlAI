@@ -40,6 +40,7 @@ def print_git_commit():
         return
     root = os.path.dirname(os.path.dirname(parlai.__file__))
     internal_root = os.path.join(root, 'parlai_internal')
+    fb_root = os.path.join(root, 'parlai_fb')
     try:
         git_ = git.Git(root)
         current_commit = git_.rev_parse('HEAD')
@@ -53,6 +54,15 @@ def print_git_commit():
         git_ = git.Git(internal_root)
         internal_commit = git_.rev_parse('HEAD')
         logging.info(f'Current internal commit: {internal_commit}')
+    except git.GitCommandNotFound:
+        pass
+    except git.GitCommandError:
+        pass
+
+    try:
+        git_ = git.Git(fb_root)
+        fb_commit = git_.rev_parse('HEAD')
+        logging.info(f'Current fb commit: {fb_commit}')
     except git.GitCommandNotFound:
         pass
     except git.GitCommandError:
@@ -643,6 +653,15 @@ class ParlaiParser(argparse.ArgumentParser):
             'Note: Further Command-line arguments override file-based options.',
         )
         parlai.add_argument(
+            '--allow-missing-init-opts',
+            type='bool',
+            default=False,
+            help=(
+                'Warn instead of raising if an argument passed in with --init-opt is '
+                'not in the target opt.'
+            ),
+        )
+        parlai.add_argument(
             '-t', '--task', help='ParlAI task(s), e.g. "babi:Task1" or "babi,cbt"'
         )
         parlai.add_argument(
@@ -729,6 +748,13 @@ class ParlaiParser(argparse.ArgumentParser):
             choices={None, 'full', 'batchsort'},
             help='Use dynamic batching',
         )
+        parlai.add_argument(
+            '-v',
+            '--verbose',
+            dest='verbose',
+            action='store_true',
+            help='Print all messages',
+        )
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):
@@ -738,13 +764,6 @@ class ParlaiParser(argparse.ArgumentParser):
         grp = self.add_argument_group('Distributed Training')
         grp.add_argument(
             '--distributed-world-size', type=int, help='Number of workers.'
-        )
-        grp.add_argument(
-            '--verbose',
-            type='bool',
-            default=False,
-            help='All workers print output.',
-            hidden=True,
         )
         return grp
 
@@ -773,7 +792,7 @@ class ParlaiParser(argparse.ArgumentParser):
             '--init-model',
             default=None,
             type=str,
-            help='load model weights and dict from this file',
+            help='Initialize model weights and dict from this file',
         )
         model_args.add_argument(
             '--dict-class', hidden=True, help='the class of the dictionary agent uses'
@@ -927,9 +946,15 @@ class ParlaiParser(argparse.ArgumentParser):
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
-                raise RuntimeError(
-                    'Trying to set opt from file that does not exist: ' + str(key)
-                )
+                if opt.get('allow_missing_init_opts', False):
+                    logging.warn(
+                        f'The "{key}" key in {optfile} will not be loaded, because it '
+                        f'does not exist in the target opt.'
+                    )
+                else:
+                    raise RuntimeError(
+                        'Trying to set opt from file that does not exist: ' + str(key)
+                    )
             if key not in opt['override']:
                 opt[key] = value
                 opt['override'][key] = value

@@ -1,0 +1,32 @@
+acts:
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - it would be very easy to keep a hash db of message-ids  . sounds good
+    text: i think we could import the old comments via rsync, but from there we need
+      to go via email. I think it is easier than caching the status on each bug and
+      than import bits here and there
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - version?
+    text: ok . perhaps we can ship an ad-hoc apt_prefereces
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - not yet . it is covered by your insurance?
+    text: thanks
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - you will be moving into your house soon? . posted a message recently which explains
+      what to do if the autoconfiguration does not do what you expect
+    text: yes . but it's really not the right time :/ . with a changing house upcoming
+      in 3 weeks
+- - episode_done: false
+    id: ubuntu:multiturn
+    labels:
+    - not particularly urgent, but a policy violation
+    text: 'how urgent is #896?'
+num_episodes: 1999966
+num_examples: 4954588

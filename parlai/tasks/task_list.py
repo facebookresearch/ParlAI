@@ -86,6 +86,18 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1610.00956"},
     },
     {
+        "id": "BotAdversarialDialogue",
+        "display_name": "Bot Adversarial Dialogue ",
+        "task": "bot_adversarial_dialogue",
+        "tags": ["All"],
+        "description": (
+            "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
+            "Datasets consist of classification tasks in which the goal is to "
+            "determine if the utterance is offensive or not given a dialogue context. "
+        ),
+        "links": {"arXiv": "<placeholder>"},
+    },
+    {
         "id": "CBT",
         "display_name": "Children's Book Test (CBT)",
         "task": "cbt",
@@ -1308,5 +1320,37 @@ task_list = [
             "The second version of TaskMaster, containing Wizard-of-Oz dialogues "
             "for task oriented dialogue in 7 domains."
         ),
+    },
+    {
+        "id": "GenderationBiasControlTask",
+        "display_name": "GenderationBiasControlTask",
+        "task": "genderation_bias:controllable_task",
+        "tags": ["All"],
+        "description": (
+            "A teacher that wraps other ParlAI tasks and appends control tokens to the "
+            "text field indicating the presence of gender words in the label(s)."
+        ),
+    },
+    {
+        "id": "MDGender",
+        "display_name": "MD Gender",
+        "task": "md_gender",
+        "tags": ["All"],
+        "description": (
+            "Tasks for the multi-dimensional gender bias classifier training."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2005.00614"},
+    },
+    {
+        "id": "Sensitive Topics Evaluation Topics Valid Teacher",
+        "display_name": "Sensitive Topics Evaluation Topics Valid Teacher",
+        "task": "sensitive_topics_evaluation",
+        "tags": ["All"],
+        "description": (
+            "Task for evaluating a classifier trained to identify conversational messages "
+            "on the following sensitive topics: Politics, Drugs, Medical Advice, Religion, "
+            "Relationships & Dating / NSFW."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2010.07079"},
     },
 ]

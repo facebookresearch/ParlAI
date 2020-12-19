@@ -113,3 +113,91 @@ class TestParty(unittest.TestCase):
         from parlai.scripts.party import Party
 
         Party.main(seconds=0.01)
+
+
+class TestDataStats(unittest.TestCase):
+    def test_simple(self):
+        from parlai.scripts.data_stats import DataStats
+
+        report = DataStats.main(task='integration_tests')
+        assert report['both/avg_utterance_length'] == 4
+        assert report['input/avg_utterance_length'] == 4
+        assert report['labels/avg_utterance_length'] == 4
+        assert report['both/tokens'] == 4000
+        assert report['input/tokens'] == 2000
+        assert report['labels/tokens'] == 2000
+        assert report['both/unique_tokens'] == 7
+        assert report['input/unique_tokens'] == 7
+        assert report['labels/unique_tokens'] == 7
+        assert report['both/unique_utterances'] == 500
+        assert report['input/unique_utterances'] == 500
+        assert report['labels/unique_utterances'] == 500
+        assert report['both/utterances'] == 1000
+        assert report['input/utterances'] == 500
+        assert report['labels/utterances'] == 500
+
+
+class TestProfileTrain(unittest.TestCase):
+    """
+    Test profile_train doesn't crash.
+    """
+
+    def test_cprofile(self):
+        from parlai.scripts.profile_train import ProfileTrain
+
+        with testing_utils.tempdir() as tmpdir:
+            ProfileTrain.main(
+                task='integration_tests:overfit',
+                model='test_agents/unigram',
+                model_file=os.path.join(tmpdir, 'model'),
+                skip_generation=True,
+            )
+
+    def test_torch(self):
+        from parlai.scripts.profile_train import ProfileTrain
+
+        with testing_utils.tempdir() as tmpdir:
+            ProfileTrain.main(
+                task='integration_tests:overfit',
+                model='test_agents/unigram',
+                torch=True,
+                model_file=os.path.join(tmpdir, 'model'),
+                skip_generation=True,
+            )
+
+    @testing_utils.skipUnlessGPU
+    def test_torch_cuda(self):
+        from parlai.scripts.profile_train import ProfileTrain
+
+        with testing_utils.tempdir() as tmpdir:
+            ProfileTrain.main(
+                task='integration_tests:overfit',
+                model='test_agents/unigram',
+                torch_cuda=True,
+                model_file=os.path.join(tmpdir, 'model'),
+                skip_generation=True,
+            )
+
+
+class TestTokenStats(unittest.TestCase):
+    def test_token_stats(self):
+        from parlai.scripts.token_stats import TokenStats
+        from parlai.core.metrics import dict_report
+
+        results = dict_report(TokenStats.main(task='integration_tests:multiturn'))
+        assert results == {
+            'exs': 2000,
+            'max': 16,
+            'mean': 7.5,
+            'min': 1,
+            'p01': 1,
+            'p05': 1,
+            'p10': 1,
+            'p25': 4,
+            'p50': 7.5,
+            'p75': 11.5,
+            'p90': 16,
+            'p95': 16,
+            'p99': 16,
+            'p@128': 1,
+        }

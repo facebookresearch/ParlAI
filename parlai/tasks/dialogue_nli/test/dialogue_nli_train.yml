@@ -1,0 +1,59 @@
+acts:
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - contradiction
+    text: 'Premise: since my dad is a mechanic we had mostly car books .
+
+      Hypothesis: my dad is a priest .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - contradiction
+    text: 'Premise: my locks are chestnut .
+
+      Hypothesis: i am blonde .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: i am only 22 so i would not know .
+
+      Hypothesis: i am twenty two years old .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: i am so sorry ! my parents died as well . they were very unhealthy
+      so i am vegan .
+
+      Hypothesis: i am a vegan .'
+- - episode_done: true
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: i was a college athlete .
+
+      Hypothesis: i am athletic .'
+num_episodes: 310110
+num_examples: 310110

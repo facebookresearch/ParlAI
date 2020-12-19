@@ -18,16 +18,26 @@ teacher for each of the original teachers.
 
 import copy
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from parlai.core.agents import create_agent_from_shared
+from parlai.core.message import Message
 from parlai.core.opt import Opt
-from parlai.core.teachers import create_task_agent_from_taskname, Teacher
+from parlai.core.teachers import (
+    create_task_agent_from_taskname,
+    FixedDialogTeacher,
+    Teacher,
+)
+from parlai.utils.misc import warn_once
 
 
 class AbstractWrapperTeacher(Teacher, ABC):
     """
-    Abstract teacher that will wrap around another teacher and allow for manipulating
-    the fields returned by the inner teacher.
+    Abstract teacher that wraps around another teacher.
+
+    This teacher allows for manipulating the fields returned by the inner teacher, in
+    the abstract self._edit_action() method that is called during self.act(). The inner
+    teacher must subclass FixedDialogTeacher in order to make use of that teacher's
+    .get_orig_action() and .process_action() methods.
     """
 
     @classmethod
@@ -40,7 +50,13 @@ class AbstractWrapperTeacher(Teacher, ABC):
             help='The task whose fields will be manipulated.',
         )
         known_args, _ = parser.parse_known_args(nohelp=True)
-        parser.add_task_args(known_args.wrapper_task)
+        try:
+            parser.add_task_args(known_args.wrapper_task)
+        except RuntimeError:
+            warn_once(
+                'The task name cannot be parsed from command-line arguments! '
+                'Task-specific flags will not be added.'
+            )
 
     def __init__(self, opt: Opt, shared=None):
         if ',' in opt['task']:
@@ -55,13 +71,32 @@ class AbstractWrapperTeacher(Teacher, ABC):
             opt_singletask = copy.deepcopy(opt)
             opt_singletask['task'] = opt['wrapper_task']
             self.task = create_task_agent_from_taskname(opt_singletask)[0]
+        assert isinstance(self.task, FixedDialogTeacher)
 
-    @abstractmethod
     def act(self):
         """
         Act on the previous observation.
+
+        Normally, the inner teacher would call .get_orig_action() and .process_action();
+        here, we insert an ._edit_action() method in between these two methods in order
+        to allow for arbitrary manipulation of the action before it is registered and
+        processed further by the inner teacher.
         """
-        raise NotImplementedError('Abstract class: user must implement act() method')
+        orig_action = self.task.get_orig_action()
+        edited_action = self._edit_action(orig_action)
+        processed_action = self.task.process_action(edited_action)
+        return processed_action
+
+    def _edit_action(self, act: Message) -> Message:
+        """
+        Edit and return the input action.
+
+        The input action typically comes from the inner teacher's .get_orig_action()
+        method.
+        """
+        raise NotImplementedError(
+            'Abstract class: user must implement the _edit_action() method'
+        )
 
     def num_examples(self):
         """
@@ -136,20 +171,19 @@ class LabelToTextTeacher(AbstractWrapperTeacher):
     def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
 
-    def act(self):
+    def _edit_action(self, act: Message) -> Message:
         """
-        Act on the previous observation.
+        Edit the fields of the action manually.
         """
-        act = self.task.act()
-        new_act = copy.deepcopy(act)
-        if 'labels' in act or 'eval_labels' in act:
-            labels_type = 'labels' if 'labels' in act else 'eval_labels'
-            labels = act[labels_type]
+        if 'labels' in act:
+            labels = act['labels']
             if len(labels) != 1:
-                raise ValueError('LabelToTextTeacher can only be used with one label!')
-            new_act.force_set('text', labels[0])
-            new_act.force_set(labels_type, [''])
+                raise ValueError(
+                    f'{type(self).__name__} can only be used with one label!'
+                )
+            act.force_set('text', labels[0])
+            act.force_set('labels', [''])
         else:
             assert 'text' not in act and act['episode_done'] is True
-        new_act.force_set('episode_done', True)  # Clear the dialogue history
-        return new_act
+        act.force_set('episode_done', True)  # Clear the dialogue history
+        return act

@@ -32,7 +32,7 @@ except ImportError:
     __TORCH_AVAILABLE = False
 
 
-DISPLAY_MESSAGE_DEFAULT_FIELDS = {
+SPECIAL_FORMATED_DISPLAY_MESSAGE_FIELDS = {
     'episode_done',
     'id',
     'image',
@@ -42,11 +42,10 @@ DISPLAY_MESSAGE_DEFAULT_FIELDS = {
     'label_candidates',
     'text_candidates',
     'reward',
-    'eval_labels_vec',
-    'text_vec',
-    'label_candidates_vecs',
     'token_losses',
 }
+
+MUST_SHOW_MESSAGE_FIELDS = {'image', 'text', 'labels', 'eval_labels', 'reward'}
 
 
 def maintain_dialog_history(
@@ -312,6 +311,21 @@ class NoLock(object):
         pass
 
 
+class SimpleCounter:
+    """
+    Simple counter object.
+    """
+
+    def __init__(self, value=0):
+        self.val = value
+
+    def increment(self, value=1):
+        self.val += value
+
+    def value(self):
+        return self.val
+
+
 def _report_sort_key(report_key: str) -> Tuple[str, str]:
     """
     Sorting name for reports.
@@ -506,19 +520,20 @@ def _ellipse(lst: List[str], max_display: int = 5, sep: str = '|') -> str:
 def display_messages(
     msgs: List[Dict[str, Any]],
     prettify: bool = False,
-    ignore_fields: str = '',
+    ignore_agent_reply: bool = False,
+    add_fields: str = '',
     max_len: int = 1000,
     verbose: bool = False,
 ) -> Optional[str]:
     """
     Return a string describing the set of messages provided.
 
-    If prettify is true, candidates are displayed using prettytable. ignore_fields
-    provides a list of fields in the msgs which should not be displayed.
+    If prettify is true, candidates are displayed using prettytable. add_fields provides
+    a list of fields in the msgs which should be displayed if verbose is off.
     """
 
     def _token_losses_line(
-        msg: Dict[str, Any], ignore_fields: List[str], space: str
+        msg: Dict[str, Any], fields_to_show: List[str], space: str
     ) -> Optional[str]:
         """
         Displays the loss associated with each token. Can be used for debugging
@@ -528,25 +543,28 @@ def display_messages(
         """
         key = 'token_losses'
         token_losses = msg.get(key, None)
-        if key in ignore_fields or not token_losses:
+        if key not in fields_to_show or not token_losses:
             return None
         # Reduce losses to 4 significant figures
         formatted_tl = ' | '.join(
             [f"{tl[0]} {float('{:.4g}'.format(tl[1]))}" for tl in token_losses]
         )
-        return f'{space}[{key}]: {formatted_tl}'
+        return _pretty_lines(space, key, formatted_tl, 'text2')
+
+    def _pretty_lines(indent_space, field, value, style):
+        line = '{}{} {}'.format(
+            indent_space, colorize('[' + field + ']:', 'field'), colorize(value, style)
+        )
+        return line
 
     lines = []
     episode_done = False
-    ignore_fields_ = ignore_fields.split(',')
+    extra_add_fields_ = add_fields.split(',')
     for index, msg in enumerate(msgs):
-        if msg is None or (index == 1 and 'agent_reply' in ignore_fields_):
+        if msg is None or (index == 1 and ignore_agent_reply):
             # We only display the first agent (typically the teacher) if we
             # are ignoring the agent reply.
             continue
-        agent_id = msg.get('id', '[no id field]')
-        if verbose:
-            lines.append(colorize('[id]:', 'field') + ' ' + colorize(agent_id, 'id'))
 
         if msg.get('episode_done'):
             episode_done = True
@@ -554,47 +572,66 @@ def display_messages(
         space = ''
         if len(msgs) == 2 and index == 1:
             space = '   '
+
+        agent_id = msg.get('id', '[no id field]')
+        if verbose:
+            line = _pretty_lines(
+                indent_space=space, field='id', value=agent_id, style='id'
+            )
+            lines.append(line)
+
         # Only display rewards !=0 as they are confusing in non-RL tasks.
         if msg.get('reward', 0) != 0:
             lines.append(space + '[reward: {r}]'.format(r=msg['reward']))
-        for key in msg:
-            if key not in DISPLAY_MESSAGE_DEFAULT_FIELDS and key not in ignore_fields_:
-                field = colorize('[' + key + ']:', 'field')
-                if type(msg[key]) is list:
-                    value = _ellipse(msg[key], sep='\n  ')
+
+        fields_to_show = []
+        if verbose:
+            fields_to_show = [field for field in msg]
+        else:
+            fields_to_show = [
+                field
+                for field in msg
+                if field in list(MUST_SHOW_MESSAGE_FIELDS) + extra_add_fields_
+            ]
+        fields_to_show.sort()
+
+        # Display fields without special format
+        for field in fields_to_show:
+            if field not in SPECIAL_FORMATED_DISPLAY_MESSAGE_FIELDS:
+                if type(msg[field]) is list:
+                    value = _ellipse(msg[field], sep='\n  ')
                 else:
-                    value = clip_text(str(msg.get(key)), max_len)
-                line = field + ' ' + colorize(value, 'text2')
-                lines.append(space + line)
+                    value = clip_text(str(msg.get(field)), max_len)
+                line = _pretty_lines(
+                    indent_space=space, field=field, value=value, style='text2'
+                )
+                lines.append(line)
+
+        # Display fields WITH special format requirements
+        # Display Image
         if type(msg.get('image')) in [str, torch.Tensor]:
             lines.append(f'[ image ]: {msg["image"]}')
+        # Display Text
         if msg.get('text', ''):
-            text = clip_text(msg['text'], max_len)
-            if index == 0:
-                style = 'bold_text'
-            else:
-                style = 'labels'
-            if verbose:
-                lines.append(
-                    space + colorize('[text]:', 'field') + ' ' + colorize(text, style)
-                )
-            else:
-                lines.append(
-                    space
-                    + colorize("[" + agent_id + "]:", 'field')
-                    + ' '
-                    + colorize(text, style)
-                )
+            value = clip_text(msg['text'], max_len)
+            style = 'bold_text' if index == 0 else 'labels'
+            field = 'text' if verbose else agent_id
+            line = _pretty_lines(
+                indent_space=space, field=field, value=value, style=style
+            )
+            lines.append(line)
+        # Display Label Fields
         for field in {'labels', 'eval_labels', 'label_candidates', 'text_candidates'}:
-            if msg.get(field) and field not in ignore_fields_:
-                string = '{}{} {}'.format(
-                    space,
-                    colorize('[' + field + ']:', 'field'),
-                    colorize(_ellipse(msg[field]), field),
+            if msg.get(field) and field in fields_to_show:
+                line = _pretty_lines(
+                    indent_space=space,
+                    field=field,
+                    value=_ellipse(msg[field]),
+                    style=field,
                 )
-                lines.append(string)
+                lines.append(line)
         # Handling this separately since we need to clean up the raw output before displaying.
-        token_loss_line = _token_losses_line(msg, ignore_fields_, space)
+        token_loss_line = _token_losses_line(msg, fields_to_show, space)
         if token_loss_line:
             lines.append(token_loss_line)
 

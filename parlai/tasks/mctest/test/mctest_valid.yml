@@ -1,0 +1,155 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Friday
+    id: mctest
+    label_candidates:
+    - Friday
+    - Monday
+    - Sunday
+    - Wednesday
+    reward: 0
+    text: "One sunny morning, Stewart chose to go to the beach. He knew that a rainstorm\
+      \ was going to arrive on Saturday and wanted to enjoy some sun before it arrived.\
+      \ \newline\newlineStewart laid on his belly and began reading his newspaper.\
+      \ As he was enjoying the sun and the newspaper, he saw a bug crawl across his\
+      \ blanket. At first Stewart thought it was an ant, but the bug was moving too\
+      \ slowly to be an ant. As Stewart leaned in for a closer look, the bug cried\
+      \ out, \"Excuse me, sir! Can you help me?\" Stewart was surprised and jumped\
+      \ to his feet. \"You can talk!\" he shouted. \"Yes,\" said the bug. \"Please\
+      \ help me! As you might know, there is a rainstorm coming into town. Unfortunately,\
+      \ I do not have a place to call home. I need to find somewhere to sleep before\
+      \ the rain washes me away!\" Stewart felt sad. \"Gee,\" he cried. \"That sounds\
+      \ terrible!\"\newline\newlineStewart thought about the problem. \"Perhaps you\
+      \ can stay at my house,\" he said. The bug jumped for joy and said, \"Oh, that\
+      \ would be wonderful!\" The two traveled back to Stewart's house and the bug\
+      \ found a soft spot to sleep.\newline\newlineThe next day, the sky had darkened\
+      \ and rain clouds appeared all over town. Just as the news had said, a rainstorm\
+      \ had arrived. When Stewart woke up, he looked for the bug but could not find\
+      \ him. Then, he saw something flying around his house. \"Thank you for letting\
+      \ me sleep here last night,\" said the butterfly. It was the bug! \"I knew I\
+      \ could not change into a butterfly if I was out in the rain. I won't forget\
+      \ your kindness.\" After speaking, the butterfly flew away. Stewart stood in\
+      \ his doorway and shouted, \"Goodbye!\" multiple: If the rain arrived on Saturday,\
+      \ what day did Stewart go to the beach?"
+- - episode_done: true
+    eval_labels:
+    - reading a newspaper
+    id: mctest
+    label_candidates:
+    - reading a newspaper
+    - looking for bugs
+    - swimming
+    - sleeping on his blanket
+    reward: 0
+    text: "One sunny morning, Stewart chose to go to the beach. He knew that a rainstorm\
+      \ was going to arrive on Saturday and wanted to enjoy some sun before it arrived.\
+      \ \newline\newlineStewart laid on his belly and began reading his newspaper.\
+      \ As he was enjoying the sun and the newspaper, he saw a bug crawl across his\
+      \ blanket. At first Stewart thought it was an ant, but the bug was moving too\
+      \ slowly to be an ant. As Stewart leaned in for a closer look, the bug cried\
+      \ out, \"Excuse me, sir! Can you help me?\" Stewart was surprised and jumped\
+      \ to his feet. \"You can talk!\" he shouted. \"Yes,\" said the bug. \"Please\
+      \ help me! As you might know, there is a rainstorm coming into town. Unfortunately,\
+      \ I do not have a place to call home. I need to find somewhere to sleep before\
+      \ the rain washes me away!\" Stewart felt sad. \"Gee,\" he cried. \"That sounds\
+      \ terrible!\"\newline\newlineStewart thought about the problem. \"Perhaps you\
+      \ can stay at my house,\" he said. The bug jumped for joy and said, \"Oh, that\
+      \ would be wonderful!\" The two traveled back to Stewart's house and the bug\
+      \ found a soft spot to sleep.\newline\newlineThe next day, the sky had darkened\
+      \ and rain clouds appeared all over town. Just as the news had said, a rainstorm\
+      \ had arrived. When Stewart woke up, he looked for the bug but could not find\
+      \ him. Then, he saw something flying around his house. \"Thank you for letting\
+      \ me sleep here last night,\" said the butterfly. It was the bug! \"I knew I\
+      \ could not change into a butterfly if I was out in the rain. I won't forget\
+      \ your kindness.\" After speaking, the butterfly flew away. Stewart stood in\
+      \ his doorway and shouted, \"Goodbye!\" one: What was Stewart doing at the beach?"
+- - episode_done: true
+    eval_labels:
+    - a place to sleep
+    id: mctest
+    label_candidates:
+    - food
+    - to read Stewart's newspaper
+    - a place to sleep
+    - a new friend
+    reward: 0
+    text: "One sunny morning, Stewart chose to go to the beach. He knew that a rainstorm\
+      \ was going to arrive on Saturday and wanted to enjoy some sun before it arrived.\
+      \ \newline\newlineStewart laid on his belly and began reading his newspaper.\
+      \ As he was enjoying the sun and the newspaper, he saw a bug crawl across his\
+      \ blanket. At first Stewart thought it was an ant, but the bug was moving too\
+      \ slowly to be an ant. As Stewart leaned in for a closer look, the bug cried\
+      \ out, \"Excuse me, sir! Can you help me?\" Stewart was surprised and jumped\
+      \ to his feet. \"You can talk!\" he shouted. \"Yes,\" said the bug. \"Please\
+      \ help me! As you might know, there is a rainstorm coming into town. Unfortunately,\
+      \ I do not have a place to call home. I need to find somewhere to sleep before\
+      \ the rain washes me away!\" Stewart felt sad. \"Gee,\" he cried. \"That sounds\
+      \ terrible!\"\newline\newlineStewart thought about the problem. \"Perhaps you\
+      \ can stay at my house,\" he said. The bug jumped for joy and said, \"Oh, that\
+      \ would be wonderful!\" The two traveled back to Stewart's house and the bug\
+      \ found a soft spot to sleep.\newline\newlineThe next day, the sky had darkened\
+      \ and rain clouds appeared all over town. Just as the news had said, a rainstorm\
+      \ had arrived. When Stewart woke up, he looked for the bug but could not find\
+      \ him. Then, he saw something flying around his house. \"Thank you for letting\
+      \ me sleep here last night,\" said the butterfly. It was the bug! \"I knew I\
+      \ could not change into a butterfly if I was out in the rain. I won't forget\
+      \ your kindness.\" After speaking, the butterfly flew away. Stewart stood in\
+      \ his doorway and shouted, \"Goodbye!\" one: What did the bug want from Stewart?"
+- - episode_done: true
+    eval_labels:
+    - caterpillar
+    id: mctest
+    label_candidates:
+    - beetle
+    - caterpillar
+    - ant
+    - butterfly
+    reward: 0
+    text: "One sunny morning, Stewart chose to go to the beach. He knew that a rainstorm\
+      \ was going to arrive on Saturday and wanted to enjoy some sun before it arrived.\
+      \ \newline\newlineStewart laid on his belly and began reading his newspaper.\
+      \ As he was enjoying the sun and the newspaper, he saw a bug crawl across his\
+      \ blanket. At first Stewart thought it was an ant, but the bug was moving too\
+      \ slowly to be an ant. As Stewart leaned in for a closer look, the bug cried\
+      \ out, \"Excuse me, sir! Can you help me?\" Stewart was surprised and jumped\
+      \ to his feet. \"You can talk!\" he shouted. \"Yes,\" said the bug. \"Please\
+      \ help me! As you might know, there is a rainstorm coming into town. Unfortunately,\
+      \ I do not have a place to call home. I need to find somewhere to sleep before\
+      \ the rain washes me away!\" Stewart felt sad. \"Gee,\" he cried. \"That sounds\
+      \ terrible!\"\newline\newlineStewart thought about the problem. \"Perhaps you\
+      \ can stay at my house,\" he said. The bug jumped for joy and said, \"Oh, that\
+      \ would be wonderful!\" The two traveled back to Stewart's house and the bug\
+      \ found a soft spot to sleep.\newline\newlineThe next day, the sky had darkened\
+      \ and rain clouds appeared all over town. Just as the news had said, a rainstorm\
+      \ had arrived. When Stewart woke up, he looked for the bug but could not find\
+      \ him. Then, he saw something flying around his house. \"Thank you for letting\
+      \ me sleep here last night,\" said the butterfly. It was the bug! \"I knew I\
+      \ could not change into a butterfly if I was out in the rain. I won't forget\
+      \ your kindness.\" After speaking, the butterfly flew away. Stewart stood in\
+      \ his doorway and shouted, \"Goodbye!\" multiple: What was the bug that Stewart\
+      \ found at the beach?"
+- - episode_done: true
+    eval_labels:
+    - making costumes for movie stars
+    id: mctest
+    label_candidates:
+    - filming movies
+    - making costumes for movie stars
+    - watching movies
+    - making boots
+    reward: 0
+    text: "My mommy has a really cool job! She makes costumes for movie stars. She\
+      \ works in the attic of our house, so I get to see her work all the time. I\
+      \ watch every movie I can, and try to learn all of the different costumes by\
+      \ heart. Mommy says if I work hard and keep up my practice, one day I'll get\
+      \ to to make costumes for movie stars too! That job sounds like heaven.\newline\n\
+      ewlineOne day I was in the attic, helping Mommy make a boot for a costume. \
+      \ They were covered in little beads, and mom had to sew them on. She kept dropping\
+      \ the needles on the ground. Then I was helping by picking them up. I was also\
+      \ helping by moving the lamp around so Mommy could see the boot better. \newline\n\
+      ewline\"Ouch!\" I said. \"I accidentally stuck my finger with the needle!\"\n\
+      ewline\newlineMy mommy looked at my finger, and gave it a kiss.  \"Welcome to\
+      \ the life of a costumer!\" multiple: What does Mommy do as a job?"
+num_episodes: 200
+num_examples: 200
