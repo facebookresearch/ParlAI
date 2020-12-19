@@ -2,13 +2,8 @@
       "transresnet_multimodal": {
         "model_file": "models:image_chat/transresnet_multimodal/model",
         "override": {
-            "beam_block_ngram": 3,
-            "beam_context_block_ngram": 3,
-            "beam_min_length": 5,
-            "beam_size": 10,
-            "inference": "beam",
             "data_parallel": false,
-            "fp16": true
+            "fp16": false
         }
     }
 }
