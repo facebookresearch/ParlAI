@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Save a JSON of image IDs and associated contexts for the model image chat task.
+Save a JSON of images and associated contexts for the model image chat task.
 """
 
 import json
@@ -19,7 +19,7 @@ from parlai.scripts.display_data import setup_args
 
 def save_image_contexts():
     """
-    Save a JSON of image IDs and associated contexts for the model image chat task.
+    Save a JSON of images and associated contexts for the model image chat task.
     """
 
     print('Creating teacher to loop over images and personalities.')
@@ -34,41 +34,28 @@ def save_image_contexts():
         help='Save path for image context file',
     )
     task_opt = task_parser.parse_args()
-    if task_opt['image_context_path'] is None:
-        raise ValueError('--image-context-path must be specified!')
     agent = RepeatLabelAgent(task_opt)
     world = create_task(task_opt, agent)
 
-    print('Looping over images and personalities.')
-    image_names = []
-    personalities = []
+    print('Creating context generator.')
+    context_generator = get_context_generator()
+
+    print('Looping over images and pulling a context for each one.')
+    image_contexts = []
     while not world.epoch_done():
         world.parley()
         teacher_act = world.get_acts()[0]
-        image_names.append(f"{teacher_act['image_id']:d}.jpg")
-        if 'personality' not in teacher_act:
-            raise ValueError(
-                'The teacher must have an associated personality for each image, as '
-                'in the image_chat:Generation task.'
-            )
-        personalities.append(teacher_act['personality'])
-    print(f'{len(image_names):d} sets of images and personalities looped over.')
-
-    print('Picking out a context to use for each image.')
-    context_generator = get_context_generator()
-    image_names_to_context_info = {
-        image_name: context_generator.get_context() for image_name in image_names
-    }
-
-    print('For each context, adding in the corresponding personality.')
-    for (image_name, context_info), personality in zip(
-        image_names_to_context_info.items(), personalities
-    ):
-        context_info['bot_personality'] = personality
+        image_context = {
+            'image_act': teacher_act,
+            'context_info': context_generator.get_context(),
+            'image_task': task_opt['task'],
+        }
+        image_contexts.append(image_context)
+    print(f'{len(image_contexts):d} image contexts created.')
 
     # Save
     with open(task_opt['image_context_path'], 'w') as f:
-        json.dump(image_names_to_context_info, f)
+        json.dump(image_contexts, f)
 
 
 if __name__ == '__main__':
