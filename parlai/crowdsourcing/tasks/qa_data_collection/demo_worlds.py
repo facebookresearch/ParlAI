@@ -59,13 +59,14 @@ class QADataCollectionWorld(MTurkTaskWorld):
             # At the first turn, the QA Collector agent provides the context
             # and prompts the turker to ask a question regarding the context
 
-            # Get context from SQuAD teacher agent
+            # Get context from dataloader
             passage = self.dataloader.act()
             self.context = passage['text']
+            ad['passage'] = passage['text']
 
             # Wrap the context with a prompt telling the turker what to do next
             ad['text'] = (
-                self.context + '\n\nPlease provide a question given this context.'
+                'Please provide a question given the passage.'
             )
             self.agent.observe(validate(ad))
             self.question = self.agent.act(timeout=self.opt["turn_timeout"])

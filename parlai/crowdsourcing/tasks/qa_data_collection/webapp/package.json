@@ -16,7 +16,8 @@
     "react": "16.13.1",
     "react-bootstrap": "^0.32.4",
     "react-dom": "16.13.1",
-    "react-table": "^6.8.6"
+    "react-table": "^6.8.6",
+    "react-fluid-textarea": "0.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
