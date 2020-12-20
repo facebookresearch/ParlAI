@@ -1,0 +1,5 @@
+dataloader:
+  class_name: SquadDataLoader
+  datatype: train
+  datapath: ${task_dir}/data
+  task: ${mephisto.task.task_name}

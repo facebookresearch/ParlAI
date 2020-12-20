@@ -1,0 +1,6 @@
+#@package _global_
+mephisto:
+  blueprint:
+    world_file: ${task_dir}/demo_worlds.py
+    task_description_file: ${task_dir}/task_description.html
+    num_conversations: 1
