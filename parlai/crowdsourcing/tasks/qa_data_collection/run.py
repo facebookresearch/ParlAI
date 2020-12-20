@@ -21,6 +21,7 @@ from typing import List, Any
 
 from parlai.tasks.squad.agents import DefaultTeacher
 
+# This needs to be properly streamlined
 class SquadDataLoader(DefaultTeacher):
 
     def __init__(self, opt):
@@ -28,6 +29,7 @@ class SquadDataLoader(DefaultTeacher):
 
     def act(self):
         data = super().act()
+        # SQuAD returns passage and question both, only passage required for task
         data.force_set('text', '\n'.join(data['text'].split('\n')[:-1]))
         return data
 
