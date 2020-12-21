@@ -26,6 +26,24 @@ class ModelImageChatWorld(ModelChatWorld):
 
         # {{{TODO}}}
 
+    def _run_initial_turn(self) -> None:
+        # TODO: docstring
+
+        pass
+        # TODO: remove
+
+        # Show the image to the human
+        # {{{TODO}}}
+
+        # Show the image to the bot
+        # {{{TODO}}}
+
+        # Have the bot respond
+        # {{{TODO}}}
+
+        # Record lines of dialogue
+        # {{{TODO: add both lines to self.dialog}}}
+
     def get_final_chat_data(self) -> Dict[str, Any]:
         """
         Add image-specific fields to the final chat data.

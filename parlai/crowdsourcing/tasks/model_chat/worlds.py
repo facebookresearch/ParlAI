@@ -220,91 +220,8 @@ class ModelChatWorld(CrowdTaskWorld):
             f'{self.__class__.__name__}:{self.tag}: is at turn {self.task_turn_idx}, with {self.num_turns} pairs of turns needed...'
         )
 
-        control_msg = {"episode_done": False}
-
         if self.task_turn_idx == 0:
-            if self.opt['include_persona']:
-                # The Bot agent
-                # We add the personas and 1/3 of the time WoW topic as the
-                # first utterance in the history.
-                # Previously for BST task, we also had a big first utterance
-                # that gave instructions. Removing that for this task.
-                persona_strings = [s.strip() for s in self.personas[1]]
-                persona_utterance = self._get_persona_utterance(
-                    persona_strings=persona_strings,
-                    context_dataset=self.context_info['context_dataset'],
-                    additional_context=self.context_info['additional_context'],
-                    is_bot=True,
-                )
-                message = control_msg.copy()
-                message['text'] = persona_utterance
-                # The bot seeing its persona does not count as a "turn"
-                self.bot.observe(validate(message), increment_turn=False)
-
-            if self.opt['conversation_start_mode'] == 'bst':
-                print('[Displaying first utterances as per BST task.]')
-                # Display the previous two utterances
-                human_first_msg = {
-                    'episode_done': False,
-                    'id': self.agent.id,
-                    'text': self.context_info['person1_seed_utterance'],
-                    'fake_start': True,
-                    'agent_idx': 0,
-                }
-                for k, v in control_msg.items():
-                    human_first_msg[k] = v
-                bot_first_msg = {
-                    'episode_done': False,
-                    'id': self.bot.id,
-                    'text': self.context_info['person2_seed_utterance'],
-                    'fake_start': True,
-                    'agent_idx': 1,
-                }
-                print(
-                    f'human_first_msg: {human_first_msg}, bot_first_msg: {bot_first_msg}'
-                )
-
-                self.dialog.append(human_first_msg)
-                self.dialog.append(bot_first_msg)
-
-                for observer in [self.agent, self.bot]:
-                    observer.observe(validate(human_first_msg))
-                    observer.observe(validate(bot_first_msg))
-
-            elif self.opt['conversation_start_mode'] == 'hi':
-                print('[Displaying "Hi!" only as per Meena task.]')
-                human_first_msg = {
-                    'episode_done': False,
-                    'id': self.agent.id,
-                    'text': 'Hi!',
-                    'fake_start': True,
-                    'agent_idx': 0,
-                }
-                for k, v in control_msg.items():
-                    human_first_msg[k] = v
-
-                self.dialog.append(human_first_msg)
-                self.agent.observe(validate(human_first_msg))
-                self.bot.observe(validate(human_first_msg))
-
-                first_bot_act = self.bot.act()
-                first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
-
-                self.agent.observe(validate(first_bot_act))
-
-                bot_utterance_data = {
-                    'agent_idx': 1,
-                    'text': first_bot_act['text'],
-                    'id': first_bot_act['id'],
-                }
-                self.dialog.append(bot_utterance_data)
-
-            else:
-                raise ValueError(
-                    f"Conversation start mode {self.opt['conversation_start_mode']} "
-                    f"not recognized!"
-                )
-
+            self._run_initial_turn()
             self.task_turn_idx += 1
             return
 
@@ -402,6 +319,98 @@ class ModelChatWorld(CrowdTaskWorld):
                     f'[agent {idx}] self.task_turn_idx: {self.task_turn_idx}, self.dialog is: {self.dialog}'
                 )
                 self.task_turn_idx += 1
+
+    def _run_initial_turn(self) -> None:
+        """
+        Run the initial turn for both the human and the bot.
+
+        Optionally show the bot its persona. If we are in BST conversation mode, show 2
+        previous BST utterances to both the human and the bot; if we are in Meena-like
+        conversation mode, show "Hi!" to the human and the bot and let the bot respond
+        accordingly.
+        """
+
+        control_msg = {"episode_done": False}  # TODO: is this needed by image chat?
+
+        if self.opt['include_persona']:
+            # The Bot agent
+            # We add the personas and 1/3 of the time WoW topic as the
+            # first utterance in the history.
+            # Previously for BST task, we also had a big first utterance
+            # that gave instructions. Removing that for this task.
+            persona_strings = [s.strip() for s in self.personas[1]]
+            persona_utterance = self._get_persona_utterance(
+                persona_strings=persona_strings,
+                context_dataset=self.context_info['context_dataset'],
+                additional_context=self.context_info['additional_context'],
+                is_bot=True,
+            )
+            message = control_msg.copy()
+            message['text'] = persona_utterance
+            # The bot seeing its persona does not count as a "turn"
+            self.bot.observe(validate(message), increment_turn=False)
+
+        if self.opt['conversation_start_mode'] == 'bst':
+            print('[Displaying first utterances as per BST task.]')
+            # Display the previous two utterances
+            human_first_msg = {
+                'episode_done': False,
+                'id': self.agent.id,
+                'text': self.context_info['person1_seed_utterance'],
+                'fake_start': True,
+                'agent_idx': 0,
+            }
+            for k, v in control_msg.items():
+                human_first_msg[k] = v
+            bot_first_msg = {
+                'episode_done': False,
+                'id': self.bot.id,
+                'text': self.context_info['person2_seed_utterance'],
+                'fake_start': True,
+                'agent_idx': 1,
+            }
+            print(f'human_first_msg: {human_first_msg}, bot_first_msg: {bot_first_msg}')
+
+            self.dialog.append(human_first_msg)
+            self.dialog.append(bot_first_msg)
+
+            for observer in [self.agent, self.bot]:
+                observer.observe(validate(human_first_msg))
+                observer.observe(validate(bot_first_msg))
+
+        elif self.opt['conversation_start_mode'] == 'hi':
+            print('[Displaying "Hi!" only as per Meena task.]')
+            human_first_msg = {
+                'episode_done': False,
+                'id': self.agent.id,
+                'text': 'Hi!',
+                'fake_start': True,
+                'agent_idx': 0,
+            }
+            for k, v in control_msg.items():
+                human_first_msg[k] = v
+
+            self.dialog.append(human_first_msg)
+            self.agent.observe(validate(human_first_msg))
+            self.bot.observe(validate(human_first_msg))
+
+            first_bot_act = self.bot.act()
+            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+
+            self.agent.observe(validate(first_bot_act))
+
+            bot_utterance_data = {
+                'agent_idx': 1,
+                'text': first_bot_act['text'],
+                'id': first_bot_act['id'],
+            }
+            self.dialog.append(bot_utterance_data)
+
+        else:
+            raise ValueError(
+                f"Conversation start mode {self.opt['conversation_start_mode']} "
+                f"not recognized!"
+            )
 
     def shutdown(self):
 
