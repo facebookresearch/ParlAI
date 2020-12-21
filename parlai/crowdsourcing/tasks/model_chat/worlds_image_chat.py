@@ -81,8 +81,11 @@ Be sure to talk about this image a little bit before discussing other things!
         Show the bot the image again on every turn.
         """
         if agent_idx == 0:
-            # Add the image to every human act, seen by the bot
-            acts[agent_idx].force_set('image', self.image_act['image'])
+            # Add the image to every human act, seen by the bot. Also adds in any other
+            # image-related fields needed by the model
+            for key, value in self.image_act.items():
+                if key not in ['episode_done', 'id', 'text', 'agent_idx']:
+                    acts[agent_idx].force_set(key, value)
 
     def get_final_chat_data(self) -> Dict[str, Any]:
         """

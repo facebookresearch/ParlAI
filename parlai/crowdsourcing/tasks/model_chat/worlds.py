@@ -236,13 +236,14 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 # agent ends chat after exceeding minimum number of turns
 
                 if self.task_turn_idx > self.num_turns:
-                    # Human has just responded. Problem data received
-                    # now will be regarding the bot's prior utterance
-                    p = acts[idx]['task_data']['problem_data_for_prior_message']
-                    turn_idx = -1
-                    # Attach the problem data to the last utterance, since the human
-                    # hasn't said anything since then
-                    self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
+                    # Human has just responded. Any problem data received now will be
+                    # regarding the bot's prior utterance
+                    p = acts[idx]['task_data'].get('problem_data_for_prior_message')
+                    if p is not None:
+                        turn_idx = -1
+                        # Attach the problem data to the last utterance, since the human
+                        # hasn't said anything since then
+                        self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
 
                 # Save the final chat data
                 time_string = time.strftime('%Y%m%d_%H%M%S')
@@ -295,13 +296,14 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 }
                 self.dialog.append(utterance_data)
                 if idx == 0:
-                    # Human has just responded. Problem data received
-                    # now will be regarding the bot's prior utterance
-                    p = acts[idx]['task_data']['problem_data_for_prior_message']
-                    turn_idx = -2
-                    # Attach the problem data to the second-to-last utterance, since the
-                    # last utterance is what the human just said
-                    self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
+                    # Human has just responded. Any problem data received now will be
+                    # regarding the bot's prior utterance
+                    p = acts[idx]['task_data'].get('problem_data_for_prior_message')
+                    if p is not None:
+                        turn_idx = -2
+                        # Attach the problem data to the second-to-last utterance, since
+                        # the last utterance is what the human just said
+                        self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
 
                 self._postprocess_acts(acts=acts, agent_idx=idx)
                 for other_agent in [self.agent, self.bot]:

@@ -173,7 +173,10 @@ function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
   const lastMessageIdx = appSettings.numMessages - 1;
   const lastMessageAnnotations = appSettings.checkboxValues[lastMessageIdx];
   
-  const computedActive = hasAnyAnnotations(lastMessageAnnotations) & active;
+  const computedActive = (
+    taskConfig.annotation_buckets === null || 
+    hasAnyAnnotations(lastMessageAnnotations) & active
+  );
   
   if (lastMessageIdx >= taskConfig.min_num_turns * 2) {
     return (
