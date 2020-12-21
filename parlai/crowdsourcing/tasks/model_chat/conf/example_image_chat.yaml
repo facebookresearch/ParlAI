@@ -1,6 +1,7 @@
 #@package _global_
 mephisto:
   blueprint:
+    annotations_config_path: ""
     block_qualification: model_image_chat_block
     chat_data_folder: ~/ParlAI/data/crowdsourcing/model_image_chat/
     num_turns: 6

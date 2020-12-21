@@ -527,7 +527,12 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
         }
         shared_state.image_stack = ImageStack(image_opt)
 
-        shared_state.world_opt.update({'image_stack': shared_state.image_stack})
+        shared_state.world_opt.update(
+            {
+                'image_contexts': shared_state.image_contexts,
+                'image_stack': shared_state.image_stack,
+            }
+        )
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
