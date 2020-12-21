@@ -12,6 +12,7 @@ from omegaconf import DictConfig
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.utils.strings import normalize_reply
 from parlai.crowdsourcing.tasks.model_chat.constants import AGENT_1
 from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility
@@ -155,8 +156,16 @@ class TurkLikeAgent:
 
         elif model_opts is not None:
 
+            # Provide default opts for parameters like 'datapath' that shouldn't need to
+            # be specified in the input model_opts arg
+            parser = ParlaiParser(False, False)
+            default_opt = parser.parse_args([])
+
             final_model_opts = {}
             for name, opt in model_opts.items():
+                for param in ['datapath']:
+                    if param not in opt:
+                        opt[param] = default_opt[param]
                 model_overrides_copy = copy.deepcopy(model_overrides)
                 if 'override' not in opt:
                     opt['override'] = {}
@@ -179,7 +188,9 @@ class TurkLikeAgent:
 
             # have to check that the options are set properly
             for k, v in copied_opt_dict.items():
-                if k != 'override':
+                if k not in ['override', 'model_file']:
+                    # We skip 'model_file', which may originally include a prefix such
+                    # as 'models:'
                     assert model_agent.opt[k] == v
 
             shared_bot_agents[model_name] = model_agent.share()

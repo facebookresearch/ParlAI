@@ -26,7 +26,7 @@ defaults = [
     {'mephisto/blueprint': IMAGE_CHAT_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "example"},
+    {"conf": "example_image_chat"},
 ]
 
 
