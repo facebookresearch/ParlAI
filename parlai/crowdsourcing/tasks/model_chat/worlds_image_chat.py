@@ -25,13 +25,10 @@ class ModelImageChatWorld(BaseModelChatWorld):
         self.image_idx = image_idx
         self.image_act = image_act
 
-        # {{{TODO}}}
-
     def _run_initial_turn(self) -> None:
         # TODO: docstring
 
-        pass
-        # TODO: remove
+        control_msg = {"episode_done": False}
 
         # Show the image to the human
         # {{{TODO}}}
