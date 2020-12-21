@@ -4,9 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Tuple
 
 from parlai.core.message import Message
+from parlai.core.worlds import validate
+from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility, get_image_src
 from parlai.crowdsourcing.tasks.model_chat.worlds import (
     BaseModelChatWorld,
     get_bot_worker,
@@ -26,21 +28,52 @@ class ModelImageChatWorld(BaseModelChatWorld):
         self.image_act = image_act
 
     def _run_initial_turn(self) -> None:
-        # TODO: docstring
+        """
+        Show the image to the human and bot, and show the bot's response to the human.
+        """
 
-        control_msg = {"episode_done": False}
+        system_id = 'SYSTEM'
+        system_agent_idx = None
 
         # Show the image to the human
-        # {{{TODO}}}
+        image_src = get_image_src(image=self.image_act['image'])
+        image_act_for_human = {
+            'episode_done': False,
+            'id': system_id,
+            'text': f"""Welcome! You'll now have a conversation with your partner.
+
+<-- FIRST, YOUR PARTNER WILL SAY SOMETHING ABOUT THIS IMAGE TO YOUR LEFT.
+
+Be sure to talk about this image a little bit before discussing other things!
+""",
+            'task_data': {'image_src': image_src},
+            'agent_idx': system_agent_idx,
+        }
+        self.agent.observe(validate(image_act_for_human))
 
         # Show the image to the bot
-        # {{{TODO}}}
+        image_act = {
+            **self.image_act,
+            'episode_done': False,
+            'id': system_id,
+            'agent_idx': system_agent_idx,
+        }
+        self.bot.observe(validate(image_act))
 
         # Have the bot respond
-        # {{{TODO}}}
+        bot_first_act_raw = self.bot.act()
+        bot_first_act_raw = Compatibility.maybe_fix_act(bot_first_act_raw)
+        self.agent.observe(validate(bot_first_act_raw))
+        bot_first_act = {
+            'episode_done': False,
+            'id': bot_first_act_raw['id'],
+            'text': bot_first_act_raw['text'],
+            'agent_idx': 1,
+        }
 
         # Record lines of dialogue
-        # {{{TODO: add both lines to self.dialog}}}
+        self.dialog.append(image_act)
+        self.dialog.append(bot_first_act)
 
     def get_final_chat_data(self) -> Dict[str, Any]:
         """

@@ -333,14 +333,16 @@ def get_context_generator(
     return context_generator
 
 
-def get_image_src(path: str) -> str:
+def get_image_src(image: Optional[Image] = None, path: Optional[str] = None) -> str:
     """
-    Given the path to an image, return a string of the encoded image that can be used as
-    the src field in an HTML img tag.
+    Given an image or the path to an image, return a string of the encoded image that
+    can be used as the src field in an HTML img tag.
     """
-    img = Image.open(path).convert('RGB')
+    if image is None:
+        image = Image.open(path)
+    rgb_image = image.convert('RGB')
     buffered = BytesIO()
-    img.save(buffered, format='JPEG')
+    rgb_image.save(buffered, format='JPEG')
     encoded = str(base64.b64encode(buffered.getvalue()).decode('ascii'))
     image_src = 'data:image/jpeg;base64,' + encoded
     return image_src
