@@ -7,7 +7,8 @@
 import time
 import os
 import json
-from typing import Any, Dict, List, Optional
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -164,8 +165,8 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
             self.onboard_statistics[self.status] += 1
 
 
-class ModelChatWorld(CrowdTaskWorld):
-    def __init__(self, opt, agent, bot, context_info: Optional[dict] = None):
+class BaseModelChatWorld(CrowdTaskWorld, ABC):
+    def __init__(self, opt, agent, bot):
         super().__init__(opt, agent)
 
         # num_turns turns for a single side, and really it appears to be
@@ -183,15 +184,6 @@ class ModelChatWorld(CrowdTaskWorld):
         self.tag = f'conversation_id {agent.mephisto_agent.db_id}'
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
         self.chat_done = False
-        if context_info is not None:
-            self.context_info = context_info
-            self.personas = [
-                self.context_info['persona_1_strings'],
-                self.context_info['persona_2_strings'],
-            ]
-        else:
-            self.context_info = {}
-            self.personas = None
         self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
         self.block_qualification = opt['block_qualification']
@@ -320,6 +312,100 @@ class ModelChatWorld(CrowdTaskWorld):
                 )
                 self.task_turn_idx += 1
 
+    @abstractmethod
+    def _run_initial_turn(self) -> None:
+        """
+        Runs logic for the first turn of the human and the bot.
+        """
+
+    def shutdown(self):
+
+        if self.chat_done:
+            self.opt['run_statistics'][self.bot.worker_id] += 1
+            print(
+                'Runs completed per model: '
+                + ', '.join(
+                    f'{model}: {count:d}'
+                    for model, count in self.opt['run_statistics'].items()
+                )
+            )
+
+        self.agent.shutdown()
+
+    def episode_done(self):
+        return self.chat_done
+
+    def get_final_chat_data(self) -> Dict[str, Any]:
+        """
+        Return specific info about the conversation, the context, acceptability, etc.
+        """
+
+        if self.check_acceptability:
+            human_messages, violation_types = self._prepare_acceptability_checking()
+            violations_string = self.acceptability_checker.check_messages(
+                messages=human_messages,
+                is_worker_0=False,
+                violation_types=violation_types,
+            )
+        else:
+            violations_string = None
+
+        data = {
+            'dialog': self.dialog,
+            'workers': [get_mturk_id_from_mephisto_wrapper(self.agent)],
+            'bad_workers': [],
+            'acceptability_violations': (violations_string,),
+            'hit_ids': [self.agent.mephisto_agent.task_run_id],
+            'assignment_ids': [self.agent.mephisto_agent.assignment_id],
+            'task_description': {
+                'annotations_config': self.opt['annotations_config'],
+                'model_nickname': self.bot.worker_id,
+                'model_file': self.bot.model_agent.opt.get('model_file'),
+                'model_opt': self.bot.model_agent.opt,
+            },
+        }
+        # 'bad_workers' is for compatibility. Before, it was only non-empty if a
+        # worker abandoned, returned, etc. a HIT, but now we don't even save chat
+        # data in that case
+        if self.check_acceptability:
+            data['acceptability_violations'] = (violations_string,)
+            # Make a tuple for compatibility with a human/human conversation in
+            # which we check both sides for acceptability
+
+        return data
+
+    def _prepare_acceptability_checking(self) -> Tuple[List[str], List[str]]:
+        """
+        Return the list of human messages and the list of acceptability types to check.
+        """
+        human_messages = [
+            message['text'] for message in self.dialog if message['agent_idx'] == 0
+        ]
+        violation_types = ['min_words', 'all_caps', 'exact_match', 'safety']
+        return human_messages, violation_types
+
+
+class ModelChatWorld(BaseModelChatWorld):
+    """
+    Version of BaseModelChatWorld for chatting without images.
+
+    Has support for features that are currently not supported by the image-chat version
+    of this task, like personas and BST-style seed utterances.
+    """
+
+    def __init__(self, opt, agent, bot, context_info: Optional[dict] = None):
+        super().__init__(opt, agent=agent, bot=bot)
+
+        if context_info is not None:
+            self.context_info = context_info
+            self.personas = [
+                self.context_info['persona_1_strings'],
+                self.context_info['persona_2_strings'],
+            ]
+        else:
+            self.context_info = {}
+            self.personas = None
+
     def _run_initial_turn(self) -> None:
         """
         Run the initial turn for both the human and the bot.
@@ -412,23 +498,6 @@ class ModelChatWorld(CrowdTaskWorld):
                 f"not recognized!"
             )
 
-    def shutdown(self):
-
-        if self.chat_done:
-            self.opt['run_statistics'][self.bot.worker_id] += 1
-            print(
-                'Runs completed per model: '
-                + ', '.join(
-                    f'{model}: {count:d}'
-                    for model, count in self.opt['run_statistics'].items()
-                )
-            )
-
-        self.agent.shutdown()
-
-    def episode_done(self):
-        return self.chat_done
-
     def _get_persona_utterance(
         self,
         persona_strings: Optional[List[str]] = None,
@@ -479,55 +548,32 @@ class ModelChatWorld(CrowdTaskWorld):
 
     def get_final_chat_data(self) -> Dict[str, Any]:
         """
-        Return specific info about the conversation, the context, acceptability, etc.
+        Add non-image-chat-specific fields to the final chat data.
         """
-
-        if self.check_acceptability:
-            human_texts = [
-                message['text'] for message in self.dialog if message['agent_idx'] == 0
-            ]
-            violation_types = ['min_words', 'all_caps', 'exact_match', 'safety']
-            if self.opt['conversation_start_mode'] == 'bst':
-                # The BST mode starts the conversation with two previous utterances, so
-                # there should be no new greeting. Also, the first human response is one
-                # of the previous utterances, so it shouldn't get checked.
-                violation_types.append('penalize_greetings')
-                human_texts = human_texts[1:]
-
-            violations_string = self.acceptability_checker.check_messages(
-                messages=human_texts, is_worker_0=False, violation_types=violation_types
-            )
-        else:
-            violations_string = None
-
-        data = {
+        data = super().get_final_chat_data()
+        context_data = {
             'personas': self.personas,
             'context_dataset': self.context_info.get('context_dataset'),
             'person1_seed_utterance': self.context_info.get('person1_seed_utterance'),
             'person2_seed_utterance': self.context_info.get('person2_seed_utterance'),
             'additional_context': self.context_info.get('additional_context'),
-            'dialog': self.dialog,
-            'workers': [get_mturk_id_from_mephisto_wrapper(self.agent)],
-            'bad_workers': [],
-            'acceptability_violations': (violations_string,),
-            'hit_ids': [self.agent.mephisto_agent.task_run_id],
-            'assignment_ids': [self.agent.mephisto_agent.assignment_id],
-            'task_description': {
-                'annotations_config': self.opt['annotations_config'],
-                'model_nickname': self.bot.worker_id,
-                'model_file': self.bot.model_agent.opt.get('model_file'),
-                'model_opt': self.bot.model_agent.opt,
-            },
         }
-        # 'bad_workers' is for compatibility. Before, it was only non-empty if a
-        # worker abandoned, returned, etc. a HIT, but now we don't even save chat
-        # data in that case
-        if self.check_acceptability:
-            data['acceptability_violations'] = (violations_string,)
-            # Make a tuple for compatibility with a human/human conversation in
-            # which we check both sides for acceptability
-
+        data.update(context_data)
         return data
+
+    def _prepare_acceptability_checking(self) -> Tuple[List[str], List[str]]:
+        """
+        Apply acceptability checking params specific to BST-style conversation.
+
+        The BST mode starts the conversation with two previous utterances, so there
+        should be no new greeting. Also, the first human response is one of the previous
+        utterances, so it shouldn't get checked.
+        """
+        human_messages, violation_types = super()._prepare_acceptability_checking()
+        if self.opt['conversation_start_mode'] == 'bst':
+            violation_types.append('penalize_greetings')
+            human_messages = human_messages[1:]
+        return human_messages, violation_types
 
 
 def make_onboarding_world(opt, agent):

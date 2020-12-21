@@ -7,18 +7,19 @@
 from typing import Any, Dict
 
 from parlai.core.message import Message
-from parlai.crowdsourcing.tasks.model_chat.worlds import ModelChatWorld, get_bot_worker
+from parlai.crowdsourcing.tasks.model_chat.worlds import (
+    BaseModelChatWorld,
+    get_bot_worker,
+)
 
 
-class ModelImageChatWorld(ModelChatWorld):
+class ModelImageChatWorld(BaseModelChatWorld):
     """
     A chat world in which an image is shown to the worker and bot at the beginning.
     """
 
-    def __init__(
-        self, opt, agent, bot, context_info: dict, image_idx: int, image_act: Message
-    ):
-        super().__init__(opt, agent=agent, bot=bot, context_info=context_info)
+    def __init__(self, opt, agent, bot, image_idx: int, image_act: Message):
+        super().__init__(opt, agent=agent, bot=bot)
 
         self.image_stack = opt['image_stack']
         self.image_idx = image_idx
@@ -51,6 +52,17 @@ class ModelImageChatWorld(ModelChatWorld):
         data = super().get_final_chat_data()
         data['image_idx'] = self.image_idx
         return data
+
+    def _prepare_acceptability_checking(self) -> Tuple[List[str], List[str]]:
+        """
+        Apply acceptability checking params specific to image-chat conversation.
+
+        The conversation starts with an image, so the human shouldn't be starting their
+        first message with "Hi", etc.
+        """
+        human_messages, violation_types = super()._prepare_acceptability_checking()
+        violation_types.append('penalize_greetings')
+        return human_messages, violation_types
 
     def shutdown(self):
 
@@ -87,7 +99,6 @@ def make_world(opt, agents):
         opt=opt,
         agent=agents[0],
         bot=bot_worker,
-        context_info=full_image_context['context_info'],
         image_idx=image_idx,
         image_act=full_image_context['image_act'],
     )
