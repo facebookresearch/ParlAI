@@ -56,6 +56,7 @@ Be sure to talk about this image a little bit before discussing other things!
             **self.image_act,
             'episode_done': False,
             'id': system_id,
+            'text': '',
             'agent_idx': system_agent_idx,
         }
         self.bot.observe(validate(image_act))
@@ -74,6 +75,14 @@ Be sure to talk about this image a little bit before discussing other things!
         # Record lines of dialogue
         self.dialog.append(image_act)
         self.dialog.append(bot_first_act)
+
+    def _postprocess_acts(self, acts: List[Message], agent_idx: int):
+        """
+        Show the bot the image again on every turn.
+        """
+        if agent_idx == 0:
+            # Add the image to every human act, seen by the bot
+            acts[agent_idx].force_set('image', self.image_act['image'])
 
     def get_final_chat_data(self) -> Dict[str, Any]:
         """

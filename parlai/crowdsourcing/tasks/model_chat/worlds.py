@@ -303,6 +303,7 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     # last utterance is what the human just said
                     self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
 
+                self._postprocess_acts(acts=acts, agent_idx=idx)
                 for other_agent in [self.agent, self.bot]:
                     if other_agent != agent:
                         other_agent.observe(validate(acts[idx]))
@@ -316,6 +317,14 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
     def _run_initial_turn(self) -> None:
         """
         Runs logic for the first turn of the human and the bot.
+        """
+
+    def _postprocess_acts(self, acts: List[dict], agent_idx: int):
+        """
+        Optionally perform further processing of the acts.
+
+        Useful for subclasses. Will be executed after saving act data to self.dialog but
+        before showing the act to the other agent.
         """
 
     def shutdown(self):
