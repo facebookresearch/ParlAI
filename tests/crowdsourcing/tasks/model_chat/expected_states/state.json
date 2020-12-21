@@ -762,7 +762,8 @@
                                 "datatype": "valid",
                                 "encode_candidate_vecs": true,
                                 "interactive_mode": true,
-                                "model_parallel": true
+                                "model_parallel": true,
+                                "skip_generation": false
                             },
                             "parlai_home": "/private/home/edinan/ParlAI",
                             "person_tokens": false,

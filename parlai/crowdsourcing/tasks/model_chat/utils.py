@@ -333,7 +333,9 @@ def get_context_generator(
     return context_generator
 
 
-def get_image_src(image: Optional[Image] = None, path: Optional[str] = None) -> str:
+def get_image_src(
+    image: Optional[Image.Image] = None, path: Optional[str] = None
+) -> str:
     """
     Given an image or the path to an image, return a string of the encoded image that
     can be used as the src field in an HTML img tag.

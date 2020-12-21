@@ -330,7 +330,11 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         """
         Ensure that arguments are properly configured to launch this task.
         """
-        if len(shared_state.conversations_needed) == 0:
+
+        if (
+            not isinstance(shared_state.conversations_needed, dict)
+            or len(shared_state.conversations_needed) == 0
+        ):
             assert (
                 args.blueprint.get('conversations_needed_string', None) is not None
             ), (
