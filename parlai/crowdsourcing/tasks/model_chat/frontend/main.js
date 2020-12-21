@@ -28,11 +28,21 @@ function MainApp() {
           key={message.message_id + "-" + idx}
         />
       )}
-      renderSidePane={({ mephistoContext: { taskConfig } }) => (
+      renderSidePane={({ mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
         <DefaultTaskDescription
           chatTitle={taskConfig.chat_title}
           taskDescriptionHtml={taskConfig.task_description}
-        />
+        >
+          {(taskContext.hasOwnProperty('image_src') && taskContext['image_src']) ? (
+            <div>
+              <h4>Conversation image:</h4>
+              <span id="image">
+                <img src={taskContext.image_src} alt='Image'/>
+              </span>
+              <br />
+            </div>
+          ) : null}
+        </DefaultTaskDescription>
       )}
       renderTextResponse={
         ({ 
