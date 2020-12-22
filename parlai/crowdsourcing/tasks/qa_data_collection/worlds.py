@@ -3,12 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
+from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.core.worlds import validate
-import mephisto.data_model.dataloader as DataLoader
 
 
-class QADataCollectionOnboardWorld(MTurkOnboardWorld):
+class QADataCollectionOnboardWorld(CrowdOnboardWorld):
     def __init__(self, opt, mturk_agent):
         super().__init__(opt, mturk_agent)
         self.opt = opt
@@ -28,7 +27,7 @@ class QADataCollectionOnboardWorld(MTurkOnboardWorld):
         self.episodeDone = True
 
 
-class QADataCollectionWorld(MTurkTaskWorld):
+class QADataCollectionWorld(CrowdTaskWorld):
     """
     World for recording a turker's question and answer given a context.
     Assumes the context is a random context from a given task, e.g. from SQuAD, CBT,
@@ -38,7 +37,7 @@ class QADataCollectionWorld(MTurkTaskWorld):
     collector_agent_id = 'QA Collector'
 
     def __init__(self, opt, agent):
-        self.dataloader = opt["dataloader"]
+        self.teacher = opt["teacher"]
         self.agent = agent
         self.agent.agent_id = "QA Agent"
         self.episodeDone = False
@@ -51,8 +50,8 @@ class QADataCollectionWorld(MTurkTaskWorld):
     def parley(self):
         # Each turn starts from the QA Collector agent
         self.turn_index = (self.turn_index + 1) % 2
-        ad = {'episode_done': False}
-        ad['id'] = self.__class__.collector_agent_id
+        act = {'episode_done': False}
+        act['id'] = self.__class__.collector_agent_id
 
 
         if self.turn_index == 0:
@@ -60,15 +59,15 @@ class QADataCollectionWorld(MTurkTaskWorld):
             # and prompts the turker to ask a question regarding the context
 
             # Get context from dataloader
-            passage = self.dataloader.act()
+            passage = self.teacher.act()
             self.context = passage['text']
-            ad['passage'] = passage['text']
+            act['passage'] = passage['text']
 
-            # Wrap the context with a prompt telling the turker what to do next
-            ad['text'] = (
+            # Add a prompt telling the turker what to do next
+            act['text'] = (
                 'Please provide a question given the passage.'
             )
-            self.agent.observe(validate(ad))
+            self.agent.observe(validate(act))
             self.question = self.agent.act(timeout=self.opt["turn_timeout"])
             # Can log the turker's question here
 
@@ -78,29 +77,15 @@ class QADataCollectionWorld(MTurkTaskWorld):
             # turker to provide the answer
 
             # A prompt telling the turker what to do next
-            ad['text'] = 'Thanks. And what is the answer to your question?'
+            act['text'] = 'Thanks. And what is the answer to your question?'
 
-            # ad['episode_done'] = True  # end of episode
-
-            self.agent.observe(validate(ad))
+            self.agent.observe(validate(act))
             self.answer = self.agent.act(timeout=self.opt["turn_timeout"])
 
             self.episodeDone = True
 
-    def prep_save_data(self, agent):
-        """Process and return any additional data from this world you may want to store"""
-        return {"example_key": "example_value"}
-
     def episode_done(self):
         return self.episodeDone
-
-    def shutdown(self):
-        """
-        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
-        disconnected then it could prevent other mturk agents from completing.
-        """
-        # self.task.shutdown()
-        self.agent.shutdown()
 
 
 def make_onboarding_world(opt, agent):
