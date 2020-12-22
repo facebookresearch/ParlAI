@@ -8,6 +8,8 @@ The scripts in this directory will allow you to run all the steps of [ACUTE-Eval
 
 Both types are discussed below.
 
+**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
+
 ## How to run Fast ACUTE if you need to produce model self-chats
 
 ### 1. Choose the self-chat task
