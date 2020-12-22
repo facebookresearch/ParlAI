@@ -47,7 +47,10 @@ function Passage({passage}) {
     border: "0px"
   };
   if (passage) {
-    return (<ResizableTextArea defaultValue={passage} readOnly style={mystyle} onClick={logSelection}/>)
+    return (<div>
+      <h2>Passage</h2>
+      <ResizableTextArea defaultValue={passage} readOnly style={mystyle} onClick={logSelection}/>
+      </div>)
   }
   return null
 }
