@@ -22,7 +22,10 @@ from parlai.crowdsourcing.tasks.fast_acute.run import FastAcuteExecutor
 from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
     FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
 )
-from parlai.crowdsourcing.tasks.fast_acute.util import FAST_ACUTE_TASK_DIRECTORY
+from parlai.crowdsourcing.tasks.fast_acute.util import (
+    ACUTE_EVAL_TASK_DIRECTORY,
+    FAST_ACUTE_TASK_DIRECTORY,
+)
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 from parlai.utils.strings import normalize_reply
 
@@ -122,14 +125,11 @@ class NoSelfChatFastAcuteExecutor(FastAcuteExecutor):
         return conversation
 
 
-ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
-# Read in any task config JSON/HTML files from the ACUTE-Eval directory
-
 defaults = [
     {"mephisto/blueprint": FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    'conf/base_no_self_chat',
+    'conf/base',
     {"conf": "example_no_self_chat"},
 ]
 
