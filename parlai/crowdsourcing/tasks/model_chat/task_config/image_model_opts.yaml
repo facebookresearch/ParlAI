@@ -1,0 +1,4 @@
+transresnet_multimodal: >
+    --model-file models:image_chat/transresnet_multimodal/model
+    --data-parallel False
+    --fp16 False

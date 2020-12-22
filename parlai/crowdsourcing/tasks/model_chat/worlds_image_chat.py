@@ -4,8 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from tempfile import NamedTemporaryFile
 from typing import Any, Dict, List, Tuple
 
+from parlai.core.image_featurizers import ImageLoader
 from parlai.core.message import Message
 from parlai.core.worlds import validate
 from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility, get_image_src
@@ -27,6 +29,16 @@ class ModelImageChatWorld(BaseModelChatWorld):
         self.image_idx = image_idx
         self.image_act = image_act
 
+        # Get a stringified version of the image to show the user
+        orig_image = self.image_act['image']
+        self.image_src = get_image_src(image=orig_image)
+
+        # Get a featurized version of the image to show the bot
+        with NamedTemporaryFile(suffix='.jpg') as f:
+            orig_image.save(f)
+            image_loader = ImageLoader(self.bot.model_agent.opt)
+            self.image_act.force_set('image', image_loader.load(f.name))
+
     def _run_initial_turn(self) -> None:
         """
         Show the image to the human and bot, and show the bot's response to the human.
@@ -36,7 +48,6 @@ class ModelImageChatWorld(BaseModelChatWorld):
         system_agent_idx = None
 
         # Show the image to the human
-        image_src = get_image_src(image=self.image_act['image'])
         image_act_for_human = {
             'episode_done': False,
             'id': system_id,
@@ -46,7 +57,7 @@ class ModelImageChatWorld(BaseModelChatWorld):
 
 Be sure to talk about this image a little bit before discussing other things!
 """,
-            'task_data': {'image_src': image_src},
+            'task_data': {'image_src': self.image_src},
             'agent_idx': system_agent_idx,
         }
         self.agent.observe(validate(image_act_for_human))
@@ -59,6 +70,8 @@ Be sure to talk about this image a little bit before discussing other things!
             'agent_idx': system_agent_idx,
         }
         self.bot.observe(validate(image_act))
+        del image_act['image']
+        # Don't save the image features to disk
 
         # Have the bot respond
         bot_first_act_raw = self.bot.act()

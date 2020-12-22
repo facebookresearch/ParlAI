@@ -101,6 +101,13 @@ class ImageStack:
 
         pointer = self.get_pointer()
 
+        # Check that the number of images is the same as before
+        if len(self.stack) != self.num_images:
+            raise ValueError(
+                f'The loaded stack has {len(self.stack):d} images instead of the '
+                f'desired {self.num_images:d}!'
+            )
+
         # Make sure that the set of models is correct (i.e. in case we are loading in an
         # older obsolete version of the stack)
         if set(self.stack[0].keys()) == set(self.models):

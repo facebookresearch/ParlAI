@@ -13,7 +13,10 @@ import pickle
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.crowdsourcing.tasks.model_chat import run
-from parlai.crowdsourcing.tasks.model_chat.utils import get_context_generator
+from parlai.crowdsourcing.tasks.model_chat.utils import (
+    get_context_generator,
+    get_image_src,
+)
 from parlai.scripts.display_data import setup_args
 
 
@@ -36,20 +39,34 @@ def save_image_contexts():
     task_opt = task_parser.parse_args()
     agent = RepeatLabelAgent(task_opt)
     world = create_task(task_opt, agent)
+    num_examples = task_opt['num_examples']
 
     print('Creating context generator.')
     context_generator = get_context_generator()
 
-    print('Looping over images and pulling a context for each one.')
+    print(f'Looping over {num_examples:d} images and pulling a context for each one.')
     image_contexts = []
-    for _ in range(task_opt['num_examples']):
+    unique_image_srcs = set()
+    while len(image_contexts) < num_examples:
+
+        # Get the next teacher act
         world.parley()
         teacher_act = world.get_acts()[0]
-        image_context = {
-            'image_act': teacher_act,
-            'context_info': context_generator.get_context(),
-        }
-        image_contexts.append(image_context)
+
+        image_src = get_image_src(image=teacher_act['image'])
+        if image_src in unique_image_srcs:
+            # Skip over non-unique images, such as from the later turns of an episode
+            print('\tSkipping non-unique image.')
+        else:
+            unique_image_srcs.add(image_src)
+            image_context = {
+                'image_act': teacher_act,
+                'context_info': context_generator.get_context(),
+            }
+            image_contexts.append(image_context)
+            if len(image_contexts) % 5 == 0:
+                print(f'Collected {len(image_contexts):d} images.')
+
     print(f'{len(image_contexts):d} image contexts created.')
 
     # Save

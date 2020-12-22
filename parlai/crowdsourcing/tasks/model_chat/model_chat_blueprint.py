@@ -14,6 +14,7 @@ from threading import Semaphore, Condition
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import numpy as np
+import yaml
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
@@ -460,8 +461,8 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         },
     )
     model_opt_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/image_model_opts.json",
-        metadata={"help": "Path to JSON of opts for each model"},
+        default="${mephisto.blueprint.task_config_path}/image_model_opts.yaml",
+        metadata={"help": "Path to YAML of opts for each model"},
     )
     num_conversations: int = field(
         default=10, metadata={'help': 'The number of conversations to collect'}
@@ -536,5 +537,5 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
-            model_opts = json.load(f)
+            model_opts = yaml.load(f.read())
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=model_opts)

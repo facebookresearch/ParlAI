@@ -1,9 +1,0 @@
-{
-      "transresnet_multimodal": {
-        "model_file": "models:image_chat/transresnet_multimodal/model",
-        "override": {
-            "data_parallel": false,
-            "fp16": false
-        }
-    }
-}

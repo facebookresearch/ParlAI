@@ -91,20 +91,23 @@ class TurkLikeAgent:
     def get_bot_agents(
         args: DictConfig,
         active_models: Optional[List[str]] = None,
-        model_opts: Optional[Dict[str, Dict]] = None,
+        model_opts: Optional[Dict[str, str]] = None,
         no_cuda=False,
     ) -> Dict[str, dict]:
         """
         Return shared bot agents.
 
-        Pass in model opts with the `model_opts` arg; otherwise, pass in a list of model
-        names with the `active_models` arg, and those models' opts will be read from
-        args.blueprint.base_model_folder.
+        Pass in model opts in one of two ways:
+        (1) With the `model_opts` arg, where `model_opts` is a dictionary whose keys are
+          model names and whose values are strings that specify model params (i.e. 
+          `--model image_seq2seq`).
+        (2) With the `active_models` arg, a list of model names: those models' opts will
+          be read from args.blueprint.base_model_folder.
         """
+        # NOTE: in the future we may want to deprecate the `active_models` arg, to move
+        #  away from the paradigm of having all models in one folder
 
         model_overrides = {
-            'datatype': 'valid',  # So we don't have to load the optimizer
-            'encode_candidate_vecs': True,  # For pulling from fixed list cands
             'interactive_mode': True,
             'model_parallel': args.blueprint.task_model_parallel,
             'skip_generation': False,
@@ -156,21 +159,23 @@ class TurkLikeAgent:
 
         elif model_opts is not None:
 
-            # Provide default opts for parameters like 'datapath' that shouldn't need to
-            # be specified in the input model_opts arg
-            parser = ParlaiParser(False, False)
-            default_opt = parser.parse_args([])
+            model_overrides_string = ' '.join(
+                f'--{key.replace("_", "-")} {val}'
+                for key, val in model_overrides.items()
+            )
+            # NOTE: this can be simplified if we remove the `active_models` arg and
+            #  specify model opts only from a YAML file. Also, in that case not all of
+            #  the model_overrides may still be needed, for instance if we use
+            #  display_model's setup_args() instead of ParlaiParser
+
+            parser = ParlaiParser(True, True)
 
             final_model_opts = {}
             for name, opt in model_opts.items():
-                for param in ['datapath']:
-                    if param not in opt:
-                        opt[param] = default_opt[param]
-                model_overrides_copy = copy.deepcopy(model_overrides)
-                if 'override' not in opt:
-                    opt['override'] = {}
-                opt['override'].update(model_overrides_copy)
-                final_model_opts[name] = opt
+                final_model_opt_string = opt + ' ' + model_overrides_string
+                final_model_opts[name] = parser.parse_args(
+                    final_model_opt_string.split()
+                )
 
         else:
 
@@ -186,12 +191,11 @@ class TurkLikeAgent:
             copied_opt_dict = copy.deepcopy(model_opt)
             model_agent = create_agent(model_opt, requireModelExists=True)
 
-            # have to check that the options are set properly
-            for k, v in copied_opt_dict.items():
-                if k not in ['override', 'model_file']:
-                    # We skip 'model_file', which may originally include a prefix such
-                    # as 'models:'
-                    assert model_agent.opt[k] == v
+            if active_models is not None:
+                # have to check that the options are set properly
+                for k, v in copied_opt_dict.items():
+                    if k != 'override':
+                        assert model_agent.opt[k] == v
 
             shared_bot_agents[model_name] = model_agent.share()
         return shared_bot_agents
