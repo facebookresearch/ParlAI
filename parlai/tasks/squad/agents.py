@@ -383,6 +383,10 @@ class SquadQATeacher(AbstractWrapperTeacher):
     Wrapper Teacher over SQuAD to get only the passage, and ignore the question
     """
 
+    @classmethod
+    def add_cmdline_args(cls, parser):
+        parser.set_defaults(wrapper_task='squad')
+
     def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
 
@@ -394,7 +398,3 @@ class SquadQATeacher(AbstractWrapperTeacher):
         passage = act['text'].split('\n')[0]
         act.force_set('text', passage)
         return act
-
-    @classmethod
-    def add_cmdline_args(cls, parser):
-        parser.set_defaults(wrapper_task='squad')

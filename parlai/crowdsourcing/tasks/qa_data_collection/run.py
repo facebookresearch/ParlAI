@@ -38,7 +38,7 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 @dataclass
 class TeacherConfig:
     task: str = field(
-        default="SquadQATeacher",
+        default="squad:SquadQATeacher",
         metadata={"help": ""}
     )
     datatype: str = field(
