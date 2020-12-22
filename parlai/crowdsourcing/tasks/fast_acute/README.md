@@ -58,11 +58,11 @@ Generated result files include the following:
 2. A CSV file of the statistical significances of results, given by the *p*-values of the win rates of model pairs. View these with `cat acute_eval_<timestamp>.significance.csv | column -t -s, | less -S`.
 3. HTML files of nicely visualized conversations.
 
-**NOTE**: Analysis can be run on its own by calling `analysis.py`, specifying the ACUTE-Eval `run_id` and the `root_dir` that you used when running Fast ACUTE:
+**NOTE**: Analysis can be run on its own by calling `analysis.py`, specifying the ACUTE-Eval `run_ids` and the `root_dir` that you used when running Fast ACUTE:
 ```
 python parlai/crowdsourcing/tasks/fast_acute/analysis.py \
 --root-dir ${FAST_ACUTE_ROOT_DIR} \
---run-id ${RUN_ID}
+--run-ids ${RUN_ID}
 ```
 Use `--outdir` to save analysis results in a custom folder.
 
