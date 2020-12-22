@@ -1,0 +1,45 @@
+{
+  "name": "parlai-mturk-task-compiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev": "webpack --mode development -q"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "bootstrap-chat": "^1.0.7",
+    "mephisto-task": "^1.0.13",
+    "rc-slider": "^8.6.3",
+    "react": "16.13.1",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "16.13.1",
+    "react-table": "^6.8.6",
+    "react-fluid-textarea": "0.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.0.2",
+    "css-loader": "^1.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-plugin-flowtype": "^4.7.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
+    "style-loader": "^0.23.0",
+    "url-loader": "^2.0.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1"
+  }
+}

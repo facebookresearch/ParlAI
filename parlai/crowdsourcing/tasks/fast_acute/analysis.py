@@ -12,6 +12,8 @@ FOR ANALYSIS!!
 import hashlib
 import json
 import os
+from copy import deepcopy
+from datetime import datetime
 from typing import Dict, Any, List, Optional
 
 import numpy as np
@@ -46,9 +48,6 @@ AGREEMENT_THRESHOLD = 0.8
 AGREEMENT_TIES_OKAY = False
 # NOTE: these could be added as flags if desired
 
-# Prepended to checkbox columns in self.dataframe
-CHECKBOX_PREFIX = 'checkbox: '
-
 
 def setup_args():
     """
@@ -56,7 +55,11 @@ def setup_args():
     """
     parser = ParlaiParser(False, False)
     parser.add_argument(
-        '-id', '--run-id', type=str, default=None, help='run id to analyze'
+        '-ids',
+        '--run-ids',
+        type=str,
+        default=None,
+        help='Comma-separated list of run IDs to analyze',
     )
     parser.add_argument(
         '--root-dir', type=str, default=None, help='root ACUTE-Eval save directory'
@@ -86,6 +89,9 @@ class AcuteAnalyzer(object):
     Given a run_id, we can do lots of fun things!
     """
 
+    CHECKBOX_PREFIX = 'checkbox: '
+    # Prepended to checkbox columns in self.dataframe
+
     def __init__(self, opt: Dict, remove_failed: bool = True):
         """
         Initialize the analyzer.
@@ -100,7 +106,8 @@ class AcuteAnalyzer(object):
         """
         self.root_dir = opt['root_dir']
         assert os.path.isdir(self.root_dir), '--root-dir must be a real directory!'
-        self.run_id = opt['run_id']
+        assert ',' not in opt['run_ids'], "AcuteAnalyzer can only handle one run ID!"
+        self.run_id = opt['run_ids']
         self.outdir = opt['outdir']
         # Get task for loading pairing files
         self.task = opt.get('task', 'q')
@@ -119,9 +126,10 @@ class AcuteAnalyzer(object):
             mephisto_root_path = None
         mephisto_db = LocalMephistoDB(database_path=mephisto_root_path)
         self.mephisto_data_browser = MephistoDataBrowser(db=mephisto_db)
-        self.checkbox_prefix = CHECKBOX_PREFIX
+        self.checkbox_prefix = self.CHECKBOX_PREFIX
         # Prepended to checkbox columns in self.dataframe
         self.dataframe = self._extract_to_dataframe()
+        self._check_eval_question()
         if remove_failed:
             self._remove_failed_onboarding()
         if self.dataframe.index.size == 0:
@@ -226,6 +234,15 @@ class AcuteAnalyzer(object):
             raise ValueError('No valid results found!')
         else:
             return pd.DataFrame(responses)
+
+    def _check_eval_question(self):
+        """
+        Check that the same eval question has been used for all results.
+        """
+        if len(set(self.dataframe['question'].unique())) > 1:
+            raise ValueError(
+                'All results must share the same eval question for consistency!'
+            )
 
     def _remove_failed_onboarding(self):
         """
@@ -648,6 +665,69 @@ REASON: {pairing_sr['reason']}
                 f.write(compiled_text)
 
 
+class MultiRunAcuteAnalyzer(AcuteAnalyzer):
+    """
+    Combine results from different ACUTE-Eval runs.
+    """
+
+    def __init__(self, opt: Dict, dataframes: Dict[str, pd.DataFrame]):
+        """
+        Read in and combine the dataframes of other already-analyzed ACUTE-Eval runs.
+        """
+
+        self.outdir = opt['outdir']
+        if opt.get('model_ordering') is not None:
+            self.custom_model_ordering = opt['model_ordering'].split(',')
+        else:
+            self.custom_model_ordering = None
+        self.run_id = 'combined'
+        self.checkbox_prefix = self.CHECKBOX_PREFIX
+        # Prepended to checkbox columns in self.dataframe
+
+        for dataframe in dataframes.values():
+            dataframe.loc[:, 'run_id'] = self.run_id
+            # Overwrite the run_id so that results will combine across runs
+        self.dataframe = pd.concat(dataframes.values(), axis=0)
+
+        # Check that all results across all runs share the same eval question
+        self._check_eval_question()
+
+
+def get_multi_run_analyzer(opt) -> MultiRunAcuteAnalyzer:
+    """
+    Return an object to analyze the results of multiple runs simultaneously.
+
+    Load HITs from each run into a separate dataframe, and then pass all dataframes into
+    a separate analyzer class that will concatenate them.
+    """
+
+    run_ids = opt['run_ids'].split(',')
+
+    # Define paths
+    assert (
+        opt['outdir'] is not None
+    ), '--outdir must be specified when combining results of multiple runs!'
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    opt['outdir'] = os.path.join(opt['outdir'], f'combined_runs_{timestamp}')
+    os.makedirs(opt['outdir'], exist_ok=True)
+    run_id_list_path = os.path.join(opt['outdir'], 'run_ids.txt')
+
+    # Save a simple list of all run IDs stitched together
+    with open(run_id_list_path, 'w') as f:
+        for run_id in run_ids:
+            f.write(run_id + '\n')
+
+    # Loop loading HITs over all run ids into dataframes
+    dataframes = {}
+    for run_id in run_ids:
+        print(f'\nStarting to load HITs for run ID {run_id}.')
+        opt_copy = deepcopy(opt)
+        opt_copy['run_ids'] = run_id
+        dataframes[run_id] = AcuteAnalyzer(opt_copy).dataframe
+
+    return MultiRunAcuteAnalyzer(opt=opt, dataframes=dataframes)
+
+
 def render_row(row):
     result = []
     for i, turn in enumerate(row['winner_dialogue']['dialogue']):
@@ -741,7 +821,12 @@ def render_conversations_per_matchups(table, force_reasons=True):
 if __name__ == "__main__":
 
     parser = setup_args()
-    analyzer = AcuteAnalyzer(parser.parse_args())
+    opt_ = parser.parse_args()
+
+    if ',' not in opt_['run_ids']:
+        analyzer = AcuteAnalyzer(opt_)
+    else:
+        analyzer = get_multi_run_analyzer(opt_)
     analyzer.save_results()
 
     # Print win fractions

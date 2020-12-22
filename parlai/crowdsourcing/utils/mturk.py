@@ -8,11 +8,12 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional
 
-from mephisto.operations.hydra_config import RunScriptConfig
 from mephisto.abstractions.database import MephistoDB
+from mephisto.abstractions.providers.mturk.mturk_agent import MTurkAgent
 from mephisto.abstractions.providers.mturk.utils.script_utils import (
     direct_soft_block_mturk_workers,
 )
+from mephisto.operations.hydra_config import RunScriptConfig
 from omegaconf import DictConfig, MISSING
 
 
@@ -50,6 +51,15 @@ class MTurkRunScriptConfig(MTurkRunScriptConfigMixin, RunScriptConfig):
     Use this instead of MTurkRunScriptConfigMixin when there are no task-specific fields
     that need to be set in the script config.
     """
+
+
+def get_mturk_id_from_mephisto_wrapper(agent):
+    """
+    Returns the MTurk worker ID from a ParlAI-Wrapped Mephisto Agent.
+    """
+    if not isinstance(agent, MTurkAgent):
+        return f"--NOT-MTURK-AGENT-{agent.mephisto_agent.get_worker().worker_name}"
+    return agent.mephisto_agent.get_worker().get_mturk_worker_id()
 
 
 def soft_block_mturk_workers(

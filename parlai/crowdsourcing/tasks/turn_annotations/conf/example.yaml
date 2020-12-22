@@ -1,0 +1,30 @@
+#@package _global_
+mephisto:
+  blueprint:
+    onboarding_qualification: turn_annotations_onboarding
+    block_qualification: turn_annotations_block
+    base_model_folder: ~/ParlAI/data/models/
+    chat_data_folder: ~/ParlAI/data/crowdsourcing/turn_annotations/
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: false
+    include_persona: false
+    conversation_start_mode: 'hi'
+    annotation_question: Does this comment from your partner have any of the following attributes? (Check all that apply)
+    conversations_needed_string: "bot_adversarial_dialogue/multi_turn:10"
+  task:
+    allowed_concurrent: 1
+    maximum_units_per_worker: 3
+    task_description: |
+      <b><h4>Task Description</h4></b>
+      <br>
+      Dummy Task Description.
+
+      Lorem ipsum.
+      <br><br>
+    task_name: turn_annotations
+    task_reward: 3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a fellow conversationalist!"
+mturk:
+  worker_blocklist_paths: null

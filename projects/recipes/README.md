@@ -23,6 +23,8 @@ We show that large scale models can learn these skills when given appropriate tr
 
 You may talk with our models. The 2.7B can be interacted with on a 16gb P100 GPU or better. The 9.4B parameter model requires at least two 32gb V100 GPUs to interact with.
 
+We also provide two smaller variants of the 2.7B-parameter model that were created using [knowledge distillation](https://github.com/facebookresearch/ParlAI/blob/master/projects/anti_scaling/README.md#knowledge-distillation). The 1.4B-parameter model is roughly 2x faster than the 2.7B-parameter model during inference and performs very nearly as well as it, and the 360M-parameter one is roughly 5x faster and has performance in between that of the 2.7B-parameter and 90M-parameter models.
+
 **Safety** We have studied improved safety from toxic language ([Dinan et al., 2019b](http://parl.ai/projects/dialogue_safety/)), but much work remains to be done. While we have made our models publicly available, and added a safety layer to the interaction, we have not mitigated all safety issues. We believe their release can help the community work together to understand further and fix these issues, and we recommend their use for that line of research.
 
 **90M**
@@ -38,6 +40,16 @@ python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/
 **9.4B**
 ```
 python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_9B/model
+```
+
+**2.7B distilled to 1.4B**
+```
+python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_1Bdistill/model
+```
+
+**2.7B distilled to 360M**
+```
+python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf zoo:blender/blender_400Mdistill/model
 ```
 
 ## Fine-tuning your own models

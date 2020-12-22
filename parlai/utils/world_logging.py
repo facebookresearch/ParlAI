@@ -55,6 +55,8 @@ class WorldLogger:
         self._current_episodes = {}
 
     def reset_world(self, idx=0):
+        if idx not in self._current_episodes:
+            return
         self._add_episode(self._current_episodes[idx])
         self._current_episodes[idx] = []
 
