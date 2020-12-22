@@ -41,22 +41,22 @@ class QADataCollectionWorld(CrowdTaskWorld):
         self.agent = agent
         self.agent.agent_id = "QA Agent"
         self.episodeDone = False
-        self.turn_index = -1
         self.context = None
         self.question = None
         self.answer = None
         self.opt = opt
 
     def parley(self):
-        # Each turn starts from the QA Collector agent
-        self.turn_index = (self.turn_index + 1) % 2
+
         act = {'episode_done': False}
         act['id'] = self.__class__.collector_agent_id
 
 
-        if self.turn_index == 0:
-            # At the first turn, the QA Collector agent provides the context
-            # and prompts the turker to ask a question regarding the context
+        if not self.question:
+            '''
+            First, the QA Collector agent provides the context
+            and prompts the turker to ask a question regarding the context
+            '''
 
             # Get context from dataloader
             passage = self.teacher.act()
@@ -71,10 +71,12 @@ class QADataCollectionWorld(CrowdTaskWorld):
             self.question = self.agent.act(timeout=self.opt["turn_timeout"])
             # Can log the turker's question here
 
-        if self.turn_index == 1:
-            # At the second turn, the QA Collector collects the turker's
-            # question from the first turn, and then prompts the
-            # turker to provide the answer
+        if not self.answer:
+            '''
+            Next, the QA Collector collects the turker's
+            question, and then prompts the
+            turker to provide the answer
+            '''
 
             # A prompt telling the turker what to do next
             act['text'] = 'Thanks. And what is the answer to your question?'
