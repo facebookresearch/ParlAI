@@ -3,13 +3,15 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
+
+from parlai.crowdsourcing.utils.worlds import CrowdTaskWorld
 from parlai.core.worlds import validate
 
 
 class QADataCollectionWorld(CrowdTaskWorld):
     """
     World for recording a turker's question and answer given a context.
+
     Assumes the context is a random context from a given task, e.g. from SQuAD, CBT,
     etc.
     """
@@ -31,12 +33,11 @@ class QADataCollectionWorld(CrowdTaskWorld):
         act = {'episode_done': False}
         act['id'] = self.__class__.collector_agent_id
 
-
         if not self.question:
-            '''
-            First, the QA Collector agent provides the context
-            and prompts the turker to ask a question regarding the context
-            '''
+            """
+            First, the QA Collector agent provides the context and prompts the turker to
+            ask a question regarding the context.
+            """
 
             # Get context from dataloader
             passage = self.teacher.act()
@@ -44,20 +45,17 @@ class QADataCollectionWorld(CrowdTaskWorld):
             act['passage'] = passage['text']
 
             # Add a prompt telling the turker what to do next
-            act['text'] = (
-                'Please provide a question given the passage.'
-            )
+            act['text'] = 'Please provide a question given the passage.'
             self.agent.observe(validate(act))
             self.question = self.agent.act(timeout=self.opt["turn_timeout"])
             # Can log the turker's question here
             return
 
         if not self.answer:
-            '''
-            Next, the QA Collector collects the turker's
-            question, and then prompts the
-            turker to provide the answer
-            '''
+            """
+            Next, the QA Collector collects the turker's question, and then prompts the
+            turker to provide the answer.
+            """
 
             # A prompt telling the turker what to do next
             act['text'] = 'Thanks. And what is the answer to your question?'

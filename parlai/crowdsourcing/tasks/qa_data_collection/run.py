@@ -6,18 +6,19 @@
 
 
 import os
-from mephisto.operations.operator import Operator
-from mephisto.tools.scripts import load_db_and_process_config
+from dataclasses import dataclass, field
+from itertools import chain
+from typing import List, Any
+
+import hydra
+from omegaconf import DictConfig
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
     BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
-
-import hydra
-from omegaconf import DictConfig
-from dataclasses import dataclass, field
-from typing import List, Any
-from itertools import chain
+from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
+from mephisto.operations.operator import Operator
+from mephisto.tools.scripts import load_db_and_process_config
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.params import ParlaiParser
@@ -30,21 +31,15 @@ defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "example"}
+    {"conf": "example"},
 ]
 
-from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
 
 @dataclass
 class TeacherConfig:
-    task: str = field(
-        default="squad:SquadQATeacher",
-        metadata={"help": ""}
-    )
-    datatype: str = field(
-        default="train",
-        metadata={"help": ""}
-    )
+    task: str = field(default="squad:SquadQATeacher", metadata={"help": ""})
+    datatype: str = field(default="train", metadata={"help": ""})
+
 
 @dataclass
 class TestScriptConfig(RunScriptConfig):
@@ -68,7 +63,9 @@ def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 
     parser = ParlaiParser(True, False)
-    opt = parser.parse_args(list(chain.from_iterable(('--'+k,v) for k,v in cfg.teacher.items())))
+    opt = parser.parse_args(
+        list(chain.from_iterable(('--' + k, v) for k, v in cfg.teacher.items()))
+    )
     agent = RepeatLabelAgent(opt)
     teacher = create_task(opt, agent).get_task_agent()
 

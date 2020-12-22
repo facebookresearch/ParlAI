@@ -4,17 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
-from parlai.tasks.wrapper.agents import AbstractWrapperTeacher
-from parlai.utils.io import PathManager
-from parlai.utils.misc import warn_once
-from parlai.core.message import Message
-from parlai.core.opt import Opt
-from .build import build
-
 import copy
 import json
 import os
+
+from parlai.core.message import Message
+from parlai.core.opt import Opt
+from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
+from parlai.tasks.wrapper.agents import AbstractWrapperTeacher
+from parlai.utils.io import PathManager
+from .build import build
 
 
 def get_sentence_tokenizer():
@@ -380,7 +379,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
 
 class SquadQATeacher(AbstractWrapperTeacher):
     """
-    Wrapper Teacher over SQuAD to get only the passage, and ignore the question
+    Wrapper Teacher over SQuAD to get only the passage, and ignore the question.
     """
 
     @classmethod
@@ -393,7 +392,7 @@ class SquadQATeacher(AbstractWrapperTeacher):
     def _edit_action(self, act: Message) -> Message:
 
         """
-        # SQuAD returns passage and question both, only passage required for task
+        # SQuAD returns passage and question both, only passage required for task.
         """
         passage = act['text'].split('\n')[0]
         act.force_set('text', passage)
