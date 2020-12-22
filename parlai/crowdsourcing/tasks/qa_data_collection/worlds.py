@@ -7,26 +7,6 @@ from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.core.worlds import validate
 
 
-class QADataCollectionOnboardWorld(CrowdOnboardWorld):
-    def __init__(self, opt, mturk_agent):
-        super().__init__(opt, mturk_agent)
-        self.opt = opt
-
-    def parley(self):
-        self.mturk_agent.agent_id = "Onboarding Agent"
-        self.mturk_agent.observe({"id": "System", "text": "Welcome onboard!"})
-        x = self.mturk_agent.act(timeout=self.opt["turn_timeout"])
-        self.mturk_agent.observe(
-            {
-                "id": "System",
-                "text": "Thank you for your input! Please wait while "
-                "we match you with another worker...",
-                "episode_done": True,
-            }
-        )
-        self.episodeDone = True
-
-
 class QADataCollectionWorld(CrowdTaskWorld):
     """
     World for recording a turker's question and answer given a context.
@@ -88,16 +68,6 @@ class QADataCollectionWorld(CrowdTaskWorld):
 
     def episode_done(self):
         return self.episodeDone
-
-
-def make_onboarding_world(opt, agent):
-    return QADataCollectionOnboardWorld(opt, agent)
-
-
-def validate_onboarding(data):
-    """Check the contents of the data to ensure they are valid"""
-    print(f"Validating onboarding data {data}")
-    return True
 
 
 def make_world(opt, agents):
