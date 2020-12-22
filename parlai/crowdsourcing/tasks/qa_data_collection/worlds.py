@@ -50,6 +50,7 @@ class QADataCollectionWorld(CrowdTaskWorld):
             self.agent.observe(validate(act))
             self.question = self.agent.act(timeout=self.opt["turn_timeout"])
             # Can log the turker's question here
+            return
 
         if not self.answer:
             '''
