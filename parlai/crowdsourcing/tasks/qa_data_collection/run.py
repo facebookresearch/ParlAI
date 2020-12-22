@@ -38,11 +38,7 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 @dataclass
 class TeacherConfig:
     task: str = field(
-        default="wrapper:SquadQATeacher",
-        metadata={"help": ""}
-    )
-    wrapper_task: str = field(
-        default="squad",
+        default="SquadQATeacher",
         metadata={"help": ""}
     )
     datatype: str = field(

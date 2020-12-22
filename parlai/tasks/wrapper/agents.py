@@ -187,20 +187,3 @@ class LabelToTextTeacher(AbstractWrapperTeacher):
             assert 'text' not in act and act['episode_done'] is True
         act.force_set('episode_done', True)  # Clear the dialogue history
         return act
-
-class SquadQATeacher(AbstractWrapperTeacher):
-    """
-    Wrapper Teacher over SQuAD to get only the passage, and ignore the question
-    """
-
-    def __init__(self, opt: Opt, shared=None):
-        super().__init__(opt, shared)
-
-    def _edit_action(self, act: Message) -> Message:
-
-        """
-        # SQuAD returns passage and question both, only passage required for task
-        """
-        passage = act['text'].split('\n')[0]
-        act.force_set('text', passage)
-        return act
