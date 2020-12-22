@@ -13,5 +13,6 @@ mephisto:
     task_reward: 0.3
     task_tags: "dynamic,question answering,testing"
 teacher:
-  task: squad
+  task: wrapper:SquadQATeacher
+  wrapper_task: squad
   datatype: train

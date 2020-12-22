@@ -19,8 +19,6 @@ from dataclasses import dataclass, field
 from typing import List, Any
 from itertools import chain
 
-from parlai.tasks.squad.agents import DefaultTeacher
-
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
@@ -40,6 +38,10 @@ from mephisto.operations.hydra_config import RunScriptConfig, register_script_co
 @dataclass
 class TeacherConfig:
     task: str = field(
+        default="wrapper:SquadQATeacher",
+        metadata={"help": ""}
+    )
+    wrapper_task: str = field(
         default="squad",
         metadata={"help": ""}
     )
