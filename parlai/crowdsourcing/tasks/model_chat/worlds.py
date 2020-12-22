@@ -226,6 +226,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
                 acts[idx] = Compatibility.maybe_fix_act(acts[idx])
+                if 'metrics' in acts[idx]:
+                    del acts[idx]['metrics']
+                    # Metrics can't be saved to JSON and are not needed here
                 print(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
