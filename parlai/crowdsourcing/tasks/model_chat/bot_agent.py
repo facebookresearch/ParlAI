@@ -107,11 +107,7 @@ class TurkLikeAgent:
         # NOTE: in the future we may want to deprecate the `active_models` arg, to move
         #  away from the paradigm of having all models in one folder
 
-        model_overrides = {
-            'interactive_mode': True,
-            'model_parallel': args.blueprint.task_model_parallel,
-            'skip_generation': False,
-        }
+        model_overrides = {'model_parallel': args.blueprint.task_model_parallel}
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU
             model_overrides['no_cuda'] = no_cuda
