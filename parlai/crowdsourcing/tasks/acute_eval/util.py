@@ -17,7 +17,6 @@ from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_hashed_combo_path(
@@ -60,7 +59,6 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
     Abstract test class for testing Fast ACUTE code.
     """
 
-    FAST_ACUTE_TASK_DIRECTORY = FAST_ACUTE_TASK_DIRECTORY
     TASK_DIRECTORY = TASK_DIRECTORY
     MODELS = ['model1', 'model2']
     MODEL_STRING = ','.join(MODELS)
@@ -84,7 +82,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             'mephisto.blueprint.block_on_onboarding_fail=False',
             '+mephisto.blueprint.matchups_per_pair=60',
             '+mephisto.blueprint.num_self_chats=5',
-            f'+mephisto.blueprint.onboarding_path={self.FAST_ACUTE_TASK_DIRECTORY}/task_config/onboarding.json',
+            f'+mephisto.blueprint.onboarding_path={self.TASK_DIRECTORY}/task_config/onboarding.json',
             f'+mephisto.blueprint.root_dir={root_dir}',
             '+mephisto.blueprint.sufficient_matchups_multiplier=2',
             '+mephisto.blueprint.task=blended_skill_talk',

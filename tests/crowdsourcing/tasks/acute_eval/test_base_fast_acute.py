@@ -44,9 +44,7 @@ try:
 
             # Copy over expected self-chat files
             shutil.copytree(
-                os.path.join(
-                    self.FAST_ACUTE_TASK_DIRECTORY, 'task_config', 'self_chats'
-                ),
+                os.path.join(self.TASK_DIRECTORY, 'task_config', 'self_chats'),
                 os.path.join(root_dir, 'self_chats'),
             )
 
@@ -57,7 +55,7 @@ try:
 
             # Set up config
             test_overrides = [
-                f'+mephisto.blueprint.config_path={self.FAST_ACUTE_TASK_DIRECTORY}/task_config/model_config.json',
+                f'+mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config.json',
                 f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
                 '+mephisto.blueprint.model_pairs=""',
                 '+mephisto.blueprint.selfchat_max_turns=6',

@@ -2,8 +2,8 @@
 mephisto:
   blueprint:
     acute_eval_type: engaging
-    config_path: ${fast_acute_task_dir}/task_config/model_config.json
+    config_path: ${task_dir}/task_config/model_config.json
     models: model1,model2
     num_self_chats: 5
-    root_dir: ${fast_acute_task_dir}/task_config
+    root_dir: ${task_dir}/task_config
     task: blended_skill_talk
