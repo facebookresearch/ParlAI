@@ -137,7 +137,7 @@ class AcuteAnalyzer(object):
 
     def _extract_response_by_index(
         self, unit_details: Dict[str, Any], idx: int
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Extract response data from task data.
 
@@ -161,7 +161,7 @@ class AcuteAnalyzer(object):
         onboarding = task_data['task_specs'].get('is_onboarding', False)
         if 'speakerChoice' not in task_data or task_data['speakerChoice'] == '':
             print('speakerChoice not in task data!')
-            return None
+            return
         choice = task_data['speakerChoice']
         if onboarding:
             response['correct'] = choice == task_data['pairing_dict']['correct_answer']
@@ -809,12 +809,6 @@ def render_conversations_per_matchups(table, force_reasons=True):
         )
     return HTML(result)
 
-    return HTML(
-        '<table><tr><th>Winner Conversation</th><th>Loser Conversation</th><th>Reason</th></tr>{}</table>'.format(
-            ''.join(render_row(row).data for i, row in table.iterrows())
-        )
-    )
-
 
 if __name__ == "__main__":
 
@@ -832,6 +826,6 @@ if __name__ == "__main__":
     print(results.round(2).to_string())
 
     # Print matchup totals with significance
-    result = pd.DataFrame(analyzer.get_matchup_totals_with_significance())
-    result = result.drop(columns=['matchup', 'agree'])
-    print(result.round(2).to_string())
+    result_ = pd.DataFrame(analyzer.get_matchup_totals_with_significance())
+    result_ = result_.drop(columns=['matchup', 'agree'])
+    print(result_.round(2).to_string())
