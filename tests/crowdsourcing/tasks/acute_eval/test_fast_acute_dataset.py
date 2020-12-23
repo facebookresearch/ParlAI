@@ -7,7 +7,6 @@
 End-to-end testing for the Fast ACUTE crowdsourcing task.
 """
 
-import os
 import shutil
 import tempfile
 import unittest
