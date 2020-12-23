@@ -67,6 +67,12 @@ class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
     num_self_chats: int = field(
         default=100, metadata={'help': "Number of self-chats to run per model"}
     )
+    num_task_data_episodes: int = field(
+        default=500,
+        metadata={
+            'help': "Number of episodes to save if running ACUTEs on a ParlAI task"
+        },
+    )
     selfchat_max_turns: int = field(
         default=6,
         metadata={'help': "The number of dialogue turns before self chat ends"},

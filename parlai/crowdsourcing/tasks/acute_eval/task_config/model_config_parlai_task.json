@@ -1,8 +1,10 @@
 {
     "convai2": {
-        "task": "convai2"
+        "task": "convai2",
+        "prepended_context": true
     },
     "blended_skill_talk": {
-        "task": "blended_skill_talk"
+        "task": "blended_skill_talk",
+        "prepended_context": true
     }
 }

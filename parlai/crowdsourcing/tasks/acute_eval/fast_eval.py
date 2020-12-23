@@ -27,6 +27,10 @@ from parlai.crowdsourcing.tasks.acute_eval.analysis import (
     AcuteAnalyzer,
     setup_args as analysis_setup_args,
 )
+from parlai.crowdsourcing.tasks.acute_eval.dump_task_to_acute_format import (
+    dump_data as convert_task_data,
+    setup_args as convert_task_setup_args,
+)
 from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
     FAST_ACUTE_BLUEPRINT_TYPE,
 )
@@ -172,6 +176,22 @@ class FastAcuteExecutor(object):
                 'display_examples': False,
                 'log_every_n_secs': -1,
                 'indent': -1,
+            }
+        )
+        return config
+
+    def _get_task_conversion_config(self, model: str) -> Dict[str, Any]:
+        """
+        Return config for task conversion to conversation format.
+        """
+        outfile = self._get_task_data_path(model)
+        config = self.model_config[model]
+        config.update(
+            {
+                'outfile': outfile,
+                'num_episodes': self.fast_acute_args.num_task_data_episodes,
+                'speaker_0_id': f'{model}_as_human',
+                'speaker_1_id': model,
             }
         )
         return config
@@ -387,6 +407,21 @@ class FastAcuteExecutor(object):
 
         self._print_progress(f'loading pairings file from {pairings_filepath}')
         self.pairings_filepath = pairings_filepath
+
+    def _convert_task_to_conversations(self, model: str):
+        """
+        Convert task data to conversations format.
+        """
+        self._print_progress(
+            f'Converting task data to conversations format for {model}'
+        )
+        config = self._get_task_conversion_config(model)
+
+        with capture_output():
+            parser = convert_task_setup_args()
+            parser.set_params(**config)
+            opt = parser.parse_args(args=[])
+        convert_task_data(opt)
 
     ##################
     # Main Functions #
