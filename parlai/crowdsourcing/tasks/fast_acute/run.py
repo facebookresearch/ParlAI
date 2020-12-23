@@ -249,7 +249,7 @@ class FastAcuteExecutor(object):
                     conversation['context'].append(ex)
                     continue
                 if is_selfchat:
-                    speaker_id = model if i == 0 else f'other_{model}'
+                    speaker_id = model if i == 0 else f'other_speaker'
                 else:
                     speaker_id = ex['id']
                 if speaker_id not in conversation['speakers']:
