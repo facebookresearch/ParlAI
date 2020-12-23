@@ -468,6 +468,7 @@ class FastAcuteExecutor(object):
         """
         self.set_up_acute_eval()
         db, cfg = load_db_and_process_config(self.args)
+        print(f'*** RUN ID: {cfg.mephisto.task.task_name} ***')
         operator = Operator(db)
         operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
         operator.wait_for_runs_then_shutdown(

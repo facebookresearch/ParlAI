@@ -57,6 +57,7 @@ register_script_config(name='scriptconfig', module=ScriptConfig)
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
+    print(f'*** RUN ID: {cfg.mephisto.task.task_name} ***')
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
     operator.wait_for_runs_then_shutdown(
