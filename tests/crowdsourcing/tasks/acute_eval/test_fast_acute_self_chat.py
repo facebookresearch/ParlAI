@@ -23,9 +23,9 @@ try:
     )
     from parlai.crowdsourcing.tasks.acute_eval.util import AbstractFastAcuteTest
 
-    class TestBaseFastAcute(AbstractFastAcuteTest):
+    class TestFastAcuteSelfChat(AbstractFastAcuteTest):
         """
-        Test the base Fast ACUTE crowdsourcing task.
+        Test the Fast ACUTE crowdsourcing task with model self-chats.
         """
 
         @pytest.fixture(scope="module")
@@ -51,11 +51,9 @@ try:
             # Define output structure
             outputs = {}
 
-            # # Run Fast ACUTEs and analysis on the base task
-
             # Set up config
             test_overrides = [
-                f'+mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config.json',
+                f'+mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config_self_chat.json',
                 f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
                 '+mephisto.blueprint.model_pairs=""',
                 '+mephisto.blueprint.selfchat_max_turns=6',
