@@ -7,6 +7,7 @@
 End-to-end testing for the Fast ACUTE crowdsourcing task.
 """
 
+import json
 import os
 import shutil
 import tempfile
@@ -23,9 +24,9 @@ try:
     )
     from parlai.crowdsourcing.tasks.acute_eval.util import AbstractFastAcuteTest
 
-    class TestParlaiTaskFastAcute(AbstractFastAcuteTest):
+    class TestChatFastAcuteLogs(AbstractFastAcuteTest):
         """
-        Test a Fast ACUTE crowdsourcing task on ParlAI datasets.
+        Test the Fast ACUTE crowdsourcing task when running from preexisting chat logs.
         """
 
         @pytest.fixture(scope="module")
@@ -42,16 +43,26 @@ try:
             # Set up common temp directory
             root_dir = tempfile.mkdtemp()
 
+            # Params
+            config_path = os.path.join(root_dir, 'config.json')
+
+            # Copy over expected self-chat files
+            shutil.copytree(
+                os.path.join(self.TASK_DIRECTORY, 'task_config', 'self_chats'),
+                os.path.join(root_dir, 'self_chats'),
+            )
+
             # Define output structure
             outputs = {}
 
+            # # Run Fast ACUTEs and analysis on the base task
+
             # Set up config
+            assert len(self.MODELS) == 2
             test_overrides = [
-                f'+mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config_parlai_task.json',
-                f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
-                '+mephisto.blueprint.model_pairs=""',
-                '+mephisto.blueprint.num_task_data_episodes=500',
-                '+mephisto.blueprint.selfchat_max_turns=6',
+                f'+mephisto.blueprint.config_path={config_path}',
+                '+mephisto.blueprint.models=""',
+                f'+mephisto.blueprint.model_pairs={self.MODELS[0]}:{self.MODELS[1]}',
             ]
             # TODO: clean this up when Hydra has support for recursive defaults
             self._set_up_config(
@@ -59,9 +70,23 @@ try:
                 task_directory=self.TASK_DIRECTORY,
                 overrides=self._get_common_overrides(root_dir) + test_overrides,
             )
-            self.config.mephisto.blueprint.model_pairs = None
-            # TODO: hack to manually set mephisto.blueprint.model_pairs to None. Remove
-            #  when Hydra releases support for recursive defaults
+            self.config.mephisto.blueprint.models = None
+            # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
+            #  Hydra releases support for recursive defaults
+
+            # Save the config file
+            config = {}
+            for model in self.MODELS:
+                config[model] = {
+                    'log_path': FastAcuteExecutor.get_relative_selfchat_log_path(
+                        root_dir=self.config.mephisto.blueprint.root_dir,
+                        model=model,
+                        task=self.config.mephisto.blueprint.task,
+                    ),
+                    'is_selfchat': True,
+                }
+            with open(config_path, 'w') as f:
+                json.dump(config, f)
 
             # Run Fast ACUTEs
             runner = FastAcuteExecutor(self.config)

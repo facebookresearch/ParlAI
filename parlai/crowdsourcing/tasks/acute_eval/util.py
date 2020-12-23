@@ -64,7 +64,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
     MODEL_STRING = ','.join(MODELS)
     TASK_DATA = {
         "final_data": [
-            {"speakerChoice": "model_2", "textReason": "Makes more sense"},
+            {"speakerChoice": "human_as_model", "textReason": "Makes more sense"},
             {"speakerChoice": "model1", "textReason": "Makes more sense"},
             {"speakerChoice": "model2", "textReason": "Makes more sense"},
             {"speakerChoice": "model1", "textReason": "Makes more sense"},
