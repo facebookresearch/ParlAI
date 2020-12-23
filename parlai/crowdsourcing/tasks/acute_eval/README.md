@@ -214,4 +214,4 @@ Upon subsequent runs with the same configuration of `mephisto.blueprint.models` 
 
 ### Phase 3: Analysis
 
-After finishing ACUTE-Eval, the script will analyze and save relevant results to `${ROOT_SAVE_DIR}/data/acute_evals/acute_results/<date>/<pairings_file>/`.
+After finishing ACUTE-Eval, the script will analyze and save relevant results to `${ROOT_SAVE_DIR}/acute_results/<date>/<pairings_file>/`.
