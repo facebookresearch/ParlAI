@@ -234,7 +234,13 @@ class FastAcuteExecutor(object):
         :return conversation:
             An ACUTE-Readable conversation
         """
-        is_selfchat = 'model' in self.model_config[model]
+        is_selfchat = 'model' in self.model_config[model] or self.model_config[
+            model
+        ].get('is_selfchat', False)
+        # It's a self-chat if one of the following are true:
+        # (1) a model is specified in the config, meaning that we're collecting
+        #   self-chats with that model
+        # (2) we manually set 'is_selfchat' to True in the config
         conversation = {'context': [], 'dialogue': [], 'speakers': []}
         dialog = dialogue_dict['dialog']
         for act_pair in dialog:

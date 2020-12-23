@@ -84,7 +84,8 @@ try:
                         root_dir=self.config.mephisto.blueprint.root_dir,
                         model=model,
                         task=self.config.mephisto.blueprint.task,
-                    )
+                    ),
+                    'is_selfchat': True,
                 }
             with open(config_path, 'w') as f:
                 json.dump(config, f)

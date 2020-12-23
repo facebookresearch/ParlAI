@@ -80,9 +80,11 @@ Save a JSON file containing paths to all model self-chat files. The file should 
 {
     "model1": {
         "log_path": "/path/to/model1/selfchats.jsonl",
+        "is_selfchat": true
     },
     "model2": {
         "log_path": "/path/to/model2/selfchats.jsonl",
+        "is_selfchat": true
     }
 }
 ```
