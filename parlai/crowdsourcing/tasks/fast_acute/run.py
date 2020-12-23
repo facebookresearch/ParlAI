@@ -498,8 +498,8 @@ defaults = [
     {"mephisto/blueprint": FAST_ACUTE_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    'conf/base',
-    {"conf": "example"},
+    'conf/base_fast_acute',
+    {"conf": "example_fast_acute"},
 ]
 
 
