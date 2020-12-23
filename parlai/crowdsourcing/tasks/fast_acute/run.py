@@ -318,10 +318,11 @@ class FastAcuteExecutor(object):
                 )
         return pairs
 
-    def _build_pairings_file(self):
+    def _build_pairings_file(self, pairings_filepath: str):
         """
-        Build the pairings file for the two models.
+        Build and save pairings to pairings file.
         """
+
         if self.fast_acute_args.onboarding_path is not None:
             onboarding_path = self.fast_acute_args.onboarding_path
         else:
@@ -332,25 +333,31 @@ class FastAcuteExecutor(object):
         with open(onboarding_path) as f:
             onboarding_convo_pair: Dict[str, Any] = json.load(f)
 
+        self._print_progress(f'building pairings file, saving at {pairings_filepath}')
+        conversations = self._load_selfchats()
+        pairs = self._build_conversation_pairs(conversations)
+
+        with open(pairings_filepath, 'w') as f:
+            # Write the onboarding convo
+            f.write(json.dumps(onboarding_convo_pair) + "\n")
+            for pair in pairs:
+                f.write(json.dumps(pair) + "\n")
+
+    def _load_pairings_file(self):
+        """
+        Build the pairings file for the two models.
+
+        If a pairings file already exists, we ask the user whether they would like to
+        overwrite the pairings file.
+        """
         pairings_filepath = get_hashed_combo_path(
             root_dir=self.fast_acute_args.root_dir,
             subdir='pairings_files',
             task=self.task,
             combos=self.combos,
         )
-
         if not os.path.exists(pairings_filepath):
-            self._print_progress(
-                f'building pairings file, saving at {pairings_filepath}'
-            )
-            conversations = self._load_selfchats()
-            pairs = self._build_conversation_pairs(conversations)
-
-            with open(pairings_filepath, 'w') as f:
-                # Write the onboarding convo
-                f.write(json.dumps(onboarding_convo_pair) + "\n")
-                for pair in pairs:
-                    f.write(json.dumps(pair) + "\n")
+            self._build_pairings_file(pairings_filepath)
         else:
             modify_time = os.path.getmtime(pairings_filepath)
             self._print_progress(
@@ -361,16 +368,7 @@ class FastAcuteExecutor(object):
                 while answer.lower().strip() != 'y' and answer.lower().strip() != 'o':
                     answer = input('Enter y to use, o to overwrite:')
                     if answer.lower().strip() == 'o':
-                        self._print_progress(
-                            f'building pairings file, saving at {pairings_filepath}'
-                        )
-                        conversations = self._load_selfchats()
-                        pairs = self._build_conversation_pairs(conversations)
-                        with open(pairings_filepath, 'w') as f:
-                            # Write the onboarding convo
-                            f.write(json.dumps(onboarding_convo_pair) + "\n")
-                            for pair in pairs:
-                                f.write(json.dumps(pair) + "\n")
+                        self._build_pairings_file(pairings_filepath)
 
         self._print_progress(f'loading pairings file from {pairings_filepath}')
         self.pairings_filepath = pairings_filepath
@@ -429,7 +427,7 @@ class FastAcuteExecutor(object):
         )
 
     def set_up_acute_eval(self):
-        self._build_pairings_file()
+        self._load_pairings_file()
 
         total_convos = self.fast_acute_args.matchups_per_pair * len(self.combos)
         additional_params = {

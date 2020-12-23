@@ -7,7 +7,6 @@
 Execute a Fast ACUTE run without model self-chats.
 """
 
-import os
 import json
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -16,9 +15,10 @@ import hydra
 from mephisto.operations.hydra_config import register_script_config
 from omegaconf import DictConfig
 
-import parlai.crowdsourcing.tasks.fast_acute.run as acute_eval
-from parlai.crowdsourcing.tasks.acute_eval import run
-from parlai.crowdsourcing.tasks.fast_acute.run import FastAcuteExecutor
+from parlai.crowdsourcing.tasks.fast_acute.run import (
+    FastAcuteExecutor,
+    ACUTE_EVAL_TYPES,
+)
 from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
     FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
 )
@@ -53,19 +53,17 @@ class NoSelfChatFastAcuteExecutor(FastAcuteExecutor):
 
         # models + task
         self._build_model_pairs()
+        self.task: str = 'q'
 
         # keep track of chat files per model
         self.chat_files: Dict[str, str] = {}
         for model in self.models:
             self.chat_files[model] = self.model_config[model]['log_path']
 
-        self.task: str = 'q'
         # question config for running ACUTE
-        self.question_config: Dict[str, str] = acute_eval.ACUTE_EVAL_TYPES[
+        self.question_config: Dict[str, str] = ACUTE_EVAL_TYPES[
             self.fast_acute_args.acute_eval_type
         ]
-        # prepare 2x convo pairs so we don't run out of them (the same logic as in _build_conversation_pairs in fast_acute/run.py)
-        # The logic of calculating num_matchup_pairs and num_conversations in acute_args is the same as that in fast_eval/run.py therefore hidden here.
 
         self.run_id = self.args.mephisto.task.task_name
 
