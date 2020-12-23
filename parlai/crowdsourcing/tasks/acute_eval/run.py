@@ -15,6 +15,7 @@ from mephisto.tools.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import BLUEPRINT_TYPE
+from parlai.crowdsourcing.tasks.acute_eval.util import TASK_DIRECTORY
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 
@@ -29,8 +30,6 @@ The following args are useful to tweak to fit your specific needs;
 - ``subtasks_per_unit``: How many comparisons you'd like a turker to complete in one HIT
 
 """
-
-TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 defaults = [
     {"mephisto/blueprint": BLUEPRINT_TYPE},

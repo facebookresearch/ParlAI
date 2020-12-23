@@ -13,12 +13,10 @@ from pytest_regressions.data_regression import DataRegressionFixture
 from pytest_regressions.dataframe_regression import DataFrameRegressionFixture
 from pytest_regressions.file_regression import FileRegressionFixture
 
-from parlai.crowdsourcing.tasks.acute_eval import run
 from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
 
-ACUTE_EVAL_TASK_DIRECTORY = os.path.dirname(os.path.abspath(run.__file__))
-# Read in any task config JSON/HTML files from the ACUTE-Eval directory
+TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 FAST_ACUTE_TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -63,7 +61,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
     """
 
     FAST_ACUTE_TASK_DIRECTORY = FAST_ACUTE_TASK_DIRECTORY
-    ACUTE_EVAL_TASK_DIRECTORY = ACUTE_EVAL_TASK_DIRECTORY
+    TASK_DIRECTORY = TASK_DIRECTORY
     MODELS = ['model1', 'model2']
     MODEL_STRING = ','.join(MODELS)
     TASK_DATA = {

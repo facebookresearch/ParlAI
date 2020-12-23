@@ -66,7 +66,7 @@ try:
             # TODO: clean this up when Hydra has support for recursive defaults
             self._set_up_config(
                 blueprint_type=FAST_ACUTE_BLUEPRINT_TYPE,
-                task_directory=self.ACUTE_EVAL_TASK_DIRECTORY,
+                task_directory=self.TASK_DIRECTORY,
                 overrides=self._get_common_overrides(root_dir) + test_overrides,
             )
             self.config.mephisto.blueprint.model_pairs = None

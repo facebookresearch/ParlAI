@@ -32,7 +32,7 @@ from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
 )
 from parlai.crowdsourcing.tasks.acute_eval.util import (
     get_hashed_combo_path,
-    ACUTE_EVAL_TASK_DIRECTORY,
+    TASK_DIRECTORY,
     FAST_ACUTE_TASK_DIRECTORY,
 )
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
@@ -506,7 +506,7 @@ defaults = [
 @dataclass
 class TestScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
-    task_dir: str = ACUTE_EVAL_TASK_DIRECTORY
+    task_dir: str = TASK_DIRECTORY
     fast_acute_task_dir: str = FAST_ACUTE_TASK_DIRECTORY
     monitoring_log_rate: int = field(
         default=30,
