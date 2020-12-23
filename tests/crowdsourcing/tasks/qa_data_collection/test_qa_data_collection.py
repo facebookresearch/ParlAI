@@ -16,49 +16,17 @@ from typing import Any, Dict
 import parlai.utils.testing as testing_utils
 
 
-# TODO: revise below
 # Inputs
-AGENT_DISPLAY_IDS = ('Worker',)
-AGENT_MESSAGES = [
-    ("What are you nervous about?",),
-    ("Do you have any plans for the weekend?",),
-    ("Yeah that sounds great! I like to bike and try new restaurants.",),
-    ("Oh, Italian food is great. I also love Thai and Indian.",),
-    (
-        "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
-    ),
-]
-AGENT_TASK_DATA = [
-    (
-        {
-            'problem_data_for_prior_message': {
-                "bucket_0": False,
-                "bucket_1": False,
-                "bucket_2": True,
-                "bucket_3": False,
-                "bucket_4": True,
-            }
-        },
-    )
-] * len(AGENT_MESSAGES)
-FORM_MESSAGES = ("",)
-# No info is sent through the 'text' field when submitting the form
-FORM_TASK_DATA = (
-    {
-        "final_rating": 4,
-        "problem_data_for_prior_message": {
-            "bucket_0": False,
-            "bucket_1": False,
-            "bucket_2": True,
-            "bucket_3": False,
-            "bucket_4": True,
-        },
-    },
-)
+AGENT_DISPLAY_IDS = ('QA Agent',)
+AGENT_MESSAGES = [("Who called the bishops to the First Council of Nicaea?",)]
+FORM_MESSAGES = ("Constantine",)
+FORM_TASK_DATA = ({},)
+# No info is sent through the 'task_data' field when submitting the form
 
 
 try:
 
+    # TODO: revise below
     import parlai.crowdsourcing.tasks.turn_annotations.worlds as world_module
     from parlai.crowdsourcing.tasks.turn_annotations.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.turn_annotations.turn_annotations_blueprint import (
@@ -155,7 +123,6 @@ try:
                     form_messages=FORM_MESSAGES,
                     form_task_data=FORM_TASK_DATA,
                     expected_states=(expected_state,),
-                    agent_task_data=AGENT_TASK_DATA,
                 )
 
                 # Check that the contents of the chat data file are as expected

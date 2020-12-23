@@ -1,0 +1,13 @@
+{
+  "outputs": {
+    "messages": [
+      {"packet_type": "update_status", "sender_id": "Mephisto", "receiver_id": "1", "data": {"state": {"agent_display_name": "QA Agent"}, "message_id": "8827eccc-da59-4c9d-a392-b19c48123e15"}, "timestamp": 1608764501.6183739},
+      {"packet_type": "agent_action", "sender_id": "Mephisto", "receiver_id": "1", "data": {"episode_done": false, "id": "QA Collector", "passage": "At the time, there were many varying opinions about Christian doctrine, and no centralized way of enforcing orthodoxy. Constantine called all the Christian bishops throughout the Roman Empire to a meeting, and some 318 bishops (very few from the Western Empire) attended the First Council of Nicaea. The purpose of this meeting was to define Christian orthodoxy and clearly differentiate it from Christian heresies. The meeting reached consensus on the Nicene Creed and other statements. Later, Philostorgius criticized Christians who offered sacrifice at statues of the divus Constantine. Constantine nevertheless took great pains to assuage traditionalist and Christian anxieties.", "text": "Please provide a question given the passage.", "message_id": "9e5a0c60-5e48-415e-bd28-eb5f2b957da2"}, "timestamp": 1608764501.6194665}, 
+      {"packet_type": "agent_action", "sender_id": "1", "receiver_id": "Mephisto", "data": {"text": "Who called the bishops to the First Council of Nicaea?", "task_data": {}, "id": "QA Agent", "episode_done": false, "message_id": "d33f458f-e301-4891-9df0-73be59d4c395"}, "timestamp": 1608764603.2027397}, 
+      {"packet_type": "agent_action", "sender_id": "Mephisto", "receiver_id": "1", "data": {"episode_done": false, "id": "QA Collector", "text": "Thanks. And what is the answer to your question?", "message_id": "4151fa37-77ef-42ef-8601-8dfe93a1b99d"}, "timestamp": 1608764603.203313}, 
+      {"packet_type": "agent_action", "sender_id": "1", "receiver_id": "Mephisto", "data": {"text": "Constantine", "task_data": {}, "id": "QA Agent", "episode_done": false, "message_id": "7924376c-0577-4563-bb7d-368d2890d98a"}, "timestamp": 1608764607.8144302}, 
+      {"packet_type": "agent_action", "sender_id": "Mephisto", "receiver_id": "1", "data": {"id": "SUBMIT_WORLD_DATA", "WORLD_DATA": {"custom_data": null, "worker_data": {}}, "text": "", "message_id": "db4fc962-75f6-426f-8542-9cabbfba32fa"}, "timestamp": 1608764607.8152032}, 
+      {"packet_type": "agent_action", "sender_id": "1", "receiver_id": "Mephisto", "data": {"task_data": {"final_data": {}}, "Mephisto_is_submit": true}, "timestamp": 1608764621.379495}
+    ]
+  }, "inputs": {}
+}
