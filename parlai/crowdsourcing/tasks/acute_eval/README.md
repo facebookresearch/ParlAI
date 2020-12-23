@@ -27,6 +27,8 @@ The `run.py` script is designed to allow you to run this entire task from comman
     python parlai/crowdsourcing/tasks/acute_eval/run.py \
     mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/task_config/pairings.jsonl
 
+Make a note of the run ID printed to the command line upon running, because this will be useful for analyzing results later on.
+
 **NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
 
 
@@ -85,9 +87,9 @@ In our paper, we address the problem of wording the questions and binary choices
 
 As discussed in the paper, we found that we had better annotation quality if we screened Turkers with an 'onboarding' comparison, consisting of a weak baseline conversation and a human-human conversation. Our code is set up so that this is optional.
 
-By default, `block_on_onboarding_fail` in `conf/example.yaml` is set to `true`, which means that workers who fail onboarding will be soft-blocked. In other words, they won't be able to see or complete any more HITs from you, but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `block_qualification`.
+By default, `block_on_onboarding_fail` in `conf/example.yaml` is set to `true`, which means that workers who fail onboarding will be soft-blocked. In other words, they won't be able to see or complete any more HITs from you, but won't receive any notification that they've been blocked. The Mechanical Turk qualification name used to soft block must be set with `mephisto.blueprint.block_qualification`.
 
-By setting `onboarding_threshold`, you can also adjust the minimum proportion of onboarding tasks (if you have multiple) that must be answered correctly to pass onboarding.
+By setting `mephisto.blueprint.onboarding_threshold`, you can also adjust the minimum fraction of onboarding tasks (if you have multiple) that must be answered correctly to pass onboarding.
 
 
 ## YAML and CLI arguments
@@ -99,16 +101,16 @@ A comprehensive list of settings specific to ACUTE-Eval can be found in `AcuteEv
 
 Once you have successfully completed a run of ACUTE-Eval, it's time to analyze your results. We provide a handy script that does everything for you!
 
-To analyze results, run the following command, specifying the ACUTE-Eval run ID and the path to the ACUTE-Eval pairings file:
+To analyze results, run the following command, specifying the ACUTE-Eval run ID (printed to the command line upon launching the ACUTE-Evals) and the path to the ACUTE-Eval pairings file that you specified with `mephisto.blueprint.pairings_filepath`:
 ```
-python parlai/crowdsourcing/tasks/fast_acute/analysis.py \
---run-id ${RUN_ID} \
+python parlai/crowdsourcing/tasks/acute_eval/analysis.py \
+--run-ids ${RUN_ID} \
 --pairings-filepath ${PATH_TO_PAIRINGS_FILE} \
 --outdir ${OUTPUT_FOLDER}
 ```
 For analyzing results from a Fast ACUTE run (see below), use the `--root-dir` flag to specify the Fast ACUTE root directory (`mephisto.blueprint.root_dir`) instead of specifying the `--pairings-filepath` and `--outdir` flags. 
 
-The script will analyze the results, and save files with information such as the win/loss rate and significance scores.
+The script will analyze the results and save files with information such as the win/loss rate and significance scores.
 
 Generated result files include the following:
 1. A CSV file of the win rates of all model pairs, as is typically shown when displaying ACUTE-Eval results in papers. These can be viewed by running a command like `cat acute_eval_<timestamp>.grid.csv | column -t -s, | less -S`.
@@ -122,15 +124,15 @@ We provide an all-in-one script to run ACUTE-Eval in the smoothest experience po
 
 The script combines three major steps of ACUTE-Eval into one simple command:
 
-1. Generation (or compilation) of chat logs for given models;
+1. Generation (or compilation) of chat logs for given models
 2. Execution of ACUTE-Eval
 3. Analysis of ACUTE-Eval results.
 
-**NOTE**: this code was adapted from the code formerly in [`parlai.mturk.tasks.acute_eval`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval), which has now been deprecated. A few minor features existed in the analysis script of that old version which have not been ported to the original:
+**NOTE**: this code was adapted from the code formerly in [`parlai/mturk/tasks/acute_eval/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval), which has now been deprecated. A few minor options existed in the analysis script of that old version which have not been ported to the original:
 
-- The minimum dialogue length to be counted as valid for analysis
-- The maximum number of matchups per model pair visualized in HTML
-- Whether to include a checkbox column for annotating the convo pairs in HTML
+- Specifying the minimum dialogue length to be counted as valid for analysis
+- Specifying the maximum number of matchups per model pair visualized in HTML
+- Optionally including a checkbox column for annotating the convo pairs in HTML
 
 If you would like to make use of these old features, please open a [ParlAI issue](https://github.com/facebookresearch/ParlAI/issues) or restore the original version by switching to the `acute_eval` tag of ParlAI:
 
@@ -146,7 +148,7 @@ This is an important step - do you have conversation logs between a model and a 
 
 Each of these options involves _slightly_ different preparation. However, each involves specifying a config file, which is specified on the command line by `mephisto.blueprint.config_path` when launching Fast ACUTEs.
 
-In the `task_config/` folder, you will find several `model_config_` files that map a _unique_ identifier to appropriate configuration arguments; these arguments differ depending on what you will be evaluating.
+In the `task_config/` folder, you will find several `model_config_*.json` files that map a _unique_ identifier to appropriate configuration arguments; these arguments differ depending on what you will be evaluating.
 
 A few of these options are enumerated below.
 
@@ -154,7 +156,7 @@ A few of these options are enumerated below.
 
 If you would like to evaluate a model chatting to itself, you simply specify the appropriate model parameters in the config. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc. You can see an example in `task_config/model_config_self_chat.json`.
 
-#### JSONL Logs
+#### JSONL logs
 
 If you have logs in the appropriate JSONL format, as would be generated by the self-chat script, then all you need to specify is the `log_path` and whether the logs are model self-chats. You can see an example in `task_config/model_config_logs.json`.
 
@@ -164,9 +166,9 @@ The appropriate JSONL format is one that can be read by ParlAI's [Conversations]
 
 If you'd like to evaluate examples from a dataset available in ParlAI directly, simply specify the `task` in the config. You can see an example in `task_config/model_config_dataset.json`.
 
-### 1b. (Optional) Determine the Self-Chat Task You Will Use
+### 1b. (Optional) Determine the self-chat task that you will use
 
-If you will be evaluating models via self-chat, you will need to determine the self-chat task you will use to help generate the self-chats. This is not so much any work on your part other than identfying a task that is setup for self-chat, i.e., a task that has the appropriate worlds used for conducting self-chat with the models. This is not strictly necessary, but you may want to introduce context, e.g. as in `convai2` or `blended_skill_talk`.
+If you will be evaluating models via self-chat, you will need to determine the ParlAI task you will use to help generate the self-chats. This is not so much any work on your part other than identifying a task that is set up for self-chat, i.e., a task that has the appropriate worlds for conducting self-chat with the models. Optionally, you may want to introduce context, e.g. as in `convai2` or `blended_skill_talk`: this can be specified in the config file with the `'prepended_context'` parameter.
 
 ### 2. Run `fast_eval.py`
 
@@ -188,7 +190,7 @@ When you are ready to run a **live** ACUTE-Eval, add `mephisto.provider.requeste
 
 #### Onboarding
 
-The default onboaring dialogue pair is in `task_config/onboarding.json`. We recommend you use a different onboarding example as the one provided is quite easy.
+The default onboaring dialogue pair is in `task_config/onboarding.json`. We recommend you use a different onboarding example, because the one provided is quite easy.
 
 To use a custom onboarding path, specify the `mephisto.blueprint.onboarding_path` when running `fast_eval.py`. The onboarding file should be a jsonl file, where each line is a json dict consisting of a pair of dialogues to evaluate, and where `is_onboarding` is set to True.
 
@@ -196,7 +198,7 @@ To use a custom onboarding path, specify the `mephisto.blueprint.onboarding_path
 
 The script operates in three phases:
 
-#### Phase 1: Compile Chat Logs
+### Phase 1: Compile Chat Logs
 
 The script will first compile the chat logs for each model specified on the command line.
 
