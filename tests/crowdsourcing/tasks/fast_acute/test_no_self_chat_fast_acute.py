@@ -18,8 +18,8 @@ import pytest
 
 try:
 
-    from parlai.crowdsourcing.tasks.fast_acute.run import FastAcuteExecutor
-    from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+    from parlai.crowdsourcing.tasks.acute_eval.fast_eval import FastAcuteExecutor
+    from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
         FAST_ACUTE_BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.acute_eval.util import AbstractFastAcuteTest

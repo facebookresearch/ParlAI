@@ -27,7 +27,7 @@ Once you have installed [ParlAI](https://github.com/facebookresearch/ParlAI/#ins
 The `run.py` script is designed to allow you to run this entire task from command line with an invocation like
 
     python parlai/crowdsourcing/tasks/acute_eval/run.py \
-    mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/pairings.jsonl
+    mephisto.blueprint.pairings_filepath=${REPO_FOLDER}/parlai/crowdsourcing/tasks/acute_eval/task_config/pairings.jsonl
 
 **NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
 
@@ -74,7 +74,7 @@ For onboarding tasks (tasks used to filter workers, see below for more details) 
       ]
     }
 
-Note that we assume that "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Additionally, `speakers_to_eval` must be in the same order as the dialogue_dicts. See `pairings.jsonl` for examples of the format required.
+Note that we assume that "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Additionally, `speakers_to_eval` must be in the same order as the dialogue_dicts. See `task_config/pairings.jsonl` for examples of the format required.
 
 ## Question phrasing
 

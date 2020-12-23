@@ -28,7 +28,7 @@ from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
     BLUEPRINT_TYPE as ACUTE_EVAL_BLUEPRINT_TYPE,
 )
-from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
     FAST_ACUTE_BLUEPRINT_TYPE,
 )
 

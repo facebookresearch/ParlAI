@@ -23,11 +23,11 @@ from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.fast_acute.analysis import (
+from parlai.crowdsourcing.tasks.acute_eval.analysis import (
     AcuteAnalyzer,
     setup_args as analysis_setup_args,
 )
-from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
+from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
     FAST_ACUTE_BLUEPRINT_TYPE,
 )
 from parlai.crowdsourcing.tasks.acute_eval.util import (

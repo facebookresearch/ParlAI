@@ -8,7 +8,7 @@ mephisto:
     eval_question: "Who would you prefer to talk to for a long conversation?"
     num_matchup_pairs: 2
     onboarding_threshold: 0.75
-    pairings_filepath: ${task_dir}/pairings.jsonl
+    pairings_filepath: ${task_dir}/task_config/pairings.jsonl
     random_seed: 42
     s1_choice: "I would prefer to talk to <Speaker 1>"
     s2_choice: "I would prefer to talk to <Speaker 2>"
