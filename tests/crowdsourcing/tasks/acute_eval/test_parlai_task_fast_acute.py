@@ -50,6 +50,7 @@ try:
                 f'+mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config_parlai_task.json',
                 f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
                 '+mephisto.blueprint.model_pairs=""',
+                '+mephisto.blueprint.num_task_data_episodes=500',
                 '+mephisto.blueprint.selfchat_max_turns=6',
             ]
             # TODO: clean this up when Hydra has support for recursive defaults
