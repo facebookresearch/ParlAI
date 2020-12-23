@@ -60,10 +60,19 @@ def setup_args():
         help='Comma-separated list of run IDs to analyze',
     )
     parser.add_argument(
-        '--root-dir', type=str, default=None, help='root ACUTE-Eval save directory'
+        '--root-dir',
+        type=str,
+        default=None,
+        help='Optional root ACUTE-Eval save directory',
     )
     parser.add_argument(
-        '--outdir', type=str, default=None, help='where to save the results'
+        '--outdir', type=str, default=None, help='Where to save the results'
+    )
+    parser.add_argument(
+        '--pairings-filepath',
+        type=str,
+        default=None,
+        help='Path to the ACUTE analysis pairs for the corresponding run id',
     )
     parser.add_argument(
         '--mephisto-root',
@@ -102,17 +111,25 @@ class AcuteAnalyzer(object):
         :param remove_failed:
             Whether to remove ratings from turkers who failed onboarding
         """
-        self.root_dir = opt['root_dir']
-        assert os.path.isdir(self.root_dir), '--root-dir must be a real directory!'
         assert ',' not in opt['run_ids'], "AcuteAnalyzer can only handle one run ID!"
         self.run_id = opt['run_ids']
+        self.pairings_filepath = opt['pairings_filepath']
         self.outdir = opt['outdir']
+        self.root_dir = opt['root_dir']
         # Get task for loading pairing files
         self.task = opt.get('task', 'q')
         if opt.get('model_ordering') is not None:
             self.custom_model_ordering = opt['model_ordering'].split(',')
         else:
             self.custom_model_ordering = None
+        if not self.outdir or not self.pairings_filepath:
+            # Default to using self.root_dir as the root directory for outputs
+            assert self.root_dir is not None and os.path.isdir(
+                self.root_dir
+            ), '--root-dir must be a real directory!'
+        if not self.pairings_filepath:
+            # Will be set to a non-empty path later
+            self.pairings_filepath = ''
         if not self.outdir:
             self.outdir = os.path.join(self.root_dir, f'{self.run_id}-results')
         if not os.path.exists(self.root_dir):
@@ -265,12 +282,14 @@ class AcuteAnalyzer(object):
 
     def _load_pairing_files(self):
         df = self.dataframe
-        self.pairings_filepath = get_hashed_combo_path(
-            root_dir=self.root_dir,
-            subdir='pairings_files',
-            task=self.task,
-            combos=self.combos,
-        )
+        if not os.path.exists(self.pairings_filepath):
+            print('No valid pairings filepath was passed in: will extract likely path.')
+            self.pairings_filepath = get_hashed_combo_path(
+                root_dir=self.root_dir,
+                subdir='pairings_files',
+                task=self.task,
+                combos=self.combos,
+            )
         if not os.path.exists(self.pairings_filepath):
             print(
                 f'WARNING: Pairings filepath {self.pairings_filepath} could not be found.'
