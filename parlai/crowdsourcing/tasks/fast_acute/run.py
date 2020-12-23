@@ -177,17 +177,6 @@ class FastAcuteExecutor(object):
         )
         return config
 
-    def _get_selfchat_log_path(self, model: str) -> str:
-        """
-        Return path to selfchat log for a given model.
-
-        :param model:
-            model string
-        """
-        return self.get_relative_selfchat_log_path(
-            root_dir=self.fast_acute_args.root_dir, model=model, task=self.task
-        )
-
     @staticmethod
     def get_relative_selfchat_log_path(root_dir: str, model: str, task: str) -> str:
         """
@@ -220,6 +209,17 @@ class FastAcuteExecutor(object):
 
         return path
 
+    def _get_selfchat_log_path(self, model: str) -> str:
+        """
+        Return path to selfchat log for a given model.
+
+        :param model:
+            model string
+        """
+        return self.get_relative_selfchat_log_path(
+            root_dir=self.fast_acute_args.root_dir, model=model, task=self.task
+        )
+
     def _acutify_convo(
         self, dialogue_dict: Dict[str, Any], model: str
     ) -> Dict[str, List]:
@@ -234,22 +234,22 @@ class FastAcuteExecutor(object):
         :return conversation:
             An ACUTE-Readable conversation
         """
-        conversation = {
-            'context': [],
-            'dialogue': [],
-            'speakers': [model, f'other_{model}'],
-        }
+        is_selfchat = 'model' in self.model_config[model]
+        conversation = {'context': [], 'dialogue': [], 'speakers': []}
         dialog = dialogue_dict['dialog']
         for act_pair in dialog:
             for i, ex in enumerate(act_pair):
                 if ex['id'] == 'context':
                     conversation['context'].append(ex)
                     continue
+                if is_selfchat:
+                    speaker_id = model if i == 0 else f'other_{model}'
+                else:
+                    speaker_id = ex['id']
+                if speaker_id not in conversation['speakers']:
+                    conversation['speakers'].append(speaker_id)
                 conversation['dialogue'].append(
-                    {
-                        'id': model if i == 0 else f'other_{model}',
-                        'text': normalize_reply(ex['text']),
-                    }
+                    {'id': speaker_id, 'text': normalize_reply(ex['text'])}
                 )
         return conversation
 
