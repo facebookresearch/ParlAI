@@ -208,6 +208,16 @@ class FastAcuteExecutor(object):
 
         return path
 
+    def _get_task_data_path(self, model: str) -> str:
+        """
+        Return path to task data as conversations for given task.
+        """
+        task_data_dir = os.path.join(
+            self.fast_acute_args.root_dir, 'tasks_as_conversations'
+        )
+        os.makedirs(task_data_dir, exist_ok=True)
+        return os.path.join(task_data_dir, f"{model}.jsonl")
+
     def _get_selfchat_log_path(self, model: str) -> str:
         """
         Return path to selfchat log for a given model.
