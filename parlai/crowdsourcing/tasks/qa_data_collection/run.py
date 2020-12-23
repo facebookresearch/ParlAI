@@ -7,7 +7,6 @@
 
 import os
 from dataclasses import dataclass, field
-from itertools import chain
 from typing import List, Any
 
 import hydra
@@ -20,9 +19,7 @@ from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.params import ParlaiParser
-from parlai.core.worlds import create_task
+from parlai.crowdsourcing.tasks.qa_data_collection.util import get_teacher
 from parlai.crowdsourcing.utils.frontend import build_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
@@ -70,13 +67,7 @@ register_script_config(name="scriptconfig", module=ScriptConfig)
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 
-    parser = ParlaiParser(True, False)
-    opt = parser.parse_args(
-        list(chain.from_iterable(('--' + k, v) for k, v in cfg.teacher.items()))
-    )
-    agent = RepeatLabelAgent(opt)
-    teacher = create_task(opt, agent).get_task_agent()
-
+    teacher = get_teacher(cfg)
     world_opt = {"turn_timeout": cfg.turn_timeout, "teacher": teacher}
 
     custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
