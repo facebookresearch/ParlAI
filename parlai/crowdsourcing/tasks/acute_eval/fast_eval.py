@@ -141,9 +141,7 @@ class FastAcuteExecutor(object):
         # verify that models are contained in the config:
         for model in self.models:
             if model not in choices:
-                raise RuntimeError(
-                    f'Model {model} not specified in the config (`model_configs.py`).'
-                )
+                raise RuntimeError(f'Model {model} not specified in the config.')
         assert len(self.models) > 1, 'Must specify least 2 models'
 
     def _print_progress(self, msg: str):

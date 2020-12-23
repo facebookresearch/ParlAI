@@ -1,10 +1,10 @@
 {
-    "convai2": {
+    "model1": {
         "task": "convai2",
         "prepended_context": true
     },
-    "blended_skill_talk": {
-        "task": "blended_skill_talk",
+    "model2": {
+        "task": "empathetic_dialogues",
         "prepended_context": true
     }
 }
