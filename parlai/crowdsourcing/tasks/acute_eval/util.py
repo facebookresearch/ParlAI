@@ -86,7 +86,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             f'+mephisto.blueprint.root_dir={root_dir}',
             '+mephisto.blueprint.sufficient_matchups_multiplier=2',
             '+mephisto.blueprint.task=blended_skill_talk',
-            '+mephisto.task.task_name=acute_eval_test',
+            'mephisto.task.task_name=acute_eval_test',
         ]
 
     def test_agent_state(self, setup_teardown, data_regression: DataRegressionFixture):
