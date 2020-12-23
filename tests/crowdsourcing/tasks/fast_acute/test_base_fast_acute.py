@@ -75,7 +75,7 @@ try:
 
             # Run Fast ACUTEs
             runner = FastAcuteExecutor(self.config)
-            runner.run_selfchat()
+            runner.compile_chat_logs()
             runner.set_up_acute_eval()
             self.config.mephisto.blueprint = runner.fast_acute_args
             self._set_up_server()

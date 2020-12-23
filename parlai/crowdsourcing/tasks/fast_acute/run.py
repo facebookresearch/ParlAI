@@ -201,6 +201,25 @@ class FastAcuteExecutor(object):
             self_chats_folder, f"{model}.{task.replace(':', '_')}.jsonl"
         )
 
+    def _get_log_path(self, model: str) -> str:
+        """
+        Return path to chat logs for the given model.
+        """
+        config = self.model_config[model]
+        if 'log_path' in config:
+            path = config['log_path']
+            assert os.path.exists(
+                path
+            ), f'Path provided in log_path for {model} does not exist'
+        elif 'task' in config:
+            path = self._get_task_data_path(model)
+        elif 'model' in config:
+            path = self._get_selfchat_log_path(model)
+        else:
+            raise ValueError(f'Invalid config for {model}')
+
+        return path
+
     def _acutify_convo(
         self, dialogue_dict: Dict[str, Any], model: str
     ) -> Dict[str, List]:
@@ -359,9 +378,14 @@ class FastAcuteExecutor(object):
     ##################
     # Main Functions #
     ##################
-    def run_selfchat(self):
+    def compile_chat_logs(self):
         """
-        Run selfchat for each model.
+        Compile chat logs.
+
+        Logs are generated depending on what is specified in the config for the model:
+        1. If a `model` is provided, run selfchat for model
+        2. If a `log_path` is provided, simply load the log path
+        3. If a `task` is provided, convert the task to ACUTE format and load that.
         """
         for model in self.models:
             try:
@@ -369,16 +393,22 @@ class FastAcuteExecutor(object):
             except Exception:
                 pass
             self._print_progress(f'Running self-chat for {model}')
-            outfile = self._get_selfchat_log_path(model)
+            outfile = self._get_log_path(model)
 
             if not os.path.exists(outfile):
-                config = self._get_selfchat_config(model)
-
-                with capture_output():
-                    parser = self_chat_setup_args()
-                    parser.set_params(**config)
-                    opt = parser.parse_args(args=[])
-                self_chat(opt)
+                if 'model' in self.model_config[model]:
+                    config = self._get_selfchat_config(model)
+                    with capture_output():
+                        parser = self_chat_setup_args()
+                        parser.set_params(**config)
+                        opt = parser.parse_args(args=[])
+                    self_chat(opt)
+                elif 'task' in self.model_config[model]:
+                    self._convert_task_to_conversations(model)
+                else:
+                    raise RuntimeError(
+                        f'Path must exist if log_path specified for {model}'
+                    )
 
                 if os.path.exists(outfile):
                     self._print_progress(f'Chats saved to {outfile} for {model}')
@@ -445,7 +475,7 @@ class FastAcuteExecutor(object):
         opt.update(
             {
                 'model_strings': ','.join(self.models),
-                'run_id': self.run_id,
+                'run_ids': self.run_id,
                 'root_dir': self.fast_acute_args.root_dir,
                 'outdir': self.results_path,
                 'task': self.task,
@@ -491,7 +521,7 @@ def main(cfg: DictConfig) -> None:
     runner = FastAcuteExecutor(cfg)
 
     # Create self-chats
-    runner.run_selfchat()
+    runner.compile_chat_logs()
 
     # Run ACUTE-Eval
     runner.run_acute_eval()
