@@ -29,7 +29,7 @@ try:
         STATIC_BLUEPRINT_TYPE,
         STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.tasks.turn_annotations_static.util import build_task
+    from parlai.crowdsourcing.utils.frontend import build_task
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
     class TestTurnAnnotationsStatic(AbstractOneTurnCrowdsourcingTest):
