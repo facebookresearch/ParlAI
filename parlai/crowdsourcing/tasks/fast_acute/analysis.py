@@ -33,7 +33,7 @@ from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
 )
 
 # To register the ACUTE-Eval and Fast ACUTE blueprints
-from parlai.crowdsourcing.tasks.fast_acute.util import get_hashed_combo_path
+from parlai.crowdsourcing.tasks.acute_eval.util import get_hashed_combo_path
 
 _ = ACUTE_EVAL_BLUEPRINT_TYPE
 _ = FAST_ACUTE_BLUEPRINT_TYPE

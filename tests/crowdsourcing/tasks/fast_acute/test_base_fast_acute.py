@@ -21,7 +21,7 @@ try:
     from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
         FAST_ACUTE_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.tasks.fast_acute.util import AbstractFastAcuteTest
+    from parlai.crowdsourcing.tasks.acute_eval.util import AbstractFastAcuteTest
 
     class TestBaseFastAcute(AbstractFastAcuteTest):
         """
