@@ -84,16 +84,8 @@ class NoSelfChatFastAcuteExecutor(FastAcuteExecutor):
         conversation = {
             'context': [],
             'dialogue': [],
-            'speakers': ['human_evaluator', model],
+            'speakers': [model, 'other_speaker'],
         }
-        if (
-            'is_selfchat' in self.model_config[model]
-            and self.model_config[model]['is_selfchat']
-        ):
-            if 'flip' in self.model_config[model]:
-                conversation['speakers'] = ['other_speaker', model]
-            else:
-                conversation['speakers'] = [model, 'other_speaker']
         dialog = dialogue_dict['dialog']
         for act_pair in dialog:
             for i, ex in enumerate(act_pair):
@@ -103,21 +95,10 @@ class NoSelfChatFastAcuteExecutor(FastAcuteExecutor):
                 else:
                     # agent 1 is the model, agent 0 is human
                     convo = {'id': ex['id'], 'text': normalize_reply(ex['text'])}
-                    if (
-                        'is_selfchat' in self.model_config[model]
-                        and self.model_config[model]['is_selfchat']
-                    ):
-                        # if_selfchat override agent_id
-                        if 'flip' in self.model_config[model]:
-                            if i % 2 == 1:
-                                convo['id'] = model
-                            else:
-                                convo['id'] = 'other_speaker'
-                        else:
-                            if i % 2 == 0:
-                                convo['id'] = model
-                            else:
-                                convo['id'] = 'other_speaker'
+                    if i % 2 == 0:
+                        convo['id'] = model
+                    else:
+                        convo['id'] = 'other_speaker'
                     conversation['dialogue'].append(convo)
 
         return conversation
