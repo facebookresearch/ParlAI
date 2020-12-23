@@ -54,7 +54,7 @@ try:
             }
 
             # Set up the config, database, operator, and server
-            overrides = [f'mephisto.blueprint.block_on_onboarding_fail={False}']
+            overrides = ['mephisto.blueprint.block_on_onboarding_fail=False']
             self._set_up_config(
                 blueprint_type=BLUEPRINT_TYPE,
                 task_directory=TASK_DIRECTORY,
