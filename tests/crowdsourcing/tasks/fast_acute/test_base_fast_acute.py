@@ -56,7 +56,7 @@ try:
             # # Run Fast ACUTEs and analysis on the base task
 
             # Set up config
-            base_task_overrides = [
+            test_overrides = [
                 f'+mephisto.blueprint.config_path={self.FAST_ACUTE_TASK_DIRECTORY}/task_config/model_config.json',
                 f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
                 '+mephisto.blueprint.model_pairs=""',
@@ -67,7 +67,7 @@ try:
             self._set_up_config(
                 blueprint_type=FAST_ACUTE_BLUEPRINT_TYPE,
                 task_directory=self.ACUTE_EVAL_TASK_DIRECTORY,
-                overrides=self._get_common_overrides(root_dir) + base_task_overrides,
+                overrides=self._get_common_overrides(root_dir) + test_overrides,
             )
             self.config.mephisto.blueprint.model_pairs = None
             # TODO: hack to manually set mephisto.blueprint.model_pairs to None. Remove

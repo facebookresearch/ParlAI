@@ -1,8 +1,8 @@
 {
     "model1": {
-        "log_path": "../../../parlai/crowdsourcing/tasks/fast_acute/task_config/self_chats/model1.blended_skill_talk.jsonl",
+        "log_path": "../../../parlai/crowdsourcing/tasks/fast_acute/task_config/self_chats/model1.blended_skill_talk.jsonl"
     },
     "model2": {
-        "log_path": "../../../parlai/crowdsourcing/tasks/fast_acute/task_config/self_chats/model2.blended_skill_talk.jsonl",
+        "log_path": "../../../parlai/crowdsourcing/tasks/fast_acute/task_config/self_chats/model2.blended_skill_talk.jsonl"
     }
 }

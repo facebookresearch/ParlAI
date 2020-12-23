@@ -18,11 +18,9 @@ import pytest
 
 try:
 
-    from parlai.crowdsourcing.tasks.fast_acute.run_no_self_chat import (
-        NoSelfChatFastAcuteExecutor,
-    )
+    from parlai.crowdsourcing.tasks.fast_acute.run import FastAcuteExecutor
     from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
-        FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
+        FAST_ACUTE_BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.fast_acute.util import AbstractFastAcuteTest
 
@@ -63,16 +61,16 @@ try:
 
             # Set up config
             assert len(self.MODELS) == 2
-            no_self_chat_overrides = [
+            test_overrides = [
                 f'+mephisto.blueprint.config_path={config_path}',
                 '+mephisto.blueprint.models=""',
                 f'+mephisto.blueprint.model_pairs={self.MODELS[0]}:{self.MODELS[1]}',
             ]
             # TODO: clean this up when Hydra has support for recursive defaults
             self._set_up_config(
-                blueprint_type=FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
+                blueprint_type=FAST_ACUTE_BLUEPRINT_TYPE,
                 task_directory=self.ACUTE_EVAL_TASK_DIRECTORY,
-                overrides=self._get_common_overrides(root_dir) + no_self_chat_overrides,
+                overrides=self._get_common_overrides(root_dir) + test_overrides,
             )
             self.config.mephisto.blueprint.models = None
             # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
@@ -82,18 +80,17 @@ try:
             config = {}
             for model in self.MODELS:
                 config[model] = {
-                    'log_path': NoSelfChatFastAcuteExecutor.get_relative_selfchat_log_path(
+                    'log_path': FastAcuteExecutor.get_relative_selfchat_log_path(
                         root_dir=self.config.mephisto.blueprint.root_dir,
                         model=model,
                         task=self.config.mephisto.blueprint.task,
-                    ),
-                    'is_selfchat': True,
+                    )
                 }
             with open(config_path, 'w') as f:
                 json.dump(config, f)
 
             # Run Fast ACUTEs
-            runner = NoSelfChatFastAcuteExecutor(self.config)
+            runner = FastAcuteExecutor(self.config)
             runner.set_up_acute_eval()
             self.config.mephisto.blueprint = runner.fast_acute_args
             self._set_up_server()

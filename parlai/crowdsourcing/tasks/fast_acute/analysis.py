@@ -30,7 +30,6 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
 )
 from parlai.crowdsourcing.tasks.fast_acute.fast_acute_blueprint import (
     FAST_ACUTE_BLUEPRINT_TYPE,
-    FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE,
 )
 
 # To register the ACUTE-Eval and Fast ACUTE blueprints
@@ -38,7 +37,6 @@ from parlai.crowdsourcing.tasks.fast_acute.util import get_hashed_combo_path
 
 _ = ACUTE_EVAL_BLUEPRINT_TYPE
 _ = FAST_ACUTE_BLUEPRINT_TYPE
-_ = FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE
 # TODO: blueprint type strings need to be imported here to register the blueprints -
 # find a better way to scale up when there are many more subclassed ACUTE blueprints
 

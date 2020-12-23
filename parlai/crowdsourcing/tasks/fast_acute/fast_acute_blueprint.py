@@ -16,7 +16,6 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_blueprint import (
 )
 
 FAST_ACUTE_BLUEPRINT_TYPE = "fast_acute"
-FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE = "fast_acute_no_self_chat"
 
 
 @dataclass
@@ -86,28 +85,3 @@ class FastAcuteBlueprint(AcuteEvalBlueprint):
 
     ArgsClass = FastAcuteBlueprintArgs
     BLUEPRINT_TYPE = FAST_ACUTE_BLUEPRINT_TYPE
-
-
-@dataclass
-class FastAcuteNoSelfChatBlueprintArgs(FastAcuteBlueprintArgs):
-    _blueprint_type: str = FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE
-    _group: str = field(
-        default="FastAcuteNoSelfChatBlueprint",
-        metadata={
-            'help': "Execute a Fast ACUTE run without launching model self-chats"
-        },
-    )
-    config_path: str = field(
-        default=MISSING,
-        metadata={'help': 'Path to JSON of model types and their parameters'},
-    )
-
-
-@register_mephisto_abstraction()
-class FastAcuteNoSelfChatBlueprint(FastAcuteBlueprint):
-    """
-    Subclass of FastAcuteBlueprint without launching model self-chats first.
-    """
-
-    ArgsClass = FastAcuteNoSelfChatBlueprintArgs
-    BLUEPRINT_TYPE = FAST_ACUTE_NO_SELF_CHAT_BLUEPRINT_TYPE
