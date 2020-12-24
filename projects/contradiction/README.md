@@ -16,7 +16,7 @@ Results reveal that:
 We also show that our best contradiction detection model correlates well with human judgements and further provide evidence for its usage in both automatically evaluating and improving the consistency of state-of-the-art generative chatbots.
 
 ## Data
-As described in the paper, **DECODE** includes 6 groups of dialogues: *Train*, *Dev*, *Test*, *Human-Bot*, *A2T*, *RCT*.
+As described in the paper, **DECODE** includes 6 groups of dialogues: (Main) *Train*, (Main) *Dev*, (Main) *Test*, *Human-Bot*, *A2T*, *RCT*.
 
 | Group Name    | Count         | Description  |
 | ------------- |---------------| -------------|
@@ -30,7 +30,7 @@ As described in the paper, **DECODE** includes 6 groups of dialogues: *Train*, *
 The details of each group can be found in the [Nie et al. (2020)]().
 
 ## Load Data from ParlAI
-The **DECODE** can be loaded directly from ParlAI. We should give the correct arguments to load data belonging to different subsets.
+The **DECODE** can be loaded directly from ParlAI. The correct arguments to load data belonging to the different subsets is given below.
 ```
 parlai display_data -t decode -dt train -v                          # Train
 parlai display_data -t decode -dt valid -v                          # Dev
@@ -41,7 +41,7 @@ parlai display_data -t decode -dt test --test_type rct -v           # RCT
 ```
 
 ## Directly Download Data.
-You can also download data directly from s3.
+You can also download the data directly from s3.
 See [download data from s3 with raw format](https://github.com/facebookresearch/ParlAI/blob/master/projects/contradiction/download_with_raw_format.md).
 
 ## Citation
