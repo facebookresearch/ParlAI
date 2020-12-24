@@ -445,14 +445,14 @@ class FastAcuteExecutor(object):
         opt.update(
             {
                 'model_strings': ','.join(self.models),
-                'run_id': self.run_id,
+                'run_ids': self.run_id,
                 'root_dir': self.fast_acute_args.root_dir,
                 'outdir': self.results_path,
                 'task': self.task,
             }
         )
 
-        analyzer = AcuteAnalyzer(opt, self.run_id)
+        analyzer = AcuteAnalyzer(opt)
         self.results = analyzer.get_matchup_totals_with_significance()
         analyzer.save_results()
 

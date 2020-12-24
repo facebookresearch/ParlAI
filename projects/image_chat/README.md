@@ -30,8 +30,9 @@ TransResNet MM-Sum, No Images               | [Shuster et al. (2018)](https://ar
 We provide our best model trained with ResNet152 image features. To evaluate the model, specify the following command:
 
       parlai eval_model \
-          -bs 128 -t image_chat
-          -mf models:image_chat/transresnet_multimodal/model
+          -bs 128 -t image_chat \
+          -mf models:image_chat/transresnet_multimodal/model \
+          --image-mode resnet152 \
           -dt test
 
 Which yields the following results:
