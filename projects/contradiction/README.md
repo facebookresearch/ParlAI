@@ -1,7 +1,7 @@
 # *I like fish <span>&#x1F41F;</span>, especially dolphins <span>&#x1F42C;</span>:*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modelling
 
 A study on *contradiction* detection and *non-contradiction* generation in dialogue modelling.  
-The paper can be found in [Nie et al. (2020)]().
+The paper can be found here: [Nie et al. (2020)](https://arxiv.org/abs/2012.13391).
 
 ## Abstract
 
@@ -45,8 +45,16 @@ You can also download the data directly from s3.
 See [download data from s3 with raw format](https://github.com/facebookresearch/ParlAI/blob/master/projects/contradiction/download_with_raw_format.md).
 
 ## Citation
+If you use the dataset or models in your own work, please cite with the following BibTex entry:
 ```
-
+@misc{nie2020i,
+      title={I like fish, especially dolphins: Addressing Contradictions in Dialogue Modelling}, 
+      author={Yixin Nie and Mary Williamson and Mohit Bansal and Douwe Kiela and Jason Weston},
+      year={2020},
+      eprint={2012.13391},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
 ```
 
 _________________
