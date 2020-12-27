@@ -12,7 +12,7 @@ As described in the paper, **DECODE** includes 6 groups of dialogues: *Train*, *
 | *A2T*         | 2,079      | Auxiliary test set created by transforming examples in *Test* |
 | *RCT*         | 2,011      | Auxiliary test set created by transforming examples in *Test* |
 
-The details of each group can be found in the [Nie et al. (2020)]().
+The details of each group can be found in the [Nie et al. (2020)](https://arxiv.org/abs/2012.13391).
 
 ### Format
 The format of the file is `JSONL`. Each line in the file is one dialogue example saved in a `JSON`.  

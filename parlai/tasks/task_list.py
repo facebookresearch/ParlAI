@@ -1359,6 +1359,6 @@ task_list = [
         "task": "decode",
         "tags": ["All", "ChitChat", "Entailment"],
         "description": "Task for detect whether the last utterance contradicts previous dialogue history.",
-        "links": {"arXiv": "coming soon"},
+        "links": {"arXiv": "https://arxiv.org/abs/2012.13391"},
     },
 ]
