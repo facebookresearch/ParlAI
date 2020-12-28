@@ -53,6 +53,8 @@ class AbstractCrowdsourcingTest:
 
         if self.operator is not None:
             self.operator.shutdown()
+        if self.server is not None:
+            self.server.shutdown_mock()
 
     def _set_up_config(
         self,
@@ -112,7 +114,7 @@ class AbstractCrowdsourcingTest:
         self.operator.validate_and_run_config(
             self.config.mephisto, shared_state=shared_state
         )
-        # self.server = self._get_channel_info().job.architect.server
+        self.server = self._get_channel_info().job.architect.server
 
     def _get_channel_info(self):
         """
