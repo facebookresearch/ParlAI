@@ -74,7 +74,6 @@ def main(cfg: DictConfig) -> None:
     if custom_bundle_path is not None:
         if not os.path.exists(custom_bundle_path):
             build_task(TASK_DIRECTORY)
-        world_opt["send_task_data"] = True
 
     shared_state = SharedParlAITaskState(
         world_opt=world_opt, onboarding_world_opt=world_opt

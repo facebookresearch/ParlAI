@@ -31,6 +31,7 @@ try:
 
     from parlai.crowdsourcing.tasks.qa_data_collection.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.qa_data_collection.util import get_teacher
+    from parlai.crowdsourcing.utils.frontend import build_task
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
     class TestQADataCollection(AbstractParlAIChatTest, unittest.TestCase):
@@ -58,6 +59,8 @@ try:
             expected_state_path = os.path.join(expected_states_folder, 'state.json')
 
             # # Setup
+
+            build_task(task_directory=TASK_DIRECTORY)
 
             # Set up the config and database
             overrides = ['+mephisto.task.allowed_concurrent=0', '+turn_timeout=300']
