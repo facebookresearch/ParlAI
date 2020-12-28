@@ -10,6 +10,7 @@ import unittest
 from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
 
@@ -22,10 +23,10 @@ class TestUpgradeOpt(unittest.TestCase):
         """
         Test --inference with simple options.
         """
-        upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 1})
+        upgraded = TorchGeneratorAgent.upgrade_opt(Opt({'beam_size': 1}))
         self.assertEqual(upgraded['inference'], 'greedy')
 
-        upgraded = TorchGeneratorAgent.upgrade_opt({'beam_size': 5})
+        upgraded = TorchGeneratorAgent.upgrade_opt(Opt({'beam_size': 5}))
         self.assertEqual(upgraded['inference'], 'beam')
 
     def test_no_greedy_largebeam(self):

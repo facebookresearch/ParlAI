@@ -224,7 +224,7 @@ def load_eval_worlds(agent, opt, datatype):
     opt = opt.fork(datatype=datatype)
     if opt.get('evaltask'):
         # if a different eval task is specified, use it.
-        opt = opt.fork(task=opt['devaltask'])
+        opt = opt.fork(task=opt['evaltask'])
     if opt.get('eval_batchsize'):
         # override eval time batchsize
         opt = opt.fork(batchsize=opt['eval_batchsize'])
