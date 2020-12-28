@@ -24,6 +24,9 @@ try:
 except ImportError:
     raise ImportError('Need to install pytorch: go to pytorch.org')
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import bisect
 import numpy as np
 import json
@@ -44,15 +47,18 @@ from .model import DocReaderModel
 
 
 class SimpleDictionaryAgent(DictionaryAgent):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        group = DictionaryAgent.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        group = cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         group.add_argument(
             '--pretrained_words',
             type='bool',
             default=True,
             help='Use only words found in provided embedding_file',
         )
+        return parser
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,8 +104,10 @@ class SimpleDictionaryAgent(DictionaryAgent):
 
 
 class DrqaAgent(Agent):
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         # Runtime environment
         agent = parser.add_argument_group('DrQA Arguments')
         agent.add_argument('--no_cuda', type='bool', default=False)
@@ -253,7 +261,8 @@ class DrqaAgent(Agent):
             default=0,
             help='Time features marking how recent word was said',
         )
-        DrqaAgent.dictionary_class().add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     @staticmethod
     def dictionary_class():

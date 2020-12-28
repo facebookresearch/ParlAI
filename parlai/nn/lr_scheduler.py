@@ -9,6 +9,9 @@ Code for LR Schedulers.
 See ParlAILRScheduler (super class) and subclasses for detailed documentation
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from abc import abstractmethod
 from torch import optim
 import numpy as np
@@ -129,8 +132,10 @@ class ParlAILRScheduler(object):
         return self.warmup_scheduler.state_dict()
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        lr_group = argparser.add_argument_group('Learning Rate Scheduler')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        lr_group = parser.add_argument_group('Learning Rate Scheduler')
         lr_group.add_argument(
             '--lr-scheduler',
             type=str,
@@ -191,6 +196,7 @@ class ParlAILRScheduler(object):
             hidden=True,
             help='Accumulate gradients N times before performing an optimizer.step().',
         )
+        return parser
 
     @classmethod
     def lr_scheduler_factory(cls, opt, optimizer, states, hard_reset=False):

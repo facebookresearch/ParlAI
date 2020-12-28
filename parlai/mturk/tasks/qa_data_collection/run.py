@@ -20,10 +20,10 @@ def main():
     and configuring it for the qa_data_collection task.
     """
     # Get relevant arguments
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    opt = argparser.parse_args()
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    parser.add_mturk_args()
+    opt = parser.parse_args()
 
     # Set the task name to be the folder name
     opt['task'] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))

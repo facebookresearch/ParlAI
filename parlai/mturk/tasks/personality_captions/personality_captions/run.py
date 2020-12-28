@@ -25,11 +25,11 @@ def main():
     This is the task setup used when collecting the Personality-Captions dataset
     (https://arxiv.org/abs/1810.10665).
     """
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    PersonalityCaptionsTeacher.add_cmdline_args(argparser)
-    argparser.add_argument(
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    parser.add_mturk_args()
+    PersonalityCaptionsTeacher.add_cmdline_args(parser, partial_opt=None)
+    parser.add_argument(
         '-ni',
         '--num_images',
         type=int,
@@ -37,34 +37,34 @@ def main():
         help='number of images to show \
                            to turker',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_rsp_time',
         '--max_resp_time',
         default=1800,
         type=int,
         help='time limit for entering a dialog message',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_onb_time',
         '--max_onboard_time',
         type=int,
         default=300,
         help='time limit for turker' 'in onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--auto-approve-delay',
         type=int,
         default=3600 * 24 * 5,
         help='how long to wait for  \
                            auto approval',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--multiple-personality',
         type='bool',
         default=False,
         help='for getting captions with ' 'multiple personalities for same image',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--task-type',
         type=str,
         default='personality',
@@ -76,7 +76,7 @@ def main():
         'caption.',
     )
 
-    opt = argparser.parse_args()
+    opt = parser.parse_args()
 
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)

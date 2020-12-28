@@ -32,130 +32,128 @@ def run_task(override_opt: Optional[dict] = None):
     config_folder = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), 'task_config'
     )
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    default_task_folder = os.path.join(
-        argparser.parlai_home, 'data', 'turn_annotations'
-    )
-    argparser.add_mturk_args()
-    argparser.add_argument(
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    default_task_folder = os.path.join(parser.parlai_home, 'data', 'turn_annotations')
+    parser.add_mturk_args()
+    parser.add_argument(
         '-num_t', '--num_turns', default=6, type=int, help='minimum number of turns'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--conversations-needed',
         dest='conversations_needed_string',
         default=None,
         type=str,
         help='Number of convos needed for each model. For example: "modelA:50,modelB:20"',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--task-model-parallel',
         default=True,
         type=bool,
         help='Whether to load models to be used with model_parallel True.',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--auto-approve-delay',
         dest='auto_approve_delay',
         type=int,
         default=3600 * 24 * 5,
         help='how long to wait for auto approval',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--max-resp-time',
         type=int,
         default=180,
         help='time limit for entering a dialog message',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--max-onboard-time',
         type=int,
         default=300,
         help='time limit accepting onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--base-save-folder',
         default=default_task_folder,
         type=str,
         help='base folder for saving all crowdsourcing results',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--base-model-folder',
         default=None,
         type=str,
         help='base folder for loading model files from',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--onboard-worker-answer-folder',
         default=os.path.join(default_task_folder, 'onboard_answers'),
         type=str,
         help='base folder for saving all worker answer results during onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--worker-blocklist-paths',
         default=None,
         type=str,
         help='Path(s) to a list of IDs of workers to soft-block, separated by newlines. Use commas to indicate multiple lists',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--check-acceptability',
         default=False,
         type=bool,
         help="Check worker's responses against several metrics of acceptability",
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--include-persona', default=False, type=bool, help="Show persona to the bot"
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--conversation-start-mode',
         default='hi',
         type=str,
         choices=['hi', 'bst'],
         help='Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--context-seed',
         default=None,
         type=int,
         help="Set seed for pulling the context info (for testing)",
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--hit-config-path',
         default=os.path.join(config_folder, 'hit_config.json'),
         type=str,
         help='Path to file of parameters describing how MTurk will describe the HIT to the workers',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--task-description-path',
         default=os.path.join(config_folder, 'task_description.html'),
         type=str,
         help='Path to file of HTML to show on the task-description page',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--left-pane-text-path',
         default=os.path.join(config_folder, 'left_pane_text.html'),
         type=str,
         help='Path to file of HTML to show on the left-hand pane of the chat window',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--annotations-intro',
         default='Does this comment from your partner have any of the following attributes? (Check all that apply)',
         type=str,
         help='Text shown to worker before they fill out annotation form',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--annotations-config-path',
         default=os.path.join(config_folder, 'annotations_config.json'),
         type=str,
         help='Path to JSON of annotation categories',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--onboard-task-data-path',
         default=os.path.join(config_folder, 'onboard_task_data.json'),
         type=str,
         help='Path to JSON containing settings for running onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--final-rating-question',
         default='Please rate your partner on a scale of 1-5.',
         type=str,
@@ -175,17 +173,17 @@ def run_task(override_opt: Optional[dict] = None):
     #    overwrites that functionality.
     # There's also still a race condition where the worker might be able to open
     # 1 extra task
-    argparser.set_defaults(
+    parser.set_defaults(
         unique_qual_name='turn_annotations_max_submissions',
         max_hits_per_worker=10,
         allowed_conversations=3,
     )
 
     if override_opt is not None:
-        argparser.set_params(**override_opt)
-        opt = argparser.parse_args([])
+        parser.set_params(**override_opt)
+        opt = parser.parse_args([])
     else:
-        opt = argparser.parse_args()
+        opt = parser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
 

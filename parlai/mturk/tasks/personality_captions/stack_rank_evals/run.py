@@ -56,24 +56,24 @@ def main():
         Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
         the outputs of the model vs. the human comments from Personality-Captions
     """
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    argparser.add_argument(
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    parser.add_mturk_args()
+    parser.add_argument(
         '-mx_rsp_time',
         '--max_resp_time',
         default=1800,
         type=int,
         help='time limit for entering a dialog message',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_onb_time',
         '--max_onboard_time',
         type=int,
         default=300,
         help='time limit for turker' 'in onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ni',
         '--num_images',
         type=int,
@@ -81,38 +81,36 @@ def main():
         help='number of images to show \
                            to turker',
     )
-    argparser.add_argument(
-        '--data-path', type=str, default='', help='where to save data'
-    )
-    argparser.add_argument(
+    parser.add_argument('--data-path', type=str, default='', help='where to save data')
+    parser.add_argument(
         '--eval-data-path',
         type=str,
         default='',
         help='where to load data to rank from. Leave '
         'blank to use Personality-Captions data',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ck1',
         '--compare-key-1',
         type=str,
         default='comment',
         help='key of first option to compare',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ck2',
         '--compare-key-2',
         type=str,
         default='comment',
         help='key of second option to compare',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--show-personality',
         default=True,
         type='bool',
         help='whether to show the personality',
     )
-    PersonalityCaptionsTeacher.add_cmdline_args(argparser)
-    opt = argparser.parse_args()
+    PersonalityCaptionsTeacher.add_cmdline_args(parser, partial_opt=None)
+    opt = parser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     if 'data_path' not in opt or opt['data_path'] == '':

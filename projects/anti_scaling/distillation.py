@@ -7,6 +7,8 @@
 Code for distilling a transformer/generator model.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Tuple, Type, Union
@@ -116,8 +118,10 @@ class ForwardPassOutputs(AttrDict):
 
 class AbstractDistillTransformerAgentMixin(ABC):
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        agent = argparser.add_argument_group('AbstractDistillTransformer arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('AbstractDistillTransformer arguments')
         agent.add_argument('--teacher-model', help='The teacher model file')
         agent.add_argument(
             '--task-loss-coeff',
@@ -736,9 +740,11 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
 class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        super().add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('DistillTransformer arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('DistillTransformer arguments')
         agent.add_argument(
             '--copy-teacher-weights',
             type='bool',
@@ -822,9 +828,11 @@ class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
 
 class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        super().add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('DistillNarrowTransformer arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('DistillNarrowTransformer arguments')
         agent.add_argument(
             '--embedding-loss-coeff',
             type=float,
@@ -973,26 +981,32 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
 
 class DistillTransformerAgent(DistillTransformerAgentMixin, TransformerGeneratorAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        DistillTransformerAgentMixin.add_cmdline_args(argparser)
-        TransformerGeneratorAgent.add_cmdline_args(argparser)
-        return argparser
+        DistillTransformerAgentMixin.add_cmdline_args(parser, partial_opt=partial_opt)
+        TransformerGeneratorAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class DistillNarrowTransformerAgent(
     DistillNarrowTransformerAgentMixin, TransformerGeneratorAgent
 ):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        DistillNarrowTransformerAgentMixin.add_cmdline_args(argparser)
-        TransformerGeneratorAgent.add_cmdline_args(argparser)
-        return argparser
+        DistillNarrowTransformerAgentMixin.add_cmdline_args(
+            parser, partial_opt=partial_opt
+        )
+        TransformerGeneratorAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class BartLikeAgent(BartAgent):
@@ -1017,21 +1031,27 @@ class BartLikeAgent(BartAgent):
 
 class DistillBartAgent(DistillTransformerAgentMixin, BartLikeAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        DistillTransformerAgentMixin.add_cmdline_args(argparser)
-        BartLikeAgent.add_cmdline_args(argparser)
-        return argparser
+        DistillTransformerAgentMixin.add_cmdline_args(parser, partial_opt=partial_opt)
+        BartLikeAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class DistillNarrowBartAgent(DistillNarrowTransformerAgentMixin, BartLikeAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        DistillNarrowTransformerAgentMixin.add_cmdline_args(argparser)
-        BartLikeAgent.add_cmdline_args(argparser)
-        return argparser
+        DistillNarrowTransformerAgentMixin.add_cmdline_args(
+            parser, partial_opt=partial_opt
+        )
+        BartLikeAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser

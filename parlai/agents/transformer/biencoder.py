@@ -5,6 +5,9 @@
 """
 Bi-encoder Agent.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 from .transformer import TransformerRankerAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -25,12 +28,14 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
             self.ignore_bad_candidates = True
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Override to include new arg.
         """
-        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('AddLabelFixedCandsTRA')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('AddLabelFixedCandsTRA')
         agent.add_argument(
             '--add-label-to-fixed-cands',
             type='bool',
@@ -39,6 +44,7 @@ class AddLabelFixedCandsTRA(TorchRankerAgent):
             help='When true, adds an example label to the fixed candidate set '
             'if not already present',
         )
+        return parser
 
     def _build_candidates(self, batch, source, mode):
         cands, cand_vecs, label_inds = super()._build_candidates(batch, source, mode)
@@ -133,9 +139,12 @@ class IRFriendlyBiencoderAgent(AddLabelFixedCandsTRA, BiencoderAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add cmd line args.
         """
-        AddLabelFixedCandsTRA.add_cmdline_args(argparser)
-        BiencoderAgent.add_cmdline_args(argparser)
+        AddLabelFixedCandsTRA.add_cmdline_args(parser, partial_opt=partial_opt)
+        BiencoderAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser

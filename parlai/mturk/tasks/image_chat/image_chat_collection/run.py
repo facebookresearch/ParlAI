@@ -24,30 +24,30 @@ def main():
     A worker is shown an image and part of a conversation, and is given a personality
     with which the worker should continue the conversation.
     """
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    argparser.add_argument(
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    parser.add_mturk_args()
+    parser.add_argument(
         '-min_t', '--min_turns', default=3, type=int, help='minimum number of turns'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mt', '--max_turns', default=5, type=int, help='maximal number of chat turns'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_rsp_time',
         '--max_resp_time',
         default=1800,
         type=int,
         help='time limit for entering a dialog message',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_onb_time',
         '--max_onboard_time',
         type=int,
         default=300,
         help='time limit for turker' 'in onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ni',
         '--num_images',
         type=int,
@@ -55,23 +55,23 @@ def main():
         help='number of images to show \
                            to turker',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--auto-approve-delay',
         type=int,
         default=3600 * 24 * 5,
         help='how long to wait for  \
                            auto approval',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--second-response',
         type='bool',
         default=False,
         help='Specify if getting responses \
                            to responses to original comment',
     )
-    ImageChatTeacher.add_cmdline_args(argparser)
+    ImageChatTeacher.add_cmdline_args(parser, partial_opt=None)
 
-    opt = argparser.parse_args()
+    opt = parser.parse_args()
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)
     if 'data_path' not in opt:

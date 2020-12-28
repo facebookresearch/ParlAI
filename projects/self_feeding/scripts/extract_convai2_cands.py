@@ -8,14 +8,14 @@ from parlai.utils.io import PathManager
 
 
 def setup_args():
-    argparser = ArgumentParser()
-    argparser.add_argument(
+    parser = ArgumentParser()
+    parser.add_argument(
         '-if', '--infile', type=str, default='data/ConvAI2/train_self_original.txt'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-of', '--outfile', type=str, default='projects/metadialog/convai2_cands.txt'
     )
-    config = vars(argparser.parse_args())
+    config = vars(parser.parse_args())
     return config
 
 

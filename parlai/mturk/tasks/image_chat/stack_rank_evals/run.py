@@ -64,30 +64,30 @@ def main():
         Thus, you would specify `-ck1 comment -ck2 model_comment` to evaluate
         the outputs of the model vs. the human comments from Personality-Captions
     """
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    argparser.add_argument(
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    parser.add_mturk_args()
+    parser.add_argument(
         '-min_t', '--min_turns', default=3, type=int, help='minimum number of turns'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mt', '--max_turns', default=5, type=int, help='maximal number of chat turns'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_rsp_time',
         '--max_resp_time',
         default=1800,
         type=int,
         help='time limit for entering a dialog message',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-mx_onb_time',
         '--max_onboard_time',
         type=int,
         default=300,
         help='time limit for turker' 'in onboarding',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ni',
         '--num_images',
         type=int,
@@ -95,37 +95,35 @@ def main():
         help='number of images to show \
                            to turker',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--auto-approve-delay',
         type=int,
         default=3600 * 24,
         help='how long to wait for  \
                            auto approval',
     )
-    argparser.add_argument(
-        '--data-path', type=str, default='', help='where to save data'
-    )
-    argparser.add_argument(
+    parser.add_argument('--data-path', type=str, default='', help='where to save data')
+    parser.add_argument(
         '--eval-data-path',
         type=str,
         default='',
         help='where to load data to rank from. Leave ' 'blank to use Image-Chat data',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ck1',
         '--compare-key-1',
         type=str,
         default='comment',
         help='key of first comparable',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ck2',
         '--compare-key-2',
         type=str,
         default='comment',
         help='key of first comparable',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-rnd',
         '--dialog-round',
         type=str,
@@ -133,14 +131,14 @@ def main():
         choices=round_choices,
         help='which dialog round to show',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--show-personality',
         default=True,
         type='bool',
         help='whether to show the personality',
     )
-    ImageChatTeacher.add_cmdline_args(argparser)
-    opt = argparser.parse_args()
+    ImageChatTeacher.add_cmdline_args(parser, partial_opt=None)
+    opt = parser.parse_args()
     build_ic(opt)
     directory_path = os.path.dirname(os.path.abspath(__file__))
     opt['task'] = os.path.basename(directory_path)

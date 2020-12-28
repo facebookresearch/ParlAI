@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.opt import Opt
 from copy import deepcopy
 import json
 import random
@@ -38,15 +40,18 @@ class InteractiveWorld(DialogPartnerWorld):
     these retrieved passages.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('WoW Interactive World Args')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('WoW Interactive World Args')
         parser.add_argument(
             '--print-checked-sentence',
             type='bool',
             default=True,
             help='Print sentence that the model checks.',
         )
+        return parser
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
@@ -66,7 +71,7 @@ class InteractiveWorld(DialogPartnerWorld):
         from parlai.core.params import ParlaiParser
 
         parser = ParlaiParser(False, False)
-        KnowledgeRetrieverAgent.add_cmdline_args(parser)
+        KnowledgeRetrieverAgent.add_cmdline_args(parser, partial_opt=partial_opt)
         parser.set_params(
             model='projects:wizard_of_wikipedia:knowledge_retriever',
             add_token_knowledge=add_token_knowledge,

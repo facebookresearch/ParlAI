@@ -7,6 +7,9 @@
 Image+Seq2Seq Agent.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from typing import Dict, List, Tuple
 
 import torch
@@ -41,13 +44,15 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
         return self.model
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Override to add one arg.
         """
-        TransformerGeneratorAgent.add_cmdline_args(argparser)
-        TorchImageAgent.add_cmdline_args(argparser)
-        group = argparser.add_argument_group('Image Encoder Args')
+        TransformerGeneratorAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        TorchImageAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group('Image Encoder Args')
         group.add_argument(
             '--include-image-token',
             type='bool',

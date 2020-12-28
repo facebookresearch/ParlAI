@@ -15,6 +15,9 @@ outputted.
 This also makes a nice reference for a simple, minimalist agent.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import json
 import re
 from parlai.core.agents import Agent
@@ -25,14 +28,17 @@ from parlai.utils.io import PathManager
 
 class UnigramAgent(Agent):
     @classmethod
-    def add_cmdline_args(cls, parser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Adds command line arguments.
         """
         parser.add_argument(
             '--num-words', type=int, default=10, help='Number of unigrams to output.'
         )
-        cls.dictionary_class().add_cmdline_args(parser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     @classmethod
     def dictionary_class(cls):

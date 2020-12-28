@@ -41,10 +41,10 @@ class TestWorkerState(unittest.TestCase):
     def setUp(self):
         self.work_state_1 = WorkerState(TEST_WORKER_ID_1, 10)
         self.work_state_2 = WorkerState(TEST_WORKER_ID_2)
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']
@@ -138,10 +138,10 @@ class TestWorkerManager(unittest.TestCase):
         if os.path.exists(disconnect_path):
             os.remove(disconnect_path)
 
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         mturk_agent_ids = ['mturk_agent_1']

@@ -10,6 +10,8 @@ Torch Ranker Agents provide functionality for building ranking models.
 See the TorchRankerAgent tutorial for examples.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
 from typing import Dict, Any
 from abc import abstractmethod
 from itertools import islice
@@ -49,12 +51,14 @@ class TorchRankerAgent(TorchAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI args.
         """
-        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('TorchRankerAgent')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands',
             '--candidates',
@@ -175,6 +179,7 @@ class TorchRankerAgent(TorchAgent):
             default=False,
             help='Return sorted candidate scores from eval_step',
         )
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary

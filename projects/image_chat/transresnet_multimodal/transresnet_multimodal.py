@@ -7,6 +7,9 @@
 Transresnet Multimodal Model (https://arxiv.org/abs/1811.00945).
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import round_sigfigs
 from parlai.core.message import Message
@@ -38,15 +41,17 @@ class TransresnetMultimodalAgent(TransresnetAgent):
     # Initialization and argument parsers
     ######################################
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Override to add personality-override option.
         """
-        TransresnetMultimodalModel.add_cmdline_args(argparser)
-        TransresnetAgent.add_cmdline_args(argparser)
-        arg_group = argparser.add_argument_group("TransresnetMultimodal Arguments")
-        argparser.add_argument(
+        TransresnetMultimodalModel.add_cmdline_args(parser, partial_opt=partial_opt)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        arg_group = parser.add_argument_group("TransresnetMultimodal Arguments")
+        parser.add_argument(
             "--personality-override",
             type=str,
             default=None,
@@ -54,13 +59,13 @@ class TransresnetMultimodalAgent(TransresnetAgent):
             "is given. This will give the model a personality "
             "(whichever is specifed).",
         )
-        argparser.add_argument(
+        parser.add_argument(
             "--personalities-path",
             type=str,
             default=None,
             help="Path to personalities list",
         )
-        DictionaryAgent.add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return arg_group
 
     def __init__(self, opt, shared=None):

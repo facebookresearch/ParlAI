@@ -89,8 +89,8 @@ def setup_args(parser=None):
         help='Report micro-averaged metrics instead of macro averaged metrics.',
         recommended=False,
     )
-    WorldLogger.add_cmdline_args(parser)
-    TensorboardLogger.add_cmdline_args(parser)
+    WorldLogger.add_cmdline_args(parser, partial_opt=None)
+    TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     parser.set_params(datatype='valid')
     return parser
 

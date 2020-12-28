@@ -142,9 +142,9 @@ class TestDictionary(unittest.TestCase):
         """
         Check the dictionary is correctly adding and parsing short sentence.
         """
-        argparser = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args([])
+        parser = ParlaiParser()
+        DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
+        opt = parser.parse_args([])
         dictionary = DictionaryAgent(opt)
         num_builtin = len(dictionary)
 
@@ -557,7 +557,7 @@ class SpecialTokenTests(unittest.TestCase):
                     kwargs['dict_file'] = os.path.join(tmpdir, 'dict')
                 string = f"This is a test of {special_token}"
                 parser = ParlaiParser(False, False)
-                DictionaryAgent.add_cmdline_args(parser)
+                DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
                 opt = parser.parse_kwargs(**kwargs)
                 da = DictionaryAgent(opt)
                 before = da.tokenize(string)

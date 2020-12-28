@@ -136,10 +136,10 @@ class InitTestMTurkManager(unittest.TestCase):
     """
 
     def setUp(self):
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
@@ -207,10 +207,10 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
     def setUp(self):
         self.fake_socket = MockSocket()
         time.sleep(0.1)
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
@@ -934,10 +934,10 @@ class TestMTurkManagerUnitFunctions(unittest.TestCase):
 
 class TestMTurkManagerPoolHandling(unittest.TestCase):
     def setUp(self):
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
@@ -1046,10 +1046,10 @@ class TestMTurkManagerPoolHandling(unittest.TestCase):
 
 class TestMTurkManagerTimeHandling(unittest.TestCase):
     def setUp(self):
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']
@@ -1147,10 +1147,10 @@ class TestMTurkManagerTimeHandling(unittest.TestCase):
 class TestMTurkManagerLifecycleFunctions(unittest.TestCase):
     def setUp(self):
         self.fake_socket = MockSocket()
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['task_description'] = 'Test task description'
         self.opt['assignment_duration_in_seconds'] = 6
@@ -1291,10 +1291,10 @@ class TestMTurkManagerConnectedFunctions(unittest.TestCase):
     def setUp(self):
         self.fake_socket = MockSocket()
         time.sleep(0.1)
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 6
         self.mturk_agent_ids = ['mturk_agent_1', 'mturk_agent_2']

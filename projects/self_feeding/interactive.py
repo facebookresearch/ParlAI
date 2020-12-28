@@ -25,8 +25,8 @@ def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Interactive chat with a model')
     parser.set_defaults(interactive_mode=True, task='interactive')
-    LocalHumanAgent.add_cmdline_args(parser)
-    SelfFeedingAgent.add_cmdline_args(parser)
+    LocalHumanAgent.add_cmdline_args(parser, partial_opt=None)
+    SelfFeedingAgent.add_cmdline_args(parser, partial_opt=None)
     parser.set_defaults(history_size=2)
     return parser
 

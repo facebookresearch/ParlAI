@@ -15,6 +15,9 @@ for unseen) after the last colon in the task.
 E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from parlai.utils.io import PathManager
@@ -206,9 +209,11 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Wizard Dialog Knowledge arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('Wizard Dialog Knowledge arguments')
         agent.add_argument(
             '--label-type',
             type=str,
@@ -248,6 +253,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             help='in interactive mode, this is the number of topic choices'
             'the human will have',
         )
+        return parser
 
     def len_episode(self, ep):
         d = self.data[ep]
@@ -359,9 +365,11 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         self.add_topic = opt.get('add_topic', False)
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Basic Dialog Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('Basic Dialog Arguments')
         agent.add_argument(
             '--speaker-label',
             type=str,
@@ -375,6 +383,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             default=False,
             help='prepend chosen topic to first turn',
         )
+        return parser
 
     def num_examples(self):
         return self.num_exs
@@ -466,11 +475,13 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
         self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
         self.dropout = opt.get('ignorant_dropout', 0.0)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        argparser.set_defaults(include_knowledge_separator=True)
-        WizardDialogKnowledgeTeacher.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('GeneratorTeacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.set_defaults(include_knowledge_separator=True)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('GeneratorTeacher Arguments')
         agent.add_argument(
             '--only-checked-knowledge',
             type='bool',
@@ -496,6 +507,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             default='\n',
             help='delimiter for prepending gold knowledge',
         )
+        return parser
 
     def getID(self):
         return "WizTeacher"
@@ -704,10 +716,12 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
         self.teacher_type = opt.get('teacher_type')
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        WizardDialogKnowledgeTeacher.add_cmdline_args(argparser)
-        argparser.add_argument(
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        WizardDialogKnowledgeTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
+        parser.add_argument(
             '--teacher-type',
             type=str,
             default='docs',
@@ -721,6 +735,7 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
                 'span_teacher',
             ],
         )
+        return parser
 
     def get_min_stopwords(self, word_set):
         min_count = 1000000000000

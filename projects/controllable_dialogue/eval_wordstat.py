@@ -37,7 +37,7 @@ import os
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'compute statistics from model predictions')
-    DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
 
     # These defaults can be overriden by both .opt file and user's command line flags
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
@@ -74,7 +74,7 @@ def setup_args(parser=None):
         beam_min_n_best=10,
         use_reply='model',
     )
-    TensorboardLogger.add_cmdline_args(parser)
+    TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

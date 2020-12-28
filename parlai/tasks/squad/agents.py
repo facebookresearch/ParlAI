@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
 from parlai.utils.io import PathManager
 from .build import build
@@ -245,15 +248,18 @@ class SentenceTeacher(IndexTeacher):
         self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('SQuAD Sentence Teacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('SQuAD Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
             type='bool',
             default=False,
             help='include context within text instead of as a ' 'separate field',
         )
+        return parser
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -326,15 +332,18 @@ class FulldocsentenceTeacher(FulldocTeacher):
         self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
             type='bool',
             default=False,
             help='include context within text instead of as a ' 'separate field',
         )
+        return parser
 
     def get(self, episode_idx, entry_idx=None):
         action = {}

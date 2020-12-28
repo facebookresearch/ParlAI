@@ -16,6 +16,8 @@ not all links are live, and thus some examples do not have valid images.
 As there is no training set, we manually split 90% of the validation set
 into train.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import csv
 import os
 
@@ -48,20 +50,23 @@ class IGCTeacher(AbstractImageTeacher):
         self.multi_ref = opt.get('igc_multi_ref', False)
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Include arg.
 
         for multi-reference labels.
         """
-        super().add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('IGC Arguments')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('IGC Arguments')
         agent.add_argument(
             '--igc-multi-ref',
             type='bool',
             default=False,
             help='specify to evaluate on multi-reference labels',
         )
+        return parser
 
     def image_id_to_image_path(self, image_id: str) -> str:
         """
@@ -254,15 +259,18 @@ class IGCOneSideTeacher(ABC, IGCTeacher):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        super().add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('IGCResponseOnly Arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('IGCResponseOnly Arguments')
         agent.add_argument(
             '--igc-multi-ref',
             type='bool',
             default=False,
             help='specify true to evaluate on multi-reference labels',
         )
+        return parser
 
     def num_episodes(self) -> int:
         return len(self.data)

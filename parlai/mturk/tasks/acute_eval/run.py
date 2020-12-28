@@ -30,76 +30,76 @@ def add_args(from_argv=False):
     Add arguments to parser and either parse from commandline or initialize to defaults
     (for overriding in scripts)
     """
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    argparser.add_argument(
+    parser = ParlaiParser(False, False)
+    parser.add_parlai_data_path()
+    parser.add_mturk_args()
+    parser.add_argument(
         '--annotations-per-pair',
         type=int,
         default=1,
         help='Number of annotations per conversation comparison pair',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--pairings-filepath',
         type=str,
         default=None,
         help='path to the file containing the task dictionaries',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--task-config',
         type=dict,
         default=DEFAULT_TASK_CONFIG,
         help='dict with keys "hit_title", "hit_description", "hit_keywords", '
         'determining how task is displayed on MTurk site',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--s1-choice',
         type=str,
         default='I would prefer to talk to <Speaker 1>',
         help='text next to speaker 1 radio button',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--s2-choice',
         type=str,
         default='I would prefer to talk to <Speaker 2>',
         help='text next to speaker 2 radio button',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--question',
         type=str,
         default='Who would you prefer to talk to for a long conversation?',
         help='question to present to turker for comparison (e.g. "Which speaker is better?")',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--block-on-onboarding-fail',
         type=bool,
         default=True,
         help='whether to block on onboarding failure',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--subtasks-per-hit',
         type=int,
         default=5,
         help='number of subtasks/comparisons to do per hit',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--onboarding-threshold',
         type=float,
         default=0.75,
         help='minimum accuracy on onboarding tasks, as a float 0-1.0',
     )
-    argparser.add_argument('--seed', type=int, default=42, help='seed for random')
-    argparser.add_argument(
+    parser.add_argument('--seed', type=int, default=42, help='seed for random')
+    parser.add_argument(
         '--softblock-list-path',
         type=str,
         default=None,
         help='Path to list of workers to softblock, separated by line breaks',
     )
-    argparser.set_defaults(allowed_conversation=1)
+    parser.set_defaults(allowed_conversation=1)
     if from_argv:
-        return argparser.parse_args()
+        return parser.parse_args()
     else:
-        return argparser.parse_args(args=[])
+        return parser.parse_args(args=[])
 
 
 class AcuteEvaluator(object):

@@ -299,7 +299,7 @@ class ParlaiParser(argparse.ArgumentParser):
     modules by passing this object and calling ``add_arg()`` or
     ``add_argument()`` on it.
 
-    For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
+    super().core.dict.DictionaryAgent.add_cmdline_args``.
 
     :param add_parlai_args:
         (default True) initializes the default arguments for ParlAI
@@ -313,7 +313,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self, add_parlai_args=True, add_model_args=False, description=None, **kwargs
     ):
         """
-        Initialize the ParlAI argparser.
+        Initialize the ParlAI parser.
         """
         if 'formatter_class' not in kwargs:
             kwargs['formatter_class'] = CustomHelpFormatter

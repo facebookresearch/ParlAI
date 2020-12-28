@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import copy
 import json
 import os
@@ -168,15 +170,18 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
     RECOMPILE_DEFAULT = False
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        EmpatheticDialoguesTeacher.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('EDPersonaTopicifierTeacher arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('EDPersonaTopicifierTeacher arguments')
         agent.add_argument(
             '--recompile-persona-topic-data',
             type='bool',
             default=cls.RECOMPILE_DEFAULT,
             help='Re-compile data with ConvAI2 personas and WoW topics added. Only useful for demonstrating how data was produced.',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
