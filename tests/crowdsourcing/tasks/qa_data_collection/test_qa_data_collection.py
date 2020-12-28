@@ -56,20 +56,20 @@ try:
             )
             expected_state_path = os.path.join(expected_states_folder, 'state.json')
 
-            # # # Setup
-            #
-            # build_task(task_directory=TASK_DIRECTORY)
-            #
-            # # Set up the config and database
-            # overrides = ['+mephisto.task.allowed_concurrent=0', '+turn_timeout=300']
-            # # TODO: remove all of these params once Hydra 1.1 is released with
-            # #  support for recursive defaults
-            # self._set_up_config(
-            #     blueprint_type=BLUEPRINT_TYPE,
-            #     task_directory=TASK_DIRECTORY,
-            #     overrides=overrides,
-            # )
-            #
+            # # Setup
+
+            build_task(task_directory=TASK_DIRECTORY)
+
+            # Set up the config and database
+            overrides = ['+mephisto.task.allowed_concurrent=0', '+turn_timeout=300']
+            # TODO: remove all of these params once Hydra 1.1 is released with
+            #  support for recursive defaults
+            self._set_up_config(
+                blueprint_type=BLUEPRINT_TYPE,
+                task_directory=TASK_DIRECTORY,
+                overrides=overrides,
+            )
+
             # # Set up the operator and server
             # teacher = get_teacher(self.config)
             # world_opt = {
