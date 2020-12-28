@@ -3,8 +3,8 @@ mephisto:
   blueprint:
     onboarding_qualification: model_chat_onboarding
     block_qualification: model_chat_block
-    base_model_folder: ~/ParlAI/data/models/
-    chat_data_folder: ~/ParlAI/data/crowdsourcing/model_chat/
+    base_model_folder: ${task_dir}/models/
+    chat_data_folder: ${task_dir}/model_chat/
     num_turns: 6
     task_model_parallel: true
     check_acceptability: false
