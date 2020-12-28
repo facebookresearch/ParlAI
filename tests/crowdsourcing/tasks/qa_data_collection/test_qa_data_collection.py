@@ -56,43 +56,43 @@ try:
             )
             expected_state_path = os.path.join(expected_states_folder, 'state.json')
 
-            # # Setup
-
-            build_task(task_directory=TASK_DIRECTORY)
-
-            # Set up the config and database
-            overrides = ['+mephisto.task.allowed_concurrent=0', '+turn_timeout=300']
-            # TODO: remove all of these params once Hydra 1.1 is released with
-            #  support for recursive defaults
-            self._set_up_config(
-                blueprint_type=BLUEPRINT_TYPE,
-                task_directory=TASK_DIRECTORY,
-                overrides=overrides,
-            )
-
-            # Set up the operator and server
-            teacher = get_teacher(self.config)
-            world_opt = {
-                "turn_timeout": self.config.turn_timeout,
-                "teacher": teacher,
-                'send_task_data': True,
-            }
-            shared_state = SharedParlAITaskState(
-                world_opt=world_opt, onboarding_world_opt=world_opt
-            )
-            self._set_up_server(shared_state=shared_state)
-
-            # Check that the agent states are as they should be
-            with open(expected_state_path) as f:
-                expected_state = json.load(f)
-            self._test_agent_states(
-                num_agents=1,
-                agent_display_ids=AGENT_DISPLAY_IDS,
-                agent_messages=AGENT_MESSAGES,
-                form_messages=FORM_MESSAGES,
-                form_task_data=FORM_TASK_DATA,
-                expected_states=(expected_state,),
-            )
+            # # # Setup
+            #
+            # build_task(task_directory=TASK_DIRECTORY)
+            #
+            # # Set up the config and database
+            # overrides = ['+mephisto.task.allowed_concurrent=0', '+turn_timeout=300']
+            # # TODO: remove all of these params once Hydra 1.1 is released with
+            # #  support for recursive defaults
+            # self._set_up_config(
+            #     blueprint_type=BLUEPRINT_TYPE,
+            #     task_directory=TASK_DIRECTORY,
+            #     overrides=overrides,
+            # )
+            #
+            # # Set up the operator and server
+            # teacher = get_teacher(self.config)
+            # world_opt = {
+            #     "turn_timeout": self.config.turn_timeout,
+            #     "teacher": teacher,
+            #     'send_task_data': True,
+            # }
+            # shared_state = SharedParlAITaskState(
+            #     world_opt=world_opt, onboarding_world_opt=world_opt
+            # )
+            # self._set_up_server(shared_state=shared_state)
+            #
+            # # Check that the agent states are as they should be
+            # with open(expected_state_path) as f:
+            #     expected_state = json.load(f)
+            # self._test_agent_states(
+            #     num_agents=1,
+            #     agent_display_ids=AGENT_DISPLAY_IDS,
+            #     agent_messages=AGENT_MESSAGES,
+            #     form_messages=FORM_MESSAGES,
+            #     form_task_data=FORM_TASK_DATA,
+            #     expected_states=(expected_state,),
+            # )
 
 
 except ImportError:
