@@ -118,67 +118,75 @@ function OnboardingUtterance({
 }
 
 function OnboardingComponent({ onboardingData, annotationBuckets, annotationQuestion, onSubmit }) {
-    const [currentTurnAnnotations, setCurrentAnnotations] = React.useState(
-        Array.from(Array(onboardingData.dialog.length), () => Object.fromEntries(
-            annotationBuckets.map(bucket => [bucket.value, false]))
-        )
-    );
-    return (
-        <div id="onboarding-main-pane">
-            <OnboardingDirections>
-                <h3>Task Description</h3>
-                <div>
-                    To first learn about the labeling task, please evaluate the "THEM" speaker in the conversation below, choosing the correct checkboxes.</div>
-            </OnboardingDirections>
-            <div style={{ width: '850px', margin: '0px auto', clear: 'both' }}>
-                <ErrorBoundary>
+    if (onboardingData === null) {
+        return (
+            <div id="onboarding-main-pane">
+                Please wait while we set up the task...
+            </div>
+        );
+    } else {
+        const [currentTurnAnnotations, setCurrentAnnotations] = React.useState(
+            Array.from(Array(onboardingData.dialog.length), () => Object.fromEntries(
+                annotationBuckets.map(bucket => [bucket.value, false]))
+            )
+        );
+        return (
+            <div id="onboarding-main-pane">
+                <OnboardingDirections>
+                    <h3>Task Description</h3>
                     <div>
-                        {
-                            onboardingData.dialog.map((turn, idx) => (
-                                <div key={'turn_pair_' + idx}>
-                                    <OnboardingUtterance
-                                        key={idx * 2}
-                                        annotationBuckets={annotationBuckets}
-                                        annotationQuestion={annotationQuestion}
-                                        turnIdx={idx * 2}
-                                        text={turn[0].text} />
-                                    <OnboardingUtterance
-                                        key={idx * 2 + 1}
-                                        annotationBuckets={annotationBuckets}
-                                        annotationQuestion={annotationQuestion}
-                                        turnIdx={idx * 2 + 1}
-                                        text={turn[1].text} 
-                                        annotations={currentTurnAnnotations[idx]}
-                                        onUpdateAnnotation={
-                                            (newAnnotations) => {
-                                                let updatedAnnotations = currentTurnAnnotations.slice()
-                                                updatedAnnotations[idx] = newAnnotations;
-                                                setCurrentAnnotations(updatedAnnotations);
+                        To first learn about the labeling task, please evaluate the "THEM" speaker in the conversation below, choosing the correct checkboxes.</div>
+                </OnboardingDirections>
+                <div style={{ width: '850px', margin: '0px auto', clear: 'both' }}>
+                    <ErrorBoundary>
+                        <div>
+                            {
+                                onboardingData.dialog.map((turn, idx) => (
+                                    <div key={'turn_pair_' + idx}>
+                                        <OnboardingUtterance
+                                            key={idx * 2}
+                                            annotationBuckets={annotationBuckets}
+                                            annotationQuestion={annotationQuestion}
+                                            turnIdx={idx * 2}
+                                            text={turn[0].text} />
+                                        <OnboardingUtterance
+                                            key={idx * 2 + 1}
+                                            annotationBuckets={annotationBuckets}
+                                            annotationQuestion={annotationQuestion}
+                                            turnIdx={idx * 2 + 1}
+                                            text={turn[1].text} 
+                                            annotations={currentTurnAnnotations[idx]}
+                                            onUpdateAnnotation={
+                                                (newAnnotations) => {
+                                                    let updatedAnnotations = currentTurnAnnotations.slice()
+                                                    updatedAnnotations[idx] = newAnnotations;
+                                                    setCurrentAnnotations(updatedAnnotations);
+                                                }
                                             }
-                                        }
-                                        />
-                                </div>
-                            ))
-                        }
-                    </div>
-                </ErrorBoundary>
-                <div style={{ clear: 'both' }}></div>
+                                            />
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </ErrorBoundary>
+                    <div style={{ clear: 'both' }}></div>
+                </div>
+                <hr />
+                <div style={{ textAlign: 'center' }}>
+                    <button id="onboarding-submit-button"
+                        className="button is-link btn-lg"
+                        onClick={() => handleOnboardingSubmit({ 
+                            onboardingData, 
+                            currentTurnAnnotations, 
+                            onSubmit,
+                        })}
+                    >
+                        Submit Answers
+                    </button>
+                </div>
             </div>
-            <hr />
-            <div style={{ textAlign: 'center' }}>
-                <button id="onboarding-submit-button"
-                    className="button is-link btn-lg"
-                    onClick={() => handleOnboardingSubmit({ 
-                        onboardingData, 
-                        currentTurnAnnotations, 
-                        onSubmit,
-                    })}
-                >
-                    Submit Answers
-                </button>
-            </div>
-        </div>
-    );
+        );
+    }
 }
 
 export { OnboardingComponent, OnboardingUtterance };
