@@ -1,0 +1,75 @@
+acts:
+- - episode_done: true
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: The Parma trolleybus system (Italian: "Rete filoviaria di Parma"
+      ) forms part of the public transport network of the city and "comune" of Parma,
+      in the region of Emilia-Romagna, northern Italy. In operation since 1953, the
+      system presently comprises four urban routes.
+
+      Hypothesis: The trolleybus system has over 2 urban routes'
+- - episode_done: true
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: Topi Raja Sweety Roja is a 1996 Telugu comedy film, produced by
+      Dr. A. Vijayalakshmi on Sri Sai Madhavi Productions banner and directed by Dr.
+      N. Siva Prasad. Starring Rajendra Prasad, Roja in the lead roles and music also
+      composed by "Hero" Rajendra Prasad.
+
+      Hypothesis: The lead role was played by Rajendra Prasad'
+- - episode_done: true
+    id: ANLI:R3
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: TOKYO, Dec 18 (Reuters) - Japan’s Shionogi & Co said on Tuesday
+      that it has applied to health regulators in the United States, Canada and Europe
+      for approval of its HIV drug Dolutegravir. Shionogi developed Dolutegravir with
+      a Viiv Healthcare, an AIDS drug joint venture between GlaxoSmithKline and Pfizer,
+      in exchange for its rights to the drug.
+
+      Hypothesis: The article was written on December 18th.'
+- - episode_done: true
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: Alexandra Lendon Bastedo (9 March 1946 – 12 January 2014) was
+      a British actress, best known for her role as secret agent Sharron Macready
+      in the 1968 British espionage/science fiction adventure series "The Champions".
+      She has been cited as a sex symbol of the 1960s and 1970s. Bastedo was a vegetarian
+      and animal welfare advocate.
+
+      Hypothesis: Sharron Macready was a popular character through the 1980''s.'
+- - episode_done: true
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: Idris Sultan (born January 1993) is a Tanzanian Actor and comedian,
+      actor and radio host who won the Big Brother Africa-Hotshots in 2014. He hosts
+      the biggest comedy news show called SIO HABARI, he also hosts a radio show called
+      MWB(Mji wa burudani) on ChoiceFm Tanzania.
+
+      Hypothesis: Idris Sultan was born in Tanzania.'
+num_episodes: 162865
+num_examples: 162865

@@ -85,7 +85,8 @@ class GPT2Decoder(torch.nn.Module):
                 and int(input[0][0]) == self.START_IDX
             ):
                 # generating: ignore the start token
-                model_input = encoder_state
+                # without deep copy, the padding_idx (-1) in encoder_state can be reset to 0 with clamp_ inplace operation
+                model_input = encoder_state.clone()
             else:
                 # forced decoding: concatenate the context
                 # with the labels
@@ -108,6 +109,7 @@ class GPT2Decoder(torch.nn.Module):
             model_input = input[:, -1:]
             attention_mask = torch.cat([encoder_state, input], dim=-1) != self.NULL_IDX
 
+        model_input = model_input.clamp_(min=0)
         transformer_outputs = self.transformer(
             model_input,
             past=incr_state,
@@ -310,3 +312,15 @@ class Gpt2Agent(TorchGeneratorAgent):
             left_padded=True,
             fp16friendly=False,
         )
+
+    def load_state_dict(self, state_dict):
+        # 2020-11-10: some very old transformer model points (pre v3.0.1) are
+        # missing a field called transformer.h.0.attn.masked_bias. This hacks
+        # around that. See
+        # https://github.com/huggingface/transformers/issues/4309.
+        current_sd = self.model.state_dict()
+        missing = set(current_sd.keys()) - set(state_dict.keys())
+        for m in missing:
+            if 'masked_bias' in m:
+                state_dict[m] = current_sd[m]
+        return super().load_state_dict(state_dict)

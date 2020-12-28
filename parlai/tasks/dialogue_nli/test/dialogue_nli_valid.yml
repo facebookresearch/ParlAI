@@ -1,0 +1,58 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i prefer basketball . team sports are fun .
+
+      Hypothesis: i like playing basketball .'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i like to make things too . i am working on a robot .
+
+      Hypothesis: i helped design the game starcraft .'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: great whats your favorite color ? mine is yellow .
+
+      Hypothesis: my favorite color is navy blue .'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i worked to make a popular fun program to play on consoles .
+
+      Hypothesis: i am a musician and hope to make it big some day .'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i am all about fitness . i used to be a gym teacher .
+
+      Hypothesis: i volunteer at a soup kitchen .'
+num_episodes: 16500
+num_examples: 16500

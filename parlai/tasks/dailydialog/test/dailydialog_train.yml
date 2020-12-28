@@ -1,0 +1,48 @@
+acts:
+- - act_type: no_act
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - Say , Jim , how about going for a few beers after dinner ?
+    text: __SILENCE__
+    topic: attitude_and_emotion
+- - act_type: commissive
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - What do you mean ? It will help us to relax .
+    text: You know that is tempting but is really not good for our fitness .
+    topic: attitude_and_emotion
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - I guess you are right . But what shall we do ? I don't feel like sitting at
+      home .
+    text: Do you really think so ? I don't . It will just make us fat and act silly
+      . Remember last time ?
+    topic: attitude_and_emotion
+- - act_type: directive
+    emotion: no_emotion
+    episode_done: false
+    id: dailydialog
+    labels:
+    - That's a good idea . I hear Mary and Sally often go there to play pingpong .
+      Perhaps we can make a foursome with them .
+    text: I suggest a walk over to the gym where we can play singsong and meet some
+      of our friends .
+    topic: attitude_and_emotion
+- - act_type: inform
+    emotion: happiness
+    episode_done: true
+    id: dailydialog
+    labels:
+    - Good . Let ' s go now .
+    text: Sounds great to me ! If they are willing , we could ask them to go dancing
+      with us . That is excellent exercise and fun , too .
+    topic: attitude_and_emotion
+num_episodes: 22236
+num_examples: 87170
