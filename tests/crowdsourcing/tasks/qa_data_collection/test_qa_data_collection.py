@@ -23,8 +23,8 @@ FORM_TASK_DATA = ({},)
 try:
 
     from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
-        BLUEPRINT_TYPE,
         SharedParlAITaskState,
+        BLUEPRINT_TYPE,
     )
 
     from parlai.crowdsourcing.tasks.qa_data_collection.run import TASK_DIRECTORY
@@ -72,16 +72,12 @@ try:
 
             # Set up the operator and server
             teacher = get_teacher(self.config)
-            world_opt = {
-                "turn_timeout": self.config.turn_timeout,
-                "teacher": teacher,
-                'send_task_data': True,
-            }
+            world_opt = {"turn_timeout": self.config.turn_timeout, "teacher": teacher}
             shared_state = SharedParlAITaskState(
                 world_opt=world_opt, onboarding_world_opt=world_opt
             )
-            # self._set_up_server(shared_state=shared_state)
-            #
+            self._set_up_server(shared_state=shared_state)
+
             # # Check that the agent states are as they should be
             # with open(expected_state_path) as f:
             #     expected_state = json.load(f)
