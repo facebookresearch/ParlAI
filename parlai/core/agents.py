@@ -308,10 +308,10 @@ def create_agent_from_opt_file(opt: Opt):
     if opt.get('override'):
         for k, v in opt['override'].items():
             if k in opt_from_file and str(v) != str(opt_from_file.get(k)):
-                to_override[k] = v
                 logging.warn(
                     f'Overriding opt["{k}"] to {v} (previously: {opt_from_file.get(k)})'
                 )
+            to_override[k] = v
     opt_from_file = opt_from_file.fork(**to_override)
 
     model_class = load_agent_module(opt_from_file['model'])
