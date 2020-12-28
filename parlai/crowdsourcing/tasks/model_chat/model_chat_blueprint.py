@@ -475,7 +475,7 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         default=10, metadata={'help': 'The number of conversations to collect'}
     )
     stack_folder: str = field(
-        default=os.path.join(get_task_path(), 'stack_folder'),
+        default=os.path.join(get_task_path(), 'image_stack'),
         metadata={
             "help": 'Folder in which to save backups of the stack of which image-and-model combinations have had HITs launched'
         },

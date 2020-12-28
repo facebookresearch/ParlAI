@@ -100,8 +100,6 @@ try:
                 model_folder = os.path.join(parlai_data_folder, 'models')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
 
-                # # Setup
-
                 # Download the Blender 90M model
                 download_blender(parlai_data_folder)
 

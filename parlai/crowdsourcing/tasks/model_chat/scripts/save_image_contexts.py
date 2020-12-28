@@ -11,6 +11,7 @@ import os
 import pickle
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.crowdsourcing.tasks.model_chat import run
 from parlai.crowdsourcing.tasks.model_chat.utils import (
@@ -20,23 +21,12 @@ from parlai.crowdsourcing.tasks.model_chat.utils import (
 from parlai.scripts.display_data import setup_args
 
 
-def save_image_contexts():
+def save_image_contexts(task_opt: Opt):
     """
     Save a JSON of images and associated contexts for the model image chat task.
     """
 
     print('Creating teacher to loop over images.')
-    task_parser = setup_args()
-    default_image_context_path = os.path.join(
-        os.path.dirname(run.__file__), 'task_config', 'image_contexts'
-    )
-    task_parser.add_argument(
-        '--image-context-path',
-        type=str,
-        default=default_image_context_path,
-        help='Save path for image context file',
-    )
-    task_opt = task_parser.parse_args()
     agent = RepeatLabelAgent(task_opt)
     world = create_task(task_opt, agent)
     num_examples = task_opt['num_examples']
@@ -75,4 +65,17 @@ def save_image_contexts():
 
 
 if __name__ == '__main__':
-    save_image_contexts()
+
+    task_parser = setup_args()
+    default_image_context_path = os.path.join(
+        os.path.dirname(run.__file__), 'task_config', 'image_contexts'
+    )
+    task_parser.add_argument(
+        '--image-context-path',
+        type=str,
+        default=default_image_context_path,
+        help='Save path for image context file',
+    )
+    task_opt_ = task_parser.parse_args()
+
+    save_image_contexts(task_opt_)
