@@ -14,7 +14,6 @@ import unittest
 from typing import Any, Dict
 
 import parlai.utils.testing as testing_utils
-from parlai.scripts.display_data import setup_args
 from parlai.zoo.image_chat.transresnet_multimodal import (
     download as download_transresnet,
 )
@@ -46,6 +45,7 @@ try:
     )
     from parlai.crowdsourcing.tasks.model_chat.scripts.save_image_contexts import (
         save_image_contexts,
+        setup_image_context_args,
     )
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 

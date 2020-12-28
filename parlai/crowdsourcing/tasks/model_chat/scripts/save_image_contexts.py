@@ -21,6 +21,20 @@ from parlai.crowdsourcing.tasks.model_chat.utils import (
 from parlai.scripts.display_data import setup_args
 
 
+def setup_image_context_args():
+    task_parser = setup_args()
+    default_image_context_path = os.path.join(
+        os.path.dirname(run.__file__), 'task_config', 'image_contexts'
+    )
+    task_parser.add_argument(
+        '--image-context-path',
+        type=str,
+        default=default_image_context_path,
+        help='Save path for image context file',
+    )
+    return task_parser
+
+
 def save_image_contexts(task_opt: Opt):
     """
     Save a JSON of images and associated contexts for the model image chat task.
@@ -65,17 +79,5 @@ def save_image_contexts(task_opt: Opt):
 
 
 if __name__ == '__main__':
-
-    task_parser = setup_args()
-    default_image_context_path = os.path.join(
-        os.path.dirname(run.__file__), 'task_config', 'image_contexts'
-    )
-    task_parser.add_argument(
-        '--image-context-path',
-        type=str,
-        default=default_image_context_path,
-        help='Save path for image context file',
-    )
-    task_opt_ = task_parser.parse_args()
-
+    task_opt_ = setup_image_context_args().parse_args()
     save_image_contexts(task_opt_)
