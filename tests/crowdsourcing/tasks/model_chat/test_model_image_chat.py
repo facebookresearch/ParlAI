@@ -31,7 +31,7 @@ AGENT_MESSAGES = [
 ]
 FORM_MESSAGES = ("",)
 # No info is sent through the 'text' field when submitting the form
-FORM_TASK_DATA = ({"final_rating": 1},)
+FORM_TASK_DATA = ({"final_rating": 0},)
 
 
 try:
@@ -91,8 +91,7 @@ try:
 --datatype test
 --num-examples 10
 """
-                image_context_parser = setup_args()
-                image_context_opt = image_context_parser.parse_args(
+                image_context_opt = setup_image_context_args().parse_args(
                     image_context_opt_string.split()
                 )
                 save_image_contexts(image_context_opt)
@@ -123,6 +122,7 @@ try:
                     f'+mephisto.blueprint.num_conversations={num_convos:d}',
                     f'+mephisto.blueprint.stack_folder={stack_folder}',
                     '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
+                    'mephisto.blueprint.task_model_parallel=False',
                 ]
                 # TODO: remove all of these params once Hydra 1.1 is released with
                 #  support for recursive defaults
@@ -137,11 +137,10 @@ try:
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be
-                # self._get_channel_info().job.task_runner.task_run.get_blueprint().use_onboarding = (
-                #     False
-                # )
-                # # Don't require onboarding for this test agent
-                # TODO: shouldn't need this anymore, right?
+                self._get_channel_info().job.task_runner.task_run.get_blueprint().use_onboarding = (
+                    False
+                )
+                # Don't require onboarding for this test agent
                 with open(expected_state_path) as f:
                     expected_state = json.load(f)
                 self._test_agent_states(
