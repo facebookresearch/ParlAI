@@ -53,10 +53,9 @@ class AbstractWrapperTeacher(Teacher, ABC):
             type=str,
             help='The task whose fields will be manipulated.',
         )
-        known_args, _ = parser.parse_known_args(nohelp=True)
         try:
-            parser.add_task_args(known_args.wrapper_task)
-        except RuntimeError:
+            parser.add_task_args(partial_opt['wrapper_task'], partial_opt)
+        except KeyError:
             warn_once(
                 'The task name cannot be parsed from command-line arguments! '
                 'Task-specific flags will not be added.'

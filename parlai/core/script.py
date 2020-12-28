@@ -51,8 +51,6 @@ class ParlaiScript(object):
         Create the parser with args.
         """
         # we want to later deprecate this for add_cmdline_args
-        pass
-        return parser
 
     def __init__(self, opt: Opt):
         self.opt = opt

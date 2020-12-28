@@ -253,6 +253,10 @@ class IrBaselineAgent(Agent):
         cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return parser
 
+    @classmethod
+    def dictionary_class(cls):
+        return DictionaryAgent
+
     def __init__(self, opt, shared=None):
         """
         Initialize agent.
