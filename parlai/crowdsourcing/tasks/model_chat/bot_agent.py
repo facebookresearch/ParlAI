@@ -118,6 +118,17 @@ class TurkLikeAgent:
 
         if active_models is not None:
 
+            model_overrides.update(
+                {
+                    'datatype': 'valid',  # So we don't have to load the optimizer
+                    'encode_candidate_vecs': True,  # For pulling from fixed list cands
+                    'interactive_mode': True,
+                    'skip_generation': False,
+                }
+            )
+            # Add overrides that were historically used when reading models from a
+            # static folder
+
             # Get the model nicknames from common folder and use them to load opts
             # from file
             base_model_folder = os.path.expanduser(args.blueprint.base_model_folder)
