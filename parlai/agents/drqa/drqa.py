@@ -51,7 +51,7 @@ class SimpleDictionaryAgent(DictionaryAgent):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        group = cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = super().add_cmdline_args(parser, partial_opt=partial_opt)
         group.add_argument(
             '--pretrained_words',
             type='bool',
