@@ -70,21 +70,21 @@ try:
                 overrides=overrides,
             )
 
-            # # Set up the operator and server
-            # teacher = get_teacher(self.config)
-            # world_opt = {
-            #     "turn_timeout": self.config.turn_timeout,
-            #     "teacher": teacher,
-            #     'send_task_data': True,
-            # }
-            # shared_state = SharedParlAITaskState(
-            #     world_opt=world_opt, onboarding_world_opt=world_opt
-            # )
-            # self._set_up_server(shared_state=shared_state)
-            #
-            # # Check that the agent states are as they should be
-            # with open(expected_state_path) as f:
-            #     expected_state = json.load(f)
+            # Set up the operator and server
+            teacher = get_teacher(self.config)
+            world_opt = {
+                "turn_timeout": self.config.turn_timeout,
+                "teacher": teacher,
+                'send_task_data': True,
+            }
+            shared_state = SharedParlAITaskState(
+                world_opt=world_opt, onboarding_world_opt=world_opt
+            )
+            self._set_up_server(shared_state=shared_state)
+
+            # Check that the agent states are as they should be
+            with open(expected_state_path) as f:
+                expected_state = json.load(f)
             # self._test_agent_states(
             #     num_agents=1,
             #     agent_display_ids=AGENT_DISPLAY_IDS,
