@@ -52,6 +52,7 @@ class SharedBaseModelChatTaskState(SharedParlAITaskState):
     shared_models: Dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass
 class SharedModelChatTaskState(SharedBaseModelChatTaskState):
     context_generator: Optional[ContextGenerator] = None
     conversations_needed: Dict[str, Any] = field(default_factory=dict)
@@ -60,6 +61,7 @@ class SharedModelChatTaskState(SharedBaseModelChatTaskState):
     statistics_condition: Optional[Condition] = None
 
 
+@dataclass
 class SharedModelImageChatTaskState(SharedBaseModelChatTaskState):
     image_contexts: List[Dict[str, Any]] = None
     image_stack: ImageStack = None
@@ -218,6 +220,11 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         semaphore = Semaphore(max_concurrent_responses)
 
         # Move shared state into the world opt, so that it can be used by the world
+        shared_state.onboarding_world_opt.update(
+            {'skip_onboarding': self.annotations_config is None}
+        )
+        # The onboarding checks how well workers annotate conversations, so it should be
+        # skipped if we are not annotating
         shared_state.world_opt.update(
             {
                 'block_qualification': args.blueprint.block_qualification,

@@ -47,9 +47,7 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
     def __init__(self, opt, agent: "MephistoAgentWrapper"):
         super().__init__(opt, agent)
 
-        self.skip_onboarding = opt['annotations_config'] is None
-        # The onboarding checks how well workers annotate conversations, so it should be
-        # skipped if we are not annotating
+        self.skip_onboarding = opt['skip_onboarding']
 
         self.min_correct = ONBOARD_CONFIG['min_correct']
         self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
@@ -159,10 +157,11 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
 
     def shutdown(self):
         super().shutdown()
-        with self.statistics_condition:
-            if self.status not in self.onboard_statistics:
-                self.onboard_statistics[self.status] = 0
-            self.onboard_statistics[self.status] += 1
+        if not self.skip_onboarding:
+            with self.statistics_condition:
+                if self.status not in self.onboard_statistics:
+                    self.onboard_statistics[self.status] = 0
+                self.onboard_statistics[self.status] += 1
 
 
 class BaseModelChatWorld(CrowdTaskWorld, ABC):
