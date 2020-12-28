@@ -61,7 +61,11 @@ try:
             build_task(task_directory=TASK_DIRECTORY)
 
             # Set up the config and database
-            overrides = ['+mephisto.task.allowed_concurrent=0', '+turn_timeout=300']
+            overrides = [
+                '+mephisto.blueprint.num_conversations=1',
+                '+mephisto.task.allowed_concurrent=0',
+                '+turn_timeout=300',
+            ]
             # TODO: remove all of these params once Hydra 1.1 is released with
             #  support for recursive defaults
             self._set_up_config(
@@ -72,7 +76,7 @@ try:
 
             # Set up the operator and server
             teacher = get_teacher(self.config)
-            world_opt = {"turn_timeout": self.config.turn_timeout, "teacher": teacher}
+            world_opt = {"turn_timeout": self.config.turn_timeout}
             shared_state = SharedParlAITaskState(
                 world_opt=world_opt, onboarding_world_opt=world_opt
             )
