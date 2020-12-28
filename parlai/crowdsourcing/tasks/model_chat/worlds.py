@@ -429,7 +429,7 @@ class ModelChatWorld(BaseModelChatWorld):
         accordingly.
         """
 
-        control_msg = {"episode_done": False}  # TODO: is this needed by image chat?
+        control_msg = {"episode_done": False}
 
         if self.opt['include_persona']:
             # The Bot agent
