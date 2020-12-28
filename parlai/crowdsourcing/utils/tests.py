@@ -53,8 +53,6 @@ class AbstractCrowdsourcingTest:
 
         if self.operator is not None:
             self.operator.shutdown()
-        if self.server is not None:
-            self.server.shutdown_mock()
 
     def _set_up_config(
         self,
