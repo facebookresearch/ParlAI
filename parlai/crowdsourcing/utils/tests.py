@@ -109,10 +109,10 @@ class AbstractCrowdsourcingTest:
         Set up the operator and server.
         """
         self.operator = Operator(self.db)
-        self.operator.validate_and_run_config(
-            self.config.mephisto, shared_state=shared_state
-        )
-        self.server = self._get_channel_info().job.architect.server
+        # self.operator.validate_and_run_config(
+        #     self.config.mephisto, shared_state=shared_state
+        # )
+        # self.server = self._get_channel_info().job.architect.server
 
     def _get_channel_info(self):
         """
