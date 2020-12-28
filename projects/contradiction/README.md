@@ -1,6 +1,6 @@
-# *I like fish <span>&#x1F41F;</span>, especially dolphins <span>&#x1F42C;</span>:*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modelling
+# *I like fish <span>&#x1F41F;</span>, especially dolphins <span>&#x1F42C;</span>:*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modeling
 
-A study on *contradiction* detection and *non-contradiction* generation in dialogue modelling.  
+A study on *contradiction* detection and *non-contradiction* generation in dialogue modeling.  
 The paper can be found here: [Nie et al. (2020)](https://arxiv.org/abs/2012.13391).
 
 ## Abstract
@@ -27,7 +27,7 @@ As described in the paper, **DECODE** includes 6 groups of dialogues: (Main) *Tr
 | *A2T*         | 2,079      | Auxiliary test set created by transforming examples in *Test* |
 | *RCT*         | 2,011      | Auxiliary test set created by transforming examples in *Test* |
 
-The details of each group can be found in the [Nie et al. (2020)]().
+The details of each group can be found in the [Nie et al. (2020)](https://arxiv.org/abs/2012.13391).
 
 ## Load Data from ParlAI
 The **DECODE** can be loaded directly from ParlAI. The correct arguments to load data belonging to the different subsets is given below.
