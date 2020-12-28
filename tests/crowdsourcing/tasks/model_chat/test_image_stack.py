@@ -7,11 +7,13 @@
 Test the stack that keeps track of model image chats.
 """
 
-import json
 import os
+import random
 import unittest
 
+import numpy as np
 import pandas as pd
+import torch
 
 from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
 import parlai.utils.testing as testing_utils
@@ -30,17 +32,27 @@ class TestImageStack(unittest.TestCase):
         expected.
         """
 
+        seed = 0
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+
         with testing_utils.tempdir() as tmpdir:
 
             # Params
-
-            # Create the stack
             opt = {
                 'evals_per_image_model_combo': 2,
                 'models': ['model_1', 'model_2'],
-                'num_images': 5,
-                'stack_folder': tmpdir
+                'num_images': 3,
+                'stack_folder': tmpdir,
             }
+            num_stack_slots = (
+                opt['evals_per_image_model_combo']
+                * len(opt['models'])
+                * opt['num_images']
+            )
+
+            # Create the stack
             stack = ImageStack(opt)
 
             # TODO: revise below
