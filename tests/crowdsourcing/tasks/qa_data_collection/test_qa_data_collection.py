@@ -62,7 +62,7 @@ try:
 
             # Set up the config and database
             overrides = [
-                '+mephisto.blueprint.num_conversations=1',
+                'mephisto.blueprint.num_conversations=1',
                 '+mephisto.task.allowed_concurrent=0',
                 '+turn_timeout=300',
             ]
