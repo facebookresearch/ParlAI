@@ -11,8 +11,6 @@ import json
 import os
 import unittest
 
-import parlai.utils.testing as testing_utils
-
 
 # Inputs
 AGENT_DISPLAY_IDS = ('QA Agent',)
