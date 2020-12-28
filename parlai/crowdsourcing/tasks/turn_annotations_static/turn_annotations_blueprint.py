@@ -84,6 +84,10 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance."
         },
     )
+    response_field: bool = field(
+        default=False,
+        metadata={"help": "If we want the crowdworker to respond to the message."},
+    )
 
 
 @register_mephisto_abstraction()
@@ -182,6 +186,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             "onboarding_data": onboarding_data,
             "annotation_buckets": annotation_buckets,
             "ask_reason": self.args.blueprint.ask_reason,
+            "response_field": self.args.blueprint.response_field,
             "frame_height": '100%',
             "num_subtasks": self.args.blueprint.subtasks_per_unit,
             "block_mobile": True,
