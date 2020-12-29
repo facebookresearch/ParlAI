@@ -49,7 +49,7 @@ This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/ta
 
 ### Setup
 
-Before running image chat HITs, you need to save a list of images that the humans and models will chat about. Do this by running `scripts/save_image_contexts.py`, which will loop over a dataset containing images and save information corresponding to a certain number of unique images to a file. This script accepts any arguments used by `parlai display_data`, for instance:
+Before running image chat HITs, you need to save a list of images that the humans and models will chat about. Do this by running `scripts/save_image_contexts.py`, which will loop over an image-based dataset and save information corresponding to a certain number of unique images. This script accepts any arguments used by `parlai display_data`, for instance:
 ```
 python parlai/crowdsourcing/tasks/model_chat/scripts/save_image_contexts.py \
 --task image_chat \
@@ -65,4 +65,5 @@ Some options for running human+model image chat are as follows:
 - `mephisto.blueprint.image_context_path`: the path to the file saved by `scripts/save_image_contexts.py` during setup.
 - `mephisto.blueprint.stack_folder`: a folder in which to store a stack file that will keep track of which crowdsource workers have chatted with which models about which images. The stack will ensure that no worker chats about the same image more than once and that conversations about images are collected uniformly among all models.
 - `mephisto.blueprint.evals_per_image_model_combo`: the maximum number of conversations collected for each combination of image and model. For instance, if this is set to 3 and your 2 models are `model_1` and `model_2`, each image will have 6 conversations collected about it, 3 with `model_1` and 3 with `model_2`.
-Note that onboarding is not currently supported with human+model image chat; please file an [issue](https://github.com/facebookresearch/ParlAI/issues) if this is desired.
+
+Note that onboarding is not currently supported with human+model image chat: use `ModelChatOnboardWorld` in `worlds.py` as a guide for how to set up onboarding for your specific task.
