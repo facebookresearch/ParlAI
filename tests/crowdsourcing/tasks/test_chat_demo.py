@@ -348,13 +348,8 @@ try:
         BLUEPRINT_TYPE,
     )
 
+    from parlai.crowdsourcing.tasks.chat_demo.util import TASK_DIRECTORY
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
-
-    TASK_DIRECTORY = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(mephisto.__file__))),
-        'examples',
-        'parlai_chat_task_demo',
-    )
 
     class TestChatDemo(AbstractParlAIChatTest, unittest.TestCase):
         """
@@ -382,7 +377,6 @@ try:
                 '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
                 '+mephisto.blueprint.num_conversations=1',
                 '+mephisto.task.allowed_concurrent=0',
-                '+num_turns=3',
                 '+turn_timeout=300',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
@@ -394,10 +388,7 @@ try:
             )
 
             # Set up the operator and server
-            world_opt = {
-                "num_turns": self.config.num_turns,
-                "turn_timeout": self.config.turn_timeout,
-            }
+            world_opt = {"turn_timeout": self.config.turn_timeout}
             shared_state = SharedParlAITaskState(
                 world_opt=world_opt, onboarding_world_opt=world_opt
             )

@@ -6,31 +6,42 @@
 
 import os
 from dataclasses import dataclass, field
+from typing import Any, List
 
 import hydra
-from omegaconf import DictConfig
-
-# From the Mephisto repo
-from examples.parlai_chat_task_demo.parlai_test_script import (
-    TestScriptConfig,
-    TASK_DIRECTORY,
-)
 from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.operator import Operator
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
+    BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
 from mephisto.tools.scripts import load_db_and_process_config
+from omegaconf import DictConfig
 
-from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfigMixin
+from parlai.crowdsourcing.tasks.chat_demo.util import TASK_DIRECTORY
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
+
+
+defaults = [
+    {"mephisto/blueprint": BLUEPRINT_TYPE},
+    {"mephisto/architect": "local"},
+    {"mephisto/provider": "mock"},
+    "conf/base",
+    {"conf": "example"},
+]
 
 
 @dataclass
-class ScriptConfig(MTurkRunScriptConfigMixin, TestScriptConfig):
-    """
-    Use the mixin's soft-blocking with the defaults from the Mephisto version.
-    """
-
+class ScriptConfig(MTurkRunScriptConfig):
+    defaults: List[Any] = field(default_factory=lambda: defaults)
+    task_dir: str = TASK_DIRECTORY
+    turn_timeout: int = field(
+        default=300,
+        metadata={
+            "help": "Maximum response time before kicking "
+            "a worker out, default 300 seconds"
+        },
+    )
     monitoring_log_rate: int = field(
         default=30,
         metadata={
@@ -47,7 +58,7 @@ relative_task_directory = os.path.relpath(TASK_DIRECTORY, os.path.dirname(__file
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 
-    world_opt = {"num_turns": cfg.num_turns, "turn_timeout": cfg.turn_timeout}
+    world_opt = {"turn_timeout": cfg.turn_timeout}
 
     custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
     if custom_bundle_path is not None:
