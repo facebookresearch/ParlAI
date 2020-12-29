@@ -35,7 +35,7 @@ class ModelChatResultsCompiler:
     ]
 
     @classmethod
-    def parse_args(cls):
+    def setup_args(cls):
         parser = argparse.ArgumentParser(description='Compile model chat results')
         parser.add_argument(
             '--results-folders',
@@ -75,8 +75,7 @@ class ModelChatResultsCompiler:
             default='',
             help='Comma-separated list of all workers to block',
         )
-        args = parser.parse_args()
-        return args
+        return parser
 
     def __init__(self, opt: Dict[str, Any]):
 
@@ -517,5 +516,6 @@ class ModelChatResultsCompiler:
 
 
 if __name__ == '__main__':
-    args_ = ModelChatResultsCompiler.parse_args()
+    parser_ = ModelChatResultsCompiler.setup_args()
+    args_ = parser_.parse_args()
     _ = ModelChatResultsCompiler(vars(args_)).compile_results()
