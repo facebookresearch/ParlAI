@@ -6,7 +6,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-import React, { useState } from "react";
+import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
 import { FormControl } from "react-bootstrap";
@@ -195,7 +195,7 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
   )
 }
 
-function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, onUserInputUpdate, userInputResponse, setUserInputResponse, subtaskIndex }) {
+function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, onUserInputUpdate }) {
   var extraElements = '';
   var responseInputElement = '';
   if (doAnnotateMessage) {
@@ -219,7 +219,6 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
             resize: "none",
             marginBottom: "40px"
         }}
-        value={userInputResponse}
         onChange={(e) => {onUserInputUpdate();}}
         placeholder={"Please enter your response here"}
         onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste and respond to each message as you would!")}}
@@ -245,7 +244,6 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
 function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
   var annotationQuestion = taskConfig.annotation_question;
   var annotationBuckets = taskConfig.annotation_buckets;
-  var annotateLastUtteranceOnly = taskConfig.annotate_last_utterance_only;
   var askReason = taskConfig.ask_reason;
   var responseField = taskConfig.response_field;
   if (subtaskData == undefined && subtaskIndex >= numSubtasks) {
@@ -271,7 +269,6 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
                 askReason={askReason}
                 responseField={responseField}
                 onUserInputUpdate={() => handleUserInputUpdate(subtaskData)}
-                subtaskIndex={subtaskIndex}
               />
             </div>
           </div>
@@ -281,7 +278,6 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
 }
 
 function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, onSubmit }) {
-  const [userInputResponse, setUserInputResponse] = useState("")
   if (taskData == undefined) {
     return <div><p> Loading chats...</p></div>;
   }
@@ -298,7 +294,7 @@ function MainTaskComponent({ taskData, taskTitle, taskDescription, taskConfig, o
         <SubtaskSubmitButton subtaskIndex={index} numSubtasks={taskData.length} onSubtaskSubmit={() => { handleSubtaskSubmit(index, setIndex, taskData.length, taskData[index], taskConfig.annotation_buckets, onSubmit); }} initialTaskData={taskData[index]}></SubtaskSubmitButton>
       </LeftPane>
       <RightPane>
-        <ContentPane subtaskData={taskData[index]} taskConfig={taskConfig} subtaskIndex={index} numSubtasks={taskData.length} userInputResponse={userInputResponse} setUserInputResponse={setUserInputResponse} ></ContentPane>
+        <ContentPane subtaskData={taskData[index]} taskConfig={taskConfig} subtaskIndex={index} numSubtasks={taskData.length} ></ContentPane>
       </RightPane>
       <div style={{ clear: 'both' }}>
       </div>
