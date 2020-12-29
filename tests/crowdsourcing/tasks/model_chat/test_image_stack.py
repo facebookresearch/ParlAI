@@ -13,60 +13,65 @@ import numpy as np
 import torch
 from pytest_regressions.file_regression import FileRegressionFixture
 
-from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
-import parlai.utils.testing as testing_utils
+try:
 
+    from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
+    import parlai.utils.testing as testing_utils
 
-class TestImageStack:
-    """
-    Test the stack that keeps track of model image chats.
-    """
-
-    def test_fill_stack(self, file_regression: FileRegressionFixture):
+    class TestImageStack:
         """
-        Check the expected output when filling up the stack.
-
-        Request image/model slots from the stack, and check that the behavior is as
-        expected.
+        Test the stack that keeps track of model image chats.
         """
 
-        seed = 0
-        random.seed(seed)
-        np.random.seed(seed)
-        torch.manual_seed(seed)
+        def test_fill_stack(self, file_regression: FileRegressionFixture):
+            """
+            Check the expected output when filling up the stack.
 
-        with testing_utils.tempdir() as tmpdir:
+            Request image/model slots from the stack, and check that the behavior is as
+            expected.
+            """
 
-            # Params
-            opt = {
-                'evals_per_image_model_combo': 2,
-                'models': ['model_1', 'model_2'],
-                'num_images': 3,
-                'stack_folder': tmpdir,
-            }
-            num_stack_slots = (
-                opt['evals_per_image_model_combo']
-                * len(opt['models'])
-                * opt['num_images']
-            )
-            num_workers = 5
-            worker_id_to_remove = '2'
-            stack_idx_to_remove_worker_from = 0
+            seed = 0
+            random.seed(seed)
+            np.random.seed(seed)
+            torch.manual_seed(seed)
 
-            # Create the stack
-            stack = ImageStack(opt)
+            with testing_utils.tempdir() as tmpdir:
 
-            with testing_utils.capture_output() as output:
-                for _ in range(num_stack_slots):
-                    worker_id = random.randrange(num_workers)
-                    _ = stack.get_next_image(str(worker_id))
-                    print('STACK: ', stack.stack)
-                stack.remove_worker_from_stack(
-                    worker=worker_id_to_remove,
-                    stack_idx=stack_idx_to_remove_worker_from,
+                # Params
+                opt = {
+                    'evals_per_image_model_combo': 2,
+                    'models': ['model_1', 'model_2'],
+                    'num_images': 3,
+                    'stack_folder': tmpdir,
+                }
+                num_stack_slots = (
+                    opt['evals_per_image_model_combo']
+                    * len(opt['models'])
+                    * opt['num_images']
                 )
-                print('STACK: ', stack.stack)
-                stdout = output.getvalue()
+                num_workers = 5
+                worker_id_to_remove = '2'
+                stack_idx_to_remove_worker_from = 0
 
-            # Check the output against what it should be
-            file_regression.check(contents=stdout)
+                # Create the stack
+                stack = ImageStack(opt)
+
+                with testing_utils.capture_output() as output:
+                    for _ in range(num_stack_slots):
+                        worker_id = random.randrange(num_workers)
+                        _ = stack.get_next_image(str(worker_id))
+                        print('STACK: ', stack.stack)
+                    stack.remove_worker_from_stack(
+                        worker=worker_id_to_remove,
+                        stack_idx=stack_idx_to_remove_worker_from,
+                    )
+                    print('STACK: ', stack.stack)
+                    stdout = output.getvalue()
+
+                # Check the output against what it should be
+                file_regression.check(contents=stdout)
+
+
+except ImportError:
+    pass

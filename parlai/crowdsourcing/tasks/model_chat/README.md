@@ -6,11 +6,9 @@ This task will collect conversations between a human and a model. After each res
 
 ## Launching
 
-Call `run.py` to run this task with the default parameters, as set by `conf/example.yaml`. 
+Call `run.py` to run this task with the default parameters, as set by `conf/example.yaml`. Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc.
 
-Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc. The models used for chat should be placed in a single base folder, specified by the `mephisto.blueprint.base_model_folder` flag. Each model file should be named `model` and should be located in a subfolder, and all options used when running the model should be listed in a JSON file named `model.opt` in that subfolder.
-
-For example, suppose your base model folder is `~/ParlAI/data/models/`, and you wish to run 10 conversations of the `blender_90M` model. Suppose that the contents of your base model folder looks like this:
+The models used for chat should be placed in a single base folder, specified by the `mephisto.blueprint.base_model_folder` flag. Each model file should be named `model` and should be located in its own subfolder, and all options used when running the model should be listed in a JSON file named `model.opt` in that subfolder. For example, suppose your base model folder is `~/ParlAI/data/models/`, and you wish to run 10 conversations of the `blender_90M` model. Suppose that the contents of your base model folder looks like this:
 ```
 blender/blender_3B:
 model
