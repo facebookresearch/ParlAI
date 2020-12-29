@@ -529,7 +529,7 @@ class FastAcuteExecutor(object):
             }
         )
 
-        analyzer = AcuteAnalyzer(opt, self.run_id)
+        analyzer = AcuteAnalyzer(opt)
         self.results = analyzer.get_matchup_totals_with_significance()
         analyzer.save_results()
 
