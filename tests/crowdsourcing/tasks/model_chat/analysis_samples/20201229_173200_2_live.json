@@ -1,0 +1,28 @@
+{
+    "personas": [["i play ping pong.", "i play the violin and the guitar."], ["i walk dogs for a living.", "i enjoy reading journals and guides related to psychology."]],
+    "context_dataset": "empathetic_dialogues",
+    "person1_seed_utterance": "I literally ate all you could eat at a chinese buffet",
+    "person2_seed_utterance": "LOL, I bet you couldn't move after that.",
+    "additional_context": "I ate at an all you can eat chinese buffet. Literally felt so close to exploding. I ended up going home and falling into a deep slumber.",
+    "dialog": [
+        {"episode_done": false, "id": "Person1", "text": "Hi!", "fake_start": true, "agent_idx": 0},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 1, "contradiction": false, "not_fluent": true, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": false}},
+        {"agent_idx": 0, "text": "Utterance placeholder", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 3, "contradiction": false, "not_fluent": false, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 5, "contradiction": false, "not_fluent": false, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 7, "contradiction": false, "not_fluent": false, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 9, "contradiction": false, "not_fluent": false, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 11, "contradiction": false, "not_fluent": false, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder", "id": "TransformerGenerator", "problem_data": {"turn_idx": 13, "contradiction": false, "not_fluent": false, "repetitive": false, "off_topic": false, "non_sensical": false, "none_all_good": true, "final_rating": "5"}}
+    ],
+    "workers": ["WORKER_2", "model_name"],
+    "bad_workers": [],
+    "acceptability_violations": [""],
+    "hit_ids": ["HIT_ID_2", "none"],
+    "assignment_ids": ["ASSIGNMENT_ID_2", "none"]
+}
