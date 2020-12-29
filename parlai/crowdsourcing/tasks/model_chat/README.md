@@ -26,6 +26,8 @@ In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to cha
 
 `run_image_chat.py` can be run to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it.
 
+This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/tasks/personality_captions/` tasks; 
+
 {{{TODO: mention removed features}}}
 
 ### Setup
