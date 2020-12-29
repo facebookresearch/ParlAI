@@ -29,6 +29,15 @@ try:
 
         MODELS = ['convai2_logs', 'ed_logs']
         MODEL_STRING = ','.join(MODELS)
+        TASK_DATA = {
+            "final_data": [
+                {"speakerChoice": "human_as_model", "textReason": "Makes more sense"},
+                {"speakerChoice": "convai2_logs", "textReason": "Makes more sense"},
+                {"speakerChoice": "ed_logs", "textReason": "Makes more sense"},
+                {"speakerChoice": "convai2_logs", "textReason": "Makes more sense"},
+                {"speakerChoice": "ed_logs", "textReason": "Makes more sense"},
+            ]
+        }
 
         @pytest.fixture(scope="module")
         def setup_teardown(self):
