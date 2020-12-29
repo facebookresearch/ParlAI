@@ -71,13 +71,13 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
                 return False
         return True
 
-    def check_onboarding_answers(self, worker_answers):
+    def check_onboarding_answers(self, worker_answers) -> bool:
         """
         Calculate how many correct answers the user gave.
 
-        :param worker_answers: list of dicts containing mappings between an
-        annotation value and whether it was selected for each bucket.
-        :return: boolean as to whether the worker passed or failed the task
+        `worker_answers` is a list of dicts containing mappings between an annotation
+        value and whether it was selected for each bucket. We return a boolean as to
+        whether the worker passed or failed the task.
         """
         given_turns = self.onboard_task_data['dialog']
         correct_answers = [t[1]['answers'] for t in given_turns]

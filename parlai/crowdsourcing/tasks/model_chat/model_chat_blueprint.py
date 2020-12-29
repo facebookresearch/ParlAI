@@ -491,8 +491,8 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
     """
     Subclass of BaseModelChatBlueprint to show the speakers an image on the first turn.
 
-    The image is drawn from a stack that keeps track of how many HITs have been
-    launched for a given combination of image and model.
+    The image is drawn from a stack that keeps track of how many HITs have been launched
+    for a given combination of image and model.
     """
 
     ArgsClass = ModelImageChatBlueprintArgs

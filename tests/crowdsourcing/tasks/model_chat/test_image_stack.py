@@ -7,11 +7,9 @@
 Test the stack that keeps track of model image chats.
 """
 
-import os
 import random
 
 import numpy as np
-import pandas as pd
 import torch
 from pytest_regressions.file_regression import FileRegressionFixture
 

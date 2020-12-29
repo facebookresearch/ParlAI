@@ -97,12 +97,11 @@ class TurkLikeAgent:
         """
         Return shared bot agents.
 
-        Pass in model opts in one of two ways:
-        (1) With the `model_opts` arg, where `model_opts` is a dictionary whose keys are
-          model names and whose values are strings that specify model params (i.e. 
-          `--model image_seq2seq`).
-        (2) With the `active_models` arg, a list of model names: those models' opts will
-          be read from args.blueprint.base_model_folder.
+        Pass in model opts in one of two ways: (1) With the `model_opts` arg, where
+        `model_opts` is a dictionary whose keys are   model names and whose values are
+        strings that specify model params (i.e.   `--model image_seq2seq`). (2) With the
+        `active_models` arg, a list of model names: those models' opts will   be read
+        from args.blueprint.base_model_folder.
         """
         # NOTE: in the future we may want to deprecate the `active_models` arg, to move
         #  away from the paradigm of having all models in one folder

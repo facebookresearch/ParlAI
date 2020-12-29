@@ -64,8 +64,8 @@ class ImageStack:
     Represents a stack of images to run through.
 
     Each element of the stack contains a list of the workers who have seen the given
-    image for a given model. The stack ensures that no worker will see the same
-    image twice.
+    image for a given model. The stack ensures that no worker will see the same image
+    twice.
     """
 
     def __init__(self, opt):
@@ -145,12 +145,12 @@ class ImageStack:
         "Stretch" the stack to handle the current set of models.
 
         The goal is to preserve as many existing stack entries as possible while
-          matching the set of models in the stack with the new set of models in
-          self.models:
-        (1) All stack entries belonging to models that are still in self.models will
-          be kept
-        (2) All models not in self.models will be removed from the stack
-        (3) All models in self.models not in the stack will be added to the stack
+        matching the set of models in the stack with the new set of models in
+        self.models:
+        - (1) All stack entries belonging to models that are still in self.models will
+        be kept
+        - (2) All models not in self.models will be removed from the stack
+        - (3) All models in self.models not in the stack will be added to the stack
 
         Return the new pointer value.
         """
@@ -187,7 +187,9 @@ class ImageStack:
 
     def save_stack(self):
         """
-        Save the stack to its regular location. Mark down the save time.
+        Save the stack to its regular location.
+
+        Mark down the save time.
         """
         self._save_stack_to_path(self.save_path)
         self.last_save_time = time.time()
