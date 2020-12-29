@@ -31,8 +31,8 @@ try:
             """
             Call code to set up and tear down tests.
 
-            Run this only once because we'll be running all analysis code before checking
-            any results.
+            Run this only once because we'll be running all analysis code before
+            checking any results.
             """
 
             # Params
