@@ -8,7 +8,7 @@ This task will collect conversations between a human and a model. After each res
 
 Call `run.py` to run this task with the default parameters, as set by `conf/example.yaml`. Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc.
 
-The models used for chat should be placed in a single base folder, specified by the `mephisto.blueprint.base_model_folder` flag. Each model file should be named `model` and should be located in its own subfolder, and all options used when running the model should be listed in a JSON file named `model.opt` in that subfolder. For example, suppose your base model folder is `~/ParlAI/data/models/`, and you wish to run 10 conversations of the `blender_90M` model. Suppose that the contents of your base model folder looks like this:
+The models used for chat should be placed in a single base folder, specified by the `mephisto.blueprint.base_model_folder` flag. Each model file should be named `model` and should be located in its own subfolder, and all options used when running the model should be listed in a JSON file named `model.opt` in that subfolder. For example, suppose your base model folder is `~/ParlAI/data/models/`, and you wish to run 10 conversations of the `blender_90M` model. Suppose that the contents of `~/ParlAI/data/models/` looks like this:
 ```
 blender/blender_3B:
 model
@@ -32,10 +32,10 @@ mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:10\"
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
-- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to "" to disable annotation of model responses.
-- `mephisto.blueprint.left_pane_text_path`: HTML to show on the left-hand pane of the chat window
-- `mephisto.blueprint.onboard_task_data_path`: JSON specifying parameters for testing workers during onboarding. Onboarding is only run if model responses will be annotated
-- `mephisto.blueprint.task_description_file`: HTML to show on the initial task-description page shown to the worker
+- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to `""` to disable annotation of model responses.
+- `mephisto.blueprint.left_pane_text_path`: HTML to show on the left-hand pane of the chat window.
+- `mephisto.blueprint.onboard_task_data_path`: JSON specifying parameters for testing workers during onboarding. Onboarding is only run if model responses will be annotated.
+- `mephisto.blueprint.task_description_file`: HTML to show on the initial task-description page shown to the worker.
 
 ## Onboarding
 
