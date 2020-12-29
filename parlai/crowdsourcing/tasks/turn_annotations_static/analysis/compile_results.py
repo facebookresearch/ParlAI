@@ -42,7 +42,7 @@ class TurnAnnotationsStaticResultsCompiler:
     CALCULATE_STATS_INTERANNOTATOR_AGREEMENT = True
 
     @classmethod
-    def parse_args(cls):
+    def setup_args(cls):
         parser = argparse.ArgumentParser()
         parser.add_argument(
             '--results-folders',
@@ -63,8 +63,7 @@ class TurnAnnotationsStaticResultsCompiler:
             default=None,
             help='Path to a JSON file mapping utterance IDs to the gold annotations',
         )
-        args = parser.parse_args()
-        return args
+        return parser
 
     def __init__(self, opt: Optional[Dict[str, Any]] = None):
         if opt is None:
@@ -556,5 +555,6 @@ class TurnAnnotationsStaticResultsCompiler:
 
 
 if __name__ == '__main__':
-    args = TurnAnnotationsStaticResultsCompiler.parse_args()
+    parser = TurnAnnotationsStaticResultsCompiler.setup_args()
+    args = parser.parse_args()
     TurnAnnotationsStaticResultsCompiler(vars(args)).compile_results()
