@@ -112,19 +112,21 @@ class ModelChatResultsCompiler:
         date_strings = []
         for folder in self.results_folders:
             # Load paths
-            date_strings = [
-                obj
-                for obj in os.listdir(folder)
-                if os.path.isdir(os.path.join(folder, obj))
-                and re.fullmatch(r'\d\d\d\d_\d\d_\d\d', obj)
-            ]
+            date_strings = sorted(
+                [
+                    obj
+                    for obj in os.listdir(folder)
+                    if os.path.isdir(os.path.join(folder, obj))
+                    and re.fullmatch(r'\d\d\d\d_\d\d_\d\d', obj)
+                ]
+            )
             if self.start_date != '':
                 date_strings = [
                     str_ for str_ in date_strings if str_ >= self.start_date
                 ]
             folders = [os.path.join(folder, str_) for str_ in date_strings]
             read_folders.extend(folders)
-        print(read_folders)
+        print(f'Date folders: ' + ', '.join(date_strings))
 
         now = datetime.now()
         results_file = os.path.join(
@@ -150,7 +152,7 @@ class ModelChatResultsCompiler:
         conversation_dfs = []
         for read_folder in read_folders:
             read_folder_name = os.path.split(read_folder)[-1]
-            for file_name in os.listdir(read_folder):
+            for file_name in sorted(os.listdir(read_folder)):
                 if file_name in self.hit_block_list:
                     continue
 
@@ -300,7 +302,6 @@ class ModelChatResultsCompiler:
                     ignore_index=True,
                 )
 
-                # print(f'About to add {len(data["dialog"])} utterances.')
                 total_utterances += len(
                     [d for d in data["dialog"] if d["agent_idx"] == 1]
                 )
