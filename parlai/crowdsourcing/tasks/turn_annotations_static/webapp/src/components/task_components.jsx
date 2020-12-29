@@ -26,6 +26,18 @@ var showEnabledCssNextButton = function () {
   document.getElementById('submit-button').style = '';
 }
 
+var validateFreetextRepsonse = function (response) {
+  // require at least 10 characters, vowels, and 2 words in the response.
+  var charCount = response.length;
+  var wordCount = response.split(' ').length;
+  var numVowels = response.match(/[aeiou]/gi);
+  if (charCount > 10 && wordCount > 1 && numVowels && numVowels.length > 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 var validateUserInput = function (subtaskData) {
   for (var i = 0; i < subtaskData.length; i++) {
     if (subtaskData[i].agent_idx == 1) {
@@ -42,6 +54,15 @@ var validateUserInput = function (subtaskData) {
         if (!atLeastOneAnswerChecked) {
           return false;
         }
+      }
+    }
+  }
+  // check response fields
+  var responses = document.getElementsByName('input_response');
+  if (responses.length > 0) {
+    for (var j = 0; j < responses.length; j++) {
+      if (!validateFreetextRepsonse(responses[j].value)) {
+        return false;
       }
     }
   }
@@ -73,29 +94,35 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
     data: []
   };
   for (var i = 0; i < initialTaskData.length; i++) {
-    var buckets = Object.keys(annotationBuckets.config);
     var answersForTurn = {
       'turn_idx': i,
       'text': initialTaskData[i].text,
       'agent_idx': initialTaskData[i].agent_idx,
       'other_metadata': initialTaskData[i].other_metadata
     };
-    for (var j = 0; j < buckets.length; j++) {
-      answersForTurn[buckets[j]] = null;
-      var checkbox = document.getElementById(buckets[j] + '_' + i);
-      if (checkbox) {
-        answersForTurn[buckets[j]] = false;
-        if (checkbox.checked) {
-          // Won't have checkboxes for agent_idx != 1
-          answersForTurn[buckets[j]] = true;
-          // uncheck any checked boxes
-          checkbox.checked = false;
+    if (annotationBuckets) {
+      var buckets = Object.keys(annotationBuckets.config);
+      for (var j = 0; j < buckets.length; j++) {
+        answersForTurn[buckets[j]] = null;
+        var checkbox = document.getElementById(buckets[j] + '_' + i);
+        if (checkbox) {
+          answersForTurn[buckets[j]] = false;
+          if (checkbox.checked) {
+            // Won't have checkboxes for agent_idx != 1
+            answersForTurn[buckets[j]] = true;
+            // uncheck any checked boxes
+            checkbox.checked = false;
+          }
         }
       }
     }
     var input = document.getElementById('input_reason_' + i);
     if (input) {
       answersForTurn['input_reason'] = input.value;
+    }
+    var response = document.getElementById('input_response_' + i);
+    if (response) {
+      answersForTurn['input_response'] = response.value
     }
     answersForSubtaskIndex.data.push(answersForTurn);
     // Need to also manually clear the reason DIV below checkboxes
@@ -107,6 +134,10 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
       var input_i = document.getElementById('input_reason_' + i);
       if (input_i) {
         input_i.value = '';
+      }
+      var response_i = document.getElementById('input_response_' + i);
+      if (response_i) {
+        response_i.value = '';
       }
     }
   }
@@ -181,15 +212,15 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
       responseInputElement = (
         <FormControl
         type="text"
-        name="response"
-        id={"input_response" + subtaskIndex}
+        name="input_response"
+        id={"input_response_" + turnIdx}
         style={{
             fontSize: "14px",
             resize: "none",
             marginBottom: "40px"
         }}
         value={userInputResponse}
-        onChange={(e) => {setUserInputResponse(e.target.value); handleUserInputResponseUpdate(e.target.value)}}
+        onChange={(e) => {onUserInputUpdate();}}
         placeholder={"Please enter your response here"}
         onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste and respond to each message as you would!")}}
         autoComplete="off"
