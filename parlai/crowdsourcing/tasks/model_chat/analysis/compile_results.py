@@ -25,6 +25,15 @@ class ModelChatResultsCompiler:
     up the level of each worker as a whole.
     """
 
+    PROBLEM_BUCKETS = [
+        'bucket_0',
+        'bucket_1',
+        'bucket_2',
+        'bucket_3',
+        'bucket_4',
+        'none_all_good',
+    ]
+
     @classmethod
     def parse_args(cls):
         parser = argparse.ArgumentParser(description='Compile model chat results')
@@ -76,6 +85,18 @@ class ModelChatResultsCompiler:
         self.max_convos_per_worker = opt['max_convos_per_worker']
         self.hit_block_list = opt['hit_block_list'].split(',')
         self.worker_block_list = opt['worker_block_list'].split(',')
+
+        # Setting up problem buckets
+        if 'none_all_good' not in self.PROBLEM_BUCKETS:
+            raise ValueError(
+                'There must be a "none_all_good" category in self.PROBLEM_BUCKETS!'
+            )
+        self.regular_buckets = [
+            bucket
+            for bucket in self.PROBLEM_BUCKETS
+            if bucket not in ['other', 'none_all_good']
+        ]
+        # Remove the buckets that are special cases
 
         self.acceptability_checker = AcceptabilityChecker()
 
@@ -164,14 +185,19 @@ class ModelChatResultsCompiler:
                     for d in data['dialog']
                     if d['agent_idx'] == 0
                 ]
-                if np.average(word_counts) < 4 or 'contradiction' in words:
+                if np.average(word_counts) < 4 or (
+                    'contradiction' in self.PROBLEM_BUCKETS and 'contradiction' in words
+                ):
                     bad_conversations.append(data)
                     print(
                         f'Bad complete conversation, words from human: {utterances}. Skipping.'
                     )
                     continue
 
-                if 'non_sensical' not in data['dialog'][1]['problem_data']:
+                if (
+                    'non_sensical' in self.PROBLEM_BUCKETS
+                    and 'non_sensical' not in data['dialog'][1]['problem_data']
+                ):
                     # Old experiment
                     print('Found old experimental design. Skipping.')
                     old_experimental_design_conversations.append(data['hit_ids'][0])
@@ -240,14 +266,8 @@ class ModelChatResultsCompiler:
                         'turn_idx',
                         'agent_idx',
                         'text',
-                        'contradiction',
-                        'not_fluent',
-                        'repetitive',
-                        'off_topic',
-                        'non_sensical',
-                        'other',
-                        'none_all_good',
-                    ],
+                    ]
+                    + self.PROBLEM_BUCKETS,
                 )
                 additional_context = ''
                 if data['context_dataset'] == 'wizard_of_wikipedia':
@@ -266,13 +286,7 @@ class ModelChatResultsCompiler:
                         + '\nyour persona: '
                         + data['personas'][1][1]
                         + additional_context,
-                        'contradiction': '',
-                        'not_fluent': '',
-                        'repetitive': '',
-                        'off_topic': '',
-                        'non_sensical': '',
-                        'other': '',
-                        'none_all_good': '',
+                        **{bucket: '' for bucket in self.PROBLEM_BUCKETS},
                     },
                     ignore_index=True,
                 )
@@ -297,50 +311,26 @@ class ModelChatResultsCompiler:
                         'turn_idx': utterance_idx,
                         'agent_idx': utt['agent_idx'],
                         'text': utt['text'],
-                        'contradiction': '',
-                        'not_fluent': '',
-                        'repetitive': '',
-                        'off_topic': '',
-                        'non_sensical': '',
-                        'other': '',
-                        'none_all_good': '',
+                        **{bucket: '' for bucket in self.PROBLEM_BUCKETS},
                     }
                     if utt['agent_idx'] == 1:
                         if 'problem_data' not in utt:
-                            d['contradiction'] = 'MALFORMED'
-                            d['not_fluent'] = 'MALFORMED'
-                            d['repetitive'] = 'MALFORMED'
-                            d['off_topic'] = 'MALFORMED'
-                            d['non_sensical'] = 'MALFORMED'
-                            d['other'] = 'MALFORMED'
-                            d['none_all_good'] = 'MALFORMED'
+                            for bucket in self.PROBLEM_BUCKETS:
+                                d[bucket] = 'MALFORMED'
                             print(
                                 f'Warning got MALFORMED utterance problem data inside complete convo: {utt}. Skipping.'
                             )
                             continue
                         else:
-                            d['contradiction'] = utt['problem_data']['contradiction']
-                            d['not_fluent'] = utt['problem_data']['not_fluent']
-                            d['repetitive'] = utt['problem_data']['repetitive']
-                            d['off_topic'] = utt['problem_data']['off_topic']
-                            d['non_sensical'] = utt['problem_data']['non_sensical']
-                            # old experimental design, but we filter these out
-                            # d['other'] = utt['problem_data']['other']
+                            for bucket in self.regular_buckets:
+                                d[bucket] = utt['problem_data'][bucket]
                             d['none_all_good'] = utt['problem_data']['none_all_good']
                             d['final_rating'] = (
                                 utt['problem_data']['final_rating']
                                 if 'final_rating' in utt['problem_data']
                                 else None
                             )
-                        keys = [
-                            'contradiction',
-                            'not_fluent',
-                            'repetitive',
-                            'off_topic',
-                            'non_sensical',
-                            'none_all_good',
-                        ]
-                        for k in keys:
+                        for k in self.regular_buckets + ['none_all_good']:
                             if k not in problem_counts[model_nickname]:
                                 problem_counts[model_nickname][k] = 0
                             problem_counts[model_nickname][k] += d[k]
@@ -479,15 +469,14 @@ class ModelChatResultsCompiler:
         print(worker_df)
         print(f'Wrote worker statistical results to: {worker_results_file}')
 
-        html_text = '<html><body><table><tr><td>model</td><td>contradiction</td><td>not_fluent</td><td>repetitive</td><td>off_topic</td><td>non_sensical</td><td>none_all_good</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr>'
+        html_text = (
+            '<html><body><table><tr><td>model</td>'
+            + ''.join(f'<td>{bucket}</td>' for bucket in self.regular_buckets)
+            + '<td>none_all_good</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr>'
+        )
         for model_nickname, model_problems_dict in problem_counts.items():
             html_text += f'<tr><td>{model_nickname}</td>'
-            keys = [
-                'contradiction',
-                'not_fluent',
-                'repetitive',
-                'off_topic',
-                'non_sensical',
+            keys = self.regular_buckets + [
                 'none_all_good',
                 'human_word_count',
                 'human_question_count',
