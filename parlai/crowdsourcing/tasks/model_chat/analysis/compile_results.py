@@ -55,7 +55,7 @@ class ModelChatResultsCompiler:
             '--max-convos-per-worker',
             type=int,
             default=100,
-            help='The most conversations to analyze from any one user',
+            help='The most conversations to analyze from any one user. Set to -1 for no limit.',
         )
         parser.add_argument(
             '--min-word-count',
@@ -174,7 +174,10 @@ class ModelChatResultsCompiler:
                 else:
                     conversations_so_far = 0
                 worker_conversation_counts[worker_id] = conversations_so_far + 1
-                if conversations_so_far >= self.max_convos_per_worker:
+                if (
+                    self.max_convos_per_worker != -1
+                    and conversations_so_far >= self.max_convos_per_worker
+                ):
                     print(
                         f'Had {conversations_so_far} conversations already from this worker {worker_id}. Skipping {assignment_id}.'
                     )
