@@ -500,7 +500,10 @@ workflows:
           requires:
             - unittests_gpu16
             - unittests_37
-      - crowdsourcing_tests
+      - crowdsourcing_tests:
+          requires:
+            - unittests_gpu16
+            - unittests_37
       - teacher_tests:
           requires:
             - unittests_gpu16
