@@ -10,9 +10,13 @@ End-to-end testing for the model image chat crowdsourcing task.
 import glob
 import json
 import os
+import pickle
 import unittest
 
+from PIL import Image
+
 import parlai.utils.testing as testing_utils
+from parlai.core.message import Message
 from parlai.zoo.image_chat.transresnet_multimodal import (
     download as download_transresnet,
 )
@@ -21,12 +25,12 @@ from parlai.zoo.image_chat.transresnet_multimodal import (
 # Inputs
 AGENT_DISPLAY_IDS = ('Worker',)
 AGENT_MESSAGES = [
-    ("Why do you say that?",),
-    ("Go long where?",),
-    ("You are a very repetitive bot.",),
-    ("Good thing that you are only a sample model for this unit test",),
-    ("Otherwise we would have a problem",),
-    ("Ugh how many more turns are there",),
+    ("Response 1",),
+    ("Response 2",),
+    ("Response 3",),
+    ("Response 4",),
+    ("Response 5",),
+    ("Response 6",),
 ]
 FORM_MESSAGES = ("",)
 # No info is sent through the 'text' field when submitting the form
@@ -41,10 +45,6 @@ try:
         SharedModelImageChatTaskState,
         ModelImageChatBlueprintArgs,
         IMAGE_CHAT_BLUEPRINT_TYPE,
-    )
-    from parlai.crowdsourcing.tasks.model_chat.scripts.save_image_contexts import (
-        save_image_contexts,
-        setup_image_context_args,
     )
     from parlai.crowdsourcing.tasks.model_chat.utils import AbstractModelChatTest
 
@@ -80,26 +80,42 @@ try:
                 )
                 parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
+                sample_image_path = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    'test_image_stack',
+                    'sample_image.jpg',
+                )
                 image_context_path = os.path.join(tmpdir, 'image_contexts')
                 stack_folder = os.path.join(tmpdir, 'image_stack')
 
-                # Save image contexts
-                image_context_opt_string = f"""\
---image-context-path {image_context_path}
---task image_chat
---datatype test
---num-examples 10
-"""
-                image_context_opt = setup_image_context_args().parse_args(
-                    image_context_opt_string.split()
-                )
-                save_image_contexts(image_context_opt)
+                # Save image context: instead of downloading images, just save a pickle
+                # file with all of the image act
+                image_context = [
+                    {
+                        'image_act': Message(
+                            {
+                                'text': 'Obsessive',
+                                'image_id': '2923e28b6f588aff2d469ab2cccfac57',
+                                'episode_done': False,
+                                'label_candidates': [
+                                    "I must learn that bird's name!",
+                                    "My, aren't you a pretty bird?",
+                                ],
+                                'image': Image.open(sample_image_path),
+                                'id': 'image_chat',
+                                'eval_labels': ["I must learn that bird's name!"],
+                            }
+                        )
+                    }
+                ]
+                with open(image_context_path, 'wb') as f:
+                    pickle.dump(image_context, f)
 
                 # Download the Transresnet Multimodal model
                 download_transresnet(parlai_data_folder)
 
                 # Set up the config and database
-                num_convos = 10
+                num_convos = 1
                 args = ModelImageChatBlueprintArgs()
                 overrides = [
                     f'+mephisto.blueprint.{key}={val}'
