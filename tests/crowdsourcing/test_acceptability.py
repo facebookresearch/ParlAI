@@ -107,7 +107,7 @@ class TestAcceptabilityChecker(unittest.TestCase):
             actual_violations = acceptability_checker.check_messages(
                 messages=test_case['messages'],
                 is_worker_0=test_case['is_worker_0'],
-                violation_types=acceptability_checker.possible_violation_types,
+                violation_types=acceptability_checker.ALL_VIOLATION_TYPES,
             )
             self.assertEqual(actual_violations, test_case['expected_violations'])
 
