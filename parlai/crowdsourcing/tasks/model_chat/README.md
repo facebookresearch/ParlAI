@@ -4,8 +4,6 @@ This task will collect conversations between a human and a model. After each res
 
 **NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
 
-**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
-
 ## Launching
 
 Call `run.py` to run this task with the default parameters, as set by `conf/example.yaml`.
@@ -23,3 +21,23 @@ The following flags can be passed in to specify filepaths for overriding the tex
 ## Onboarding
 
 In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to change the worker selection criteria.
+
+## Human+model image chat
+
+`run_image_chat.py` can be run to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it.
+
+{{{TODO: mention removed features}}}
+
+### Setup
+
+Before running image chat HITs, you need to save a list of images that the humans and models will chat about. Do this by running `scripts/save_image_contexts.py`, which will loop over a dataset containing images and save information corresponding to a certain number of unique images to a file. This script accepts any arguments used by `parlai display_data`, for instance:
+```
+python parlai/crowdsourcing/tasks/model_chat/scripts/save_image_contexts.py \
+--task image_chat \
+--datatype test \
+--num-examples 10
+```
+
+### Options
+
+{{{TODO: say that there is no onboarding for this variant}}}

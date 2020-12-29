@@ -38,6 +38,10 @@ def setup_image_context_args():
 def save_image_contexts(task_opt: Opt):
     """
     Save a JSON of images and associated contexts for the model image chat task.
+
+    Note that each image will have BST-style context information saved with it, such as
+    persona strings and a pair of lines of dialogue from another dataset.
+    TODO: perhaps have the image chat task make use of this context information
     """
 
     print('Creating teacher to loop over images.')
