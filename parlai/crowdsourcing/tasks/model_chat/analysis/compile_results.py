@@ -58,6 +58,12 @@ class ModelChatResultsCompiler:
             help='The most conversations to analyze from any one user',
         )
         parser.add_argument(
+            '--min-word-count',
+            type=int,
+            default=4,
+            help='The minimum acceptable mean number of words per human utterance',
+        )
+        parser.add_argument(
             '--hit-block-list',
             type=str,
             default='',
@@ -83,6 +89,7 @@ class ModelChatResultsCompiler:
         os.makedirs(self.output_folder, exist_ok=True)
         self.start_date = opt['start_date']
         self.max_convos_per_worker = opt['max_convos_per_worker']
+        self.min_word_count = opt['min_word_count']
         self.hit_block_list = opt['hit_block_list'].split(',')
         self.worker_block_list = opt['worker_block_list'].split(',')
 
@@ -100,7 +107,7 @@ class ModelChatResultsCompiler:
 
         self.acceptability_checker = AcceptabilityChecker()
 
-    def compile_results(self):
+    def compile_results(self) -> pd.DataFrame:
 
         read_folders = []
         date_strings = []
@@ -185,7 +192,7 @@ class ModelChatResultsCompiler:
                     for d in data['dialog']
                     if d['agent_idx'] == 0
                 ]
-                if np.average(word_counts) < 4 or (
+                if np.average(word_counts) < self.min_word_count or (
                     'contradiction' in self.PROBLEM_BUCKETS and 'contradiction' in words
                 ):
                     bad_conversations.append(data)
@@ -500,10 +507,12 @@ class ModelChatResultsCompiler:
         for df in conversation_dfs:
             all_conversations_df = all_conversations_df.append(df)
         all_conversations_df.to_csv(results_file, index=False)
-        print(f'\nWrote results to: {results_file}')
+        print(f'\nWrote all conversation results to: {results_file}')
         print(f'\nWorker conversation counts: {worker_conversation_counts}')
+
+        return all_conversations_df
 
 
 if __name__ == '__main__':
     args_ = ModelChatResultsCompiler.parse_args()
-    ModelChatResultsCompiler(vars(args_)).compile_results()
+    _ = ModelChatResultsCompiler(vars(args_)).compile_results()
