@@ -1,9 +1,9 @@
 {
-    "model1": {
+    "convai2_logs": {
         "task": "convai2",
         "prepended_context": true
     },
-    "model2": {
+    "ed_logs": {
         "task": "empathetic_dialogues",
         "prepended_context": true
     }

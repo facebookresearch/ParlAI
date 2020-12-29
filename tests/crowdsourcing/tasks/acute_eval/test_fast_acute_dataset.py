@@ -27,6 +27,9 @@ try:
         Test a Fast ACUTE crowdsourcing task on ParlAI datasets.
         """
 
+        MODELS = ['convai2_logs', 'ed_logs']
+        MODEL_STRING = ','.join(MODELS)
+
         @pytest.fixture(scope="module")
         def setup_teardown(self):
             """
