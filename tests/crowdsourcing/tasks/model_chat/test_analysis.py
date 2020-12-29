@@ -14,86 +14,96 @@ import pytest
 from pytest_regressions.file_regression import FileRegressionFixture
 
 import parlai.utils.testing as testing_utils
-from parlai.crowdsourcing.tasks.model_chat.analysis.compile_results import (
-    ModelChatResultsCompiler,
-)
 
+try:
 
-class TestCompileResults:
-    """
-    Test the analysis code for the model chat task.
-    """
+    from parlai.crowdsourcing.tasks.model_chat.analysis.compile_results import (
+        ModelChatResultsCompiler,
+    )
 
-    @pytest.fixture(scope="module")
-    def setup_teardown(self):
+    class TestCompileResults:
         """
-        Call code to set up and tear down tests.
-
-        Run this only once because we'll be running all analysis code before checking
-        any results.
+        Test the analysis code for the model chat task.
         """
 
-        # Params
-        results_folder = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
-        )
-        prefixes = ['results', 'worker_results']
+        @pytest.fixture(scope="module")
+        def setup_teardown(self):
+            """
+            Call code to set up and tear down tests.
 
-        with testing_utils.tempdir() as tmpdir:
+            Run this only once because we'll be running all analysis code before checking
+            any results.
+            """
 
-            # Run analysis
-            with testing_utils.capture_output() as output:
-                arg_string = f"""\
---results-folders {results_folder}
---output-folder {tmpdir}
-"""
-                parser_ = ModelChatResultsCompiler.setup_args()
-                args_ = parser_.parse_args(arg_string.split())
-                _ = ModelChatResultsCompiler(vars(args_)).compile_results()
-                stdout = output.getvalue()
-
-            # Define output structure
-            filtered_stdout = '\n'.join(
-                [line for line in stdout.split('\n') if not line.endswith('.csv')]
+            # Params
+            results_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
             )
-            # Don't track lines that record where a file was saved to, because filenames
-            # are timestamped
-            outputs = {'stdout': filtered_stdout}
-            for prefix in prefixes:
-                results_path = list(glob.glob(os.path.join(tmpdir, f'{prefix}_*')))[0]
-                with open(results_path) as f:
-                    outputs[prefix] = f.read()
+            prefixes = ['results', 'worker_results']
 
-        yield outputs
-        # All code after this will be run upon teardown
+            with testing_utils.tempdir() as tmpdir:
 
-    def test_stdout(self, setup_teardown, file_regression: FileRegressionFixture):
-        """
-        Check the output against what it should be.
-        """
-        outputs = setup_teardown
-        file_regression.check(outputs['stdout'])
+                # Run analysis
+                with testing_utils.capture_output() as output:
+                    arg_string = f"""\
+    --results-folders {results_folder}
+    --output-folder {tmpdir}
+    """
+                    parser_ = ModelChatResultsCompiler.setup_args()
+                    args_ = parser_.parse_args(arg_string.split())
+                    _ = ModelChatResultsCompiler(vars(args_)).compile_results()
+                    stdout = output.getvalue()
 
-    def test_results_file(self, setup_teardown, file_regression: FileRegressionFixture):
-        """
-        Check the results file against what it should be.
+                # Define output structure
+                filtered_stdout = '\n'.join(
+                    [line for line in stdout.split('\n') if not line.endswith('.csv')]
+                )
+                # Don't track lines that record where a file was saved to, because filenames
+                # are timestamped
+                outputs = {'stdout': filtered_stdout}
+                for prefix in prefixes:
+                    results_path = list(glob.glob(os.path.join(tmpdir, f'{prefix}_*')))[
+                        0
+                    ]
+                    with open(results_path) as f:
+                        outputs[prefix] = f.read()
 
-        We don't use DataFrameRegression fixture because the results might include
-        non-numeric data.
-        """
-        prefix = 'results'
-        outputs = setup_teardown
-        file_regression.check(outputs[prefix], basename=prefix)
+            yield outputs
+            # All code after this will be run upon teardown
 
-    def test_worker_results_file(
-        self, setup_teardown, file_regression: FileRegressionFixture
-    ):
-        """
-        Check the worker_results file against what it should be.
+        def test_stdout(self, setup_teardown, file_regression: FileRegressionFixture):
+            """
+            Check the output against what it should be.
+            """
+            outputs = setup_teardown
+            file_regression.check(outputs['stdout'])
 
-        We don't use DataFrameRegression fixture because the results might include
-        non-numeric data.
-        """
-        prefix = 'worker_results'
-        outputs = setup_teardown
-        file_regression.check(outputs[prefix], basename=prefix)
+        def test_results_file(
+            self, setup_teardown, file_regression: FileRegressionFixture
+        ):
+            """
+            Check the results file against what it should be.
+
+            We don't use DataFrameRegression fixture because the results might include
+            non-numeric data.
+            """
+            prefix = 'results'
+            outputs = setup_teardown
+            file_regression.check(outputs[prefix], basename=prefix)
+
+        def test_worker_results_file(
+            self, setup_teardown, file_regression: FileRegressionFixture
+        ):
+            """
+            Check the worker_results file against what it should be.
+
+            We don't use DataFrameRegression fixture because the results might include
+            non-numeric data.
+            """
+            prefix = 'worker_results'
+            outputs = setup_teardown
+            file_regression.check(outputs[prefix], basename=prefix)
+
+
+except ImportError:
+    pass
