@@ -9,24 +9,24 @@ Test the stack that keeps track of model image chats.
 
 import os
 import random
-import unittest
 
 import numpy as np
 import pandas as pd
 import torch
+from pytest_regressions.file_regression import FileRegressionFixture
 
 from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
 import parlai.utils.testing as testing_utils
 
 
-class TestImageStack(unittest.TestCase):
+class TestImageStack:
     """
     Test the stack that keeps track of model image chats.
     """
 
-    def test_load_stack(self):
+    def test_fill_stack(self, file_regression: FileRegressionFixture):
         """
-        Check the expected output when loading the stack.
+        Check the expected output when filling up the stack.
 
         Request image/model slots from the stack, and check that the behavior is as
         expected.
@@ -53,7 +53,7 @@ class TestImageStack(unittest.TestCase):
             )
             num_workers = 5
             worker_id_to_remove = '2'
-            stack_idx_to_remove_worker_from = 0  # TODO: set
+            stack_idx_to_remove_worker_from = 0
 
             # Create the stack
             stack = ImageStack(opt)
@@ -62,24 +62,13 @@ class TestImageStack(unittest.TestCase):
                 for _ in range(num_stack_slots):
                     worker_id = random.randrange(num_workers)
                     _ = stack.get_next_image(str(worker_id))
+                    print('STACK: ', stack.stack)
                 stack.remove_worker_from_stack(
                     worker=worker_id_to_remove,
                     stack_idx=stack_idx_to_remove_worker_from,
                 )
-                actual_stdout = output.getvalue()
+                print('STACK: ', stack.stack)
+                stdout = output.getvalue()
 
             # Check the output against what it should be
-            desired_stdout = f"""\
-Oh but obviously I am wrong\
-"""  # TODO: fix
-            actual_stdout_lines = actual_stdout.split('\n')
-            for desired_line in desired_stdout.split('\n'):
-                if desired_line not in actual_stdout_lines:
-                    raise ValueError(
-                        f'\n\tThe following line:\n\n{desired_line}\n\n\twas not found '
-                        f'in the actual stdout:\n\n{actual_stdout}'
-                    )
-
-
-if __name__ == "__main__":
-    unittest.main()
+            file_regression.check(contents=stdout)

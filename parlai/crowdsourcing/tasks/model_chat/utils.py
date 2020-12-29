@@ -73,7 +73,7 @@ class ImageStack:
         # Input params
         self.num_images = opt['num_images']
         self.models = opt['models']
-        self.evals_per_combo = opt['evals_per_image_model_combo']
+        self.evals_per_combo = opt.get('evals_per_image_model_combo', 1)
 
         # Paths
         self.save_folder = opt['stack_folder']
@@ -223,7 +223,9 @@ class ImageStack:
 
     def build_stack(self) -> int:
         print('[ Building stack... ]')
-        self.stack = [{model: [] for model in self.models}] * self.num_images
+        self.stack = [
+            {model: [] for model in self.models} for _ in range(self.num_images)
+        ]
         return 0  # The pointer starts at 0
 
     def build_or_load_stack(self) -> int:
