@@ -61,10 +61,7 @@ A example `JSON` is shown below:
     }, 
     "conversation_contexts": null, 
     "is_truncated": true,
-    "auxiliary": {   
-        "workers": ["A248D5XVN1YGCZ", "A2RBVMD2HTBCZ9"], 
-        "assignment_ids": ["3TAYZSBPLO5EAUXXRU24479226QS2T", "3SNVL38CI7PTKTCRJEI8PYREX3QCK5"], 
-        "hit_ids": ["344M16OZKKC72DJEMGBHJUCXCGTNET", "35XW21VSVIBIOWLBBYF7VJCN8C2LSQ"], 
+    "auxiliary": { 
         "source": "BST_test"
     },
     "conversation_id": "9cb462d9-86f1-4296-af36-009d2e4d90f8#truncated#4",
