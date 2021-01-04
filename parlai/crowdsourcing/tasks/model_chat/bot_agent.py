@@ -14,8 +14,8 @@ from parlai.core.agents import create_agent
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.utils.strings import normalize_reply
 from parlai.crowdsourcing.tasks.model_chat.constants import AGENT_1
+from parlai.utils.strings import normalize_reply
 
 
 class TurkLikeAgent:
@@ -65,7 +65,7 @@ class TurkLikeAgent:
         Need to protect the observe also with a semaphore for composed models where an
         act() may be called within an observe()
         """
-        print(
+        logging.info(
             f'{self.__class__.__name__}: In observe() before semaphore, self.turn_idx is {self.turn_idx} and observation is {observation}'
         )
         new_ob = copy.deepcopy(observation)
@@ -74,7 +74,7 @@ class TurkLikeAgent:
                 self.model_agent.observe(new_ob)
         else:
             self.model_agent.observe(new_ob)
-        print(
+        logging.info(
             f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
         )
 
@@ -135,12 +135,12 @@ class TurkLikeAgent:
             for obj in os.listdir(base_model_folder):
                 if os.path.isdir(os.path.join(base_model_folder, obj)):
                     models_available.append(obj)
-            print(
+            logging.info(
                 f'Found {len(models_available)} models available for Mturk task in {base_model_folder}: {models_available}'
             )
 
             all_model_opts = {}
-            print(f'Active models to use are: {active_models}')
+            logging.info(f'Active models to use are: {active_models}')
             for model_nickname in active_models:
                 model_overrides_copy = copy.deepcopy(model_overrides)
                 model_path = os.path.join(base_model_folder, model_nickname, 'model')
@@ -151,7 +151,7 @@ class TurkLikeAgent:
                     }
                 else:
                     model_opt_path = model_path + '.opt'
-                    print(
+                    logging.info(
                         f'Model file for model {model_nickname} does not exist! Instead, '
                         f'loading opt from {model_opt_path}.'
                     )
@@ -187,13 +187,13 @@ class TurkLikeAgent:
 
             raise ValueError('Either active_models or model_opts must be supplied!')
 
-        print(
+        logging.info(
             f'Got {len(list(final_model_opts.keys()))} active models with keys: {final_model_opts.keys()}.'
         )
         shared_bot_agents = {}
         for model_name, model_opt in final_model_opts.items():
-            print('\n\n--------------------------------')
-            print(f'model_name: {model_name}, opt_dict: {model_opt}')
+            logging.info('\n\n--------------------------------')
+            logging.info(f'model_name: {model_name}, opt_dict: {model_opt}')
             copied_opt_dict = copy.deepcopy(model_opt)
             model_agent = create_agent(model_opt, requireModelExists=True)
 
