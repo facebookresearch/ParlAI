@@ -1165,6 +1165,42 @@ model_list = [
         ),
     },
     {
+        "title": "Blender 1B distilled",
+        "id": "blender",
+        "path": "zoo:blender/blender_1Bdistill/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to ~1.4B parameters and roughly 2x the inference speed."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_1Bdistill/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How about yourself? What do you do for a living? I'm a creative writer."
+        ),
+    },
+    {
+        "title": "Blender 400M distilled",
+        "id": "blender",
+        "path": "zoo:blender/blender_400Mdistill/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "description": (
+            "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to ~360M parameters and roughly 5x the inference speed."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_400Mdistill/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How about you? What do you like to do in your free time?"
+        ),
+    },
+    {
         "title": "Blender 9.4B",
         "id": "blender",
         "path": "zoo:blender/blender_9B/model",

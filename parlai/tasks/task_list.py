@@ -1353,4 +1353,12 @@ task_list = [
         ),
         "links": {"arXiv": "https://arxiv.org/abs/2010.07079"},
     },
+    {
+        "id": "decode",
+        "display_name": "DialoguE COntradiction DEteCtion (DECODE)",
+        "task": "decode",
+        "tags": ["All", "ChitChat", "Entailment"],
+        "description": "Task for detect whether the last utterance contradicts previous dialogue history.",
+        "links": {"arXiv": "https://arxiv.org/abs/2012.13391"},
+    },
 ]

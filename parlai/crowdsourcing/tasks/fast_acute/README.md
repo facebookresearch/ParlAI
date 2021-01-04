@@ -8,6 +8,8 @@ The scripts in this directory will allow you to run all the steps of [ACUTE-Eval
 
 Both types are discussed below.
 
+**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
+
 ## How to run Fast ACUTE if you need to produce model self-chats
 
 ### 1. Choose the self-chat task
@@ -58,11 +60,11 @@ Generated result files include the following:
 2. A CSV file of the statistical significances of results, given by the *p*-values of the win rates of model pairs. View these with `cat acute_eval_<timestamp>.significance.csv | column -t -s, | less -S`.
 3. HTML files of nicely visualized conversations.
 
-**NOTE**: Analysis can be run on its own by calling `analysis.py`, specifying the ACUTE-Eval `run_id` and the `root_dir` that you used when running Fast ACUTE:
+**NOTE**: Analysis can be run on its own by calling `analysis.py`, specifying the ACUTE-Eval `run_ids` and the `root_dir` that you used when running Fast ACUTE:
 ```
 python parlai/crowdsourcing/tasks/fast_acute/analysis.py \
 --root-dir ${FAST_ACUTE_ROOT_DIR} \
---run-id ${RUN_ID}
+--run-ids ${RUN_ID}
 ```
 Use `--outdir` to save analysis results in a custom folder.
 
