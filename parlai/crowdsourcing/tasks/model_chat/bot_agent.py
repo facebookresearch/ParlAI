@@ -167,23 +167,12 @@ class TurkLikeAgent:
 
         elif model_opts is not None:
 
-            model_overrides_string = ' '.join(
-                f'--{key.replace("_", "-")} {val}'
-                for key, val in model_overrides.items()
-            )
-            # NOTE: this can be simplified if we remove the `active_models` arg and
-            #  specify model opts only from a YAML file. Also, in that case not all of
-            #  the model_overrides may still be needed, for instance if we use
-            #  display_model's setup_args() instead of ParlaiParser
-
             parser = ParlaiParser(True, True)
+            parser.set_params(**model_overrides)
 
             final_model_opts = {}
             for name, opt in model_opts.items():
-                final_model_opt_string = opt + ' ' + model_overrides_string
-                final_model_opts[name] = parser.parse_args(
-                    final_model_opt_string.split()
-                )
+                final_model_opts[name] = parser.parse_args(opt.split())
 
         else:
 
