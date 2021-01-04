@@ -27,7 +27,7 @@ var showEnabledCssNextButton = function () {
 }
 
 var validateFreetextRepsonse = function (response) {
-  // require at least 10 characters, vowels, and 2 words in the response.
+  // require more than 10 characters, at least 1 vowel, and at least 2 words in the response.
   var charCount = response.length;
   var wordCount = response.split(' ').length;
   var numVowels = response.match(/[aeiou]/gi);
