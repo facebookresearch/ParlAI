@@ -52,11 +52,7 @@ class AbstractCrowdsourcingTest:
         """
 
         if self.operator is not None:
-            self.operator.supervisor.shutdown()
-            self.operator.shutdown()
-            assert self._get_channel_info().channel.is_closed()
-        if self.server is not None:
-            self.server.shutdown_mock()
+            self.operator.force_shutdown()
 
     def _set_up_config(
         self,
