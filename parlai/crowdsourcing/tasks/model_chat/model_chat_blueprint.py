@@ -14,6 +14,7 @@ from threading import Semaphore, Condition
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import numpy as np
+import torch
 import yaml
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
@@ -197,6 +198,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         super().__init__(task_run, args=args, shared_state=shared_state)
         random.seed(self.args.blueprint.random_seed)
         np.random.seed(self.args.blueprint.random_seed)
+        torch.manual_seed(self.args.blueprint.random_seed)
 
         # Load task configuration data beyond the task description, as the super does
         # that
