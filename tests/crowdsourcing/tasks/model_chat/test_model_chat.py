@@ -122,7 +122,7 @@ try:
                     f'mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:{num_blender_convos:d}\"',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
-                    'mephisto.blueprint.max_concurrent_responses=1',
+                    '+mephisto.blueprint.max_concurrent_responses=1',
                     f'+mephisto.blueprint.num_conversations={num_blender_convos:d}',
                     '+mephisto.blueprint.onboard_task_data_path=${task_dir}/task_config/onboard_task_data.json',
                     '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
