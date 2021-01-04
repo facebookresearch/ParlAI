@@ -58,7 +58,7 @@ class TurkLikeAgent:
         act_out = act_out.force_set('text', final_message_text)
         assert ('episode_done' not in act_out) or (not act_out['episode_done'])
         self.turn_idx += 1
-        return {**act_out, 'episode_done': False, 'checked_radio_name_id': ''}
+        return {**act_out, 'episode_done': False}
 
     def observe(self, observation, increment_turn: bool = True):
         """
