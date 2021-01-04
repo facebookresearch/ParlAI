@@ -129,7 +129,7 @@ try:
                         'world_file',
                     ]
                 ] + [
-                    '+mephisto.blueprint.annotations_config_path=""',
+                    'mephisto.blueprint.annotations_config_path=""',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     f'+mephisto.blueprint.image_context_path={image_context_path}',
                     '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',

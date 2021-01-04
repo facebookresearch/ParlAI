@@ -117,7 +117,7 @@ try:
                         'world_file',
                     ]
                 ] + [
-                    '+mephisto.blueprint.annotations_config_path=${task_dir}/task_config/annotations_config.json',
+                    'mephisto.blueprint.annotations_config_path=${task_dir}/task_config/annotations_config.json',
                     f'mephisto.blueprint.base_model_folder={model_folder}',
                     f'mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:{num_blender_convos:d}\"',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
