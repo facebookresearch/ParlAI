@@ -243,7 +243,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
     @abstractmethod
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         """
-        Return a dictionary whose values are the shared model files.
+        Return a dictionary whose values are the shared models.
         """
 
     def get_frontend_args(self) -> Dict[str, Any]:
