@@ -65,7 +65,6 @@ class TransresnetMultimodalAgent(TransresnetAgent):
             default=None,
             help="Path to personalities list",
         )
-        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return arg_group
 
     def __init__(self, opt, shared=None):

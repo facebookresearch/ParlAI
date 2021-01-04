@@ -13,6 +13,7 @@ import os
 import string
 
 
+from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.message import Message
 from parlai.core.worlds import DialogPartnerWorld, validate
@@ -71,7 +72,7 @@ class InteractiveWorld(DialogPartnerWorld):
         from parlai.core.params import ParlaiParser
 
         parser = ParlaiParser(False, False)
-        KnowledgeRetrieverAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        KnowledgeRetrieverAgent.add_cmdline_args(parser, partial_opt=self.opt)
         parser.set_params(
             model='projects:wizard_of_wikipedia:knowledge_retriever',
             add_token_knowledge=add_token_knowledge,

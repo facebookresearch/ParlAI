@@ -70,6 +70,10 @@ class TransresnetAgent(Agent):
         cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return arg_group
 
+    @classmethod
+    def dictionary_class(cls):
+        return DictionaryAgent
+
     def __init__(self, opt, shared=None):
         self.metrics = {
             'hits@1/100': 0.0,
