@@ -150,6 +150,8 @@ class TurkLikeAgent:
                         'override': model_overrides_copy,
                     }
                 else:
+                    # Sometimes the model file is downloaded, like
+                    # `-m hugging_face/dialogpt`
                     model_opt_path = model_path + '.opt'
                     logging.info(
                         f'Model file for model {model_nickname} does not exist! Instead, '
