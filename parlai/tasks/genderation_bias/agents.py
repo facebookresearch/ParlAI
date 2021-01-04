@@ -16,7 +16,6 @@ As an example, try running:
 `parlai display_data -t genderation_bias:controllable_task:convai2`
 """
 
-from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.message import Message
 from parlai.core.opt import Opt

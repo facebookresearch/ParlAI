@@ -8,7 +8,6 @@
 Poly-encoder Agent.
 """
 
-from typing import Optional
 from parlai.core.params import ParlaiParser
 from typing import Any, Dict, Optional, Tuple
 

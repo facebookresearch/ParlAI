@@ -10,7 +10,6 @@ Transresnet Multimodal Model (https://arxiv.org/abs/1811.00945).
 from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
-from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import round_sigfigs
 from parlai.core.message import Message
 from .modules import TransresnetMultimodalModel

@@ -19,7 +19,6 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from typing import Optional
 from parlai.core.params import ParlaiParser
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod

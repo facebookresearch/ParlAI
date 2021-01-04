@@ -7,7 +7,6 @@
 Models and helper classes for style-controlled generation.
 """
 
-from typing import Optional
 from parlai.core.params import ParlaiParser
 import random
 from typing import List, Optional

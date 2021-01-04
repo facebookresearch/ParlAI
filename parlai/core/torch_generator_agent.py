@@ -17,7 +17,6 @@ Contains the following utilities:
 * Beam class which provides some generic beam functionality for classes to use
 """
 
-from typing import Optional
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable

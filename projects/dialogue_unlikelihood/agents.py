@@ -62,7 +62,7 @@ class RewardUnlikelihoodAgentTrait(object):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--alpha', default=1.0, type=float)
         return parser
 
@@ -160,7 +160,6 @@ class RepetitionUnlikelihoodAgentTrait(object):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        print(super())
         grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--seq-ul-ratio', default=0.5, type=float)
         grp.add_argument('--seq-ul-n', default=4, type=int)
@@ -366,7 +365,6 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        print(super())
         grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--alpha', default=1.0, type=float)
         grp.add_argument('--queue-size', default=32, type=int)

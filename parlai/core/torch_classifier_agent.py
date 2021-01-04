@@ -9,7 +9,6 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
-from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters

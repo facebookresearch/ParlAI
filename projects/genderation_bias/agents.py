@@ -19,7 +19,7 @@ class BiasAgentTrait(object):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--bias-class', type=str, default='f0m0')
         return parser
 
