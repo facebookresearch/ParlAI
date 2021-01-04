@@ -11,11 +11,11 @@ from typing import Dict, List, Optional
 from omegaconf import DictConfig
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.strings import normalize_reply
 from parlai.crowdsourcing.tasks.model_chat.constants import AGENT_1
-from parlai.crowdsourcing.tasks.model_chat.utils import Compatibility
 
 
 class TurkLikeAgent:
@@ -46,6 +46,8 @@ class TurkLikeAgent:
                 act_out = self.model_agent.act()
         else:
             act_out = self.model_agent.act()
+        act_out = Message(act_out)
+        # Wrap as a Message for compatibility with older ParlAI models
 
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
@@ -53,9 +55,7 @@ class TurkLikeAgent:
         else:
             final_message_text = normalize_reply(act_out['text'])
 
-        act_out = Compatibility.backward_compatible_force_set(
-            act_out, 'text', final_message_text
-        )
+        act_out = act_out.force_set('text', final_message_text)
         assert ('episode_done' not in act_out) or (not act_out['episode_done'])
         self.turn_idx += 1
         return {**act_out, 'episode_done': False, 'checked_radio_name_id': ''}
