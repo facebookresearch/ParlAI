@@ -133,6 +133,7 @@ try:
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     f'+mephisto.blueprint.image_context_path={image_context_path}',
                     '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
+                    'mephisto.blueprint.max_concurrent_responses=1',
                     '+mephisto.blueprint.model_opt_path=${task_dir}/task_config/image_model_opts.yaml',
                     f'+mephisto.blueprint.num_conversations={num_convos:d}',
                     f'+mephisto.blueprint.stack_folder={stack_folder}',
