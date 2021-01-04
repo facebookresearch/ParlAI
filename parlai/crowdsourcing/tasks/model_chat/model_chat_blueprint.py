@@ -218,8 +218,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         shared_state.shared_models = self._get_shared_models(args)
 
         # Limits the number of models that can generate at once
-        max_concurrent_responses = 1
-        semaphore = Semaphore(max_concurrent_responses)
+        semaphore = Semaphore(args.blueprint.max_concurrent_responses)
 
         # Move shared state into the world opt, so that it can be used by the world
         shared_state.onboarding_world_opt.update(
