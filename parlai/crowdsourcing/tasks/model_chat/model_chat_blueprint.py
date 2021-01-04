@@ -125,7 +125,7 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
         },
     )
     annotations_config_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/annotations_config.json",
+        default="",
         metadata={
             "help": 'Path to JSON of annotation categories. Set to "" to disable annotations'
         },
