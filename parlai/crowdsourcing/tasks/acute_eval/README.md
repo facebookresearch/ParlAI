@@ -154,7 +154,7 @@ A few of these options are enumerated below.
 
 #### Model self-chat
 
-If you would like to evaluate a model chatting to itself, you simply specify the appropriate model parameters in the config. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc. You can see an example in `task_config/model_config_self_chat.json`.
+If you would like to evaluate a model chatting to itself, you simply specify the appropriate model parameters in the config. The parameters are any that you would need to specify on the command line, and include things like the model-file, fixed candidates file, etc. You can see an example in `task_config/model_config_self_chat.json`. You will need to determine the ParlAI task that you will use to help generate the self-chats: this must be a task that is set up for self-chat, i.e., a task that has the appropriate worlds for conducting self-chat with the models.
 
 #### JSONL logs
 
@@ -164,11 +164,7 @@ The appropriate JSONL format is one that can be read by ParlAI's [Conversations]
 
 #### Dataset
 
-If you'd like to evaluate examples from a dataset available in ParlAI directly, simply specify the `task` in the config. You can see an example in `task_config/model_config_dataset.json`.
-
-### 1b. (Optional) Determine the self-chat task that you will use
-
-If you will be evaluating models via self-chat, you will need to determine the ParlAI task you will use to help generate the self-chats. This is not so much any work on your part other than identifying a task that is set up for self-chat, i.e., a task that has the appropriate worlds for conducting self-chat with the models. Optionally, you may want to introduce context, e.g. as in `convai2` or `blended_skill_talk`: this can be specified in the config file with the `'prepended_context'` parameter.
+If you'd like to evaluate examples from a dataset available in ParlAI directly, simply specify the `task` in the config. You can see an example in `task_config/model_config_dataset.json`. Optionally, you may want to introduce context, e.g. as in `convai2` or `blended_skill_talk`: this can be specified in the config file with the `'prepended_context'` parameter.
 
 ### 2. Run `fast_eval.py`
 
