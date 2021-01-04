@@ -14,6 +14,7 @@ from threading import Semaphore, Condition
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import numpy as np
+import torch
 import yaml
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
@@ -125,7 +126,7 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
         },
     )
     annotations_config_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/annotations_config.json",
+        default="",
         metadata={
             "help": 'Path to JSON of annotation categories. Set to "" to disable annotations'
         },
@@ -197,6 +198,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         super().__init__(task_run, args=args, shared_state=shared_state)
         random.seed(self.args.blueprint.random_seed)
         np.random.seed(self.args.blueprint.random_seed)
+        torch.manual_seed(self.args.blueprint.random_seed)
 
         # Load task configuration data beyond the task description, as the super does
         # that
@@ -216,8 +218,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         shared_state.shared_models = self._get_shared_models(args)
 
         # Limits the number of models that can generate at once
-        max_concurrent_responses = 1
-        semaphore = Semaphore(max_concurrent_responses)
+        semaphore = Semaphore(args.blueprint.max_concurrent_responses)
 
         # Move shared state into the world opt, so that it can be used by the world
         shared_state.onboarding_world_opt.update(
@@ -242,7 +243,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
     @abstractmethod
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         """
-        Return a dictionary whose values are the shared model files.
+        Return a dictionary whose values are the shared models.
         """
 
     def get_frontend_args(self) -> Dict[str, Any]:
@@ -367,6 +368,9 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         super().assert_task_args(args=args, shared_state=shared_state)
 
         if args.blueprint.get("annotations_config_path", "") != "":
+            # We are going to do annotations, so check for the presence of an onboarding
+            # data file that will be used to onboard users into knowing how to do the
+            # annotations properly
             assert (
                 args.blueprint.get("onboard_task_data_path", None) is not None
             ), "Must provide an onboarding data file"
@@ -393,6 +397,8 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
 
         if args.blueprint.get("annotations_config_path", "") != "":
+            # We are going to do annotations, so load the onboarding data file that will
+            # be used to onboard users into knowing how to do the annotations properly
             onboard_task_data_path = os.path.expanduser(
                 args.blueprint.onboard_task_data_path
             )

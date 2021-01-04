@@ -45,7 +45,7 @@ In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to cha
 
 `run_image_chat.py` can be run to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it.
 
-This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/tasks/personality_captions/` tasks, which are deprecated and can be accessed with `$ git checkout v0.10.0`. Those tasks featured the ability to compare two possible captions to an image and rate which one is more engaging: this functionality has now been replaced by the [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) task. 
+This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/tasks/personality_captions/` tasks, which are deprecated and can be accessed with `$ git checkout v0.10.0`. Those tasks also featured the ability to compare two possible captions to an image and rate which one is more engaging: this functionality has now been replaced by the [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) task. 
 
 ### Setup
 
@@ -60,7 +60,7 @@ python parlai/crowdsourcing/tasks/model_chat/scripts/save_image_contexts.py \
 ### Options
 
 Some options for running human+model image chat are as follows:
-- `mephisto.blueprint.model_opt_path`: path to a YAML file listing all models to be chatted with, as well as the ParlAI flags for running each one. See `task_config/image_model_opts.yaml` for an example.
+- `mephisto.blueprint.model_opt_path`: path to a YAML file listing all models to be chatted with, as well as the ParlAI flags for running each one. See `task_config/image_model_opts.yaml` for an example. This is in contrast to the non-image-chat crowdsourcing task, for which models must all be placed in the same root folder, as detailed above.
 - `mephisto.blueprint.num_conversations`: the total number of conversations to collect.
 - `mephisto.blueprint.image_context_path`: the path to the file saved by `scripts/save_image_contexts.py` during setup.
 - `mephisto.blueprint.stack_folder`: a folder in which to store a stack file that will keep track of which crowdsource workers have chatted with which models about which images. The stack will ensure that no worker chats about the same image more than once and that conversations about images are collected uniformly among all models.
