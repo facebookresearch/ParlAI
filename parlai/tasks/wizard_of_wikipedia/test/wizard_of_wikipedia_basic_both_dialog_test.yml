@@ -1,0 +1,29 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Blue is always nice. I like royal blue.
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    text: Blue is my favorite primary color.
+- - episode_done: false
+    eval_labels:
+    - Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    text: I once road on The Royal Blue train from New York to D.C
+- - episode_done: false
+    eval_labels:
+    - No I haven't, but I always like the way he danced.
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    text: Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?
+- - episode_done: true
+    eval_labels:
+    - He was definitely a legend. I think he was a good singer too.
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    text: Yes. I was sad when he died in 1977. He was my favorite actor.
+- - chosen_topic: Blue
+    episode_done: false
+    eval_labels:
+    - I once road on The Royal Blue train from New York to D.C
+    id: wizard_of_wikipedia:BasicWizardDialog
+    text: Blue is always nice. I like royal blue.
+num_episodes: 1930
+num_examples: 7750

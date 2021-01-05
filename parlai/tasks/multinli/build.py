@@ -11,7 +11,7 @@ from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
-        'https://www.nyu.edu/projects/bowman/multinli/multinli_1.0.zip',
+        'https://cims.nyu.edu/~sbowman/multinli/multinli_1.0.zip',
         'multinli_1.0.zip',
         '049f507b9e36b1fcb756cfd5aeb3b7a0cfcb84bf023793652987f7e7e0957822',
     )

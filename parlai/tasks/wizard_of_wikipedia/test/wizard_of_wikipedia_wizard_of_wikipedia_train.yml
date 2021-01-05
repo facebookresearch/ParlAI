@@ -1,0 +1,609 @@
+acts:
+- - checked_passage:
+      chosen_topic_0_Science_fiction: Science fiction
+    checked_sentence:
+      chosen_Science_fiction_0: Science fiction (often shortened to SF or sci-fi)
+        is a genre of speculative fiction, typically dealing with imaginative concepts
+        such as futuristic science and technology, space travel, time travel, faster
+        than light travel, parallel universes, and extraterrestrial life.
+    chosen_topic: Science fiction
+    chosen_topic_passage:
+    - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life.
+    - Science fiction often explores the potential consequences of scientific and
+      other innovations, and has been called a "literature of ideas".
+    - It usually avoids the supernatural, unlike the related genre of fantasy.
+    - Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction.
+    - Science fiction is difficult to define, as it includes a wide range of subgenres
+      and themes.
+    - 'Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories"
+      magazine, wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells
+      and Edgar Allan Poe type of story—a charming romance intermingled with scientific
+      fact and prophetic vision... Not only do these amazing tales make tremendously
+      interesting reading—they are always instructive.'
+    - They supply knowledge... in a very palatable form... New adventures pictured
+      for us in the scientifiction of today are not at all impossible of realization
+      tomorrow...
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Hyperspace (science fiction):
+      - Hyperspace is a faster-than-light (FTL) method of traveling used in science
+        fiction.
+      - It is typically described as an alternative "sub-region" of space co-existing
+        with our own universe which may be entered using an energy field or other
+        device.
+      - As seen in most fiction hyperspace is most succinctly described as a "somewhere
+        else" within which the laws of general and special relativity decidedly do
+        "not" apply – especially with respect to the speed of light being the cosmic
+        speed limit.
+      - Entering and exiting said "elsewhere" thus directly enables travel near or
+        faster than the speed of light – almost universally with the aid of extremely
+        advanced technology.
+    - Science fiction:
+      - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+        fiction, typically dealing with imaginative concepts such as futuristic science
+        and technology, space travel, time travel, faster than light travel, parallel
+        universes, and extraterrestrial life.
+      - Science fiction often explores the potential consequences of scientific and
+        other innovations, and has been called a "literature of ideas".
+      - It usually avoids the supernatural, unlike the related genre of fantasy.
+      - Historically, science-fiction stories have had a grounding in actual science,
+        but now this is only expected of hard science fiction.
+    - History of science fiction:
+      - The literary genre of science fiction is diverse, and its exact definition
+        remains a contested question among both scholars and devotees.
+      - This lack of consensus is reflected in debates about the genre's history,
+        particularly over determining its exact origins.
+      - There are two broad camps of thought, one that identifies the genre's roots
+        in early fantastical works such as the Sumerian "Epic of Gilgamesh" (earliest
+        Sumerian text versions c. 2150–2000 BCE).
+      - A second approach argues that science fiction only became possible sometime
+        between the 17th and early 19th centuries, following the scientific revolution
+        and major discoveries in astronomy, physics, and mathematics.
+    - Science fiction film:
+      - Science fiction film (or sci-fi film) is a genre that uses speculative, fictional
+        science-based depictions of phenomena that are not fully accepted by mainstream
+        science, such as extraterrestrial lifeforms, alien worlds, extrasensory perception
+        and time travel, along with futuristic elements such as spacecraft, robots,
+        cyborgs, interstellar travel or other technologies.
+      - Science fiction films have often been used to focus on political or social
+        issues, and to explore philosophical issues like the human condition.
+      - In many cases, tropes derived from written science fiction may be used by
+        filmmakers ignorant of or at best indifferent to the standards of scientific
+        plausibility and plot logic to which written science fiction is traditionally
+        held.
+    - Time travel:
+      - Time travel is the concept of movement between certain points in time, analogous
+        to movement between different points in space by an object or a person, typically
+        using a hypothetical device known as a time machine, in the form of a vehicle
+        or of a portal connecting distant points in spacetime, either to an earlier
+        time or to a later time, without the need for the time-traveling body to experience
+        the intervening period in the usual sense.
+      - Time travel is a widely-recognized concept in philosophy and fiction.
+      - It was popularized by H. G. Wells' 1895 novel "The Time Machine", which moved
+        the concept of time travel into the public imagination.
+    - List of starships in Stargate:
+      - This is a list of fictional starships in the "Stargate" universe depicted
+        through a series of television shows and three feature-length movies.
+      - The Ancients are one of the most technologically advanced races in "Stargate",
+        and this is reflected in their starships.
+      - Duplicates of these ships are utilized by their nanite creations, the Asurans,
+        as they also possess knowledge of Ancient technology.
+      - The Puddle Jumper or Jumper is a small spacecraft used extensively in the
+        "Stargate Atlantis" series.
+      - Puddle Jumpers were created by the Ancients and most exist within the city
+        built by the Ancients known as Atlantis.
+    - History of US science fiction and fantasy magazines to 1950:
+      - Science fiction and fantasy magazines began to be published in the US in the
+        1920s.
+      - Stories with science fiction themes had been appearing for decades in pulp
+        magazines such as "Argosy", but there were no magazines that specialized in
+        a single genre until 1915, when Street & Smith, one of the major pulp publishers,
+        brought out "Detective Story Magazine".
+      - The first magazine to focus solely on fantasy and horror was "Weird Tales",
+        which was launched in 1923, and established itself as the leading weird fiction
+        magazine over the next two decades; writers such as H.P.
+      - Lovecraft, Clark Ashton Smith and Robert E. Howard became regular contributors.
+    retrieved_topics:
+    - Hyperspace (science fiction)
+    - Science fiction
+    - History of science fiction
+    - Science fiction film
+    - Time travel
+    - List of starships in Stargate
+    - History of US science fiction and fantasy magazines to 1950
+    text: I think science fiction is an amazing genre for anything. Future science,
+      technology, time travel, FTL travel, they're all such interesting concepts.
+    wizard_eval: 5
+- - checked_passage: null
+    checked_sentence: null
+    chosen_topic: Science fiction
+    chosen_topic_passage:
+    - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life.
+    - Science fiction often explores the potential consequences of scientific and
+      other innovations, and has been called a "literature of ideas".
+    - It usually avoids the supernatural, unlike the related genre of fantasy.
+    - Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction.
+    - Science fiction is difficult to define, as it includes a wide range of subgenres
+      and themes.
+    - 'Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories"
+      magazine, wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells
+      and Edgar Allan Poe type of story—a charming romance intermingled with scientific
+      fact and prophetic vision... Not only do these amazing tales make tremendously
+      interesting reading—they are always instructive.'
+    - They supply knowledge... in a very palatable form... New adventures pictured
+      for us in the scientifiction of today are not at all impossible of realization
+      tomorrow...
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Science fiction:
+      - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+        fiction, typically dealing with imaginative concepts such as futuristic science
+        and technology, space travel, time travel, faster than light travel, parallel
+        universes, and extraterrestrial life.
+      - Science fiction often explores the potential consequences of scientific and
+        other innovations, and has been called a "literature of ideas".
+      - It usually avoids the supernatural, unlike the related genre of fantasy.
+      - Historically, science-fiction stories have had a grounding in actual science,
+        but now this is only expected of hard science fiction.
+    - History of science fiction:
+      - The literary genre of science fiction is diverse, and its exact definition
+        remains a contested question among both scholars and devotees.
+      - This lack of consensus is reflected in debates about the genre's history,
+        particularly over determining its exact origins.
+      - There are two broad camps of thought, one that identifies the genre's roots
+        in early fantastical works such as the Sumerian "Epic of Gilgamesh" (earliest
+        Sumerian text versions c. 2150–2000 BCE).
+      - A second approach argues that science fiction only became possible sometime
+        between the 17th and early 19th centuries, following the scientific revolution
+        and major discoveries in astronomy, physics, and mathematics.
+    - Isaac Asimov:
+      - Isaac Asimov (; born Isaak Ozimov; January 2, 1920 – April 6, 1992) was an
+        American writer and professor of biochemistry at Boston University.
+      - He was known for his works of science fiction and popular science.
+      - Asimov was a prolific writer, and wrote or edited more than 500 books and
+        an estimated 90,000 letters and postcards.
+      - His books have been published in 9 of the 10 major categories of the Dewey
+        Decimal Classification.
+      - Asimov wrote hard science fiction and, along with Robert A. Heinlein and Arthur
+        C. Clarke, he was considered one of the "Big Three" science fiction writers
+        during his lifetime.
+    - U.S. television science fiction:
+      - U.S. television science fiction is a popular genre of television in the United
+        States that has produced many of the best-known and most popular science fiction
+        shows in the world.
+      - Most famous of all, and one of the most influential science-fiction series
+        in history, is the iconic "" and its various spin-off shows, which comprise
+        the Star Trek franchise.
+      - Other hugely influential programs have included the 1960s anthology series
+        "The Twilight Zone," the internationally successful "The X-Files," and a wide
+        variety of television movies and continuing series for more than half a century.
+      - The first popular science-fiction program on American television was the children's
+        adventure serial "Captain Video and His Video Rangers", which ran from June
+        1949 to April 1955.
+    - History of US science fiction and fantasy magazines to 1950:
+      - Science fiction and fantasy magazines began to be published in the US in the
+        1920s.
+      - Stories with science fiction themes had been appearing for decades in pulp
+        magazines such as "Argosy", but there were no magazines that specialized in
+        a single genre until 1915, when Street & Smith, one of the major pulp publishers,
+        brought out "Detective Story Magazine".
+      - The first magazine to focus solely on fantasy and horror was "Weird Tales",
+        which was launched in 1923, and established itself as the leading weird fiction
+        magazine over the next two decades; writers such as H.P.
+      - Lovecraft, Clark Ashton Smith and Robert E. Howard became regular contributors.
+    - Starstruck (comics):
+      - Starstruck is an American comic book series.
+      - It was inspired by the off-Broadway stage play with the same name written
+        by Elaine Lee, with contributions from Susan Norfleet Lee and Dale Place.
+      - The "Starstruck" creator-owned illustrated science fiction serial has been
+        produced at various intervals since 1982 by writer Lee and artist Michael
+        Wm.
+      - Kaluta; their primary collaborators are colorist Lee Moyer and letterer Todd
+        Klein.
+      - The series, epic in scope, has been carried across multiple comic companies,
+        but primarily by Epic Comics, Dark Horse Comics, and IDW Publishing.
+      - It was collected in a revised and recolored hardcover book form as "Starstruck
+        Deluxe Edition" in 2011.
+    - LGBT themes in speculative fiction:
+      - LGBT themes in speculative fiction refer to the incorporation of lesbian,
+        gay, bisexual, or transgender (LGBT) themes into science fiction, fantasy,
+        horror fiction and related genres.
+      - Such elements may include an LGBT character as the protagonist or a major
+        character, or explorations of sexuality or gender that deviate from the hetero-normative.
+      - Science fiction and fantasy have traditionally been puritanical genres aimed
+        at a male readership, and can be more restricted than non-genre literature
+        by their conventions of characterisation and the effect that these conventions
+        have on depictions of sexuality and gender.
+    retrieved_topics:
+    - Science fiction
+    - History of science fiction
+    - Isaac Asimov
+    - U.S. television science fiction
+    - History of US science fiction and fantasy magazines to 1950
+    - Starstruck (comics)
+    - LGBT themes in speculative fiction
+    text: 'I''m a huge fan of science fiction myself! '
+    wizard_eval: 5
+- - checked_passage:
+      self_3_Science_fiction_film: Science fiction film
+    checked_sentence:
+      self_Science_fiction_film_1: Science fiction films have often been used to focus
+        on political or social issues, and to explore philosophical issues like the
+        human condition.
+    chosen_topic: Science fiction
+    chosen_topic_passage:
+    - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life.
+    - Science fiction often explores the potential consequences of scientific and
+      other innovations, and has been called a "literature of ideas".
+    - It usually avoids the supernatural, unlike the related genre of fantasy.
+    - Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction.
+    - Science fiction is difficult to define, as it includes a wide range of subgenres
+      and themes.
+    - 'Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories"
+      magazine, wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells
+      and Edgar Allan Poe type of story—a charming romance intermingled with scientific
+      fact and prophetic vision... Not only do these amazing tales make tremendously
+      interesting reading—they are always instructive.'
+    - They supply knowledge... in a very palatable form... New adventures pictured
+      for us in the scientifiction of today are not at all impossible of realization
+      tomorrow...
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Oddworld Inhabitants:
+      - Oddworld Inhabitants Inc. is an American video game developer founded in 1994
+        by special-effects and computer-animation veterans Sherry McKenna and Lorne
+        Lanning.
+      - The company is primarily known for the incomplete "Oddworld Quintology", a
+        series of award-winning video games about the fictional planet of Oddworld
+        and its native creatures.
+      - The series debuted with "" in 1997 and continued with "" in 2001 but the studio
+        has also developed standalone titles "" in 1998 and "" in 2005.
+      - Oddworld Inhabitants took a break from game development for a time following
+        the release of "Stranger's Wrath", even though it had already begun preliminary
+        work on its next Oddworld title, "The Brutal Ballad of Fangus Klot".
+    - Legalism (Chinese philosophy):
+      - Fajia () or Legalism is one of Sima Tan's six classical schools of thought
+        in Chinese philosophy.
+      - Roughly meaning "house of Fa" (administrative "methods" or "standards"), the
+        "school" (term) represents some several branches of realistic statesmen or
+        "men of methods" (fashu zishi) foundational for the traditional Chinese bureaucratic
+        empire.
+      - Compared with Machiavelli, it has often been considered in the Western world
+        as akin to the Realpolitikal thought of ancient China.
+      - Largely ignoring morality or questions on how a society ideally should function,
+        they examined contemporary government; emphasizing a realistic consolidation
+        of the wealth and power of autocrat and state, with the goal of achieving
+        increased order, security and stability.
+    - Sci-Fi on the Rock:
+      - Sci-Fi on the Rock is an annual science fiction, fantasy and horror festival
+        held in St. John's, Newfoundland, Canada.
+      - It was founded by Darren Hann and Melanie Collins in mid-to-late 2006, and
+        held its first festival in 2007.
+      - It began in 2007 at the Hotel Mount Pearl, moving on to be housed in the Holiday
+        Inn in St. John's as of April 2008.
+      - The convention made another move in 2016 to the Sheraton Hotel Newfoundland.
+      - The festival has had a number a notable guests both from Newfoundland and
+        beyond, including science-fiction author Kenneth Tam ("Defense Command", "His
+        Majesty's New World"), comic-book artist Paul Tucker ("The Underworld Railroad",
+        "Google John Smith"), actor Brian Downey ("Lexx", "Millennium"), actor Jeremy
+        Bulloch ("The Empire Strikes Back", "Octopussy"), author William Meikle ("The
+        Midnight Eye" series), horror author Matthew LeDrew ("Black Womb", "Roulette")
+        and author Shannon Patrick Sullivan ("The Dying Days").
+    - Starstruck (comics):
+      - Starstruck is an American comic book series.
+      - It was inspired by the off-Broadway stage play with the same name written
+        by Elaine Lee, with contributions from Susan Norfleet Lee and Dale Place.
+      - The "Starstruck" creator-owned illustrated science fiction serial has been
+        produced at various intervals since 1982 by writer Lee and artist Michael
+        Wm.
+      - Kaluta; their primary collaborators are colorist Lee Moyer and letterer Todd
+        Klein.
+      - The series, epic in scope, has been carried across multiple comic companies,
+        but primarily by Epic Comics, Dark Horse Comics, and IDW Publishing.
+      - It was collected in a revised and recolored hardcover book form as "Starstruck
+        Deluxe Edition" in 2011.
+    - The Spirit of the Age:
+      - 'The Spirit of the Age (full title "The Spirit of the Age: Or, Contemporary
+        Portraits") is a collection of character sketches by the early 19th century
+        English essayist, literary critic, and social commentator William Hazlitt,
+        portraying 25 men, mostly British, whom he believed to represent significant
+        trends in the thought, literature, and politics of his time.'
+      - The subjects include thinkers, social reformers, politicians, poets, essayists,
+        and novelists, many of whom Hazlitt was personally acquainted with or had
+        encountered.
+      - Originally appearing in English periodicals, mostly "The New Monthly Magazine"
+        in 1824, the essays were collected with several others written for the purpose
+        and published in book form in 1825.
+    - Science fiction film:
+      - Science fiction film (or sci-fi film) is a genre that uses speculative, fictional
+        science-based depictions of phenomena that are not fully accepted by mainstream
+        science, such as extraterrestrial lifeforms, alien worlds, extrasensory perception
+        and time travel, along with futuristic elements such as spacecraft, robots,
+        cyborgs, interstellar travel or other technologies.
+      - Science fiction films have often been used to focus on political or social
+        issues, and to explore philosophical issues like the human condition.
+      - In many cases, tropes derived from written science fiction may be used by
+        filmmakers ignorant of or at best indifferent to the standards of scientific
+        plausibility and plot logic to which written science fiction is traditionally
+        held.
+    - Music of the Marvel Cinematic Universe:
+      - The music of the Marvel Cinematic Universe (MCU) is the film and television
+        scores composed by various composers for the films and television series of
+        that franchise.
+      - Ramin Djawadi provided the first MCU music with his original score for "Iron
+        Man" in 2008.
+      - Alan Silvestri was the first composer to work on multiple MCU films after
+        he transitioned from scoring "" (2011) to "Marvel's The Avengers" (2012),
+        while Brian Tyler was the first composer to reference the work of another
+        MCU composer when he quoted Silvestri's "Captain America March" in his score
+        for "" (2013).
+      - Original music has also been composed for the Marvel One-Shots short film
+        series, and other related projects of the MCU, including the fanfares for
+        the two Marvel Studios logos, composed by Tyler and Michael Giacchino, respectively.
+    retrieved_topics:
+    - Oddworld Inhabitants
+    - Legalism (Chinese philosophy)
+    - Sci-Fi on the Rock
+    - Starstruck (comics)
+    - The Spirit of the Age
+    - Science fiction film
+    - Music of the Marvel Cinematic Universe
+    text: Awesome! I really love how sci-fi storytellers focus on political/social/philosophical
+      issues that would still be around even in the future. Makes them relatable.
+    wizard_eval: 5
+- - checked_passage: null
+    checked_sentence: null
+    chosen_topic: Science fiction
+    chosen_topic_passage:
+    - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life.
+    - Science fiction often explores the potential consequences of scientific and
+      other innovations, and has been called a "literature of ideas".
+    - It usually avoids the supernatural, unlike the related genre of fantasy.
+    - Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction.
+    - Science fiction is difficult to define, as it includes a wide range of subgenres
+      and themes.
+    - 'Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories"
+      magazine, wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells
+      and Edgar Allan Poe type of story—a charming romance intermingled with scientific
+      fact and prophetic vision... Not only do these amazing tales make tremendously
+      interesting reading—they are always instructive.'
+    - They supply knowledge... in a very palatable form... New adventures pictured
+      for us in the scientifiction of today are not at all impossible of realization
+      tomorrow...
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Science fiction:
+      - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+        fiction, typically dealing with imaginative concepts such as futuristic science
+        and technology, space travel, time travel, faster than light travel, parallel
+        universes, and extraterrestrial life.
+      - Science fiction often explores the potential consequences of scientific and
+        other innovations, and has been called a "literature of ideas".
+      - It usually avoids the supernatural, unlike the related genre of fantasy.
+      - Historically, science-fiction stories have had a grounding in actual science,
+        but now this is only expected of hard science fiction.
+    - Science fiction film:
+      - Science fiction film (or sci-fi film) is a genre that uses speculative, fictional
+        science-based depictions of phenomena that are not fully accepted by mainstream
+        science, such as extraterrestrial lifeforms, alien worlds, extrasensory perception
+        and time travel, along with futuristic elements such as spacecraft, robots,
+        cyborgs, interstellar travel or other technologies.
+      - Science fiction films have often been used to focus on political or social
+        issues, and to explore philosophical issues like the human condition.
+      - In many cases, tropes derived from written science fiction may be used by
+        filmmakers ignorant of or at best indifferent to the standards of scientific
+        plausibility and plot logic to which written science fiction is traditionally
+        held.
+    - History of science fiction:
+      - The literary genre of science fiction is diverse, and its exact definition
+        remains a contested question among both scholars and devotees.
+      - This lack of consensus is reflected in debates about the genre's history,
+        particularly over determining its exact origins.
+      - There are two broad camps of thought, one that identifies the genre's roots
+        in early fantastical works such as the Sumerian "Epic of Gilgamesh" (earliest
+        Sumerian text versions c. 2150–2000 BCE).
+      - A second approach argues that science fiction only became possible sometime
+        between the 17th and early 19th centuries, following the scientific revolution
+        and major discoveries in astronomy, physics, and mathematics.
+    - Time travel:
+      - Time travel is the concept of movement between certain points in time, analogous
+        to movement between different points in space by an object or a person, typically
+        using a hypothetical device known as a time machine, in the form of a vehicle
+        or of a portal connecting distant points in spacetime, either to an earlier
+        time or to a later time, without the need for the time-traveling body to experience
+        the intervening period in the usual sense.
+      - Time travel is a widely-recognized concept in philosophy and fiction.
+      - It was popularized by H. G. Wells' 1895 novel "The Time Machine", which moved
+        the concept of time travel into the public imagination.
+    - Parallel universes in fiction:
+      - A parallel universe is a hypothetical self-contained reality co-existing with
+        one's own.
+      - A specific group of parallel universes are called a "multiverse", although
+        this term can also be used to describe the possible parallel universes that
+        constitute reality.
+      - While the terms "parallel universe" and "alternative reality" are generally
+        synonymous and can be used interchangeably in most cases, there is sometimes
+        an additional connotation implied with the term "alternative reality" that
+        implies that the reality is a variant of our own.
+      - The term "parallel universe" is more general, without any connotations implying
+        a relationship, or lack of relationship, with our own universe.
+    - Alternate history:
+      - Alternate history or alternative history (Commonwealth English), sometimes
+        abbreviated as AH, is a genre of fiction consisting of stories in which one
+        or more historical events occur differently.
+      - These stories usually contain "what if" scenarios at crucial points in history
+        and present outcomes other than those in the historical record.
+      - The stories are conjectural, but are sometimes based on fact.
+      - Alternate history has been seen as a subgenre of literary fiction, science
+        fiction, or historical fiction; alternate history works may use tropes from
+        any or all of these genres.
+      - Another term occasionally used for the genre is "allohistory" (literally "other
+        history").
+    - Time travel in fiction:
+      - Time travel is a common theme in fiction and has been depicted in a variety
+        of media, such as literature, television, film, and advertisements.
+      - The concept of time travel by mechanical means was popularized in H. G. Wells'
+        1895 story, "The Time Machine".
+      - In general, time travel stories focus on the consequences of traveling into
+        the past or the future.
+      - The central premise for these stories oftentimes involves changing history,
+        either intentionally or by accident, and the ways by which altering the past
+        changes the future and creates an altered present or future for the time traveler
+        when they return home.
+    retrieved_topics:
+    - Science fiction
+    - Science fiction film
+    - History of science fiction
+    - Time travel
+    - Parallel universes in fiction
+    - Alternate history
+    - Time travel in fiction
+    text: I agree. One of my favorite forms of science fiction is anything related
+      to time travel! I find it fascinating.
+    wizard_eval: 5
+- - checked_passage:
+      partner_6_Time_travel_in_fiction: Time travel in fiction
+    checked_sentence:
+      partner_Time_travel_in_fiction_3: The central premise for these stories oftentimes
+        involves changing history, either intentionally or by accident, and the ways
+        by which altering the past changes the future and creates an altered present
+        or future for the time traveler when they return home.
+    chosen_topic: Science fiction
+    chosen_topic_passage:
+    - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life.
+    - Science fiction often explores the potential consequences of scientific and
+      other innovations, and has been called a "literature of ideas".
+    - It usually avoids the supernatural, unlike the related genre of fantasy.
+    - Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction.
+    - Science fiction is difficult to define, as it includes a wide range of subgenres
+      and themes.
+    - 'Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories"
+      magazine, wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells
+      and Edgar Allan Poe type of story—a charming romance intermingled with scientific
+      fact and prophetic vision... Not only do these amazing tales make tremendously
+      interesting reading—they are always instructive.'
+    - They supply knowledge... in a very palatable form... New adventures pictured
+      for us in the scientifiction of today are not at all impossible of realization
+      tomorrow...
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Magical objects in Harry Potter:
+      - The following is a list of magical objects used in the "Harry Potter" series.
+      - In "Harry Potter and the Order of the Phoenix", Hermione Granger creates fake,
+        enchanted Galleons that are used for communication between members of Dumbledore's
+        Army.
+      - Like real Galleons, the coins have numerals around the edge; on normal Galleons
+        these serial numbers aren't used the same way the enchanted coins are used,
+        the numbers represent the time and date of the next meeting, and automatically
+        change to match whatever numbers Harry Potter sets on his coin.
+      - Due to the coins being infused with a Protean Charm, once Harry Potter alters
+        his, every coin changes to suit.
+    - List of supporting Harry Potter characters:
+      - The following are supporting characters in the "Harry Potter" series written
+        by J. K. Rowling.
+      - For members of the Order of the Phoenix, Dumbledore's Army, Hogwarts staff,
+        Ministry of Magic, or for Death Eaters, see the respective articles.
+      - The Dursley family are Harry Potter's last living relatives.
+      - To ensure Harry's safety, Albus Dumbledore placed him in the Dursleys' care
+        when he was a baby.
+      - The Dursleys live at Number 4, Privet Drive, Little Whinging in Surrey, England.
+      - They are all Muggles, and despise all things related to magic – and anything
+        out of the ordinary in general – and the Wizarding World, especially the Potters.
+    - Harry Potter:
+      - Harry Potter is a series of fantasy novels written by British author J. K.
+        Rowling.
+      - The novels chronicle the life of a young wizard, Harry Potter, and his friends
+        Hermione Granger and Ron Weasley, all of whom are students at Hogwarts School
+        of Witchcraft and Wizardry.
+      - The main story arc concerns Harry's struggle against Lord Voldemort, a dark
+        wizard who intends to become immortal, overthrow the wizard governing body
+        known as the Ministry of Magic, and subjugate all wizards and muggles, a reference
+        term that means non-magical people.
+      - Since the release of the first novel, "Harry Potter and the Philosopher's
+        Stone", on 26 June 1997, the books have found immense popularity, critical
+        acclaim, and commercial success worldwide.
+    - Order of the Phoenix (fictional organisation):
+      - The Order of the Phoenix is a secret organisation in the "Harry Potter" series
+        of fiction books written by J. K. Rowling.
+      - Founded by Albus Dumbledore to fight Lord Voldemort and his followers, the
+        Death Eaters, the Order lends its name to the fifth book of the series, "Harry
+        Potter and the Order of the Phoenix".
+      - Before the Harry Potter series starts – when the character Lord Voldemort
+        declared war on the wizarding world – Albus Dumbledore, headmaster of Hogwarts
+        School of Witchcraft and Wizardry and an upstanding and powerful citizen of
+        the wizarding world, attempted to take control of the situation by founding
+        the Order of the Phoenix.
+    - Places in Harry Potter:
+      - J. K. Rowling's "Harry Potter" universe contains numerous settings for the
+        events in her fantasy novels.
+      - These locations are categorised as a dwelling, school, shopping district,
+        or government-affiliated locale.
+      - The Weasleys' home, known as the Burrow, is located outside the village of
+        Ottery St Catchpole, also near the home of the Lovegoods, the Diggorys and
+        the Fawcetts.
+      - The Burrow was used as the Order of the Phoenix's headquarters, due to the
+        compromised Fidelius Charm placed on 12 Grimmauld Place, in "Harry Potter
+        and the Deathly Hallows" until it lost its given protection.
+      - The Weasley house has seven floors.
+    - Ministry of Magic:
+      - The Ministry of Magic is the government of the Magical community of Britain
+        in "J. K. Rowling's Wizarding World" .The magical government in Britain is  first
+        mentioned in "Harry Potter and the Philosopher's Stone," the Ministry makes
+        its first proper appearance in "Harry Potter and the Order of the Phoenix".
+      - Throughout the books, it is generally depicted as either corrupt, incompetent,
+        or both, with its high officials blind to actual events and dangers.
+      - It reaches a zenith of corruption before being effectively taken over by Lord
+        Voldemort.
+      - At the end of the final book, following Voldemort's death, Kingsley Shacklebolt
+        takes over the ministry, changing it for the better.
+    - Harry Potter (film series):
+      - Harry Potter is a British-American film series based on the "Harry Potter"
+        novels by author J. K. Rowling.
+      - The series is distributed by Warner Bros. and consists of eight fantasy films,
+        beginning with "Harry Potter and the Philosopher's Stone" (2001) and culminating
+        with "Harry Potter and the Deathly Hallows – Part 2" (2011).
+      - A spin-off prequel series will consist of five films, starting with "Fantastic
+        Beasts and Where to Find Them" (2016).
+      - The "Fantastic Beasts" films mark the beginning of a shared media franchise
+        known as J. K. Rowling's Wizarding World.
+      - 'The series was mainly produced by David Heyman, and stars Daniel Radcliffe,
+        Rupert Grint, and Emma Watson as the three leading characters: Harry Potter,
+        Ron Weasley, and Hermione Granger.'
+    retrieved_topics:
+    - Magical objects in Harry Potter
+    - List of supporting Harry Potter characters
+    - Harry Potter
+    - Order of the Phoenix (fictional organisation)
+    - Places in Harry Potter
+    - Ministry of Magic
+    - Harry Potter (film series)
+    text: It's not quite sci-fi, but my favorite version of time travel is in Harry
+      Potter and the Prisoner of Azkaban. Breaks zero logical rules.
+    wizard_eval: 5
+num_episodes: 18430
+num_examples: 166787

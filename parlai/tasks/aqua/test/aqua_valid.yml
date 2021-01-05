@@ -1,0 +1,82 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - A ) 32400
+    id: AQuA
+    label_candidates:
+    - A ) 32400
+    - B ) 6000
+    - C ) 600
+    - D ) 60000
+    - E ) 10
+    text: Three birds are flying at a fast rate of 900 kilometers per hour . What
+      is their speed in miles per minute ? [ 1 km = 0.6 miles ]
+- - episode_done: true
+    eval_labels:
+    - 'To calculate the equivalent of miles in a kilometer
+
+      0.6 kilometers = 1 mile
+
+      900 kilometers = ( 0.6 ) * 900 = 540 miles
+
+      In 1 hour there are 60 minutes
+
+      Speed in miles / minutes = 60 * 540 = 32400
+
+      Correct answer - A'
+    id: AQuA
+    label_candidates:
+    - 'To calculate the equivalent of miles in a kilometer
+
+      0.6 kilometers = 1 mile
+
+      900 kilometers = ( 0.6 ) * 900 = 540 miles
+
+      In 1 hour there are 60 minutes
+
+      Speed in miles / minutes = 60 * 540 = 32400
+
+      Correct answer - A'
+    text: Can you provide a rationale for your answer?
+- - episode_done: false
+    eval_labels:
+    - D ) 250 m
+    id: AQuA
+    label_candidates:
+    - A ) 100 m
+    - B ) 150 m
+    - C ) 200 m
+    - D ) 250 m
+    - E ) 300 m
+    text: A ship is leaving a port . It takes 240 seconds to passes through a 750
+      m channel to get to the port gates , and takes 60 seconds to pass through the
+      gates of the port . What is its length ?
+- - episode_done: true
+    eval_labels:
+    - 'Let the length of the ship be x metres and its speed be y m / sec . Then ,
+      x / y = 60 ⇒ y = x / 60
+
+      ∴ ( x + 750 ) / 240 = x / 60 ⇔ x = 250 m . Answer D'
+    id: AQuA
+    label_candidates:
+    - 'Let the length of the ship be x metres and its speed be y m / sec . Then ,
+      x / y = 60 ⇒ y = x / 60
+
+      ∴ ( x + 750 ) / 240 = x / 60 ⇔ x = 250 m . Answer D'
+    text: Can you provide a rationale for your answer?
+- - episode_done: false
+    eval_labels:
+    - C ) 24
+    id: AQuA
+    label_candidates:
+    - A ) 6
+    - B ) 18
+    - C ) 24
+    - D ) 36
+    - E ) 48
+    text: A rectangular piece of cloth 2 feet wide was cut lengthwise into two smaller
+      rectangular pieces . The shorter piece was one - third of the length of the
+      longer of the 2 new pieces and had an area of 12 square feet . What was the
+      length Q in feet of the original piece of cloth before cutting ?
+num_episodes: 254
+num_examples: 508

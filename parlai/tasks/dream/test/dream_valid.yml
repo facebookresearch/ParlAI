@@ -1,0 +1,83 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - To change her job.
+    id: dream
+    label_candidates:
+    - To teach a different textbook.
+    - To change her job.
+    - To learn a different textbook.
+    text: 'M: How long have you been teaching in this middle school?
+
+      W: For ten years. To be frank, I''m tired of teaching the same textbook for
+      so long though I do enjoy being a teacher. I''m considering trying something
+      new.
+
+      What''s the woman probably going to do?'
+- - episode_done: true
+    eval_labels:
+    - Watch TV.
+    id: dream
+    label_candidates:
+    - Saw a film.
+    - Read a book.
+    - Watch TV.
+    text: 'M: Did you watch TV yesterday evening?
+
+      F: No, I saw a film instead.
+
+      What did the man probably do yesterday evening?'
+- - episode_done: false
+    eval_labels:
+    - The price sounds reasonable.
+    id: dream
+    label_candidates:
+    - It has all been booked out.
+    - The price sounds reasonable.
+    - The price includes one-way airfare.
+    text: 'M: Could you give me some information on your European tours?
+
+      W: Our pleasure. We have several package tours you may choose, from ten days
+      to three weeks in Europe.
+
+      M: I would be interested in a ten-day trip around Christmas time.
+
+      W: I have one ten-day tour that is still available. It will depart from New
+      York on December 24.
+
+      M: What is the cost?
+
+      W: The price for one person for a ten-day tour is only $1,088, which includes
+      round-trip airfare.
+
+      M: That sounds reasonable. By the way, do you have a discount for two?
+
+      W: Yes, you can have a 10% discount.
+
+      What can we learn about the ten-day tour?'
+- - episode_done: true
+    eval_labels:
+    - $1,958.
+    id: dream
+    label_candidates:
+    - $1,088.
+    - $1,958.
+    - $2,176.
+    text: If the man and his wife go on the recommended package tour, how much should
+      they pay?
+- - episode_done: true
+    eval_labels:
+    - Summer.
+    id: dream
+    label_candidates:
+    - Spring.
+    - Summer.
+    - Winter.
+    text: 'M: The summer vacation is coming next month. How about taking a trip to
+      Hawaii?
+
+      W: That''s a good idea.
+
+      What season is it now?'
+num_episodes: 1288
+num_examples: 2040

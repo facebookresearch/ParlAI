@@ -1,0 +1,104 @@
+acts:
+- - episode_done: true
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Danio is a genus of small freshwater fish in the family Cyprinidae found in
+      South and Southeast Asia, commonly kept in aquaria.
+    - They are generally characterised by a pattern of horizontal stripes, rows of
+      spots or vertical bars.
+    - Some species have two pairs of long barbels.
+    - Species of this genus consume various small aquatic insects, crustaceans and
+      worms.
+    labels:
+    - Some species have two pairs of long barbels.
+    reward: 0
+    text: Danio is a genus of small freshwater fish in the family Cyprinidae found
+      in South and Southeast Asia, commonly kept in aquaria. They are generally characterised
+      by a pattern of horizontal stripes, rows of spots or vertical bars. Some species
+      have two pairs of long barbels. Species of this genus consume various small
+      aquatic insects, crustaceans and worms.
+- - episode_done: true
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Livingston is a city in Sumter County, Alabama, United States.
+    - By an act of the state legislature, it was incorporated on January 10, 1835.
+    - At the 2010 census the population was 3,485, up from 3,297 in 2000.
+    - The city is the county seat of Sumter County.
+    - It was named in honor of Edward Livingston, of the Livingston family of New
+      York.
+    labels:
+    - Livingston is a city in Sumter County, Alabama, United States.
+    reward: 0
+    text: Livingston is a city in Sumter County, Alabama, United States. By an act
+      of the state legislature, it was incorporated on January 10, 1835. At the 2010
+      census the population was 3,485, up from 3,297 in 2000. The city is the county
+      seat of Sumter County. It was named in honor of Edward Livingston, of the Livingston
+      family of New York.
+- - episode_done: true
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Soldier Mountain Ski Area is an alpine ski area in the western United States,
+      in the Soldier Mountains of Sawtooth National Forest in south central Idaho.
+    - Located north of Fairfield in very rural Camas County, its summit elevation
+      is above sea level with a vertical drop of .
+    - The area has two chairlifts in series on its east-facing slopes, and a magic
+      carpet was installed in the fall of 2012 near the base.
+    labels:
+    - Located north of Fairfield in very rural Camas County, its summit elevation
+      is above sea level with a vertical drop of .
+    reward: 0
+    text: Soldier Mountain Ski Area is an alpine ski area in the western United States,
+      in the Soldier Mountains of Sawtooth National Forest in south central Idaho.
+      Located north of Fairfield in very rural Camas County, its summit elevation
+      is above sea level with a vertical drop of . The area has two chairlifts in
+      series on its east-facing slopes, and a magic carpet was installed in the fall
+      of 2012 near the base.
+- - episode_done: true
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Tyssøyna or Tyssøy is an island in Sund municipality in Hordaland county, Norway.
+    - The island lies in the northern part of the Raunefjorden.
+    - The island has a population of about 70 and it is connected to the neighboring
+      island of Bjorøy to the north via a short bridge.
+    - Bjorøy is connected to the mainland by the Bjorøy Tunnel.
+    - The island is named for the Norse god Týr.
+    - On the western side of the island is a wide and sheltered harbour called Tyssøyvågen.
+    - A norrow inlet leads into the harbour from the south, on the eastern side of
+      the inlet several large soap stone rock have tumbled down from the hillside.
+    labels:
+    - The island lies in the northern part of the Raunefjorden.
+    reward: 0
+    text: Tyssøyna or Tyssøy is an island in Sund municipality in Hordaland county,
+      Norway. The island lies in the northern part of the Raunefjorden. The island
+      has a population of about 70 and it is connected to the neighboring island of
+      Bjorøy to the north via a short bridge. Bjorøy is connected to the mainland
+      by the Bjorøy Tunnel. The island is named for the Norse god Týr. On the western
+      side of the island is a wide and sheltered harbour called Tyssøyvågen. A norrow
+      inlet leads into the harbour from the south, on the eastern side of the inlet
+      several large soap stone rock have tumbled down from the hillside.
+- - episode_done: true
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Old Trick New Dog is a 1998 album from David Cassidy on his own Slamajama Records
+      label.
+    - In addition to new songs, it also features several remakes of songs from "The
+      Partridge Family".
+    - The single lifted from the album - "No Bridge I Wouldn't Cross" - was an Adult
+      Contemporary Top 25 hit in the USA.
+    - The track - "You Were The One" - was co-written by David Cassidy and Tony Romeo
+      who wrote many of the most popular songs for Cassidy and The Partridge Family
+      in the 1970s, including I Think I Love You, "Summer Days", "I Am A Clown" and
+      "Sing Me".
+    labels:
+    - In addition to new songs, it also features several remakes of songs from "The
+      Partridge Family".
+    reward: 0
+    text: Old Trick New Dog is a 1998 album from David Cassidy on his own Slamajama
+      Records label. In addition to new songs, it also features several remakes of
+      songs from "The Partridge Family". The single lifted from the album - "No Bridge
+      I Wouldn't Cross" - was an Adult Contemporary Top 25 hit in the USA. The track
+      - "You Were The One" - was co-written by David Cassidy and Tony Romeo who wrote
+      many of the most popular songs for Cassidy and The Partridge Family in the 1970s,
+      including I Think I Love You, "Summer Days", "I Am A Clown" and "Sing Me".
+num_episodes: 79791
+num_examples: 79791

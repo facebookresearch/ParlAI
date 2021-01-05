@@ -336,9 +336,9 @@ jobs:
           marker: unit
 
   unittests_37:
-    executor: standard_cpu38
+    executor: standard_cpu37
     working_directory: ~/ParlAI
-    parallelism: 2
+    parallelism: 8
     steps:
       - runtests:
           more_installs:
@@ -422,7 +422,7 @@ jobs:
   teacher_tests:
     executor: standard_cpu37
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 16
     steps:
       - runtests:
           cachename: teacher

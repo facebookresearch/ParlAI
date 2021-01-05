@@ -1,0 +1,29 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Hello.
+    id: airdialogue
+    text: Hello.
+- - episode_done: false
+    eval_labels:
+    - How may I help you out?
+    id: airdialogue
+    text: My name is Emily Edwards.
+- - episode_done: false
+    eval_labels:
+    - Sure, I will help you out. May I know your travelling dates please?
+    id: airdialogue
+    text: I need some help in my flight ticket reservation to attend a convocation
+      meeting, can you please help me?
+- - episode_done: false
+    eval_labels:
+    - Can I know your airport codes?
+    id: airdialogue
+    text: Thank you and my dates are 06/12 and back on 06/14.
+- - episode_done: false
+    eval_labels:
+    - Ok, please wait a moment.
+    id: airdialogue
+    text: The airport codes are from DFW to IAD.
+num_episodes: 20181
+num_examples: 128413
