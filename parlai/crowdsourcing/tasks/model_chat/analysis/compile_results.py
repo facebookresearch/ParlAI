@@ -15,9 +15,10 @@ import numpy as np
 import pandas as pd
 
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
+from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
 
 
-class ModelChatResultsCompiler:
+class ModelChatResultsCompiler(AbstractResultsCompiler):
     """
     Compile and save results of human+model chats.
 
