@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import argparse
 from typing import Any, Dict
 
 
@@ -22,6 +23,19 @@ class AbstractResultsCompiler:
         'bucket_4',
         'none_all_good',
     ]
+
+    @classmethod
+    def setup_args(cls):
+        parser = argparse.ArgumentParser('Compile crowdsourcing results')
+        parser.add_argument(
+            '--results-folders',
+            type=str,
+            help='Comma-separated list of result folders (example: "/basefolder/mephisto/data/runs/NO_PROJECT/123")',
+        )
+        parser.add_argument(
+            '--output-folder', type=str, help='Folder to save output files to'
+        )
+        return parser
 
     def __init__(self, opt: Dict[str, Any]):
 

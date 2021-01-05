@@ -36,15 +36,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
 
     @classmethod
     def setup_args(cls):
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            '--results-folders',
-            type=str,
-            help='Comma-separated list of result folders (example: "/basefolder/mephisto/data/runs/NO_PROJECT/123")',
-        )
-        parser.add_argument(
-            '--output-folder', type=str, help='Folder to save output files to'
-        )
+        parser = super().setup_args()
         parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
@@ -539,6 +531,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
 
 
 if __name__ == '__main__':
-    parser = TurnAnnotationsStaticResultsCompiler.setup_args()
-    args = parser.parse_args()
+    parser_ = TurnAnnotationsStaticResultsCompiler.setup_args()
+    args = parser_.parse_args()
     TurnAnnotationsStaticResultsCompiler(vars(args)).compile_results()
