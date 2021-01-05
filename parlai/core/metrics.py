@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 import functools
 import datetime
-from typing import Union, List, Optional, Tuple, Set, Any, Dict
+from typing import Union, List, Optional, Tuple, Set, Any, Dict, Counter as TCounter
 
 import torch
 
@@ -23,7 +23,12 @@ from parlai.utils.typing import TScalar, TVector
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
 BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3', 'bleu-4'}
-DISTINCT_METRICS = {'distinct-1', 'distinct-2'}
+DISTINCT_METRICS = {
+    'interdistinct-1',
+    'interdistinct-2',
+    'intradistinct-1',
+    'instradistinct-2',
+}
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS | DISTINCT_METRICS
 
 
@@ -524,11 +529,38 @@ class RougeMetric(AverageMetric):
         )
 
 
-class InterDistinctMetric(Metric):
-    def __init__(self, counts):
-        """
-        Compute inter-distinct metric over corpus-level.
+class IntraDistinctMetric(AverageMetric):
+    """
+    Compute intra-distinct (per-utterance).
+    """
 
+    @classmethod
+    def _ngram(cls, seq, n: int):
+        for i in range(len(seq) - n + 1):
+            yield tuple(seq[i : i + n])
+
+    @classmethod
+    def compute(cls, text: str, ngram: int = 1):
+        """
+        :param text:
+            The text to compute metric over
+        :param ngram:
+            n-gram length
+        """
+        tokens = normalize_answer(text).split()
+        counts = Counter(cls._ngram(tokens, ngram))
+        # computed per-example, macro averaged across examples
+        intra = max(len(counts), 1e-12) / max(sum(counts.values()), 1e-5)
+        return IntraDistinctMetric(intra, 1.0)
+
+
+class InterDistinctMetric(Metric):
+    """
+    Compute inter-distinct metric over corpus-level.
+    """
+
+    def __init__(self, counts: TCounter[Tuple]):
+        """
         :param counts:
             collections.Counter of ngram -> frequency
         """
@@ -538,7 +570,7 @@ class InterDistinctMetric(Metric):
         return InterDistinctMetric(self._counts + other._counts)
 
     def value(self):
-        return (len(self._counts) + 1e-12) / (sum(self._counts.values()) + 1e-5)
+        return max(len(self._counts), 1e-12) / max(sum(self._counts.values()), 1e-5)
 
     @classmethod
     def _ngram(cls, seq, n):
@@ -763,9 +795,15 @@ class TeacherMetrics(Metrics):
                 if 'rouge-L' in self._metrics_list and rL:
                     self.add('rouge_L', rL)
             # compute distinct-k
-            for k in range(1, 3):  # 1,2
-                if f'distinct-{k}' in self._metrics_list:
-                    self.add(f'distinct-{k}', InterDistinctMetric.compute(prediction, k))
+            for k in [1, 2]:  # 1,2
+                if f'interdistinct-{k}' in self._metrics_list:
+                    self.add(
+                        f'interdistinct-{k}', InterDistinctMetric.compute(prediction, k)
+                    )
+                if f'intradistinct-{k}' in self._metrics_list:
+                    self.add(
+                        f'intradistinct-{k}', IntraDistinctMetric.compute(prediction, k)
+                    )
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)
