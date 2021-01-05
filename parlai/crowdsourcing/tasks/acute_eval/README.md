@@ -64,7 +64,7 @@ This is a template of the expected format with the minimal expected fields:
       ]
     }
 
-Note that we assume that "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Speakers that we would like to evaluate in the dialogues of `dialogue_dicts` should appear in the same order as `speakers_to_eval`; consequently, the number of entries should be the same between the values of these fields. See `task_config/pairings.jsonl` for examples of the format required.
+Note that we assume that "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Speakers that we would like to evaluate in the dialogues of `dialogue_dicts` should appear in the same order as `speakers_to_eval`. (Consequently, the number of dialogues in `dialogues_dicts` will be the same as the number of speakers in `speakers_to_eval`.) See `task_config/pairings.jsonl` for examples of the format required.
 
 You can add an `"image_src"` key to an entry of `"dialogue"` to append an image to a chat message. The value of the key should be a serialized image, starting with a string such `data:image/jpeg;base64,`.
 
