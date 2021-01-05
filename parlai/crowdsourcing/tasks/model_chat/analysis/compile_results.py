@@ -495,4 +495,4 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
 if __name__ == '__main__':
     parser_ = ModelChatResultsCompiler.setup_args()
     args_ = parser_.parse_args()
-    _ = ModelChatResultsCompiler(vars(args_)).compile_results()
+    ModelChatResultsCompiler(vars(args_)).compile_results()

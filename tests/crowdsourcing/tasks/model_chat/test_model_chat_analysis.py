@@ -51,7 +51,7 @@ try:
     """
                     parser_ = ModelChatResultsCompiler.setup_args()
                     args_ = parser_.parse_args(arg_string.split())
-                    _ = ModelChatResultsCompiler(vars(args_)).compile_results()
+                    ModelChatResultsCompiler(vars(args_)).compile_results()
                     stdout = output.getvalue()
 
                 # Define output structure
