@@ -174,11 +174,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     for d in data['dialog']
                     if d['agent_idx'] == 0
                 ]
-                if np.average(word_counts) < self.min_word_count or (
-                    'contradiction' in self.problem_buckets and 'contradiction' in words
-                ):
-                    # If we are checking for contradictions, make sure that the user
-                    # didn't use the word "contradiction" in their reponse
+                if np.average(word_counts) < self.min_word_count:
                     bad_conversations.append(data)
                     print(
                         f'Bad complete conversation, words from human: {utterances}. Skipping.'
