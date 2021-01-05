@@ -7,7 +7,6 @@
 
 import os
 from dataclasses import dataclass, field
-from itertools import chain
 from typing import List, Any
 
 import hydra
@@ -16,13 +15,13 @@ from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
     BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
-from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
+from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
 
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
-from parlai.core.params import ParlaiParser
-from parlai.core.worlds import create_task
+from parlai.crowdsourcing.tasks.qa_data_collection.util import get_teacher
+from parlai.crowdsourcing.utils.frontend import build_task
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -42,9 +41,15 @@ class TeacherConfig:
 
 
 @dataclass
-class TestScriptConfig(RunScriptConfig):
+class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
+    monitoring_log_rate: int = field(
+        default=30,
+        metadata={
+            'help': 'Frequency in seconds of logging the monitoring of the crowdsourcing task'
+        },
+    )
     turn_timeout: int = field(
         default=300,
         metadata={
@@ -55,38 +60,30 @@ class TestScriptConfig(RunScriptConfig):
     teacher: TeacherConfig = TeacherConfig()
 
 
-register_script_config(name="scriptconfig", module=TestScriptConfig)
+register_script_config(name="scriptconfig", module=ScriptConfig)
 
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 
-    parser = ParlaiParser(True, False)
-    opt = parser.parse_args(
-        list(chain.from_iterable(('--' + k, v) for k, v in cfg.teacher.items()))
-    )
-    agent = RepeatLabelAgent(opt)
-    teacher = create_task(opt, agent).get_task_agent()
-
+    teacher = get_teacher(cfg)
     world_opt = {"turn_timeout": cfg.turn_timeout, "teacher": teacher}
 
     custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
     if custom_bundle_path is not None:
-        assert os.path.exists(custom_bundle_path), (
-            "Must build the custom bundle with `npm install; npm run dev` from within "
-            f"the {TASK_DIRECTORY}/webapp directory in order to demo a custom bundle "
-        )
-        world_opt["send_task_data"] = True
+        if not os.path.exists(custom_bundle_path):
+            build_task(TASK_DIRECTORY)
 
     shared_state = SharedParlAITaskState(
         world_opt=world_opt, onboarding_world_opt=world_opt
     )
 
     operator = Operator(db)
-
-    operator.validate_and_run_config(cfg.mephisto, shared_state)
-    operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
+    operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)
+    operator.wait_for_runs_then_shutdown(
+        skip_input=True, log_rate=cfg.monitoring_log_rate
+    )
 
 
 if __name__ == "__main__":

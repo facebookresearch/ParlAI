@@ -1,0 +1,109 @@
+acts:
+- - episode_done: false
+    id: wizard_of_wikipedia:docreader
+    labels:
+    - Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life.
+    text: 'Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life. Science fiction often explores the potential
+      consequences of scientific and other innovations, and has been called a "literature
+      of ideas". It usually avoids the supernatural, unlike the related genre of fantasy.
+      Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction. Science fiction is difficult
+      to define, as it includes a wide range of subgenres and themes. Hugo Gernsback,
+      who suggested the term "scientifiction" for his "Amazing Stories" magazine,
+      wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells and Edgar
+      Allan Poe type of story—a charming romance intermingled with scientific fact
+      and prophetic vision... Not only do these amazing tales make tremendously interesting
+      reading—they are always instructive. They supply knowledge... in a very palatable
+      form... New adventures pictured for us in the scientifiction of today are not
+      at all impossible of realization tomorrow...
+
+      Science fiction'
+- - episode_done: false
+    id: wizard_of_wikipedia:docreader
+    labels:
+    - Science fiction films have often been used to focus on political or social issues,
+      and to explore philosophical issues like the human condition.
+    text: 'Science fiction film (or sci-fi film) is a genre that uses speculative,
+      fictional science-based depictions of phenomena that are not fully accepted
+      by mainstream science, such as extraterrestrial lifeforms, alien worlds, extrasensory
+      perception and time travel, along with futuristic elements such as spacecraft,
+      robots, cyborgs, interstellar travel or other technologies. Science fiction
+      films have often been used to focus on political or social issues, and to explore
+      philosophical issues like the human condition. In many cases, tropes derived
+      from written science fiction may be used by filmmakers ignorant of or at best
+      indifferent to the standards of scientific plausibility and plot logic to which
+      written science fiction is traditionally held.
+
+      I think science fiction is an amazing genre for anything. Future science, technology,
+      time travel, FTL travel, they''re all such interesting concepts.'
+- - episode_done: false
+    id: wizard_of_wikipedia:docreader
+    labels:
+    - The central premise for these stories oftentimes involves changing history,
+      either intentionally or by accident, and the ways by which altering the past
+      changes the future and creates an altered present or future for the time traveler
+      when they return home.
+    text: 'Time travel is a common theme in fiction and has been depicted in a variety
+      of media, such as literature, television, film, and advertisements. The concept
+      of time travel by mechanical means was popularized in H. G. Wells'' 1895 story,
+      "The Time Machine". In general, time travel stories focus on the consequences
+      of traveling into the past or the future. The central premise for these stories
+      oftentimes involves changing history, either intentionally or by accident, and
+      the ways by which altering the past changes the future and creates an altered
+      present or future for the time traveler when they return home.
+
+      I agree. One of my favorite forms of science fiction is anything related to
+      time travel! I find it fascinating.'
+- - episode_done: true
+    id: wizard_of_wikipedia:docreader
+    labels:
+    - Science fiction often explores the potential consequences of scientific and
+      other innovations, and has been called a "literature of ideas".
+    text: 'Science fiction (often shortened to SF or sci-fi) is a genre of speculative
+      fiction, typically dealing with imaginative concepts such as futuristic science
+      and technology, space travel, time travel, faster than light travel, parallel
+      universes, and extraterrestrial life. Science fiction often explores the potential
+      consequences of scientific and other innovations, and has been called a "literature
+      of ideas". It usually avoids the supernatural, unlike the related genre of fantasy.
+      Historically, science-fiction stories have had a grounding in actual science,
+      but now this is only expected of hard science fiction. Science fiction is difficult
+      to define, as it includes a wide range of subgenres and themes. Hugo Gernsback,
+      who suggested the term "scientifiction" for his "Amazing Stories" magazine,
+      wrote: "By ''scientifiction'' I mean the Jules Verne, H. G. Wells and Edgar
+      Allan Poe type of story—a charming romance intermingled with scientific fact
+      and prophetic vision... Not only do these amazing tales make tremendously interesting
+      reading—they are always instructive. They supply knowledge... in a very palatable
+      form... New adventures pictured for us in the scientifiction of today are not
+      at all impossible of realization tomorrow...
+
+      Science fiction'
+- - episode_done: false
+    id: wizard_of_wikipedia:docreader
+    labels:
+    - Internet access was once rare, but has grown rapidly.
+    text: 'Internet access is the ability of individuals and organizations to connect
+      to the Internet using computer terminals, computers, and other devices; and
+      to access services such as email and the World Wide Web. Various technologies,
+      at a wide range of speeds have been used by Internet service providers (ISPs)
+      to provide this service. Internet access was once rare, but has grown rapidly.
+      In 1995, only percent of the world''s population had access, with well over
+      half of those living in the United States, and consumer use was through dial-up.
+      By the first decade of the 21st century, many consumers in developed nations
+      used faster broadband technology, and by 2014, 41 percent of the world''s population
+      had access, broadband was almost ubiquitous worldwide, and global average connection
+      speeds exceeded 1 Mbit/s. The Internet developed from the ARPANET, which was
+      funded by the US government to support projects within the government and at
+      universities and research laboratories in the US – but grew over time to include
+      most of the world''s large universities and the research arms of many technology
+      companies. Use by a wider audience only came in 1995 when restrictions on the
+      use of the Internet to carry commercial traffic were lifted.
+
+      Internet access'
+num_episodes: 18430
+num_examples: 77526

@@ -1,0 +1,124 @@
+CONVO PAIR ID: 45
+
+WINNING DIALOGUE: convai2_logs
+[convai2_logs_as_human]: Hello. How are you? Do you have kids?
+[convai2_logs]: No. I am just fourteen myself.
+[convai2_logs_as_human]: My youngest kid is 14. Do you have hobbies?
+[convai2_logs]: Swimming and playing video games and believe it or not, sports cars
+[convai2_logs_as_human]: What is your favorite food?
+[convai2_logs]: Pizza all day long. What do you like to eat?
+[convai2_logs_as_human]: Hot wings. So good. Do you like to sing?
+[convai2_logs]: I'm not good. Grandpa and mom say for me to be quiet.
+[convai2_logs_as_human]: My church has a choir. I sing soprano. You should sing in church.
+[convai2_logs]: My friends carol, mia and stephanie do that. I am not a good singer though.
+[convai2_logs_as_human]: My kids say I am not that good. But I am on the road often.
+[convai2_logs]: What is your job? I bet you sing in the car too.
+[convai2_logs_as_human]: I drive a truck.
+[convai2_logs]: Stick shift? You are good! My grandmother drives a stick.
+[convai2_logs_as_human]: No. I am a commercial truck driver.
+[convai2_logs]: And you sing too. I want to learn to drive sports cars and trucks
+
+LOSING DIALOGUE: ed_logs
+[ed_logs_as_human]: One of my friend didn't keep this promise he made to me. I was so angry to him.
+[ed_logs]: What promise didn't he keep?
+[ed_logs_as_human]: I was suppose to help me move from my apartment. He didn't come and turned off his cell phone.
+[ed_logs]: Wow that sounds like a terrible friend. I hope he had a good reason for not showing up.
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: convai2_logs
+REASON: Makes more sense
+
+
+
+CONVO PAIR ID: 62
+
+WINNING DIALOGUE: ed_logs
+[ed_logs_as_human]: What happened?!
+[ed_logs]: I filled an entire cart with food for a party and then realized I had forgot me purse at home.
+[ed_logs_as_human]: Oh no. Did you end up having to leave the cart?
+[ed_logs]: Yes. My apartment is close by but it was still embarrassing
+
+LOSING DIALOGUE: convai2_logs
+[convai2_logs_as_human]: Hi. I'm super lazy
+[convai2_logs]: It can be enjoyable to be lazy sometimes. I like to relax on the beach.
+[convai2_logs_as_human]: I love to paint trees
+[convai2_logs]: That sounds nice. I ride my bike on a nice path that goes through the trees.
+[convai2_logs_as_human]: Don't get stuck! Oh dear
+[convai2_logs]: Oh no. It is a fine path.
+[convai2_logs_as_human]: Ok good. Do not wanna call 911
+[convai2_logs]: It doesn't literally go through a tree. Ha ha ha.
+[convai2_logs_as_human]: Oh ok good. That was scarry
+[convai2_logs]: I have simplified my life. I was once employed with a cable company.
+[convai2_logs_as_human]: Oh that's good. I get lonely
+[convai2_logs]: I now make rope. I work with many people. You'dn't be lonely there.
+[convai2_logs_as_human]: Can I come then please
+[convai2_logs]: Oh yes. You would like it. I like it there.
+[convai2_logs_as_human]: Ok, I'm on my way
+[convai2_logs]: We have plenty of rope to make. I don't know what the deal with cable is.
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: ed_logs
+REASON: Makes more sense
+
+
+
+CONVO PAIR ID: 21
+
+WINNING DIALOGUE: convai2_logs
+[convai2_logs_as_human]: Hey, how are you doing today?
+[convai2_logs]: I am great. Drinking some iced tea, which I love.
+[convai2_logs_as_human]: That sounds great. I cannot even make iced tea, I'm such a lowly cook.
+[convai2_logs]: That's too bad. It just takes practice. My mom taught me to cok.
+[convai2_logs_as_human]: That is awesome. I am ovo vegetarian, so its hard to find restaurants.
+[convai2_logs]: I'll bet! My youngest sister I've four is a vegetarian.
+[convai2_logs_as_human]: Neat. What do you do on your days off? I like to sleep in.
+[convai2_logs]: Believe it or not, I study mermaids.
+[convai2_logs_as_human]: That is fascinating. Tell me all about them.
+[convai2_logs]: Mermaids are real. Most people do not know that.
+[convai2_logs_as_human]: I'd have thought they were not real, but you have convinced me!
+[convai2_logs]: Yeah, the evidence is overwhelming when you really look.
+[convai2_logs_as_human]: That makes sense to my mind. I wonder how long they have been here.
+[convai2_logs]: Probably longer than us. I wish one of my four sisters was a mermaid!
+
+LOSING DIALOGUE: ed_logs
+[ed_logs_as_human]: Why don't you say something?
+[ed_logs]: I did, she calls me a helicopter parent and just laughs at me
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: convai2_logs
+REASON: Makes more sense
+
+
+
+CONVO PAIR ID: 81
+
+WINNING DIALOGUE: ed_logs
+[ed_logs_as_human]: Do you watch game of thrones?
+[ed_logs]: I watched the first season.
+[ed_logs_as_human]: I love that show. I'm sad it is ending. It should stay on forever.
+[ed_logs]: What? It's ending? I heard he hasn't yet finished the books.
+
+LOSING DIALOGUE: convai2_logs
+[convai2_logs_as_human]: Hi how are you today
+[convai2_logs]: Hello there. God bless you.
+[convai2_logs_as_human]: Bless you too did you sneeze?
+[convai2_logs]: I am just the religious type. Don't get me agitated.
+[convai2_logs_as_human]: But how are you today?
+[convai2_logs]: I'm tired after just getting back from the trip to london.
+[convai2_logs_as_human]: What did you do there
+[convai2_logs]: I visited the pope, what else would I do?
+[convai2_logs_as_human]: Probably eat a pizza or something
+[convai2_logs]: I'd eat pizza while watching the game shows I love.
+[convai2_logs_as_human]: What is the best one
+[convai2_logs]: Please don't get me agitated, it will happen really easily!
+[convai2_logs_as_human]: Wow and why is that then
+[convai2_logs]: God will take of that. What do you like to do?
+[convai2_logs_as_human]: I can not see any colors
+[convai2_logs]: That would make it hard to watch game shows.
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: ed_logs
+REASON: Makes more sense
+
+
+

@@ -1,0 +1,43 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - France
+    - France
+    - France
+    - France
+    id: squad2
+    text: In what country is Normandy located?
+- - episode_done: true
+    eval_labels:
+    - 10th and 11th centuries
+    - in the 10th and 11th centuries
+    - 10th and 11th centuries
+    - 10th and 11th centuries
+    id: squad2
+    text: When were the Normans in Normandy?
+- - episode_done: true
+    eval_labels:
+    - Denmark, Iceland and Norway
+    - Denmark, Iceland and Norway
+    - Denmark, Iceland and Norway
+    - Denmark, Iceland and Norway
+    id: squad2
+    text: From which countries did the Norse originate?
+- - episode_done: true
+    eval_labels:
+    - Rollo
+    - Rollo
+    - Rollo
+    - Rollo
+    id: squad2
+    text: Who was the Norse leader?
+- - episode_done: true
+    eval_labels:
+    - 10th century
+    - the first half of the 10th century
+    - 10th
+    - 10th
+    id: squad2
+    text: What century did the Normans first gain their separate identity?
+num_episodes: 11873
+num_examples: 11873

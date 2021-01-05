@@ -1,0 +1,50 @@
+Available models: model_1, model_2
+Retrieving stack 0 for worker 3 and test case model_2.
+STACK:  [{'model_1': [], 'model_2': ['3']}, {'model_1': [], 'model_2': []}, {'model_1': [], 'model_2': []}]
+Available models: model_1, model_2
+Retrieving stack 0 for worker 0 and test case model_2.
+STACK:  [{'model_1': [], 'model_2': ['3', '0']}, {'model_1': [], 'model_2': []}, {'model_1': [], 'model_2': []}]
+Available models: model_1
+Retrieving stack 0 for worker 4 and test case model_1.
+STACK:  [{'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': [], 'model_2': []}, {'model_1': [], 'model_2': []}]
+Pointer for worker 3 at 0
+Available models: model_1, model_2
+Retrieving stack 1 for worker 3 and test case model_2.
+STACK:  [{'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': [], 'model_2': ['3']}, {'model_1': [], 'model_2': []}]
+Pointer for worker 3 at 0
+Pointer for worker 3 at 0
+Available models: model_1, model_2
+Retrieving stack 2 for worker 3 and test case model_2.
+STACK:  [{'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': [], 'model_2': ['3']}, {'model_1': [], 'model_2': ['3']}]
+Pointer for worker 4 at 0
+Available models: model_1, model_2
+Retrieving stack 1 for worker 4 and test case model_1.
+STACK:  [{'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': ['4'], 'model_2': ['3']}, {'model_1': [], 'model_2': ['3']}]
+Pointer for worker 4 at 0
+Pointer for worker 4 at 0
+Available models: model_1, model_2
+Retrieving stack 2 for worker 4 and test case model_1.
+STACK:  [{'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': ['4'], 'model_2': ['3']}, {'model_1': ['4'], 'model_2': ['3']}]
+Available models: model_1
+Retrieving stack 0 for worker 2 and test case model_1.
+STACK:  [{'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4'], 'model_2': ['3']}, {'model_1': ['4'], 'model_2': ['3']}]
+Pointer at 1
+Available models: model_1, model_2
+Retrieving stack 1 for worker 0 and test case model_2.
+STACK:  [{'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': ['4'], 'model_2': ['3']}]
+Pointer for worker 4 at 1
+Pointer for worker 4 at 1
+WARNING: getting a random stack for worker 4.
+Available models: model_1, model_2
+Retrieving stack 2 for worker 4 and test case model_1.
+STACK:  [{'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': ['4', '4'], 'model_2': ['3']}]
+Available models: model_1
+Retrieving stack 1 for worker 2 and test case model_1.
+STACK:  [{'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4', '4'], 'model_2': ['3']}]
+Pointer at 2
+Available models: model_2
+Retrieving stack 2 for worker 0 and test case model_2.
+STACK:  [{'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4', '4'], 'model_2': ['3', '0']}]
+Removing worker 2 from stack 0.
+Moving pointer from 2 to 0.
+STACK:  [{'model_1': ['4'], 'model_2': ['3', '0']}, {'model_1': ['4', '2'], 'model_2': ['3', '0']}, {'model_1': ['4', '4'], 'model_2': ['3', '0']}]

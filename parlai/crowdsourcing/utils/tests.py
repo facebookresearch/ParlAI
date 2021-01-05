@@ -52,7 +52,7 @@ class AbstractCrowdsourcingTest:
         """
 
         if self.operator is not None:
-            self.operator.shutdown()
+            self.operator.force_shutdown()
 
     def _set_up_config(
         self,

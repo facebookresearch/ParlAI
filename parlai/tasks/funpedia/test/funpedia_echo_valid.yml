@@ -1,0 +1,55 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball player.
+    id: funpedia:echo
+    reward: 0
+    text: 'Bill Closs
+
+      Deep
+
+      Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball player.'
+- - episode_done: true
+    eval_labels:
+    - Gerald Rashard Everett (born June 25, 1994) is an American football tight end
+      for the Los Angeles Rams of the National Football League (NFL).
+    id: funpedia:echo
+    reward: 0
+    text: 'Gerald Everett
+
+      Playful
+
+      Gerald Rashard Everett (born June 25, 1994) is an American football tight end
+      for the Los Angeles Rams of the National Football League (NFL).'
+- - episode_done: true
+    eval_labels:
+    - The Nahoni Range is a mountain range in the Yukon, Canada.
+    id: funpedia:echo
+    reward: 0
+    text: 'Nahoni Range
+
+      Creative
+
+      The Nahoni Range is a mountain range in the Yukon, Canada.'
+- - episode_done: true
+    eval_labels:
+    - The Vieux Fort River is a river in Saint Lucia.
+    id: funpedia:echo
+    reward: 0
+    text: 'Vieux Fort River
+
+      Insightful
+
+      The Vieux Fort River is a river in Saint Lucia.'
+- - episode_done: true
+    eval_labels:
+    - Popovača is a town in Croatia in the Moslavina geographical region.
+    id: funpedia:echo
+    reward: 0
+    text: 'Popovača
+
+      Objective (Detached, Impartial)
+
+      Popovača is a town in Croatia in the Moslavina geographical region.'
+num_episodes: 10184
+num_examples: 10184

@@ -1,0 +1,71 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball player.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball player.
+    - He played collegiately for Rice University.
+    - In his final year, he led the Southwest Conference in scoring and was All-American
+      in 1943.
+    - In 1971 he was inducted into the Rice Athletic Hall of Fame, and in 2003 his
+      basketball jersey was retired.
+    reward: 0
+    text: Bill Tom Closs (January 8, 1922 – June 6, 2011) was an American basketball
+      player. He played collegiately for Rice University. In his final year, he led
+      the Southwest Conference in scoring and was All-American in 1943. In 1971 he
+      was inducted into the Rice Athletic Hall of Fame, and in 2003 his basketball
+      jersey was retired.
+- - episode_done: true
+    eval_labels:
+    - Gerald Rashard Everett (born June 25, 1994) is an American football tight end
+      for the Los Angeles Rams of the National Football League (NFL).
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Gerald Rashard Everett (born June 25, 1994) is an American football tight end
+      for the Los Angeles Rams of the National Football League (NFL).
+    - He played college football at South Alabama, and was drafted by the Rams in
+      the second round of the 2017 NFL Draft.
+    reward: 0
+    text: Gerald Rashard Everett (born June 25, 1994) is an American football tight
+      end for the Los Angeles Rams of the National Football League (NFL). He played
+      college football at South Alabama, and was drafted by the Rams in the second
+      round of the 2017 NFL Draft.
+- - episode_done: true
+    eval_labels:
+    - The Nahoni Range is a mountain range in the Yukon, Canada.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - The Nahoni Range is a mountain range in the Yukon, Canada.
+    - It has an area of 4535 km and is a subrange of the Ogilvie Mountains which in
+      turn form part of the Yukon Ranges.
+    reward: 0
+    text: The Nahoni Range is a mountain range in the Yukon, Canada. It has an area
+      of 4535 km and is a subrange of the Ogilvie Mountains which in turn form part
+      of the Yukon Ranges.
+- - episode_done: true
+    eval_labels:
+    - The Vieux Fort River is a river in Saint Lucia.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - The Vieux Fort River is a river in Saint Lucia.
+    - It flows south-southeast, reaching the coast close to the country's southernmost
+      point at the town of Vieux Fort.
+    reward: 0
+    text: The Vieux Fort River is a river in Saint Lucia. It flows south-southeast,
+      reaching the coast close to the country's southernmost point at the town of
+      Vieux Fort.
+- - episode_done: true
+    eval_labels:
+    - Popovača is a town in Croatia in the Moslavina geographical region.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Popovača is a town in Croatia in the Moslavina geographical region.
+    - Administratively it is part of the Sisak-Moslavina County.
+    - The town has a population of 11,905 (2011 census), 96% of which are ethnic Croats.
+    reward: 0
+    text: Popovača is a town in Croatia in the Moslavina geographical region. Administratively
+      it is part of the Sisak-Moslavina County. The town has a population of 11,905
+      (2011 census), 96% of which are ethnic Croats.
+num_episodes: 9974
+num_examples: 9974

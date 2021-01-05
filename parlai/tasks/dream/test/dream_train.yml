@@ -1,0 +1,78 @@
+acts:
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - Consult her dancing teacher.
+    - Take a more interesting class.
+    - Continue her dancing class.
+    labels:
+    - Continue her dancing class.
+    text: 'M: I am considering dropping my dancing class. I am not making any progress.
+
+      W: If I were you, I stick with it. It''s definitely worth time and effort.
+
+      What does the man suggest the woman do?'
+- - episode_done: false
+    id: dream
+    label_candidates:
+    - It's really terrible.
+    - It's very good indeed.
+    - It's better than what he does.
+    labels:
+    - It's very good indeed.
+    text: 'W: Well, I''m afraid my cooking isn''t to your taste.
+
+      M: Actually, I like it very much.
+
+      W: I''m glad you enjoy it. Let me serve you some more fish.
+
+      M: No, thank you. I''ve had enough fish, but I''d like some soup.
+
+      W: Here it is. Help yourself!
+
+      M: Thanks. I didn''t know you were so good at cooking. If only my wife could
+      learn to cook from you.
+
+      W: Why not bring your wife next time? I haven''t seen her for quite a while.
+
+      M: OK, I will. She will be very glad to see you, too. Thank you for the wonderful
+      meal.
+
+      What does the man think of the woman''s cooking?'
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - Improve cooking skills.
+    - Bring his wife next time.
+    - Have some soup.
+    labels:
+    - Bring his wife next time.
+    text: What does the woman ask the man to do?
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - At home
+    - In their classroom
+    - On the street
+    labels:
+    - On the street
+    text: 'M: Look at the girl on the bike!
+
+      F: Oh, yes she''s really a smart girl.
+
+      Where are the two persons?'
+- - episode_done: true
+    id: dream
+    label_candidates:
+    - To play the piano.
+    - To give a performance.
+    - To sing a song.
+    labels:
+    - To play the piano.
+    text: 'M: Can you accompany me while I am singing.
+
+      W: I don''t play very well, but I will give it a try.
+
+      What does the man want the woman to do?'
+num_episodes: 3869
+num_examples: 6116

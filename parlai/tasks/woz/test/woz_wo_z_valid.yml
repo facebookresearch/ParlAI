@@ -1,0 +1,46 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - area:south
+    - price range:expensive
+    id: woz
+    text: 'I''m looking for an expensive restaurant in the south part of town.
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - request:phone
+    - request:address
+    id: woz
+    text: 'Okay, what is the next one after that.  And can I get the address and phone
+      number both, please?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - area:west
+    - price range:cheap
+    id: woz
+    text: 'I''m looking for a cheap restaurant in the west.
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - request:phone
+    - request:address
+    id: woz
+    text: 'What is the address and phone number?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - area:centre
+    - food:spanish
+    - request:phone
+    - request:address
+    id: woz
+    text: 'Looking for the address and phone of a spanish in the centre of town.
+
+      What is the change in the dialogue state?'
+num_episodes: 563
+num_examples: 563

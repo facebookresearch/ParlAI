@@ -1,0 +1,1213 @@
+acts:
+- - checked_sentence: Gardening is considered by many people to be a relaxing activity.
+    chosen_topic: Gardening
+    episode_done: false
+    eval_labels:
+    - I live on a farm, we garden all year long, it is very relaxing.
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Gardening __knowledge__ Gardening is the practice of growing and cultivating
+      plants as part of horticulture.
+
+      Gardening __knowledge__ In gardens, ornamental plants are often grown for their
+      flowers, foliage, or overall appearance; useful plants, such as root vegetables,
+      leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+      or for medicinal or cosmetic use.
+
+      Gardening __knowledge__ Gardening is considered by many people to be a relaxing
+      activity.
+
+      Gardening __knowledge__ Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside.
+
+      Gardening __knowledge__ Gardening may be very specialized, with only one type
+      of plant grown, or involve a large number of different plants in mixed plantings.
+
+      Gardening __knowledge__ It involves an active participation in the growing of
+      plants, and tends to be labor-intensive, which differentiates it from farming
+      or forestry.
+
+      Gardening __knowledge__ Forest gardening, a forest-based food production system,
+      is the world''s oldest form of gardening.
+
+      Gardening __knowledge__ Forest gardens originated in prehistoric times along
+      jungle-clad river banks and in the wet foothills of monsoon regions.
+
+      Gardening __knowledge__ In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      List of Gun Sword characters __knowledge__ This is a list of the fictional characters,
+      with biographical details, in the Japanese anime "Gun Sword" (full name Gun
+      x Sword: the "x" is silent) the story of which takes place on the fictional
+      "Planet of Endless Illusion".
+
+      List of Gun Sword characters __knowledge__ Van is the primary protagonist of
+      the series.
+
+      List of Gun Sword characters __knowledge__ He is traveling the world, searching
+      after a mysterious man with an artificial claw hand who killed his bride, Helena,
+      on the day of their wedding.
+
+      List of Gun Sword characters __knowledge__ Van swore to kill this man to avenge
+      Helena.
+
+      List of Gun Sword characters __knowledge__ His primary weapon is a shape-memory
+      cloth held at his side like a pistol.
+
+      List of Gun Sword characters __knowledge__ When an electrical charge is run
+      through the weapon, it can change configuration to a dueling sword or extend
+      to grapple or embed itself into walls.
+
+      Guerrilla gardening __knowledge__ Guerrilla gardening is the act of gardening
+      on land that the gardeners do not have the legal rights to cultivate, such as
+      abandoned sites, areas that are not being cared for, or private property.
+
+      Guerrilla gardening __knowledge__ It encompasses a diverse range of people and
+      motivations, ranging from gardeners who spill over their legal boundaries to
+      gardeners with political influences who seek to provoke change by using guerrilla
+      gardening as a form of protest or direct action.
+
+      Guerrilla gardening __knowledge__ This practice has implications for land rights
+      and land reform; aiming to promote re-consideration of land ownership in order
+      to assign a new purpose or reclaim land that is perceived to be in neglect or
+      misused.
+
+      History of gardening __knowledge__ The history of ornamental gardening may be
+      considered as aesthetic expressions of beauty through art and nature, a display
+      of taste or style in civilized life, an expression of an individual''s or culture''s
+      philosophy, and sometimes as a display of private status or national pride—in
+      private and public landscapes.
+
+      History of gardening __knowledge__ Forest gardening, a plant-based food pro-system,
+      is the world''s oldest form of gardening.
+
+      History of gardening __knowledge__ Forest gardens originated in prehistoric
+      times along jungle-clad river banks and in the wet foothills of monsoon regions.
+
+      History of gardening __knowledge__ In the gradual process of families improving
+      their immediate environment, useful tree and vine species were identified, protected,
+      and improved while undesirable species were eliminated.
+
+      Urban agriculture __knowledge__ Urban agriculture, urban farming, or urban gardening
+      is the practice of cultivating, processing, and distributing food in or around
+      a village, town, or city.
+
+      Urban agriculture __knowledge__ Urban agriculture can also involve animal husbandry,
+      aquaculture, agroforestry, urban beekeeping, and horticulture.
+
+      Urban agriculture __knowledge__ These activities occur in peri-urban areas as
+      well, and peri-urban agriculture may have different characteristics.
+
+      Urban agriculture __knowledge__ Urban agriculture can reflect varying levels
+      of economic and social development.
+
+      Urban agriculture __knowledge__ In the global north, it often takes the form
+      of a social movement for sustainable communities, where organic growers, ‘foodies,’
+      and ‘locavores’ form social networks founded on a shared ethos of nature and
+      community holism.
+
+      Phat Beets Produce __knowledge__ Phat Beets Produce is an American non-profit
+      food justice collective focusing on food justice in North Oakland, California,
+      started by Max Cadji and Bret Brenner in 2007.
+
+      Phat Beets Produce __knowledge__ Their programs include weekly farmer''s markets
+      (sourcing from local farmers of color), free produce stands, youth gardens,
+      community supported agriculture programs (called the "beet box"), food and social
+      justice workshops, and a kitchen and cafe cooperative.
+
+      Phat Beets Produce __knowledge__ Cadji helps residents have access to nutritious
+      food by coordinating between farmers, institutions, and low-income communities
+      to utilize empty land for urban gardening.
+
+      Phat Beets Produce __knowledge__ Their work addresses disadvantaged North Oakland
+      residents, actively opposes the systematic forces of gentrification in the North
+      Oakland Area, and stands in solidarity with criminal justice issues.
+
+      Amateur Gardening (magazine) __knowledge__ Amateur Gardening is a British weekly
+      magazine dedicated to gardening.
+
+      Amateur Gardening (magazine) __knowledge__ It includes news, advice, feature
+      articles, and celebrity columns and interviews.
+
+      Amateur Gardening (magazine) __knowledge__ "Amateur Gardening" was founded in
+      London in May 1884 by Shirley Hibberd, who edited it until 1887.
+
+      Amateur Gardening (magazine) __knowledge__ This makes it the oldest UK amateur
+      gardening weekly still published today, and was Britain''s best-seller in that
+      category in 2013.
+
+      Amateur Gardening (magazine) __knowledge__ The magazine is published on a weekly
+      basis.
+
+      Amateur Gardening (magazine) __knowledge__ Its editorial offices are in Poole,
+      Dorset.
+
+      Amateur Gardening (magazine) __knowledge__ At the time of the magazine''s launch
+      in 1884 there had been several other notable gardening magazines in circulation,
+      including the "Gardeners'' Chronicle" and "Gardens Illustrated", but these were
+      tailored more for the professional gardener.
+
+      '
+    label_candidates: []
+    text: 'Gardening
+
+      I like Gardening, even when I''ve only been doing it for a short time.'
+    title: Gardening
+- - checked_sentence: Gardening ranges in scale from fruit orchards, to long boulevard
+      plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside.
+    chosen_topic: Gardening
+    episode_done: false
+    eval_labels:
+    - I have planted several fruits trees, tomatoes, jalepenos, bell peppers, onions,
+      Garlic, and potatoes mostly.
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Gardening __knowledge__ Gardening is the practice of growing and cultivating
+      plants as part of horticulture.
+
+      Gardening __knowledge__ In gardens, ornamental plants are often grown for their
+      flowers, foliage, or overall appearance; useful plants, such as root vegetables,
+      leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+      or for medicinal or cosmetic use.
+
+      Gardening __knowledge__ Gardening is considered by many people to be a relaxing
+      activity.
+
+      Gardening __knowledge__ Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside.
+
+      Gardening __knowledge__ Gardening may be very specialized, with only one type
+      of plant grown, or involve a large number of different plants in mixed plantings.
+
+      Gardening __knowledge__ It involves an active participation in the growing of
+      plants, and tends to be labor-intensive, which differentiates it from farming
+      or forestry.
+
+      Gardening __knowledge__ Forest gardening, a forest-based food production system,
+      is the world''s oldest form of gardening.
+
+      Gardening __knowledge__ Forest gardens originated in prehistoric times along
+      jungle-clad river banks and in the wet foothills of monsoon regions.
+
+      Gardening __knowledge__ In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Mary Katherine &quot;Merricat&quot; Blackwood (Character) __knowledge__ Mary
+      Katherine Blackwood, or "Merricat," is the protagonist of Shirley Jackson''s
+      1962 novel, "We Have Always Lived in the Castle."
+
+      Mary Katherine &quot;Merricat&quot; Blackwood (Character) __knowledge__ The
+      eighteen-year-old "Merricat" lives with her remaining family members, Constance
+      and Julian Blackwood, on an estate in Vermont.
+
+      Mary Katherine &quot;Merricat&quot; Blackwood (Character) __knowledge__ As a
+      result of a tragedy six years prior the family remains isolated from the surrounding
+      village.
+
+      Mary Katherine &quot;Merricat&quot; Blackwood (Character) __knowledge__ The
+      "Dictionary of Literary Characters" designates a "definition" to Merricat as
+      follows: Reclusive, psychotic 18-year-old who lives in the family manse with
+      her older sister, Constance Blackwood, and her uncle, Julian Blackwood, as a
+      child, poisoned most of her family in Shirley Jackson''s "We Have Always Live
+      in the Castle".
+
+      Steve Marriott __knowledge__ Stephen Peter Marriott (30 January 1947 – 20 April
+      1991) was an English musician, songwriter and frontman of two notable rock and
+      roll bands, spanning over two decades.
+
+      Steve Marriott __knowledge__ Marriott is remembered for his powerful singing
+      voice which belied his small stature, and for his aggressive approach as a guitarist
+      in mod rock bands Small Faces (1965–1969 and 1977-1978) and Humble Pie (1969–1975
+      and 1980–1981).
+
+      Steve Marriott __knowledge__ Marriott was inducted posthumously into the Rock
+      and Roll Hall of Fame in 2012 as a member of Small Faces.
+
+      Steve Marriott __knowledge__ In Britain, Marriott became a popular, often-photographed
+      mod style icon through his role as lead singer and guitarist with the Small
+      Faces in the mid to late 1960s.
+
+      Pet Sounds __knowledge__ Pet Sounds is the eleventh studio album by American
+      rock band the Beach Boys, released on May 16, 1966.
+
+      Pet Sounds __knowledge__ It initially met with a lukewarm critical and commercial
+      response in the United States, peaking at number 10 in the "Billboard" 200,
+      a significantly lower placement than the band''s preceding albums.
+
+      Pet Sounds __knowledge__ In the United Kingdom, the album was hailed by its
+      music press and was an immediate commercial success, peaking at number 2 in
+      the UK Top 40 Albums Chart and remaining among the top ten positions for six
+      months.
+
+      Pet Sounds __knowledge__ Originally promoted as "the most progressive pop album
+      ever", "Pet Sounds" attracted recognition for its ambitious recording and unusually
+      sophisticated music, and is widely considered to be one of the most influential
+      albums in music history.
+
+      List of Tenchi Muyo! supporting characters __knowledge__ The following is a
+      list of supporting characters from the anime and manga series "Tenchi Muyo!".
+
+      List of Tenchi Muyo! supporting characters __knowledge__ is a fictional character
+      in the anime "Tenchi Muyo!".
+
+      List of Tenchi Muyo! supporting characters __knowledge__ OVA  In the OVA, Katsuhito,
+      also known as , fled Jurai over 700 years ago to "retire" on Earth.
+
+      List of Tenchi Muyo! supporting characters __knowledge__ He was once the greatest
+      swordsman on Jurai.
+
+      List of Tenchi Muyo! supporting characters __knowledge__ Currently Katsuhito
+      is a Shinto priest who is not only training Tenchi to be a Shinto priest but
+      also training him in Jurai swordsmanship.
+
+      List of Tenchi Muyo! supporting characters __knowledge__ Yōshō had a marriage
+      arranged with half-sister Ayeka, but left.
+
+      List of Tenchi Muyo! supporting characters __knowledge__ At the time, not all
+      Juraians liked the idea of mixed blood heritages (he is part human, on his mother''s
+      side) and he used Ryōko''s attack as an excuse to slip away to Earth.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ The following is
+      a list of fictional characters in Laurell K. Hamilton''s "" series of novels.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ The title character,
+      Anita Blake starts as a human with the power of necromancy.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ She joins the organization
+      Animators, Inc. as an animator: a person who raises zombies) and a vampire executioner.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ In later volumes,
+      she acquires some powers that are commonly associated with vampires.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ She contracts the
+      lycanthropy viruses which makes her associate with were-creatures.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ She also grows
+      powers as a succubus.
+
+      List of Anita Blake: Vampire Hunter characters __knowledge__ Bert is the founder
+      and managing partner of Animators, Inc. Over 6 feet tall and built like a former
+      athlete, Bert is an unscrupulous boss who is inclined to sign the animators
+      up for almost any job if the price is right.
+
+      List of Warriors characters __knowledge__ The "Warriors" novel series is written
+      by Erin Hunter.
+
+      List of Warriors characters __knowledge__ Due to the large number of characters
+      present in the novel series, this list is divided by Clan, e.g., all characters
+      in ThunderClan are listed together.
+
+      List of Warriors characters __knowledge__ Each cat has a prefix.
+
+      List of Warriors characters __knowledge__ Eg: Dawn, Violet etc.
+
+      List of Warriors characters __knowledge__ As a young kit they will have -kit
+      at the end of their name.
+
+      List of Warriors characters __knowledge__ Eg: Dawnkit Violetkit.
+
+      List of Warriors characters __knowledge__ When they are an apprentice -paw will
+      be at the end of their name.
+
+      List of Warriors characters __knowledge__ Eg: Dawnpaw Violetpaw.
+
+      List of Warriors characters __knowledge__ When that cat is a warrior or medicine
+      cat they will have a suffix.
+
+      List of Warriors characters __knowledge__ Eg: -fur -pelt -cloud -flame -wing
+      -song etc.
+
+      List of Warriors characters __knowledge__ Eg: Dawnsong Violetflame.
+
+      List of Warriors characters __knowledge__ That is if they are in one of the
+      clans like ThunderClan, RiverClan, WindClan, ShadowClan, Skyclan.
+
+      Dennis Miller __knowledge__ Dennis Michael Miller (born November 3, 1953) is
+      an American stand-up comedian, talk show host, political commentator, sports
+      commentator, actor, and television and radio personality.
+
+      Dennis Miller __knowledge__ He rose as a cast member of "Saturday Night Live"
+      in 1985, and subsequently hosted a string of his own talk shows on HBO, CNBC,
+      and in syndication.
+
+      Dennis Miller __knowledge__ From 2007 to 2015, Miller hosted a daily, three-hour,
+      self-titled talk radio program, nationally syndicated by Westwood One.
+
+      Dennis Miller __knowledge__ He is known for his critical assessments of current
+      events, laced with pop culture references and delivered in an idiosyncratic
+      verbal style.
+
+      Dennis Miller __knowledge__ Miller is listed as 21st on Comedy Central''s 100
+      greatest stand up comedians of all time, and was ranked as the best host of
+      SNL''s "Weekend Update" by Vulture.com.
+
+      Urban agriculture __knowledge__ Urban agriculture, urban farming, or urban gardening
+      is the practice of cultivating, processing, and distributing food in or around
+      a village, town, or city.
+
+      Urban agriculture __knowledge__ Urban agriculture can also involve animal husbandry,
+      aquaculture, agroforestry, urban beekeeping, and horticulture.
+
+      Urban agriculture __knowledge__ These activities occur in peri-urban areas as
+      well, and peri-urban agriculture may have different characteristics.
+
+      Urban agriculture __knowledge__ Urban agriculture can reflect varying levels
+      of economic and social development.
+
+      Urban agriculture __knowledge__ In the global north, it often takes the form
+      of a social movement for sustainable communities, where organic growers, ‘foodies,’
+      and ‘locavores’ form social networks founded on a shared ethos of nature and
+      community holism.
+
+      Year Long Disaster __knowledge__ Year Long Disaster was an American hard rock
+      band from Los Angeles, California.
+
+      Year Long Disaster __knowledge__ Formed in 2004, the band was composed of vocalist
+      and guitarist Daniel Davies, bassist Rich Mullins and drummer Brad Hargreaves.
+
+      Year Long Disaster __knowledge__ Hargreaves was later replaced by Rob Oswald,
+      and guitarist William Mecum also joined in a later incarnation of the group.
+
+      Year Long Disaster __knowledge__ Daniel Davies and Rich Mullins first met in
+      November 2003, after the bassist had left Karma to Burn and was playing in the
+      band Speedealer.
+
+      Year Long Disaster __knowledge__ After completing a drug rehabilitation program
+      together, the pair met Brad Hargreaves in November 2004, and after an informal
+      jam session formed Year Long Disaster later.
+
+      Lewis Ginter Botanical Garden __knowledge__ The Lewis Ginter Botanical Garden,
+      , is a botanical garden located at 1800 Lakeside Avenue, on the North Side of
+      Richmond, Virginia.
+
+      Lewis Ginter Botanical Garden __knowledge__ It includes the Lakeside Wheel Club
+      built by Lewis Ginter and expanded and remodeled into Bloemendaal by his niece
+      Grace Arents.
+
+      Lewis Ginter Botanical Garden __knowledge__ The Garden’s three-fold mission
+      is (1) to provide education to the community about the plant world, (2) promote
+      the best in horticulture and landscape design and (3) work toward the goal of
+      being a leader in botanical and applied horticultural research.
+
+      Lewis Ginter Botanical Garden __knowledge__ The gently rolling terrain that
+      is the site of Lewis Ginter Botanical Garden was once the hunting ground of
+      Powhatan Indians.
+
+      Adana __knowledge__ Adana (; ) is a major city in southern Turkey.
+
+      Adana __knowledge__ The city is situated on the Seyhan river, inland from the
+      Mediterranean, in south-central Anatolia.
+
+      Adana __knowledge__ It is the administrative seat of the Adana Province and
+      has a population of 1.7 million, making it the fifth most populous city in Turkey.
+
+      Adana __knowledge__ The Adana-Mersin polycentric metropolitan area, with a population
+      of 3 million, stretches over east-west and north-south; encompassing the cities
+      of Mersin, Tarsus and Adana.
+
+      Adana __knowledge__ Adana lies in the heart of Çukurova, a geo-cultural region
+      alternatively known as Cilicia.
+
+      Adana __knowledge__ Home to six million people, Çukurova is one of the largest
+      population concentrations in Turkey, as well as the most agriculturally productive
+      area, owing to its large stretch of flat, fertile land.
+
+      Freddie Welsh __knowledge__ Freddie Welsh (born Frederick Hall Thomas, 5 March
+      1886 – 29 July 1927) was a Welsh World lightweight boxing champion.
+
+      Freddie Welsh __knowledge__ Born in Pontypridd, Wales, he was nicknamed the
+      "Welsh Wizard".
+
+      Freddie Welsh __knowledge__ Brought up in a tough mining community, Welsh left
+      a middle-class background to make a name for himself in America.
+
+      Freddie Welsh __knowledge__ He turned professional as a boxer in Philadelphia
+      in 1905, and spent the best part of his career fighting in the United States.
+
+      Freddie Welsh __knowledge__ Welsh spent much of his career chasing the World
+      Championship title, held in turn by Battling Nelson, Ad Wolgast and Willie Ritchie,
+      failing through a series of events to meet each until a successful encounter
+      with Ritchie in July 1914, when he finally became World Lightweight Champion.
+
+      Relaxing (horse) __knowledge__ Relaxing was a bay thoroughbred born in 1976
+      at the Ogden Phipps stud farm in Kentucky.
+
+      Relaxing (horse) __knowledge__ She was a stakes winner and an outstanding broodmare.
+
+      Relaxing (horse) __knowledge__ As a youngster, Relaxing was sent to England
+      to race.
+
+      Relaxing (horse) __knowledge__ At the age of three years, she had four wins
+      and one second out of nine races on turf before she returned to America to race
+      on the U.S.''s dirt tracks.
+
+      Relaxing (horse) __knowledge__ In 1980, at age four, she started twelve times,
+      winning five races, and set a new track record for going 1 5/8 miles in 2:42.2
+      during her victory against colts in the Gallant Fox Handicap (Gr-2).
+
+      Relaxing (horse) __knowledge__ Relaxing also equaled a track record in the Firenze
+      Handicap (Gr-2).
+
+      Karma to Burn __knowledge__ Karma to Burn, sometimes known as K2B, is a desert
+      rock/stoner rock band from Morgantown, West Virginia comprising guitarist William
+      Mecum, bassist Eric Clutter, and drummer Evan Devine.
+
+      Karma to Burn __knowledge__ The band are noted for their uncompromising, mostly
+      instrumental sound.
+
+      Karma to Burn __knowledge__ Their name comes from a sleevenote on Bob Dylan''s
+      1976 album "Desire" which reads "I have a brother or two and a whole lot of
+      karma to burn..."  After years of viral self-promotion (such as phoning record
+      companies pretending to be other bands who''d heard an interesting band called
+      Karma To Burn), Karma To Burn was signed to Roadrunner Records in 1996.
+
+      '
+    label_candidates: []
+    text: That sounds great.  I've always thought that I would love living in a farm,
+      but I;ve always lived in the city.  What do you mostly plant?
+    title: Gardening
+- - checked_sentence: Forest gardening, a forest-based food production system, is
+      the world's oldest form of gardening.
+    chosen_topic: Gardening
+    episode_done: false
+    eval_labels:
+    - yes i do. Cows, chickens, Micro pigs, Guinneas, We also do forest growing also.
+      we plants large pine trees.
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Gardening __knowledge__ Gardening is the practice of growing and cultivating
+      plants as part of horticulture.
+
+      Gardening __knowledge__ In gardens, ornamental plants are often grown for their
+      flowers, foliage, or overall appearance; useful plants, such as root vegetables,
+      leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+      or for medicinal or cosmetic use.
+
+      Gardening __knowledge__ Gardening is considered by many people to be a relaxing
+      activity.
+
+      Gardening __knowledge__ Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside.
+
+      Gardening __knowledge__ Gardening may be very specialized, with only one type
+      of plant grown, or involve a large number of different plants in mixed plantings.
+
+      Gardening __knowledge__ It involves an active participation in the growing of
+      plants, and tends to be labor-intensive, which differentiates it from farming
+      or forestry.
+
+      Gardening __knowledge__ Forest gardening, a forest-based food production system,
+      is the world''s oldest form of gardening.
+
+      Gardening __knowledge__ Forest gardens originated in prehistoric times along
+      jungle-clad river banks and in the wet foothills of monsoon regions.
+
+      Gardening __knowledge__ In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Urban agriculture __knowledge__ Urban agriculture, urban farming, or urban gardening
+      is the practice of cultivating, processing, and distributing food in or around
+      a village, town, or city.
+
+      Urban agriculture __knowledge__ Urban agriculture can also involve animal husbandry,
+      aquaculture, agroforestry, urban beekeeping, and horticulture.
+
+      Urban agriculture __knowledge__ These activities occur in peri-urban areas as
+      well, and peri-urban agriculture may have different characteristics.
+
+      Urban agriculture __knowledge__ Urban agriculture can reflect varying levels
+      of economic and social development.
+
+      Urban agriculture __knowledge__ In the global north, it often takes the form
+      of a social movement for sustainable communities, where organic growers, ‘foodies,’
+      and ‘locavores’ form social networks founded on a shared ethos of nature and
+      community holism.
+
+      Cuisine of the United States __knowledge__ The cuisine of the United States
+      reflects its history.
+
+      Cuisine of the United States __knowledge__ The European colonization of the
+      Americas yielded the introduction of a number of ingredients and cooking styles
+      to the latter.
+
+      Cuisine of the United States __knowledge__ The various styles continued expanding
+      well into the 19th and 20th centuries, proportional to the influx of immigrants
+      from many different nations; such influx developed a rich diversity in food
+      preparation throughout the country.
+
+      Cuisine of the United States __knowledge__ Early Native Americans utilized a
+      number of cooking methods in early American Cuisine that have been blended with
+      early European cooking methods to form the basis of American Cuisine.
+
+      Cuisine of the United States __knowledge__ When the colonists came to the colonies,
+      they farmed animals for clothing and meat in a similar fashion to what they
+      had done in Europe.
+
+      History of agriculture in the People''s Republic of China __knowledge__ In 4,000
+      years, China has been a nation of farmers.
+
+      History of agriculture in the People''s Republic of China __knowledge__ By the
+      time the People''s Republic of China was established in 1949, virtually all
+      arable land was under cultivation; irrigation and drainage systems constructed
+      centuries earlier and intensive farming practices already produced relatively
+      high yields.
+
+      History of agriculture in the People''s Republic of China __knowledge__ But
+      little prime virgin land was available to support population growth and economic
+      development.
+
+      History of agriculture in the People''s Republic of China __knowledge__ However,
+      after a decline in production as a result of the Great Leap Forward (1958–60),
+      agricultural reforms implemented in the 1980s increased yields and promised
+      even greater future production from existing cultivated land.
+
+      Ancient Israelite cuisine __knowledge__ Ancient Israelite cuisine refers to
+      the food eaten by the ancient Israelites during a period of over a thousand
+      years, from the beginning of the Israelite presence in the Land of Israel at
+      the beginning of the Iron Age until the Roman period.
+
+      Ancient Israelite cuisine __knowledge__ The dietary staples were bread, wine
+      and olive oil, but also included legumes, fruits and vegetables, dairy products,
+      fish and meat.
+
+      Ancient Israelite cuisine __knowledge__ Religious beliefs, which prohibited
+      the consumption of certain foods, shaped the Israelite diet.
+
+      Ancient Israelite cuisine __knowledge__ There was considerable continuity in
+      the main components of the diet over time, despite the introduction of new foodstuffs
+      at various stages.
+
+      Agriculture in India __knowledge__ The history of Agriculture in India dates
+      back to Indus Valley Civilization Era and even before that in some parts of
+      Southern India.
+
+      Agriculture in India __knowledge__ Today, India ranks second worldwide in farm
+      output.
+
+      Agriculture in India __knowledge__ Agriculture and allied sectors like forestry
+      and fisheries accounted for 13.7% of the GDP (gross domestic product) in 2013,
+      about 50% of the workforce.
+
+      Agriculture in India __knowledge__ The economic contribution of agriculture
+      to India''s GDP is steadily declining with the country''s broad-based economic
+      growth.
+
+      Agriculture in India __knowledge__ Still, agriculture is demographically the
+      broadest economic sector and plays a significant role in the overall socio-economic
+      fabric of India.
+
+      Vegetable __knowledge__ In everyday usage, vegetables are certain parts of plants
+      that are consumed by humans as food as part of a savory meal.
+
+      Vegetable __knowledge__ Originally, the traditional term (still commonly used
+      in biology) included the flowers, fruit, stems, leaves, roots, tubers, bark,
+      seeds, and all other plant matter, although modern-day culinary usage of the
+      term "vegetable" may exclude food derived from plants such as fruits, nuts,
+      and cereal grains, but include seeds such as pulses; the term "vegetable" is
+      somewhat arbitrary, and can be largely defined through culinary and cultural
+      tradition.
+
+      Vegetable __knowledge__ Originally, vegetables were collected from the wild
+      by hunter-gatherers and entered cultivation in several parts of the world, probably
+      during the period 10,000 BC to 7,000 BC, when a new agricultural way of life
+      developed.
+
+      Indian cuisine __knowledge__ Indian cuisine comprises a wide variety of regional
+      and traditional cuisines native to the Indian subcontinent.
+
+      Indian cuisine __knowledge__ Given the range of diversity in soil type, climate,
+      culture, ethnic groups, and occupations, these cuisines vary substantially from
+      each other and use locally available spices, herbs, vegetables, and fruits.
+
+      Indian cuisine __knowledge__ Indian food is also heavily influenced by religion,
+      in particular Hindu, and cultural choices and traditions.
+
+      Indian cuisine __knowledge__ Also, Middle Eastern and Central Asian influences
+      have occurred on North Indian cuisine from the years of Mughal rule.
+
+      Indian cuisine __knowledge__ Indian cuisine is still evolving, as a result of
+      the nation''s cultural interactions with other societies.
+
+      Israeli cuisine __knowledge__ The Israeli cuisine ( "ha-mitbach ha-yisra’eli")
+      comprises local dishes by people native to Israel and dishes brought to Israel
+      by Jews from the Diaspora.
+
+      Israeli cuisine __knowledge__ Since before the establishment of the State of
+      Israel in 1948, and particularly since the late 1970s, an Israeli Jewish fusion
+      cuisine has developed.
+
+      Israeli cuisine __knowledge__ Israeli cuisine has adopted, and continues to
+      adapt, elements of various styles of Jewish cuisine, particularly the Mizrahi,
+      Sephardic and Ashkenazi styles of cooking.
+
+      Israeli cuisine __knowledge__ It incorporates many foods traditionally eaten
+      in Middle Eastern and Mediterranean cuisines, and foods such as falafel, hummus,
+      msabbha, shakshouka, couscous, and za''atar are now widely popular in Israel.
+
+      Italian cuisine __knowledge__ Italian cuisine is food typical from Italy.
+
+      Italian cuisine __knowledge__ It has developed through centuries of social and
+      economic changes, with roots stretching to antiquity.
+
+      Italian cuisine __knowledge__ Significant changes occurred with the discovery
+      of the New World and the introduction of potatoes, tomatoes, bell peppers, maize
+      and sugar beet, this last introduced in quantity in the 18th century.
+
+      Italian cuisine __knowledge__ Italian cuisine is known for its regional diversity,
+      especially between the north and the south of the Italian peninsula.
+
+      Italian cuisine __knowledge__ It offers an abundance of taste, and is one of
+      the most popular and copied in the world.
+
+      Italian cuisine __knowledge__ It influenced several cuisines around the world
+      chiefly that of the United States.
+
+      Pickling __knowledge__ Pickling is the process of preserving or expanding the
+      lifespan of food by either anaerobic fermentation in brine or immersion in vinegar.
+
+      Pickling __knowledge__ The resulting food is called a "pickle", or, to prevent
+      ambiguity, prefaced with the adjective "pickled".
+
+      Pickling __knowledge__ The pickling procedure will typically affect the food''s
+      texture and flavor.
+
+      Pickling __knowledge__ In East Asia, vinaigrette (vegetable oil and vinegar)
+      is also used as a pickling medium.
+
+      Pickling __knowledge__ Foods that are pickled include meats, fruits, eggs, and
+      vegetables.
+
+      Pickling __knowledge__ Another distinguishing characteristic is a pH of 4.6
+      or lower, which is sufficient to kill most bacteria.
+
+      Pickling __knowledge__ Pickling can preserve perishable foods for months.
+
+      Sofrito __knowledge__ Sofrito (), or soffritto (Italian), or refogado (, ),
+      is a sauce used as a base in Spanish, Italian, Portuguese and Latin American
+      cooking.
+
+      Sofrito __knowledge__ Preparations may vary, but it typically consists of aromatic
+      ingredients cut into small pieces and sauteed or braised in cooking oil.
+
+      Sofrito __knowledge__ In Spanish cuisine, sofrito consists of garlic, onion,
+      paprika, and tomatoes cooked in olive oil.
+
+      Sofrito __knowledge__ This is known as or sometimes as in Portuguese-speaking
+      nations, where only onions and olive oil are often essential, garlic and bay
+      laurel leaves being the other most common ingredients.
+
+      Sofrito __knowledge__ In Brazilian cuisine, the verb encompasses also dishes
+      that are fried in vegetable oil before being boiled or steamed, even when the
+      actual fried seasoning is not there.
+
+      Regional street food __knowledge__ Street foods, ready-to-eat food or drink
+      sold in a street or other public place, such as a market or fair, by a hawker
+      or vendor, often from a portable stall, have variations within both regions
+      and cultures.
+
+      Regional street food __knowledge__ For example, Dorling Kindersley describes
+      the street food of Viet Nam as being "fresh and lighter than many of the cuisines
+      in the area" and "draw[ing] heavily on herbs, chile peppers and lime," while
+      street food of Thailand is "fiery" and "pungent with shrimp paste... and fish
+      sauce" with New York City''s signature street food being the hot dog, although
+      the offerings in New York also range from "spicy Middle Eastern falafel or Jamaican
+      jerk chicken to Belgian waffles."
+
+      Filipino cuisine __knowledge__ Filipino cuisine (Filipino: "Lutuing Filipino"
+      or "Pagkaing Filipino") is composed of the cuisines of 135 distinct ethno-linguistic
+      tribes found within the Philippine archipelago, however, majority of mainstream
+      Filipino dishes that compose Filipino cuisine are from the cuisines of the Bikol,
+      Chabakano, Hiligaynon, Ilokano, Kapampangan, Meranaw, Pangasinan, Sebwano (or
+      Bisaya), Tagalog, and Waray ethno-linguistic tribes.
+
+      Filipino cuisine __knowledge__ The style of cooking and the food associated
+      with it have evolved over many centuries from their Austronesian origins (shared
+      with Malaysian and Indonesian cuisines) to a mixed cuisine of Indian, Chinese,
+      Spanish, and American influences, in line with the major waves of influence
+      that had enriched the cultures of the archipelago, as well as others adapted
+      to indigenous ingredients and the local palate.
+
+      '
+    label_candidates: []
+    text: Great, I love the idea of growing my own vegetables and fruits! Do you have
+      animals in the farm?
+    title: Gardening
+- - checked_sentence: In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+    chosen_topic: Gardening
+    episode_done: true
+    eval_labels:
+    - yes they are. they are extremely smart. most people buy them for inside pets.
+      you can train the to use a litter box just like a cat. When families started
+      using vines and trees to build their houses out of there was several species
+      of trees and vines that were eliminated by them.
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Gardening __knowledge__ Gardening is the practice of growing and cultivating
+      plants as part of horticulture.
+
+      Gardening __knowledge__ In gardens, ornamental plants are often grown for their
+      flowers, foliage, or overall appearance; useful plants, such as root vegetables,
+      leaf vegetables, fruits, and herbs, are grown for consumption, for use as dyes,
+      or for medicinal or cosmetic use.
+
+      Gardening __knowledge__ Gardening is considered by many people to be a relaxing
+      activity.
+
+      Gardening __knowledge__ Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside.
+
+      Gardening __knowledge__ Gardening may be very specialized, with only one type
+      of plant grown, or involve a large number of different plants in mixed plantings.
+
+      Gardening __knowledge__ It involves an active participation in the growing of
+      plants, and tends to be labor-intensive, which differentiates it from farming
+      or forestry.
+
+      Gardening __knowledge__ Forest gardening, a forest-based food production system,
+      is the world''s oldest form of gardening.
+
+      Gardening __knowledge__ Forest gardens originated in prehistoric times along
+      jungle-clad river banks and in the wet foothills of monsoon regions.
+
+      Gardening __knowledge__ In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Atelier Bow-Wow __knowledge__ Atelier Bow-Wow is a Tokyo-based architecture
+      firm, founded in 1992 by Yoshiharu Tsukamoto and Momoyo Kajima.
+
+      Atelier Bow-Wow __knowledge__ The firm is well known for its domestic and cultural
+      architecture and its research exploring the urban conditions of micro, ad hoc
+      architecture.
+
+      Atelier Bow-Wow __knowledge__ Yoshiharu Tsukamoto was born in Kanagawa Prefecture
+      in 1965.
+
+      Atelier Bow-Wow __knowledge__ He studied architecture at Tokyo Institute of
+      Technology, graduating from his undergraduate degree in 1987.
+
+      Atelier Bow-Wow __knowledge__ Tsukamoto travelled to Paris to be a guest student
+      at L’Ecole d’Architecture de Belleville (UP 8) from 1987–88 and in 1994 he completed
+      a Doctor of Engineering program at Tokyo Institute of Technology.
+
+      Pow wow __knowledge__ A pow wow (also powwow or pow-wow) is a social gathering
+      held by many different Native American communities.
+
+      Pow wow __knowledge__ A modern pow wow is a specific type of event for Native
+      American people to meet and dance, sing, socialize, and honor their cultures.
+
+      Pow wow __knowledge__ Pow wows may be private or public.
+
+      Pow wow __knowledge__ There is generally a dancing competition, with many different
+      types of traditional dances, music and regalia, often with significant prize
+      money awarded.
+
+      Pow wow __knowledge__ Pow wows vary in length from a one-day event, to major
+      pow wows called for a special occasion which can be up to one week long.
+
+      Pow wow __knowledge__ In popular culture, such as older Western movies, the
+      term has also been used to describe any gathering of Native Americans, or to
+      refer to any type of meeting, such as among military personnel.
+
+      Guinea pig __knowledge__ The domestic guinea pig or simply guinea pig ("Cavia
+      porcellus"), also known as cavy, is a species of rodent belonging to the family
+      Caviidae and the genus "Cavia".
+
+      Guinea pig __knowledge__ Despite their common name, these animals are not in
+      the pig family Suidae, nor do they come from Guinea in Africa.
+
+      Guinea pig __knowledge__ They originated in the Andes of South America; studies
+      based on biochemistry and hybridization suggest they are domestic descendants
+      of a closely related species of cavy such as "C. tschudii", and therefore do
+      not exist naturally in the wild.
+
+      Guinea pig __knowledge__ The domestic guinea pig plays an important role in
+      the folk culture of many indigenous South American groups, especially as a food
+      source, but also in folk medicine and in community religious ceremonies.
+
+      Heartbreak on Hold __knowledge__ Heartbreak on Hold is the second studio album
+      by British recording artist Alexandra Burke.
+
+      Heartbreak on Hold __knowledge__ It was released on 4 June 2012 through Syco
+      and RCA Records.
+
+      Heartbreak on Hold __knowledge__ Recording for the album started in late 2010
+      and finished in early 2012.
+
+      Heartbreak on Hold __knowledge__ Burke collaborated with a wide range of producers
+      for the album, many of whom are noted for their distinct dance and house music
+      influences, including Erick Morillo and DJ Smash.
+
+      Heartbreak on Hold __knowledge__ The album suffered a long series of delays
+      to its release date.
+
+      Heartbreak on Hold __knowledge__ Originally expected for a summer 2011 release,
+      the original album was shelved as Burke parted ways with record label Syco,
+      with whom she had been signed since winning "The X Factor", in favour of RCA.
+
+      Bow Wow (rapper) __knowledge__ Shad Gregory Moss (born March 9, 1987), better
+      known by his stage name Bow Wow (formerly Lil'' Bow Wow), is an American rapper,
+      actor and television host.
+
+      Bow Wow (rapper) __knowledge__ As Lil'' Bow Wow, he released his first album,
+      "Beware of Dog", in 2000 at age 13, which was followed by "Doggy Bag" in 2001.
+
+      Bow Wow (rapper) __knowledge__ In 2003, Bow Wow released his third album "Unleashed",
+      which was the first album released without using Lil'' in his name.
+
+      Bow Wow (rapper) __knowledge__ As of September 27, 2015, Bow Wow has signed
+      a management deal to Bad Boy Records.
+
+      Bow Wow (rapper) __knowledge__ Bow Wow made his first movie appearance in "All
+      About the Benjamins", in 2002 as a cameo.
+
+      Bow Wow (rapper) __knowledge__ In the same year, Bow Wow made his debut as the
+      lead role in "Like Mike".
+
+      New Zealand Democratic Party for Social Credit __knowledge__ The New Zealand
+      Democratic Party for Social Credit (shortened to Democrats for Social Credit)
+      is a small leftist political party in New Zealand.
+
+      New Zealand Democratic Party for Social Credit __knowledge__ Its policies are
+      based on the ideas of social credit.
+
+      New Zealand Democratic Party for Social Credit __knowledge__ The party has been
+      known as the Social Credit Political League, Social Credit Party, and New Zealand
+      Democratic Party and was part of the Alliance for a time.
+
+      New Zealand Democratic Party for Social Credit __knowledge__ The party does
+      not hold any seats in the Parliament of New Zealand.
+
+      New Zealand Democratic Party for Social Credit __knowledge__ It held one seat
+      from 1966 to 1969.
+
+      New Zealand Democratic Party for Social Credit __knowledge__ The party won a
+      seat in a 1978 byelection, and held two seats from 1980 to 1987.
+
+      New Zealand Democratic Party for Social Credit __knowledge__ Democratic Party
+      members also held seats when the party was part of the Alliance.
+
+      Cute (Japanese idol group) __knowledge__ Cute, stylized as , was a Japanese
+      idol girl group part of Hello!
+
+      Cute (Japanese idol group) __knowledge__ Project collective produced by Tsunku,
+      who also writes almost all the group''s songs.
+
+      Cute (Japanese idol group) __knowledge__ Cute consisted of Maimi Yajima, Saki
+      Nakajima, Airi Suzuki, Chisato Okai, and Mai Hagiwara, who were all members
+      of Hello!
+
+      Cute (Japanese idol group) __knowledge__ Project Kids prior to the group''s
+      formation.
+
+      Cute (Japanese idol group) __knowledge__ The original member line-up also consisted
+      of fellow Hello!
+
+      Cute (Japanese idol group) __knowledge__ Project Kids members Megumi Murakami
+      and Erika Umeda, as well as Hello!
+
+      Cute (Japanese idol group) __knowledge__ Project trainee Kanna Arihara, prior
+      to their departure.
+
+      Cute (Japanese idol group) __knowledge__ After releasing a string of independent
+      hits, Cute made its major debut in 2007 with "Sakura Chirari" and that year
+      won the Japan Record Award for Best New Artist.
+
+      Intensive animal farming __knowledge__ Intensive animal farming or industrial
+      livestock production, also colloquially known as factory farming, is a production
+      approach towards farm animals in order to maximize production output, while
+      minimizing production costs.
+
+      Intensive animal farming __knowledge__ Intensive farming refers to animal husbandry,
+      the keeping of livestock such as cattle, poultry, and fish at higher stocking
+      densities than is usually the case with other forms of animal agriculture—a
+      practice typical in industrial farming by agribusinesses.
+
+      Intensive animal farming __knowledge__ The main products of this industry are
+      meat, milk and eggs for human consumption.
+
+      Intensive animal farming __knowledge__ There are issues regarding whether factory
+      farming is sustainable or ethical.
+
+      Animal husbandry __knowledge__ Animal husbandry is the branch of agriculture
+      concerned with animals that are raised for meat, fibre, milk, eggs, or other
+      products.
+
+      Animal husbandry __knowledge__ It includes day-to-day care, selective breeding
+      and the raising of livestock.
+
+      Animal husbandry __knowledge__ Husbandry has a long history, starting with the
+      Neolithic revolution when animals were first domesticated, from around 13,000
+      BC onwards, antedating farming of the first crops.
+
+      Animal husbandry __knowledge__ By the time of early civilisations such as ancient
+      Egypt, cattle, sheep, goats and pigs were being raised on farms.
+
+      Animal husbandry __knowledge__ Major changes took place in the Columbian Exchange
+      when Old World livestock were brought to the New World, and then in the British
+      Agricultural Revolution of the 18th century, when livestock breeds like the
+      Dishley Longhorn cattle and Lincoln Longwool sheep were rapidly improved by
+      agriculturalists such as Robert Bakewell to yield more meat, milk, and wool.
+
+      Effects of global warming on human health __knowledge__ The effects of global
+      warming include its gayon human health.
+
+      Effects of global warming on human health __knowledge__ The observed and projected
+      increased frequency and severity of climate related impacts will further exacerbate
+      the effects on human health.
+
+      Effects of global warming on human health __knowledge__ This article describes
+      some of those effects on individuals and populations.
+
+      Effects of global warming on human health __knowledge__ A good example of the
+      impact of global warming on health can be seen in the disease Erythromelalgia.
+
+      Effects of global warming on human health __knowledge__ This is a vascular disease
+      that is commonly triggered by the involvement of change in temperature, which
+      leads to syndromes including (first and second degree) burning pain, increased
+      temperature, erythema and swelling, of mainly the hands and feet that are affected.
+
+      Ashdown Forest __knowledge__ Ashdown Forest is an ancient area of tranquil open
+      heathland occupying the highest sandy ridge-top of the High Weald Area of Outstanding
+      Natural Beauty.
+
+      Ashdown Forest __knowledge__ It is situated some south of London in the county
+      of Sussex, England.
+
+      Ashdown Forest __knowledge__ Rising to an altitude of above sea level, its heights
+      provide expansive vistas across the heavily wooded hills of the Weald to the
+      chalk escarpments of the North Downs and South Downs on the horizon.
+
+      Ashdown Forest __knowledge__ Ashdown Forest''s origins lie as a medieval hunting
+      forest created soon after the Norman conquest of England.
+
+      Ashdown Forest __knowledge__ By 1283 the forest was fenced in by a "pale" enclosing
+      an area of some .
+
+      Pinus strobus __knowledge__ Pinus strobus, commonly denominated the eastern
+      white pine, northern white pine, white pine, Weymouth pine (British), and soft
+      pine is a large pine native to eastern North America.
+
+      Pinus strobus __knowledge__ It occurs from Newfoundland, Canada west through
+      the Great Lakes region to southeastern Manitoba and Minnesota, United States,
+      and south along the Appalachian Mountains and upper Piedmont to northernmost
+      Georgia and perhaps very rarely in some of the higher elevations in northeastern
+      Alabama.
+
+      Pinus strobus __knowledge__ The Native American Haudenosaunee denominated it
+      the "Tree of Peace".
+
+      Pinus strobus __knowledge__ It is known as the "Weymouth pine" in the United
+      Kingdom, after Captain George Weymouth of the British Royal Navy, who brought
+      its seeds to England from Maine in 1605.
+
+      Mountain pine beetle __knowledge__ The mountain pine beetle "Dendroctonus ponderosae",
+      is a species of bark beetle native to the forests of western North America from
+      Mexico to central British Columbia.
+
+      Mountain pine beetle __knowledge__ It has a hard black exoskeleton, and measures
+      approximately 5 mm, about the size of a grain of rice.
+
+      Mountain pine beetle __knowledge__ In western North America, the current outbreak
+      of the mountain pine beetle and its microbial associates has destroyed wide
+      areas of lodgepole pine forest, including more than 16 million of the 55 million
+      hectares of forest in British Columbia.
+
+      Mountain pine beetle __knowledge__ The current outbreak in the Rocky Mountain
+      National Park began in 1996 and has caused the destruction of millions of acres
+      of ponderosa and lodgepole pine trees.
+
+      Pinus pinaster __knowledge__ Pinus pinaster, the maritime pine or cluster pine,
+      is a pine native to Mediterranean region.
+
+      Pinus pinaster __knowledge__ "P. pinaster" is a hard, fast growing pine containing
+      small seeds with large wings.
+
+      Pinus pinaster __knowledge__ "P. pinaster" is located in the Mediterranean basin.
+
+      Pinus pinaster __knowledge__ It favors a Mediterranean climate, which is one
+      that has cool, rainy winters and hot, dry summers.
+
+      Pinus pinaster __knowledge__ The native area that this species of pine, "Pinus
+      pinaster", originates from is the Mediterranean Basin, including Northern Tunisia,
+      Algeria, and Morocco.
+
+      Pinus pinaster __knowledge__ "P. pinaster" is a popular topic in ecology because
+      of its problematic growth and spread in South Africa for the past 150 years
+      after being imported into the region at the end of the 17th century (1685-1693).
+
+      '
+    label_candidates: []
+    text: Wow, it sounds amazing, the Micro-pigs are so cute! are they trainable to
+      be well behaved?
+    title: Gardening
+- - checked_sentence: Robert Norman Ross (October 29, 1942 – July 4, 1995) was an
+      American painter, art instructor, and television host.
+    chosen_topic: Bob Ross
+    episode_done: false
+    eval_labels:
+    - Ross was an American painter and television host
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Bob Ross __knowledge__ Robert Norman Ross (October 29, 1942 – July 4, 1995)
+      was an American painter, art instructor, and television host.
+
+      Bob Ross __knowledge__ He was the creator and host of "The Joy of Painting",
+      an instructional television program that aired from 1983 to 1994 on PBS in the
+      United States, and also aired in Canada, Latin America, and Europe.
+
+      Bob Ross __knowledge__ Ross went from being a public-television personality
+      in the 1980s and 1990s to being an Internet celebrity in the 21st century, popular
+      with fans on YouTube and many other websites.
+
+      Bob Ross __knowledge__ Ross was born in Daytona Beach, Florida, to Jack and
+      Ollie Ross (a carpenter and waitress, respectively), and raised in Orlando,
+      Florida.
+
+      Bob Ross __knowledge__ As a child, Ross entertained himself by caring for injured
+      animals, purportedly including an armadillo, snake, and alligator.
+
+      Bob Ross __knowledge__ One of these animals, a squirrel named Peapod, was featured
+      in a few episodes of his show.
+
+      Bob Ross __knowledge__ He had a half-brother, Jim, whom he mentioned in passing
+      on his show.
+
+      Bob Ross __knowledge__ Ross dropped out of high school in the 9th grade to work
+      as a carpenter with his father, Jack Ross, where he lost part of his left index
+      finger.
+
+      Bob Ross __knowledge__ This, however, did not affect the way he held his palette
+      while painting.
+
+      Bob Ross __knowledge__ In 1961, then 18-year-old Ross enlisted in the United
+      States Air Force and was put into service as a medical records technician.
+
+      Gay Comix __knowledge__ Gay Comix (later Gay Comics) is an underground comics
+      series published from 1980–1998 featuring cartoons by and for gay and lesbian
+      men and women.
+
+      Gay Comix __knowledge__ The comic books had the tagline “Lesbians and Gay Men
+      Put It On Paper!”  Much of the early content was autobiographical, but more
+      diverse themes were explored in later editions.
+
+      Gay Comix __knowledge__ The contents of "Gay Comix" were generally about relationships,
+      personal experiences, and humor, rather than sex.
+
+      Gay Comix __knowledge__ It is generally less sexually explicit than the similarly-themed
+      (and male-focused) "Meatmen" series of graphic novels.
+
+      Gay Comix __knowledge__ Its editors each made a deliberate effort to feature
+      work by both women and men.
+
+      The Joy of Painting __knowledge__ The Joy of Painting is an American half-hour
+      instructional television show hosted by painter Bob Ross which ran from January
+      11, 1983 until May 17, 1994.
+
+      The Joy of Painting __knowledge__ In each episode, Ross taught techniques for
+      landscape oil painting, completing a painting in each session.
+
+      The Joy of Painting __knowledge__ The program followed the same format as its
+      predecessor, "The Magic of Oil Painting", hosted by Ross''s mentor Bill Alexander.
+
+      The Joy of Painting __knowledge__ In its running it won three Emmy Awards.
+
+      The Joy of Painting __knowledge__ Broadcast by non-commercial public television
+      stations, the show''s first season was in 1983, and initially produced by WNVC
+      in Falls Church, Virginia, then by WIPB in Muncie, Indiana, from 1984 until
+      the show ended in 1994, and later by Blue Ridge Public Television in Roanoke,
+      Virginia.
+
+      Kingdom Brass __knowledge__ Kingdom Brass is a brass band based in Cowdenbeath,
+      in Fife, Scotland.
+
+      Kingdom Brass __knowledge__ Kingdom Brass is graded in the Championship Section,
+      and performs at various concerts, festivals and competitions all over the UK
+      and abroad.
+
+      Kingdom Brass __knowledge__ It was formed in 1999 by the amalgamation of the
+      Cowdenbeath and Kelty & Blairadam Bands.
+
+      Kingdom Brass __knowledge__ The band consists of 35 brass and percussion players.
+
+      Kingdom Brass __knowledge__ Kingdom Brass rehearse in the Co-op Hall, Broad
+      Street, Cowdenbeath,  Kingdom Brass rehearses on Thursday and Sunday evenings,
+      from 7.30 – 9.30pm.
+
+      Kingdom Brass __knowledge__ Kingdom Brass was formed in August 1999 after the
+      amalgamation of the Cowdenbeath and the Kelty & Blairadam Bands.
+
+      Bob Ross (publisher) __knowledge__ Bob Ross (April 2, 1934 – December 13, 2003)
+      was the founder and former publisher of the "Bay Area Reporter" and a key gay
+      rights and AIDS activist in San Francisco.
+
+      Bob Ross (publisher) __knowledge__ Ross was born in New York City.
+
+      Bob Ross (publisher) __knowledge__ In addition to the "Bay Area Reporter", Ross
+      published the long-running "Gay Comix", beginning in 1985 and continuing until
+      1998.
+
+      Bob Ross (publisher) __knowledge__ He was criticized by some for his more moderate
+      policies, sometimes leaning toward the conservative, with gay rights being seen
+      by many as a primarily liberal issue.
+
+      Bob Ross (publisher) __knowledge__ In 1996, he established the Bob Ross Foundation,
+      which donated to a "broad portfolio of nonprofits".
+
+      Bob Ross (publisher) __knowledge__ In 2016, the Foundation donated $50,000 to
+      purchase equipment for the GLBT Historical Society to digitize and publish a
+      complete searchable archive of the "Bay Area Reporter" from the first issue
+      in 1971 until 2005 when the newspaper began online operations.
+
+      Bob Ross (disambiguation) __knowledge__ Bob Ross (1942–1995) was a painter and
+      television presenter.
+
+      Bob Ross (disambiguation) __knowledge__ Bob Ross may also refer to:
+
+      Edgar Ross (communist) __knowledge__ Edgar Argent Ross (20 November 1904 – 16
+      November 2001) was an Australian journalist, trade unionist and communist organiser.
+
+      Edgar Ross (communist) __knowledge__ Ross was born in Brisbane to Bob and Ethel
+      Ross, who were based in Broken Hill.
+
+      Edgar Ross (communist) __knowledge__ Bob Ross, a newspaper editor, was also
+      a foundation member of the Socialist League and the Social Democratic Vanguard,
+      which influenced young Edgar''s political development.
+
+      Edgar Ross (communist) __knowledge__ The family later moved to Melbourne and,
+      briefly, New Zealand, but Edgar attended University High School in Melbourne
+      before becoming a cadet journalist in 1922, joining the Australian Journalists''
+      Association.
+
+      Edgar Ross (communist) __knowledge__ He was sporting editor for the Geelong-based
+      "Industrial Advocate" and wrote book reviews for the "Socialist", both of which
+      were edited by his father.
+
+      '
+    label_candidates: []
+    text: 'Bob Ross
+
+      I would like to know more about bob ross'
+    title: Bob Ross
+num_episodes: 981
+num_examples: 3939

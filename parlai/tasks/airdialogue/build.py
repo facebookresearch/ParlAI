@@ -12,7 +12,7 @@ RESOURCES = [
     DownloadableFile(
         'https://storage.googleapis.com/airdialogue/airdialogue_data.tar.gz',
         'airdialogue.tar.gz',
-        '4ebf1e7e44078fa0a1986539f6d1827851982420045c674ff26d869e02560b05',
+        '7d2130cdde73a59afd6ad6c463a25453d8ed677c1b3a4a4aaa2406db9c9712cb',
     )
 ]
 

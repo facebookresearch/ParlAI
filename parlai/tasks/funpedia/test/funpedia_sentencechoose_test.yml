@@ -1,0 +1,66 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - The Case of Mines or "R v Earl of Northumberland" was decided in 1568.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - The Case of Mines or "R v Earl of Northumberland" was decided in 1568.
+    - Twelve judges decided authoritatively “that by the law all mines of gold and
+      silver within the realm, whether they be in the lands of the Queen, or of subjects,
+      belong to the Queen by prerogative, with liberty to dig and carry away the ores
+      thereof, and with other such incidents thereto as are necessary to be used for
+      the getting of the ore.”
+    reward: 0
+    text: The Case of Mines or "R v Earl of Northumberland" was decided in 1568. Twelve
+      judges decided authoritatively “that by the law all mines of gold and silver
+      within the realm, whether they be in the lands of the Queen, or of subjects,
+      belong to the Queen by prerogative, with liberty to dig and carry away the ores
+      thereof, and with other such incidents thereto as are necessary to be used for
+      the getting of the ore.”
+- - episode_done: true
+    eval_labels:
+    - The population was 15,313 at the 2010 census.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Wailuku is a census-designated place (CDP) in and county seat of Maui County,
+      Hawaii, United States.
+    - The population was 15,313 at the 2010 census.
+    - It is the county seat of Maui County.
+    reward: 0
+    text: Wailuku is a census-designated place (CDP) in and county seat of Maui County,
+      Hawaii, United States. The population was 15,313 at the 2010 census. It is the
+      county seat of Maui County.
+- - episode_done: true
+    eval_labels:
+    - He currently plays for Sporting Cristal in the Torneo Descentralizado.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Horacio Calcaterra (born 22 February 1989) is an Argentine-Peruvian footballer
+      who plays as a winger.
+    - He currently plays for Sporting Cristal in the Torneo Descentralizado.
+    reward: 0
+    text: Horacio Calcaterra (born 22 February 1989) is an Argentine-Peruvian footballer
+      who plays as a winger. He currently plays for Sporting Cristal in the Torneo
+      Descentralizado.
+- - episode_done: true
+    eval_labels:
+    - Its single species, "C. polita", is endemic to Burma.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Ceglusa is a spider genus of the Salticidae family (jumping spiders).
+    - Its single species, "C. polita", is endemic to Burma.
+    reward: 0
+    text: Ceglusa is a spider genus of the Salticidae family (jumping spiders). Its
+      single species, "C. polita", is endemic to Burma.
+- - episode_done: true
+    eval_labels:
+    - Kurper is a generic name for certain fish in South Africa.
+    id: funpedia:sentencechoose
+    label_candidates:
+    - Kurper is a generic name for certain fish in South Africa.
+    - 'It may refer to:'
+    reward: 0
+    text: 'Kurper is a generic name for certain fish in South Africa. It may refer
+      to:'
+num_episodes: 9974
+num_examples: 9974
