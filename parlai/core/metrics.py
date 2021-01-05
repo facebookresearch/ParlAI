@@ -27,7 +27,7 @@ DISTINCT_METRICS = {
     'interdistinct-1',
     'interdistinct-2',
     'intradistinct-1',
-    'instradistinct-2',
+    'intradistinct-2',
 }
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS | DISTINCT_METRICS
 
@@ -795,7 +795,7 @@ class TeacherMetrics(Metrics):
                 if 'rouge-L' in self._metrics_list and rL:
                     self.add('rouge_L', rL)
             # compute distinct-k
-            for k in [1, 2]:  # 1,2
+            for k in [1, 2]:
                 if f'interdistinct-{k}' in self._metrics_list:
                     self.add(
                         f'interdistinct-{k}', InterDistinctMetric.compute(prediction, k)

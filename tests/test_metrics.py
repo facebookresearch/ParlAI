@@ -152,7 +152,7 @@ class TestMetrics(unittest.TestCase):
         m2.add('key', SumMetric(1))
         m3.add('key', SumMetric(2))
         m.add('key', SumMetric(3))
-        m.report()['key'] == 6
+        assert m.report()['key'] == 6
 
     def test_verymultithreaded(self):
         # legacy test, but useful all the same, for ensuring
