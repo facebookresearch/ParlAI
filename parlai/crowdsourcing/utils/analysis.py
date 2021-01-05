@@ -18,15 +18,6 @@ class AbstractResultsCompiler(ABC):
     Currently only provides utility attributes/methods for analyzing turn annotations.
     """
 
-    PROBLEM_BUCKETS = [
-        'bucket_0',
-        'bucket_1',
-        'bucket_2',
-        'bucket_3',
-        'bucket_4',
-        'none_all_good',
-    ]
-
     @classmethod
     def setup_args(cls):
         parser = argparse.ArgumentParser('Compile crowdsourcing results')
@@ -38,6 +29,12 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
         )
+        parser.add_argument(
+            '--problem-buckets',
+            type=str,
+            help='Comma-separated list of buckets used for annotation',
+            default='bucket_0,bucket_1,bucket_2,bucket_3,bucket_4,none_all_good',
+        )
         return parser
 
     def __init__(self, opt: Dict[str, Any]):
@@ -48,11 +45,12 @@ class AbstractResultsCompiler(ABC):
         else:
             self.results_folders = None
         self.output_folder = opt.get('output_folder')
+        self.problem_buckets = opt['problem_buckets'].split(',')
 
         # Validate problem buckets
-        if 'none_all_good' not in self.PROBLEM_BUCKETS:
+        if 'none_all_good' not in self.problem_buckets:
             raise ValueError(
-                'There must be a "none_all_good" category in the problem buckets!'
+                'There must be a "none_all_good" category in self.problem_buckets!'
             )
 
     @abstractmethod

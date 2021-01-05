@@ -78,7 +78,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         # Setting up problem buckets
         self.regular_buckets = [
             bucket
-            for bucket in self.PROBLEM_BUCKETS
+            for bucket in self.problem_buckets
             if bucket not in ['other', 'none_all_good']
         ]
         # Remove the buckets that are special cases
@@ -176,7 +176,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     if d['agent_idx'] == 0
                 ]
                 if np.average(word_counts) < self.min_word_count or (
-                    'contradiction' in self.PROBLEM_BUCKETS and 'contradiction' in words
+                    'contradiction' in self.problem_buckets and 'contradiction' in words
                 ):
                     bad_conversations.append(data)
                     print(
@@ -185,7 +185,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     continue
 
                 if (
-                    'non_sensical' in self.PROBLEM_BUCKETS
+                    'non_sensical' in self.problem_buckets
                     and 'non_sensical' not in data['dialog'][1]['problem_data']
                 ):
                     # Old experiment
@@ -257,7 +257,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                         'agent_idx',
                         'text',
                     ]
-                    + self.PROBLEM_BUCKETS,
+                    + self.problem_buckets,
                 )
                 additional_context = ''
                 if data['context_dataset'] == 'wizard_of_wikipedia':
@@ -276,7 +276,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                         + '\nyour persona: '
                         + data['personas'][1][1]
                         + additional_context,
-                        **{bucket: '' for bucket in self.PROBLEM_BUCKETS},
+                        **{bucket: '' for bucket in self.problem_buckets},
                     },
                     ignore_index=True,
                 )
@@ -300,11 +300,11 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                         'turn_idx': utterance_idx,
                         'agent_idx': utt['agent_idx'],
                         'text': utt['text'],
-                        **{bucket: '' for bucket in self.PROBLEM_BUCKETS},
+                        **{bucket: '' for bucket in self.problem_buckets},
                     }
                     if utt['agent_idx'] == 1:
                         if 'problem_data' not in utt:
-                            for bucket in self.PROBLEM_BUCKETS:
+                            for bucket in self.problem_buckets:
                                 d[bucket] = 'MALFORMED'
                             print(
                                 f'Warning got MALFORMED utterance problem data inside complete convo: {utt}. Skipping.'
