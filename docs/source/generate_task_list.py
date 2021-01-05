@@ -45,6 +45,7 @@ for num_category, (category, tl) in enumerate(category_task_list.items()):
 
         urls_md = ", ".join(f"[{k}]({v})" for k, v in urls)
         fout.write(f"### {display_name}\n")
+        fout.write(f"_Usage_:  `--task {task}`\n\n")
         fout.write(f"_Links_:  {urls_md}\n\n")
         if description:
             fout.write(description + "\n")
