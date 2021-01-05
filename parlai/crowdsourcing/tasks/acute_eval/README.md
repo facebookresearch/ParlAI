@@ -34,7 +34,9 @@ Make a note of the run ID printed to the command line upon running, because this
 
 ## Formatting conversation data
 
-This task code assumes that you've parsed and saved your collected conversations in a simple .jsonl format. The path to this file should be passed in as `mephisto.blueprint.pairings_filepath=${PATH_TO_FILE}`.
+This task code assumes that you've parsed and saved your collected dialogues in a simple .jsonl format. The path to this file should be passed in as `mephisto.blueprint.pairings_filepath=${PATH_TO_FILE}`.
+
+Note that this format is slightly different than that of chat logs from `eval_model` scripts. See information on Fast-ACUTE below for scripts to compile chat logs of the Conversations format into the ACUTE format.
 
 This is a template of the expected format with the minimal expected fields:
 
@@ -62,6 +64,8 @@ This is a template of the expected format with the minimal expected fields:
       ]
     }
 
+Note that we assume that "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Speakers that we would like to evaluate in the dialogues of `dialogue_dicts` should appear in the same order as `speakers_to_eval`. (Consequently, the number of dialogues in `dialogues_dicts` will be the same as the number of speakers in `speakers_to_eval`.) See `task_config/pairings.jsonl` for examples of the format required.
+
 You can add an `"image_src"` key to an entry of `"dialogue"` to append an image to a chat message. The value of the key should be a serialized image, starting with a string such `data:image/jpeg;base64,`.
 
 For onboarding tasks (tasks used to filter workers, see below for more details) you must additionally set a `correct_answer` field:
@@ -74,9 +78,6 @@ For onboarding tasks (tasks used to filter workers, see below for more details) 
         # as above
       ]
     }
-
-
-Note that we assume that "dialogue" consists of strictly alternating turns (e.g. speakers a, b, a, b, a...). Additionally, `speakers_to_eval` must be in the same order as the dialogue_dicts. See `task_config/pairings.jsonl` for examples of the format required.
 
 ## Question phrasing
 
@@ -124,7 +125,7 @@ We provide an all-in-one script to run ACUTE-Eval in the smoothest experience po
 
 The script combines three major steps of ACUTE-Eval into one simple command:
 
-1. Generation (or compilation) of chat logs for given models
+1. Generation (or compilation) of chat logs for given models into the ACUTE format
 2. Execution of ACUTE-Eval
 3. Analysis of ACUTE-Eval results.
 
