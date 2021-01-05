@@ -377,10 +377,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
         Filter the bot responses given the specific problem buckets being used.
         """
 
-        if 'none_all_good' not in self.PROBLEM_BUCKETS:
-            raise ValueError(
-                'There must be a "none_all_good" category in self.PROBLEM_BUCKETS!'
-            )
         non_none_problem_buckets = [
             bucket for bucket in self.PROBLEM_BUCKETS if bucket != 'none_all_good'
         ]

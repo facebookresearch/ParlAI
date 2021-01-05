@@ -86,10 +86,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         self.worker_block_list = opt['worker_block_list'].split(',')
 
         # Setting up problem buckets
-        if 'none_all_good' not in self.PROBLEM_BUCKETS:
-            raise ValueError(
-                'There must be a "none_all_good" category in self.PROBLEM_BUCKETS!'
-            )
         self.regular_buckets = [
             bucket
             for bucket in self.PROBLEM_BUCKETS

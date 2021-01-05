@@ -22,7 +22,15 @@ class AbstractResultsCompiler:
     ]
 
     def __init__(self, opt: Dict[str, Any]):
+
+        # Handle inputs
         if 'results_folders' in opt:
             self.results_folders = opt['results_folders'].split(',')
         else:
             self.results_folders = None
+
+        # Validate problem buckets
+        if 'none_all_good' not in self.PROBLEM_BUCKETS:
+            raise ValueError(
+                'There must be a "none_all_good" category in the problem buckets!'
+            )
