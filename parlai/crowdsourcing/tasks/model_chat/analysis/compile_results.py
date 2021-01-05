@@ -313,9 +313,8 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                             )
                             continue
                         else:
-                            for bucket in self.regular_buckets:
+                            for bucket in self.regular_buckets + ['none_all_good']:
                                 d[bucket] = utt['problem_data'][bucket]
-                            d['none_all_good'] = utt['problem_data']['none_all_good']
                             d['final_rating'] = (
                                 utt['problem_data']['final_rating']
                                 if 'final_rating' in utt['problem_data']
