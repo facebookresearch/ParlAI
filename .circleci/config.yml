@@ -158,10 +158,10 @@ commands:
             python setup.py develop; cd -
 
   installcrowdsourcingdeps:
-    description: Install Mephisto and related dependencies
+    description: Install Mephisto
     steps:
       - run:
-            name: Install Mephisto and related dependencies
+            name: Install Mephisto
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
@@ -170,8 +170,6 @@ commands:
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
-              python -m pip install torchvision==0.7.0+cu101
-              # For image-chat task
 
   setupcuda:
     description: Setup CUDA
