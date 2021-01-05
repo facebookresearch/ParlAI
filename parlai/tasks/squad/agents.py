@@ -391,8 +391,9 @@ class SquadQATeacher(AbstractWrapperTeacher):
     """
 
     @classmethod
-    def add_cmdline_args(cls, parser):
+    def add_cmdline_args(cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None):
         parser.set_defaults(wrapper_task='squad')
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)

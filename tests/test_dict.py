@@ -299,7 +299,7 @@ class TestByteLevelBPE(unittest.TestCase):
 
     def test_nofile(self):
         pp = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(pp)
+        DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         with self.assertRaises(IOError):
             # did not specify bpe merge or vocab
             DictionaryAgent(pp.parse_args(['--dict-tokenizer', 'bytelevelbpe']))
@@ -365,7 +365,7 @@ class TestByteLevelBPE(unittest.TestCase):
         Save and reload an existing BL-BPE dictionary.
         """
         pp = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(pp)
+        DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         da = DictionaryAgent(
             pp.parse_args(
                 [
@@ -607,7 +607,7 @@ class SpecialTokenTests(unittest.TestCase):
 class TestBpeDropout(unittest.TestCase):
     def _test_bpe_dropout(self, **dict_args):
         pp = ParlaiParser(False, False)
-        DictionaryAgent.add_cmdline_args(pp)
+        DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         opt = pp.parse_kwargs(bpe_dropout=0.5, **dict_args)
         da = DictionaryAgent(opt)
         da.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)

@@ -39,8 +39,8 @@ import parlai.core.torch_generator_agent as tga
 class Seq2seqAgent(tga.TorchGeneratorAgent):
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
+    def add_cmdline_args(cls, argparser, partial_opt=None):
+        super().add_cmdline_args(argparser, partial_opt=partial_opt)
         group = argparser.add_argument_group('Example TGA Agent')
         group.add_argument(
             '-hid', '--hidden-size', type=int, default=1024, help='Hidden size.'

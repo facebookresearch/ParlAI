@@ -197,9 +197,9 @@ class TestAddCmdlineArgs(unittest.TestCase):
         @register_agent("partialopt_addcmdlineargs_agent")
         class TestAgent:
             @classmethod
-            def add_cmdline_args(cls, argparser, partial_opt):
+            def add_cmdline_args(cls, argparser, partial_opt=None):
                 argparser.add_argument("--yes-find", default=True, type='bool')
-                if partial_opt.get('yes_find'):
+                if partial_opt and partial_opt.get('yes_find'):
                     # conditional argument addition
                     argparser.add_argument(
                         "--yes-partial-find", default=True, type='bool'
@@ -243,9 +243,9 @@ class TestAddCmdlineArgs(unittest.TestCase):
         @register_teacher("partialopt_addcmdlineargs_teacher")
         class TestAgent:
             @classmethod
-            def add_cmdline_args(cls, argparser, partial_opt):
+            def add_cmdline_args(cls, argparser, partial_opt=None):
                 argparser.add_argument("--yes-find", default=True, type='bool')
-                if partial_opt.get('yes_find'):
+                if partial_opt and partial_opt.get('yes_find'):
                     # conditional argument addition
                     argparser.add_argument(
                         "--yes-partial-find", default=True, type='bool'
