@@ -49,6 +49,8 @@ class AbstractResultsCompiler(ABC):
 
         # Validate problem buckets
         if 'none_all_good' not in self.problem_buckets:
+            # The code relies on a catchall "none" category if the user selects no other
+            # annotation bucket
             raise ValueError(
                 'There must be a "none_all_good" category in self.problem_buckets!'
             )
