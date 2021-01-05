@@ -169,11 +169,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     if d['agent_idx'] == 0
                 ]
                 utterances = [d['text'] for d in data['dialog'] if d['agent_idx'] == 0]
-                words = [
-                    d['text'].lower().split(' ')
-                    for d in data['dialog']
-                    if d['agent_idx'] == 0
-                ]
                 if np.average(word_counts) < self.min_word_count:
                     bad_conversations.append(data)
                     print(
