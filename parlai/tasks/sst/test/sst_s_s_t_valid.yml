@@ -1,0 +1,58 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: 'One long string of cliches.
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"If you''ve ever entertained the notion of doing what the title of this
+      film implies, what Sex With Strangers actually shows may put you off the idea
+      forever."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: 'K-19 exploits our substantial collective fear of nuclear holocaust to generate
+      cheap Hollywood tension.
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"It''s played in the most straight-faced fashion, with little humor to
+      lighten things up."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"There is a fabric of complex ideas here, and feelings that profoundly
+      deepen them."
+
+      Is this sentence positive or negative?'
+num_episodes: 872
+num_examples: 872

@@ -297,7 +297,13 @@ def _untar(path, fname, delete=True, flatten=False):
                 raise NotImplementedError("No support for symlinks etc. right now.")
 
     if delete:
-        PathManager.rm(fullpath)
+        try:
+            PathManager.rm(fullpath)
+        except PermissionError:
+            logging.error(
+                f"Tried to delete {fullpath} but got a permission error. This "
+                "is known to happen in Windows and is probably not fatal."
+            )
 
 
 def ungzip(path, fname, deleteGZip=True):
@@ -361,7 +367,13 @@ def _unzip(path, fname, delete=True):
             with zf.open(member, 'r') as inf, PathManager.open(outpath, 'wb') as outf:
                 shutil.copyfileobj(inf, outf)
     if delete:
-        PathManager.rm(fullpath)
+        try:
+            PathManager.rm(fullpath)
+        except PermissionError:
+            logging.error(
+                f"Tried to delete {fullpath} but got a permission error. This "
+                "is known to happen in Windows and is probably not fatal."
+            )
 
 
 def _get_confirm_token(response):

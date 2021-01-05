@@ -1,0 +1,54 @@
+acts:
+- - episode_done: false
+    id: google_sgd
+    labels:
+    - Do you have a specific which you want the eating place to be located at?
+    slots:
+      city: []
+    text: 'I am feeling hungry so I would like to find a place to eat. api_resp: city
+      = []'
+    type: apiresp
+- - episode_done: false
+    id: google_sgd
+    labels:
+    - Is there a specific cuisine type you enjoy, such as Mexican, Italian or something
+      else?
+    slots:
+      cuisine:
+      - Mexican
+      - Italian
+    text: 'I would like for it to be in San Jose. api_resp: cuisine = [''Mexican'',
+      ''Italian'']'
+    type: apiresp
+- - episode_done: false
+    id: google_sgd
+    labels:
+    - 'apicall: FindRestaurants.city = San Jose ; FindRestaurants.cuisine = American'
+    slots:
+      FindRestaurants.city: San Jose
+      FindRestaurants.cuisine: American
+    text: I usually like eating the American type of food.
+    type: apicall
+- - episode_done: false
+    id: google_sgd
+    labels:
+    - I see that at 71 Saint Peter there is a good restaurant which is in San Jose.
+    slots:
+      city:
+      - San Jose
+      restaurant_name:
+      - 71 Saint Peter
+    text: 'api_resp: restaurant_name = [''71 Saint Peter''] ; city = [''San Jose'']'
+    type: apiresp
+- - episode_done: false
+    id: google_sgd
+    labels:
+    - If you want to go to this restaurant you can find it at 71 North San Pedro Street.
+    slots:
+      street_address:
+      - 71 North San Pedro Street
+    text: 'Can you give me the address of this restaurant. api_resp: street_address
+      = [''71 North San Pedro Street'']'
+    type: apiresp
+num_episodes: 16142
+num_examples: 215128

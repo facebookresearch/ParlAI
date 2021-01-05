@@ -1,0 +1,38 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Denver Broncos
+    - Denver Broncos
+    - Denver Broncos
+    id: squad
+    text: Which NFL team represented the AFC at Super Bowl 50?
+- - episode_done: true
+    eval_labels:
+    - Carolina Panthers
+    - Carolina Panthers
+    - Carolina Panthers
+    id: squad
+    text: Which NFL team represented the NFC at Super Bowl 50?
+- - episode_done: true
+    eval_labels:
+    - Santa Clara, California
+    - Levi's Stadium
+    - Levi's Stadium in the San Francisco Bay Area at Santa Clara, California.
+    id: squad
+    text: Where did Super Bowl 50 take place?
+- - episode_done: true
+    eval_labels:
+    - Denver Broncos
+    - Denver Broncos
+    - Denver Broncos
+    id: squad
+    text: Which NFL team won Super Bowl 50?
+- - episode_done: true
+    eval_labels:
+    - gold
+    - gold
+    - gold
+    id: squad
+    text: What color was used to emphasize the 50th anniversary of the Super Bowl?
+num_episodes: 10570
+num_examples: 10570

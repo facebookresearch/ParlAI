@@ -32,7 +32,7 @@ def _path(opt, task_size='small'):
     return data_path
 
 
-class TaskNTalkTeacher(Teacher):
+class AbstractTaskNTalk(Teacher):
     """
     TaskNTalk basic teacher, it picks a random image and associates a random task with
     it.
@@ -101,7 +101,7 @@ class TaskNTalkTeacher(Teacher):
         return action
 
 
-class SmallTeacher(TaskNTalkTeacher):
+class SmallTeacher(AbstractTaskNTalk):
     """
     Teacher for small dataset, invoked by ``taskntalk:small``.
     """
@@ -111,7 +111,7 @@ class SmallTeacher(TaskNTalkTeacher):
         super().__init__(opt, shared)
 
 
-class LargeTeacher(TaskNTalkTeacher):
+class LargeTeacher(AbstractTaskNTalk):
     """
     Teacher for large dataset, invoked by ``taskntalk:large``.
     """

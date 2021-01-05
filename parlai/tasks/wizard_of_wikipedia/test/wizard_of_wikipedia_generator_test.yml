@@ -1,0 +1,1039 @@
+acts:
+- - checked_sentence: Blue is one of the three primary colours of pigments in painting
+      and traditional colour theory, as well as in the RGB colour model.
+    chosen_topic: Blue
+    episode_done: false
+    eval_labels:
+    - Blue is my favorite primary color.
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Blue __knowledge__ Blue is one of the three primary colours of pigments in painting
+      and traditional colour theory, as well as in the RGB colour model.
+
+      Blue __knowledge__ It lies between violet and green on the spectrum of visible
+      light.
+
+      Blue __knowledge__ The eye perceives blue when observing light with a dominant
+      wavelength between approximately 450 and 495 nanometres.
+
+      Blue __knowledge__ Most blues contain a slight mixture of other colors; azure
+      contains some green, while ultramarine contains some violet.
+
+      Blue __knowledge__ The clear daytime sky and the deep sea appear blue because
+      of an optical effect known as Rayleigh scattering.
+
+      Blue __knowledge__ An optical effect called Tyndall scattering explains blue
+      eyes.
+
+      Blue __knowledge__ Distant objects appear more blue because of another optical
+      effect called atmospheric perspective.
+
+      Blue __knowledge__ Blue has been an important colour in art and decoration since
+      ancient times.
+
+      Blue __knowledge__ The semi-precious stone lapis lazuli was used in ancient
+      Egypt for jewellery and ornament and later, in The Renaissance, to make the
+      pigment ultramarine, the most expensive of all pigments.
+
+      Blue __knowledge__ In the eighth century Chinese artists used cobalt blue to
+      colour fine blue and white porcelain.
+
+      Blue __knowledge__ In the Middle Ages, European artists used it in the windows
+      of Cathedrals.
+
+      Blue __knowledge__ Europeans wore clothing coloured with the vegetable dye woad
+      until it was replaced by the finer indigo from America.
+
+      '
+    label_candidates: []
+    text: Blue
+    title: Blue
+- - checked_sentence: The Royal Blue was the Baltimore and Ohio Railroad (B&O)'s flagship
+      passenger train between New York City and Washington, D.C., in the United States,
+      beginning in 1890.
+    chosen_topic: Blue
+    episode_done: false
+    eval_labels:
+    - I once road on The Royal Blue train from New York to D.C
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Blue __knowledge__ Blue is one of the three primary colours of pigments in painting
+      and traditional colour theory, as well as in the RGB colour model.
+
+      Blue __knowledge__ It lies between violet and green on the spectrum of visible
+      light.
+
+      Blue __knowledge__ The eye perceives blue when observing light with a dominant
+      wavelength between approximately 450 and 495 nanometres.
+
+      Blue __knowledge__ Most blues contain a slight mixture of other colors; azure
+      contains some green, while ultramarine contains some violet.
+
+      Blue __knowledge__ The clear daytime sky and the deep sea appear blue because
+      of an optical effect known as Rayleigh scattering.
+
+      Blue __knowledge__ An optical effect called Tyndall scattering explains blue
+      eyes.
+
+      Blue __knowledge__ Distant objects appear more blue because of another optical
+      effect called atmospheric perspective.
+
+      Blue __knowledge__ Blue has been an important colour in art and decoration since
+      ancient times.
+
+      Blue __knowledge__ The semi-precious stone lapis lazuli was used in ancient
+      Egypt for jewellery and ornament and later, in The Renaissance, to make the
+      pigment ultramarine, the most expensive of all pigments.
+
+      Blue __knowledge__ In the eighth century Chinese artists used cobalt blue to
+      colour fine blue and white porcelain.
+
+      Blue __knowledge__ In the Middle Ages, European artists used it in the windows
+      of Cathedrals.
+
+      Blue __knowledge__ Europeans wore clothing coloured with the vegetable dye woad
+      until it was replaced by the finer indigo from America.
+
+      Royal Blue (train) __knowledge__ The Royal Blue was the Baltimore and Ohio Railroad
+      (B&O)''s flagship passenger train between New York City and Washington, D.C.,
+      in the United States, beginning in 1890.
+
+      Royal Blue (train) __knowledge__ The Baltimore-based B&O also used the name
+      between 1890 and 1917 for its improved passenger service between New York and
+      Washington launched in the 1890s, collectively dubbed the Royal Blue Line.
+
+      Royal Blue (train) __knowledge__ Using variants such as the "Royal Limited"
+      and "Royal Special" for individual "Royal Blue" trains, the B&O operated the
+      service in partnership with the Reading Railroad and the Central Railroad of
+      New Jersey.
+
+      Royal Blue (train) __knowledge__ Principal intermediate cities served were Philadelphia,
+      Wilmington, and Baltimore.
+
+      Royal Blue Coach Services __knowledge__ Royal Blue Express Services was a coach
+      operator in the south and west of England from 1880 until 1986.
+
+      Royal Blue Coach Services __knowledge__ The Royal Blue business was founded
+      in 1880 by Thomas Elliott in Bournemouth.
+
+      Royal Blue Coach Services __knowledge__ The business, at first known as Royal
+      Blue & Branksome Mews, included the hire of every kind of horse-drawn vehicle,
+      as well as coach building, saddlery and blacksmithing.
+
+      Royal Blue Coach Services __knowledge__ Elliott soon started a four-in-hand
+      stagecoach service to connect Bournemouth to the railway at Holmsley.
+
+      Royal Blue Coach Services __knowledge__ That service became redundant when the
+      railway was extended to Bournemouth in 1888, but by then Elliott had started
+      running Royal Blue excursions by charabanc and coach around Bournemouth and
+      the New Forest.
+
+      British Army mess dress __knowledge__ British Army mess dress is the formal
+      military evening dress worn by British Army officers and senior non-commissioned
+      officers in their respective messes or at other formal occasions.
+
+      British Army mess dress __knowledge__ Mess uniforms first appeared in the British
+      Army in about 1845, initially utilizing the short shell jacket worn since 1831.
+
+      British Army mess dress __knowledge__ This working jacket was worn open over
+      a regimental waistcoat for evening dress.
+
+      British Army mess dress __knowledge__ The original purpose was to provide a
+      relatively comfortable and inexpensive alternative to the stiff and elaborate
+      full-dress uniforms then worn by officers for evening social functions such
+      as regimental dinners or balls.
+
+      Denver Nuggets __knowledge__ The Denver Nuggets are an American professional
+      basketball team based in Denver, Colorado.
+
+      Denver Nuggets __knowledge__ The Nuggets compete in the National Basketball
+      Association (NBA) as a member club of the league''s Western Conference Northwest
+      Division.
+
+      Denver Nuggets __knowledge__ The team was founded as the Denver Larks in 1967
+      as a charter franchise of the American Basketball Association (ABA), but changed
+      its name to Rockets before the first season.
+
+      Denver Nuggets __knowledge__ It changed its name again to the Nuggets in 1974.
+
+      Denver Nuggets __knowledge__ After the name change, the Nuggets played for the
+      final ABA Championship title in 1976, losing to the New York Nets.
+
+      Denver Nuggets __knowledge__ The team has had some periods of success, qualifying
+      for the ABA Playoffs for all seasons from 1967 to the 1976 ABA playoffs where
+      it lost in the finals.
+
+      Los Angeles Rams __knowledge__ The Los Angeles Rams are a professional American
+      football team based in the Los Angeles metropolitan area.
+
+      Los Angeles Rams __knowledge__ The Rams compete in the National Football League
+      (NFL), as a member club of the league''s National Football Conference (NFC)
+      West division.
+
+      Los Angeles Rams __knowledge__ The Rams franchise has won three NFL championships,
+      and is the only franchise to win championships while representing three different
+      cities (Cleveland in 1945, Los Angeles in 1951, and St. Louis in 1999).
+
+      Los Angeles Rams __knowledge__ The Rams play their home games at the Los Angeles
+      Memorial Coliseum in Los Angeles, California.
+
+      Los Angeles Rams __knowledge__ The franchise began in 1936 as the Cleveland
+      Rams, located in Cleveland, Ohio.
+
+      Air Jordan __knowledge__ Air Jordan is a brand of basketball footwear and athletic
+      clothing produced by Nike.
+
+      Air Jordan __knowledge__ It was created for former professional basketball player,
+      Michael Jordan.
+
+      Air Jordan __knowledge__ The original Air Jordan I sneaker, were produced exclusively
+      for Jordan in early 1984, and released to the public in late 1984.
+
+      Air Jordan __knowledge__ The shoes were designed for Nike by Peter Moore, Tinker
+      Hatfield, and Bruce Kilgore.
+
+      Air Jordan __knowledge__ Since its introduction into the sports shoe market,
+      the Air Jordans evolved from the original basketball shoes to models for different
+      uses, including I-XXXII.
+
+      Air Jordan __knowledge__ The Jordan brand sponsors 21 active NBA players, including
+      Jimmy Butler, Chris Paul, Blake Griffin, Kawhi Leonard, Russell Westbrook and
+      Carmelo Anthony.
+
+      Victorian Railways S type carriage __knowledge__ The S type carriages are a
+      compartment layout passenger carriage used on the railways of Victoria, Australia.
+
+      Victorian Railways S type carriage __knowledge__ The carriages were constructed
+      by the Victorian Railways in 1937 for use on the "Spirit of Progress", with
+      additional carriages built until the 1950s for other trains.
+
+      Victorian Railways S type carriage __knowledge__ Introduced by Victorian Railways
+      Chief Commissioner Harold Clapp for the "Spirit of Progress" service between
+      Melbourne and Albury, the carriages lasted through many decades of regular service
+      across a number of operators.
+
+      Victorian Railways S type carriage __knowledge__ Most of the fleet are still
+      in service today, though none are in regular passenger service.
+
+      Victorian Railways S type carriage __knowledge__ Two major types of carriage
+      were constructed - AS first class cars with 3+3 seating in each compartment,
+      BS second class cars with 4+4 seating.
+
+      RGB color model __knowledge__ The RGB color model is an additive color model
+      in which red, green and blue light are added together in various ways to reproduce
+      a broad array of colors.
+
+      RGB color model __knowledge__ The name of the model comes from the initials
+      of the three additive primary colors, red, green, and blue.
+
+      RGB color model __knowledge__ The main purpose of the RGB color model is for
+      the sensing, representation and display of images in electronic systems, such
+      as televisions and computers, though it has also been used in conventional photography.
+
+      RGB color model __knowledge__ Before the electronic age, the RGB color model
+      already had a solid theory behind it, based in human perception of colors.
+
+      RGB color model __knowledge__ RGB is a "device-dependent" color model: different
+      devices detect or reproduce a given RGB value differently, since the color elements
+      (such as phosphors or dyes) and their response to the individual R, G, and B
+      levels vary from manufacturer to manufacturer, or even in the same device over
+      time.
+
+      Red __knowledge__ Red is the colour at the end of the visible spectrum of light,
+      next to orange and opposite violet.
+
+      Red __knowledge__ It has a dominant wavelength of approximately 625–740 nanometres.
+
+      Red __knowledge__ It is a primary color in the RGB color model and the CMYK
+      color model, and is the complementary color of cyan.
+
+      Red __knowledge__ Reds range from the brilliant yellow-tinged scarlet and vermillion
+      to bluish-red crimson, and vary in shade from the pale red pink to the dark
+      red burgundy.
+
+      Red __knowledge__ The red sky at sunset results from Rayleigh scattering, while
+      the red color of the Grand Canyon and other geological features is caused by
+      hematite or red ochre, both forms of iron oxide.
+
+      Shades of green __knowledge__ Varieties of the color green may differ in hue,
+      chroma (also called saturation or intensity) or lightness (or value, tone, or
+      brightness), or in two or three of these qualities.
+
+      Shades of green __knowledge__ Variations in value are also called tints and
+      shades, a tint being a green or other hue mixed with white, a shade being mixed
+      with black.
+
+      Shades of green __knowledge__ A large selection of these various colors is shown
+      below.
+
+      Shades of green __knowledge__ Green is common in nature, especially in plants.
+
+      Shades of green __knowledge__ Many plants are green mainly because of a complex
+      chemical known as chlorophyll which is involved in photosynthesis.
+
+      Shades of green __knowledge__ Many shades of green have been named after plants
+      or are related to plants.
+
+      Chicago White Sox __knowledge__ The Chicago White Sox are an American professional
+      baseball team based in Chicago.
+
+      Chicago White Sox __knowledge__ The White Sox compete in Major League Baseball
+      (MLB) as a member club of the American League (AL) Central division.
+
+      Chicago White Sox __knowledge__ Home games are held at Guaranteed Rate Field,
+      located on the city''s South Side, and the team is owned by Jerry Reinsdorf.
+
+      Chicago White Sox __knowledge__ They are one of two major league clubs in Chicago;
+      the other is the Chicago Cubs, who are a member of the National League (NL)
+      Central division.
+
+      Chicago White Sox __knowledge__ One of the American League''s eight charter
+      franchises, the franchise was established as a major league baseball club in
+      .
+
+      Chicago White Sox __knowledge__ The club was originally called the Chicago White
+      Stockings, but this was soon shortened to Chicago White Sox.
+
+      Color theory __knowledge__ In the visual arts, color theory or colour theory
+      is a body of practical guidance to color mixing and the visual effects of a
+      specific color combination.
+
+      Color theory __knowledge__ There are also definitions (or categories) of colors
+      based on the color wheel: primary color, secondary color and tertiary color.
+
+      Color theory __knowledge__ Although color theory principles first appeared in
+      the writings of Leone Battista Alberti (c.1435) and the notebooks of Leonardo
+      da Vinci (c.1490), a tradition of "colory theory" began in the 18th century,
+      initially within a partisan controversy over Isaac Newton''s theory of color
+      ("Opticks", 1704) and the nature of primary colors.
+
+      Linguistic relativity and the color naming debate __knowledge__ The concept
+      of linguistic relativity concerns the relationship between language and thought,
+      specifically whether language influences thought, and, if so, how.
+
+      Linguistic relativity and the color naming debate __knowledge__ This question
+      has led to research in multiple disciplines—especially anthropology, cognitive
+      science, linguistics, and philosophy.
+
+      Linguistic relativity and the color naming debate __knowledge__ Among the most
+      popular and controversial theories in this area of scholarly work is the theory
+      of linguistic relativity (also known as the Sapir–Whorf hypothesis).
+
+      Linguistic relativity and the color naming debate __knowledge__ An often-cited
+      "strong version" of the claim, first given by Lenneberg in 1953, proposes that
+      language structure determines how we perceive the world.
+
+      Tertiary color __knowledge__ A "tertiary color" is a color made by mixing full
+      saturation of one primary color with half saturation of another primary color
+      and none of a third primary color, in a given color space such as RGB, CMYK
+      (more modern) or RYB (traditional).
+
+      Tertiary color __knowledge__ Tertiary colors have general names, one set of
+      names for the RGB color wheel and a different set for the RYB color wheel.
+
+      Tertiary color __knowledge__ These names are shown below.
+
+      Tertiary color __knowledge__ Another definition of tertiary color is provided
+      by color theorists such as Moses Harrisand Josef Albers, who suggest that tertiary
+      colors are created by intermixing pairs of secondary colors: orange-green, green-purple,
+      purple-orange; or by intermixing complementary colors.
+
+      '
+    label_candidates: []
+    text: Blue is always nice. I like royal blue.
+    title: Royal Blue (train)
+- - checked_sentence: Blue Skies is a 1946 American musical comedy film directed by
+      Stuart Heisler and starring Bing Crosby, Fred Astaire, and Joan Caulfield.
+    chosen_topic: Blue
+    episode_done: true
+    eval_labels:
+    - Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Blue __knowledge__ Blue is one of the three primary colours of pigments in painting
+      and traditional colour theory, as well as in the RGB colour model.
+
+      Blue __knowledge__ It lies between violet and green on the spectrum of visible
+      light.
+
+      Blue __knowledge__ The eye perceives blue when observing light with a dominant
+      wavelength between approximately 450 and 495 nanometres.
+
+      Blue __knowledge__ Most blues contain a slight mixture of other colors; azure
+      contains some green, while ultramarine contains some violet.
+
+      Blue __knowledge__ The clear daytime sky and the deep sea appear blue because
+      of an optical effect known as Rayleigh scattering.
+
+      Blue __knowledge__ An optical effect called Tyndall scattering explains blue
+      eyes.
+
+      Blue __knowledge__ Distant objects appear more blue because of another optical
+      effect called atmospheric perspective.
+
+      Blue __knowledge__ Blue has been an important colour in art and decoration since
+      ancient times.
+
+      Blue __knowledge__ The semi-precious stone lapis lazuli was used in ancient
+      Egypt for jewellery and ornament and later, in The Renaissance, to make the
+      pigment ultramarine, the most expensive of all pigments.
+
+      Blue __knowledge__ In the eighth century Chinese artists used cobalt blue to
+      colour fine blue and white porcelain.
+
+      Blue __knowledge__ In the Middle Ages, European artists used it in the windows
+      of Cathedrals.
+
+      Blue __knowledge__ Europeans wore clothing coloured with the vegetable dye woad
+      until it was replaced by the finer indigo from America.
+
+      Nothing Records __knowledge__ Nothing Records was an American record label specializing
+      in industrial rock and electronic music, founded by John Malm Jr. and Trent
+      Reznor in 1992.
+
+      Nothing Records __knowledge__ It is considered an example of a vanity label,
+      where an artist is able to run a label with some degree of independence from
+      within a larger parent company—in this case, Interscope Records was the parent
+      company.
+
+      Nothing Records __knowledge__ Nothing Records became largely defunct in 2004
+      due to a lawsuit by Reznor against John Malm.
+
+      Nothing Records __knowledge__ The label became inactive as a whole following
+      several further releases—the "Beside You in Time" (February 2007) home video
+      was the label''s final release.
+
+      Irving Berlin __knowledge__ Irving Berlin (born Israel Beilin; May 11, 1888
+      – September 22, 1989) was an American composer and lyricist, widely considered
+      one of the greatest songwriters in American history.
+
+      Irving Berlin __knowledge__ His music forms a great part of the Great American
+      Songbook.
+
+      Irving Berlin __knowledge__ Born in Imperial Russia, Berlin arrived in the United
+      States at the age of five.
+
+      Irving Berlin __knowledge__ He published his first song, "Marie from Sunny Italy",
+      in 1907, receiving 33 cents for the publishing rights, and had his first major
+      international hit, "Alexander''s Ragtime Band" in 1911.
+
+      Irving Berlin __knowledge__ He also was an owner of the Music Box Theatre on
+      Broadway.
+
+      Irving Berlin __knowledge__ "Alexander''s Ragtime Band" sparked an international
+      dance craze in places as far away as Berlin''s native Russia, which also "flung
+      itself into the ragtime beat with an abandon bordering on mania."
+
+      Blue Skies (1946 film) __knowledge__ Blue Skies is a 1946 American musical comedy
+      film directed by Stuart Heisler and starring Bing Crosby, Fred Astaire, and
+      Joan Caulfield.
+
+      Blue Skies (1946 film) __knowledge__ Based on a story by Irving Berlin, the
+      film is about a dancer who loves a showgirl who loves a compulsive nightclub-opener
+      who can''t stay committed to anything in life for very long.
+
+      Blue Skies (1946 film) __knowledge__ Produced by Sol C. Siegel, "Blue Skies"
+      was filmed in Technicolor and released by Paramount Pictures.
+
+      Blue Skies (1946 film) __knowledge__ The music, lyrics, and story were written
+      by Irving Berlin, with most of the songs recycled from earlier works.
+
+      Blue Skies (1946 film) __knowledge__ As in "Holiday Inn" (1942), the film is
+      designed to showcase Berlin''s songs.
+
+      7 Blue Skies __knowledge__ 7 Blue Skies is an alternative rock band formed in
+      2004.
+
+      7 Blue Skies __knowledge__ The group is well known for their high energy live
+      performances, as well as for always performing barefoot.
+
+      7 Blue Skies __knowledge__ The band has since broken up.
+
+      7 Blue Skies __knowledge__ The band''s name was chosen following an email from
+      producer Ron Saint Germain, in which Germain signed off "Good luck, 7 blue skies!"
+
+      7 Blue Skies __knowledge__ The band determined the name to mean "have a nice
+      week," and decided to use the name.
+
+      7 Blue Skies __knowledge__ This was later revealed to be a typo, as the intended
+      line was "Good luck & blue skies!"
+
+      7 Blue Skies __knowledge__ (the & is located above the 7 key).
+
+      7 Blue Skies __knowledge__ Jon Shaffer, Adam Schulman and Andy Stickel formed
+      the band and posted an ad online for a singer and drummer in 2004.
+
+      Lloyd Cole (album) __knowledge__ Lloyd Cole, also known as The X Album, is the
+      debut solo album by English singer, songwriter and musician Lloyd Cole released
+      on February 21, 1990 by Polydor and Capitol.
+
+      Lloyd Cole (album) __knowledge__ Previously Cole was best known for his work
+      with The Commotions but this album marked a departure from their signature sound
+      and an opportunity for him to collaborate with other musicians and explore new
+      ideas.
+
+      Lloyd Cole (album) __knowledge__ Following the release of "Mainstream", and
+      limited touring and promotion in support of it, Cole left the Commotions.
+
+      Lloyd Cole (album) __knowledge__ The chance to write and record new types of
+      songs was the motivating factor.
+
+      Lloyd Cole (album) __knowledge__ He also believed that the group had reached
+      a natural conclusion and he no longer wanted the pressure and responsibility
+      of managing a band.
+
+      Sarah Platt __knowledge__ Sarah Louise Platt (also Tilsley and Grimshaw) is
+      a fictional character from the British ITV soap opera "Coronation Street".
+
+      Sarah Platt __knowledge__ She was born on-screen during the episode broadcast
+      on 2 February 1987.
+
+      Sarah Platt __knowledge__ She was played by Leah King in 1987 and by Lynsay
+      King from 1987 until 8 October 1999 when King opted to leave to focus on her
+      education.
+
+      Sarah Platt __knowledge__ Tina O''Brien took over the role on 31 October 1999;
+      she opted to leave in 2007 and made her final on-screen appearance on 30 December
+      2007.
+
+      Sarah Platt __knowledge__ A number of false rumours about O''Brien returning
+      to the role surfaced during her absence from the serial.
+
+      Sarah Platt __knowledge__ In October 2014, it was announced that O''Brien was
+      going to reprise the role, she returned to filming in February 2015 and returned
+      on screen on 30 March 2015.
+
+      Pet Sounds __knowledge__ Pet Sounds is the eleventh studio album by American
+      rock band the Beach Boys, released on May 16, 1966.
+
+      Pet Sounds __knowledge__ It initially met with a lukewarm critical and commercial
+      response in the United States, peaking at number 10 in the "Billboard" 200,
+      a significantly lower placement than the band''s preceding albums.
+
+      Pet Sounds __knowledge__ In the United Kingdom, the album was hailed by its
+      music press and was an immediate commercial success, peaking at number 2 in
+      the UK Top 40 Albums Chart and remaining among the top ten positions for six
+      months.
+
+      Pet Sounds __knowledge__ Originally promoted as "the most progressive pop album
+      ever", "Pet Sounds" attracted recognition for its ambitious recording and unusually
+      sophisticated music, and is widely considered to be one of the most influential
+      albums in music history.
+
+      Royal Blue (train) __knowledge__ The Royal Blue was the Baltimore and Ohio Railroad
+      (B&O)''s flagship passenger train between New York City and Washington, D.C.,
+      in the United States, beginning in 1890.
+
+      Royal Blue (train) __knowledge__ The Baltimore-based B&O also used the name
+      between 1890 and 1917 for its improved passenger service between New York and
+      Washington launched in the 1890s, collectively dubbed the Royal Blue Line.
+
+      Royal Blue (train) __knowledge__ Using variants such as the "Royal Limited"
+      and "Royal Special" for individual "Royal Blue" trains, the B&O operated the
+      service in partnership with the Reading Railroad and the Central Railroad of
+      New Jersey.
+
+      Royal Blue (train) __knowledge__ Principal intermediate cities served were Philadelphia,
+      Wilmington, and Baltimore.
+
+      Blue Train Races __knowledge__ The Blue Train Races were a series of record-breaking
+      attempts between automobiles and trains in the late 1920s and early 1930s.
+
+      Blue Train Races __knowledge__ It saw a number of motorists and their own or
+      sponsored automobiles race against the "Le Train Bleu", a train that ran between
+      Calais and the French Riviera.
+
+      Blue Train Races __knowledge__ The rationale to beat the train was to compare
+      the contemporary automotive performance with locomotive dominance; to showcase
+      recent progress achieved by cars regarding reliability, durability, speed and
+      comfort; to promote the cars, their marques and the adventurous persona of their
+      drivers; and to establish automobiles as a viable and aspirational mode of transport
+      for the individual traveller.
+
+      Royal Blue Coach Services __knowledge__ Royal Blue Express Services was a coach
+      operator in the south and west of England from 1880 until 1986.
+
+      Royal Blue Coach Services __knowledge__ The Royal Blue business was founded
+      in 1880 by Thomas Elliott in Bournemouth.
+
+      Royal Blue Coach Services __knowledge__ The business, at first known as Royal
+      Blue & Branksome Mews, included the hire of every kind of horse-drawn vehicle,
+      as well as coach building, saddlery and blacksmithing.
+
+      Royal Blue Coach Services __knowledge__ Elliott soon started a four-in-hand
+      stagecoach service to connect Bournemouth to the railway at Holmsley.
+
+      Royal Blue Coach Services __knowledge__ That service became redundant when the
+      railway was extended to Bournemouth in 1888, but by then Elliott had started
+      running Royal Blue excursions by charabanc and coach around Bournemouth and
+      the New Forest.
+
+      Le Train Bleu __knowledge__ The Calais-Mediterranée Express was a luxury French
+      night express train which operated from 1886 to 2003.
+
+      Le Train Bleu __knowledge__ It gained international fame as the preferred train
+      of wealthy and famous passengers between Calais and the French Riviera in the
+      two decades before World War II.
+
+      Le Train Bleu __knowledge__ It was colloquially referred to as Le Train Bleu
+      in French (which became its formal name after World War II) and the Blue Train
+      in English because of its dark blue sleeping cars.
+
+      Le Train Bleu __knowledge__ In December 1883 the Compagnie Internationale des
+      Wagons-Lits (CIWL) created its second luxury train after the Orient Express
+      introduced in June earlier that year.
+
+      The Mystery of the Blue Train __knowledge__ The Mystery of the Blue Train is
+      a work of detective fiction by Agatha Christie, first published in the United
+      Kingdom by William Collins & Sons on 29 March 1928 and in the United States
+      by Dodd, Mead and Company later in the same year.
+
+      The Mystery of the Blue Train __knowledge__ The UK edition retailed at seven
+      shillings and sixpence (7/6) and the US edition at $2.00.
+
+      The Mystery of the Blue Train __knowledge__ The book features her detective
+      Hercule Poirot.
+
+      The Mystery of the Blue Train __knowledge__ Poirot boards Le Train Bleu, bound
+      for the French Riviera.
+
+      The Mystery of the Blue Train __knowledge__ So does Katherine Grey, who is having
+      her first winter out of England, after recently receiving a relatively large
+      inheritance.
+
+      The Mystery of the Blue Train __knowledge__ On board the train Grey meets Ruth
+      Kettering, an American heiress leaving her unhappy marriage to meet her lover.
+
+      British Army mess dress __knowledge__ British Army mess dress is the formal
+      military evening dress worn by British Army officers and senior non-commissioned
+      officers in their respective messes or at other formal occasions.
+
+      British Army mess dress __knowledge__ Mess uniforms first appeared in the British
+      Army in about 1845, initially utilizing the short shell jacket worn since 1831.
+
+      British Army mess dress __knowledge__ This working jacket was worn open over
+      a regimental waistcoat for evening dress.
+
+      British Army mess dress __knowledge__ The original purpose was to provide a
+      relatively comfortable and inexpensive alternative to the stiff and elaborate
+      full-dress uniforms then worn by officers for evening social functions such
+      as regimental dinners or balls.
+
+      Los Angeles Rams __knowledge__ The Los Angeles Rams are a professional American
+      football team based in the Los Angeles metropolitan area.
+
+      Los Angeles Rams __knowledge__ The Rams compete in the National Football League
+      (NFL), as a member club of the league''s National Football Conference (NFC)
+      West division.
+
+      Los Angeles Rams __knowledge__ The Rams franchise has won three NFL championships,
+      and is the only franchise to win championships while representing three different
+      cities (Cleveland in 1945, Los Angeles in 1951, and St. Louis in 1999).
+
+      Los Angeles Rams __knowledge__ The Rams play their home games at the Los Angeles
+      Memorial Coliseum in Los Angeles, California.
+
+      Los Angeles Rams __knowledge__ The franchise began in 1936 as the Cleveland
+      Rams, located in Cleveland, Ohio.
+
+      '
+    label_candidates: []
+    text: Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
+    title: Blue Skies (1946 film)
+- - checked_sentence: Cinematography (also called "Direction of Photography") is the
+      science or art of motion-picture photography by recording light or other electromagnetic
+      radiation, either electronically by means of an image sensor, or chemically
+      by means of a light-sensitive material such as film stock.
+    chosen_topic: Cinematography
+    episode_done: false
+    eval_labels:
+    - 'Cinematography,is a type of motion picture , captured electronically by means
+      of an image '
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+      is the science or art of motion-picture photography by recording light or other
+      electromagnetic radiation, either electronically by means of an image sensor,
+      or chemically by means of a light-sensitive material such as film stock.
+
+      Cinematography __knowledge__ Typically, a lens is used to repeatedly focus the
+      light reflected from objects into real images on the light-sensitive surface
+      inside a camera during a questioned exposure, creating multiple images.
+
+      Cinematography __knowledge__ With an electronic image sensor, this produces
+      an electrical charge at each pixel, which is electronically processed and stored
+      in a video file for subsequent display or processing.
+
+      Cinematography __knowledge__ The result with photographic emulsion is a series
+      of invisible latent images on the film stock, which are later chemically "developed"
+      into a visible image.
+
+      Cinematography __knowledge__ The images on the film stock are played back at
+      a rapid speed and projected onto a screen, creating the illusion of motion.
+
+      Cinematography __knowledge__ Cinematography finds uses in many fields of science
+      and business as well as for entertainment purposes and mass communication.
+
+      Cinematography __knowledge__ The word "cinematography" was created from the
+      Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+      "to record", together meaning "recording motion."
+
+      Buddy''s Song (novel) __knowledge__ Buddy''s Song is a novel by British author
+      Nigel Hinton which was first published in 1987.
+
+      Buddy''s Song (novel) __knowledge__ It is the second instalment in the Buddy
+      trilogy, between Buddy and Buddy''s Blues, and follows the story of Buddy as
+      he started to pursue a musical career.
+
+      Buddy''s Song (novel) __knowledge__ The book was adapted into a film, directed
+      by Claude Whatham and starring Roger Daltrey and Chesney Hawkes as Terry and
+      Buddy respectively, in 1990.
+
+      Buddy''s Song (novel) __knowledge__ Whilst visiting the set in the television
+      series based on the first book the author asked why they put a guitar in Buddy''s
+      bedroom.
+
+      Buddy''s Song (novel) __knowledge__ The set designer explained that he figured
+      Terry got Buddy a guitar then he gave up when he could not play it.
+
+      Hi-5 (Australian band) __knowledge__ Hi-5 are an Australian children''s musical
+      group formed in 1998, who are associated with the children''s television series
+      of the same name.
+
+      Hi-5 (Australian band) __knowledge__ As of December 2016, the members are Lachie
+      Dearing, Courtney Clarke, Shay Clifford, Joe Kalou and Bailey Spalding.
+
+      Hi-5 (Australian band) __knowledge__ The group is aimed at preschoolers, composed
+      of five performers who entertain and educate children through music, movement
+      and play.
+
+      Hi-5 (Australian band) __knowledge__ "Hi-5" was created by Helena Harris and
+      Posie Graeme-Evans, initially a television series for the Nine Network, which
+      premiered in 1999.
+
+      Hi-5 (Australian band) __knowledge__ The cast of the show became a recognised
+      musical group for children.
+
+      Hi-5 (Australian band) __knowledge__ The original members were Kellie Crawford,
+      Kathleen de Leon Jones, Nathan Foley, Tim Harding and Charli Robinson.
+
+      Buddy Rich __knowledge__ Bernard "Buddy" Rich (September 30, 1917 – April 2,
+      1987) was an American jazz drummer and bandleader.
+
+      Buddy Rich __knowledge__ Widely considered one of the most influential drummers
+      of all time and known for his virtuoso technique, power, and speed, Rich was
+      billed as "the world''s greatest drummer" during his career.
+
+      Buddy Rich __knowledge__ He performed with many bandleaders, most notably Tommy
+      Dorsey, Harry James, Count Basie, and led his own big band.
+
+      Buddy Rich __knowledge__ Rich was born in Sheepshead Bay, Brooklyn to Jewish-American
+      parents Bess (née Skolnik) and Robert Rich, both vaudevillians.
+
+      Buddy Rich __knowledge__ His talent for rhythm was first noted by his father,
+      who saw that Rich could keep a steady beat with spoons at the age of one.
+
+      List of Regular Show characters __knowledge__ "Regular Show" is an American
+      animated series created by J. G. Quintel.
+
+      List of Regular Show characters __knowledge__ The series contains many characters,
+      with seven main characters and various recurring and one-time characters.
+
+      List of Regular Show characters __knowledge__ Mordecai (voiced by J. G. Quintel)
+      is a 5''10" anthropomorphic blue jay (6'' including the crest) who works as
+      a groundskeeper at The Park.
+
+      List of Regular Show characters __knowledge__ He has been best friends with
+      Rigby ever since childhood, and together they are very lazy and constantly slack
+      off at their jobs there.
+
+      List of Regular Show characters __knowledge__ Mordecai is more conscientious,
+      mature, and moral about his actions than Rigby is, which sometimes leads to
+      his opposing Rigby when he is the cause of some kind of chaotic problem.
+
+      Buddy''s Song (film) __knowledge__ Buddy''s Song is a 1991 (copyrighted in 1990)
+      British film starring Chesney Hawkes, Roger Daltrey, Sharon Duce and Michael
+      Elphick, Based on the novel of the same name by Nigel Hinton.
+
+      Buddy''s Song (film) __knowledge__ The film is a dramatic comedy featuring a
+      17-year-old boy, Buddy Clark (Chesney Hawkes), who is determined to make it
+      as a pop star, aided by his father Terry (Roger Daltrey).
+
+      Buddy''s Song (film) __knowledge__ He struggles with young love, estranged parents
+      and the problems associated with making it in the music business.
+
+      Buddy''s Song (film) __knowledge__ The film was accompanied by a soundtrack
+      album which featured Hawkes'' hit "The One and Only".
+
+      Buddy''s Song (film) __knowledge__ It was filmed in London and various towns
+      in the Thames Valley.
+
+      Citizen Kane __knowledge__ Citizen Kane is a 1941 American mystery drama film
+      by Orson Welles, its producer, co-screenwriter, director and star.
+
+      Citizen Kane __knowledge__ The picture was Welles''s first feature film.
+
+      Citizen Kane __knowledge__ Nominated for Academy Awards in nine categories,
+      it won an Academy Award for Best Writing (Original Screenplay) by Herman J.
+      Mankiewicz and Welles.
+
+      Citizen Kane __knowledge__ Considered by many critics, filmmakers, and fans
+      to be the greatest film of all time, "Citizen Kane" was voted as such in five
+      consecutive British Film Institute "Sight & Sound" polls of critics, until it
+      was displaced by "Vertigo" in the 2012 poll.
+
+      Citizen Kane __knowledge__ It topped the American Film Institute''s 100 Years ...
+      100 Movies list in 1998, as well as its 2007 update.
+
+      Buddy diving __knowledge__ Buddy diving is the use of the buddy system by scuba
+      divers and is a set of safety procedures that are intended to improve divers''
+      chances of avoiding or surviving accidents in or under water by diving in a
+      group of two or sometimes three divers.
+
+      Buddy diving __knowledge__ When using the buddy system, members of the group
+      dive together and co-operate with each other, so that they can help or rescue
+      each other in the event of an emergency.
+
+      Buddy diving __knowledge__ This is most effective if the divers are both competent
+      in all the relevant skills and are sufficiently aware of the situation to be
+      able to respond in time, which is a matter of both attitude and competence.
+
+      '
+    label_candidates: []
+    text: 'Cinematography
+
+      Hi buddy, What you think about cinematography'
+    title: Cinematography
+- - checked_sentence: Typically, a lens is used to repeatedly focus the light reflected
+      from objects into real images on the light-sensitive surface inside a camera
+      during a questioned exposure, creating multiple images.
+    chosen_topic: Cinematography
+    episode_done: false
+    eval_labels:
+    - It works by lens used to repeatedly focus the light reflected from objects into
+      real images on the light-sensitive surface .
+    id: WizTeacher
+    knowledge: 'no_passages_used __knowledge__ no_passages_used
+
+      Cinematography __knowledge__ Cinematography (also called "Direction of Photography")
+      is the science or art of motion-picture photography by recording light or other
+      electromagnetic radiation, either electronically by means of an image sensor,
+      or chemically by means of a light-sensitive material such as film stock.
+
+      Cinematography __knowledge__ Typically, a lens is used to repeatedly focus the
+      light reflected from objects into real images on the light-sensitive surface
+      inside a camera during a questioned exposure, creating multiple images.
+
+      Cinematography __knowledge__ With an electronic image sensor, this produces
+      an electrical charge at each pixel, which is electronically processed and stored
+      in a video file for subsequent display or processing.
+
+      Cinematography __knowledge__ The result with photographic emulsion is a series
+      of invisible latent images on the film stock, which are later chemically "developed"
+      into a visible image.
+
+      Cinematography __knowledge__ The images on the film stock are played back at
+      a rapid speed and projected onto a screen, creating the illusion of motion.
+
+      Cinematography __knowledge__ Cinematography finds uses in many fields of science
+      and business as well as for entertainment purposes and mass communication.
+
+      Cinematography __knowledge__ The word "cinematography" was created from the
+      Greek words ("kinema"), meaning "movement, motion" and ("graphein") meaning
+      "to record", together meaning "recording motion."
+
+      Photography __knowledge__ Photography is the science, art, application and practice
+      of creating durable images by recording light or other electromagnetic radiation,
+      either electronically by means of an image sensor, or chemically by means of
+      a light-sensitive material such as photographic film.
+
+      Photography __knowledge__ Typically, a lens is used to focus the light reflected
+      or emitted from objects into a real image on the light-sensitive surface inside
+      a camera during a timed exposure.
+
+      Photography __knowledge__ With an electronic image sensor, this produces an
+      electrical charge at each pixel, which is electronically processed and stored
+      in a digital image file for subsequent display or processing.
+
+      Image stabilization __knowledge__ Image stabilization (IS) is a family of techniques
+      that reduce blurring associated with the motion of a camera or other imaging
+      device during exposure.
+
+      Image stabilization __knowledge__ Generally, it compensates for pan and tilt
+      (angular movement, equivalent to yaw and pitch) of the imaging device, though
+      electronic image stabilization can also compensate for rotation.
+
+      Image stabilization __knowledge__ It is used in image-stabilized binoculars,
+      still and video cameras, astronomical telescopes, and also smartphones, mainly
+      the high-end.
+
+      Image stabilization __knowledge__ With still cameras, camera shake is particularly
+      problematic at slow shutter speeds or with long focal length (telephoto or zoom)
+      lenses.
+
+      Camera __knowledge__ A camera is an optical instrument for recording or capturing
+      images, which may be stored locally, transmitted to another location, or both.
+
+      Camera __knowledge__ The images may be individual still photographs or sequences
+      of images constituting videos or movies.
+
+      Camera __knowledge__ The camera is a remote sensing device as it senses subjects
+      without any contact  .
+
+      Camera __knowledge__ The word "camera" comes from "camera obscura", which means
+      "dark chamber" and is the Latin name of the original device for projecting an
+      image of external reality onto a flat surface.
+
+      Camera __knowledge__ The modern photographic camera evolved from the camera
+      obscura.
+
+      Camera __knowledge__ The functioning of the camera is very similar to the functioning
+      of the human eye.
+
+      Timeline of United States inventions (1946–91) __knowledge__ A timeline of United
+      States inventions (1946–1991) encompasses the ingenuity and innovative advancements
+      of the United States within a historical context, dating from the era of the
+      Cold War, which have been achieved by inventors who are either native-born or
+      naturalized citizens of the United States.
+
+      Timeline of United States inventions (1946–91) __knowledge__ Copyright protection
+      secures a person''s right to his or her first-to-invent claim of the "original"
+      invention in question, highlighted in Article I, Section 8, Clause 8 of the
+      United States Constitution which gives the following enumerated power to the
+      United States Congress: In 1641, the first patent in North America was issued
+      to Samuel Winslow by the General Court of Massachusetts for a new method of
+      making salt.
+
+      Video camera tube __knowledge__ The video camera tube was a type of cathode
+      ray tube used to capture the television image prior to the introduction of charge-coupled
+      devices (CCDs) in the 1980s.
+
+      Video camera tube __knowledge__ Several different types of tubes were in use
+      from the early 1930s to the 1980s.
+
+      Video camera tube __knowledge__ In these tubes, the cathode ray was scanned
+      across an image of the scene to be broadcast.
+
+      Video camera tube __knowledge__ The resultant current was dependent on the brightness
+      of the image on the target.
+
+      Video camera tube __knowledge__ The size of the striking ray was tiny compared
+      to the size of the target, allowing 483 horizontal scan lines per image in the
+      NTSC format, or 576 lines in PAL.
+
+      Video camera tube __knowledge__ Any vacuum tube which operates using a focused
+      beam of electrons, "cathode rays," is known as a cathode ray tube (CRT).
+
+      Digital cinematography __knowledge__ Digital cinematography is the process of
+      capturing (recording) a motion picture using digital image sensors rather than
+      through film stock.
+
+      Digital cinematography __knowledge__ As digital technology has improved in recent
+      years, this practice has become dominant.
+
+      Digital cinematography __knowledge__ Since the mid 2010s most of the movies
+      across the world are captured as well as distributed digitally.
+
+      Digital cinematography __knowledge__ Many vendors have brought products to market,
+      including traditional film camera vendors like Arri and Panavision, as well
+      as new vendors like RED, Blackmagic, Silicon Imaging, Vision Research and companies
+      which have traditionally focused on consumer and broadcast video equipment,
+      like Sony, GoPro, and Panasonic.
+
+      Color motion picture film __knowledge__ Color motion picture film refers both
+      to unexposed color photographic film in a format suitable for use in a motion
+      picture camera, and to finished motion picture film, ready for use in a projector,
+      which bears images in color.
+
+      Color motion picture film __knowledge__ The first color cinematography was by
+      additive color systems such as the one patented by Edward Raymond Turner in
+      1899 and tested in 1902.
+
+      Color motion picture film __knowledge__ A simplified additive system was successfully
+      commercialized in 1909 as Kinemacolor.
+
+      Color motion picture film __knowledge__ These early systems used black-and-white
+      film to photograph and project two or more component images through different
+      color filters.
+
+      Color motion picture film __knowledge__ Around 1920, the first practical subtractive
+      color processes were introduced.
+
+      Movie camera __knowledge__ The movie camera, film camera or cine-camera is a
+      type of photographic camera which takes a rapid sequence of photographs on an
+      image sensor or on a film.
+
+      Movie camera __knowledge__ In contrast to a still camera, which captures a single
+      snapshot at a time, the movie camera takes a series of images; each image constitutes
+      a "frame".
+
+      Movie camera __knowledge__ This is accomplished through an intermittent mechanism.
+
+      Movie camera __knowledge__ The frames are later played back in a movie projector
+      at a specific speed, called the frame rate (number of frames per second).
+
+      Movie camera __knowledge__ While viewing at a particular frame rate, a person''s
+      eyes and brain merge the separate pictures together to create the illusion of
+      motion.
+
+      History of film technology __knowledge__ The history of film technology traces
+      the development of film technology from the initial development of "moving pictures"
+      at the end of 19th century to the present time.
+
+      History of film technology __knowledge__ Motion pictures were initially exhibited
+      as a fairground novelty and developed into one of the most important tools of
+      communication and entertainment in the 20th century.
+
+      History of film technology __knowledge__ Major developments in motion picture
+      technology have included the adoption of synchronized motion picture sound,
+      color motion picture film, and the adoption of digital film technologies to
+      replace physical film stock at both ends of the production chain by digital
+      image sensors and projectors.
+
+      Citizen Kane __knowledge__ Citizen Kane is a 1941 American mystery drama film
+      by Orson Welles, its producer, co-screenwriter, director and star.
+
+      Citizen Kane __knowledge__ The picture was Welles''s first feature film.
+
+      Citizen Kane __knowledge__ Nominated for Academy Awards in nine categories,
+      it won an Academy Award for Best Writing (Original Screenplay) by Herman J.
+      Mankiewicz and Welles.
+
+      Citizen Kane __knowledge__ Considered by many critics, filmmakers, and fans
+      to be the greatest film of all time, "Citizen Kane" was voted as such in five
+      consecutive British Film Institute "Sight & Sound" polls of critics, until it
+      was displaced by "Vertigo" in the 2012 poll.
+
+      Citizen Kane __knowledge__ It topped the American Film Institute''s 100 Years ...
+      100 Movies list in 1998, as well as its 2007 update.
+
+      35 mm film __knowledge__ 35 mm film (millimeter) is the film gauge most commonly
+      used for motion pictures and chemical still photography (see 135 film).
+
+      35 mm film __knowledge__ The name of the gauge refers to the width of the photographic
+      film, which consists of strips 34.98 ±0.03 mm (1.377 ±0.001 inches) wide.
+
+      35 mm film __knowledge__ The standard negative pulldown for movies ("single-frame"
+      format) is four perforations per frame along both edges, which results in 16
+      frames per foot of film.
+
+      35 mm film __knowledge__ For still photography, the standard frame has eight
+      perforations on each side.
+
+      35 mm film __knowledge__ A variety of largely proprietary gauges were devised
+      for the numerous camera and projection systems being developed independently
+      in the late 19th century and early 20th century, ranging from 13 mm to 75 mm
+      (0.51–2.95 in), as well as a variety of film feeding systems.
+
+      '
+    label_candidates: []
+    text: Yes buddy,  Images captured with an electronic image-sensor, produces an
+      electrical charge.The word "cinematography" is based on the Greek words  meaning
+      movement, motion.
+    title: Cinematography
+num_episodes: 965
+num_examples: 3865

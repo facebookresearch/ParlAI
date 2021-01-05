@@ -55,7 +55,7 @@ def readFiles(dpath, rfnames):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'wmt')
-    version = 'None'
+    version = '1.0'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
@@ -75,7 +75,7 @@ def build(opt):
         test_w_fname = 'en_de_test.txt'
 
         train_zip = readFiles(dpath, train_r_fnames)
-        numpy.random.shuffle(train_zip)
+        numpy.random.RandomState(42).shuffle(train_zip)
         with PathManager.open(os.path.join(dpath, valid_w_fname), 'w') as f:
             for de_sent, en_sent in train_zip[:30000]:
                 f.write('1 ' + en_sent + '\t' + de_sent + '\n')

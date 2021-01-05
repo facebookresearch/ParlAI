@@ -1,0 +1,33 @@
+acts:
+- - episode_done: false
+    id: redial
+    labels:
+    - Hello!
+    text: Hi!
+- - episode_done: false
+    id: redial
+    labels:
+    - 'I tend to like animated movies. Some of my favorites are The Emperor''s New
+      Groove and Fullmetal Alchemist: Brotherhood .'
+    text: What movies are you interested in?
+- - episode_done: false
+    id: redial
+    labels:
+    - That was one of my favorites as a child! Can you recommend any more recent animated
+      movies?
+    text: Okay, I've seen a few animated. I also liked the Emperor. I really like
+      A Goofy Movie as well
+- - episode_done: false
+    id: redial
+    labels:
+    - Thanks! I've been meaning to watch that since I saw The Lego Batman Movie
+    text: It's definitely a good one! Have you seen  The Lego Movie not super recent
+      but it is good
+- - episode_done: true
+    id: redial
+    labels:
+    - Thanks! I think that definitely helps.
+    text: 'Or the new Captain Underpants: The First Epic Movie I loved the books as
+      a kid Hope this helps!'
+num_episodes: 8665
+num_examples: 51045

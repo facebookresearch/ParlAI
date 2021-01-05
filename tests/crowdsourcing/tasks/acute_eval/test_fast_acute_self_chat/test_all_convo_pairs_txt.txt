@@ -1,0 +1,128 @@
+CONVO PAIR ID: 45
+
+WINNING DIALOGUE: model1
+[model1]: I've never played tennis, but I do love watching it. Do you have any kids?
+[other_speaker]: No, I don't have any children. What do you like to do in your spare time?
+[model1]: I like to play tennis with my daughter. She's 3 and loves it. What about you?
+[other_speaker]: I love to go to the mall and play with my friends. What is your favorite thing to do?
+[model1]: I love the mall too! My favorite thing is selling paper products. What are your hobbies?
+[other_speaker]: I really like to read and play video games. I also like to listen to music. You?
+[model1]: I love video games too! I love listening to music too. What kind of video games do you play?
+[other_speaker]: I play a lot of call of duty. I'm not very good at it, though.
+[model1]: I used to play cod as a kid. It was fun. What's your favorite game?
+[other_speaker]: My favorite game is probably black ops 3. I love that game so much! What is yours?
+
+LOSING DIALOGUE: model2
+[model2]: I've never been to mexico, but I'd love to go. What do you do for a living?
+[other_speaker]: I'm a stay at home mom. What about you? Do you have any hobbies?
+[model2]: I don't have kids. I am a rapper, so I like to listen to music.
+[other_speaker]: That's cool. What kind of music do you like to rap about? I like hip hop.
+[model2]: I love hip hop as well. Frank ocean is my favorite. Do you listen to hip hop?
+[other_speaker]: I love frank ocean. He's one of my favorite rappers. What else do you enjoy?
+[model2]: I like a lot of different genres of music. I like rock, country, and country music.
+[other_speaker]: I like country music too. I listen to it when I walk. It's so relaxing.
+[model2]: I agree. I love listening to country music when I go to the beach. It is relaxing.
+[other_speaker]: Do you live near the beach? I live in tx. We have the best beach music.
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: model1
+REASON: Makes more sense
+
+
+
+CONVO PAIR ID: 62
+
+WINNING DIALOGUE: model2
+[model2]: I love to bake and bake cookies. What about you? Do you have any hobbies?
+[other_speaker]: I enjoy writing poetry. I also like to listen to music. What kind of music do you like?
+[model2]: I like all kinds of music. I listen to a lot of hip hop. Do you play any instruments?
+[other_speaker]: I don't, but I've always wanted to learn to play the piano. What else do you enjoy?
+[model2]: I really like to eat bagels. They're my favorite thing to eat. What's your favorite food?
+[other_speaker]: I love bagels too! I like italian food the best. What is your favorite type of bagel?
+[model2]: I'm not really a big fan of italian food. I'd have to say bagel with everything.
+[other_speaker]: That's true. Bagels are good, but italian food is probably my favorite. Have you ever been to italy?
+[model2]: No, I haven't. But I would love to go one day. How long have you been?
+[other_speaker]: Since I was a kid. It's been a long time. I really want to go back.
+
+LOSING DIALOGUE: model1
+[model1]: That's interesting. I've never heard of that. Do you have any hobbies?
+[other_speaker]: Yes, I love to go to the local park and hang out with friends. What about you?
+[model1]: I love going to the park as well. I also like to take my iguana with me.
+[other_speaker]: I love iguanas. I have one in my back yard. What do you like to do for fun?
+[model1]: I really like to watch movies and play video games. What's your favorite thing to do?
+[other_speaker]: I like playing video games too. I really enjoy watching netflix. What is your favorite movie?
+[model1]: It's hard to pick just one. There are so many good ones out there. What are your favorite movies?
+[other_speaker]: I like all kinds of movies. My favorite movie of all time is the godfather. Have you seen it?
+[model1]: No, I haven't. I should check it out. What else do you enjoy doing?
+[other_speaker]: I'm a big fan of hiking. I love the outdoors and the outdoors in general. You?
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: model2
+REASON: Makes more sense
+
+
+
+CONVO PAIR ID: 19
+
+WINNING DIALOGUE: model1
+[model1]: I've never been to new york, but I'd love to visit one day. What do you do for fun?
+[other_speaker]: I like to read and play video games. I also work at the newspaper. What about you?
+[model1]: I enjoy playing video games as well. I work at a grocery store. What kind of newspaper do you work at?
+[other_speaker]: It's a newspaper in new york city. Do you have any hobbies besides video games?
+[model1]: Yes, I love to play games outdoors. What is your favorite genre of video games to play?
+[other_speaker]: I like rpg's and action games. What's your favorite game to play outdoors?
+[model1]: I really like to play call of duty. What other games do you like to do in your free time?
+[other_speaker]: I play a lot of league of legends. I really enjoy it. What else do you enjoy?
+[model1]: I have never heard of that game. I am more into video games than I am into games.
+[other_speaker]: That's okay. I like video games a lot too. What are your favorite types of games?
+
+LOSING DIALOGUE: model2
+[model2]: Thank you! What do you like to do for fun? I like to go to the beach.
+[other_speaker]: I love the beach! I've always wanted to go. What's your favorite place to go?
+[model2]: I'd have to say my favorite place would have to be the atlantic ocean. What about you?
+[other_speaker]: I love going to the gulf of mexico. It's such a beautiful place. Do you have any hobbies?
+[model2]: Yes, I love to play with my dogs. They're my favorite. How about yourself?
+[other_speaker]: I love dogs too! My favorite hobby is watching tv. What kind of dogs do you own?
+[model2]: I have a poodle and a chihuahua. What is your favorite tv show?
+[other_speaker]: My favorite show is game of thrones. I love it so much! How about yours?
+[model2]: I haven't seen that one yet. I'll have to check it out. Have you seen the new season yet?
+[other_speaker]: I have seen the first few episodes, but I don't know if I'm ready for it yet.
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: model1
+REASON: Makes more sense
+
+
+
+CONVO PAIR ID: 12
+
+WINNING DIALOGUE: model2
+[model2]: Wow, that's a long time. What do you like to do in your spare time?
+[other_speaker]: I play guitar in my spare time. I also like to listen to music. What about you?
+[model2]: I like music too. I like to create my own houses. Do you have any hobbies?
+[other_speaker]: Yes, I love to read and play video games. What is your favorite thing to do for fun?
+[model2]: I like playing video games as well. My favorite hobby is writing. What's your favorite book?
+[other_speaker]: I don't really have a favorite book. I just like to read. What kind of writing do you do?
+[model2]: I'm a fiction writer. I've written a few books in the past, but I haven't published any yet.
+[other_speaker]: That sounds like a lot of fun. What type of fiction do you write? I like science fiction.
+[model2]: I write sci - fi as well! I love science fiction as well as fantasy. What else do you enjoy?
+[other_speaker]: I really enjoy reading science fiction books. I have been reading them since I was a little girl.
+
+LOSING DIALOGUE: model1
+[model1]: It's a public transportation system in new york city. I like to take it to and from work.
+[other_speaker]: That's cool. I've never been to new york, but I'd love to visit one day.
+[model1]: New york is a great place to visit. It is the most populous city in the united states.
+[other_speaker]: I'll have to check it out some time. What else do you like to do in your spare time?
+[model1]: I love to read. I also like to watch movies and play video games. What about you?
+[other_speaker]: I love video games as well. I play a lot of call of duty. What's your favorite game?
+[model1]: My favorite game is league of legends. Do you have a favorite champion? I love the champion select screen.
+[other_speaker]: I like malphite. He's so fun to play. What other games do you play?
+[model1]: I really like to play overwatch. I have been playing it since it came out in 2016.
+[other_speaker]: I haven't played overwatch in a while. I used to play it when I was a kid.
+
+QUESTION: Who would you prefer to talk to for a long conversation?
+TURKER'S CHOICE: model2
+REASON: Makes more sense
+
+
+

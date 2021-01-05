@@ -29,7 +29,7 @@ try:
         STATIC_BLUEPRINT_TYPE,
         STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
     )
-    from parlai.crowdsourcing.tasks.turn_annotations_static.util import build_task
+    from parlai.crowdsourcing.utils.frontend import build_task
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
     class TestTurnAnnotationsStatic(AbstractOneTurnCrowdsourcingTest):
@@ -142,6 +142,7 @@ try:
                 '+mephisto.blueprint.conversation_count=null',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
+                '+mephisto.task.assignment_duration_in_seconds=1800',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults

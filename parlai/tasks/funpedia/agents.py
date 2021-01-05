@@ -176,7 +176,7 @@ class SentencechooseTeacher(FbDeprecatedDialogTeacher):
 
     def next_example(self):
         action, epoch_done = super().next_example()
-        action['label_candidates'] = list(action['label_candidates'])
+        action.force_set('label_candidates', list(action['label_candidates']))
         if '' in action['label_candidates']:
             action['label_candidates'].remove('')
         return action, epoch_done

@@ -1,0 +1,46 @@
+acts:
+- - episode_done: true
+    id: funpedia:nopersona
+    labels:
+    - Well, I bet you didn't know about danio's two pairs of long barbels
+    reward: 0
+    text: 'Danio
+
+      Some species have two pairs of long barbels.'
+- - episode_done: true
+    id: funpedia:nopersona
+    labels:
+    - I wonder what the people in Livingston feel about their county, Sumter.
+    reward: 0
+    text: 'Livingston, Alabama
+
+      Livingston is a city in Sumter County, Alabama, United States.'
+- - episode_done: true
+    id: funpedia:nopersona
+    labels:
+    - What a nice place to go above sea level, Soldier Mountain is
+    reward: 0
+    text: 'Soldier Mountain
+
+      Located north of Fairfield in very rural Camas County, its summit elevation
+      is above sea level with a vertical drop of .'
+- - episode_done: true
+    id: funpedia:nopersona
+    labels:
+    - Incredible, the island Tyssoy is all away towards the north in the country
+    reward: 0
+    text: 'Tyssøy
+
+      The island lies in the northern part of the Raunefjorden.'
+- - episode_done: true
+    id: funpedia:nopersona
+    labels:
+    - Old Trick New Dog has lovely new songs but I am thankful for the Partridge Family
+      remake songs.
+    reward: 0
+    text: 'Old Trick New Dog
+
+      In addition to new songs, it also features several remakes of songs from "The
+      Partridge Family".'
+num_episodes: 81467
+num_examples: 81467
