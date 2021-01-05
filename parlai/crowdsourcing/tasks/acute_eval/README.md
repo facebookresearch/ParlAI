@@ -125,7 +125,7 @@ We provide an all-in-one script to run ACUTE-Eval in the smoothest experience po
 
 The script combines three major steps of ACUTE-Eval into one simple command:
 
-1. Generation (or compilation) of chat logs for given models
+1. Generation (or compilation) of chat logs for given models into the ACUTE format
 2. Execution of ACUTE-Eval
 3. Analysis of ACUTE-Eval results.
 
