@@ -1,0 +1,133 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - A ) 5 ( √ 3 + 1 )
+    id: AQuA
+    label_candidates:
+    - A ) 5 ( √ 3 + 1 )
+    - B ) 6 ( √ 3 + √ 2 )
+    - C ) 7 ( √ 3 – 1 )
+    - D ) 8 ( √ 3 – 2 )
+    - E ) None of these
+    text: A car is being driven , in a straight line and at a uniform speed , towards
+      the base of a vertical tower . The top of the tower is observed from the car
+      and , in the process , it takes 10 minutes for the angle of elevation to change
+      from 45 ° to 60 ° . After how much more time will this car reach the base of
+      the tower ?
+- - episode_done: true
+    eval_labels:
+    - 'Explanation :
+
+      Let the height of the building be h . Initially , he was at an angle of 450
+      . tan 45 = h / distance between car and tower . h = distance between car and
+      tower ( since tan 45 = 1 ) .
+
+      Now , after 10 minutes , it travelled a certain distance , and angle changed
+      to 600 .
+
+      tan 60 = h / x x = h / √ 3
+
+      So , in 10 minutes , it has travelled a distance of h – x = h - h / √ 3 .
+
+      10 minutes = h * ( 1 – 1 √ 3 )
+
+      h can be travelled in 10 / ( 1 – 1 √ 3 ) .
+
+      To travel a distance of x , which is h / √ 3 , it takes :
+
+      h = 10 / ( 1 – 1 / √ 3 )
+
+      h / √ 3 = 10 / √ 3 * ( 1 – 1 / √ 3 ) . Multiply numerator and denominator by
+      1 + √ 3 ( conjugate of 1 - √ 3 ) . We get , x = h / √ 3 = 10 ( 1 + √ 3 ) / 2
+      = 5 * ( 1 + √ 3 )
+
+      So , it takes 5 ( 1 + √ 3 ) minutes to reach the base of the tower .
+
+      Answer : A'
+    id: AQuA
+    label_candidates:
+    - 'Explanation :
+
+      Let the height of the building be h . Initially , he was at an angle of 450
+      . tan 45 = h / distance between car and tower . h = distance between car and
+      tower ( since tan 45 = 1 ) .
+
+      Now , after 10 minutes , it travelled a certain distance , and angle changed
+      to 600 .
+
+      tan 60 = h / x x = h / √ 3
+
+      So , in 10 minutes , it has travelled a distance of h – x = h - h / √ 3 .
+
+      10 minutes = h * ( 1 – 1 √ 3 )
+
+      h can be travelled in 10 / ( 1 – 1 √ 3 ) .
+
+      To travel a distance of x , which is h / √ 3 , it takes :
+
+      h = 10 / ( 1 – 1 / √ 3 )
+
+      h / √ 3 = 10 / √ 3 * ( 1 – 1 / √ 3 ) . Multiply numerator and denominator by
+      1 + √ 3 ( conjugate of 1 - √ 3 ) . We get , x = h / √ 3 = 10 ( 1 + √ 3 ) / 2
+      = 5 * ( 1 + √ 3 )
+
+      So , it takes 5 ( 1 + √ 3 ) minutes to reach the base of the tower .
+
+      Answer : A'
+    text: Can you provide a rationale for your answer?
+- - episode_done: false
+    eval_labels:
+    - E ) $ 78.20
+    id: AQuA
+    label_candidates:
+    - A ) $ 61
+    - B ) $ 65
+    - C ) $ 67.40
+    - D ) $ 70
+    - E ) $ 78.20
+    text: The original price of an item is discounted 22 % . A customer buys the item
+      at this discounted price using a $ 20 - off coupon . There is no tax on the
+      item , and this was the only item the customer bought . If the customer paid
+      $ 1.90 more than half the original price of the item , what was the original
+      price of the item ?
+- - episode_done: true
+    eval_labels:
+    - 'Let x be the original price of the item
+
+      Discounted price = 0.78 x
+
+      Payment made by the customer after using the $ 20 coupon = 0.78 x - 20
+
+      0.78 x - 20 = x / 2 + 1.9
+
+      x = 78.20
+
+      Answer : E'
+    id: AQuA
+    label_candidates:
+    - 'Let x be the original price of the item
+
+      Discounted price = 0.78 x
+
+      Payment made by the customer after using the $ 20 coupon = 0.78 x - 20
+
+      0.78 x - 20 = x / 2 + 1.9
+
+      x = 78.20
+
+      Answer : E'
+    text: Can you provide a rationale for your answer?
+- - episode_done: false
+    eval_labels:
+    - A ) 36
+    id: AQuA
+    label_candidates:
+    - A ) 36
+    - B ) 15
+    - C ) 17
+    - D ) 5
+    - E ) 7
+    text: Find out which of the following values is the multiple of X , if it is divisible
+      by 9 and 12 ?
+num_episodes: 254
+num_examples: 508

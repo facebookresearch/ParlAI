@@ -34,10 +34,10 @@ class V2Teacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         task = opt.get('task', None)
-        if not task:
-            # options are 100, 500, 1000, or 1500
-            task = 'insuranceqa:V2:100'
         split = task.split(':')
+        if len(split) == 2:
+            # options are 100, 500, 1000, or 1500
+            split = list(split) + [100]
         opt['datafile'] = _path('V2', opt, split[2])
         super().__init__(opt, shared)
 

@@ -1,0 +1,34 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - I have restaurants matching your criteria in all price ranges. Do you have a
+      preference on price?
+    id: multiwoz_v21
+    text: 'I''m looking for a local place to dine in the centre that serves chinese
+      food. '
+- - episode_done: false
+    eval_labels:
+    - Ok how about Charlie Chan, located at Regent Street City Centre. Postcode is
+      cb21db with a cheap price. Can I help you further today?
+    id: multiwoz_v21
+    text: 'I need the address, postcode and the price range. '
+- - episode_done: false
+    eval_labels:
+    - Can I have more information for the train you're needing? Where are you departing
+      from and arriving to?
+    id: multiwoz_v21
+    text: 'I also need a train. The train should leave after 16:15 and should leave
+      on sunday. '
+- - episode_done: false
+    eval_labels:
+    - I have train TR1840 leaving at 16:36 is that okay?
+    id: multiwoz_v21
+    text: I am leaving from Cambridge and going to Norwich.
+- - episode_done: false
+    eval_labels:
+    - You're all set.  Reference number is NJB87PAP.  Is there anything else I can
+      help you with today?
+    id: multiwoz_v21
+    text: book for 5 people and get me the reference number
+num_episodes: 1000
+num_examples: 7374

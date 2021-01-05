@@ -1,0 +1,33 @@
+acts:
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - Okay, do you have a specific area you want to stay in?
+    text: am looking for a place to to stay that has cheap price range it should be
+      in a type of hotel
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - I found 1 cheap hotel for you that includes parking. Do you like me to book
+      it?
+    text: no, i just need to make sure it's cheap. oh, and i need parking
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - I am sorry but I wasn't able to book that for you for Tuesday. Is there another
+      day you would like to stay or perhaps a shorter stay?
+    text: Yes, please. 6 people 3 nights starting on tuesday.
+- - episode_done: false
+    id: multiwoz_v20
+    labels:
+    - 'Booking was successful.
+
+      Reference number is : 7GAWK763. Anything else I can do for you?'
+    text: how about only 2 nights.
+- - episode_done: true
+    id: multiwoz_v20
+    labels:
+    - Thank you for using our services.
+    text: No, that will be all. Good bye.
+num_episodes: 8438
+num_examples: 56778

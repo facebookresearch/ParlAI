@@ -1,0 +1,59 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - 'Es gibt mindestens zwei Handlungsstrategien , die wir voranbringen wollen :
+      zum einen muss mit Blick auf eine umfassendere und strukturierte wechselseitige
+      Zusammenarbeit wieder ein stärkeres Vertrauensverhältnis zu Israel hergestellt
+      werden und zum anderen der von Italien bereits auf den Tagungen des Europäischen
+      Rates und im Rahmen der G8 initiierte Plan für den Wiederaufbau der palästinensischen
+      Wirtschaft umgesetzt werden , der in den Verhandlungen zwischen den Parteien
+      einen konkreten und wirksamen Anreiz bieten könnte .'
+    id: wmt
+    reward: 0
+    text: 'There are at least two lines of action that we intend to promote : firstly
+      , restoring a relationship of greater trust with Israel with a view to broader
+      and more structured mutual cooperation , and , secondly , implementing the plan
+      - already launched by Italy at European Councils and G8 Summits - for rebuilding
+      the Palestinian economy , which could act as a tangible , effective incentive
+      in negotiations between the parties .'
+- - episode_done: true
+    eval_labels:
+    - 'Es bietet den Gästen komfortable Unterbringung in 3 Einzel- , 28 Doppelzimmern
+      und 6 Appartementen die mit allem Komfort ausgestattet sind : Minibar , Telefon
+      , TV mit Radio , Tresor , Badewanne , Haartrockner und Bademantel an .'
+    id: wmt
+    reward: 0
+    text: 'The hotels offers its guests comfortable accommodation in three single
+      rooms , twenty __AT__ eight double rooms and six suites with luxury equipped
+      : bathroom , WC , mini bar , TV , , telephone , radio , safe and hair dryer
+      . Hotel Services is 24 hours duty in the Reception , currency exchange , pay
+      TV , bussiness centre , room service , laundry , ironing and cleaning of clothes
+      .'
+- - episode_done: true
+    eval_labels:
+    - Anders als in Europa senden die meisten US __AT__ amerikanischen Fernsehsender
+      nicht landesweit , vielmehr bestehen viele lokale Fernsehsender nebeneinander
+      .
+    id: wmt
+    reward: 0
+    text: Syndication is the occurrence of local television stations purchasing individual
+      television shows outside of a network context .
+- - episode_done: true
+    eval_labels:
+    - Wie kann man unter diesen Umständen der Ausmerzung der französischen Fischer
+      beiwohnen , ohne Abscheu zu empfinden ?
+    id: wmt
+    reward: 0
+    text: How , under these circumstances , can one fail to feel disgust at witnessing
+      the eradication of French fishermen ?
+- - episode_done: true
+    eval_labels:
+    - Wir nehmen Ihnen Ihre Sorgen ab , beginnend mit dem Ausfüllen der Formulare
+      zur Beantragung von Wasser- und Elektrizitätsanschluss bis zur pünktlichen Bauabnahme
+      .
+    id: wmt
+    reward: 0
+    text: According to the information you give us we will compose the right system
+      for your presentation , based on your wishes and the available budget .
+num_episodes: 30000
+num_examples: 30000

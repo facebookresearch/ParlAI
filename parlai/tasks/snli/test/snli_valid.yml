@@ -1,0 +1,63 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Two women are embracing while holding to go packages.
+
+      Hypothesis: The sisters are hugging goodbye while holding to go packages after
+      just eating lunch.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Two women are embracing while holding to go packages.
+
+      Hypothesis: Two woman are holding packages.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Two women are embracing while holding to go packages.
+
+      Hypothesis: The men are fighting outside a deli.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Two young children in blue jerseys, one with the number 9 and
+      one with the number 2 are standing on wooden steps in a bathroom and washing
+      their hands in a sink.
+
+      Hypothesis: Two kids in numbered jerseys wash their hands.'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Two young children in blue jerseys, one with the number 9 and
+      one with the number 2 are standing on wooden steps in a bathroom and washing
+      their hands in a sink.
+
+      Hypothesis: Two kids at a ballgame wash their hands.'
+num_episodes: 9842
+num_examples: 9842

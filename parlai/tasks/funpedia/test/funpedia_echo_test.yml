@@ -1,0 +1,53 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - The Case of Mines or "R v Earl of Northumberland" was decided in 1568.
+    id: funpedia:echo
+    reward: 0
+    text: 'Case of Mines
+
+      Kind
+
+      The Case of Mines or "R v Earl of Northumberland" was decided in 1568.'
+- - episode_done: true
+    eval_labels:
+    - The population was 15,313 at the 2010 census.
+    id: funpedia:echo
+    reward: 0
+    text: 'Wailuku, Hawaii
+
+      Fun-loving
+
+      The population was 15,313 at the 2010 census.'
+- - episode_done: true
+    eval_labels:
+    - He currently plays for Sporting Cristal in the Torneo Descentralizado.
+    id: funpedia:echo
+    reward: 0
+    text: 'Horacio Calcaterra
+
+      Articulate (Well-spoken, Expressive)
+
+      He currently plays for Sporting Cristal in the Torneo Descentralizado.'
+- - episode_done: true
+    eval_labels:
+    - Its single species, "C. polita", is endemic to Burma.
+    id: funpedia:echo
+    reward: 0
+    text: 'Ceglusa
+
+      Sweet
+
+      Its single species, "C. polita", is endemic to Burma.'
+- - episode_done: true
+    eval_labels:
+    - Kurper is a generic name for certain fish in South Africa.
+    id: funpedia:echo
+    reward: 0
+    text: 'Kurper
+
+      Articulate (Well-spoken, Expressive)
+
+      Kurper is a generic name for certain fish in South Africa.'
+num_episodes: 10184
+num_examples: 10184

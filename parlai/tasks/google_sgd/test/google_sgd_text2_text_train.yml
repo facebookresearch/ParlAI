@@ -1,0 +1,34 @@
+acts:
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - Do you have a specific which you want the eating place to be located at?
+    text: I am feeling hungry so I would like to find a place to eat.
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - Is there a specific cuisine type you enjoy, such as Mexican, Italian or something
+      else?
+    text: I would like for it to be in San Jose.
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - I see that at 71 Saint Peter there is a good restaurant which is in San Jose.
+    text: I usually like eating the American type of food.
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - If you want to go to this restaurant you can find it at 71 North San Pedro Street.
+    text: Can you give me the address of this restaurant.
+    type: text
+- - episode_done: false
+    id: google_sgd:text2_text
+    labels:
+    - If you want to phone them you can at 408-971-8523.
+    text: Can you give me the phone number that I can contact them with?
+    type: text
+num_episodes: 16142
+num_examples: 215128

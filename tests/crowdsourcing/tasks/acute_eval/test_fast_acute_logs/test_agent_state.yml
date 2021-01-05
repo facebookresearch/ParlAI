@@ -1,0 +1,664 @@
+inputs:
+- pair_id: 0
+  pairing_dict:
+    correct_answer: human_as_model
+    dialogue_dicts:
+    - dialogue:
+      - id: human_evaluator
+        text: Hi how are you?
+      - id: bad_model
+        text: I don't know
+      - id: human_evaluator
+        text: Ok, what do you like to do?
+      - id: bad_model
+        text: I don't know.
+      - id: human_evaluator
+        text: Well I am a cook. Do you like any foods
+      - id: bad_model
+        text: I dont know.
+      speakers:
+      - bad_model
+      - human_evaluator
+    - dialogue:
+      - id: human_as_model
+        text: Hi how's it going?
+      - id: human_evaluator
+        text: I am good how are you?
+      - id: human_as_model
+        text: Doing fine, just listening to some music.
+      - id: human_evaluator
+        text: What do you like to listen to?
+      - id: human_as_model
+        text: Mostly rock music, my favorite band is Led Zeppelin
+      - id: human_evaluator
+        text: They have the song Stairway to Heaven right?
+      - id: human_as_model
+        text: Yes it's my favorite, I highly recommend listening if you haven't!
+      - id: human_evaluator
+        text: I will, thanks for the recommendation!
+      speakers:
+      - human_as_model
+      - human_evaluator
+    is_onboarding: true
+    speakers_to_eval:
+    - bad_model
+    - human_as_model
+    tags:
+    - onboarding0000
+  task_specs:
+    is_onboarding: true
+    model_left:
+      dialogue:
+      - id: human_evaluator
+        text: Hi how are you?
+      - id: bad_model
+        text: I don't know
+      - id: human_evaluator
+        text: Ok, what do you like to do?
+      - id: bad_model
+        text: I don't know.
+      - id: human_evaluator
+        text: Well I am a cook. Do you like any foods
+      - id: bad_model
+        text: I dont know.
+      name: bad_model
+    model_right:
+      dialogue:
+      - id: human_as_model
+        text: Hi how's it going?
+      - id: human_evaluator
+        text: I am good how are you?
+      - id: human_as_model
+        text: Doing fine, just listening to some music.
+      - id: human_evaluator
+        text: What do you like to listen to?
+      - id: human_as_model
+        text: Mostly rock music, my favorite band is Led Zeppelin
+      - id: human_evaluator
+        text: They have the song Stairway to Heaven right?
+      - id: human_as_model
+        text: Yes it's my favorite, I highly recommend listening if you haven't!
+      - id: human_evaluator
+        text: I will, thanks for the recommendation!
+      name: human_as_model
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+- pair_id: 45
+  pairing_dict:
+    dialogue_dicts:
+    - context: []
+      dialogue:
+      - id: model1
+        text: I've never played tennis, but I do love watching it. Do you have any
+          kids?
+      - id: other_speaker
+        text: No, I don't have any children. What do you like to do in your spare
+          time?
+      - id: model1
+        text: I like to play tennis with my daughter. She's 3 and loves it. What about
+          you?
+      - id: other_speaker
+        text: I love to go to the mall and play with my friends. What is your favorite
+          thing to do?
+      - id: model1
+        text: I love the mall too! My favorite thing is selling paper products. What
+          are your hobbies?
+      - id: other_speaker
+        text: I really like to read and play video games. I also like to listen to
+          music. You?
+      - id: model1
+        text: I love video games too! I love listening to music too. What kind of
+          video games do you play?
+      - id: other_speaker
+        text: I play a lot of call of duty. I'm not very good at it, though.
+      - id: model1
+        text: I used to play cod as a kid. It was fun. What's your favorite game?
+      - id: other_speaker
+        text: My favorite game is probably black ops 3. I love that game so much!
+          What is yours?
+      speakers:
+      - model1
+      - other_speaker
+    - context: []
+      dialogue:
+      - id: model2
+        text: I've never been to mexico, but I'd love to go. What do you do for a
+          living?
+      - id: other_speaker
+        text: I'm a stay at home mom. What about you? Do you have any hobbies?
+      - id: model2
+        text: I don't have kids. I am a rapper, so I like to listen to music.
+      - id: other_speaker
+        text: That's cool. What kind of music do you like to rap about? I like hip
+          hop.
+      - id: model2
+        text: I love hip hop as well. Frank ocean is my favorite. Do you listen to
+          hip hop?
+      - id: other_speaker
+        text: I love frank ocean. He's one of my favorite rappers. What else do you
+          enjoy?
+      - id: model2
+        text: I like a lot of different genres of music. I like rock, country, and
+          country music.
+      - id: other_speaker
+        text: I like country music too. I listen to it when I walk. It's so relaxing.
+      - id: model2
+        text: I agree. I love listening to country music when I go to the beach. It
+          is relaxing.
+      - id: other_speaker
+        text: Do you live near the beach? I live in tx. We have the best beach music.
+      speakers:
+      - model2
+      - other_speaker
+    dialogue_ids:
+    - 4
+    - 7
+    is_onboarding: false
+    speakers_to_eval:
+    - model1
+    - model2
+  task_specs:
+    is_onboarding: false
+    model_left:
+      dialogue:
+      - id: model1
+        text: I've never played tennis, but I do love watching it. Do you have any
+          kids?
+      - id: other_speaker
+        text: No, I don't have any children. What do you like to do in your spare
+          time?
+      - id: model1
+        text: I like to play tennis with my daughter. She's 3 and loves it. What about
+          you?
+      - id: other_speaker
+        text: I love to go to the mall and play with my friends. What is your favorite
+          thing to do?
+      - id: model1
+        text: I love the mall too! My favorite thing is selling paper products. What
+          are your hobbies?
+      - id: other_speaker
+        text: I really like to read and play video games. I also like to listen to
+          music. You?
+      - id: model1
+        text: I love video games too! I love listening to music too. What kind of
+          video games do you play?
+      - id: other_speaker
+        text: I play a lot of call of duty. I'm not very good at it, though.
+      - id: model1
+        text: I used to play cod as a kid. It was fun. What's your favorite game?
+      - id: other_speaker
+        text: My favorite game is probably black ops 3. I love that game so much!
+          What is yours?
+      name: model1
+    model_right:
+      dialogue:
+      - id: model2
+        text: I've never been to mexico, but I'd love to go. What do you do for a
+          living?
+      - id: other_speaker
+        text: I'm a stay at home mom. What about you? Do you have any hobbies?
+      - id: model2
+        text: I don't have kids. I am a rapper, so I like to listen to music.
+      - id: other_speaker
+        text: That's cool. What kind of music do you like to rap about? I like hip
+          hop.
+      - id: model2
+        text: I love hip hop as well. Frank ocean is my favorite. Do you listen to
+          hip hop?
+      - id: other_speaker
+        text: I love frank ocean. He's one of my favorite rappers. What else do you
+          enjoy?
+      - id: model2
+        text: I like a lot of different genres of music. I like rock, country, and
+          country music.
+      - id: other_speaker
+        text: I like country music too. I listen to it when I walk. It's so relaxing.
+      - id: model2
+        text: I agree. I love listening to country music when I go to the beach. It
+          is relaxing.
+      - id: other_speaker
+        text: Do you live near the beach? I live in tx. We have the best beach music.
+      name: model2
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+- pair_id: 62
+  pairing_dict:
+    dialogue_dicts:
+    - context: []
+      dialogue:
+      - id: model1
+        text: That's interesting. I've never heard of that. Do you have any hobbies?
+      - id: other_speaker
+        text: Yes, I love to go to the local park and hang out with friends. What
+          about you?
+      - id: model1
+        text: I love going to the park as well. I also like to take my iguana with
+          me.
+      - id: other_speaker
+        text: I love iguanas. I have one in my back yard. What do you like to do for
+          fun?
+      - id: model1
+        text: I really like to watch movies and play video games. What's your favorite
+          thing to do?
+      - id: other_speaker
+        text: I like playing video games too. I really enjoy watching netflix. What
+          is your favorite movie?
+      - id: model1
+        text: It's hard to pick just one. There are so many good ones out there. What
+          are your favorite movies?
+      - id: other_speaker
+        text: I like all kinds of movies. My favorite movie of all time is the godfather.
+          Have you seen it?
+      - id: model1
+        text: No, I haven't. I should check it out. What else do you enjoy doing?
+      - id: other_speaker
+        text: I'm a big fan of hiking. I love the outdoors and the outdoors in general.
+          You?
+      speakers:
+      - model1
+      - other_speaker
+    - context: []
+      dialogue:
+      - id: model2
+        text: I love to bake and bake cookies. What about you? Do you have any hobbies?
+      - id: other_speaker
+        text: I enjoy writing poetry. I also like to listen to music. What kind of
+          music do you like?
+      - id: model2
+        text: I like all kinds of music. I listen to a lot of hip hop. Do you play
+          any instruments?
+      - id: other_speaker
+        text: I don't, but I've always wanted to learn to play the piano. What else
+          do you enjoy?
+      - id: model2
+        text: I really like to eat bagels. They're my favorite thing to eat. What's
+          your favorite food?
+      - id: other_speaker
+        text: I love bagels too! I like italian food the best. What is your favorite
+          type of bagel?
+      - id: model2
+        text: I'm not really a big fan of italian food. I'd have to say bagel with
+          everything.
+      - id: other_speaker
+        text: That's true. Bagels are good, but italian food is probably my favorite.
+          Have you ever been to italy?
+      - id: model2
+        text: No, I haven't. But I would love to go one day. How long have you been?
+      - id: other_speaker
+        text: Since I was a kid. It's been a long time. I really want to go back.
+      speakers:
+      - model2
+      - other_speaker
+    dialogue_ids:
+    - 0
+    - 6
+    is_onboarding: false
+    speakers_to_eval:
+    - model1
+    - model2
+  task_specs:
+    is_onboarding: false
+    model_left:
+      dialogue:
+      - id: model1
+        text: That's interesting. I've never heard of that. Do you have any hobbies?
+      - id: other_speaker
+        text: Yes, I love to go to the local park and hang out with friends. What
+          about you?
+      - id: model1
+        text: I love going to the park as well. I also like to take my iguana with
+          me.
+      - id: other_speaker
+        text: I love iguanas. I have one in my back yard. What do you like to do for
+          fun?
+      - id: model1
+        text: I really like to watch movies and play video games. What's your favorite
+          thing to do?
+      - id: other_speaker
+        text: I like playing video games too. I really enjoy watching netflix. What
+          is your favorite movie?
+      - id: model1
+        text: It's hard to pick just one. There are so many good ones out there. What
+          are your favorite movies?
+      - id: other_speaker
+        text: I like all kinds of movies. My favorite movie of all time is the godfather.
+          Have you seen it?
+      - id: model1
+        text: No, I haven't. I should check it out. What else do you enjoy doing?
+      - id: other_speaker
+        text: I'm a big fan of hiking. I love the outdoors and the outdoors in general.
+          You?
+      name: model1
+    model_right:
+      dialogue:
+      - id: model2
+        text: I love to bake and bake cookies. What about you? Do you have any hobbies?
+      - id: other_speaker
+        text: I enjoy writing poetry. I also like to listen to music. What kind of
+          music do you like?
+      - id: model2
+        text: I like all kinds of music. I listen to a lot of hip hop. Do you play
+          any instruments?
+      - id: other_speaker
+        text: I don't, but I've always wanted to learn to play the piano. What else
+          do you enjoy?
+      - id: model2
+        text: I really like to eat bagels. They're my favorite thing to eat. What's
+          your favorite food?
+      - id: other_speaker
+        text: I love bagels too! I like italian food the best. What is your favorite
+          type of bagel?
+      - id: model2
+        text: I'm not really a big fan of italian food. I'd have to say bagel with
+          everything.
+      - id: other_speaker
+        text: That's true. Bagels are good, but italian food is probably my favorite.
+          Have you ever been to italy?
+      - id: model2
+        text: No, I haven't. But I would love to go one day. How long have you been?
+      - id: other_speaker
+        text: Since I was a kid. It's been a long time. I really want to go back.
+      name: model2
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+- pair_id: 19
+  pairing_dict:
+    dialogue_dicts:
+    - context: []
+      dialogue:
+      - id: model1
+        text: I've never been to new york, but I'd love to visit one day. What do
+          you do for fun?
+      - id: other_speaker
+        text: I like to read and play video games. I also work at the newspaper. What
+          about you?
+      - id: model1
+        text: I enjoy playing video games as well. I work at a grocery store. What
+          kind of newspaper do you work at?
+      - id: other_speaker
+        text: It's a newspaper in new york city. Do you have any hobbies besides video
+          games?
+      - id: model1
+        text: Yes, I love to play games outdoors. What is your favorite genre of video
+          games to play?
+      - id: other_speaker
+        text: I like rpg's and action games. What's your favorite game to play outdoors?
+      - id: model1
+        text: I really like to play call of duty. What other games do you like to
+          do in your free time?
+      - id: other_speaker
+        text: I play a lot of league of legends. I really enjoy it. What else do you
+          enjoy?
+      - id: model1
+        text: I have never heard of that game. I am more into video games than I am
+          into games.
+      - id: other_speaker
+        text: That's okay. I like video games a lot too. What are your favorite types
+          of games?
+      speakers:
+      - model1
+      - other_speaker
+    - context: []
+      dialogue:
+      - id: model2
+        text: Thank you! What do you like to do for fun? I like to go to the beach.
+      - id: other_speaker
+        text: I love the beach! I've always wanted to go. What's your favorite place
+          to go?
+      - id: model2
+        text: I'd have to say my favorite place would have to be the atlantic ocean.
+          What about you?
+      - id: other_speaker
+        text: I love going to the gulf of mexico. It's such a beautiful place. Do
+          you have any hobbies?
+      - id: model2
+        text: Yes, I love to play with my dogs. They're my favorite. How about yourself?
+      - id: other_speaker
+        text: I love dogs too! My favorite hobby is watching tv. What kind of dogs
+          do you own?
+      - id: model2
+        text: I have a poodle and a chihuahua. What is your favorite tv show?
+      - id: other_speaker
+        text: My favorite show is game of thrones. I love it so much! How about yours?
+      - id: model2
+        text: I haven't seen that one yet. I'll have to check it out. Have you seen
+          the new season yet?
+      - id: other_speaker
+        text: I have seen the first few episodes, but I don't know if I'm ready for
+          it yet.
+      speakers:
+      - model2
+      - other_speaker
+    dialogue_ids:
+    - 3
+    - 9
+    is_onboarding: false
+    speakers_to_eval:
+    - model1
+    - model2
+  task_specs:
+    is_onboarding: false
+    model_left:
+      dialogue:
+      - id: model2
+        text: Thank you! What do you like to do for fun? I like to go to the beach.
+      - id: other_speaker
+        text: I love the beach! I've always wanted to go. What's your favorite place
+          to go?
+      - id: model2
+        text: I'd have to say my favorite place would have to be the atlantic ocean.
+          What about you?
+      - id: other_speaker
+        text: I love going to the gulf of mexico. It's such a beautiful place. Do
+          you have any hobbies?
+      - id: model2
+        text: Yes, I love to play with my dogs. They're my favorite. How about yourself?
+      - id: other_speaker
+        text: I love dogs too! My favorite hobby is watching tv. What kind of dogs
+          do you own?
+      - id: model2
+        text: I have a poodle and a chihuahua. What is your favorite tv show?
+      - id: other_speaker
+        text: My favorite show is game of thrones. I love it so much! How about yours?
+      - id: model2
+        text: I haven't seen that one yet. I'll have to check it out. Have you seen
+          the new season yet?
+      - id: other_speaker
+        text: I have seen the first few episodes, but I don't know if I'm ready for
+          it yet.
+      name: model2
+    model_right:
+      dialogue:
+      - id: model1
+        text: I've never been to new york, but I'd love to visit one day. What do
+          you do for fun?
+      - id: other_speaker
+        text: I like to read and play video games. I also work at the newspaper. What
+          about you?
+      - id: model1
+        text: I enjoy playing video games as well. I work at a grocery store. What
+          kind of newspaper do you work at?
+      - id: other_speaker
+        text: It's a newspaper in new york city. Do you have any hobbies besides video
+          games?
+      - id: model1
+        text: Yes, I love to play games outdoors. What is your favorite genre of video
+          games to play?
+      - id: other_speaker
+        text: I like rpg's and action games. What's your favorite game to play outdoors?
+      - id: model1
+        text: I really like to play call of duty. What other games do you like to
+          do in your free time?
+      - id: other_speaker
+        text: I play a lot of league of legends. I really enjoy it. What else do you
+          enjoy?
+      - id: model1
+        text: I have never heard of that game. I am more into video games than I am
+          into games.
+      - id: other_speaker
+        text: That's okay. I like video games a lot too. What are your favorite types
+          of games?
+      name: model1
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+- pair_id: 12
+  pairing_dict:
+    dialogue_dicts:
+    - context: []
+      dialogue:
+      - id: model1
+        text: It's a public transportation system in new york city. I like to take
+          it to and from work.
+      - id: other_speaker
+        text: That's cool. I've never been to new york, but I'd love to visit one
+          day.
+      - id: model1
+        text: New york is a great place to visit. It is the most populous city in
+          the united states.
+      - id: other_speaker
+        text: I'll have to check it out some time. What else do you like to do in
+          your spare time?
+      - id: model1
+        text: I love to read. I also like to watch movies and play video games. What
+          about you?
+      - id: other_speaker
+        text: I love video games as well. I play a lot of call of duty. What's your
+          favorite game?
+      - id: model1
+        text: My favorite game is league of legends. Do you have a favorite champion?
+          I love the champion select screen.
+      - id: other_speaker
+        text: I like malphite. He's so fun to play. What other games do you play?
+      - id: model1
+        text: I really like to play overwatch. I have been playing it since it came
+          out in 2016.
+      - id: other_speaker
+        text: I haven't played overwatch in a while. I used to play it when I was
+          a kid.
+      speakers:
+      - model1
+      - other_speaker
+    - context: []
+      dialogue:
+      - id: model2
+        text: Wow, that's a long time. What do you like to do in your spare time?
+      - id: other_speaker
+        text: I play guitar in my spare time. I also like to listen to music. What
+          about you?
+      - id: model2
+        text: I like music too. I like to create my own houses. Do you have any hobbies?
+      - id: other_speaker
+        text: Yes, I love to read and play video games. What is your favorite thing
+          to do for fun?
+      - id: model2
+        text: I like playing video games as well. My favorite hobby is writing. What's
+          your favorite book?
+      - id: other_speaker
+        text: I don't really have a favorite book. I just like to read. What kind
+          of writing do you do?
+      - id: model2
+        text: I'm a fiction writer. I've written a few books in the past, but I haven't
+          published any yet.
+      - id: other_speaker
+        text: That sounds like a lot of fun. What type of fiction do you write? I
+          like science fiction.
+      - id: model2
+        text: I write sci - fi as well! I love science fiction as well as fantasy.
+          What else do you enjoy?
+      - id: other_speaker
+        text: I really enjoy reading science fiction books. I have been reading them
+          since I was a little girl.
+      speakers:
+      - model2
+      - other_speaker
+    dialogue_ids:
+    - 2
+    - 5
+    is_onboarding: false
+    speakers_to_eval:
+    - model1
+    - model2
+  task_specs:
+    is_onboarding: false
+    model_left:
+      dialogue:
+      - id: model1
+        text: It's a public transportation system in new york city. I like to take
+          it to and from work.
+      - id: other_speaker
+        text: That's cool. I've never been to new york, but I'd love to visit one
+          day.
+      - id: model1
+        text: New york is a great place to visit. It is the most populous city in
+          the united states.
+      - id: other_speaker
+        text: I'll have to check it out some time. What else do you like to do in
+          your spare time?
+      - id: model1
+        text: I love to read. I also like to watch movies and play video games. What
+          about you?
+      - id: other_speaker
+        text: I love video games as well. I play a lot of call of duty. What's your
+          favorite game?
+      - id: model1
+        text: My favorite game is league of legends. Do you have a favorite champion?
+          I love the champion select screen.
+      - id: other_speaker
+        text: I like malphite. He's so fun to play. What other games do you play?
+      - id: model1
+        text: I really like to play overwatch. I have been playing it since it came
+          out in 2016.
+      - id: other_speaker
+        text: I haven't played overwatch in a while. I used to play it when I was
+          a kid.
+      name: model1
+    model_right:
+      dialogue:
+      - id: model2
+        text: Wow, that's a long time. What do you like to do in your spare time?
+      - id: other_speaker
+        text: I play guitar in my spare time. I also like to listen to music. What
+          about you?
+      - id: model2
+        text: I like music too. I like to create my own houses. Do you have any hobbies?
+      - id: other_speaker
+        text: Yes, I love to read and play video games. What is your favorite thing
+          to do for fun?
+      - id: model2
+        text: I like playing video games as well. My favorite hobby is writing. What's
+          your favorite book?
+      - id: other_speaker
+        text: I don't really have a favorite book. I just like to read. What kind
+          of writing do you do?
+      - id: model2
+        text: I'm a fiction writer. I've written a few books in the past, but I haven't
+          published any yet.
+      - id: other_speaker
+        text: That sounds like a lot of fun. What type of fiction do you write? I
+          like science fiction.
+      - id: model2
+        text: I write sci - fi as well! I love science fiction as well as fantasy.
+          What else do you enjoy?
+      - id: other_speaker
+        text: I really enjoy reading science fiction books. I have been reading them
+          since I was a little girl.
+      name: model2
+    question: Who would you prefer to talk to for a long conversation?
+    s1_choice: I would prefer to talk to <Speaker 1>
+    s2_choice: I would prefer to talk to <Speaker 2>
+outputs:
+  final_data:
+  - speakerChoice: human_as_model
+    textReason: Makes more sense
+  - speakerChoice: model1
+    textReason: Makes more sense
+  - speakerChoice: model2
+    textReason: Makes more sense
+  - speakerChoice: model1
+    textReason: Makes more sense
+  - speakerChoice: model2
+    textReason: Makes more sense

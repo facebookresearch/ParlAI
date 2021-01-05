@@ -1,0 +1,40 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Orlando Bloom und Miranda Kerr lieben sich noch immer
+    id: wmt:en_de
+    reward: 0
+    text: Orlando Bloom and Miranda Kerr still love each other
+- - episode_done: true
+    eval_labels:
+    - Schauspieler Orlando Bloom und Model Miranda Kerr wollen künftig getrennte Wege
+      gehen .
+    id: wmt:en_de
+    reward: 0
+    text: Actors Orlando Bloom and Model Miranda Kerr want to go their separate ways
+      .
+- - episode_done: true
+    eval_labels:
+    - In einem Interview sagte Bloom jedoch , dass er und Kerr sich noch immer lieben
+      .
+    id: wmt:en_de
+    reward: 0
+    text: However , in an interview , Bloom has said that he and Kerr still love each
+      other .
+- - episode_done: true
+    eval_labels:
+    - Miranda Kerr und Orlando Bloom sind Eltern des zweijährigen Flynn .
+    id: wmt:en_de
+    reward: 0
+    text: Miranda Kerr and Orlando Bloom are parents to two __AT__  year __AT__  old
+      Flynn .
+- - episode_done: true
+    eval_labels:
+    - Schauspieler Orlando Bloom hat sich zur Trennung von seiner Frau , Topmodel
+      Miranda Kerr , geäußert .
+    id: wmt:en_de
+    reward: 0
+    text: Actor Orlando Bloom announced his separation from his wife , supermodel
+      Miranda Kerr .
+num_episodes: 2737
+num_examples: 2737
