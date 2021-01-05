@@ -298,8 +298,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         # # Check that the inputs and outputs are as expected
 
         # Wait until all messages have arrived
-        wait_time = 1  # In seconds
-        max_num_tries = 60  # max_num_tries * wait_time is the max time to wait
+        wait_time = 5.0  # In seconds
+        max_num_tries = 30  # max_num_tries * wait_time is the max time to wait
         num_tries = 0
         while num_tries < max_num_tries:
             actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
@@ -313,13 +313,14 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             if expected_num_messages == actual_num_messages:
                 break
             else:
+                num_tries += 1
                 print(
                     f'The expected number of messages is '
                     f'{expected_num_messages:d}, but the actual number of messages '
-                    f'is {actual_num_messages:d}! Waiting for more messages to '
-                    f'arrive...'
+                    f'is {actual_num_messages:d}! Waiting for {wait_time:0.1f} seconds '
+                    f'for more messages to arrive (try #{num_tries:d} of '
+                    f'{max_num_tries:d})...'
                 )
-                num_tries += 1
                 time.sleep(wait_time)
         else:
             raise ValueError('The expected number of messages never arrived!')
