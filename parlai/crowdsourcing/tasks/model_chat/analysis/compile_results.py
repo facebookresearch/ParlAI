@@ -121,7 +121,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         num_complete_convos = 0
         complete_convos_per_model = {}
         bad_conversations = []
-        old_experimental_design_conversations = []
         problem_counts = {}
         worker_stats = {}
         worker_conversation_counts = {}
@@ -178,20 +177,19 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                 if np.average(word_counts) < self.min_word_count or (
                     'contradiction' in self.problem_buckets and 'contradiction' in words
                 ):
+                    # If we are checking for contradictions, make sure that the user
+                    # didn't use the word "contradiction" in their reponse
                     bad_conversations.append(data)
                     print(
                         f'Bad complete conversation, words from human: {utterances}. Skipping.'
                     )
                     continue
 
-                if (
-                    'non_sensical' in self.problem_buckets
-                    and 'non_sensical' not in data['dialog'][1]['problem_data']
+                if not all(
+                    bucket in data['dialog'][1]['problem_data']
+                    for bucket in self.problem_buckets
                 ):
-                    # Old experiment
-                    print('Found old experimental design. Skipping.')
-                    old_experimental_design_conversations.append(data['hit_ids'][0])
-                    continue
+                    raise ValueError('Bucket(s) are missing from the problem data!')
                 s = read_folder.split('/')[-2]
                 experimental_design = s[s.find('_') + 1 :]
 
@@ -393,15 +391,11 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         for m, conversation_count in complete_convos_per_model.items():
             print(f'Got {conversation_count} complete conversations for model: {m}')
 
-        print(f'{num_complete_convos} complete conversations collected.')
-        print(f'{len(bad_conversations)} bad conversations.')
-        print(
-            f'{len(old_experimental_design_conversations)} old experimental design conversations.'
-        )
-        print(
-            f'{num_complete_convos - len(bad_conversations) - len(old_experimental_design_conversations)} approved conversations.'
-        )
-        print(f'({num_incomplete_convos} incomplete conversations collected.)')
+        print(f'{num_complete_convos:d} complete conversations collected.')
+        print(f'{len(bad_conversations):d} bad conversations.')
+        num_approved_convos = num_complete_convos - len(bad_conversations)
+        print(f'{num_approved_convos:d} approved conversations.')
+        print(f'({num_incomplete_convos:d} incomplete conversations collected.)')
         for model_nickname, model_problems_dict in problem_counts.items():
             print(f'---{model_nickname}---')
             for p, v in model_problems_dict.items():
