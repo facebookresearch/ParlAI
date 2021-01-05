@@ -267,7 +267,7 @@ class ImageLoader:
             return self.extract(self._load_image(path), new_path)
         else:
             with PathManager.open(new_path, 'rb') as f:
-                return self.torch.load(f)
+                return torch.load(f)
 
 
 class DetectronFeatureExtractor:
