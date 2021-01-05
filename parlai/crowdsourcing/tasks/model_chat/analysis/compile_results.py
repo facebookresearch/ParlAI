@@ -257,9 +257,13 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     ]
                     + self.problem_buckets,
                 )
-                additional_context = ''
-                if data['context_dataset'] == 'wizard_of_wikipedia':
+                if (
+                    data['additional_context'] is not None
+                    and len(data['additional_context']) > 0
+                ):
                     additional_context = '\n' + data['additional_context']
+                else:
+                    additional_context = ''
                 df = df.append(
                     {
                         'folder': info_dict['read_folder_name'],
