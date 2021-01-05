@@ -478,7 +478,7 @@
                     "episode_done": false,
                     "id": "TransformerGenerator",
                     "message_id": "f68faec0-b2c2-434d-98a6-b4cc9f1f42b3",
-                    "text": "I like all kinds of peanuts. I like a lot of things with peanuts. What are your hobbies?"
+                    "text": "Oh, I love peanuts! I love all kinds of peanuts. Do you eat a lot of peanuts?"
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -622,7 +622,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "I like all kinds of peanuts. I like a lot of things with peanuts. What are your hobbies?"
+                            "text": "Oh, I love peanuts! I love all kinds of peanuts. Do you eat a lot of peanuts?"
                         }
                     ],
                     "hit_ids": [
