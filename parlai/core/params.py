@@ -806,6 +806,13 @@ class ParlaiParser(argparse.ArgumentParser):
         try:
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self, partial)
+        except TypeError:
+            logging.error(
+                f"Agent '{model}' appears to have signature "
+                "add_cmdline_args(argparser) but we have updated the signature "
+                "to add_cmdline_args(argparser, partial_opt). For details, see "
+                "https://github.com/facebookresearch/ParlAI/pull/3328."
+            )
         except argparse.ArgumentError:
             # already added
             pass
@@ -826,6 +833,13 @@ class ParlaiParser(argparse.ArgumentParser):
             try:
                 if hasattr(agent, 'add_cmdline_args'):
                     agent.add_cmdline_args(self, partial)
+            except TypeError:
+                logging.error(
+                    f"Task '{task}' appears to have signature "
+                    "add_cmdline_args(argparser) but we have updated the signature "
+                    "to add_cmdline_args(argparser, partial_opt). For details, see "
+                    "https://github.com/facebookresearch/ParlAI/pull/3328."
+                )
             except argparse.ArgumentError:
                 # already added
                 pass
@@ -849,6 +863,13 @@ class ParlaiParser(argparse.ArgumentParser):
             except argparse.ArgumentError:
                 # already added
                 pass
+            except TypeError:
+                logging.error(
+                    f"World '{task}' appears to have signature "
+                    "add_cmdline_args(argparser) but we have updated the signature "
+                    "to add_cmdline_args(argparser, partial_opt). For details, see "
+                    "https://github.com/facebookresearch/ParlAI/pull/3328."
+                )
 
     def add_image_args(self, image_mode):
         """

@@ -14,6 +14,7 @@ import unittest
 from parlai.core.params import ParlaiParser
 import parlai.core.agents as agents
 import parlai.utils.testing as testing_utils
+import parlai.utils.logging as logging
 
 
 class _ExampleUpgradeOptAgent(agents.Agent):
@@ -171,6 +172,100 @@ class TestParlaiParser(unittest.TestCase):
         assert opt['bar'] is False
         opt = parser.parse_args(['--bar', '0'])
         assert opt['bar'] is False
+
+
+class TestAddCmdlineArgs(unittest.TestCase):
+    def test_bad_agent(self):
+        from parlai.core.agents import register_agent
+
+        @register_agent("bad_addcmdlineargs_agent")
+        class TestAgent:
+            @classmethod
+            def add_cmdline_args(cls, argparser):
+                argparser.add_argument("--no-find", default=True)
+                return argparser
+
+        with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
+            ParlaiParser(True, True).parse_kwargs(
+                model="bad_addcmdlineargs_agent", task="integration_tests"
+            )
+            self.assertIn("add_cmdline_args(argparser)", "\n".join(cm.output))
+
+    def test_good_agent(self):
+        from parlai.core.agents import register_agent
+
+        @register_agent("partialopt_addcmdlineargs_agent")
+        class TestAgent:
+            @classmethod
+            def add_cmdline_args(cls, argparser, partial_opt):
+                argparser.add_argument("--yes-find", default=True, type='bool')
+                if partial_opt.get('yes_find'):
+                    # conditional argument addition
+                    argparser.add_argument(
+                        "--yes-partial-find", default=True, type='bool'
+                    )
+                return argparser
+
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model="partialopt_addcmdlineargs_agent", task="integration_tests"
+        )
+        assert 'yes_find' in opt
+        assert 'yes_partial_find' in opt
+
+        # don't trigger the partial opt dynamic add. we shouldn't find the subarg.
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model="partialopt_addcmdlineargs_agent",
+            task="integration_tests",
+            yes_find=False,
+        )
+        assert 'yes_find' in opt
+        assert 'yes_partial_find' not in opt
+
+    def test_bad_task(self):
+        from parlai.core.teachers import register_teacher
+
+        @register_teacher("bad_addcmdlineargs_teacher")
+        class TestAgent:
+            @classmethod
+            def add_cmdline_args(cls, argparser):
+                argparser.add_argument("--no-find", default=True)
+                return argparser
+
+        with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
+            ParlaiParser(True, True).parse_kwargs(
+                model="repeat_query", task="bad_addcmdlineargs_teacher"
+            )
+            self.assertIn("add_cmdline_args(argparser)", "\n".join(cm.output))
+
+    def test_good_teacher(self):
+        from parlai.core.teachers import register_teacher
+
+        @register_teacher("partialopt_addcmdlineargs_teacher")
+        class TestAgent:
+            @classmethod
+            def add_cmdline_args(cls, argparser, partial_opt):
+                argparser.add_argument("--yes-find", default=True, type='bool')
+                if partial_opt.get('yes_find'):
+                    # conditional argument addition
+                    argparser.add_argument(
+                        "--yes-partial-find", default=True, type='bool'
+                    )
+                return argparser
+
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model="repeat_query", task="partialopt_addcmdlineargs_teacher"
+        )
+        assert 'yes_find' in opt
+        assert 'yes_partial_find' in opt
+
+        # don't trigger the partial opt dynamic add. we shouldn't find the subarg.
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model="partialopt_addcmdlineargs_agent",
+            task="integration_tests",
+            yes_find=False,
+        )
+        assert 'yes_find' in opt
+        assert 'yes_partial_find' not in opt
 
 
 if __name__ == '__main__':
