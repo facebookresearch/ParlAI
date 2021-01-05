@@ -25,15 +25,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
     you are asking crowdsource workers to annotate with.
     """
 
-    PROBLEM_BUCKETS = [
-        'bucket_0',
-        'bucket_1',
-        'bucket_2',
-        'bucket_3',
-        'bucket_4',
-        'none_all_good',
-    ]
-
     NUM_SUBTASKS = 7
     LIVE_ONBOARDING_IS_LAST_SUBTASK = True
     LIVE_ONBOARDING_THRESHOLD = 0.5
@@ -67,13 +58,8 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
         )
         return parser
 
-    def __init__(self, opt: Optional[Dict[str, Any]] = None):
-        if opt is None:
-            opt = {}
-        if 'results_folders' in opt:
-            self.results_folders = opt['results_folders'].split(',')
-        else:
-            self.results_folders = None
+    def __init__(self, opt: Dict[str, Any]):
+        super().__init__(opt)
         self.output_folder = opt.get('output_folder')
         self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
         self.gold_annotations_file = opt.get('gold_annotations_file')

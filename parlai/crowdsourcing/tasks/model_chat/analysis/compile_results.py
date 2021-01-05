@@ -26,15 +26,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
     up the level of each worker as a whole.
     """
 
-    PROBLEM_BUCKETS = [
-        'bucket_0',
-        'bucket_1',
-        'bucket_2',
-        'bucket_3',
-        'bucket_4',
-        'none_all_good',
-    ]
-
     @classmethod
     def setup_args(cls):
         parser = argparse.ArgumentParser(description='Compile model chat results')
@@ -80,8 +71,9 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
 
     def __init__(self, opt: Dict[str, Any]):
 
+        super().__init__(opt)
+
         # Input args
-        self.results_folders = opt['results_folders'].split(',')
         assert len(self.results_folders) > 0
         for folder in self.results_folders:
             assert os.path.isdir(folder), f'{folder} is not a valid folder!'

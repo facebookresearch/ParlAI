@@ -11,3 +11,18 @@ class AbstractResultsCompiler:
 
     Currently only provides utility attributes/methods for analyzing turn annotations.
     """
+
+    PROBLEM_BUCKETS = [
+        'bucket_0',
+        'bucket_1',
+        'bucket_2',
+        'bucket_3',
+        'bucket_4',
+        'none_all_good',
+    ]
+
+    def __init__(self, opt: Dict[str, Any]):
+        if 'results_folders' in opt:
+            self.results_folders = opt['results_folders'].split(',')
+        else:
+            self.results_folders = None
