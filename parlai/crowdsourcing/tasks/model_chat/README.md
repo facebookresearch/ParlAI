@@ -70,4 +70,4 @@ Note that onboarding is not currently supported with human+model image chat: use
 
 ## Analysis
 
-Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. The `ModelChatResultsCompiler` in that script has dummy annotation buckets by default; change `ModelChatResultsCompiler.PROBLEM_BUCKETS` in order to define your own.
+Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. The `ModelChatResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own.
