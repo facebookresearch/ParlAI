@@ -52,7 +52,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
 
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
-        self.output_folder = opt.get('output_folder')
         self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
         self.gold_annotations_file = opt.get('gold_annotations_file')
 
@@ -89,7 +88,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
                         read_folders.append(full_path)
         return read_folders
 
-    def compile_results(self):
+    def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
         conversations = self.compile_initial_results(self.results_folders)
         master_dataframe = self.process_data_into_dataframe(conversations)
@@ -112,6 +111,8 @@ class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
         )
         master_dataframe.to_csv(results_file, index=False)
         print(f'Wrote aggregated utterance data to: {results_file}')
+
+        return master_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
         """

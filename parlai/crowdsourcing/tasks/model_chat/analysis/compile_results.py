@@ -69,7 +69,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         assert len(self.results_folders) > 0
         for folder in self.results_folders:
             assert os.path.isdir(folder), f'{folder} is not a valid folder!'
-        self.output_folder = opt['output_folder']
         os.makedirs(self.output_folder, exist_ok=True)
         self.start_date = opt['start_date']
         self.max_convos_per_worker = opt['max_convos_per_worker']

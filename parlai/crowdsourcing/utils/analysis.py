@@ -5,10 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 
 import argparse
+from abc import ABC, abstractmethod
 from typing import Any, Dict
 
+import pandas as pd
 
-class AbstractResultsCompiler:
+
+class AbstractResultsCompiler(ABC):
     """
     Abstract class for compiling results of crowdsourcing runs.
 
@@ -44,9 +47,16 @@ class AbstractResultsCompiler:
             self.results_folders = opt['results_folders'].split(',')
         else:
             self.results_folders = None
+        self.output_folder = opt.get('output_folder')
 
         # Validate problem buckets
         if 'none_all_good' not in self.PROBLEM_BUCKETS:
             raise ValueError(
                 'There must be a "none_all_good" category in the problem buckets!'
             )
+
+    @abstractmethod
+    def compile_results(self) -> pd.DataFrame:
+        """
+        Method for returning the final results dataframe.
+        """
