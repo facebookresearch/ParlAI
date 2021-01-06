@@ -29,6 +29,18 @@ var showEnabledCssNextButton = function () {
   document.getElementById('submit-button').style = '';
 }
 
+var validateFreetextResponse = function (response, charMin, wordMin, vowelMin) {
+  // Requires the response to contain at least charMin characters, wordMin words, and vowelMin vowels.
+  var charCount = response.length;
+  var wordCount = response.split(' ').length;
+  var numVowels = response.match(/[aeiou]/gi);
+  if (charCount >= charMin && wordCount >= wordMin && numVowels && numVowels.length >= vowelMin) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 var validateUserInput = function (subtaskData) {
   for (var i = 0; i < subtaskData.length; i++) {
     if (subtaskData[i].agent_idx == 1) {
@@ -45,6 +57,15 @@ var validateUserInput = function (subtaskData) {
         if (!atLeastOneAnswerChecked) {
           return false;
         }
+      }
+    }
+  }
+  // check response fields
+  var responses = document.getElementsByName('input_response');
+  if (responses.length > 0) {
+    for (var j = 0; j < responses.length; j++) {
+      if (!validateFreetextResponse(responses[j].value, 10, 2, 2)) {
+        return false;
       }
     }
   }
@@ -76,29 +97,35 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
     data: []
   };
   for (var i = 0; i < initialTaskData.length; i++) {
-    var buckets = Object.keys(annotationBuckets.config);
     var answersForTurn = {
       'turn_idx': i,
       'text': initialTaskData[i].text,
       'agent_idx': initialTaskData[i].agent_idx,
       'other_metadata': initialTaskData[i].other_metadata
     };
-    for (var j = 0; j < buckets.length; j++) {
-      answersForTurn[buckets[j]] = null;
-      var checkbox = document.getElementById(buckets[j] + '_' + i);
-      if (checkbox) {
-        answersForTurn[buckets[j]] = false;
-        if (checkbox.checked) {
-          // Won't have checkboxes for agent_idx != 1
-          answersForTurn[buckets[j]] = true;
-          // uncheck any checked boxes
-          checkbox.checked = false;
+    if (annotationBuckets !== null) {
+      var buckets = Object.keys(annotationBuckets.config);
+      for (var j = 0; j < buckets.length; j++) {
+        answersForTurn[buckets[j]] = null;
+        var checkbox = document.getElementById(buckets[j] + '_' + i);
+        if (checkbox) {
+          answersForTurn[buckets[j]] = false;
+          if (checkbox.checked) {
+            // Won't have checkboxes for agent_idx != 1
+            answersForTurn[buckets[j]] = true;
+            // uncheck any checked boxes
+            checkbox.checked = false;
+          }
         }
       }
     }
     var input = document.getElementById('input_reason_' + i);
     if (input) {
       answersForTurn['input_reason'] = input.value;
+    }
+    var response = document.getElementById('input_response_' + i);
+    if (response) {
+      answersForTurn['input_response'] = response.value;
     }
     answersForSubtaskIndex.data.push(answersForTurn);
     // Need to also manually clear the reason DIV below checkboxes
@@ -110,6 +137,10 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
       var input_i = document.getElementById('input_reason_' + i);
       if (input_i) {
         input_i.value = '';
+      }
+      var response_i = document.getElementById('input_response_' + i);
+      if (response_i) {
+        response_i.value = '';
       }
     }
   }
