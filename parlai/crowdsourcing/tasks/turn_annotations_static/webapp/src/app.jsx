@@ -28,7 +28,7 @@ function MainApp() {
   if (blockedReason !== null) {
     return (
       <section className="hero is-medium is-danger">
-        <div class="hero-body">
+        <div className="hero-body">
           <h2 className="title is-3">{blockedExplanation}</h2>{" "}
         </div>
       </section>
@@ -41,7 +41,7 @@ function MainApp() {
   if (isPreview) {
     return (
       <section className="hero is-medium is-link">
-        <div class="hero-body">
+        <div className="hero-body">
           <h3><span dangerouslySetInnerHTML={{ __html: taskConfig.task_title || 'Task Title Loading' }}></span></h3>
           <br />
           <span dangerouslySetInnerHTML={{ __html: taskConfig.task_description || 'Task Description Loading' }}></span>

@@ -6,9 +6,13 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+ // NOTE: this frontend uses document accessors rather than React to control state,
+ // and may not be compatible with some future Mephisto features
+
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
+import { FormControl } from 'react-bootstrap';
 
 // HACK global variable (fix at some point)
 // Array of arrays (by subtask and then by turn)
@@ -163,25 +167,48 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
   )
 }
 
-function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, onUserInputUpdate }) {
+function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, onUserInputUpdate }) {
   var extraElements = '';
+  var responseInputElement = '';
   if (doAnnotateMessage) {
-    extraElements = '';
-    extraElements = (<span key={'extra_' + turnIdx}><br /><br />
-      <span style={{ fontStyle: 'italic' }} >
-        <span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span>
-        <br />
-        <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} askReason={askReason} onUserInputUpdate={onUserInputUpdate} />
-      </span>
-    </span>)
+    if (annotationBuckets !== null) { 
+      extraElements = (<span key={'extra_' + turnIdx}><br /><br />
+        <span style={{ fontStyle: 'italic' }} >
+          <span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span>
+          <br />
+          <Checkboxes turnIdx={turnIdx} annotationBuckets={annotationBuckets} askReason={askReason} onUserInputUpdate={onUserInputUpdate} />
+        </span>
+      </span>)
+    }
+    if (responseField !== null) {
+      responseInputElement = (
+        <FormControl
+        type="text"
+        name="input_response"
+        id={"input_response_" + turnIdx}
+        style={{
+            fontSize: "14px",
+            resize: "none",
+            marginBottom: "40px"
+        }}
+        onChange={(e) => {onUserInputUpdate();}}
+        placeholder={"Please enter your response here"}
+        onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste. You must manually respond to each message.")}}
+        autoComplete="off"
+      />
+      )
+    }
   }
   return (
-    <div className={`alert ${agentIdx == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${agentIdx == 0 ? "right" : "left"}`, display: 'table', minWidth: `${agentIdx == 0 ? "30%" : "80%"}`, marginTop: `${turnIdx == 1 ? "40px" : "auto"}` }}>
-      <span><b>{turnIdx % 2 == 0 ? 'YOU' : 'THEM'}:</b> {text}
-        <ErrorBoundary>
-          {extraElements}
-        </ErrorBoundary>
-      </span>
+    <div>
+      <div className={`alert ${agentIdx == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${agentIdx == 0 ? "right" : "left"}`, display: 'table', minWidth: `${agentIdx == 0 ? "30%" : "80%"}`, marginTop: "auto" }}>
+        <span><b>{turnIdx % 2 == 0 ? 'YOU' : 'THEM'}:</b> {text}
+          <ErrorBoundary>
+            {extraElements}
+          </ErrorBoundary>
+        </span>
+      </div>
+      {responseInputElement}
     </div>
   )
 }
@@ -189,8 +216,8 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
 function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
   var annotationQuestion = taskConfig.annotation_question;
   var annotationBuckets = taskConfig.annotation_buckets;
-  var annotateLastUtteranceOnly = taskConfig.annotate_last_utterance_only;
   var askReason = taskConfig.ask_reason;
+  var responseField = taskConfig.response_field;
   if (subtaskData == undefined && subtaskIndex >= numSubtasks) {
     // This happens when index gets set to num subtasks + 1 after submitting
     return (<div>
@@ -212,6 +239,7 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
                 annotationBuckets={annotationBuckets}
                 doAnnotateMessage={m.do_annotate}
                 askReason={askReason}
+                responseField={responseField}
                 onUserInputUpdate={() => handleUserInputUpdate(subtaskData)}
               />
             </div>
