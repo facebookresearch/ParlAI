@@ -138,7 +138,10 @@ class InteractiveWorld(DialogPartnerWorld):
         if self.cnt == 0:
             self.topic = self._get_new_topic()
             self.acts = [None, None]
-            self.human_first = random.choice([0, 1])
+            if self.topic != NO_TOPIC:
+                self.human_first = random.choice([0, 1])
+            else:
+                self.human_first = 1
 
         # possibly get human act first
         if self.cnt == 0 and not self.human_first:
