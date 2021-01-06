@@ -29,13 +29,12 @@ var showEnabledCssNextButton = function () {
   document.getElementById('submit-button').style = '';
 }
 
-var validateFreetextResponse = function (response) {
-  // Override this function to change the requirements for validating the textbox response.
-  // Currently requires more than 10 characters, at least 1 vowel, and at least 2 words in the response.
+var validateFreetextResponse = function (response, charMin, wordMin, vowelMin) {
+  // Requires the response to contain at least charMin characters, wordMin words, and vowelMin vowels.
   var charCount = response.length;
   var wordCount = response.split(' ').length;
   var numVowels = response.match(/[aeiou]/gi);
-  if (charCount > 10 && wordCount > 1 && numVowels && numVowels.length > 1) {
+  if (charCount >= charMin && wordCount >= wordMin && numVowels && numVowels.length >= vowelMin) {
     return true;
   } else {
     return false;
@@ -65,7 +64,7 @@ var validateUserInput = function (subtaskData) {
   var responses = document.getElementsByName('input_response');
   if (responses.length > 0) {
     for (var j = 0; j < responses.length; j++) {
-      if (!validateFreetextResponse(responses[j].value)) {
+      if (!validateFreetextResponse(responses[j].value, 10, 2, 2)) {
         return false;
       }
     }
