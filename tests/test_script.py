@@ -35,7 +35,7 @@ class _TestShortOptScript(script.ParlaiScript):
 
     @classmethod
     def setup_args(cls):
-        parser = ParlaiParser(False, False, description="Short opt test")
+        parser = ParlaiParser(True, True, description="Short opt test")
         parser.add_argument('-m', '--model')
         parser.add_argument('-mxx', '--my-other-option')
         return parser
