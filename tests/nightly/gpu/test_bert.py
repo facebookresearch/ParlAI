@@ -42,8 +42,8 @@ class TestBertModel(unittest.TestCase):
             dict(
                 task='convai2',
                 model='bert_ranker/cross_encoder_ranker',
-                num_epochs=0.002,
-                batchsize=1,
+                num_epochs=0.01,
+                batchsize=4,
                 candidates="inline",
                 type_optimization="all_encoder_layers",
                 warmup_updates=100,
