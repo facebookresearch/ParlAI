@@ -875,7 +875,12 @@ class ParlaiParser(argparse.ArgumentParser):
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
         if parsed.get('init_opt') is not None:
-            self._load_known_opts(parsed.get('init_opt'), parsed, first_pass=True)
+            try:
+                self._load_known_opts(parsed.get('init_opt'), parsed)
+            except FileNotFoundError:
+                # don't die if -o isn't found here. See comment in second call
+                # later on
+                pass
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -909,7 +914,7 @@ class ParlaiParser(argparse.ArgumentParser):
         # after we have added the model args.
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         if parsed.get('init_opt') is not None:
-            self._load_known_opts(parsed.get('init_opt'), parsed, first_pass=False)
+            self._load_known_opts(parsed.get('init_opt'), parsed)
 
         # reset parser-level defaults over any model-level defaults
         try:
@@ -934,7 +939,7 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
         return super().parse_known_args(args, namespace)
 
-    def _load_known_opts(self, optfile, parsed, first_pass: bool):
+    def _load_known_opts(self, optfile, parsed):
         """
         Pull in CLI args for proper models/tasks/etc.
 
@@ -945,13 +950,7 @@ class ParlaiParser(argparse.ArgumentParser):
         just set model/task/world, and the second time is to actually load
         opts.
         """
-        try:
-            new_opt = Opt.load(optfile)
-        except FileNotFoundError:
-            if first_pass:
-                return
-            else:
-                raise
+        new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
