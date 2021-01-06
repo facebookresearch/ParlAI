@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Alias script around `parlai eval_model -m repeat_label`  to dump data to conversations
-format.
+Converts data used in a task to json format. (Same as "Conversation" class; ie, for use in ACUTE-eval)
+
+Specify the task with `-t`. By default, this code will save to a file with prefix "tmp". To change the prefix, set `--report-filename`.
 """
 
 from parlai.core.script import register_script
@@ -18,6 +19,8 @@ class DumpDataToConversations(EvalModel):
     def setup_args(cls):
         parser = EvalModel.setup_args()
         parser.set_defaults(model="repeat_label")
+        parser.set_defaults(save_world_logs="true")
+        parser.set_defaults(report_filename="tmp")
         return parser
 
 
