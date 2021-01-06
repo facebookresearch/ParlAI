@@ -6,6 +6,9 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+ // NOTE: this frontend uses document accessors rather than React to control state, 
+ // and may not be compatible with some future Mephisto features.
+
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
@@ -26,8 +29,9 @@ var showEnabledCssNextButton = function () {
   document.getElementById('submit-button').style = '';
 }
 
-var validateFreetextRepsonse = function (response) {
-  // require more than 10 characters, at least 1 vowel, and at least 2 words in the response.
+var validateFreetextResponse = function (response) {
+  // Override this function to change the requirements for validating the textbox response.
+  // Currently requires more than 10 characters, at least 1 vowel, and at least 2 words in the response.
   var charCount = response.length;
   var wordCount = response.split(' ').length;
   var numVowels = response.match(/[aeiou]/gi);
@@ -61,7 +65,7 @@ var validateUserInput = function (subtaskData) {
   var responses = document.getElementsByName('input_response');
   if (responses.length > 0) {
     for (var j = 0; j < responses.length; j++) {
-      if (!validateFreetextRepsonse(responses[j].value)) {
+      if (!validateFreetextResponse(responses[j].value)) {
         return false;
       }
     }
@@ -100,7 +104,7 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
       'agent_idx': initialTaskData[i].agent_idx,
       'other_metadata': initialTaskData[i].other_metadata
     };
-    if (annotationBuckets) {
+    if (annotationBuckets !== null) {
       var buckets = Object.keys(annotationBuckets.config);
       for (var j = 0; j < buckets.length; j++) {
         answersForTurn[buckets[j]] = null;
@@ -199,7 +203,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
   var extraElements = '';
   var responseInputElement = '';
   if (doAnnotateMessage) {
-    if (annotationBuckets) { 
+    if (annotationBuckets !== null) { 
       extraElements = (<span key={'extra_' + turnIdx}><br /><br />
         <span style={{ fontStyle: 'italic' }} >
           <span dangerouslySetInnerHTML={{ __html: annotationQuestion }}></span>
@@ -208,7 +212,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
         </span>
       </span>)
     }
-    if (responseField) {
+    if (responseField !== null) {
       responseInputElement = (
         <FormControl
         type="text"
@@ -221,7 +225,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
         }}
         onChange={(e) => {onUserInputUpdate();}}
         placeholder={"Please enter your response here"}
-        onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste and respond to each message as you would!")}}
+        onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste. You must manually respond to each message.")}}
         autoComplete="off"
       />
       )

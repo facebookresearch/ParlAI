@@ -12,3 +12,5 @@ Two variants of the blueprint are supported:
 For both variants of the blueprint, it is required to pass in your own file of conversations with `mephisto.blueprint.data_jsonl=${PATH_TO_CONVERSATIONS}`.
 
 See `turn_annotations_blueprint.py` for various parameters of this task, including passing in custom annotation bucket definitions using the `annotation_buckets` YAML flag, being able to group multiple conversations into one HIT using the `subtasks_per_unit` flag, passing in onboarding data with answers, and being able to ask only for the final utterance as an annotation.
+
+The validation of the response field requires the input to have more than 10 characters, at least 1 vowel, and at least 2 words. If you would like to change the validation requirements, override the `validateFreetextResponse` function in `task_components.jsx`.
