@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.self_feeding.utils import extract_fb_episodes, episode_to_examples
+from projects.self_feeding.utils import extract_fb_episodes, episode_to_examples
 from parlai.utils.io import PathManager
 
 

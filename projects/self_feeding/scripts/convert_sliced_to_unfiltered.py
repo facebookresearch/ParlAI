@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.self_feeding.utils import (
+from projects.self_feeding.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
