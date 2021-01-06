@@ -86,7 +86,9 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
     )
     response_field: bool = field(
         default=False,
-        metadata={"help": "If we want the crowdworker to respond to the message."},
+        metadata={
+            "help": "If we want a freeform textbox input for the crowdworker to respond to the message."
+        },
     )
 
 
