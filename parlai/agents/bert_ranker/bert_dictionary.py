@@ -24,6 +24,9 @@ class BertDictionaryAgent(DictionaryAgent):
     Allow to use the Torch Agent with the wordpiece dictionary of Hugging Face.
     """
 
+    def is_prebuit(self):
+        return True
+
     def __init__(self, opt):
         super().__init__(opt)
         # initialize from vocab path
