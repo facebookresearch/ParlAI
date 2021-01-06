@@ -142,6 +142,8 @@ class AbstractCrowdsourcingTest:
             while num_tries < max_num_tries:
                 try:
                     self.server.register_mock_worker(mock_worker_name)
+                    workers = self.db.find_workers(worker_name=mock_worker_name)
+                    worker_id = workers[0].db_id
                     break
                 except IndexError:
                     num_tries += 1
@@ -154,8 +156,6 @@ class AbstractCrowdsourcingTest:
                     wait_time *= 2  # Wait for longer next time
             else:
                 raise ValueError('The worker could not be registered!')
-            workers = self.db.find_workers(worker_name=mock_worker_name)
-            worker_id = workers[0].db_id
 
             # Register the agent
             mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
