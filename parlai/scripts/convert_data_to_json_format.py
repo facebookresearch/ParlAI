@@ -4,9 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Converts data used in a task to json format. (Same as "Conversation" class; ie, for use in ACUTE-eval)
+Converts data used in a task to json format. (Same as "Conversation" class; ie, for use
+in ACUTE-eval)
 
-Specify the task with `-t`. By default, this code will save to a file with prefix "tmp". To change the prefix, set `--report-filename`.
+Specify the task with `-t`. By default, this code will save to a file with prefix "tmp".
+To change the prefix, set `--report-filename`.
 """
 
 from parlai.core.script import register_script
