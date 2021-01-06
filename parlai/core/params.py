@@ -875,7 +875,7 @@ class ParlaiParser(argparse.ArgumentParser):
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
         if parsed.get('init_opt') is not None:
-            self._load_known_opts(parsed.get('init_opt'), parsed)
+            self._load_known_opts(parsed.get('init_opt'), parsed, first_pass=True)
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -904,6 +904,13 @@ class ParlaiParser(argparse.ArgumentParser):
                 parsed.get('selfchat_task', False),
             )
 
+        # reparse args now that we've inferred some things.  specifically helps
+        # with a misparse of `-opt` as `-o pt` which may be ambigiuous until
+        # after we have added the model args.
+        parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        if parsed.get('init_opt') is not None:
+            self._load_known_opts(parsed.get('init_opt'), parsed, first_pass=False)
+
         # reset parser-level defaults over any model-level defaults
         try:
             self.set_defaults(**self._defaults)
@@ -927,14 +934,24 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
         return super().parse_known_args(args, namespace)
 
-    def _load_known_opts(self, optfile, parsed):
+    def _load_known_opts(self, optfile, parsed, first_pass: bool):
         """
         Pull in CLI args for proper models/tasks/etc.
 
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
+
+        Called twice, hence the first_pass bool. The first time is used to
+        just set model/task/world, and the second time is to actually load
+        opts.
         """
-        new_opt = Opt.load(optfile)
+        try:
+            new_opt = Opt.load(optfile)
+        except FileNotFoundError:
+            if first_pass:
+                return
+            else:
+                raise
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
