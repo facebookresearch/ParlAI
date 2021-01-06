@@ -78,18 +78,22 @@ class TestAnalysis(unittest.TestCase):
                 json.dump(gold_annotations, f)
 
             # Run compilation of results
-            opt = {
-                'results_folders': os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
-                ),
-                'output_folder': tmpdir,
-                'onboarding_in_flight_data_file': os.path.join(
-                    analysis_config_folder, 'onboarding_in_flight.jsonl'
-                ),
-                'gold_annotations_file': temp_gold_annotations_path,
-            }
+            parser = TurnAnnotationsStaticResultsCompiler.setup_args()
+            parser.set_defaults(
+                **{
+                    'results_folders': os.path.join(
+                        os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
+                    ),
+                    'output_folder': tmpdir,
+                    'onboarding_in_flight_data_file': os.path.join(
+                        analysis_config_folder, 'onboarding_in_flight.jsonl'
+                    ),
+                    'gold_annotations_file': temp_gold_annotations_path,
+                }
+            )
+            args = parser.parse_args([])
             with testing_utils.capture_output() as output:
-                compiler = TurnAnnotationsStaticResultsCompiler(opt)
+                compiler = TurnAnnotationsStaticResultsCompiler(vars(args))
                 compiler.NUM_SUBTASKS = 3
                 compiler.NUM_ANNOTATIONS = 3
                 compiler.compile_results()
