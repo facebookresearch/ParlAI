@@ -4,10 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Alias script around `parlai eval_model -m repeat_label`  to dump data to conversations format
+Alias script around `parlai eval_model -m repeat_label`  to dump data to conversations
+format.
 """
 
-from parlai.core.script import ParlaiScript, register_script
+from parlai.core.script import register_script
 from parlai.scripts.eval_model import EvalModel
 
 
