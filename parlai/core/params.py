@@ -945,10 +945,6 @@ class ParlaiParser(argparse.ArgumentParser):
 
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
-
-        Called twice, hence the first_pass bool. The first time is used to
-        just set model/task/world, and the second time is to actually load
-        opts.
         """
         new_opt = Opt.load(optfile)
         for key, value in new_opt.items():
