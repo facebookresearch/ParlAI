@@ -14,7 +14,6 @@ import unittest
 from parlai.core.params import ParlaiParser
 import parlai.core.agents as agents
 import parlai.utils.testing as testing_utils
-import parlai.utils.logging as logging
 
 
 class _ExampleUpgradeOptAgent(agents.Agent):
@@ -175,6 +174,10 @@ class TestParlaiParser(unittest.TestCase):
 
 
 class TestAddCmdlineArgs(unittest.TestCase):
+    """
+    Test that a deprecated api signature for add_cmdline_args is not accepted.
+    """
+
     def test_bad_agent(self):
         from parlai.core.agents import register_agent
 
@@ -185,7 +188,7 @@ class TestAddCmdlineArgs(unittest.TestCase):
                 argparser.add_argument("--no-find", default=True)
                 return argparser
 
-        with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
+        with self.assertRaises(TypeError) as cm:
             ParlaiParser(True, True).parse_kwargs(
                 model="bad_addcmdlineargs_agent", task="integration_tests"
             )
@@ -231,13 +234,13 @@ class TestAddCmdlineArgs(unittest.TestCase):
                 argparser.add_argument("--no-find", default=True)
                 return argparser
 
-        with self.assertLogs(logger=logging.logger, level='ERROR') as cm:
+        with self.assertRaises(TypeError) as cm:
             ParlaiParser(True, True).parse_kwargs(
                 model="repeat_query", task="bad_addcmdlineargs_teacher"
             )
             self.assertIn("add_cmdline_args(argparser)", "\n".join(cm.output))
 
-    def test_good_teacher(self):
+    def test_good_task(self):
         from parlai.core.teachers import register_teacher
 
         @register_teacher("partialopt_addcmdlineargs_teacher")

@@ -299,7 +299,7 @@ class ParlaiParser(argparse.ArgumentParser):
     modules by passing this object and calling ``add_arg()`` or
     ``add_argument()`` on it.
 
-    super().core.dict.DictionaryAgent.add_cmdline_args``.
+    For an example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
 
     :param add_parlai_args:
         (default True) initializes the default arguments for ParlAI
@@ -806,13 +806,13 @@ class ParlaiParser(argparse.ArgumentParser):
         try:
             if hasattr(agent, 'add_cmdline_args'):
                 agent.add_cmdline_args(self, partial)
-        except TypeError:
-            logging.error(
+        except TypeError as typ:
+            raise TypeError(
                 f"Agent '{model}' appears to have signature "
                 "add_cmdline_args(argparser) but we have updated the signature "
                 "to add_cmdline_args(argparser, partial_opt). For details, see "
                 "https://github.com/facebookresearch/ParlAI/pull/3328."
-            )
+            ) from typ
         except argparse.ArgumentError:
             # already added
             pass
@@ -833,13 +833,13 @@ class ParlaiParser(argparse.ArgumentParser):
             try:
                 if hasattr(agent, 'add_cmdline_args'):
                     agent.add_cmdline_args(self, partial)
-            except TypeError:
-                logging.error(
+            except TypeError as typ:
+                raise TypeError(
                     f"Task '{task}' appears to have signature "
                     "add_cmdline_args(argparser) but we have updated the signature "
                     "to add_cmdline_args(argparser, partial_opt). For details, see "
                     "https://github.com/facebookresearch/ParlAI/pull/3328."
-                )
+                ) from typ
             except argparse.ArgumentError:
                 # already added
                 pass
@@ -864,7 +864,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 # already added
                 pass
             except TypeError:
-                logging.error(
+                raise TypeError(
                     f"World '{task}' appears to have signature "
                     "add_cmdline_args(argparser) but we have updated the signature "
                     "to add_cmdline_args(argparser, partial_opt). For details, see "
