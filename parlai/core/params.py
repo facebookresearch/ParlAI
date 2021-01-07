@@ -875,7 +875,12 @@ class ParlaiParser(argparse.ArgumentParser):
         parsed = vars(self.parse_known_args(args, nohelp=True)[0])
         # Also load extra args options if a file is given.
         if parsed.get('init_opt') is not None:
-            self._load_known_opts(parsed.get('init_opt'), parsed)
+            try:
+                self._load_known_opts(parsed.get('init_opt'), parsed)
+            except FileNotFoundError:
+                # don't die if -o isn't found here. See comment in second call
+                # later on.
+                pass
         parsed = self._infer_datapath(parsed)
 
         # find which image mode specified if any, and add additional arguments
@@ -903,6 +908,15 @@ class ParlaiParser(argparse.ArgumentParser):
                 parsed.get('interactive_task', False),
                 parsed.get('selfchat_task', False),
             )
+
+        # reparse args now that we've inferred some things.  specifically helps
+        # with a misparse of `-opt` as `-o pt`, which causes opt loading to
+        # try to load the file "pt" which doesn't exist.
+        # After adding model arguments, -opt becomes known (it's in TorchAgent),
+        # and we parse the `-opt` value correctly.
+        parsed = vars(self.parse_known_args(args, nohelp=True)[0])
+        if parsed.get('init_opt') is not None:
+            self._load_known_opts(parsed.get('init_opt'), parsed)
 
         # reset parser-level defaults over any model-level defaults
         try:
