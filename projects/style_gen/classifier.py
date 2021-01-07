@@ -7,6 +7,9 @@
 Agent for classifying style with utterance(s) as context.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from itertools import chain
 
 import torch
@@ -33,12 +36,14 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI args.
         """
-        TransformerClassifierAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('ClassifierOnGenerator Arguments')
+        TransformerClassifierAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('ClassifierOnGenerator Arguments')
         agent.add_argument(
             '--freeze-enc-dec-weights',
             type='bool',

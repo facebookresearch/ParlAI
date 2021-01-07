@@ -299,7 +299,7 @@ class ParlaiParser(argparse.ArgumentParser):
     modules by passing this object and calling ``add_arg()`` or
     ``add_argument()`` on it.
 
-    For example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
+    For an example, see ``parlai.core.dict.DictionaryAgent.add_cmdline_args``.
 
     :param add_parlai_args:
         (default True) initializes the default arguments for ParlAI
@@ -313,7 +313,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self, add_parlai_args=True, add_model_args=False, description=None, **kwargs
     ):
         """
-        Initialize the ParlAI argparser.
+        Initialize the ParlAI parser.
         """
         if 'formatter_class' not in kwargs:
             kwargs['formatter_class'] = CustomHelpFormatter
@@ -798,14 +798,21 @@ class ParlaiParser(argparse.ArgumentParser):
             '--dict-class', hidden=True, help='the class of the dictionary agent uses'
         )
 
-    def add_model_subargs(self, model):
+    def add_model_subargs(self, model: str, partial: Opt):
         """
         Add arguments specific to a particular model.
         """
         agent = load_agent_module(model)
         try:
             if hasattr(agent, 'add_cmdline_args'):
-                agent.add_cmdline_args(self)
+                agent.add_cmdline_args(self, partial)
+        except TypeError as typ:
+            raise TypeError(
+                f"Agent '{model}' appears to have signature "
+                "add_cmdline_args(argparser) but we have updated the signature "
+                "to add_cmdline_args(argparser, partial_opt). For details, see "
+                "https://github.com/facebookresearch/ParlAI/pull/3328."
+            ) from typ
         except argparse.ArgumentError:
             # already added
             pass
@@ -817,7 +824,7 @@ class ParlaiParser(argparse.ArgumentParser):
             # already added
             pass
 
-    def add_task_args(self, task):
+    def add_task_args(self, task: str, partial: Opt):
         """
         Add arguments specific to the specified task.
         """
@@ -825,12 +832,25 @@ class ParlaiParser(argparse.ArgumentParser):
             agent = load_teacher_module(t)
             try:
                 if hasattr(agent, 'add_cmdline_args'):
-                    agent.add_cmdline_args(self)
+                    agent.add_cmdline_args(self, partial)
+            except TypeError as typ:
+                raise TypeError(
+                    f"Task '{task}' appears to have signature "
+                    "add_cmdline_args(argparser) but we have updated the signature "
+                    "to add_cmdline_args(argparser, partial_opt). For details, see "
+                    "https://github.com/facebookresearch/ParlAI/pull/3328."
+                ) from typ
             except argparse.ArgumentError:
                 # already added
                 pass
 
-    def add_world_args(self, task, interactive_task, selfchat_task):
+    def add_world_args(
+        self,
+        task: str,
+        interactive_task: Optional[str],
+        selfchat_task: Optional[str],
+        partial: Opt,
+    ):
         """
         Add arguments specific to the world.
         """
@@ -839,10 +859,17 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         if world_class is not None and hasattr(world_class, 'add_cmdline_args'):
             try:
-                world_class.add_cmdline_args(self)
+                world_class.add_cmdline_args(self, partial)
             except argparse.ArgumentError:
                 # already added
                 pass
+            except TypeError:
+                raise TypeError(
+                    f"World '{task}' appears to have signature "
+                    "add_cmdline_args(argparser) but we have updated the signature "
+                    "to add_cmdline_args(argparser, partial_opt). For details, see "
+                    "https://github.com/facebookresearch/ParlAI/pull/3328."
+                )
 
     def add_image_args(self, image_mode):
         """
@@ -883,6 +910,8 @@ class ParlaiParser(argparse.ArgumentParser):
                 pass
         parsed = self._infer_datapath(parsed)
 
+        partial = Opt(parsed)
+
         # find which image mode specified if any, and add additional arguments
         image_mode = parsed.get('image_mode', None)
         if image_mode is not None and image_mode != 'no_image_model':
@@ -891,15 +920,15 @@ class ParlaiParser(argparse.ArgumentParser):
         # find which task specified if any, and add its specific arguments
         task = parsed.get('task', None)
         if task is not None:
-            self.add_task_args(task)
+            self.add_task_args(task, partial)
         evaltask = parsed.get('evaltask', None)
         if evaltask is not None:
-            self.add_task_args(evaltask)
+            self.add_task_args(evaltask, partial)
 
         # find which model specified if any, and add its specific arguments
         model = get_model_name(parsed)
         if model is not None:
-            self.add_model_subargs(model)
+            self.add_model_subargs(model, partial)
 
         # add world args, if we know a priori which world is being used
         if task is not None:
@@ -907,6 +936,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 task,
                 parsed.get('interactive_task', False),
                 parsed.get('selfchat_task', False),
+                partial,
             )
 
         # reparse args now that we've inferred some things.  specifically helps

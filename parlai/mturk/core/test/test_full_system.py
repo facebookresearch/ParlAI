@@ -378,10 +378,10 @@ class TestMTurkManagerWorkflows(unittest.TestCase):
         # Set up an MTurk Manager and get it ready for accepting workers
         self.fake_socket = MockSocket()
         time.sleep(0.1)
-        argparser = ParlaiParser(False, False)
-        argparser.add_parlai_data_path()
-        argparser.add_mturk_args()
-        self.opt = argparser.parse_args([])
+        parser = ParlaiParser(False, False)
+        parser.add_parlai_data_path()
+        parser.add_mturk_args()
+        self.opt = parser.parse_args([])
         self.opt['task'] = 'unittest'
         self.opt['assignment_duration_in_seconds'] = 1
         self.opt['hit_title'] = 'test_hit_title'

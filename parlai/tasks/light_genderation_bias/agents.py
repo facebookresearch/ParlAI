@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
@@ -157,10 +160,12 @@ class LightGenderTeacher(FixedDialogTeacher):
     <https://parl.ai/projects/genderation_bias/>
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('LIGHT Gender Args')
-        OrigLightTeacher.add_cmdline_args(parser)
+        OrigLightTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
         parser.add_argument(
             '--add-new-data',
             type='bool',

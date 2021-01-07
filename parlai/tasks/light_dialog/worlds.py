@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
 from parlai.tasks.interactive.worlds import InteractiveWorld as InteractiveBaseWorld
@@ -15,15 +18,18 @@ import os
 
 
 class InteractiveSimpleWorld(InteractiveBaseWorld):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('LIGHT Interactive World')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('LIGHT Interactive World')
         parser.add_argument(
             '--add-task-string',
             type='bool',
             default=False,
             help='Add _task_speech to text input to model or not',
         )
+        return parser
 
     def init_contexts(self, shared=None):
         # Create Light data so we can assign personas.

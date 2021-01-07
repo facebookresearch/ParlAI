@@ -142,9 +142,9 @@ class TestDictionary(unittest.TestCase):
         """
         Check the dictionary is correctly adding and parsing short sentence.
         """
-        argparser = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(argparser)
-        opt = argparser.parse_args([])
+        parser = ParlaiParser()
+        DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
+        opt = parser.parse_args([])
         dictionary = DictionaryAgent(opt)
         num_builtin = len(dictionary)
 
@@ -299,7 +299,7 @@ class TestByteLevelBPE(unittest.TestCase):
 
     def test_nofile(self):
         pp = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(pp)
+        DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         with self.assertRaises(IOError):
             # did not specify bpe merge or vocab
             DictionaryAgent(pp.parse_args(['--dict-tokenizer', 'bytelevelbpe']))
@@ -365,7 +365,7 @@ class TestByteLevelBPE(unittest.TestCase):
         Save and reload an existing BL-BPE dictionary.
         """
         pp = ParlaiParser()
-        DictionaryAgent.add_cmdline_args(pp)
+        DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         da = DictionaryAgent(
             pp.parse_args(
                 [
@@ -557,7 +557,7 @@ class SpecialTokenTests(unittest.TestCase):
                     kwargs['dict_file'] = os.path.join(tmpdir, 'dict')
                 string = f"This is a test of {special_token}"
                 parser = ParlaiParser(False, False)
-                DictionaryAgent.add_cmdline_args(parser)
+                DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
                 opt = parser.parse_kwargs(**kwargs)
                 da = DictionaryAgent(opt)
                 before = da.tokenize(string)
@@ -607,7 +607,7 @@ class SpecialTokenTests(unittest.TestCase):
 class TestBpeDropout(unittest.TestCase):
     def _test_bpe_dropout(self, **dict_args):
         pp = ParlaiParser(False, False)
-        DictionaryAgent.add_cmdline_args(pp)
+        DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         opt = pp.parse_kwargs(bpe_dropout=0.5, **dict_args)
         da = DictionaryAgent(opt)
         da.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)

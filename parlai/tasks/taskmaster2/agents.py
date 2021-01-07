@@ -11,6 +11,7 @@ No official train/valid/test splits are available as of 2020-05-18, so we make o
 splits.
 """
 
+from parlai.core.params import ParlaiParser
 import os
 import pandas as pd
 import hashlib
@@ -48,16 +49,18 @@ class _Abstract(DialogTeacher):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        argparser.add_argument('--include-ontology', type=bool, default=False)
-        argparser.add_argument(
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.add_argument('--include-ontology', type=bool, default=False)
+        parser.add_argument(
             '--domains',
             nargs='+',
             default=DOMAINS,
             choices=DOMAINS,
             help='Uses last passed in configuration.',
         )
-        return argparser
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         self.fold = opt['datatype'].split(':')[0]
@@ -322,20 +325,22 @@ class FewShotTeacher(_Abstract):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        argparser.add_argument(
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.add_argument(
             '--holdout',
             default=DOMAINS[0],
             choices=DOMAINS,
             help='Domain which is held out from test',
         )
-        argparser.add_argument(
+        parser.add_argument(
             '--n-shot',
             default=100,
             type=int,
             help='Number of few shot examples to provide in training fold.',
         )
-        return super().add_cmdline_args(argparser)
+        return super().add_cmdline_args(parser, partial_opt=partial_opt)
 
     def _label_fold(self, chunks):
         folds = []

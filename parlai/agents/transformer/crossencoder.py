@@ -4,6 +4,9 @@
 # LICENSE file in the root directory of this source tree.
 
 # hack to make sure -m transformer/generator works as expected
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from .modules import TransformerEncoder
 from .modules import get_n_positions_from_options
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -19,13 +22,15 @@ class CrossencoderAgent(TorchRankerAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        TransformerRankerAgent.add_cmdline_args(argparser)
-        argparser.set_defaults(encode_candidate_vecs=False)
-        return argparser
+        TransformerRankerAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        parser.set_defaults(encode_candidate_vecs=False)
+        return parser
 
     def build_model(self, states=None):
         return CrossEncoderModule(self.opt, self.dict, self.NULL_IDX)

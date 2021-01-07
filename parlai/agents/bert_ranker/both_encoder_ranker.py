@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from .bert_dictionary import BertDictionaryAgent
 from .bi_encoder_ranker import BiEncoderRankerAgent
 from .cross_encoder_ranker import CrossEncoderRankerAgent
@@ -20,8 +23,10 @@ class BothEncoderRankerAgent(TorchAgent):
     requiring less memory on the GPU.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         add_common_args(parser)
         parser = parser.add_argument_group('Bert Ranker Arguments')
         parser.add_argument(
@@ -51,6 +56,7 @@ class BothEncoderRankerAgent(TorchAgent):
         parser.set_defaults(
             encode_candidate_vecs=True, dict_maxexs=0  # skip building dictionary
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         opt['lr_scheduler'] = 'none'

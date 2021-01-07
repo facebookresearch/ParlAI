@@ -7,6 +7,9 @@
 Agent code for the model described in (https://arxiv.org/abs/1811.00945).
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import round_sigfigs
@@ -34,36 +37,42 @@ class TransresnetAgent(Agent):
     See the paper linked above for more information.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command line args.
         """
-        arg_group = argparser.add_argument_group('Transresnet Arguments')
-        TransresnetModel.add_cmdline_args(argparser)
-        argparser.add_argument(
+        arg_group = parser.add_argument_group('Transresnet Arguments')
+        TransresnetModel.add_cmdline_args(parser, partial_opt=partial_opt)
+        parser.add_argument(
             '--freeze-patience',
             type=int,
             default=-1,
             help='How long to freeze text encoders',
         )
-        argparser.add_argument(
+        parser.add_argument(
             '--one-cand-set',
             type='bool',
             default=False,
             help='True if each example has one set of shared ' 'label candidates',
         )
-        argparser.add_argument(
+        parser.add_argument(
             '--fixed-cands-path',
             type=str,
             default=None,
             help='path to text file with candidates',
         )
-        argparser.add_argument(
+        parser.add_argument(
             '--pretrained', type='bool', default=False, help='True if pretrained model'
         )
-        DictionaryAgent.add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return arg_group
+
+    @classmethod
+    def dictionary_class(cls):
+        return DictionaryAgent
 
     def __init__(self, opt, shared=None):
         self.metrics = {

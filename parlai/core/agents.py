@@ -364,7 +364,7 @@ def add_datapath_and_model_args(opt: Opt):
     # add model args if they are missing
     model = get_model_name(opt)
     if model is not None:
-        parser.add_model_subargs(model)
+        parser.add_model_subargs(model, opt)
     opt_parser = parser.parse_args("")
     for k, v in opt_parser.items():
         if k not in opt:

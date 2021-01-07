@@ -7,6 +7,9 @@
 Dialogue safety related datasets and teachers.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
@@ -81,8 +84,10 @@ class MultiturnTeacher(FixedDialogTeacher):
     single turn data.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('Multiturn Safety Teacher Args')
         parser.add_argument(
             '--single-turn',
@@ -90,6 +95,7 @@ class MultiturnTeacher(FixedDialogTeacher):
             default=False,
             help='only include the single turn data and not the context info',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         build(opt['datapath'])  # download the data
@@ -148,8 +154,10 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
     We convert this data to a binary classification task.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('Kaggle Toxic Comment Classification Data')
         parser.add_argument(
             '--use-test-set',
