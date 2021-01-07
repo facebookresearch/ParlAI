@@ -14,10 +14,12 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
+import os
 import json
 import numbers
+import datetime
 from parlai.core.opt import Opt
-from parlai.core.metrics import Metric
+from parlai.core.metrics import Metric, dict_report
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
@@ -89,3 +91,86 @@ class TensorboardLogger(object):
 
     def flush(self):
         self.writer.flush()
+
+
+class WandbLogger(object):
+    """
+    Log objects to Weights and Biases.
+    """
+
+    @staticmethod
+    def add_cmdline_args(argparser):
+        """
+        Add w&b CLI args.
+        """
+        logger = argparser.add_argument_group('Tensorboard Arguments')
+        logger.add_argument(
+            '-wblog',
+            '--wandb-log',
+            type='bool',
+            default=False,
+            help="W&B logging of metrics, default is %(default)s",
+            hidden=False,
+        )
+        logger.add_argument(
+            '--wandb-name',
+            type=str,
+            default=None,
+            help='W&B project name. Defaults to timestamp.',
+            hidden=False,
+        )
+
+    def __init__(self, opt: Opt, model=None):
+        try:
+            # tensorboard is a very expensive thing to import. Wait until the
+            # last second to import it.
+            import wandb
+        except ImportError:
+            raise ImportError('Please run `pip install wandb`.')
+
+        name = opt.get('wandb_name') or datetime.datetime.now().strftime(
+            '%Y-%m-%d-%H-%M'
+        )
+
+        self.run = wandb.init(project=name, dir=os.path.dirname(opt['model_file']))
+        for key, value in opt.items():
+            if value is None or isinstance(value(str, float, int, tuple)):
+                setattr(self.run.config, key, value)
+        if model is not None:
+            self.run.watch(model)
+
+    def log_metrics(self, setting, step, report):
+        """
+        Add all metrics from tensorboard_metrics opt key.
+
+        :param setting:
+            One of train/valid/test. Will be used as the title for the graph.
+        :param step:
+            Number of parleys
+        :param report:
+            The report to log
+        """
+        report = dict_report(report)
+        report = {
+            f'{k}/{setting}': v
+            for k, v in report.items()
+            if isinstance(v, numbers.Number)
+        }
+        report['custom_step'] = step
+        self.run.log(report)
+
+    def log_final(self, setting, report):
+        report = dict_report(report)
+        report = {
+            f'{k}/{setting}': v
+            for k, v in report.items()
+            if isinstance(v, numbers.Number)
+        }
+        for key, value in report.items():
+            self.run.summary[key] = value
+
+    def finish(self):
+        self.run.finish()
+
+    def flush(self):
+        pass
