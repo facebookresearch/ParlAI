@@ -82,7 +82,7 @@ Though pip install command is easier, it would not give you access to the ready 
  - [List of available agents](https://parl.ai/docs/agents_list.html)
  - [Creating a seq2seq agent](https://parl.ai/docs/tutorial_torch_generator_agent.html)
  - [Model zoo (pretrained models)](https://parl.ai/docs/zoo.html)
- - [Plug into MTurk](http://parl.ai/docs/tutorial_mturk.html)
+ - [Running crowdsourcing tasks](http://parl.ai/docs/tutorial_crowdsourcing.html)
  - [Plug into Facebook Messenger](https://parl.ai/docs/tutorial_chat_service.html)
 
 
@@ -117,8 +117,8 @@ The code is set up into several main directories:
 - [**agents**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents): contains agents which can interact with the different tasks (e.g. machine learning models)
 - [**scripts**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/scripts): contains a number of useful scripts, like training, evaluating, interactive chatting, ...
 - [**tasks**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks): contains code for the different tasks available from within ParlAI
-- [**mturk**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
-- [**messenger**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/services/messenger): contains code for interfacing with Facebook Messenger
+- [**crowdsourcing**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing): contains code for running crowdsourcing tasks, such as on Amazon Mechanical Turk
+- [**chat_service**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/services/messenger): contains code for interfacing with services such as Facebook Messenger
 - [**zoo**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo): contains code to directly download and use pretrained models from our model zoo
 
 ## Support

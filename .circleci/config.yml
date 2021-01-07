@@ -429,15 +429,6 @@ jobs:
           cachename: teacher
           marker: teacher
 
-  mturk_tests:
-    executor: small_cpu37
-    working_directory: ~/ParlAI
-    parallelism: 1
-    steps:
-      - runtests:
-          cachename: mturk
-          marker: mturk
-
   build_website:
     executor: small_cpu37
     working_directory: ~/ParlAI
@@ -492,7 +483,6 @@ workflows:
             - unittests_37
             - unittests_gpu16
       - unittests_37
-      - mturk_tests
       - unittests_osx:
           requires:
             - unittests_gpu16

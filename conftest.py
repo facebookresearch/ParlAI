@@ -67,7 +67,6 @@ MARKER_RULES = [
     ('datatests/', 'data'),
     ('parlai/tasks/', 'teacher'),
     ('tasks/', 'tasks'),
-    ('parlai/mturk/core/test/', 'mturk'),
 ]
 
 

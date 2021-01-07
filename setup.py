@@ -34,9 +34,7 @@ if __name__ == '__main__':
         long_description_content_type='text/markdown',
         url='http://parl.ai/',
         python_requires='>=3.7',
-        packages=find_packages(
-            exclude=('data', 'docs', 'examples', 'tests', 'parlai_internal*')
-        ),
+        packages=find_packages(exclude=('data', 'docs', 'tests', 'parlai_internal*')),
         install_requires=reqs,
         include_package_data=True,
         package_data={'': ['*.txt', '*.md']},
