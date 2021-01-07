@@ -145,10 +145,10 @@ document.
 
 
 ## The Team
-ParlAI is currently maintained by Moya Chen, Emily Dinan, Dexter Ju, Spencer
-Poff, Pratik Ringshia, Stephen Roller, Kurt Shuster, Eric Michael Smith, Jack
-Urbanek, Jason Weston, Mary Williamson, and Jing Xu. Stephen Roller is the
-current Tech Lead.
+ParlAI is currently maintained by Moya Chen, Emily Dinan, Dexter Ju, Mojtaba
+Komeili, Spencer Poff, Pratik Ringshia, Stephen Roller, Kurt Shuster,
+Eric Michael Smith, Megan Ung, Jack Urbanek, Jason Weston, Mary Williamson,
+and Jing Xu. Stephen Roller is the current Tech Lead.
 
 Former major contributors and maintainers include Alexander H. Miller, Margaret
 Li, Will Feng, Adam Fisch, Jiasen Lu, Antoine Bordes, Devi Parikh, Dhruv Batra,
