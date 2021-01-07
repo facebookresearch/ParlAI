@@ -25,7 +25,7 @@ def _make_argparse_table(class_):
     """
     readme = []
     parser = ParlaiParser(False, False)
-    class_.add_cmdline_args(parser)
+    class_.add_cmdline_args(parser, partial_opt=None)
     # group by whatever ArgumentGroups there are
     for ag in parser._action_groups:
         actions = []

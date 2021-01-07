@@ -10,6 +10,9 @@ Used in interactive mode when the knowledge is not available. Uses the retrieval
 from the model zoo.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent, create_agent, create_agent_from_shared
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE
@@ -23,13 +26,15 @@ SELECTOR_FILE = 'models:wizard_of_wikipedia/knowledge_retriever/model'
 
 
 class KnowledgeRetrieverAgent(Agent):
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        TorchRankerAgent.add_cmdline_args(argparser)
-        parser = argparser.add_argument_group('KnowledgeRetriever Arguments')
+        TorchRankerAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        parser = parser.add_argument_group('KnowledgeRetriever Arguments')
         parser.add_argument('--retriever-model-file', type=str, default=RETRIEVER_FILE)
         parser.add_argument('--selector-model-file', type=str, default=SELECTOR_FILE)
         parser.add_argument(

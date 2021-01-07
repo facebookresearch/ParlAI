@@ -8,6 +8,9 @@
 Poly-encoder agent that ingests image features.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from typing import Any, Dict
 
 import torch
@@ -29,13 +32,15 @@ class ImagePolyencoderAgent(PolyencoderAgent, TorchImageAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        PolyencoderAgent.add_cmdline_args(argparser)
-        TorchImageAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('ImagePolyencoder Args')
+        PolyencoderAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        TorchImageAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('ImagePolyencoder Args')
         agent.add_argument(
             '--image-combination-mode',
             type=str,

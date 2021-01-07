@@ -9,6 +9,9 @@ MockTorchAgent.
 Mean for unit testing purposes only, and should not be invoked otherwise.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.torch_agent import TorchAgent, Output
 import torch
 from parlai.core.agents import Agent
@@ -60,11 +63,15 @@ class MockDict(Agent):
     def __len__(self):
         return 0
 
-    def add_cmdline_args(self, *args, **kwargs):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI args.
         """
         pass
+        return parser
 
     def txt2vec(self, txt):
         """

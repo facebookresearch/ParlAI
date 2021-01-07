@@ -5,6 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.utils.io import PathManager
 from .build import build
@@ -38,9 +41,11 @@ class HollETeacher(FixedDialogTeacher):
     https://github.com/nikitacs16/Holl-E.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        group = argparser.add_argument_group('Holl-E Knowledge arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        group = parser.add_argument_group('Holl-E Knowledge arguments')
         group.add_argument(
             '--knowledge-types',
             '-kt',
@@ -48,6 +53,7 @@ class HollETeacher(FixedDialogTeacher):
             default='full',
             help='Either "full" (all of the following), "none" (knowledge not used) or comma separated list of knowledge types to include. Possible types: plot, review, comments, fact_table (contains awards, taglines, and similar movies). e.g. -kt plot,review,fact_table or -kt full',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)

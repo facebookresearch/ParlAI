@@ -69,8 +69,8 @@ def setup_args(parser=None):
         help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
     )
     parser.set_defaults(interactive_mode=True, task='interactive')
-    LocalHumanAgent.add_cmdline_args(parser)
-    WorldLogger.add_cmdline_args(parser)
+    LocalHumanAgent.add_cmdline_args(parser, partial_opt=None)
+    WorldLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

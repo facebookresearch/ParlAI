@@ -35,7 +35,7 @@ class _TestShortOptScript(script.ParlaiScript):
 
     @classmethod
     def setup_args(cls):
-        parser = ParlaiParser(False, False, description="Short opt test")
+        parser = ParlaiParser(True, True, description="Short opt test")
         parser.add_argument('-m', '--model')
         parser.add_argument('-mxx', '--my-other-option')
         return parser
@@ -106,6 +106,11 @@ class TestSuperCommand(unittest.TestCase):
         """
         opt = script.superscript_main(args=['short_opt', '-m', 'repeat_query'])
         assert opt.get('model') == 'repeat_query'
+
+        opt = script.superscript_main(
+            args=['short_opt', '-m', 'transformer/generator', '-opt', 'adam']
+        )
+        assert opt.get('optimizer') == 'adam'
 
     def test_supercommand(self):
         opt = script.superscript_main(args=['test_script', '--foo', 'test'])

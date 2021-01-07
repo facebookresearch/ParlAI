@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
@@ -52,15 +55,18 @@ def _load_personas(opt):
 
 
 class InteractiveWorld(InteractiveBaseWorld):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('ConvAI2 Interactive World')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('ConvAI2 Interactive World')
         parser.add_argument(
             '--display-partner-persona',
             type='bool',
             default=True,
             help='Display your partner persona at the end of the chat',
         )
+        return parser
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)

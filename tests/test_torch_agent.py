@@ -34,7 +34,7 @@ def get_agent(**kwargs):
     from parlai.core.params import ParlaiParser
 
     parser = ParlaiParser()
-    MockTorchAgent.add_cmdline_args(parser)
+    MockTorchAgent.add_cmdline_args(parser, partial_opt=None)
     parser.set_params(**kwargs)
     opt = parser.parse_args([])
     return MockTorchAgent(opt)

@@ -26,6 +26,9 @@ Afterwards, you can play with --beam-size to see how responses differ with
 different beam lengths.
 """  # noqa: E501
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch.nn as nn
 import torch.nn.functional as F
 import parlai.core.torch_generator_agent as tga
@@ -189,18 +192,21 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI arguments.
         """
         # Make sure to add all of TorchGeneratorAgent's arguments
-        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
 
         # Add custom arguments only for this model.
-        group = argparser.add_argument_group('Example TGA Agent')
+        group = parser.add_argument_group('Example TGA Agent')
         group.add_argument(
             '-hid', '--hidden-size', type=int, default=1024, help='Hidden size.'
         )
+        return parser
 
     def build_model(self):
         """

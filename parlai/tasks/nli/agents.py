@@ -6,6 +6,9 @@
 #
 # Download and build the data if it does not exist.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import MultiTaskTeacher
 import parlai.tasks.anli.agents as anli
 import parlai.tasks.multinli.agents as multinli
@@ -31,8 +34,10 @@ class DnliTeacher(dnli.DefaultTeacher):
 
 
 class NliTeacher(MultiTaskTeacher):
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('NLI Teacher Args')
         parser.add_argument(
             '-dfm',
@@ -50,6 +55,7 @@ class NliTeacher(MultiTaskTeacher):
             help="True if label candidates are (contradiction, not_contradiction), and (entailment, contradiction, "
             "neutral) otherwise (default: False).",
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         nli_tasks = [

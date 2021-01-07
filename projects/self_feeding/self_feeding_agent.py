@@ -13,6 +13,9 @@ A self-feeding chatbot consists of three components:
     feedback score, this module asks for an feedback from the from the user.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import random
 
 import torch
@@ -55,14 +58,16 @@ NEWTOPIC = "Can you pick a new topic for us to talk about now?"
 
 class SelfFeedingAgent(TransformerRankerAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        super().add_cmdline_args(argparser)
-        SelfFeedingModel.add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        SelfFeedingModel.add_cmdline_args(parser, partial_opt=partial_opt)
 
-        agent = argparser.add_argument_group('Self-feeding Agent')
+        agent = parser.add_argument_group('Self-feeding Agent')
         agent.add_argument(
             '--request-rating',
             type='bool',
@@ -187,7 +192,7 @@ class SelfFeedingAgent(TransformerRankerAgent):
 
         agent.set_defaults(person_tokens=False)  # add these in a special way
 
-        variants = argparser.add_argument_group('Self-feeding Variants')
+        variants = parser.add_argument_group('Self-feeding Variants')
         variants.add_argument(
             '-rgx',
             '--regex',

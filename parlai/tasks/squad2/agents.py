@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
 from parlai.utils.io import PathManager
 from .build import build
@@ -12,8 +15,8 @@ import json
 import os
 
 
-def add_common_cmdline_args(argparser):
-    agent = argparser.add_argument_group('Squad2 teacher arguments')
+def add_common_cmdline_args(parser):
+    agent = parser.add_argument_group('Squad2 teacher arguments')
     agent.add_argument(
         '--impossible-answer-string',
         type=str,
@@ -34,8 +37,11 @@ class IndexTeacher(FixedDialogTeacher):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        add_common_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        add_common_cmdline_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         build(opt)
@@ -108,8 +114,11 @@ class DefaultTeacher(DialogTeacher):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        add_common_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        add_common_cmdline_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
@@ -150,8 +159,11 @@ class OpenSquadTeacher(DialogTeacher):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        add_common_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        add_common_cmdline_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']

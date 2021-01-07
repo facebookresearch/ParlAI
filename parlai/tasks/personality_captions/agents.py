@@ -13,6 +13,9 @@ An example is given as follows:
            'label': <comment>,
           }
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from parlai.utils.io import PathManager
@@ -67,12 +70,14 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
             self._setup_data(self.data_path, personalities_data_path)
         self.reset()
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command line args.
         """
-        agent = argparser.add_argument_group('Personality-Captions arguments')
+        agent = parser.add_argument_group('Personality-Captions arguments')
         agent.add_argument(
             '--include-personality',
             type='bool',
@@ -102,6 +107,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
             help='Path to yfcc images (if not downloaded '
             'via the provided download script)',
         )
+        return parser
 
     def _setup_data(self, data_path, personalities_data_path):
         print('loading: ' + data_path)

@@ -7,6 +7,8 @@ mephisto:
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 5
     onboarding_qualification: turn_annotations_static
+    annotation_buckets: ${task_dir}/task_config/annotation_buckets.json
+    response_field: False
   task:
     allowed_concurrent: 1
     maximum_units_per_worker: 5

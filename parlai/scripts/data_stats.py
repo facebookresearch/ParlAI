@@ -49,7 +49,7 @@ def setup_args(parser=None):
         help='ignore tokens containings these substrings (comma-separated)',
     )
     parser.set_defaults(datatype='train:ordered')
-    DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

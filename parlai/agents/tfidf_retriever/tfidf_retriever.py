@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import regex  # noqa: F401
 import scipy  # noqa: F401
 import sklearn  # noqa: F401
@@ -43,8 +46,10 @@ class TfidfRetrieverAgent(Agent):
     '--retriever-task' argument and switch '--retriever-mode' to 'keys'.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('Retriever Arguments')
         parser.add_argument(
             '--retriever-numworkers',
