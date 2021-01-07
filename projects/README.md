@@ -117,6 +117,6 @@ _QA model for answering questions by retrieving and reading knowledge._
 
 ## Evaluation
 
-- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
+- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
 _ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
 

@@ -13,7 +13,7 @@ To achieve the long-term goal of machines being able to engage humans in convers
 The Image-Chat dataset can be accessed via ParlAI, with `-t image_chat`.
 
 Additionally, the ParlAI MTurk tasks for data collection and human evaluation
-are [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/image_chat) in ParlAI.
+are [available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md) in an older release of ParlAI (see the `image_chat` task).
 
 ## Leaderboards for Image-Chat Task
 
