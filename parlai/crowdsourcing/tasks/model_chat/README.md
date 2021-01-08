@@ -26,7 +26,7 @@ You might then run the following command:
 ```
 python parlai/crowdsourcing/tasks/model_chat/run.py \
 mephisto.blueprint.base_model_folder=~/ParlAI/data/models \
-mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:10\"
+mephisto.blueprint.conversations_needed_string=\"blender_90M:10\"
 ```
 
 ## Passing in task config files

@@ -12,7 +12,7 @@ mephisto:
     include_persona: false
     conversation_start_mode: 'hi'
     annotation_question: Does this comment from your partner have any of the following attributes? (Check all that apply)
-    conversations_needed_string: "blender/blender_90M:10"
+    conversations_needed_string: "blender_90M:10"
   task:
     allowed_concurrent: 1
     maximum_units_per_worker: 3

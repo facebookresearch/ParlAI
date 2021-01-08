@@ -88,6 +88,10 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
             "help": "The string displayed above the checkboxes for each annotation in the task."
         },
     )
+    model_opt_path: str = field(
+        default="${mephisto.blueprint.task_config_path}/model_opts.yaml",
+        metadata={"help": "Path to YAML of opts for each model"},
+    )
     task_model_parallel: bool = field(
         default=True,
         metadata={
@@ -294,9 +298,6 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
     include_persona: bool = field(
         default=False, metadata={"help": "Show persona to the bot"}
     )
-    base_model_folder: str = field(
-        default=MISSING, metadata={"help": "base folder for loading model files from"}
-    )
     conversations_needed_string: str = field(
         default=MISSING,
         metadata={
@@ -445,10 +446,14 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         )
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
-        _ = args  # Not needed
-        models_needed = list(self.conversations_needed.keys())
-        active_models = [m for m in models_needed if self.conversations_needed[m] > 0]
-        return TurkLikeAgent.get_bot_agents(args=args, active_models=active_models)
+        with open(args.blueprint.model_opt_path) as f:
+            all_model_opts = yaml.load(f.read())
+        active_model_opts = {
+            model: opt
+            for model, opt in all_model_opts.items()
+            if self.conversations_needed[model] > 0
+        }
+        return TurkLikeAgent.get_bot_agents(args=args, model_opts=active_model_opts)
 
 
 @dataclass
@@ -472,10 +477,6 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         metadata={
             "help": "Path to pickle file containing images and the context information that goes with each one"
         },
-    )
-    model_opt_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/model_opts.yaml",
-        metadata={"help": "Path to YAML of opts for each model"},
     )
     num_conversations: int = field(
         default=10, metadata={'help': 'The number of conversations to collect'}
