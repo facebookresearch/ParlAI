@@ -60,7 +60,7 @@ does the following:
 2.  Ask a Turker to provide a question given the paragraph.
 3.  Ask the same Turker to provide an answer to their question.
 
-# {{{TODO: REVISE BELOW}}}
+### {{{TODO: revise this section onward}}}
 
 In `QADataCollectionWorld`, there are two agents: one is the human
 Turker (`MTurkAgent`), the other is the task agent (`DefaultTeacher`
@@ -170,6 +170,8 @@ at the end. These components are defined and linked in the
 Creating Your Own Task
 ----------------------
 
+# {{{TODO: REVISE BELOW}}}
+
 ParlAI provides a generic MTurk dialog interface that one can use to
 implement any kind of dialog tasks. To create your own task, start with
 reading the tutorials on the provided examples, and then copy and modify
@@ -196,6 +198,8 @@ A few things to keep in mind:
 
 Advanced Task Techniques
 ------------------------
+
+### {{{TODO: revise this section onward}}}
 
 The ParlAI-MTurk platform allows for a number of advanced customization
 techniques to cover specialized tasks. The below sections explain how to
@@ -459,6 +463,8 @@ ParlAI-MTurk Tips and Tricks
 
 ParlAI-MTurk Alpha Functionality
 --------------------------------
+
+### {{{TODO: revise this section onward}}}
 
 ParlAI-MTurk has a number of alpha features that surround maintaining a
 local database of run information. This alpha functionality includes a
