@@ -10,15 +10,9 @@ instructions for hosting a ParlAI-Chat style task can be found
 and regular collection tasks can be found
 [here](https://github.com/facebookresearch/Mephisto/tree/master/examples/static_react_task).
 
-We will be moving some of our common tasks out of the Mephisto repo into
-the ParlAI repo soon, alongside better documentation and tooling for
-those common tasks.
-
-See the [turn annotations task README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/turn_annotations/README.md) for an example of what the front-end interfaces (CLI and Python script) of the new tasks will look like.
-
-The original guide for using the `parlai.mturk.core` module to collect
+We have moved our crowdsourcing code from `parlai.mturk` into [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). The original guide for using the `parlai.mturk.core` module to collect
 data on MTurk is preserved below for those who are still running tasks
-on the old framework.
+on the old framework, but it will be revamped soon to address the new Mephisto framework.
 :::
 
 In ParlAI, you can use Amazon Mechanical Turk for __data collection__,
