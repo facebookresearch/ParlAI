@@ -12,8 +12,9 @@ import json
 import os
 import unittest
 
+import yaml
+
 import parlai.utils.testing as testing_utils
-from parlai.zoo.blender.blender_90M import download as download_blender
 
 
 # Inputs
@@ -96,11 +97,16 @@ try:
                 )
                 expected_state_path = os.path.join(expected_states_folder, 'state.json')
                 parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
-                model_folder = os.path.join(parlai_data_folder, 'models')
+                model_opt_path = os.path.join(tmpdir, 'model_opts.yaml')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
 
-                # Download the Blender 90M model
-                download_blender(parlai_data_folder)
+                # Create a model opt file for the fixed-response model
+                with open(model_opt_path, 'w') as f:
+                    model_opt_contents = f"""\
+fixed_response: >
+    --model fixed_response
+"""
+                    yaml.dump(model_opt_contents, f)
 
                 # Set up the config and database
                 num_blender_convos = 10
@@ -118,11 +124,11 @@ try:
                     ]
                 ] + [
                     'mephisto.blueprint.annotations_config_path=${task_dir}/task_config/annotations_config.json',
-                    f'mephisto.blueprint.base_model_folder={model_folder}',
-                    f'mephisto.blueprint.conversations_needed_string=\"blender/blender_90M:{num_blender_convos:d}\"',
+                    f'mephisto.blueprint.conversations_needed_string=\"fixed_response:{num_blender_convos:d}\"',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
                     '+mephisto.blueprint.max_concurrent_responses=1',
+                    f'+mephisto.blueprint.model_opt_path={model_opt_path}',
                     f'+mephisto.blueprint.num_conversations={num_blender_convos:d}',
                     '+mephisto.blueprint.onboard_task_data_path=${task_dir}/task_config/onboard_task_data.json',
                     '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',

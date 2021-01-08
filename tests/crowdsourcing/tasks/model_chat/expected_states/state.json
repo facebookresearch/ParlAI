@@ -30,68 +30,10 @@
             },
             {
                 "data": {
-                    "beam_texts": [
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m nervous .",
-                            -10.195354461669922
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m a bit nervous .",
-                            -10.213093757629395
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m a little nervous .",
-                            -10.298173904418945
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m nervous !",
-                            -10.45439624786377
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a great time .",
-                            -10.50149917602539
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' ve been busy .",
-                            -10.519726753234863
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m super excited !",
-                            -10.566374778747559
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a blast .",
-                            -10.573784828186035
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a great time !",
-                            -10.585394859313965
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a great day !",
-                            -10.638066291809082
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a blast !",
-                            -10.654006004333496
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a great day .",
-                            -10.702296257019043
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m a bit nervous !",
-                            -10.849411010742188
-                        ],
-                        [
-                            "hello , how are you today ? i just got back from a long day at work , so i ' m having a great time here",
-                            -12.200803756713867
-                        ]
-                    ],
                     "episode_done": false,
-                    "id": "TransformerGenerator",
+                    "id": "FixedResponseAgent",
                     "message_id": "43ef23af-a9fc-4f67-bd06-6e083ba45678",
-                    "text": "Hello, how are you today? I just got back from a long day at work, so I'm nervous."
+                    "text": "I don't know."
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -121,56 +63,10 @@
             },
             {
                 "data": {
-                    "beam_texts": [
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my life .",
-                            -7.635712146759033
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my entire life .",
-                            -8.200992584228516
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been in a situation like that before .",
-                            -8.252224922180176
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my life !",
-                            -8.533013343811035
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been in a situation like that .",
-                            -8.578954696655273
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been in a situation like this before .",
-                            -8.67634391784668
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my life . what do you do ?",
-                            -8.701852798461914
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my life . what do you do for work ?",
-                            -8.904227256774902
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my life . what do you do for fun ?",
-                            -8.959891319274902
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been so nervous in my life . i just want to relax .",
-                            -9.85078239440918
-                        ],
-                        [
-                            "i just don ' t know what to do . i ' ve never been in a situation like that before , so it ' s hard .",
-                            -10.106484413146973
-                        ]
-                    ],
                     "episode_done": false,
-                    "id": "TransformerGenerator",
+                    "id": "FixedResponseAgent",
                     "message_id": "05fefda5-dfa0-44e2-81ad-ba9ca203ed1d",
-                    "text": "I just don't know what to do. I've never been so nervous in my life."
+                    "text": "I don't know."
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -200,52 +96,10 @@
             },
             {
                 "data": {
-                    "beam_texts": [
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you like to do ?",
-                            -7.96605110168457
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you do for a living ?",
-                            -8.145879745483398
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? do you like movies ?",
-                            -8.162055015563965
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you do for fun ?",
-                            -8.194974899291992
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what are your plans ?",
-                            -8.207662582397461
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you do ?",
-                            -8.393877029418945
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you do for work ?",
-                            -8.481093406677246
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you want to do ?",
-                            -8.638794898986816
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what ' s your plans ?",
-                            -8.764143943786621
-                        ],
-                        [
-                            "yes , i ' ll probably go to the movies . what about you ? what do you like ?",
-                            -8.866968154907227
-                        ]
-                    ],
                     "episode_done": false,
-                    "id": "TransformerGenerator",
+                    "id": "FixedResponseAgent",
                     "message_id": "6a52d8ee-1955-4d08-a7f8-007feea3ecfd",
-                    "text": "Yes, I'll probably go to the movies. What about you? What do you like to do?"
+                    "text": "I don't know."
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -275,52 +129,10 @@
             },
             {
                 "data": {
-                    "beam_texts": [
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i love italian food .",
-                            -8.275801658630371
-                        ],
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i like italian food .",
-                            -8.382392883300781
-                        ],
-                        [
-                            "that sounds like fun . what kind of restaurant do you usually go to ? i like italian food .",
-                            -8.489991188049316
-                        ],
-                        [
-                            "that sounds like fun . what kind of restaurant are you thinking of going to ? i like italian .",
-                            -8.703670501708984
-                        ],
-                        [
-                            "that sounds like fun . what kind of restaurant are you thinking of going to ? i like italian food .",
-                            -8.755870819091797
-                        ],
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i like italian food the best .",
-                            -8.771954536437988
-                        ],
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i love italian food !",
-                            -8.959925651550293
-                        ],
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i like italian food the best !",
-                            -9.828605651855469
-                        ],
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i like italian food the best . what ' s your favorite ?",
-                            -10.063850402832031
-                        ],
-                        [
-                            "that ' s great ! what kind of restaurant do you usually go to ? i like italian , but i haven ' t tried it yet .",
-                            -10.20632553100586
-                        ]
-                    ],
                     "episode_done": false,
-                    "id": "TransformerGenerator",
+                    "id": "FixedResponseAgent",
                     "message_id": "550f71a4-f441-4546-bd73-45313932ec3c",
-                    "text": "That's great! What kind of restaurant do you usually go to? I love italian food."
+                    "text": "I don't know."
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -350,60 +162,10 @@
             },
             {
                 "data": {
-                    "beam_texts": [
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like thai food the best .",
-                            -9.27477741241455
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like thai food the most .",
-                            -9.372665405273438
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? mine is thai .",
-                            -9.38836669921875
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite type of thai food ? i like indian too .",
-                            -9.438559532165527
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like indian too .",
-                            -9.448002815246582
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? mine is chicken .",
-                            -9.487981796264648
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite type of thai food ? i like indian and chinese .",
-                            -9.922293663024902
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like indian and chinese .",
-                            -9.926708221435547
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like indian and thai food .",
-                            -10.028731346130371
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite type of thai food ? i like indian and thai food .",
-                            -10.067522048950195
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like indian and chinese food .",
-                            -10.09428596496582
-                        ],
-                        [
-                            "i love thai as well . what ' s your favorite kind of thai food ? i like thai food the best !",
-                            -10.155777931213379
-                        ]
-                    ],
                     "episode_done": false,
-                    "id": "TransformerGenerator",
+                    "id": "FixedResponseAgent",
                     "message_id": "3a046372-6204-452d-8877-88a1d1a9583a",
-                    "text": "I love thai as well. What's your favorite kind of thai food? I like thai food the best."
+                    "text": "I don't know."
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -433,52 +195,10 @@
             },
             {
                 "data": {
-                    "beam_texts": [
-                        [
-                            "oh , i love peanuts ! i love all kinds of peanuts . do you eat a lot of peanuts ?",
-                            -9.490594863891602
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . what are your plans for this weekend ?",
-                            -9.669536590576172
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . what are your plans this weekend ?",
-                            -9.784035682678223
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . what are your plans today ?",
-                            -9.840043067932129
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . what are your plans for today ?",
-                            -9.871358871459961
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . what are your plans for tonight ?",
-                            -9.925469398498535
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . what are your plans for tomorrow ?",
-                            -10.200005531311035
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . do you go to indian restaurants ?",
-                            -10.389397621154785
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . do you live in the us ?",
-                            -10.426934242248535
-                        ],
-                        [
-                            "i love peanuts too ! i also like a lot of indian food . do you go to indian restaurants often ?",
-                            -10.520974159240723
-                        ]
-                    ],
                     "episode_done": false,
-                    "id": "TransformerGenerator",
+                    "id": "FixedResponseAgent",
                     "message_id": "f68faec0-b2c2-434d-98a6-b4cc9f1f42b3",
-                    "text": "Oh, I love peanuts! I love all kinds of peanuts. Do you eat a lot of peanuts?"
+                    "text": "I don't know."
                 },
                 "packet_type": "agent_action",
                 "receiver_id": "1",
@@ -529,7 +249,7 @@
                         },
                         {
                             "agent_idx": 1,
-                            "id": "TransformerGenerator",
+                            "id": "FixedResponseAgent",
                             "problem_data": {
                                 "bucket_0": false,
                                 "bucket_1": false,
@@ -537,7 +257,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "Hello, how are you today? I just got back from a long day at work, so I'm nervous."
+                            "text": "I don't know."
                         },
                         {
                             "agent_idx": 0,
@@ -546,7 +266,7 @@
                         },
                         {
                             "agent_idx": 1,
-                            "id": "TransformerGenerator",
+                            "id": "FixedResponseAgent",
                             "problem_data": {
                                 "bucket_0": false,
                                 "bucket_1": false,
@@ -554,7 +274,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "I just don't know what to do. I've never been so nervous in my life."
+                            "text": "I don't know."
                         },
                         {
                             "agent_idx": 0,
@@ -563,7 +283,7 @@
                         },
                         {
                             "agent_idx": 1,
-                            "id": "TransformerGenerator",
+                            "id": "FixedResponseAgent",
                             "problem_data": {
                                 "bucket_0": false,
                                 "bucket_1": false,
@@ -571,7 +291,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "Yes, I'll probably go to the movies. What about you? What do you like to do?"
+                            "text": "I don't know."
                         },
                         {
                             "agent_idx": 0,
@@ -580,7 +300,7 @@
                         },
                         {
                             "agent_idx": 1,
-                            "id": "TransformerGenerator",
+                            "id": "FixedResponseAgent",
                             "problem_data": {
                                 "bucket_0": false,
                                 "bucket_1": false,
@@ -588,7 +308,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "That's great! What kind of restaurant do you usually go to? I love italian food."
+                            "text": "I don't know."
                         },
                         {
                             "agent_idx": 0,
@@ -597,7 +317,7 @@
                         },
                         {
                             "agent_idx": 1,
-                            "id": "TransformerGenerator",
+                            "id": "FixedResponseAgent",
                             "problem_data": {
                                 "bucket_0": false,
                                 "bucket_1": false,
@@ -605,7 +325,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "I love thai as well. What's your favorite kind of thai food? I like thai food the best."
+                            "text": "I don't know."
                         },
                         {
                             "agent_idx": 0,
@@ -614,7 +334,7 @@
                         },
                         {
                             "agent_idx": 1,
-                            "id": "TransformerGenerator",
+                            "id": "FixedResponseAgent",
                             "problem_data": {
                                 "bucket_0": false,
                                 "bucket_1": false,
@@ -622,7 +342,7 @@
                                 "bucket_3": false,
                                 "bucket_4": true
                             },
-                            "text": "Oh, I love peanuts! I love all kinds of peanuts. Do you eat a lot of peanuts?"
+                            "text": "I don't know."
                         }
                     ],
                     "hit_ids": [
