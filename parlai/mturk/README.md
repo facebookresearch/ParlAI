@@ -4,7 +4,10 @@ Instructions on how to find all old `parlai/mturk/` code can be found in the sec
 
 ### core/, scripts/, webapp/
 
-{{{TODO: add final tag before this version and how to switch to it}}}
+These folders can be restored by switching to the `final_mturk` tag of ParlAI:
+```bash
+git checkout final_mturk
+```
 
 
 ### tasks/acute_eval/
