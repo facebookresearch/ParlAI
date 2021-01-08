@@ -1,5 +1,7 @@
 The code in `parlai/mturk/` has been deprecated. All code for running crowdsourcing tasks can now be found in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing), and all crowdsourcing tasks now utilize the [Mephisto](https://github.com/facebookresearch/Mephisto) platform.
 
+-----
+
 Instructions on how to find all old `parlai/mturk/` code can be found in the sections below.
 
 ### core/, scripts/, webapp/
