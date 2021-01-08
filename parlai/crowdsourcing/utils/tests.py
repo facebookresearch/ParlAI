@@ -149,7 +149,8 @@ class AbstractCrowdsourcingTest:
                     # Register the agent
                     mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
                     self.server.register_mock_agent(worker_id, mock_agent_details)
-                    assert len(self.db.find_agents()) == idx + 1
+                    _ = self.db.find_agents()[idx]
+                    # Make sure the agent can be found, or else raise an IndexError
 
                     break
                 except IndexError:
