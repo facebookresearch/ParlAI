@@ -12,8 +12,6 @@ import json
 import os
 import unittest
 
-import yaml
-
 import parlai.utils.testing as testing_utils
 
 
@@ -96,7 +94,6 @@ try:
                     expected_states_folder, 'final_chat_data.json'
                 )
                 expected_state_path = os.path.join(expected_states_folder, 'state.json')
-                parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
                 model_opt_path = os.path.join(tmpdir, 'model_opts.yaml')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
 
@@ -106,7 +103,7 @@ try:
 fixed_response: >
     --model fixed_response
 """
-                    yaml.dump(model_opt_contents, f)
+                    f.write(model_opt_contents)
 
                 # Set up the config and database
                 num_blender_convos = 10
@@ -128,7 +125,7 @@ fixed_response: >
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
                     '+mephisto.blueprint.max_concurrent_responses=1',
-                    f'+mephisto.blueprint.model_opt_path={model_opt_path}',
+                    f'mephisto.blueprint.model_opt_path={model_opt_path}',
                     f'+mephisto.blueprint.num_conversations={num_blender_convos:d}',
                     '+mephisto.blueprint.onboard_task_data_path=${task_dir}/task_config/onboard_task_data.json',
                     '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',

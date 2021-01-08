@@ -379,6 +379,7 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
                             'dict_file',
                             'model_file',
                             'override',
+                            'starttime',
                         ]
                         # These paths depend on the random tmpdir and the host
                         # machine
