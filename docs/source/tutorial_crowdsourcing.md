@@ -1,6 +1,6 @@
-Using Mechanical Turk
+Running crowdsourcing tasks
 =====================
-__Authors__: Jack Urbanek, Emily Dinan, Will Feng
+__Authors__: Jack Urbanek, Emily Dinan, Will Feng, Eric Smith
 
 :::{warning}
 ParlAI's MTurk functionality has expanded out of this project to become
