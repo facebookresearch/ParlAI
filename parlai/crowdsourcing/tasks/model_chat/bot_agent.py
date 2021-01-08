@@ -5,14 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import copy
-import os
-from typing import Dict, List, Optional
+from typing import Dict
 
 from omegaconf import DictConfig
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.message import Message
-from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.model_chat.constants import AGENT_1
 from parlai.utils.strings import normalize_reply
