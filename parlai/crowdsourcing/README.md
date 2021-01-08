@@ -2,6 +2,8 @@
 
 Code for crowdsourcing tasks that use Mephisto. See https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md for a guide to quickly getting started with Mephisto.
 
+**NOTE:** `parlai/crowdsourcing/` has taken the place of `parlai/mturk/` as the home for ParlAI crowdsourcing tasks. Information on how to find the old code in `parlai/mturk/` can be find [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md).
+
 ## Running tasks
 
 Tasks are launched by calling the appropriate run script: for instance, an ACUTE-Eval run can be launched with `python parlai/crowdsourcing/tasks/acute_eval/run.py`, followed by any appropriate flags. All run parameters are set using [Hydra](https://github.com/facebookresearch/hydra): append the flag `-c job` to your run command to see a list of all available parameters, grouped by their package name (`mephisto.blueprint`, `mephisto.task`, etc.), which determines how they are called. Each run script has a YAML file of default parameters that will be loaded, found in the `conf/` subfolder of each task.
