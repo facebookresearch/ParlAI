@@ -474,7 +474,7 @@ class ModelImageChatBlueprintArgs(BaseModelChatBlueprintArgs):
         },
     )
     model_opt_path: str = field(
-        default="${mephisto.blueprint.task_config_path}/image_model_opts.yaml",
+        default="${mephisto.blueprint.task_config_path}/model_opts.yaml",
         metadata={"help": "Path to YAML of opts for each model"},
     )
     num_conversations: int = field(

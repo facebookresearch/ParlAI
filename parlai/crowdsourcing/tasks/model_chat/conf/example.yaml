@@ -4,8 +4,8 @@ mephisto:
     annotations_config_path: ${task_dir}/task_config/annotations_config.json
     onboarding_qualification: model_chat_onboarding
     block_qualification: model_chat_block
-    base_model_folder: ${task_dir}/models/
     chat_data_folder: ${task_dir}/model_chat/
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
     num_turns: 6
     task_model_parallel: true
     check_acceptability: false
