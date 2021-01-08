@@ -11,7 +11,8 @@ import os
 import random
 import tempfile
 import time
-from typing import Any, Dict, List, Optional, Sequence
+import unittest
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 import numpy as np
 import torch
@@ -348,7 +349,14 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         expected_value=expected_value,
                     )
 
-    def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
+    def _check_output_key(
+        self: Union['AbstractParlAIChatTest', unittest.TestCase],
+        key: str,
+        actual_value: Any,
+        expected_value: Any,
+    ):
+        # TODO: remove typing of self after switching to pytest regressions, in which we
+        #  no longer inherit from TestCase
         """
         Check the actual and expected values, given that they come from the specified
         key of the output message dictionary.

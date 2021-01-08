@@ -209,14 +209,13 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         left_pane_path = os.path.expanduser(args.blueprint.left_pane_text_path)
         with open(left_pane_path, "r") as left_pane_file:
             self.left_pane_text = left_pane_file.read()
+        self.annotations_config: Optional[str] = None
         if args.blueprint.get("annotations_config_path", "") != "":
             annotations_config_path = os.path.expanduser(
                 args.blueprint.annotations_config_path
             )
             with open(annotations_config_path, "r") as annotations_config_file:
                 self.annotations_config = annotations_config_file.read()
-        else:
-            self.annotations_config = None
 
         # Initialize models
         shared_state.shared_models = self._get_shared_models(args)
@@ -411,13 +410,12 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
         shared_state.run_statistics = run_statistics
 
+        context_generator: Optional[ContextGenerator] = None
         if (
             args.blueprint.include_persona
             or args.blueprint.conversation_start_mode == 'bst'
         ):
             context_generator = get_context_generator(args.blueprint.override_opt)
-        else:
-            context_generator = None
         shared_state.context_generator = context_generator
 
         # Lock for editing run statistics between threads
