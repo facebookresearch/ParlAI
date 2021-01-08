@@ -38,42 +38,29 @@ Example Tasks
 
 We provide a few examples of using crowdsourcing tasks with ParlAI:
 
--   [QA Data
-    Collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/):
+- [Chat demo](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/chat_demo): have two humans chat back and forth for a multi-turn conversation.
+- [Model chat](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/model_chat): have a human chat with a model agent in a conversation, perhaps about an image, and optionally have the human select among checkboxes to annotate the model's responses.
+- [Static turn annotations](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/turn_annotations_static): have a human read a static conversation between two partners and select among checkboxes to annotate one of the speakers' responses.
+-   [QA data
+    collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/):
     collect questions and answers from Turkers, given a random Wikipedia
     paragraph from SQuAD.
-# {{{TODO: REVISE BELOW}}}
--   [Model
-    Evaluator](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/model_evaluator/):
-    ask Turkers to evaluate the information retrieval baseline model on
-    the Reddit movie dialog dataset.
--   [Multi-Agent
-    Dialog](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/multi_agent_dialog/):
-    round-robin chat between a local human agent and two Turkers.
--   [Deal or No
-    Deal](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/dealnodeal/):
-    negotiation chat between two agents over how to fairly divide a
-    fixed set of items when each agent values the items differently.
--   [Qualification Flow
-    Example](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/qualification_flow_example):
-    filter out workers from working on more instances of your task if
-    they fail to complete a test instance properly.
--   [React Task
-    Demo](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/react_task_demo):
-    Demo task for displaying custom components using the React frontend.
+- [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation questions such as, "Who would you prefer to talk to for a long conversation?""
 
 ### Task 1: Collecting Data
 
 One of the biggest use cases of Mechanical Turk is to collect natural
 language data from human Turkers.
 
-As an example, the [QA Data Collection
-task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/)
+As an example, the [QA data collection
+task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/)
 does the following:
 
-1.  Pick a random Wikipedia paragraph from SQuAD dataset.
+1.  Pick a random Wikipedia paragraph from the SQuAD dataset.
 2.  Ask a Turker to provide a question given the paragraph.
 3.  Ask the same Turker to provide an answer to their question.
+
+# {{{TODO: REVISE BELOW}}}
 
 In `QADataCollectionWorld`, there are two agents: one is the human
 Turker (`MTurkAgent`), the other is the task agent (`DefaultTeacher`
