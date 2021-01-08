@@ -2,7 +2,7 @@ Using Mechanical Turk
 =====================
 __Authors__: Jack Urbanek, Emily Dinan, Will Feng
 
-:::{note}
+:::{warning}
 ParlAI's MTurk functionality has expanded out of this project to become
 [Mephisto](https://github.com/facebookresearch/Mephisto). The
 instructions for hosting a ParlAI-Chat style task can be found
