@@ -11,16 +11,14 @@ git checkout final_mturk
 ```
 :::
 
-# {{{TODO: REVISE BELOW}}}
-
-In ParlAI, you can use Amazon Mechanical Turk for __data collection__,
+In ParlAI, you can use the crowdsourcing platform [Amazon Mechanical Turk](https://www.mturk.com/) for __data collection__,
 __training__, or __evaluation__ of your dialog model.
 
 Human Turkers are viewed as just another type of agent in ParlAI; hence,
 agents in a group chat consisting of any number of humans and/or bots
 can communicate with each other within the same framework.
 
-The human Turkers communicate in observation/action dict format, the
+The human Turkers communicate in an observation/action dict format, the
 same as all other agents in ParlAI. During the conversation, human
 Turkers receive a message that is rendered on the live chat webpage,
 such as the following:
@@ -28,22 +26,23 @@ such as the following:
 ![*Example: Human Turker participating in a QA data collection
 task*](_static/img/mturk-small.png)
 
-Each MTurk task has at least one human Turker that connects to ParlAI
+Each crowdsourcing task has at least one human Turker who connects to ParlAI
 via the Mechanical Turk Live Chat interface, encapsulated as an
-`MTurkAgent` object.
+`Agent` object.
 
-Each MTurk task also consists of a `World` where all agents live and
-interact within.
+Each crowdsourcing task also consists of a `World` in which all agents live and
+interact.
 
 Example Tasks
 -------------
 
-We provide a few examples of using Mechanical Turk with ParlAI:
+We provide a few examples of using crowdsourcing tasks with ParlAI:
 
 -   [QA Data
-    Collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/):
+    Collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/):
     collect questions and answers from Turkers, given a random Wikipedia
     paragraph from SQuAD.
+# {{{TODO: REVISE BELOW}}}
 -   [Model
     Evaluator](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/model_evaluator/):
     ask Turkers to evaluate the information retrieval baseline model on
