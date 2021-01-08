@@ -11,7 +11,8 @@ import os
 import random
 import tempfile
 import time
-from typing import Any, Dict, List, Optional, Sequence
+import unittest
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 import numpy as np
 import torch
@@ -133,7 +134,6 @@ class AbstractCrowdsourcingTest:
 
         for idx in range(num_agents):
 
-            # Register the worker
             mock_worker_name = f"MOCK_WORKER_{idx:d}"
             max_num_tries = 6
             initial_wait_time = 0.5  # In seconds
@@ -141,14 +141,23 @@ class AbstractCrowdsourcingTest:
             wait_time = initial_wait_time
             while num_tries < max_num_tries:
                 try:
+
+                    # Register the worker
                     self.server.register_mock_worker(mock_worker_name)
                     workers = self.db.find_workers(worker_name=mock_worker_name)
                     worker_id = workers[0].db_id
+
+                    # Register the agent
+                    mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
+                    self.server.register_mock_agent(worker_id, mock_agent_details)
+                    _ = self.db.find_agents()[idx]
+                    # Make sure the agent can be found, or else raise an IndexError
+
                     break
                 except IndexError:
                     num_tries += 1
                     print(
-                        f'A subscriber could not be found after {num_tries:d} '
+                        f'The agent could not be registered after {num_tries:d} '
                         f'attempt(s), out of {max_num_tries:d} attempts total. Waiting '
                         f'for {wait_time:0.1f} seconds...'
                     )
@@ -157,12 +166,13 @@ class AbstractCrowdsourcingTest:
             else:
                 raise ValueError('The worker could not be registered!')
 
-            # Register the agent
-            mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
-            self.server.register_mock_agent(worker_id, mock_agent_details)
-
         # Get all agents' IDs
         agents = self.db.find_agents()
+        if len(agents) != num_agents:
+            raise ValueError(
+                f'The actual number of agents is {len(agents):d} instead of the '
+                f'desired {num_agents:d}!'
+            )
         agent_ids = [agent.db_id for agent in agents]
 
         return agent_ids
@@ -339,7 +349,14 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         expected_value=expected_value,
                     )
 
-    def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
+    def _check_output_key(
+        self: Union['AbstractParlAIChatTest', unittest.TestCase],
+        key: str,
+        actual_value: Any,
+        expected_value: Any,
+    ):
+        # TODO: remove typing of self after switching to pytest regressions, in which we
+        #  no longer inherit from TestCase
         """
         Check the actual and expected values, given that they come from the specified
         key of the output message dictionary.
