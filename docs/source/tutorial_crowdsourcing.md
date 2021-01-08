@@ -3,17 +3,15 @@ Running crowdsourcing tasks
 __Authors__: Jack Urbanek, Emily Dinan, Will Feng, Eric Smith
 
 :::{warning}
-ParlAI's MTurk functionality has expanded out of this project to become
-[Mephisto](https://github.com/facebookresearch/Mephisto). The
-instructions for hosting a ParlAI-Chat style task can be found
-[here](https://github.com/facebookresearch/Mephisto/tree/master/examples/parlai_chat_task_demo),
-and regular collection tasks can be found
-[here](https://github.com/facebookresearch/Mephisto/tree/master/examples/static_react_task).
+ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and we have moved our crowdsourcing code from `parlai.mturk` into [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). See [this README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for more specifics on how to run crowdsourcing tasks in the current version of ParlAI.
 
-We have moved our crowdsourcing code from `parlai.mturk` into [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). The original guide for using the `parlai.mturk.core` module to collect
-data on MTurk is preserved below for those who are still running tasks
-on the old framework, but it will be revamped soon to address the new Mephisto framework.
+If you wish to access the old version of this tutorial for pre-Mephisto crowdsourcing tasks, switch to the `final_mturk` tag of ParlAI:
+```bash
+git checkout final_mturk
+```
 :::
+
+# {{{TODO: REVISE BELOW}}}
 
 In ParlAI, you can use Amazon Mechanical Turk for __data collection__,
 __training__, or __evaluation__ of your dialog model.
