@@ -170,13 +170,17 @@ at the end. These components are defined and linked in the
 Creating Your Own Task
 ----------------------
 
+ParlAI provides a generic MTurk dialog interface that you can use to
+implement any kind of dialog task. To create your own task, start by
+reading the README of the existing task that your task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following:
+
 # {{{TODO: REVISE BELOW}}}
 
-ParlAI provides a generic MTurk dialog interface that one can use to
-implement any kind of dialog tasks. To create your own task, start with
-reading the tutorials on the provided examples, and then copy and modify
-the example `worlds.py`, `run.py` and `task_config.py` files to create
-your task. Be sure to update import locations!
+{TODO: classes: ChatWorld, OnboardingWorld, BlueprintArgs, Blueprint}
+
+If you are creating a new `Blueprint`, you will currently need to create a new `run.py` file in which to call your `Blueprint` so that its arguments can be read in correctly by Hydra; this should no longer be necessary as of the upcoming Hydra 1.1. You will likely need to specify the following helper files for your task:
+
+{TODO: Helper files: conf/example.yaml, task_config/*}
 
 A few things to keep in mind:
 
