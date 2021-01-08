@@ -36,7 +36,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from parlai.utils.io import PathManager
 
-from parlai.projects.self_feeding.utils import Parley
+from projects.self_feeding.utils import Parley
 
 PARLAIHOME = os.environ['PARLAIHOME']
 NUM_INLINE_CANDS = 20

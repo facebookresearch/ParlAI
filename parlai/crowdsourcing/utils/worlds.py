@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.worlds import World
-from parlai.mturk.core.agents import MTurkAgent
 
 
 class CrowdDataWorld(World):
@@ -16,19 +15,6 @@ class CrowdDataWorld(World):
         """
         custom_data = self.get_custom_task_data()
         save_data = {'custom_data': custom_data, 'worker_data': {}}
-
-        for agent in workers:
-            # TODO clean up once ParlAI-MTurk is gone.
-            if isinstance(agent, MTurkAgent):
-                messages = agent.get_messages()
-                save_data['worker_data'][agent.worker_id] = {
-                    'worker_id': agent.worker_id,
-                    'agent_id': agent.id,
-                    'assignment_id': agent.assignment_id,
-                    'messages': messages,
-                    'given_feedback': agent.feedback,
-                }
-
         return save_data
 
     def get_custom_task_data(self):

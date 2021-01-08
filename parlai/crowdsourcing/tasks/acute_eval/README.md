@@ -129,7 +129,7 @@ The script combines three major steps of ACUTE-Eval into one simple command:
 2. Execution of ACUTE-Eval
 3. Analysis of ACUTE-Eval results.
 
-**NOTE**: this code was adapted from the code formerly in [`parlai/mturk/tasks/acute_eval/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval), which has now been deprecated. A few minor options existed in the analysis script of that old version which have not been ported to the original:
+**NOTE**: this code was adapted from the code formerly in [`parlai/mturk/tasks/acute_eval/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk), which has now been deprecated. A few minor options existed in the analysis script of that old version which have not been ported to the original:
 
 - Specifying the minimum dialogue length to be counted as valid for analysis
 - Specifying the maximum number of matchups per model pair visualized in HTML
