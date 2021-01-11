@@ -3,7 +3,7 @@ Running crowdsourcing tasks
 __Authors__: Jack Urbanek, Emily Dinan, Will Feng, Eric Smith
 
 :::{warning}
-ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and we have moved our crowdsourcing code from `parlai.mturk` into [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). Before reading this tutorial, it may be useful to read the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for a concise guide on how to run crowdsourcing tasks in the current version of ParlAI: this tutorial provides more in-depth information.
+ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and the ParlAI crowdsourcing code has moved from `parlai.mturk` to [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). Before reading this tutorial, it may be useful to read the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for a concise guide on how to run crowdsourcing tasks in the current version of ParlAI. This tutorial provides more in-depth information on setting up and configuring crowdsourcing tasks.
 
 If you wish to access the old version of this tutorial for pre-Mephisto crowdsourcing tasks, switch to the `final_mturk` tag of ParlAI:
 ```bash
@@ -45,7 +45,7 @@ We provide a few examples of using crowdsourcing tasks with ParlAI:
     collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/):
     collect questions and answers from Turkers, given a random Wikipedia
     paragraph from SQuAD.
-- [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation questions such as, "Who would you prefer to talk to for a long conversation?""
+- [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation question such as, "Who would you prefer to talk to for a long conversation?"
 
 ### Sample Task: Collecting Data
 
@@ -74,22 +74,22 @@ Creating Your Own Task
 
 Mephisto provides a generic MTurk dialog interface that you can use to
 implement any kind of dialog task. To create your own task, start by
-reading the README of the existing task in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing) that your task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following classes (or classes that inherit from them):
+reading the README of the existing task in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing) that your desired task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following classes (or classes that inherit from them):
 
-- `CrowdOnboardingWorld`: the base world class that handles the logic for determine whether a crowdsource worker passes or fails onboarding. This logic is typically used to judge whether the crowdsource worker is likely to be able to complete your task in an acceptable manner.
-- `CrowdTaskWorld`: the base world class that handles the logic for how each of the human or bot agents will act during each turn of the task, defined by a call to `CrowdTaskWorld.parley()`.
+- `CrowdOnboardingWorld`: the base world class that handles the logic for determining whether a crowdsource worker passes or fails onboarding. This logic is typically used to judge whether the crowdsource worker is likely to be able to complete your task in an acceptable manner.
+- `CrowdTaskWorld`: the base world class that handles the logic for how each of the human or bot agents will act during each turn of the task, as defined by a call to `CrowdTaskWorld.parley()`.
 - `Blueprint`: the base class containing task-specific logic for setting up a task run. See the Mephisto [Blueprint README](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/blueprints/README.md) and [architecture overview](https://github.com/facebookresearch/Mephisto/blob/master/docs/architecture_overview.md) for more information.
-- `BlueprintArgs`: this defines the specific arguments needed for configuring a blueprint. Subclasses of `BlueprintArgs` retain all arguments defined by their superclasses and add additional task-specific ones.
+- `BlueprintArgs`: defines the specific arguments needed for configuring a blueprint. Subclasses of `BlueprintArgs` retain all arguments defined by their superclasses and add additional task-specific ones.
 
-If you are creating a new `Blueprint`, you will currently need to create a new `run.py` file in which to call your `Blueprint` so that its arguments can be read in correctly by Hydra; this should no longer be necessary as of the upcoming Hydra 1.1. You will likely need to specify the following helper files for your task:
+If you are creating a new `Blueprint`, you will currently need to create a new `run.py` file in which to call your `Blueprint` so that its arguments can be read in correctly by [Hydra](https://github.com/facebookresearch/hydra); this should no longer be necessary as of the upcoming Hydra 1.1. You will likely need to create the following helper files for your task:
 
-- `conf/example.yaml`: the file of Hydra parameters that is applied to your task by default when running `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
+- `conf/example.yaml`: the file of Hydra parameter values that are set by your task by default when lauching `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
 - `task_config/`: the standard folder in which useful configuration files are stored, such as for specifying UI text, configuring models, providing sample onboarding parameters, etc.
 
 A few things to keep in mind:
 
 1.  To end a conversation, you should check to see if an action has
-    `episode_done` set to `True`, as this signals that the world should
+    `'episode_done'` set to `True`, as this signals that the world should
     start returning `True` for the `episode_done()` function.
 2.  Make sure to test your dialog task using Mephisto's sandbox mode (enabled by default) before
     pushing it live. See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live) for running live tasks.
