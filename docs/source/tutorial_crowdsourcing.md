@@ -357,26 +357,23 @@ ParlAI-MTurk Tips and Tricks
     
 ### Preventing and Handling Crashes
 
-# {{{TODO: REVISE BELOW}}}
-
--   Set the --max-connections flag sufficiently low for your task; this
-    controls the number of people who can work on your task at any given
-    time. Leaving this too high might leave your heroku server running
+-   The `max_num_concurrent_units` argument when initializing [`TaskLauncher`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/operations/task_launcher.py) controls how many people can work on your task at any given time: set this sufficiently low for your task. Leaving this too high might leave your heroku server running
     into issues depending on how many messages per second it's trying to
     process, and on how much data is being sent in those messages (such
     as picture or video data).
 -   If you're using a model on your local machine, try to share the
     model parameters whenever possible. Needing new parameters for each
-    of your conversations might run your machine out of memory, causing
-    the data collection to crash in an manner that ParlAI can't handle
--   If your task crashes, you'll need to run the delete\_hits script and
-    find the task that had crashed to remove the orphan tasks.
+    of your conversations might make your machine run out of memory, causing
+    the data collection to crash in an manner that ParlAI can't handle.
+-   If your task crashes, it's good to run [`mephisto/scripts/mturk/cleanup.py`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/scripts/mturk/cleanup.py) to find the task that had crashed and remove the orphan tasks.
 -   If workers email you about task crashes with sufficient evidence
-    that they were working on the task, offer to compensate by sending
-    them a bonus for the failed task on one of their other completed
-    tasks, then bonus that HITId with the bonus\_workers script.
+    that they were working on that task, offer to compensate them by sending
+    them a bonus for their failed task on one of their other completed
+    tasks, and bonus that HIT ID by calling [`MTurkWorker.bonus_worker()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/providers/mturk/mturk_worker.py).
 
 ### Task Design
+
+# {{{TODO: REVISE BELOW}}}
 
 -   Design and test your task using the developer sandbox feature (used
     by default when calling a run.py), only launch --live after you've
