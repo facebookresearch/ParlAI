@@ -47,7 +47,7 @@ We provide a few examples of using crowdsourcing tasks with ParlAI:
     paragraph from SQuAD.
 - [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation questions such as, "Who would you prefer to talk to for a long conversation?""
 
-### Task 1: Collecting Data
+### Sample Task: Collecting Data
 
 One of the biggest use cases of Mechanical Turk is to collect natural
 language data from human Turkers.
@@ -60,121 +60,21 @@ does the following:
 2.  Ask a Turker to provide a question given the paragraph.
 3.  Ask the same Turker to provide an answer to their question.
 
-### {{{TODO: revise this section onward}}}
-
 In `QADataCollectionWorld`, there are two agents: one is the human
-Turker (`MTurkAgent`), the other is the task agent (`DefaultTeacher`
+Turker (`Agent`) and the other is the task agent (`SquadQATeacher`
 from SQuAD) that provides the Wikipedia paragraph.
 
-The `QADataCollectionWorld` uses `turn_index` to denote what stage the
-conversation is at. One *turn* means that `world.parley()` has been
-called once.
-
-After two turns, the task is finished, and the Turker's work is
+`QADataCollectionWorld` uses `.question` and `.answer` attributes to denote what stage the
+conversation is at. The task lasts for two *turns*: each turn means that `world.parley()` has been
+called once. After two turns, the task is finished, and the Turker's work is
 submitted for review.
-
-### Task 2: Evaluating a Dialog Model
-
-You can easily evaluate your dialog model's performance with human
-Turkers using ParlAI. As an example, the [Model Evaluator
-task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/model_evaluator/)
-does the following:
-
-1.  Initialize a task world with a dialog model agent
-    ([ir\_baseline](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/ir_baseline/ir_baseline.py#L98))
-    and a dataset
-    ([MovieDD-Reddit](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/moviedialog/agents.py#L57)).
-2.  Let all the agents in the task world `observe()` and `act()` once,
-    by calling `parley()` on the world.
-3.  Ask the human Turker to rate the dialog model agent's response on a
-    scale of 0-10.
-
-In `ModelEvaluatorWorld`, there are two main components: one is the
-`task_world` that contains the task and the dialog model we are
-evaluating, the other is the `MTurkAgent` which is an interface to the
-human Turker.
-
-Note that since the human Turker speaks only once to provide the rating,
-the `ModelEvaluatorWorld` doesn't need to use `turn_index` to keep track
-of the turns.
-
-After one turn, the task is finished, and the Turker's work is submitted
-for review.
-
-### Task 3: Multi-Agent Dialog
-
-ParlAI supports dialogs between multiple agents, whether they are local
-ParlAI agents or human Turkers. In the [Multi-Agent Dialog
-task](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/multi_agent_dialog/),
-one local human agents and two Turkers engage in a round-robin chat,
-until the first local human agent sends a message ending with `[DONE]`,
-after which other agents will send a final message and the task is
-concluded.
-
-This task uses the `MultiAgentDialogWorld` which is already implemented
-in `parlai.core.worlds`.
-
-### Task 4: Advanced Functionality - Deal or No Deal
-
-ParlAI is able to support more than just generic chat. The [Deal or No
-Deal
-task](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/dealnodeal/)
-provides additional functionality over the regular chat window to allow
-users to view the items they are dividing, select an allocation, and
-then submit a deal.
-
-This task leverages the ability to override base functionality of the
-core.html page using `task_config.py`. Javascript is added here to
-replace the task description with additional buttons and UI elements
-that are required for the more complicated task. These trigger within an
-overridden handle\_new\_message function, which will only fire after an
-agent has entered the chat. In general it is easier/preferred to use a
-custom webpage as described in step 4 of "Creating Your Own Task",
-though this is an alternate that can be used if you specifically only
-want to show additional components in the task description pane of the
-chat window.
-
-### Task 5: Advanced Functionality - MTurk Qualification Flow
-
-ParlAI MTurk is able to support filtering users through a form of
-qualification system. The [Qualification Flow
-task](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/qualification_flow_example)
-demos this functionality using a simple "addition" task.
-
-In this task, all users see a test version of the task on the first time
-they enter it and a real version every subsequent time, however users
-that fail to pass the test version are assigned a qualification that
-prevents them from working on the task again. Thus ParlAI users are able
-to filter out workers from the very beginning who don't necessarily meet
-the specifications you are going for. This is preferred to filtering out
-workers using the onboarding world for tasks that require a full
-instance's worth of work to verify a worker's readiness.
-
-### Task 6: Advanced Functionality - React Task Demo
-
-ParlAI MTurk allows creation of arbitrary tasks, so long as the required
-components can be created in React. The [React Task
-Demo](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/react_task_demo)
-task exists to show how this is set up for both cases where you are
-building your own components from scratch and cases where you want to
-import other components as dependancies.
-
-This task consists of 3 agents participating in different roles with
-different frontend needs. By setting `MTurkAgent.id` to the correct
-values, different interfaces are displayed to an 'Asker' who can ask any
-questions, an 'Answerer' who is only able to respond with numeric
-values, and an Evaluator who observes the chat and approves or rejects
-at the end. These components are defined and linked in the
-`frontend/components/custom.jsx` file.
 
 Creating Your Own Task
 ----------------------
 
-ParlAI provides a generic MTurk dialog interface that you can use to
+Mephisto provides a generic MTurk dialog interface that you can use to
 implement any kind of dialog task. To create your own task, start by
 reading the README of the existing task that your task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following:
-
-### {{{TODO: revise this section onward}}}
 
 {TODO: classes: ChatWorld, OnboardingWorld, BlueprintArgs, Blueprint}
 
@@ -186,19 +86,17 @@ A few things to keep in mind:
 
 1.  To end a conversation, you should check to see if an action has
     `episode_done` set to `True`, as this signals that the world should
-    start returning `True` for the `episode_done` function.
-2.  Make sure to test your dialog task using MTurk's sandbox mode before
-    pushing it live, by using the `--sandbox` flag (enabled by default)
-    when running `run.py`.
+    start returning `True` for the `episode_done()` function.
+2.  Make sure to test your dialog task using Mephisto's sandbox mode (enabled by default) before
+    pushing it live. See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live) for running live tasks.
+    
+### {{{TODO: revise this section onward}}}
+
 3.  Your `worlds.py` worlds should be handling different types of agent
     disconnect messages. `MTurkAgent.act()` can return any of
     `MTURK_DISCONNECT_MESSAGE`, `RETURN_MESSAGE`, and `TIMEOUT_MESSAGE`
     as defined in `MTurkAgent`. Your world should still be able to
     continue to completion in any of these circumstances.
-4.  NO DATA is saved automatically in the way that regular MTurk tasks
-    save data. Unless you're using the Alpha saving and loading
-    functionality described below, you'll need to save your data in your
-    `world.shutdown()` function.
 
 Advanced Task Techniques
 ------------------------
@@ -232,9 +130,9 @@ Follow the steps below:
     create a [Sandbox Worker account](http://workersandbox.mturk.com/).
     You can then view tasks that you publish from ParlAI and complete them
     yourself.
--   ParlAI's MTurk default functionality requires a free heroku account
+-   Mephisto's default MTurk functionality requires a free heroku account
     which can be obtained [here](https://signup.heroku.com/). Running
-    any ParlAI MTurk operation will walk you through linking the two.
+    any Mephisto MTurk operation will walk you through linking the two.
     
 To run a crowdsourcing task, launch its run file (typically `run.py`) with the proper flags, using a command like the following:
 
@@ -244,7 +142,7 @@ mephisto.blueprint.num_conversations <num_conversations> \
 mephisto.task.task_reward <reward> \
 [mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku]
 ```
-For instance, to create 2 conversations for the [QA Data
+(Note that the command will launch HITs on the sandbox by default.) For instance, to create 2 conversations for the [QA Data
 Collection](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/qa_data_collection)
 task with a reward of $0.05 per assignment in sandbox mode, run:
 
@@ -254,7 +152,7 @@ mephisto.blueprint.num_conversations 2 \
 mephisto.task.task_reward 0.05
 ```
 
-Make sure to test your task in MTurk sandbox mode first before pushing it live (with the `mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku` flags).
+Make sure to test your task in sandbox mode first before pushing it live (as described in the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live)).
 
 Additional flags can be used for more specific purposes:
 
@@ -278,7 +176,7 @@ automatically approved if they are deemed completed by the world.
 If you don't take any action in 1 week, all HITs will be auto-approved
 and Turkers will be paid.
 
-ParlAI-MTurk Tips and Tricks
+Mephisto MTurk Tips and Tricks
 ----------------------------
 
 ### Approving Work
