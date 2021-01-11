@@ -174,7 +174,7 @@ ParlAI provides a generic MTurk dialog interface that you can use to
 implement any kind of dialog task. To create your own task, start by
 reading the README of the existing task that your task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following:
 
-# {{{TODO: REVISE BELOW}}}
+### {{{TODO: revise this section onward}}}
 
 {TODO: classes: ChatWorld, OnboardingWorld, BlueprintArgs, Blueprint}
 
@@ -203,63 +203,8 @@ A few things to keep in mind:
 Advanced Task Techniques
 ------------------------
 
-### {{{TODO: revise this section onward}}}
-
-The ParlAI-MTurk platform allows for a number of advanced customization
-techniques to cover specialized tasks. The below sections explain how to
-leverage these more advanced features for task control.
-
-### Custom Frontend Components
-
-If you want to show a custom webpage (instead of the default one) for
-any of your MTurk agents, you can create an `frontend` folder within
-your task directory, and then create the `custom.jsx` within (see the
-React Task Demo for an example). For most custom tasks, creating your
-desired frontend is as simple as creating a
-`frontend/components/custom.jsx` file in your task directory that
-overrides a component you want to replace, and setting
-task\_config\['frontend\_version'\] = 1 in your `task_config.py`. Custom
-task components are keyed on the `MTurkAgent.id` field, as such it is
-possible to render different frontends for different agents in a task.
-The react task demo displays this possibility by having 3 roles, each
-with custom components.
-
-In general, if you want to create a custom component that replaces a
-component from the baseline UI, you should start off by copying the
-component you want to replace from [the core components
-file](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/core/react_server/dev/components/core_components.jsx)
-into your `frontend/components/custom.jsx` file. After creating your own
-version of a component, you'll need to export it properly, as displayed
-below:
-
-```javascript
-export default {
-  // XWantedComponentName: {'agent_id': ReplacementComponentForAgent},
-};
-```
-
-In the above code snippet, we're intending to replace
-`WantedComponentName` (like `ChatMessage` or `TextResponse`). For the
-system to properly pick this up, we prepend `X` to the component name in
-the module that we export. The object that corresponds to the component
-we want to replace should be a map from the value in the `MTurkAgent.id`
-field for a given agent to the specific custom component you want them
-to be able to see. You can use `'default'` to have the same component
-displayed for all agent ids. If on runtime the linker finds no custom
-component for a given agent's id, it will use the default defined in
-`core_components.jsx`.
-
-### Displaying Task Context
-
-Some tasks may want to display additional context, such as an image. In
-order to support this as controllable from your `worlds.py` file, we
-support a special field that can be observed from the `act` dict
-supplied to `MTurkAgent.observe(act)`. This is the `act['task_data']`
-field, and anything you put inside it will be available to all frontend
-components in the `this.props.task_data` field. It will also be rendered
-in the `ContextView` component in the left pane.
-
-More details and an example coming soon.
+The Mephisto platform allows for a number of advanced customization
+techniques to cover specialized tasks. See the [`bootstrap-chat` README](https://github.com/facebookresearch/Mephisto/blob/master/packages/bootstrap-chat/README.md) for a discussion of how to utilize Bootstrap-based UI components for crowdsourcing tasks.
 
 Running a Task
 --------------
@@ -285,15 +230,13 @@ Follow the steps below:
     account](http://requestersandbox.mturk.com/developer) to your
     Sandbox account. In order to test faster, you will also want to
     create a [Sandbox Worker account](http://workersandbox.mturk.com/).
-    You can then view tasks your publish from ParlAI and complete them
+    You can then view tasks that you publish from ParlAI and complete them
     yourself.
 -   ParlAI's MTurk default functionality requires a free heroku account
     which can be obtained [here](https://signup.heroku.com/). Running
     any ParlAI MTurk operation will walk you through linking the two.
-    If, instead, you wish to run ParlAI MTurk's node server on the same
-    machine you are running ParlAI from, use the flag `--local`. Note
-    that if you specify this flag, you will need to set up SSL for your
-    server.
+    
+### {{{TODO: revise this section onward}}}
 
 Then, to run an MTurk task, first ensure that the task directory is in
 [parlai/mturk/tasks/](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/).
@@ -343,6 +286,8 @@ Additional flags can be used for more specific purposes.
 
 Handling Turker Disconnects
 ---------------------------
+
+# {{{TODO: REVISE BELOW}}}
 
 Sometimes you may find that a task you have created is leading to a lot
 of workers disconnecting in the middle of a conversation, or that a few
