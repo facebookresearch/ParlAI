@@ -236,7 +236,7 @@ Follow the steps below:
     which can be obtained [here](https://signup.heroku.com/). Running
     any ParlAI MTurk operation will walk you through linking the two.
     
-### {{{TODO: revise this section onward}}}
+### {{{TODO: revise this section onward. Convert all existing flags, remove all unported ones, and maybe look if there are any other important ones to cover}}}
 
 Then, to run an MTurk task, first ensure that the task directory is in
 [parlai/mturk/tasks/](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/).
@@ -287,7 +287,7 @@ Additional flags can be used for more specific purposes.
 Handling Turker Disconnects
 ---------------------------
 
-# {{{TODO: REVISE BELOW}}}
+### {{{TODO: revise this section onward. Only mention soft blocks}}}
 
 Sometimes you may find that a task you have created is leading to a lot
 of workers disconnecting in the middle of a conversation, or that a few
@@ -310,9 +310,7 @@ Reviewing Turker's Work
 -----------------------
 
 You can programmatically review work using the commands available in the
-MTurkManager class. See, for example, the [review\_work
-function](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/personachat/personachat_collect_personas/worlds.py/)
-in the `personachat_collect_personas` task. In this task, HITs are
+`CrowdTaskWorld` class: for example, see the sample code in the docstring of the [`.review_work()` method](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/utils/worlds.py) of that class. For instance, you can set HITs to be
 automatically approved if they are deemed completed by the world.
 
 If you don't take any action in 1 week, all HITs will be auto-approved
@@ -323,54 +321,43 @@ ParlAI-MTurk Tips and Tricks
 
 ### Approving Work
 
--   Unless you explicitly set the flag —auto-approve-delay or approve
-    the agents work by calling mturk\_agent.approve\_work(), work will
-    be auto approved after 30 days; workers generally like getting paid
-    sooner than this so set the auto\_approve\_delay to be shorter when
-    possible.
+-   Unless you explicitly set the `auto_approve_delay` argument in [`create_hit_type()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/providers/mturk/mturk_utils.py), or approve work by calling [`MTurkAgent.approve_work()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/providers/mturk/mturk_agent.py), work will be auto-approved after 7 days. Workers like getting paid quickly, so be mindful to not have too much delay before their HITs are approved.
 -   Occasionally Turkers will take advantage of getting paid immediately
     without review if you auto approve their work by calling
-    mturk\_agent.approve\_work() at the close of the task. If you aren't
-    using any kind of validation before you approve\_work or if you
-    don't intend to review the work manually, consider setting the
-    —-auto-approve-delay flag rather than approving immediately.
+    `MTurkAgent.approve_work()` at the close of the task. If you aren't
+    using any kind of validation before you approve work or if you
+    don't intend to review the work manually, consider relying on auto approval after a fixed time delay with the `auto_approve_delay` argument of `create_hit_type()` rather than approving immediately.
 
 ### Rejecting Work
 
 -   Most Turkers take their work very seriously, so if you find yourself
     with many different workers making similar mistakes on your task,
-    it's possible the task itself is unclear. You __shouldn't__ be
-    rejecting work in this case, rather you should update your
-    instructions and see if the problem resolves.
--   Reject sparingly at first and give clear reasons for rejection/how
+    it's possible that the task itself is unclear. You __shouldn't__ be
+    rejecting work in this case, but rather you should update your
+    instructions and see if the problem is resolved.
+-   Reject sparingly at first and give clear reasons for rejection / how
     to improve. Rejections with no context are a violation of Amazon's
-    TOS.
+    terms of service.
 
 ### Filtering Workers
 
--   For tasks where it is reasonably easy to tell whether or not a
+-   For tasks for which it is reasonably easy to tell whether or not a
     worker is capable of working on the task (generally less than 5
     minutes of reading and interacting), it's appropriate to build a
     testing stage into your onboarding world. This stage should only be
-    shown to workers once, and failing the task should soft block the
+    shown to workers once, and failing the task should soft-block the
     worker and expire the HIT.
--   For tasks where it can be difficult to assess a worker's quality
-    level, you should use the kind of flow demonstrated in the MTurk
-    Qualification Flow demo task.
 
 ### Soft-blocking vs. Hard-blocking
 
--   Hard block sparingly; it's possible workers that aren't doing well
-    on a particular task are perfectly good at others. Hard blocking
-    reduces your possible worker pool.
--   Soft blocking workers that are clearly trying on a task but not
+-   Soft-blocking workers who are clearly trying on a task but not
     __quite__ getting it allows those workers to work on other tasks for
-    you in the future. You can soft block workers by calling
-    mturk\_manager.soft\_block\_worker(&lt;worker id&gt;) after setting
-    —-block-qualification. That worker will not be able to work on any
-    tasks that use the same —-block-qualification.
-
+    you in the future. You can soft block workers by calling [`Worker.grant_qualification()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/data_model/qualification.py) for a certain `qualification_name`, which is typically set by the `mephisto.blueprint.block_qualification` parameter. That worker will not be able to work on any
+    tasks that use the same `block_qualification`.
+    
 ### Preventing and Handling Crashes
+
+# {{{TODO: REVISE BELOW}}}
 
 -   Set the --max-connections flag sufficiently low for your task; this
     controls the number of people who can work on your task at any given
