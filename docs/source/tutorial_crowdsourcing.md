@@ -373,20 +373,18 @@ ParlAI-MTurk Tips and Tricks
 
 ### Task Design
 
-# {{{TODO: REVISE BELOW}}}
-
 -   Design and test your task using the developer sandbox feature (used
-    by default when calling a run.py), only launch --live after you've
+    by default when calling a run.py), only launch live mode (as detailed in the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live)) after you've
     tested your flow entirely.
--   Launch a few small pilot hits --live before your main data
+-   Launch a few small pilot HITs live before your main data
     collection, and manually review every response to see how well the
-    workers are understanding your task. Use this time to tweak your
+    workers are understanding your task. Use these test HITs to tweak your
     task instructions until you're satisfied with the results, as this
     will improve the quality of the received data.
 
 ### Other Tips
 
--   Check your MTurk-associated email frequently when running a task,
+-   Check your MTurk-associated email account frequently when running a task,
     and be responsive to the workers working on your tasks. This is
     important to keep a good reputation in the MTurk community.
 -   If you notice that certain workers are doing a really good job on
