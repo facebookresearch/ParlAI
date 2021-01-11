@@ -236,28 +236,29 @@ Follow the steps below:
     which can be obtained [here](https://signup.heroku.com/). Running
     any ParlAI MTurk operation will walk you through linking the two.
     
+To run a crowdsourcing task, launch its run file (typically `run.py`) with the proper flags, using a command like the following:
+
+```bash
+python run.py \
+mephisto.blueprint.num_conversations <num_conversations> \
+mephisto.task.task_reward <reward> \
+[mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku]
+```
+For instance, to create 2 conversations for the [QA Data
+Collection](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/qa_data_collection)
+task with a reward of $0.05 per assignment in sandbox mode, run:
+
+```bash
+python parlai/crowdsourcing/tasks/qa_data_collection/run.py \
+mephisto.blueprint.num_conversations 2 \
+mephisto.task.task_reward 0.05
+```
+
+Make sure to test your task in MTurk sandbox mode first before pushing it live (with the `mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku` flags).
+
+Additional flags can be used for more specific purposes:
+
 ### {{{TODO: revise this section onward. Convert all existing flags, remove all unported ones, and maybe look if there are any other important ones to cover}}}
-
-Then, to run an MTurk task, first ensure that the task directory is in
-[parlai/mturk/tasks/](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/).
-Then, run its `run.py` file with proper flags:
-
-```bash
-python run.py -nc <num_conversations> -r <reward> [--sandbox]/[--live]
-```
-e.g. to create 2 conversations for the [QA Data
-Collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/mturk/tasks/qa_data_collection/)
-example with a reward of \$0.05 per assignment in sandbox mode, first go
-into the task directory and then run:
-
-```bash
-python run.py -nc 2 -r 0.05 --sandbox
-```
-
-Please make sure to test your task in MTurk sandbox mode first
-(`--sandbox`) before pushing it live (`--live`).
-
-Additional flags can be used for more specific purposes.
 
 -   `--unique` ensures that an Turker is only able to complete one
     assignment, thus ensuring each assignment is completed by a unique
@@ -283,28 +284,6 @@ Additional flags can be used for more specific purposes.
 -   `--max-time-qual` sets the specific qualification name for the
     max-time soft block. Using this can allow you to limit worker time
     between separate machines where `working_time.pickle` isn't shared
-
-Handling Turker Disconnects
----------------------------
-
-### {{{TODO: revise this section onward. Only mention soft blocks}}}
-
-Sometimes you may find that a task you have created is leading to a lot
-of workers disconnecting in the middle of a conversation, or that a few
-people are disconnecting repeatedly. ParlAI MTurk offers two kinds of
-blocks to stop these workers from doing your hits.
-
--   soft blocks can be created by using the
-    `--disconnect-qualification <name>` flag with a name that you want
-    to associate to your ParlAI tasks. Any user that hits the disconnect
-    cap for a HIT with this flag active will not be able to participate
-    in any HITs using this flag.
--   hard blocks can be used by setting the `--hard-block` flag. Soft
-    blocks in general are preferred, as Turkers can be block-averse (as
-    it may affect their reputation) and sometimes the disconnects are
-    out of their control. This will prevent any Turkers that hit the
-    disconnect cap with this flag active from participating in any of
-    your future HITs of any type.
 
 Reviewing Turker's Work
 -----------------------
