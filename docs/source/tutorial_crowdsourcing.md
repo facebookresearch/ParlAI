@@ -3,7 +3,7 @@ Running crowdsourcing tasks
 __Authors__: Jack Urbanek, Emily Dinan, Will Feng, Eric Smith
 
 :::{warning}
-ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and we have moved our crowdsourcing code from `parlai.mturk` into [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). See [this README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for more specifics on how to run crowdsourcing tasks in the current version of ParlAI.
+ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and we have moved our crowdsourcing code from `parlai.mturk` into [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). Before reading this tutorial, it may be useful to read the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for a concise guide on how to run crowdsourcing tasks in the current version of ParlAI: this tutorial provides more in-depth information.
 
 If you wish to access the old version of this tutorial for pre-Mephisto crowdsourcing tasks, switch to the `final_mturk` tag of ParlAI:
 ```bash
@@ -258,32 +258,15 @@ Make sure to test your task in MTurk sandbox mode first before pushing it live (
 
 Additional flags can be used for more specific purposes:
 
-### {{{TODO: revise this section onward. Convert all existing flags, remove all unported ones, and maybe look if there are any other important ones to cover}}}
-
--   `--unique` ensures that an Turker is only able to complete one
-    assignment, thus ensuring each assignment is completed by a unique
+-   `mephisto.task.maximum_units_per_worker` ensures that an Turker is only able to complete one
+    assignment, thus ensuring that each assignment is completed by a unique
     person.
--   `--unique-qual-name <name>` lets you use the above functionality
-    across more than one task. Workers will only be able to complete a
-    task launched with this flag for a given &lt;name&gt; once.
--   `--allowed-conversations <num>` prevents a Turker from entering more
-    than &lt;num&gt; conversations at once (by using multiple
+-   `mephisto.task.allowed_concurrent` prevents a Turker from entering more
+    than a certain number of conversations at once (by using multiple
     windows/tabs). This defaults to 0, which is unlimited.
--   `--count-complete` only counts completed assignments towards the
-    num\_conversations requested. This may lead to more conversations
-    being had than requested (and thus higher costs for instances where
-    one Turker disconnects and we pay the other) but it ensures that if
-    you request 1,000 conversations you end up with at least 1,000
-    completed data points.
--   `--max-connections` controls the number of HITs can be launched at
-    the same time. If not specified, it defaults to 30; 0 is unlimited.
--   `--max-time` sets a maximum limit in seconds for how many seconds
-    per day a specific worker can work on your task. Data is logged to
-    `working_time.pickle`, so all runs on the same machine will share
-    the daily work logs.
--   `--max-time-qual` sets the specific qualification name for the
-    max-time soft block. Using this can allow you to limit worker time
-    between separate machines where `working_time.pickle` isn't shared
+-   `mephisto.task.assignment_duration_in_seconds` sets a maximum limit for how long a specific worker can work on your task.
+
+See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#mturk-specific-task-configuration) for some more commonly used command-line flags.
 
 Reviewing Turker's Work
 -----------------------
