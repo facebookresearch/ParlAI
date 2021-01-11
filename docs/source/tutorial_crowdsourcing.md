@@ -76,15 +76,15 @@ Mephisto provides a generic MTurk dialog interface that you can use to
 implement any kind of dialog task. To create your own task, start by
 reading the README of the existing task in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing) that your task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following classes (or classes that inherit from them):
 
-- `CrowdOnboardingWorld`: {{{TODO}}}
-- `CrowdTaskWorld`: {{{TODO}}}
-- `Blueprint`: {{{TODO}}}
-- `BlueprintArgs`: {{{TODO}}}}
+- `CrowdOnboardingWorld`: the base world class that handles the logic for determine whether a crowdsource worker passes or fails onboarding. This logic is typically used to judge whether the crowdsource worker is likely to be able to complete your task in an acceptable manner.
+- `CrowdTaskWorld`: the base world class that handles the logic for how each of the human or bot agents will act during each turn of the task, defined by a call to `CrowdTaskWorld.parley()`.
+- `Blueprint`: the base class containing task-specific logic for setting up a task run. See the Mephisto [Blueprint README](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/blueprints/README.md) and [architecture overview](https://github.com/facebookresearch/Mephisto/blob/master/docs/architecture_overview.md) for more information.
+- `BlueprintArgs`: this defines the specific arguments needed for configuring a blueprint. Subclasses of `BlueprintArgs` retain all arguments defined by their superclasses and add additional task-specific ones.
 
 If you are creating a new `Blueprint`, you will currently need to create a new `run.py` file in which to call your `Blueprint` so that its arguments can be read in correctly by Hydra; this should no longer be necessary as of the upcoming Hydra 1.1. You will likely need to specify the following helper files for your task:
 
-- `conf/example.yaml`: {{{TODO}}}
-- `task_config/`: this is the standard folder in which useful configuration files are stored, such as for specifying UI text, configuring models, providing sample onboarding parameters, etc.
+- `conf/example.yaml`: the file of Hydra parameters that is applied to your task by default when running `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
+- `task_config/`: the standard folder in which useful configuration files are stored, such as for specifying UI text, configuring models, providing sample onboarding parameters, etc.
 
 A few things to keep in mind:
 
