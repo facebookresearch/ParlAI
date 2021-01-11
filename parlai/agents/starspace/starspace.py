@@ -8,6 +8,9 @@
 # See: https://arxiv.org/abs/1709.03856
 # TODO: move this over to TorchRankerAgent when it is ready.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import maintain_dialog_history, load_cands
@@ -48,12 +51,14 @@ class StarspaceAgent(Agent):
     def dictionary_class():
         return DictionaryAgent
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group('StarSpace Arguments')
+        agent = parser.add_argument_group('StarSpace Arguments')
         agent.add_argument(
             '-emb',
             '--embedding-type',
@@ -175,7 +180,8 @@ class StarspaceAgent(Agent):
             type=str,
             help='File of cands to use for prediction',
         )
-        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def __init__(self, opt, shared=None):
         """

@@ -20,6 +20,9 @@ Options:
     chance of replying with "I don't know."
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import random
 
 from parlai.core.agents import Agent
@@ -27,9 +30,11 @@ from parlai.core.message import Message
 
 
 class RepeatLabelAgent(Agent):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        group = argparser.add_argument_group('RepeatLabel Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        group = parser.add_argument_group('RepeatLabel Arguments')
         group.add_argument(
             '--return_one_random_answer',
             type='bool',
@@ -49,6 +54,7 @@ class RepeatLabelAgent(Agent):
             default="I don't know.",
             help='Message sent when the model cannot answer',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)

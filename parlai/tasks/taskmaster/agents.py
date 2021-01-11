@@ -5,6 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.utils.io import PathManager
 from . import tm_utils
@@ -133,15 +136,18 @@ class WozDialogueTeacher(FixedDialogTeacher):
 
         self.reset()
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Corrupt-Example-Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('Corrupt-Example-Arguments')
         agent.add_argument(
             '--exclude-invalid-data',
             type='bool',
             default=True,
             help='Whether to include corrupt examples in the data',
         )
+        return parser
 
     def _setup_data(self, data_path, opt):
         print('loading: ' + data_path)

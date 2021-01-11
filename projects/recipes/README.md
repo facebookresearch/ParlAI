@@ -81,7 +81,7 @@ python parlai/scripts/eval_model.py -t blended_skill_talk -mf zoo:blender/blende
 
 ## Running Human Evaluations (ACUTE-Eval)
 
-To run ACUTE-Eval human evaluations, see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval).
+To run ACUTE-Eval human evaluations, see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval).
 
 
 ## Crowdworker conversation logs

@@ -13,4 +13,10 @@ For both variants of the blueprint, it is required to pass in your own file of c
 
 See `turn_annotations_blueprint.py` for various parameters of this task, including passing in custom annotation bucket definitions using the `annotation_buckets` YAML flag, being able to group multiple conversations into one HIT using the `subtasks_per_unit` flag, passing in onboarding data with answers, and being able to ask only for the final utterance as an annotation.
 
+The validation of the response field is handled by `validateFreetextResponse` function in `task_components.jsx` and checks for a minimum number of characters, words, and vowels specified by function parameters. To change this, modify the values passed in to the function call or override the function to set your own validation requirements.
+
 **NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
+
+## Analysis
+
+Run `analysis/compile_results.py` to compile and save statistics about collected static turn annotations. The `TurnAnnotationsStaticResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own.

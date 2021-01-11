@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from abc import ABC, abstractmethod
 import os
 import random
@@ -26,8 +29,10 @@ class _BaseSafetyTeacher(FixedDialogTeacher, ABC):
     Not meant to be a standalone teacher.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('Safety Teacher Args')
         parser.add_argument(
             '--round',

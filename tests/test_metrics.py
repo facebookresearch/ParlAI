@@ -18,6 +18,8 @@ from parlai.core.metrics import (
     TimerMetric,
     aggregate_unnamed_reports,
     aggregate_named_reports,
+    InterDistinctMetric,
+    IntraDistinctMetric,
 )
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
 
@@ -150,7 +152,7 @@ class TestMetrics(unittest.TestCase):
         m2.add('key', SumMetric(1))
         m3.add('key', SumMetric(2))
         m.add('key', SumMetric(3))
-        m.report()['key'] == 6
+        assert m.report()['key'] == 6
 
     def test_verymultithreaded(self):
         # legacy test, but useful all the same, for ensuring
@@ -383,6 +385,31 @@ class TestAggregators(unittest.TestCase):
         assert agg['task2/weighted_f1'] == (2 / 3) * 0.5 + (4 / 7) * 0.5
         # all
         assert agg['weighted_f1'] == (0.5 + (2 / 3) * 0.5 + (4 / 7) * 0.5) / 2
+
+
+class TestDistinct(unittest.TestCase):
+    def test_inter_distinct(self):
+        # 3 n-grams, all appearing once
+        m = InterDistinctMetric.compute("this is some test", 2)
+        self.assertAlmostEqual(m, 1.0)
+        # 3-grams, each appearing twice
+        self.assertAlmostEqual(m + m, 0.5)
+
+    def test_inter_distinct_unigram(self):
+        m1 = InterDistinctMetric.compute("this test", 1)
+        self.assertAlmostEqual(m1, 1.0, delta=0.001)
+        m2 = InterDistinctMetric.compute("another test", 1)
+        self.assertAlmostEqual(m2, 1.0, delta=0.001)
+        # we now have 4 tokens, 3 words
+        self.assertAlmostEqual(m1 + m2, 3 / 4)
+
+    def test_intra_distinct(self):
+        # 4/5 are unique
+        m1 = IntraDistinctMetric.compute("this is some test test", 1)
+        self.assertAlmostEqual(m1, 4 / 5)
+        m2 = IntraDistinctMetric.compute("this test test test test", 1)
+        self.assertAlmostEqual(m2, 2 / 5)
+        self.assertAlmostEqual(m1 + m2, 3 / 5)
 
 
 if __name__ == '__main__':

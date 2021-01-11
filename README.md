@@ -91,7 +91,7 @@ files needed will be downloaded again.
  - [Creating a seq2seq agent](https://parl.ai/docs/tutorial_torch_generator_agent.html)
  - [List of available agents](https://parl.ai/docs/agents_list.html)
  - [Model zoo (list pretrained models)](https://parl.ai/docs/zoo.html)
- - [Plug into MTurk/Mephisto](http://parl.ai/docs/tutorial_mturk.html)
+ - [Running crowdsourcing tasks](http://parl.ai/docs/tutorial_crowdsourcing.html)
  - [Plug into Facebook Messenger](https://parl.ai/docs/tutorial_chat_service.html)
 
 
@@ -127,6 +127,8 @@ The code is set up into several main directories:
 - [**mturk**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk): contains code for setting up Mechanical Turk, as well as sample MTurk tasks
 - [**messenger**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/services/messenger): contains code for interfacing with Facebook Messenger
 - [**utils**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/utils): contains a wide number of frequently used utility methods
+- [**crowdsourcing**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing): contains code for running crowdsourcing tasks, such as on Amazon Mechanical Turk
+- [**chat_service**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/services/messenger): contains code for interfacing with services such as Facebook Messenger
 - [**zoo**](https://github.com/facebookresearch/ParlAI/tree/master/parlai/zoo): contains code to directly download and use pretrained models from our model zoo
 
 ## Support

@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import json
 import os
 import re
@@ -76,9 +79,11 @@ def unescape(s):
 
 
 class VqaDictionaryAgent(Agent):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        dictionary = argparser.add_argument_group('Dictionary Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        dictionary = parser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
             '--dict-file',
             help='if set, the dictionary will automatically save to this path'
@@ -100,6 +105,7 @@ class VqaDictionaryAgent(Agent):
         dictionary.add_argument('--maxlength', type=int, default=16)
         dictionary.add_argument('--minwcount', type=int, default=0)
         dictionary.add_argument('--nlp', default='mcb')
+        return parser
 
     def __init__(self, opt, shared=None):
         super(VqaDictionaryAgent, self).__init__(opt)

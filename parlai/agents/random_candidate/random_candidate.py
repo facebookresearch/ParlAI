@@ -10,6 +10,9 @@ Chooses from the label candidates if they are available. If candidates are not
 available, it repeats the label.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import random
 
 from parlai.core.agents import Agent
@@ -20,8 +23,10 @@ class RandomCandidateAgent(Agent):
     Agent returns random candidate if available or repeats the label.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command line arguments for this agent.
         """
@@ -32,6 +37,7 @@ class RandomCandidateAgent(Agent):
             default=None,
             help='file of candidate responses to choose from',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         """

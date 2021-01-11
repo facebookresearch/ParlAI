@@ -7,6 +7,9 @@
 Agent for style-controlled generation.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from projects.style_gen.modules import StyleAgentMixin
 
@@ -17,10 +20,12 @@ class StyleGenAgent(StyleAgentMixin, TransformerGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        StyleAgentMixin.add_cmdline_args(argparser)
-        TransformerGeneratorAgent.add_cmdline_args(argparser)
-        return argparser
+        StyleAgentMixin.add_cmdline_args(parser, partial_opt=partial_opt)
+        TransformerGeneratorAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser

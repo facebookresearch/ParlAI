@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.utils.torch import concat_without_padding
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.zoo.bert.build import download
@@ -20,14 +23,17 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
     It is a standalone Agent. It might be called by the Both Encoder.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         add_common_args(parser)
         parser.set_defaults(
             encode_candidate_vecs=True,
             candidates='inline',
             dict_maxexs=0,  # skip building dictionary
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         # download pretrained models

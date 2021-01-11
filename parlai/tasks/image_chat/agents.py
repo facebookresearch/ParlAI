@@ -7,6 +7,8 @@ Images and Dialogues from Image-Chat dataset.
 
 202k images, 401k utterances, over 215 different personalities.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import json
 import os
 import random
@@ -75,9 +77,11 @@ class ImageChatTeacher(FixedDialogTeacher):
         self.num_exs = sum(len(d['dialog']) for d in self.data)
         self.reset()
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Personality-Captions arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('Personality-Captions arguments')
         agent.add_argument(
             '--include-personality',
             type='bool',
@@ -110,6 +114,7 @@ class ImageChatTeacher(FixedDialogTeacher):
             choices=['100', '1000'],
             help='how many candidates to provide agent',
         )
+        return parser
 
     def _setup_data(self, data_path: str, personalities_data_path: str):
         """
@@ -229,10 +234,12 @@ class GenerationTeacher(ImageChatTeacher):
                         for personality, label in d['dialog']
                     ]
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        ImageChatTeacher.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('generation teacher arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('generation teacher arguments')
         agent.add_argument(
             '--prepend-personality',
             type='bool',
@@ -251,6 +258,7 @@ class GenerationTeacher(ImageChatTeacher):
             default=0.0,
             help='Fraction of the time to replace the personality with its polarity category ("positive/neutral" or "negative")',
         )
+        return parser
 
     def num_episodes(self) -> int:
         return self.num_eps

@@ -367,7 +367,7 @@ which models are being evaluated, and then you can launch the experiment with:
 ```
 python parlai/mturk/tasks/controllable_dialogue/run.py -r 0.9 --count-complete --hobby --max-resp-time 1200 --max-connections 20 -nc 1200 --sandbox
 ```
-Change it to `--live` if you're prepared to spend actual currency. The output must be
+(See [this README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md) for how to access this now deprecated script.) Change `--sandbox` to `--live` if you're prepared to spend actual currency. The output must be
 lightly postprocessed to use it with the analysis tools released. If you intend to do
 this, please file an issue on the
 [ParlAI GitHub](https://github.com/facebookresearch/ParlAI/).

@@ -14,7 +14,7 @@ from projects.wizard_of_wikipedia.wizard_transformer_ranker.wizard_transformer_r
 
 if __name__ == '__main__':
     parser = setup_args()
-    WizardTransformerRankerAgent.add_cmdline_args(parser)
+    WizardTransformerRankerAgent.add_cmdline_args(parser, partial_opt=None)
     parser.set_params(
         task='wizard_of_wikipedia',
         model='projects:wizard_of_wikipedia:wizard_transformer_ranker',

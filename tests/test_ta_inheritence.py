@@ -10,6 +10,8 @@ Inheritence around add_cmdline_args can be tricky.
 This serves as an example, and verifies inheritence is behaving correctly.
 """
 
+from typing import Optional
+from parlai.core.opt import Opt
 import unittest
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
@@ -17,8 +19,11 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent
 
 class FakeDict(object):
     @classmethod
-    def add_cmdline_args(cls, parser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser.add_argument('--dictarg', default='d')
+        return parser
 
 
 class SubClassA(TorchGeneratorAgent):
@@ -27,15 +32,21 @@ class SubClassA(TorchGeneratorAgent):
         return FakeDict
 
     @classmethod
-    def add_cmdline_args(cls, parser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser.add_argument('--withclassinheritence', default='a')
-        super(SubClassA, cls).add_cmdline_args(parser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class SubClassB(SubClassA):
     @classmethod
-    def add_cmdline_args(cls, parser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser.add_argument('--withoutclassinheritence', default='b')
+        return parser
 
 
 class TestInheritence(unittest.TestCase):

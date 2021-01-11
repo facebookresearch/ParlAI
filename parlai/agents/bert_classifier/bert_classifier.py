@@ -8,6 +8,9 @@
 BERT classifier agent uses bert embeddings to make an utterance-level classification.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.agents.bert_ranker.bert_dictionary import BertDictionaryAgent
 from parlai.agents.bert_ranker.helpers import BertWrapper, MODEL_PATH
 from parlai.core.torch_agent import History
@@ -77,12 +80,14 @@ class BertClassifierAgent(TorchClassifierAgent):
         """
         return BertClassifierHistory
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI args.
         """
-        TorchClassifierAgent.add_cmdline_args(parser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         parser = parser.add_argument_group('BERT Classifier Arguments')
         parser.add_argument(
             '--type-optimization',
@@ -112,6 +117,7 @@ class BertClassifierAgent(TorchClassifierAgent):
             'segment with [SEP] token in between',
         )
         parser.set_defaults(dict_maxexs=0)  # skip building dictionary
+        return parser
 
     @staticmethod
     def dictionary_class():

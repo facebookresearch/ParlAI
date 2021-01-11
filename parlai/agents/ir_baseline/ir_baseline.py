@@ -20,6 +20,9 @@ Additonally, TFIDF is either used (requires building a dictionary) or not,
 depending on whether you train on the train set first, or not.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import math
 from collections.abc import Sequence
 import heapq
@@ -218,8 +221,10 @@ class IrBaselineAgent(Agent):
     Information Retrieval baseline.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command line args specific to this agent.
         """
@@ -245,7 +250,12 @@ class IrBaselineAgent(Agent):
             default=None,
             help='file of candidate responses to choose from',
         )
-        DictionaryAgent.add_cmdline_args(parser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
+
+    @classmethod
+    def dictionary_class(cls):
+        return DictionaryAgent
 
     def __init__(self, opt, shared=None):
         """

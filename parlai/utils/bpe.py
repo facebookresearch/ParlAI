@@ -9,6 +9,7 @@ Byte pair encoding (BPE).
 
 Lots of BPE things for ParlAI
 """
+from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from functools import lru_cache
 import json
@@ -112,9 +113,11 @@ class BPEHelper(ABC):
         self.bpe_dropout: Optional[float] = opt.get('bpe_dropout')
         self._bpe_dropout_enabled = False
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('BPEHelper Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('BPEHelper Arguments')
         parser.add_argument(
             '--bpe-vocab', type=str, help='path to pre-trained tokenizer vocab'
         )

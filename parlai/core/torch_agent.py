@@ -19,6 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
+from parlai.core.params import ParlaiParser
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
@@ -424,11 +425,13 @@ class TorchAgent(ABC, Agent):
         return History
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add the default commandline args we expect most agents to want.
         """
-        agent = argparser.add_argument_group('TorchAgent Arguments')
+        agent = parser.add_argument_group('TorchAgent Arguments')
         agent.add_argument(
             '-i',
             '--interactive-mode',
@@ -669,8 +672,9 @@ class TorchAgent(ABC, Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
             'available on the device.',
         )
-        cls.dictionary_class().add_cmdline_args(argparser)
-        ParlAILRScheduler.add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        ParlAILRScheduler.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         """
