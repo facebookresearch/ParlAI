@@ -137,7 +137,9 @@ Fleiss' kappa for none_all_good is: -0.410.\
 """
             actual_stdout_lines = actual_stdout.split('\n')
             for desired_line in desired_stdout.split('\n'):
-                if desired_line not in actual_stdout_lines:
+                if not any(
+                    desired_line in actual_line for actual_line in actual_stdout_lines
+                ):
                     raise ValueError(
                         f'\n\tThe following line:\n\n{desired_line}\n\n\twas not found '
                         f'in the actual stdout:\n\n{actual_stdout}'
