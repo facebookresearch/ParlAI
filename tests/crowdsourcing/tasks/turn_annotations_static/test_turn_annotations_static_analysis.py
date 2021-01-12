@@ -31,7 +31,7 @@ class TestAnalysis(unittest.TestCase):
 
         with testing_utils.tempdir() as tmpdir:
 
-            # Define desired stdout
+            # Define expected stdout
 
             # Paths
             analysis_config_folder = os.path.join(
@@ -100,7 +100,7 @@ class TestAnalysis(unittest.TestCase):
                 actual_stdout = output.getvalue()
 
             # Check the output against what it should be
-            desired_stdout = f"""\
+            expected_stdout = f"""\
 Got 4 folders to read.
 Average task completion time (seconds) was: 187.5
 Returning master dataframe with 48 annotations.
@@ -136,22 +136,22 @@ Fleiss' kappa for bucket_4 is: -0.380.
 Fleiss' kappa for none_all_good is: -0.410.\
 """
             actual_stdout_lines = actual_stdout.split('\n')
-            for desired_line in desired_stdout.split('\n'):
+            for expected_line in expected_stdout.split('\n'):
                 if not any(
-                    desired_line in actual_line for actual_line in actual_stdout_lines
+                    expected_line in actual_line for actual_line in actual_stdout_lines
                 ):
                     raise ValueError(
-                        f'\n\tThe following line:\n\n{desired_line}\n\n\twas not found '
+                        f'\n\tThe following line:\n\n{expected_line}\n\n\twas not found '
                         f'in the actual stdout:\n\n{actual_stdout}'
                     )
 
             # Check that the saved results file is what it should be
             sort_columns = ['hit_id', 'worker_id', 'conversation_id', 'turn_idx']
-            desired_results_path = os.path.join(
-                analysis_config_folder, 'desired_results.csv'
+            expected_results_path = os.path.join(
+                analysis_config_folder, 'expected_results.csv'
             )
-            desired_results = (
-                pd.read_csv(desired_results_path)
+            expected_results = (
+                pd.read_csv(expected_results_path)
                 .drop('folder', axis=1)
                 .sort_values(sort_columns)
                 .reset_index(drop=True)
@@ -167,9 +167,9 @@ Fleiss' kappa for none_all_good is: -0.410.\
                 .sort_values(sort_columns)
                 .reset_index(drop=True)
             )
-            if not actual_results.equals(desired_results):
+            if not actual_results.equals(expected_results):
                 raise ValueError(
-                    f'\n\n\tDesired results:\n{desired_results.to_csv()}'
+                    f'\n\n\tExpected results:\n{expected_results.to_csv()}'
                     f'\n\n\tActual results:\n{actual_results.to_csv()}'
                 )
 
