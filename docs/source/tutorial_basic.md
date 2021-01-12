@@ -14,7 +14,7 @@ Its goal is to provide researchers:
 -   many popular datasets available all in one place, with the ability
     to multi-task over them
 -   seamless integration of
-    [Amazon Mechanical Turk](tutorial_mturk) for data collection
+    [Amazon Mechanical Turk](tutorial_crowdsourcing) for data collection
     and human evaluation
 -   integration with
     chat services like [Facebook Messenger](tutorial_chat_service)
