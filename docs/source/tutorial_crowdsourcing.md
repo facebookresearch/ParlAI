@@ -41,10 +41,7 @@ We provide a few examples of using crowdsourcing tasks with ParlAI:
 - [Chat demo](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/chat_demo): have two humans chat back and forth for a multi-turn conversation.
 - [Model chat](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/model_chat): have a human chat with a model agent in a conversation, perhaps about an image, and optionally have the human select among checkboxes to annotate the model's responses.
 - [Static turn annotations](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/turn_annotations_static): have a human read a static conversation between two partners and select among checkboxes to annotate one of the speakers' responses.
--   [QA data
-    collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/):
-    collect questions and answers from Turkers, given a random Wikipedia
-    paragraph from SQuAD.
+- [QA data collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/): collect questions and answers from Turkers, given a random Wikipedia paragraph from SQuAD.
 - [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation question such as, "Who would you prefer to talk to for a long conversation?"
 
 ### Sample Task: Collecting Data
@@ -148,7 +145,7 @@ mephisto.task.task_reward 0.05
 
 Make sure to test your task in sandbox mode first before pushing it live: see the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live) for how to run a live task.
 
-Additional flags can be used for more specific purposes:
+Additional parameters can be used for more specific purposes:
 
 -   `mephisto.task.maximum_units_per_worker` ensures that a single Turker is only able to complete one
     assignment, thus ensuring that each assignment is completed by a different
@@ -158,7 +155,7 @@ Additional flags can be used for more specific purposes:
     windows/tabs). This defaults to 0, which is unlimited.
 -   `mephisto.task.assignment_duration_in_seconds` sets a maximum limit for how long a specific worker can work on your task.
 
-See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#mturk-specific-task-configuration) for some more commonly used command-line flags.
+See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#mturk-specific-task-configuration) for some more commonly used command-line flags. Also see the [README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#specifying-your-own-yaml-file) for how to specify your own YAML file of parameter values.
 
 Reviewing Turker's Work
 -----------------------
