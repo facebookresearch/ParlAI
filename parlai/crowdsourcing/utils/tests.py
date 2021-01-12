@@ -333,7 +333,17 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 )
                 time.sleep(wait_time)
         else:
-            raise ValueError('The expected number of messages never arrived!')
+            actual_num_messages = sum(
+                len(state['outputs']['messages']) for state in actual_states
+            )
+            print(f'\nPrinting all {actual_num_messages:d} messages received:')
+            for state in actual_states:
+                for message in state['outputs']['messages']:
+                    print(message)
+            raise ValueError(
+                f'The expected number of messages ({expected_num_messages:d}) never '
+                f'arrived!'
+            )
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
