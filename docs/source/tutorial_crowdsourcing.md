@@ -78,7 +78,9 @@ reading the README of the existing task in [`parlai/crowdsourcing/`](https://git
 - `Blueprint`: the base class containing task-specific logic for setting up a task run. See the Mephisto [Blueprint README](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/blueprints/README.md) and [architecture overview](https://github.com/facebookresearch/Mephisto/blob/master/docs/architecture_overview.md) for more information.
 - `BlueprintArgs`: defines the specific arguments needed for configuring a blueprint. Subclasses of `BlueprintArgs` retain all arguments defined by their superclasses and add additional task-specific ones.
 
-If you are creating a new `Blueprint`, you will currently need to create a new `run.py` file in which to call your `Blueprint` so that its arguments can be read in correctly by [Hydra](https://github.com/facebookresearch/hydra); this should no longer be necessary as of the upcoming Hydra 1.1. You will likely need to create the following helper files for your task:
+You may need to create your own `run.py` file with which to launch your script if you wish to have more control over setup of HITs, initialize custom objects shared across HITs with `SharedParlAITaskState`, or call a custom `Blueprint` so that its arguments can be read in correctly by [Hydra](https://github.com/facebookresearch/hydra). (Note that having to create a new `run.py` file in order to call a specific `Blueprint` should no longer be necessary as of the upcoming Hydra 1.1.)
+
+You will also likely need to create the following helper files for your task:
 
 - `conf/example.yaml`: the file of Hydra parameter values that are set by your task by default when lauching `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
 - `task_config/`: the standard folder in which useful configuration files are stored, such as for specifying UI text, configuring models, providing sample onboarding parameters, etc.
