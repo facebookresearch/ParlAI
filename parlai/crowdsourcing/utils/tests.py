@@ -333,7 +333,17 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 )
                 time.sleep(wait_time)
         else:
-            raise ValueError('The expected number of messages never arrived!')
+            actual_num_messages = sum(
+                len(state['outputs']['messages']) for state in actual_states
+            )
+            print(f'\nPrinting all {actual_num_messages:d} messages received:')
+            for state in actual_states:
+                for message in state['outputs']['messages']:
+                    print(message)
+            raise ValueError(
+                f'The expected number of messages ({expected_num_messages:d}) never '
+                f'arrived!'
+            )
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
@@ -371,9 +381,18 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 if key_inner in ['beam_texts', 'message_id']:
                     pass  # The message ID will be different
                 else:
-                    self.assertEqual(actual_value[key_inner], expected_value_inner)
+                    if actual_value[key_inner] != expected_value_inner:
+                        raise ValueError(
+                            f'The value of ["{key}"]["{key_inner}"] is supposed to be '
+                            f'{expected_value_inner} but is actually '
+                            f'{actual_value[key_inner]}!'
+                        )
         else:
-            self.assertEqual(actual_value, expected_value)
+            if actual_value != expected_value:
+                raise ValueError(
+                    f'The value of ["{key}"] is supposed to be {expected_value} but is '
+                    f'actually {actual_value}!'
+                )
 
     def _send_agent_message(
         self, agent_id: str, agent_display_id: str, text: str, task_data: Dict[str, Any]
