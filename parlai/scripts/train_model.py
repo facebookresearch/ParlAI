@@ -81,13 +81,35 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time', type=float, default=-1)
+    train.add_argument(
+        '-tstep',
+        '--max-train-steps',
+        type=int,
+        default=-1,
+        help='End training after n model updates',
+    )
     train.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
+    train.add_argument(
+        '-lstep',
+        '--log-every-n-steps',
+        type=int,
+        default=-1,
+        help='Log every n training steps',
+    )
     train.add_argument(
         '-vtim',
         '--validation-every-n-secs',
         type=float,
         default=-1,
         help='Validate every n seconds. Saves model to model_file '
+        '(if set) whenever best val metric is found',
+    )
+    train.add_argument(
+        '-vstep',
+        '--validation-every-n-steps',
+        type=float,
+        default=-1,
+        help='Validate every n training steps. Saves model to model_file '
         '(if set) whenever best val metric is found',
     )
     train.add_argument(
@@ -289,28 +311,22 @@ class TrainLoop:
         self.save_time = Timer()
 
         self.parleys = 0
-        self.max_num_epochs = (
-            opt['num_epochs'] if opt['num_epochs'] > 0 else float('inf')
-        )
-        self.max_train_time = (
-            opt['max_train_time'] if opt['max_train_time'] > 0 else float('inf')
-        )
-        self.log_every_n_secs = (
-            opt['log_every_n_secs'] if opt['log_every_n_secs'] > 0 else float('inf')
-        )
-        self.val_every_n_secs = (
-            opt['validation_every_n_secs']
-            if opt['validation_every_n_secs'] > 0
-            else float('inf')
-        )
-        self.save_every_n_secs = (
-            opt['save_every_n_secs'] if opt['save_every_n_secs'] > 0 else float('inf')
-        )
-        self.val_every_n_epochs = (
-            opt['validation_every_n_epochs']
-            if opt['validation_every_n_epochs'] > 0
-            else float('inf')
-        )
+        self._train_steps = 0
+        self._last_log_steps = 0
+        self.update_freq = opt.get('update_freq', 1)
+
+        def _num_else_inf(key: str):
+            return opt[key] if opt[key] > 0 else float('inf')
+
+        self.max_num_epochs = _num_else_inf('num_epochs')
+        self.max_train_time = _num_else_inf('max_train_time')
+        self.max_train_steps = _num_else_inf('max_train_steps')
+        self.log_every_n_secs = _num_else_inf('log_every_n_secs')
+        self.log_every_n_steps = _num_else_inf('log_every_n_steps')
+        self.val_every_n_secs = _num_else_inf('validation_every_n_secs')
+        self.val_every_n_epochs = _num_else_inf('validation_every_n_epochs')
+        self.val_every_n_steps = _num_else_inf('validation_every_n_steps')
+        self.save_every_n_secs = _num_else_inf('save_every_n_secs')
 
         # smart defaults for --validation-metric-mode
         if opt['validation_metric'] in {'loss', 'ppl', 'mean_rank'}:
@@ -321,6 +337,7 @@ class TrainLoop:
             opt['validation_metric_mode'] = 'max'
 
         self.last_valid_epoch = 0
+        self._last_valid_steps = 0
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.train_reports = []
         self.valid_reports = []
@@ -343,6 +360,7 @@ class TrainLoop:
                 self.parleys = obj.get('parleys', 0)
                 self._preempted_epochs = obj.get('total_epochs', 0)
                 self.train_time.total = obj.get('train_time', 0)
+                self._train_steps = obj.get('train_steps', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
                 self.train_reports = obj.get('train_reports', [])
@@ -397,6 +415,7 @@ class TrainLoop:
                 {
                     'parleys': self.parleys,
                     'train_time': self.train_time.time(),
+                    'train_steps': self._train_steps,
                     'total_epochs': self._total_epochs,
                     'train_reports': self.train_reports,
                     'valid_reports': self.valid_reports,
@@ -426,6 +445,7 @@ class TrainLoop:
         v = dict_report(valid_report)
         v['train_time'] = self.train_time.time()
         v['parleys'] = self.parleys
+        v['train_steps'] = self._train_steps
         v['total_exs'] = self._total_exs
         v['total_epochs'] = self._total_epochs
         self.valid_reports.append(v)
@@ -579,7 +599,9 @@ class TrainLoop:
         all_versions = all_gather_list(metrics)
         return aggregate_unnamed_reports(all_versions)
 
-    def _compute_eta(self, epochs_completed, time_elapsed):
+    def _compute_eta(
+        self, epochs_completed: float, time_elapsed: float, steps_taken: int
+    ):
         """
         Compute the estimated seconds remaining in training.
 
@@ -602,6 +624,11 @@ class TrainLoop:
             if eta is None or time_left < eta:
                 eta = time_left
 
+        max_train_steps = self.opt.get('max_train_steps', -1)
+        if max_train_steps > 0:
+            steps_progress = steps_taken / max_train_steps
+            eta = (1 - steps_progress) * time_elapsed / steps_progress
+
         return eta
 
     def log(self):
@@ -621,24 +648,29 @@ class TrainLoop:
         train_report_trainstats['total_epochs'] = self._total_epochs
         train_report_trainstats['total_exs'] = self._total_exs
         train_report_trainstats['parleys'] = self.parleys
+        train_report_trainstats['train_steps'] = self._train_steps
         train_report_trainstats['train_time'] = self.train_time.time()
         self.train_reports.append(train_report_trainstats)
 
         # time elapsed
         logs.append(f'time:{self.train_time.time():.0f}s')
         logs.append(f'total_exs:{self._total_exs}')
+        logs.append(f'total_steps:{self._train_steps}')
 
         if self._total_epochs >= 0:
             # only if it's unbounded
             logs.append(f'epochs:{self._total_epochs:.2f}')
 
-        time_left = self._compute_eta(self._total_epochs, self.train_time.time())
+        time_left = self._compute_eta(
+            self._total_epochs, self.train_time.time(), self._train_steps
+        )
         if time_left is not None:
             logs.append(f'time_left:{max(0,time_left):.0f}s')
 
         log = '{}\n{}\n'.format(' '.join(logs), nice_report(train_report))
         logging.info(log)
         self.log_time.reset()
+        self._last_log_steps = 0
 
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger.log_metrics('train', self.parleys, train_report)
@@ -662,6 +694,8 @@ class TrainLoop:
                     break
 
                 self.parleys += 1
+                self._train_steps = int(self.parleys / self.update_freq)
+                self._last_log_steps += 1 / self.update_freq
 
                 # get the total training examples done, compute epochs
                 self._total_epochs = self._preempted_epochs + sum(
@@ -688,12 +722,20 @@ class TrainLoop:
                 if train_time > self.max_train_time:
                     logging.info(f'max_train_time elapsed:{train_time}s')
                     break
-                if log_time > self.log_every_n_secs:
+                if self._train_steps >= self.max_train_steps:
+                    logging.info(f'max_train_steps elapsed:{self._train_steps}')
+                    break
+                if (
+                    log_time > self.log_every_n_secs
+                    or self._last_log_steps >= self.log_every_n_steps
+                ):
                     self.log()
                 if (
                     validate_time > self.val_every_n_secs
                     or self._total_epochs - self.last_valid_epoch
                     >= self.val_every_n_epochs
+                    or self._train_steps - self._last_valid_steps
+                    >= self.val_every_n_steps
                 ):
                     try:
                         # log before we validate
@@ -705,6 +747,7 @@ class TrainLoop:
                     # reset the log time because we logged right before validating
                     self.log_time.reset()
                     self.last_valid_epoch = self._total_epochs
+                    self._last_valid_steps = self._train_steps
                     if stop_training:
                         break
                     # make sure metrics are clean before we log

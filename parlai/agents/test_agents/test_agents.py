@@ -164,3 +164,19 @@ class SilentTorchAgent(TorchAgent):
         Null output.
         """
         return Output()
+
+
+class MockTrainUpdatesAgent(MockTorchAgent):
+    """
+    Simulate training updates
+    """
+
+    def train_step(self, batch):
+        ret = super().train_step(batch)
+        update_freq = self.opt.get('update_freq', 1)
+        if update_freq == 1:
+            self._number_training_updates += 1
+        else:
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            self._number_training_updates += int(self._number_grad_accum == 0)
+        return ret

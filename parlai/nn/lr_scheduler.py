@@ -17,6 +17,7 @@ from torch import optim
 import numpy as np
 
 from parlai.core.exceptions import StopTrainException
+import parlai.utils.logging as logging
 from parlai.utils.misc import warn_once
 
 
@@ -161,7 +162,9 @@ class ParlAILRScheduler(object):
             '--max-lr-steps',
             type=int,
             default=-1,
-            help='Number of train steps the scheduler should take after warmup. '
+            hidden=True,
+            help='**DEPRECATED: please use --max-train-steps instead**'
+            'Number of train steps the scheduler should take after warmup. '
             'Training is terminated after this many steps. This should only be '
             'set for --lr-scheduler cosine or linear',
         )
@@ -222,7 +225,18 @@ class ParlAILRScheduler(object):
         decay = opt.get('lr_scheduler_decay', 0.5)
         warmup_updates = opt.get('warmup_updates', -1)
         warmup_rate = opt.get('warmup_rate', 1e-4)
-        max_lr_steps = opt.get('max_lr_steps', -1)
+        max_lr_steps = opt.get('max_train_steps', -1)
+        deprecated_max_lr_steps = opt.get('max_lr_steps', -1)
+        if deprecated_max_lr_steps > 0:
+            logging.warn(
+                '**DEPRECATED: --max-lr-steps is deprecated, please only specify '
+                '--max-train-steps instead'
+            )
+            if deprecated_max_lr_steps != max_lr_steps:
+                logging.warn(
+                    f'Setting max_lr_steps from {deprecated_max_lr_steps} to {max_lr_steps}'
+                )
+                max_lr_steps = deprecated_max_lr_steps
         invsqrt_lr_decay_gamma = opt.get('invsqrt_lr_decay_gamma', -1)
 
         if opt.get('lr_scheduler') == 'none':
