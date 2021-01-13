@@ -109,11 +109,15 @@ class WandbLogger(object):
             '--wandb-log',
             type='bool',
             default=False,
-            help="W&B logging of metrics, default is %(default)s",
+            help="Enable W&B logging of metrics, default is %(default)s",
             hidden=False,
         )
         logger.add_argument(
-            '--wandb-name',
+            '--wandb-name', type=str, default=None, help='W&B run name', hidden=True
+        )
+
+        logger.add_argument(
+            '--wandb-project',
             type=str,
             default=None,
             help='W&B project name. Defaults to timestamp.',
@@ -125,16 +129,25 @@ class WandbLogger(object):
             # tensorboard is a very expensive thing to import. Wait until the
             # last second to import it.
             import wandb
+
         except ImportError:
             raise ImportError('Please run `pip install wandb`.')
 
-        name = opt.get('wandb_name') or datetime.datetime.now().strftime(
+        name = opt.get('wandb_name')
+        project = opt.get('wandb_project') or datetime.datetime.now().strftime(
             '%Y-%m-%d-%H-%M'
         )
 
-        self.run = wandb.init(project=name, dir=os.path.dirname(opt['model_file']))
+        self.run = wandb.init(
+            name=name,
+            project=project,
+            dir=os.path.dirname(opt['model_file']),
+            notes=f"{opt['model_file']}",
+        )
+        # suppress wandb's output
+        logging.getLogger("wandb").setLevel(logging.ERROR)
         for key, value in opt.items():
-            if value is None or isinstance(value(str, float, int, tuple)):
+            if value is None or isinstance(value, (str, numbers.Number, tuple)):
                 setattr(self.run.config, key, value)
         if model is not None:
             self.run.watch(model)
