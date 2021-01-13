@@ -43,7 +43,7 @@ task 1.
 
 ```bash
 # display examples from bAbI 10k task 1
-parlai display_data -t babi:task10k:1
+parlai display_data --task babi:task10k:1
 ```
 
 Now let's try to train a model on it (even on your laptop, this should
@@ -51,14 +51,14 @@ train fast).
 
 ```bash
 # train MemNN using batch size 1 and for 5 epochs
-parlai train_model -t babi:task10k:1 -mf /tmp/babi_memnn -bs 1 -eps 5 -m memnn --no-cuda
+parlai train_model --task babi:task10k:1 --model-file /tmp/babi_memnn --batchsize 1 --num-epochs 5 --model memnn --no-cuda
 ```
 
 Let's print some of its predictions to make sure it's working.
 
 ```bash
 # display predictions for model save at specified file on bAbI task 1
-parlai display_model -t babi:task10k:1 -mf /tmp/babi_memnn -ecands vocab
+parlai display_model --task babi:task10k:1 --model-file /tmp/babi_memnn --eval-candidates vocab
 ```
 
 The "eval\_labels" and "MemNN" lines should (usually) match!
@@ -67,7 +67,7 @@ Let's try asking the model a question ourselves.
 
 ```bash
 # interact with saved model
-parlai interactive -mf /tmp/babi_memnn -ecands vocab
+parlai interactive --model-file /tmp/babi_memnn --eval-candidates vocab
 ...
 Enter your message: John went to the hallway.\n Where is John?
 ```
@@ -91,14 +91,14 @@ Let's begin again by printing the first few examples.
 
 ```bash
 # display first examples from twitter dataset
-parlai display_data -t twitter
+parlai display_data --task twitter
 ```
 
 Now, we'll train the model. This will take a while to reach convergence.
 
 ```bash
 # train transformer ranker
-parlai train_model -t twitter -mf /tmp/tr_twitter -m transformer/ranker -bs 16 -vtim 3600 -cands batch -ecands batch --data-parallel True
+parlai train_model --task twitter --model-file /tmp/tr_twitter --model transformer/ranker --batchsize 16 --validation-every-n-secs 3600 --candidates batch --eval-candidates batch --data-parallel True
 ```
 
 You can modify some of the command line arguments we use here -we set
@@ -119,7 +119,7 @@ Zoo](http://parl.ai/docs/zoo.html), we could do the following:
 
 ```bash
 # Evaluate the tiny BlenderBot model on twitter data
-parlai eval_model -t twitter -mf zoo:blender/blender_90M/model
+parlai eval_model --task twitter --model-file zoo:blender/blender_90M/model
 ```
 
 Finally, let's print some of our transformer's predictions with the same
@@ -127,7 +127,7 @@ display\_model script from above.
 
 ```bash
 # display predictions for model saved at specific file on twitter
-parlai display_model -t twitter -mf /tmp/tr_twitter -ecands batch
+parlai display_model --task twitter --model-file /tmp/tr_twitter --eval-candidates batch
 ```
 
 Add a simple model
@@ -166,7 +166,7 @@ class ParrotAgent(TorchAgent):
 Now let's test it out:
 
 ```bash
-parlai display_model -t babi:task10k:1 -m parrot
+parlai display_model --task babi:task10k:1 --model parrot
 ```
 
 You'll notice the model is always outputting the "unknown" token. This
@@ -175,13 +175,13 @@ any tokens, because we haven't built a dictionary yet. Let's do that
 now.
 
 ```bash
-parlai build_dict -t babi:task10k:1 -df /tmp/parrot.dict
+parlai build_dict --task babi:task10k:1 --dict-file /tmp/parrot.dict
 ```
 
 Now let's try our Parrot agent again.
 
 ```bash
-parlai display_model -t babi:task10k:1 -m parrot -df /tmp/parrot.dict
+parlai display_model --task babi:task10k:1 --model parrot --dict-file /tmp/parrot.dict
 ```
 
 This ParrotAgent implements `eval_step`, one of two abstract functions

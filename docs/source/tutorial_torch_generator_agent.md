@@ -9,9 +9,9 @@
 Two major models in ParlAI inherit from `TorchGeneratorAgent`: seq2seq and transformer. You can try the transformer with the example below:
 
 ```bash
-parlai train_model -m transformer/generator \
-  -t convai2 -mf /tmp/testtransformer \
-  --beam-size 5 -bs 16
+parlai train_model --model transformer/generator \
+  --task convai2 --model-file /tmp/testtransformer \
+  --beam-size 5 --batchsize 16
 ```
 
 ## Creating a Model
@@ -148,9 +148,9 @@ class Decoder(nn.Module):
 The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
 
 ```bash
-parlai train_model -m examples/seq2seq \
-    -mf /tmp/example_model \
-    -t convai2 -bs 32 -eps 2 --truncate 128
+parlai train_model --model examples/seq2seq \
+    --model-file /tmp/example_model \
+    --task convai2 --batchsize 32 --num-epochs 2 --truncate 128
 ```
 
 You should get a perplexity of around 140 and a token accuracy of around 28% on the ConvAI2 validation/test set.
