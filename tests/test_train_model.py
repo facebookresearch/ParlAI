@@ -15,7 +15,6 @@ from parlai.core.params import ParlaiParser
 
 
 class TestTrainModel(unittest.TestCase):
-    @unittest.skip
     def test_fast_final_eval(self):
         valid, test = testing_utils.train_model(
             {
@@ -29,7 +28,6 @@ class TestTrainModel(unittest.TestCase):
         self.assertEqual(valid['exs'], 10, 'Validation exs is wrong')
         self.assertEqual(test['exs'], 10, 'Test exs is wrong')
 
-    @unittest.skip
     def test_multitasking_metrics_micro(self):
         valid, test = testing_utils.train_model(
             {
@@ -65,7 +63,6 @@ class TestTrainModel(unittest.TestCase):
             total_acc, task1_acc + task2_acc, 'Task accuracy is averaged incorrectly'
         )
 
-    @unittest.skip
     def test_multitasking_metrics_macro(self):
         valid, test = testing_utils.train_model(
             {
@@ -105,7 +102,6 @@ class TestTrainModel(unittest.TestCase):
             'Task accuracy is averaged incorrectly',
         )
 
-    @unittest.skip
     def test_multitasking_id_overlap(self):
         with self.assertRaises(AssertionError) as context:
             pp = ParlaiParser()
