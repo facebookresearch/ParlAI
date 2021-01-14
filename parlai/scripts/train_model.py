@@ -196,6 +196,12 @@ def setup_args(parser=None) -> ParlaiParser:
         help='Report micro-averaged metrics instead of macro averaged metrics.',
         recommended=False,
     )
+    train.add_argument(
+        '--dynamic-batching-train-only',  # FIXME: see https://github.com/facebookresearch/ParlAI/issues/3367
+        type='bool',
+        default=False,
+        help='Temporary fix for an issue tracked in #3367',
+    )
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
 
     parser = setup_dict_args(parser)
@@ -241,6 +247,9 @@ def load_eval_worlds(agent, opt, datatype):
     for task in tasks:
         task_opt = opt.copy()  # copy opt since we edit the task
         task_opt['task'] = task
+        # FIXME: see issue tracked in https://github.com/facebookresearch/ParlAI/issues/3367
+        if opt.get('dynamic_batching_train_only', False):
+            task_opt['dynamic_batching'] = None
         valid_world = create_task(task_opt, valid_agent)
         worlds.append(valid_world)
 
