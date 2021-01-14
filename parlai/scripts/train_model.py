@@ -83,8 +83,11 @@ def setup_args(parser=None) -> ParlaiParser:
         default=None,
         type='nonestr',
         choices={None, 'off', 'full', 'batchsort'},
-        help='Temporary fix for an issue tracked in #3367. Eval dynamic batching; '
-        'if None, defaults to whatever is set in --dynamic-batching. If "off", sets dynamic batching to None',
+        help=(
+        	'Set dynamic batching at evaluation time. Set to off for '
+	        'train-only dynamic batching. Set to none (default) to use same '
+	        'setting as --dynamic-batching.'
+	    ),
     )
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
