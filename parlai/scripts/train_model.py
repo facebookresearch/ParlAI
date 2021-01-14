@@ -78,6 +78,14 @@ def setup_args(parser=None) -> ParlaiParser:
         hidden=True,
         help='Eval time batch size (defaults to same as -bs)',
     )
+    train.add_argument(
+        '--eval-dynamic-batching',  # FIXME: see https://github.com/facebookresearch/ParlAI/issues/3367
+        default=None,
+        type='nonestr',
+        choices={None, 'off', 'full', 'batchsort'},
+        help='Temporary fix for an issue tracked in #3367. Eval dynamic batching; '
+        'if None, defaults to whatever is set in --dynamic-batching. If "off", sets dynamic batching to None',
+    )
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time', type=float, default=-1)
@@ -196,12 +204,6 @@ def setup_args(parser=None) -> ParlaiParser:
         help='Report micro-averaged metrics instead of macro averaged metrics.',
         recommended=False,
     )
-    train.add_argument(
-        '--dynamic-batching-train-only',  # FIXME: see https://github.com/facebookresearch/ParlAI/issues/3367
-        type='bool',
-        default=False,
-        help='Temporary fix for an issue tracked in #3367',
-    )
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
 
     parser = setup_dict_args(parser)
@@ -235,6 +237,15 @@ def load_eval_worlds(agent, opt, datatype):
     if opt.get('eval_batchsize'):
         # override eval time batchsize
         opt['batchsize'] = opt['eval_batchsize']
+    if opt.get('eval_dynamic_batching'):
+        # FIXME: see issue tracked in https://github.com/facebookresearch/ParlAI/issues/3367
+        # override eval time dynamic batching settings
+        eval_dyn_batch = (
+            None
+            if opt['eval_dynamic_batching'] == 'off'
+            else opt['eval_dynamic_batching']
+        )
+        opt['dynamic_batching'] = eval_dyn_batch
 
     tasks = opt['task'].split(',')
     worlds = []
@@ -247,9 +258,6 @@ def load_eval_worlds(agent, opt, datatype):
     for task in tasks:
         task_opt = opt.copy()  # copy opt since we edit the task
         task_opt['task'] = task
-        # FIXME: see issue tracked in https://github.com/facebookresearch/ParlAI/issues/3367
-        if opt.get('dynamic_batching_train_only', False):
-            task_opt['dynamic_batching'] = None
         valid_world = create_task(task_opt, valid_agent)
         worlds.append(valid_world)
 
