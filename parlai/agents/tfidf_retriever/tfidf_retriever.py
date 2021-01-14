@@ -271,9 +271,9 @@ class TfidfRetrieverAgent(Agent):
                     picks = ['\n'.join(p.split('\n')[1:]) for p in picks]
                     pick = '\n'.join(pick.split('\n')[1:])
                 reply['text_candidates'] = picks
-                reply['candidate_scores'] = doc_scores
+                reply['candidate_scores'] = list(doc_scores)
 
                 reply['text'] = pick
-                reply['candidate_ids'] = doc_ids
+                reply['candidate_ids'] = list(doc_ids)
 
         return reply
