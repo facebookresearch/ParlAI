@@ -168,7 +168,7 @@ class SilentTorchAgent(TorchAgent):
 
 class MockTrainUpdatesAgent(MockTorchAgent):
     """
-    Simulate training updates
+    Simulate training updates.
     """
 
     def train_step(self, batch):

@@ -114,7 +114,7 @@ class TestTrainModel(unittest.TestCase):
 
     def _test_opt_step_opts(self, update_freq: int):
         """
-        Test -tstep, -vstep, -lstep
+        Test -tstep, -vstep, -lstep.
 
         :param update_freq:
             update frequency

@@ -704,13 +704,27 @@ class TrainLoop:
                 exs_per_epoch = world.num_examples()
                 self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
                 # and use the primary worker's timings for everything
-                train_time, log_time, validate_time = sync_object(
-                    (
+                if any(
+                    getattr(self, k) < float('inf')
+                    for k in [
+                        'max_train_time',
+                        'log_every_n_secs',
+                        'validation_every_n_secs',
+                    ]
+                ):
+                    train_time, log_time, validate_time = sync_object(
+                        (
+                            self.train_time.time(),
+                            self.log_time.time(),
+                            self.validate_time.time(),
+                        )
+                    )
+                else:
+                    train_time, log_time, validate_time = (
                         self.train_time.time(),
                         self.log_time.time(),
                         self.validate_time.time(),
                     )
-                )
 
                 # check counters and timers
                 if self._total_epochs >= self.max_num_epochs:
