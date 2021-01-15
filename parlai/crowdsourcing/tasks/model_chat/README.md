@@ -51,4 +51,4 @@ Note that onboarding is not currently supported with human+model image chat: use
 
 ## Analysis
 
-Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. The `ModelChatResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own.
+Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. The `ModelChatResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own. Set `--results-folders` to the value of `mephisto.blueprint.chat_data_folder` used when running HITs.

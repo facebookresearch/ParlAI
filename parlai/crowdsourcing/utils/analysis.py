@@ -24,7 +24,7 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--results-folders',
             type=str,
-            help='Comma-separated list of result folders (example: "/basefolder/mephisto/data/runs/NO_PROJECT/123")',
+            help='Comma-separated list of result folders',
         )
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'

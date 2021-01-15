@@ -19,4 +19,4 @@ The validation of the response field is handled by `validateFreetextResponse` fu
 
 ## Analysis
 
-Run `analysis/compile_results.py` to compile and save statistics about collected static turn annotations. The `TurnAnnotationsStaticResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own.
+Run `analysis/compile_results.py` to compile and save statistics about collected static turn annotations. The `TurnAnnotationsStaticResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own. Set `--results-folders` to a comma-separated list of the folders that the data was saved to (likely of the format `"/basefolder/mephisto/data/runs/NO_PROJECT/123"`)
