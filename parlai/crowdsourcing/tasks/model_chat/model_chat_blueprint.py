@@ -197,7 +197,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
                 f'"~" can\'t currently be parsed in the chat data folder path '
                 f'{args.blueprint.chat_data_folder}'
             )
-            # TODO: remove this restriction
+            # TODO: allow ~ to be parsed correctly
 
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)
