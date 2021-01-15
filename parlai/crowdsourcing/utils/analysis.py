@@ -22,9 +22,7 @@ class AbstractResultsCompiler(ABC):
     def setup_args(cls):
         parser = argparse.ArgumentParser('Compile crowdsourcing results')
         parser.add_argument(
-            '--results-folders',
-            type=str,
-            help='Comma-separated list of result folders',
+            '--results-folders', type=str, help='Comma-separated list of result folders'
         )
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
