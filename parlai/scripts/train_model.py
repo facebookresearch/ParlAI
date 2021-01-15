@@ -78,6 +78,17 @@ def setup_args(parser=None) -> ParlaiParser:
         hidden=True,
         help='Eval time batch size (defaults to same as -bs)',
     )
+    train.add_argument(
+        '--eval-dynamic-batching',  # FIXME: see https://github.com/facebookresearch/ParlAI/issues/3367
+        default=None,
+        type='nonestr',
+        choices={None, 'off', 'full', 'batchsort'},
+        help=(
+            'Set dynamic batching at evaluation time. Set to off for '
+            'train-only dynamic batching. Set to none (default) to use same '
+            'setting as --dynamic-batching.'
+        ),
+    )
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time', type=float, default=-1)
@@ -229,6 +240,15 @@ def load_eval_worlds(agent, opt, datatype):
     if opt.get('eval_batchsize'):
         # override eval time batchsize
         opt['batchsize'] = opt['eval_batchsize']
+    if opt.get('eval_dynamic_batching'):
+        # FIXME: see issue tracked in https://github.com/facebookresearch/ParlAI/issues/3367
+        # override eval time dynamic batching settings
+        eval_dyn_batch = (
+            None
+            if opt['eval_dynamic_batching'] == 'off'
+            else opt['eval_dynamic_batching']
+        )
+        opt['dynamic_batching'] = eval_dyn_batch
 
     tasks = opt['task'].split(',')
     worlds = []
