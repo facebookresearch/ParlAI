@@ -163,7 +163,7 @@ fixed_response: >
                 with open(expected_chat_data_path) as f:
                     expected_chat_data = json.load(f)
                 results_path = list(
-                    glob.glob(os.path.join(chat_data_folder, '*_*_*_sandbox.json'))
+                    glob.glob(os.path.join(chat_data_folder, '*/*_*_*_sandbox.json'))
                 )[0]
                 with open(results_path) as f:
                     actual_chat_data = json.load(f)
