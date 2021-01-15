@@ -188,6 +188,17 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             full_path
         ), f"Target left pane text path {full_path} doesn't exist"
 
+        if args.blueprint.get("chat_data_folder") == '':
+            raise ValueError('Must provide a valid chat data folder')
+        else:
+            assert (
+                '~' not in args.blueprint.chat_data_folder
+            ), (
+                f'"~" can\'t currently be parsed in the chat data folder path '
+                f'{args.blueprint.chat_data_folder}'
+            )
+            # TODO: remove this restriction
+
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)
             assert os.path.exists(
