@@ -65,7 +65,6 @@ def atomic_save(state_dict: Any, path: str) -> None:
 def padded_tensor(
     items: List[Union[List[int], torch.LongTensor]],
     pad_idx: int = 0,
-    use_cuda: bool = False,
     left_padded: bool = False,
     max_len: Optional[int] = None,
     fp16friendly: bool = False,
@@ -85,7 +84,6 @@ def padded_tensor(
     :param list[iter[int]] items: List of items
     :param bool sort: If True, orders by the length
     :param int pad_idx: the value to use for padding
-    :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
     :param bool fp16friendly: if True, pads the time dimension to be a multiple of 4.
@@ -130,17 +128,12 @@ def padded_tensor(
             # place at beginning
             output[i, :length] = item
 
-    if use_cuda:
-        output = output.cuda()
-        if device >= 0:
-            output = output.to(device)
     return output, lens
 
 
 def padded_3d(
     tensors: List[torch.LongTensor],
     pad_idx: int = 0,
-    use_cuda: bool = False,
     dtype: Optional[torch.dtype] = torch.long,
     fp16friendly: bool = False,
 ):
@@ -151,8 +144,6 @@ def padded_3d(
         list of lists of 1D tensors (or lists)
     :param pad_idx:
         padding to fill tensor with
-    :param use_cuda:
-        whether to call cuda() before returning
     :param bool fp16friendly:
         if True, pads the final dimension to be a multiple of 8.
 
@@ -178,9 +169,6 @@ def padded_3d(
             if not isinstance(item, torch.Tensor):
                 item = torch.Tensor(item, dtype=dtype)
             output[i, j, : len(item)] = item
-
-    if use_cuda:
-        output = output.cuda()
 
     return output
 

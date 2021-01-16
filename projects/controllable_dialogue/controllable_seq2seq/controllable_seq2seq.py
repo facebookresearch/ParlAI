@@ -780,9 +780,7 @@ class ControllableSeq2seqAgent(TorchAgent):
             [max([cand.size(0) for cand in cands_i]) for cands_i in cands]
         )
         for i, c in enumerate(cands):
-            cands[i] = padded_tensor(c, use_cuda=self.use_cuda, max_len=max_cands_len)[
-                0
-            ].unsqueeze(0)
+            cands[i] = padded_tensor(c, max_len=max_cands_len)[0].unsqueeze(0)
         cands = torch.cat(cands, 0)
         return cands, cand_inds
 

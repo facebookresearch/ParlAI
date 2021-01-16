@@ -125,9 +125,19 @@ class Batch(AttrDict):
         )
 
     def cuda(self):
+        """
+        Move all tensors in the batch to cuda.
+
+        Happens in place.
+
+        :return:
+            self
+        """
         for key in self.keys():
             if torch.is_tensor(self[key]):
                 self[key] = self[key].cuda()
+        # just to enable batch = batch.cuda() idomatics
+        return self
 
 
 class Output(AttrDict):
@@ -1478,11 +1488,7 @@ class TorchAgent(ABC, Agent):
         to pad their input.
         """
         return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            fp16friendly=self.fp16,
-            device=self.opt['gpu'],
+            items, pad_idx=self.NULL_IDX, fp16friendly=self.fp16, device=self.opt['gpu']
         )
 
     def is_valid(self, obs):
@@ -1964,6 +1970,8 @@ class TorchAgent(ABC, Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
+        if self.use_cuda:
+            batch = batch.cuda()
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (
