@@ -730,10 +730,7 @@ class TorchRankerAgent(TorchAgent):
 
             cands = batch.candidates
             cand_vecs = padded_3d(
-                batch.candidate_vecs,
-                self.NULL_IDX,
-                use_cuda=self.use_cuda,
-                fp16friendly=self.fp16,
+                batch.candidate_vecs, self.NULL_IDX, fp16friendly=self.fp16
             )
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))

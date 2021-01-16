@@ -1107,11 +1107,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             assert batch.label_vec is not None, "need label_vec for _generate"
             dev = batch.label_vec.device
 
-        bsz = (
-            len(batch.text_lengths)
-            if batch.text_lengths is not None
-            else len(batch.image)  # type: ignore
-        )
+        bsz = batch.batch_size
         if batch.text_vec is not None:
             batchsize = batch.text_vec.size(0)
             beams = [
