@@ -316,9 +316,7 @@ class TestTorchAgent(unittest.TestCase):
             # nothing has been vectorized yet so should be empty
             batch = agent.batchify(obs_batch)
             self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
             self.assertIsNone(batch.label_vec)
-            self.assertIsNone(batch.label_lengths)
             self.assertIsNone(batch.labels)
             self.assertIsNone(batch.valid_indices)
             self.assertIsNone(batch.candidates)
@@ -341,9 +339,7 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(obs_batch)
             self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
             self.assertIsNone(batch.label_vec)
-            self.assertIsNone(batch.label_lengths)
             self.assertIsNone(batch.labels)
             self.assertIsNone(batch.valid_indices)
             self.assertIsNone(batch.candidates)
@@ -359,9 +355,7 @@ class TestTorchAgent(unittest.TestCase):
             batch = agent.batchify(obs_vecs)
             # which fields were filled vs should be empty?
             self.assertIsNotNone(batch.text_vec)
-            self.assertIsNotNone(batch.text_lengths)
             self.assertIsNotNone(batch.label_vec)
-            self.assertIsNotNone(batch.label_lengths)
             self.assertIsNotNone(batch.labels)
             self.assertIsNotNone(batch.valid_indices)
             self.assertIsNone(batch.candidates)
@@ -373,12 +367,10 @@ class TestTorchAgent(unittest.TestCase):
                 batch.text_vec.tolist(),
                 [[1, 2, 3, 4, 5, 0], [1, 2, 3, 4, 5, 6], [1, 2, 0, 0, 0, 0]],
             )
-            self.assertEqual(batch.text_lengths, [5, 6, 2])
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1, 2, 0, 0, 0]],
             )
-            self.assertEqual(batch.label_lengths, [1, 5, 2])
             self.assertEqual(batch.labels, [o[lab_key][0] for o in obs_batch])
             self.assertEqual(list(batch.valid_indices), [0, 1, 2])
 
@@ -388,12 +380,10 @@ class TestTorchAgent(unittest.TestCase):
                 batch.text_vec.tolist(),
                 [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 0], [1, 2, 0, 0, 0, 0]],
             )
-            self.assertEqual(batch.text_lengths, [6, 5, 2])
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 2, 3, 4, 5], [1, 0, 0, 0, 0], [1, 2, 0, 0, 0]],
             )
-            self.assertEqual(batch.label_lengths, [5, 1, 2])
             labs = [o[lab_key][0] for o in obs_batch]
             self.assertEqual(batch.labels, [labs[i] for i in [1, 0, 2]])
             self.assertEqual(list(batch.valid_indices), [1, 0, 2])
@@ -411,14 +401,11 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(new_vecs, sort=True)
             self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
             self.assertIsNotNone(batch.label_vec)
-            self.assertIsNotNone(batch.label_lengths)
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 2, 3, 4, 5], [1, 2, 0, 0, 0], [1, 0, 0, 0, 0]],
             )
-            self.assertEqual(batch.label_lengths, [5, 2, 1])
             labs = [o[lab_key][0] for o in new_vecs]
             self.assertEqual(batch.labels, [labs[i] for i in [1, 2, 0]])
             self.assertEqual(list(batch.valid_indices), [1, 2, 0])
@@ -431,9 +418,7 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(obs_vecs)
             self.assertEqual(batch.text_vec.tolist(), [[1, 2]])
-            self.assertEqual(batch.text_lengths, [2])
             self.assertEqual(batch.label_vec.tolist(), [[1, 2]])
-            self.assertEqual(batch.label_lengths, [2])
             self.assertEqual(batch.labels, obs_batch[2][lab_key])
             self.assertEqual(list(batch.valid_indices), [2])
 
@@ -463,9 +448,7 @@ class TestTorchAgent(unittest.TestCase):
         batch = agent.batchify(obs_cands)
         self.assertTrue(agent.rank_candidates, 'Agent not set up to rank.')
         self.assertIsNone(batch.text_vec)
-        self.assertIsNone(batch.text_lengths)
         self.assertIsNone(batch.label_vec)
-        self.assertIsNone(batch.label_lengths)
         self.assertIsNone(batch.labels)
         self.assertIsNotNone(batch.valid_indices)
         self.assertIsNotNone(batch.candidates)
@@ -962,7 +945,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.observe(obs)
         _ = agent.act()
         self.assertEqual(
-            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to Call)!'
+            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to [[1]])!'
         )
         # now some of the other possible values of --use-reply
         # --use-reply model. even if there is a label, we should see the model's out

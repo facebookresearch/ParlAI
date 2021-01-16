@@ -65,16 +65,8 @@ class Batch(AttrDict):
     :param text_vec:
         bsz x seqlen tensor containing the parsed text data.
 
-    :param text_lengths:
-        list of length bsz containing the lengths of the text in same order as
-        text_vec; necessary for pack_padded_sequence.
-
     :param label_vec:
         bsz x seqlen tensor containing the parsed label (one per batch row).
-
-    :param label_lengths:
-        list of length bsz containing the lengths of the labels in same order as
-        label_vec.
 
     :param labels:
         list of length bsz containing the selected label for each batch row (some
@@ -95,22 +87,16 @@ class Batch(AttrDict):
 
     :param image:
         list of image features in the format specified by the --image-mode arg.
-
-    :param observations:
-        the original observations in the batched order
     """
 
     batchsize: int
     text_vec: Optional[torch.LongTensor]
-    text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]
-    label_lengths: Optional[List[int]]
     labels: Optional[List[str]]
-    valid_indices: Optional[List[int]]
+    valid_indices: Optional[torch.LongTensor]
     candidates: Optional[List[List[str]]]
     candidate_vecs: Optional[List[List[torch.LongTensor]]]
     image: Optional[List[Any]]
-    observations: Optional[List[Message]]
 
     def __init__(
         self,
@@ -123,7 +109,6 @@ class Batch(AttrDict):
         candidates=None,
         candidate_vecs=None,
         image=None,
-        observations=None,
         **kwargs,
     ):
         super().__init__(
@@ -136,9 +121,13 @@ class Batch(AttrDict):
             candidates=candidates,
             candidate_vecs=candidate_vecs,
             image=image,
-            observations=observations,
             **kwargs,
         )
+
+    def cuda(self):
+        for key in self.keys():
+            if torch.is_tensor(self[key]):
+                self[key] = self[key].cuda()
 
 
 class Output(AttrDict):
@@ -1580,18 +1569,18 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        # make sure we're only passing around tensors
+        valid_inds = torch.LongTensor(valid_inds)
+
         return Batch(
             batchsize=len(valid_inds),
             text_vec=xs,
-            text_lengths=x_lens,
             label_vec=ys,
-            label_lengths=y_lens,
             labels=labels,
             valid_indices=valid_inds,
             candidates=cands,
             candidate_vecs=cand_vecs,
             image=imgs,
-            observations=exs,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
