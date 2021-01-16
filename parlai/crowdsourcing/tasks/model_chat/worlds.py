@@ -246,6 +246,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                         # Attach the problem data to the last utterance, since the human
                         # hasn't said anything since then
                         self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
+                        self.dialog[turn_idx]['final_rating'] = acts[idx]['task_data'][
+                            'final_rating'
+                        ]
 
                 # Save the final chat data
                 time_string = time.strftime('%Y%m%d_%H%M%S')
