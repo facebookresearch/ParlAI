@@ -10,6 +10,7 @@ from parlai.core.opt import Opt
 import torch
 from parlai.agents.seq2seq.modules import opt_to_kwargs
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+from parlai.utils.torch import padded_3d
 
 from .modules import HredModel
 
@@ -129,26 +130,12 @@ class HredAgent(TorchGeneratorAgent):
         Store history vec as context_vec.
         """
         batch = super().batchify(obs_batch, sort)
-        batch["context_vec"], batch["hist_lens"] = self.parse_context_vec(batch)
-        return batch
-
-    def parse_context_vec(self, batch):
-        batch_context_vec = []
-        hist_lens = []
-        for i in range(len(batch["observations"])):
-            hist_len = len(batch["observations"][i]["context_vec"])
-            hist_lens.append(hist_len)
-            for j in range(hist_len):
-                context_vec = batch["observations"][i]["context_vec"][j]
-                batch_context_vec.append(torch.tensor(context_vec, device=self.device))
-
-        padded_context_vec = torch.nn.utils.rnn.pad_sequence(
-            batch_context_vec, batch_first=True
-        ).squeeze(1)
-        return (
-            padded_context_vec,
-            torch.tensor(hist_lens, dtype=torch.long, device=self.device),
+        context_vec = padded_3d([o['context_vec'] for o in obs_batch])
+        batch['context_vec'] = context_vec
+        batch['hist_lens'] = torch.LongTensor(
+            [len(o['context_vec']) for o in obs_batch]
         )
+        return batch
 
     def _model_input(self, batch):
         return (batch.text_vec, batch.context_vec, batch.hist_lens)

@@ -167,7 +167,7 @@ def padded_3d(
             if len(item) == 0:
                 continue
             if not isinstance(item, torch.Tensor):
-                item = torch.Tensor(item, dtype=dtype)
+                item = torch.as_tensor(item, dtype=dtype)
             output[i, j, : len(item)] = item
 
     return output
