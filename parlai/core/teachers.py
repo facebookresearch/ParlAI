@@ -459,7 +459,7 @@ class FixedDialogTeacher(Teacher):
             # metrics back into the original observation. This is an abuse of
             # Messages being pointers
             if 'metrics' in observation:
-                # override agent-level metrics for all ones
+                # override agent-level metrics if present
                 observation.pop('metrics')
             observation['metrics'] = recent_metrics
         return observation
