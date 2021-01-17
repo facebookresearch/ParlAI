@@ -671,6 +671,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
 
+    def batchify(self, obs_batch, sort=True):
+        batch = super().batchify(obs_batch, sort=sort)
+        if self.beam_block_full_context:
+            batch['full_text_vec'] = self._pad_tensor(
+                [o['full_text_vec'] for o in obs_batch]
+            )
+        return batch
+
     def _model_input(self, batch):
         """
         Create the input (x) value for the model.
@@ -1017,10 +1025,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         ctxt = batch.text_vec[batch_idx]
         if self.beam_block_full_context:
-            full_ctxt = batch.observations[batch_idx].get('full_text_vec', ctxt)
-            if not isinstance(full_ctxt, torch.Tensor):
-                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
-            ctxt = full_ctxt
+            ctxt = batch.full_text_vec[batch_idx]
         return ctxt
 
     def _get_initial_decoder_input(

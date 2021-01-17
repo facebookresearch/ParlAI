@@ -10,7 +10,7 @@ from parlai.core.opt import Opt
 import torch
 from parlai.agents.seq2seq.modules import opt_to_kwargs
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
-from parlai.utils.torch import padded_3d
+from parlai.utils.torch import padded_3d, padded_tensor
 
 from .modules import HredModel
 
@@ -130,7 +130,10 @@ class HredAgent(TorchGeneratorAgent):
         Store history vec as context_vec.
         """
         batch = super().batchify(obs_batch, sort)
-        context_vec = padded_3d([o['context_vec'] for o in obs_batch])
+        # sum here is list concat, not addition
+        context_vec, hist_lens_ = self._pad_tensor(
+            sum([o['context_vec'] for o in obs_batch], [])
+        )
         batch['context_vec'] = context_vec
         batch['hist_lens'] = torch.LongTensor(
             [len(o['context_vec']) for o in obs_batch]
@@ -162,6 +165,7 @@ class HredAgent(TorchGeneratorAgent):
             if history_string:
                 history_vec = history.get_history_vec_list()
                 obs["text_vec"] = history_vec[-1]
+                obs["full_text_vec"] = history.get_history_vec()
                 obs["context_vec"] = history_vec
 
         # check truncation

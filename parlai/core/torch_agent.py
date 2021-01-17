@@ -124,9 +124,9 @@ class Batch(AttrDict):
             **kwargs,
         )
 
-    def cuda(self):
+    def to(self, dev):
         """
-        Move all tensors in the batch to cuda.
+        Move all tensors in the batch to a device.
 
         Happens in place.
 
@@ -135,8 +135,8 @@ class Batch(AttrDict):
         """
         for key in self.keys():
             if torch.is_tensor(self[key]):
-                self[key] = self[key].cuda()
-        # just to enable batch = batch.cuda() idomatics
+                self[key] = self[key].to(dev)
+        # just to enable batch = batch.to(dev) idomatics
         return self
 
 
@@ -1337,7 +1337,6 @@ class TorchAgent(ABC, Agent):
 
         Useful to override to change vectorization behavior
         """
-
         if 'text' not in obs:
             return obs
 
@@ -1487,9 +1486,7 @@ class TorchAgent(ABC, Agent):
         This is intentionally overridable so that models can control how
         to pad their input.
         """
-        return padded_tensor(
-            items, pad_idx=self.NULL_IDX, fp16friendly=self.fp16, device=self.opt['gpu']
-        )
+        return padded_tensor(items, pad_idx=self.NULL_IDX, fp16friendly=self.fp16)
 
     def is_valid(self, obs):
         """
@@ -1971,7 +1968,7 @@ class TorchAgent(ABC, Agent):
         # create a batch from the vectors
         batch = self.batchify(observations)
         if self.use_cuda:
-            batch = batch.cuda()
+            batch = batch.to(0 if self.opt['gpu'] == -1 else self.opt['gpu'])
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (

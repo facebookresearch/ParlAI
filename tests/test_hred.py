@@ -48,7 +48,7 @@ class TestHred(unittest.TestCase):
                 model_file="zoo:unittest/hred_model/model",
                 dict_file="zoo:unittest/hred_model/model.dict",
                 skip_generation=False,
-                batchsize=32,
+                batchsize=1,
             )
         )
 
