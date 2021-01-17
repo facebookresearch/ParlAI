@@ -138,6 +138,8 @@ def padded_3d(
     """
     Make 3D padded tensor for list of lists of 1D tensors or lists.
 
+    Will keep items on the same device as originally.
+
     :param tensors:
         list of lists of 1D tensors (or lists)
     :param pad_idx:
@@ -157,7 +159,8 @@ def padded_3d(
         c += FP16_PAD_SIZE - (c % FP16_PAD_SIZE)
     c = max(c, 1)
 
-    output = torch.full((a, b, c), pad_idx, dtype=dtype)
+    dev = tensors[0][0].device
+    output = torch.full((a, b, c), pad_idx, dtype=dtype, device=dev)
 
     for i, row in enumerate(tensors):
         item: Sized

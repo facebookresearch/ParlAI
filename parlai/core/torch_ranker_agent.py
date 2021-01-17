@@ -732,6 +732,10 @@ class TorchRankerAgent(TorchAgent):
             cand_vecs = padded_3d(
                 batch.candidate_vecs, self.NULL_IDX, fp16friendly=self.fp16
             )
+            if self.use_cuda:
+                cand_vecs = cand_vecs.to(
+                    0 if self.opt['gpu'] == -1 else self.opt['gpu']
+                )
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
