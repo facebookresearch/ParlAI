@@ -5,7 +5,7 @@
     "person2_seed_utterance": "we go to worship christian concerts",
     "additional_context": null,
     "dialog": [
-        {"episode_done": false, "id": "Person1",s "text": "Hi!", "fake_start": true, "agent_idx": 0},
+        {"episode_done": false, "id": "Person1", "text": "Hi!", "fake_start": true, "agent_idx": 0},
         {"agent_idx": 1, "text": "Utterance placeholder line 1 0", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": true, "none_all_good": false}},
         {"agent_idx": 0, "text": "Utterance placeholder line 0 1", "id": "Person1"},
         {"agent_idx": 1, "text": "Utterance placeholder line 1 1", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
