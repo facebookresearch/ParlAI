@@ -664,16 +664,14 @@ class Metrics(object):
     def __init__(self, threadsafe=False, shared=None):
         if shared and 'data' in shared:
             # This is a clone
-            self._buffer = None
-            self._queue = None
-            self._worker = False
             self._data = shared['data']
         else:
             # The original
-            self._buffer = None
-            self._queue = None
-            self._worker = False
             self._data = {}
+
+        # recent data is to track per-example metrics, and so should never be
+        # shared
+        self._recent_data = {}
 
     def __str__(self):
         return str(self._data)
@@ -686,18 +684,32 @@ class Metrics(object):
         Record an accumulation to a metric.
         """
         self._data[key] = self._data.get(key) + value
+        self._recent_data[key] = self._recent_data.get(key) + value
 
     def report(self):
         """
         Report the metrics over all data seen so far.
         """
-        return {k: v for k, v in self._data.items()}
+        return self._data.copy()
+
+    def clear_recent(self):
+        """
+        Clear recent metrics (latest example).
+        """
+        self._recent_data.clear()
+
+    def report_recent(self):
+        """
+        Report recent metrics (latest example).
+        """
+        return self._recent_data.copy()
 
     def clear(self):
         """
         Clear all the metrics.
         """
         self._data.clear()
+        self._recent_data.clear()
 
     def share(self):
         return {'data': self._data}

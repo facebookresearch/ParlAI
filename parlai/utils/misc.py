@@ -43,6 +43,7 @@ SPECIAL_FORMATED_DISPLAY_MESSAGE_FIELDS = {
     'text_candidates',
     'reward',
     'token_losses',
+    'metrics',
 }
 
 MUST_SHOW_MESSAGE_FIELDS = {'image', 'text', 'labels', 'eval_labels', 'reward'}
@@ -630,6 +631,16 @@ def display_messages(
                     style=field,
                 )
                 lines.append(line)
+        if msg.get('metrics') and verbose:
+            lines.append(
+                _pretty_lines(
+                    indent_space=space,
+                    field='metrics',
+                    value="\n" + nice_report(msg['metrics']),
+                    style='text',
+                )
+            )
+
         # Handling this separately since we need to clean up the raw output before displaying.
         token_loss_line = _token_losses_line(msg, fields_to_show, space)
         if token_loss_line:

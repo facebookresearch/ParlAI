@@ -179,6 +179,33 @@ class TestMetrics(unittest.TestCase):
 
         assert m.report()['key'] == 32768 + 1
 
+    def test_recent(self):
+        m = Metrics()
+        m2 = Metrics(shared=m.share())
+        m.add('test', SumMetric(1))
+        assert m.report() == {'test': 1}
+        assert m.report_recent() == {'test': 1}
+        m.clear_recent()
+        m.add('test', SumMetric(2))
+        assert m.report() == {'test': 3}
+        assert m.report_recent() == {'test': 2}
+        assert m2.report() == {'test': 3}
+        assert m2.report_recent() == {}
+        m2.add('test', SumMetric(3))
+        assert m2.report() == {'test': 6}
+        assert m.report() == {'test': 6}
+        assert m2.report_recent() == {'test': 3}
+        assert m.report_recent() == {'test': 2}
+        m2.clear_recent()
+        assert m2.report() == {'test': 6}
+        assert m.report() == {'test': 6}
+        assert m2.report_recent() == {}
+        assert m.report_recent() == {'test': 2}
+        m.clear_recent()
+        assert m2.report() == {'test': 6}
+        assert m.report() == {'test': 6}
+        assert m.report_recent() == {}
+
 
 class TestAggregators(unittest.TestCase):
     def test_unnamed_aggregation(self):
