@@ -80,12 +80,7 @@ def make_aboutpage():
 
 def make_homepage():
     template = _read_file(os.path.join(TEMPLATES, 'home.html'))
-    news = _read_file(os.path.join(GIT_ROOT_LEVEL, 'NEWS.md'))
-    news = news.replace('## News', '')
-    news_html = ghmarkdown(news)
-    content = template.replace('{{{CONTENT}}}', news_html)
-    html = wrap_base(content, "ParlAI")
-    _write_file('index.html', html)
+    _write_file('index.html', template)
 
 
 def make_projects_landing():
