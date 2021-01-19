@@ -248,11 +248,14 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                         self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
 
                 # Save the final chat data
+                date_folder = time.strftime('%Y_%m_%d')
                 time_string = time.strftime('%Y%m%d_%H%M%S')
-                chat_data_folder = self.opt['chat_data_folder']
-                os.makedirs(chat_data_folder, exist_ok=True)
+                chat_data_subfolder = os.path.join(
+                    self.opt['chat_data_folder'], date_folder
+                )
+                os.makedirs(chat_data_subfolder, exist_ok=True)
                 chat_data_path = os.path.join(
-                    chat_data_folder,
+                    chat_data_subfolder,
                     f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
                 )
                 final_chat_data = self.get_final_chat_data()

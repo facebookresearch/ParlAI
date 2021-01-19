@@ -10,6 +10,8 @@ Call `run.py` to run this task with the default parameters, as set by `conf/exam
 
 Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing all models to be chatted with, as well as the ParlAI flags for running each one. See `task_config/model_opts.yaml` for an example.
 
+Set `mephisto.blueprint.chat_data_folder` to the root folder that you want all results of HITs to be saved in: all results will be saved to a date folder (of format `2021_01_15`) within that root folder.
+
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
@@ -51,4 +53,4 @@ Note that onboarding is not currently supported with human+model image chat: use
 
 ## Analysis
 
-Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. The `ModelChatResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own.
+Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. The `ModelChatResultsCompiler` in that script uses dummy annotation buckets by default; set `--problem-buckets` in order to define your own. Set `--results-folders` to the value of `mephisto.blueprint.chat_data_folder` used when running HITs.
