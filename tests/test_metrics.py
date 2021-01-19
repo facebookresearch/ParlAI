@@ -196,6 +196,15 @@ class TestMetrics(unittest.TestCase):
         assert m.report() == {'test': 6}
         assert m2.report_recent() == {'test': 3}
         assert m.report_recent() == {'test': 2}
+        m2.clear_recent()
+        assert m2.report() == {'test': 6}
+        assert m.report() == {'test': 6}
+        assert m2.report_recent() == {}
+        assert m.report_recent() == {'test': 2}
+        m.clear_recent()
+        assert m2.report() == {'test': 6}
+        assert m.report() == {'test': 6}
+        assert m.report_recent() == {}
 
 
 class TestAggregators(unittest.TestCase):
