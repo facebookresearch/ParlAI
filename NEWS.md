@@ -1,7 +1,7 @@
 ## News
 
 **Archive Information**
-We are now making most of our major announcements on [Twitter](https://twitter.com/parlai_parley) and our
+We are now making most of our major announcements on [Twitter](https://twitter.com/parlai_parley) and in our
 [Release Notes](https://github.com/facebookresearch/ParlAI/releases).
 
 ### Older news
