@@ -80,7 +80,8 @@ def make_aboutpage():
 
 def make_homepage():
     template = _read_file(os.path.join(TEMPLATES, 'home.html'))
-    _write_file('index.html', template)
+    html = wrap_base(template, "ParlAI")
+    _write_file('index.html', html)
 
 
 def make_projects_landing():
