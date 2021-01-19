@@ -678,7 +678,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             and obs_batch
             and 'full_text_vec' in obs_batch[0]
         ):
-            batch['full_text_vec'] = self._pad_tensor(
+            batch['full_text_vec'], _ = self._pad_tensor(
                 [obs_batch[i]['full_text_vec'] for i in batch.valid_indices]
             )
         return batch
