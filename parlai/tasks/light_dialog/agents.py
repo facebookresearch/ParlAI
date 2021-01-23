@@ -117,7 +117,7 @@ class DefaultTeacher(ParlAIDialogTeacher):
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        self.pct_train_exs = opt['light_percent_train_exs']
+        self.pct_train_exs = opt.get('light_percent_train_exs', 1)
         assert 0.0 <= self.pct_train_exs <= 1.0
         opt['parlaidialogteacher_datafile'] = _path(opt)
         if 'light_use_speech_prefix' not in opt:
