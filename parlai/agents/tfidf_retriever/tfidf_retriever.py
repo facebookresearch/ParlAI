@@ -82,12 +82,6 @@ class TfidfRetrieverAgent(Agent):
             help='How many docs to retrieve.',
         )
         parser.add_argument(
-            '--retriever-mode',
-            choices=['keys', 'values'],
-            default='values',
-            help='Whether to retrieve the stored key or the stored value.',
-        )
-        parser.add_argument(
             '--remove-title',
             type='bool',
             default=False,
