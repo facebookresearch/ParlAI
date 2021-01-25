@@ -63,7 +63,7 @@ RESOURCES = [
     build_data.DownloadableFile(
         'http://parl.ai/downloads/blended_skill_talk/human_annotations.json',
         'human_annotations.json',
-        'REPLACE_ME',
+        'fe76a989d4fdcfa4a5beb214054069ed0abf45f3530eaeb8df38e75f7bb14795',
         zipped=False,
     ),
 ]
