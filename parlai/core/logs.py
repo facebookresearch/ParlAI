@@ -110,7 +110,7 @@ class WandbLogger(object):
         """
         Add w&b CLI args.
         """
-        logger = argparser.add_argument_group('Tensorboard Arguments')
+        logger = parser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-wblog',
             '--wandb-log',
@@ -130,6 +130,7 @@ class WandbLogger(object):
             help='W&B project name. Defaults to timestamp.',
             hidden=False,
         )
+        return logger
 
     def __init__(self, opt: Opt, model=None):
         try:

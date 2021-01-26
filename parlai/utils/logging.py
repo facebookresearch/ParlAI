@@ -6,7 +6,7 @@
 import os
 import sys
 import logging
-from logging import getLogger
+from logging import getLogger  # noqa: F401
 
 try:
     import coloredlogs
