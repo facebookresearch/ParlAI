@@ -9,6 +9,9 @@ Agent does gets the local keyboard input in the act() function.
 Example: parlai eval_model -m local_human -t babi:Task1k:1 -dt valid
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
@@ -16,11 +19,14 @@ from parlai.utils.strings import colorize
 
 
 class LocalHumanAgent(Agent):
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group('Local Human Arguments')
+        agent = parser.add_argument_group('Local Human Arguments')
         agent.add_argument(
             '-fixedCands',
             '--local-human-candidates-file',
@@ -34,6 +40,7 @@ class LocalHumanAgent(Agent):
             default=False,
             help='If on, assumes single turn episodes.',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)

@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
 from parlai.utils.io import PathManager
@@ -52,9 +55,11 @@ class DefaultTeacher(FixedDialogTeacher):
 
         self.reset()
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Flickr30k arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('Flickr30k arguments')
         agent.add_argument(
             '--use_intro',
             type='bool',
@@ -70,6 +75,7 @@ class DefaultTeacher(FixedDialogTeacher):
             help='Number of candidates to use during \
                                 evaluation, setting to -1 uses all.',
         )
+        return parser
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up

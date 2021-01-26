@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 import parlai.tasks.md_gender.utils as gend_utils
@@ -20,10 +23,12 @@ class FunpediaTeacher(FixedDialogTeacher):
     Funpedia Gender gender.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        argparser = gend_utils.add_common_args(argparser)
-        return argparser
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = gend_utils.add_common_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         self.opt = opt

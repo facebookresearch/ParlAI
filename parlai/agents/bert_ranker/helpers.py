@@ -32,7 +32,7 @@ def add_common_args(parser):
     """
     Add command line arguments for this agent.
     """
-    TorchRankerAgent.add_cmdline_args(parser)
+    TorchRankerAgent.add_cmdline_args(parser, partial_opt=None)
     parser = parser.add_argument_group('Bert Ranker Arguments')
     parser.add_argument(
         '--add-transformer-layer',

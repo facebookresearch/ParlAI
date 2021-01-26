@@ -1,0 +1,4 @@
+worker_id,conversations,problems_found,avg_problems_per_convo
+WORKER_1,1,2,2.0
+WORKER_2,1,1,1.0
+WORKER_3,1,0,0.0

@@ -32,6 +32,7 @@ This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
 """
+from parlai.core.params import ParlaiParser
 from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
@@ -447,10 +448,20 @@ class FixedDialogTeacher(Teacher):
         """
         Process observation for metrics.
         """
+        self.metrics.clear_recent()
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
             self.custom_evaluation(self.last_act, self.lastY, observation)
             self.lastY = None
+        recent_metrics = self.metrics.report_recent()
+        if recent_metrics:
+            # for display purposes (display_model), take all accumulated
+            # metrics back into the original observation. This is an abuse of
+            # Messages being pointers
+            if 'metrics' in observation:
+                # override agent-level metrics if present
+                observation.pop('metrics')
+            observation['metrics'] = recent_metrics
         return observation
 
     def custom_evaluation(
@@ -1712,10 +1723,12 @@ class AbstractImageTeacher(FixedDialogTeacher):
         return a
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         # Be sure to call super() if overriding this method b/c
         # AbstractImageTeacher has necessary params
-        agent = argparser.add_argument_group('AbstractImageTeacher Arguments')
+        agent = parser.add_argument_group('AbstractImageTeacher Arguments')
         agent.add_argument(
             '--image-path',
             type=str,
@@ -1732,6 +1745,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             default=2048,
             help='Specify the size of image features Tensors.',
         )
+        return parser
 
     @property
     def image_id_key(self):

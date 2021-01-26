@@ -165,7 +165,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.3.1.1 -b stable
+              cd Mephisto; git checkout v0.3.2 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -429,15 +429,6 @@ jobs:
           cachename: teacher
           marker: teacher
 
-  mturk_tests:
-    executor: small_cpu37
-    working_directory: ~/ParlAI
-    parallelism: 1
-    steps:
-      - runtests:
-          cachename: mturk
-          marker: mturk
-
   build_website:
     executor: small_cpu37
     working_directory: ~/ParlAI
@@ -492,7 +483,6 @@ workflows:
             - unittests_37
             - unittests_gpu16
       - unittests_37
-      - mturk_tests
       - unittests_osx:
           requires:
             - unittests_gpu16

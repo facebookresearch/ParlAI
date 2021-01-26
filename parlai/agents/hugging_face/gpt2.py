@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import os
 
 import torch
@@ -112,7 +115,7 @@ class GPT2Decoder(torch.nn.Module):
         model_input = model_input.clamp_(min=0)
         transformer_outputs = self.transformer(
             model_input,
-            past=incr_state,
+            past_key_values=incr_state,
             attention_mask=attention_mask,
             position_ids=position_ids,
         )
@@ -224,8 +227,10 @@ class Gpt2Agent(TorchGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        agent = argparser.add_argument_group("Gpt2 Args")
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group("Gpt2 Args")
         agent.add_argument(
             "--gpt2-size",
             type=str,
@@ -246,12 +251,12 @@ class Gpt2Agent(TorchGeneratorAgent):
             default=False,
             help="Add start tokens when finetuning.",
         )
-        argparser.set_defaults(
+        parser.set_defaults(
             text_truncate=768,
             label_truncate=256,
             dict_maxexs=0,  # skip building dictionary
         )
-        super(Gpt2Agent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         warn_once("WARNING: this model is in beta and the API is subject to change.")
         return agent
 

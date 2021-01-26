@@ -41,8 +41,8 @@ def _path(opt, test_type):
 
 
 class DecodeTeacher(DialogTeacher):
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(cls, parser, partial_opt):
         parser = parser.add_argument_group('DECODE Teacher Args')
         parser.add_argument(
             '--test_type',
@@ -50,6 +50,7 @@ class DecodeTeacher(DialogTeacher):
             default='vanilla',
             help="The test sets can have three types: vanilla (default), human-bot, a2t, and rct.",
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)

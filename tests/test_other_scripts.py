@@ -13,6 +13,24 @@ import unittest
 import parlai.utils.testing as testing_utils
 
 
+class TestDisplayModel(unittest.TestCase):
+    def test_display_model(self):
+        from parlai.scripts.display_model import DisplayModel
+
+        with testing_utils.capture_output() as output:
+            DisplayModel.main(
+                model='fixed_response',
+                fixed_response='1 2 3 4',
+                task='integration_tests',
+                verbose=True,
+            )
+
+        output = output.getvalue()
+        assert 'metrics' in output
+        assert 'accuracy' in output
+        assert '1 2 3 4' in output
+
+
 class TestConvertToParlaiFormat(unittest.TestCase):
     def test_convert(self):
         from parlai.scripts.convert_data_to_parlai_format import (

@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 import torch.nn as nn
 
@@ -12,8 +15,10 @@ from parlai.agents.transformer.modules import TransformerEncoder
 
 class SelfFeedingModel(nn.Module):
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        model = argparser.add_argument_group('Self Feeding Model')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        model = parser.add_argument_group('Self Feeding Model')
 
         model.add_argument(
             '-shl',
@@ -57,6 +62,7 @@ class SelfFeedingModel(nn.Module):
             default=False,
             help="If True, the satisfaction task shares the dialog " "encoder",
         )
+        return parser
 
     def __init__(self, opt, dictionary):
         super().__init__()

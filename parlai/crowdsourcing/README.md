@@ -1,6 +1,8 @@
 # Crowdsourcing tasks
 
-Code for crowdsourcing tasks that use Mephisto. See https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md for a guide to quickly getting started with Mephisto.
+Code for crowdsourcing tasks that use Mephisto. See the [Mephisto quick start guide](https://github.com/facebookresearch/mephisto/blob/master/docs/quickstart.md) to quickly get started with Mephisto. This README provides a quick overview of how to run crowdsourcing tasks in ParlAI: see the [tutorial](https://github.com/facebookresearch/ParlAI/blob/master/docs/source/tutorial_crowdsourcing.md) for a deeper guide on how to set up and configure new crowdsourcing tasks.
+
+**NOTE:** `parlai/crowdsourcing/` has taken the place of `parlai/mturk/` as the home for ParlAI crowdsourcing tasks. Information on how to find the old code in `parlai/mturk/` can be find [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md).
 
 ## Running tasks
 

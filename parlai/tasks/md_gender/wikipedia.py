@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.core.teachers import ChunkTeacher
 from parlai.tasks.wikipedia.build import build
@@ -62,10 +65,12 @@ class WikipediaTeacher(ChunkTeacher):
     Wikipedia gender.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        argparser = gend_utils.add_common_args(argparser)
-        agent = argparser.add_argument_group('Wiki gender')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = gend_utils.add_common_args(parser)
+        agent = parser.add_argument_group('Wiki gender')
         agent.add_argument(
             '--class-task',
             type=str,
@@ -79,7 +84,7 @@ class WikipediaTeacher(ChunkTeacher):
             default=False,
             help='Mask explicitly gendered words.',
         )
-        return argparser
+        return parser
 
     def __init__(self, opt, shared=None):
         if shared is None:

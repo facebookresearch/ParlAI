@@ -1,0 +1,28 @@
+{
+    "personas": [["i enjoy sports such as running.", "my favorite color is blue."], ["i like to make time stop.", "i live in the cloud."]], 
+    "context_dataset": "wizard_of_wikipedia", 
+    "person1_seed_utterance": "I am trying to recall, where does blue fall on the spectrum of visible light", 
+    "person2_seed_utterance": "It is right between violet and green", 
+    "additional_context": "Blue",
+    "dialog": [
+        {"episode_done": false, "id": "Person1", "text": "Hi!", "fake_start": true, "agent_idx": 0},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 0", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder line 0 1", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 1", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder line 0 2", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 2", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder line 0 3", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 3", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder line 0 4", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 4", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder line 0 5", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 5", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}},
+        {"agent_idx": 0, "text": "Utterance placeholder line 0 6", "id": "Person1"},
+        {"agent_idx": 1, "text": "Utterance placeholder line 1 6", "id": "TransformerGenerator", "problem_data": {"bucket_0": false, "bucket_1": false, "bucket_2": false, "bucket_3": false, "bucket_4": false, "none_all_good": true}, "final_rating": "1"}
+    ],
+    "workers": ["WORKER_3", "model_name"],
+    "bad_workers": [],
+    "acceptability_violations": [""],
+    "hit_ids": ["HIT_ID_3", "none"],
+    "assignment_ids": ["ASSIGNMENT_ID_3", "none"]
+}

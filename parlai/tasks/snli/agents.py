@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import copy
 import os
 
@@ -42,8 +45,10 @@ def _path(opt):
 
 
 class DefaultTeacher(DialogTeacher):
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('SNLI Teacher Args')
         parser.add_argument(
             '-dfm',
@@ -61,6 +66,7 @@ class DefaultTeacher(DialogTeacher):
             help="True if label candidates are (contradiction, not_contradiction), and (entailment, contradiction, "
             "neutral) otherwise (default: False).",
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)

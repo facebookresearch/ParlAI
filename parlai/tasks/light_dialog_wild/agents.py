@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import ParlAIDialogTeacher
 from .build import build, get_fpath
 
@@ -28,9 +31,11 @@ def _path(opt):
 
 
 class DefaultTeacher(ParlAIDialogTeacher):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('LIGHT Dialogue options')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
             type=str,
@@ -124,6 +129,7 @@ class DefaultTeacher(ParlAIDialogTeacher):
             help="If specified, prefix text with character name",
         )
         agent.add_argument('--light_percent_train_exs', type=float, default=1.0)
+        return parser
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -147,9 +153,11 @@ class DefaultTeacher(ParlAIDialogTeacher):
 
 
 class SimpleTeacher(DefaultTeacher):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('LIGHT Dialogue options')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
             type=str,
@@ -240,6 +248,7 @@ class SimpleTeacher(DefaultTeacher):
             help="If specified, prefix text with character name",
         )
         agent.add_argument('--light_percent_train_exs', type=float, default=1.0)
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -247,9 +256,11 @@ class SimpleTeacher(DefaultTeacher):
 
 
 class SimpleMultiTeacher(DefaultTeacher):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('LIGHT Dialogue options')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
             type=str,
@@ -340,6 +351,7 @@ class SimpleMultiTeacher(DefaultTeacher):
             help="If specified, prefix text with character name",
         )
         agent.add_argument('--light_percent_train_exs', type=float, default=1.0)
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -353,10 +365,12 @@ class ReversedTeacher(DefaultTeacher):
     Only support swapping text & labels, no other guarantees.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        DefaultTeacher.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('LIGHT Dialogue options')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light-min-conv-length',
             type=int,
@@ -385,6 +399,7 @@ class ReversedTeacher(DefaultTeacher):
             default=False,
             help='if specified, setting/characters prettified.',
         )
+        return parser
 
     def _setup_data(self, path):
         super()._setup_data(path)

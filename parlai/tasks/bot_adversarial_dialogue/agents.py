@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import os
 
 from parlai.core.opt import Opt
@@ -45,8 +47,11 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
     Teacher for bot_adversarial_dialogue.
     """
 
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Bot Adversarial Dialogue options')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('Bot Adversarial Dialogue options')
         agent.add_argument(
             '--bad-num-turns',
             type=int,
@@ -73,6 +78,7 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
             default=False,
             help="Whether to include bot persona or not in the message",
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         opt['parlaidialogteacher_datafile'] = _adversarial_dialogue_datapath(opt=opt)
@@ -175,8 +181,11 @@ class HumanSafetyEvaluationTeacher(ParlAIDialogTeacher):
     Teacher for human safety evaluation on bot adversarial dialogues.
     """
 
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group(
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group(
             'Bot Adversarial Dialogue Human Evaluation options'
         )
         agent.add_argument(
@@ -191,6 +200,7 @@ class HumanSafetyEvaluationTeacher(ParlAIDialogTeacher):
             default=True,
             help="Whether to flatten the dialogue context",
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         opt['parlaidialogteacher_datafile'] = _human_safety_eval_datapath(opt=opt)

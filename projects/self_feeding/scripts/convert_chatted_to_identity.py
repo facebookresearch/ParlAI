@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.self_feeding.utils import (
+from projects.self_feeding.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
@@ -22,31 +22,31 @@ CONTINUE = "and in response to what you were saying before"  # Not the first wor
 
 
 def setup_args():
-    argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str)
-    argparser.add_argument('-of', '--outfile', type=str)
-    argparser.add_argument(
+    parser = ArgumentParser()
+    parser.add_argument('-if', '--infile', type=str)
+    parser.add_argument('-of', '--outfile', type=str)
+    parser.add_argument(
         '-histsz',
         '--history-size',
         type=int,
         default=-1,
         help="The number of turns to include in the prompt.",
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-pos',
         '--positives',
         type=str,
         default='positive',
         help="A comma-separated list of ratings with positive label",
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-neg',
         '--negatives',
         type=str,
         default='negative',
         help="A comma-separated list of ratings with negative label",
     )
-    opt = vars(argparser.parse_args())
+    opt = vars(parser.parse_args())
 
     return opt
 

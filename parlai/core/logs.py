@@ -15,6 +15,8 @@ extended to any other tool like visdom.
 """
 
 import os
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import json
 import numbers
 import datetime
@@ -29,12 +31,14 @@ class TensorboardLogger(object):
     Log objects to tensorboard.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add tensorboard CLI args.
         """
-        logger = argparser.add_argument_group('Tensorboard Arguments')
+        logger = parser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-tblog',
             '--tensorboard-log',
@@ -51,6 +55,7 @@ class TensorboardLogger(object):
             help="Tensorboard logging directory, defaults to model_file.tensorboard",
             hidden=False,
         )
+        return parser
 
     def __init__(self, opt: Opt):
         try:
@@ -99,7 +104,9 @@ class WandbLogger(object):
     """
 
     @staticmethod
-    def add_cmdline_args(argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add w&b CLI args.
         """

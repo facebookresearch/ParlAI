@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.agents.hugging_face.dict import DialoGPTDictionaryAgent
 from parlai.agents.hugging_face.gpt2 import Gpt2Agent, GPT2Decoder, HFGPT2Model
 from parlai.utils.misc import warn_once
@@ -87,23 +90,25 @@ class DialogptAgent(Gpt2Agent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        agent = argparser.add_argument_group('DialoGPT Args')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('DialoGPT Args')
         agent.add_argument(
             '--gpt2-size',
             type=str,
-            default='small',
+            default='medium',
             choices=['small', 'medium', 'large'],
             help='Which size model to initialize.',
         )
-        argparser.set_defaults(
+        parser.set_defaults(
             delimiter='<|endoftext|>',
             history_add_global_end_token='<|endoftext|>',
             text_truncate=768,
             label_truncate=256,
             dict_maxexs=0,  # skip building dictionary
         )
-        super(DialogptAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         warn_once('WARNING: this model is in beta and the API is subject to change.')
         return agent
 

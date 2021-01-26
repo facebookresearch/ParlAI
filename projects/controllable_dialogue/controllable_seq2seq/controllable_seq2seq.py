@@ -18,6 +18,9 @@ However, for simplicity and to keep things as similar as possible to the version
 for the paper, we have kept this file mostly the same.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.torch_agent import TorchAgent, Output, Batch
 from parlai.utils.misc import round_sigfigs
 from parlai.utils.torch import padded_tensor, argsort, neginf
@@ -57,11 +60,13 @@ class ControllableSeq2seqAgent(TorchAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group('ControllableSeq2seqAgent Arguments')
+        agent = parser.add_argument_group('ControllableSeq2seqAgent Arguments')
         agent.add_argument(
             '--init-model',
             type=str,
@@ -256,8 +261,8 @@ class ControllableSeq2seqAgent(TorchAgent):
             default=False,
             help='If true, print out beam search info',
         )
-        TorchAgent.add_cmdline_args(argparser)
-        ControllableSeq2seqAgent.dictionary_class().add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
 
     def __init__(self, opt, shared=None):

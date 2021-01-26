@@ -7,6 +7,7 @@
 Models and helper classes for style-controlled generation.
 """
 
+from parlai.core.params import ParlaiParser
 import random
 from typing import List, Optional
 
@@ -35,13 +36,15 @@ class StyleAgentMixin:
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
 
         Does not add arguments from its superclass because it's a mixin.
         """
-        agent = argparser.add_argument_group('StyleAgentMixin arguments')
+        agent = parser.add_argument_group('StyleAgentMixin arguments')
         agent.add_argument(
             '--use-style-frac',
             type=float,

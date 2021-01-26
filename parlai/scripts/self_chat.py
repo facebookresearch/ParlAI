@@ -75,7 +75,7 @@ def setup_args(parser=None):
         help='Path to file containing opts to override for partner',
     )
     parser.set_defaults(interactive_mode=True, task='self_chat')
-    WorldLogger.add_cmdline_args(parser)
+    WorldLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

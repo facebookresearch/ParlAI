@@ -16,6 +16,7 @@ As an example, try running:
 `parlai display_data -t genderation_bias:controllable_task:convai2`
 """
 
+from parlai.core.params import ParlaiParser
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
@@ -45,8 +46,10 @@ class ControllableTaskTeacher(FixedDialogTeacher):
     in which we append to the context a special classification token.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         flattened = parser.add_argument_group('ControllableTaskTeacher Flattening Args')
         flattened.add_argument(
             '--flatten-include-labels',
@@ -92,8 +95,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
         tasks = get_original_task_module(opt, multi_possible=True)
         for task in tasks:
             if hasattr(task, 'add_cmdline_args'):
-                task.add_cmdline_args(parser)
-
+                task.add_cmdline_args(parser, partial_opt=partial_opt)
         return parser
 
     def __init__(self, opt: Opt, shared: TShared = None):

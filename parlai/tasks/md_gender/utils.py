@@ -65,11 +65,11 @@ def get_data_stats(data, key='label', lst=True):
         print(f'{k}: {v}')
 
 
-def add_common_args(argparser):
+def add_common_args(parser):
     """
     Add arguments common across all of the datasets.
     """
-    agent = argparser.add_argument_group('Gender Multiclass args')
+    agent = parser.add_argument_group('Gender Multiclass args')
     agent.add_argument(
         '--balance',
         type='bool',
@@ -94,7 +94,7 @@ def add_common_args(argparser):
         default=1.0,
         help='Rate at which to sample examples from the unknown class',
     )
-    return argparser
+    return parser
 
 
 def balance_data(data_list, key='labels', shuffle=True, exclude_labels=None):

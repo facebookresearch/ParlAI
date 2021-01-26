@@ -5,14 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 
 import copy
-import os
-from typing import Dict, List, Optional
+from typing import Dict
 
 from omegaconf import DictConfig
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent
 from parlai.core.message import Message
-from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.tasks.model_chat.constants import AGENT_1
 from parlai.utils.strings import normalize_reply
@@ -89,110 +87,42 @@ class TurkLikeAgent:
 
     @staticmethod
     def get_bot_agents(
-        args: DictConfig,
-        active_models: Optional[List[str]] = None,
-        model_opts: Optional[Dict[str, str]] = None,
-        no_cuda=False,
+        args: DictConfig, model_opts: Dict[str, str], no_cuda=False
     ) -> Dict[str, dict]:
         """
         Return shared bot agents.
 
-        Pass in model opts in one of two ways: (1) With the `model_opts` arg, where
-        `model_opts` is a dictionary whose keys are   model names and whose values are
-        strings that specify model params (i.e.   `--model image_seq2seq`). (2) With the
-        `active_models` arg, a list of model names: those models' opts will   be read
-        from args.blueprint.base_model_folder.
+        Pass in model opts with the `model_opts` arg, where `model_opts` is a dictionary
+        whose keys are model names and whose values are strings that specify model
+        params (i.e. `--model image_seq2seq`).
         """
-        # NOTE: in the future we may want to deprecate the `active_models` arg, to move
-        #  away from the paradigm of having all models in one folder
 
+        # Set up overrides
         model_overrides = {'model_parallel': args.blueprint.task_model_parallel}
         if no_cuda:
             # If we load many models at once, we have to keep it on CPU
             model_overrides['no_cuda'] = no_cuda
         else:
             logging.warn(
-                'WARNING: MTurk task has no_cuda FALSE. Models will run on GPU. Will not work if loading many models at once.'
+                'WARNING: MTurk task has no_cuda FALSE. Models will run on GPU. Will '
+                'not work if loading many models at once.'
             )
 
-        if active_models is not None:
+        # Convert opt strings to Opt objects
+        parser = ParlaiParser(True, True)
+        parser.set_params(**model_overrides)
+        processed_opts = {}
+        for name, opt_string in model_opts.items():
+            processed_opts[name] = parser.parse_args(opt_string.split())
 
-            model_overrides.update(
-                {
-                    'datatype': 'valid',  # So we don't have to load the optimizer
-                    'encode_candidate_vecs': True,  # For pulling from fixed list cands
-                    'interactive_mode': True,
-                    'skip_generation': False,
-                }
-            )
-            # Add overrides that were historically used when reading models from a
-            # static folder
-
-            # Get the model nicknames from common folder and use them to load opts
-            # from file
-            base_model_folder = os.path.expanduser(args.blueprint.base_model_folder)
-            models_available = []
-            for obj in os.listdir(base_model_folder):
-                if os.path.isdir(os.path.join(base_model_folder, obj)):
-                    models_available.append(obj)
-            logging.info(
-                f'Found {len(models_available)} models available for Mturk task in {base_model_folder}: {models_available}'
-            )
-
-            all_model_opts = {}
-            logging.info(f'Active models to use are: {active_models}')
-            for model_nickname in active_models:
-                model_overrides_copy = copy.deepcopy(model_overrides)
-                model_path = os.path.join(base_model_folder, model_nickname, 'model')
-                if os.path.isfile(model_path):
-                    model_opt = {
-                        'model_file': model_path,
-                        'override': model_overrides_copy,
-                    }
-                else:
-                    # Sometimes the model file is downloaded, like
-                    # `-m hugging_face/dialogpt`
-                    model_opt_path = model_path + '.opt'
-                    logging.info(
-                        f'Model file for model {model_nickname} does not exist! Instead, '
-                        f'loading opt from {model_opt_path}.'
-                    )
-                    model_opt = Opt.load(model_opt_path)
-                    if 'override' not in model_opt:
-                        model_opt['override'] = {}
-                    model_opt['override'].update(model_overrides_copy)
-                all_model_opts[model_nickname] = model_opt
-
-            final_model_opts = {m: all_model_opts[m] for m in active_models}
-
-        elif model_opts is not None:
-
-            parser = ParlaiParser(True, True)
-            parser.set_params(**model_overrides)
-
-            final_model_opts = {}
-            for name, opt in model_opts.items():
-                final_model_opts[name] = parser.parse_args(opt.split())
-
-        else:
-
-            raise ValueError('Either active_models or model_opts must be supplied!')
-
+        # Load and share all model agents
         logging.info(
-            f'Got {len(list(final_model_opts.keys()))} active models with keys: {final_model_opts.keys()}.'
+            f'Got {len(list(processed_opts.keys()))} models: {processed_opts.keys()}.'
         )
         shared_bot_agents = {}
-        for model_name, model_opt in final_model_opts.items():
+        for model_name, model_opt in processed_opts.items():
             logging.info('\n\n--------------------------------')
             logging.info(f'model_name: {model_name}, opt_dict: {model_opt}')
-            copied_opt_dict = copy.deepcopy(model_opt)
             model_agent = create_agent(model_opt, requireModelExists=True)
-
-            if active_models is not None:
-                # have to check that the options are set properly
-                for k, v in copied_opt_dict.items():
-                    if k != 'override':
-                        assert model_agent.opt[k] == v
-
             shared_bot_agents[model_name] = model_agent.share()
         return shared_bot_agents

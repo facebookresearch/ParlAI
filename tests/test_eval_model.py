@@ -216,7 +216,7 @@ class TestEvalModel(unittest.TestCase):
                 datatype='valid',
                 num_examples=5,
                 display_examples=False,
-                save_world_logs=True,
+                world_logs=save_report,
                 report_filename=save_report,
             )
             valid, test = testing_utils.eval_model(opt)

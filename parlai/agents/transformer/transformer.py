@@ -5,6 +5,9 @@
 """
 Transformer Agents.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.utils.torch import padded_3d
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
@@ -22,46 +25,46 @@ from .modules import (
 import torch
 
 
-def add_common_cmdline_args(argparser):
+def add_common_cmdline_args(parser):
     """
     Add common command line args.
     """
-    argparser.add_argument(
+    parser.add_argument(
         '-esz',
         '--embedding-size',
         type=int,
         default=300,
         help='Size of all embedding layers',
     )
-    argparser.add_argument('-nl', '--n-layers', type=int, default=2)
-    argparser.add_argument(
+    parser.add_argument('-nl', '--n-layers', type=int, default=2)
+    parser.add_argument(
         '-hid',
         '--ffn-size',
         type=int,
         default=300,
         help='Hidden size of the FFN layers',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--dropout', type=float, default=0.0, help='Dropout used in Vaswani 2017.'
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--attention-dropout',
         type=float,
         default=0.0,
         help='Dropout used after attention softmax.',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--relu-dropout',
         type=float,
         default=0.0,
         help='Dropout used after ReLU. From tensor2tensor.',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--n-heads', type=int, default=2, help='Number of multihead attention heads'
     )
-    argparser.add_argument('--learn-positional-embeddings', type='bool', default=False)
-    argparser.add_argument('--embeddings-scale', type='bool', default=True)
-    argparser.add_argument(
+    parser.add_argument('--learn-positional-embeddings', type='bool', default=False)
+    parser.add_argument('--embeddings-scale', type='bool', default=True)
+    parser.add_argument(
         '--n-positions',
         type=int,
         default=None,
@@ -69,14 +72,14 @@ def add_common_cmdline_args(argparser):
         help='Number of positional embeddings to learn. Defaults '
         'to truncate or 1024 if not provided.',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--n-segments',
         type=int,
         default=0,
         help='The number of segments that support the model. '
         'If zero no segment and no langs_embedding.',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--variant',
         choices={'aiayn', 'xlm', 'prelayernorm', 'bart'},
         default='aiayn',
@@ -84,7 +87,7 @@ def add_common_cmdline_args(argparser):
         'is used to match some fairseq models',
         recommended='xlm',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--activation',
         choices={'relu', 'gelu'},
         default='relu',
@@ -92,34 +95,34 @@ def add_common_cmdline_args(argparser):
         'more recent papers prefer gelu.',
         recommended='gelu',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--output-scaling',
         type=float,
         default=1.0,
         help='scale the output of every transformer by this quantity.',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--share-word-embeddings',
         type='bool',
         default=True,
         help='Share word embeddings table for candidate and context'
         'in the memory network',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-nel',
         '--n-encoder-layers',
         type=int,
         default=-1,
         help='This will overide the n-layers for asymmetrical transformers',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '-ndl',
         '--n-decoder-layers',
         type=int,
         default=-1,
         help='This will overide the n-layers for asymmetrical transformers',
     )
-    argparser.add_argument(
+    parser.add_argument(
         '--model-parallel',
         type='bool',
         default=False,
@@ -150,12 +153,14 @@ class TransformerRankerAgent(TorchRankerAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        super(TransformerRankerAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Transformer Arguments')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
         # memory and knowledge arguments
         agent.add_argument(
@@ -182,7 +187,7 @@ class TransformerRankerAgent(TorchRankerAgent):
         # model specific arguments
         agent.add_argument('--normalize-sent-emb', type='bool', default=False)
         agent.add_argument('--share-encoders', type='bool', default=True)
-        argparser.add_argument(
+        parser.add_argument(
             '--share-word-embeddings',
             type='bool',
             default=True,
@@ -206,8 +211,8 @@ class TransformerRankerAgent(TorchRankerAgent):
             help='Type of reduction at the end of transformer',
         )
 
-        argparser.set_defaults(learningrate=0.0001, optimizer='adamax', truncate=1024)
-        cls.dictionary_class().add_cmdline_args(argparser)
+        parser.set_defaults(learningrate=0.0001, optimizer='adamax', truncate=1024)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
 
         return agent
 
@@ -306,15 +311,17 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group('Transformer Arguments')
+        agent = parser.add_argument_group('Transformer Arguments')
         add_common_cmdline_args(agent)
-        cls.dictionary_class().add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
 
-        super(TransformerGeneratorAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
 
     def build_model(self, states=None):
@@ -362,10 +369,14 @@ class TransformerClassifierAgent(TorchClassifierAgent):
     Classifier based on Transformer.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
-        TransformerRankerAgent.add_cmdline_args(parser)  # add transformer args
-        TorchClassifierAgent.add_cmdline_args(parser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        TransformerRankerAgent.add_cmdline_args(
+            parser, partial_opt=partial_opt
+        )  # add transformer args
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         parser.add_argument(
             '--load-from-pretrained-ranker',
             type='bool',
@@ -374,6 +385,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
             '(used for pretraining)',
         )
         parser.set_defaults(reduction_type='first')
+        return parser
 
     def build_model(self):
         num_classes = len(self.class_list)
