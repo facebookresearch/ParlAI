@@ -115,7 +115,7 @@ class GPT2Decoder(torch.nn.Module):
         model_input = model_input.clamp_(min=0)
         transformer_outputs = self.transformer(
             model_input,
-            past=incr_state,
+            past_key_values=incr_state,
             attention_mask=attention_mask,
             position_ids=position_ids,
         )

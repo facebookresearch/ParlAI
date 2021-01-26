@@ -9,13 +9,16 @@ We actively welcome your pull requests.
 
 1. Fork the repo and create your branch from `master`. Set up your environment
    and run `pre-commit install` once.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Autoformat and lint your code (`bash autoformat.sh`)
-5. Ensure the test suite passes. Run `python -m pytest -m unit`.
-6. If you've added a new dataset, you should also run
+2. Link [CircleCI](https://circleci.com/vcs-authorize/) to your github account 
+   if you haven't done so previously (and make sure the CircleCI tests run 
+   successfully).
+3. If you've added code that should be tested, add tests.
+4. If you've changed APIs, update the documentation.
+5. Autoformat and lint your code (`bash autoformat.sh`)
+6. Ensure the test suite passes. Run `python -m pytest -m unit`.
+7. If you've added a new dataset, you should also run
    `python -m pytest -m data`. Copy-paste the output into a comment in your PR.
-7. If you haven't already, complete the Contributor License Agreement ("CLA").
+8. If you haven't already, complete the Contributor License Agreement ("CLA").
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need

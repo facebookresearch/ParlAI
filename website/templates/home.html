@@ -16,24 +16,25 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
 <section class="install-wizard wrap" style="background-color: #f7f7f7">
     <div class="container">
 
-        <div class="twitter-feed">
-        <a class="twitter-timeline" data-lang="en" data-width="600"
-            data-height="600" data-theme="light" data-link-color="#E81C4F"
-            href="https://twitter.com/parlai_parley?ref_src=twsrc%5Etfw">Tweets
-    by parlai_parley</a> <script async
-                                 src="https://platform.twitter.com/widgets.js"
-                                 charset="utf-8"></script> </div>
-        <div class="row">
-            <div class="col-md-5">
-                <h3>What's New</h3>
-            </div>
-        </div>
         <!-- <div class="row"> -->
+        <h2>What's new?</h2>
         <article class="markdown-body">
-            {{{CONTENT}}}
+            You can find the latest information about ParlAI by
+            <a href="https://twitter.com/parlai_parley">following us on Twitter</a> and
+            checking out our
+            <a href="https://github.com/facebookresearch/ParlAI/releases">Release Notes</a>.
         </article>
         <!-- </div> -->
-    </div>
+        <div class="twitter-feed">
+            <a class="twitter-timeline" data-lang="en" data-width="600"
+                data-height="600" data-theme="light" data-link-color="#E81C4F"
+                href="https://twitter.com/parlai_parley?ref_src=twsrc%5Etfw">Tweets
+                    by parlai_parley
+            </a>
+            <script async
+                src="https://platform.twitter.com/widgets.js"
+                charset="utf-8"></script>
+        </div>
 </section>
 
 <section class="install-wizard wrap">
@@ -43,7 +44,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
                 <a name="getstarted"></a><h3>Get Started</h3>
             </div>
         </div>
-        <!-- <div class="row">
+        <div class="row">
             <div class="col-md-7" style="padding-top: 20px; padding-bottom: 20px">
               <h4 style="color: #555"><b>To install ParlAI:</b></h4>
             </div>
@@ -51,7 +52,8 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
         <div class="command" style="margin-bottom: 20px">
             <div class="label">Run this command:</div>
             <div class="text">pip install parlai</div>
-        </div> -->
+        </div>
+        <!--
         <div class="row">
             <div class="col-md-7" style="padding-top: 20px; padding-bottom: 20px">
               <h4 style="color: #555"><b>Check out our <a href="https://github.com/facebookresearch/ParlAI/blob/master/README.md">GitHub repository</a>:</b></h4>
@@ -61,6 +63,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
             <div class="label">Run this command:</div>
             <div class="text"><code>git clone https://github.com/facebookresearch/ParlAI.git<br>cd ParlAI; python setup.py develop</code></div>
         </div>
+        -->
     </div>
 </section>
 
@@ -93,7 +96,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
         </div>
         <div class="command" style="margin-bottom: 20px">
             <div class="label">Run this command:</div>  
-            <div class="text" style="background-color: #fff"><code>parlai display_data -t babi:task1k:1</code></div>
+            <div class="text" style="background-color: #fff"><code>parlai display_data --task babi:task1k:1</code></div>
         </div>
 
         <div class="row">
@@ -103,7 +106,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
         </div>
         <div class="command" style="margin-bottom: 20px">
             <div class="label">Run this command:</div>  
-            <div class="text" style="background-color: #fff"><code>parlai display_data -t babi:task1k:1,squad -n 100</code></div>
+            <div class="text" style="background-color: #fff"><code>parlai display_data --task babi:task1k:1,squad -n 100</code></div>
         </div>
 
         <div class="row">
@@ -113,7 +116,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
         </div>
         <div class="command" style="margin-bottom: 20px">
             <div class="label">Run this command:</div>  
-            <div class="text" style="background-color: #fff"><code>parlai eval_model -m ir_baseline -t "#moviedd-reddit" -dt valid</code></div>
+            <div class="text" style="background-color: #fff"><code>parlai eval_model --model ir_baseline --task "#moviedd-reddit" --datatype valid</code></div>
         </div>
 
         <div class="row">
@@ -123,7 +126,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
         </div>
         <div class="command" style="margin-bottom: 20px">
             <div class="label">Run this command:</div>  
-            <div class="text" style="background-color: #fff"><code>parlai display_model -m ir_baseline -t "#moviedd-reddit" -dt valid</code></div>
+            <div class="text" style="background-color: #fff"><code>parlai display_model --model ir_baseline --task "#moviedd-reddit" --datatype valid</code></div>
         </div>
 
         <div class="row">
@@ -133,7 +136,7 @@ letter-spacing: 0em;">Seamless integration of Amazon Mechanical Turk for data co
         </div>
         <div class="command" style="margin-bottom: 20px">
             <div class="label">Run this command:</div>  
-            <div class="text" style="background-color: #fff"><code>parlai train_model -m drqa -t squad -bs 32 -mf /tmp/model_drqa</code></div>
+            <div class="text" style="background-color: #fff"><code>parlai train_model --model drqa --task squad --batchsize 32 --model-file /tmp/model_drqa</code></div>
         </div>
 
         <div class="row">

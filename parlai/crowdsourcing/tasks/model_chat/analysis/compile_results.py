@@ -190,7 +190,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                 if model_nickname in complete_convos_per_model:
                     complete_convos_per_model[model_nickname] += 1
                 else:
-                    complete_convos_per_model[model_nickname] = 0
+                    complete_convos_per_model[model_nickname] = 1
 
                 # Extract non-message info
                 info_dict = {
@@ -307,9 +307,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                             for bucket in self.regular_buckets + ['none_all_good']:
                                 d[bucket] = utt['problem_data'][bucket]
                             d['final_rating'] = (
-                                utt['problem_data']['final_rating']
-                                if 'final_rating' in utt['problem_data']
-                                else None
+                                utt['final_rating'] if 'final_rating' in utt else None
                             )
                         for k in self.regular_buckets + ['none_all_good']:
                             if k not in problem_counts[model_nickname]:

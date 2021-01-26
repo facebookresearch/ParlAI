@@ -97,7 +97,7 @@ class DialogptAgent(Gpt2Agent):
         agent.add_argument(
             '--gpt2-size',
             type=str,
-            default='small',
+            default='medium',
             choices=['small', 'medium', 'large'],
             help='Which size model to initialize.',
         )

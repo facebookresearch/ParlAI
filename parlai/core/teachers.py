@@ -448,10 +448,20 @@ class FixedDialogTeacher(Teacher):
         """
         Process observation for metrics.
         """
+        self.metrics.clear_recent()
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
             self.custom_evaluation(self.last_act, self.lastY, observation)
             self.lastY = None
+        recent_metrics = self.metrics.report_recent()
+        if recent_metrics:
+            # for display purposes (display_model), take all accumulated
+            # metrics back into the original observation. This is an abuse of
+            # Messages being pointers
+            if 'metrics' in observation:
+                # override agent-level metrics if present
+                observation.pop('metrics')
+            observation['metrics'] = recent_metrics
         return observation
 
     def custom_evaluation(

@@ -1,5 +1,5 @@
 Date folders: 2020_12_29
-Got 2 complete conversations for model: samples/model_name
+Got 3 complete conversations for model: samples/model_name
 3 complete conversations collected.
 0 bad conversations.
 3 approved conversations.

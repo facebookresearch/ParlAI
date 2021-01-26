@@ -44,7 +44,11 @@ ParlAI is described in the following paper:
 [“ParlAI: A Dialog Research Software Platform", arXiv:1705.06476](https://arxiv.org/abs/1705.06476)
 or see these [more up-to-date slides](https://drive.google.com/file/d/1JfUW4AVrjSp8X8Fp0_rTTRoLxUfW0aUm/view?usp=sharing).
 
-See the [news page](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md) for the latest additions & updates, and the website [http://parl.ai](http://parl.ai) for further docs.
+Follow us on [Twitter](https://twitter.com/parlai_parley) and check out our [Release
+notes](https://github.com/facebookresearch/ParlAI/releases) to see the latest
+information about new features & updates, and the website
+[http://parl.ai](http://parl.ai) for further docs. For an archived list of updates,
+check out [NEWS.md](https://github.com/facebookresearch/ParlAI/blob/master/NEWS.md).
 
 <p align="center"><img width="90%" src="https://raw.githubusercontent.com/facebookresearch/ParlAI/master/docs/source/_static/img/parlai_example.png" /></p>
 
