@@ -103,7 +103,7 @@ class WandbLogger(object):
     Log objects to Weights and Biases.
     """
 
-    @staticmethod
+    @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
