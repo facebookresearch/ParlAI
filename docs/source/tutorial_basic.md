@@ -364,22 +364,22 @@ Here are some examples:
 
 ```python
 # Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
-parlai train_model --task babi:task10k:1 --model seq2seq --model-file /tmp/model_s2s --batchsize 32 --validation-every-n-secs 30 -vcut 0.95
+parlai train_model --task babi:task10k:1 --model seq2seq --model-file /tmp/model_s2s --batchsize 32 --validation-every-n-secs 30
 
 # Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
 parlai train_model --model drqa --task squad --batchsize 32 --model-file /tmp/model_drqa
 
-# Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
-parlai eval_model --task squad --model-file "zoo:drqa/squad/model"
+# Tests an existing generative transformer from our model zoo
+parlai eval_model --task convai2 --model-file "zoo:tutorial_transformer_generator/model"
 
 # Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
 parlai eval_model --model local_human --task babi:Task1k:1 --datatype valid
 
-# Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
-parlai eval_model --model ir_baseline --task "#moviedd-reddit" --datatype valid
+# Evaluate an IR baseline model on the validation set of ConvAI2:
+parlai eval_model --model ir_baseline --task convai" --datatype valid
 
 # Display the predictions of that same IR baseline model:
-parlai display_model --model ir_baseline --task "#moviedd-reddit" --datatype valid
+parlai display_model --model ir_baseline --task convai2 --datatype valid
 ```
 
 The main flags are:
@@ -389,9 +389,9 @@ agents available in parlAI [are
 here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents).
 See [this tutorial](tutorial_task) for making your own agents.
 
-2)  --model-file (--modelfile) points to the file name of where to save your
+2)  --model-file (-mf) points to the file name of where to save your
     model.
-3)  --task (--task) as described before.
+3)  --task (-t) as described before.
 
 Of course every model has various parameters and hyperparameters to set
 in general.
