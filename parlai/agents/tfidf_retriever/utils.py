@@ -251,3 +251,12 @@ def filter_ngram(gram, mode='any'):
         list of tokens (length N)
     """
     return any(filter_word(w) for w in gram)
+
+
+def cosine_similarity(vec1, vec2) -> float:
+    """
+    Cosine similarity between two scipy sparse row matricies.
+    """
+    numerator = np.dot(vec1, vec2.transpose())[0, 0]
+    denominator = np.linalg.norm(vec1.data) * np.linalg.norm(vec2.data)
+    return numerator / max(denominator, 1e-8)
