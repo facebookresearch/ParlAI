@@ -21,7 +21,7 @@ reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
 ## Examples
 
 ```shell
-parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+parlai eval_wordstat --model-file /path/to/model_file --task convai2:self --freq-bins 10,100,1000
 ```
 """
 

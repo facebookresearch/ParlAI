@@ -9,7 +9,7 @@ Basic script which allows local human keyboard input to talk to a trained model.
 ## Examples
 
 ```shell
-parlai interactive -m drqa -mf "models:drqa/squad/model"
+parlai interactive --model-file "zoo:tutorial_transformer_generator/model"
 ```
 
 When prompted, enter something like: `Bob is Blue.\\nWhat is Bob?`

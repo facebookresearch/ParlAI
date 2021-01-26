@@ -11,8 +11,8 @@ on them.
 ## Examples
 
 ```shell
-parlai eval_model -t "babi:Task1k:2" -m "repeat_label"
-parlai eval_model -t "#CornellMovie" -m "ir_baseline" -mp "-lp 0.5"
+parlai eval_model --task "babi:Task1k:2" -m "repeat_label"
+parlai eval_model --task convai2 --model-file "/path/to/model_file"
 ```
 """
 

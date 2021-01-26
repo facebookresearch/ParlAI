@@ -9,7 +9,7 @@ Talk with a model using a web UI.
 ## Examples
 
 ```shell
-parlai interactive_web -mf "zoo:tutorial_transformer_generator/model"
+parlai interactive_web --model-file "zoo:tutorial_transformer_generator/model"
 ```
 """
 

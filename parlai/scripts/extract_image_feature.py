@@ -15,7 +15,7 @@ For more options, check `parlai.core.image_featurizers`
 To extract the image feature of COCO images:
 
 ```shell
-parlai extract_image_feature -t vqa_v1 -im resnet152
+parlai extract_image_feature --task vqa_v1 --image-mode resnet152
 ```
 """
 import copy
