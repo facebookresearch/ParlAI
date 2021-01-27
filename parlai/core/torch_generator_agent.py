@@ -676,10 +676,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if (
             self.beam_block_full_context
             and obs_batch
-            and 'full_text_vec' in obs_batch[0]
+            and any('full_text_vec' in o for o in obs_batch)
         ):
             batch['full_text_vec'], _ = self._pad_tensor(
-                [obs_batch[i]['full_text_vec'] for i in batch.valid_indices]
+                [obs_batch[i].get('full_text_vec', []) for i in batch.valid_indices]
             )
         return batch
 
