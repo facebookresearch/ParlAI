@@ -132,11 +132,11 @@ class HredAgent(TorchGeneratorAgent):
         batch = super().batchify(obs_batch, sort)
         # sum here is list concat, not addition
         context_vec, hist_lens_ = self._pad_tensor(
-            sum([o['context_vec'] for o in obs_batch], [])
+            sum([obs_batch[i]['context_vec'] for i in batch.valid_indices], [])
         )
         batch['context_vec'] = context_vec
         batch['hist_lens'] = torch.LongTensor(
-            [len(o['context_vec']) for o in obs_batch]
+            [len(obs_batch[i]['context_vec']) for i in batch.valid_indices]
         )
         return batch
 

@@ -55,7 +55,6 @@ class TestHred(unittest.TestCase):
         self.assertLess(valid["ppl"], 1.2)
         self.assertLess(test["ppl"], 1.2)
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         """
         Ensures beam search can generate the correct response.
