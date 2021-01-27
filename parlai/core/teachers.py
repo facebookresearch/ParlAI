@@ -528,7 +528,7 @@ class FixedDialogTeacher(Teacher):
         return action
 
 
-class DialogTeacher(Teacher):
+class DialogTeacher(FixedDialogTeacher):
     """
     A base teacher class for doing dialog with fixed chat logs.
 
