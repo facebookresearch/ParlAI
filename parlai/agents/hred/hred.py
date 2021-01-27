@@ -10,7 +10,6 @@ from parlai.core.opt import Opt
 import torch
 from parlai.agents.seq2seq.modules import opt_to_kwargs
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
-from parlai.utils.torch import padded_3d, padded_tensor
 
 from .modules import HredModel
 
