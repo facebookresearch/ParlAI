@@ -711,6 +711,7 @@ class TorchRankerAgent(TorchAgent):
                         cands_to_id[cand] = len(cands_to_id)
                         all_cands_vecs.append(batch.candidate_vecs[i][j])
             cand_vecs, _ = self._pad_tensor(all_cands_vecs)
+            cand_vecs = cand_vecs.to(batch.label_vec.device)
             label_inds = label_vecs.new_tensor(
                 [cands_to_id[label] for label in batch.labels]
             )
