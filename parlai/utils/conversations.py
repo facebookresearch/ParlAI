@@ -12,6 +12,7 @@ import os
 import random
 
 from parlai.utils.io import PathManager
+from parlai.core.metrics import dict_report
 from parlai.utils.misc import AttrDict
 import parlai.utils.logging as logging
 
@@ -323,11 +324,11 @@ class Conversations:
                         if save_keys != 'all':
                             save_keys_lst = save_keys.split(',')
                         else:
-                            save_keys_lst = [
-                                key for key in ex.keys() if key != 'metrics'
-                            ]
+                            save_keys_lst = ex.keys()
                         for key in save_keys_lst:
                             turn[key] = ex.get(key, '')
+                            if key == 'metrics':
+                                turn[key] = dict_report(turn[key])
                         turn['id'] = ex_id
                         if not context:
                             new_pair.append(turn)
