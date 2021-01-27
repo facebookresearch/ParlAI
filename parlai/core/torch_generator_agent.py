@@ -831,44 +831,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         for k in range(4):
             self.record_local_metric(f'fairseq_bleu{k + 1}', bleu_scores[k])
 
-    def _compute_nltk_bleu(self, batch: Batch, texts: List[str]):
-        """
-        Compute BLEU score between text and label(s), using the NLTK BLEU Scorer.
-
-        Note this differs from BLEU in ParlAI metrics in that the answers
-        are unnormalized (no removal of stop words, etc.)
-
-        :param batch:
-            Batch of observations
-        :param texts:
-            list of string predictions
-        """
-
-        results: Dict[int, List[Metric]] = {}
-        observations = batch.observations
-        assert observations is not None, 'observations must not be none in nltk bleu'
-        for i, p in enumerate(texts):
-            obs = observations[i]
-            references = []
-            for lbl in obs['eval_labels']:
-                references.append(
-                    self._v2t(
-                        self._vectorize_text(
-                            lbl, True, True, self.label_truncate, False
-                        )
-                    )
-                )
-            for k in range(1, 5):
-                b = BleuMetric.compute(p, references, k)
-                if b is None:
-                    b = BleuMetric(0)
-                if k not in results:
-                    results[k] = []
-                results[k].append(b)
-
-        for k in range(1, 5):
-            self.record_local_metric(f'nltk_bleu{k}', results[k])
-
     def _add_generation_metrics(self, batch, preds):
         """
         Can be overridden to allow for some metrics on the generations calculated at
@@ -946,7 +908,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
-            self._compute_nltk_bleu(batch, text)
         retval = Output(text, cand_choices, token_losses=token_losses)
         if not self.skip_generation:
             retval.beam_texts = beam_texts
