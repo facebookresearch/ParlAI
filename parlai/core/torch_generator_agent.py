@@ -928,6 +928,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 num_cands = len(batch.candidate_vecs[i])
                 enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
                 cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+                cands = cands.to(batch.label_vec.device)
                 scores, _ = self.model.decode_forced(enc, cands)
                 cand_losses = F.cross_entropy(
                     scores.view(num_cands * cands.size(1), -1),
