@@ -58,7 +58,6 @@ import os
 import queue
 import random
 from threading import Thread
-import time
 import torch
 from typing import List, Tuple, Optional, TypeVar
 
