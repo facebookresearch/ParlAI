@@ -108,6 +108,7 @@ class Batch(AttrDict):
         valid_indices=None,
         candidates=None,
         candidate_vecs=None,
+        reward=None,
         image=None,
         **kwargs,
     ):
@@ -1582,6 +1583,11 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        # reward
+        rewards = None
+        if any('reward' in ex for ex in exs):
+            rewards = torch.Tensor([ex.get('reward', 0) for ex in exs])
+
         # make sure we're only passing around tensors
         valid_inds = torch.LongTensor(valid_inds)
 
@@ -1594,6 +1600,7 @@ class TorchAgent(ABC, Agent):
             candidates=cands,
             candidate_vecs=cand_vecs,
             image=imgs,
+            rewards=rewards,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
