@@ -551,7 +551,6 @@ class DialogTeacher(FixedDialogTeacher):
             )
         super().__init__(opt, shared)
 
-        self.startTime = time.time()
         self.datatype = opt['datatype']
         self.training = DatatypeHelper.is_training(self.datatype)
         self.cycle = DatatypeHelper.should_cycle(self.datatype)
