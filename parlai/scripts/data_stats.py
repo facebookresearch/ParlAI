@@ -9,7 +9,7 @@ Count and display statistics of the data.
 ## Examples
 
 ```shell
-parlai data_stats -t convai2 -dt train:ordered
+parlai data_stats --task convai2
 ```
 """
 from parlai.core.params import ParlaiParser

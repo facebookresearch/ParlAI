@@ -17,25 +17,25 @@ some of the examples below:
 Train a Bag-of-words Ranker model on ConvAI2:
 
 ```bash
-parlai train_model -m examples/tra  -t convai2 -mf /tmp/test -bs 32
+parlai train_model --model examples/tra  --task convai2 --model-file /tmp/test --batchsize 32
 ```
 
 Train a Transformer Ranker model on ConvAI2:
 
 ```bash
-parlai train_model -m transformer/ranker -t convai2 -mf /tmp/tr_convai2_test
+parlai train_model --model transformer/ranker --task convai2 --model-file /tmp/tr_convai2_test
 ```
 
 Train a Memory Network model on Daily Dialog:
 
 ```bash
-parlai train_model -m memnn -t dailydialog -mf /tmp/memnn_dd_test -bs 20 -cands batch -ecands batch
+parlai train_model --model memnn --task dailydialog --model-file /tmp/memnn_dd_test --batchsize 20 --candidates batch --eval-candidates batch
 ```
 
 Train a BERT-based Bi-Encoder ranker model on Twitter:
 
 ```bash
-parlai train_model -m bert_ranker/bi_encoder_ranker -t twitter -mf /tmp/bert_twitter_test -bs 10 -cands batch -ecands batch --data-parallel True
+parlai train_model --model bert_ranker/bi_encoder_ranker --task twitter --model-file /tmp/bert_twitter_test --batchsize 10 --candidates batch --eval-candidates batch --data-parallel True
 ```
 
 Creating a Model

@@ -16,9 +16,9 @@ The user must provide a model (with `--model`) and a task (with
 ## Examples
 
 ```shell
-parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+parlai train_model --model ir_baseline --task dialog_babi:Task:1 --model-file /tmp/model
+parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/model' --batchsize 32 --learningrate 0.5
+parlai train_model --model drqa --task babi:Task10k:1 --model-file /tmp/model --batchsize 10
 ```
 """  # noqa: E501
 
