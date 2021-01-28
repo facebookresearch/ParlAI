@@ -30,9 +30,11 @@ class AbstractResultsCompiler(ABC):
         self.output_folder = opt.get('output_folder')
 
     @abstractmethod
-    def compile_results(self) -> Any:
+    def compile_results(self) -> pd.DataFrame:
         """
-        Method for returning the final results object.
+        Method for returning the final results dataframe.
+
+        Each row of the dataframe consists of one utterance of one conversation.
         """
 
 
@@ -77,11 +79,3 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
             raise ValueError(
                 'There must be a "none_all_good" category in self.problem_buckets!'
             )
-
-    @abstractmethod
-    def compile_results(self) -> pd.DataFrame:
-        """
-        Method for returning the final results dataframe.
-
-        Each row of the dataframe consists of one utterance of one conversation.
-        """
