@@ -86,6 +86,15 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         """
         Retrieves the list of work units from the Mephisto task.
         """
-        db = LocalMephistoDB()
-        mephisto_data_browser = MephistoDataBrowser(db=db)
-        return mephisto_data_browser.get_units_for_task_name(task_name)
+        data_browser = self.get_mephisto_data_browser()
+        return data_browser.get_units_for_task_name(task_name)
+
+    def get_units_data(self, task_units: List[Unit]) -> List[Dict]:
+        """
+        Retrieves task data for a lits of Mephisto task units.
+        """
+        data_browser = self.get_mephisto_data_browser()
+        task_data = []
+        for unit in task_units:
+            task_data.append(data_browser.get_data_from_unit(unit))
+        return task_data
