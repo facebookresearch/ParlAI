@@ -73,6 +73,7 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         return parser
 
     def __init__(self, opt):
+        self.task_name = opt["task_name"]
         self._mephisto_data_browser = None
 
     def get_mephisto_data_browser(self) -> MephistoDataBrowser:
