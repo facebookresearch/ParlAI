@@ -13,10 +13,10 @@ from typing import Any, Dict, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
+from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 
 
-class TurnAnnotationsStaticResultsCompiler(AbstractResultsCompiler):
+class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     """
     Class to compile results from static turn annotations.
 
