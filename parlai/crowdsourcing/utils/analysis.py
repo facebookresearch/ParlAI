@@ -9,6 +9,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 import pandas as pd
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.data_model.unit import Unit
+from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 
 
 class AbstractResultsCompiler(ABC):
@@ -58,3 +61,21 @@ class AbstractResultsCompiler(ABC):
         """
         Method for returning the final results dataframe.
         """
+
+
+class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
+    @classmethod
+    def setup_args(cls):
+        parser = argparse.ArgumentParser('Compile crowdsourcing results')
+        parser.add_argument(
+            '--task-name', type=str, help='Name of the Mephisto task to open'
+        )
+        return parser
+
+    def get_task_units(self, task_name: str) -> List[Unit]:
+        """
+        Retrieves the list of work units from the Mephisto task.
+        """
+        db = LocalMephistoDB()
+        mephisto_data_browser = MephistoDataBrowser(db=db)
+        return mephisto_data_browser.get_units_for_task_name(task_name)
