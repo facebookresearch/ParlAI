@@ -74,13 +74,19 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
 
     def __init__(self, opt):
         self.task_name = opt["task_name"]
+        self._mephisto_db = None
         self._mephisto_data_browser = None
 
     def get_mephisto_data_browser(self) -> MephistoDataBrowser:
         if not self._mephisto_data_browser:
-            db = LocalMephistoDB()
+            db = self.get_mephisto_db()
             self._mephisto_data_browser = MephistoDataBrowser(db=db)
         return self._mephisto_data_browser
+
+    def get_mephisto_db(self) -> LocalMephistoDB:
+        if not self._mephisto_db:
+            self._mephisto_db = LocalMephistoDB()
+        return self._mephisto_db
 
     def get_task_units(self, task_name: str) -> List[Unit]:
         """
