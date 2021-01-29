@@ -25,9 +25,6 @@ class AbstractResultsCompiler(ABC):
     def setup_args(cls):
         parser = argparse.ArgumentParser('Compile crowdsourcing results')
         parser.add_argument(
-            '--task-name', type=str, help='Name of the Mephisto task to open'
-        )
-        parser.add_argument(
             '--results-folders', type=str, help='Comma-separated list of result folders'
         )
         parser.add_argument(
@@ -58,14 +55,6 @@ class AbstractResultsCompiler(ABC):
             raise ValueError(
                 'There must be a "none_all_good" category in self.problem_buckets!'
             )
-
-    def get_task_units(self, task_name: str) -> List[Unit]:
-        """
-        Retrieves the list of work units from the Mephisto task.
-        """
-        db = LocalMephistoDB()
-        mephisto_data_browser = MephistoDataBrowser(db=db)
-        return mephisto_data_browser.get_units_for_task_name(task_name)
 
     @abstractmethod
     def compile_results(self) -> pd.DataFrame:
