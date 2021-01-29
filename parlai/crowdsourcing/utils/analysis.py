@@ -88,6 +88,13 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
             self._mephisto_db = LocalMephistoDB()
         return self._mephisto_db
 
+    def get_worker_name(self, worker_id: str) -> str:
+        """
+        Gets the global (AWS) id of a worker from their Mephisto worker_id.
+        """
+        db = self.get_mephisto_db()
+        return db.get_worker(worker_id)["worker_name"]
+
     def get_task_units(self, task_name: str) -> List[Unit]:
         """
         Retrieves the list of work units from the Mephisto task.
