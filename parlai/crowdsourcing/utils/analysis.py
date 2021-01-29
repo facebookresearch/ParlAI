@@ -6,7 +6,7 @@
 
 import argparse
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import pandas as pd
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
