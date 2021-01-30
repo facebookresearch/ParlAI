@@ -25,10 +25,36 @@ class AbstractResultsCompiler(ABC):
     def setup_args(cls):
         parser = argparse.ArgumentParser('Compile crowdsourcing results')
         parser.add_argument(
-            '--results-folders', type=str, help='Comma-separated list of result folders'
-        )
-        parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
+        )
+        return parser
+
+    def __init__(self, opt: Dict[str, Any]):
+        self.output_folder = opt.get('output_folder')
+
+    @abstractmethod
+    def compile_results(self) -> pd.DataFrame:
+        """
+        Method for returning the final results dataframe.
+
+        Each row of the dataframe consists of one utterance of one conversation.
+        """
+
+
+class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
+    """
+    Results compiler subclass to provide utility code for turn annotations.
+
+    Currently incompatible with Mephisto's DataBrowser: all subclasses load results
+    files directly from disk.
+    TODO: make all subclasses compatible with DataBrowser
+    """
+
+    @classmethod
+    def setup_args(cls):
+        parser = super().setup_args()
+        parser.add_argument(
+            '--results-folders', type=str, help='Comma-separated list of result folders'
         )
         parser.add_argument(
             '--problem-buckets',
@@ -40,12 +66,13 @@ class AbstractResultsCompiler(ABC):
 
     def __init__(self, opt: Dict[str, Any]):
 
+        super().__init__(opt)
+
         # Handle inputs
         if 'results_folders' in opt:
             self.results_folders = opt['results_folders'].split(',')
         else:
             self.results_folders = None
-        self.output_folder = opt.get('output_folder')
         self.problem_buckets = opt['problem_buckets'].split(',')
 
         # Validate problem buckets
