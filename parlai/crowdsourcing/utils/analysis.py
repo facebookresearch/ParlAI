@@ -91,6 +91,12 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
 
 
 class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
+    """
+    Results compiler subclass to provide utility code for crowdsourcing tasks.
+
+    Uses Mephisto's DataBrowser to retrieve the work units and their data.
+    """
+
     @classmethod
     def setup_args(cls):
         parser = super().setup_args()
