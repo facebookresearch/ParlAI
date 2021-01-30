@@ -83,12 +83,6 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
                 'There must be a "none_all_good" category in self.problem_buckets!'
             )
 
-    @abstractmethod
-    def compile_results(self) -> pd.DataFrame:
-        """
-        Method for returning the final results dataframe.
-        """
-
 
 class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
     """
