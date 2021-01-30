@@ -66,7 +66,7 @@ class AbstractResultsCompiler(ABC):
 class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
     @classmethod
     def setup_args(cls):
-        parser = argparse.ArgumentParser('Compile crowdsourcing results')
+        parser = super().setup_args()
         parser.add_argument(
             '--task-name', type=str, help='Name of the Mephisto task to open'
         )
