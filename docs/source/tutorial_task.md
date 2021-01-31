@@ -98,7 +98,7 @@ Make a file like this instead (using the same example data as above):
 
 We can then again look at that data using the usual display data script, using the jsonfile teacher:
 
-    python parlai/scripts/display_data.py --task jsonfile --json-datapath /tmp/data.json
+    python parlai/scripts/display_data.py --task jsonfile --jsonfile-datapath /tmp/data.json
     <.. snip ..>
     [creating task(s): jsonfile]
     [loading data from json file into task:/tmp/data.json]
