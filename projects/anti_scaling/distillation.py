@@ -329,9 +329,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
         )
         self._clear_hook_outputs(self.hooks)
 
-        tokens_per_example = mask.sum(dim=-1)
+        tokens_per_example = mask.sum(dim=-1)  # Sum over tokens
         num_tokens = mask.sum()
-        context_tokens_per_example = context_mask.sum(dim=-1)
+        context_tokens_per_example = context_mask.sum(dim=-1)  # Sum over tokens
         num_context_tokens = context_mask.sum()
 
         # If needed, perform further manipulation of the mask tensor
@@ -341,6 +341,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         # Record teacher accuracy
         teacher_acc = ((student_preds == teacher_preds) * mask).sum(dim=-1)
+        # Sum over tokens
         self.record_local_metric(
             'teacher_acc', AverageMetric.many(teacher_acc, tokens_per_example)
         )
@@ -527,8 +528,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
         )
         clamped_loss = torch.clamp(raw_loss, min=0, max=NEAR_INF_FP16)
         # Prevent infs from appearing in the loss term. Especially important with fp16
-        masked_loss = clamped_loss.sum(dim=-1) * mask
-        # Sum over embedding dim
+        masked_loss = clamped_loss.mean(dim=-1) * mask
+        # Average over embedding dim
         embedding_loss_per_example = masked_loss.sum(dim=-1)  # Sum over token dim
         embedding_loss = masked_loss.div(num_tokens).sum()
         # Divide before summing over examples so that values don't get too large
@@ -596,7 +597,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
             # Prevent infs from appearing in the loss term. Especially important with
             # fp16
             masked_layer_loss = clamped_layer_loss.mean(dim=-1) * mask
-            # Avg over embedding dim
+            # Average over embedding dim
             layer_loss_per_example = masked_layer_loss.sum(dim=-1)  # Sum over token dim
             layer_loss = masked_layer_loss.div(num_tokens).sum()
             # Divide before summing over examples so that values don't get too large
@@ -726,14 +727,15 @@ class AbstractDistillTransformerAgentMixin(ABC):
             reduction='none',
         ).type_as(fwd_pass.student_scores)
         pred_loss = pred_loss.sum(dim=-1) * fwd_pass.mask
+        # Sum over dictionary
         self.record_local_metric(
             'pred_ppl',
             PPLMetric.many(pred_loss.sum(dim=-1), fwd_pass.tokens_per_example),
-        )
+        )  # Sum over tokens
         self.record_local_metric(
             'pred_loss',
             AverageMetric.many(pred_loss.sum(dim=-1), fwd_pass.tokens_per_example),
-        )
+        )  # Sum over tokens
         pred_loss = pred_loss.sum() / fwd_pass.num_tokens
         return pred_loss
 
