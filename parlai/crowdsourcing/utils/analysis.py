@@ -86,7 +86,7 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
 
 class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
     """
-    Results compiler subclass to provide utility code for crowdsourcing tasks.
+    Provides interface for using Mephisto's DataBrowser, DB, and their methods.
 
     Uses Mephisto's DataBrowser to retrieve the work units and their data.
     """
@@ -129,9 +129,9 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         data_browser = self.get_mephisto_data_browser()
         return data_browser.get_units_for_task_name(task_name)
 
-    def get_units_data(self, task_units: List[Unit]) -> List[Dict]:
+    def get_units_data(self, task_units: List[Unit]) -> List[dict]:
         """
-        Retrieves task data for a lits of Mephisto task units.
+        Retrieves task data for a list of Mephisto task units.
         """
         data_browser = self.get_mephisto_data_browser()
         task_data = []
