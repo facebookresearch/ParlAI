@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from parlai.core.params import ParlaiParser
 from dataclasses import dataclass, field
 from typing import Any, List
 

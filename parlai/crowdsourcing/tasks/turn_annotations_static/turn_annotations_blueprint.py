@@ -19,7 +19,7 @@ from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint i
     StaticReactBlueprint,
     StaticReactBlueprintArgs,
 )
-from omegaconf import DictConfig, MISSING
+from omegaconf import DictConfig
 
 if TYPE_CHECKING:
     from mephisto.data_model.task import TaskRun

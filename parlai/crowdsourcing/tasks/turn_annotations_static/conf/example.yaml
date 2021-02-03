@@ -1,5 +1,9 @@
 #@package _global_
 mephisto:
+  architect:
+    _architect_type: local
+  provider:
+    _provider_type: mock
   blueprint:
     subtasks_per_unit: 6
     task_source: ${task_dir}/webapp/build/bundle.js
