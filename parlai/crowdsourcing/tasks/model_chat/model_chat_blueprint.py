@@ -453,7 +453,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
-            all_model_opts = yaml.load(f.read())
+            all_model_opts = yaml.safe_load(f.read())
         active_model_opts = {
             model: opt
             for model, opt in all_model_opts.items()
@@ -557,5 +557,5 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
-            model_opts = yaml.load(f.read())
+            model_opts = yaml.safe_load(f.read())
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=model_opts)
