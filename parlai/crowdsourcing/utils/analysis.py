@@ -7,11 +7,7 @@
 import argparse
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
-
 import pandas as pd
-from mephisto.abstractions.databases.local_database import LocalMephistoDB
-from mephisto.data_model.unit import Unit
-from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 
 
 class AbstractResultsCompiler(ABC):
@@ -84,57 +80,67 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
             )
 
 
-class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
-    """
-    Provides interface for using Mephisto's DataBrowser, DB, and their methods.
+# Defining the class only if Mephisto is installed, since it relies on Mephisto
+try:
+    from mephisto.abstractions.databases.local_database import LocalMephistoDB
+    from mephisto.data_model.unit import Unit
+    from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 
-    Uses Mephisto's DataBrowser to retrieve the work units and their data.
-    """
+    class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
+        """
+        Provides interface for using Mephisto's DataBrowser, DB, and their methods.
 
-    @classmethod
-    def setup_args(cls):
-        parser = super().setup_args()
-        parser.add_argument(
-            '--task-name', type=str, help='Name of the Mephisto task to open'
-        )
-        return parser
+        Uses Mephisto's DataBrowser to retrieve the work units and their data.
+        """
 
-    def __init__(self, opt):
-        self.task_name = opt["task_name"]
-        self._mephisto_db = None
-        self._mephisto_data_browser = None
+        @classmethod
+        def setup_args(cls):
+            parser = super().setup_args()
+            parser.add_argument(
+                '--task-name', type=str, help='Name of the Mephisto task to open'
+            )
+            return parser
 
-    def get_mephisto_data_browser(self) -> MephistoDataBrowser:
-        if not self._mephisto_data_browser:
+        def __init__(self, opt):
+            self.task_name = opt["task_name"]
+            self._mephisto_db = None
+            self._mephisto_data_browser = None
+
+        def get_mephisto_data_browser(self) -> MephistoDataBrowser:
+            if not self._mephisto_data_browser:
+                db = self.get_mephisto_db()
+                self._mephisto_data_browser = MephistoDataBrowser(db=db)
+            return self._mephisto_data_browser
+
+        def get_mephisto_db(self) -> LocalMephistoDB:
+            if not self._mephisto_db:
+                self._mephisto_db = LocalMephistoDB()
+            return self._mephisto_db
+
+        def get_worker_name(self, worker_id: str) -> str:
+            """
+            Gets the global (AWS) id of a worker from their Mephisto worker_id.
+            """
             db = self.get_mephisto_db()
-            self._mephisto_data_browser = MephistoDataBrowser(db=db)
-        return self._mephisto_data_browser
+            return db.get_worker(worker_id)["worker_name"]
 
-    def get_mephisto_db(self) -> LocalMephistoDB:
-        if not self._mephisto_db:
-            self._mephisto_db = LocalMephistoDB()
-        return self._mephisto_db
+        def get_task_units(self, task_name: str) -> List[Unit]:
+            """
+            Retrieves the list of work units from the Mephisto task.
+            """
+            data_browser = self.get_mephisto_data_browser()
+            return data_browser.get_units_for_task_name(task_name)
 
-    def get_worker_name(self, worker_id: str) -> str:
-        """
-        Gets the global (AWS) id of a worker from their Mephisto worker_id.
-        """
-        db = self.get_mephisto_db()
-        return db.get_worker(worker_id)["worker_name"]
+        def get_units_data(self, task_units: List[Unit]) -> List[dict]:
+            """
+            Retrieves task data for a list of Mephisto task units.
+            """
+            data_browser = self.get_mephisto_data_browser()
+            task_data = []
+            for unit in task_units:
+                task_data.append(data_browser.get_data_from_unit(unit))
+            return task_data
 
-    def get_task_units(self, task_name: str) -> List[Unit]:
-        """
-        Retrieves the list of work units from the Mephisto task.
-        """
-        data_browser = self.get_mephisto_data_browser()
-        return data_browser.get_units_for_task_name(task_name)
 
-    def get_units_data(self, task_units: List[Unit]) -> List[dict]:
-        """
-        Retrieves task data for a list of Mephisto task units.
-        """
-        data_browser = self.get_mephisto_data_browser()
-        task_data = []
-        for unit in task_units:
-            task_data.append(data_browser.get_data_from_unit(unit))
-        return task_data
+except ImportError:
+    pass
