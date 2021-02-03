@@ -24,8 +24,9 @@ def run_static_task(cfg: DictConfig, task_directory: str):
 
     random.seed(42)
 
+    task_name = cfg.mephisto.task.get('task_name', 'turn_annotations_static')
     soft_block_qual_name = cfg.mephisto.task.get(
-        'task_name', 'turn_annotations_static_block'
+        'block_qualification', f'{task_name}_block'
     )
     # Default to a task-specific name to avoid soft-block collisions
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
