@@ -343,7 +343,6 @@ jobs:
       - runtests:
           more_installs:
             - installtorchcpu
-            - installcrowdsourcingdeps
           cachename: ut37
           marker: unit
 
