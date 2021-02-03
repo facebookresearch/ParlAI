@@ -16,7 +16,7 @@ try:
     from mephisto.abstractions.databases.local_database import LocalMephistoDB
     from mephisto.data_model.unit import Unit
     from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
-except:
+except ImportError:
     pass
 
 
