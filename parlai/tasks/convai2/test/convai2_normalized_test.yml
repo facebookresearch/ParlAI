@@ -1,0 +1,149 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - I am good, I just got off work and tired, I have two jobs.
+    id: convai2:normalized
+    label_candidates:
+    - Oh really? I am actually in high school and I am graduating as class of 2019!
+    - That's an interesting choice. I'd have to pick french fries
+    - I just got a pet fish for my 18th birthday yesterday from my parents.
+    - Yeah, well what about you?
+    - My favorite watch is the rolex? What is yours?
+    - What is in spain that's so interesting
+    - I don't like clowns. They are scary to a kid like me
+    - Poetry. Roses are red. Violet are...?
+    - My father is a member of the army, served for 10 years now.
+    - Oh I like mexican food, but my favorite food are cheeseburgers
+    - Hey there, are you a mother?
+    - It sure is. I'd like to see more of the city though.
+    - It is not so fun I have 2 friend who speak a different langues
+    - I'd like some honey though. Do you sell it?
+    - I am a recovering heavy drinker. Full time. How about you?
+    - Hi! I have three kids. How many do you have?
+    - Awesome! I own 2 dogs, love them
+    - Yes, my favorite is broccoli and tofu in a garlic sauce. Yum!
+    - Maybe he can skydive to see a better view
+    - I am good, I just got off work and tired, I have two jobs.
+    reward: 0
+    text: 'your persona: I read twenty books a year.
+
+      your persona: I''m a stunt double as my second job.
+
+      your persona: I only eat kosher.
+
+      your persona: I was raised in a single parent household.
+
+      Hello what are doing today?'
+- - episode_done: false
+    eval_labels:
+    - I rather read, I've read about 20 books this year.
+    id: convai2:normalized
+    label_candidates:
+    - Why have you not sent help?! The scorpions are stinging my legs! Ree!!!!!!!
+    - That is great I am expecting twins in two months. Will these be your first kids?
+    - Do you live on a farm or ranch?
+    - Hi how are you doing tonight I am fine.
+    - I'd love to see her do that.
+    - I don't. But I am so glad you do something that brings you joy
+    - It is hard, buy my dog keeps me company. Do you have dogs?
+    - Sounds like a good plan, what would you like to teach?
+    - I like rap music and I also produce for music artists.
+    - Where do you work?
+    - I broke my arm so I can not drink coffee
+    - I meant mickey. Cool I've a lot of friends and love the playground. Do you?
+    - Oh, yes. I wish I could skate to school. I ride the bus instead.
+    - That is my idea of heaven. I love bunnies! I donate to a bunny charity too.
+    - I work on a freelance basis as an author, blogger and affiliate marketer. And
+      you?
+    - Like me? Would you go on vacation to the beach with me
+    - I don't let myself watch tv
+    - We can go for a trade that sounds awesome
+    - What part of the world is bratislava?
+    - I rather read, I've read about 20 books this year.
+    reward: 0
+    text: I just got done watching a horror movie
+- - episode_done: false
+    eval_labels:
+    - But a good movie is always good.
+    id: convai2:normalized
+    label_candidates:
+    - Oh I'm sure they are
+    - That would be great! We just bought a house so no travel soon
+    - Lol, I must go too. The imelda marcos shoe collection on qvc is on
+    - I'm so sorry to hear that. My father also passed away. He drove for nascar.
+    - Yes we do. My hair also goes down to my waist
+    - I'm just fine. My name is priya, and you?
+    - Gotta celebrate! I'm so old, I recall when nobody owned a tv.
+    - Very carefully, did you get flooded in texas?
+    - With kids in my house I can not listen to rap anymore.
+    - I'm working on both of my vintage mustangs
+    - Yes, all descendants from christopher columbus love star wars.
+    - I have a cat mouse and a dog biscuit. What about you?
+    - Yes, you have said that. What do your parents do?
+    - Oh gosh another day just grateful.
+    - Good song and what your favorite beverage?
+    - I work from home doing internet searches
+    - This one time, this guy turned into a alien, and he teleported, nobody believes
+      me
+    - That is a great question, I have never tried! Where are you from?
+    - That is awesome. Are you scared there? I'm so scared of clowns.
+    - But a good movie is always good.
+    reward: 0
+    text: Wow! I do love a good horror movie. Loving this cooler weather
+- - episode_done: false
+    eval_labels:
+    - I work in the movies as well.
+    id: convai2:normalized
+    label_candidates:
+    - That is great! Are you going to college?
+    - Ugh. I do not think I could live with them.
+    - I sing folk music. My parents aren't supportive.
+    - I love piano music. Do you play jazz?
+    - Sure, your parents will have to take you here, I'm also a teacher in kindergarten
+    - That is nice, I need a new car, how is the bmw?
+    - All natural... Second time... Twins this time.
+    - One is a tabby yet overweight and the other is a black and white cat
+    - Go to national parks. Think about what I missed out on in high school. You?
+    - No. I'm too busy with my bees. I wish I had family I was close to.
+    - Nothing like a dog and a truck!
+    - Nope, I work in a hat shop 24 7. My name is sophie by the way.
+    - When I take over the world I'll grant bacon to everyone
+    - Wow that is awesome I'm trying to relax having triplets in 90 days
+    - I bet. What will be the first thing you will eat
+    - I like electricity and electronics. I'm a bartender
+    - Blue, I guess. What is yours?
+    - I must be too cause I enjoy my activites in the spring more
+    - I do not have any pets, but I may be interested in one
+    - I work in the movies as well.
+    reward: 0
+    text: Yes! My son is in junior high and I just started letting him watch them
+      too
+- - episode_done: false
+    eval_labels:
+    - Yes it is neat, I stunt double, it is so much fun and hard work.
+    id: convai2:normalized
+    label_candidates:
+    - Big city life to overwhelming too much pressure
+    - Frozen food is bad, full of nitrates.
+    - I like to take my dog for walks and sometimes I volunteer.
+    - Great I a blue sweater that I love and you sew it for me
+    - I just want to move out. They are always on my back.
+    - Oh wow that really sucks. And assistant marketing director
+    - Thanks! I like riding horses.
+    - Well at least some good came out of it. Hope everything is well for you
+    - Amazing. Do you study and languages
+    - I'm not active but love watching birds from indoors
+    - What do you call your fish? I'm drinking fancy tea
+    - Yes, I pray for her. I'm helping her paint her kitchen red, my favorite color.
+    - I'm from mexico. I'm moving into my home soon you?
+    - Nice, I like comic books as well. What position do you play in basketball.
+    - Do you have any? Mine is a black lab
+    - Out of work right now what do you do?
+    - They are yummy salty little fish. You should try them.
+    - I prefer my roller coasters and thrills.
+    - What sport do you enjoy?
+    - Yes it is neat, I stunt double, it is so much fun and hard work.
+    reward: 0
+    text: Neat!! I used to work in the human services field
+num_episodes: 1000
+num_examples: 7801

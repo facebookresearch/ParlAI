@@ -12,7 +12,7 @@ dataset) can be created.
 All setups are handled in pretty much the same way, with the same API,
 but there are less steps of course to make a basic dataset.
 
-For a fast way to add a new dataset, go to the **Quickstart** below.
+For a fast way to add a new dataset, go to the __Quickstart__ below.
 
 For more complete instructions, or a more complicated setup (like streaming large data), go to the section **Creating a new task: _the more complete way_**.
 
@@ -41,7 +41,7 @@ below to work.
 
 We could look at that data using the usual display data script:
 
-    python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile_datapath /tmp/data.txt
+    python parlai/scripts/display_data.py --task fromfile:parlaiformat --fromfile_datapath /tmp/data.txt
     <.. snip ..>
     [creating task(s): fromfile:parlaiformat]
     [loading parlAI text data:/tmp/data.txt]
@@ -82,7 +82,7 @@ Simply separate the data into three separate files: `mydata_train.txt`,
 `mydata_valid.txt` and `mydata_test.txt`. Afterwards, modify your parlai
 call as follows:
 
-    python parlai/scripts/display_data.py -t fromfile:parlaiformat --fromfile-datapath /tmp/mydata --fromfile-datatype-extension true
+    python parlai/scripts/display_data.py --task fromfile:parlaiformat --fromfile-datapath /tmp/mydata --fromfile-datatype-extension true
 
 This will cause the system to add the `_train.txt`, `_valid.txt`, and
 `_test.txt` suffixes at the appropriate times during training,
@@ -98,7 +98,7 @@ Make a file like this instead (using the same example data as above):
 
 We can then again look at that data using the usual display data script, using the jsonfile teacher:
 
-    python parlai/scripts/display_data.py -t jsonfile --json-datapath /tmp/data.json
+    python parlai/scripts/display_data.py --task jsonfile --jsonfile-datapath /tmp/data.json
     <.. snip ..>
     [creating task(s): jsonfile]
     [loading data from json file into task:/tmp/data.json]
@@ -298,7 +298,7 @@ To access this data, we can now use the `display_data.py` file in the
 `examples` directory:
 
 ```bash
-parlai display_data -t twitter
+parlai display_data --task twitter
 ```
 
 (dialogteacher)=
@@ -555,13 +555,66 @@ A simple way of testing the basic functionality in a task is to run the
 is done, we can pass it to ParlAI by using the `-t` flag. For example,
 to execute the MTurk WikiMovies task we should call:
 
-`python display_data.py -t mturkwikimovies`
+`python display_data.py --task mturkwikimovies`
 
 To run the MNIST\_QA task, while displaying the images in ascii format,
 we could call:
 
-`python display_data.py -t mnist_qa -im ascii`
+`python display_data.py --task mnist_qa -im ascii`
 
 And for VQAv2:
 
-`python display_data.py -t vqa_v2`
+`python display_data.py --task vqa_v2`
+
+
+### Part 5: Contributing upstream
+
+Wow! Now that you've created your task, perhaps you should add it to ParlAI!
+We welcome new datasets from all contributors.
+
+If you do want to make a pull request, we will _usually_ expect that you submit
+a Regression Test with your dataset. The regression test is a sort of automatic
+test which ensures your teacher gives consistent output in different versions
+of ParlAI.
+
+Adding a regression test is easy. Just add the following "test.py" into the
+same folder as your tasks.
+
+```python
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+from parlai.utils.testing import AutoTeacherTest  # noqa: F401
+
+
+class TestDefaultTeacher(AutoTeacherTest):
+    task = 'myteacher'  # replace with your teacher name
+```
+
+Next, run your test. __It will always fail the first time.__
+
+```bash
+pytest parlai/tasks/myteacher/test.py
+```
+
+You will see many error messages about "Failed: File not found in data
+directory, created." This is expected the first time. You should now see a
+"test" folder appear in the same directory, containing several `.yml` files.
+Add these files to your git commit.
+
+Next run the test again. This time, you should see all tests pass. If so,
+go ahead and [create your PR](contributing).
+
+Note, if you need to make further changes to your teacher, you may need
+to update the regression fixtures. You can do this by adding `--force-regen`
+to the pytest arguments:
+
+```
+pytest --force-regen parlai/tasks/myteacher/test.py
+```
+
+Similar to the first time you ran the test, you may see failure. Rerun again
+to ensure things pass.

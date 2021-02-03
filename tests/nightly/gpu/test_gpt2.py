@@ -21,7 +21,7 @@ class TestHuggingFaceDict(unittest.TestCase):
 
         parser = ParlaiParser(False, False)
         parser.set_defaults(gpt2_size="small", add_special_tokens=True)
-        Gpt2DictionaryAgent.add_cmdline_args(parser)
+        Gpt2DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
         with testing_utils.tempdir() as tmpdir:
             opt = parser.parse_kwargs(dict_file=os.path.join(tmpdir, 'dict'))
             dict_agent = Gpt2DictionaryAgent(opt)
@@ -36,6 +36,8 @@ class TestHuggingFaceDict(unittest.TestCase):
 
 
 class TestGpt2(unittest.TestCase):
+    # Did you implement a test for DialoGPT too if your changes affect it?
+
     def _test_batchsize(self, batchsize, add_start_token):
         utterances = [
             'Just keep swimming -',

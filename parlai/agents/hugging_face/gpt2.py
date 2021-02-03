@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import os
 
 import torch
@@ -85,7 +88,8 @@ class GPT2Decoder(torch.nn.Module):
                 and int(input[0][0]) == self.START_IDX
             ):
                 # generating: ignore the start token
-                model_input = encoder_state
+                # without deep copy, the padding_idx (-1) in encoder_state can be reset to 0 with clamp_ inplace operation
+                model_input = encoder_state.clone()
             else:
                 # forced decoding: concatenate the context
                 # with the labels
@@ -108,9 +112,10 @@ class GPT2Decoder(torch.nn.Module):
             model_input = input[:, -1:]
             attention_mask = torch.cat([encoder_state, input], dim=-1) != self.NULL_IDX
 
+        model_input = model_input.clamp_(min=0)
         transformer_outputs = self.transformer(
             model_input,
-            past=incr_state,
+            past_key_values=incr_state,
             attention_mask=attention_mask,
             position_ids=position_ids,
         )
@@ -222,8 +227,10 @@ class Gpt2Agent(TorchGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        agent = argparser.add_argument_group("Gpt2 Args")
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group("Gpt2 Args")
         agent.add_argument(
             "--gpt2-size",
             type=str,
@@ -244,12 +251,12 @@ class Gpt2Agent(TorchGeneratorAgent):
             default=False,
             help="Add start tokens when finetuning.",
         )
-        argparser.set_defaults(
+        parser.set_defaults(
             text_truncate=768,
             label_truncate=256,
             dict_maxexs=0,  # skip building dictionary
         )
-        super(Gpt2Agent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         warn_once("WARNING: this model is in beta and the API is subject to change.")
         return agent
 
@@ -310,3 +317,15 @@ class Gpt2Agent(TorchGeneratorAgent):
             left_padded=True,
             fp16friendly=False,
         )
+
+    def load_state_dict(self, state_dict):
+        # 2020-11-10: some very old transformer model points (pre v3.0.1) are
+        # missing a field called transformer.h.0.attn.masked_bias. This hacks
+        # around that. See
+        # https://github.com/huggingface/transformers/issues/4309.
+        current_sd = self.model.state_dict()
+        missing = set(current_sd.keys()) - set(state_dict.keys())
+        for m in missing:
+            if 'masked_bias' in m:
+                state_dict[m] = current_sd[m]
+        return super().load_state_dict(state_dict)

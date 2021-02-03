@@ -43,13 +43,15 @@ class BartAgent(TransformerGeneratorAgent):
     to a ParlAI model.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser: ParlaiParser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Override to add init-fairseq-model arg.
         """
-        TransformerGeneratorAgent.add_cmdline_args(argparser)
-        group = argparser.add_argument_group('Bart Args')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group('Bart Args')
         group.add_argument(
             '--init-fairseq-model',
             type=str,
@@ -62,8 +64,9 @@ class BartAgent(TransformerGeneratorAgent):
             default=None,
             help='where to save fairseq conversion',
         )
-        argparser.set_defaults(dict_tokenizer='gpt2')
-        argparser.set_defaults(**BART_ARGS)
+        parser.set_defaults(dict_tokenizer='gpt2')
+        parser.set_defaults(**BART_ARGS)
+        return parser
 
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
@@ -82,9 +85,9 @@ class BartAgent(TransformerGeneratorAgent):
         :return opt:
             return opt with BART-specific args.
         """
+        init_model, _ = self._get_init_model(opt, None)
         if not opt.get('converting') and (
-            opt.get('init_model') is None
-            or not PathManager.exists(opt.get('init_model', ''))
+            init_model is None or not PathManager.exists(init_model)
         ):
             download(opt['datapath'])
             opt['init_model'] = os.path.join(
@@ -173,9 +176,7 @@ class BartAgent(TransformerGeneratorAgent):
         Override to seed decoder with EOS BOS token.
         """
         return (
-            torch.LongTensor(  # type: ignore
-                [self.END_IDX, self.START_IDX]
-            )
+            torch.LongTensor([self.END_IDX, self.START_IDX])  # type: ignore
             .expand(bsz * beam_size, 2)
             .to(dev)
         )

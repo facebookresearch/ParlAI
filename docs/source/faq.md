@@ -2,17 +2,29 @@
 
 This document contains a number of questions that are regularly asked on GitHub Issues.
 
-
-**Why is my model not generating a response?**
+## Why is my model not generating a response?
 
 For a generative model, check that `--skip-generation` is set to `False`.
 
+## Why can't I reproduce the results of an evaluation on a task with a pretrained model?
 
-**Why can't I reproduce the results of an evaluation on a task with a pretrained model?**
+One common culprit for this is that the flags for that task may not be
+correctly set. When loading a pretrained checkpoint, all of the parameters for
+the model itself will be loaded from the model's `.opt` file, but all
+task-specific parameters will need to be re-specified.
 
-One common culprit for this is that the flags for that task may not be correctly set. When loading a pretrained checkpoint, all of the parameters for the model itself will be loaded from the model's `.opt` file, but all task-specific parameters will need to be re-specified.
 
+## Why is my generative model's perplexity so high (>1000) when evaluating?
 
-**Why is my generative model's perplexity so high (>1000) when evaluating?**
+One first thing to check is whether there is a problem with your dictionary or
+token embeddings, because this high perplexity implies that the model is very
+bad at predicting the next token in a string of text.
 
-One first thing to check is whether there is a problem with your dictionary or token embeddings, because this high perplexity implies that the model is very bad at predicting the next token in a string of text.
+## I changed my teacher and now its tests won't pass.
+
+Take a careful look at the diff outputs that those tests produce. If the results
+look expected, then you can update the regression fixtures (stored, expected
+results) with:
+
+`pytest --force-regen parlai/tasks/TASK_NAME_HERE/test.py`
+

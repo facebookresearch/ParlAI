@@ -16,9 +16,9 @@ The user must provide a model (with `--model`) and a task (with
 ## Examples
 
 ```shell
-parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+parlai train_model --model ir_baseline --task dialog_babi:Task:1 --model-file /tmp/model
+parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/model' --batchsize 32 --learningrate 0.5
+parlai train_model --model drqa --task babi:Task10k:1 --model-file /tmp/model --batchsize 10
 ```
 """  # noqa: E501
 
@@ -77,6 +77,17 @@ def setup_args(parser=None) -> ParlaiParser:
         type=int,
         hidden=True,
         help='Eval time batch size (defaults to same as -bs)',
+    )
+    train.add_argument(
+        '--eval-dynamic-batching',  # FIXME: see https://github.com/facebookresearch/ParlAI/issues/3367
+        default=None,
+        type='nonestr',
+        choices={None, 'off', 'full', 'batchsort'},
+        help=(
+            'Set dynamic batching at evaluation time. Set to off for '
+            'train-only dynamic batching. Set to none (default) to use same '
+            'setting as --dynamic-batching.'
+        ),
     )
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
@@ -196,7 +207,7 @@ def setup_args(parser=None) -> ParlaiParser:
         help='Report micro-averaged metrics instead of macro averaged metrics.',
         recommended=False,
     )
-    TensorboardLogger.add_cmdline_args(parser)
+    TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
 
     parser = setup_dict_args(parser)
     return parser
@@ -229,6 +240,15 @@ def load_eval_worlds(agent, opt, datatype):
     if opt.get('eval_batchsize'):
         # override eval time batchsize
         opt['batchsize'] = opt['eval_batchsize']
+    if opt.get('eval_dynamic_batching'):
+        # FIXME: see issue tracked in https://github.com/facebookresearch/ParlAI/issues/3367
+        # override eval time dynamic batching settings
+        eval_dyn_batch = (
+            None
+            if opt['eval_dynamic_batching'] == 'off'
+            else opt['eval_dynamic_batching']
+        )
+        opt['dynamic_batching'] = eval_dyn_batch
 
     tasks = opt['task'].split(',')
     worlds = []

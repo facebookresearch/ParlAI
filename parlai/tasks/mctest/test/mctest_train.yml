@@ -1,0 +1,113 @@
+acts:
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - trip
+    - Miami
+    - Atlanta
+    - beach
+    labels:
+    - Miami
+    reward: 0
+    text: 'Alyssa got to the beach after a long trip. She''s from Charlotte. She traveled
+      from Atlanta. She''s now in Miami. She went to Miami to visit some friends.
+      But she wanted some time to herself at the beach, so she went there first. After
+      going swimming and laying out, she went to her friend Ellen''s house. Ellen
+      greeted Alyssa and they both had some lemonade to drink. Alyssa called her friends
+      Kristin and Rachel to meet at Ellen''s house. The girls traded stories and caught
+      up on their lives. It was a happy time for everyone. The girls went to a restaurant
+      for dinner. The restaurant had a special on catfish. Alyssa enjoyed the restaurant''s
+      special. Ellen ordered a salad. Kristin had soup. Rachel had a steak. After
+      eating, the ladies went back to Ellen''s house to have fun. They had lots of
+      fun. They stayed the night because they were tired. Alyssa was happy to spend
+      time with her friends again. one: What city is Alyssa in?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - swim
+    - travel
+    - visit friends
+    - laying out
+    labels:
+    - visit friends
+    reward: 0
+    text: 'Alyssa got to the beach after a long trip. She''s from Charlotte. She traveled
+      from Atlanta. She''s now in Miami. She went to Miami to visit some friends.
+      But she wanted some time to herself at the beach, so she went there first. After
+      going swimming and laying out, she went to her friend Ellen''s house. Ellen
+      greeted Alyssa and they both had some lemonade to drink. Alyssa called her friends
+      Kristin and Rachel to meet at Ellen''s house. The girls traded stories and caught
+      up on their lives. It was a happy time for everyone. The girls went to a restaurant
+      for dinner. The restaurant had a special on catfish. Alyssa enjoyed the restaurant''s
+      special. Ellen ordered a salad. Kristin had soup. Rachel had a steak. After
+      eating, the ladies went back to Ellen''s house to have fun. They had lots of
+      fun. They stayed the night because they were tired. Alyssa was happy to spend
+      time with her friends again. one: Why did Alyssa go to Miami?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - '1'
+    - '2'
+    - '3'
+    - '4'
+    labels:
+    - '3'
+    reward: 0
+    text: 'Alyssa got to the beach after a long trip. She''s from Charlotte. She traveled
+      from Atlanta. She''s now in Miami. She went to Miami to visit some friends.
+      But she wanted some time to herself at the beach, so she went there first. After
+      going swimming and laying out, she went to her friend Ellen''s house. Ellen
+      greeted Alyssa and they both had some lemonade to drink. Alyssa called her friends
+      Kristin and Rachel to meet at Ellen''s house. The girls traded stories and caught
+      up on their lives. It was a happy time for everyone. The girls went to a restaurant
+      for dinner. The restaurant had a special on catfish. Alyssa enjoyed the restaurant''s
+      special. Ellen ordered a salad. Kristin had soup. Rachel had a steak. After
+      eating, the ladies went back to Ellen''s house to have fun. They had lots of
+      fun. They stayed the night because they were tired. Alyssa was happy to spend
+      time with her friends again. multiple: How many friends does Alyssa have?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - steak
+    - soup
+    - salad
+    - catfish
+    labels:
+    - catfish
+    reward: 0
+    text: 'Alyssa got to the beach after a long trip. She''s from Charlotte. She traveled
+      from Atlanta. She''s now in Miami. She went to Miami to visit some friends.
+      But she wanted some time to herself at the beach, so she went there first. After
+      going swimming and laying out, she went to her friend Ellen''s house. Ellen
+      greeted Alyssa and they both had some lemonade to drink. Alyssa called her friends
+      Kristin and Rachel to meet at Ellen''s house. The girls traded stories and caught
+      up on their lives. It was a happy time for everyone. The girls went to a restaurant
+      for dinner. The restaurant had a special on catfish. Alyssa enjoyed the restaurant''s
+      special. Ellen ordered a salad. Kristin had soup. Rachel had a steak. After
+      eating, the ladies went back to Ellen''s house to have fun. They had lots of
+      fun. They stayed the night because they were tired. Alyssa was happy to spend
+      time with her friends again. multiple: What did Alyssa eat at the restaurant?'
+- - episode_done: true
+    id: mctest
+    label_candidates:
+    - she says hello to the tree
+    - she throws the covers on the floor
+    - she says hello to the sun
+    - she gets out of bed
+    labels:
+    - she throws the covers on the floor
+    reward: 0
+    text: 'One morning, Elena woke up, much like she did every day. She threw the
+      covers on the floor and rolled out of bed, yawning hugely. She walked to the
+      window and said, "Hello there, Mr. tree!" at the big tree in the yard. It waved
+      its branches back at her. She walked over to her fish bowl next. "Hello there,
+      Mr. Fish!" But wait. Where was Mr. Fish? The bowl was empty--oh, the rocks and
+      water and tiny castle were all there alright, but the pretty blue fish with
+      the long shiny tail was nowhere to be seen. Elena was very worried. She liked
+      Mr. Fish very much. She looked all around her desk, but here wasn''t there.
+      Then she looked on the floor behind the desk--and there he was! He was covered
+      in dust bunnies and not moving. Elena picked him up and put him back in the
+      bowl. And what do you know? He shook himself off and started swimming around
+      again! multiple: What is the very first thing Elena does after waking up?'
+num_episodes: 1200
+num_examples: 1200

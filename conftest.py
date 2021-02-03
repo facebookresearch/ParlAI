@@ -13,6 +13,7 @@ We use this to split up tests into different circleci runs.
 
 import os
 import pathlib
+import random
 import collections
 import pytest
 import subprocess
@@ -35,7 +36,12 @@ def get_class_name(item):
             module_name = parent.module.__name__
             break
 
-    if class_name:
+    # heuristic:
+    # - better to group gpu and task tests, since tests from those modules
+    #   are likely to share caching more
+    # - split up the rest by class name because slow tests tend to be in
+    #   the same module
+    if class_name and '.tasks.' not in module_name:
         return "{}.{}".format(module_name, class_name)
     else:
         return module_name
@@ -61,7 +67,6 @@ MARKER_RULES = [
     ('datatests/', 'data'),
     ('parlai/tasks/', 'teacher'),
     ('tasks/', 'tasks'),
-    ('parlai/mturk/core/test/', 'mturk'),
 ]
 
 
@@ -98,7 +103,10 @@ def pytest_collection_modifyitems(config, items):
             class_name = get_class_name(item)
             class_mapping[class_name].append(item)
 
-        filtered_tests = filter_tests_with_circleci(class_mapping.keys())
+        test_groupings = list(class_mapping.keys())
+        random.Random(1337).shuffle(test_groupings)
+
+        filtered_tests = filter_tests_with_circleci(test_groupings)
         new_items = []
         for name in filtered_tests:
             new_items.extend(class_mapping[name])

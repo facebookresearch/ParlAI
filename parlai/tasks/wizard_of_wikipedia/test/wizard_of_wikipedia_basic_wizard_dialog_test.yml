@@ -1,0 +1,37 @@
+acts:
+- - chosen_topic: Blue
+    episode_done: false
+    eval_labels:
+    - I once road on The Royal Blue train from New York to D.C
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    text: Blue is always nice. I like royal blue.
+- - chosen_topic: Blue
+    episode_done: false
+    eval_labels:
+    - Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    text: Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
+- - chosen_topic: Blue
+    episode_done: true
+    eval_labels:
+    - Yes. I was sad when he died in 1977. He was my favorite actor.
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    text: No I haven't, but I always like the way he danced.
+- - chosen_topic: Cinematography
+    episode_done: false
+    eval_labels:
+    - 'Cinematography,is a type of motion picture , captured electronically by means
+      of an image '
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    text: Hi buddy, What you think about cinematography
+- - chosen_topic: Cinematography
+    episode_done: false
+    eval_labels:
+    - It works by lens used to repeatedly focus the light reflected from objects into
+      real images on the light-sensitive surface .
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    text: Yes buddy,  Images captured with an electronic image-sensor, produces an
+      electrical charge.The word "cinematography" is based on the Greek words  meaning
+      movement, motion.
+num_episodes: 965
+num_examples: 3865

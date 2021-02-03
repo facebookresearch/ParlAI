@@ -10,7 +10,7 @@ language.
 ## Examples
 
 ```shell
-parlai detect_offensive_language -t "convai_chitchat" --display-examples True
+parlai detect_offensive_language --task "convai_chitchat" --display-examples True
 ```
 """  # noqa: E501
 from parlai.core.params import ParlaiParser

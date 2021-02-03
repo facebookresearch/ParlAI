@@ -17,6 +17,7 @@ Contains the following utilities:
 * Beam class which provides some generic beam functionality for classes to use
 """
 
+from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
@@ -380,11 +381,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         return opt_from_disk
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command line arguments.
         """
-        agent = argparser.add_argument_group('Torch Generator Agent')
+        agent = parser.add_argument_group('Torch Generator Agent')
         agent.add_argument(
             '--beam-size',
             type=int,
@@ -467,7 +470,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             help='if true, compute tokenized bleu scores',
         )
 
-        super(TorchGeneratorAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
 
     def __init__(self, opt: Opt, shared=None):

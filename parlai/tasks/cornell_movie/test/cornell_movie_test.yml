@@ -1,0 +1,129 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - You're sweet.
+    id: cornell_movie
+    label_candidates:
+    - ' And he agreed?'
+    - ' The only one who understands what this me-...'
+    - '"...unsure whether or not Enemy Action..."'
+    - '"A Reason to Love."'
+    - '"A people is a detour of nature to get 6 or 7 great men - Yes, and then to
+      get around them..." Nietzsche said that.'
+    - '"Cora" is my part. You''ve got to tell Lloyd it''s for me.'
+    - '"Debbie Does Dallas"...  Hell, it''s in Russian.  I can''t read it...'
+    - '"Deserve" don''t mean shit, Little Bill.'
+    - '"Deutchland, Deutchland ... "'
+    - '"Do chickens give milk?"'
+    - '[Your brother wants to talk to you.]'
+    - '`Cause you know I can do other stuff. I mean,  if you wanted me to talk or...'
+    - and HERBERT exchange a glance. HONORA smiles at Juliet.
+    - frowns at Henry.
+    - how much weight have you lost?
+    - kissed a lotta tadpoles.  Listen, I been thinking about your problem. I'm not
+      the guy to sponsor you. It would be unethical. But, there is something I could
+      do for you.  Putt-putt golf.
+    - ooohhhhhh no.
+    - xxxxxx
+    - yeah, I had a bad night.
+    - yeah.
+    reward: 0
+    text: You have my word.  As a gentleman
+- - episode_done: false
+    eval_labels:
+    - What crap?
+    id: cornell_movie
+    label_candidates:
+    - ' And he agreed?'
+    - ' The only one who understands what this me-...'
+    - '"...unsure whether or not Enemy Action..."'
+    - '"A Reason to Love."'
+    - '"A people is a detour of nature to get 6 or 7 great men - Yes, and then to
+      get around them..." Nietzsche said that.'
+    - '"Cora" is my part. You''ve got to tell Lloyd it''s for me.'
+    - '"Debbie Does Dallas"...  Hell, it''s in Russian.  I can''t read it...'
+    - '"Deserve" don''t mean shit, Little Bill.'
+    - '"Deutchland, Deutchland ... "'
+    - '"Do chickens give milk?"'
+    - '[Your brother wants to talk to you.]'
+    - '`Cause you know I can do other stuff. I mean,  if you wanted me to talk or...'
+    - and HERBERT exchange a glance. HONORA smiles at Juliet.
+    - frowns at Henry.
+    - how much weight have you lost?
+    - kissed a lotta tadpoles.  Listen, I been thinking about your problem. I'm not
+      the guy to sponsor you. It would be unethical. But, there is something I could
+      do for you.  Putt-putt golf.
+    - ooohhhhhh no.
+    - xxxxxx
+    - yeah, I had a bad night.
+    - yeah.
+    reward: 0
+    text: do you listen to this crap?
+- - episode_done: true
+    eval_labels:
+    - Thank God!  If I had to hear one more story about your coiffure...
+    id: cornell_movie
+    label_candidates:
+    - ' And he agreed?'
+    - ' The only one who understands what this me-...'
+    - '"...unsure whether or not Enemy Action..."'
+    - '"A Reason to Love."'
+    - '"A people is a detour of nature to get 6 or 7 great men - Yes, and then to
+      get around them..." Nietzsche said that.'
+    - '"Cora" is my part. You''ve got to tell Lloyd it''s for me.'
+    - '"Debbie Does Dallas"...  Hell, it''s in Russian.  I can''t read it...'
+    - '"Deserve" don''t mean shit, Little Bill.'
+    - '"Deutchland, Deutchland ... "'
+    - '"Do chickens give milk?"'
+    - '[Your brother wants to talk to you.]'
+    - '`Cause you know I can do other stuff. I mean,  if you wanted me to talk or...'
+    - and HERBERT exchange a glance. HONORA smiles at Juliet.
+    - frowns at Henry.
+    - how much weight have you lost?
+    - kissed a lotta tadpoles.  Listen, I been thinking about your problem. I'm not
+      the guy to sponsor you. It would be unethical. But, there is something I could
+      do for you.  Putt-putt golf.
+    - ooohhhhhh no.
+    - xxxxxx
+    - yeah, I had a bad night.
+    - yeah.
+    reward: 0
+    text: Me.  This endless ...blonde babble. I'm like, boring myself.
+- - episode_done: false
+    eval_labels:
+    - Sometimes I wonder if the guys we're supposed to want to go out with are the
+      ones we actually want to go out with, you know?
+    id: cornell_movie
+    label_candidates:
+    - ' And he agreed?'
+    - ' The only one who understands what this me-...'
+    - '"...unsure whether or not Enemy Action..."'
+    - '"A Reason to Love."'
+    - '"A people is a detour of nature to get 6 or 7 great men - Yes, and then to
+      get around them..." Nietzsche said that.'
+    - '"Cora" is my part. You''ve got to tell Lloyd it''s for me.'
+    - '"Debbie Does Dallas"...  Hell, it''s in Russian.  I can''t read it...'
+    - '"Deserve" don''t mean shit, Little Bill.'
+    - '"Deutchland, Deutchland ... "'
+    - '"Do chickens give milk?"'
+    - '[Your brother wants to talk to you.]'
+    - '`Cause you know I can do other stuff. I mean,  if you wanted me to talk or...'
+    - and HERBERT exchange a glance. HONORA smiles at Juliet.
+    - frowns at Henry.
+    - how much weight have you lost?
+    - kissed a lotta tadpoles.  Listen, I been thinking about your problem. I'm not
+      the guy to sponsor you. It would be unethical. But, there is something I could
+      do for you.  Putt-putt golf.
+    - ooohhhhhh no.
+    - xxxxxx
+    - yeah, I had a bad night.
+    - yeah.
+    reward: 0
+    text: Bianca, I don't think the highlights of dating Joey Dorsey are going to
+      include door-opening and coat-holding.
+- - episode_done: true
+    id: cornell_movie
+    reward: 0
+    text: All I know is -- I'd give up my private line to go out with a guy like Joey.
+num_episodes: 8309
+num_examples: 16611

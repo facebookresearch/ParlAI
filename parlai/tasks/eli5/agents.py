@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.utils.io import PathManager
 from .build import build
@@ -23,15 +26,18 @@ class ELI5Teacher(FixedDialogTeacher):
         self.messages = self.load_eli5(opt)
         self.reset()
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        group = argparser.add_argument_group('ELI5 Knowledge arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        group = parser.add_argument_group('ELI5 Knowledge arguments')
         group.add_argument(
             '--knowledge',
             type='bool',
             default=True,
             help='Whether to include supporting document knowledge',
         )
+        return parser
 
     def load_eli5(self, opt):
         """

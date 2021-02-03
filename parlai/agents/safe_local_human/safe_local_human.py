@@ -9,6 +9,9 @@ Agent that gets the local keyboard input in the act() function.
 Applies safety classifier(s) to process user and partner messages.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages
 from parlai.utils.strings import colorize
@@ -24,11 +27,13 @@ OFFENSIVE_BOT_REPLY = (
 
 class SafeLocalHumanAgent(LocalHumanAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group('Safe Local Human Arguments')
+        agent = parser.add_argument_group('Safe Local Human Arguments')
         agent.add_argument(
             '--safety',
             type=str,
@@ -36,7 +41,8 @@ class SafeLocalHumanAgent(LocalHumanAgent):
             choices={'none', 'string_matcher', 'classifier', 'all'},
             help='Apply safety filtering to messages',
         )
-        super(SafeLocalHumanAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)

@@ -9,6 +9,9 @@ This is an example how to extend torch ranker agent and use it for your own purp
 
 In this example, we will just use a simple bag of words model.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 import torch
 from torch import nn
@@ -63,13 +66,16 @@ class TraAgent(TorchRankerAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI args.
         """
-        TorchRankerAgent.add_cmdline_args(argparser)
-        arg_group = argparser.add_argument_group('ExampleBagOfWordsModel Arguments')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        arg_group = parser.add_argument_group('ExampleBagOfWordsModel Arguments')
         arg_group.add_argument('--hidden-dim', type=int, default=512)
+        return parser
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
         """

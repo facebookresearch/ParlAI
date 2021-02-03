@@ -7,6 +7,9 @@
 Model Code.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 from torch import nn
 from torch import optim
@@ -20,13 +23,15 @@ class TransresnetModel(nn.Module):
     Actual model code for the Transresnet Agent.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command line arguments.
         """
-        Transformer.add_common_cmdline_args(argparser)
-        agent = argparser.add_argument_group('TransresnetModel arguments')
+        Transformer.add_common_cmdline_args(parser)
+        agent = parser.add_argument_group('TransresnetModel arguments')
         agent.add_argument(
             '--truncate',
             type=int,
@@ -94,9 +99,10 @@ class TransresnetModel(nn.Module):
             default=0.2,
             help='dropout for additional linear layer',
         )
-        argparser.set_params(
+        parser.set_params(
             ffn_size=1200, attention_dropout=0.2, relu_dropout=0.2, n_positions=1000
         )
+        return parser
 
     def __init__(self, opt, personalities_list, dictionary):
         super().__init__()

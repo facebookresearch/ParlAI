@@ -1,0 +1,59 @@
+acts:
+- - episode_done: true
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - positive
+    text: '"A stirring, funny and finally transporting re-imagining of Beauty and
+      the Beast and 1930s horror films"
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - negative
+    text: 'Apparently reassembled from the cutting-room floor of any given daytime
+      soap.
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - negative
+    text: '"They presume their audience won''t sit still for a sociology lesson, however
+      entertainingly presented, so they trot out the conventional science-fiction
+      elements of bug-eyed monsters and futuristic women in skimpy clothes."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - positive
+    text: '"This is a visually stunning rumination on love, memory, history and the
+      war between art and commerce."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - positive
+    text: 'Jonathan Parker''s Bartleby should have been the be-all-end-all of the
+      modern-office anomie films.
+
+      Is this sentence positive or negative?'
+num_episodes: 6920
+num_examples: 6920

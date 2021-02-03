@@ -1,0 +1,17 @@
+#@package _global_
+mephisto:
+  blueprint:
+    world_file: ${task_dir}/worlds.py
+    task_description_file: ${task_dir}/task_config/task_description.html
+    custom_source_bundle: ${task_dir}/webapp/build/bundle.js
+    num_conversations: 1
+  task:
+    task_name: parlai-qa-example
+    task_title: "Test ParlAI QA Data Collection Task"
+    task_description: >
+      This is a ParlAI data collection task.
+    task_reward: 0.3
+    task_tags: "dynamic,question answering,testing"
+teacher:
+  task: squad:SquadQATeacher
+  datatype: train

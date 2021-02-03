@@ -1,0 +1,29 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Ok, what area are you thinking about?
+    id: taskmaster
+    text: Hi, I'm looking to book a table for Korean fod.
+- - episode_done: false
+    eval_labels:
+    - Ok, great.  There's Thursday Kitchen, it has great reviews.
+    id: taskmaster
+    text: Somewhere in Southern NYC, maybe the East Village?
+- - episode_done: false
+    eval_labels:
+    - They don't have any availability for 7 pm.
+    id: taskmaster
+    text: That's great. So I need a table for tonight at 7 pm for 8 people. We don't
+      want to sit at the bar, but anywhere else is fine.
+- - episode_done: false
+    eval_labels:
+    - 5 or 8.
+    id: taskmaster
+    text: What times are available?
+- - episode_done: false
+    eval_labels:
+    - Ok, do you have a second choice?
+    id: taskmaster
+    text: Yikes, we can't do those times.
+num_episodes: 15416
+num_examples: 161761

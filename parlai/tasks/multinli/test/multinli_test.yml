@@ -1,0 +1,71 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Your contribution helped make it possible for us to provide our
+      students with a quality education.
+
+      Hypothesis: Your contributions were of no help with our students'' education.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: The answer has nothing to do with their cause, however, but with
+      the simple fact that dictionaries are not exercises in bi-unique substitutability;
+      in other words, if one of the senses of run is `operate'' (as in She runs an
+      engine factory ), that does not make it valid to assume that one can substitute
+      operate for run in We run in the marathon every year .  Although recognizing
+      this as a shortcoming of dictionaries and assigning it arbitrarily to what,
+      for lack of a better term, we might call the  genius  of the language, might
+      seem trivial to the casual observer, it is a valid matter for concern in the
+      realm of lexicology.
+
+      Hypothesis: Dictionaries are indeed exercises in bi-unique substitutability.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise:  We serve a classic Tuscan meal that includes a Florentine terrine
+      made with dick and chicken livers.
+
+      Hypothesis: We serve a meal of Florentine terrine.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: A few months ago, Carl Newton and I wrote a letter asking you
+      to consider a financial contribution to graduate Endodontics at Indiana University.
+
+      Hypothesis: Carl Newton and I have never had any other previous contact with
+      you. '
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: I was on this earth you know, I''ve lived on this earth for some
+      reason, I just don''t know what it is yet.
+
+      Hypothesis: I don''t yet know the reason why I have lived on earth. '
+num_episodes: 9832
+num_examples: 9832

@@ -5,6 +5,9 @@ Model card for the MMB DegenPos model described in [Multi-Modal Open-Domain Dial
 ## Model details
 This model was trained to create a dialogue agent that can converse engagingly about the content of an image as well as about general chitchat. It is a 2.7-billion-parameter Transformer sequence-to-sequence model based on the [BlenderBot](https://ai.facebook.com/blog/state-of-the-art-open-source-chatbot/) open-domain chatbot, trained on the image tasks [COCO Captions](https://cocodataset.org/) and [Image-Chat](https://parl.ai/projects/image_chat/), and using an image encoder from [Faster R-CNN](https://arxiv.org/abs/1506.01497?context=cs).
 
+## Model weights
+Due to safety concerns, we are only releasing model weights by request. Please fill out [this form](https://forms.gle/BWaS3Xx3oMaf3Ja46) to request access to a time-limited link to download model weights. We will grant access only to members of university or corporate research labs, for research use only. Please provide links to one or more of your previously published papers to aid in acceptance of your request.
+
 ## Training
 ### Domain-adaptive pre-training
 To recreate a MMB DegenPos model, the base pre-trained BlenderBot3B model must first be further pre-trained on an image dataset, COCO Captions:

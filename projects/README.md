@@ -6,6 +6,8 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
+- **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token_
+
 - **Unlikelihood Training for Consistent Dialogue** [[project]](https://parl.ai/projects/dialogue_unlikelihood/).
   _Methods to reduce copies & repeats, correct vocab usage, and avoiding contradiction via unlikelihood training._
 
@@ -33,7 +35,10 @@ This directory also contains subfolders for some of the projects which are house
   _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._
 
 
-## Chit-chat
+## Open-domain Dialogue
+
+- **Addressing Contradictions in Dialogue Modeling** [[project]](https://parl.ai/projects/contradiction).
+  _A new task for contradiction detection and its use for non-contradicting generation._
 
 - **Recipes for open-domain chatbots** [[project]](https://parl.ai/projects/recipes).
   _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
@@ -56,7 +61,6 @@ _Competition on dialogue chitchat based on the PersonaChat task._
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat).
 _Task & models for chitchat with a given persona._
 
-- **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token_
 
 ## Well-Behaved
 
@@ -113,6 +117,6 @@ _QA model for answering questions by retrieving and reading knowledge._
 
 ## Evaluation
 
-- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
+- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
 _ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
 

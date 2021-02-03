@@ -14,6 +14,7 @@ completed easily.
 Also contains helper classes for loading scripts, etc.
 """
 
+import sys
 import io
 import argparse
 from typing import List, Optional, Dict, Any
@@ -50,7 +51,6 @@ class ParlaiScript(object):
         Create the parser with args.
         """
         # we want to later deprecate this for add_cmdline_args
-        pass
 
     def __init__(self, opt: Opt):
         self.opt = opt
@@ -148,8 +148,15 @@ class _SupercommandParser(ParlaiParser):
         sa = [a for a in self._actions if isinstance(a, argparse._SubParsersAction)]
         assert len(sa) == 1
         sa = sa[0]
-        for _, v in sa.choices.items():
-            v.add_extra_args(args)
+        if args is None:
+            args = sys.argv[1:]
+        if args and args[0] in sa.choices:
+            # if at all possible, try to use the actual subcommand only for
+            # the add extra args, to prevent parse errors in other commands.
+            sa.choices[args[0]].add_extra_args(args)
+        else:
+            for _, v in sa.choices.items():
+                v.add_extra_args(args)
 
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         known, unused = super().parse_known_args(args, namespace, nohelp)

@@ -1,0 +1,43 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - SELECT  Position FROM table WHERE School/Club Team = Butler CC (KS)
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      What position does the player who played for butler cc (ks) play?'
+- - episode_done: true
+    eval_labels:
+    - SELECT COUNT School/Club Team FROM table WHERE No. = 3
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      How many schools did player number 3 play at?'
+- - episode_done: true
+    eval_labels:
+    - SELECT  School/Club Team FROM table WHERE No. = 21
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      What school did player number 21 play for?'
+- - episode_done: true
+    eval_labels:
+    - SELECT  Player FROM table WHERE No. = 42
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      Who is the player that wears number 42?'
+- - episode_done: true
+    eval_labels:
+    - SELECT  Player FROM table WHERE Position = Guard AND Years in Toronto = 1996-97
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      What player played guard for toronto in 1996-97?'
+num_episodes: 56355
+num_examples: 56355

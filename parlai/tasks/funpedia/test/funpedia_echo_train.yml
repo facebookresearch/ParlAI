@@ -1,0 +1,57 @@
+acts:
+- - episode_done: true
+    id: funpedia:echo
+    labels:
+    - Some species have two pairs of long barbels.
+    reward: 0
+    text: 'Danio
+
+      Cultured (Refined, Educated)
+
+      Some species have two pairs of long barbels.'
+- - episode_done: true
+    id: funpedia:echo
+    labels:
+    - Livingston is a city in Sumter County, Alabama, United States.
+    reward: 0
+    text: 'Livingston, Alabama
+
+      Gentle
+
+      Livingston is a city in Sumter County, Alabama, United States.'
+- - episode_done: true
+    id: funpedia:echo
+    labels:
+    - Located north of Fairfield in very rural Camas County, its summit elevation
+      is above sea level with a vertical drop of .
+    reward: 0
+    text: 'Soldier Mountain
+
+      Caring
+
+      Located north of Fairfield in very rural Camas County, its summit elevation
+      is above sea level with a vertical drop of .'
+- - episode_done: true
+    id: funpedia:echo
+    labels:
+    - The island lies in the northern part of the Raunefjorden.
+    reward: 0
+    text: 'Tyssøy
+
+      Profound
+
+      The island lies in the northern part of the Raunefjorden.'
+- - episode_done: true
+    id: funpedia:echo
+    labels:
+    - In addition to new songs, it also features several remakes of songs from "The
+      Partridge Family".
+    reward: 0
+    text: 'Old Trick New Dog
+
+      Appreciative (Grateful)
+
+      In addition to new songs, it also features several remakes of songs from "The
+      Partridge Family".'
+num_episodes: 81467
+num_examples: 81467

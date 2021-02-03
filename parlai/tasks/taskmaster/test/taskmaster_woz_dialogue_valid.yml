@@ -1,0 +1,32 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - 'Okay! let me see what we got.
+
+      I found 2 options.'
+    id: taskmaster:woz_dialogue
+    text: Oh well, I've tried to go see Aquaman in Reno, Nevada.
+- - episode_done: false
+    eval_labels:
+    - Century Summit Sierra is the first.
+    id: taskmaster:woz_dialogue
+    text: Okay.
+- - episode_done: false
+    eval_labels:
+    - the next showtime is at 3:45.
+    id: taskmaster:woz_dialogue
+    text: All right, I'll go with that one. When is the next showing today?
+- - episode_done: false
+    eval_labels:
+    - Sure! let me get those for you!
+    id: taskmaster:woz_dialogue
+    text: All right, can I get three tickets for that?
+- - episode_done: false
+    eval_labels:
+    - 'The total for 3 tickets to Aquaman at 3:45 will be $28.44.
+
+      is that okay?'
+    id: taskmaster:woz_dialogue
+    text: Okay.
+num_episodes: 10684
+num_examples: 102492

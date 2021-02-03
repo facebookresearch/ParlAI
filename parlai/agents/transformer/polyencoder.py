@@ -8,6 +8,7 @@
 Poly-encoder Agent.
 """
 
+from parlai.core.params import ParlaiParser
 from typing import Any, Dict, Optional, Tuple
 
 import torch
@@ -36,12 +37,14 @@ class PolyencoderAgent(TorchRankerAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        TransformerRankerAgent.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Polyencoder Arguments')
+        TransformerRankerAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('Polyencoder Arguments')
         agent.add_argument(
             '--polyencoder-type',
             type=str,
@@ -411,7 +414,7 @@ class PolyEncoderModule(torch.nn.Module):
         if isinstance(attention_layer, PolyBasicAttention):
             return attention_layer(queries, keys, mask_ys=mask, values=values)
         elif isinstance(attention_layer, MultiHeadAttention):
-            return attention_layer(queries, keys, values, mask)
+            return attention_layer(queries, keys, values, mask)[0]
         else:
             raise Exception('Unrecognized type of attention')
 
@@ -595,9 +598,12 @@ class IRFriendlyPolyencoderAgent(AddLabelFixedCandsTRA, PolyencoderAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add cmd line args.
         """
-        AddLabelFixedCandsTRA.add_cmdline_args(argparser)
-        PolyencoderAgent.add_cmdline_args(argparser)
+        AddLabelFixedCandsTRA.add_cmdline_args(parser, partial_opt=partial_opt)
+        PolyencoderAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser

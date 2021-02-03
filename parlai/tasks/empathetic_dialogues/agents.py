@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import os
 from typing import Any, List
 
@@ -53,8 +56,10 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
         self.reset()
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        agent = argparser.add_argument_group('EmpatheticDialogues teacher arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('EmpatheticDialogues teacher arguments')
         agent.add_argument(
             '--train-experiencer-only',
             type='bool',
@@ -70,6 +75,7 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             default=DEFAULT_REMOVE_POLITICAL_CONVOS,
             help='Remove all conversations containing an utterance marked as political',
         )
+        return parser
 
     def num_episodes(self):
         return self.num_eps

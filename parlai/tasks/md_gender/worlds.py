@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from copy import deepcopy
 import torch.nn.functional as F
 
@@ -108,9 +111,11 @@ class InteractiveWorld(DialogPartnerWorld):
     Interact with a model and get TO/AS/ABOUT predictions for each utterance.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('Gender Multiclass Interactive World')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('Gender Multiclass Interactive World')
         parser.add_argument(
             '--self-threshold',
             type=float,
@@ -123,11 +128,12 @@ class InteractiveWorld(DialogPartnerWorld):
             default=0.52,
             help='Threshold for choosing unknown for self',
         )
-        argparser.set_params(
+        parser.set_params(
             single_turn=True,  # this is a single turn task currently
             eval_candidates='inline',
             return_cand_scores=True,
         )
+        return parser
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)

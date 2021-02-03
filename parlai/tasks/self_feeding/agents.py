@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import copy
 import json
 import os
@@ -77,9 +80,11 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
         opt['datafile'] = path
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        project = argparser.add_argument_group('Self-Feeding Tasks')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        project = parser.add_argument_group('Self-Feeding Tasks')
         project.add_argument(
             '-st',
             '--subtasks',
@@ -156,7 +161,8 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
             'be used if it is read by an instance of '
             'ParlaiDialogTeacher',
         )
-        argparser.set_defaults(history_size=2)
+        parser.set_defaults(history_size=2)
+        return parser
 
     def _setup_data(self, path):  # Make private method for ParlAIDialogTeacher
         """
@@ -227,9 +233,12 @@ class SelfFeedingMTLTeacher(MultiTaskTeacher):
         self.new_task = True
         self.random = opt.get('datatype') == 'train'
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        SelfFeedingTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def observe(self, observation):
         return self.tasks[self.task_idx].observe(observation)
@@ -271,9 +280,12 @@ class DialogTeacher(SelfFeedingTeacher):
         opt['subtask'] = 'dialog'
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class FeedbackTeacher(SelfFeedingTeacher):
@@ -282,9 +294,12 @@ class FeedbackTeacher(SelfFeedingTeacher):
         opt['subtask'] = 'feedback'
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class SatisfactionTeacher(SelfFeedingTeacher):
@@ -293,9 +308,12 @@ class SatisfactionTeacher(SelfFeedingTeacher):
         opt['subtask'] = 'satisfaction'
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class DiafeeTeacher(SelfFeedingMTLTeacher):
@@ -312,9 +330,12 @@ class DiafeeTeacher(SelfFeedingMTLTeacher):
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        SelfFeedingTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class DiasatTeacher(SelfFeedingMTLTeacher):
@@ -331,9 +352,12 @@ class DiasatTeacher(SelfFeedingMTLTeacher):
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        SelfFeedingTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
 
 class AllTeacher(SelfFeedingMTLTeacher):
@@ -350,6 +374,9 @@ class AllTeacher(SelfFeedingMTLTeacher):
         opt['task'] = ','.join(tasks)
         super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        SelfFeedingTeacher.add_cmdline_args(argparser)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        SelfFeedingTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser

@@ -7,6 +7,9 @@
 """
 Agents for handling the generation aspects of Wizard.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from itertools import chain
 from functools import lru_cache
 
@@ -44,9 +47,12 @@ DEFAULT_OPTS = {
 
 class _GenericWizardAgent(TransformerGeneratorAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        argparser.set_defaults(**DEFAULT_OPTS)
-        super(_GenericWizardAgent, cls).add_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.set_defaults(**DEFAULT_OPTS)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def batchify(self, obs_batch):
         batch = super().batchify(obs_batch)
@@ -288,9 +294,11 @@ class EndToEndAgent(_GenericWizardAgent):
         return batch
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        super(EndToEndAgent, cls).add_cmdline_args(argparser)
-        group = argparser.add_argument_group("EndToEnd Agent")
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group("EndToEnd Agent")
         group.add_argument(
             '--knowledge-alpha',
             type=float,
@@ -308,12 +316,13 @@ class EndToEndAgent(_GenericWizardAgent):
             type=int,
             help='Reduce the amount of negative knowledge at train time.',
         )
-        argparser.add_argument(
+        parser.add_argument(
             '--knowledge-alpha',
             type=float,
             default=0.95,
             help='Weight on the knowledge-attn loss',
         )
+        return parser
 
     def _model_input(self, batch):
         return (

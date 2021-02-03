@@ -44,7 +44,7 @@ class OffensiveLanguageClassifier:
         from parlai.core.params import ParlaiParser
 
         parser = ParlaiParser(False, False)
-        TransformerClassifierAgent.add_cmdline_args(parser)
+        TransformerClassifierAgent.add_cmdline_args(parser, partial_opt=None)
         parser.set_params(
             model='transformer/classifier',
             model_file=custom_model_file,

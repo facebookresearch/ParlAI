@@ -3,6 +3,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.agents.transformer.transformer import TransformerRankerAgent
 from .wizard_dict import WizardDictAgent
 from parlai.utils.io import PathManager
@@ -20,12 +23,14 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
         return WizardDictAgent
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        super(WizardTransformerRankerAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('Wizard Transformer Ranker Arguments')
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('Wizard Transformer Ranker Arguments')
         agent.add_argument(
             '--use-knowledge',
             type='bool',
@@ -52,7 +57,7 @@ class WizardTransformerRankerAgent(TransformerRankerAgent):
             help='truncate knowledge to this length',
         )
         agent.add_argument('--legacy', type='bool', default=False, help='legacy model')
-        argparser.set_defaults(
+        parser.set_defaults(
             learningrate=0.0008,
             eval_candidates='inline',
             candidates='batch',

@@ -7,10 +7,12 @@
 End-to-end testing for the chat demo crowdsourcing task.
 """
 
+import os
 import unittest
 
+
 # Desired inputs/outputs
-DESIRED_STATE_AGENT_0 = {
+EXPECTED_STATE_AGENT_0 = {
     "outputs": {
         "messages": [
             {
@@ -155,7 +157,7 @@ DESIRED_STATE_AGENT_0 = {
     },
     "inputs": {},
 }
-DESIRED_STATE_AGENT_1 = {
+EXPECTED_STATE_AGENT_1 = {
     "outputs": {
         "messages": [
             {
@@ -300,18 +302,18 @@ DESIRED_STATE_AGENT_1 = {
     },
     "inputs": {},
 }
+EXPECTED_STATES = (EXPECTED_STATE_AGENT_0, EXPECTED_STATE_AGENT_1)
 AGENT_MESSAGES = [
     ("Hi! How are you?", "I'm pretty good - you?"),
     ("I'm okay - how was your weekend?", "I was fine. Did you do anything fun?"),
 ]
-AGENT_0_DISPLAY_ID = 'Chat Agent 1'
-AGENT_1_DISPLAY_ID = 'Chat Agent 2'
-FORM_PROMPTS = {
-    'agent_0': "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
-    'agent_1': "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
-}
-FORM_RESPONSES = {
-    'agent_0': [
+AGENT_DISPLAY_IDS = ('Chat Agent 1', 'Chat Agent 2')
+FORM_MESSAGES = (
+    "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
+    "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
+)
+FORM_RESPONSES = (
+    [
         {
             "question": "How much did you enjoy talking to this user?",
             "response": "A lot",
@@ -322,7 +324,7 @@ FORM_RESPONSES = {
         },
         {"question": "Enter any comment here", "response": "Yes"},
     ],
-    'agent_1': [
+    [
         {
             "question": "How much did you enjoy talking to this user?",
             "response": "Not at all",
@@ -333,25 +335,42 @@ FORM_RESPONSES = {
         },
         {"question": "Enter any comment here", "response": "No"},
     ],
-}
+)
+FORM_TASK_DATA = [{'form_responses': responses} for responses in FORM_RESPONSES]
 # TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
 try:
 
-    # From the Mephisto repo
-    from examples.parlai_chat_task_demo.parlai_test_script import TASK_DIRECTORY
-    from mephisto.server.blueprints.parlai_chat.parlai_chat_blueprint import (
+    import mephisto
+    from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
         BLUEPRINT_TYPE,
     )
 
-    from parlai.crowdsourcing.utils.tests import CrowdsourcingTestMixin
+    from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
-    class TestChatDemo(CrowdsourcingTestMixin, unittest.TestCase):
+    TASK_DIRECTORY = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(mephisto.__file__))),
+        'examples',
+        'parlai_chat_task_demo',
+    )
+
+    class TestChatDemo(AbstractParlAIChatTest, unittest.TestCase):
         """
         Test the chat demo crowdsourcing task.
         """
+
+        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
+        #  regressions. Also use a pytest.fixture to call self._setup() and
+        #  self._teardown(), like the other tests use, instead of calling them with
+        #  self.setUp() and self.tearDown()
+
+        def setUp(self) -> None:
+            self._setup()
+
+        def tearDown(self) -> None:
+            self._teardown()
 
         def test_base_task(self):
 
@@ -384,111 +403,15 @@ try:
             )
             self._set_up_server(shared_state=shared_state)
 
-            # Set up the mock human agents
-            agent_0_id, agent_1_id = self._register_mock_agents(num_agents=2)
-
-            # # Feed messages to the agents
-
-            # Set initial data
-            self.server.request_init_data(agent_0_id)
-            self.server.request_init_data(agent_1_id)
-
-            # Have agents talk to each other
-            for agent_0_text, agent_1_text in AGENT_MESSAGES:
-                self._send_agent_message(
-                    agent_id=agent_0_id,
-                    agent_display_id=AGENT_0_DISPLAY_ID,
-                    text=agent_0_text,
-                )
-                self._send_agent_message(
-                    agent_id=agent_1_id,
-                    agent_display_id=AGENT_1_DISPLAY_ID,
-                    text=agent_1_text,
-                )
-
-            # Have agents fill out the form
-            self.server.send_agent_act(
-                agent_id=agent_0_id,
-                act_content={
-                    'text': FORM_PROMPTS['agent_0'],
-                    'task_data': {'form_responses': FORM_RESPONSES['agent_0']},
-                    'id': AGENT_0_DISPLAY_ID,
-                    'episode_done': False,
-                },
+            # Check that the agent states are as they should be
+            self._test_agent_states(
+                num_agents=2,
+                agent_display_ids=AGENT_DISPLAY_IDS,
+                agent_messages=AGENT_MESSAGES,
+                form_messages=FORM_MESSAGES,
+                form_task_data=FORM_TASK_DATA,
+                expected_states=EXPECTED_STATES,
             )
-            self.server.send_agent_act(
-                agent_id=agent_1_id,
-                act_content={
-                    'text': FORM_PROMPTS['agent_1'],
-                    'task_data': {'form_responses': FORM_RESPONSES['agent_1']},
-                    'id': AGENT_1_DISPLAY_ID,
-                    'episode_done': False,
-                },
-            )
-
-            # Submit the HIT
-            self.server.send_agent_act(
-                agent_id=agent_0_id,
-                act_content={
-                    'task_data': {'final_data': {}},
-                    'MEPHISTO_is_submit': True,
-                },
-            )
-            self.server.send_agent_act(
-                agent_id=agent_1_id,
-                act_content={
-                    'task_data': {'final_data': {}},
-                    'MEPHISTO_is_submit': True,
-                },
-            )
-
-            # # Check that the inputs and outputs are as expected
-
-            state_0, state_1 = [
-                agent.state.get_data() for agent in self.db.find_agents()
-            ]
-            actual_and_desired_states = [
-                (state_0, DESIRED_STATE_AGENT_0),
-                (state_1, DESIRED_STATE_AGENT_1),
-            ]
-            for actual_state, desired_state in actual_and_desired_states:
-                assert actual_state['inputs'] == desired_state['inputs']
-                assert len(actual_state['outputs']['messages']) == len(
-                    desired_state['outputs']['messages']
-                )
-                for actual_message, desired_message in zip(
-                    actual_state['outputs']['messages'],
-                    desired_state['outputs']['messages'],
-                ):
-                    for key, desired_value in desired_message.items():
-                        if key == 'timestamp':
-                            pass  # The timestamp will obviously be different
-                        elif key == 'data':
-                            for key_inner, desired_value_inner in desired_message[
-                                key
-                            ].items():
-                                if key_inner == 'message_id':
-                                    pass  # The message ID will be different
-                                else:
-                                    self.assertEqual(
-                                        actual_message[key][key_inner],
-                                        desired_value_inner,
-                                    )
-                        else:
-                            self.assertEqual(actual_message[key], desired_value)
-
-        def _send_agent_message(self, agent_id: str, agent_display_id: str, text: str):
-            """
-            Have the agent specified by agent_id send the specified text with the given
-            display ID string.
-            """
-            act_content = {
-                "text": text,
-                "task_data": {},
-                "id": agent_display_id,
-                "episode_done": False,
-            }
-            self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
 
 
 except ImportError:

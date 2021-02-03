@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import json
 import math
 import os
@@ -56,9 +59,12 @@ class RewardUnlikelihoodAgentTrait(object):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        grp = super(RewardUnlikelihoodAgentTrait, cls).add_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--alpha', default=1.0, type=float)
+        return parser
 
     def batchify(self, obs_batch, **kwargs):
         batch = super().batchify(obs_batch, **kwargs)
@@ -151,14 +157,16 @@ class RepetitionUnlikelihoodAgentTrait(object):
         self.pred_logsoftmax = torch.nn.LogSoftmax(dim=2)
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        print(super())
-        grp = super().add_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--seq-ul-ratio', default=0.5, type=float)
         grp.add_argument('--seq-ul-n', default=4, type=int)
         grp.add_argument('--mask-n', default=100, type=int)
         grp.add_argument('--ctxt-beta', default=0.5, type=float)
         grp.add_argument('--crep-pen', default='crep', type=str)
+        return parser
 
     def _init_cuda_buffer(self, batchsize, maxlen, force=False):
         pass
@@ -354,9 +362,10 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         self.running_human = Counter()
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        print(super())
-        grp = super().add_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
         grp.add_argument('--alpha', default=1.0, type=float)
         grp.add_argument('--queue-size', default=32, type=int)
         grp.add_argument(
@@ -364,6 +373,7 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
         )
         grp.add_argument('--threshold', type=float, default=1e-3)
         grp.add_argument('--counts-file', type=str, default=None)
+        return parser
 
     def _init_cuda_buffer(self, *args, **kwargs):
         pass

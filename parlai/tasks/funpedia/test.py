@@ -4,9 +4,28 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.utils.testing import AutoTeacherTest  # noqa: F401
-import unittest
+from parlai.utils.testing import AutoTeacherTest
 
 
-class TestDefaultTeacher(unittest.TestCase, AutoTeacherTest):
-    task = 'funpedia'
+class TestDefaultTeacher(AutoTeacherTest):
+    task = "funpedia"
+
+
+class TestFunpediaTeacher(AutoTeacherTest):
+    task = "funpedia:funpedia"
+
+
+class TestNopersonaTeacher(AutoTeacherTest):
+    task = "funpedia:nopersona"
+
+
+class TestLmTeacher(AutoTeacherTest):
+    task = "funpedia:lm"
+
+
+class TestEchoTeacher(AutoTeacherTest):
+    task = "funpedia:echo"
+
+
+class TestSentencechooseTeacher(AutoTeacherTest):
+    task = "funpedia:sentencechoose"

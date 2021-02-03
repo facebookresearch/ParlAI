@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.tasks.md_gender.build import build
@@ -24,10 +27,12 @@ class LIGHTTeacher(FixedDialogTeacher):
     Predict the gender of character given the dialogue utterance.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        argparser = gend_utils.add_common_args(argparser)
-        agent = argparser.add_argument_group('LIGHT gender')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = gend_utils.add_common_args(parser)
+        agent = parser.add_argument_group('LIGHT gender')
         agent.add_argument(
             '--labels-to-use',
             type=str,
@@ -35,6 +40,7 @@ class LIGHTTeacher(FixedDialogTeacher):
             choices=['all', 'self', 'partner'],
             help='Which labels to use for this teacher',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         self.opt = opt

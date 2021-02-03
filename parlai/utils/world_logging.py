@@ -8,6 +8,9 @@
 Useful utilities for logging actions/observations in a world.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.worlds import BatchWorld, DynamicBatchWorld
 from parlai.utils.misc import msg_to_str
 from parlai.utils.conversations import Conversations
@@ -25,15 +28,18 @@ class WorldLogger:
     Logs actions/observations in a world and saves in a given format.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('World Logging')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('World Logging')
         agent.add_argument(
             '--log-keep-fields',
             type=str,
             default=KEEP_ALL,
             help='Fields to keep when logging. Should be a comma separated list',
         )
+        return parser
 
     def __init__(self, opt):
         self.opt = copy.deepcopy(opt)
@@ -55,6 +61,8 @@ class WorldLogger:
         self._current_episodes = {}
 
     def reset_world(self, idx=0):
+        if idx not in self._current_episodes:
+            return
         self._add_episode(self._current_episodes[idx])
         self._current_episodes[idx] = []
 

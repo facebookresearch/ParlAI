@@ -22,7 +22,7 @@ includes:
 Example invocation:
 
 ```bash
-parlai train_model -t convai2 -m seq2seq -emb fasttext_cc
+parlai train_model --task convai2 --model seq2seq --embedding-type fasttext_cc
 ```
 
 Adding '-fixed' to the name e.g. 'twitter-fixed' means backprop will not
@@ -37,5 +37,5 @@ bert bi-, poly- and cross-encoder rankers.
 Example invocation:
 
 ```bash
-parlai train_model -t convai2 -m bert_ranker/bi_encoder_ranker
+parlai train_model --task convai2 --model bert_ranker/bi_encoder_ranker
 ```

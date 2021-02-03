@@ -9,6 +9,7 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
+from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
 from parlai.core.torch_agent import TorchAgent, Output
@@ -225,12 +226,14 @@ class TorchClassifierAgent(TorchAgent):
     model.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add CLI args.
         """
-        TorchAgent.add_cmdline_args(parser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         parser = parser.add_argument_group('Torch Classifier Arguments')
         # class arguments
         parser.add_argument(
@@ -297,6 +300,7 @@ class TorchClassifierAgent(TorchAgent):
             help='Freeze the encoder and update the classifier head only',
         )
         parser.set_defaults(use_reply='none')
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         init_model, self.is_finetune = self._get_init_model(opt, shared)

@@ -4,13 +4,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
-from parlai.utils.io import PathManager
-from .build import build
-
 import copy
 import json
 import os
+
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.message import Message
+from parlai.core.opt import Opt
+from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
+from parlai.tasks.wrapper.agents import AbstractWrapperTeacher
+from parlai.utils.io import PathManager
+from .build import build
 
 
 def get_sentence_tokenizer():
@@ -163,7 +168,7 @@ class OpensquadTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    answers = (a['text'] for a in qa['answers'])
+                    answers = [a['text'] for a in qa['answers']]
                     yield (question, answers), True
 
 
@@ -245,15 +250,18 @@ class SentenceTeacher(IndexTeacher):
         self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('SQuAD Sentence Teacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('SQuAD Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
             type='bool',
             default=False,
             help='include context within text instead of as a ' 'separate field',
         )
+        return parser
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -326,15 +334,18 @@ class FulldocsentenceTeacher(FulldocTeacher):
         self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = parser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
             type='bool',
             default=False,
             help='include context within text instead of as a ' 'separate field',
         )
+        return parser
 
     def get(self, episode_idx, entry_idx=None):
         action = {}
@@ -372,3 +383,26 @@ class FulldocsentenceTeacher(FulldocTeacher):
             del action['context']
 
         return action
+
+
+class SquadQATeacher(AbstractWrapperTeacher):
+    """
+    Wrapper Teacher over SQuAD to get only the passage, and ignore the question.
+    """
+
+    @classmethod
+    def add_cmdline_args(cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None):
+        parser.set_defaults(wrapper_task='squad')
+        return parser
+
+    def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
+
+    def _edit_action(self, act: Message) -> Message:
+
+        """
+        # SQuAD returns passage and question both, only passage required for task.
+        """
+        passage = act['text'].split('\n')[0]
+        act.force_set('text', passage)
+        return act

@@ -1,0 +1,10 @@
+dec_emb_loss: 0.0151884
+dec_hid_loss: 0.658225
+dec_self_attn_loss: 497.628
+enc_dec_attn_loss: 232.173
+enc_emb_loss: 0.0109334
+enc_hid_loss: 0.0423955
+enc_loss: 0.0415342
+enc_self_attn_loss: 3.48364
+loss: 11.9793
+pred_loss: 6.93707

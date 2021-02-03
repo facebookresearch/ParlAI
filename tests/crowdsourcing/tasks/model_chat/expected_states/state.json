@@ -1,0 +1,394 @@
+{
+    "inputs": {},
+    "outputs": {
+        "messages": [
+            {
+                "data": {
+                    "message_id": "3a289317-8519-4da8-be8f-9a515a6ec3da",
+                    "state": {
+                        "agent_display_name": "Worker"
+                    }
+                },
+                "packet_type": "update_status",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748716.1582668
+            },
+            {
+                "data": {
+                    "agent_idx": 0,
+                    "episode_done": false,
+                    "fake_start": true,
+                    "id": "Worker",
+                    "message_id": "4f72800c-e1ff-4411-8ee5-286336c27859",
+                    "text": "Hi!"
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748716.1952436
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "FixedResponseAgent",
+                    "message_id": "43ef23af-a9fc-4f67-bd06-6e083ba45678",
+                    "text": "I don't know."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748719.289413
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "Worker",
+                    "message_id": "fb168956-cfe1-40e2-b28b-1ca66207a39e",
+                    "task_data": {
+                        "problem_data_for_prior_message": {
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": true
+                        }
+                    },
+                    "text": "What are you nervous about?"
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748750.6269932
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "FixedResponseAgent",
+                    "message_id": "05fefda5-dfa0-44e2-81ad-ba9ca203ed1d",
+                    "text": "I don't know."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748754.1622028
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "Worker",
+                    "message_id": "49740817-1443-47b4-b91d-3260fd12bf7d",
+                    "task_data": {
+                        "problem_data_for_prior_message": {
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": true
+                        }
+                    },
+                    "text": "Do you have any plans for the weekend?"
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748767.7324872
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "FixedResponseAgent",
+                    "message_id": "6a52d8ee-1955-4d08-a7f8-007feea3ecfd",
+                    "text": "I don't know."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748770.6286461
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "Worker",
+                    "message_id": "db9a475a-a47f-4328-92f4-130f2227dfbb",
+                    "task_data": {
+                        "problem_data_for_prior_message": {
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": true
+                        }
+                    },
+                    "text": "Yeah that sounds great! I like to bike and try new restaurants."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748790.1551545
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "FixedResponseAgent",
+                    "message_id": "550f71a4-f441-4546-bd73-45313932ec3c",
+                    "text": "I don't know."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748793.6703372
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "Worker",
+                    "message_id": "9dc9241c-73f6-4724-bad6-50038ab64522",
+                    "task_data": {
+                        "problem_data_for_prior_message": {
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": true
+                        }
+                    },
+                    "text": "Oh, Italian food is great. I also love Thai and Indian."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748803.546519
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "FixedResponseAgent",
+                    "message_id": "3a046372-6204-452d-8877-88a1d1a9583a",
+                    "text": "I don't know."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748806.4725926
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "Worker",
+                    "message_id": "64816a92-5e8a-4ab9-b194-2a93499f47dc",
+                    "task_data": {
+                        "problem_data_for_prior_message": {
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": true
+                        }
+                    },
+                    "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748820.3473911
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "FixedResponseAgent",
+                    "message_id": "f68faec0-b2c2-434d-98a6-b4cc9f1f42b3",
+                    "text": "I don't know."
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748822.6552174
+            },
+            {
+                "data": {
+                    "episode_done": false,
+                    "id": "Worker",
+                    "message_id": "524d5a56-71a5-4b00-8595-0df720004eb6",
+                    "task_data": {
+                        "final_rating": 4,
+                        "problem_data_for_prior_message": {
+                            "bucket_0": false,
+                            "bucket_1": false,
+                            "bucket_2": true,
+                            "bucket_3": false,
+                            "bucket_4": true
+                        }
+                    },
+                    "text": ""
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748839.8552907
+            },
+            {
+                "final_chat_data": {
+                    "acceptability_violations": [
+                        null
+                    ],
+                    "additional_context": null,
+                    "assignment_ids": [
+                        "1"
+                    ],
+                    "bad_workers": [],
+                    "context_dataset": null,
+                    "dialog": [
+                        {
+                            "agent_idx": 0,
+                            "episode_done": false,
+                            "fake_start": true,
+                            "id": "Worker",
+                            "message_id": "4f72800c-e1ff-4411-8ee5-286336c27859",
+                            "text": "Hi!"
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "FixedResponseAgent",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Worker",
+                            "text": "What are you nervous about?"
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "FixedResponseAgent",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Worker",
+                            "text": "Do you have any plans for the weekend?"
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "FixedResponseAgent",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Worker",
+                            "text": "Yeah that sounds great! I like to bike and try new restaurants."
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "FixedResponseAgent",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Worker",
+                            "text": "Oh, Italian food is great. I also love Thai and Indian."
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "FixedResponseAgent",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Worker",
+                            "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "FixedResponseAgent",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true
+                            },
+                            "final_rating": 4,
+                            "text": "I don't know."
+                        }
+                    ],
+                    "hit_ids": [
+                        "1"
+                    ],
+                    "person1_seed_utterance": null,
+                    "person2_seed_utterance": null,
+                    "personas": null,
+                    "task_description": {
+                        "annotations_config": "[\n    {\n        \"value\": \"bucket_0\",\n        \"name\": \"Bucket 0\",\n        \"description\": \"this response implies something...0\"\n    },\n    {\n        \"value\": \"bucket_1\",\n        \"name\": \"Bucket 1\",\n        \"description\": \"this response implies something...1\"\n    },\n    {\n        \"value\": \"bucket_2\",\n        \"name\": \"Bucket 2\",\n        \"description\": \"this response implies something...2\"\n    },\n    {\n        \"value\": \"bucket_3\",\n        \"name\": \"Bucket 3\",\n        \"description\": \"this response implies something...3\"\n    },\n    {\n        \"value\": \"bucket_4\",\n        \"name\": \"Bucket 4\",\n        \"description\": \"this response implies something...4\"\n    }\n]\n",
+                        "model_nickname": "fixed_response",
+                        "model_opt": {"init_opt": null, "allow_missing_init_opts": false, "task": null, "download_path": null, "loglevel": "info", "datatype": "train", "image_mode": "raw", "hide_labels": false, "multitask_weights": [1], "batchsize": 1, "dynamic_batching": null, "verbose": false, "datapath": "/private/home/ems/GitHub/facebookresearch/ParlAI/data", "model": "fixed_response", "model_file": null, "init_model": null, "dict_class": null, "image_size": 256, "image_cropsize": 224, "fixed_response": "I don't know.", "model_parallel": true, "parlai_home": "/private/home/ems/GitHub/facebookresearch/ParlAI", "override": {"model_parallel": true, "model": "fixed_response"}, "starttime": "Jan08_11-16"}
+                    },
+                    "workers": [
+                        "--NOT-MTURK-AGENT-MOCK_WORKER_0"
+                    ]
+                }
+            },
+            {
+                "data": {
+                    "WORLD_DATA": {
+                        "custom_data": null,
+                        "worker_data": {}
+                    },
+                    "id": "SUBMIT_WORLD_DATA",
+                    "message_id": "b4a0d2d2-1728-468b-a4a4-5589b653a5b8",
+                    "text": ""
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "1",
+                "sender_id": "mephisto",
+                "timestamp": 1606748839.8638673
+            },
+            {
+                "data": {
+                    "MEPHISTO_is_submit": true,
+                    "task_data": {
+                        "final_data": {}
+                    }
+                },
+                "packet_type": "agent_action",
+                "receiver_id": "Mephisto",
+                "sender_id": "1",
+                "timestamp": 1606748846.5838857
+            }
+        ]
+    }
+}
