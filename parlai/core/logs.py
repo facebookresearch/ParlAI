@@ -44,7 +44,7 @@ class TensorboardLogger(object):
             '--tensorboard-log',
             type='bool',
             default=False,
-            help="Tensorboard logging of metrics, default is %(default)s",
+            help="Tensorboard logging of metrics",
             hidden=False,
         )
         logger.add_argument(
@@ -77,7 +77,7 @@ class TensorboardLogger(object):
 
     def log_metrics(self, setting, step, report):
         """
-        Add all metrics from tensorboard_metrics opt key.
+        Log all metrics to tensorboard.
 
         :param setting:
             One of train/valid/test. Will be used as the title for the graph.
@@ -108,7 +108,7 @@ class WandbLogger(object):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         """
-        Add w&b CLI args.
+        Add WandB CLI args.
         """
         logger = parser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
@@ -116,25 +116,28 @@ class WandbLogger(object):
             '--wandb-log',
             type='bool',
             default=False,
-            help="Enable W&B logging of metrics, default is %(default)s",
-            hidden=False,
+            help="Enable W&B logging of metrics",
         )
         logger.add_argument(
-            '--wandb-name', type=str, default=None, help='W&B run name', hidden=True
+            '--wandb-name',
+            type=str,
+            default=None,
+            help='W&B run name. If not set, WandB will randomly generate a name.',
+            hidden=True,
         )
 
         logger.add_argument(
             '--wandb-project',
             type=str,
             default=None,
-            help='W&B project name. Defaults to timestamp.',
+            help='W&B project name. Defaults to timestamp. Usually the name of the sweep.',
             hidden=False,
         )
         return logger
 
     def __init__(self, opt: Opt, model=None):
         try:
-            # tensorboard is a very expensive thing to import. Wait until the
+            # wand is a very expensive thing to import. Wait until the
             # last second to import it.
             import wandb
 
@@ -151,6 +154,7 @@ class WandbLogger(object):
             project=project,
             dir=os.path.dirname(opt['model_file']),
             notes=f"{opt['model_file']}",
+            reinit=True,  # in case of preemption
         )
         # suppress wandb's output
         logging.getLogger("wandb").setLevel(logging.ERROR)
@@ -162,7 +166,7 @@ class WandbLogger(object):
 
     def log_metrics(self, setting, step, report):
         """
-        Add all metrics from tensorboard_metrics opt key.
+        Log all metrics to W&B.
 
         :param setting:
             One of train/valid/test. Will be used as the title for the graph.
