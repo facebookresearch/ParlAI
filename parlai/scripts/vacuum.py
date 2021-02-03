@@ -53,7 +53,7 @@ class Vacuum(ParlaiScript):
             states = torch.load(
                 f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
             )
-        if not opt['no_backup']:
+        if not self.opt['no_backup']:
             logging.info(f"Backing up {model_file} to {model_file}.unvacuumed")
             os.rename(model_file, model_file + ".unvacuumed")
         for key in [

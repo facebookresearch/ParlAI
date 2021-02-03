@@ -91,13 +91,14 @@ class TestVacuum(unittest.TestCase):
                     'optimizer': 'adam',
                     'learningrate': 0.01,
                     'model_file': model_file,
-                    'num_epochs': 0.05,
+                    'num_epochs': 0.01,
                     'skip_generation': True,
+                    'no_cuda': True,
                     'batchsize': 8,
                     # TODO: switch to test_agents/unigram
                     'model': 'transformer/generator',
-                    'ffn_size': 32,
-                    'embedding_size': 32,
+                    'ffn_size': 8,
+                    'embedding_size': 8,
                     'n_layers': 1,
                 }
             )
@@ -112,6 +113,34 @@ class TestVacuum(unittest.TestCase):
             for key in ['loss', 'exs', 'ppl', 'token_acc']:
                 assert valid2[key] == valid[key], f"{key} score doesn't match"
                 assert test2[key] == test[key], f"{key} score doesn't match"
+
+    def test_vacuum_nobackup(self):
+        with testing_utils.tempdir() as tmpdir:
+            from parlai.scripts.vacuum import Vacuum
+
+            model_file = os.path.join(tmpdir, 'model')
+            valid, test = testing_utils.train_model(
+                {
+                    'task': 'integration_tests',
+                    'optimizer': 'adam',
+                    'learningrate': 0.01,
+                    'model_file': model_file,
+                    'num_epochs': 0.01,
+                    'no_cuda': True,
+                    'skip_generation': True,
+                    'batchsize': 8,
+                    # TODO: switch to test_agents/unigram
+                    'model': 'transformer/generator',
+                    'ffn_size': 8,
+                    'embedding_size': 8,
+                    'n_layers': 1,
+                }
+            )
+            size_before = os.stat(model_file).st_size
+            Vacuum.main(model_file=model_file, no_backup=True)
+            size_after = os.stat(model_file).st_size
+            assert size_after < size_before
+            assert not os.path.exists(model_file + '.unvacuumed')
 
 
 class TestDetectOffensive(unittest.TestCase):
