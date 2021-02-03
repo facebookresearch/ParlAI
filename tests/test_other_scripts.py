@@ -105,7 +105,7 @@ class TestVacuum(unittest.TestCase):
             size_before = os.stat(model_file).st_size
             Vacuum.main(model_file=model_file)
             size_after = os.stat(model_file).st_size
-            assert size_after < size_before
+            assert size_after < size_before, "Model file did not shrink after vacuum"
             assert os.path.exists(model_file + '.unvacuumed')
             valid2, test2 = testing_utils.eval_model(
                 {'task': 'integration_tests', 'model_file': model_file, 'batchsize': 8}
@@ -139,7 +139,7 @@ class TestVacuum(unittest.TestCase):
             size_before = os.stat(model_file).st_size
             Vacuum.main(model_file=model_file, no_backup=True)
             size_after = os.stat(model_file).st_size
-            assert size_after < size_before
+            assert size_after < size_before, "Model file did not shrink after vacuum"
             assert not os.path.exists(model_file + '.unvacuumed')
 
 
