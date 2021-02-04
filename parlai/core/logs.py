@@ -110,7 +110,7 @@ class WandbLogger(object):
         """
         Add WandB CLI args.
         """
-        logger = parser.add_argument_group('Tensorboard Arguments')
+        logger = parser.add_argument_group('WandB Arguments')
         logger.add_argument(
             '-wblog',
             '--wandb-log',
