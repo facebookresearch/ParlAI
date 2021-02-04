@@ -36,8 +36,7 @@ from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
 from parlai.utils.fp16 import (
-    fp16_apex_available,
-    fp16_optimizer_wrapper,
+    PytorchFP16Optimizer,
     MemoryEfficientFP16Optimizer,
     MemoryEfficientFP16Adam,
     Adafactor,
@@ -479,7 +478,7 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '--fp16-impl',
             type=str,
-            default='apex',
+            default='pytorch',
             choices=['apex', 'mem_efficient'],
             help='Implementation of FP16 to use',
         )
@@ -719,9 +718,7 @@ class TorchAgent(ABC, Agent):
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
             # check that the implementation requested is available
-            self.fp16_impl = self.opt.get('fp16_impl', 'apex')
-            if self.fp16_impl == 'apex' and not fp16_apex_available():
-                self.fp16 = False
+            self.fp16_impl = self.opt.get('fp16_impl', 'pytorch')
 
         if shared is None:
             # intitialize any important structures from scratch
@@ -983,8 +980,8 @@ class TorchAgent(ABC, Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            if self.fp16_impl == 'apex':
-                self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+            if self.fp16_impl == 'pytorch':
+                self.optimizer = PytorchFP16Optimizer(self.optimizer)
             else:
                 # Using memory efficient optimizer
                 opt_name = opt['optimizer']
