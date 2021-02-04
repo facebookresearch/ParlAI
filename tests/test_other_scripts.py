@@ -140,7 +140,9 @@ class TestVacuum(unittest.TestCase):
             Vacuum.main(model_file=model_file, no_backup=True)
             size_after = os.stat(model_file).st_size
             assert size_after < size_before, "Model file did not shrink after vacuum"
-            assert not os.path.exists(model_file + '.unvacuumed')
+            assert not os.path.exists(
+                model_file + '.unvacuumed'
+            ), "Backup should not exist"
 
 
 class TestDetectOffensive(unittest.TestCase):
