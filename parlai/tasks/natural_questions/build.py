@@ -81,9 +81,11 @@ def _untar_dataset_files(dpath):
 
 def _move_valid_files_from_dev_to_valid(dpath):
     """
-    Files from Google are stored at `nq-dev-##.jsonl.gz` and get untar'd to 
-    `nq-dev-##.jsonl`. The agent expects them to be stored at `nq-valid-00.jsonl`.
-    This moves them over if need be.
+    Files from Google are stored at `nq-dev-##.jsonl.gz` and get untar'd to `nq-
+    dev-##.jsonl`.
+
+    The agent expects them to be stored at `nq-valid-00.jsonl`. This moves them over if
+    need be.
     """
     valid_path = os.path.join(dpath, 'valid')
     for f in os.listdir(valid_path):
