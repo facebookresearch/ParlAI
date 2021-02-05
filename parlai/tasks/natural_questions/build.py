@@ -87,7 +87,6 @@ def _move_valid_files_from_dev_to_valid(dpath):
     """
     valid_path = os.path.join(dpath, 'valid')
     for f in os.listdir(valid_path):
-        print(f)
         if "dev" in f:
             new = f.replace('dev', 'valid')
             os.rename(os.path.join(valid_path, f), os.path.join(valid_path, new))
