@@ -34,9 +34,11 @@ class TestAnalysis(unittest.TestCase):
             # Define expected stdout
 
             # Paths
-            analysis_config_folder = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'analysis_config'
+            analysis_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'test_turn_annotations_static_analysis',
             )
+            expected_stdout_path = os.path.join(analysis_folder, 'test_stdout.txt')
             temp_gold_annotations_path = os.path.join(tmpdir, 'gold_annotations.json')
 
             # Save a file of gold annotations
@@ -82,11 +84,11 @@ class TestAnalysis(unittest.TestCase):
             parser.set_defaults(
                 **{
                     'results_folders': os.path.join(
-                        os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
+                        analysis_folder, 'samples'
                     ),
                     'output_folder': tmpdir,
                     'onboarding_in_flight_data_file': os.path.join(
-                        analysis_config_folder, 'onboarding_in_flight.jsonl'
+                        analysis_folder, 'onboarding_in_flight.jsonl'
                     ),
                     'gold_annotations_file': temp_gold_annotations_path,
                 }
@@ -100,42 +102,9 @@ class TestAnalysis(unittest.TestCase):
                 actual_stdout = output.getvalue()
 
             # Check the output against what it should be
-            expected_stdout = f"""\
-Got 4 folders to read.
-Average task completion time (seconds) was: 187.5
-Returning master dataframe with 48 annotations.
-Dropped 1 inconsistently annotated utterances (none_all_good and a problem bucket). Now have 7 utterances.
-Removed 1 that did not have annotations by 3 workers. 6 annotations remaining.
-summed_df has length 2; bot_only_df: 4
-Number of unique utterance_ids: 2.
-Bucket: bucket_0, total unique problem utterances: 1 (50.0% of all), one annotator: 1 (100.0%), two_annotators: 0 (0.0%), three+ annotators: 0 (0.0%)
-Bucket: bucket_4, total unique problem utterances: 1 (50.0% of all), one annotator: 0 (0.0%), two_annotators: 1 (100.0%), three+ annotators: 0 (0.0%)
-Bucket: none_all_good, total unique problem utterances: 1 (50.0% of all), one annotator: 1 (100.0%), two_annotators: 0 (0.0%), three+ annotators: 0 (0.0%)
-Bucket: any_problem, total unique problem utterances: 2 (100.0% of all), one annotator: 1 (50.0%), two_annotators: 1 (50.0%), three+ annotators: 0 (0.0%)
-Got 4 utterances with gold annotations. Found 8 utterances matching gold annotations from DataFrame.
-Average agreement with 4 total gold utterances annotated was:
-bucket_0: 91.7% (0 gold problem samples)
-bucket_1: 100.0% (1 gold problem samples)
-bucket_2: 75.0% (0 gold problem samples)
-bucket_3: 91.7% (0 gold problem samples)
-bucket_4: 100.0% (2 gold problem samples)
-none_all_good: 58.3% (1 gold problem samples)
-Average agreement problem samples only with 4 total gold utterances annotated was:
-bucket_0: nan% (0 gold problem samples)
-bucket_1: 100.0% (1 gold problem samples)
-bucket_2: nan% (0 gold problem samples)
-bucket_3: nan% (0 gold problem samples)
-bucket_4: 100.0% (2 gold problem samples)
-none_all_good: 33.3% (1 gold problem samples)
-Calculating agreement on 8 annotations.
-Fleiss' kappa for bucket_0 is: -0.410.
-Fleiss' kappa for bucket_1 is: -0.385.
-Fleiss' kappa for bucket_2 is: -0.385.
-Fleiss' kappa for bucket_3 is: -0.410.
-Fleiss' kappa for bucket_4 is: -0.380.
-Fleiss' kappa for none_all_good is: -0.410.\
-"""
             actual_stdout_lines = actual_stdout.split('\n')
+            with open(expected_stdout_path) as f:
+                expected_stdout = f.read()
             for expected_line in expected_stdout.split('\n'):
                 if not any(
                     expected_line in actual_line for actual_line in actual_stdout_lines
@@ -148,7 +117,7 @@ Fleiss' kappa for none_all_good is: -0.410.\
             # Check that the saved results file is what it should be
             sort_columns = ['hit_id', 'worker_id', 'conversation_id', 'turn_idx']
             expected_results_path = os.path.join(
-                analysis_config_folder, 'expected_results.csv'
+                analysis_folder, 'expected_results.csv'
             )
             expected_results = (
                 pd.read_csv(expected_results_path)
