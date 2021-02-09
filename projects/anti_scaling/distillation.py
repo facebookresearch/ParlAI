@@ -767,7 +767,8 @@ class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
                 "with --init-model!"
             )
         super().__init__(opt, shared)
-        assert self.teacher_agent_opt['n_heads'] == opt['n_heads']
+        if shared is None:
+            assert self.teacher_agent_opt['n_heads'] == opt['n_heads']
 
     def build_model(self):
 
@@ -861,9 +862,10 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         self.self_attn_loss_coeff = opt['self_attn_loss_coeff']
         self.enc_dec_attn_loss_coeff = opt['enc_dec_attn_loss_coeff']
         super().__init__(opt, shared)
-        assert self.teacher_agent_opt['n_heads'] == opt['n_heads'] or (
-            self.self_attn_loss_coeff == 0 and self.enc_dec_attn_loss_coeff == 0
-        ), 'The number of attention heads can only differ between the student and teacher models if both attention loss coefficients are 0!'
+        if shared is None:
+            assert self.teacher_agent_opt['n_heads'] == opt['n_heads'] or (
+                self.self_attn_loss_coeff == 0 and self.enc_dec_attn_loss_coeff == 0
+            ), 'The number of attention heads can only differ between the student and teacher models if both attention loss coefficients are 0!'
 
     def build_model(self):
         student_model = super().build_model()
