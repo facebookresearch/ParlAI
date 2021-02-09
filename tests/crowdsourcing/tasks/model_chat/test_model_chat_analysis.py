@@ -14,7 +14,6 @@ import pytest
 from pytest_regressions.file_regression import FileRegressionFixture
 
 import parlai.utils.testing as testing_utils
-from parlai.crowdsourcing.utils.tests import check_stdout
 
 
 try:
@@ -22,6 +21,7 @@ try:
     from parlai.crowdsourcing.tasks.model_chat.analysis.compile_results import (
         ModelChatResultsCompiler,
     )
+    from parlai.crowdsourcing.utils.tests import check_stdout
 
     class TestCompileResults:
         """
