@@ -481,11 +481,11 @@ class MemoryEfficientFP16Adam(torch.optim.Adam):
                 state['step'] += 1
 
                 if group['weight_decay'] != 0:
-                    grad.add_(group['weight_decay'], p_data_fp32)
+                    grad.add_(p_data_fp32, alpha=group['weight_decay'])
 
                 # Decay the first and second moment running average coefficient
-                exp_avg.mul_(beta1).add_(1 - beta1, grad)
-                exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
+                exp_avg.mul_(beta1).add_(grad, alpha=(1 - beta1))
+                exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=(1 - beta2))
                 if amsgrad:
                     # Maintains the maximum of all 2nd moment running avg. till now
                     torch.max(max_exp_avg_sq, exp_avg_sq, out=max_exp_avg_sq)
@@ -498,7 +498,7 @@ class MemoryEfficientFP16Adam(torch.optim.Adam):
                 bias_correction2 = 1 - beta2 ** state['step']
                 step_size = group['lr'] * math.sqrt(bias_correction2) / bias_correction1
 
-                p_data_fp32.addcdiv_(-step_size, exp_avg, denom)
+                p_data_fp32.addcdiv_(exp_avg, denom, value=-step_size)
 
                 p.data.copy_(p_data_fp32)
 
@@ -674,8 +674,12 @@ class Adafactor(torch.optim.Optimizer):
                     exp_avg_sq_row = state['exp_avg_sq_row']
                     exp_avg_sq_col = state['exp_avg_sq_col']
 
-                    exp_avg_sq_row.mul_(beta2t).add_(1.0 - beta2t, update.mean(dim=-1))
-                    exp_avg_sq_col.mul_(beta2t).add_(1.0 - beta2t, update.mean(dim=-2))
+                    exp_avg_sq_row.mul_(beta2t).add_(
+                        update.mean(dim=-1), alpha=(1.0 - beta2t)
+                    )
+                    exp_avg_sq_col.mul_(beta2t).add_(
+                        update.mean(dim=-2), alpha=(1.0 - beta2t)
+                    )
 
                     # Approximation of exponential moving average of square of gradient
                     self._approx_sq_grad(exp_avg_sq_row, exp_avg_sq_col, update)
@@ -683,7 +687,7 @@ class Adafactor(torch.optim.Optimizer):
                 else:
                     exp_avg_sq = state['exp_avg_sq']
 
-                    exp_avg_sq.mul_(beta2t).add_(1.0 - beta2t, update)
+                    exp_avg_sq.mul_(beta2t).add_(update, alpha=(1.0 - beta2t))
                     torch.rsqrt(exp_avg_sq, out=update).mul_(grad)
 
                 update.div_(max(1.0, self._rms(update) / group['clip_threshold']))
@@ -691,11 +695,15 @@ class Adafactor(torch.optim.Optimizer):
 
                 if use_first_moment:
                     exp_avg = state['exp_avg']
-                    exp_avg.mul_(group['beta1']).add_(1 - group['beta1'], update)
+                    exp_avg.mul_(group['beta1']).add_(
+                        update, alpha=(1 - group['beta1'])
+                    )
                     update = exp_avg
 
                 if group['weight_decay'] != 0:
-                    p_data_fp32.add_(-group['weight_decay'] * group['lr'], p_data_fp32)
+                    p_data_fp32.add_(
+                        p_data_fp32, alpha=(-group['weight_decay'] * group['lr'])
+                    )
 
                 p_data_fp32.add_(-update)
 
