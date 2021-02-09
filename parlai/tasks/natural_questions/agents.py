@@ -253,57 +253,5 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         return message_dict
 
 
-class NaturalQuestionsTeacherLongAnswerHTML(NaturalQuestionsTeacher):
-    """
-    Generates context texts (articles) in HTML, with long answers (also in HTML) that
-    are selected from major components  (e.g., paragraphs, tables, etc.) from the main
-    article, granted such an answer exists based on the article.
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['use_html'] = True
-        opt['use_long_answer'] = True
-        super().__init__(opt, shared)
-
-
-class NaturalQuestionsTeacherShortAnswerHTML(NaturalQuestionsTeacher):
-    """
-    Generates context texts (articles) in HTML, with short answers that are selected
-    from a short span within the main article, or YES or NO, granted such an answer
-    exists based on the article.
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['use_html'] = True
-        opt['use_long_answer'] = False
-        super().__init__(opt, shared)
-
-
-class NaturalQuestionsTeacherLongAnswer(NaturalQuestionsTeacher):
-    """
-    Generates context texts (articles), with long answers that are selected from major
-    components  (e.g., paragraphs, tables, etc.) from the main article, granted such an
-    answer exists based on the article.
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['use_html'] = False
-        opt['use_long_answer'] = True
-        super().__init__(opt, shared)
-
-
-class NaturalQuestionsTeacherShortAnswer(NaturalQuestionsTeacher):
-    """
-    Generates context texts, with short answers that are selected from a short span
-    within the main article, or YES or NO, granted such an answer exists based on the
-    article.
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['use_html'] = False
-        opt['use_long_answer'] = False
-        super().__init__(opt, shared)
-
-
 class DefaultTeacher(NaturalQuestionsTeacher):
     pass
