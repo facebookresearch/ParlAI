@@ -167,8 +167,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
             override = {k: opt[k] for k in to_copy}
             override['datatype'] = 'train:evalmode'  # Don't initialize the optimizer
             teacher_agent = create_agent_from_model_file(opt['teacher_model'], override)
+            self.teacher_agent_opt = teacher_agent.opt
             self.teacher_model = teacher_agent.model
-            assert teacher_agent.opt['n_heads'] == opt['n_heads']
             self.teacher_model.eval()
 
         super().__init__(opt, shared)
@@ -767,6 +767,7 @@ class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
                 "with --init-model!"
             )
         super().__init__(opt, shared)
+        assert self.teacher_agent_opt['n_heads'] == opt['n_heads']
 
     def build_model(self):
 
@@ -860,6 +861,9 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         self.self_attn_loss_coeff = opt['self_attn_loss_coeff']
         self.enc_dec_attn_loss_coeff = opt['enc_dec_attn_loss_coeff']
         super().__init__(opt, shared)
+        assert self.teacher_agent_opt['n_heads'] == opt['n_heads'] or (
+            self.self_attn_loss_coeff == 0 and self.enc_dec_attn_loss_coeff == 0
+        ), 'The number of attention heads can only differ between the student and teacher models if both attention loss coefficients are 0!'
 
     def build_model(self):
         student_model = super().build_model()
@@ -956,11 +960,18 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         enc_hidden_loss, dec_hidden_loss = self._get_hidden_losses(fwd_pass)
 
         # Calculate the losses on the attention matrices
-        (
-            enc_self_attn_loss,
-            dec_self_attn_loss,
-            enc_dec_attn_loss,
-        ) = self._get_attention_losses(fwd_pass)
+        if self.self_attn_loss_coeff != 0 or self.enc_dec_attn_loss_coeff != 0:
+            (
+                enc_self_attn_loss,
+                dec_self_attn_loss,
+                enc_dec_attn_loss,
+            ) = self._get_attention_losses(fwd_pass)
+        else:
+            # Skip calculating the losses and just set them to 0 because they do not
+            # form part of the loss function. This is useful if the number of attention
+            # heads is different between the student and teacher, because in that case
+            # that the attention query-key matrices will be of different shape.
+            enc_self_attn_loss = dec_self_attn_loss = enc_dec_attn_loss = 0
 
         # Calculate the KL loss on the teacher's prediction layer
         pred_loss = self._get_prediction_loss(fwd_pass)
