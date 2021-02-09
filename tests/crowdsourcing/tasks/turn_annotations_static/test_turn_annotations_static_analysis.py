@@ -13,10 +13,11 @@ import unittest
 
 import pandas as pd
 
+import parlai.utils.testing as testing_utils
 from parlai.crowdsourcing.tasks.turn_annotations_static.analysis.compile_results import (
     TurnAnnotationsStaticResultsCompiler,
 )
-import parlai.utils.testing as testing_utils
+from parlai.crowdsourcing.utils.tests import check_stdout
 
 
 class TestAnalysis(unittest.TestCase):
@@ -34,11 +35,16 @@ class TestAnalysis(unittest.TestCase):
             # Define expected stdout
 
             # Paths
-            analysis_folder = os.path.join(
+            analysis_samples_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
+            )
+            analysis_outputs_folder = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
                 'test_turn_annotations_static_analysis',
             )
-            expected_stdout_path = os.path.join(analysis_folder, 'test_stdout.txt')
+            expected_stdout_path = os.path.join(
+                analysis_outputs_folder, 'test_stdout.txt'
+            )
             temp_gold_annotations_path = os.path.join(tmpdir, 'gold_annotations.json')
 
             # Save a file of gold annotations
@@ -83,12 +89,10 @@ class TestAnalysis(unittest.TestCase):
             parser = TurnAnnotationsStaticResultsCompiler.setup_args()
             parser.set_defaults(
                 **{
-                    'results_folders': os.path.join(
-                        analysis_folder, 'samples'
-                    ),
+                    'results_folders': analysis_samples_folder,
                     'output_folder': tmpdir,
                     'onboarding_in_flight_data_file': os.path.join(
-                        analysis_folder, 'onboarding_in_flight.jsonl'
+                        analysis_samples_folder, 'onboarding_in_flight.jsonl'
                     ),
                     'gold_annotations_file': temp_gold_annotations_path,
                 }
@@ -102,22 +106,14 @@ class TestAnalysis(unittest.TestCase):
                 actual_stdout = output.getvalue()
 
             # Check the output against what it should be
-            actual_stdout_lines = actual_stdout.split('\n')
-            with open(expected_stdout_path) as f:
-                expected_stdout = f.read()
-            for expected_line in expected_stdout.split('\n'):
-                if not any(
-                    expected_line in actual_line for actual_line in actual_stdout_lines
-                ):
-                    raise ValueError(
-                        f'\n\tThe following line:\n\n{expected_line}\n\n\twas not found '
-                        f'in the actual stdout:\n\n{actual_stdout}'
-                    )
+            check_stdout(
+                actual_stdout=actual_stdout, expected_stdout_path=expected_stdout_path
+            )
 
             # Check that the saved results file is what it should be
             sort_columns = ['hit_id', 'worker_id', 'conversation_id', 'turn_idx']
             expected_results_path = os.path.join(
-                analysis_folder, 'expected_results.csv'
+                analysis_outputs_folder, 'expected_results.csv'
             )
             expected_results = (
                 pd.read_csv(expected_results_path)

@@ -14,6 +14,8 @@ import pytest
 from pytest_regressions.file_regression import FileRegressionFixture
 
 import parlai.utils.testing as testing_utils
+from parlai.crowdsourcing.utils.tests import check_stdout
+
 
 try:
 
@@ -26,6 +28,19 @@ try:
         Test the analysis code for the model chat task.
         """
 
+        def __init__(self):
+
+            # Paths
+            self.analysis_samples_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
+            )
+            self.analysis_outputs_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'test_model_chat_analysis'
+            )
+            self.expected_stdout_path = os.path.join(
+                self.analysis_outputs_folder, 'test_stdout.txt'
+            )
+
         @pytest.fixture(scope="module")
         def setup_teardown(self):
             """
@@ -35,10 +50,6 @@ try:
             checking any results.
             """
 
-            # Params
-            results_folder = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
-            )
             prefixes = ['results', 'worker_results']
 
             with testing_utils.tempdir() as tmpdir:
@@ -46,7 +57,7 @@ try:
                 # Run analysis
                 with testing_utils.capture_output() as output:
                     arg_string = f"""\
-    --results-folders {results_folder}
+    --results-folders {self.analysis_samples_folder}
     --output-folder {tmpdir}
     """
                     parser_ = ModelChatResultsCompiler.setup_args()
@@ -71,12 +82,15 @@ try:
             yield outputs
             # All code after this will be run upon teardown
 
-        def test_stdout(self, setup_teardown, file_regression: FileRegressionFixture):
+        def test_stdout(self, setup_teardown):
             """
             Check the output against what it should be.
             """
             outputs = setup_teardown
-            file_regression.check(outputs['stdout'])
+            check_stdout(
+                actual_stdout=outputs['stdout'],
+                expected_stdout_path=self.expected_stdout_path,
+            )
 
         def test_results_file(
             self, setup_teardown, file_regression: FileRegressionFixture
