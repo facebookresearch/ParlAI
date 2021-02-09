@@ -28,19 +28,6 @@ try:
         Test the analysis code for the model chat task.
         """
 
-        def __init__(self):
-
-            # Paths
-            self.analysis_samples_folder = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
-            )
-            self.analysis_outputs_folder = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'test_model_chat_analysis'
-            )
-            self.expected_stdout_path = os.path.join(
-                self.analysis_outputs_folder, 'test_stdout.txt'
-            )
-
         @pytest.fixture(scope="module")
         def setup_teardown(self):
             """
@@ -50,6 +37,19 @@ try:
             checking any results.
             """
 
+            outputs = {}
+
+            # Paths
+            analysis_samples_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'analysis_samples'
+            )
+            analysis_outputs_folder = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), 'test_model_chat_analysis'
+            )
+            outputs['expected_stdout_path'] = os.path.join(
+                analysis_outputs_folder, 'test_stdout.txt'
+            )
+
             prefixes = ['results', 'worker_results']
 
             with testing_utils.tempdir() as tmpdir:
@@ -57,7 +57,7 @@ try:
                 # Run analysis
                 with testing_utils.capture_output() as output:
                     arg_string = f"""\
-    --results-folders {self.analysis_samples_folder}
+    --results-folders {analysis_samples_folder}
     --output-folder {tmpdir}
     """
                     parser_ = ModelChatResultsCompiler.setup_args()
@@ -71,7 +71,7 @@ try:
                 )
                 # Don't track lines that record where a file was saved to, because filenames
                 # are timestamped
-                outputs = {'stdout': filtered_stdout}
+                outputs['stdout'] = filtered_stdout
                 for prefix in prefixes:
                     results_path = list(glob.glob(os.path.join(tmpdir, f'{prefix}_*')))[
                         0
@@ -89,7 +89,7 @@ try:
             outputs = setup_teardown
             check_stdout(
                 actual_stdout=outputs['stdout'],
-                expected_stdout_path=self.expected_stdout_path,
+                expected_stdout_path=outputs['expected_stdout_path'],
             )
 
         def test_results_file(
