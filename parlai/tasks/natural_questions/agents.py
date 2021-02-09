@@ -12,12 +12,15 @@ import copy
 import os
 import jsonlines
 from tqdm import tqdm
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import parlai.utils.logging as logging
 from parlai.core.teachers import ChunkTeacher
 from .build import build, DATASET_NAME_LOCAL
 from .utils.text_utils import simplify_nq_example
+
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 
 
 def _count_lines_in_file(fname):
@@ -93,10 +96,32 @@ class NaturalQuestionsTeacher(ChunkTeacher):
     use_long_answer) to either True or False.
     """
 
+    @classmethod
+    def add_cmdline_args(
+        cls, parser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        nq = parser.add_argument_group('Natural Questions Teacher')
+        nq.add_argument(
+            '--use-html',
+            type='bool',
+            default=False,
+            help='Use HTML for the context (does nothing if `use-context` is False)',
+        )
+        nq.add_argument(
+            '--use-long-answer', type='bool', default=False, help='Use long answers'
+        )
+        nq.add_argument(
+            '--use-context',
+            type='bool',
+            default=True,
+            help='Include context blurb or not',
+        )
+
     def __init__(self, opt, shared=None):
         build(opt)
         self.use_html = opt.get('use_html', False)
         self.use_long_answer = opt.get('use_long_answer', False)
+        self.use_context = opt.get('use_context', False)
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
         self.dtype = self.opt['datatype'].split(':')[0]
@@ -192,9 +217,12 @@ class NaturalQuestionsTeacher(ChunkTeacher):
             for example in fi:
                 example_components = dict()
                 example = self._simplify(example)
-                context = example[_context_type_key(self.use_html)]
                 question = example['question_text']
-                example_components['text'] = f'{context}\n{question}?'
+                if self.use_context:
+                    context = example[_context_type_key(self.use_html)]
+                    example_components['text'] = f'{context}\n{question}?'
+                else:
+                    example_components['text'] = f'{question}?'
 
                 if self.use_long_answer:
                     example_components[
@@ -277,5 +305,5 @@ class NaturalQuestionsTeacherShortAnswer(NaturalQuestionsTeacher):
         super().__init__(opt, shared)
 
 
-class DefaultTeacher(NaturalQuestionsTeacherShortAnswer):
+class DefaultTeacher(NaturalQuestionsTeacher):
     pass
