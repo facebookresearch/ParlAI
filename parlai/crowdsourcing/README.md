@@ -45,3 +45,7 @@ By default, Mephisto data is saved in the following directory:
 - Internally, `<mephisto_root_dir>` defaults to `/scratch/${USER}/mephisto`.
 - The `NO_PROJECT` and `data` subfolders may be renamed in later versions of Mephisto.
 - `<agent_id>` can be mapped to MTurk `worker_id` with the `workers` table in the Mephisto SQLite3 database.
+
+### Utility functions
+
+See [this README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/utils/README.md) for documentation on utility functions in the `utils` folder.
