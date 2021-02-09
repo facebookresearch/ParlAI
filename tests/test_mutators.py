@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+import unittest
+
+from parlai.core.opt import Opt
+from parlai.core.message import Message
+
+EXAMPLE1 = {
+    'text': "Hi, my name is Stephen",
+    'labels': ["Hello Stephen!"],
+    'episode_done': False,
+}
+
+EXAMPLE2 = {
+    'text': "What is your name?",
+    'labels': ["My name is Emily."],
+    'episode_done': True,
+}
+EXAMPLE3 = {
+    'text': "Hello, I'm Emily.",
+    'labels': ["Hi Emily. Nice to meet you."],
+    'episode_done': False,
+}
+
+EXAMPLE4 = {
+    'text': "What are you called?",
+    'labels': ["I am called Stephen."],
+    'episode_done': True,
+}
+
+
+class AbstractTestMutator(unittest.TestCase):
+    def _setup_data(self):
+        yield Message(EXAMPLE1)
+        yield Message(EXAMPLE2)
+        yield Message(EXAMPLE3)
+        yield Message(EXAMPLE4)
+
+    def _apply_mutator(self, mutator_class):
+        opt = Opt()
+        mutator = mutator_class(opt)
+        mutated = mutator(self._setup_data())
+        return list(mutated)
+
+
+class TestExampleMutator(AbstractTestMutator):
+    def test_word_shuffle(self):
+        from parlai.mutators.word_shuffle import WordShuffleMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(WordShuffleMutator)
+
+        # check episode done is always set correctly
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+
+        # check there was a mutation
+        assert ex1 != EXAMPLE1
+        assert ex2 != EXAMPLE2
+        assert ex3 != EXAMPLE3
+        assert ex4 != EXAMPLE4
+
+        # check words are the same in each setting
+        assert set(ex1['text'].split()) == set(EXAMPLE1['text'].split())
+        assert set(ex2['text'].split()) == set(EXAMPLE2['text'].split())
+        assert set(ex3['text'].split()) == set(EXAMPLE3['text'].split())
+        assert set(ex4['text'].split()) == set(EXAMPLE4['text'].split())
+
+
+class TestEpisodeMutator(AbstractTestMutator):
+    def _text_eq(self, ex1, ex2):
+        """
+        Return if the text field is equal.
+        """
+        return ex1['text'] == ex2['text']
+
+    def test_episode_shuffle(self):
+        from parlai.mutators.episode_shuffle import EpisodeShuffleMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(EpisodeShuffleMutator)
+
+        # check episode done is always set correctly
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+
+        # check there was a mutation
+        assert self._text_eq(ex1, EXAMPLE1) or self._text_eq(ex2, EXAMPLE1)
+        assert self._text_eq(ex2, EXAMPLE2) or self._text_eq(ex1, EXAMPLE2)
+        assert not self._text_eq(ex1, ex2)
+
+        assert self._text_eq(ex3, EXAMPLE3) or self._text_eq(ex4, EXAMPLE3)
+        assert self._text_eq(ex4, EXAMPLE4) or self._text_eq(ex3, EXAMPLE4)
+        assert not self._text_eq(ex3, ex4)
