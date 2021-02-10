@@ -47,6 +47,7 @@ from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
+from parlai.core.mutators import MUTATOR_REGISTRY, Mutator, setup_mutator_registry
 
 from abc import ABC, abstractmethod
 import argparse
@@ -539,6 +540,33 @@ class DialogTeacher(FixedDialogTeacher):
     In order to subclass this class, you must implement ``setup_data()`` in
     your class, which reads your data file as an iterator.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.add_argument(
+            '--mutators',
+            '-mut',
+            default=None,
+            help='Apply one or more mutators to the data.',
+        )
+        mutators = cls._load_mutator_types(partial_opt.get('mutators'))
+        for m in mutators:
+            m.add_cmdline_args(parser, partial_opt)
+        return parser
+
+    @classmethod
+    def _load_mutator_types(
+        cls, mutator_names: Optional[str]
+    ) -> Optional[List[Mutator]]:
+        setup_mutator_registry()
+        if not mutator_names:
+            return []
+        assert isinstance(mutator_names, str)
+        names = mutator_names.split(',')
+        mutators = [MUTATOR_REGISTRY[name] for name in names]
+        return mutators
 
     def __init__(self, opt, shared=None):
         # Check for setup_data
@@ -1710,6 +1738,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     ) -> ParlaiParser:
         # Be sure to call super() if overriding this method b/c
         # AbstractImageTeacher has necessary params
+        parser = super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('AbstractImageTeacher Arguments')
         agent.add_argument(
             '--image-path',
