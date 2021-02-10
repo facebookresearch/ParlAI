@@ -120,7 +120,6 @@ class ExampleMutator(Mutator):
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
         for message in messages:
-            message = message.copy()
             message, episode_done = self._pop_episode_done(message)
             message = self.example_mutation(message)
             if 'episode_done' in message:

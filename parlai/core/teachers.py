@@ -596,6 +596,9 @@ class DialogTeacher(FixedDialogTeacher):
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
+            mutator_types = self._load_mutator_types(self.opt.get('mutators'))
+            mutators = [mutator(self.opt) for mutator in mutator_types]
+            kwargs['mutators'] = mutators
             if 'datafile' not in self.opt:
                 raise KeyError(
                     ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
@@ -738,7 +741,9 @@ class DialogData(object):
       to ``True`` every time.
     """
 
-    def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
+    def __init__(
+        self, opt, data_loader=None, cands=None, shared=None, mutators=None, **kwargs
+    ):
         # in case we need to shard the dataset
         self.rank = get_rank()
         self.num_workers = num_workers()
@@ -746,6 +751,8 @@ class DialogData(object):
             x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
         )
 
+        self.addedCands = []
+        self.copied_cands = False
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
@@ -755,18 +762,15 @@ class DialogData(object):
             self.cands = shared.get('cands', None)
         else:
             self.image_loader = ImageLoader(opt)
-            self.data = []
+            self.mutators = mutators
 
             if 'datafile' not in opt:
                 raise KeyError(
                     ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
                 )
 
-            self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(c for c in cands)
-
-        self.addedCands = []
-        self.copied_cands = False
+            self.data = list(self._load(data_loader, opt['datafile'], mutators))
 
     def share(self):
         """
@@ -779,7 +783,7 @@ class DialogData(object):
         }
         return shared
 
-    def _read_episode(self, data_loader):
+    def _read_episode(self, entry_stream):
         """
         Read one episode at a time from the provided iterable over entries.
 
@@ -787,19 +791,28 @@ class DialogData(object):
             an iterable which returns tuples in the format described in the
             class docstring.
         """
-
         episode = []
-        for entry, new in data_loader:
-            if new and len(episode) > 0:
-                yield tuple(episode)
+        for entry in entry_stream:
+            episode.append(entry)
+            if entry['episode_done']:
+                yield episode
                 episode = []
 
-            episode.append(entry)
+        if episode:
+            # probably shouldn't happen
+            yield episode
 
-        if len(episode) > 0:
-            yield tuple(episode)
+    def _process(self, data_stream):
+        last_entry, new = next(data_stream)
+        last_entry = self.build_table(last_entry)
+        for entry, new in data_stream:
+            last_entry['episode_done'] = new
+            yield last_entry
+            last_entry = self.build_table(entry)
+        last_entry['episode_done'] = True
+        yield last_entry
 
-    def _load(self, data_loader, datafile):
+    def _load(self, data_loader, datafile, mutators):
         """
         Load up data from an iterable over tuples described in the class docs.
 
@@ -808,9 +821,14 @@ class DialogData(object):
             class docstring.
         :param str datafile:
         """
-        for i, episode in enumerate(self._read_episode(data_loader(datafile))):
+
+        entry_stream = self._process(data_loader(datafile))
+        for mutator in mutators:
+            entry_stream = mutator(entry_stream)
+
+        for i, episode in enumerate(self._read_episode(entry_stream)):
             if not self.is_distributed_and_is_eval or i % self.num_workers == self.rank:
-                self.data.append(episode)
+                yield episode
 
     def num_episodes(self):
         """
@@ -845,16 +863,9 @@ class DialogData(object):
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
-        episode_done = entry_idx == len(episode) - 1
-
+        episode_done = entry['episode_done']
         end_of_data = episode_done and next_episode_idx_for_rank >= len(self.data)
-
-        # now pack it in a action-observation dictionary
-        table = self.build_table(entry)
-
-        # last entry in this episode
-        table['episode_done'] = episode_done
-        return table, end_of_data
+        return entry, end_of_data
 
     def build_table(self, entry):
         """
@@ -868,11 +879,6 @@ class DialogData(object):
                 raise KeyError(
                     'Labels are converted to eval_labels automatically. Please do not '
                     'set them in setup_data.'
-                )
-            if 'episode_done' in entry:
-                raise KeyError(
-                    "episode_done is set automatically for you. Please don't set it "
-                    "in setup_data."
                 )
             if 'label' in entry:
                 # for convenience, rename to the labels convention automatically

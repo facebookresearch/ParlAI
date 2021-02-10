@@ -21,8 +21,11 @@ class WordShuffleMutator(ExampleMutator):
         self.rng = random.Random(42)
 
     def example_mutation(self, message: Message) -> Message:
-        text = message.pop('text')
-        words = text.split(' ')
-        self.rng.shuffle(words)
-        message['text'] = ' '.join(words)
+        texts = message.pop('text').split('\n')
+        output_texts = []
+        for text in texts:
+            words = text.split(' ')
+            self.rng.shuffle(words)
+            output_texts.append(' '.join(words))
+        message['text'] = '\n'.join(output_texts)
         return message
