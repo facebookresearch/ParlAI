@@ -9,6 +9,10 @@ from .build import build
 
 import copy
 import os
+from typing import List, Tuple, Optional, TypeVar
+
+from parlai.core.message import Message
+from parlai.core.metrics import ExactMatchMetric
 
 
 def _path(opt):
@@ -23,3 +27,14 @@ class DefaultTeacher(FbDeprecatedDialogTeacher):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt)
         super().__init__(opt, shared)
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ) -> None:
+        if "text" in model_response:
+            self.metrics.add(
+                ExactMatchMetric(guess=model_response.get("text"), answers=labels)
+            )
