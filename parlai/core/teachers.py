@@ -246,6 +246,33 @@ class FixedDialogTeacher(Teacher):
     To see this in action, take a look at this teacher in ``tasks.vqa_v1.agents``.
     """
 
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.add_argument(
+            '--mutators',
+            '-mut',
+            default=None,
+            help='Apply one or more mutators to the data.',
+        )
+        mutators = cls._load_mutator_types(partial_opt.get('mutators'))
+        for m in mutators:
+            m.add_cmdline_args(parser, partial_opt)
+        return parser
+
+    @classmethod
+    def _load_mutator_types(
+        cls, mutator_names: Optional[str]
+    ) -> Optional[List[Mutator]]:
+        setup_mutator_registry()
+        if not mutator_names:
+            return []
+        assert isinstance(mutator_names, str)
+        names = mutator_names.split(',')
+        mutators = [MUTATOR_REGISTRY[name] for name in names]
+        return mutators
+
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
 
@@ -334,6 +361,9 @@ class FixedDialogTeacher(Teacher):
         if hasattr(self, 'data_loader'):
             shared['data_loader'] = self.data_loader
 
+        if hasattr(self, 'mutators'):
+            shared['mutators'] = self.mutators
+
         shared['index'] = self.index
 
         return shared
@@ -371,15 +401,29 @@ class FixedDialogTeacher(Teacher):
         if self._episode_done:
             self.episode_idx = self.next_episode_idx()
             self.entry_idx = 0
+
+            # buffer the full conversation ahead of time for mutators
+            episode_buffer = []
+            buffer_entry_idx = 0
+            while True:
+                entry = self.get(self.episode_idx, buffer_entry_idx)
+                episode_buffer.append(entry)
+                if entry.get('episode_done'):
+                    break
+                buffer_entry_idx += 1
+            # apply mutators
+            for mutator in self.mutators:
+                episode_buffer = mutator(episode_buffer)
+            self.episode_buffer = list(episode_buffer)
         else:
             self.entry_idx += 1
 
         if self.episode_idx >= self.num_episodes():
             return {'episode_done': True}, True
 
-        # buffer the entire
-        ex = self.get(self.episode_idx, self.entry_idx)
-        self._episode_done = ex.get('episode_done', False)
+        # buffer the entire conversation so we can apply mutators
+        ex = self.episode_buffer[self.entry_idx]
+        self._episode_done = self.entry_idx == len(self.episode_buffer) - 1
 
         if (
             not self.cycle
@@ -526,33 +570,6 @@ class DialogTeacher(FixedDialogTeacher):
     your class, which reads your data file as an iterator.
     """
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        parser.add_argument(
-            '--mutators',
-            '-mut',
-            default=None,
-            help='Apply one or more mutators to the data.',
-        )
-        mutators = cls._load_mutator_types(partial_opt.get('mutators'))
-        for m in mutators:
-            m.add_cmdline_args(parser, partial_opt)
-        return parser
-
-    @classmethod
-    def _load_mutator_types(
-        cls, mutator_names: Optional[str]
-    ) -> Optional[List[Mutator]]:
-        setup_mutator_registry()
-        if not mutator_names:
-            return []
-        assert isinstance(mutator_names, str)
-        names = mutator_names.split(',')
-        mutators = [MUTATOR_REGISTRY[name] for name in names]
-        return mutators
-
     def __init__(self, opt, shared=None):
         # Check for setup_data
         if not hasattr(self, 'setup_data'):
@@ -677,7 +694,22 @@ class DialogTeacher(FixedDialogTeacher):
         Get the next example.
         """
         if self.stream:
-            action, epoch_done = self.data.get()
+            # unfortunately we need to also do the mutator buffering here.
+            # it's difficult to structure it so it's not
+            if hasattr(self, 'episode_buffer') and self.episode_buffer:
+                action = self.episode_buffer.pop(0)
+                epoch_done = (not self.episode_buffer) and self._saw_epoch_done
+                return action, epoch_done
+            episode_buffer = []
+            while True:
+                action, epoch_done = self.data.get()
+                episode_buffer.append(action)
+                if action['episode_done']:
+                    self._saw_epoch_done = epoch_done
+                    break
+            for mutator in self.mutators:
+                episode_buffer = mutator(episode_buffer)
+            self.episode_buffer = list(episode_buffer)
         else:
             action, epoch_done = super().next_example()
         return action, epoch_done
@@ -723,9 +755,7 @@ class DialogData(object):
       to ``True`` every time.
     """
 
-    def __init__(
-        self, opt, data_loader=None, cands=None, shared=None, mutators=None, **kwargs
-    ):
+    def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
         # in case we need to shard the dataset
         self.rank = get_rank()
         self.num_workers = num_workers()
@@ -733,8 +763,6 @@ class DialogData(object):
             x in opt['datatype'] for x in ('valid', 'test', 'train:evalmode')
         )
 
-        self.addedCands = []
-        self.copied_cands = False
         # self.data is a list of episodes
         # each episode is a tuple of entries
         # each entry is a tuple of values for the action/observation table
@@ -744,15 +772,18 @@ class DialogData(object):
             self.cands = shared.get('cands', None)
         else:
             self.image_loader = ImageLoader(opt)
-            self.mutators = mutators
+            self.data = []
 
             if 'datafile' not in opt:
                 raise KeyError(
                     ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
                 )
 
+            self._load(data_loader, opt['datafile'])
             self.cands = None if cands is None else set(c for c in cands)
-            self.data = list(self._load(data_loader, opt['datafile'], mutators))
+
+        self.addedCands = []
+        self.copied_cands = False
 
     def share(self):
         """
@@ -765,7 +796,7 @@ class DialogData(object):
         }
         return shared
 
-    def _read_episode(self, entry_stream):
+    def _read_episode(self, data_loader):
         """
         Read one episode at a time from the provided iterable over entries.
 
@@ -774,27 +805,17 @@ class DialogData(object):
             class docstring.
         """
         episode = []
-        for entry in entry_stream:
-            episode.append(entry)
-            if entry['episode_done']:
+        for entry, new in data_loader:
+            if new and len(episode) > 0:
                 yield episode
                 episode = []
 
-        if episode:
-            # probably shouldn't happen
+            episode.append(entry)
+
+        if len(episode) > 0:
             yield episode
 
-    def _process(self, data_stream):
-        last_entry, new = next(data_stream)
-        last_entry = self.build_table(last_entry)
-        for entry, new in data_stream:
-            last_entry['episode_done'] = new
-            yield last_entry
-            last_entry = self.build_table(entry)
-        last_entry['episode_done'] = True
-        yield last_entry
-
-    def _load(self, data_loader, datafile, mutators):
+    def _load(self, data_loader, datafile):
         """
         Load up data from an iterable over tuples described in the class docs.
 
@@ -803,14 +824,9 @@ class DialogData(object):
             class docstring.
         :param str datafile:
         """
-
-        entry_stream = self._process(data_loader(datafile))
-        for mutator in mutators:
-            entry_stream = mutator(entry_stream)
-
-        for i, episode in enumerate(self._read_episode(entry_stream)):
+        for i, episode in enumerate(self._read_episode(data_loader(datafile))):
             if not self.is_distributed_and_is_eval or i % self.num_workers == self.rank:
-                yield episode
+                self.data.append(episode)
 
     def num_episodes(self):
         """
@@ -845,9 +861,16 @@ class DialogData(object):
         # first look up data
         episode = self.data[episode_idx]
         entry = episode[entry_idx]
-        episode_done = entry['episode_done']
+        episode_done = entry_idx == len(episode) - 1
+
         end_of_data = episode_done and next_episode_idx_for_rank >= len(self.data)
-        return entry, end_of_data
+
+        # now pack it in a action-observation dictionary
+        table = self.build_table(entry)
+
+        # last entry in this episode
+        table['episode_done'] = episode_done
+        return table, end_of_data
 
     def build_table(self, entry):
         """
@@ -861,6 +884,11 @@ class DialogData(object):
                 raise KeyError(
                     'Labels are converted to eval_labels automatically. Please do not '
                     'set them in setup_data.'
+                )
+            if 'episode_done' in entry:
+                raise KeyError(
+                    "episode_done is set automatically for you. Please don't set it "
+                    "in setup_data."
                 )
             if 'label' in entry:
                 # for convenience, rename to the labels convention automatically
