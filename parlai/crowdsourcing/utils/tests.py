@@ -408,3 +408,26 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             "episode_done": False,
         }
         self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
+
+
+def check_stdout(actual_stdout: str, expected_stdout_path: str):
+    """
+    Check that actual and expected stdouts match.
+
+    Given a string of the actual stdout and a path to the expected stdout, check that
+    both stdouts match, keeping in mind that the actual stdout may have additional
+    strings relating to progress updates that are not found in the expected output
+    strings.
+
+    TODO: this can probably be moved to a method of an abstract test class once all
+     analysis code relies on pytest regressions for some of its tests.
+    """
+    actual_stdout_lines = actual_stdout.split('\n')
+    with open(expected_stdout_path) as f:
+        expected_stdout = f.read()
+    for expected_line in expected_stdout.split('\n'):
+        if not any(expected_line in actual_line for actual_line in actual_stdout_lines):
+            raise ValueError(
+                f'\n\tThe following line:\n\n{expected_line}\n\n\twas not found '
+                f'in the actual stdout:\n\n{actual_stdout}'
+            )
