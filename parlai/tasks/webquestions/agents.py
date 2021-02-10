@@ -36,5 +36,8 @@ class DefaultTeacher(FbDeprecatedDialogTeacher):
     ) -> None:
         if "text" in model_response:
             self.metrics.add(
-                ExactMatchMetric(guess=model_response.get("text"), answers=labels)
+                "exact_match",
+                ExactMatchMetric.compute(
+                    guess=model_response.get("text"), answers=labels
+                ),
             )
