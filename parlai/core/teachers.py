@@ -279,6 +279,12 @@ class FixedDialogTeacher(Teacher):
         # set up batching
         self.bsz = opt.get('batchsize', 1)
 
+        if shared:
+            self.mutators = shared.get('mutators', [])
+        else:
+            mutator_types = self._load_mutator_types(self.opt.get('mutators'))
+            self.mutators = [mutator(self.opt) for mutator in mutator_types]
+
     def reset(self):
         """
         Reset the dialog to the start of the epoch, and reset all metrics.
@@ -371,6 +377,7 @@ class FixedDialogTeacher(Teacher):
         if self.episode_idx >= self.num_episodes():
             return {'episode_done': True}, True
 
+        # buffer the entire
         ex = self.get(self.episode_idx, self.entry_idx)
         self._episode_done = ex.get('episode_done', False)
 
@@ -384,28 +391,6 @@ class FixedDialogTeacher(Teacher):
             epoch_done = False
 
         return ex, epoch_done
-
-    def next_batch(self):
-        """
-        Return the next batch of examples.
-        """
-        # get next batch
-        self.index.value += 1
-        if self.training:
-            self.index.value %= len(self.batches)
-        batch_idx = self.index.value
-
-        if batch_idx + 1 >= len(self.batches):
-            if self.random:
-                random.shuffle(self.batches)
-            self.epochDone = True
-        else:
-            self.epochDone = False
-
-        if batch_idx >= len(self.batches):
-            return [{'episode_done': True, 'id': self.getID()}] * self.bsz
-
-        return self.batches[batch_idx]
 
     def num_episodes(self) -> int:
         """
@@ -596,9 +581,6 @@ class DialogTeacher(FixedDialogTeacher):
         if shared and shared.get('data'):
             self.data = data_class(opt, shared=shared['data'], **kwargs)
         else:
-            mutator_types = self._load_mutator_types(self.opt.get('mutators'))
-            mutators = [mutator(self.opt) for mutator in mutator_types]
-            kwargs['mutators'] = mutators
             if 'datafile' not in self.opt:
                 raise KeyError(
                     ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
