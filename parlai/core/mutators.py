@@ -1,25 +1,56 @@
 #!/usr/bin/env python3
 
+
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import abc
+import importlib
+import pkgutil
 from typing import Optional, Iterable, Tuple, List, Iterator, Callable, Type
 
+import parlai.mutators
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.message import Message
 
+MUTATOR_REGISTRY: dict[str, Type] = {}
+
+
+def setup_mutator_registry():
+    """
+    Loads the mutators so that @register_mutator is hit for all.
+    """
+    if hasattr(setup_mutator_registry, 'loaded'):
+        return
+    for module in pkgutil.iter_modules(parlai.mutators.__path__, 'parlai.mutators.'):
+        importlib.import_module(module.name)
+    setattr(setup_mutator_registry, 'loaded', True)
+
 
 def register_mutator(name: str) -> Callable[[Type], Type]:
-    def _inner(cls_):
+    """
+    Register a mutator.
+    """
+
+    def _inner(cls_: Type) -> Type:
+        global MUTATOR_REGISTRY
+        MUTATOR_REGISTRY[name] = cls_
         return cls_
 
     return _inner
 
 
-class BaseMutator(abc.ABC):
+class Mutator(abc.ABC):
+    """
+    Base class for mutators.
+
+    Users are not advised to use this class.
+    """
+
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -68,7 +99,21 @@ class BaseMutator(abc.ABC):
         pass
 
 
-class ExampleMutator(BaseMutator):
+class ExampleMutator(Mutator):
+    """
+    Example-level mutators.
+
+    Example level mutators have a function applied per-example. They are ideal
+    for transformations of data which don't create any new conversations or
+    turns, but only apply simple text-transformations.
+
+    Examples include:
+
+    * Shuffling words in context
+    * Adding a special token based on a non-text field
+    * Replacing words with synonyms or other simple augmentations
+    """
+
     @abc.abstractmethod
     def example_mutation(self, example: Message) -> Message:
         pass
@@ -84,7 +129,11 @@ class ExampleMutator(BaseMutator):
             yield message
 
 
-class EpisodeMutator(BaseMutator):
+class EpisodeMutator(Mutator):
+    """
+    Episode-level mutators.
+    """
+
     @abc.abstractmethod
     def episode_mutation(self, episode: List[Message]) -> List[Message]:
         pass
