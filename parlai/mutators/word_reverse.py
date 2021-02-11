@@ -15,9 +15,9 @@ class WordReverseMutator(ExampleMutator):
     """
     Reverses the words of each turn.
 
-    Only the text (prompt) is modified, not the labels. Utterances separated by
-    newlines will not be shuffled across boundaries. You may wish to combine it
-    with the flatten mutator to reverse both labels and texts.
+    Only the text (prompt) is modified, not the labels. Utterances separated by newlines
+    will not be shuffled across boundaries. You may wish to combine it with the flatten
+    mutator to reverse both labels and texts.
     """
 
     def __init__(self, opt: Opt):

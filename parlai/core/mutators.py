@@ -28,7 +28,7 @@ def setup_mutator_registry():
         return
     for module in pkgutil.iter_modules(parlai.mutators.__path__, 'parlai.mutators.'):
         importlib.import_module(module.name)
-    setattr(setup_mutator_registry, 'loaded', True)
+    setup_mutator_registry.loaded = True
 
 
 def register_mutator(name: str) -> Callable[[Type], Type]:
@@ -180,7 +180,7 @@ class ManyEpisodeMutator(Mutator):
     def _postprocess_episode(self, unmutated_episode):
         # make a list in case the user actually returned a generator
         mutated_episodes = list(self.many_episode_mutation(unmutated_episode))
-        for i, episode in enumerate(mutated_episodes):
+        for episode in mutated_episodes:
             episode = list(episode)
             for j, entry in enumerate(episode):
                 if 'episode_done' in entry:

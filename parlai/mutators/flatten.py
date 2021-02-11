@@ -14,8 +14,8 @@ class FlattenMutator(ManyEpisodeMutator):
     """
     Flattens the entire conversation history.
 
-    Simply concatentates all turns in the conversation with a newline.
-    Frequently useful when composed with other mutators.
+    Simply concatentates all turns in the conversation with a newline. Frequently useful
+    when composed with other mutators.
     """
 
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
