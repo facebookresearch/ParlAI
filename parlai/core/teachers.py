@@ -415,6 +415,10 @@ class FixedDialogTeacher(Teacher):
             for mutator in self.mutators:
                 episode_buffer = mutator(episode_buffer)
             self.episode_buffer = list(episode_buffer)
+
+            if not self.episode_buffer:
+                # if we got back an empty episode after mutating, skip it
+                return self.next_example()
         else:
             self.entry_idx += 1
 
@@ -707,9 +711,15 @@ class DialogTeacher(FixedDialogTeacher):
                 if action['episode_done']:
                     self._saw_epoch_done = epoch_done
                     break
+            # perform any mutations there are
             for mutator in self.mutators:
                 episode_buffer = mutator(episode_buffer)
+            # make sure mutations are fully realized (not generators)
             self.episode_buffer = list(episode_buffer)
+            # The recursive call has dual purpose:
+            # - if we get back an empty episode after mutating, skip it gracefully
+            # - pull the first item the episode w/ epoch_done logic, but DRY
+            return self.next_example()
         else:
             action, epoch_done = super().next_example()
         return action, epoch_done
