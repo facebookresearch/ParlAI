@@ -120,6 +120,9 @@ class ExampleMutator(Mutator):
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
         for message in messages:
+            if message == {'episode_done': True}:
+                yield message
+                continue
             message, episode_done = self._pop_episode_done(message)
             message = self.example_mutation(message)
             if 'episode_done' in message:
@@ -138,6 +141,10 @@ class EpisodeMutator(Mutator):
         pass
 
     def _postprocess_episode(self, unmutated_episode):
+        if unmutated_episode == [{'episode_done': True}]:
+            for message in unmutated_episode:
+                yield message
+            return
         # make a list in case the user actually returned a generator
         mutated_episode = list(self.episode_mutation(unmutated_episode))
         if not mutated_episode:
@@ -150,6 +157,43 @@ class EpisodeMutator(Mutator):
             yield m
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
+        messagenew_pairs = self._turn_to_messagenew_pair(messages)
+        episode: List[Message] = []
+        for message, new_episode in messagenew_pairs:
+            if new_episode and episode:
+                yield from self._postprocess_episode(episode)
+                episode = []
+            episode.append(message)
+        if episode:
+            yield from self._postprocess_episode(episode)
+
+
+class ManyEpisodeMutator(Mutator):
+    """
+    Episode mutator than can map one episode to zero or more.
+    """
+
+    @abc.abstractmethod
+    def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
+        pass
+
+    def _postprocess_episode(self, unmutated_episode):
+        # make a list in case the user actually returned a generator
+        mutated_episodes = list(self.many_episode_mutation(unmutated_episode))
+        for i, episode in enumerate(mutated_episodes):
+            episode = list(episode)
+            for j, entry in enumerate(episode):
+                if 'episode_done' in entry:
+                    raise ValueError('Episode mutators should not set episode_done.')
+                # set episode_done = False for everything except final
+                entry['episode_done'] = j == len(episode) - 1
+                yield entry
+
+    def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
+        if messages == [{'episode_done': True}]:
+            for message in messages:
+                yield message
+            return
         messagenew_pairs = self._turn_to_messagenew_pair(messages)
         episode: List[Message] = []
         for message, new_episode in messagenew_pairs:
