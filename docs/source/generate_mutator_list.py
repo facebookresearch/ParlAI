@@ -3,17 +3,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-TASK = 'convai2'
-
 import textwrap
 import argparse
 from parlai.core.params import ParlaiParser
-from parlai.core.opt import Opt
 from parlai.core.mutators import setup_mutator_registry
 from parlai.utils.testing import capture_output
 import parlai.utils.logging as logging
 
 from parlai.scripts.display_data import DisplayData
+
+TASK = 'convai2'
 
 
 def _make_argparse_table(class_):
