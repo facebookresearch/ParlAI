@@ -13,7 +13,11 @@ from parlai.core.mutators import register_mutator, ExampleMutator
 @register_mutator("word_reverse")
 class WordReverseMutator(ExampleMutator):
     """
-    Shuffles all the words in an example (text field).
+    Reverses the words of each turn.
+
+    Only the text (prompt) is modified, not the labels. Utterances separated by
+    newlines will not be shuffled across boundaries. You may wish to combine it
+    with the flatten mutator to reverse both labels and texts.
     """
 
     def __init__(self, opt: Opt):

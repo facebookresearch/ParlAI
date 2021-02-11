@@ -16,6 +16,9 @@ from parlai.core.params import ParlaiParser
 class EpisodeShuffleMutator(EpisodeMutator):
     """
     Shuffles all the turns in a conversation.
+
+    Labels remain in the original ordering, but the order of text (prompts) is
+    mixed up. Thus "one half" of the conversation is reordered.
     """
 
     @classmethod

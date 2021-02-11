@@ -13,7 +13,11 @@ from parlai.core.mutators import register_mutator, ExampleMutator
 @register_mutator("word_shuffle")
 class WordShuffleMutator(ExampleMutator):
     """
-    Shuffles all the words in an example (text field).
+    Shuffles all the words in the message.
+
+    Only the text (prompt) is modified, not the labels. Utterances separated by
+    newlines will not be shuffled across boundaries. You may wish to combine it
+    with the flatten mutator to shuffle labels and texts.
     """
 
     def __init__(self, opt: Opt):

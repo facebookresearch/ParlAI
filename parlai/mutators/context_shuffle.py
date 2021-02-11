@@ -13,7 +13,10 @@ from parlai.core.mutators import register_mutator, ExampleMutator
 @register_mutator("context_shuffle")
 class ContextShuffleMutator(ExampleMutator):
     """
-    Shuffles all the words in an example (text field).
+    Shuffles all the lines in the context.
+
+    Context is defined to be any text prepended to the first turn of a
+    conversation, for example, personas.
     """
 
     def __init__(self, opt: Opt):

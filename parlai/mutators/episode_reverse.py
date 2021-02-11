@@ -15,7 +15,10 @@ from parlai.core.params import ParlaiParser
 @register_mutator("episode_reverse")
 class EpisodeReverseMutator(EpisodeMutator):
     """
-    Shuffles all the turns in a conversation.
+    Reverses all the turns in a conversation.
+
+    Labels remain in the original ordering, but the order of text (prompts) is
+    mixed up. Thus "one half" of the conversation is reordered.
     """
 
     @classmethod
@@ -23,7 +26,7 @@ class EpisodeReverseMutator(EpisodeMutator):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         parser.add_argument(
-            '--shuffle-preserve-context',
+            '--preserve-context',
             default=True,
             type='bool',
             help='If extra context is provided, keep it prepended to the first turn',
@@ -37,7 +40,7 @@ class EpisodeReverseMutator(EpisodeMutator):
         texts = []
         for turn in episode:
             texts.append(turn.pop('text'))
-        if self.opt.get('shuffle_preserve_context'):
+        if self.opt.get('preserve_context'):
             first_turn = texts[0].split('\n')
             context, text = first_turn[:-1], first_turn[-1]
             texts[0] = text

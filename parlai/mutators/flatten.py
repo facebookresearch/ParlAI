@@ -11,6 +11,13 @@ from parlai.core.mutators import ManyEpisodeMutator, register_mutator
 
 @register_mutator("flatten")
 class FlattenMutator(ManyEpisodeMutator):
+    """
+    Flattens the entire conversation history.
+
+    Simply concatentates all turns in the conversation with a newline.
+    Frequently useful when composed with other mutators.
+    """
+
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
         history = []
         for message in episode:
