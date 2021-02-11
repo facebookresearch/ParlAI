@@ -24,11 +24,13 @@ def setup_mutator_registry():
     """
     Loads the mutators so that @register_mutator is hit for all.
     """
+    global MUTATOR_REGISTRY
     if hasattr(setup_mutator_registry, 'loaded'):
         return
     for module in pkgutil.iter_modules(parlai.mutators.__path__, 'parlai.mutators.'):
         importlib.import_module(module.name)
     setup_mutator_registry.loaded = True
+    return MUTATOR_REGISTRY
 
 
 def register_mutator(name: str) -> Callable[[Type], Type]:

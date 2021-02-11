@@ -49,7 +49,7 @@ class EpisodeReverseMutator(EpisodeMutator):
         texts = list(reversed(texts))
         for i, turn in enumerate(episode):
             text = texts.pop(0)
-            if i == 0 and self.opt.get('shuffle_preserve_context') and context:
+            if i == 0 and self.opt.get('preserve_context') and context:
                 text = '\n'.join(context + [text])
             turn['text'] = text
         return episode

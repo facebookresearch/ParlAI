@@ -33,6 +33,7 @@ tutorial_tipsntricks
 
 agents_list
 tasks
+mutators
 zoo
 ```
 

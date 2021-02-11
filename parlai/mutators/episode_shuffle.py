@@ -26,7 +26,7 @@ class EpisodeShuffleMutator(EpisodeMutator):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         parser.add_argument(
-            '--shuffle-preserve-context',
+            '--preserve-context',
             default=True,
             type='bool',
             help='If extra context is provided, keep it prepended to the first turn',
@@ -40,7 +40,7 @@ class EpisodeShuffleMutator(EpisodeMutator):
         texts = []
         for turn in episode:
             texts.append(turn.pop('text'))
-        if self.opt.get('shuffle_preserve_context'):
+        if self.opt.get('preserve_context'):
             first_turn = texts[0].split('\n')
             context, text = first_turn[:-1], first_turn[-1]
             texts[0] = text
@@ -49,7 +49,7 @@ class EpisodeShuffleMutator(EpisodeMutator):
         self.rng.shuffle(texts)
         for i, turn in enumerate(episode):
             text = texts.pop(0)
-            if i == 0 and self.opt.get('shuffle_preserve_context') and context:
+            if i == 0 and self.opt.get('preserve_context') and context:
                 text = '\n'.join(context + [text])
             turn['text'] = text
         return episode
