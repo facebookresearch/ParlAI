@@ -9,6 +9,8 @@ import unittest
 from parlai.core.opt import Opt
 from parlai.core.message import Message
 
+CONTEXT = "All your base\n" "Are belong to us."
+
 EXAMPLE1 = {
     'text': "Hi, my name is Stephen",
     'labels': ["Hello Stephen!"],
@@ -33,12 +35,21 @@ EXAMPLE4 = {
 }
 
 
-class AbstractTestMutator(unittest.TestCase):
+class TestSpecificMutators(unittest.TestCase):
     def _setup_data(self):
         yield Message(EXAMPLE1)
         yield Message(EXAMPLE2)
         yield Message(EXAMPLE3)
         yield Message(EXAMPLE4)
+
+    def _setup_data_with_context(self):
+        yield Message(self._add_context(EXAMPLE1))
+        yield Message(EXAMPLE2)
+        yield Message(self._add_context(EXAMPLE3))
+        yield Message(EXAMPLE4)
+
+    def _add_context(self, message):
+        return {k: v if k != 'text' else CONTEXT + '\n' + v for k, v in message.items()}
 
     def _apply_mutator(self, mutator_class):
         opt = Opt()
@@ -46,8 +57,61 @@ class AbstractTestMutator(unittest.TestCase):
         mutated = mutator(self._setup_data())
         return list(mutated)
 
+    def _apply_context_mutator(self, mutator_class):
+        opt = Opt()
+        mutator = mutator_class(opt)
+        mutated = mutator(self._setup_data_with_context())
+        return list(mutated)
 
-class TestExampleMutator(AbstractTestMutator):
+    def _text_eq(self, ex1, ex2):
+        """
+        Return if the text field is equal.
+        """
+        return ex1['text'] == ex2['text']
+
+    def test_context_shuffle(self):
+        from parlai.mutators.context_shuffle import ContextShuffleMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_context_mutator(ContextShuffleMutator)
+
+        ex1_lines = ex1['text'].split('\n')
+        assert len(ex1_lines) == 3
+        assert sorted(ex1_lines) == sorted(CONTEXT.split("\n") + [EXAMPLE1['text']])
+        ex3_lines = ex3['text'].split('\n')
+        assert len(ex3_lines) == 3
+        assert sorted(ex3_lines) == sorted(CONTEXT.split("\n") + [EXAMPLE3['text']])
+
+    def test_episode_reverse(self):
+        from parlai.mutators.episode_reverse import EpisodeReverseMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(EpisodeReverseMutator)
+
+        assert ex1['text'] == EXAMPLE2['text']
+        assert ex2['text'] == EXAMPLE1['text']
+        assert ex3['text'] == EXAMPLE4['text']
+        assert ex4['text'] == EXAMPLE3['text']
+        assert ex1['text'] == EXAMPLE2['text']
+
+    def test_episode_shuffle(self):
+        from parlai.mutators.episode_shuffle import EpisodeShuffleMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(EpisodeShuffleMutator)
+
+        # check episode done is always set correctly
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+
+        # check there was a mutation
+        assert self._text_eq(ex1, EXAMPLE1) or self._text_eq(ex2, EXAMPLE1)
+        assert self._text_eq(ex2, EXAMPLE2) or self._text_eq(ex1, EXAMPLE2)
+        assert not self._text_eq(ex1, ex2)
+
+        assert self._text_eq(ex3, EXAMPLE3) or self._text_eq(ex4, EXAMPLE3)
+        assert self._text_eq(ex4, EXAMPLE4) or self._text_eq(ex3, EXAMPLE4)
+        assert not self._text_eq(ex3, ex4)
+
     def test_word_shuffle(self):
         from parlai.mutators.word_shuffle import WordShuffleMutator
 
@@ -71,18 +135,10 @@ class TestExampleMutator(AbstractTestMutator):
         assert set(ex3['text'].split()) == set(EXAMPLE3['text'].split())
         assert set(ex4['text'].split()) == set(EXAMPLE4['text'].split())
 
+    def test_word_reverse(self):
+        from parlai.mutators.word_reverse import WordReverseMutator
 
-class TestEpisodeMutator(AbstractTestMutator):
-    def _text_eq(self, ex1, ex2):
-        """
-        Return if the text field is equal.
-        """
-        return ex1['text'] == ex2['text']
-
-    def test_episode_shuffle(self):
-        from parlai.mutators.episode_shuffle import EpisodeShuffleMutator
-
-        ex1, ex2, ex3, ex4 = self._apply_mutator(EpisodeShuffleMutator)
+        ex1, ex2, ex3, ex4 = self._apply_mutator(WordReverseMutator)
 
         # check episode done is always set correctly
         assert not ex1['episode_done']
@@ -90,11 +146,8 @@ class TestEpisodeMutator(AbstractTestMutator):
         assert not ex1['episode_done']
         assert ex2['episode_done']
 
-        # check there was a mutation
-        assert self._text_eq(ex1, EXAMPLE1) or self._text_eq(ex2, EXAMPLE1)
-        assert self._text_eq(ex2, EXAMPLE2) or self._text_eq(ex1, EXAMPLE2)
-        assert not self._text_eq(ex1, ex2)
-
-        assert self._text_eq(ex3, EXAMPLE3) or self._text_eq(ex4, EXAMPLE3)
-        assert self._text_eq(ex4, EXAMPLE4) or self._text_eq(ex3, EXAMPLE4)
-        assert not self._text_eq(ex3, ex4)
+        # assert correct texts
+        assert ex1['text'] == "Stephen is name my Hi,"
+        assert ex2['text'] == "name? your is What"
+        assert ex3['text'] == "Emily. I'm Hello,"
+        assert ex4['text'] == "called? you are What"
