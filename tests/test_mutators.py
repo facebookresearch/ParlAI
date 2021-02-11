@@ -100,8 +100,8 @@ class TestSpecificMutators(unittest.TestCase):
         # check episode done is always set correctly
         assert not ex1['episode_done']
         assert ex2['episode_done']
-        assert not ex1['episode_done']
-        assert ex2['episode_done']
+        assert not ex3['episode_done']
+        assert ex4['episode_done']
 
         # check there was a mutation
         assert self._text_eq(ex1, EXAMPLE1) or self._text_eq(ex2, EXAMPLE1)
@@ -112,6 +112,57 @@ class TestSpecificMutators(unittest.TestCase):
         assert self._text_eq(ex4, EXAMPLE4) or self._text_eq(ex3, EXAMPLE4)
         assert not self._text_eq(ex3, ex4)
 
+    def test_flatten(self):
+        from parlai.mutators.flatten import FlattenMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(FlattenMutator)
+
+        # check episode done is always set correctly
+        assert ex1['episode_done']
+        assert ex2['episode_done']
+        assert ex3['episode_done']
+        assert ex4['episode_done']
+
+        # check there was a mutation
+        assert ex1['text'] == "\n".join(e['text'] for e in [EXAMPLE1])
+        assert ex2['text'] == "\n".join(e['text'] for e in [EXAMPLE1, EXAMPLE2])
+        assert ex3['text'] == "\n".join(e['text'] for e in [EXAMPLE3])
+        assert ex4['text'] == "\n".join(e['text'] for e in [EXAMPLE3, EXAMPLE4])
+
+    def test_last_turn(self):
+        from parlai.mutators.last_turn import LastTurnMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(LastTurnMutator)
+
+        # check episode done is always set correctly
+        assert ex1['episode_done']
+        assert ex2['episode_done']
+        assert ex3['episode_done']
+        assert ex4['episode_done']
+
+        # check there was a mutation
+        assert ex1['text'] == EXAMPLE1['text']
+        assert ex2['text'] == EXAMPLE2['text']
+        assert ex3['text'] == EXAMPLE3['text']
+        assert ex4['text'] == EXAMPLE4['text']
+
+    def test_word_reverse(self):
+        from parlai.mutators.word_reverse import WordReverseMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(WordReverseMutator)
+
+        # check episode done is always set correctly
+        assert not ex1['episode_done']
+        assert ex2['episode_done']
+        assert not ex3['episode_done']
+        assert ex4['episode_done']
+
+        # assert correct texts
+        assert ex1['text'] == "Stephen is name my Hi,"
+        assert ex2['text'] == "name? your is What"
+        assert ex3['text'] == "Emily. I'm Hello,"
+        assert ex4['text'] == "called? you are What"
+
     def test_word_shuffle(self):
         from parlai.mutators.word_shuffle import WordShuffleMutator
 
@@ -120,8 +171,8 @@ class TestSpecificMutators(unittest.TestCase):
         # check episode done is always set correctly
         assert not ex1['episode_done']
         assert ex2['episode_done']
-        assert not ex1['episode_done']
-        assert ex2['episode_done']
+        assert not ex3['episode_done']
+        assert ex4['episode_done']
 
         # check there was a mutation
         assert ex1 != EXAMPLE1
@@ -134,20 +185,3 @@ class TestSpecificMutators(unittest.TestCase):
         assert set(ex2['text'].split()) == set(EXAMPLE2['text'].split())
         assert set(ex3['text'].split()) == set(EXAMPLE3['text'].split())
         assert set(ex4['text'].split()) == set(EXAMPLE4['text'].split())
-
-    def test_word_reverse(self):
-        from parlai.mutators.word_reverse import WordReverseMutator
-
-        ex1, ex2, ex3, ex4 = self._apply_mutator(WordReverseMutator)
-
-        # check episode done is always set correctly
-        assert not ex1['episode_done']
-        assert ex2['episode_done']
-        assert not ex1['episode_done']
-        assert ex2['episode_done']
-
-        # assert correct texts
-        assert ex1['text'] == "Stephen is name my Hi,"
-        assert ex2['text'] == "name? your is What"
-        assert ex3['text'] == "Emily. I'm Hello,"
-        assert ex4['text'] == "called? you are What"
