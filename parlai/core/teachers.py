@@ -89,6 +89,7 @@ class DataLoader(Thread):
         Thread.__init__(self, daemon=True)
         self.num_workers = opt.get('num_load_threads', 1)
         self.request_queue = queue.Queue()
+        self.last_future = None
 
     def request_load(self, receive_fn, load_fn, args):
         """
@@ -108,15 +109,23 @@ class DataLoader(Thread):
         """
         Run the execution loop.
         """
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers)
+        executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=self.num_workers, thread_name_prefix=self.name
+        )
         with executor:
             while True:
                 receive_fn, load_fn, args = self.request_queue.get()
-                if type(args) == dict:
-                    future = executor.submit(load_fn, **args)
-                else:
-                    future = executor.submit(load_fn, *args)
-                receive_fn(future)
+                if receive_fn is StopIteration:
+                    return
+                try:
+                    if type(args) == dict:
+                        future = executor.submit(load_fn, **args)
+                    else:
+                        future = executor.submit(load_fn, *args)
+                    self.last_future = future
+                    receive_fn(future)
+                except RuntimeError:
+                    return
 
 
 class Teacher(Agent):
@@ -2244,6 +2253,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             # launch queue loader on the main thread
             self.tot_samples_loaded = defaultdict(int)
             if not opt.get("no_auto_enqueues", False):
+                # we only enqueue the train thread because the reset() called at
+                # the top of training will
                 self._enqueue_request()
 
         self._episode_done = True
@@ -2330,11 +2341,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         Load data into self.samples until buffersize is reached.
         """
-        output = future.result()
-        if output is None:
-            return
-        chunk_output, chunk_reset_cnt = output
+        chunk_output, chunk_reset_cnt = future.result()
         if chunk_output is None:
+            self.samples.put((None, chunk_reset_cnt))
             return
         while chunk_output:
             # self.samples is a queue with maxsize
@@ -2361,6 +2370,14 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         reset_cnt = self.reset_counter.value()
         for c in self.fold_chunks:
             self.chunks.put((c, reset_cnt))
+        self.chunks.put((None, reset_cnt))
+        # gross hack: in training models, when we get to validation, we enqueue
+        # a request in the constructor, followed by another enqueue from a
+        # reset immediately after. If the former is already running, we'll end up
+        # with one too many calls to get_chunk and block on termination. That's
+        # what I refer to as "losing" the race condition. If you search gross hack,
+        # you'll also find the spot where we "win" the race condition.
+        self.chunks.put((None, reset_cnt))
 
     @abstractmethod
     def load_from_chunk(self, chunk_idx: int) -> List[ChunkOutput]:
@@ -2385,14 +2402,18 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Refill the buffer.
         """
-        if self.chunks.empty():
+        next_chunk, chunk_reset_cnt = self.chunks.get()
+        if next_chunk is None:
             if self.is_train:
                 self._enqueue_chunks()
+                next_chunk, chunk_reset_cnt = self.chunks.get()
+                if next_chunk is None:
+                    # See the race condition described around "gross hack".
+                    # if we win the race condition, then catch it here
+                    return (None, chunk_reset_cnt)
             else:
                 # if we're in valid/test, we need to actually signal the end
-                return None
-
-        next_chunk, chunk_reset_cnt = self.chunks.get()
+                return (None, chunk_reset_cnt)
         # abstract method `load_from_chunk` returns a list of tuples
         output = self.load_from_chunk(next_chunk)
 
@@ -2405,19 +2426,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         curr_reset_cnt = self.reset_counter.value()
         if self._episode_done:
             # Get the next episode or example
-            output = self.samples.get()
-            if output is None:
-                return None
-            queue_output, reset_cnt = output
+            queue_output, reset_cnt = self.samples.get()
             stale_exs = 0
             while curr_reset_cnt > reset_cnt:
                 stale_exs += 1
-                output = self.samples.get()
-                if output is None:
-                    return None
-                queue_output, reset_cnt = output
+                queue_output, reset_cnt = self.samples.get()
             if stale_exs > 0:
-                logging.info(f"Removed {stale_exs} stale examples from the queue.")
+                logging.debug(f"Removed {stale_exs} stale examples from the queue.")
+            if queue_output is None:
+                self.samples.put((None, reset_cnt))
+                return {'episode_done': True}
 
             # Update the last queue output in the case
             # of multi-turn episodes
@@ -2442,6 +2460,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.reset_counter.increment()
             # drain the queues and refill the chunk queue with a new epoch.
             # additionally, we have to relaunch the loader
+            # if self.data_loader.last_future: # and not self.data_loader.last_future.done():
+            #     self.data_loader.last_future.cancel()
+            # self._drain(self.data_loader.request_queue)
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()

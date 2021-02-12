@@ -507,12 +507,17 @@ class ChunkyUniqueSlowTeacher(ChunkyTeacher):
     """
 
     def load_from_chunk(self, chunk_idx: int):
+        if chunk_idx is None:
+            import parlai.utils.logging as logging
+
+            logging.error("Yooooo wtf chunk_idx")
+            return []
         output = []
         for i in range(10):
             text = str(i + chunk_idx * 10)
             resp = str(i + chunk_idx * 10)
             output.append((text, resp))
-            time.sleep(0.1)
+        time.sleep(0.1)
         return output
 
 
