@@ -2373,10 +2373,11 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.chunks.put((None, reset_cnt))
         # gross hack: in training models, when we get to validation, we enqueue
         # a request in the constructor, followed by another enqueue from a
-        # reset immediately after. If the former is already running, we'll end up
-        # with one too many calls to get_chunk and block on termination. That's
-        # what I refer to as "losing" the race condition. If you search gross hack,
-        # you'll also find the spot where we "win" the race condition.
+        # reset immediately after. If the former is already running, we'll end
+        # up with one too many calls to get_chunk and block on termination.
+        # That's what I refer to as "losing" the race condition. If you look in
+        # get_chunk, you'll also find the spot where we "win" the race
+        # condition.
         self.chunks.put((None, reset_cnt))
 
     @abstractmethod
@@ -2408,8 +2409,10 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 self._enqueue_chunks()
                 next_chunk, chunk_reset_cnt = self.chunks.get()
                 if next_chunk is None:
-                    # See the race condition described around "gross hack".
-                    # if we win the race condition, then catch it here
+                    # See the race condition described around "gross hack" in
+                    # _enqueue_chunks.  if we win the race condition, then
+                    # catch it here
+                    logging.debug("Won the chunk_teacher reset race condition")
                     return (None, chunk_reset_cnt)
             else:
                 # if we're in valid/test, we need to actually signal the end
