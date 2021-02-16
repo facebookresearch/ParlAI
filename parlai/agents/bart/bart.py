@@ -15,6 +15,7 @@ or `-mf zoo:bart/bart_large/model` to ensure correct dictionaries are saved.
 """
 import os
 import torch
+import torch.nn.functional as F
 from typing import Optional, Dict, Any
 
 from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
@@ -238,3 +239,35 @@ class BartAgent(TransformerGeneratorAgent):
                 )
             )
         return token_losses
+
+    def _rank_eval_label_candidates(self, batch, batchsize):
+        """
+        Rank eval label candidates.
+
+        Overridden from TorchGeneratorAgent because BART uses
+        both EOS-BOS tokens to start decoding. During scoring of
+        candidates, we must get rid of the score for the start token.
+        """
+        cand_choices = []
+        cand_choices_scores = []
+        encoder_states = self.model.encoder(*self._encoder_input(batch))
+        for i in range(batchsize):
+            num_cands = len(batch.candidate_vecs[i])
+            enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
+            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            scores, _ = self.model.decode_forced(enc, cands)
+            # ignore the score for the start token
+            scores = scores[:, 1:, :]
+            score_view = scores.reshape(num_cands * cands.size(1), -1)
+            cand_losses = F.cross_entropy(
+                score_view, cands.view(-1), reduction='none'
+            ).view(num_cands, cands.size(1))
+            # now cand_losses is cands x seqlen size, but we still need to
+            # check padding and such
+            mask = (cands != self.NULL_IDX).float()
+            cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
+            sorted_scores, ordering = cand_scores.sort()
+            cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices_scores.append(sorted_scores.tolist())
+
+        return cand_choices, cand_choices_scores

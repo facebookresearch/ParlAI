@@ -864,6 +864,38 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         pass
 
+    def _rank_eval_label_candidates(self, batch, batchsize):
+        """
+        Rank label_candidates during eval_step.
+
+        Can be overridden to allow for different ways of ranking candidates.
+        Must have `--rank-candidates` set to True. By default, we roughly compute
+        PPL to rank the candidates.
+        """
+        # compute roughly ppl to rank candidates
+        cand_choices = []
+        cand_choices_scores = []
+        encoder_states = self.model.encoder(*self._encoder_input(batch))
+        for i in range(batchsize):
+            num_cands = len(batch.candidate_vecs[i])
+            enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
+            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            scores, _ = self.model.decode_forced(enc, cands)
+            cand_losses = F.cross_entropy(
+                scores.view(num_cands * cands.size(1), -1),
+                cands.view(-1),
+                reduction='none',
+            ).view(num_cands, cands.size(1))
+            # now cand_losses is cands x seqlen size, but we still need to
+            # check padding and such
+            mask = (cands != self.NULL_IDX).float()
+            cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
+            sorted_scores, ordering = cand_scores.sort()
+            cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices_scores.append(sorted_scores.tolist())
+
+        return cand_choices, cand_choices_scores
+
     def eval_step(self, batch):
         """
         Evaluate a single batch of examples.
@@ -907,34 +939,18 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                         continue
 
         cand_choices = None
-        # TODO: abstract out the scoring here
+        cand_scores = None
         if self.rank_candidates:
-            # compute roughly ppl to rank candidates
-            cand_choices = []
-            encoder_states = self.model.encoder(*self._encoder_input(batch))
-            for i in range(bsz):
-                num_cands = len(batch.candidate_vecs[i])
-                enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-                cands, _ = self._pad_tensor(batch.candidate_vecs[i])
-                scores, _ = self.model.decode_forced(enc, cands)
-                cand_losses = F.cross_entropy(
-                    scores.view(num_cands * cands.size(1), -1),
-                    cands.view(-1),
-                    reduction='none',
-                ).view(num_cands, cands.size(1))
-                # now cand_losses is cands x seqlen size, but we still need to
-                # check padding and such
-                mask = (cands != self.NULL_IDX).float()
-                cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
-                _, ordering = cand_scores.sort()
-                cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices, cand_scores = self._rank_eval_label_candidates(batch, bsz)
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
             self._compute_nltk_bleu(batch, text)
-        retval = Output(text, cand_choices, token_losses=token_losses)
+        retval = Output(
+            text, cand_choices, token_losses=token_losses, cand_scores=cand_scores
+        )
         if not self.skip_generation:
             retval.beam_texts = beam_texts
         return retval
