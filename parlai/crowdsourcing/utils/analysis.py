@@ -33,10 +33,24 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
         )
+        parser.add_argument(
+            '--results-format',
+            type=str,
+            choices=['csv', 'jsonl'],
+            default='csv',
+            help='Output format for results data',
+        )
         return parser
 
     def __init__(self, opt: Dict[str, Any]):
         self.output_folder = opt.get('output_folder')
+        self.results_format = opt['results_format']
+
+    @abstractmethod
+    def get_results_path(self) -> str:
+        """
+        Return the save path for the results file.
+        """
 
     @abstractmethod
     def compile_results(self) -> pd.DataFrame:
@@ -45,6 +59,24 @@ class AbstractResultsCompiler(ABC):
 
         Each row of the dataframe consists of one utterance of one conversation.
         """
+
+    def save_results(self):
+        """
+        Compile and save results.
+
+        Results will be saved in the format given by --results-format.
+        """
+        result_df = self.compile_results()
+        results_path = self.get_results_path()
+        if self.results_format == 'csv':
+            result_df.to_csv(results_path, index=False)
+        elif self.results_format == 'jsonl':
+            # {{{TODO: save in the jsonl format}}}
+            pass  # TODO: remove
+        else:
+            raise ValueError(
+                f'Results save format of "{self.results_format}" currently unsupported!'
+            )
 
 
 class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
@@ -105,7 +137,8 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         )
         return parser
 
-    def __init__(self, opt):
+    def __init__(self, opt: Dict[str, Any]):
+        super().__init__(opt)
         self.task_name = opt["task_name"]
         self._mephisto_db = None
         self._mephisto_data_browser = None
