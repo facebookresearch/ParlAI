@@ -444,6 +444,9 @@ class TransformerEncoder(nn.Module):
             or self.variant == 'bart'
         ):
             self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+        elif self.variant == 'bart2':
+            self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            self.final_norm = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -585,7 +588,7 @@ class TransformerEncoder(nn.Module):
         # embed input
         tensor, mask = self.forward_embedding(input, positions, segments)
 
-        if self.variant == 'xlm' or self.variant == 'bart':
+        if self.variant == 'xlm' or self.variant == 'bart' or self.variant == 'bart2':
             tensor = _normalize(tensor, self.norm_embeddings)
 
         # --dropout on the embeddings
@@ -598,6 +601,8 @@ class TransformerEncoder(nn.Module):
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
+        elif self.variant == 'bart2':
+            tensor = _normalize(tensor, self.final_norm)
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
@@ -662,14 +667,14 @@ class TransformerEncoderLayer(nn.Module):
         Forward pass.
         """
         residual = tensor
-        if self.variant == 'prelayernorm':
+        if self.variant == 'prelayernorm' or self.variant == 'bart2':
             tensor = _normalize(tensor, self.norm1)
         attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = _normalize(tensor, self.norm1)
         residual = tensor
-        if self.variant == 'prelayernorm':
+        if self.variant == 'prelayernorm' or self.variant == 'bart2':
             tensor = _normalize(tensor, self.norm2)
         tensor = residual + self.dropout(self.ffn(tensor))
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
@@ -753,6 +758,9 @@ class TransformerDecoder(nn.Module):
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
                     'as it involves a less-stable layernorm operation.'
                 )
+        elif self.variant == 'bart2':
+            self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            self.final_norm = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -815,7 +823,7 @@ class TransformerDecoder(nn.Module):
                 )
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
-        if self.variant == 'bart':
+        if self.variant == 'bart' or self.variant == 'bart2':
             tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor
@@ -895,6 +903,8 @@ class TransformerDecoder(nn.Module):
 
         if self.variant == 'prelayernorm':
             tensor = _normalize(tensor, self.norm_embeddings)
+        elif self.variant == 'bart2':
+            tensor = _normalize(tensor, self.final_norm)
 
         return tensor, new_incr_state
 
@@ -991,7 +1001,7 @@ class TransformerDecoderLayer(nn.Module):
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
-        if self.variant == 'prelayernorm':
+        if self.variant == 'prelayernorm' or self.variant == 'bart2':
             x = _normalize(x, self.norm1)
 
         # don't peak into the future!
@@ -1008,7 +1018,7 @@ class TransformerDecoderLayer(nn.Module):
 
         residual = x
         # encoder_attn_layer_norm norm 2
-        if self.variant == 'prelayernorm':
+        if self.variant == 'prelayernorm' or self.variant == 'bart2':
             x = _normalize(x, self.norm2)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
@@ -1025,7 +1035,7 @@ class TransformerDecoderLayer(nn.Module):
 
         # finally the ffn
         residual = x
-        if self.variant == 'prelayernorm':
+        if self.variant == 'prelayernorm' or self.variant == 'bart2':
             x = _normalize(x, self.norm3)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout

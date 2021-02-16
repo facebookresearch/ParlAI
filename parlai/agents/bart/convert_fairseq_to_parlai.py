@@ -145,7 +145,10 @@ class ConversionScript(ParlaiScript):
         """
         # assume encoder/decoder symetrical except for number of layers
         state = self.state
-        fairseq_args = state['args'].__dict__
+        if state['args']:
+            fairseq_args = state['args'].__dict__
+        else:
+            fairseq_args = state['cfg']._content['model']._value().__dict__
 
         transformer_common_config = {}
 
@@ -203,6 +206,7 @@ class ConversionScript(ParlaiScript):
         parser = ParlaiParser()
         parser.set_params(**transformer_common_config)
         opt = parser.parse_args([])
+        opt['variant'] = 'bart2'
 
         # 6. Augment opt with additional ParlAI options
         opt['fp16'] = self.opt['fp16']
@@ -298,7 +302,6 @@ class ConversionScript(ParlaiScript):
                 output_model[k] = torch.cat(subpieces, dim=0)
             else:
                 print(f"Could not handle {k}")
-                __import__("ipdb").set_trace()  # FIXME
                 print()
 
         output_sd['model'] = output_model
@@ -387,7 +390,7 @@ class ConversionScript(ParlaiScript):
 
             for _key in ['encoder', 'decoder']:
                 mapped_key = mapped_key.replace(
-                    f'{_key}.layer_norm', f'{_key}.norm_embeddings'
+                    f'{_key}.layer_norm', f'{_key}.final_norm'
                 )
                 mapped_key = mapped_key.replace(
                     f'{_key}.layernorm_embedding', f'{_key}.norm_embeddings'
@@ -474,6 +477,9 @@ class ConversionScript(ParlaiScript):
             return_dict['encoder.position_embeddings.weight'] = emb[2:]
             return_dict['decoder.position_embeddings.weight'] = emb[2:]
 
+        if 'decoder.output_projection.weight' in return_dict:
+            del return_dict['decoder.output_projection.weight']
+
         return_dict['START'] = torch.LongTensor([1])  # type: ignore
         return return_dict
 
@@ -484,6 +490,7 @@ class ConversionScript(ParlaiScript):
         self.agent.observe(
             {'text': "What's your favorite kind of ramen?", 'episode_done': False}
         )
+        self.agent.model.eval()
         print(self.agent.act())
 
 
