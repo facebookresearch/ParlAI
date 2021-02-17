@@ -868,9 +868,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Rank label_candidates during eval_step.
 
-        Can be overridden to allow for different ways of ranking candidates.
-        Must have `--rank-candidates` set to True. By default, we roughly compute
-        PPL to rank the candidates.
+        Can be overridden to allow for different ways of ranking candidates. Must have
+        `--rank-candidates` set to True. By default, we roughly compute PPL to rank the
+        candidates.
         """
         # compute roughly ppl to rank candidates
         cand_choices = []

@@ -244,9 +244,9 @@ class BartAgent(TransformerGeneratorAgent):
         """
         Rank eval label candidates.
 
-        Overridden from TorchGeneratorAgent because BART uses
-        both EOS-BOS tokens to start decoding. During scoring of
-        candidates, we must get rid of the score for the start token.
+        Overridden from TorchGeneratorAgent because BART uses both EOS-BOS tokens to
+        start decoding. During scoring of candidates, we must get rid of the score for
+        the start token.
         """
         cand_choices = []
         cand_choices_scores = []
