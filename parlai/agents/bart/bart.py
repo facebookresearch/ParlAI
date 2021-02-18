@@ -15,7 +15,6 @@ or `-mf zoo:bart/bart_large/model` to ensure correct dictionaries are saved.
 """
 import os
 import torch
-import torch.nn.functional as F
 from typing import Optional, Dict, Any
 
 from parlai.agents.bart.convert_fairseq_to_parlai import ConversionScript
@@ -181,93 +180,3 @@ class BartAgent(TransformerGeneratorAgent):
             .expand(bsz * beam_size, 2)
             .to(dev)
         )
-
-    def compute_loss(self, batch, return_output=False):
-        """
-        Override TGA.compute_loss to ignore start token.
-        """
-        if batch.label_vec is None:
-            raise ValueError('Cannot compute loss without a label.')
-        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
-        scores, preds, *_ = model_output
-
-        if scores.size(1) != batch.label_vec.size(1):
-            # ignore start
-            scores = scores[:, 1:, :]
-            preds = preds[:, 1:]
-
-        score_view = scores.reshape(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
-        loss = loss.view(scores.shape[:-1]).sum(dim=1)
-        # save loss to metrics
-        notnull = batch.label_vec.ne(self.NULL_IDX)
-        target_tokens = notnull.long().sum(dim=-1)
-        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
-
-        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
-        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
-        self.record_local_metric(
-            'token_acc', AverageMetric.many(correct, target_tokens)
-        )
-        # actually do backwards loss
-        loss = loss.sum()
-        loss /= target_tokens.sum()  # average loss per token
-        if return_output:
-            return (loss, model_output)
-        else:
-            return loss
-
-    def _construct_token_losses(self, labels, model_output):
-        """
-        Override TGA._construct_token_losses to ignore start token.
-        """
-        # Get non-aggregated losses
-        scores, _, _ = model_output
-        scores = scores[:, 1:, :]  # ignore start token
-        score_view = scores.reshape(-1, scores.size(-1))
-        losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
-
-        # Zip decoded tokens with losses
-        token_losses = []
-        for i, label in enumerate(labels):
-            token_losses.append(
-                list(
-                    zip(
-                        [self.dict[token] for token in label.tolist()],
-                        losses[i].tolist(),
-                    )
-                )
-            )
-        return token_losses
-
-    def _rank_eval_label_candidates(self, batch, batchsize):
-        """
-        Rank eval label candidates.
-
-        Overridden from TorchGeneratorAgent because BART uses both EOS-BOS tokens to
-        start decoding. During scoring of candidates, we must get rid of the score for
-        the start token.
-        """
-        cand_choices = []
-        cand_choices_scores = []
-        encoder_states = self.model.encoder(*self._encoder_input(batch))
-        for i in range(batchsize):
-            num_cands = len(batch.candidate_vecs[i])
-            enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
-            scores, _ = self.model.decode_forced(enc, cands)
-            # ignore the score for the start token
-            scores = scores[:, 1:, :]
-            score_view = scores.reshape(num_cands * cands.size(1), -1)
-            cand_losses = F.cross_entropy(
-                score_view, cands.view(-1), reduction='none'
-            ).view(num_cands, cands.size(1))
-            # now cand_losses is cands x seqlen size, but we still need to
-            # check padding and such
-            mask = (cands != self.NULL_IDX).float()
-            cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
-            sorted_scores, ordering = cand_scores.sort()
-            cand_choices.append([batch.candidates[i][o] for o in ordering])
-            cand_choices_scores.append(sorted_scores.tolist())
-
-        return cand_choices, cand_choices_scores

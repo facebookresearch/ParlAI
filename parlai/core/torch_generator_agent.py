@@ -712,7 +712,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             raise ValueError('Cannot compute loss without a label.')
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
-        score_view = scores.view(-1, scores.size(-1))
+        score_view = scores.reshape(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))
         loss = loss.view(scores.shape[:-1]).sum(dim=1)
         # save loss to metrics
@@ -775,7 +775,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
         scores, _, _ = model_output
-        score_view = scores.view(-1, scores.size(-1))
+        score_view = scores.reshape(-1, scores.size(-1))
         losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
 
         # Zip decoded tokens with losses
@@ -881,10 +881,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
             cands, _ = self._pad_tensor(batch.candidate_vecs[i])
             scores, _ = self.model.decode_forced(enc, cands)
+            score_view = scores.reshape(num_cands * cands.size(1), -1)
             cand_losses = F.cross_entropy(
-                scores.view(num_cands * cands.size(1), -1),
-                cands.view(-1),
-                reduction='none',
+                score_view, cands.view(-1), reduction='none'
             ).view(num_cands, cands.size(1))
             # now cand_losses is cands x seqlen size, but we still need to
             # check padding and such
