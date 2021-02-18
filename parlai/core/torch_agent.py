@@ -504,6 +504,12 @@ class TorchAgent(ABC, Agent):
             ),
         )
         optim_group.add_argument(
+            '--reset-optimizer',
+            type='bool',
+            default=False,
+            help='Reset the optimizer during fine-tuning',
+        )
+        optim_group.add_argument(
             '-lr', '--learningrate', type=float, default=1, help='Learning rate'
         )
         optim_group.add_argument(
@@ -918,6 +924,9 @@ class TorchAgent(ABC, Agent):
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
             logging.warn('Not loading optimizer due to resize in token embeddings')
+        if self.opt.get('reset_optimizer', False):
+            optim_states = None
+            logging.warn('Not loading optimizer due to --reset-optimizer True')
 
         opt = self.opt
 
