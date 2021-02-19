@@ -13,6 +13,7 @@ from parlai.core.params import ParlaiParser
 
 RUNNING = True
 
+
 def _get_rand_id():
     """
     :return: The string of a random id using uuid4
