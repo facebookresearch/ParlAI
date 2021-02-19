@@ -471,8 +471,10 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
         super().__init__(opt, shared)
         self.knowledge_separator = opt.get('include_knowledge_separator', True)
         self.only_checked_knowledge = opt.get('only_checked_knowledge', False)
+        self.prepend_false_knowledge = opt.get('prepend_false_knowledge', False)
         self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
         self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
+        self.prepend_noisy_knowledge = opt.get('prepend_noisy_knowledge', 0)
         self.dropout = opt.get('ignorant_dropout', 0.0)
 
     @classmethod
@@ -502,10 +504,22 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             help='If true, prepend text with checked sentence',
         )
         agent.add_argument(
+            '--prepend-false-knowledge',
+            type='bool',
+            default=False,
+            help='If true, prepend text with random sentence',
+        )
+        agent.add_argument(
             '--gold-knowledge-delimiter',
             type=str,
             default='\n',
             help='delimiter for prepending gold knowledge',
+        )
+        agent.add_argument(
+            '--prepend-noisy-knowledge',
+            type=int,
+            default=0,
+            help='add noisy knowledge, oonly work when prepend-gold-knowledge = True',
         )
         return parser
 
@@ -546,9 +560,23 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
                 TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
             )
         elif self.prepend_gold_knowledge:
-            a[
-                'text'
-            ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
+            if self.prepend_noisy_knowledge > 0:
+                noisy_knowledge = a['knowledge'].split('\n')
+                noisy_knowledge[:] = [x for x in noisy_knowledge if x]
+                noisy_knowledge = random.sample(
+                    noisy_knowledge, k=self.prepend_noisy_knowledge
+                )
+                if not self.prepend_false_knowledge:
+                    noisy_knowledge.append(a['checked_sentence'])
+                random.shuffle(noisy_knowledge)
+                noisy_knowledge = ''.join(noisy_knowledge)
+                a[
+                    'text'
+                ] = f"{TOKEN_KNOWLEDGE} {noisy_knowledge} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
+            else:
+                a[
+                    'text'
+                ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
         return a
 
 
