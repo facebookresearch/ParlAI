@@ -1998,7 +1998,7 @@ class TorchAgent(ABC, Agent):
         self.is_training = any('labels' in obs for obs in observations)
 
         # check if we should add truncate stats
-        if any('if_text_truncate' in obs for obs in observations):
+        if all('if_text_truncate' in obs for obs in observations):
             self.record_local_metric(
                 'tr',
                 AverageMetric.many(
