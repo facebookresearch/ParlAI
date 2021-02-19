@@ -1376,7 +1376,7 @@ class TorchAgent(ABC, Agent):
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
             )
-            obs['if_text_truncate'] = text_length != len(truncated_vec)
+            obs.force_set('if_text_truncate', text_length != len(truncated_vec))
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
