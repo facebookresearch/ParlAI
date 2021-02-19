@@ -11,6 +11,7 @@ import time
 import threading
 from parlai.core.params import ParlaiParser
 
+RUNNING = True
 
 def _get_rand_id():
     """
@@ -35,6 +36,8 @@ def on_message(ws, message):
     :param ws: a WebSocketApp
     :param message: json with 'text' field to be printed
     """
+    if not RUNNING:
+        return
     incoming_message = json.loads(message)
     print("\033[0m\n")
     print("Bot: " + incoming_message['text'])
@@ -71,16 +74,22 @@ def _run(ws, id):
 
     :param ws: websocket.WebSocketApp
     """
+    global RUNNING
     while True:
         x = input("\033[44m Me: ")
         print("\033[0m", end="")
         data = {}
         data['id'] = id
         data['text'] = x
+        if x == "[DONE]":
+            RUNNING = False
         json_data = json.dumps(data)
         ws.send(json_data)
         time.sleep(1)
         if x == "[DONE]":
+            time.sleep(1)
+            data['text'] = 'EXIT'
+            ws.send(json.dumps(data))
             break
     ws.close()
 
