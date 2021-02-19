@@ -43,6 +43,7 @@ from parlai.utils.fp16 import (
     Adafactor,
 )
 from parlai.core.metrics import (
+    AverageMetric,
     Metrics,
     Metric,
     GlobalAverageMetric,
@@ -1371,9 +1372,11 @@ class TorchAgent(ABC, Agent):
         # check truncation
         if obs.get('text_vec') is not None:
             truncate_left = not self.history_reversed
+            text_length = len(obs['text_vec'])
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
             )
+            obs['if_text_truncate'] = text_length != len(truncated_vec)
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
@@ -1994,6 +1997,14 @@ class TorchAgent(ABC, Agent):
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)
 
+        # check if we should add truncate stats
+        if any('if_text_truncate' in obs for obs in observations):
+            self.record_local_metric(
+                'tr',
+                AverageMetric.many(
+                    [float(obs['if_text_truncate']) for obs in observations]
+                ),
+            )
         # create a batch from the vectors
         batch = self.batchify(observations)
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
