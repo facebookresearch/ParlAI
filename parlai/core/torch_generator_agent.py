@@ -725,6 +725,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
         )
+        self.record_local_metric('num_tokens', SumMetric.many(target_tokens))
         # actually do backwards loss
         loss = loss.sum()
         loss /= target_tokens.sum()  # average loss per token
