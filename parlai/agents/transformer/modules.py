@@ -21,6 +21,7 @@ from typing import Dict, Tuple, Optional, Union
 
 import numpy as np
 import torch
+import torch.jit
 import torch.cuda
 import torch.nn as nn
 import torch.nn.functional as F
@@ -29,31 +30,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
-try:
-    from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
-
-    APEX_LAYER_NORM = True
-except ImportError:
-    from torch.nn import LayerNorm
-
-    APEX_LAYER_NORM = False
-
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
-
-
-def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm.
-    """
-    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
-    if APEX_LAYER_NORM and not is_cpu:
-        # fused_layer_norm has a bug around multi-device networks.
-        # https://github.com/NVIDIA/apex/issues/770
-        # https://github.com/NVIDIA/apex/issues/371
-        with torch.cuda.device(tensor.device):
-            return norm_layer(tensor)
-    else:
-        return norm_layer(tensor)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
@@ -443,7 +420,7 @@ class TransformerEncoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -471,10 +448,10 @@ class TransformerEncoder(nn.Module):
 
     def forward_embedding(
         self,
-        input: torch.LongTensor,
-        positions: Optional[torch.LongTensor] = None,
-        segments: Optional[torch.LongTensor] = None,
-    ) -> Tuple[torch.Tensor, torch.BoolTensor]:
+        input: torch.Tensor,
+        positions: Optional[torch.Tensor] = None,
+        segments: Optional[torch.Tensor] = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Embed tokens prior to feeding into transformer.
 
@@ -493,9 +470,9 @@ class TransformerEncoder(nn.Module):
             positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
-            tensor = tensor * np.sqrt(self.dim)
+            tensor = tensor * math.sqrt(self.dim)
 
-        if positions.max().item() > self.n_positions:
+        if positions.max().item() > self.n_positions and not torch.jit.is_scripting():
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
@@ -505,16 +482,14 @@ class TransformerEncoder(nn.Module):
         position_embs = self.position_embeddings(positions).expand_as(tensor)
         tensor = tensor + position_embs
 
-        if self.n_segments >= 1:
+        if hasattr(self, 'segment_embeddings'):
             if segments is None:
                 segments = torch.zeros_like(input)  # type: ignore
             tensor = tensor + self.segment_embeddings(segments)
 
         return tensor, mask
 
-    def forward_layers(
-        self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> torch.Tensor:
+    def forward_layers(self, tensor: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
         """
         Apply transformer layers to input.
 
@@ -526,7 +501,7 @@ class TransformerEncoder(nn.Module):
         :return tensor:
             return embedding after applying transformer layers
         """
-        if getattr(self.layers, 'is_model_parallel', False):
+        if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
             # factored out for readability. It is equivalent to the other
             # condition
             tensor = self._apply_model_parallel(tensor, mask)
@@ -537,8 +512,8 @@ class TransformerEncoder(nn.Module):
         return tensor
 
     def reduce_output(
-        self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> Tuple[torch.Tensor, Optional[torch.BoolTensor]]:
+        self, tensor: torch.Tensor, mask: torch.Tensor
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """
         Reduce transformer output at end of forward pass.
 
@@ -568,10 +543,10 @@ class TransformerEncoder(nn.Module):
 
     def forward(  # type: ignore
         self,
-        input: torch.LongTensor,
-        positions: Optional[torch.LongTensor] = None,
-        segments: Optional[torch.LongTensor] = None,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
+        input: torch.Tensor,
+        positions: Optional[torch.Tensor] = None,
+        segments: Optional[torch.Tensor] = None,
+    ):
         """
         Forward pass.
 
@@ -586,7 +561,7 @@ class TransformerEncoder(nn.Module):
         tensor, mask = self.forward_embedding(input, positions, segments)
 
         if self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
@@ -597,7 +572,7 @@ class TransformerEncoder(nn.Module):
         tensor = self.forward_layers(tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
@@ -647,14 +622,14 @@ class TransformerEncoderLayer(nn.Module):
         self.attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
-        self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = TransformerFFN(
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
             activation=self.activation,
         )
-        self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -663,17 +638,17 @@ class TransformerEncoderLayer(nn.Module):
         """
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor = residual + self.dropout(self.ffn(tensor))
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -747,8 +722,8 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
-            if self.variant == 'xlm':
+            self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            if self.variant == 'xlm' and not torch.jit.is_scripting():
                 warn_once(
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
                     'as it involves a less-stable layernorm operation.'
@@ -785,9 +760,9 @@ class TransformerDecoder(nn.Module):
 
     def forward_embedding(
         self,
-        input: torch.LongTensor,
-        positions: Optional[torch.LongTensor] = None,
-        segments: Optional[torch.LongTensor] = None,
+        input: torch.Tensor,
+        positions: Optional[torch.Tensor] = None,
+        segments: Optional[torch.Tensor] = None,
     ):
         """
         Embed tokens prior to feeding into transformer.
@@ -804,10 +779,10 @@ class TransformerDecoder(nn.Module):
         """
         tensor = self.embeddings(input)
         if self.embeddings_scale:
-            tensor = tensor * np.sqrt(self.dim)
+            tensor = tensor * math.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
-        if positions.max().item() > self.n_positions:
+            tensor = self.norm_embeddings(tensor)
+        if positions.max().item() > self.n_positions and not torch.jit.is_scripting():
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
@@ -816,7 +791,7 @@ class TransformerDecoder(nn.Module):
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         if self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor
 
@@ -844,7 +819,7 @@ class TransformerDecoder(nn.Module):
             as new incremental decoding state.
         """
         new_incr_state = {}
-        if getattr(self.layers, 'is_model_parallel', False):
+        if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
             tensor, new_incr_state = self._apply_model_parallel(
                 tensor, encoder_output, encoder_mask, incr_state
             )
@@ -894,7 +869,7 @@ class TransformerDecoder(nn.Module):
         )
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor, new_incr_state
 
@@ -965,17 +940,17 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = TransformerFFN(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
-        self.norm3 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
     def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
@@ -992,7 +967,7 @@ class TransformerDecoderLayer(nn.Module):
         # first self attn
         residual = x
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm1)
+            x = self.norm1(x)
 
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
@@ -1004,12 +979,12 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = _normalize(x, self.norm1)
+            x = self.norm1(x)
 
         residual = x
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm2)
+            x = self.norm2(x)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -1021,17 +996,17 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = _normalize(x, self.norm2)
+            x = self.norm2(x)
 
         # finally the ffn
         residual = x
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm3)
+            x = self.norm3(x)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = _normalize(x, self.norm3)
+            x = self.norm3(x)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,

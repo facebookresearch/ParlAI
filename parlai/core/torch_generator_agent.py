@@ -24,6 +24,7 @@ import math
 from operator import attrgetter
 
 import torch
+import torch.jit
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -160,6 +161,47 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         return torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
 
+    def _get_initial_decoder_input(self, bsz: int, beam_size: int) -> torch.Tensor:
+        """
+        Return initial input to the decoder.
+
+        :param bsz:
+            batchsize
+        :param beam_size:
+            beam size
+        :param dev:
+            device to send input to.
+
+        :return initial_input:
+            initial input for the decoder
+        """
+        return torch.LongTensor([self.START_IDX]).expand(
+            bsz * beam_size, 1
+        )  # type: ignore
+
+    def _get_next_decoder_input(
+        self,
+        prev_input: torch.LongTensor,
+        selection: torch.LongTensor,
+        incr_state_inds: torch.LongTensor,
+    ) -> torch.LongTensor:
+        """
+        Return next decoder input.
+
+        :param prev_input:
+            previous input to decoder
+        :param selection:
+            token selections for current timestep
+        :param inds:
+            incremental state indices
+
+        :return decoder input:
+            return decoder input for next timestep
+        """
+        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
+        decoder_input = torch.cat([prev_input, selection], dim=-1)
+        return decoder_input
+
     def decode_forced(self, encoder_states, ys):
         """
         Decode with a fixed, true sequence, computing loss.
@@ -282,6 +324,36 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         pass
 
+    @torch.jit.export
+    def jit_greedy_search(self, x: torch.Tensor, max_len: int = 128):
+        """
+        A helper function for exporting simple greedy-search models via
+        TorchScript.
+
+        Models with extra inputs will need to override to include more
+        variables.
+
+        Utilize with:
+
+        >>> TODO: write this
+        """
+        incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
+        bsz = x.size(0)
+        encoder_states = self.encoder(x)
+        generations = self._get_initial_decoder_input(bsz, 1).to(x.device)
+        # keep track of early stopping if all generations finish
+        seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
+        for timestep in range(max_len):
+            latent, incr_state = self.decoder(generations, encoder_states, incr_state)
+            logits = self.output(latent[:, -1:, :])
+            _, preds = logits.max(dim=2)
+            seen_end = seen_end + (preds == self.END_IDX).squeeze(1)
+            generations = torch.cat([generations, preds], dim=1)
+            if torch.all(seen_end):
+                break
+        return generations
+
+    @torch.jit.unused
     def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
         """
         Get output predictions from the model.
@@ -1022,51 +1094,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
             ctxt = full_ctxt
         return ctxt
-
-    def _get_initial_decoder_input(
-        self, bsz: int, beam_size: int, dev: torch.device
-    ) -> torch.LongTensor:
-        """
-        Return initial input to the decoder.
-
-        :param bsz:
-            batchsize
-        :param beam_size:
-            beam size
-        :param dev:
-            device to send input to.
-
-        :return initial_input:
-            initial input for the decoder
-        """
-        return (
-            torch.LongTensor([self.START_IDX])  # type: ignore
-            .expand(bsz * beam_size, 1)
-            .to(dev)
-        )
-
-    def _get_next_decoder_input(
-        self,
-        prev_input: torch.LongTensor,
-        selection: torch.LongTensor,
-        incr_state_inds: torch.LongTensor,
-    ) -> torch.LongTensor:
-        """
-        Return next decoder input.
-
-        :param prev_input:
-            previous input to decoder
-        :param selection:
-            token selections for current timestep
-        :param inds:
-            incremental state indices
-
-        :return decoder input:
-            return decoder input for next timestep
-        """
-        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
-        decoder_input = torch.cat([prev_input, selection], dim=-1)
-        return decoder_input
 
     def _generate(
         self,
