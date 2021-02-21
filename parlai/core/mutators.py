@@ -192,13 +192,12 @@ class ManyEpisodeMutator(Mutator):
                 yield entry
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
-        if messages and messages[0].is_padding():
-            for message in messages:
-                yield message
-            return
         messagenew_pairs = self._turn_to_messagenew_pair(messages)
         episode: List[Message] = []
         for message, new_episode in messagenew_pairs:
+            if message.is_padding():
+                yield message
+                continue
             if new_episode and episode:
                 yield from self._postprocess_episode(episode)
                 episode = []
