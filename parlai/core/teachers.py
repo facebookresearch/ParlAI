@@ -47,7 +47,6 @@ from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
-from parlai.utils.typing import TShared
 from parlai.core.mutators import MUTATOR_REGISTRY, Mutator, setup_mutator_registry
 
 from abc import ABC, abstractmethod
