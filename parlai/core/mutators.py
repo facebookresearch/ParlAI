@@ -122,7 +122,7 @@ class ExampleMutator(Mutator):
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
         for message in messages:
-            if message == {'episode_done': True}:
+            if message.is_padding():
                 yield message
                 continue
             message, episode_done = self._pop_episode_done(message)
@@ -142,8 +142,8 @@ class EpisodeMutator(Mutator):
     def episode_mutation(self, episode: List[Message]) -> List[Message]:
         pass
 
-    def _postprocess_episode(self, unmutated_episode):
-        if unmutated_episode == [{'episode_done': True}]:
+    def _postprocess_episode(self, unmutated_episode: List[Message]) -> List[Message]:
+        if unmutated_episode and unmutated_episode[0].is_padding():
             for message in unmutated_episode:
                 yield message
             return
@@ -192,7 +192,7 @@ class ManyEpisodeMutator(Mutator):
                 yield entry
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
-        if messages == [{'episode_done': True}]:
+        if messages and messages[0].is_padding():
             for message in messages:
                 yield message
             return

@@ -47,6 +47,7 @@ from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
+from parlai.utils.typing import TShared
 from parlai.core.mutators import MUTATOR_REGISTRY, Mutator, setup_mutator_registry
 
 from abc import ABC, abstractmethod
@@ -321,6 +322,8 @@ class FixedDialogTeacher(Teacher):
             mutator_types = self._load_mutator_types(self.opt.get('mutators'))
             self.mutators = [mutator(self.opt) for mutator in mutator_types]
 
+        self._episode_done = True
+
     def reset(self):
         """
         Reset the dialog to the start of the epoch, and reset all metrics.
@@ -432,7 +435,7 @@ class FixedDialogTeacher(Teacher):
             self.entry_idx += 1
 
         if self.episode_idx >= self.num_episodes():
-            return {'episode_done': True}, True
+            return Message.padding_example(), True
 
         # buffer the entire conversation so we can apply mutators
         ex = self.episode_buffer[self.entry_idx]
@@ -875,7 +878,7 @@ class DialogData(object):
             single-entry episodes, so this defaults to zero.
         """
         if episode_idx >= len(self.data):
-            return {'episode_done': True}, True
+            return Message.padding_example(), True
         next_episode_idx_for_rank = episode_idx + 1
         # first look up data
         episode = self.data[episode_idx]
@@ -1122,7 +1125,7 @@ class StreamDialogData(DialogData):
             self.cur_episode = next(self.data)
         if self.cur_episode == self._END_OF_EPOCH:
             # we're done here
-            return {'episode_done': True}, True
+            return Message.padding_example(), True
         entry = self.cur_episode[self.entry_idx]
         table = self.build_table(entry)
         episode_done = self.entry_idx == len(self.cur_episode) - 1
@@ -2148,7 +2151,7 @@ class MultiTaskTeacher(Teacher):
                         break
                 if self.tasks[self.task_idx].epoch_done():
                     # all tasks are done, so return empty action table
-                    return {'episode_done': True}
+                    return Message.padding_example()
         t = self.tasks[self.task_idx].act()
         if t['episode_done']:
             self.new_task = True
@@ -2438,7 +2441,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 logging.debug(f"Removed {stale_exs} stale examples from the queue.")
             if queue_output is None:
                 self.samples.put((None, reset_cnt))
-                return {'episode_done': True}
+                return Message.padding_example()
 
             # Update the last queue output in the case
             # of multi-turn episodes

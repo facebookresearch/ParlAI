@@ -32,3 +32,10 @@ class Message(dict):
 
     def copy(self):
         return Message(self)
+
+    @classmethod
+    def padding_example(cls):
+        return cls({'batch_padding': True, 'episode_done': True})
+
+    def is_padding(self):
+        return bool(self.get('batch_padding'))

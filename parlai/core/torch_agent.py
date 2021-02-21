@@ -1510,7 +1510,7 @@ class TorchAgent(ABC, Agent):
         """
         Determine if an observation is valid or not.
         """
-        return 'text_vec' in obs or 'image' in obs
+        return not obs.is_padding_example()
 
     def batchify(self, obs_batch, sort=False):
         """
