@@ -16,9 +16,9 @@ The user must provide a model (with `--model`) and a task (with
 ## Examples
 
 ```shell
-parlai train_model -m ir_baseline -t dialog_babi:Task:1 -mf /tmp/model
-parlai train_model -m seq2seq -t babi:Task10k:1 -mf '/tmp/model' -bs 32 -lr 0.5 -hs 128
-parlai train_model -m drqa -t babi:Task10k:1 -mf /tmp/model -bs 10
+parlai train_model --model ir_baseline --task dialog_babi:Task:1 --model-file /tmp/model
+parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/model' --batchsize 32 --learningrate 0.5
+parlai train_model --model drqa --task babi:Task10k:1 --model-file /tmp/model --batchsize 10
 ```
 """  # noqa: E501
 
@@ -32,7 +32,7 @@ import signal
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
-from parlai.core.logs import TensorboardLogger
+from parlai.core.logs import TensorboardLogger, WandbLogger
 from parlai.core.metrics import (
     aggregate_named_reports,
     aggregate_unnamed_reports,
@@ -208,6 +208,7 @@ def setup_args(parser=None) -> ParlaiParser:
         recommended=False,
     )
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
+    WandbLogger.add_cmdline_args(parser, partial_opt=None)
 
     parser = setup_dict_args(parser)
     return parser
@@ -382,6 +383,9 @@ class TrainLoop:
 
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger = TensorboardLogger(opt)
+        if opt['wandb_log'] and is_primary_worker():
+            model = self.agent.model if hasattr(self.agent, 'model') else None
+            self.wb_logger = WandbLogger(opt, model)
 
     def save_model(self, suffix=None):
         """
@@ -455,6 +459,10 @@ class TrainLoop:
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
             # flush on a validation
             self.tb_logger.flush()
+        if opt['wandb_log'] and is_primary_worker():
+            valid_report['total_exs'] = self._total_exs
+            self.wb_logger.log_metrics('valid', self.parleys, valid_report)
+
         # saving
         if (
             opt.get('model_file')
@@ -662,6 +670,8 @@ class TrainLoop:
 
         if opt['tensorboard_log'] and is_primary_worker():
             self.tb_logger.log_metrics('train', self.parleys, train_report)
+        if opt['wandb_log'] and is_primary_worker():
+            self.wb_logger.log_metrics('train', self.parleys, train_report)
 
     def train(self):
         """
@@ -766,6 +776,12 @@ class TrainLoop:
         v_report = self._run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
         test_worlds = load_eval_worlds(self.agent, opt, 'test')
         t_report = self._run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
+
+        if opt['wandb_log'] and is_primary_worker():
+            self.wb_logger.log_final('valid', v_report)
+            self.wb_logger.log_final('test', t_report)
+            self.wb_logger.finish()
+
         if valid_worlds:
             for valid_world in valid_worlds:
                 valid_world.shutdown()

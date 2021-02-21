@@ -12,7 +12,7 @@ For example, let's try a Fixed Response model, which always returns a given fixe
 response, and evaluate on the DailyDialog dataset:
 
 ```
-$ parlai eval_model -m fixed_response -t dailydialog --fixed-response "how may i help you ?"
+$ parlai eval_model --model fixed_response --task dailydialog --fixed-response "how may i help you ?"
 ... after a while ...
 14:41:40 | Evaluating task dailydialog using datatype valid.
 14:41:40 | creating task(s): dailydialog
@@ -40,7 +40,7 @@ We can also measure [ROUGE](https://en.wikipedia.org/wiki/ROUGE_%28metric%29). N
 that we need to `pip install py-rouge` for this functionality:
 
 ```
-$ parlai eval_model -m fixed_response -t dailydialog --fixed-response "how may i help you ?" --metrics rouge
+$ parlai eval_model --model fixed_response --task dailydialog --fixed-response "how may i help you ?" --metrics rouge
 14:47:24 | creating task(s): dailydialog
 14:47:31 | Finished evaluating tasks ['dailydialog'] using datatype valid
     accuracy  exs    f1  rouge_1  rouge_2  rouge_L
@@ -63,7 +63,7 @@ an example, let's evaluate the [BlenderBot](https://parl.ai/projects/recipes/)
 90M model on DailyDialog:
 
 ```
-$ parlai eval_model --task dailydialog -mf zoo:blender/blender_90M/model -bs 32
+$ parlai eval_model --task dailydialog --model-file zoo:blender/blender_90M/model --batchsize 32
 ...
 14:54:14 | Evaluating task dailydialog using datatype valid.
 14:54:14 | creating task(s): dailydialog

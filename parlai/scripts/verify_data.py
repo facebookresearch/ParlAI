@@ -10,7 +10,7 @@ candidates.
 ## Examples
 
 ```shell
-parlai verify_data -t convai2 -dt train:stream:ordered
+parlai verify_data --task convai2 --datatype valid
 ```
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent

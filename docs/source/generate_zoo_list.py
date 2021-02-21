@@ -49,7 +49,7 @@ def model_text(model_dict, fout):
     if 'example' in model:
         example = model['example']
     else:
-        example = "parlai eval_model --model {} --task {} -mf {}".format(
+        example = "parlai eval_model --model {} --task {} --model-file {}".format(
             model['agent'], model['task'], model['path']
         )
     fout.write(example_to_code(example, model.get('result')))

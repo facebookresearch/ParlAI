@@ -10,8 +10,8 @@ them.
 ## Examples
 
 ```shell
-parlai display_model -t babi:task1k:1 -m "repeat_label"
-parlai display_model -t "#MovieDD-Reddit" -m "ir_baseline" -mp "-lp 0.5" -dt test
+parlai display_model --task babi:task1k:1 --model repeat_label
+parlai display_model --task convai2 --model-file "/path/to/model_file"  --datatype test
 ```
 """  # noqa: E501
 

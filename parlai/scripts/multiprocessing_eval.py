@@ -18,7 +18,7 @@ all TorchRankerAgents and TorchGeneratorAgents support this.
 ## Examples
 
 ```shell
-parlai multiprocessing_eval -mf "zoo:tutorial_transformer_generator/model" -bs 16 -t convai2
+parlai multiprocessing_eval --model-file "zoo:tutorial_transformer_generator/model" --batchsize 16 --task convai2
 ```
 """
 

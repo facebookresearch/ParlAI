@@ -768,9 +768,9 @@ class DictionaryAgent(Agent):
             # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
             extra_tokens = 4  # length of special tokens
             vector = [
-                self.bpe.special_tok_map[idx]
-                if idx in self.bpe.special_tok_map
-                else idx - extra_tokens
+                self.bpe.special_tok_map[int(idx)]
+                if int(idx) in self.bpe.special_tok_map
+                else int(idx) - extra_tokens
                 for idx in vector
             ]
             tokens = [self[int(idx)] for idx in vector]
