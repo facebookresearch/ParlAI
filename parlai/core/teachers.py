@@ -414,6 +414,9 @@ class FixedDialogTeacher(Teacher):
             self.episode_idx = self.next_episode_idx()
             self.entry_idx = 0
 
+            if self.episode_idx >= self.num_episodes():
+                return Message.padding_example(), True
+
             # buffer the full conversation ahead of time for mutators
             episode_buffer = []
             buffer_entry_idx = 0
@@ -547,9 +550,10 @@ class FixedDialogTeacher(Teacher):
 
         # get next example, action is episode_done dict if already out of exs
         action, self.epochDone = self.next_example()
-        # TODO: all teachers should eventually create messages
-        # while setting up the data, so this won't be necessary
-        action = Message(action)
+        if not isinstance(action, Message):
+            # TODO: all teachers should eventually create messages
+            # while setting up the data, so this won't be necessary
+            action = Message(action)
 
         return action
 
@@ -672,7 +676,7 @@ class DialogTeacher(FixedDialogTeacher):
         Default implementation returns ``None`` always, but this may be overriden to
         provide candidates in all areas. See ``FbDialogueTeacher``.
         """
-        # TODO DEPRECATIONDAY: FbiDialogueTeacher is being deprecated, should we
+        # TODO DEPRECATIONDAY: FbDialogueTeacher is being deprecated, should we
         # remove this?
 
         # TODO: mark as optionally abstract?

@@ -171,8 +171,6 @@ class FixedDialogCandidateTeacher(CandidateBaseTeacher, FixedDialogTeacher):
             self.cands.append(cands)
 
     def get(self, episode_idx: int, entry_idx: int = 0):
-        if episode_idx >= len(self.corpus):
-            return Message.padding_example()
         return {
             'text': self.corpus[episode_idx],
             'episode_done': True,
