@@ -135,6 +135,18 @@ class Teacher(Agent):
     Teachers provide the ``report()`` method to get back metrics.
     """
 
+    @classmethod
+    def _load_mutator_types(
+        cls, mutator_names: Optional[str]
+    ) -> Optional[List[Mutator]]:
+        setup_mutator_registry()
+        if not mutator_names:
+            return []
+        assert isinstance(mutator_names, str)
+        names = mutator_names.split(',')
+        mutators = [MUTATOR_REGISTRY[name] for name in names]
+        return mutators
+
     def __init__(self, opt: Opt, shared=None):
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
@@ -259,6 +271,7 @@ class FixedDialogTeacher(Teacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument(
             '--mutators',
             '-mut',
@@ -269,18 +282,6 @@ class FixedDialogTeacher(Teacher):
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
         return parser
-
-    @classmethod
-    def _load_mutator_types(
-        cls, mutator_names: Optional[str]
-    ) -> Optional[List[Mutator]]:
-        setup_mutator_registry()
-        if not mutator_names:
-            return []
-        assert isinstance(mutator_names, str)
-        names = mutator_names.split(',')
-        mutators = [MUTATOR_REGISTRY[name] for name in names]
-        return mutators
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -2068,6 +2069,22 @@ class MultiTaskTeacher(Teacher):
     The task string format is described for the ``create_task_agents()``
     function above.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        # frustrating, multitask needs its own set of mutator arguments, sigh
+        parser.add_argument(
+            '--mutators',
+            '-mut',
+            default=None,
+            help='Apply one or more mutators to the data.',
+        )
+        mutators = cls._load_mutator_types(partial_opt.get('mutators'))
+        for m in mutators:
+            m.add_cmdline_args(parser, partial_opt)
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         self.tasks: List[Agent] = []

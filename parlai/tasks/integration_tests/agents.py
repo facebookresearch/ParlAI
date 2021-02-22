@@ -202,6 +202,7 @@ class OverfitTeacher(CandidateTeacher, DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--corpus-size', default=4, type=int)
         return parser
 
@@ -230,6 +231,7 @@ class OverfitMultiturnTeacher(CandidateTeacher, DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--corpus-size', default=4, type=int)
         return parser
 

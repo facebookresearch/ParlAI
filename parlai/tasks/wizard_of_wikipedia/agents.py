@@ -370,6 +370,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('Basic Dialog Arguments')
         agent.add_argument(
             '--speaker-label',
@@ -721,6 +722,7 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         WizardDialogKnowledgeTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
         parser.add_argument(
             '--teacher-type',
