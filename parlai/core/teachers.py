@@ -136,6 +136,12 @@ class Teacher(Agent):
     """
 
     @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        return parser
+
+    @classmethod
     def _load_mutator_types(
         cls, mutator_names: Optional[str]
     ) -> Optional[List[Mutator]]:
