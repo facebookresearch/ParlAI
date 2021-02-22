@@ -55,6 +55,15 @@ class Mutator(abc.ABC):
 
     @classmethod
     def load_mutator_types(cls, mutator_names: Optional[str]) -> List[Type]:
+        """
+        Map mutator names to actual classes via the registry.
+
+        :param mutator_names:
+            A list of one or more mutators separated by '+'. E.g.
+            'flatten+word_shuffle'.
+        :returns: a list of mutators
+        """
+
         global MUTATOR_REGISTRY
         setup_mutator_registry()
         if not mutator_names:
@@ -89,24 +98,6 @@ class Mutator(abc.ABC):
             yield message, next_is_new_episode
             next_is_new_episode = episode_done
 
-    def _turn_to_episode_done(
-        self, message_new_pairs: Iterator[Tuple[Message, bool]]
-    ) -> Iterator[Message]:
-        iterable = iter(message_new_pairs)
-        last_message: Message
-        try:
-            last_message, new_episode = next(iterable)
-        except StopIteration:
-            return
-        for message, new_episode in iterable:
-            if 'episode_done' in message:
-                raise KeyError("Mutated messages should not have episode_done keys.")
-            last_message['episode_done'] = new_episode
-            yield last_message
-            last_message = message
-        last_message['episode_done'] = True
-        yield last_message
-
     @abc.abstractmethod
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
         pass
@@ -129,9 +120,24 @@ class ExampleMutator(Mutator):
 
     @abc.abstractmethod
     def example_mutation(self, example: Message) -> Message:
+        """
+        Abstract example mutation.
+
+        The main method to implement when implementing an ExampleMutator.
+
+        :param example:
+            An individual message you should mutate.
+        :returns:
+            The mutated message.
+        """
         pass
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
+        """
+        Apply the mutator to a series of messages.
+
+        Not meant to be called directly by a user.
+        """
         for message in messages:
             if message.is_padding():
                 yield message
@@ -151,6 +157,20 @@ class EpisodeMutator(Mutator):
 
     @abc.abstractmethod
     def episode_mutation(self, episode: List[Message]) -> List[Message]:
+        """
+        Abstract epsiode mutation.
+
+        The main method to implement when implementing an EpisodeMutator.
+
+        The "episode_done" field will be automatically stripped before providing
+        as input, and automatically added back to the finalized episode.
+
+        :param messages:
+            All the messages in one episode. You may manipulate any or all of
+            them, or change the ordering entirely.
+        :returns:
+            The new, mutated episode.
+        """
         pass
 
     def _postprocess_episode(self, unmutated_episode: List[Message]) -> List[Message]:
@@ -170,6 +190,11 @@ class EpisodeMutator(Mutator):
             yield m
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
+        """
+        Apply the mutator to a series of messages.
+
+        Not meant to be called directly by a user.
+        """
         messagenew_pairs = self._turn_to_messagenew_pair(messages)
         episode: List[Message] = []
         for message, new_episode in messagenew_pairs:
@@ -188,6 +213,22 @@ class ManyEpisodeMutator(Mutator):
 
     @abc.abstractmethod
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
+        """
+        Abstract many-episode mutation.
+
+        The main method to implement when creation a ManyEpisodeMutator.
+        You should map this episode to one-or-more episodes.
+
+        If you wish to create multiple episodes, you need to output
+        one-sublist-per-new-episode. As with EpisodeMutator, "episode_done"
+        will be automatically stripped and re-inserted for you.
+
+        :param episode:
+            A single episode (provided list of Messages).
+        :returns:
+            A list of list of messages. Each sub-list will be turned into a new
+            episode.
+        """
         pass
 
     def _postprocess_episode(self, unmutated_episode):
@@ -203,6 +244,11 @@ class ManyEpisodeMutator(Mutator):
                 yield entry
 
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
+        """
+        Apply the mutator to a series of messages.
+
+        Not meant to be called directly by a user.
+        """
         messagenew_pairs = self._turn_to_messagenew_pair(messages)
         episode: List[Message] = []
         for message, new_episode in messagenew_pairs:
