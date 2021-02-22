@@ -7,8 +7,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, Dict, List
+
 import pandas as pd
 
 # Defining the class only if Mephisto is installed, since it relies on Mephisto
@@ -46,11 +49,15 @@ class AbstractResultsCompiler(ABC):
         self.output_folder = opt.get('output_folder')
         self.results_format = opt['results_format']
 
-    @abstractmethod
     def get_results_path(self) -> str:
         """
         Return the save path for the results file.
         """
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder,
+            f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}.csv',
+        )
 
     @abstractmethod
     def compile_results(self) -> pd.DataFrame:

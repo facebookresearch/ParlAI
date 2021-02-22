@@ -87,6 +87,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                         read_folders.append(full_path)
         return read_folders
 
+    def get_results_path(self) -> str:
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder,
+            f'{self.FILENAME_STUB}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
+        )
+
     def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
         conversations = self.compile_initial_results(self.results_folders)
@@ -104,10 +111,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         # Write out to files
         os.makedirs(self.output_folder, exist_ok=True)
         now = datetime.now()
-        results_file = os.path.join(
-            self.output_folder,
-            f'{self.FILENAME_STUB}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
-        )
+        results_file = self.get_results_path()
         master_dataframe.to_csv(results_file, index=False)
         print(f'Wrote aggregated utterance data to: {results_file}')
 

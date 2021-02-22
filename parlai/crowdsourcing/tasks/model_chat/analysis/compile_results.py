@@ -85,6 +85,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
         self.acceptability_checker = AcceptabilityChecker()
 
+    def get_results_path(self) -> str:
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder, f'results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
+        )
+
     def compile_results(self) -> pd.DataFrame:
 
         read_folders = []
@@ -108,13 +114,9 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         print(f'Date folders: ' + ', '.join(date_strings))
 
         now = datetime.now()
-        results_file = os.path.join(
-            self.output_folder,
-            f'results_{"".join([d + "_" for d in date_strings])[:-1]}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
-        )
+        results_file = self.get_results_path()
         worker_results_file = os.path.join(
-            self.output_folder,
-            f'worker_results_{"".join([d + "_" for d in date_strings])[:-1]}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
+            self.output_folder, f'worker_results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
         )
         # Read in each file
         num_incomplete_convos = 0
