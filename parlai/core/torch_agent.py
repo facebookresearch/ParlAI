@@ -1601,6 +1601,7 @@ class TorchAgent(ABC, Agent):
             candidate_vecs=cand_vecs,
             image=imgs,
             rewards=rewards,
+            observations=exs,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):

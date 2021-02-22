@@ -236,13 +236,6 @@ class ClassificationMixin(Agent):
             if the observations are empty.
         """
         f1_dict = {}
-        explode_labels = []
-        for x in labels:
-            if x is not None and len(x) > 0:
-                assert len(x) == 1, 'Multiple labels are not currently supported!'
-                explode_labels.append(x[0])
-            else:
-                explode_labels.append(None)
 
         # Check that predictions and labels have Nones in the same places, and then
         # filter the Nones out because we can't compute metrics with them
@@ -251,11 +244,11 @@ class ClassificationMixin(Agent):
             [
                 (pred is None and label is None)
                 or (pred is not None and label is not None)
-                for pred, label in zip(predictions, explode_labels)
+                for pred, label in zip(predictions, labels)
             ]
         )
         filtered_predictions = [pred for pred in predictions if pred is not None]
-        filtered_labels = [label for label in explode_labels if label is not None]
+        filtered_labels = [label for label in labels if label is not None]
 
         class_list = set(filtered_predictions + filtered_labels)
         for class_name in class_list:
@@ -270,7 +263,3 @@ class ClassificationMixin(Agent):
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
         self.record_local_metric('weighted_f1', WeightedF1Metric.compute_many(f1_dict))
-
-    def _get_labels(self, observations, labels_field: str):
-        labels = [obs.get(labels_field) for obs in observations]
-        return labels
