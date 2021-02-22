@@ -11,6 +11,11 @@ import time
 import threading
 from parlai.core.params import ParlaiParser
 
+# the socket callback functions operate asynchronously.
+# upon exit of a chat, we do not want the user to view any additional messages from the server.
+# alas, it is necessary to send two messages ([DONE], and EXIT) in order to fully exist the world pool
+# to prevent receiving a message after sending [DONE], we track the user's state with
+# this global variable.
 RUNNING = True
 
 
