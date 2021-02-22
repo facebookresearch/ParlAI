@@ -140,6 +140,22 @@ class Batch(AttrDict):
         # just to enable batch = batch.to(dev) idomatics
         return self
 
+    def __repr__(self):
+        output = ['Batch({']
+        for key in sorted(self.keys()):
+            value = self[key]
+            if value is None:
+                output.append(f'  {key}: {value},')
+            elif isinstance(value, torch.Tensor):
+                typ = value.type().replace("torch.", "")
+                shape = ", ".join(str(s) for s in value.shape)
+                output.append(f'  {key}: {typ}[{shape}],')
+            else:
+                s = repr(value)
+                output.append(f'  {key}: {s},')
+        output.append('})')
+        return "\n".join(output)
+
 
 class Output(AttrDict):
     """
@@ -1601,7 +1617,6 @@ class TorchAgent(ABC, Agent):
             candidate_vecs=cand_vecs,
             image=imgs,
             rewards=rewards,
-            observations=exs,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
