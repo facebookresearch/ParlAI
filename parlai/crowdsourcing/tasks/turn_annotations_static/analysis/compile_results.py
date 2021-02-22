@@ -108,13 +108,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         if self.CALCULATE_STATS_INTERANNOTATOR_AGREEMENT:
             self.calculate_stats_interannotator_agreement(master_dataframe)
 
-        # Write out to files
-        os.makedirs(self.output_folder, exist_ok=True)
-        now = datetime.now()
-        results_file = self.get_results_path()
-        master_dataframe.to_csv(results_file, index=False)
-        print(f'Wrote aggregated utterance data to: {results_file}')
-
         return master_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:

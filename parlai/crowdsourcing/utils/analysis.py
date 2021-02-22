@@ -75,6 +75,7 @@ class AbstractResultsCompiler(ABC):
         """
         result_df = self.compile_results()
         results_path = self.get_results_path()
+        os.makedirs(self.output_folder, exist_ok=True)
         if self.results_format == 'csv':
             result_df.to_csv(results_path, index=False)
         elif self.results_format == 'jsonl':
@@ -84,6 +85,7 @@ class AbstractResultsCompiler(ABC):
             raise ValueError(
                 f'Results save format of "{self.results_format}" currently unsupported!'
             )
+        print(f'Wrote results file to {results_path}.')
 
 
 class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):

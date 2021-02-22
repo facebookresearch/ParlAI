@@ -114,7 +114,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         print(f'Date folders: ' + ', '.join(date_strings))
 
         now = datetime.now()
-        results_file = self.get_results_path()
         worker_results_file = os.path.join(
             self.output_folder, f'worker_results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
         )
@@ -476,8 +475,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         all_conversations_df = pd.DataFrame()
         for df in conversation_dfs:
             all_conversations_df = all_conversations_df.append(df)
-        all_conversations_df.to_csv(results_file, index=False)
-        print(f'\nWrote all conversation results to: {results_file}')
         print(f'\nWorker conversation counts: {worker_conversation_counts}')
 
         return all_conversations_df
