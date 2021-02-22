@@ -39,7 +39,7 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--results-format',
             type=str,
-            choices=['csv', 'jsonl'],
+            choices=['csv', 'json'],
             default='csv',
             help='Output format for results data',
         )
@@ -78,9 +78,8 @@ class AbstractResultsCompiler(ABC):
         os.makedirs(self.output_folder, exist_ok=True)
         if self.results_format == 'csv':
             result_df.to_csv(results_path, index=False)
-        elif self.results_format == 'jsonl':
-            # {{{TODO: save in the jsonl format}}}
-            pass  # TODO: remove
+        elif self.results_format == 'json':
+            result_df.to_json(results_path)
         else:
             raise ValueError(
                 f'Results save format of "{self.results_format}" currently unsupported!'
