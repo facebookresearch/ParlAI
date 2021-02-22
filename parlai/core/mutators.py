@@ -54,6 +54,17 @@ class Mutator(abc.ABC):
     """
 
     @classmethod
+    def load_mutator_types(cls, mutator_names: Optional[str]) -> List[Type]:
+        global MUTATOR_REGISTRY
+        setup_mutator_registry()
+        if not mutator_names:
+            return []
+        assert isinstance(mutator_names, str)
+        names = mutator_names.replace('+', ',').split(',')
+        mutators = [MUTATOR_REGISTRY[name] for name in names]
+        return mutators
+
+    @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:

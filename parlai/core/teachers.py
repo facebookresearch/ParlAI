@@ -47,7 +47,7 @@ from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
-from parlai.core.mutators import MUTATOR_REGISTRY, Mutator, setup_mutator_registry
+from parlai.core.mutators import Mutator
 
 from abc import ABC, abstractmethod
 import argparse
@@ -141,18 +141,6 @@ class Teacher(Agent):
     ) -> ParlaiParser:
         return parser
 
-    @classmethod
-    def _load_mutator_types(
-        cls, mutator_names: Optional[str]
-    ) -> Optional[List[Mutator]]:
-        setup_mutator_registry()
-        if not mutator_names:
-            return []
-        assert isinstance(mutator_names, str)
-        names = mutator_names.split(',')
-        mutators = [MUTATOR_REGISTRY[name] for name in names]
-        return mutators
-
     def __init__(self, opt: Opt, shared=None):
         if not hasattr(self, 'opt'):
             self.opt = copy.deepcopy(opt)
@@ -171,7 +159,7 @@ class Teacher(Agent):
         Act upon the previous observation.
         """
         if self.observation is not None and 'text' in self.observation:
-            t = {'text': 'Hello agent!'}
+            t = Message({'text': 'Hello agent!'})
         return t
 
     def epoch_done(self):
@@ -284,7 +272,7 @@ class FixedDialogTeacher(Teacher):
             default=None,
             help='Apply one or more mutators to the data.',
         )
-        mutators = cls._load_mutator_types(partial_opt.get('mutators'))
+        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
         return parser
@@ -325,7 +313,7 @@ class FixedDialogTeacher(Teacher):
         if shared:
             self.mutators = shared.get('mutators', [])
         else:
-            mutator_types = self._load_mutator_types(self.opt.get('mutators'))
+            mutator_types = Mutator.load_mutator_types(self.opt.get('mutators'))
             self.mutators = [mutator(self.opt) for mutator in mutator_types]
 
         self._episode_done = True
@@ -428,6 +416,16 @@ class FixedDialogTeacher(Teacher):
             buffer_entry_idx = 0
             while True:
                 entry = self.get(self.episode_idx, buffer_entry_idx)
+                if not isinstance(entry, Message):
+                    assert isinstance(entry, dict)
+                    typ = type(self)
+                    warn_once(
+                        f"{typ.__module__}.{typ.__name__}' is outputting dicts "
+                        "instead of messages. If this is a teacher that is part of "
+                        "ParlAI, please file an issue on GitHub. If it is your own "
+                        "teacher, please return a Message object instead."
+                    )
+                    entry = Message(entry)
                 episode_buffer.append(entry)
                 if entry.get('episode_done'):
                     break
@@ -1646,7 +1644,7 @@ class ConversationTeacher(FixedDialogTeacher):
                 warn_once(
                     'At least one of these conversations contains a context within the dialogue, which is being discarded'
                 )
-            turns.insert(0, {'text': '__SILENCE__'})
+            turns.insert(0, Message({'text': '__SILENCE__'}))
             # train on odd turns as labels (turns w/ first speaker)
             if self.label_turns in ['firstspeaker', 'both']:
                 eps = self._get_ep_from_turns(turns[::2], turns[1::2])
@@ -2087,7 +2085,7 @@ class MultiTaskTeacher(Teacher):
             default=None,
             help='Apply one or more mutators to the data.',
         )
-        mutators = cls._load_mutator_types(partial_opt.get('mutators'))
+        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
         return parser
