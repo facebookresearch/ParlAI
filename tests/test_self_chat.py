@@ -20,7 +20,8 @@ class TestSelfChat(unittest.TestCase):
     def test_ed(self):
         SelfChat.main(
             task='empathetic_dialogues',
-            model_file='zoo:tutorial_transformer_generator/model',
+            model='fixed_response',
+            fixed_response='hi',
             seed_messages_from_task=True,
         )
 
