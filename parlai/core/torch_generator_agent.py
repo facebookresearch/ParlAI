@@ -16,7 +16,6 @@ Contains the following utilities:
   agents.
 * Beam class which provides some generic beam functionality for classes to use
 """
-
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
@@ -905,6 +904,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     except KeyError:
                         logging.error("Decoding error: %s", tokens)
                         continue
+            # reorder slightly so match_batch() handles correctly
+            stride = int(len(beam_texts) / batch.batchsize)
+            beam_texts = [
+                beam_texts[i : i + stride] for i in range(0, len(beam_texts), stride)
+            ]
 
         cand_choices = None
         # TODO: abstract out the scoring here
