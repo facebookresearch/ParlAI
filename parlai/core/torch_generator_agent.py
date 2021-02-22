@@ -940,7 +940,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         cand_choices = None
         cand_scores = None
         if self.rank_candidates:
-            cand_choices, cand_scores = self._rank_eval_label_candidates(batch, bsz)
+            cand_choices, cand_scores = self.rank_eval_label_candidates(batch, bsz)
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
         if text and self.compute_tokenized_bleu:
