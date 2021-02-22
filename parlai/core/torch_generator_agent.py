@@ -864,7 +864,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         pass
 
-    def _rank_eval_label_candidates(self, batch, batchsize):
+    def rank_eval_label_candidates(self, batch, batchsize):
         """
         Rank label_candidates during eval_step.
 
