@@ -905,7 +905,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                         logging.error("Decoding error: %s", tokens)
                         continue
             # reorder slightly so match_batch() handles correctly
-            stride = int(len(beam_texts) / batch.batchsize)
+            stride = len(beam_texts) // batch.batchsize
             beam_texts = [
                 beam_texts[i : i + stride] for i in range(0, len(beam_texts), stride)
             ]
