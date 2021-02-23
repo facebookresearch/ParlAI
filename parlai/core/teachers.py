@@ -213,6 +213,20 @@ class Teacher(Agent):
         shared['metrics'] = self.metrics.share()
         return shared
 
+    def __iter__(self):
+        """
+        Iterate through the examples of the teacher.
+        """
+        clone = self.clone()
+        while True:
+            message = clone.act()
+            if not isinstance(message, Message):
+                # backwards compatibility with older agents
+                message = Message(message)
+            if message.is_padding():
+                break
+            yield message
+
 
 class FixedDialogTeacher(Teacher):
     """
