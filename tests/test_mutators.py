@@ -6,7 +6,10 @@
 
 import unittest
 
+import parlai.utils.testing as testing_utils
+from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
+from parlai.core.teachers import create_task_agent_from_taskname
 from parlai.core.message import Message
 
 CONTEXT = "All your base\n" "Are belong to us."
@@ -33,6 +36,31 @@ EXAMPLE4 = {
     'labels': ["I am called Stephen."],
     'episode_done': True,
 }
+
+
+class TestIntegrations(unittest.TestCase):
+    """
+    Test that mutators work with teachers.
+    """
+
+    def _run_through(self, task, mutators):
+        pp = ParlaiParser(True, False)
+        opt = pp.parse_kwargs(task=task, mutators=mutators)
+        teacher = create_task_agent_from_taskname(opt)[0]
+        outputs = []
+        for _ in range(5):
+            outputs.append(teacher.act())
+        return outputs
+
+    def test_example(self):
+        for example in self._run_through('integration_tests', 'word_reverse'):
+            assert "".join(reversed(example['text'])) == example['labels'][0]
+
+    def test_episode(self):
+        for i, example in enumerate(
+            self._run_through('integration_tests:overfit_multiturn', 'episode_reverse')
+        ):
+            print(example)
 
 
 class TestSpecificMutators(unittest.TestCase):
