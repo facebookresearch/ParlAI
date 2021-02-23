@@ -9,6 +9,7 @@ Pure functions used in transformer implementation.
 
 import numpy as np
 import torch
+import torch.nn as nn
 
 
 def create_position_codes(n_pos, dim, out):
@@ -26,3 +27,13 @@ def create_position_codes(n_pos, dim, out):
     out.requires_grad = False
     out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
     out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
+
+
+def create_embeddings(dictionary, embedding_size, padding_idx):
+    """
+    Create and initialize word embeddings.
+    """
+    e = nn.Embedding(len(dictionary), embedding_size, padding_idx)
+    nn.init.normal_(e.weight, mean=0, std=embedding_size ** -0.5)
+    nn.init.constant_(e.weight[padding_idx], 0)
+    return e
