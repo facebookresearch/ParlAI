@@ -57,10 +57,18 @@ class TestIntegrations(unittest.TestCase):
             assert "".join(reversed(example['text'])) == example['labels'][0]
 
     def test_episode(self):
-        for i, example in enumerate(
-            self._run_through('integration_tests:overfit_multiturn', 'episode_reverse')
-        ):
-            print(example)
+        examples = self._run_through('integration_tests:multiturn', 'episode_reverse')
+        examples = examples[:4]  # hardcoded for this teacher
+        total = []
+        for i, example in enumerate(examples):
+            total.append(example['text'])
+        assert example['labels'][0] == ' '.join(reversed(total))
+
+    def test_many_episode(self):
+        examples = self._run_through('integration_tests:multiturn', 'flatten')
+        total = []
+        for i, example in enumerate(examples):
+            assert example['text'].replace('\n', ' ') == example['labels'][0]
 
 
 class TestSpecificMutators(unittest.TestCase):
