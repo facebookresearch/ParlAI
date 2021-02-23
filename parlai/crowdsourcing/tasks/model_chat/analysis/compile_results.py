@@ -85,10 +85,10 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
         self.acceptability_checker = AcceptabilityChecker()
 
-    def get_results_path(self) -> str:
+    def get_results_path_base(self) -> str:
         now = datetime.now()
         return os.path.join(
-            self.output_folder, f'results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
+            self.output_folder, f'results_{now.strftime("%Y%m%d_%H%M%S")}'
         )
 
     def compile_results(self) -> pd.DataFrame:

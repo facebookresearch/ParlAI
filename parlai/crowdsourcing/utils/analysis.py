@@ -49,14 +49,14 @@ class AbstractResultsCompiler(ABC):
         self.output_folder = opt.get('output_folder')
         self.results_format = opt['results_format']
 
-    def get_results_path(self) -> str:
+    def get_results_path_base(self) -> str:
         """
-        Return the save path for the results file.
+        Return the save path for the results file, not including the file extension.
         """
         now = datetime.now()
         return os.path.join(
             self.output_folder,
-            f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}.csv',
+            f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
         )
 
     @abstractmethod
@@ -74,7 +74,8 @@ class AbstractResultsCompiler(ABC):
         Results will be saved in the format given by --results-format.
         """
         result_df = self.compile_results()
-        results_path = self.get_results_path()
+        results_path_base = self.get_results_path_base()
+        results_path = f'{results_path_base}.{self.results_format}'
         os.makedirs(self.output_folder, exist_ok=True)
         if self.results_format == 'csv':
             result_df.to_csv(results_path, index=False)

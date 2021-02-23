@@ -87,11 +87,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                         read_folders.append(full_path)
         return read_folders
 
-    def get_results_path(self) -> str:
+    def get_results_path_base(self) -> str:
         now = datetime.now()
         return os.path.join(
-            self.output_folder,
-            f'{self.FILENAME_STUB}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
+            self.output_folder, f'{self.FILENAME_STUB}_{now.strftime("%Y%m%d_%H%M%S")}'
         )
 
     def compile_results(self) -> pd.DataFrame:
