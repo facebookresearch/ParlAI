@@ -6,7 +6,6 @@
 
 import unittest
 
-import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.teachers import create_task_agent_from_taskname
@@ -60,14 +59,13 @@ class TestIntegrations(unittest.TestCase):
         examples = self._run_through('integration_tests:multiturn', 'episode_reverse')
         examples = examples[:4]  # hardcoded for this teacher
         total = []
-        for i, example in enumerate(examples):
+        for example in examples:
             total.append(example['text'])
         assert example['labels'][0] == ' '.join(reversed(total))
 
     def test_many_episode(self):
         examples = self._run_through('integration_tests:multiturn', 'flatten')
-        total = []
-        for i, example in enumerate(examples):
+        for example in examples:
             assert example['text'].replace('\n', ' ') == example['labels'][0]
 
 
