@@ -16,7 +16,7 @@ import torch.nn as nn
 from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     TransformerEncoder,
-    _normalize,
+    normalize,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -328,14 +328,14 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         # WARNING: Below follows the rest of TransformerEncoder.forward
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = normalize(tensor, self.norm_embeddings)
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         # apply transformer layers
         tensor = self.forward_layers(tensor, mask)
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = normalize(tensor, self.norm_embeddings)
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
         return tensor, out_mask

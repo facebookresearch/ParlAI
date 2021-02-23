@@ -8,3 +8,4 @@ from parlai.agents.transformer.modules.mem_net import *  # noqa: F401
 from parlai.agents.transformer.modules.decoder import *  # noqa: F401
 from parlai.agents.transformer.modules.encoder import *  # noqa: F401
 from parlai.agents.transformer.modules.attention import *  # noqa: F401
+from parlai.agents.transformer.modules.layer_norm import *  # noqa: F401
