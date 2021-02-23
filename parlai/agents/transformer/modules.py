@@ -501,13 +501,13 @@ class TransformerEncoder(nn.Module):
         :return tensor:
             return embedding after applying transformer layers
         """
-        if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
-            # factored out for readability. It is equivalent to the other
-            # condition
-            tensor = self._apply_model_parallel(tensor, mask)
-        else:
-            for i in range(self.n_layers):
-                tensor = self.layers[i](tensor, mask)
+        # if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
+        #     # factored out for readability. It is equivalent to the other
+        #     # condition
+        #     tensor = self._apply_model_parallel(tensor, mask)
+        # else:
+        for i in range(self.n_layers):
+            tensor = self.layers[i](tensor, mask)
 
         return tensor
 
@@ -819,18 +819,18 @@ class TransformerDecoder(nn.Module):
             as new incremental decoding state.
         """
         new_incr_state = {}
-        if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
-            tensor, new_incr_state = self._apply_model_parallel(
-                tensor, encoder_output, encoder_mask, incr_state
+        # if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
+        #     tensor, new_incr_state = self._apply_model_parallel(
+        #         tensor, encoder_output, encoder_mask, incr_state
+        #     )
+        # else:
+        for idx, layer in enumerate(self.layers):
+            tensor, new_incr_state[idx] = layer(
+                x=tensor,
+                encoder_output=encoder_output,
+                encoder_mask=encoder_mask,
+                incr_state=incr_state.get(idx),
             )
-        else:
-            for idx, layer in enumerate(self.layers):
-                tensor, new_incr_state[idx] = layer(
-                    x=tensor,
-                    encoder_output=encoder_output,
-                    encoder_mask=encoder_mask,
-                    incr_state=incr_state.get(idx),
-                )
 
         return tensor, new_incr_state
 
@@ -1213,6 +1213,7 @@ class BasicAttention(nn.Module):
         self.get_weights = get_weights
         self.residual = residual
 
+
     def forward(self, xs, ys, mask_ys=None, values=None):
         """
         Compute attention.
@@ -1279,6 +1280,18 @@ class MultiHeadAttention(nn.Module):
         self.out_lin = nn.Linear(dim, dim)
 
         nn.init.xavier_normal_(self.out_lin.weight)
+
+    def _prepare_head(self, tensor, batch_size: int, n_heads: int, dim_per_head: int):
+        # input is [batch_size, seq_len, n_heads * dim_per_head]
+        # output is [batch_size * n_heads, seq_len, dim_per_head]
+        bsz, seq_len, _ = tensor.size()
+        tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
+        tensor = (
+            tensor.transpose(1, 2)
+            .contiguous()
+            .view(batch_size * n_heads, seq_len, dim_per_head)
+        )
+        return tensor
 
     def forward(  # type: ignore
         # TODO: remove type ignore with pytorch 1.5:
@@ -1347,9 +1360,9 @@ class MultiHeadAttention(nn.Module):
         assert key is not None  # let mypy know we sorted this
         _, _key_len, dim = key.size()
 
-        q = prepare_head(self.q_lin(query))
-        k = prepare_head(self.k_lin(key))
-        v = prepare_head(self.v_lin(value))
+        q = self._prepare_head(self.q_lin(query), batch_size, n_heads, dim_per_head)
+        k = self._prepare_head(self.k_lin(key), batch_size, n_heads, dim_per_head)
+        v = self._prepare_head(self.v_lin(value), batch_size, n_heads, dim_per_head)
 
         # Prepend incremental states. For each of the key, value, and mask, see if
         # a previous incremental state exists, and if so, reshape it to match the shape
