@@ -8,7 +8,7 @@ Converts data used in a task to json format. (Same as "Conversation" class; ie, 
 in ACUTE-eval)
 
 Specify the task with `-t`. By default, this code will save to a file with prefix "tmp".
-To change the prefix, set `--report-filename`.
+To change the prefix, set `--world-logs`.
 """
 
 from parlai.core.script import register_script
