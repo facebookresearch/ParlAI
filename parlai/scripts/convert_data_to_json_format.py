@@ -21,8 +21,7 @@ class DumpDataToConversations(EvalModel):
     def setup_args(cls):
         parser = EvalModel.setup_args()
         parser.set_defaults(model="repeat_label")
-        parser.set_defaults(save_world_logs="true")
-        parser.set_defaults(report_filename="tmp")
+        parser.set_defaults(world_logs="tmp")
         return parser
 
 
