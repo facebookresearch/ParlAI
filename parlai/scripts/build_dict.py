@@ -10,8 +10,8 @@ Generates a dictionary file from the training data.
 
 ```bash
 # learn the vocabulary from one task, then train on another task.
-parlai build_dict -t convai2 --dict-file premade.dict
-parlai train_model -t squad --dict-file premade.dict -m seq2seq
+parlai build_dict --task convai2 --dict-file premade.dict
+parlai train_model --task squad --dict-file premade.dict --model seq2seq
 ```
 """
 
@@ -55,7 +55,7 @@ def setup_args(parser=None, hidden=True):
     dict_loop.add_argument(
         '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
     )
-    DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

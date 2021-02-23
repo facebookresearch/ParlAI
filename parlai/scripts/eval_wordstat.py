@@ -21,7 +21,7 @@ reqs, cnt = get_word_stats(predictions.tolist(), self.dict)
 ## Examples
 
 ```shell
-parlai eval_wordstat -mf data/model -t convai2:self --freq-bins 10,100,1000
+parlai eval_wordstat --model-file /path/to/model_file --task convai2:self --freq-bins 10,100,1000
 ```
 """
 
@@ -44,7 +44,7 @@ import random
 def setup_args(parser=None):
     if parser is None:
         parser = ParlaiParser(True, True, 'Compute statistics from model predictions')
-    DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
     # Get command line arguments
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
@@ -77,7 +77,7 @@ def setup_args(parser=None):
         help='Compute %% of unique responses from the model',
     )
     parser.set_defaults(datatype='valid')
-    TensorboardLogger.add_cmdline_args(parser)
+    TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

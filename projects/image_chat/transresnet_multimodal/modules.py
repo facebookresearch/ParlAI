@@ -7,6 +7,9 @@
 Modules for TransresnetMultimodalAgent.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 from torch import nn
 from parlai.utils.io import PathManager
@@ -26,13 +29,15 @@ class TransresnetMultimodalModel(TransresnetModel):
     Extension of Transresnet to incorporate dialogue history and multimodality.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Override to include model-specific args.
         """
-        TransresnetModel.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group("TransresnetMultimodal task arguments")
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group("TransresnetMultimodal task arguments")
         agent.add_argument(
             "--context-encoder-embedding-type",
             type=str,
@@ -90,6 +95,7 @@ class TransresnetMultimodalModel(TransresnetModel):
             help="Whether to include the personality encoding "
             "when retrieving a candidate response",
         )
+        return parser
 
     def __init__(self, opt, personalities_list, dictionary):
         super().__init__(opt, personalities_list, dictionary)

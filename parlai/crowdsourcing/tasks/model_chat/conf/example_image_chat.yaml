@@ -4,6 +4,7 @@ mephisto:
     annotations_config_path: ""
     block_qualification: model_image_chat_block
     chat_data_folder: ${task_dir}/model_chat/
+    model_opt_path: ${task_dir}/task_config/image_model_opts.yaml
     num_turns: 6
     task_model_parallel: false
     check_acceptability: false

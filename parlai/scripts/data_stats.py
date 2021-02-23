@@ -9,7 +9,7 @@ Count and display statistics of the data.
 ## Examples
 
 ```shell
-parlai data_stats -t convai2 -dt train:ordered
+parlai data_stats --task convai2
 ```
 """
 from parlai.core.params import ParlaiParser
@@ -49,7 +49,7 @@ def setup_args(parser=None):
         help='ignore tokens containings these substrings (comma-separated)',
     )
     parser.set_defaults(datatype='train:ordered')
-    DictionaryAgent.add_cmdline_args(parser)
+    DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

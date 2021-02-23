@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 from parlai.agents.seq2seq.modules import opt_to_kwargs
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
@@ -13,11 +16,13 @@ from .modules import HredModel
 
 class HredAgent(TorchGeneratorAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group("HRED Arguments")
+        agent = parser.add_argument_group("HRED Arguments")
         agent.add_argument(
             "-hs",
             "--hiddensize",
@@ -60,7 +65,7 @@ class HredAgent(TorchGeneratorAgent):
             help="Probability of replacing tokens with UNK in training.",
         )
 
-        super(HredAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
 
     def __init__(self, opt, shared=None):

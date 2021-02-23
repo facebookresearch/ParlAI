@@ -9,7 +9,7 @@ Build the candidate responses for a retrieval model.
 ## Examples
 
 ```bash
-parlai build_candidates -t convai2 --outfile /tmp/cands.txt
+parlai build_candidates --task convai2 --outfile /tmp/cands.txt
 ```
 """
 

@@ -237,22 +237,27 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 self.chat_done = True
                 # agent ends chat after exceeding minimum number of turns
 
-                if self.task_turn_idx > self.num_turns:
-                    # Human has just responded. Any problem data received now will be
-                    # regarding the bot's prior utterance
-                    p = acts[idx]['task_data'].get('problem_data_for_prior_message')
-                    if p is not None:
-                        turn_idx = -1
-                        # Attach the problem data to the last utterance, since the human
-                        # hasn't said anything since then
-                        self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
+                # Human has just responded. Any problem data received now will be
+                # regarding the bot's prior utterance
+                turn_idx = -1
+                # Attach the problem data and final rating to the last utterance, since
+                # the human hasn't said anything since then
+                p = acts[idx]['task_data'].get('problem_data_for_prior_message')
+                if p is not None:
+                    self.__add_problem_data_to_utterance(p, turn_idx=turn_idx)
+                self.dialog[turn_idx]['final_rating'] = acts[idx]['task_data'][
+                    'final_rating'
+                ]
 
                 # Save the final chat data
+                date_folder = time.strftime('%Y_%m_%d')
                 time_string = time.strftime('%Y%m%d_%H%M%S')
-                chat_data_folder = self.opt['chat_data_folder']
-                os.makedirs(chat_data_folder, exist_ok=True)
+                chat_data_subfolder = os.path.join(
+                    self.opt['chat_data_folder'], date_folder
+                )
+                os.makedirs(chat_data_subfolder, exist_ok=True)
                 chat_data_path = os.path.join(
-                    chat_data_folder,
+                    chat_data_subfolder,
                     f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
                 )
                 final_chat_data = self.get_final_chat_data()

@@ -355,9 +355,9 @@ class TestContextGenerator(unittest.TestCase):
             ),
         ]
         for datatype, seed, desired_context in datatypes_seeds_and_desired_contexts:
-            argparser = ParlaiParser(False, False)
-            argparser.add_parlai_data_path()
-            context_opt = argparser.parse_args([])
+            parser = ParlaiParser(False, False)
+            parser.add_parlai_data_path()
+            context_opt = parser.parse_args([])
             context_generator = ContextGenerator(
                 context_opt, datatype=datatype, seed=seed
             )

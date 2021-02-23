@@ -19,6 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
+from parlai.core.params import ParlaiParser
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
@@ -424,11 +425,13 @@ class TorchAgent(ABC, Agent):
         return History
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add the default commandline args we expect most agents to want.
         """
-        agent = argparser.add_argument_group('TorchAgent Arguments')
+        agent = parser.add_argument_group('TorchAgent Arguments')
         agent.add_argument(
             '-i',
             '--interactive-mode',
@@ -652,7 +655,11 @@ class TorchAgent(ABC, Agent):
             '--special-tok-lst',
             type=str,
             default=None,
-            help='Comma separated list of special tokens',
+            help=(
+                'Comma separated list of special tokens. '
+                'In case of ambiguous parses from special tokens, the ordering '
+                'provided in this arg sets precedence.'
+            ),
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
@@ -669,8 +676,9 @@ class TorchAgent(ABC, Agent):
             help='disable GPUs even if available. otherwise, will use GPUs if '
             'available on the device.',
         )
-        cls.dictionary_class().add_cmdline_args(argparser)
-        ParlAILRScheduler.add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        ParlAILRScheduler.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def __init__(self, opt: Opt, shared=None):
         """
@@ -863,6 +871,12 @@ class TorchAgent(ABC, Agent):
         Return list of special tokens.
 
         Made easily overridable for special cases.
+
+        Note that in the case of ambiguity of special-token parsing, the
+        precedence is set by the ordering returned in this method.  For
+        example, if special tokens are ["OHB", "BOY"], parsing "OHBOY" will
+        become (special)OHB and (normal)OY. But with special tokens
+        ["BOY", "OHB"], then we will get (normal)OH and (special)BOY.
         """
         if self.opt.get('special_tok_lst'):
             return self.opt['special_tok_lst'].split(',')

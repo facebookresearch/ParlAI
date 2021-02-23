@@ -14,7 +14,7 @@ Its goal is to provide researchers:
 -   many popular datasets available all in one place, with the ability
     to multi-task over them
 -   seamless integration of
-    [Amazon Mechanical Turk](tutorial_mturk) for data collection
+    [Amazon Mechanical Turk](tutorial_crowdsourcing) for data collection
     and human evaluation
 -   integration with
     chat services like [Facebook Messenger](tutorial_chat_service)
@@ -323,10 +323,10 @@ for displaying data with the existing script
 
 ```python
 #Display 10 random examples from task 1 of the "1k training examples" bAbI task:
-parlai display_data -t babi:task1k:1
+parlai display_data --task babi:task1k:1
 
 #Displays 100 random examples from multi-tasking on the bAbI task and the SQuAD dataset at the same time:
-parlai display_data -t babi:task1k:1,squad -n 100
+parlai display_data --task babi:task1k:1,squad -n 100
 ```
 
 In the last section, we mentioned that labels are hidden at validation
@@ -340,10 +340,10 @@ ParlAI downloads the data required for a requested task automatically
 --datapath. This is ParlAI/data by default but you can configure this to
 point elsewhere, e.g. to another disk with more memory. Only the tasks
 you request are downloaded. Additionally, you could specify
--dt train:stream or -dt valid:stream to denote that you want the data to
+-dt train:stream or --datatype valid:stream to denote that you want the data to
 stream online if possible, rather than loading into memory.
 
-You can also specify -dt train:ordered the override the default behavior
+You can also specify --datatype train:ordered the override the default behavior
 that data from the train set comes in a random order (whereas valid and
 test data is ordered by default).
 
@@ -364,34 +364,34 @@ Here are some examples:
 
 ```python
 # Train a seq2seq model on the "10k training examples" bAbI task 1 with batch size of 32 examples until accuracy reaches 95% on validation (requires pytorch):
-parlai train_model -t babi:task10k:1 -m seq2seq -mf /tmp/model_s2s -bs 32 -vtim 30 -vcut 0.95
+parlai train_model --task babi:task10k:1 --model seq2seq --model-file /tmp/model_s2s --batchsize 32 --validation-every-n-secs 30
 
 # Trains an attentive LSTM model on the SQuAD dataset with a batch size of 32 examples (pytorch and regex):
-parlai train_model -m drqa -t squad -bs 32 -mf /tmp/model_drqa
+parlai train_model --model drqa --task squad --batchsize 32 --model-file /tmp/model_drqa
 
-# Tests an existing attentive LSTM model (DrQA reader) on the SQuAD dataset from our model zoo:
-parlai eval_model -t squad -mf "zoo:drqa/squad/model"
+# Tests an existing generative transformer from our model zoo
+parlai eval_model --task convai2 --model-file "zoo:tutorial_transformer_generator/model"
 
 # Evaluate on the bAbI test set with a human agent (using the local keyboard as input):
-parlai eval_model -m local_human -t babi:Task1k:1 -dt valid
+parlai eval_model --model local_human --task babi:Task1k:1 --datatype valid
 
-# Evaluate an IR baseline model on the validation set of the Movies Subreddit dataset:
-parlai eval_model -m ir_baseline -t "#moviedd-reddit" -dt valid
+# Evaluate an IR baseline model on the validation set of ConvAI2:
+parlai eval_model --model ir_baseline --task convai" --datatype valid
 
 # Display the predictions of that same IR baseline model:
-parlai display_model -m ir_baseline -t "#moviedd-reddit" -dt valid
+parlai display_model --model ir_baseline --task convai2 --datatype valid
 ```
 
 The main flags are:
 
-1\) -m (-model) which sets the agent type that will be trained. The
+1\) --model (-model) which sets the agent type that will be trained. The
 agents available in parlAI [are
 here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents).
 See [this tutorial](tutorial_task) for making your own agents.
 
-2)  -mf (--modelfile) points to the file name of where to save your
+2)  --model-file (-mf) points to the file name of where to save your
     model.
-3)  -t (--task) as described before.
+3)  --task (-t) as described before.
 
 Of course every model has various parameters and hyperparameters to set
 in general.
@@ -403,15 +403,15 @@ already in the model zoo:
 
 ```python
 # Interact with a Poly-Encoder model on ConvAI2
-parlai interactive -mf zoo:pretrained_transformers/model_poly/model -t convai2
+parlai interactive --model-file zoo:pretrained_transformers/model_poly/model --task convai2
 
 # Interact with a Wizard Of Wikipedia (Full Dialogue Retrieval Model).
-parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+parlai interactive --model projects:wizard_of_wikipedia:interactive_retrieval --task wizard_of_wikipedia
 ```
 
 To view additional fields from the model output, try use the flag `--display-add-fields`. For example, 
 ```
-parlai interactive -mf zoo:blender/blender_90M/model -t convai2 --display-add-fields beam_texts
+parlai interactive --model-file zoo:blender/blender_90M/model --task convai2 --display-add-fields beam_texts
 ```
 to display all beam texts.
 

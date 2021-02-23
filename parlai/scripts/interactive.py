@@ -9,7 +9,7 @@ Basic script which allows local human keyboard input to talk to a trained model.
 ## Examples
 
 ```shell
-parlai interactive -m drqa -mf "models:drqa/squad/model"
+parlai interactive --model-file "zoo:tutorial_transformer_generator/model"
 ```
 
 When prompted, enter something like: `Bob is Blue.\\nWhat is Bob?`
@@ -69,8 +69,8 @@ def setup_args(parser=None):
         help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
     )
     parser.set_defaults(interactive_mode=True, task='interactive')
-    LocalHumanAgent.add_cmdline_args(parser)
-    WorldLogger.add_cmdline_args(parser)
+    LocalHumanAgent.add_cmdline_args(parser, partial_opt=None)
+    WorldLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 

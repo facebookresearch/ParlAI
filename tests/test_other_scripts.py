@@ -13,6 +13,24 @@ import unittest
 import parlai.utils.testing as testing_utils
 
 
+class TestDisplayModel(unittest.TestCase):
+    def test_display_model(self):
+        from parlai.scripts.display_model import DisplayModel
+
+        with testing_utils.capture_output() as output:
+            DisplayModel.main(
+                model='fixed_response',
+                fixed_response='1 2 3 4',
+                task='integration_tests',
+                verbose=True,
+            )
+
+        output = output.getvalue()
+        assert 'metrics' in output
+        assert 'accuracy' in output
+        assert '1 2 3 4' in output
+
+
 class TestConvertToParlaiFormat(unittest.TestCase):
     def test_convert(self):
         from parlai.scripts.convert_data_to_parlai_format import (
@@ -73,20 +91,21 @@ class TestVacuum(unittest.TestCase):
                     'optimizer': 'adam',
                     'learningrate': 0.01,
                     'model_file': model_file,
-                    'num_epochs': 0.05,
+                    'num_epochs': 0.01,
                     'skip_generation': True,
+                    'no_cuda': True,
                     'batchsize': 8,
                     # TODO: switch to test_agents/unigram
                     'model': 'transformer/generator',
-                    'ffn_size': 32,
-                    'embedding_size': 32,
+                    'ffn_size': 8,
+                    'embedding_size': 8,
                     'n_layers': 1,
                 }
             )
             size_before = os.stat(model_file).st_size
             Vacuum.main(model_file=model_file)
             size_after = os.stat(model_file).st_size
-            assert size_after < size_before
+            assert size_after < size_before, "Model file did not shrink after vacuum"
             assert os.path.exists(model_file + '.unvacuumed')
             valid2, test2 = testing_utils.eval_model(
                 {'task': 'integration_tests', 'model_file': model_file, 'batchsize': 8}
@@ -94,6 +113,36 @@ class TestVacuum(unittest.TestCase):
             for key in ['loss', 'exs', 'ppl', 'token_acc']:
                 assert valid2[key] == valid[key], f"{key} score doesn't match"
                 assert test2[key] == test[key], f"{key} score doesn't match"
+
+    def test_vacuum_nobackup(self):
+        with testing_utils.tempdir() as tmpdir:
+            from parlai.scripts.vacuum import Vacuum
+
+            model_file = os.path.join(tmpdir, 'model')
+            valid, test = testing_utils.train_model(
+                {
+                    'task': 'integration_tests',
+                    'optimizer': 'adam',
+                    'learningrate': 0.01,
+                    'model_file': model_file,
+                    'num_epochs': 0.01,
+                    'no_cuda': True,
+                    'skip_generation': True,
+                    'batchsize': 8,
+                    # TODO: switch to test_agents/unigram
+                    'model': 'transformer/generator',
+                    'ffn_size': 8,
+                    'embedding_size': 8,
+                    'n_layers': 1,
+                }
+            )
+            size_before = os.stat(model_file).st_size
+            Vacuum.main(model_file=model_file, no_backup=True)
+            size_after = os.stat(model_file).st_size
+            assert size_after < size_before, "Model file did not shrink after vacuum"
+            assert not os.path.exists(
+                model_file + '.unvacuumed'
+            ), "Backup should not exist"
 
 
 class TestDetectOffensive(unittest.TestCase):

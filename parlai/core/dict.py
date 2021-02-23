@@ -7,6 +7,8 @@
 Contains code for parsing and building a dictionary from text.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.build_data import modelzoo_path
 from parlai.utils.bpe import bpe_factory, BPEHelper
@@ -118,12 +120,14 @@ class DictionaryAgent(Agent):
     default_lower = False
     default_textfields = 'text,labels'
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add commandline arguments related to the dictionary.
         """
-        dictionary = argparser.add_argument_group('Dictionary Arguments')
+        dictionary = parser.add_argument_group('Dictionary Arguments')
         dictionary.add_argument(
             '-df',
             '--dict-file',
@@ -221,7 +225,7 @@ class DictionaryAgent(Agent):
             'Tasks with additional fields may add to this list to handle '
             'any extra vocabulary.',
         )
-        dictionary = BPEHelper.add_cmdline_args(dictionary)
+        dictionary = BPEHelper.add_cmdline_args(dictionary, partial_opt=partial_opt)
         return dictionary
 
     def __init__(self, opt: Opt, shared=None):
@@ -764,9 +768,9 @@ class DictionaryAgent(Agent):
             # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
             extra_tokens = 4  # length of special tokens
             vector = [
-                self.bpe.special_tok_map[idx]
-                if idx in self.bpe.special_tok_map
-                else idx - extra_tokens
+                self.bpe.special_tok_map[int(idx)]
+                if int(idx) in self.bpe.special_tok_map
+                else int(idx) - extra_tokens
                 for idx in vector
             ]
             tokens = [self[int(idx)] for idx in vector]

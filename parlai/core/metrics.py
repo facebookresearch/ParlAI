@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 import functools
 import datetime
-from typing import Union, List, Optional, Tuple, Set, Any, Dict
+from typing import Union, List, Optional, Tuple, Set, Any, Dict, Counter as TCounter
 
 import torch
 
@@ -23,7 +23,13 @@ from parlai.utils.typing import TScalar, TVector
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
 BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3', 'bleu-4'}
-ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS
+DISTINCT_METRICS = {
+    'interdistinct-1',
+    'interdistinct-2',
+    'intradistinct-1',
+    'intradistinct-2',
+}
+ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS | DISTINCT_METRICS
 
 
 try:
@@ -523,6 +529,60 @@ class RougeMetric(AverageMetric):
         )
 
 
+class IntraDistinctMetric(AverageMetric):
+    """
+    Compute intra-distinct (per-utterance).
+    """
+
+    @classmethod
+    def _ngram(cls, seq, n: int):
+        for i in range(len(seq) - n + 1):
+            yield tuple(seq[i : i + n])
+
+    @classmethod
+    def compute(cls, text: str, ngram: int = 1):
+        """
+        :param text:
+            The text to compute metric over
+        :param ngram:
+            n-gram length
+        """
+        tokens = normalize_answer(text).split()
+        counts = Counter(cls._ngram(tokens, ngram))
+        # computed per-example, macro averaged across examples
+        intra = max(len(counts), 1e-12) / max(sum(counts.values()), 1e-5)
+        return IntraDistinctMetric(intra, 1.0)
+
+
+class InterDistinctMetric(Metric):
+    """
+    Compute inter-distinct metric over corpus-level.
+    """
+
+    def __init__(self, counts: TCounter[Tuple]):
+        """
+        :param counts:
+            collections.Counter of ngram -> frequency
+        """
+        self._counts = counts
+
+    def __add__(self, other):
+        return InterDistinctMetric(self._counts + other._counts)
+
+    def value(self):
+        return max(len(self._counts), 1e-12) / max(sum(self._counts.values()), 1e-5)
+
+    @classmethod
+    def _ngram(cls, seq, n):
+        for i in range(len(seq) - n + 1):
+            yield tuple(seq[i : i + n])
+
+    @classmethod
+    def compute(cls, text, ngram=1):
+        tokens = normalize_answer(text).split()
+        return InterDistinctMetric(Counter(cls._ngram(tokens, ngram)))
+
+
 def normalize_answer(s):
     """
     Lower text and remove punctuation, articles and extra whitespace.
@@ -604,16 +664,14 @@ class Metrics(object):
     def __init__(self, threadsafe=False, shared=None):
         if shared and 'data' in shared:
             # This is a clone
-            self._buffer = None
-            self._queue = None
-            self._worker = False
             self._data = shared['data']
         else:
             # The original
-            self._buffer = None
-            self._queue = None
-            self._worker = False
             self._data = {}
+
+        # recent data is to track per-example metrics, and so should never be
+        # shared
+        self._recent_data = {}
 
     def __str__(self):
         return str(self._data)
@@ -626,18 +684,32 @@ class Metrics(object):
         Record an accumulation to a metric.
         """
         self._data[key] = self._data.get(key) + value
+        self._recent_data[key] = self._recent_data.get(key) + value
 
     def report(self):
         """
         Report the metrics over all data seen so far.
         """
-        return {k: v for k, v in self._data.items()}
+        return self._data.copy()
+
+    def clear_recent(self):
+        """
+        Clear recent metrics (latest example).
+        """
+        self._recent_data.clear()
+
+    def report_recent(self):
+        """
+        Report recent metrics (latest example).
+        """
+        return self._recent_data.copy()
 
     def clear(self):
         """
         Clear all the metrics.
         """
         self._data.clear()
+        self._recent_data.clear()
 
     def share(self):
         return {'data': self._data}
@@ -679,6 +751,8 @@ class TeacherMetrics(Metrics):
                 col |= ROUGE_METRICS
             elif n == 'bleu':
                 col |= BLEU_METRICS
+            elif n == 'distinct':
+                col |= DISTINCT_METRICS
             elif n == 'all':
                 col |= ALL_METRICS
             else:
@@ -732,6 +806,16 @@ class TeacherMetrics(Metrics):
                     self.add('rouge_2', r2)
                 if 'rouge-L' in self._metrics_list and rL:
                     self.add('rouge_L', rL)
+            # compute distinct-k
+            for k in [1, 2]:
+                if f'interdistinct-{k}' in self._metrics_list:
+                    self.add(
+                        f'interdistinct-{k}', InterDistinctMetric.compute(prediction, k)
+                    )
+                if f'intradistinct-{k}' in self._metrics_list:
+                    self.add(
+                        f'intradistinct-{k}', IntraDistinctMetric.compute(prediction, k)
+                    )
 
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)

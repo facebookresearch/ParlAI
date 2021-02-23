@@ -6,7 +6,7 @@
 from argparse import ArgumentParser
 import json
 
-from parlai.projects.self_feeding.utils import (
+from projects.self_feeding.utils import (
     Parley,
     extract_parlai_episodes,
     add_person_tokens,
@@ -15,10 +15,10 @@ from parlai.utils.io import PathManager
 
 
 def setup_args():
-    argparser = ArgumentParser()
-    argparser.add_argument('-if', '--infile', type=str)
-    argparser.add_argument('-of', '--outfile', type=str)
-    config = vars(argparser.parse_args())
+    parser = ArgumentParser()
+    parser.add_argument('-if', '--infile', type=str)
+    parser.add_argument('-of', '--outfile', type=str)
+    config = vars(parser.parse_args())
 
     return config
 

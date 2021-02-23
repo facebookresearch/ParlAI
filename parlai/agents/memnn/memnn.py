@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from functools import lru_cache
 
 import torch
@@ -24,9 +27,11 @@ class MemnnAgent(TorchRankerAgent):
     - 'adam' seems to work very poorly compared to 'sgd' for hogwild training
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        arg_group = argparser.add_argument_group('MemNN Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        arg_group = parser.add_argument_group('MemNN Arguments')
         arg_group.add_argument(
             '-esz',
             '--embedding-size',
@@ -58,11 +63,11 @@ class MemnnAgent(TorchRankerAgent):
             default=False,
             help='use position encoding instead of bag of words embedding',
         )
-        argparser.set_defaults(
+        parser.set_defaults(
             split_lines=True, add_p1_after_newln=True, encode_candidate_vecs=True
         )
-        TorchRankerAgent.add_cmdline_args(argparser)
-        MemnnAgent.dictionary_class().add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
         return arg_group
 
     def __init__(self, opt, shared=None):

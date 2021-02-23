@@ -4,6 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import json
 import random
 
@@ -99,9 +102,11 @@ def _standardize(orig: str) -> str:
 
 
 class InteractiveWorld(InteractiveBaseWorld):
-    @staticmethod
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('BST Interactive World')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('BST Interactive World')
         parser.add_argument(
             '--display-partner-persona',
             type='bool',
@@ -127,6 +132,7 @@ class InteractiveWorld(InteractiveBaseWorld):
             help='Only use personas on an allowed list of safe personas',
             hidden=True,
         )
+        return parser
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
@@ -155,8 +161,11 @@ class InteractiveWorld(InteractiveBaseWorld):
 
 
 class SelfChatWorld(SelfChatBaseWorld):
-    def add_cmdline_args(argparser):
-        parser = argparser.add_argument_group('BST SelfChat World')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = parser.add_argument_group('BST SelfChat World')
         parser.add_argument(
             '--include-personas',
             type='bool',
@@ -169,6 +178,7 @@ class SelfChatWorld(SelfChatBaseWorld):
             default=True,
             help='Include context conversation at beginning or not',
         )
+        return parser
 
     def init_contexts(self, shared=None):
         self.contexts_data = get_contexts_data(self.opt, shared=shared)

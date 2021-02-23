@@ -10,6 +10,9 @@ the database to answer.
 NOTE: this model only works for eval, it assumes all training is already done.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.core.agents import create_agent
 import regex
@@ -28,12 +31,14 @@ class RetrieverReaderAgent(Agent):
         reader_opt = {'model_file': opt['reader_model_file']}
         self.reader = create_agent(reader_opt)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add command-line arguments specifically for this agent.
         """
-        agent = argparser.add_argument_group('RetrieverReader Arguments')
+        agent = parser.add_argument_group('RetrieverReader Arguments')
         agent.add_argument('--retriever-model-file', type=str, default=None)
         agent.add_argument('--reader-model-file', type=str, default=None)
         agent.add_argument(

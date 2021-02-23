@@ -76,7 +76,10 @@ class TokenStats(ParlaiScript):
         while not teacher.epoch_done() and cnt < num_examples:
             act = teacher.act()
             processed = agent.observe(act)
-            text_vec = processed[field]
+            try:
+                text_vec = processed[field]
+            except KeyError:
+                raise KeyError(f"Pick one of {list(processed.keys())}")
             if text_vec is not None and (
                 not self.opt['final_only'] or act.get('episode_done')
             ):

@@ -14,10 +14,14 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
+import os
+from typing import Optional
+from parlai.core.params import ParlaiParser
 import json
 import numbers
+import datetime
 from parlai.core.opt import Opt
-from parlai.core.metrics import Metric
+from parlai.core.metrics import Metric, dict_report
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
@@ -27,18 +31,20 @@ class TensorboardLogger(object):
     Log objects to tensorboard.
     """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
         Add tensorboard CLI args.
         """
-        logger = argparser.add_argument_group('Tensorboard Arguments')
+        logger = parser.add_argument_group('Tensorboard Arguments')
         logger.add_argument(
             '-tblog',
             '--tensorboard-log',
             type='bool',
             default=False,
-            help="Tensorboard logging of metrics, default is %(default)s",
+            help="Tensorboard logging of metrics",
             hidden=False,
         )
         logger.add_argument(
@@ -49,6 +55,7 @@ class TensorboardLogger(object):
             help="Tensorboard logging directory, defaults to model_file.tensorboard",
             hidden=False,
         )
+        return parser
 
     def __init__(self, opt: Opt):
         try:
@@ -70,7 +77,7 @@ class TensorboardLogger(object):
 
     def log_metrics(self, setting, step, report):
         """
-        Add all metrics from tensorboard_metrics opt key.
+        Log all metrics to tensorboard.
 
         :param setting:
             One of train/valid/test. Will be used as the title for the graph.
@@ -89,3 +96,106 @@ class TensorboardLogger(object):
 
     def flush(self):
         self.writer.flush()
+
+
+class WandbLogger(object):
+    """
+    Log objects to Weights and Biases.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add WandB CLI args.
+        """
+        logger = parser.add_argument_group('WandB Arguments')
+        logger.add_argument(
+            '-wblog',
+            '--wandb-log',
+            type='bool',
+            default=False,
+            help="Enable W&B logging of metrics",
+        )
+        logger.add_argument(
+            '--wandb-name',
+            type=str,
+            default=None,
+            help='W&B run name. If not set, WandB will randomly generate a name.',
+            hidden=True,
+        )
+
+        logger.add_argument(
+            '--wandb-project',
+            type=str,
+            default=None,
+            help='W&B project name. Defaults to timestamp. Usually the name of the sweep.',
+            hidden=False,
+        )
+        return logger
+
+    def __init__(self, opt: Opt, model=None):
+        try:
+            # wand is a very expensive thing to import. Wait until the
+            # last second to import it.
+            import wandb
+
+        except ImportError:
+            raise ImportError('Please run `pip install wandb`.')
+
+        name = opt.get('wandb_name')
+        project = opt.get('wandb_project') or datetime.datetime.now().strftime(
+            '%Y-%m-%d-%H-%M'
+        )
+
+        self.run = wandb.init(
+            name=name,
+            project=project,
+            dir=os.path.dirname(opt['model_file']),
+            notes=f"{opt['model_file']}",
+            reinit=True,  # in case of preemption
+        )
+        # suppress wandb's output
+        logging.getLogger("wandb").setLevel(logging.ERROR)
+        for key, value in opt.items():
+            if value is None or isinstance(value, (str, numbers.Number, tuple)):
+                setattr(self.run.config, key, value)
+        if model is not None:
+            self.run.watch(model)
+
+    def log_metrics(self, setting, step, report):
+        """
+        Log all metrics to W&B.
+
+        :param setting:
+            One of train/valid/test. Will be used as the title for the graph.
+        :param step:
+            Number of parleys
+        :param report:
+            The report to log
+        """
+        report = dict_report(report)
+        report = {
+            f'{k}/{setting}': v
+            for k, v in report.items()
+            if isinstance(v, numbers.Number)
+        }
+        report['custom_step'] = step
+        self.run.log(report)
+
+    def log_final(self, setting, report):
+        report = dict_report(report)
+        report = {
+            f'{k}/{setting}': v
+            for k, v in report.items()
+            if isinstance(v, numbers.Number)
+        }
+        for key, value in report.items():
+            self.run.summary[key] = value
+
+    def finish(self):
+        self.run.finish()
+
+    def flush(self):
+        pass

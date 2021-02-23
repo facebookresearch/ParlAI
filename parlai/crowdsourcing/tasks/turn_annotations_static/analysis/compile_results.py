@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import argparse
 import copy
 import json
 import os
@@ -14,23 +13,16 @@ from typing import Any, Dict, Optional, Tuple
 import numpy as np
 import pandas as pd
 
+from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 
-class TurnAnnotationsStaticResultsCompiler:
+
+class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     """
     Class to compile results from static turn annotations.
 
     Change PROBLEM_BUCKETS in task_config/annotation_buckets.json to be the buckets that
     you are asking crowdsource workers to annotate with.
     """
-
-    PROBLEM_BUCKETS = [
-        'bucket_0',
-        'bucket_1',
-        'bucket_2',
-        'bucket_3',
-        'bucket_4',
-        'none_all_good',
-    ]
 
     NUM_SUBTASKS = 7
     LIVE_ONBOARDING_IS_LAST_SUBTASK = True
@@ -42,16 +34,8 @@ class TurnAnnotationsStaticResultsCompiler:
     CALCULATE_STATS_INTERANNOTATOR_AGREEMENT = True
 
     @classmethod
-    def parse_args(cls):
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            '--results-folders',
-            type=str,
-            help='Comma-separated list of result folders (example: "/basefolder/mephisto/data/runs/NO_PROJECT/123")',
-        )
-        parser.add_argument(
-            '--output-folder', type=str, help='Folder to save output files to'
-        )
+    def setup_args(cls):
+        parser = super().setup_args()
         parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
@@ -63,17 +47,10 @@ class TurnAnnotationsStaticResultsCompiler:
             default=None,
             help='Path to a JSON file mapping utterance IDs to the gold annotations',
         )
-        args = parser.parse_args()
-        return args
+        return parser
 
-    def __init__(self, opt: Optional[Dict[str, Any]] = None):
-        if opt is None:
-            opt = {}
-        if 'results_folders' in opt:
-            self.results_folders = opt['results_folders'].split(',')
-        else:
-            self.results_folders = None
-        self.output_folder = opt.get('output_folder')
+    def __init__(self, opt: Dict[str, Any]):
+        super().__init__(opt)
         self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
         self.gold_annotations_file = opt.get('gold_annotations_file')
 
@@ -110,7 +87,7 @@ class TurnAnnotationsStaticResultsCompiler:
                         read_folders.append(full_path)
         return read_folders
 
-    def compile_results(self):
+    def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
         conversations = self.compile_initial_results(self.results_folders)
         master_dataframe = self.process_data_into_dataframe(conversations)
@@ -133,6 +110,8 @@ class TurnAnnotationsStaticResultsCompiler:
         )
         master_dataframe.to_csv(results_file, index=False)
         print(f'Wrote aggregated utterance data to: {results_file}')
+
+        return master_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
         """
@@ -173,11 +152,11 @@ class TurnAnnotationsStaticResultsCompiler:
         for utterance_data in subtask_data:
             if (
                 utterance_data['agent_idx'] == 1
-                and self.PROBLEM_BUCKETS[0] not in utterance_data
+                and self.problem_buckets[0] not in utterance_data
             ):
                 return (
                     False,
-                    f'Bot utterance was malformed and had no problem annotation fields (Failed to find key: {self.PROBLEM_BUCKETS[0]}).',
+                    f'Bot utterance was malformed and had no problem annotation fields (Failed to find key: {self.problem_buckets[0]}).',
                 )
 
         return True, None
@@ -192,7 +171,7 @@ class TurnAnnotationsStaticResultsCompiler:
         for d in self.INFLIGHT_ONBOARDING_DATA:
             if d['dialog'][-1][-1]['text'] == onboarding_utterance['text']:
                 num_answers = len(d['answers'])
-                for pb in self.PROBLEM_BUCKETS:
+                for pb in self.problem_buckets:
                     if pb in d['answers'] and onboarding_utterance[pb]:
                         num_correct += 1
                     if onboarding_utterance[pb] and pb not in d['answers']:
@@ -310,7 +289,7 @@ class TurnAnnotationsStaticResultsCompiler:
                     'text': utt['text'],
                 }
                 row = self._add_additional_columns(row=row, utt=utt)
-                for k in self.PROBLEM_BUCKETS:
+                for k in self.problem_buckets:
                     row[k] = utt[k] if utt['agent_idx'] == 1 else ''
                 rows.append(row)
         df = pd.DataFrame(rows)
@@ -367,9 +346,9 @@ class TurnAnnotationsStaticResultsCompiler:
 
         if 'any_problem' in summed_df:
             # We've computed a column marking if any problem exists, so include this
-            extended_problem_buckets = self.PROBLEM_BUCKETS + ['any_problem']
+            extended_problem_buckets = self.problem_buckets + ['any_problem']
         else:
-            extended_problem_buckets = self.PROBLEM_BUCKETS
+            extended_problem_buckets = self.problem_buckets
         for k in extended_problem_buckets:
             one_annotator = len(summed_df[summed_df[k] == 1])
             two_annotators = len(summed_df[summed_df[k] == 2])
@@ -390,14 +369,10 @@ class TurnAnnotationsStaticResultsCompiler:
         Filter the bot responses given the specific problem buckets being used.
         """
 
-        if 'none_all_good' not in self.PROBLEM_BUCKETS:
-            raise ValueError(
-                'There must be a "none_all_good" category in self.PROBLEM_BUCKETS!'
-            )
         non_none_problem_buckets = [
-            bucket for bucket in self.PROBLEM_BUCKETS if bucket != 'none_all_good'
+            bucket for bucket in self.problem_buckets if bucket != 'none_all_good'
         ]
-        assert len(set(non_none_problem_buckets)) + 1 == len(self.PROBLEM_BUCKETS)
+        assert len(set(non_none_problem_buckets)) + 1 == len(self.problem_buckets)
         # Make sure problem buckets are all unique
 
         utterance_count_total = len(bot_only_df)
@@ -450,14 +425,14 @@ class TurnAnnotationsStaticResultsCompiler:
             f'Got {len(gold_annotations.keys())} utterances with gold annotations. Found {len(bot_only_df)} utterances matching gold annotations from DataFrame.'
         )
 
-        agreement_map = {pb: [] for pb in self.PROBLEM_BUCKETS}
-        agreement_map_problem_only = {pb: [] for pb in self.PROBLEM_BUCKETS}
-        problem_counts = {pb: 0 for pb in self.PROBLEM_BUCKETS}
+        agreement_map = {pb: [] for pb in self.problem_buckets}
+        agreement_map_problem_only = {pb: [] for pb in self.problem_buckets}
+        problem_counts = {pb: 0 for pb in self.problem_buckets}
         for utterance_id, gold in gold_annotations.items():
             utterance_df = bot_only_df[bot_only_df['utterance_id'] == utterance_id]
             count_workers = len(utterance_df)
 
-            for pb in self.PROBLEM_BUCKETS:
+            for pb in self.problem_buckets:
                 gold_annotation = gold[pb]
                 match_count = utterance_df[utterance_df[pb] == gold[pb]].count()[pb]
                 a = float(match_count / count_workers)
@@ -468,7 +443,7 @@ class TurnAnnotationsStaticResultsCompiler:
         print(
             f'------------------------\nAverage agreement with {len(gold_annotations)} total gold utterances annotated was:'
         )
-        for pb in self.PROBLEM_BUCKETS:
+        for pb in self.problem_buckets:
             print(
                 f'{pb}: {np.average(agreement_map[pb]):.1%} ({problem_counts[pb]} gold problem samples)'
             )
@@ -476,7 +451,7 @@ class TurnAnnotationsStaticResultsCompiler:
         print(
             f'------------------------\nAverage agreement problem samples only with {len(gold_annotations)} total gold utterances annotated was:'
         )
-        for pb in self.PROBLEM_BUCKETS:
+        for pb in self.problem_buckets:
             print(
                 f'{pb}: {np.average(agreement_map_problem_only[pb]):.1%} ({problem_counts[pb]} gold problem samples)'
             )
@@ -492,7 +467,7 @@ class TurnAnnotationsStaticResultsCompiler:
         bot_only_df = bot_only_df.dropna()
         print(f'Calculating agreement on {len(bot_only_df)} annotations.')
 
-        for pb in self.PROBLEM_BUCKETS:
+        for pb in self.problem_buckets:
             # Expects a df of rater_id, item_id and "data" column
             kappa_df = df[['annotation_id', 'worker_id', 'utterance_id', pb]]
             kappa_df = kappa_df.rename(
@@ -556,5 +531,6 @@ class TurnAnnotationsStaticResultsCompiler:
 
 
 if __name__ == '__main__':
-    args = TurnAnnotationsStaticResultsCompiler.parse_args()
+    parser_ = TurnAnnotationsStaticResultsCompiler.setup_args()
+    args = parser_.parse_args()
     TurnAnnotationsStaticResultsCompiler(vars(args)).compile_results()

@@ -46,7 +46,7 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
         setSending(false);
       });
     }
-  }, [active, sending, onMessageSend]);
+  }, [active, sending, rating, onMessageSend]);
 
   const ratingOptions = [<option key="empty_option" />].concat(
     ["1", "2", "3", "4", "5"].map((option_label, index) => {
