@@ -701,6 +701,7 @@ class TorchAgent(ABC, Agent):
         Initialize agent.
         """
         super().__init__(opt, shared)
+        self.is_debug = opt.get('is_debug', False)
         opt = self.opt
 
         # Safety checkers to ensure TorchAgent assumptions aren't being violated.
@@ -1617,6 +1618,7 @@ class TorchAgent(ABC, Agent):
             candidate_vecs=cand_vecs,
             image=imgs,
             rewards=rewards,
+            observations=exs if self.is_debug else None,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
