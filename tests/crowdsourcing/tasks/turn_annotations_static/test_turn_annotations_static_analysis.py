@@ -127,7 +127,8 @@ try:
                     .sort_values(sort_columns)
                     .reset_index(drop=True)
                 )
-                # Drop the 'folder' column, which contains a system-dependent path string
+                # Drop the 'folder' column, which contains a system-dependent path
+                # string
                 actual_results_rel_path = [
                     obj for obj in os.listdir(tmpdir) if obj.startswith('results')
                 ][0]
