@@ -80,7 +80,8 @@ class AbstractResultsCompiler(ABC):
         if self.results_format == 'csv':
             result_df.to_csv(results_path, index=False)
         elif self.results_format == 'json':
-            result_df.to_json(results_path)
+            result_df.reset_index().to_json(results_path)
+            # Reset the index to make each row have a unique index value
         else:
             raise ValueError(
                 f'Results save format of "{self.results_format}" currently unsupported!'
