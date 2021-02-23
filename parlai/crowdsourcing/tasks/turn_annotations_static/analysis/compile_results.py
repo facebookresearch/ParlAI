@@ -530,4 +530,4 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 if __name__ == '__main__':
     parser_ = TurnAnnotationsStaticResultsCompiler.setup_args()
     args = parser_.parse_args()
-    TurnAnnotationsStaticResultsCompiler(vars(args)).save_compiled_results()
+    TurnAnnotationsStaticResultsCompiler(vars(args)).compile_and_save_results()

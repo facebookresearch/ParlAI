@@ -107,7 +107,7 @@ try:
                     compiler = TurnAnnotationsStaticResultsCompiler(vars(args))
                     compiler.NUM_SUBTASKS = 3
                     compiler.NUM_ANNOTATIONS = 3
-                    compiler.save_compiled_results()
+                    compiler.compile_and_save_results()
                     actual_stdout = output.getvalue()
 
                 # Check the output against what it should be

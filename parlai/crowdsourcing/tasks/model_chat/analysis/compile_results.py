@@ -483,4 +483,4 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 if __name__ == '__main__':
     parser_ = ModelChatResultsCompiler.setup_args()
     args_ = parser_.parse_args()
-    ModelChatResultsCompiler(vars(args_)).save_compiled_results()
+    ModelChatResultsCompiler(vars(args_)).compile_and_save_results()
