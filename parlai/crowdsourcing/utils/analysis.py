@@ -67,7 +67,7 @@ class AbstractResultsCompiler(ABC):
         Each row of the dataframe consists of one utterance of one conversation.
         """
 
-    def save_results(self):
+    def save_compiled_results(self):
         """
         Compile and save results.
 
