@@ -144,7 +144,9 @@ class Batch(AttrDict):
         output = ['Batch({']
         for key in sorted(self.keys()):
             value = self[key]
-            if value is None:
+            if key == 'observations' and value is None:
+                output.append(f'  {key}: {value} (use --debug to include),')
+            elif value is None:
                 output.append(f'  {key}: {value},')
             elif isinstance(value, torch.Tensor):
                 typ = value.type().replace("torch.", "")
