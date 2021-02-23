@@ -26,3 +26,27 @@ def create_position_codes(n_pos, dim, out):
     out.requires_grad = False
     out[:, 0::2] = torch.FloatTensor(np.sin(position_enc)).type_as(out)
     out[:, 1::2] = torch.FloatTensor(np.cos(position_enc)).type_as(out)
+
+
+def get_n_positions_from_options(opt):
+    """
+    Determine n_positions from options dict.
+    """
+    if opt.get('n_positions'):
+        # if the number of positions is explicitly provided, use that
+        n_positions = opt['n_positions']
+    else:
+        # else, use the worst case from truncate
+        n_positions = max(
+            opt.get('truncate') or 0,
+            opt.get('text_truncate') or 0,
+            opt.get('label_truncate') or 0,
+        )
+        if n_positions == 0:
+            # default to 1024
+            n_positions = 1024
+
+    if n_positions < 0:
+        raise ValueError('n_positions must be positive')
+
+    return n_positions

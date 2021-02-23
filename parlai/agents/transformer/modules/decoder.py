@@ -13,7 +13,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from parlai.agents.transformer.functions import create_position_codes
+from parlai.agents.transformer.functions import (
+    create_position_codes,
+    get_n_positions_from_options,
+)
 from parlai.agents.transformer.modules.attention import MultiHeadAttention
 from parlai.agents.transformer.modules.ffn import TransformerFFN
 from parlai.agents.transformer.modules.layer_norm import LayerNorm, normalize
@@ -46,41 +49,29 @@ class TransformerDecoder(nn.Module):
     :param int n_positions: Size of the position embeddings matrix.
     """
 
-    def __init__(
-        self,
-        n_heads,
-        n_layers,
-        embedding_size,
-        ffn_size,
-        vocabulary_size,
-        embedding=None,
-        dropout=0.0,
-        attention_dropout=0.0,
-        relu_dropout=0.0,
-        embeddings_scale=True,
-        learn_positional_embeddings=False,
-        padding_idx=None,
-        n_positions=1024,
-        n_segments=0,
-        variant='aiayn',
-        activation='relu',
-    ):
+    def __init__(self, opt, embedding=None):
         super().__init__()
-        self.embedding_size = embedding_size
-        self.ffn_size = ffn_size
-        self.n_layers = n_layers
-        self.n_heads = n_heads
-        self.dim = embedding_size
-        self.activation = activation
-        self.variant = variant
 
-        self.embeddings_scale = embeddings_scale
-        self.dropout = nn.Dropout(p=dropout)  # --dropout
+        self.embedding_size = opt['embedding_size']
+        self.ffn_size = opt['ffn_size']
+        self.n_layers = (
+            opt['n_decoder_layers']
+            if opt.get('n_decoder_layers', -1) > 0
+            else opt['n_layers']
+        )
+        self.n_heads = opt['n_heads']
+        self.dim = self.embedding_size
+        self.activation = opt['activation']
+        self.variant = opt['variant']
 
-        self.n_positions = n_positions
-        self.out_dim = embedding_size
+        self.embeddings_scale = opt['embeddings_scale']
+        dropout_frac = opt['dropout']
+        self.dropout = nn.Dropout(p=dropout_frac)  # --dropout
+
+        self.n_positions = get_n_positions_from_options(opt)
+        self.out_dim = self.embedding_size
         assert (
-            embedding_size % n_heads == 0
+            self.embedding_size % self.n_heads == 0
         ), 'Transformer embedding size must be a multiple of n_heads'
 
         self.embeddings = embedding
@@ -102,27 +93,31 @@ class TransformerDecoder(nn.Module):
             raise ValueError("Can't handle --variant {}".format(self.variant))
 
         # create the positional embeddings
-        self.position_embeddings = nn.Embedding(n_positions, embedding_size)
-        if not learn_positional_embeddings:
+        self.position_embeddings = nn.Embedding(self.n_positions, self.embedding_size)
+        if not opt['learn_positional_embeddings']:
             create_position_codes(
-                n_positions, embedding_size, out=self.position_embeddings.weight
+                self.n_positions,
+                self.embedding_size,
+                out=self.position_embeddings.weight,
             )
         else:
-            nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
+            nn.init.normal_(
+                self.position_embeddings.weight, 0, self.embedding_size ** -0.5
+            )
 
         # build the model
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
                 TransformerDecoderLayer(
-                    n_heads,
-                    embedding_size,
-                    ffn_size,
-                    attention_dropout=attention_dropout,
-                    relu_dropout=relu_dropout,
-                    dropout=dropout,
-                    activation=activation,
-                    variant=variant,
+                    self.n_heads,
+                    self.embedding_size,
+                    self.ffn_size,
+                    attention_dropout=opt['attention_dropout'],
+                    relu_dropout=opt['relu_dropout'],
+                    dropout=dropout_frac,
+                    activation=self.activation,
+                    variant=self.variant,
                 )
             )
 

@@ -13,7 +13,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from parlai.agents.transformer.functions import create_position_codes
+from parlai.agents.transformer.functions import (
+    create_position_codes,
+    get_n_positions_from_options,
+)
 from parlai.agents.transformer.modules.attention import MultiHeadAttention
 from parlai.agents.transformer.modules.ffn import TransformerFFN
 from parlai.agents.transformer.modules.layer_norm import LayerNorm, normalize
@@ -59,52 +62,39 @@ class TransformerEncoder(nn.Module):
     """
 
     def __init__(
-        self,
-        n_heads,
-        n_layers,
-        embedding_size,
-        ffn_size,
-        vocabulary_size,
-        embedding=None,
-        dropout=0.0,
-        attention_dropout=0.0,
-        relu_dropout=0.0,
-        padding_idx=0,
-        learn_positional_embeddings=False,
-        embeddings_scale=False,
-        reduction_type='mean',
-        n_positions=1024,
-        activation='relu',
-        variant='aiayn',
-        n_segments=0,
-        output_scaling=1.0,
+        self, opt, vocabulary_size, embedding=None, padding_idx=0, reduction_type='mean'
     ):
         super(TransformerEncoder, self).__init__()
 
-        self.embedding_size = embedding_size
-        self.ffn_size = ffn_size
-        self.n_layers = n_layers
-        self.n_heads = n_heads
-        self.dim = embedding_size
-        self.embeddings_scale = embeddings_scale
+        self.embedding_size = opt['embedding_size']
+        self.ffn_size = opt['ffn_size']
+        self.n_layers = (
+            opt['n_encoder_layers']
+            if opt.get('n_encoder_layers', -1) > 0
+            else opt['n_layers']
+        )
+        self.n_heads = opt['n_heads']
+        self.dim = self.embedding_size
+        self.embeddings_scale = opt['embeddings_scale']
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
-        self.dropout_frac = dropout
+        self.dropout_frac = opt['dropout']
         self.dropout = nn.Dropout(p=self.dropout_frac)
-        self.variant = variant
-        self.n_segments = n_segments
+        self.variant = opt['variant']
+        self.n_segments = opt.get('n_segments', 0)
 
-        self.n_positions = n_positions
-        self.out_dim = embedding_size
+        self.n_positions = get_n_positions_from_options(opt)
+        self.out_dim = self.embedding_size
         assert (
-            embedding_size % n_heads == 0
+            self.embedding_size % self.n_heads == 0
         ), 'Transformer embedding size must be a multiple of n_heads'
 
         # check input formats:
         if embedding is not None:
             assert (
-                embedding_size is None or embedding_size == embedding.weight.shape[1]
+                self.embedding_size is None
+                or self.embedding_size == embedding.weight.shape[1]
             ), "Embedding dim must match the embedding size."
 
         if embedding is not None:
@@ -113,20 +103,24 @@ class TransformerEncoder(nn.Module):
             raise AssertionError(
                 "This code should not execute. Left here in case we want to enable it."
             )
-            assert padding_idx is not None
+            assert self.padding_idx is not None
             self.embeddings = nn.Embedding(
-                vocabulary_size, embedding_size, padding_idx=padding_idx
+                vocabulary_size, self.embedding_size, padding_idx=padding_idx
             )
-            nn.init.normal_(self.embeddings.weight, 0, embedding_size ** -0.5)
+            nn.init.normal_(self.embeddings.weight, 0, self.embedding_size ** -0.5)
 
         # create the positional embeddings
-        self.position_embeddings = nn.Embedding(n_positions, embedding_size)
-        if not learn_positional_embeddings:
+        self.position_embeddings = nn.Embedding(self.n_positions, self.embedding_size)
+        if not opt['learn_positional_embeddings']:
             create_position_codes(
-                n_positions, embedding_size, out=self.position_embeddings.weight
+                self.n_positions,
+                self.embedding_size,
+                out=self.position_embeddings.weight,
             )
         else:
-            nn.init.normal_(self.position_embeddings.weight, 0, embedding_size ** -0.5)
+            nn.init.normal_(
+                self.position_embeddings.weight, 0, self.embedding_size ** -0.5
+            )
 
         # embedding normalization
         if (
@@ -148,17 +142,17 @@ class TransformerEncoder(nn.Module):
         for _ in range(self.n_layers):
             self.layers.append(
                 TransformerEncoderLayer(
-                    n_heads,
-                    embedding_size,
-                    ffn_size,
-                    attention_dropout=attention_dropout,
-                    relu_dropout=relu_dropout,
-                    dropout=dropout,
-                    variant=variant,
-                    activation=activation,
+                    self.n_heads,
+                    self.embedding_size,
+                    self.ffn_size,
+                    attention_dropout=opt['attention_dropout'],
+                    relu_dropout=opt['relu_dropout'],
+                    dropout=self.dropout_frac,
+                    variant=self.variant,
+                    activation=opt['activation'],
                 )
             )
-        self.output_scaling = output_scaling
+        self.output_scaling = opt['output_scaling']
 
     def forward_embedding(
         self,
