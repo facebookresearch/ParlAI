@@ -496,7 +496,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         Return the optimizer's state dict.
         """
         state_dict = self.optimizer.state_dict()
-        state_dict['loss_scaler'] = self.scaler
+        state_dict['loss_scaler'] = self.scaler.loss_scale
         return state_dict
 
     def load_state_dict(self, state_dict):
@@ -507,7 +507,12 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         """
         if 'loss_scaler' in state_dict:
             # init from the state dict
-            self.scaler = state_dict['loss_scaler']
+            if isinstance(state_dict['loss_scaler'], float):
+                # new method, restore the float
+                self.scaler.loss_scale = state_dict['loss_scaler']
+            else:
+                # old method, we stored the entire loss scaler
+                self.scaler.loss_scale = state_dict['loss_scaler'].loss_scale
 
         self.optimizer.load_state_dict(state_dict)
 

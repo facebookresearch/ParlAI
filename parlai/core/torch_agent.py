@@ -981,7 +981,7 @@ class TorchAgent(ABC, Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            if self.fp16_impl == 'pytorch':
+            if self.fp16_impl == 'safe':
                 self.optimizer = SafeFP16Optimizer(self.optimizer)
             else:
                 # Using memory efficient optimizer
@@ -1002,6 +1002,7 @@ class TorchAgent(ABC, Agent):
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
             logging.warn('Not loading optim state since optim class changed.')
+            return False
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
@@ -1024,7 +1025,7 @@ class TorchAgent(ABC, Agent):
                     warn_once(
                         'WARNING: not loading optim state since model params changed.'
                     )
-                return
+                return True
             else:
                 # previously trained in fp32, loading in fp32.
                 # no special treatment needed.
@@ -1033,10 +1034,12 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
+                return False
             except (ValueError, KeyError):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
+                return False
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -2130,24 +2133,28 @@ class TorchAgent(ABC, Agent):
             # finally time to perform the update.
             self.optimizer.update_master_grads()
 
-        if self.opt.get('gradient_clip', -1) > 0:
+        if self.opt.get('gradient_clip', -1) > 0 or self.fp16:
             if self.fp16:
+                # clip grad norm is where we check for fp16 overflows, so we need
+                # to do it regardless of whether gradient clipping is off
                 grad_norm = self.optimizer.clip_master_grads(self.opt['gradient_clip'])
             else:
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
-            self.global_metrics.add(
-                'clip',
-                GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
-            )
+            if self.opt.get('gradient_clip', -1) > 0:
+                self.global_metrics.add(
+                    'clip',
+                    GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
+                )
         else:
             parameters = self.model.parameters()
             grad_norm = compute_grad_norm(parameters)
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
 
         if self.fp16:
+            print(self.optimizer.loss_scale, self.scheduler.get_last_lr())
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
             )

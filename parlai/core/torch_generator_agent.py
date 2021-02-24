@@ -535,12 +535,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
-            self.init_optim(
+            was_reset = self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'),
             )
-            self.build_lr_scheduler(states, hard_reset=is_finetune)
+            if was_reset and not is_finetune:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
         if shared is None and is_distributed():
             device_ids = None if self.model_parallel else [self.opt['gpu']]
@@ -628,6 +630,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         This is also used in distributed mode to force a worker to sync with others.
         """
+        return
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 self._control_local_metrics(disabled=True)

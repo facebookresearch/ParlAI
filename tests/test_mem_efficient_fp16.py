@@ -61,28 +61,28 @@ class TestMemEfficientFP16(unittest.TestCase):
             valid1, test1 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
-                    task='integration_tests:candidate',
-                    model='transformer/ranker',
+                    task='integration_tests',
+                    model='transformer/generator',
                     optimizer='adam',
                     fp16=True,
                     fp16_impl='safe',
-                    learningrate=7e-3,
+                    learningrate=1e-3,
                     batchsize=32,
                     num_epochs=0.25,
                     n_layers=1,
                     n_heads=1,
                     ffn_size=32,
                     embedding_size=32,
-                    warmup_updates=1,
+                    warmup_updates=100,
                     lr_scheduler='invsqrt',
+                    skip_generation=True,
                 )
             )
 
             valid2, test2 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
-                    task='integration_tests:candidate',
-                    model='transformer/ranker',
+                    task='integration_tests',
                     fp16_impl='mem_efficient',
                     num_epochs=0.5,
                     fp16=True,
@@ -106,8 +106,8 @@ class TestMemEfficientFP16(unittest.TestCase):
             valid1, test1 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
-                    task='integration_tests:candidate',
-                    model='transformer/ranker',
+                    task='integration_tests',
+                    model='transformer/generator',
                     optimizer='adam',
                     fp16=True,
                     fp16_impl='mem_efficient',
@@ -120,17 +120,17 @@ class TestMemEfficientFP16(unittest.TestCase):
                     embedding_size=32,
                     warmup_updates=1,
                     lr_scheduler='invsqrt',
+                    skip_generation=True,
                 )
             )
 
             valid2, test2 = testing_utils.train_model(
                 dict(
                     model_file=model_file,
-                    task='integration_tests:candidate',
-                    model='transformer/ranker',
+                    task='integration_tests',
+                    model='transformer/generator',
                     fp16_impl='safe',
                     num_epochs=0.5,
-                    fp16=True,
                 )
             )
 
