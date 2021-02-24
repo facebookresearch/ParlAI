@@ -719,7 +719,7 @@ class TorchAgent(ABC, Agent):
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
             # check that the implementation requested is available
-            self.fp16_impl = self.opt.get('fp16_impl', 'pytorch')
+            self.fp16_impl = self.opt.get('fp16_impl', 'safe')
 
         if shared is None:
             # intitialize any important structures from scratch
