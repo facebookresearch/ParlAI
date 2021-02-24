@@ -17,9 +17,12 @@ from parlai.agents.transformer.functions import (
     create_position_codes,
     get_n_positions_from_options,
 )
-from parlai.agents.transformer.modules.attention import MultiHeadAttention
-from parlai.agents.transformer.modules.ffn import TransformerFFN
-from parlai.agents.transformer.modules.layer_norm import LayerNorm, normalize
+from parlai.agents.transformer.modules import (
+    LayerNorm,
+    MultiHeadAttention,
+    normalize,
+    TransformerFFN,
+)
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 

@@ -6,8 +6,7 @@
 import torch.nn as nn
 
 from parlai.agents.transformer.functions import create_embeddings
-from parlai.agents.transformer.modules.attention import BasicAttention
-from parlai.agents.transformer.modules.encoder import TransformerEncoder
+from parlai.agents.transformer.modules import BasicAttention, TransformerEncoder
 
 
 class TransformerMemNetModel(nn.Module):
