@@ -23,6 +23,7 @@ from parlai.core.params import ParlaiParser
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
+import warnings
 import torch
 import parlai.utils.logging as logging
 from torch import optim
@@ -36,7 +37,7 @@ from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
 from parlai.utils.fp16 import (
-    PytorchFP16Optimizer,
+    SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
     MemoryEfficientFP16Adam,
     Adafactor,
@@ -478,8 +479,8 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '--fp16-impl',
             type=str,
-            default='pytorch',
-            choices=['apex', 'mem_efficient'],
+            default='safe',
+            choices=['safe', 'mem_efficient'],
             help='Implementation of FP16 to use',
         )
         agent.add_argument(
@@ -981,7 +982,7 @@ class TorchAgent(ABC, Agent):
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
             if self.fp16_impl == 'pytorch':
-                self.optimizer = PytorchFP16Optimizer(self.optimizer)
+                self.optimizer = SafeFP16Optimizer(self.optimizer)
             else:
                 # Using memory efficient optimizer
                 opt_name = opt['optimizer']
@@ -1006,21 +1007,19 @@ class TorchAgent(ABC, Agent):
             optimstate_fp16 = 'loss_scaler' in optim_states
             if self.fp16 and optimstate_fp16:
                 # previously trained in fp16, now we're training in fp16.
-                # ideally no action needed, but APEX broke backwards
-                # compatibility and this is the hack around it.
-                optim_states['loss_scaler'] = self.optimizer.state_dict()['loss_scaler']
+                pass
             elif optimstate_fp16 and not self.fp16:
                 # old optimizer was fp16 but now we're doing fp32,
-                # if apex, drop the fp16 wrapper from the state_dict and just load
+                # if pytorch, drop the fp16 wrapper from the state_dict and just load
                 # the fp16 weights into the fp32 tensors
                 if 'optimizer_state_dict' in optim_states:
-                    # trained with apex
+                    # trained with apex, pull in the old state
                     optim_states = optim_states['optimizer_state_dict']
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
                 try:
-                    self.optimizer.optimizer.load_state_dict(optim_states)
+                    self.optimizer.load_state_dict(optim_states)
                 except ValueError:
                     warn_once(
                         'WARNING: not loading optim state since model params changed.'
@@ -1825,7 +1824,10 @@ class TorchAgent(ABC, Agent):
         # lr scheduler
         states['number_training_updates'] = self._number_training_updates
         if getattr(self, 'scheduler', None):
-            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            with warnings.catch_warnings():
+                # prevent an annoying pytorch warning us to save optimizer state
+                warnings.simplefilter("ignore")
+                states['lr_scheduler'] = self.scheduler.get_state_dict()
             states['lr_scheduler_type'] = self.opt['lr_scheduler']
             states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
@@ -1903,6 +1905,11 @@ class TorchAgent(ABC, Agent):
     def upgrade_opt(cls, opt_from_disk: Opt):
         # call the parent upgrades
         opt_from_disk = super(TorchAgent, cls).upgrade_opt(opt_from_disk)
+
+        if 'fp16_impl' in opt_from_disk:
+            # 2021-02-23: we removed apex and replaced it with our own thing
+            if opt_from_disk['fp16_impl'] == 'apex':
+                opt_from_disk['fp16_impl'] = 'safe'
 
         if 'hf_skip_special_tokens' in opt_from_disk:
             # 2020-10-28: we killed the --hf-skip-special-tokens option

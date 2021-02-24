@@ -4,21 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-try:
-    import apex  # noqa: F401
-
-    APEX_AVAILABLE = True
-except ImportError:
-    APEX_AVAILABLE = False
-
-
 import unittest
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
 
 
-@unittest.skipIf(APEX_AVAILABLE, "Apex is installed, can't test its absence.")
 class TestNoApex(unittest.TestCase):
     """
     Test if some models that were pretrained with APEX.

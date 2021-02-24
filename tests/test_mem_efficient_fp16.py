@@ -51,11 +51,9 @@ class TestMemEfficientFP16(unittest.TestCase):
                 )
             )
 
-    # we don't currently install apex in CircleCI for a variety of reasons
-    @testing_utils.skipIfCircleCI
-    def test_resuming_apex2memeff(self):
+    def test_resuming_safe2memeff(self):
         """
-        Test switching from memory efficient fp16 to apex fp16.
+        Test switching from safe fp16 to memory efficient fp16
         """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
@@ -67,7 +65,7 @@ class TestMemEfficientFP16(unittest.TestCase):
                     model='transformer/ranker',
                     optimizer='adam',
                     fp16=True,
-                    fp16_impl='apex',
+                    fp16_impl='safe',
                     learningrate=7e-3,
                     batchsize=32,
                     num_epochs=0.25,
@@ -98,11 +96,9 @@ class TestMemEfficientFP16(unittest.TestCase):
                 'Number of updates is not increasing',
             )
 
-    # we don't currently install apex in CircleCI for a variety of reasons
-    @testing_utils.skipIfCircleCI
-    def test_resuming_memeff2apex(self):
+    def test_resuming_memeff2safe(self):
         """
-        Test switching from memory efficient fp16 to apex fp16.
+        Test switching from memory efficient fp16 to safe fp16.
         """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
@@ -115,7 +111,7 @@ class TestMemEfficientFP16(unittest.TestCase):
                     optimizer='adam',
                     fp16=True,
                     fp16_impl='mem_efficient',
-                    learningrate=7e-3,
+                    learningrate=1e-3,
                     batchsize=32,
                     num_epochs=0.25,
                     n_layers=1,
@@ -132,7 +128,7 @@ class TestMemEfficientFP16(unittest.TestCase):
                     model_file=model_file,
                     task='integration_tests:candidate',
                     model='transformer/ranker',
-                    fp16_impl='apex',
+                    fp16_impl='safe',
                     num_epochs=0.5,
                     fp16=True,
                 )

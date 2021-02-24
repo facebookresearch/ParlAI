@@ -88,7 +88,7 @@ def has_overflow(grad_norm):
     return False
 
 
-class PytorchFP16Optimizer(torch.optim.Optimizer):
+class SafeFP16Optimizer(torch.optim.Optimizer):
     def __init__(self, optimizer):
         self.fp16_params = self._get_parameters(optimizer)
         self.fp32_params = self._build_fp32_params(self.fp16_params, flatten=False)
@@ -140,10 +140,10 @@ class PytorchFP16Optimizer(torch.optim.Optimizer):
         """Return the optimizer's state dict."""
         state_dict = self.optimizer.state_dict()
         if self.scaler is not None:
-            state_dict['loss_scale'] = self.scaler.loss_scale
+            state_dict['loss_scaler'] = self.scaler.loss_scale
         return state_dict
 
-    def load_state_dict(self, state_dict, optimizer_overrides=None):
+    def load_state_dict(self, state_dict):
         """Load an optimizer state dict.
 
         In general we should prefer the configuration of the existing optimizer
@@ -151,9 +151,9 @@ class PytorchFP16Optimizer(torch.optim.Optimizer):
         allows us to resume training from a checkpoint using a new set of
         optimizer args.
         """
-        if 'loss_scale' in state_dict and self.scaler is not None:
-            self.scaler.loss_scale = state_dict['loss_scale']
-        self.optimizer.load_state_dict(state_dict, optimizer_overrides)
+        if 'loss_scaler' in state_dict and self.scaler is not None:
+            self.scaler.loss_scale = state_dict['loss_scaler']
+        self.optimizer.load_state_dict(state_dict)
 
     def backward(self, loss, update_master_grads=False):
         """Computes the sum of gradients of the given tensor w.r.t. graph leaves.
@@ -209,6 +209,7 @@ class PytorchFP16Optimizer(torch.optim.Optimizer):
             prev_scale = self.scaler.loss_scale
             self.scaler.update_scale(overflow)
             if overflow:
+                self.zero_grad()
                 if self.scaler.loss_scale <= self.min_loss_scale:
                     # Use FloatingPointError as an uncommon error that parent
                     # functions can safely catch to stop training.
@@ -220,7 +221,9 @@ class PytorchFP16Optimizer(torch.optim.Optimizer):
                             'increasing the batch size.'
                         ).format(self.min_loss_scale)
                     )
-                logging.info('setting loss scale to: ' + str(self.scaler.loss_scale))
+                    logging.info(
+                        f'Overflow: setting loss scale to {self.scaler.loss_scale}'
+                    )
 
         return grad_norm
 
@@ -276,7 +279,7 @@ class DynamicLossScaler(object):
         init_scale: float = 2.0 ** 15,
         scale_factor: float = 2.0,
         scale_window: int = 2000,
-        tolerance: float = 0.05,
+        tolerance: float = 0.00,
         threshold: float = None,
     ):
         """
@@ -353,7 +356,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py#L382>
 
     This allows you to train bigger models on a single GPU, but can be unstable.
-    Opt for the APEX implementation if you do not have concerns about memory.
+    Opt for the Pytorch implementation if you do not have concerns about memory.
 
     :param params:
         Model parameters

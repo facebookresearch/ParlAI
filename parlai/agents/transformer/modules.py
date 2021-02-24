@@ -29,31 +29,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import neginf, PipelineHelper
 
-try:
-    from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
-
-    APEX_LAYER_NORM = True
-except ImportError:
-    from torch.nn import LayerNorm
-
-    APEX_LAYER_NORM = False
-
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
-
-
-def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm.
-    """
-    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
-    if APEX_LAYER_NORM and not is_cpu:
-        # fused_layer_norm has a bug around multi-device networks.
-        # https://github.com/NVIDIA/apex/issues/770
-        # https://github.com/NVIDIA/apex/issues/371
-        with torch.cuda.device(tensor.device):
-            return norm_layer(tensor)
-    else:
-        return norm_layer(tensor)
 
 
 def _create_embeddings(dictionary, embedding_size, padding_idx):
@@ -443,7 +419,7 @@ class TransformerEncoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -586,7 +562,7 @@ class TransformerEncoder(nn.Module):
         tensor, mask = self.forward_embedding(input, positions, segments)
 
         if self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
@@ -597,7 +573,7 @@ class TransformerEncoder(nn.Module):
         tensor = self.forward_layers(tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
@@ -647,14 +623,14 @@ class TransformerEncoderLayer(nn.Module):
         self.attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
-        self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = TransformerFFN(
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
             activation=self.activation,
         )
-        self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -663,17 +639,17 @@ class TransformerEncoderLayer(nn.Module):
         """
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor = residual + self.dropout(self.ffn(tensor))
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor
 
@@ -747,7 +723,7 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = LayerNorm(self.dim, eps=LAYER_NORM_EPS)
+            self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
             if self.variant == 'xlm':
                 warn_once(
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
@@ -806,7 +782,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
@@ -816,7 +792,7 @@ class TransformerDecoder(nn.Module):
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         if self.variant == 'bart':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor
 
@@ -894,7 +870,7 @@ class TransformerDecoder(nn.Module):
         )
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor, new_incr_state
 
@@ -965,17 +941,17 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = TransformerFFN(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
-        self.norm3 = LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
     def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
@@ -992,7 +968,7 @@ class TransformerDecoderLayer(nn.Module):
         # first self attn
         residual = x
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm1)
+            x = self.norm1(x)
 
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
@@ -1004,12 +980,12 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = _normalize(x, self.norm1)
+            x = self.norm1(x)
 
         residual = x
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm2)
+            x = self.norm2(x)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -1021,17 +997,17 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = _normalize(x, self.norm2)
+            x = self.norm2(x)
 
         # finally the ffn
         residual = x
         if self.variant == 'prelayernorm':
-            x = _normalize(x, self.norm3)
+            x = self.norm3(x)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = _normalize(x, self.norm3)
+            x = self.norm3(x)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
