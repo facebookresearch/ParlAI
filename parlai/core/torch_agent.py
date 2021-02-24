@@ -27,6 +27,7 @@ import warnings
 import torch
 import parlai.utils.logging as logging
 from torch import optim
+import fairscale
 
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
