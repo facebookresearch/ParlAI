@@ -282,6 +282,9 @@ class TransformerEncoder(nn.Module):
         If none, one is created for this encoder.
     :param int padding_idx: Reserved padding index in the embeddings matrix.
     :param str reduction_type: Type of reduction at the end of the encoder.
+    :param int n_segments: Number of segments/lang/sentence embeddings.
+    :param bool embeddings_scale: Scale embeddings relative to their dimensionality.
+        Found useful in fairseq.
     """
 
     def __init__(
@@ -291,6 +294,8 @@ class TransformerEncoder(nn.Module):
         embedding=None,
         padding_idx=0,
         reduction_type='mean',
+        n_segments=None,
+        embeddings_scale=None,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -303,14 +308,14 @@ class TransformerEncoder(nn.Module):
         )
         self.n_heads = opt['n_heads']
         self.dim = self.embedding_size
-        self.embeddings_scale = opt['embeddings_scale']
+        self.embeddings_scale = embeddings_scale or opt['embeddings_scale']
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
         self.dropout_frac = opt['dropout']
         self.dropout = nn.Dropout(p=self.dropout_frac)
         self.variant = opt['variant']
-        self.n_segments = opt.get('n_segments', 0)
+        self.n_segments = n_segments or opt.get('n_segments', 0)
 
         self.n_positions = get_n_positions_from_options(opt)
         self.out_dim = self.embedding_size
