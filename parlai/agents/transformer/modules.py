@@ -26,9 +26,13 @@ import torch.cuda
 import torch.nn as nn
 import torch.nn.functional as F
 
+import parlai.utils.torch as parlai_torch
+
+# Preferred to `from parlai.utils.torch import ...`, given
+# https://github.com/pytorch/pytorch/issues/52312
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import neginf, PipelineHelper
+from parlai.utils.torch import PipelineHelper
 
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
@@ -506,8 +510,8 @@ class TransformerEncoder(nn.Module):
         #     # condition
         #     tensor = self._apply_model_parallel(tensor, mask)
         # else:
-        for i in range(self.n_layers):
-            tensor = self.layers[i](tensor, mask)
+        for layer in self.layers:  # self.n_layers not recognized as an attribute
+            tensor = layer(tensor, mask)
 
         return tensor
 
@@ -526,20 +530,22 @@ class TransformerEncoder(nn.Module):
             returns the reduced tensor, and mask if appropriate
         """
         tensor *= self.output_scaling
-        if self.reduction_type == 'first':
-            return tensor[:, 0, :], None
-        elif self.reduction_type == 'max':
-            return tensor.max(dim=1)[0], None
-        elif self.reduction_type == 'mean':
-            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
-            output = tensor.sum(dim=1) / divisor
-            return output, None
-        elif self.reduction_type is None or 'none' in self.reduction_type:
-            return tensor, mask
-        else:
-            raise ValueError(
-                "Can't handle --reduction-type {}".format(self.reduction_type)
-            )
+        # TODO: get this working with all reduction types!! Currently having trouble
+        #  getting JIT to recognize self.reduction_type
+        # if self.reduction_type == 'first':
+        #     return tensor[:, 0, :], None
+        # elif self.reduction_type == 'max':
+        #     return tensor.max(dim=1)[0], None
+        # elif self.reduction_type == 'mean':
+        #     divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
+        #     output = tensor.sum(dim=1) / divisor
+        #     return output, None
+        # elif self.reduction_type is None or 'none' in self.reduction_type:
+        return tensor, mask
+        # else:
+        #     raise ValueError(
+        #         "Can't handle --reduction-type {}".format(self.reduction_type)
+        #     )
 
     def forward(  # type: ignore
         self,
@@ -576,10 +582,11 @@ class TransformerEncoder(nn.Module):
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
-        if out_mask is not None:
-            return tensor, out_mask
-        else:
-            return tensor
+        # TODO: revert once supporting other reduction types
+        # if out_mask is not None:
+        return tensor, out_mask
+        # else:
+        # return tensor
 
     def _apply_model_parallel(self, tensor, mask):
         """
@@ -639,7 +646,8 @@ class TransformerEncoderLayer(nn.Module):
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = self.norm1(tensor)
-        attended_tensor = self.attention(tensor, mask=mask)[0]
+        attended_tensor = self.attention(tensor, key=None, value=None, mask=mask)[0]
+        # Problematic to set None as default with type Optional[torch.Tensor]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = self.norm1(tensor)
@@ -761,7 +769,7 @@ class TransformerDecoder(nn.Module):
     def forward_embedding(
         self,
         input: torch.Tensor,
-        positions: Optional[torch.Tensor] = None,
+        positions: torch.Tensor,
         segments: Optional[torch.Tensor] = None,
     ):
         """
@@ -834,7 +842,9 @@ class TransformerDecoder(nn.Module):
 
         return tensor, new_incr_state
 
-    def forward(self, input, encoder_state, incr_state=None):
+    def forward(
+        self, input, encoder_state: Tuple[torch.Tensor, torch.Tensor], incr_state=None
+    ):
         """
         Forward pass.
 
@@ -849,8 +859,10 @@ class TransformerDecoder(nn.Module):
         encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
-        positions = input.new(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = torch.arange(
+            seq_len, dtype=torch.long, device=input.device
+        ).unsqueeze(0)
+        # tensor.new() deprecated
 
         if incr_state is not None:
             # We're doing incremental decoding, so select only the most recent position
@@ -952,7 +964,13 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-    def forward(self, x, encoder_output, encoder_mask, incr_state=None):
+    def forward(
+        self,
+        x,
+        encoder_output,
+        encoder_mask,
+        incr_state: Optional[Dict[str, Optional[Dict[str, torch.Tensor]]]],
+    ):
         """
         Forward pass.
 
@@ -972,10 +990,13 @@ class TransformerDecoderLayer(nn.Module):
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
             query=x,
+            key=None,
+            value=None,
             mask=decoder_mask,
             incr_state=incr_state.get('self_attn'),
             static_kv=False,
         )[:2]
+        # Problematic to set None as default with type Optional[torch.Tensor]
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
@@ -1019,7 +1040,8 @@ class TransformerDecoderLayer(nn.Module):
         bsz = x.size(0)
         time = x.size(1)
         # make sure that we don't look into the future
-        mask = torch.tril(x.new(time, time).fill_(1))
+        mask = torch.tril(torch.ones(time, time, dtype=x.dtype, device=x.device))
+        # tensor.new() deprecated and tensor.new_ones() unsupported
         # broadcast across batch
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask
@@ -1042,7 +1064,20 @@ class TransformerDecoderLayer(nn.Module):
         }
 
 
-class TransformerGeneratorModel(TorchGeneratorModel):
+class NegInfMixin:
+    # TODO: write docstring: basically, a way to get modules to use neginf. Avoids "Perhaps it is a closed over global variable? If so, please consider passing it in as an argument or use a local variable instead" error
+
+    def _neginf(self, dtype: torch.dtype) -> float:
+        """
+        Return a representable finite number near -inf for a dtype.
+        """
+        if dtype is torch.float16:
+            return float(-parlai_torch.NEAR_INF_FP16)
+        else:
+            return float(-parlai_torch.NEAR_INF)
+
+
+class TransformerGeneratorModel(TorchGeneratorModel, NegInfMixin):
     """
     Implements a full generator model, with one encoder and one decoder.
     """
@@ -1195,11 +1230,11 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         output = F.linear(tensor, self.embeddings.weight)
         # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
         # we need to force their probability of generation to be 0.
-        output[:, :, self.start_idx] = neginf(output.dtype)
+        output[:, :, self.start_idx] = self._neginf(output.dtype)
         return output
 
 
-class BasicAttention(nn.Module):
+class BasicAttention(nn.Module, NegInfMixin):
     """
     Implements simple/classical attention.
     """
@@ -1212,7 +1247,6 @@ class BasicAttention(nn.Module):
         self.dim = dim
         self.get_weights = get_weights
         self.residual = residual
-
 
     def forward(self, xs, ys, mask_ys=None, values=None):
         """
@@ -1240,7 +1274,7 @@ class BasicAttention(nn.Module):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill_(attn_mask, neginf(l1.dtype))
+            l1.masked_fill_(attn_mask, self._neginf(l1.dtype))
         l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys
@@ -1256,7 +1290,7 @@ class BasicAttention(nn.Module):
             return lhs_emb.squeeze(self.dim - 1)
 
 
-class MultiHeadAttention(nn.Module):
+class MultiHeadAttention(nn.Module, NegInfMixin):
     """
     Implements MultiHeadAttention; this is the core workhorse of the Transformer.
 
@@ -1298,9 +1332,9 @@ class MultiHeadAttention(nn.Module):
         # https://github.com/pytorch/pytorch/pull/31057
         self,
         query: torch.Tensor,
-        key: Optional[torch.Tensor] = None,
-        value: Optional[torch.Tensor] = None,
-        mask: torch.Tensor = None,
+        key: Optional[torch.Tensor],
+        value: Optional[torch.Tensor],
+        mask: torch.Tensor,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
@@ -1335,18 +1369,6 @@ class MultiHeadAttention(nn.Module):
         dim_per_head = dim // n_heads
         scale = math.sqrt(dim_per_head)
 
-        def prepare_head(tensor):
-            # input is [batch_size, seq_len, n_heads * dim_per_head]
-            # output is [batch_size * n_heads, seq_len, dim_per_head]
-            bsz, seq_len, _ = tensor.size()
-            tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
-            tensor = (
-                tensor.transpose(1, 2)
-                .contiguous()
-                .view(batch_size * n_heads, seq_len, dim_per_head)
-            )
-            return tensor
-
         # q, k, v are the transformed values
         if key is None and value is None:
             # self attention
@@ -1360,6 +1382,7 @@ class MultiHeadAttention(nn.Module):
         assert key is not None  # let mypy know we sorted this
         _, _key_len, dim = key.size()
 
+        assert value is not None  # For TorchScript typing check
         q = self._prepare_head(self.q_lin(query), batch_size, n_heads, dim_per_head)
         k = self._prepare_head(self.k_lin(key), batch_size, n_heads, dim_per_head)
         v = self._prepare_head(self.v_lin(value), batch_size, n_heads, dim_per_head)
@@ -1414,7 +1437,7 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size * n_heads, query_len, full_key_len)
         )
         assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
+        dot_prod.masked_fill_(attn_mask, self._neginf(dot_prod.dtype))
 
         attn_weights = F.softmax(
             dot_prod, dim=-1, dtype=torch.float  # type: ignore

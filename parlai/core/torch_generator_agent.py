@@ -175,9 +175,10 @@ class TorchGeneratorModel(nn.Module, ABC):
         :return initial_input:
             initial input for the decoder
         """
-        return torch.LongTensor([self.START_IDX]).expand(
+        return (torch.ones(1, dtype=torch.long) * self.START_IDX).expand(
             bsz * beam_size, 1
         )  # type: ignore
+        # Not using torch.LongTensor() because of 4th bullet point at https://pytorch.org/tutorials/beginner/deploy_seq2seq_hybrid_frontend_tutorial.html#changes
 
     def _get_next_decoder_input(
         self,

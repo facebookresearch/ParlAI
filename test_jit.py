@@ -6,9 +6,18 @@
 
 import torch.jit
 
-from parlai.core.agents import create_agent_from_model_file
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser
 
-agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
+parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
+args_ = f"""\
+--model-file zoo:blender/blender_90M/model \
+--no-cuda \
+"""
+opt = parser.parse_args(args_.split())
+agent = create_agent(opt, requireModelExists=True)
+# Using create_agent() instead of create_agent_from_model_file() because I couldn't get
+# --no-cuda to be recognized with the latter
 # get the tokenization
 obs = agent.observe({'text': 'hello world', 'episode_done': True})
 batch = agent.batchify([obs])
