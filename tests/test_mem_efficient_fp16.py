@@ -53,7 +53,7 @@ class TestMemEfficientFP16(unittest.TestCase):
 
     def test_resuming_safe2memeff(self):
         """
-        Test switching from safe fp16 to memory efficient fp16
+        Test switching from safe fp16 to memory efficient fp16.
         """
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model')
