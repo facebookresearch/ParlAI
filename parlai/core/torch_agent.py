@@ -2154,7 +2154,6 @@ class TorchAgent(ABC, Agent):
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
 
         if self.fp16:
-            print(self.optimizer.loss_scale, self.scheduler.get_last_lr())
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
             )
