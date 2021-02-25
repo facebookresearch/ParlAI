@@ -808,7 +808,7 @@ class TransformerDecoder(nn.Module):
         tensor: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[int, torch.Tensor],
+        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -969,7 +969,7 @@ class TransformerDecoderLayer(nn.Module):
         x,
         encoder_output,
         encoder_mask,
-        incr_state: Optional[Dict[str, Optional[Dict[str, torch.Tensor]]]],
+        incr_state: Optional[Dict[str, Dict[str, torch.Tensor]]],
     ):
         """
         Forward pass.
@@ -979,7 +979,7 @@ class TransformerDecoderLayer(nn.Module):
         """
 
         if incr_state is None:
-            incr_state = {}
+            incr_state = {'self_attn': {}, 'encoder_attn': {}}
 
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
@@ -993,7 +993,7 @@ class TransformerDecoderLayer(nn.Module):
             key=None,
             value=None,
             mask=decoder_mask,
-            incr_state=incr_state.get('self_attn'),
+            incr_state=incr_state['self_attn'],
             static_kv=False,
         )[:2]
         # Problematic to set None as default with type Optional[torch.Tensor]
@@ -1011,7 +1011,7 @@ class TransformerDecoderLayer(nn.Module):
             key=encoder_output,
             value=encoder_output,
             mask=encoder_mask,
-            incr_state=incr_state.get('encoder_attn'),
+            incr_state=incr_state['encoder_attn'],
             static_kv=True,
         )[:2]
         x = self.dropout(x)  # --dropout
