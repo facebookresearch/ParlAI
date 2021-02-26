@@ -11,13 +11,13 @@ from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
-        'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/self-dialogs.json',
+        'https://raw.githubusercontent.com/google-research-datasets/Taskmaster/master/TM-1-2019/self-dialogs.json',
         'self-dialogs.json',
         '1e590ed0ccee279e40c2fb9e083d3b9417477c6bfe35ce5b2277167698dd858d',
         zipped=False,
     ),
     DownloadableFile(
-        'https://storage.googleapis.com/dialog-data-corpus/TASKMASTER-1-2019/woz-dialogs.json',
+        'https://raw.githubusercontent.com/google-research-datasets/Taskmaster/master/TM-1-2019/woz-dialogs.json',
         'woz-dialogs.json',
         'cd3bc4e968487315d412c044d30af2bf0a4b33c3ef8b74c589f1e1fa832bf72f',
         zipped=False,
@@ -29,7 +29,7 @@ def build(opt):
     # get path to data directory
     dpath = os.path.join(opt['datapath'], 'taskmaster-1')
     # define version if any
-    version = "1.0"
+    version = "1.01"
 
     # check if data had been previously built
     if not build_data.built(dpath, version_string=version):
