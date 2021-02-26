@@ -325,8 +325,7 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         pass
 
-    @torch.jit.export
-    def jit_greedy_search(self, x: torch.Tensor, max_len: int = 128):
+    def jit_greedy_search(self, x: torch.Tensor, max_len: int = 32):
         """
         A helper function for exporting simple greedy-search models via
         TorchScript.
@@ -338,21 +337,30 @@ class TorchGeneratorModel(nn.Module, ABC):
 
         >>> TODO: write this
         """
-        incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
+        # incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
         bsz = x.size(0)
         encoder_states = self.encoder(x)
         generations = self._get_initial_decoder_input(bsz, 1).to(x.device)
         # keep track of early stopping if all generations finish
         seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
         for timestep in range(max_len):
-            latent, incr_state = self.decoder(generations, encoder_states, incr_state)
+            print(f'Timestep: {timestep:d}')
+            # latent, incr_state = self.decoder(generations, encoder_states, incr_state)
+            latent = self.decoder(generations, encoder_states)
             logits = self.output(latent[:, -1:, :])
             _, preds = logits.max(dim=2)
             seen_end = seen_end + (preds == self.END_IDX).squeeze(1)
             generations = torch.cat([generations, preds], dim=1)
-            if torch.all(seen_end):
-                break
-        return generations
+            # if torch.all(seen_end):
+            #     print('\n\n\nALL HAVE BEEN SEEN!')
+            #     break
+        padded_generations = F.pad(
+            generations, pad=(0, max_len - generations.size(1)), value=self.NULL_IDX
+        )
+        # Just pad the generation to max_len so that the generation will be the same
+        # size before and after tracing, which is needed when the tracer checks the
+        # similarity of the outputs after tracing
+        return padded_generations
 
     @torch.jit.unused
     def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
@@ -1156,14 +1164,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
-        incr_state = None
+        # incr_state = None
 
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):
                 # exit early if possible
                 break
 
-            score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
+            # score, incr_state = model.decoder(decoder_input, encoder_states, incr_state)
+            score = model.decoder(decoder_input, encoder_states)
             # only need the final hidden state to make the word prediction
             score = score[:, -1:, :]
             score = model.output(score)
@@ -1194,9 +1203,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     for i, b in enumerate(beams)
                 ]
             )
-            incr_state = model.reorder_decoder_incremental_state(
-                incr_state, incr_state_inds
-            )
+            # incr_state = model.reorder_decoder_incremental_state(
+            #     incr_state, incr_state_inds
+            # )
             selection = torch.cat(
                 [b.get_output_from_current_step() for b in beams]
             ).unsqueeze(-1)
