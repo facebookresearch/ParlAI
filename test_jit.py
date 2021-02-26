@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import torch.jit
+import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.agents import create_agent
@@ -28,89 +29,76 @@ def test_jit():
     batch = agent.batchify([obs])
     tokens = batch.text_vec
 
-    # Trace all subcomponents of the model separately
-    bsz = tokens.size(0)
-    encoder_states = agent.model.encoder(tokens)
-    generations = agent.model._get_initial_decoder_input(bsz, 1).to(tokens.device)
-    # latent, incr_state = agent.model.decoder(generations, encoder_states, incr_state)
-    latent = agent.model.decoder(generations, encoder_states)
-    traced_encoder = torch.jit.trace(agent.model.encoder, tokens)
-    # partially_traced_model = torch.jit.trace_module(
-    #     agent.model, {'_get_initial_decoder_input': (bsz, 1)}
-    # )
-    # traced_decoder = torch.jit.trace(agent.model.decoder, (generations, encoder_states))
-    # traced_output = torch.jit.trace(agent.model.output, (latent[:, -1:, :]))
+    # Script and trace the greedy search routine
+    scripted_module = torch.jit.script(JitGreedySearch(agent.model))
+    result = scripted_module(tokens)
+    print(agent._v2t(result[0].tolist()))
 
-    # Run the original greedy search and trace the result
-    scripted_function = jit_greedy_search(
-        traced_encoder=traced_encoder,
-        # partially_traced_model=partially_traced_model,
-        # traced_decoder=traced_decoder,
-        # traced_output=traced_output,
-        x=tokens,
-        end_idx=agent.model.end_idx,
-        null_idx=agent.model.NULL_IDX,
-    )
-    print(scripted_function)
-
-    # # print(result)
-    # print(agent._v2t(result[0].tolist()))
-
-    # # Trace and save the module
-    # traced_module = torch.jit.trace_module(agent.model, {'jit_greedy_search': tokens})
-    # print('Finished tracing.')
-    # traced_module.save('_traced_blender_90M.pt')
-
-    # # Run greedy search on the traced module
-    # traced_result = traced_module.jit_greedy_search(tokens)
-    # print(agent._v2t(traced_result[0].tolist()))
+    # Save the scripted module
+    scripted_module.save('_scripted_blender_90M.pt')
 
 
-@torch.jit.script
-def jit_greedy_search(
-    traced_encoder,
-    # partially_traced_model,
-    # traced_decoder,
-    # traced_output,
-    x: torch.Tensor,
-    end_idx: int,
-    null_idx: int,
-    max_len: int = 128,
-):
+class JitGreedySearch(nn.Module):
     """
-    A helper function for exporting simple greedy-search models via
-    TorchScript.
+    A helper class for exporting simple greedy-search models via TorchScript.
 
-    Models with extra inputs will need to override to include more
-    variables.
+    Models with extra inputs will need to override to include more variables.
 
     Utilize with:
 
     >>> TODO: write this
     """
-    # incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
-    bsz = x.size(0)
-    encoder_states = traced_encoder(x)
-    # generations = partially_traced_model._get_initial_decoder_input(bsz, 1).to(x.device)
-    # # keep track of early stopping if all generations finish
-    # seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
-    # for _ in range(max_len):
-    #     # latent, incr_state = self.decoder(generations, encoder_states, incr_state)
-    #     latent = traced_decoder(generations, encoder_states)
-    #     logits = traced_output(latent[:, -1:, :])
-    #     _, preds = logits.max(dim=2)
-    #     seen_end = seen_end + (preds == end_idx).squeeze(1)
-    #     generations = torch.cat([generations, preds], dim=1)
-    #     if torch.all(seen_end):
-    #         break
-    # padded_generations = F.pad(
-    #     generations, pad=(0, max_len - generations.size(1)), value=null_idx
-    # )
-    # Just pad the generation to max_len so that the generation will be the same
-    # size before and after tracing, which is needed when the tracer checks the
-    # similarity of the outputs after tracing
-    # return padded_generations
-    return 0
+
+    def __init__(self, model):
+        super().__init__()
+        sample_tokens = torch.LongTensor([[1, 2, 3, 4, 5]])
+        bsz = sample_tokens.size(0)
+        encoder_states = model.encoder(sample_tokens)
+        generations = model._get_initial_decoder_input(bsz, 1).to(sample_tokens.device)
+        # latent, incr_state = model.decoder(generations, encoder_states, incr_state)
+        latent = model.decoder(generations, encoder_states)
+        self.encoder = torch.jit.trace(model.encoder, sample_tokens)
+        self.decoder = torch.jit.trace(model.decoder, (generations, encoder_states))
+        self.partially_traced_model = torch.jit.trace_module(
+            model, {'output': (latent[:, -1:, :])}
+        )
+        self.start_idx = model.START_IDX
+        self.end_idx = model.END_IDX
+        self.null_idx = model.NULL_IDX
+
+    def forward(self, x: torch.Tensor, max_len: int = 128):
+        # incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
+        bsz = x.size(0)
+        encoder_states = self.encoder(x)
+        generations = (
+            (torch.ones(1, dtype=torch.long) * self.start_idx)
+            .expand(bsz, 1)
+            .to(x.device)
+        )
+        # Can't use TGM._get_initial_decoder_input() directly: when we do, we get a
+        # "RuntimeError: Type 'Tuple[int, int]' cannot be traced. Only Tensors and
+        # (possibly nested) Lists, Dicts, and Tuples of Tensors can be traced" error
+        # keep track of early stopping if all generations finish
+        seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
+        for _ in range(max_len):
+            # latent, incr_state = self.decoder(generations, encoder_states, incr_state)
+            latent = self.decoder(generations, encoder_states)
+            logits = self.partially_traced_model.output(latent[:, -1:, :])
+            _, preds = logits.max(dim=2)
+            seen_end = seen_end + (preds == self.end_idx).squeeze(1)
+            generations = torch.cat([generations, preds], dim=1)
+            if torch.all(seen_end):
+                break
+        padded_generations = F.pad(
+            generations,
+            pad=(0, max_len - generations.size(1)),
+            value=float(self.null_idx),
+        )
+        # Just pad the generation to max_len so that the generation will be the same
+        # size before and after tracing, which is needed when the tracer checks the
+        # similarity of the outputs after tracing. The `value` arg needs to be a float
+        # for some reason
+        return padded_generations
 
 
 if __name__ == '__main__':
