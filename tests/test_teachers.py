@@ -289,6 +289,7 @@ class TestChunkTeacher(unittest.TestCase):
             teacher = create_task_agent_from_taskname(
                 {'task': 'integration_tests', 'datatype': 'valid', 'datapath': tmpdir}
             )[0]
+            # twice to assert we reset iterators correctly
             assert len(list(teacher)) == 100
             assert len(list(teacher)) == 100
 
@@ -441,6 +442,7 @@ class TestDialogTeacher(unittest.TestCase):
     def test_iter(self):
         opt = Opt({'datatype': 'valid', 'datapath': '/tmp', 'task': 'test'})
         teacher = TupleTeacher(opt)
+        # twice to ensure we reset iterators correctly
         examples = list(teacher)
         assert len(examples) == 9
         examples = list(teacher)
