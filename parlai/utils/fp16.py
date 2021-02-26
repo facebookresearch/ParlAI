@@ -276,10 +276,15 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
 
 class DynamicLossScaler(object):
     """
-    Shamelessly stolen from Fairseq.
+    Dynamically adjusts the loss scaling factor.
 
-    Dynamically adjusts the loss scaling factor. Useful for mixed-precision training.
-    Fairseq implementation can be found here:
+    Dynamic loss scalers are important in mixed-precision training. They help
+    us avoid underflows and overflows in low-precision gradients.
+
+    See here for information:
+    <https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html#lossscaling>
+
+    Shamelessly stolen and adapted from Fairseq.
     <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py>
     """
 
@@ -365,7 +370,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py#L382>
 
     This allows you to train bigger models on a single GPU, but can be unstable.
-    Opt for the Pytorch implementation if you do not have concerns about memory.
+    Prefer the SafeFP16 implementation if you do not have concerns about memory.
 
     :param params:
         Model parameters

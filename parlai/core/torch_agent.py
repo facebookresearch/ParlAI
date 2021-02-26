@@ -899,7 +899,7 @@ class TorchAgent(ABC, Agent):
         is_train = 'train' in datatype and 'evalmode' not in datatype
         return is_train
 
-    def init_optim(self, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, params, optim_states=None, saved_optim_type=None) -> bool:
         """
         Initialize optimizer with model parameters.
 
@@ -912,6 +912,10 @@ class TorchAgent(ABC, Agent):
         :param saved_optim_type:
             type of optimizer being loaded, if changed will skip loading
             optimizer states
+
+        :returns:
+            boolean indicating whether the optimizer was initialized with
+            optim_states.
         """
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
