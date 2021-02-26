@@ -139,6 +139,16 @@ class Teacher(Agent):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        parser.add_argument(
+            '--mutators',
+            '-mut',
+            default=None,
+            help='Apply one or more mutators to the data.',
+        )
+        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
+        for m in mutators:
+            m.add_cmdline_args(parser, partial_opt)
         return parser
 
     def __init__(self, opt: Opt, shared=None):
@@ -274,22 +284,6 @@ class FixedDialogTeacher(Teacher):
 
     To see this in action, take a look at this teacher in ``tasks.vqa_v1.agents``.
     """
-
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt)
-        parser.add_argument(
-            '--mutators',
-            '-mut',
-            default=None,
-            help='Apply one or more mutators to the data.',
-        )
-        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
-        for m in mutators:
-            m.add_cmdline_args(parser, partial_opt)
-        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -2088,22 +2082,6 @@ class MultiTaskTeacher(Teacher):
     function above.
     """
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        # frustrating, multitask needs its own set of mutator arguments, sigh
-        parser.add_argument(
-            '--mutators',
-            '-mut',
-            default=None,
-            help='Apply one or more mutators to the data.',
-        )
-        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
-        for m in mutators:
-            m.add_cmdline_args(parser, partial_opt)
-        return parser
-
     def __init__(self, opt: Opt, shared=None):
         self.tasks: List[Agent] = []
         self.opt = opt
@@ -2453,7 +2431,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                     # See the race condition described around "gross hack" in
                     # _enqueue_chunks.  if we win the race condition, then
                     # catch it here
-                    logging.debug("Won the chunk_teacher reset race condition")
                     return (None, chunk_reset_cnt)
             else:
                 # if we're in valid/test, we need to actually signal the end
@@ -2504,9 +2481,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.reset_counter.increment()
             # drain the queues and refill the chunk queue with a new epoch.
             # additionally, we have to relaunch the loader
-            # if self.data_loader.last_future: # and not self.data_loader.last_future.done():
-            #     self.data_loader.last_future.cancel()
-            # self._drain(self.data_loader.request_queue)
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
