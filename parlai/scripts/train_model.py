@@ -28,6 +28,7 @@ parlai train_model --model drqa --task babi:Task10k:1 --model-file /tmp/model --
 import json
 import numpy as np
 import signal
+from typing import Tuple
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
@@ -39,7 +40,7 @@ from parlai.core.metrics import (
     dict_report,
 )
 from parlai.core.params import ParlaiParser, print_announcements
-from parlai.core.worlds import create_task
+from parlai.core.worlds import create_task, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.utils.distributed import (
     sync_object,
@@ -659,6 +660,49 @@ class TrainLoop:
 
         return eta
 
+    def _get_time(self, world: World) -> Tuple[float, float, float]:
+        """
+        Return train, log, and validate timing.
+
+        If relying on the time for validation/logging/max train time purposes,
+        we sync and return primary worker's time.
+
+        Otherwise, it's not super relevant what we do here.
+
+        **SIDE EFFECT**: Update _total_epochs trained.
+
+        :param world:
+            current running world
+
+        :return (train, log, valid):
+            return time for each of train, log, and validation
+        """
+        if any(
+            getattr(self, k) < float('inf')
+            for k in ['max_train_time', 'log_every_n_secs', 'validation_every_n_secs']
+        ):
+            self._total_epochs = self._preempted_epochs + sum(
+                all_gather_list(world.get_total_epochs())
+            )
+            train_time, log_time, validate_time = sync_object(
+                (
+                    self.train_time.time(),
+                    self.log_time.time(),
+                    self.validate_time.time(),
+                )
+            )
+        else:
+            train_time, log_time, validate_time = (
+                self.train_time.time(),
+                self.log_time.time(),
+                self.validate_time.time(),
+            )
+            self._total_epochs = self._preempted_epochs + (
+                world.get_distributed_size() * world.get_total_epochs()
+            )
+
+        return train_time, log_time, validate_time
+
     def log(self):
         """
         Output a training log entry.
@@ -724,37 +768,14 @@ class TrainLoop:
                     break
 
                 self.parleys += 1
-                self._train_steps = int(self.parleys / self.update_freq)
+                self._train_steps = self.parleys // self.update_freq
                 self._last_log_steps += 1 / self.update_freq
 
+                # the following additionally updates self._total_epochs
+                train_time, log_time, validate_time = self._get_time(world)
                 # get the total training examples done, compute epochs
-                self._total_epochs = self._preempted_epochs + sum(
-                    all_gather_list(world.get_total_epochs())
-                )
                 exs_per_epoch = world.num_examples()
                 self._total_exs = int(np.round(self._total_epochs * exs_per_epoch))
-                # and use the primary worker's timings for everything
-                if any(
-                    getattr(self, k) < float('inf')
-                    for k in [
-                        'max_train_time',
-                        'log_every_n_secs',
-                        'validation_every_n_secs',
-                    ]
-                ):
-                    train_time, log_time, validate_time = sync_object(
-                        (
-                            self.train_time.time(),
-                            self.log_time.time(),
-                            self.validate_time.time(),
-                        )
-                    )
-                else:
-                    train_time, log_time, validate_time = (
-                        self.train_time.time(),
-                        self.log_time.time(),
-                        self.validate_time.time(),
-                    )
 
                 # check counters and timers
                 if self._total_epochs >= self.max_num_epochs:
