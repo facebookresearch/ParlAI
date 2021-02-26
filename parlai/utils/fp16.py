@@ -12,7 +12,6 @@ from itertools import chain
 from typing import Optional
 
 import parlai.utils.logging as logging
-from parlai.utils.misc import error_once
 
 try:
     import torch
@@ -60,9 +59,12 @@ def clip_grad_norm(params, max_norm):
     """
     Clips grad norm.
     """
+    if isinstance(params, torch.Tensor):
+        params = [params]
+    # make sure any generators are expanded
     params = list(params)
     if len(params) == 1:
-        p = params[0]
+        p = params[0].grad
         grad_norm = torch.norm(p)
         if grad_norm > max_norm > 0:
             clip_coef = max_norm / (grad_norm + 1e-6)
@@ -85,68 +87,186 @@ def has_overflow(grad_norm):
     return False
 
 
-###################################################
-## APEX Wrapper
-###################################################
+class SafeFP16Optimizer(torch.optim.Optimizer):
+    def __init__(self, optimizer):
+        self.fp16_params = self._get_parameters(optimizer)
+        self.fp32_params = self._build_fp32_params(self.fp16_params, flatten=False)
+        self.optimizer = optimizer
 
+        # we want the optimizer to be tracking the fp32 parameters
+        if len(optimizer.param_groups) != 1:
+            # future implementers: this should hopefully be a matter of just
+            # iterating through the param groups and keeping track of the pointer
+            # through the fp32_params
+            raise NotImplementedError("Need to implement the parameter group transfer.")
+        optimizer.param_groups[0]['params'] = self.fp32_params
 
-def fp16_optimizer_wrapper(
-    optimizer: torch.optim.Optimizer,  # type: ignore
-    verbose: bool = False,
-    dynamic_loss_scale: bool = True,
-    loss_initial_scale: float = 2.0 ** 17,
-):
-    """
-    Wrap the an optimizer with FP16 loss scaling protection.
+        self.scaler = DynamicLossScaler(2.0 ** 15)
+        self.min_loss_scale = 2 ** -5
 
-    Requires apex to be installed. Will throw an ImportError if it is not.
+    @classmethod
+    def _get_parameters(cls, optimizer):
+        params = []
+        for pg in optimizer.param_groups:
+            params += list(pg['params'])
+        return params
 
-    :param optimizer:
-        Any torch optimizer
-    :param bool verbose:
-        Enables verbose output in the FP16 optimizer. Turning this on can help
-        debug when FP16 is underperforming.
-    :param bool dynamic_loss_scaling:
-        FP16 requires loss scaling to avoid underflows. It is recommended this
-        stays on, but advanced users may want it off.
-    :param float loss_initial_scale:
-        Initial loss scaling. Default chosen empirically, but models with very low
-        or high loss values may need this adjusted. Stick with powers of 2.
+    @classmethod
+    def _build_fp32_params(cls, params, flatten=True):
+        # create FP32 copy of parameters and grads
+        if flatten:
+            total_param_size = sum(p.data.numel() for p in params)
+            fp32_params = torch.zeros(
+                total_param_size, dtype=torch.float, device=params[0].device
+            )
+            offset = 0
+            for p in params:
+                numel = p.data.numel()
+                fp32_params[offset : offset + numel].copy_(p.data.view(-1))
+                offset += numel
+            fp32_params = torch.nn.Parameter(fp32_params)
+            fp32_params.grad = fp32_params.data.new(total_param_size)
+            return fp32_params
+        else:
+            fp32_params = []
+            for p in params:
+                p32 = torch.nn.Parameter(p.data.float())
+                p32.grad = torch.zeros_like(p32.data)
+                fp32_params.append(p32)
+            return fp32_params
 
-    :returns:
-        An APEX FP16 optimizer. Please note this has different requirements on
-        how backward() and step() are called.
-    """
-    try:
-        import apex.fp16_utils
-    except ImportError:
-        raise ImportError(
-            'No fp16 support without apex. Please install it from '
-            'https://github.com/NVIDIA/apex'
-        )
-    return apex.fp16_utils.FP16_Optimizer(
-        optimizer,
-        dynamic_loss_scale=dynamic_loss_scale,
-        verbose=verbose,
-        # TODO: We may later want to remove this flag. Right now it
-        # empirically improves the first few backward passes, but future APEX
-        # improvements may make this unnecessary.
-        dynamic_loss_args={'init_scale': loss_initial_scale},
-    )
+    def state_dict(self):
+        """
+        Return the optimizer's state dict.
+        """
+        state_dict = self.optimizer.state_dict()
+        if self.scaler is not None:
+            state_dict['loss_scaler'] = self.scaler.loss_scale
+        return state_dict
 
+    def load_state_dict(self, state_dict):
+        """
+        Load an optimizer state dict.
 
-def fp16_apex_available() -> bool:
-    try:
-        import apex.fp16_utils  # noqa: F401
+        In general we should prefer the configuration of the existing optimizer instance
+        (e.g., learning rate) over that found in the state_dict. This allows us to
+        resume training from a checkpoint using a new set of optimizer args.
+        """
+        if 'loss_scaler' in state_dict and self.scaler is not None:
+            self.scaler.loss_scale = state_dict['loss_scaler']
+        self.optimizer.load_state_dict(state_dict)
 
-        return True
-    except ImportError:
-        error_once(
-            'You set --fp16 true with --fp16-impl apex, but fp16 '
-            'with apex is unavailable. To use apex fp16, please '
-            'install APEX from https://github.com/NVIDIA/apex.'
-        )
-        return False
+    def backward(self, loss, update_master_grads=False):
+        """
+        Computes the sum of gradients of the given tensor w.r.t. graph leaves.
+
+        Compared to :func:`fairseq.optim.FairseqOptimizer.backward`, this function
+        additionally dynamically scales the loss to avoid gradient underflow.
+        """
+        if self.scaler is not None:
+            loss = loss * self.scaler.loss_scale
+        loss.backward()
+        self._needs_sync = True
+        if update_master_grads:
+            self.update_master_grads()
+
+    def _sync_fp16_grads_to_fp32(self, multiply_grads=1.0):
+        if self._needs_sync:
+            if self.scaler is not None:
+                # correct for dynamic loss scaler
+                multiply_grads /= self.scaler.loss_scale
+
+            # copy FP16 grads to FP32
+            for p, p32 in zip(self.fp16_params, self.fp32_params):
+                if not p.requires_grad:
+                    continue
+                if p.grad is not None:
+                    p32.grad.data.copy_(p.grad.data)
+                    p32.grad.data.mul_(multiply_grads)
+                else:
+                    p32.grad = torch.zeros_like(p.data, dtype=torch.float)
+
+            self._needs_sync = False
+
+    def multiply_grads(self, c):
+        """
+        Multiplies grads by a constant ``c``.
+        """
+        if self._needs_sync:
+            self._sync_fp16_grads_to_fp32(c)
+        else:
+            for p32 in self.fp32_params:
+                p32.grad.data.mul_(c)
+
+    def update_master_grads(self):
+        self._sync_fp16_grads_to_fp32()
+
+    def clip_master_grads(self, max_norm):
+        """
+        Clips gradient norm and updates dynamic loss scaler.
+        """
+        self._sync_fp16_grads_to_fp32()
+        grad_norm = clip_grad_norm(self.fp32_params, max_norm)
+
+        # detect overflow and adjust loss scale
+        if self.scaler is not None:
+            overflow = has_overflow(grad_norm)
+            prev_scale = self.scaler.loss_scale
+            self.scaler.update_scale(overflow)
+            if overflow:
+                self.zero_grad()
+                if self.scaler.loss_scale <= self.min_loss_scale:
+                    # Use FloatingPointError as an uncommon error that parent
+                    # functions can safely catch to stop training.
+                    self.scaler.loss_scale = prev_scale
+                    raise FloatingPointError(
+                        (
+                            'Minimum loss scale reached ({}). Your loss is probably exploding. '
+                            'Try lowering the learning rate, using gradient clipping or '
+                            'increasing the batch size.'
+                        ).format(self.min_loss_scale)
+                    )
+                    logging.info(
+                        f'Overflow: setting loss scale to {self.scaler.loss_scale}'
+                    )
+
+        return grad_norm
+
+    def step(self, closure=None):
+        """
+        Performs a single optimization step.
+        """
+        self._sync_fp16_grads_to_fp32()
+        self.optimizer.step(closure)
+
+        # copy FP32 params back into FP16 model
+        for p, p32 in zip(self.fp16_params, self.fp32_params):
+            if not p.requires_grad:
+                continue
+            p.data.copy_(p32.data)
+
+    def zero_grad(self):
+        """
+        Clears the gradients of all optimized parameters.
+        """
+        for p in self.fp16_params:
+            p.grad = None
+        for p32 in self.fp32_params:
+            p32.grad.zero_()
+        self._needs_sync = False
+
+    def get_lr(self):
+        return self.optimizer.get_lr()
+
+    def set_lr(self, lr):
+        self.optimizer.set_lr(lr)
+
+    @property
+    def loss_scale(self):
+        """
+        Convenience function which TorchAgent calls to get current scale value.
+        """
+        return self.scaler.loss_scale
 
 
 ###################################################
@@ -156,10 +276,15 @@ def fp16_apex_available() -> bool:
 
 class DynamicLossScaler(object):
     """
-    Shamelessly stolen from Fairseq.
+    Dynamically adjusts the loss scaling factor.
 
-    Dynamically adjusts the loss scaling factor. Useful for mixed-precision training.
-    Fairseq implementation can be found here:
+    Dynamic loss scalers are important in mixed-precision training. They help
+    us avoid underflows and overflows in low-precision gradients.
+
+    See here for information:
+    <https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html#lossscaling>
+
+    Shamelessly stolen and adapted from Fairseq.
     <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py>
     """
 
@@ -168,7 +293,7 @@ class DynamicLossScaler(object):
         init_scale: float = 2.0 ** 15,
         scale_factor: float = 2.0,
         scale_window: int = 2000,
-        tolerance: float = 0.05,
+        tolerance: float = 0.00,
         threshold: float = None,
     ):
         """
@@ -245,7 +370,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py#L382>
 
     This allows you to train bigger models on a single GPU, but can be unstable.
-    Opt for the APEX implementation if you do not have concerns about memory.
+    Prefer the SafeFP16 implementation if you do not have concerns about memory.
 
     :param params:
         Model parameters
@@ -376,7 +501,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         Return the optimizer's state dict.
         """
         state_dict = self.optimizer.state_dict()
-        state_dict['loss_scaler'] = self.scaler
+        state_dict['loss_scaler'] = self.scaler.loss_scale
         return state_dict
 
     def load_state_dict(self, state_dict):
@@ -387,7 +512,12 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         """
         if 'loss_scaler' in state_dict:
             # init from the state dict
-            self.scaler = state_dict['loss_scaler']
+            if isinstance(state_dict['loss_scaler'], float):
+                # new method, restore the float
+                self.scaler.loss_scale = state_dict['loss_scaler']
+            else:
+                # old method, we stored the entire loss scaler
+                self.scaler.loss_scale = state_dict['loss_scaler'].loss_scale
 
         self.optimizer.load_state_dict(state_dict)
 
