@@ -325,43 +325,6 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         pass
 
-    def jit_greedy_search(self, x: torch.Tensor, max_len: int = 32):
-        """
-        A helper function for exporting simple greedy-search models via
-        TorchScript.
-
-        Models with extra inputs will need to override to include more
-        variables.
-
-        Utilize with:
-
-        >>> TODO: write this
-        """
-        # incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
-        bsz = x.size(0)
-        encoder_states = self.encoder(x)
-        generations = self._get_initial_decoder_input(bsz, 1).to(x.device)
-        # keep track of early stopping if all generations finish
-        seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
-        for timestep in range(max_len):
-            print(f'Timestep: {timestep:d}')
-            # latent, incr_state = self.decoder(generations, encoder_states, incr_state)
-            latent = self.decoder(generations, encoder_states)
-            logits = self.output(latent[:, -1:, :])
-            _, preds = logits.max(dim=2)
-            seen_end = seen_end + (preds == self.END_IDX).squeeze(1)
-            generations = torch.cat([generations, preds], dim=1)
-            # if torch.all(seen_end):
-            #     print('\n\n\nALL HAVE BEEN SEEN!')
-            #     break
-        padded_generations = F.pad(
-            generations, pad=(0, max_len - generations.size(1)), value=self.NULL_IDX
-        )
-        # Just pad the generation to max_len so that the generation will be the same
-        # size before and after tracing, which is needed when the tracer checks the
-        # similarity of the outputs after tracing
-        return padded_generations
-
     @torch.jit.unused
     def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
         """
