@@ -24,7 +24,7 @@ class WordShuffleMutator(MessageMutator):
         super().__init__(opt)
         self.rng = random.Random(42)
 
-    def example_mutation(self, message: Message) -> Message:
+    def message_mutation(self, message: Message) -> Message:
         texts = message.pop('text').split('\n')
         output_texts = []
         for text in texts:

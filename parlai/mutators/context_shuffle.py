@@ -23,7 +23,7 @@ class ContextShuffleMutator(MessageMutator):
         super().__init__(opt)
         self.rng = random.Random(42)
 
-    def example_mutation(self, message: Message) -> Message:
+    def message_mutation(self, message: Message) -> Message:
         texts = message.pop('text').split('\n')
         context, text = texts[:-1], texts[-1]
         self.rng.shuffle(context)

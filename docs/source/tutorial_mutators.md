@@ -47,7 +47,7 @@ parlai display_data -t dailydialog --mutators word_shuffle+flatten
 parlai display_data -t dailydialog --mutators word_shuffle,flatten  # equivalent
 ```
 
-This runs the `shuffle_words` mutator, and pipes the output to the `flatten`
+This runs the `word_shuffle` mutator, and pipes the output to the `flatten`
 mutator
 
 
