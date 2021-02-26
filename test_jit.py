@@ -13,14 +13,8 @@ from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 
 
-def test_jit():
+def test_jit(opt):
 
-    parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
-    args_ = f"""\
-    --model-file zoo:blender/blender_90M/model \
-    --no-cuda \
-    """
-    opt = parser.parse_args(args_.split())
     agent = create_agent(opt, requireModelExists=True)
     # Using create_agent() instead of create_agent_from_model_file() because I couldn't get
     # --no-cuda to be recognized with the latter
@@ -102,4 +96,6 @@ class JitGreedySearch(nn.Module):
 
 
 if __name__ == '__main__':
-    test_jit()
+    parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
+    opt_ = parser.parse_args()
+    test_jit(opt_)
