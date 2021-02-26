@@ -80,7 +80,7 @@ to make your own modifications, you can add a new file in
 ParlAI has 3 base classes for Mutators. Choosing the right base class is only about
 making bookkeeping easier.
 
-- `ExampleMutator` is used when you need to make changes to individual turns, and
+- `MessageMutator` is used when you need to make changes to individual turns, and
   is no relationship between turns.
 - `EpisodeMutator` is when you want to make changes to whole conversations
   (episodes), but you want to keep the number of episodes fixed.
@@ -99,7 +99,7 @@ examples:
 
 - [Word
   Shuffle](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mutators/word_shuffle.py):
-  shows how to implement a simple `ExampleMutator`.
+  shows how to implement a simple `MessageMutator`.
 - [Episode
   Reverse](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mutators/episode_reverse.py):
   shows how to implement a simple `EpisodeMutator`.

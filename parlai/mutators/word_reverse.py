@@ -7,11 +7,11 @@
 import random
 from parlai.core.opt import Opt
 from parlai.core.message import Message
-from parlai.core.mutators import register_mutator, ExampleMutator
+from parlai.core.mutators import register_mutator, MessageMutator
 
 
 @register_mutator("word_reverse")
-class WordReverseMutator(ExampleMutator):
+class WordReverseMutator(MessageMutator):
     """
     Reverses the words of each turn.
 

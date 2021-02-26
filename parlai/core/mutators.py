@@ -103,11 +103,11 @@ class Mutator(abc.ABC):
         pass
 
 
-class ExampleMutator(Mutator):
+class MessageMutator(Mutator):
     """
-    Example-level mutators.
+    Message-level mutators.
 
-    Example level mutators have a function applied per-example. They are ideal
+    Message-level mutators have a function applied per-utterance. They are ideal
     for transformations of data which don't create any new conversations or
     turns, but only apply simple text-transformations.
 
@@ -119,13 +119,13 @@ class ExampleMutator(Mutator):
     """
 
     @abc.abstractmethod
-    def example_mutation(self, example: Message) -> Message:
+    def message_mutation(self, message: Message) -> Message:
         """
-        Abstract example mutation.
+        Abstract message mutation.
 
-        The main method to implement when implementing an ExampleMutator.
+        The main method to implement when implementing an MessageMutator.
 
-        :param example:
+        :param message:
             An individual message you should mutate.
         :returns:
             The mutated message.
@@ -143,9 +143,9 @@ class ExampleMutator(Mutator):
                 yield message
                 continue
             message, episode_done = self._pop_episode_done(message)
-            message = self.example_mutation(message)
+            message = self.message_mutation(message)
             if 'episode_done' in message:
-                raise ValueError('Example Mutators should not modify episode_done.')
+                raise ValueError('MessageMutators should not modify episode_done.')
             message['episode_done'] = episode_done
             yield message
 

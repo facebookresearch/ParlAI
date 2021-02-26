@@ -7,11 +7,11 @@
 import random
 from parlai.core.opt import Opt
 from parlai.core.message import Message
-from parlai.core.mutators import register_mutator, ExampleMutator
+from parlai.core.mutators import register_mutator, MessageMutator
 
 
 @register_mutator("context_shuffle")
-class ContextShuffleMutator(ExampleMutator):
+class ContextShuffleMutator(MessageMutator):
     """
     Shuffles all the lines in the context.
 
