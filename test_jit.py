@@ -29,7 +29,7 @@ def test_jit(opt):
     print(agent._v2t(result[0].tolist()))
 
     # Save the scripted module
-    scripted_module.save('_scripted_blender_90M.pt')
+    scripted_module.save('_scripted.pt')
 
 
 class JitGreedySearch(nn.Module):
