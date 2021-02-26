@@ -55,6 +55,7 @@ class ForwardPassOutputs(AttrDict):
     """
 
     mask: torch.BoolTensor
+    decoder_mask: torch.BoolTensor
     tokens_per_example: torch.Tensor
     num_tokens: torch.Tensor
     context_mask: torch.BoolTensor
@@ -76,6 +77,7 @@ class ForwardPassOutputs(AttrDict):
     def __init__(
         self,
         mask,
+        decoder_mask,
         tokens_per_example,
         num_tokens,
         context_mask,
@@ -96,6 +98,7 @@ class ForwardPassOutputs(AttrDict):
     ):
         super().__init__(
             mask=mask,
+            decoder_mask=decoder_mask,
             tokens_per_example=tokens_per_example,
             num_tokens=num_tokens,
             context_mask=context_mask,
@@ -338,6 +341,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
         mask = self._manipulate_mask(
             mask=mask, student_scores=student_scores, batch=batch
         )
+        decoder_mask = self._manipulate_mask(
+            mask=mask, student_scores=student_embedding_outputs["decoder"], batch=batch
+        )
 
         # Record teacher accuracy
         teacher_acc = ((student_preds == teacher_preds) * mask).sum(dim=-1)
@@ -348,6 +354,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         return ForwardPassOutputs(
             mask=mask,
+            decoder_mask=decoder_mask,
             tokens_per_example=tokens_per_example,
             num_tokens=num_tokens,
             context_mask=context_mask,
@@ -502,7 +509,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         dec_emb_loss, dec_emb_loss_per_example = self._get_component_embedding_loss(
             student_emb_output=fwd_pass.student_embedding_outputs['decoder'],
             teacher_emb_output=fwd_pass.teacher_embedding_outputs['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             num_tokens=fwd_pass.num_tokens,
         )
         self.record_local_metric(
@@ -559,7 +566,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         dec_hidden_loss, dec_hidden_loss_per_example = self._get_component_hidden_loss(
             student_hidden_states=fwd_pass.student_hidden_states['decoder'],
             teacher_hidden_states=fwd_pass.teacher_hidden_states['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             num_tokens=fwd_pass.num_tokens,
             mapped_layers=self.mapped_dec_layers,
         )
@@ -631,7 +638,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         dec_self_attn_loss = self._get_and_record_component_attention_loss(
             student_attention_matrices=fwd_pass.student_attention_matrices['decoder'],
             teacher_attention_matrices=fwd_pass.teacher_attention_matrices['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             tokens_per_example=fwd_pass.tokens_per_example,
             num_tokens=fwd_pass.num_tokens,
             mapped_layers=self.mapped_dec_layers,
@@ -641,7 +648,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         enc_dec_attn_loss = self._get_and_record_component_attention_loss(
             student_attention_matrices=fwd_pass.student_attention_matrices['decoder'],
             teacher_attention_matrices=fwd_pass.teacher_attention_matrices['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             tokens_per_example=fwd_pass.tokens_per_example,
             num_tokens=fwd_pass.num_tokens,
             mapped_layers=self.mapped_dec_layers,
@@ -1038,9 +1045,11 @@ class BartLikeAgent(BartAgent):
     ) -> torch.BoolTensor:
         """
         Add one extra (masked-out) token to the mask, for compatibility with BART.
+
+        Only necessary when examining decoder outputs directly.
         """
-        assert student_scores.size(1) == batch.label_vec.size(1) + 1
-        mask = torch.cat([mask.new_zeros([mask.size(0), 1]), mask], dim=1)
+        if student_scores.size(1) == batch.label_vec.size(1) + 1:
+            mask = torch.cat([mask.new_zeros([mask.size(0), 1]), mask], dim=1)
         return mask
 
 
