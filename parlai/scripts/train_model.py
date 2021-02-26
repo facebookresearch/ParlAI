@@ -679,7 +679,7 @@ class TrainLoop:
         """
         if any(
             getattr(self, k) < float('inf')
-            for k in ['max_train_time', 'log_every_n_secs', 'validation_every_n_secs']
+            for k in ['max_train_time', 'log_every_n_secs', 'val_every_n_secs']
         ):
             self._total_epochs = self._preempted_epochs + sum(
                 all_gather_list(world.get_total_epochs())
@@ -698,7 +698,7 @@ class TrainLoop:
                 self.validate_time.time(),
             )
             self._total_epochs = self._preempted_epochs + (
-                world.get_distributed_size() * world.get_total_epochs()
+                num_workers() * world.get_total_epochs()
             )
 
         return train_time, log_time, validate_time
