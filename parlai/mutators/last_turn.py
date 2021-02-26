@@ -16,9 +16,8 @@ class LastTurnMutator(ManyEpisodeMutator):
     """
     Keep only the most recent turn.
 
-    This mutator obliterates the history of the conversation, keeping only the
-    very last thing said. Every turn is still evaluated, but treated as a new
-    episode.
+    This mutator obliterates the history of the conversation, keeping only the very last
+    thing said. Every turn is still evaluated, but treated as a new episode.
     """
 
     @classmethod
