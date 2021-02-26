@@ -1177,7 +1177,7 @@ class DynamicBatchWorld(World):
         assert len(batch) <= self.max_batch_size
 
         # great, this batch is good to go! let's run it!
-        acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
+        acts = self.handle_batch([self._obs[i] for i in batch])
         self.acts = [[self._task_acts[i] for i in batch], acts]
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
@@ -1200,6 +1200,10 @@ class DynamicBatchWorld(World):
         self.total_parleys += 1
         self.total_exs += len(batch)
 
+    def handle_batch(self, batch):
+        acts = self.world.get_model_agent().batch_act(batch)
+        return acts
+
     def get_total_exs(self):
         return self.total_exs
 
@@ -1208,6 +1212,88 @@ class DynamicBatchWorld(World):
 
     def report(self):
         return self.world.report()
+
+
+class BackgroundDriverWorld(World):
+    def __init__(self, opt: Opt, world: World):
+        self.world = world
+        super().__init__(opt, agents=world.agents, shared=None)
+
+        import torch.multiprocessing as mp
+
+        self._num_workers = self.opt['num_workers']
+        self._process_queue = mp.Queue(maxsize=4 * self._num_workers)
+        self._processes = []
+        for i in range(self.opt['num_workers']):
+            self._processes.append(self._start_process(i))
+
+        self._batch_buffer = []
+
+    def _start_process(self, index):
+        import torch.multiprocessing as mp
+
+        if False:
+            BackgroundWorkerDynamicBatchWorld.launch_process(
+                self.opt, index, self.get_model_agent(), self._process_queue
+            )
+        else:
+            process = mp.Process(
+                target=BackgroundWorkerDynamicBatchWorld.launch_process,
+                args=(self.opt, index, self.get_model_agent(), self._process_queue),
+            )
+            process.start()
+            return process
+
+    def get_task_agent(self):
+        return self.world.get_task_agent()
+
+    def get_model_agent(self):
+        return self.world.get_model_agent()
+
+    def num_examples(self):
+        return self.world.num_examples()
+
+    def num_episodes(self):
+        return self.world.num_episodes()
+
+    def parley(self):
+        index, batch = self._process_queue.get()
+        response_object = self.get_model_agent().batch_act(batch)
+        self.total_parleys += 1
+        self.total_exs += batch.batchsize
+
+    def get_total_exs(self):
+        return self.total_exs
+
+    def get_total_epochs(self):
+        return self.total_exs / self.num_examples()
+
+    def report(self):
+        return self.world.report()
+
+
+class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
+    @classmethod
+    def launch_process(cls, opt, index, model_agent, process_queue):
+        logging.info(f"Launching background on Index {index}")
+        opt = copy.deepcopy(opt)
+        opt['background_index'] = index
+        world = cls(opt, model_agent=model_agent, process_queue=process_queue)
+        while True:
+            world.parley()
+
+    def __init__(self, opt: Opt, model_agent=None, process_queue=None):
+        base_world = create_task_world(opt, [model_agent])
+        self.process_queue = process_queue
+        self.index = opt['background_index']
+        super().__init__(opt, base_world)
+
+    def handle_batch(self, batch):
+        batchified = self.world.get_model_agent().batchify(batch)
+        logging.debug(f"Putting batch onto queue (Worker {self.index})")
+        self.process_queue.put((self.index, batchified))
+        acts = [{} for i in batch]
+        return acts
 
 
 ################################################################################
@@ -1286,7 +1372,9 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # TODO: remove and replace with multiteachers only?
         world = MultiWorld(opt, user_agents, default_world=default_world)
 
-    if opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
+    if DatatypeHelper.is_training(opt['datatype']) and opt.get('num_workers', 0) > 0:
+        world = BackgroundDriverWorld(opt, world)
+    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
         world = DynamicBatchWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld
