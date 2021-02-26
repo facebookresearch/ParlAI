@@ -19,7 +19,7 @@ all TorchRankerAgents and TorchGeneratorAgents support this.
 ## Examples
 
 ```shell
-parlai multiprocessing_train -m transformer/generator -bs 16 -t convai2 -mf /tmp/mymodel
+parlai multiprocessing_train -m transformer/generator --batchsize 16 --task convai2 --model-file /tmp/mymodel
 ```
 """
 

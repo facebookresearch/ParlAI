@@ -82,12 +82,6 @@ class TfidfRetrieverAgent(Agent):
             help='How many docs to retrieve.',
         )
         parser.add_argument(
-            '--retriever-mode',
-            choices=['keys', 'values'],
-            default='values',
-            help='Whether to retrieve the stored key or the stored value.',
-        )
-        parser.add_argument(
             '--remove-title',
             type='bool',
             default=False,
@@ -271,9 +265,9 @@ class TfidfRetrieverAgent(Agent):
                     picks = ['\n'.join(p.split('\n')[1:]) for p in picks]
                     pick = '\n'.join(pick.split('\n')[1:])
                 reply['text_candidates'] = picks
-                reply['candidate_scores'] = doc_scores
+                reply['candidate_scores'] = doc_scores.tolist()
 
                 reply['text'] = pick
-                reply['candidate_ids'] = doc_ids
+                reply['candidate_ids'] = doc_ids.tolist()
 
         return reply

@@ -188,6 +188,14 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             full_path
         ), f"Target left pane text path {full_path} doesn't exist"
 
+        if args.blueprint.get("chat_data_folder") == '':
+            raise ValueError('Must provide a valid chat data folder')
+        assert '~' not in args.blueprint.chat_data_folder, (
+            f'"~" can\'t currently be parsed in the chat data folder path '
+            f'{args.blueprint.chat_data_folder}'
+        )
+        # TODO: allow ~ to be parsed correctly
+
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)
             assert os.path.exists(
@@ -445,7 +453,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
-            all_model_opts = yaml.load(f.read())
+            all_model_opts = yaml.safe_load(f.read())
         active_model_opts = {
             model: opt
             for model, opt in all_model_opts.items()
@@ -549,5 +557,5 @@ class ModelImageChatBlueprint(BaseModelChatBlueprint):
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
-            model_opts = yaml.load(f.read())
+            model_opts = yaml.safe_load(f.read())
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=model_opts)

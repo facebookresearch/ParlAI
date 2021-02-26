@@ -36,6 +36,9 @@ class Vacuum(ParlaiScript):
             dest='path',
             help="Path to model file.",
         )
+        parser.add_argument(
+            '--no-backup', action='store_true', help="Do not create a backup."
+        )
         return parser
 
     def run(self):
@@ -50,8 +53,9 @@ class Vacuum(ParlaiScript):
             states = torch.load(
                 f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
             )
-        logging.info(f"Backing up {model_file} to {model_file}.unvacuumed")
-        os.rename(model_file, model_file + ".unvacuumed")
+        if not self.opt['no_backup']:
+            logging.info(f"Backing up {model_file} to {model_file}.unvacuumed")
+            os.rename(model_file, model_file + ".unvacuumed")
         for key in [
             'optimizer',
             'optimizer_type',

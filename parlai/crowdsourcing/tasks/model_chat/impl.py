@@ -41,7 +41,9 @@ def run_task(cfg: DictConfig, task_directory: str):
         task_name = f"{task_name}_sandbox"
     cfg.mephisto.task.task_name = task_name
 
-    soft_block_qual_name = f"{task_name}_ineligible"
+    soft_block_qual_name = cfg.mephisto.blueprint.get(
+        'block_qualification', f'{task_name}_block'
+    )
     # Default to a task-specific name to avoid soft-block collisions
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 

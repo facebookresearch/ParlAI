@@ -12,7 +12,7 @@ To make sure that bAbI task 1 (1k exs) loads one can run and to see a
 few of them:
 
 ```shell
-parlai profile_train -t babi:task1k:1 -m seq2seq --dict-file /tmp/dict
+parlai profile_train --task babi:task1k:1 --model seq2seq --dict-file /tmp/dict
 ```
 """
 

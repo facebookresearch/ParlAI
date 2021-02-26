@@ -14,10 +14,10 @@ import numpy as np
 import pandas as pd
 
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
-from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
+from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 
 
-class ModelChatResultsCompiler(AbstractResultsCompiler):
+class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     """
     Compile and save results of human+model chats.
 
@@ -85,6 +85,12 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
 
         self.acceptability_checker = AcceptabilityChecker()
 
+    def get_results_path_base(self) -> str:
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder, f'results_{now.strftime("%Y%m%d_%H%M%S")}'
+        )
+
     def compile_results(self) -> pd.DataFrame:
 
         read_folders = []
@@ -108,13 +114,8 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         print(f'Date folders: ' + ', '.join(date_strings))
 
         now = datetime.now()
-        results_file = os.path.join(
-            self.output_folder,
-            f'results_{"".join([d + "_" for d in date_strings])[:-1]}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
-        )
         worker_results_file = os.path.join(
-            self.output_folder,
-            f'worker_results_{"".join([d + "_" for d in date_strings])[:-1]}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
+            self.output_folder, f'worker_results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
         )
         # Read in each file
         num_incomplete_convos = 0
@@ -190,7 +191,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                 if model_nickname in complete_convos_per_model:
                     complete_convos_per_model[model_nickname] += 1
                 else:
-                    complete_convos_per_model[model_nickname] = 0
+                    complete_convos_per_model[model_nickname] = 1
 
                 # Extract non-message info
                 info_dict = {
@@ -307,9 +308,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                             for bucket in self.regular_buckets + ['none_all_good']:
                                 d[bucket] = utt['problem_data'][bucket]
                             d['final_rating'] = (
-                                utt['problem_data']['final_rating']
-                                if 'final_rating' in utt['problem_data']
-                                else None
+                                utt['final_rating'] if 'final_rating' in utt else None
                             )
                         for k in self.regular_buckets + ['none_all_good']:
                             if k not in problem_counts[model_nickname]:
@@ -476,8 +475,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         all_conversations_df = pd.DataFrame()
         for df in conversation_dfs:
             all_conversations_df = all_conversations_df.append(df)
-        all_conversations_df.to_csv(results_file, index=False)
-        print(f'\nWrote all conversation results to: {results_file}')
         print(f'\nWorker conversation counts: {worker_conversation_counts}')
 
         return all_conversations_df
@@ -486,4 +483,4 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
 if __name__ == '__main__':
     parser_ = ModelChatResultsCompiler.setup_args()
     args_ = parser_.parse_args()
-    ModelChatResultsCompiler(vars(args_)).compile_results()
+    ModelChatResultsCompiler(vars(args_)).compile_and_save_results()

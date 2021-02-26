@@ -655,7 +655,11 @@ class TorchAgent(ABC, Agent):
             '--special-tok-lst',
             type=str,
             default=None,
-            help='Comma separated list of special tokens',
+            help=(
+                'Comma separated list of special tokens. '
+                'In case of ambiguous parses from special tokens, the ordering '
+                'provided in this arg sets precedence.'
+            ),
         )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
@@ -867,6 +871,12 @@ class TorchAgent(ABC, Agent):
         Return list of special tokens.
 
         Made easily overridable for special cases.
+
+        Note that in the case of ambiguity of special-token parsing, the
+        precedence is set by the ordering returned in this method.  For
+        example, if special tokens are ["OHB", "BOY"], parsing "OHBOY" will
+        become (special)OHB and (normal)OY. But with special tokens
+        ["BOY", "OHB"], then we will get (normal)OH and (special)BOY.
         """
         if self.opt.get('special_tok_lst'):
             return self.opt['special_tok_lst'].split(',')

@@ -43,6 +43,7 @@ SPECIAL_FORMATED_DISPLAY_MESSAGE_FIELDS = {
     'text_candidates',
     'reward',
     'token_losses',
+    'metrics',
 }
 
 MUST_SHOW_MESSAGE_FIELDS = {'image', 'text', 'labels', 'eval_labels', 'reward'}
@@ -291,26 +292,6 @@ class AttrDict(dict):
         self.__dict__ = self
 
 
-class NoLock(object):
-    """
-    Empty `lock`.
-
-    Does nothing when you enter or exit.
-    """
-
-    def __enter__(self):
-        """
-        No-op.
-        """
-        return self
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        """
-        No-op.
-        """
-        pass
-
-
 class SimpleCounter:
     """
     Simple counter object.
@@ -473,16 +454,6 @@ def round_sigfigs(x: Union[float, 'torch.Tensor'], sigfigs=4) -> float:
             raise ex
 
 
-single_nolock = NoLock()
-
-
-def no_lock():
-    """
-    Build a nolock for other classes to use for no-op locking.
-    """
-    return single_nolock
-
-
 def clip_text(text, max_len):
     """
     Clip text to max length, adding ellipses.
@@ -630,6 +601,16 @@ def display_messages(
                     style=field,
                 )
                 lines.append(line)
+        if msg.get('metrics') and verbose:
+            lines.append(
+                _pretty_lines(
+                    indent_space=space,
+                    field='metrics',
+                    value="\n" + nice_report(msg['metrics']),
+                    style='text',
+                )
+            )
+
         # Handling this separately since we need to clean up the raw output before displaying.
         token_loss_line = _token_losses_line(msg, fields_to_show, space)
         if token_loss_line:

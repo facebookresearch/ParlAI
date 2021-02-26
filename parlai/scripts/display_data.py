@@ -13,7 +13,7 @@ and to see a few of them:
 ## Examples
 
 ```shell
-parlai display_data -t babi:task1k:1
+parlai display_data --task babi:task1k:1
 ```
 """
 

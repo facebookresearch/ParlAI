@@ -42,7 +42,7 @@ from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.conversations import Conversations
 from parlai.utils.data import DatatypeHelper
-from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once, SimpleCounter
+from parlai.utils.misc import AttrDict, str_to_msg, warn_once, SimpleCounter
 from parlai.utils.distributed import get_rank, num_workers, is_distributed
 import parlai.utils.torch as torch_utils
 import parlai.utils.logging as logging
@@ -58,7 +58,6 @@ import os
 import queue
 import random
 from threading import Thread
-import time
 import torch
 from typing import List, Tuple, Optional, TypeVar
 
@@ -279,12 +278,6 @@ class FixedDialogTeacher(Teacher):
         # set up batching
         self.bsz = opt.get('batchsize', 1)
 
-    def _lock(self):
-        if hasattr(self.index, 'get_lock'):
-            return self.index.get_lock()
-        else:
-            return no_lock()
-
     def reset(self):
         """
         Reset the dialog to the start of the epoch, and reset all metrics.
@@ -298,8 +291,7 @@ class FixedDialogTeacher(Teacher):
         self.data_queue = queue.Queue()
 
         self.episode_idx = -1
-        with self._lock():
-            self.index.value = -1
+        self.index.value = -1
 
     def submit_load_request(self):
         """
@@ -355,11 +347,10 @@ class FixedDialogTeacher(Teacher):
         if self.random:
             new_idx = random.randrange(num_eps)
         else:
-            with self._lock():
-                self.index.value += 1
-                if loop:
-                    self.index.value %= num_eps
-                new_idx = self.index.value
+            self.index.value += 1
+            if loop:
+                self.index.value %= num_eps
+            new_idx = self.index.value
         return new_idx
 
     def next_example(self):
@@ -398,18 +389,17 @@ class FixedDialogTeacher(Teacher):
         Return the next batch of examples.
         """
         # get next batch
-        with self._lock():
-            self.index.value += 1
-            if self.training:
-                self.index.value %= len(self.batches)
-            batch_idx = self.index.value
+        self.index.value += 1
+        if self.training:
+            self.index.value %= len(self.batches)
+        batch_idx = self.index.value
 
-            if batch_idx + 1 >= len(self.batches):
-                if self.random:
-                    random.shuffle(self.batches)
-                self.epochDone = True
-            else:
-                self.epochDone = False
+        if batch_idx + 1 >= len(self.batches):
+            if self.random:
+                random.shuffle(self.batches)
+            self.epochDone = True
+        else:
+            self.epochDone = False
 
         if batch_idx >= len(self.batches):
             return [{'episode_done': True, 'id': self.getID()}] * self.bsz
@@ -448,10 +438,20 @@ class FixedDialogTeacher(Teacher):
         """
         Process observation for metrics.
         """
+        self.metrics.clear_recent()
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
             self.custom_evaluation(self.last_act, self.lastY, observation)
             self.lastY = None
+        recent_metrics = self.metrics.report_recent()
+        if recent_metrics:
+            # for display purposes (display_model), take all accumulated
+            # metrics back into the original observation. This is an abuse of
+            # Messages being pointers
+            if 'metrics' in observation:
+                # override agent-level metrics if present
+                observation.pop('metrics')
+            observation['metrics'] = recent_metrics
         return observation
 
     def custom_evaluation(
@@ -537,8 +537,7 @@ class DialogTeacher(FixedDialogTeacher):
     - generates action tables to send to the student agent from the data
 
     In order to subclass this class, you must implement ``setup_data()`` in
-    your class (or subclass another class which does, like
-    ``FbDeprecatedDialogTeacher``), which reads your data file as an iterator.
+    your class, which reads your data file as an iterator.
     """
 
     def __init__(self, opt, shared=None):
@@ -551,7 +550,6 @@ class DialogTeacher(FixedDialogTeacher):
             )
         super().__init__(opt, shared)
 
-        self.startTime = time.time()
         self.datatype = opt['datatype']
         self.training = DatatypeHelper.is_training(self.datatype)
         self.cycle = DatatypeHelper.should_cycle(self.datatype)
@@ -1048,12 +1046,6 @@ class StreamDialogData(DialogData):
         if not self.num_eps:
             self.num_eps, self.num_exs = self.load_length()
         return self.num_eps
-
-    def _lock(self):
-        if hasattr(self, 'lock'):
-            return self.lock
-        else:
-            return no_lock()
 
     def get(self):
         """

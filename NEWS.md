@@ -1,4 +1,11 @@
 ## News
+
+**Archive Information**
+We are now making most of our major announcements on [Twitter](https://twitter.com/parlai_parley) and in our
+[Release Notes](https://github.com/facebookresearch/ParlAI/releases).
+
+### Older news
+
 2020-07-21: We have added a new `parlai` super command, complete with [autocompletion](https://parl.ai/docs/tutorial_tipsntricks.html#command-line-tool).
 
 2020-07-17: We've added a new tutorial showing how to [speed up training](https://parl.ai/docs/tutorial_fast.html).

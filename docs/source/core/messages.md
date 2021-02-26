@@ -162,7 +162,7 @@ representation for quick debugging.
 Here is an example of using the ascii image mode:
 
 ```bash
-    parlai display_data -t mnist_qa --image-mode ascii
+    parlai display_data --task mnist_qa --image-mode ascii
 ```
 
 ```python
