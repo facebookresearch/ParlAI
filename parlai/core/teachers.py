@@ -2303,6 +2303,17 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 c for c in self.fold_chunks if c % self.dws == self.rank
             ]
 
+        # deal with --num-workers
+        self.threading = not (opt.get('num_workers') > 0 and self.is_train)
+        if not self.threading and opt.get('background_index') is None:
+            # don't start loading data on the main driver, we don't need it
+            opt['no_auto_enqueues'] = True
+            logging.error("Let's skip")
+        if not self.threading:
+            # if we're in single-threaded (background preprocessing mode), we
+            # can't have a max queue size or we will hang if we overfill it
+            self.buffersize = 0
+
         if shared is not None:
             self.is_root_teacher = False
             self.chunks = shared['chunks']
@@ -2324,7 +2335,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.tot_samples_loaded = defaultdict(int)
             if not opt.get("no_auto_enqueues", False):
                 # we only enqueue the train thread because the reset() called at
-                # the top of training will
+                # the top of training will handle this
                 self._enqueue_request()
 
         self._episode_done = True
@@ -2403,15 +2414,21 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Queue a request for loading to the data loader.
         """
-        self.data_loader.request_load(self.receive_data, self.get_chunk, ())
+        if self.threading:
+            self.data_loader.request_load(self.receive_data, self.get_chunk, ())
+        else:
+            self.receive_data(self.get_chunk(), direct_result=True)
 
-    def receive_data(self, future):
+    def receive_data(self, future, direct_result=False):
         """
         Loads data.
 
         Load data into self.samples until buffersize is reached.
         """
-        chunk_output, chunk_reset_cnt = future.result()
+        output = future if direct_result else future.result()
+        if output is None:
+            return
+        chunk_output, chunk_reset_cnt = output
         if chunk_output is None:
             self.samples.put((None, chunk_reset_cnt))
             return
@@ -2427,8 +2444,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 # log the reset count at the time the chunk was queued
                 self.samples.put((sample, chunk_reset_cnt))
             self.tot_samples_loaded[chunk_reset_cnt] += 1
-        # and start loading the next chunk
-        self._enqueue_request()
+        if self.threading:
+            # and start loading the next chunk
+            self._enqueue_request()
 
     def _enqueue_chunks(self):
         """
@@ -2495,6 +2513,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return output, chunk_reset_cnt
 
     def get(self, episode_idx, entry_idx=0):
+        if not self.threading and self.samples.empty():
+            self._enqueue_request()
+
         curr_reset_cnt = self.reset_counter.value()
         if self._episode_done:
             # Get the next episode or example
