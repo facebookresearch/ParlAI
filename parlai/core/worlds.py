@@ -44,7 +44,11 @@ from typing import Dict, List, Optional, Union
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
-from parlai.core.metrics import aggregate_named_reports
+from parlai.core.metrics import (
+    aggregate_named_reports,
+    aggregate_unnamed_reports,
+    TeacherMetrics,
+)
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
@@ -1228,6 +1232,7 @@ class BackgroundDriverWorld(World):
             self._processes.append(self._start_process(i))
 
         self._batch_buffer = []
+        self.metrics = TeacherMetrics()
 
     def _start_process(self, index):
         import torch.multiprocessing as mp
@@ -1244,6 +1249,19 @@ class BackgroundDriverWorld(World):
             process.start()
             return process
 
+    def reset(self):
+        """
+        Reset all subworlds.
+        """
+        self.world.reset()
+
+    def reset_metrics(self):
+        """
+        Reset metrics in all subworlds.
+        """
+        self.world.reset_metrics()
+        self.metrics.clear()
+
     def get_task_agent(self):
         return self.world.get_task_agent()
 
@@ -1259,6 +1277,9 @@ class BackgroundDriverWorld(World):
     def parley(self):
         index, batch = self._process_queue.get()
         response_object = self.get_model_agent().batch_act(batch)
+        # compute metrics
+        for response in response_object:
+            self.metrics.evaluate_response(response, [])
         self.total_parleys += 1
         self.total_exs += batch.batchsize
 
@@ -1269,7 +1290,7 @@ class BackgroundDriverWorld(World):
         return self.total_exs / self.num_examples()
 
     def report(self):
-        return self.world.report()
+        return aggregate_unnamed_reports([self.world.report(), self.metrics.report()])
 
 
 class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
