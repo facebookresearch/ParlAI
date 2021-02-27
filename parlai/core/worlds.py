@@ -1227,27 +1227,21 @@ class BackgroundDriverWorld(World):
 
         self._num_workers = self.opt['num_workers']
         self._process_queue = mp.Queue(maxsize=4 * self._num_workers)
-        self._processes = []
-        for i in range(self.opt['num_workers']):
-            self._processes.append(self._start_process(i))
+        self._process_pool = self._start_processes()
 
         self._batch_buffer = []
         self.metrics = TeacherMetrics()
 
-    def _start_process(self, index):
+    def _start_processes(self):
         import torch.multiprocessing as mp
 
-        if False:
-            BackgroundWorkerDynamicBatchWorld.launch_process(
-                self.opt, index, self.get_model_agent(), self._process_queue
-            )
-        else:
-            process = mp.Process(
-                target=BackgroundWorkerDynamicBatchWorld.launch_process,
-                args=(self.opt, index, self.get_model_agent(), self._process_queue),
-            )
-            process.start()
-            return process
+        return mp.start_processes(
+            fn=BackgroundWorkerDynamicBatchWorld.launch_process,
+            args=(self.opt, self.get_model_agent(), self._process_queue),
+            nprocs=self._num_workers,
+            join=False,
+            start_method='fork',
+        )
 
     def reset(self):
         """
@@ -1292,10 +1286,15 @@ class BackgroundDriverWorld(World):
     def report(self):
         return aggregate_unnamed_reports([self.world.report(), self.metrics.report()])
 
+    def __del__(self):
+        logging.error("Calling delete!")
+        for p in self._process_pool.processes:
+            p.kill()
+
 
 class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
     @classmethod
-    def launch_process(cls, opt, index, model_agent, process_queue):
+    def launch_process(cls, index, opt, model_agent, process_queue):
         logging.info(f"Launching background on Index {index}")
         opt = copy.deepcopy(opt)
         opt['background_index'] = index

@@ -129,6 +129,29 @@ class DataLoader(Thread):
                     return
 
 
+class _ErrorThrowingDataLoader(object):
+    """
+    A fake DataLoader which throws an exception when a work order is placed.
+
+    Since threads cannot be mixed with spawn_method='fork', we need to disallow
+    users from combining --num-workers with teachers that utilize threads.
+    This placeholder object is only useful for ensuring the user sees a loud
+    error message when 
+    """
+
+    def __init__(self, opt):
+        pass
+
+    def request_load(self, receive_fn, load_fn, args):
+        raise RuntimeError(
+            'One of your teachers uses a DataLoader or a thread. You may only '
+            'combine this with --num-wokers 0.'
+        )
+
+    def start(self):
+        pass
+
+
 class Teacher(Agent):
     """
     Basic Teacher agent that keeps track of how many times it's received messages.
@@ -312,7 +335,10 @@ class FixedDialogTeacher(Teacher):
             self.index = AttrDict(value=-1)
 
         if not hasattr(self, 'data_loader'):
-            self.data_loader = DataLoader(opt)
+            if opt.get('num_workers', 0) <= 0:
+                self.data_loader = DataLoader(opt)
+            else:
+                self.data_loader = _ErrorThrowingDataLoader(opt)
             self.data_loader.start()
 
         # set up batching

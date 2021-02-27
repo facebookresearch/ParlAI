@@ -9,6 +9,7 @@ Byte pair encoding (BPE).
 
 Lots of BPE things for ParlAI
 """
+from typing import Optional
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from functools import lru_cache
@@ -33,6 +34,12 @@ try:
     SUBWORD_BPE_INSTALLED = True
 except ImportError:
     SUBWORD_BPE_INSTALLED = False
+
+
+try:
+    import regex
+except ImportError:
+    regex = None
 
 
 def bpe_factory(opt: Opt, shared: TShared) -> 'BPEHelper':
@@ -535,15 +542,10 @@ class Gpt2BpeHelper(BPEHelper):
         self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
         self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
 
-        try:
-            import regex as re
-
-            self.re = re
-        except ImportError:
+        if regex is None:
             raise ImportError('Please install regex with: pip install regex')
-
         # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
-        self.pat = self.re.compile(self.PATTERN)
+        self.pat = regex.compile(self.PATTERN)
 
     def _build_data(self) -> Tuple[str, str]:
         """
@@ -711,7 +713,7 @@ class Gpt2BpeHelper(BPEHelper):
             A list of tokens
         """
         bpe_tokens: List[str] = []
-        for token in self.re.findall(self.pat, text):
+        for token in regex.findall(self.pat, text):
             token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
             bpe_tokens.extend(
                 self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
