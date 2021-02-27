@@ -121,12 +121,15 @@ class MessengerOverworld(World):
                 {
                     'id': 'Overworld',
                     'text': 'Welcome to the overworld for the ParlAI messenger '
-                    'chatbot demo. Please type "begin" to start.',
-                    'quick_replies': ['begin'],
+                    'chatbot demo. Please type "begin" to start, or "exit" to exit',
+                    'quick_replies': ['begin', 'exit'],
                 }
             )
             self.first_time = False
         a = self.agent.act()
+        if a is not None and a['text'].lower() == 'exit':
+            self.episode_done = True
+            return 'EXIT'
         if a is not None and a['text'].lower() == 'begin':
             self.episodeDone = True
             return 'default'

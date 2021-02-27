@@ -18,7 +18,6 @@ from torch import nn as nn
 from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerGeneratorModel,
-    _normalize,
 )
 from parlai.core.agents import Agent
 from parlai.core.message import Message
@@ -182,7 +181,7 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
@@ -208,7 +207,7 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
                 )
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor, new_incr_state
 

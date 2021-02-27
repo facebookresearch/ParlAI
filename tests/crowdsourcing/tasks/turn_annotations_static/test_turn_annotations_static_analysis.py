@@ -107,7 +107,7 @@ try:
                     compiler = TurnAnnotationsStaticResultsCompiler(vars(args))
                     compiler.NUM_SUBTASKS = 3
                     compiler.NUM_ANNOTATIONS = 3
-                    compiler.compile_results()
+                    compiler.compile_and_save_results()
                     actual_stdout = output.getvalue()
 
                 # Check the output against what it should be
@@ -127,7 +127,8 @@ try:
                     .sort_values(sort_columns)
                     .reset_index(drop=True)
                 )
-                # Drop the 'folder' column, which contains a system-dependent path string
+                # Drop the 'folder' column, which contains a system-dependent path
+                # string
                 actual_results_rel_path = [
                     obj for obj in os.listdir(tmpdir) if obj.startswith('results')
                 ][0]
