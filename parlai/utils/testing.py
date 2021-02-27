@@ -20,6 +20,8 @@ from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 from pytest_regressions.data_regression import DataRegressionFixture
+from parlai.core.teachers import DialogTeacher, load_teacher_module
+from parlai.utils.data import DatatypeHelper
 
 
 try:

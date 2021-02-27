@@ -12,7 +12,7 @@ import parlai.utils.logging as logging
 
 from parlai.scripts.display_data import DisplayData
 
-TASK = 'convai2'
+TASK = 'convai2:sample'
 
 
 def _make_argparse_table(class_):
@@ -100,7 +100,7 @@ with open('mutators_list.inc', 'w') as fout:
         fout.write(f'## {mutator_name}\n\n')
         fout.write(textwrap.dedent(mutator.__doc__).strip() + '\n\n')
         fout.write(
-            '**Example usage**:\n\n`parlai display_data -t convai2 '
+            f'**Example usage**:\n\n`parlai display_data -t {TASK} '
             f'--mutators {mutator_name}`\n\n'
         )
         fout.write("**Example output**:\n\n")
