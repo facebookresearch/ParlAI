@@ -34,25 +34,6 @@ DISTINCT_METRICS = {
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS | DISTINCT_METRICS
 
 
-try:
-    from nltk.translate import bleu_score as nltkbleu
-except ImportError:
-    # User doesn't have nltk installed, so we can't use it for bleu
-    # We'll just turn off things, but we might want to warn the user
-    nltkbleu = None
-
-try:
-    from fairseq.scoring import bleu as fairseqbleu
-except ImportError:
-    fairseqbleu = None
-
-try:
-    import rouge
-except ImportError:
-    # User doesn't have py-rouge installed, so we can't use it.
-    # We'll just turn off rouge computations
-    rouge = None
-
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
@@ -454,9 +435,13 @@ class BleuMetric(AverageMetric):
         """
         Compute approximate BLEU score between guess and a set of answers.
         """
-        if nltkbleu is None:
-            # bleu library not installed, just return a default value
+        try:
+            from nltk.translate import bleu_score as nltkbleu
+        except ImportError:
+            # User doesn't have nltk installed, so we can't use it for bleu
+            # We'll just turn off things, but we might want to warn the user
             return None
+
         # Warning: BLEU calculation *should* include proper tokenization and
         # punctuation etc. We're using the normalize_answer for everything though,
         # so we're over-estimating our BLEU scores.  Also note that NLTK's bleu is
@@ -481,8 +466,11 @@ class FairseqBleuMetric(AverageMetric):
         """
         Return BLEU-1..4 using fairseq and tokens.
         """
-        if fairseqbleu is None:
+        try:
+            from fairseq.scoring import bleu as fairseqbleu
+        except ImportError:
             return None
+
         scorer = fairseqbleu.Scorer(pad_idx, end_idx, unk_idx)
         answers = answers.cpu().int()
         guess = guess.cpu().int()
@@ -505,9 +493,13 @@ class RougeMetric(AverageMetric):
         :return: (rouge-1, rouge-2, rouge-L)
         """
         # possible global initialization
-        global rouge
-        if rouge is None:
+        try:
+            import rouge
+        except ImportError:
+            # User doesn't have py-rouge installed, so we can't use it.
+            # We'll just turn off rouge computations
             return None, None, None
+
         if RougeMetric._evaluator is None:
             RougeMetric._evaluator = rouge.Rouge(
                 metrics=['rouge-n', 'rouge-l'], max_n=2

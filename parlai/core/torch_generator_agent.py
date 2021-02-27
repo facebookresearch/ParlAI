@@ -49,19 +49,6 @@ from parlai.utils.torch import (
 )
 
 
-try:
-    from nltk.translate import bleu_score as nltkbleu
-
-except ImportError:
-    nltkbleu = None
-
-try:
-    from fairseq.scoring import bleu as fairseq_bleu
-
-except ImportError:
-    fairseq_bleu = None
-
-
 class SearchBlocklist(object):
     """
     Search block list facilitates blocking ngrams from being generated.
