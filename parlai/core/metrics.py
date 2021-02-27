@@ -165,6 +165,13 @@ class Metric(ABC):
         Useful if you separately compute numerators and denomenators, etc.
         """
         lengths = [len(o) for o in objs]
+        objs = list(objs)  # convert from tuple for inplace modification
+        for i, o in enumerate(objs):
+            if isinstance(o, torch.Tensor):
+                # if the tensor is on GPU, make sure we transfer the whole thing
+                # at once, instead of one-element-at-a-time during our list
+                # comprehension
+                objs[i] = o.tolist()
         if len(set(lengths)) != 1:
             raise IndexError(f'Uneven {cls.__name__} constructions: {lengths}')
         return [cls(*items) for items in zip(*objs)]
