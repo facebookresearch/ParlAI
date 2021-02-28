@@ -89,14 +89,30 @@ class Mutator(abc.ABC):
             episode_done = False
         return message, episode_done
 
-    def _turn_to_messagenew_pair(
-        self, messages: Iterable[Message]
-    ) -> Iterator[Tuple[Message, bool]]:
-        next_is_new_episode = True
-        for message in messages:
+    def _group_into_episodes(
+        self, message_stream: Iterable[Message]
+    ) -> Iterator[List[Message]]:
+        """
+        Apply fn to grouped episodes, yielding back the results of the application.
+        """
+        episode: List[Message] = []
+        for message in message_stream:
+            if message.is_padding():
+                assert not episode
+                yield [message]
+                continue
             message, episode_done = self._pop_episode_done(message)
-            yield message, next_is_new_episode
-            next_is_new_episode = episode_done
+            episode.append(message)
+            if episode_done:
+                yield episode
+                episode = []
+        if episode:
+            yield episode
+
+    def _add_episode_done(self, episode: List[Message]) -> List[Message]:
+        for i, message in enumerate(episode):
+            message['episode_done'] = i == len(episode) - 1
+        return episode
 
     @abc.abstractmethod
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
@@ -173,37 +189,19 @@ class EpisodeMutator(Mutator):
         """
         pass
 
-    def _postprocess_episode(self, unmutated_episode: List[Message]) -> List[Message]:
-        if unmutated_episode and unmutated_episode[0].is_padding():
-            for message in unmutated_episode:
-                yield message
-            return
-        # make a list in case the user actually returned a generator
-        mutated_episode = list(self.episode_mutation(unmutated_episode))
-        if not mutated_episode:
-            raise ValueError('Episode mutation returned an empty episode.')
-        # set episode_done = False for everything except final
-        for i, m in enumerate(mutated_episode):
-            if 'episode_done' in m:
-                raise ValueError('Episode mutators should not set episode_done.')
-            m['episode_done'] = i == len(mutated_episode) - 1
-            yield m
-
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
         """
         Apply the mutator to a series of messages.
 
         Not meant to be called directly by a user.
         """
-        messagenew_pairs = self._turn_to_messagenew_pair(messages)
-        episode: List[Message] = []
-        for message, new_episode in messagenew_pairs:
-            if new_episode and episode:
-                yield from self._postprocess_episode(episode)
-                episode = []
-            episode.append(message)
-        if episode:
-            yield from self._postprocess_episode(episode)
+        for episode in self._group_into_episodes(messages):
+            if episode and episode[0].is_padding():
+                for message in episode:
+                    yield message
+            else:
+                mutated_episode = self._add_episode_done(self.episode_mutation(episode))
+                yield from mutated_episode
 
 
 class ManyEpisodeMutator(Mutator):
@@ -231,33 +229,17 @@ class ManyEpisodeMutator(Mutator):
         """
         pass
 
-    def _postprocess_episode(self, unmutated_episode):
-        # make a list in case the user actually returned a generator
-        mutated_episodes = list(self.many_episode_mutation(unmutated_episode))
-        for episode in mutated_episodes:
-            episode = list(episode)
-            for j, entry in enumerate(episode):
-                if 'episode_done' in entry:
-                    raise ValueError('Episode mutators should not set episode_done.')
-                # set episode_done = False for everything except final
-                entry['episode_done'] = j == len(episode) - 1
-                yield entry
-
     def __call__(self, messages: Iterable[Message]) -> Iterator[Message]:
         """
         Apply the mutator to a series of messages.
 
         Not meant to be called directly by a user.
         """
-        messagenew_pairs = self._turn_to_messagenew_pair(messages)
-        episode: List[Message] = []
-        for message, new_episode in messagenew_pairs:
-            if message.is_padding():
-                yield message
-                continue
-            if new_episode and episode:
-                yield from self._postprocess_episode(episode)
-                episode = []
-            episode.append(message)
-        if episode:
-            yield from self._postprocess_episode(episode)
+
+        for episode in self._group_into_episodes(messages):
+            if episode and episode[0].is_padding():
+                yield from episode
+            else:
+                mutated_episodes = self.many_episode_mutation(episode)
+                for mutated_episode in mutated_episodes:
+                    yield from self._add_episode_done(mutated_episode)
