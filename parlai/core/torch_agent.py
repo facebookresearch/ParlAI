@@ -1376,6 +1376,7 @@ class TorchAgent(ABC, Agent):
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
             )
+            obs.force_set('ori_text_length', text_length)
             obs.force_set('if_text_truncate', text_length != len(truncated_vec))
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
@@ -1400,7 +1401,10 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
+            label_length = len(obs[label_type + '_vec'])
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
+            obs.force_set('ori_label_length', label_length)
+            obs.force_set('if_label_truncate', label_length > len(truncated_vec))
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
@@ -2000,11 +2004,29 @@ class TorchAgent(ABC, Agent):
         # check if we should add truncate stats
         if all('if_text_truncate' in obs for obs in observations):
             self.record_local_metric(
-                'tr',
+                'truncate',
                 AverageMetric.many(
                     [float(obs['if_text_truncate']) for obs in observations]
                 ),
             )
+        if all('if_label_truncate' in obs for obs in observations):
+            self.record_local_metric(
+                'label_truncate',
+                AverageMetric.many(
+                    [float(obs['if_label_truncate']) for obs in observations]
+                ),
+            )
+        if all('ori_text_length' in obs for obs in observations):
+            self.record_local_metric(
+                'text_length',
+                AverageMetric.many([obs['ori_text_length'] for obs in observations]),
+            )
+        if all('ori_label_length' in obs for obs in observations):
+            self.record_local_metric(
+                'label_length',
+                AverageMetric.many([obs['ori_label_length'] for obs in observations]),
+            )
+
         # create a batch from the vectors
         batch = self.batchify(observations)
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
