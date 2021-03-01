@@ -43,6 +43,7 @@ def _path(opt, test_type):
 class DecodeTeacher(DialogTeacher):
     @classmethod
     def add_cmdline_args(cls, parser, partial_opt):
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('DECODE Teacher Args')
         parser.add_argument(
             '--test_type',

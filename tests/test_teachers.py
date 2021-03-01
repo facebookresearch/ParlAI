@@ -12,7 +12,7 @@ A module for testing various teacher types in ParlAI
 import os
 import unittest
 from parlai.utils import testing as testing_utils
-from parlai.core.teachers import DialogTeacher
+from parlai.core.teachers import DialogTeacher, create_task_agent_from_taskname
 from parlai.core.metrics import SumMetric
 import regex as re
 from parlai.core.message import Message
@@ -284,6 +284,15 @@ class TestChunkTeacher(unittest.TestCase):
     Test chunked teacher.
     """
 
+    def test_iter(self):
+        with testing_utils.tempdir() as tmpdir:
+            teacher = create_task_agent_from_taskname(
+                {'task': 'integration_tests', 'datatype': 'valid', 'datapath': tmpdir}
+            )[0]
+            # twice to assert we reset iterators correctly
+            assert len(list(teacher)) == 100
+            assert len(list(teacher)) == 100
+
     def test_no_batched(self):
         valid, test = testing_utils.eval_model(
             dict(task='integration_tests:chunky', model='repeat_label'),
@@ -430,6 +439,15 @@ class ViolationTeacher(_MockTeacher):
 
 
 class TestDialogTeacher(unittest.TestCase):
+    def test_iter(self):
+        opt = Opt({'datatype': 'valid', 'datapath': '/tmp', 'task': 'test'})
+        teacher = TupleTeacher(opt)
+        # twice to ensure we reset iterators correctly
+        examples = list(teacher)
+        assert len(examples) == 9
+        examples = list(teacher)
+        assert len(examples) == 9
+
     def test_nodatafile(self):
         for dt in [
             'train:ordered',
