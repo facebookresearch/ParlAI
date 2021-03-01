@@ -59,7 +59,7 @@ class SelfChatWorld(DialogPartnerWorld):
     ) -> ParlaiParser:
         """
         Return the parser as-is.
-        
+
         Self-chat-specific world flags can be added here.
         """
         return parser
