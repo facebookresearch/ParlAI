@@ -100,6 +100,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
     def add_cmdline_args(
         cls, parser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         nq = parser.add_argument_group('Natural Questions Teacher')
         nq.add_argument(
             '--use-html',

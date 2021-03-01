@@ -14,6 +14,7 @@ tutorial_torch_generator_agent
 tutorial_torch_ranker_agent
 tutorial_metrics
 tutorial_fast
+tutorial_mutators
 tutorial_crowdsourcing
 tutorial_chat_service
 tutorial_tests
@@ -29,16 +30,17 @@ tutorial_tipsntricks
 
 ```{toctree}
 :maxdepth: 1
-:caption: Agents, Tasks & Zoo
+:caption: Component Reference
 
 agents_list
 tasks
+mutators
 zoo
 ```
 
 ```{toctree}
 :maxdepth: 2
-:caption: Scripts & CLI
+:caption: Scripts Reference
 
 cli_usage
 cli_advanced
