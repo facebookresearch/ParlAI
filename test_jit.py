@@ -10,11 +10,12 @@ import torch.jit
 import torch.nn as nn
 
 from parlai.core.agents import create_agent
+from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.io import PathManager
 
 
-def test_jit(opt):
+def test_jit(opt: Opt):
 
     agent = create_agent(opt, requireModelExists=True)
     # Using create_agent() instead of create_agent_from_model_file() because I couldn't get
