@@ -857,7 +857,7 @@ class TransformerDecoder(nn.Module):
         self,
         input,
         encoder_state: Tuple[torch.Tensor, torch.Tensor],
-        incr_state: Dict[str, torch.Tensor] = None,
+        incr_state: Dict[str, torch.Tensor],
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.

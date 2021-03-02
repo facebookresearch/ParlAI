@@ -61,7 +61,9 @@ class JitGreedySearch(nn.Module):
         bsz = sample_tokens.size(0)
         encoder_states = model.encoder(sample_tokens)
         generations = model._get_initial_decoder_input(bsz, 1).to(sample_tokens.device)
-        latent, _ = model.decoder(generations, encoder_states, incr_state=None)
+        latent, _ = model.decoder(
+            generations, encoder_states, incr_state=initial_incr_state
+        )
 
         self.encoder = torch.jit.trace(model.encoder, sample_tokens)
         self.decoder = torch.jit.trace(
