@@ -11,6 +11,7 @@ import torch.nn as nn
 
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
+from parlai.utils.io import PathManager
 
 
 def test_jit(opt):
@@ -30,7 +31,8 @@ def test_jit(opt):
     print(agent._v2t(result[0].tolist()))
 
     # Save the scripted module
-    scripted_module.save(opt['scripted_model_file'])
+    with PathManager.open(opt['scripted_model_file'], 'wb') as f:
+        torch.jit.save(scripted_module, f)
 
 
 def setup_args() -> ParlaiParser:
