@@ -21,6 +21,7 @@ def test_jit(opt):
     # Using create_agent() instead of create_agent_from_model_file() because I couldn't get
     # --no-cuda to be recognized with the latter
     # get the tokenization
+    agent.model.eval()
     obs = agent.observe({'text': 'hello world', 'episode_done': True})
     batch = agent.batchify([obs])
     tokens = batch.text_vec
@@ -103,16 +104,7 @@ class JitGreedySearch(nn.Module):
             generations = torch.cat([generations, preds], dim=1)
             if torch.all(seen_end):
                 break
-        padded_generations = F.pad(
-            generations,
-            pad=(0, max_len - generations.size(1)),
-            value=float(self.null_idx),
-        )
-        # Just pad the generation to max_len so that the generation will be the same
-        # size before and after tracing, which is needed when the tracer checks the
-        # similarity of the outputs after tracing. The `value` arg needs to be a float
-        # for some reason
-        return padded_generations
+        return generations
 
     def _get_intial_empty_incr_state(
         self, encoder_seq_len: int
@@ -136,23 +128,9 @@ class JitGreedySearch(nn.Module):
             'self_attn_prev_mask': torch.empty(
                 self.num_dec_layers, self.batch_size, 1, self.orig_incr_state_len
             ),
-            'encoder_attn_prev_key': torch.empty(
-                self.num_dec_layers,
-                self.batch_size,
-                self.num_heads,
-                encoder_seq_len,
-                self.dim_per_head,
-            ),
-            'encoder_attn_prev_value': torch.empty(
-                self.num_dec_layers,
-                self.batch_size,
-                self.num_heads,
-                encoder_seq_len,
-                self.dim_per_head,
-            ),
-            'encoder_attn_prev_mask': torch.empty(
-                self.num_dec_layers, self.batch_size, encoder_seq_len
-            ),
+            'encoder_attn_prev_key': torch.empty(self.num_dec_layers, 0),
+            'encoder_attn_prev_value': torch.empty(self.num_dec_layers, 0),
+            'encoder_attn_prev_mask': torch.empty(self.num_dec_layers, 0),
         }
 
 

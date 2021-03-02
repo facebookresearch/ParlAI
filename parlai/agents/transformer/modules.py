@@ -1399,7 +1399,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
         # these three states are unchanging, so just re-use the cached states.)
         if incr_state is None:
             incr_state = {}
-        if 'prev_key' in incr_state:
+        if 'prev_key' in incr_state and incr_state['prev_key'].numel() > 0:
             prev_key = incr_state['prev_key'].view(
                 batch_size * n_heads, -1, dim_per_head
             )
@@ -1407,7 +1407,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
                 k = prev_key
             else:
                 k = torch.cat([prev_key, k], dim=1)
-        if 'prev_value' in incr_state:
+        if 'prev_value' in incr_state and incr_state['prev_value'].numel() > 0:
             prev_value = incr_state['prev_value'].view(
                 batch_size * n_heads, -1, dim_per_head
             )
@@ -1415,7 +1415,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
                 v = prev_value
             else:
                 v = torch.cat([prev_value, v], dim=1)
-        if 'prev_mask' in incr_state:
+        if 'prev_mask' in incr_state and incr_state['prev_mask'].numel() > 0:
             if static_kv:
                 mask = incr_state['prev_mask']
             else:
