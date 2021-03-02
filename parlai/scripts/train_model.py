@@ -39,6 +39,7 @@ from parlai.core.metrics import (
     aggregate_unnamed_reports,
     dict_report,
 )
+from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
@@ -53,6 +54,10 @@ from parlai.utils.misc import Timer, nice_report
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
+
+
+def _num_else_inf(opt: Opt, key: str):
+    return opt[key] if opt[key] > 0 else float('inf')
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -96,6 +101,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument(
         '-tstep',
         '--max-train-steps',
+        '--max-lr-steps',
         type=int,
         default=-1,
         help='End training after n model updates',
@@ -119,7 +125,7 @@ def setup_args(parser=None) -> ParlaiParser:
     train.add_argument(
         '-vstep',
         '--validation-every-n-steps',
-        type=float,
+        type=int,
         default=-1,
         help='Validate every n training steps. Saves model to model_file '
         '(if set) whenever best val metric is found',
@@ -337,18 +343,15 @@ class TrainLoop:
         self._last_log_steps = 0
         self.update_freq = opt.get('update_freq', 1)
 
-        def _num_else_inf(key: str):
-            return opt[key] if opt[key] > 0 else float('inf')
-
-        self.max_num_epochs = _num_else_inf('num_epochs')
-        self.max_train_time = _num_else_inf('max_train_time')
-        self.max_train_steps = _num_else_inf('max_train_steps')
-        self.log_every_n_secs = _num_else_inf('log_every_n_secs')
-        self.log_every_n_steps = _num_else_inf('log_every_n_steps')
-        self.val_every_n_secs = _num_else_inf('validation_every_n_secs')
-        self.val_every_n_epochs = _num_else_inf('validation_every_n_epochs')
-        self.val_every_n_steps = _num_else_inf('validation_every_n_steps')
-        self.save_every_n_secs = _num_else_inf('save_every_n_secs')
+        self.max_num_epochs = _num_else_inf(opt, 'num_epochs')
+        self.max_train_time = _num_else_inf(opt, 'max_train_time')
+        self.max_train_steps = _num_else_inf(opt, 'max_train_steps')
+        self.log_every_n_secs = _num_else_inf(opt, 'log_every_n_secs')
+        self.log_every_n_steps = _num_else_inf(opt, 'log_every_n_steps')
+        self.val_every_n_secs = _num_else_inf(opt, 'validation_every_n_secs')
+        self.val_every_n_epochs = _num_else_inf(opt, 'validation_every_n_epochs')
+        self.val_every_n_steps = _num_else_inf(opt, 'validation_every_n_steps')
+        self.save_every_n_secs = _num_else_inf(opt, 'save_every_n_secs')
 
         # smart defaults for --validation-metric-mode
         if opt['validation_metric'] in {'loss', 'ppl', 'mean_rank'}:
@@ -677,9 +680,10 @@ class TrainLoop:
         :return (train, log, valid):
             return time for each of train, log, and validation
         """
-        if any(
-            getattr(self, k) < float('inf')
-            for k in ['max_train_time', 'log_every_n_secs', 'val_every_n_secs']
+        if (
+            self.max_train_time < float('inf')
+            or self.log_every_n_secs < float('inf')
+            or self.val_every_n_secs < float('inf')
         ):
             self._total_epochs = self._preempted_epochs + sum(
                 all_gather_list(world.get_total_epochs())

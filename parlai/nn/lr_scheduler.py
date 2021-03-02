@@ -158,16 +158,6 @@ class ParlAILRScheduler(object):
             'when it is lowered.',
         )
         lr_group.add_argument(
-            '--max-lr-steps',
-            type=int,
-            default=-1,
-            hidden=True,
-            help='**DEPRECATED: please use --max-train-steps instead**'
-            'Number of train steps the scheduler should take after warmup. '
-            'Training is terminated after this many steps. This should only be '
-            'set for --lr-scheduler cosine or linear',
-        )
-        lr_group.add_argument(
             '--invsqrt-lr-decay-gamma',
             type=int,
             default=-1,
