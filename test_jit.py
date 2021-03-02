@@ -61,21 +61,29 @@ class JitGreedySearch(nn.Module):
 
         bsz = sample_tokens.size(0)
         encoder_states = model.encoder(sample_tokens)
-        generations = model._get_initial_decoder_input(bsz, 1).to(sample_tokens.device)
-        latent, _ = model.decoder(
-            generations, encoder_states, incr_state=initial_incr_state
+        initial_generations = model._get_initial_decoder_input(bsz, 1).to(
+            sample_tokens.device
         )
+        latent, incr_state = model.decoder(
+            initial_generations, encoder_states, incr_state=initial_incr_state
+        )
+        logits = model.output(latent[:, -1:, :])
+        _, preds = logits.max(dim=2)
+        generations = torch.cat([initial_generations, preds], dim=1)
 
         self.encoder = torch.jit.trace(model.encoder, sample_tokens)
-        self.decoder = torch.jit.trace(
+        self.decoder_first_pass = torch.jit.trace(
             model.decoder,
-            (generations, encoder_states, initial_incr_state),
+            (initial_generations, encoder_states, initial_incr_state),
             strict=False,
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
         self.partially_traced_model = torch.jit.trace_module(
             model, {'output': (latent[:, -1:, :])}
+        )
+        self.decoder_later_pass = torch.jit.trace(
+            model.decoder, (generations, encoder_states, incr_state), strict=False
         )
 
         self.start_idx = model.START_IDX
@@ -96,8 +104,15 @@ class JitGreedySearch(nn.Module):
         # (possibly nested) Lists, Dicts, and Tuples of Tensors can be traced" error
         # keep track of early stopping if all generations finish
         seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
-        for _ in range(max_len):
-            latent, incr_state = self.decoder(generations, encoder_states, incr_state)
+        for token_idx in range(max_len):
+            if token_idx == 0:
+                latent, incr_state = self.decoder_first_pass(
+                    generations, encoder_states, incr_state
+                )
+            else:
+                latent, incr_state = self.decoder_later_pass(
+                    generations, encoder_states, incr_state
+                )
             logits = self.partially_traced_model.output(latent[:, -1:, :])
             _, preds = logits.max(dim=2)
             seen_end = seen_end + (preds == self.end_idx).squeeze(1)
