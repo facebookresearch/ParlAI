@@ -19,6 +19,7 @@ def test_jit(opt):
     # Using create_agent() instead of create_agent_from_model_file() because I couldn't get
     # --no-cuda to be recognized with the latter
     # get the tokenization
+    agent.model.eval()
     obs = agent.observe({'text': 'hello world', 'episode_done': True})
     batch = agent.batchify([obs])
     tokens = batch.text_vec
@@ -83,16 +84,7 @@ class JitGreedySearch(nn.Module):
             generations = torch.cat([generations, preds], dim=1)
             if torch.all(seen_end):
                 break
-        padded_generations = F.pad(
-            generations,
-            pad=(0, max_len - generations.size(1)),
-            value=float(self.null_idx),
-        )
-        # Just pad the generation to max_len so that the generation will be the same
-        # size before and after tracing, which is needed when the tracer checks the
-        # similarity of the outputs after tracing. The `value` arg needs to be a float
-        # for some reason
-        return padded_generations
+        return generations
 
 
 if __name__ == '__main__':
