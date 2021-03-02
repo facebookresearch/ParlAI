@@ -4,6 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Dict
+
 import torch.jit
 import torch.nn as nn
 import torch.nn.functional as F
@@ -45,23 +47,40 @@ class JitGreedySearch(nn.Module):
 
     def __init__(self, model):
         super().__init__()
+
+        # Create sample inputs
         sample_tokens = torch.LongTensor([[1, 2, 3, 4, 5]])
+        self.batch_size = 1
+        self.num_dec_layers = model.decoder.n_layers
+        self.emb_dim = model.decoder.embedding_size
+        self.num_heads = model.decoder.n_heads
+        self.dim_per_head = self.emb_dim // self.num_heads
+        self.orig_incr_state_len = 0
+        initial_incr_state = self._get_intial_empty_incr_state(sample_tokens.size(0))
+
         bsz = sample_tokens.size(0)
         encoder_states = model.encoder(sample_tokens)
         generations = model._get_initial_decoder_input(bsz, 1).to(sample_tokens.device)
-        # latent, incr_state = model.decoder(generations, encoder_states, incr_state)
-        latent = model.decoder(generations, encoder_states)
+        latent, _ = model.decoder(generations, encoder_states, incr_state=None)
+
         self.encoder = torch.jit.trace(model.encoder, sample_tokens)
-        self.decoder = torch.jit.trace(model.decoder, (generations, encoder_states))
+        self.decoder = torch.jit.trace(
+            model.decoder,
+            (generations, encoder_states, initial_incr_state),
+            strict=False,
+        )
+        # We do strict=False to avoid an error when passing a Dict out of
+        # decoder.forward()
         self.partially_traced_model = torch.jit.trace_module(
             model, {'output': (latent[:, -1:, :])}
         )
+
         self.start_idx = model.START_IDX
         self.end_idx = model.END_IDX
         self.null_idx = model.NULL_IDX
 
     def forward(self, x: torch.Tensor, max_len: int = 128):
-        # incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
+        incr_state = self._get_intial_empty_incr_state(x.size(0))
         bsz = x.size(0)
         encoder_states = self.encoder(x)
         generations = (
@@ -75,8 +94,7 @@ class JitGreedySearch(nn.Module):
         # keep track of early stopping if all generations finish
         seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
         for _ in range(max_len):
-            # latent, incr_state = self.decoder(generations, encoder_states, incr_state)
-            latent = self.decoder(generations, encoder_states)
+            latent, incr_state = self.decoder(generations, encoder_states, incr_state)
             logits = self.partially_traced_model.output(latent[:, -1:, :])
             _, preds = logits.max(dim=2)
             seen_end = seen_end + (preds == self.end_idx).squeeze(1)
@@ -93,6 +111,47 @@ class JitGreedySearch(nn.Module):
         # similarity of the outputs after tracing. The `value` arg needs to be a float
         # for some reason
         return padded_generations
+
+    def _get_intial_empty_incr_state(
+        self, encoder_seq_len: int
+    ) -> Dict[str, torch.Tensor]:
+        # TODO: todo: write docstring
+        return {
+            'self_attn_prev_key': torch.empty(
+                self.num_dec_layers,
+                self.batch_size,
+                self.num_heads,
+                self.orig_incr_state_len,
+                self.dim_per_head,
+            ),
+            'self_attn_prev_value': torch.empty(
+                self.num_dec_layers,
+                self.batch_size,
+                self.num_heads,
+                self.orig_incr_state_len,
+                self.dim_per_head,
+            ),
+            'self_attn_prev_mask': torch.empty(
+                self.num_dec_layers, self.batch_size, 1, self.orig_incr_state_len
+            ),
+            'encoder_attn_prev_key': torch.empty(
+                self.num_dec_layers,
+                self.batch_size,
+                self.num_heads,
+                encoder_seq_len,
+                self.dim_per_head,
+            ),
+            'encoder_attn_prev_value': torch.empty(
+                self.num_dec_layers,
+                self.batch_size,
+                self.num_heads,
+                encoder_seq_len,
+                self.dim_per_head,
+            ),
+            'encoder_attn_prev_mask': torch.empty(
+                self.num_dec_layers, self.batch_size, encoder_seq_len
+            ),
+        }
 
 
 if __name__ == '__main__':
