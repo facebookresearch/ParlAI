@@ -4,15 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Dict, Optional
+from typing import Dict
 
 import torch.jit
 import torch.nn as nn
-import torch.nn.functional as F
 
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_generator_agent import TorchGeneratorModel
 
 
 def test_jit(opt):
@@ -32,7 +30,19 @@ def test_jit(opt):
     print(agent._v2t(result[0].tolist()))
 
     # Save the scripted module
-    scripted_module.save('_scripted.pt')
+    scripted_module.save(opt['scripted_model_file'])
+
+
+def setup_args() -> ParlaiParser:
+    parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
+    parser.add_argument(
+        '-smf',
+        '--scripted-model-file',
+        type=str,
+        default='_scripted.pt',
+        help='Where the scripted model checkpoint will be saved',
+    )
+    return parser
 
 
 class JitGreedySearch(nn.Module):
@@ -118,6 +128,6 @@ class JitGreedySearch(nn.Module):
 
 
 if __name__ == '__main__':
-    parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
+    parser = setup_args()
     opt_ = parser.parse_args()
     test_jit(opt_)
