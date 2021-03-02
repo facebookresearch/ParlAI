@@ -810,7 +810,7 @@ class TransformerDecoder(nn.Module):
         tensor: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[str, torch.Tensor],
+        incr_state: Optional[Dict[str, torch.Tensor]],
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -835,9 +835,12 @@ class TransformerDecoder(nn.Module):
         else:
             new_incr_states = []
             for idx, layer in enumerate(self.layers):
-                single_layer_incr_state = {
-                    key: val[idx] for key, val in incr_state.items()
-                }
+                if incr_state is not None:
+                    single_layer_incr_state = {
+                        key: val[idx] for key, val in incr_state.items()
+                    }
+                else:
+                    single_layer_incr_state = None
                 tensor, single_layer_new_incr_state = layer(
                     x=tensor,
                     encoder_output=encoder_output,
@@ -857,7 +860,7 @@ class TransformerDecoder(nn.Module):
         self,
         input,
         encoder_state: Tuple[torch.Tensor, torch.Tensor],
-        incr_state: Dict[str, torch.Tensor],
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
@@ -878,10 +881,11 @@ class TransformerDecoder(nn.Module):
         ).unsqueeze(0)
         # tensor.new() deprecated
 
-        # We're doing incremental decoding, so select only the most recent position
-        input = input[:, -1:]
-        if positions is not None:
-            positions = positions[:, -1:]
+        if incr_state is not None:
+            # We're doing incremental decoding, so select only the most recent position
+            input = input[:, -1:]
+            if positions is not None:
+                positions = positions[:, -1:]
 
         tensor = self.forward_embedding(input, positions)
 
@@ -980,7 +984,7 @@ class TransformerDecoderLayer(nn.Module):
         x: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[str, torch.Tensor],
+        incr_state: Optional[Dict[str, torch.Tensor]],
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
@@ -998,9 +1002,12 @@ class TransformerDecoderLayer(nn.Module):
             x = self.norm1(x)
 
         # don't peak into the future!
-        self_attn_incr_state = {
-            type_: incr_state[f'self_attn_{type_}'] for type_ in attn_types
-        }
+        if incr_state is not None:
+            self_attn_incr_state = {
+                type_: incr_state[f'self_attn_{type_}'] for type_ in attn_types
+            }
+        else:
+            self_attn_incr_state = None
         x, final_self_attn_incr_state = self.self_attention(
             query=x,
             key=None,
@@ -1019,9 +1026,12 @@ class TransformerDecoderLayer(nn.Module):
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
             x = self.norm2(x)
-        encoder_attn_incr_state = {
-            type_: incr_state[f'encoder_attn_{type_}'] for type_ in attn_types
-        }
+        if incr_state is not None:
+            encoder_attn_incr_state = {
+                type_: incr_state[f'encoder_attn_{type_}'] for type_ in attn_types
+            }
+        else:
+            encoder_attn_incr_state = None
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -1399,7 +1409,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
         # these three states are unchanging, so just re-use the cached states.)
         if incr_state is None:
             incr_state = {}
-        if 'prev_key' in incr_state and incr_state['prev_key'].numel() > 0:
+        if 'prev_key' in incr_state:
             prev_key = incr_state['prev_key'].view(
                 batch_size * n_heads, -1, dim_per_head
             )
@@ -1407,7 +1417,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
                 k = prev_key
             else:
                 k = torch.cat([prev_key, k], dim=1)
-        if 'prev_value' in incr_state and incr_state['prev_value'].numel() > 0:
+        if 'prev_value' in incr_state:
             prev_value = incr_state['prev_value'].view(
                 batch_size * n_heads, -1, dim_per_head
             )
@@ -1415,7 +1425,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
                 v = prev_value
             else:
                 v = torch.cat([prev_value, v], dim=1)
-        if 'prev_mask' in incr_state and incr_state['prev_mask'].numel() > 0:
+        if 'prev_mask' in incr_state:
             if static_kv:
                 mask = incr_state['prev_mask']
             else:

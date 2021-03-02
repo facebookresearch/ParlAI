@@ -239,7 +239,6 @@ class TorchGeneratorModel(nn.Module, ABC):
             )
         inputs = self._get_initial_forced_decoder_input(bsz, inputs)
         latent, _ = self.decoder(inputs, encoder_states)
-        # TODO: a dummy incr_state will have to be passed in here as well
         logits = self.output(latent)
         _, preds = logits.max(dim=2)
         return logits, preds
@@ -1145,7 +1144,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
-        incr_state = None  # TODO: initialize this as in test_jit.py
+        incr_state = None
 
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):

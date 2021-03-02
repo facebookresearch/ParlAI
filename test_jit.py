@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Dict
+from typing import Dict, Optional
 
 import torch.jit
 import torch.nn as nn
@@ -57,25 +57,20 @@ class JitGreedySearch(nn.Module):
         self.num_heads = model.decoder.n_heads
         self.dim_per_head = self.emb_dim // self.num_heads
         self.orig_incr_state_len = 0
-        initial_incr_state = self._get_intial_empty_incr_state(sample_tokens.size(0))
 
         bsz = sample_tokens.size(0)
         encoder_states = model.encoder(sample_tokens)
         initial_generations = model._get_initial_decoder_input(bsz, 1).to(
             sample_tokens.device
         )
-        latent, incr_state = model.decoder(
-            initial_generations, encoder_states, incr_state=initial_incr_state
-        )
+        latent, incr_state = model.decoder(initial_generations, encoder_states)
         logits = model.output(latent[:, -1:, :])
         _, preds = logits.max(dim=2)
         generations = torch.cat([initial_generations, preds], dim=1)
 
         self.encoder = torch.jit.trace(model.encoder, sample_tokens)
         self.decoder_first_pass = torch.jit.trace(
-            model.decoder,
-            (initial_generations, encoder_states, initial_incr_state),
-            strict=False,
+            model.decoder, (initial_generations, encoder_states), strict=False
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
@@ -91,7 +86,6 @@ class JitGreedySearch(nn.Module):
         self.null_idx = model.NULL_IDX
 
     def forward(self, x: torch.Tensor, max_len: int = 128):
-        incr_state = self._get_intial_empty_incr_state(x.size(0))
         bsz = x.size(0)
         encoder_states = self.encoder(x)
         generations = (
@@ -104,10 +98,11 @@ class JitGreedySearch(nn.Module):
         # (possibly nested) Lists, Dicts, and Tuples of Tensors can be traced" error
         # keep track of early stopping if all generations finish
         seen_end = torch.zeros(x.size(0), device=x.device, dtype=torch.bool)
+        incr_state: Dict[str, torch.Tensor] = {}
         for token_idx in range(max_len):
             if token_idx == 0:
                 latent, incr_state = self.decoder_first_pass(
-                    generations, encoder_states, incr_state
+                    generations, encoder_states
                 )
             else:
                 latent, incr_state = self.decoder_later_pass(
@@ -120,33 +115,6 @@ class JitGreedySearch(nn.Module):
             if torch.all(seen_end):
                 break
         return generations
-
-    def _get_intial_empty_incr_state(
-        self, encoder_seq_len: int
-    ) -> Dict[str, torch.Tensor]:
-        # TODO: todo: write docstring
-        return {
-            'self_attn_prev_key': torch.empty(
-                self.num_dec_layers,
-                self.batch_size,
-                self.num_heads,
-                self.orig_incr_state_len,
-                self.dim_per_head,
-            ),
-            'self_attn_prev_value': torch.empty(
-                self.num_dec_layers,
-                self.batch_size,
-                self.num_heads,
-                self.orig_incr_state_len,
-                self.dim_per_head,
-            ),
-            'self_attn_prev_mask': torch.empty(
-                self.num_dec_layers, self.batch_size, 1, self.orig_incr_state_len
-            ),
-            'encoder_attn_prev_key': torch.empty(self.num_dec_layers, 0),
-            'encoder_attn_prev_value': torch.empty(self.num_dec_layers, 0),
-            'encoder_attn_prev_mask': torch.empty(self.num_dec_layers, 0),
-        }
 
 
 if __name__ == '__main__':
