@@ -13,8 +13,11 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from parlai.agents.transformer.functions import create_position_codes
-from parlai.agents.transformer.modules import MultiHeadAttention, TransformerFFN
+from parlai.agents.transformer.modules import (
+    create_position_codes,
+    MultiHeadAttention,
+    TransformerFFN,
+)
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 

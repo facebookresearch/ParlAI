@@ -22,8 +22,11 @@ import torch
 import torch.cuda
 import torch.nn.functional as F
 
-from parlai.agents.transformer.functions import create_embeddings
-from parlai.agents.transformer.modules import TransformerDecoder, TransformerEncoder
+from parlai.agents.transformer.modules import (
+    create_embeddings,
+    TransformerDecoder,
+    TransformerEncoder,
+)
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
