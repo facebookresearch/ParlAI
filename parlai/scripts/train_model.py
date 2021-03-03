@@ -687,7 +687,6 @@ class TrainLoop:
             or self.val_every_n_epochs < float('inf')
             or self.max_num_epochs < float('inf')
         ):
-            logging.info("Doing a manual sync")
             self._total_epochs = self._preempted_epochs + sum(
                 all_gather_list(world.get_total_epochs())
             )
@@ -699,7 +698,6 @@ class TrainLoop:
                 )
             )
         else:
-            logging.info("Not syncing")
             train_time, log_time, validate_time = (
                 self.train_time.time(),
                 self.log_time.time(),
