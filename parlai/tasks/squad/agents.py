@@ -254,6 +254,7 @@ class SentenceTeacher(IndexTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('SQuAD Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
@@ -338,6 +339,7 @@ class FulldocsentenceTeacher(FulldocTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
@@ -392,6 +394,7 @@ class SquadQATeacher(AbstractWrapperTeacher):
 
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None):
+        super().add_cmdline_args(parser, partial_opt)
         parser.set_defaults(wrapper_task='squad')
         return parser
 

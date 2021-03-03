@@ -14,12 +14,7 @@ import torch
 import torch.nn as nn
 
 from parlai.agents.transformer.functions import create_position_codes
-from parlai.agents.transformer.modules import (
-    LayerNorm,
-    normalize,
-    MultiHeadAttention,
-    TransformerFFN,
-)
+from parlai.agents.transformer.modules import MultiHeadAttention, TransformerFFN
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
@@ -137,7 +132,7 @@ class TransformerEncoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = LayerNorm(self.dim)
+            self.norm_embeddings = nn.LayerNorm(self.dim)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -280,7 +275,7 @@ class TransformerEncoder(nn.Module):
         tensor, mask = self.forward_embedding(input, positions, segments)
 
         if self.variant == 'xlm' or self.variant == 'bart':
-            tensor = normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
@@ -291,7 +286,7 @@ class TransformerEncoder(nn.Module):
         tensor = self.forward_layers(tensor, mask)
 
         if self.variant == 'prelayernorm':
-            tensor = normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
@@ -341,14 +336,14 @@ class TransformerEncoderLayer(nn.Module):
         self.attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
-        self.norm1 = LayerNorm(embedding_size)
+        self.norm1 = nn.LayerNorm(embedding_size)
         self.ffn = TransformerFFN(
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
             activation=self.activation,
         )
-        self.norm2 = LayerNorm(embedding_size)
+        self.norm2 = nn.LayerNorm(embedding_size)
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, tensor, mask):
@@ -357,16 +352,16 @@ class TransformerEncoderLayer(nn.Module):
         """
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = normalize(tensor, self.norm1)
+            tensor = self.norm1(tensor)
         residual = tensor
         if self.variant == 'prelayernorm':
-            tensor = normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor = residual + self.dropout(self.ffn(tensor))
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = normalize(tensor, self.norm2)
+            tensor = self.norm2(tensor)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         return tensor

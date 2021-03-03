@@ -86,6 +86,67 @@ class TestBuildData(unittest.TestCase):
             assert Session.call_count == 3
 
 
+class TestUnzip(unittest.TestCase):
+    def test_ungzip(self):
+        with testing_utils.tempdir() as tmpdir:
+            import gzip
+
+            fname = os.path.join(tmpdir, "test.txt.gz")
+            with gzip.GzipFile(fname, mode="w") as f:
+                f.write("This is a test\n".encode("utf-8"))
+            build_data.ungzip(tmpdir, "test.txt.gz")
+            out_fn = os.path.join(tmpdir, "test.txt")
+            assert os.path.exists(out_fn)
+            assert not os.path.exists(fname)
+            with open(out_fn) as f:
+                assert f.read() == "This is a test\n"
+
+    def test_unzip(self):
+        with testing_utils.tempdir() as tmpdir:
+            import zipfile
+
+            zname = os.path.join(tmpdir, "test.zip")
+            with zipfile.ZipFile(zname, "w") as zf:
+                with zf.open("test1.txt", "w") as f:
+                    f.write(b"Test1\n")
+                with zf.open("test2.txt", "w") as f:
+                    f.write(b"Test2\n")
+
+            build_data._unzip(tmpdir, "test.zip")
+            assert os.path.exists(os.path.join(tmpdir, "test1.txt"))
+            assert os.path.exists(os.path.join(tmpdir, "test2.txt"))
+            with open(os.path.join(tmpdir, "test1.txt")) as f:
+                assert f.read() == "Test1\n"
+            with open(os.path.join(tmpdir, "test2.txt")) as f:
+                assert f.read() == "Test2\n"
+            assert not os.path.exists(zname)
+
+    def test_untar(self):
+        with testing_utils.tempdir() as tmpdir:
+            import io
+            import tarfile
+
+            zname = os.path.join(tmpdir, "test.tar.gz")
+            with tarfile.open(zname, "w") as zf:
+                with io.BytesIO(b"Test1\n") as f:
+                    tarinfo = tarfile.TarInfo("test1.txt")
+                    tarinfo.size = 6
+                    zf.addfile(tarinfo, fileobj=f)
+                with io.BytesIO(b"Test2\n") as f:
+                    tarinfo = tarfile.TarInfo("test2.txt")
+                    tarinfo.size = 6
+                    zf.addfile(tarinfo, fileobj=f)
+
+            build_data._untar(tmpdir, "test.tar.gz")
+            assert os.path.exists(os.path.join(tmpdir, "test1.txt"))
+            assert os.path.exists(os.path.join(tmpdir, "test2.txt"))
+            with open(os.path.join(tmpdir, "test1.txt")) as f:
+                assert f.read() == "Test1\n"
+            with open(os.path.join(tmpdir, "test2.txt")) as f:
+                assert f.read() == "Test2\n"
+            assert not os.path.exists(zname)
+
+
 if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
     unittest.main()

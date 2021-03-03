@@ -14,12 +14,7 @@ import torch
 import torch.nn as nn
 
 from parlai.agents.transformer.functions import create_position_codes
-from parlai.agents.transformer.modules import (
-    LayerNorm,
-    MultiHeadAttention,
-    normalize,
-    TransformerFFN,
-)
+from parlai.agents.transformer.modules import MultiHeadAttention, TransformerFFN
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
@@ -93,7 +88,7 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = LayerNorm(self.dim)
+            self.norm_embeddings = nn.LayerNorm(self.dim)
             if self.variant == 'xlm':
                 warn_once(
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
@@ -152,7 +147,7 @@ class TransformerDecoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
@@ -162,7 +157,7 @@ class TransformerDecoder(nn.Module):
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
         if self.variant == 'bart':
-            tensor = normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor
 
@@ -240,7 +235,7 @@ class TransformerDecoder(nn.Module):
         )
 
         if self.variant == 'prelayernorm':
-            tensor = normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor, new_incr_state
 
@@ -311,17 +306,17 @@ class TransformerDecoderLayer(nn.Module):
         self.self_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm1 = LayerNorm(embedding_size)
+        self.norm1 = nn.LayerNorm(embedding_size)
 
         self.encoder_attention = MultiHeadAttention(
             n_heads, embedding_size, dropout=attention_dropout
         )
-        self.norm2 = LayerNorm(embedding_size)
+        self.norm2 = nn.LayerNorm(embedding_size)
 
         self.ffn = TransformerFFN(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
-        self.norm3 = LayerNorm(embedding_size)
+        self.norm3 = nn.LayerNorm(embedding_size)
 
     def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
@@ -338,7 +333,7 @@ class TransformerDecoderLayer(nn.Module):
         # first self attn
         residual = x
         if self.variant == 'prelayernorm':
-            x = normalize(x, self.norm1)
+            x = self.norm1(x)
 
         # don't peak into the future!
         x, final_self_attn_incr_state = self.self_attention(
@@ -350,12 +345,12 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = normalize(x, self.norm1)
+            x = self.norm1(x)
 
         residual = x
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
-            x = normalize(x, self.norm2)
+            x = self.norm2(x)
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
@@ -367,17 +362,17 @@ class TransformerDecoderLayer(nn.Module):
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = normalize(x, self.norm2)
+            x = self.norm2(x)
 
         # finally the ffn
         residual = x
         if self.variant == 'prelayernorm':
-            x = normalize(x, self.norm3)
+            x = self.norm3(x)
         x = self.ffn(x)
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = normalize(x, self.norm3)
+            x = self.norm3(x)
 
         new_incr_state = {
             'self_attn': final_self_attn_incr_state,
