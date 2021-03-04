@@ -279,6 +279,9 @@ class TransformerEncoder(nn.Module):
     """
     Transformer encoder module.
 
+    For documentation on parameters that are take directly from opt,
+    see parlai/agents/transformer/transformer.py
+
     :param opt: ParlAI-parsed options.
     :param vocabulary_size: Count of tokens/words in the dictionary.
     :param embedding: an embedding matrix for the bottom layer of the transformer.
@@ -608,15 +611,27 @@ class TransformerEncoderLayer(nn.Module):
 
 class TransformerDecoder(nn.Module):
     """
-    Transformer Decoder layer.
+    Transformer Decoder module.
+
+    For documentation on parameters that are take directly from opt,
+    see parlai/agents/transformer/transformer.py
 
     :param opt: ParlAI-parsed options.
     :param embedding: an embedding matrix for the bottom layer of the transformer.
         If none, one is created for this encoder.
+    :param int n_positions: Size of the position embeddings matrix.
     """
 
-    def __init__(self, opt: Opt, embedding: Optional[nn.Embedding] = None):
+    def __init__(
+        self,
+        opt: Opt,
+        embedding: Optional[nn.Embedding] = None,
+        n_positions: Optional[int] = None,
+    ):
         super().__init__()
+
+        def _default(val, default):
+            return val if val is not None else default
 
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
@@ -627,14 +642,14 @@ class TransformerDecoder(nn.Module):
         )
         self.n_heads = opt['n_heads']
         self.dim = self.embedding_size
-        self.activation = opt['activation']
-        self.variant = opt['variant']
+        self.activation = opt.get('activation', 'relu')
+        self.variant = opt.get('variant', 'aiayn')
 
-        self.embeddings_scale = opt['embeddings_scale']
-        dropout_frac = opt['dropout']
+        self.embeddings_scale = opt.get('embeddings_scale', True)
+        dropout_frac = opt.get('dropout', 0.0)
         self.dropout = nn.Dropout(p=dropout_frac)  # --dropout
 
-        self.n_positions = get_n_positions_from_options(opt)
+        self.n_positions = _default(n_positions, get_n_positions_from_options(opt))
         self.out_dim = self.embedding_size
         assert (
             self.embedding_size % self.n_heads == 0
@@ -660,7 +675,7 @@ class TransformerDecoder(nn.Module):
 
         # create the positional embeddings
         self.position_embeddings = nn.Embedding(self.n_positions, self.embedding_size)
-        if not opt['learn_positional_embeddings']:
+        if not opt.get('learn_positional_embeddings', False):
             create_position_codes(
                 self.n_positions,
                 self.embedding_size,
@@ -679,8 +694,8 @@ class TransformerDecoder(nn.Module):
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
-                    attention_dropout=opt['attention_dropout'],
-                    relu_dropout=opt['relu_dropout'],
+                    attention_dropout=opt.get('attention_dropout', 0.0),
+                    relu_dropout=opt.get('relu_dropout', 0.0),
                     dropout=dropout_frac,
                     activation=self.activation,
                     variant=self.variant,
