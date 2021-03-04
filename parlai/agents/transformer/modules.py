@@ -285,6 +285,7 @@ class TransformerEncoder(nn.Module):
         If none, one is created for this encoder.
     :param int padding_idx: Reserved padding index in the embeddings matrix.
     :param str reduction_type: Type of reduction at the end of the encoder.
+    :param int n_positions: Size of the position embeddings matrix.
     :param int n_segments: Number of segments/lang/sentence embeddings.
     :param bool embeddings_scale: Scale embeddings relative to their dimensionality.
         Found useful in fairseq.
@@ -297,10 +298,14 @@ class TransformerEncoder(nn.Module):
         embedding: Optional[nn.Embedding] = None,
         padding_idx: int = 0,
         reduction_type: str = 'mean',
+        n_positions: Optional[int] = None,
         n_segments: Optional[int] = None,
         embeddings_scale: Optional[bool] = None,
     ):
         super(TransformerEncoder, self).__init__()
+
+        def _default(val, default):
+            return val if val is not None else default
 
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
@@ -311,16 +316,18 @@ class TransformerEncoder(nn.Module):
         )
         self.n_heads = opt['n_heads']
         self.dim = self.embedding_size
-        self.embeddings_scale = embeddings_scale or opt['embeddings_scale']
+        self.embeddings_scale = _default(
+            embeddings_scale, opt.get('embeddings_scale', False)
+        )
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
-        self.dropout_frac = opt['dropout']
+        self.dropout_frac = opt.get('dropout', 0.0)
         self.dropout = nn.Dropout(p=self.dropout_frac)
-        self.variant = opt['variant']
-        self.n_segments = n_segments or opt.get('n_segments', 0)
+        self.variant = opt.get('variant', 'aiayn')
+        self.n_segments = _default(n_segments, opt.get('n_segments', 0))
 
-        self.n_positions = get_n_positions_from_options(opt)
+        self.n_positions = _default(n_positions, get_n_positions_from_options(opt))
         self.out_dim = self.embedding_size
         assert (
             self.embedding_size % self.n_heads == 0
@@ -347,7 +354,7 @@ class TransformerEncoder(nn.Module):
 
         # create the positional embeddings
         self.position_embeddings = nn.Embedding(self.n_positions, self.embedding_size)
-        if not opt['learn_positional_embeddings']:
+        if not opt.get('learn_positional_embeddings', False):
             create_position_codes(
                 self.n_positions,
                 self.embedding_size,
@@ -381,14 +388,14 @@ class TransformerEncoder(nn.Module):
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
-                    attention_dropout=opt['attention_dropout'],
-                    relu_dropout=opt['relu_dropout'],
+                    attention_dropout=opt.get('attention_dropout', 0.0),
+                    relu_dropout=opt.get('relu_dropout', 0.0),
                     dropout=self.dropout_frac,
                     variant=self.variant,
-                    activation=opt['activation'],
+                    activation=opt.get('activation', 'relu'),
                 )
             )
-        self.output_scaling = opt['output_scaling']
+        self.output_scaling = opt.get('output_scaling', 1.0)
 
     def forward_embedding(
         self,
