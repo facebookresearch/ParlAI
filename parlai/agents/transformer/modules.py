@@ -60,6 +60,8 @@ def get_n_positions_from_options(opt: Opt):
         if n_positions == 0:
             # default to 1024
             n_positions = 1024
+    if n_positions < 0:
+        raise ValueError('n_positions must be positive')
     return n_positions
 
 
@@ -362,7 +364,7 @@ class TransformerEncoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = nn.LayerNorm(self.dim)
+            self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
         elif self.variant == 'aiayn':
             pass
         else:
@@ -638,7 +640,7 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'prelayernorm'
             or self.variant == 'bart'
         ):
-            self.norm_embeddings = nn.LayerNorm(self.dim)
+            self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
             if self.variant == 'xlm':
                 warn_once(
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
