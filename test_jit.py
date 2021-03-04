@@ -22,18 +22,24 @@ def test_jit(opt: Opt):
     # --no-cuda to be recognized with the latter
     # get the tokenization
     agent.model.eval()
-    obs = agent.observe({'text': 'hello world', 'episode_done': True})
+    obs = agent.observe({'text': opt['input'], 'episode_done': True})
     batch = agent.batchify([obs])
     tokens = batch.text_vec
 
+    search_module = JitGreedySearch(agent.model)
+
     # Script and trace the greedy search routine
-    scripted_module = torch.jit.script(JitGreedySearch(agent.model))
-    result = scripted_module(tokens)
-    print(agent._v2t(result[0].tolist()))
+    scripted_module = torch.jit.script(search_module)
+    scripted_result = scripted_module(tokens)
+    print('  SCRIPTED MODEL OUTPUT: ' + agent._v2t(scripted_result[0].tolist()))
 
     # Save the scripted module
     with PathManager.open(opt['scripted_model_file'], 'wb') as f:
         torch.jit.save(scripted_module, f)
+
+    # Just check that the output is the same as for the unscripted model
+    unscripted_result = search_module(tokens)
+    print('UNSCRIPTED MODEL OUTPUT: ' + agent._v2t(unscripted_result[0].tolist()))
 
 
 def setup_args() -> ParlaiParser:
@@ -44,6 +50,13 @@ def setup_args() -> ParlaiParser:
         type=str,
         default='_scripted.pt',
         help='Where the scripted model checkpoint will be saved',
+    )
+    parser.add_argument(
+        '-i',
+        '--input',
+        type=str,
+        default='hello world',
+        help='Test input string to pass into the encoder of the scripted model',
     )
     return parser
 
