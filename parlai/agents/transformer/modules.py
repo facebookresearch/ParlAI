@@ -58,6 +58,7 @@ def get_n_positions_from_options(opt: Opt):
             opt.get('label_truncate') or 0,
         )
         if n_positions == 0:
+            # default to 1024
             n_positions = 1024
     return n_positions
 
@@ -291,11 +292,11 @@ class TransformerEncoder(nn.Module):
         self,
         opt: Opt,
         vocabulary_size: int,
-        embedding=None,
-        padding_idx=0,
-        reduction_type='mean',
-        n_segments=None,
-        embeddings_scale=None,
+        embedding: Optional[nn.Embedding] = None,
+        padding_idx: int = 0,
+        reduction_type: str = 'mean',
+        n_segments: Optional[int] = None,
+        embeddings_scale: Optional[bool] = None,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -605,7 +606,7 @@ class TransformerDecoder(nn.Module):
         If none, one is created for this encoder.
     """
 
-    def __init__(self, opt: Opt, embedding=None):
+    def __init__(self, opt: Opt, embedding: Optional[nn.Embedding] = None):
         super().__init__()
 
         self.embedding_size = opt['embedding_size']
@@ -979,8 +980,8 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         )
 
     @classmethod
-    def build_decoder(cls, opt, dictionary, embedding=None):
-        return TransformerDecoder(opt=opt, dictionary=dictionary, embedding=embedding)
+    def build_decoder(cls, opt, embedding=None):
+        return TransformerDecoder(opt=opt, embedding=embedding)
 
     def __init__(self, opt, dictionary):
         self.pad_idx = dictionary[dictionary.null_token]
@@ -994,9 +995,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         self.encoder = self.build_encoder(
             opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None
         )
-        self.decoder = self.build_decoder(
-            opt, dictionary, self.embeddings, self.pad_idx
-        )
+        self.decoder = self.build_decoder(opt, self.embeddings)
 
     def reorder_encoder_states(self, encoder_states, indices):
         """
