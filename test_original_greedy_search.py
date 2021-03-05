@@ -95,7 +95,6 @@ def _update_vecs(history_vecs: List[int], size: int, dict: DictionaryAgent, text
             history_vecs.pop(0)
     new_vec = list(dict._word_lookup(token) for token in dict.tokenize(str(text)))
     history_vecs.append(new_vec)
-    print('HISTORY VEC: ', history_vecs)
 
 
 def jit_greedy_search(agent, x: torch.Tensor, max_len: int = 128):
@@ -109,7 +108,6 @@ def jit_greedy_search(agent, x: torch.Tensor, max_len: int = 128):
     """
     incr_state: Optional[Dict[int, Dict[str, Dict[str, torch.Tensor]]]] = None
     bsz = x.size(0)
-    print(x)
     encoder_states = agent.model.encoder(x)
     generations = agent._get_initial_decoder_input(bsz, 1, x.device)
     # keep track of early stopping if all generations finish
