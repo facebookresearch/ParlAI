@@ -34,6 +34,14 @@ DISTINCT_METRICS = {
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS | DISTINCT_METRICS
 
 
+try:
+    from fairseq.scoring import bleu as fairseqbleu
+    from fairseq.scoring.bleu import BleuConfig
+except ImportError:
+    fairseqbleu = None
+
+fairseqbleu_scorer = None
+
 re_art = re.compile(r'\b(a|an|the)\b')
 re_punc = re.compile(r'[!"#$%&()*+,-./:;<=>?@\[\]\\^`{|}~_\']')
 
@@ -466,16 +474,20 @@ class FairseqBleuMetric(AverageMetric):
         """
         Return BLEU-1..4 using fairseq and tokens.
         """
-        try:
-            from fairseq.scoring import bleu as fairseqbleu
-        except ImportError:
+        if fairseqbleu is None:
             return None
+        global fairseqbleu_scorer
+        if fairseqbleu_scorer is None:
+            fairseqbleu_scorer = fairseqbleu.Scorer(
+                BleuConfig(pad=pad_idx, eos=end_idx, unk=unk_idx)
+            )
 
-        scorer = fairseqbleu.Scorer(pad_idx, end_idx, unk_idx)
         answers = answers.cpu().int()
         guess = guess.cpu().int()
-        scorer.add(answers, guess)
-        return [FairseqBleuMetric(scorer.score(i) / 100.0) for i in range(1, 5)]
+        fairseqbleu_scorer.add(answers, guess)
+        return [
+            FairseqBleuMetric(fairseqbleu_scorer.score(i) / 100.0) for i in range(1, 5)
+        ]
 
 
 class RougeMetric(AverageMetric):
