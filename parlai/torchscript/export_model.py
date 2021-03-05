@@ -11,8 +11,8 @@ import torch.nn as nn
 
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
+from parlai.torchscript.util import generate_given_module, setup_args
 from parlai.utils.io import PathManager
-from projects.torchscript.util import generate_given_module, setup_args
 
 
 def export_model(opt: Opt):
