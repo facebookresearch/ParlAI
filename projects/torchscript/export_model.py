@@ -43,7 +43,7 @@ def test_jit(opt: Opt):
         return agent._v2t(label_vec_[0].tolist())
 
     # Script and trace the greedy search routine
-    search_module = JitGreedySearch(agent.model)
+    search_module = JitGreedySearch(agent.model, bart=bart)
     scripted_module = torch.jit.script(search_module)
 
     # Save the scripted module
@@ -53,7 +53,7 @@ def test_jit(opt: Opt):
     for input_ in inputs:
 
         # Vectorize this line of context
-        print(" TEXT: " + input_)
+        print("                   TEXT: " + input_)
         _update_vecs(
             history_vecs=history_vecs,
             size=agent.opt["history_size"],
@@ -142,9 +142,16 @@ class JitGreedySearch(nn.Module):
         sample_tokens = torch.LongTensor([[1, 2, 3, 4, 5]])
         encoder_states = model.encoder(sample_tokens)
         initial_generations = self._get_initial_decoder_input(sample_tokens)
-        latent, incr_state = model.decoder(initial_generations, encoder_states)
+        latent, initial_incr_state = model.decoder(initial_generations, encoder_states)
         logits = model.output(latent[:, -1:, :])
         _, preds = logits.max(dim=2)
+        incr_state = {k: torch.clone(v) for k, v in initial_incr_state.items()}
+        # Copy the initial incremental state, used when tracing the
+        # .reorder_decoder_incremental_state() method below, to avoid having it be
+        # mutated by the following line
+        incr_state = model.reorder_decoder_incremental_state(
+            incr_state, torch.tensor([0], dtype=torch.long, device=sample_tokens.device)
+        )
         generations = torch.cat([initial_generations, preds], dim=1)
 
         # Do tracing
@@ -154,19 +161,19 @@ class JitGreedySearch(nn.Module):
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
-        self.decoder_later_pass = torch.jit.trace(
-            model.decoder, (generations, encoder_states, incr_state), strict=False
-        )
         self.partially_traced_model = torch.jit.trace_module(
             model,
             {
                 'output': (latent[:, -1:, :]),
                 'reorder_decoder_incremental_state': (
-                    incr_state,
+                    initial_incr_state,
                     torch.LongTensor([0], device=sample_tokens.device),
                 ),
             },
             strict=False,
+        )
+        self.decoder_later_pass = torch.jit.trace(
+            model.decoder, (generations, encoder_states, incr_state), strict=False
         )
 
     def _get_initial_decoder_input(self, x: torch.Tensor) -> torch.Tensor:

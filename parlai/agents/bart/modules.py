@@ -60,14 +60,12 @@ class BartModel(TransformerGeneratorModel):
         assert incremental_state is not None
         assert len(incremental_state) > 0
 
-        for incr_state_l in incremental_state.values():
-            assert 'self_attn' in incr_state_l
-            assert 'prev_mask' in incr_state_l['self_attn']
-            self_attn_mask = incr_state_l['self_attn']['prev_mask']
-            # check this is on the very first run with incremental state
-            if self_attn_mask.ndim == 3 and tuple(self_attn_mask.shape[1:]) == (2, 2):
-                # cut off the inappropriate incremental state
-                incr_state_l['self_attn']['prev_mask'] = self_attn_mask[:, -1:, :]
+        assert 'self_attn_prev_mask' in incremental_state
+        self_attn_mask = incremental_state['self_attn_prev_mask']
+        # check this is on the very first run with incremental state
+        if self_attn_mask.ndim == 4 and tuple(self_attn_mask.shape[2:]) == (2, 2):
+            # cut off the inappropriate incremental state
+            incremental_state['self_attn_prev_mask'] = self_attn_mask[:, :, -1:, :]
 
         return super().reorder_decoder_incremental_state(incremental_state, inds)
 
