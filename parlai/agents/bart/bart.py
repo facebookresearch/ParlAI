@@ -166,15 +166,3 @@ class BartAgent(TransformerGeneratorAgent):
             'text_vec', self._add_start_end_tokens(vec, add_start=True, add_end=True)
         )
         return obs
-
-    def _get_initial_decoder_input(
-        self, bsz: int, beam_size: int, dev: torch.device
-    ) -> torch.LongTensor:
-        """
-        Override to seed decoder with EOS BOS token.
-        """
-        return (
-            torch.LongTensor([self.END_IDX, self.START_IDX])  # type: ignore
-            .expand(bsz * beam_size, 2)
-            .to(dev)
-        )

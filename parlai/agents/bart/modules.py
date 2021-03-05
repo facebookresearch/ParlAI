@@ -49,6 +49,18 @@ class BartModel(TransformerGeneratorModel):
         )
         return torch.cat([tens, inputs], 1)
 
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> torch.LongTensor:
+        """
+        Override to seed decoder with EOS BOS token.
+        """
+        return (
+            torch.tensor([self.END_IDX, self.START_IDX], dtype=torch.long)
+            .expand(bsz * beam_size, 2)
+            .to(dev)
+        )
+
     def reorder_decoder_incremental_state(
         self,
         incremental_state: Dict[str, Any],

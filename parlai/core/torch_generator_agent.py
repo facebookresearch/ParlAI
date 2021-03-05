@@ -148,7 +148,9 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         return torch.cat([self.START.detach().expand(bsz, 1), inputs], 1)
 
-    def _get_initial_decoder_input(self, bsz: int, beam_size: int) -> torch.Tensor:
+    def _get_initial_decoder_input(
+        self, bsz: int, beam_size: int, dev: torch.device
+    ) -> torch.Tensor:
         """
         Return initial input to the decoder.
 
@@ -162,33 +164,12 @@ class TorchGeneratorModel(nn.Module, ABC):
         :return initial_input:
             initial input for the decoder
         """
-        return (torch.ones(1, dtype=torch.long) * self.START_IDX).expand(
-            bsz * beam_size, 1
+        return (
+            (torch.ones(1, dtype=torch.long) * self.START_IDX)
+            .expand(bsz * beam_size, 1)
+            .to(dev)
         )  # type: ignore
         # Not using torch.LongTensor() because of 4th bullet point at https://pytorch.org/tutorials/beginner/deploy_seq2seq_hybrid_frontend_tutorial.html#changes
-
-    def _get_next_decoder_input(
-        self,
-        prev_input: torch.LongTensor,
-        selection: torch.LongTensor,
-        incr_state_inds: torch.LongTensor,
-    ) -> torch.LongTensor:
-        """
-        Return next decoder input.
-
-        :param prev_input:
-            previous input to decoder
-        :param selection:
-            token selections for current timestep
-        :param inds:
-            incremental state indices
-
-        :return decoder input:
-            return decoder input for next timestep
-        """
-        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
-        decoder_input = torch.cat([prev_input, selection], dim=-1)
-        return decoder_input
 
     def decode_forced(self, encoder_states, ys):
         """
@@ -1070,6 +1051,29 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
             ctxt = full_ctxt
         return ctxt
+
+    def _get_next_decoder_input(
+        self,
+        prev_input: torch.LongTensor,
+        selection: torch.LongTensor,
+        incr_state_inds: torch.LongTensor,
+    ) -> torch.LongTensor:
+        """
+        Return next decoder input.
+
+        :param prev_input:
+            previous input to decoder
+        :param selection:
+            token selections for current timestep
+        :param inds:
+            incremental state indices
+
+        :return decoder input:
+            return decoder input for next timestep
+        """
+        prev_input = torch.index_select(prev_input, 0, incr_state_inds)
+        decoder_input = torch.cat([prev_input, selection], dim=-1)
+        return decoder_input
 
     def _generate(
         self,
