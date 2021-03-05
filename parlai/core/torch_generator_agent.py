@@ -24,7 +24,6 @@ import math
 from operator import attrgetter
 
 import torch
-import torch.jit
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -270,7 +269,6 @@ class TorchGeneratorModel(nn.Module, ABC):
         """
         pass
 
-    @torch.jit.unused
     def forward(self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None):
         """
         Get output predictions from the model.
@@ -1033,6 +1031,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self, bsz: int, beam_size: int, dev: torch.device
     ) -> torch.LongTensor:
         """
+
         Return initial input to the decoder.
         :param bsz:
             batchsize
@@ -1040,6 +1039,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beam size
         :param dev:
             device to send input to.
+
         :return initial_input:
             initial input for the decoder
         """
