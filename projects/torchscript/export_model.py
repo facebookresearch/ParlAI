@@ -34,13 +34,13 @@ def test_jit(opt: Opt):
     text_truncate = agent.opt.get('text_truncate') or agent.opt['truncate']
     text_truncate = text_truncate if text_truncate >= 0 else None
 
-    def _get_label_from_vec(label_vec: torch.LongTensor) -> str:
+    def _get_label_from_vec(label_vec_: torch.LongTensor) -> str:
         if bart:
-            assert label_vec[0, 0].item() == agent.END_IDX
-            label_vec = label_vec[:, 1:]
+            assert label_vec_[0, 0].item() == agent.END_IDX
+            label_vec_ = label_vec_[:, 1:]
             # Hack: remove initial end token. I haven't found in the code where this is
             # done, but it seems to happen early on during generation
-        return agent._v2t(label_vec[0].tolist())
+        return agent._v2t(label_vec_[0].tolist())
 
     # Script and trace the greedy search routine
     search_module = JitGreedySearch(agent.model)
@@ -57,7 +57,7 @@ def test_jit(opt: Opt):
         _update_vecs(
             history_vecs=history_vecs,
             size=agent.opt["history_size"],
-            dict=agent.dict,
+            dict_=agent.dict,
             text=input_,
         )
 
@@ -98,7 +98,7 @@ def test_jit(opt: Opt):
         _update_vecs(
             history_vecs=history_vecs,
             size=agent.opt["history_size"],
-            dict=agent.dict,
+            dict_=agent.dict,
             text=label,
         )
 
@@ -114,9 +114,6 @@ def _update_vecs(history_vecs: List[int], size: int, dict_: DictionaryAgent, tex
             history_vecs.pop(0)
     new_vec = list(dict_._word_lookup(token) for token in dict_.tokenize(str(text)))
     history_vecs.append(new_vec)
-
-
-# TODO: revise below
 
 
 class JitGreedySearch(nn.Module):
@@ -143,17 +140,25 @@ class JitGreedySearch(nn.Module):
         _, preds = logits.max(dim=2)
         generations = torch.cat([initial_generations, preds], dim=1)
 
+        # Do tracing
         self.encoder = torch.jit.trace(model.encoder, sample_tokens)
         self.decoder_first_pass = torch.jit.trace(
             model.decoder, (initial_generations, encoder_states), strict=False
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
-        self.partially_traced_model = torch.jit.trace_module(
-            model, {'output': (latent[:, -1:, :])}
-        )
         self.decoder_later_pass = torch.jit.trace(
             model.decoder, (generations, encoder_states, incr_state), strict=False
+        )
+        self.partially_traced_model = torch.jit.trace_module(
+            model,
+            {
+                'output': (latent[:, -1:, :]),
+                'reorder_decoder_incremental_state': (
+                    incr_state,
+                    torch.LongTensor([0], device=sample_tokens.device),
+                ),
+            },
         )
 
         self.start_idx = model.START_IDX
@@ -190,6 +195,9 @@ class JitGreedySearch(nn.Module):
                 )
             logits = self.partially_traced_model.output(latent[:, -1:, :])
             _, preds = logits.max(dim=2)
+            incr_state = self.partially_traced_model.reorder_decoder_incremental_state(
+                incr_state, torch.LongTensor([0], device=x.device)
+            )
             seen_end = seen_end + (preds == self.end_idx).squeeze(1)
             generations = torch.cat([generations, preds], dim=1)
             if torch.all(seen_end):
@@ -217,6 +225,6 @@ def setup_args() -> ParlaiParser:
 
 
 if __name__ == '__main__':
-    parser = setup_args()
-    opt_ = parser.parse_args()
+    parser_ = setup_args()
+    opt_ = parser_.parse_args()
     test_jit(opt_)
