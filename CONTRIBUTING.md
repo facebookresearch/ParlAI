@@ -8,8 +8,8 @@ desired to increase the pool of tasks, models, and baselines.
 ## Pull Requests
 We actively welcome your pull requests.
 
-1. Fork the repo and then clone the forked repository. (See this [github guide](https://guides.github.com/activities/forking/) on forking for more info). 
-   > **If you have already cloned the repo directly and committed changes, follow the steps in the [section below](#Moving-changes-you've-committed-to-a-fork)**
+1. Fork the repo and then clone the forked repository. (See this [github guide](https://guides.github.com/activities/forking/) on forking for more info).  
+   **If you have already cloned the repo directly and committed changes, follow the steps in the [section below](#moving-changes-youve-committed-to-a-fork)**
 2. Create your branch from `master`. Set up your environment
    and run `pre-commit install` once. 
 3. Make your changes
