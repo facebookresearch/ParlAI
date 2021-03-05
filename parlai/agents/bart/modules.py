@@ -50,10 +50,8 @@ class BartModel(TransformerGeneratorModel):
         return torch.cat([tens, inputs], 1)
 
     def reorder_decoder_incremental_state(
-        self,
-        incremental_state: Dict[str, Any],
-        inds: Union[List[int], torch.LongTensor],
-    ) -> Optional[Dict[str, Any]]:
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
+    ) -> Dict[str, torch.Tensor]:
         """
         Incremental state is weird to handle when we seed decoder with two inputs
         initially.

@@ -407,10 +407,10 @@ class TransformerEncoder(nn.Module):
 
     def forward_embedding(
         self,
-        input: torch.Tensor,
-        positions: Optional[torch.Tensor] = None,
-        segments: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
+    ) -> Tuple[torch.Tensor, torch.BoolTensor]:
         """
         Embed tokens prior to feeding into transformer.
 
@@ -448,7 +448,9 @@ class TransformerEncoder(nn.Module):
 
         return tensor, mask
 
-    def forward_layers(self, tensor: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def forward_layers(
+        self, tensor: torch.Tensor, mask: torch.BoolTensor
+    ) -> torch.Tensor:
         """
         Apply transformer layers to input.
 
@@ -471,9 +473,9 @@ class TransformerEncoder(nn.Module):
         return tensor
 
     def reduce_output(
-        self, tensor: torch.Tensor, mask: torch.Tensor
+        self, tensor: torch.Tensor, mask: torch.BoolTensor
     ) -> Tuple[
-        torch.Tensor, torch.Tensor
+        torch.Tensor, torch.BoolTensor
     ]:  # For enc/dec models we always need to pass back the encoder mask
         """
         Reduce transformer output at end of forward pass.
@@ -506,9 +508,9 @@ class TransformerEncoder(nn.Module):
 
     def forward(  # type: ignore
         self,
-        input: torch.Tensor,
-        positions: Optional[torch.Tensor] = None,
-        segments: Optional[torch.Tensor] = None,
+        input: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
+        segments: Optional[torch.LongTensor] = None,
     ):
         """
         Forward pass.
@@ -713,9 +715,9 @@ class TransformerDecoder(nn.Module):
 
     def forward_embedding(
         self,
-        input: torch.Tensor,
-        positions: torch.Tensor,
-        segments: Optional[torch.Tensor] = None,
+        input: torch.LongTensor,
+        positions: torch.LongTensor,
+        segments: Optional[torch.LongTensor] = None,
     ):
         """
         Embed tokens prior to feeding into transformer.
@@ -1082,8 +1084,8 @@ class TransformerGeneratorModel(TorchGeneratorModel, NegInfMixin):
         return enc, mask
 
     def reorder_decoder_incremental_state(
-        self, incremental_state: Dict[int, torch.Tensor], inds: torch.Tensor
-    ) -> Dict[int, dict]:
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
+    ) -> Dict[str, torch.Tensor]:
         """
         Reorder the decoder incremental state.
 
