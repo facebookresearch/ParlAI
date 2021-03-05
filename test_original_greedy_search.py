@@ -73,21 +73,19 @@ def test_original_greedy_search(opt: Opt):
 
         # Use greedy search to get model response
         batch_history_vec = torch.unsqueeze(full_history_vec, dim=0)  # Add batch dim
-        print("FULL HISTORY VEC: ", full_history_vec)
         label_vec = jit_greedy_search(agent=agent, x=batch_history_vec)
-        label_indices = label_vec[0].tolist()
         if bart:
-            label_indices = label_indices[1:]
-            # Hack: remove start token. I haven't found in the code where this is done
-            # but I'll get a complaint that the string doesn't start with a space
-            # otherwise
-        label = agent._v2t(label_indices)
+            assert label_vec[0, 0].item() == agent.END_IDX
+            label_vec = label_vec[:, 1:]
+            # Hack: remove initial end token. I haven't found in the code where this is
+            # done, but it seems to happen early on during generation
+        label = agent._v2t(label_vec[0].tolist())
         print("LABEL: " + label)
         _update_vecs(
             history_vecs=history_vecs,
             size=opt["history_size"],
             dict=agent.dict,
-            text=label_vec.tolist(),
+            text=label,
         )
 
 
