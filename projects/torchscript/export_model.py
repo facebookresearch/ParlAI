@@ -4,116 +4,38 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Dict, List
+from typing import Dict
 
 import torch.jit
 import torch.nn as nn
 
 from parlai.core.agents import create_agent
-from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
-from parlai.core.params import ParlaiParser
 from parlai.utils.io import PathManager
+from projects.torchscript.util import generate_given_module, setup_args
 
 
-def test_jit(opt: Opt):
+def export_model(opt: Opt):
 
     agent = create_agent(opt, requireModelExists=True)
-    # Using create_agent() instead of create_agent_from_model_file() because I couldn't get
-    # --no-cuda to be recognized with the latter
-    # get the tokenization
     agent.model.eval()
-    inputs = agent.opt["input"].split("|")
-    history_vecs = []
-    delimiter_tok = agent.history.delimiter_tok
-    if agent.opt.get('history_add_global_end_token', None) is not None:
-        global_end_token = agent.dict[agent.dict.end_token]
-    else:
-        global_end_token = None
-    bart = agent.opt['model'] == 'bart'
-    text_truncate = agent.opt.get('text_truncate') or agent.opt['truncate']
-    text_truncate = text_truncate if text_truncate >= 0 else None
-
-    def _get_label_from_vec(label_vec_: torch.LongTensor) -> str:
-        if bart:
-            assert label_vec_[0, 0].item() == agent.END_IDX
-            label_vec_ = label_vec_[:, 1:]
-            # Hack: remove initial end token. I haven't found in the code where this is
-            # done, but it seems to happen early on during generation
-        return agent._v2t(label_vec_[0].tolist())
+    is_bart = agent.opt['model'] == 'bart'
 
     # Script and trace the greedy search routine
-    search_module = JitGreedySearch(agent.model, bart=bart)
-    scripted_module = torch.jit.script(search_module)
+    original_module = JitGreedySearch(agent.model, bart=is_bart)
+    scripted_module = torch.jit.script(original_module)
 
     # Save the scripted module
     with PathManager.open(opt['scripted_model_file'], 'wb') as f:
         torch.jit.save(scripted_module, f)
 
-    for input_ in inputs:
+    inputs = opt['input'].split('|')
 
-        # Vectorize this line of context
-        print("                   TEXT: " + input_)
-        _update_vecs(
-            history_vecs=history_vecs,
-            size=agent.opt["history_size"],
-            dict_=agent.dict,
-            text=input_,
-        )
+    print('\nGenerating given the scripted module:')
+    generate_given_module(agent=agent, module=scripted_module, inputs=inputs)
 
-        # Get full history vec
-        full_history_vec = []
-        for vec in history_vecs[:-1]:
-            full_history_vec += [vec]
-            full_history_vec += [delimiter_tok]
-        full_history_vec += [history_vecs[-1]]
-        if global_end_token is not None:
-            full_history_vec += [[global_end_token]]
-        full_history_vec = sum(full_history_vec, [])
-
-        # Format history vec given various logic
-        if text_truncate is not None:
-            if bart:
-                truncate_length = text_truncate - 2  # Start and end tokens
-            else:
-                truncate_length = text_truncate
-            if len(full_history_vec) > truncate_length:
-                full_history_vec = full_history_vec[-truncate_length:]
-        full_history_vec = torch.LongTensor(full_history_vec)
-        if bart:
-            full_history_vec = torch.cat(
-                [
-                    full_history_vec.new_tensor([agent.START_IDX]),
-                    full_history_vec,
-                    full_history_vec.new_tensor([agent.END_IDX]),
-                ],
-                axis=0,
-            )
-
-        # Use greedy search to get model response
-        batch_history_vec = torch.unsqueeze(full_history_vec, dim=0)  # Add batch dim
-        label_vec = scripted_module(batch_history_vec)
-        label = _get_label_from_vec(label_vec)
-        print("  SCRIPTED MODEL OUTPUT: " + label)
-        _update_vecs(
-            history_vecs=history_vecs,
-            size=agent.opt["history_size"],
-            dict_=agent.dict,
-            text=label,
-        )
-
-        # Compare against the output from the unscripted model
-        unscripted_label_vec = search_module(batch_history_vec)
-        unscripted_label = _get_label_from_vec(unscripted_label_vec)
-        print("UNSCRIPTED MODEL OUTPUT: " + unscripted_label)
-
-
-def _update_vecs(history_vecs: List[int], size: int, dict_: DictionaryAgent, text: str):
-    if size > 0:
-        while len(history_vecs) >= size:
-            history_vecs.pop(0)
-    new_vec = list(dict_._word_lookup(token) for token in dict_.tokenize(str(text)))
-    history_vecs.append(new_vec)
+    print('\nGenerating given the original unscripted module:')
+    generate_given_module(agent=agent, module=original_module, inputs=inputs)
 
 
 class JitGreedySearch(nn.Module):
@@ -216,26 +138,7 @@ class JitGreedySearch(nn.Module):
         return generations
 
 
-def setup_args() -> ParlaiParser:
-    parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
-    parser.add_argument(
-        '-smf',
-        '--scripted-model-file',
-        type=str,
-        default='_scripted.pt',
-        help='Where the scripted model checkpoint will be saved',
-    )
-    parser.add_argument(
-        "-i",
-        "--input",
-        type=str,
-        default="hello world",
-        help="Test input string to pass into the encoder of the scripted model. Separate lines with a pipe",
-    )
-    return parser
-
-
 if __name__ == '__main__':
     parser_ = setup_args()
     opt_ = parser_.parse_args()
-    test_jit(opt_)
+    export_model(opt_)
