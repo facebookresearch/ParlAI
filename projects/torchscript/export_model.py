@@ -130,18 +130,11 @@ class JitGreedySearch(nn.Module):
     >>> TODO: write this
     """
 
-    def __init__(self, model):
+    def __init__(self, model, bart: bool = False):
         super().__init__()
 
-        # Create sample inputs
+        # Create sample inputs for tracing
         sample_tokens = torch.LongTensor([[1, 2, 3, 4, 5]])
-        self.batch_size = 1
-        self.num_dec_layers = model.decoder.n_layers
-        self.emb_dim = model.decoder.embedding_size
-        self.num_heads = model.decoder.n_heads
-        self.dim_per_head = self.emb_dim // self.num_heads
-        self.orig_incr_state_len = 0
-
         bsz = sample_tokens.size(0)
         encoder_states = model.encoder(sample_tokens)
         initial_generations = model._get_initial_decoder_input(bsz, 1)
@@ -166,13 +159,18 @@ class JitGreedySearch(nn.Module):
         self.start_idx = model.START_IDX
         self.end_idx = model.END_IDX
         self.null_idx = model.NULL_IDX
+        if bart:
+            self.initial_decoder_input = [self.end_idx, self.start_idx]
+        else:
+            self.initial_decoder_input = [self.start_idx]
+        # ^ We're going to want to clean this code up, but we can't trace
 
     def forward(self, x: torch.Tensor, max_len: int = 128):
         bsz = x.size(0)
         encoder_states = self.encoder(x)
         generations = (
-            (torch.ones(1, dtype=torch.long) * self.start_idx)
-            .expand(bsz, 1)
+            torch.tensor(self.initial_decoder_input, dtype=torch.long)
+            .expand(bsz, len(self.initial_decoder_input))
             .to(x.device)
         )
         # Can't use TGM._get_initial_decoder_input() directly: when we do, we get a

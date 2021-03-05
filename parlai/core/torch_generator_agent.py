@@ -1031,8 +1031,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self, bsz: int, beam_size: int, dev: torch.device
     ) -> torch.LongTensor:
         """
-
         Return initial input to the decoder.
+
         :param bsz:
             batchsize
         :param beam_size:
