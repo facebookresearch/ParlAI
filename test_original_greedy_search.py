@@ -20,15 +20,15 @@ def test_original_greedy_search(opt: Opt):
     # --no-cuda to be recognized with the latter
     # get the tokenization
     agent.model.eval()
-    inputs = opt["input"].split("|")
+    inputs = agent.opt["input"].split("|")
     history_vecs = []
     delimiter_tok = agent.history.delimiter_tok
-    if opt.get('history_add_global_end_token', None) is not None:
+    if agent.opt.get('history_add_global_end_token', None) is not None:
         global_end_token = agent.dict[agent.dict.end_token]
     else:
         global_end_token = None
-    bart = opt['model'] == 'bart'
-    text_truncate = opt.get('text_truncate') or opt['truncate']
+    bart = agent.opt['model'] == 'bart'
+    text_truncate = agent.opt.get('text_truncate') or agent.opt['truncate']
     text_truncate = text_truncate if text_truncate >= 0 else None
 
     for input_ in inputs:
@@ -37,7 +37,7 @@ def test_original_greedy_search(opt: Opt):
         print(" TEXT: " + input_)
         _update_vecs(
             history_vecs=history_vecs,
-            size=opt["history_size"],
+            size=agent.opt["history_size"],
             dict=agent.dict,
             text=input_,
         )
@@ -83,7 +83,7 @@ def test_original_greedy_search(opt: Opt):
         print("LABEL: " + label)
         _update_vecs(
             history_vecs=history_vecs,
-            size=opt["history_size"],
+            size=agent.opt["history_size"],
             dict=agent.dict,
             text=label,
         )
