@@ -1357,7 +1357,9 @@ class TorchAgent(ABC, Agent):
             Truncate from the left side (keep the rightmost tokens). You
             probably want this True for inputs, False for targets.
         """
-        return self._vectorize_text_with_truncate_stats(**locals())[0]
+        return self._vectorize_text_with_truncate_stats(
+            text, add_start, add_end, truncate, truncate_left
+        )[0]
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
         """
