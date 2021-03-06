@@ -1305,7 +1305,7 @@ class TorchAgent(ABC, Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(
+    def _vectorize_text_with_truncate_stats(
         self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
     ):
         """
@@ -1334,6 +1334,30 @@ class TorchAgent(ABC, Agent):
         if_truncated = original_length > len(vec)
         tensor = torch.LongTensor(vec)
         return tensor, original_length, if_truncated
+
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
+        """
+        Return vector from text.
+
+        :param text:
+            String to vectorize.
+
+        :param add_start:
+            Add the start token to the front of the tensor.
+
+        :param add_end:
+            Add the end token to the end of the tensor.
+
+        :param truncate:
+            Truncate to this many tokens >= 0, or None.
+
+        :param truncate_left:
+            Truncate from the left side (keep the rightmost tokens). You
+            probably want this True for inputs, False for targets.
+        """
+        return self._vectorize_text_with_truncate_stats(**locals())[0]
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
         """
@@ -1412,7 +1436,7 @@ class TorchAgent(ABC, Agent):
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text(
+            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
                 label, add_start, add_end, truncate, False
             )
             obs.force_set('original_label_length', vec_label_length)
