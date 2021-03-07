@@ -709,10 +709,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
+        # cross entropy loss
         self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        # perplexity
         self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        # token-wise accuracy
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
+        )
+        # utterance-wise exact match
+        self.record_local_metric(
+            'token_em', AverageMetric.many(correct == target_tokens)
         )
         # actually do backwards loss
         loss = loss.sum()
