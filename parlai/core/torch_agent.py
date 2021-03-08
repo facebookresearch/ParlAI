@@ -23,6 +23,7 @@ from parlai.core.params import ParlaiParser
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
+import warnings
 import torch
 import parlai.utils.logging as logging
 from torch import optim
@@ -36,13 +37,13 @@ from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
 from parlai.utils.fp16 import (
-    fp16_apex_available,
-    fp16_optimizer_wrapper,
+    SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
     MemoryEfficientFP16Adam,
     Adafactor,
 )
 from parlai.core.metrics import (
+    AverageMetric,
     Metrics,
     Metric,
     GlobalAverageMetric,
@@ -497,8 +498,8 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '--fp16-impl',
             type=str,
-            default='apex',
-            choices=['apex', 'mem_efficient'],
+            default='safe',
+            choices=['safe', 'mem_efficient'],
             help='Implementation of FP16 to use',
         )
         agent.add_argument(
@@ -738,9 +739,7 @@ class TorchAgent(ABC, Agent):
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
             # check that the implementation requested is available
-            self.fp16_impl = self.opt.get('fp16_impl', 'apex')
-            if self.fp16_impl == 'apex' and not fp16_apex_available():
-                self.fp16 = False
+            self.fp16_impl = self.opt.get('fp16_impl', 'safe')
 
         if shared is None:
             # intitialize any important structures from scratch
@@ -920,7 +919,7 @@ class TorchAgent(ABC, Agent):
         is_train = 'train' in datatype and 'evalmode' not in datatype
         return is_train
 
-    def init_optim(self, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, params, optim_states=None, saved_optim_type=None) -> bool:
         """
         Initialize optimizer with model parameters.
 
@@ -933,6 +932,10 @@ class TorchAgent(ABC, Agent):
         :param saved_optim_type:
             type of optimizer being loaded, if changed will skip loading
             optimizer states
+
+        :returns:
+            boolean indicating whether the optimizer was initialized with
+            optim_states.
         """
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
@@ -1002,8 +1005,8 @@ class TorchAgent(ABC, Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            if self.fp16_impl == 'apex':
-                self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+            if self.fp16_impl == 'safe':
+                self.optimizer = SafeFP16Optimizer(self.optimizer)
             else:
                 # Using memory efficient optimizer
                 opt_name = opt['optimizer']
@@ -1023,31 +1026,30 @@ class TorchAgent(ABC, Agent):
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
             logging.warn('Not loading optim state since optim class changed.')
+            return False
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
             if self.fp16 and optimstate_fp16:
                 # previously trained in fp16, now we're training in fp16.
-                # ideally no action needed, but APEX broke backwards
-                # compatibility and this is the hack around it.
-                optim_states['loss_scaler'] = self.optimizer.state_dict()['loss_scaler']
+                pass
             elif optimstate_fp16 and not self.fp16:
                 # old optimizer was fp16 but now we're doing fp32,
-                # if apex, drop the fp16 wrapper from the state_dict and just load
+                # if pytorch, drop the fp16 wrapper from the state_dict and just load
                 # the fp16 weights into the fp32 tensors
                 if 'optimizer_state_dict' in optim_states:
-                    # trained with apex
+                    # trained with apex, pull in the old state
                     optim_states = optim_states['optimizer_state_dict']
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
                 try:
-                    self.optimizer.optimizer.load_state_dict(optim_states)
+                    self.optimizer.load_state_dict(optim_states)
                 except ValueError:
                     warn_once(
                         'WARNING: not loading optim state since model params changed.'
                     )
-                return
+                return True
             else:
                 # previously trained in fp32, loading in fp32.
                 # no special treatment needed.
@@ -1056,10 +1058,12 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
+                return False
             except (ValueError, KeyError):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
+                return False
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -1320,7 +1324,7 @@ class TorchAgent(ABC, Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(
+    def _vectorize_text_with_truncate_stats(
         self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
     ):
         """
@@ -1344,9 +1348,37 @@ class TorchAgent(ABC, Agent):
         """
         vec = self.dict.txt2vec(text)
         vec = self._add_start_end_tokens(vec, add_start, add_end)
+        original_length = len(vec)
         vec = self._check_truncate(vec, truncate, truncate_left)
+        if_truncated = original_length > len(vec)
         tensor = torch.LongTensor(vec)
-        return tensor
+        return tensor, original_length, if_truncated
+
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
+        """
+        Return vector from text.
+
+        :param text:
+            String to vectorize.
+
+        :param add_start:
+            Add the start token to the front of the tensor.
+
+        :param add_end:
+            Add the end token to the end of the tensor.
+
+        :param truncate:
+            Truncate to this many tokens >= 0, or None.
+
+        :param truncate_left:
+            Truncate from the left side (keep the rightmost tokens). You
+            probably want this True for inputs, False for targets.
+        """
+        return self._vectorize_text_with_truncate_stats(
+            text, add_start, add_end, truncate, truncate_left
+        )[0]
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
         """
@@ -1386,9 +1418,12 @@ class TorchAgent(ABC, Agent):
         # check truncation
         if obs.get('text_vec') is not None:
             truncate_left = not self.history_reversed
+            text_length = len(obs['text_vec'])
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
             )
+            obs.force_set('original_context_length', text_length)
+            obs.force_set('if_context_truncate', text_length != len(truncated_vec))
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
@@ -1412,13 +1447,20 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
+            vec_label_length = len(obs[label_type + '_vec'])
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
+            obs.force_set('original_label_length', vec_label_length)
+            obs.force_set('if_label_truncate', vec_label_length > len(truncated_vec))
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label = self._vectorize_text(label, add_start, add_end, truncate, False)
+            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
+                label, add_start, add_end, truncate, False
+            )
+            obs.force_set('original_label_length', vec_label_length)
+            obs.force_set('if_label_truncate', vec_label_truncated)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -1522,7 +1564,7 @@ class TorchAgent(ABC, Agent):
         """
         Determine if an observation is valid or not.
         """
-        return 'text_vec' in obs or 'image' in obs
+        return not obs.is_padding()
 
     def batchify(self, obs_batch, sort=False):
         """
@@ -1847,7 +1889,10 @@ class TorchAgent(ABC, Agent):
         # lr scheduler
         states['number_training_updates'] = self._number_training_updates
         if getattr(self, 'scheduler', None):
-            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            with warnings.catch_warnings():
+                # prevent an annoying pytorch warning us to save optimizer state
+                warnings.simplefilter("ignore")
+                states['lr_scheduler'] = self.scheduler.get_state_dict()
             states['lr_scheduler_type'] = self.opt['lr_scheduler']
             states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
@@ -1926,6 +1971,11 @@ class TorchAgent(ABC, Agent):
         # call the parent upgrades
         opt_from_disk = super(TorchAgent, cls).upgrade_opt(opt_from_disk)
 
+        if 'fp16_impl' in opt_from_disk:
+            # 2021-02-23: we removed apex and replaced it with our own thing
+            if opt_from_disk['fp16_impl'] == 'apex':
+                opt_from_disk['fp16_impl'] = 'safe'
+
         if 'hf_skip_special_tokens' in opt_from_disk:
             # 2020-10-28: we killed the --hf-skip-special-tokens option
             if (
@@ -2001,6 +2051,36 @@ class TorchAgent(ABC, Agent):
 
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)
+
+        # check if we should add truncate stats
+        if all('if_context_truncate' in obs for obs in observations):
+            self.record_local_metric(
+                'context_truncate',
+                AverageMetric.many(
+                    [float(obs['if_context_truncate']) for obs in observations]
+                ),
+            )
+        if all('if_label_truncate' in obs for obs in observations):
+            self.record_local_metric(
+                'label_truncate',
+                AverageMetric.many(
+                    [float(obs['if_label_truncate']) for obs in observations]
+                ),
+            )
+        if all('original_context_length' in obs for obs in observations):
+            self.record_local_metric(
+                'context_length',
+                AverageMetric.many(
+                    [obs['original_context_length'] for obs in observations]
+                ),
+            )
+        if all('original_label_length' in obs for obs in observations):
+            self.record_local_metric(
+                'label_length',
+                AverageMetric.many(
+                    [obs['original_label_length'] for obs in observations]
+                ),
+            )
 
         # create a batch from the vectors
         batch = self.batchify(observations)
@@ -2147,18 +2227,21 @@ class TorchAgent(ABC, Agent):
             # finally time to perform the update.
             self.optimizer.update_master_grads()
 
-        if self.opt.get('gradient_clip', -1) > 0:
+        if self.opt.get('gradient_clip', -1) > 0 or self.fp16:
             if self.fp16:
+                # clip grad norm is where we check for fp16 overflows, so we need
+                # to do it regardless of whether gradient clipping is off
                 grad_norm = self.optimizer.clip_master_grads(self.opt['gradient_clip'])
             else:
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
-            self.global_metrics.add(
-                'clip',
-                GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
-            )
+            if self.opt.get('gradient_clip', -1) > 0:
+                self.global_metrics.add(
+                    'clip',
+                    GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
+                )
         else:
             parameters = self.model.parameters()
             grad_norm = compute_grad_norm(parameters)

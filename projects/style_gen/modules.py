@@ -18,7 +18,6 @@ from torch import nn as nn
 from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerGeneratorModel,
-    _normalize,
 )
 from parlai.core.agents import Agent
 from parlai.core.message import Message
@@ -82,41 +81,11 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
     """
 
     @classmethod
-    def build_decoder(
-        cls,
-        opt,
-        dictionary,
-        embedding=None,
-        padding_idx=None,
-        n_positions=1024,
-        n_segments=0,
-    ):
+    def build_decoder(cls, opt, embedding=None):
         """
         Return TransformerDecoderWithEmbeds instead of TransformerDecoder.
         """
-        n_layers = (
-            opt['n_decoder_layers']
-            if opt.get('n_decoder_layers', -1) > 0
-            else opt['n_layers']
-        )
-        return TransformerDecoderWithEmbeds(
-            n_heads=opt['n_heads'],
-            n_layers=n_layers,
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
-            vocabulary_size=len(dictionary),
-            embedding=embedding,
-            dropout=opt['dropout'],
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
-            padding_idx=padding_idx,
-            learn_positional_embeddings=opt['learn_positional_embeddings'],
-            embeddings_scale=opt['embeddings_scale'],
-            n_positions=n_positions,
-            activation=opt['activation'],
-            variant=opt['variant'],
-            n_segments=n_segments,
-        )
+        return TransformerDecoderWithEmbeds(opt=opt, embedding=embedding)
 
     def __init__(self, opt, dictionary, num_classes: int):
         super().__init__(opt, dictionary)
@@ -182,7 +151,7 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
         if self.embeddings_scale:
             tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
@@ -208,7 +177,7 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
                 )
 
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
 
         return tensor, new_incr_state
 

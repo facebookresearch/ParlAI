@@ -6,6 +6,10 @@
 
 from copy import deepcopy
 
+from typing import Optional
+from parlai.core.opt import Opt
+
+from parlai.core.params import ParlaiParser
 from parlai.core.worlds import DialogPartnerWorld, validate
 from parlai.core.message import Message
 
@@ -18,6 +22,13 @@ class InteractiveWorld(DialogPartnerWorld):
     tasks/convai2 both agents are given personas, so a world class should be written
     especially for those cases for given tasks.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        # no default args
+        return parser
 
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)

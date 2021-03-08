@@ -10,6 +10,8 @@ The Message object's key function is to prevent users from editing fields in an 
 or observation dict unintentionally.
 """
 
+from __future__ import annotations
+
 
 class Message(dict):
     """
@@ -31,4 +33,17 @@ class Message(dict):
         super().__setitem__(key, val)
 
     def copy(self):
-        return Message(self)
+        return type(self)(self)
+
+    @classmethod
+    def padding_example(cls) -> Message:
+        """
+        Create a Message for batch padding.
+        """
+        return cls({'batch_padding': True, 'episode_done': True})
+
+    def is_padding(self) -> bool:
+        """
+        Determine if a message is a padding example or not.
+        """
+        return bool(self.get('batch_padding'))

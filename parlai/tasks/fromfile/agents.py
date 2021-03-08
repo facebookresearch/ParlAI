@@ -27,6 +27,7 @@ class FbformatTeacher(FbDeprecatedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('FromFile Task Arguments')
         agent.add_argument('-dp', '--fromfile-datapath', type=str, help="Data file")
         return parser
@@ -51,6 +52,7 @@ class Fbformat2Teacher(FbDeprecatedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('FromFile Task Arguments')
         agent.add_argument('-dp', '--fromfile-datapath2', type=str, help="Data file")
         return parser
@@ -74,6 +76,7 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('FromFile Task Arguments')
         agent.add_argument('-ffdp', '--fromfile-datapath', type=str, help="Data file")
         agent.add_argument(
@@ -113,6 +116,7 @@ class Parlaiformat2Teacher(ParlAIDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('FromFile Task Arguments')
         agent.add_argument('--fromfile-datapath2', type=str, help="Data file")
         return parser
