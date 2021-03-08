@@ -56,8 +56,18 @@ import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 
 
-def _num_else_inf(opt: Opt, key: str):
-    return opt[key] if opt[key] > 0 else float('inf')
+def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
+    if opt[key] > 0:
+        if distributed_warn and is_distributed():
+            nicekey = '--' + key.replace('_', '-')
+            logging.warn(
+                f'Using {nicekey} in distributed mode can lead to slowdowns. '
+                'See https://github.com/facebookresearch/ParlAI/pull/3379 for more info.'
+            )
+        value = opt[key]
+    else:
+        value = float('inf')
+    return value
 
 
 def setup_args(parser=None) -> ParlaiParser:
@@ -106,12 +116,12 @@ def setup_args(parser=None) -> ParlaiParser:
         default=-1,
         help='End training after n model updates',
     )
-    train.add_argument('-ltim', '--log-every-n-secs', type=float, default=10)
+    train.add_argument('-ltim', '--log-every-n-secs', type=float, default=-1)
     train.add_argument(
         '-lstep',
         '--log-every-n-steps',
         type=int,
-        default=-1,
+        default=50,
         help='Log every n training steps',
     )
     train.add_argument(
@@ -343,15 +353,25 @@ class TrainLoop:
         self._last_log_steps = 0
         self.update_freq = opt.get('update_freq', 1)
 
-        self.max_num_epochs = _num_else_inf(opt, 'num_epochs')
-        self.max_train_time = _num_else_inf(opt, 'max_train_time')
+        self.max_num_epochs = _num_else_inf(opt, 'num_epochs', distributed_warn=True)
+        self.max_train_time = _num_else_inf(
+            opt, 'max_train_time', distributed_warn=True
+        )
         self.max_train_steps = _num_else_inf(opt, 'max_train_steps')
-        self.log_every_n_secs = _num_else_inf(opt, 'log_every_n_secs')
+        self.log_every_n_secs = _num_else_inf(
+            opt, 'log_every_n_secs', distributed_warn=True
+        )
         self.log_every_n_steps = _num_else_inf(opt, 'log_every_n_steps')
-        self.val_every_n_secs = _num_else_inf(opt, 'validation_every_n_secs')
-        self.val_every_n_epochs = _num_else_inf(opt, 'validation_every_n_epochs')
+        self.val_every_n_secs = _num_else_inf(
+            opt, 'validation_every_n_secs', distributed_warn=True
+        )
+        self.val_every_n_epochs = _num_else_inf(
+            opt, 'validation_every_n_epochs', distributed_warn=True
+        )
         self.val_every_n_steps = _num_else_inf(opt, 'validation_every_n_steps')
-        self.save_every_n_secs = _num_else_inf(opt, 'save_every_n_secs')
+        self.save_every_n_secs = _num_else_inf(
+            opt, 'save_every_n_secs', distributed_warn=True
+        )
 
         # smart defaults for --validation-metric-mode
         if opt['validation_metric'] in {'loss', 'ppl', 'mean_rank'}:
