@@ -1610,12 +1610,13 @@ class TorchAgent(ABC, Agent):
         # TEXT
         xs = x_lens = original_context_lengths = context_truncate_rate = None
         if any(ex.get('text_vec') is not None for ex in exs):
-            context_truncate_rate = torch.LongTensor(
-                [ex['context_truncate_rate'] for ex in exs]
-            )
-            original_context_lengths = torch.LongTensor(
-                [ex['original_context_length'] for ex in exs]
-            )
+            if any('original_context_length' in ex for ex in exs):
+                context_truncate_rate = torch.LongTensor(
+                    [ex['context_truncate_rate'] for ex in exs]
+                )
+                original_context_lengths = torch.LongTensor(
+                    [ex['original_context_length'] for ex in exs]
+                )
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = self._pad_tensor(_xs)
             if sort:
@@ -1630,12 +1631,13 @@ class TorchAgent(ABC, Agent):
 
         ys = y_lens = labels = original_label_lengths = label_truncate_rate = None
         if some_labels_avail:
-            label_truncate_rate = torch.LongTensor(
-                [ex['label_truncate_rate'] for ex in exs]
-            )
-            original_label_lengths = torch.LongTensor(
-                [ex['original_label_length'] for ex in exs]
-            )
+            if any('original_label_length' in ex for ex in exs):
+                label_truncate_rate = torch.LongTensor(
+                    [ex['label_truncate_rate'] for ex in exs]
+                )
+                original_label_lengths = torch.LongTensor(
+                    [ex['original_label_length'] for ex in exs]
+                )
             field = 'labels' if labels_avail else 'eval_labels'
 
             label_vecs = [ex.get(field + '_vec', self.EMPTY) for ex in exs]
@@ -2076,12 +2078,13 @@ class TorchAgent(ABC, Agent):
         batch = self.batchify(observations)
 
         # truncation statistics
-        self.record_local_metric(
-            'clen', AverageMetric.many(batch._original_context_length)
-        )
-        self.record_local_metric(
-            'ctrun', AverageMetric.many(batch._context_truncate_rate)
-        )
+        if batch._original_context_length is not None:
+            self.record_local_metric(
+                'clen', AverageMetric.many(batch._original_context_length)
+            )
+            self.record_local_metric(
+                'ctrun', AverageMetric.many(batch._context_truncate_rate)
+            )
         if batch._original_label_length is not None:
             self.record_local_metric(
                 'llen', AverageMetric.many(batch._original_label_length)
