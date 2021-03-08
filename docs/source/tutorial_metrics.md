@@ -4,6 +4,10 @@ Author: Stephen Roller
 
 ## Introduction and Standard Metrics
 
+:::{tip} List of metrics
+If you're not sure what a metric means, refer to our [List of metrics](#list-of-metrics).
+:::
+
 ParlAI contains a number of built-in metrics that are automatically computed when
 we train and evaluate models. Some of these metrics are _text generation_ metrics,
 which happen any time we generate a text: this includes F1, BLEU and Accuracy.
@@ -51,6 +55,7 @@ One nice thing about metrics is that they are automatically logged to the
 `.trainstats` file, and within Tensorboard (when enabled with
 `--tensorboard-log true`. As such, metrics are more reliable than adding print
 statements into your code.
+
 
 
 ### Agent-specific metrics
@@ -402,3 +407,40 @@ __Under the hood__: Local metrics work by including a "metrics" field in the
 return message. This is a dictionary which maps field name to a metric value.
 When the teacher receives the response from the model, it utilizes the metrics
 field to update counters on its side.
+
+## List of Metrics
+
+Below is a list of metrics and a brief explanation of each.
+
+:::{note} List of metrics
+If you find a metric not listed here,
+please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issues/new?assignees=&labels=Docs,Metrics&template=other.md).
+:::
+
+| Metric                  | Explanation  |
+| ----------------------- | ------------ |
+| `accuracy`              | Exact match text accuracy |
+| `bleu-4`                | BLEU-4 of the generation, under a standardized (model-independent) tokenizer |
+| `clip`                  | Fraction of batches with clipped gradients |
+| `ctpb`                  | Context tokens per batch |
+| `ctps`                  | Context tokens per second |
+| `exps`                  | Examples per second |
+| `exs`                   | Number of examples processed since last print |
+| `f1`                    | Unigram F1 overlap, under a standardized (model-independent) tokenizer |
+| `gnorm`                 | Gradient norm |
+| `gpu_mem`               | Fraction of GPU memory used. May slightly underestimate true value. |
+| `hits@1`, `hits@5`, ... | Fraction of correct choices in K guesses. (Similar to recall@K) |
+| `interdistinct-1`, `interdictinct-2` | Fraction of n-grams unique across _all_ generations |
+| `intradistinct-1`, `intradictinct-2` | Fraction of n-grams unique _within_ each utterance |
+| `jga`                   | Joint Goal Accuracy |
+| `loss`                  | Loss |
+| `lr`                    | The most recent learning rate applied |
+| `ltpb`                  | Label tokens per batch |
+| `ltps`                  | Label tokens per second |
+| `rouge-1`, `rouge-1`, `rouge-L` | ROUGE metrics |
+| `token_acc`             | Token-wise accuracy (generative only) |
+| `token_em`              | Utterance-level token accuracy. Roughly corresponds to perfection under greedy search (generative only) |
+| `total_train_updates`   | Number of SGD steps taken across all batches |
+| `tpb`                   | Total tokens (context + label) per batch |
+| `tps`                   | Total tokens (context + label) per second |
+| `ups`                   | Updates per second (approximate) |
