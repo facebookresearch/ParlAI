@@ -422,6 +422,8 @@ please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issu
 | `accuracy`              | Exact match text accuracy |
 | `bleu-4`                | BLEU-4 of the generation, under a standardized (model-independent) tokenizer |
 | `clip`                  | Fraction of batches with clipped gradients |
+|`context_truncate`       | Ratio of samples' contexts being truncated per batch |
+|`context_length`         | Average length of context tokens per batch |
 | `ctpb`                  | Context tokens per batch |
 | `ctps`                  | Context tokens per second |
 | `exps`                  | Examples per second |
@@ -433,6 +435,8 @@ please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issu
 | `interdistinct-1`, `interdictinct-2` | Fraction of n-grams unique across _all_ generations |
 | `intradistinct-1`, `intradictinct-2` | Fraction of n-grams unique _within_ each utterance |
 | `jga`                   | Joint Goal Accuracy |
+|`label_length`           | Average length of label tokens per batch |
+|`label_truncate`         | Ratio of samples' labels being truncated per batch |
 | `loss`                  | Loss |
 | `lr`                    | The most recent learning rate applied |
 | `ltpb`                  | Label tokens per batch |
