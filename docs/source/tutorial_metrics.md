@@ -1,4 +1,4 @@
-# Understanding and adding new metrics
+# Understanding and adding metrics
 
 Author: Stephen Roller
 
