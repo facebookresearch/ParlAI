@@ -84,6 +84,7 @@ class SelfFeedingTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         project = parser.add_argument_group('Self-Feeding Tasks')
         project.add_argument(
             '-st',
@@ -237,6 +238,7 @@ class SelfFeedingMTLTeacher(MultiTaskTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         SelfFeedingTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
         return parser
 
@@ -334,6 +336,7 @@ class DiafeeTeacher(SelfFeedingMTLTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         SelfFeedingTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
         return parser
 

@@ -21,6 +21,7 @@ once acting as Speaker 2.
 
 import os
 import json
+from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.utils.io import PathManager
 from .build import build
@@ -70,14 +71,16 @@ class Convai2Teacher(FixedDialogTeacher):
 
         episode_done = 2 * entry_idx + speaker_id + 1 >= len(full_eps['dialogue']) - 1
 
-        action = {
-            'topic': full_eps['topic'],
-            'text': their_turn['text'],
-            'emotion': their_turn['emotion'],
-            'act_type': their_turn['act'],
-            'labels': [my_turn['text']],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'topic': full_eps['topic'],
+                'text': their_turn['text'],
+                'emotion': their_turn['emotion'],
+                'act_type': their_turn['act'],
+                'labels': [my_turn['text']],
+                'episode_done': episode_done,
+            }
+        )
         return action
 
     def share(self):
@@ -115,14 +118,16 @@ class NoStartTeacher(Convai2Teacher):
         my_turn = entries[1 + speaker_id + 2 * entry_idx]
         episode_done = 2 * entry_idx + speaker_id + 1 >= len(entries) - 2
 
-        action = {
-            'topic': full_eps['topic'],
-            'text': their_turn['text'],
-            'emotion': their_turn['emotion'],
-            'act_type': their_turn['act'],
-            'labels': [my_turn['text']],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'topic': full_eps['topic'],
+                'text': their_turn['text'],
+                'emotion': their_turn['emotion'],
+                'act_type': their_turn['act'],
+                'labels': [my_turn['text']],
+                'episode_done': episode_done,
+            }
+        )
         return action
 
 

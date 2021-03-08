@@ -49,19 +49,6 @@ from parlai.utils.torch import (
 )
 
 
-try:
-    from nltk.translate import bleu_score as nltkbleu
-
-except ImportError:
-    nltkbleu = None
-
-try:
-    from fairseq.scoring import bleu as fairseq_bleu
-
-except ImportError:
-    fairseq_bleu = None
-
-
 class SearchBlocklist(object):
     """
     Search block list facilitates blocking ngrams from being generated.
@@ -523,9 +510,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
 
-            if self.fp16:
-                self.model = self.model.half()
-
             if init_model is not None:
                 # load model parameters if available
                 logging.info(f'Loading existing model params from {init_model}')
@@ -538,18 +522,23 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
-            self.init_optim(
+            was_reset = self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'),
             )
-            self.build_lr_scheduler(states, hard_reset=is_finetune)
+            if was_reset and not is_finetune:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
         if shared is None and is_distributed():
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
             )
+
+        if shared is None and self.fp16:
+            self.model = self.model.half()
 
         self.reset()
 
@@ -720,10 +709,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
+        # cross entropy loss
         self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        # perplexity
         self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        # token-wise accuracy
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
+        )
+        # utterance-wise exact match
+        self.record_local_metric(
+            'token_em', AverageMetric.many(correct == target_tokens)
         )
         # actually do backwards loss
         loss = loss.sum()

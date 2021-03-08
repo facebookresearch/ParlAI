@@ -408,6 +408,10 @@ class TrainLoop:
                 self._train_steps = obj.get('train_steps', 0)
                 self.impatience = obj.get('impatience', 0)
                 self.valid_reports = obj.get('valid_reports', [])
+                if self.valid_reports:
+                    self.last_valid_epoch = self.valid_reports[-1].get(
+                        'total_epochs', 0.0
+                    )
                 self.train_reports = obj.get('train_reports', [])
                 if 'best_valid' in obj:
                     self.best_valid = obj['best_valid']

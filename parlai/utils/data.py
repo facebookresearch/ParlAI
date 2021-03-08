@@ -74,7 +74,20 @@ class DatatypeHelper:
             parlai datatype
 
         :return is_training:
-            given datatype, return whether we should return eval_labels or labels
+            bool indicating whether should return eval_labels or labels
         """
         assert datatype is not None, 'datatype must not be none'
         return 'train' in datatype and 'evalmode' not in datatype
+
+    @classmethod
+    def is_streaming(cls, datatype: str) -> bool:
+        """
+        Return whether this is streaming.
+
+        :param datatype:
+            parlai datatype
+
+        :returns:
+            bool indicating whether we are streaming
+        """
+        return 'stream' in datatype

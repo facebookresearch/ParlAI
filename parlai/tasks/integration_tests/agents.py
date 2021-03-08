@@ -31,6 +31,8 @@ import json
 from abc import ABC
 from typing import Tuple, List
 import time
+from parlai.core.message import Message
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
 
 # default parameters
@@ -200,6 +202,7 @@ class OverfitTeacher(CandidateTeacher, DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--corpus-size', default=4, type=int)
         return parser
 
@@ -228,6 +231,7 @@ class OverfitMultiturnTeacher(CandidateTeacher, DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--corpus-size', default=4, type=int)
         return parser
 
@@ -486,19 +490,24 @@ class ChunkyTeacher(ChunkTeacher):
         return {'text': text, 'labels': [label], 'episode_done': True}
 
 
-class InfiniteTrainTeacher(ChunkyTeacher):
+class InfiniteTrainTeacher(FixedDialogTeacher):
     """
-    Chunk teacher with an effectively infinite number of training examples.
+    Teacher with an effectively infinite number of training examples.
     """
 
-    def get_num_samples(self, opt) -> Tuple[int, int]:
-        datatype = opt['datatype']
-        if 'train' in datatype:
-            return INFINITE, INFINITE
-        elif 'valid' in datatype:
-            return NUM_TEST, NUM_TEST
-        elif 'test' in datatype:
-            return NUM_TEST, NUM_TEST
+    def num_examples(self):
+        return INFINITE
+
+    def num_episodes(self):
+        return INFINITE
+
+    def get(self, episode_idx=0, entry_idx=0):
+        field = (
+            'labels'
+            if DatatypeHelper.is_training(self.opt['datatype'])
+            else 'eval_labels'
+        )
+        return Message({'text': '1 2 3 4', field: ['1 2 3 4'], 'episode_done': True})
 
 
 class ChunkyUniqueSlowTeacher(ChunkyTeacher):
@@ -512,7 +521,7 @@ class ChunkyUniqueSlowTeacher(ChunkyTeacher):
             text = str(i + chunk_idx * 10)
             resp = str(i + chunk_idx * 10)
             output.append((text, resp))
-            time.sleep(0.1)
+        time.sleep(0.1)
         return output
 
 

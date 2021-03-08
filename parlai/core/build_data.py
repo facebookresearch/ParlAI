@@ -330,7 +330,7 @@ def ungzip(path, fname, deleteGZip=True):
     logging.debug(f'unzipping {fname}')
     fullpath = os.path.join(path, fname)
 
-    with gzip.open(fullpath, 'rb') as fin, open(
+    with gzip.open(PathManager.open(fullpath, 'rb'), 'r') as fin, PathManager.open(
         _get_output_filename(fullpath), 'wb'
     ) as fout:
         shutil.copyfileobj(fin, fout)

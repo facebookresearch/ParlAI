@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional
 
 from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.core.agents import Agent
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task, DialogPartnerWorld, validate
 from parlai.core.message import Message
 
@@ -51,6 +53,17 @@ def load_openers(opt) -> Optional[List[str]]:
 
 
 class SelfChatWorld(DialogPartnerWorld):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Return the parser as-is.
+
+        Self-chat-specific world flags can be added here.
+        """
+        return parser
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.init_contexts(shared=shared)

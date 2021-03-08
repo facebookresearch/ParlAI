@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDeprecatedDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher, YamlTeacher
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import warn_once
 from .build import build
 from parlai.utils.strings import normalize_reply
@@ -124,3 +125,17 @@ class InteractiveTeacher(SelfOriginalTeacher):
 class SelfchatTeacher(SelfOriginalTeacher):
     # Dummy class to add arguments for interactive world.
     pass
+
+
+class SampleTeacher(YamlTeacher):
+    """
+    Loads the small sample of data created by the AutoTeacherTests.
+    """
+
+    def __init__(self, opt, shared=None):
+        opt = opt.copy()
+        fold = DatatypeHelper.fold(opt['datatype'])
+        opt['datafile'] = os.path.join(
+            os.path.dirname(__file__), f'test/convai2_{fold}.yml'
+        )
+        super().__init__(opt, shared)
