@@ -1624,10 +1624,10 @@ class TorchAgent(ABC, Agent):
         if any(ex.get('text_vec') is not None for ex in exs):
             if any('context_original_length' in ex for ex in exs):
                 context_truncate_rate = torch.LongTensor(
-                    [ex['context_truncate_rate'] for ex in exs]
+                    [ex.get('context_truncate_rate', 0) for ex in exs]
                 )
                 context_original_lengths = torch.LongTensor(
-                    [ex['context_original_length'] for ex in exs]
+                    [ex.get('context_original_length', 0) for ex in exs]
                 )
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = self._pad_tensor(_xs)
@@ -1645,10 +1645,10 @@ class TorchAgent(ABC, Agent):
         if some_labels_avail:
             if any('label_original_length' in ex for ex in exs):
                 label_truncate_rate = torch.LongTensor(
-                    [ex['label_truncate_rate'] for ex in exs]
+                    [ex.get('label_truncate_rate', 0) for ex in exs]
                 )
                 label_original_lengths = torch.LongTensor(
-                    [ex['label_original_length'] for ex in exs]
+                    [ex.get('label_original_length', 0) for ex in exs]
                 )
             field = 'labels' if labels_avail else 'eval_labels'
 
