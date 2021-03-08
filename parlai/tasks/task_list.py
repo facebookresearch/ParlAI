@@ -13,7 +13,7 @@ task_list = [
         "id": "AmazonQA",
         "display_name": "AmazonQA",
         "task": "amazon_qa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "links": {"website": "http://jmcauley.ucsd.edu/data/amazon/qa/"},
         "description": (
             "This dataset contains Question and Answer data from Amazon, "
@@ -24,7 +24,7 @@ task_list = [
         "id": "AQuA",
         "display_name": "AQuA",
         "task": "aqua",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "links": {"arXiv": "https://arxiv.org/abs/1705.04146"},
         "description": (
             "Dataset containing algebraic word problems with rationales for "
@@ -35,7 +35,7 @@ task_list = [
         "id": "bAbI-1k",
         "display_name": "bAbI 1k",
         "task": "babi:All1k",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "20 synthetic tasks that each test a unique aspect of text and "
             "reasoning, and hence test different capabilities of learning "
@@ -51,7 +51,7 @@ task_list = [
         "id": "bAbI-10k",
         "display_name": "bAbI 10k",
         "task": "babi:All10k",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "20 synthetic tasks that each test a unique aspect of text and "
             "reasoning, and hence test different capabilities of learning "
@@ -67,7 +67,7 @@ task_list = [
         "id": "BlendedSkillTalk",
         "display_name": "Blended Skill Talk",
         "task": "blended_skill_talk",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": (
             "A dataset of 7k conversations explicitly designed to exhibit multiple "
             "conversation modes: displaying personality, having empathy, and "
@@ -78,7 +78,7 @@ task_list = [
         "id": "BookTest",
         "display_name": "BookTest",
         "task": "booktest",
-        "tags": ["All", "Cloze"],
+        "tags": ["Cloze"],
         "description": (
             "Sentence completion given a few sentences as context from a book. "
             "A larger version of CBT."
@@ -89,19 +89,19 @@ task_list = [
         "id": "BotAdversarialDialogue",
         "display_name": "Bot Adversarial Dialogue ",
         "task": "bot_adversarial_dialogue",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
             "Datasets consist of classification tasks in which the goal is to "
             "determine if the utterance is offensive or not given a dialogue context. "
         ),
-        "links": {"arXiv": "<placeholder>"},
+        "links": {"arXiv": "https://arxiv.org/abs/2010.07079"},
     },
     {
         "id": "CBT",
         "display_name": "Children's Book Test (CBT)",
         "task": "cbt",
-        "tags": ["All", "Cloze"],
+        "tags": ["Cloze"],
         "description": (
             "Sentence completion given a few sentences as context from a "
             "children's book."
@@ -112,7 +112,7 @@ task_list = [
         "id": "CCPE",
         "display_name": "Coached Conversational Preference Elicitation",
         "task": "ccpe",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "A dataset consisting of 502 dialogs with 12,000 annotated "
             "utterances between a user and an assistant discussing movie "
@@ -129,7 +129,7 @@ task_list = [
         "id": "COPA",
         "display_name": "Choice of Plausible Alternatives",
         "task": "copa",
-        "tags": ["All", "Reasoning"],
+        "tags": ["Reasoning"],
         "description": (
             "The Choice Of Plausible Alternatives (COPA) evaluation provides "
             "researchers with a tool for assessing progress in open-domain "
@@ -142,7 +142,7 @@ task_list = [
         "id": "COQA",
         "display_name": "Conversational Question Answering Challenge",
         "task": "coqa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "CoQA is a large-scale dataset for building Conversational "
             "Question Answering systems. The goal of the CoQA challenge "
@@ -156,7 +156,7 @@ task_list = [
         "id": "CornellMovie",
         "display_name": "Cornell Movie",
         "task": "cornell_movie",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": ("Fictional conversations extracted from raw movie scripts."),
         "links": {"arXiv": "https://arxiv.org/abs/1106.3077"},
     },
@@ -164,7 +164,7 @@ task_list = [
         "id": "DBLL-bAbI",
         "display_name": "Dialog Based Language Learning: bAbI Task",
         "task": "dbll_babi",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "Short dialogs based on the bAbI tasks, but in the form of a "
             "question from a teacher, the answer from the student, and finally a "
@@ -183,7 +183,7 @@ task_list = [
         "id": "DBLL-Movie",
         "display_name": "Dialog Based Language Learning: WikiMovies Task",
         "task": "dbll_movie",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "Short dialogs based on WikiMovies, but in the form of a question "
             "from a teacher, the answer from the student, and finally a comment "
@@ -196,7 +196,7 @@ task_list = [
         "id": "dialog-bAbI",
         "display_name": "Dialog bAbI",
         "task": "dialog_babi",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": "Simulated dialogs of restaurant booking",
         "links": {"arXiv": "https://arxiv.org/abs/1605.07683"},
     },
@@ -204,7 +204,7 @@ task_list = [
         "id": "dialog-bAbI-plus",
         "display_name": "Dialog bAbI+",
         "task": "dialog_babi_plus",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "bAbI+ is an extension of the bAbI Task 1 dialogues with everyday "
             "incremental dialogue phenomena (hesitations, restarts, and "
@@ -224,7 +224,7 @@ task_list = [
         "id": "dialogue-nli",
         "display_name": "Dialogue NLI",
         "task": "dialogue_nli",
-        "tags": ["All", "ChitChat", "NLI"],
+        "tags": ["ChitChat", "NLI"],
         "description": (
             "Dialogue NLI is a dataset that addresses the issue of consistency in "
             "dialogue models."
@@ -238,7 +238,7 @@ task_list = [
         "id": "dstc7",
         "display_name": "DSTC7 subtrack 1 - ubuntu",
         "task": "dstc7",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": (
             "DSTC7 is a competition which provided a dataset of dialogs very "
             "similar to the ubuntu dataset. In particular, the subtrack 1 "
@@ -250,7 +250,7 @@ task_list = [
         "id": "FVQA",
         "display_name": "FVQA",
         "task": "fvqa",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "The FVQA, a VQA dataset which requires, and supports, much deeper "
             "reasoning. We extend a conventional visual question answering "
@@ -265,7 +265,7 @@ task_list = [
         "id": "DealNoDeal",
         "display_name": "Deal or No Deal",
         "task": "dealnodeal",
-        "tags": ["All", "Negotiation"],
+        "tags": ["Negotiation"],
         "description": (
             "End-to-end negotiation task which requires two agents to agree on "
             "how to divide a set of items, with each agent assigning different "
@@ -277,7 +277,7 @@ task_list = [
         "id": "HotpotQA",
         "display_name": "HotpotQA",
         "task": "hotpotqa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "HotpotQA is a dataset for multi-hop question answering."
             "The overall setting is that given some context paragraphs"
@@ -292,7 +292,7 @@ task_list = [
         "id": "LIGHT-Dialogue",
         "display_name": "LIGHT-Dialogue",
         "task": "light_dialog",
-        "tags": ["All", "Grounded", "Dodeca"],
+        "tags": ["Grounded", "Dodeca"],
         "description": (
             "LIGHT is a text adventure game with actions and dialogue collected."
             "The source data is collected between crowdworkers playing the game."
@@ -306,7 +306,7 @@ task_list = [
         "id": "LIGHT-Dialogue-Wild",
         "display_name": "LIGHT-Dialogue-Wild",
         "task": "light_dialog_wild",
-        "tags": ["All", "Grounded", "LIGHT"],
+        "tags": ["Grounded", "LIGHT"],
         "description": (
             " LIGHT is a text adventure game with actions and dialogue."
             "The WILD dataset here features 41,131+ training episodes of dialogue "
@@ -321,7 +321,7 @@ task_list = [
         "id": "MutualFriends",
         "display_name": "MutualFriends",
         "task": "mutualfriends",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "Task where two agents must discover which friend of theirs is "
             "mutual based on the friends's attributes."
@@ -332,7 +332,7 @@ task_list = [
         "id": "MCTest",
         "display_name": "MCTest",
         "task": "mctest",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": ("Questions about short children's stories."),
         "links": {
             "website": (
@@ -345,7 +345,7 @@ task_list = [
         "id": "MovieDD-QA",
         "display_name": "Movie Dialog QA",
         "task": "moviedialog:Task:1",
-        "tags": ["All", "QA", "MovieDD"],
+        "tags": ["QA", "MovieDD"],
         "description": (
             "Closed-domain QA dataset asking templated questions about movies, "
             "answerable from Wikipedia, similar to WikiMovies."
@@ -356,7 +356,7 @@ task_list = [
         "id": "MovieDD-QARecs",
         "display_name": "Movie Dialog QA Recommendations",
         "task": "moviedialog:Task:3",
-        "tags": ["All", "Goal", "MovieDD"],
+        "tags": ["Goal", "MovieDD"],
         "description": (
             "Dialogs discussing questions about movies as well as recommendations."
         ),
@@ -366,7 +366,7 @@ task_list = [
         "id": "MovieDD-Recs",
         "display_name": "Movie Dialog Recommendations",
         "task": "moviedialog:Task:2",
-        "tags": ["All", "QA", "MovieDD"],
+        "tags": ["QA", "MovieDD"],
         "description": ("Questions asking for movie recommendations."),
         "links": {"arXiv": "https://arxiv.org/abs/1511.06931"},
     },
@@ -374,7 +374,7 @@ task_list = [
         "id": "MovieDD-Reddit",
         "display_name": "Movie Dialog Reddit",
         "task": "moviedialog:Task:4",
-        "tags": ["All", "ChitChat", "MovieDD"],
+        "tags": ["ChitChat", "MovieDD"],
         "description": (
             "Dialogs discussing Movies from Reddit (the Movies SubReddit)."
         ),
@@ -384,7 +384,7 @@ task_list = [
         "id": "MTurkWikiMovies",
         "display_name": "MTurk WikiMovies",
         "task": "mturkwikimovies",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Closed-domain QA dataset asking MTurk-derived questions about "
             "movies, answerable from Wikipedia."
@@ -395,7 +395,7 @@ task_list = [
         "id": "MultiNLI",
         "display_name": "MultiNLI",
         "task": "multinli",
-        "tags": ["All", "Entailment", "decanlp"],
+        "tags": ["Entailment", "decanlp"],
         "description": (
             "A dataset designed for use in the development and evaluation of "
             "machine learning models for sentence understanding. Each example "
@@ -409,7 +409,7 @@ task_list = [
         "id": "NarrativeQA",
         "display_name": "NarrativeQA",
         "task": "narrative_qa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "A dataset and set of tasks in which the reader must answer "
             "questions about stories by reading entire books or movie scripts. "
@@ -424,7 +424,7 @@ task_list = [
         "id": "NaturalQuestions",
         "display_name": "Natural Questions",
         "task": "natural_questions",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "An open domain question answering dataset. "
             "Each example contains real questions that people searched "
@@ -450,7 +450,7 @@ task_list = [
         "id": "OpenSubtitles",
         "display_name": "Open Subtitles",
         "task": "opensubtitles",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": "Dataset of dialogs from movie scripts.",
         "links": {
             "version 2018 website": "http://opus.lingfil.uu.se/OpenSubtitles2018.php",
@@ -462,7 +462,7 @@ task_list = [
         "id": "personalized-dialog-full",
         "display_name": "Personalized Dialog Full Set",
         "task": "personalized_dialog:AllFull",
-        "tags": ["All", "Goal", "Personalization"],
+        "tags": ["Goal", "Personalization"],
         "description": (
             "Simulated dataset of restaurant booking focused on personalization "
             "based on user profiles."
@@ -473,7 +473,7 @@ task_list = [
         "id": "personalized-dialog-small",
         "display_name": "Personalized Dialog Small Set",
         "task": "personalized_dialog:AllSmall",
-        "tags": ["All", "Goal", "Personalization"],
+        "tags": ["Goal", "Personalization"],
         "description": (
             "Simulated dataset of restaurant booking focused on personalization "
             "based on user profiles."
@@ -484,7 +484,7 @@ task_list = [
         "id": "QACNN",
         "display_name": "QA CNN",
         "task": "qacnn",
-        "tags": ["All", "Cloze"],
+        "tags": ["Cloze"],
         "description": (
             "Cloze dataset based on a missing (anonymized) entity phrase from a "
             "CNN article"
@@ -495,7 +495,7 @@ task_list = [
         "id": "QADailyMail",
         "display_name": "QA Daily Mail",
         "task": "qadailymail",
-        "tags": ["All", "Cloze"],
+        "tags": ["Cloze"],
         "description": (
             "Cloze dataset based on a missing (anonymized) entity phrase from a "
             "Daily Mail article."
@@ -506,7 +506,7 @@ task_list = [
         "id": "QuAC",
         "display_name": "Question Answering in Context",
         "task": "quac",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Question Answering in Context is a dataset for modeling, "
             "understanding, and participating in information seeking dialog. Data "
@@ -524,7 +524,7 @@ task_list = [
         "id": "SelfFeedingChatbot",
         "display_name": "Self-Feeding Chatbot",
         "task": "self_feeding",
-        "tags": ["diaexp", "diasen", "All"],
+        "tags": [],
         "description": (
             "Learning from Dialogue after Deployment. Leveraging user textual "
             "feedback to improve the chatbot's abilities."
@@ -535,7 +535,7 @@ task_list = [
         "id": "SimpleQuestions",
         "display_name": "Simple Questions",
         "task": "simplequestions",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": ("Open-domain QA dataset based on Freebase triples."),
         "links": {"arXiv": "https://arxiv.org/abs/1506.02075"},
     },
@@ -543,7 +543,7 @@ task_list = [
         "id": "SNLI",
         "display_name": "The Stanford Natural Language Inference (SNLI) Corpus",
         "task": "snli",
-        "tags": ["All", "Entailment"],
+        "tags": ["Entailment"],
         "description": (
             "The SNLI corpus (version 1.0) is a collection of 570k "
             "human-written English sentence pairs manually labeled for balanced "
@@ -557,7 +557,7 @@ task_list = [
         "id": "SQuAD2",
         "display_name": "SQuAD2",
         "task": "squad2",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Open-domain QA dataset answerable from a given paragraph from "
             "Wikipedia."
@@ -568,7 +568,7 @@ task_list = [
         "id": "SQuAD",
         "display_name": "SQuAD",
         "task": "squad",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Open-domain QA dataset answerable from a given paragraph from "
             "Wikipedia."
@@ -579,7 +579,7 @@ task_list = [
         "id": "TriviaQA",
         "display_name": "TriviaQA",
         "task": "triviaqa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Open-domain QA dataset with question-answer-evidence triples."
         ),
@@ -589,7 +589,7 @@ task_list = [
         "id": "TaskNTalk",
         "display_name": "Task N' Talk",
         "task": "taskntalk",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "Dataset of synthetic shapes described by attributes, for agents to "
             "play a cooperative QA game."
@@ -600,7 +600,7 @@ task_list = [
         "id": "Ubuntu",
         "display_name": "Ubuntu",
         "task": "ubuntu",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": (
             "Dialogs between an Ubuntu user and an expert trying to fix issue, "
             "we use the V2 version, which cleaned the data to some extent. "
@@ -611,7 +611,7 @@ task_list = [
         "id": "WebQuestions",
         "display_name": "Web Questions",
         "task": "webquestions",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": ("Open-domain QA dataset from Web queries."),
         "links": {"paper": "http://www.aclweb.org/anthology/D13-1160"},
     },
@@ -619,7 +619,7 @@ task_list = [
         "id": "WikiMovies",
         "display_name": "WikiMovies",
         "task": "wikimovies",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Closed-domain QA dataset asking templated questions about movies, "
             "answerable from Wikipedia."
@@ -630,7 +630,7 @@ task_list = [
         "id": "WikiQA",
         "display_name": "WikiQA",
         "task": "wikiqa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": ("Open domain QA from Wikipedia dataset"),
         "links": {
             "website": (
@@ -643,7 +643,7 @@ task_list = [
         "id": "VQAv1",
         "display_name": "VQAv1",
         "task": "vqa_v1",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": ("Open-ended question answering about visual content."),
         "links": {"arXiv": "https://arxiv.org/abs/1505.00468"},
     },
@@ -651,7 +651,7 @@ task_list = [
         "id": "VQAv2",
         "display_name": "VQAv2",
         "task": "vqa_v2",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": ("Bigger, more balanced version of the original VQA dataset."),
         "links": {"arXiv": "https://arxiv.org/abs/1612.00837"},
     },
@@ -659,7 +659,7 @@ task_list = [
         "id": "VisDial",
         "display_name": "VisDial",
         "task": "visdial",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "Task which requires agents to hold a meaningful dialog about "
             "visual content."
@@ -670,7 +670,7 @@ task_list = [
         "id": "MNIST_QA",
         "display_name": "MNIST_QA",
         "task": "mnist_qa",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "Task which requires agents to identify which number they are "
             "seeing. From the MNIST dataset."
@@ -680,7 +680,7 @@ task_list = [
         "id": "InsuranceQA",
         "display_name": "InsuranceQA",
         "task": "insuranceqa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Task which requires agents to identify high quality answers "
             "composed by professionals with deep domain knowledge."
@@ -691,7 +691,7 @@ task_list = [
         "id": "MS_MARCO",
         "display_name": "MS_MARCO",
         "task": "ms_marco",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "A large scale Machine Reading Comprehension Dataset with questions "
             "sampled from real anonymized user queries and contexts from web "
@@ -703,7 +703,7 @@ task_list = [
         "id": "CLEVR",
         "display_name": "CLEVR",
         "task": "clevr",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "A visual reasoning dataset that tests abilities such as attribute "
             "identification, counting, comparison, spatial relationships, and "
@@ -715,7 +715,7 @@ task_list = [
         "id": "nlvr",
         "display_name": "nlvr",
         "task": "nlvr",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "Cornell Natural Language Visual Reasoning (NLVR) is a language "
             "grounding dataset based on  pairs of natural language statements "
@@ -727,7 +727,7 @@ task_list = [
         "id": "WMT",
         "display_name": "WMT",
         "task": "wmt",
-        "tags": ["All", "MT"],
+        "tags": ["MT"],
         "description": (
             "Workshop on Machine Translation task, currently only includes en_de."
         ),
@@ -736,7 +736,7 @@ task_list = [
         "id": "IWSLT14",
         "display_name": "IWSLT14",
         "task": "iwslt14",
-        "tags": ["All", "MT", "decanlp"],
+        "tags": ["MT", "decanlp"],
         "description": (
             "2014 International Workshop on Spoken Language task, currently "
             "only includes en_de and de_en."
@@ -747,7 +747,7 @@ task_list = [
         "id": "ConvAI2",
         "display_name": "ConvAI2",
         "task": "convai2",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": (
             "A chit-chat dataset based on PersonaChat for a NIPS 2018 competition. "
         ),
@@ -760,7 +760,7 @@ task_list = [
         "id": "ConvAI_ChitChat",
         "display_name": "ConvAI_ChitChat",
         "task": "convai_chitchat",
-        "tags": ["All", "ChitChat", "decanlp"],
+        "tags": ["ChitChat", "decanlp"],
         "description": (
             "Human-bot dialogues containing free discussions of randomly chosen "
             "paragraphs from SQuAD."
@@ -771,7 +771,7 @@ task_list = [
         "id": "Dialogue_QE",
         "display_name": "Dialogue_QE",
         "task": "dialogue_qe",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "Human-bot dialogues labelled for quality at the level of "
             "dialogues. Can be used to train dialogue-level metric for dialogue "
@@ -782,7 +782,7 @@ task_list = [
         "id": "QAngaroo",
         "display_name": "QAngaroo",
         "task": "qangaroo",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "Reading Comprehension with Multiple Hop. Including two datasets: "
             "WIKIHOP built on on wikipedia, MEDHOP built on paper abstracts from "
@@ -794,7 +794,7 @@ task_list = [
         "id": "SCAN",
         "display_name": "SCAN",
         "task": "scan",
-        "tags": ["Goal", "All"],
+        "tags": ["Goal"],
         "description": (
             "SCAN is a set of simple language-driven navigation tasks for "
             "studying compositional learning and zero-shot generalization. The "
@@ -811,7 +811,7 @@ task_list = [
         "id": "Persona-Chat",
         "display_name": "Persona-Chat",
         "task": "personachat",
-        "tags": ["ChitChat", "All"],
+        "tags": ["ChitChat"],
         "description": (
             "A chit-chat dataset where paired Turkers are given assigned "
             "personas and chat to try to get to know each other."
@@ -822,7 +822,7 @@ task_list = [
         "id": "TaskMaster",
         "display_name": "TaskMaster-1-2019",
         "task": "taskmaster",
-        "tags": ["ChitChat", "All"],
+        "tags": ["ChitChat"],
         "description": (
             "A chit-chat dataset by GoogleAI providing high quality goal-oriented conversations"
             "The dataset hopes to provoke interest in written vs spoken language"
@@ -837,7 +837,7 @@ task_list = [
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": (
             "Twitter data found on GitHub. No "
             "train/valid/test split was provided so 10k for valid and 10k for "
@@ -849,7 +849,7 @@ task_list = [
         "id": "Wikipedia",
         "display_name": "Wikipedia",
         "task": 'wikipedia',
-        "tags": ["All"],
+        "tags": [],
         "description": ("Dump of Wikipedia articles from 2/3/18"),
         "notes": (
             "Specify ':full' for the full articles to be returned, otherwise "
@@ -863,7 +863,7 @@ task_list = [
         "id": "Flickr30k",
         "display_name": "Flickr30k",
         "task": "flickr30k",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": ("30k captioned images pulled from Flickr compiled by UIUC. "),
         "links": {
             "website": "http://web.engr.illinois.edu/~bplumme2/Flickr30kEntities/",
@@ -875,7 +875,7 @@ task_list = [
         "id": "COCO_Captions",
         "display_name": "COCO_Captions",
         "task": "coco_caption",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "COCO annotations derived from the 2015 COCO Caption Competition. "
         ),
@@ -885,14 +885,14 @@ task_list = [
         "id": "integration_tests",
         "display_name": "Integration Tests",
         "task": "integration_tests",
-        "tags": ["All", "Debug"],
+        "tags": ["Debug"],
         "description": ("Artificial tasks for ensuring models perform as expected"),
     },
     {
         "id": "ConvAI2_wild_evaluation",
         "display_name": "ConvAI2_wild_evaluation",
         "task": "convai2_wild_evaluation",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": (
             "Dataset collected during the wild evaluation of ConvaAI2 participants "
             "bots. 60% train, 20% valid and 20% test is chosen at "
@@ -904,7 +904,7 @@ task_list = [
         "id": "sst",
         "display_name": "SST Sentiment Analysis",
         "task": "sst",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": (
             "Dataset containing sentiment trees of movie reviews. We use the modified "
             "binary sentence analysis subtask given by the DecaNLP paper here."
@@ -918,7 +918,7 @@ task_list = [
         "id": "cnn_dm",
         "display_name": "CNN/DM Summarisation",
         "task": "cnn_dm",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": (
             "Dataset collected from CNN and the Daily Mail with summaries as labels, "
             "Implemented as part of the DecaNLP task."
@@ -929,7 +929,7 @@ task_list = [
         "id": "qasrl",
         "display_name": "QA-SRL Semantic Role Labeling",
         "task": "qasrl",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": ("QA dataset implemented as part of the DecaNLP task."),
         "links": {"website": "https://dada.cs.washington.edu/qasrl/"},
     },
@@ -937,7 +937,7 @@ task_list = [
         "id": "qazre",
         "display_name": "QA-ZRE Relation Extraction",
         "task": "qazre",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": (
             "Zero Shot relation extraction task implemented as part of the DecaNLP "
             "task."
@@ -948,7 +948,7 @@ task_list = [
         "id": "woz",
         "display_name": "WOZ restuarant reservation (Goal-Oriented Dialogue)",
         "task": "woz",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": (
             "Dataset containing dialogues dengotiating a resturant reservation. "
             "Implemented as part of the DecaNLP task, focused on the change "
@@ -960,7 +960,7 @@ task_list = [
         "id": "wikisql",
         "display_name": "WikiSQL semantic parsing task",
         "task": "wikisql",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": (
             "Dataset for parsing sentences to SQL code, given a table. "
             "Implemented as part of the DecaNLP task."
@@ -971,7 +971,7 @@ task_list = [
         "id": "mwsc",
         "display_name": "MWSC pronoun resolution",
         "task": "mwsc",
-        "tags": ["All", "decanlp"],
+        "tags": ["decanlp"],
         "description": (
             "Resolving possible ambiguous pronouns. "
             "Implemented as part of the DecaNLP "
@@ -983,7 +983,7 @@ task_list = [
         "id": "decanlp",
         "display_name": "DecaNLP: The Natural Language Decathlon",
         "task": "decanlp",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "A collection of 10 tasks (SQuAD, IWSLT, CNN/DM, MNLI, SST, QA‑SRL,"
             "QA‑ZRE, WOZ, WikiSQL and MWSC) designed to challenge a model with a range "
@@ -999,7 +999,7 @@ task_list = [
         "id": "Personality_Captions",
         "display_name": "Personality_Captions",
         "task": "personality_captions",
-        "tags": ["All", "Visual"],
+        "tags": ["Visual"],
         "description": (
             "200k images from the YFCC100m dataset "
             "with captions conditioned on one of 215 personalities."
@@ -1018,7 +1018,7 @@ task_list = [
         "id": "Image_Chat",
         "display_name": "Image_Chat",
         "task": "image_chat",
-        "tags": ["All", "Visual", "ChitChat"],
+        "tags": ["Visual", "ChitChat"],
         "description": (
             "202k dialogues and 401k utterances over 202k images from "
             "the YFCC100m dataset "
@@ -1038,14 +1038,14 @@ task_list = [
         "id": "Image_Chat_Generation",
         "display_name": "Image_Chat_Generation",
         "task": "image_chat:Generation",
-        "tags": ["All", "Visual", "ChitChat", "Dodeca"],
+        "tags": ["Visual", "ChitChat", "Dodeca"],
         "description": ("Image Chat task to train generative model"),
     },
     {
         "id": "Wizard_of_Wikipedia",
         "display_name": "Wizard_of_Wikipedia",
         "task": "wizard_of_wikipedia",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": (
             "A dataset with conversations directly grounded with knowledge "
             "retrieved from Wikipedia. Contains 201k utterances from 22k "
@@ -1066,14 +1066,14 @@ task_list = [
         "id": "Wizard_of_Wikipedia_Generator",
         "display_name": "Wizard_of_Wikipedia_Generator",
         "task": "wizard_of_wikipedia:Generator",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": ("Wizard of Wikipedia task to train generative models"),
     },
     {
         "id": "DailyDialog",
         "display_name": "Daily Dialog",
         "task": "dailydialog",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": (
             "A dataset of chitchat dialogues with strong annotations for "
             "topic, emotion and utterance act. This version contains both sides "
@@ -1086,7 +1086,7 @@ task_list = [
         "id": "EmpatheticDialogues",
         "display_name": "Empathetic Dialogues",
         "task": "empathetic_dialogues",
-        "tags": ["All", "ChitChat", "Dodeca"],
+        "tags": ["ChitChat", "Dodeca"],
         "description": (
             "A dataset of 25k conversations grounded in emotional situations "
             "to facilitate training and evaluating dialogue systems."
@@ -1111,7 +1111,7 @@ task_list = [
         "id": "DialogueSafety",
         "display_name": "Dialogue Safety",
         "task": "dialogue_safety",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "Several datasets described in the paper Built it Break it Fix it "
             "for Dialogue Safety: Robustness from Adversarial Human Attack. "
@@ -1124,7 +1124,7 @@ task_list = [
         "id": "MultiWOZv2.0",
         "display_name": "MultiWOZ 2.0",
         "task": "multiwoz_v20",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "A fully labeled collection of human-written conversations spanning"
             "over multiple domains and topics."
@@ -1135,7 +1135,7 @@ task_list = [
         "id": "MultiWOZv2.1",
         "display_name": "MultiWOZ 2.1",
         "task": "multiwoz_v21",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "A fully labeled collection of human-written conversations spanning"
             "over multiple domains and topics."
@@ -1153,7 +1153,7 @@ task_list = [
         "id": "OneCommon",
         "display_name": "OneCommon",
         "task": "onecommon",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "A collaborative referring task which requires advanced skills "
             "of common grounding under continuous and partially-observable context. "
@@ -1165,7 +1165,7 @@ task_list = [
         "id": "IGC",
         "display_name": "Image Grounded Conversations",
         "task": "igc",
-        "tags": ["All", "Visual", "ChitChat", "Dodeca"],
+        "tags": ["Visual", "ChitChat", "Dodeca"],
         "description": (
             "A dataset of (image, context, question, answer) tuples, comprised "
             "of eventful images taken from Bing, Flickr, and COCO."
@@ -1176,7 +1176,7 @@ task_list = [
         "id": "ANLI",
         "display_name": "Adversarial Natural Language Inference (ANLI) Corpus",
         "task": "anli",
-        "tags": ["All", "Entailment", "NLI"],
+        "tags": ["Entailment", "NLI"],
         "description": (
             "The ANLI corpus (version 1.0) is a new large-scale NLI benchmark dataset,"
             "collected via an iterative, adversarial human-and-model-in-the-loop procedure"
@@ -1192,7 +1192,7 @@ task_list = [
         "id": "NLI",
         "display_name": "Natural Language Inference (NLI) Corpus",
         "task": "nli",
-        "tags": ["All", "Entailment"],
+        "tags": ["Entailment"],
         "description": (
             "A collection of 3 popular Natural Language Inference(NLI) benchmark tasks: "
             "ANLI v0.1, MultiNLI 1.0, SNLI 1.0."
@@ -1202,7 +1202,7 @@ task_list = [
         "id": "Funpedia",
         "display_name": "Funpedia",
         "task": "funpedia",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "Task for rephrasing sentences from Wikipedia conditioned on a persona."
         ),
@@ -1211,7 +1211,7 @@ task_list = [
         "id": "LIGHTGenderBias",
         "display_name": "LIGHT Gender Bias",
         "task": "light_genderation_bias",
-        "tags": ["All"],
+        "tags": [],
         "description": ("Task for debiasing the LIGHT dataset."),
         "links": {"arXiv": "https://arxiv.org/abs/1911.03842"},
     },
@@ -1219,7 +1219,7 @@ task_list = [
         "id": "AirDialogue",
         "display_name": "AirDialogue",
         "task": "airdialogue",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "Task for goal-oriented dialogue using airplane booking conversations "
             "between agents and customers."
@@ -1230,7 +1230,7 @@ task_list = [
         "id": "HollE",
         "display_name": "Holl-E",
         "task": "holl_e",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": (
             "Sequence of utterances and responses with background knowledge about"
             "movies. From the Holl-E dataset."
@@ -1241,7 +1241,7 @@ task_list = [
         "id": "ELI5",
         "display_name": "ELI5",
         "task": "eli5",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "This dataset contains Question and Answer data from Reddit "
             "explainlikeimfive posts and comments."
@@ -1252,7 +1252,7 @@ task_list = [
         "id": "ReDial",
         "display_name": "ReDial",
         "task": "redial",
-        "tags": ["All", "ChitChat", "Goal"],
+        "tags": ["ChitChat", "Goal"],
         "description": (
             "Annotated dataset of dialogues where users recommend movies to each other."
         ),
@@ -1262,7 +1262,7 @@ task_list = [
         "id": "DREAM",
         "display_name": "DREAM",
         "task": "dream",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "A multiple-choice answering dataset based on multi-turn, multi-party dialogue."
         ),
@@ -1272,7 +1272,7 @@ task_list = [
         "id": "C3",
         "display_name": "C3",
         "task": "c3",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "A multiple-choice answering dataset in Chinese based on a prior passage."
         ),
@@ -1282,7 +1282,7 @@ task_list = [
         "id": "CommonSenseQA",
         "display_name": "CommonSenseQA",
         "task": "commonsenseqa",
-        "tags": ["All", "QA"],
+        "tags": ["QA"],
         "description": (
             "CommonSenseQA is a multiple-choice Q-A dataset that relies on commonsense "
             "knowlegde to predict correct answers."
@@ -1293,7 +1293,7 @@ task_list = [
         "id": "StyleGen",
         "display_name": "Style-Controlled Generation",
         "task": "style_gen",
-        "tags": ["All", "ChitChat"],
+        "tags": ["ChitChat"],
         "description": (
             "Dialogue datasets (BlendedSkillTalk, ConvAI2, EmpatheticDialogues, and "
             "Wizard of Wikipedia) labeled with personalities taken from the Image-Chat "
@@ -1304,7 +1304,7 @@ task_list = [
         "id": "GoogleSGD",
         "display_name": "GoogleSGD",
         "task": "google_sgd",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "The Schema-Guided Dialogue (SGD) dataset consists of over 20k "
             "annotated multi-domain, task-oriented conversations between a "
@@ -1315,7 +1315,7 @@ task_list = [
         "id": "TaskMaster2",
         "display_name": "TaskMaster2",
         "task": "taskmaster2",
-        "tags": ["All", "Goal"],
+        "tags": ["Goal"],
         "description": (
             "The second version of TaskMaster, containing Wizard-of-Oz dialogues "
             "for task oriented dialogue in 7 domains."
@@ -1325,7 +1325,7 @@ task_list = [
         "id": "GenderationBiasControlTask",
         "display_name": "GenderationBiasControlTask",
         "task": "genderation_bias:controllable_task",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "A teacher that wraps other ParlAI tasks and appends control tokens to the "
             "text field indicating the presence of gender words in the label(s)."
@@ -1335,7 +1335,7 @@ task_list = [
         "id": "MDGender",
         "display_name": "MD Gender",
         "task": "md_gender",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "Tasks for the multi-dimensional gender bias classifier training."
         ),
@@ -1345,7 +1345,7 @@ task_list = [
         "id": "Sensitive Topics Evaluation Topics Valid Teacher",
         "display_name": "Sensitive Topics Evaluation Topics Valid Teacher",
         "task": "sensitive_topics_evaluation",
-        "tags": ["All"],
+        "tags": [],
         "description": (
             "Task for evaluating a classifier trained to identify conversational messages "
             "on the following sensitive topics: Politics, Drugs, Medical Advice, Religion, "
@@ -1357,7 +1357,7 @@ task_list = [
         "id": "decode",
         "display_name": "DialoguE COntradiction DEteCtion (DECODE)",
         "task": "decode",
-        "tags": ["All", "ChitChat", "Entailment"],
+        "tags": ["ChitChat", "Entailment"],
         "description": "Task for detect whether the last utterance contradicts previous dialogue history.",
         "links": {"arXiv": "https://arxiv.org/abs/2012.13391"},
     },
