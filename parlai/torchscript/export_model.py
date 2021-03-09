@@ -25,22 +25,22 @@ def export_model(opt: Opt):
 
     # Script and trace the greedy search routine
     original_module = JitGreedySearch(agent)
-    scripted_module = torch.jit.script(original_module)
-
-    # Save the scripted module
-    with PathManager.open(opt['scripted_model_file'], 'wb') as f:
-        torch.jit.save(scripted_module, f)
 
     inputs = opt['input'].split('|')
-
-    print('\nGenerating given the scripted module:')
-    for input_ in inputs:
-        label = scripted_module(input_)
-        print("LABEL: " + label)
 
     print('\nGenerating given the original unscripted module:')
     for input_ in inputs:
         label = original_module(input_)
+        print("LABEL: " + label)
+
+    # Script the module and save
+    scripted_module = torch.jit.script(original_module)
+    with PathManager.open(opt['scripted_model_file'], 'wb') as f:
+        torch.jit.save(scripted_module, f)
+
+    print('\nGenerating given the scripted module:')
+    for input_ in inputs:
+        label = scripted_module(input_)
         print("LABEL: " + label)
 
 
@@ -457,11 +457,13 @@ class ScriptableGpt2BpeHelper(object):
             new_word: List[str] = []
             i = 0
             while i < len(word):
-                try:
+                if first in word[i:]:
+                    # It's not performant to have to scan `word` twice, but this is a
+                    # workaround for the fact that try blocks aren't TorchScriptable
                     j = word.index(first, i)
                     new_word.extend(word[i:j])
                     i = j
-                except Exception:
+                else:
                     new_word.extend(word[i:])
                     break
 
@@ -490,10 +492,14 @@ class ScriptableGpt2BpeHelper(object):
         """
         bpe_tokens: List[str] = []
         for token in regex.findall(self.pat, text):
-            token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
-            bpe_tokens.extend(
-                self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
-            )
+            byte_encoded = []
+            for b in token.encode('utf-8'):
+                byte_encoded.append(self.byte_encoder[b])
+            token = ''.join(byte_encoded)
+            encoded = []
+            for bpe_token in self.bpe(token).split(' '):
+                encoded.append(self.encoder[bpe_token])
+            bpe_tokens.extend(encoded)
         return bpe_tokens
 
     # def helper_decode(
