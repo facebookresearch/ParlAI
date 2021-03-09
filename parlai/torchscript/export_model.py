@@ -413,8 +413,8 @@ class ScriptableDictionaryAgent:
         # else:
         #     self.additional_special_tokens: List[str] = []
         self.freq = defaultdict(int)
-        #     self.tok2ind = {}
-        #     self.ind2tok = {}
+        self.tok2ind = {}
+        self.ind2tok = {}
 
         if self.null_token:
             self.add_token(self.null_token)
