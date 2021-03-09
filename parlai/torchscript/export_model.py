@@ -6,6 +6,7 @@
 
 from typing import Dict, List, Tuple
 
+import regex
 import torch.jit
 import torch.nn as nn
 
@@ -312,20 +313,10 @@ class ScriptableGpt2BpeHelper(object):
         # ]
         self.byte_encoder = byte_encoder
         #     self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
-        self.bpe_ranks = {
-            tuple(key.split('\n')): value for key, value in fused_key_bpe_ranks.items()
-        }
-        assert all(len(key) == 2 for key in self.bpe_ranks.keys())
-
-        try:
-            import regex as re
-
-            self.re = re
-        except ImportError:
-            raise ImportError('Please install regex with: pip install regex')
+        self.bpe_ranks = fused_key_bpe_ranks
 
         # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
-        self.pat = self.re.compile(
+        self.pat = regex.compile(
             r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
         )
 
@@ -453,11 +444,14 @@ class ScriptableGpt2BpeHelper(object):
             return token
 
         while True:
-            dropped_pairs = pairs  # Have not enabled bpe_dropout
-            bigram = min(
-                dropped_pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf'))
-            )
-            if bigram not in self.bpe_ranks:
+            min_rank = self.bpe_ranks.get('\n'.join(pairs[0]), float('inf'))
+            bigram = pairs[0]
+            for pair in pairs[1:]:
+                current_rank = self.bpe_ranks.get('\n'.join(pair), float('inf'))
+                if current_rank < min_rank:
+                    min_rank = current_rank
+                    bigram = pair
+            if '\n'.join(bigram) not in self.bpe_ranks:
                 break
             first, second = bigram
             new_word: List[str] = []
@@ -495,7 +489,7 @@ class ScriptableGpt2BpeHelper(object):
             A list of tokens
         """
         bpe_tokens: List[str] = []
-        for token in self.re.findall(self.pat, text):
+        for token in regex.findall(self.pat, text):
             token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
             bpe_tokens.extend(
                 self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
