@@ -10,7 +10,6 @@ import torch.jit
 import torch.nn as nn
 
 from parlai.core.agents import create_agent
-from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import History, TorchAgent
 from parlai.torchscript.util import setup_args
@@ -139,8 +138,8 @@ class JitGreedySearch(nn.Module):
 
         # Vectorize this line of context
         print(" TEXT: " + input_)
-        input_observation = Message({'text': input_, 'episode_done': False})
-        self.history.update_history(obs=input_observation)
+        self.history.update_history(obs={'text': input_})
+        # Forgo wrapping input as a Message to avoid having to TorchScript that type
 
         # Get full history vec
         text_vec = self.history.get_history_vec()
