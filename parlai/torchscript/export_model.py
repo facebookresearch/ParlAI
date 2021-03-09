@@ -965,7 +965,7 @@ class ScriptableGpt2BpeHelper(object):
         add_prefix_space: bool,
         encoder: Dict[str, str],
         byte_encoder: Dict[int, str],
-        bpe_ranks: List[Tuple[str, str]],
+        bpe_ranks: Dict[Tuple[str, str], int],
     ):
         """
         Override init to build the data.
