@@ -17,6 +17,7 @@ from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import TorchAgent
 from parlai.torchscript.util import setup_args
+from parlai.utils.bpe import Gpt2BpeHelper
 from parlai.utils.io import PathManager
 
 
@@ -65,10 +66,6 @@ class JitGreedySearch:  # TODO: make nn.Module again
         "dict_max_ngram_size": -1,
         "dict_minfreq": 0,
         "dict_maxtokens": -1,
-        "dict_nulltoken": "__null__",
-        "dict_starttoken": "__start__",
-        "dict_endtoken": "__end__",
-        "dict_unktoken": "__unk__",
         "dict_tokenizer": "gpt2",
         "dict_lower": False,
         "dict_textfields": "text,labels",
@@ -80,6 +77,8 @@ class JitGreedySearch:  # TODO: make nn.Module again
         super().__init__()
 
         self.is_bart = agent.opt['model'] == 'bart'
+
+        # Download bpe data and json
 
         # Dictionary/tokenization setup
         for key, val in self.CAIRAOKE_DICT_PARAMS.items():
@@ -376,16 +375,26 @@ class ScriptableDictionaryAgent:
     #     dictionary = BPEHelper.add_cmdline_args(dictionary, partial_opt=partial_opt)
     #     return dictionary
 
-    def __init__(self, bpe_add_prefix_space: bool):
+    def __init__(
+        self,
+        null_token: str,
+        end_token: str,
+        unk_token: str,
+        start_token: str,
+        freq: Dict[int],
+        tok2ind: Dict[str, int],
+        ind2tok: Dict[int, str],
+        bpe_add_prefix_space: bool,
+    ):
         """
         Initialize DictionaryAgent.
         """
         # self.opt = copy.deepcopy(opt)
         # self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
-        self.null_token = '__null__'
-        self.end_token = '__end__'
-        self.unk_token = '__unk__'
-        self.start_token = '__start__'
+        self.null_token = null_token
+        self.end_token = end_token
+        self.unk_token = unk_token
+        self.start_token = start_token
         # self.max_ngram_size = opt.get(
         #     'dict_max_ngram_size', DictionaryAgent.default_maxngram
         # )
@@ -412,24 +421,24 @@ class ScriptableDictionaryAgent:
         #     self.ind2tok = shared.get('ind2tok', {})
         # else:
         #     self.additional_special_tokens: List[str] = []
-        self.freq = defaultdict(int)
-        self.tok2ind = {}
-        self.ind2tok = {}
+        self.freq = freq
+        self.tok2ind = tok2ind
+        self.ind2tok = ind2tok
 
-        if self.null_token:
-            self.add_token(self.null_token)
-
-        if self.start_token:
-            # set special start of sentence word token
-            self.add_token(self.start_token)
-
-        if self.end_token:
-            # set special end of sentence word token
-            self.add_token(self.end_token)
-
-        if self.unk_token:
-            # set special unknown word token
-            self.add_token(self.unk_token)
+        # if self.null_token:
+        #     self.add_token(self.null_token)
+        #
+        # if self.start_token:
+        #     # set special start of sentence word token
+        #     self.add_token(self.start_token)
+        #
+        # if self.end_token:
+        #     # set special end of sentence word token
+        #     self.add_token(self.end_token)
+        #
+        # if self.unk_token:
+        #     # set special unknown word token
+        #     self.add_token(self.unk_token)
 
         #     loaded = False
         #     # If data built via pytorch data teacher, we need to load prebuilt dict
@@ -468,24 +477,24 @@ class ScriptableDictionaryAgent:
         #     self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
         # elif self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
         self.bpe = ScriptableGpt2BpeHelper(add_prefix_space=bpe_add_prefix_space)
-        self.bpe.sync_with_dict(self)
+        # self.bpe.sync_with_dict(self)
 
-        # if not shared:
-        if self.null_token:
-            # fix count for null token to one billion and three
-            self.freq[self.null_token] = 1000000003
-
-        if self.start_token:
-            # fix count for start of sentence token to one billion and two
-            self.freq[self.start_token] = 1000000002
-
-        if self.end_token:
-            # fix count for end of sentence token to one billion and one
-            self.freq[self.end_token] = 1000000001
-
-        if self.unk_token:
-            # fix count for unknown token to one billion
-            self.freq[self.unk_token] = 1000000000
+        # # if not shared:
+        # if self.null_token:
+        #     # fix count for null token to one billion and three
+        #     self.freq[self.null_token] = 1000000003
+        #
+        # if self.start_token:
+        #     # fix count for start of sentence token to one billion and two
+        #     self.freq[self.start_token] = 1000000002
+        #
+        # if self.end_token:
+        #     # fix count for end of sentence token to one billion and one
+        #     self.freq[self.end_token] = 1000000001
+        #
+        # if self.unk_token:
+        #     # fix count for unknown token to one billion
+        #     self.freq[self.unk_token] = 1000000000
         #
         #     if opt.get('dict_file'):
         #         self.save_path = opt['dict_file']
@@ -496,14 +505,14 @@ class ScriptableDictionaryAgent:
     #     """
     #     return self.tokenizer == 'gpt2'
 
-    def add_token(self, word):
-        """
-        Add a single token to the dictionary.
-        """
-        if word not in self.tok2ind:
-            index = len(self.tok2ind)
-            self.tok2ind[word] = index
-            self.ind2tok[index] = word
+    # def add_token(self, word):
+    #     """
+    #     Add a single token to the dictionary.
+    #     """
+    #     if word not in self.tok2ind:
+    #         index = len(self.tok2ind)
+    #         self.tok2ind[word] = index
+    #         self.ind2tok[index] = word
 
     # def __contains__(self, key):
     #     """
@@ -1190,20 +1199,20 @@ class ScriptableGpt2BpeHelper(object):
     #     )
     #     return text
 
-    def sync_with_dict(self, dict_agent: ScriptableDictionaryAgent):
-        """
-        Sync with dictionary agent.
-
-        Just add all of the tokens to the dict
-
-        NOTE: How does this handle special tokens?
-
-        :param dict_agent:
-            A DictionaryAgent instantiation
-        """
-        for each_token in self.encoder.values():
-            dict_agent.add_token(each_token)
-            dict_agent.freq[each_token] = 1
+    # def sync_with_dict(self, dict_agent: ScriptableDictionaryAgent):
+    #     """
+    #     Sync with dictionary agent.
+    #
+    #     Just add all of the tokens to the dict
+    #
+    #     NOTE: How does this handle special tokens?
+    #
+    #     :param dict_agent:
+    #         A DictionaryAgent instantiation
+    #     """
+    #     for each_token in self.encoder.values():
+    #         dict_agent.add_token(each_token)
+    #         dict_agent.freq[each_token] = 1
 
     # def save(self, dir_name: str, file_name: str):
     #     """
