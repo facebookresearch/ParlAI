@@ -1051,3 +1051,17 @@ class TestTorchAgent(unittest.TestCase):
             init_model_file, is_finetune = agent._get_init_model(popt, None)
             self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
             self.assertFalse(is_finetune)
+
+    def test_truncate_metrics(self):
+        agent = get_agent(model='test_agents/unigram', truncate=5)
+        obs = {
+            'text': "I'll be back. I'll be back. I'll be back.",
+            'labels': ["I'll be back. I'll be back. I'll be back."],
+            'episode_done': True,
+        }
+        obs = agent.observe(obs)
+        agent.act()
+        self.assertEqual(agent._local_metrics['context_truncate'][0].value(), 1.0)
+        self.assertEqual(agent._local_metrics['label_truncate'][0].value(), 1.0)
+        self.assertEqual(agent._local_metrics['context_length'][0].value(), 9)
+        self.assertEqual(agent._local_metrics['label_length'][0].value(), 11)

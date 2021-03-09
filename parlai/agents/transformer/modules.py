@@ -309,6 +309,10 @@ class TransformerEncoder(nn.Module):
         n_positions: Optional[int] = None,
         n_segments: Optional[int] = None,
         embeddings_scale: Optional[bool] = None,
+        dropout: Optional[float] = None,
+        activation: Optional[str] = None,
+        variant: Optional[str] = None,
+        output_scaling: Optional[float] = None,
     ):
         super(TransformerEncoder, self).__init__()
 
@@ -330,9 +334,9 @@ class TransformerEncoder(nn.Module):
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
-        self.dropout_frac = opt.get('dropout', 0.0)
+        self.dropout_frac = _default(dropout, opt.get('dropout', 0.0))
         self.dropout = nn.Dropout(p=self.dropout_frac)
-        self.variant = opt.get('variant', 'aiayn')
+        self.variant = _default(variant, opt.get('variant', 'aiayn'))
         self.n_segments = _default(n_segments, opt.get('n_segments', 0))
 
         self.n_positions = _default(n_positions, get_n_positions_from_options(opt))
@@ -400,10 +404,10 @@ class TransformerEncoder(nn.Module):
                     relu_dropout=opt.get('relu_dropout', 0.0),
                     dropout=self.dropout_frac,
                     variant=self.variant,
-                    activation=opt.get('activation', 'relu'),
+                    activation=_default(activation, opt.get('activation', 'relu')),
                 )
             )
-        self.output_scaling = opt.get('output_scaling', 1.0)
+        self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))
 
     def forward_embedding(
         self,

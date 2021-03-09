@@ -53,7 +53,7 @@ def setup_args(parser=None, hidden=True):
         hidden=hidden,
     )
     dict_loop.add_argument(
-        '-ltim', '--log-every-n-secs', type=float, default=10, hidden=hidden
+        '-ltim', '--log-every-n-secs', type=float, default=-1, hidden=hidden
     )
     DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
     return parser

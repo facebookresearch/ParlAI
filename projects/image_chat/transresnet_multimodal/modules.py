@@ -181,6 +181,7 @@ class TransresnetMultimodalModel(TransresnetModel):
                 vocabulary_size=len(self.dictionary),
                 padding_idx=self.dictionary.tok2ind[self.dictionary.null_token],
                 embeddings_scale=False,
+                output_scaling=1.0,
             )
             if self.opt.get("load_context_encoder_from") is not None:
                 self._load_context_encoder_state()

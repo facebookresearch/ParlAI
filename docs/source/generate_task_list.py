@@ -7,18 +7,25 @@ from parlai.tasks.task_list import task_list
 
 MASTER = "https://github.com/facebookresearch/ParlAI/tree/master"
 
-category_order = ['QA', 'Cloze', 'Goal', 'ChitChat', 'Negotiation', 'Visual', 'decanlp']
-category_task_list = {x: [] for x in category_order}
+categories = set()
+for task_dict in task_list:
+    categories.update(task_dict.get('tags', []))
+categories = sorted(categories)
+category_task_list = {x: [] for x in categories}
 
 fout = open('task_list.inc', 'w')
 
 s = "They consist of:  "
-for t in category_order:
+for t in categories:
     fout.write(f"1. {t} tasks\n")
 fout.write("\n")
 
 for task_dict in task_list:
-    tags = task_dict.get('tags', None)
+    tags = task_dict.get('tags', [])
+    if not tags:
+        if 'Uncategorized' not in category_task_list:
+            category_task_list['Uncategorized'] = []
+        category_task_list['Uncategorized'].append(task_dict)
     for tag in tags:
         if tag in category_task_list:
             category_task_list[tag].append(task_dict)
@@ -44,7 +51,7 @@ for num_category, (category, tl) in enumerate(category_task_list.items()):
         urls.append(("code", code_url))
 
         urls_md = ", ".join(f"[{k}]({v})" for k, v in urls)
-        fout.write(f"### {display_name}\n")
+        fout.write(f"### {display_name.title().replace('_', ' ')}\n")
         fout.write(f"_Usage_:  `--task {task}`\n\n")
         fout.write(f"_Links_:  {urls_md}\n\n")
         if description:

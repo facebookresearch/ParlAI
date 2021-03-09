@@ -13,6 +13,7 @@ from parlai.core.opt import Opt
 import json
 import os
 
+from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 from parlai.tasks.multinli.agents import convert_to_dialogData
@@ -134,7 +135,7 @@ class DialogueNliTeacher(FixedDialogTeacher):
             binary_classes=self.binary_classes,
         )
         new_entry = {k: entry[k] for k in ENTRY_FIELDS if k in entry}
-        return new_entry
+        return Message(new_entry)
 
 
 class ExtrasTeacher(DialogueNliTeacher):

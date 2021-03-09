@@ -43,6 +43,7 @@ from parlai.utils.fp16 import (
     Adafactor,
 )
 from parlai.core.metrics import (
+    AverageMetric,
     Metrics,
     Metric,
     GlobalAverageMetric,
@@ -1304,7 +1305,7 @@ class TorchAgent(ABC, Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(
+    def _vectorize_text_with_truncate_stats(
         self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
     ):
         """
@@ -1328,9 +1329,37 @@ class TorchAgent(ABC, Agent):
         """
         vec = self.dict.txt2vec(text)
         vec = self._add_start_end_tokens(vec, add_start, add_end)
+        original_length = len(vec)
         vec = self._check_truncate(vec, truncate, truncate_left)
+        if_truncated = original_length > len(vec)
         tensor = torch.LongTensor(vec)
-        return tensor
+        return tensor, original_length, if_truncated
+
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
+        """
+        Return vector from text.
+
+        :param text:
+            String to vectorize.
+
+        :param add_start:
+            Add the start token to the front of the tensor.
+
+        :param add_end:
+            Add the end token to the end of the tensor.
+
+        :param truncate:
+            Truncate to this many tokens >= 0, or None.
+
+        :param truncate_left:
+            Truncate from the left side (keep the rightmost tokens). You
+            probably want this True for inputs, False for targets.
+        """
+        return self._vectorize_text_with_truncate_stats(
+            text, add_start, add_end, truncate, truncate_left
+        )[0]
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
         """
@@ -1371,9 +1400,12 @@ class TorchAgent(ABC, Agent):
         # check truncation
         if obs.get('text_vec') is not None:
             truncate_left = not self.history_reversed
+            text_length = len(obs['text_vec'])
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
             )
+            obs.force_set('original_context_length', text_length)
+            obs.force_set('if_context_truncate', text_length != len(truncated_vec))
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
@@ -1397,13 +1429,20 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
+            vec_label_length = len(obs[label_type + '_vec'])
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
+            obs.force_set('original_label_length', vec_label_length)
+            obs.force_set('if_label_truncate', vec_label_length > len(truncated_vec))
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label = self._vectorize_text(label, add_start, add_end, truncate, False)
+            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
+                label, add_start, add_end, truncate, False
+            )
+            obs.force_set('original_label_length', vec_label_length)
+            obs.force_set('if_label_truncate', vec_label_truncated)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -1993,6 +2032,36 @@ class TorchAgent(ABC, Agent):
 
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)
+
+        # check if we should add truncate stats
+        if all('if_context_truncate' in obs for obs in observations):
+            self.record_local_metric(
+                'context_truncate',
+                AverageMetric.many(
+                    [float(obs['if_context_truncate']) for obs in observations]
+                ),
+            )
+        if all('if_label_truncate' in obs for obs in observations):
+            self.record_local_metric(
+                'label_truncate',
+                AverageMetric.many(
+                    [float(obs['if_label_truncate']) for obs in observations]
+                ),
+            )
+        if all('original_context_length' in obs for obs in observations):
+            self.record_local_metric(
+                'context_length',
+                AverageMetric.many(
+                    [obs['original_context_length'] for obs in observations]
+                ),
+            )
+        if all('original_label_length' in obs for obs in observations):
+            self.record_local_metric(
+                'label_length',
+                AverageMetric.many(
+                    [obs['original_label_length'] for obs in observations]
+                ),
+            )
 
         # create a batch from the vectors
         batch = self.batchify(observations)
