@@ -593,13 +593,13 @@ class ScriptableDictionaryAgent:
     #         for sent in self.sent_tok.tokenize(text)
     #         for token in self.word_tok.tokenize(sent)
     #     )
-    #
-    # def gpt2_tokenize(self, text):
-    #     """
-    #     Tokenize using Gpt2 BPE tokenizer.
-    #     """
-    #     return self.bpe_tokenize(text)
-    #
+
+    def gpt2_tokenize(self, text: str):
+        """
+        Tokenize using Gpt2 BPE tokenizer.
+        """
+        return self.bpe_tokenize(text)
+
     # def slow_bytelevel_bpe_tokenize(self, text):
     #     """
     #     Tokenize using Gpt2 BPE tokenizer.
@@ -667,42 +667,25 @@ class ScriptableDictionaryAgent:
     #         indices.append((curr_idx, curr_idx + len(t)))
     #         curr_idx += len(t)
     #     return tokens, indices
-    #
-    # def tokenize(self, text, building=False):
-    #     """
-    #     Return a sequence of tokens from the iterable.
-    #
-    #     Also handles special tokens for some tokenizers
-    #     """
-    #     if self.tokenizer in ('re', 'split', 'space'):
-    #         for special_token in self.additional_special_tokens:
-    #             index = text.find(special_token)
-    #             if index == -1:
-    #                 continue
-    #             left = text[:index]
-    #             right = text[index + len(special_token) :]
-    #             tokens_left = self.tokenize(left, building) if left else []
-    #             tokens_right = self.tokenize(right, building) if right else []
-    #             return tokens_left + [special_token] + tokens_right
-    #
-    #     if self.lower:
-    #         text = text.lower()
-    #
-    #     # calls the selected tokenizer function e.g. 're' => re_tokenize(text)
-    #     word_tokens = self.tokenizer_fun(text)
-    #
-    #     if not building and self.max_ngram_size > 1:
-    #         # search for ngrams during parse-time
-    #         # TODO(ahm): support build-time ngrams using word2vec heuristic?
-    #         word_tokens = find_ngrams(self.tok2ind, word_tokens, self.max_ngram_size)
-    #     return word_tokens
-    #
-    # def bpe_tokenize(self, text):
-    #     """
-    #     Return a sequence of BPE-tokens from the text.
-    #     """
-    #     return self.bpe.encode(text)
-    #
+
+    def tokenize(self, text: str) -> List[str]:
+        """
+        Return a sequence of tokens from the iterable.
+
+        Also handles special tokens for some tokenizers
+        """
+
+        # calls the selected tokenizer function e.g. 're' => re_tokenize(text)
+        word_tokens = self.gpt2_tokenize(text)
+
+        return word_tokens
+
+    def bpe_tokenize(self, text: str) -> List[str]:
+        """
+        Return a sequence of BPE-tokens from the text.
+        """
+        return self.bpe.encode(text)
+
     # def add_to_dict(self, tokens):
     #     """
     #     Build dictionary from the list of provided tokens.
@@ -875,7 +858,7 @@ class ScriptableDictionaryAgent:
     #     else:
     #         return self.vec2txt(txt_or_vec)
 
-    def txt2vec(self, text: str):
+    def txt2vec(self, text: str) -> List[int]:
         """
         Convert a string to a vector (list of ints).
 
