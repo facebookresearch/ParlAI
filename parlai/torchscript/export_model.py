@@ -4,16 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import json
-import os
-from collections import defaultdict
-from functools import lru_cache
 from typing import Dict, List, Tuple
 
 import torch.jit
 import torch.nn as nn
 
 from parlai.core.agents import create_agent
+from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import TorchAgent
 from parlai.torchscript.util import setup_args
@@ -85,8 +82,20 @@ class JitGreedySearch:  # TODO: make nn.Module again
             assert (
                 agent.opt.get(key, val) == val
             ), f'The only currently supported value of "{key}" is {val}!'
+        orig_dict: DictionaryAgent = agent.dict
+        orig_bpe: Gpt2BpeHelper = orig_dict.bpe
         self.dict = ScriptableDictionaryAgent(
-            bpe_add_prefix_space=agent.opt['bpe_add_prefix_space']
+            null_token=orig_dict.null_token,
+            end_token=orig_dict.end_token,
+            unk_token=orig_dict.unk_token,
+            start_token=orig_dict.start_token,
+            freq=orig_dict.freq,
+            tok2ind=orig_dict.tok2ind,
+            ind2tok=orig_dict.ind2tok,
+            bpe_add_prefix_space=agent.opt['bpe_add_prefix_space'],
+            bpe_encoder=orig_bpe.encoder,
+            bpe_byte_encoder=orig_bpe.byte_encoder,
+            bpe_ranks=orig_bpe.bpe_ranks,
         )
         self.v2t = agent._v2t
 
@@ -385,6 +394,9 @@ class ScriptableDictionaryAgent:
         tok2ind: Dict[str, int],
         ind2tok: Dict[int, str],
         bpe_add_prefix_space: bool,
+        bpe_encoder: Dict[str, str],
+        bpe_byte_encoder: Dict[int, str],
+        bpe_ranks: Dict[Tuple[str, str], int],
     ):
         """
         Initialize DictionaryAgent.
@@ -476,7 +488,12 @@ class ScriptableDictionaryAgent:
         #         self.sent_tok = nltk.data.load(st_path)
         #     self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
         # elif self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
-        self.bpe = ScriptableGpt2BpeHelper(add_prefix_space=bpe_add_prefix_space)
+        self.bpe = ScriptableGpt2BpeHelper(
+            add_prefix_space=bpe_add_prefix_space,
+            encoder=bpe_encoder,
+            byte_encoder=bpe_byte_encoder,
+            bpe_ranks=bpe_ranks,
+        )
         # self.bpe.sync_with_dict(self)
 
         # # if not shared:
@@ -1035,7 +1052,6 @@ class ScriptableGpt2BpeHelper(object):
     #     :return (bpe_data, json_path):
     #         bpe_data and path to encoder json
     #     """
-    #     # TODO: revise below
     #     data_path = os.path.join(self.opt['datapath'], 'gpt2')
     #     vocab_path = os.path.join(data_path, 'vocab.bpe')
     #     json_path = os.path.join(data_path, 'encoder.json')
