@@ -25,8 +25,6 @@ from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import History
-from parlai.core.torch_generator_agent import PPLMetric
-from parlai.core.metrics import AverageMetric
 from parlai.utils.typing import TShared
 from parlai.utils.io import PathManager
 from parlai.zoo.bart.build import download, CONVERSION_ARGS, BART_ARGS
@@ -180,61 +178,3 @@ class BartAgent(TransformerGeneratorAgent):
             .expand(bsz * beam_size, 2)
             .to(dev)
         )
-
-    def compute_loss(self, batch, return_output=False):
-        """
-        Override TGA.compute_loss to ignore start token.
-        """
-        if batch.label_vec is None:
-            raise ValueError('Cannot compute loss without a label.')
-        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
-        scores, preds, *_ = model_output
-
-        if scores.size(1) != batch.label_vec.size(1):
-            # ignore start
-            scores = scores[:, 1:, :]
-            preds = preds[:, 1:]
-
-        score_view = scores.reshape(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
-        loss = loss.view(scores.shape[:-1]).sum(dim=1)
-        # save loss to metrics
-        notnull = batch.label_vec.ne(self.NULL_IDX)
-        target_tokens = notnull.long().sum(dim=-1)
-        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
-
-        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
-        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
-        self.record_local_metric(
-            'token_acc', AverageMetric.many(correct, target_tokens)
-        )
-        # actually do backwards loss
-        loss = loss.sum()
-        loss /= target_tokens.sum()  # average loss per token
-        if return_output:
-            return (loss, model_output)
-        else:
-            return loss
-
-    def _construct_token_losses(self, labels, model_output):
-        """
-        Override TGA._construct_token_losses to ignore start token.
-        """
-        # Get non-aggregated losses
-        scores, _, _ = model_output
-        scores = scores[:, 1:, :]  # ignore start token
-        score_view = scores.reshape(-1, scores.size(-1))
-        losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
-
-        # Zip decoded tokens with losses
-        token_losses = []
-        for i, label in enumerate(labels):
-            token_losses.append(
-                list(
-                    zip(
-                        [self.dict[token] for token in label.tolist()],
-                        losses[i].tolist(),
-                    )
-                )
-            )
-        return token_losses

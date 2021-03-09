@@ -7,8 +7,11 @@
 from __future__ import annotations
 
 import argparse
+import os
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, Dict, List
+
 import pandas as pd
 
 # Defining the class only if Mephisto is installed, since it relies on Mephisto
@@ -33,10 +36,28 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
         )
+        parser.add_argument(
+            '--results-format',
+            type=str,
+            choices=['csv', 'json'],
+            default='csv',
+            help='Output format for results data',
+        )
         return parser
 
     def __init__(self, opt: Dict[str, Any]):
         self.output_folder = opt.get('output_folder')
+        self.results_format = opt['results_format']
+
+    def get_results_path_base(self) -> str:
+        """
+        Return the save path for the results file, not including the file extension.
+        """
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder,
+            f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
+        )
 
     @abstractmethod
     def compile_results(self) -> pd.DataFrame:
@@ -45,6 +66,27 @@ class AbstractResultsCompiler(ABC):
 
         Each row of the dataframe consists of one utterance of one conversation.
         """
+
+    def compile_and_save_results(self):
+        """
+        Compile results and save them.
+
+        Results will be saved in the format given by --results-format.
+        """
+        result_df = self.compile_results()
+        results_path_base = self.get_results_path_base()
+        results_path = f'{results_path_base}.{self.results_format}'
+        os.makedirs(self.output_folder, exist_ok=True)
+        if self.results_format == 'csv':
+            result_df.to_csv(results_path, index=False)
+        elif self.results_format == 'json':
+            result_df.reset_index().to_json(results_path)
+            # Reset the index to make each row have a unique index value
+        else:
+            raise ValueError(
+                f'Results save format of "{self.results_format}" currently unsupported!'
+            )
+        print(f'Wrote results file to {results_path}.')
 
 
 class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
@@ -105,7 +147,8 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         )
         return parser
 
-    def __init__(self, opt):
+    def __init__(self, opt: Dict[str, Any]):
+        super().__init__(opt)
         self.task_name = opt["task_name"]
         self._mephisto_db = None
         self._mephisto_data_browser = None

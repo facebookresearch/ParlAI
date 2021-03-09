@@ -79,7 +79,7 @@ class TestMultiworld(unittest.TestCase):
         # stochastic so wide range
         ratio = report['teacher1/exs'].value() / report['teacher2/exs'].value()
         assert ratio > 18
-        assert ratio < 22
+        assert ratio < 45
 
     def test_with_stream(self):
         """

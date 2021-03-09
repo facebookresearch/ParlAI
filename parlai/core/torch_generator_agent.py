@@ -49,19 +49,6 @@ from parlai.utils.torch import (
 )
 
 
-try:
-    from nltk.translate import bleu_score as nltkbleu
-
-except ImportError:
-    nltkbleu = None
-
-try:
-    from fairseq.scoring import bleu as fairseq_bleu
-
-except ImportError:
-    fairseq_bleu = None
-
-
 class SearchBlocklist(object):
     """
     Search block list facilitates blocking ngrams from being generated.
@@ -523,9 +510,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
 
-            if self.fp16:
-                self.model = self.model.half()
-
             if init_model is not None:
                 # load model parameters if available
                 logging.info(f'Loading existing model params from {init_model}')
@@ -538,18 +522,23 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
-            self.init_optim(
+            was_reset = self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'),
             )
-            self.build_lr_scheduler(states, hard_reset=is_finetune)
+            if was_reset and not is_finetune:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
         if shared is None and is_distributed():
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
             )
+
+        if shared is None and self.fp16:
+            self.model = self.model.half()
 
         self.reset()
 
@@ -712,7 +701,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             raise ValueError('Cannot compute loss without a label.')
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
-        score_view = scores.view(-1, scores.size(-1))
+        score_view = scores.reshape(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))
         loss = loss.view(scores.shape[:-1]).sum(dim=1)
         # save loss to metrics
@@ -720,10 +709,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
+        # cross entropy loss
         self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        # perplexity
         self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        # token-wise accuracy
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
+        )
+        # utterance-wise exact match
+        self.record_local_metric(
+            'token_em', AverageMetric.many(correct == target_tokens)
         )
         # actually do backwards loss
         loss = loss.sum()
@@ -775,7 +771,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
         scores, _, _ = model_output
-        score_view = scores.view(-1, scores.size(-1))
+        score_view = scores.reshape(-1, scores.size(-1))
         losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
 
         # Zip decoded tokens with losses
@@ -864,6 +860,37 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         pass
 
+    def rank_eval_label_candidates(self, batch, batchsize):
+        """
+        Rank label_candidates during eval_step.
+
+        Can be overridden to allow for different ways of ranking candidates. Must have
+        `--rank-candidates` set to True. By default, we roughly compute PPL to rank the
+        candidates.
+        """
+        # compute roughly ppl to rank candidates
+        cand_choices = []
+        cand_choices_scores = []
+        encoder_states = self.model.encoder(*self._encoder_input(batch))
+        for i in range(batchsize):
+            num_cands = len(batch.candidate_vecs[i])
+            enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
+            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            scores, _ = self.model.decode_forced(enc, cands)
+            score_view = scores.reshape(num_cands * cands.size(1), -1)
+            cand_losses = F.cross_entropy(
+                score_view, cands.view(-1), reduction='none'
+            ).view(num_cands, cands.size(1))
+            # now cand_losses is cands x seqlen size, but we still need to
+            # check padding and such
+            mask = (cands != self.NULL_IDX).float()
+            cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
+            sorted_scores, ordering = cand_scores.sort()
+            cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices_scores.append(sorted_scores.tolist())
+
+        return cand_choices, cand_choices_scores
+
     def eval_step(self, batch):
         """
         Evaluate a single batch of examples.
@@ -907,34 +934,18 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                         continue
 
         cand_choices = None
-        # TODO: abstract out the scoring here
+        cand_scores = None
         if self.rank_candidates:
-            # compute roughly ppl to rank candidates
-            cand_choices = []
-            encoder_states = self.model.encoder(*self._encoder_input(batch))
-            for i in range(bsz):
-                num_cands = len(batch.candidate_vecs[i])
-                enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-                cands, _ = self._pad_tensor(batch.candidate_vecs[i])
-                scores, _ = self.model.decode_forced(enc, cands)
-                cand_losses = F.cross_entropy(
-                    scores.view(num_cands * cands.size(1), -1),
-                    cands.view(-1),
-                    reduction='none',
-                ).view(num_cands, cands.size(1))
-                # now cand_losses is cands x seqlen size, but we still need to
-                # check padding and such
-                mask = (cands != self.NULL_IDX).float()
-                cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
-                _, ordering = cand_scores.sort()
-                cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices, cand_scores = self.rank_eval_label_candidates(batch, bsz)
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
             self._compute_nltk_bleu(batch, text)
-        retval = Output(text, cand_choices, token_losses=token_losses)
+        retval = Output(
+            text, cand_choices, token_losses=token_losses, cand_scores=cand_scores
+        )
         if not self.skip_generation:
             retval.beam_texts = beam_texts
         return retval

@@ -8,8 +8,10 @@ import copy
 import random
 from typing import Any, Dict, List, Optional
 
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.core.agents import Agent
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task, DialogPartnerWorld, validate
 from parlai.core.message import Message
 
@@ -31,7 +33,8 @@ def load_openers(opt) -> Optional[List[str]]:
         task_opt['datatype'] = f'{datatype}:evalmode'
     task_opt['interactive_task'] = False
     task_opt['selfchat_task'] = False
-    task_agent = RepeatLabelAgent(task_opt)
+    task_opt['fixed_response'] = None
+    task_agent = FixedResponseAgent(task_opt)
     task_world = create_task(task_opt, task_agent)
 
     # run through task data, collecting all first messages
@@ -50,6 +53,17 @@ def load_openers(opt) -> Optional[List[str]]:
 
 
 class SelfChatWorld(DialogPartnerWorld):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Return the parser as-is.
+
+        Self-chat-specific world flags can be added here.
+        """
+        return parser
+
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
         self.init_contexts(shared=shared)
