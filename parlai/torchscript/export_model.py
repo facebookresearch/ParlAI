@@ -376,10 +376,10 @@ class ScriptableDictionaryAgent:
         """
         # self.opt = copy.deepcopy(opt)
         # self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
-        # self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
-        # self.end_token = opt.get('dict_endtoken', DictionaryAgent.default_end)
-        # self.unk_token = opt.get('dict_unktoken', DictionaryAgent.default_unk)
-        # self.start_token = opt.get('dict_starttoken', DictionaryAgent.default_start)
+        self.null_token = '__null__'
+        self.end_token = '__end__'
+        self.unk_token = '__unk__'
+        self.start_token = '__start__'
         # self.max_ngram_size = opt.get(
         #     'dict_max_ngram_size', DictionaryAgent.default_maxngram
         # )
@@ -409,22 +409,22 @@ class ScriptableDictionaryAgent:
         #     self.freq = defaultdict(int)
         #     self.tok2ind = {}
         #     self.ind2tok = {}
-        #
-        #     if self.null_token:
-        #         self.add_token(self.null_token)
-        #
-        #     if self.start_token:
-        #         # set special start of sentence word token
-        #         self.add_token(self.start_token)
-        #
-        #     if self.end_token:
-        #         # set special end of sentence word token
-        #         self.add_token(self.end_token)
-        #
-        #     if self.unk_token:
-        #         # set special unknown word token
-        #         self.add_token(self.unk_token)
-        #
+
+        if self.null_token:
+            self.add_token(self.null_token)
+
+        if self.start_token:
+            # set special start of sentence word token
+            self.add_token(self.start_token)
+
+        if self.end_token:
+            # set special end of sentence word token
+            self.add_token(self.end_token)
+
+        if self.unk_token:
+            # set special unknown word token
+            self.add_token(self.unk_token)
+
         #     loaded = False
         #     # If data built via pytorch data teacher, we need to load prebuilt dict
         #     if opt.get('dict_file'):
@@ -442,10 +442,10 @@ class ScriptableDictionaryAgent:
         #         # don't check isfile first, should fail if file not found
         #         self.load(opt['dict_initpath'])
         #     opt['dict_loaded'] = loaded
-        #
-        # # cache unk token for later
-        # self._unk_token_idx = self.tok2ind.get(self.unk_token)
-        #
+
+        # cache unk token for later
+        self._unk_token_idx = self.tok2ind.get(self.unk_token)
+
         # # initialize tokenizers
         # if self.tokenizer == 'nltk':
         #     try:
@@ -484,47 +484,21 @@ class ScriptableDictionaryAgent:
         #     if opt.get('dict_file'):
         #         self.save_path = opt['dict_file']
 
-    # def add_additional_special_tokens(self, additional_special_tokens: List[str]):
-    #     """
-    #     Add additional special tokens to the dictionary.
-    #
-    #     Should only be called after initialization of the existing dictionary.
-    #     """
-    #     self.additional_special_tokens = additional_special_tokens
-    #
-    #     for tok in self.additional_special_tokens:
-    #         self.add_token(tok)
-    #
-    #     for i, tok in enumerate(self.additional_special_tokens):
-    #         self.freq[tok] = 1000000000 + 4 + i
-    #
-    #     if hasattr(self, 'bpe'):
-    #         self.bpe.add_special_tokens(self, self.additional_special_tokens)
-    #     elif self.tokenizer in ('split', 're', 'space'):
-    #         pass
-    #     else:
-    #         raise NotImplementedError(
-    #             f"Special Tokens are not supported with this tokenizer. "
-    #             f"(--dict-tokenizer {self.tokenizer}). File a github issue or "
-    #             f"pull request if you need others extended. "
-    #             f"https://github.com/facebookresearch/ParlAI"
-    #         )
-    #
     # def is_prebuilt(self):
     #     """
     #     Indicates whether the dictionary is fixed, and does not require building.
     #     """
     #     return self.tokenizer == 'gpt2'
-    #
-    # def add_token(self, word):
-    #     """
-    #     Add a single token to the dictionary.
-    #     """
-    #     if word not in self.tok2ind:
-    #         index = len(self.tok2ind)
-    #         self.tok2ind[word] = index
-    #         self.ind2tok[index] = word
-    #
+
+    def add_token(self, word):
+        """
+        Add a single token to the dictionary.
+        """
+        if word not in self.tok2ind:
+            index = len(self.tok2ind)
+            self.tok2ind[word] = index
+            self.ind2tok[index] = word
+
     # def __contains__(self, key):
     #     """
     #     Return if the dictionary contains the key.
@@ -536,11 +510,11 @@ class ScriptableDictionaryAgent:
     #         return key in self.ind2tok
     #     elif type(key) == str:
     #         return key in self.tok2ind
-    #
-    # def _word_lookup(self, key):
-    #     # return index from token, or unk_token's index, or None
-    #     return self.tok2ind.get(key, self._unk_token_idx)
-    #
+
+    def _word_lookup(self, key):
+        # return index from token, or unk_token's index, or None
+        return self.tok2ind.get(key, self._unk_token_idx)
+
     # def _index_lookup(self, key):
     #     # return token from index, or unk_token
     #     return self.ind2tok.get(key, self.unk_token)
