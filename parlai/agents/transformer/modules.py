@@ -27,6 +27,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.agents.transformer.interfaces import (
+    DecoderOnlyTransformer,
     Transformer,
     TransformerAttention,
     TransformerDecoder,
@@ -1361,3 +1362,69 @@ class BasicAttention(nn.Module):
             return lhs_emb.squeeze(self.dim - 1), l2
         else:
             return lhs_emb.squeeze(self.dim - 1)
+
+
+class TransformerDecoderOnlyModel(TorchGeneratorModel, DecoderOnlyTransformer):
+    """
+    Implements a full generator model, with one encoder and one decoder.
+    """
+
+    @dataclass
+    class Manifest(DecoderOnlyTransformer.Manifest):
+        decoder: Type[TransformerDecoder] = DefaultTransformerDecoder
+        decoder_manifest: Type[TransformerDecoderLayer] = DefaultTransformerDecoderLayer
+
+    @classmethod
+    def build_decoder(cls, opt, embedding=None):
+        return DefaultTransformerDecoder(opt=opt, embedding=embedding)
+
+    def __init__(self, opt: Opt, dictionary, manifest: Manifest = None):
+        self.pad_idx = dictionary[dictionary.null_token]
+        self.start_idx = dictionary[dictionary.start_token]
+        self.end_idx = dictionary[dictionary.end_token]
+        super().__init__(self.pad_idx, self.start_idx, self.end_idx)
+        self.embeddings = _create_embeddings(
+            dictionary, opt['embedding_size'], self.pad_idx
+        )
+
+        self.decoder = self.build_decoder(opt, self.embeddings)
+
+    def reorder_encoder_states(self, encoder_states, indices):
+        """
+        Reorder the encoder states.
+
+        See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
+        """
+        enc, mask = encoder_states
+        if not torch.is_tensor(indices):
+            indices = torch.LongTensor(indices).to(enc.device)
+        enc = torch.index_select(enc, 0, indices)
+        mask = torch.index_select(mask, 0, indices)
+        return enc, mask
+
+    def reorder_decoder_incremental_state(
+        self, incremental_state: Dict[int, dict], inds: torch.Tensor
+    ) -> Dict[int, dict]:
+        """
+        Reorder the decoder incremental state.
+
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+
+        Here, incremental_state is a dict whose keys are layer indices and whose values
+        are dicts containing the incremental state for that layer.
+        """
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(self.decoder.layers)
+        }
+
+    def output(self, tensor):
+        """
+        Compute output logits.
+        """
+        # project back to vocabulary
+        output = F.linear(tensor, self.embeddings.weight)
+        # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
+        # we need to force their probability of generation to be 0.
+        output[:, :, self.start_idx] = neginf(output.dtype)
+        return output

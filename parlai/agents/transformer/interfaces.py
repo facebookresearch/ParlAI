@@ -140,3 +140,20 @@ class Transformer(Protocol):
         self, input: torch.LongTensor, ys=None, prev_enc=None, **kwargs
     ) -> Tuple[torch.FloatTensor, torch.FloatTensor, Any]:
         ...
+
+
+class DecoderOnlyTransformer(Protocol):
+    @dataclass
+    class Manifest:
+        decoder: Type[TransformerDecoder]
+        decoder_manifest: Type[TransformerDecoderLayer]
+
+    @abstractmethod
+    def __init__(self, opt: Opt, dictionary, manifest: Manifest = None, **kwargs):
+        ...
+
+    @abstractmethod
+    def forward(
+        self, input: torch.LongTensor, ys=None, prev_enc=None, **kwargs
+    ) -> Tuple[torch.FloatTensor, torch.FloatTensor, Any]:
+        ...
