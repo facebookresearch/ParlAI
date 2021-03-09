@@ -43,7 +43,7 @@ def export_model(opt: Opt):
         print("LABEL: " + label)
 
 
-class JitGreedySearch:  # TODO: make nn.Module again
+class JitGreedySearch(nn.Module):
     """
     A helper class for exporting simple greedy-search models via TorchScript.
 
@@ -390,7 +390,7 @@ class ScriptableDictionaryAgent:
         end_token: str,
         unk_token: str,
         start_token: str,
-        freq: Dict[int],
+        freq: Dict[str, int],
         tok2ind: Dict[str, int],
         ind2tok: Dict[int, str],
         bpe_add_prefix_space: bool,
