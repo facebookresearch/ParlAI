@@ -84,6 +84,13 @@ class JitGreedySearch(nn.Module):
             ), f'The only currently supported value of "{key}" is {val}!'
         orig_dict: DictionaryAgent = agent.dict
         orig_bpe: Gpt2BpeHelper = orig_dict.bpe
+        assert all(len(key) == 2 for key in orig_bpe.bpe_ranks.keys())
+        assert not any(
+            i for key in orig_bpe.bpe_ranks.keys() for i in key if '\n' in i
+        ), "We need to temporarily merge the bpe_ranks dict's keys with a newline character in order to use it as a TorchScript arg, but at least one of the dict's keys contains a newline character already!"
+        fused_key_bpe_ranks = {
+            '\n'.join(key): val for key, val in orig_bpe.bpe_ranks.items()
+        }
         self.dict = ScriptableDictionaryAgent(
             null_token=orig_dict.null_token,
             end_token=orig_dict.end_token,
@@ -95,7 +102,7 @@ class JitGreedySearch(nn.Module):
             bpe_add_prefix_space=agent.opt['bpe_add_prefix_space'],
             bpe_encoder=orig_bpe.encoder,
             bpe_byte_encoder=orig_bpe.byte_encoder,
-            bpe_ranks=orig_bpe.bpe_ranks,
+            fused_key_bpe_ranks=fused_key_bpe_ranks,
         )
         self.v2t = agent._v2t
 
@@ -259,6 +266,7 @@ class JitGreedySearch(nn.Module):
         return label
 
 
+@torch.jit.script
 class ScriptableDictionaryAgent:
     """
     Builds and/or loads a dictionary. All code is TorchScriptable.
@@ -396,7 +404,7 @@ class ScriptableDictionaryAgent:
         bpe_add_prefix_space: bool,
         bpe_encoder: Dict[str, str],
         bpe_byte_encoder: Dict[int, str],
-        bpe_ranks: Dict[Tuple[str, str], int],
+        fused_key_bpe_ranks: Dict[str, int],
     ):
         """
         Initialize DictionaryAgent.
@@ -492,7 +500,7 @@ class ScriptableDictionaryAgent:
             add_prefix_space=bpe_add_prefix_space,
             encoder=bpe_encoder,
             byte_encoder=bpe_byte_encoder,
-            bpe_ranks=bpe_ranks,
+            fused_key_bpe_ranks=fused_key_bpe_ranks,
         )
         # self.bpe.sync_with_dict(self)
 
@@ -966,6 +974,7 @@ class ScriptableDictionaryAgent:
     #         self.bpe.enable_bpe_dropout(mode == TokenizationMode.TRAIN_TIME_TEXT)
 
 
+@torch.jit.script
 class ScriptableGpt2BpeHelper(object):
     """
     Version of parlai.utils.bpe.Gpt2BpeHelper that can be TorchScripted.
@@ -982,7 +991,7 @@ class ScriptableGpt2BpeHelper(object):
         add_prefix_space: bool,
         encoder: Dict[str, str],
         byte_encoder: Dict[int, str],
-        bpe_ranks: Dict[Tuple[str, str], int],
+        fused_key_bpe_ranks: Dict[str, int],
     ):
         """
         Override init to build the data.
@@ -1011,7 +1020,10 @@ class ScriptableGpt2BpeHelper(object):
         # ]
         self.byte_encoder = byte_encoder
         #     self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
-        self.bpe_ranks = bpe_ranks
+        self.bpe_ranks = {
+            tuple(key.split('\n')): value for key, value in fused_key_bpe_ranks.items()
+        }
+        assert all(len(key) == 2 for key in self.bpe_ranks.keys())
 
         try:
             import regex as re
