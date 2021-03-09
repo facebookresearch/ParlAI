@@ -960,7 +960,13 @@ class ScriptableGpt2BpeHelper(object):
     # DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
     # ERRORS_METHOD = 'replace'
 
-    def __init__(self, add_prefix_space: bool):
+    def __init__(
+        self,
+        add_prefix_space: bool,
+        encoder: Dict[str, str],
+        byte_encoder: Dict[int, str],
+        bpe_ranks: List[Tuple[str, str]],
+    ):
         """
         Override init to build the data.
         """
@@ -976,20 +982,19 @@ class ScriptableGpt2BpeHelper(object):
         #             ' (no --dict-minfreq or --dict-maxtokens).'
         #         )
 
-        # self.bpe_data, self.json_path, self.merge_path = self._build_data()  # TODO: reenable if you need this last attribute
-        self.bpe_data, self.json_path, _ = self._build_data()
+        # self.bpe_data, self.json_path, self.merge_path = self._build_data()
 
         # build encoder & decoder
-        self.encoder: Dict[str, str] = self._build_encoder(self.json_path)
+        self.encoder = encoder
 
         #     self.decoder: Dict[str, str] = {v: k for k, v in self.encoder.items()}
         #
-        bpe_merges = [
-            tuple(merge_str.split()) for merge_str in self.bpe_data.split('\n')[1:-1]
-        ]
-        self.byte_encoder = self.bytes_to_unicode()
+        # bpe_merges = [
+        #     tuple(merge_str.split()) for merge_str in self.bpe_data.split('\n')[1:-1]
+        # ]
+        self.byte_encoder = byte_encoder
         #     self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
-        self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
+        self.bpe_ranks = bpe_ranks
 
         try:
             import regex as re
@@ -1021,76 +1026,76 @@ class ScriptableGpt2BpeHelper(object):
             text = f' {text}'
         return self.helper_encode(text)
 
-    def _build_data(self) -> Tuple[str, str, str]:
-        """
-        Build data.
+    # def _build_data(self) -> Tuple[str, str, str]:
+    #     """
+    #     Build data.
+    #
+    #     Maybe download the appropriate data.
+    #
+    #     :return (bpe_data, json_path):
+    #         bpe_data and path to encoder json
+    #     """
+    #     # TODO: revise below
+    #     data_path = os.path.join(self.opt['datapath'], 'gpt2')
+    #     vocab_path = os.path.join(data_path, 'vocab.bpe')
+    #     json_path = os.path.join(data_path, 'encoder.json')
+    #     if not PathManager.exists(vocab_path) or not PathManager.exists(json_path):
+    #         make_dir(data_path)
+    #         download(self.DEFAULT_VOCAB_BPE, data_path, 'vocab.bpe')
+    #         download(self.DEFAULT_ENCODER_JSON, data_path, 'encoder.json')
+    #     with PathManager.open(vocab_path, 'r', encoding="utf-8") as f:
+    #         bpe_data = f.read()
+    #
+    #     return bpe_data, json_path, vocab_path
 
-        Maybe download the appropriate data.
+    # def _build_encoder(self, json_path: str) -> Dict[str, str]:
+    #     """
+    #     Build and return the encoder.
+    #
+    #     :param json_path:
+    #         path to encoder json file
+    #
+    #     :return:
+    #         encoder, mapping tokens to unicode reps
+    #     """
+    #     with PathManager.open(json_path, 'r', encoding='utf8') as f:
+    #         encoder = json.load(f)
+    #     for each_token in encoder.keys():
+    #         new_token = ''.join(
+    #             # escape nonprintable characters
+    #             '\\' + hex(b).lstrip('0') if (b > 127 or b < 32) else chr(b)
+    #             for b in each_token.encode('utf-8')
+    #         )
+    #         encoder[each_token] = new_token
+    #
+    #     return encoder
 
-        :return (bpe_data, json_path):
-            bpe_data and path to encoder json
-        """
-        # TODO: revise below
-        data_path = os.path.join(self.opt['datapath'], 'gpt2')
-        vocab_path = os.path.join(data_path, 'vocab.bpe')
-        json_path = os.path.join(data_path, 'encoder.json')
-        if not PathManager.exists(vocab_path) or not PathManager.exists(json_path):
-            make_dir(data_path)
-            download(self.DEFAULT_VOCAB_BPE, data_path, 'vocab.bpe')
-            download(self.DEFAULT_ENCODER_JSON, data_path, 'encoder.json')
-        with PathManager.open(vocab_path, 'r', encoding="utf-8") as f:
-            bpe_data = f.read()
-
-        return bpe_data, json_path, vocab_path
-
-    def _build_encoder(self, json_path: str) -> Dict[str, str]:
-        """
-        Build and return the encoder.
-
-        :param json_path:
-            path to encoder json file
-
-        :return:
-            encoder, mapping tokens to unicode reps
-        """
-        with PathManager.open(json_path, 'r', encoding='utf8') as f:
-            encoder = json.load(f)
-        for each_token in encoder.keys():
-            new_token = ''.join(
-                # escape nonprintable characters
-                '\\' + hex(b).lstrip('0') if (b > 127 or b < 32) else chr(b)
-                for b in each_token.encode('utf-8')
-            )
-            encoder[each_token] = new_token
-
-        return encoder
-
-    @lru_cache()
-    def bytes_to_unicode(self) -> Dict[int, str]:
-        """
-        Returns list of utf-8 byte and a corresponding list of unicode strings.
-
-        The reversible bpe codes work on unicode strings. This means you need a large #
-        of unicode characters in your vocab if you want to avoid UNKs. When you're at
-        something like a 10B token dataset you end up needing around 5K for decent
-        coverage. This is a signficant percentage of your normal, say, 32K bpe vocab. To
-        avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
-        avoids mapping to whitespace/control characters the bpe code barfs on.
-        """
-        bs: List[int] = (
-            list(range(ord("!"), ord("~") + 1))
-            + list(range(ord("¡"), ord("¬") + 1))
-            + list(range(ord("®"), ord("ÿ") + 1))
-        )
-        cs: List[int] = bs[:]
-        n = 0
-        for b in range(2 ** 8):
-            if b not in bs:
-                bs.append(b)
-                cs.append(2 ** 8 + n)
-                n += 1
-        str_cs: List[str] = [chr(n) for n in cs]
-        return dict(zip(bs, str_cs))
+    # @lru_cache()
+    # def bytes_to_unicode(self) -> Dict[int, str]:
+    #     """
+    #     Returns list of utf-8 byte and a corresponding list of unicode strings.
+    #
+    #     The reversible bpe codes work on unicode strings. This means you need a large #
+    #     of unicode characters in your vocab if you want to avoid UNKs. When you're at
+    #     something like a 10B token dataset you end up needing around 5K for decent
+    #     coverage. This is a signficant percentage of your normal, say, 32K bpe vocab. To
+    #     avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
+    #     avoids mapping to whitespace/control characters the bpe code barfs on.
+    #     """
+    #     bs: List[int] = (
+    #         list(range(ord("!"), ord("~") + 1))
+    #         + list(range(ord("¡"), ord("¬") + 1))
+    #         + list(range(ord("®"), ord("ÿ") + 1))
+    #     )
+    #     cs: List[int] = bs[:]
+    #     n = 0
+    #     for b in range(2 ** 8):
+    #         if b not in bs:
+    #             bs.append(b)
+    #             cs.append(2 ** 8 + n)
+    #             n += 1
+    #     str_cs: List[str] = [chr(n) for n in cs]
+    #     return dict(zip(bs, str_cs))
 
     def get_pairs(self, word: Tuple[str, ...]) -> List[Tuple[str, str]]:
         """
