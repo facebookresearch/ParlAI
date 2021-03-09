@@ -4,14 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Dict
+from typing import Dict, List
 
 import torch.jit
 import torch.nn as nn
 
 from parlai.core.agents import create_agent
 from parlai.core.opt import Opt
-from parlai.core.torch_agent import History, TorchAgent
+from parlai.core.torch_agent import TorchAgent
 from parlai.torchscript.util import setup_args
 from parlai.utils.io import PathManager
 
@@ -58,14 +58,14 @@ class JitGreedySearch(nn.Module):
         self.is_bart = agent.opt['model'] == 'bart'
 
         # Tokenization and history tracking
-        self.history = History(
-            agent.opt,
-            maxlen=agent.text_truncate,
-            size=agent.histsz,
-            p1_token=agent.P1_TOKEN,
-            p2_token=agent.P2_TOKEN,
-            dict_agent=agent.dict,
-        )
+        self.dict = agent.dict
+        self.history_vecs = []
+        self.delimiter_tok = agent.history.delimiter_tok
+        self.history_size = agent.opt['history_size']
+        if agent.opt.get('history_add_global_end_token', None) is not None:
+            self.global_end_token = agent.dict[agent.dict.end_token]
+        else:
+            self.global_end_token = None
         self.text_truncate = agent.opt.get('text_truncate') or agent.opt['truncate']
         self.text_truncate = self.text_truncate if self.text_truncate >= 0 else None
         self.v2t = agent._v2t
@@ -133,16 +133,31 @@ class JitGreedySearch(nn.Module):
             .to(x.device)
         )
 
+    def _update_vecs(self, text: str):
+        if self.history_size > 0:
+            while len(self.history_vecs) >= self.history_size:
+                self.history_vecs.pop(0)
+        new_vec = list(
+            self.dict._word_lookup(token) for token in self.dict.tokenize(str(text))
+        )
+        self.history_vecs.append(new_vec)
+
     def forward(self, input_: str, max_len: int = 128) -> str:
         # TODO: docstring
 
         # Vectorize this line of context
         print(" TEXT: " + input_)
-        self.history.update_history(obs={'text': input_})
-        # Forgo wrapping input as a Message to avoid having to TorchScript that type
+        self._update_vecs(input_)
 
         # Get full history vec
-        text_vec = self.history.get_history_vec()
+        text_vec = []
+        for vec in self.history_vecs[:-1]:
+            text_vec += [vec]
+            text_vec += [self.delimiter_tok]
+        text_vec += [self.history_vecs[-1]]
+        if self.global_end_token is not None:
+            text_vec += [[self.global_end_token]]
+        text_vec = sum(text_vec, [])
 
         # Format history vec given various logic
         if self.text_truncate is not None:
@@ -199,7 +214,7 @@ class JitGreedySearch(nn.Module):
             # Hack: remove initial end token. I haven't found in the code where this is
             # done, but it seems to happen early on during generation
         label = self.v2t(generations[0].tolist())
-        self.history.add_reply(text=label)
+        self._update_vecs(label)
 
         return label
 
