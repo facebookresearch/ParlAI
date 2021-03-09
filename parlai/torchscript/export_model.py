@@ -4,8 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import json
+import os
 from collections import defaultdict
-from typing import Dict, List
+from functools import lru_cache
+from typing import Dict, List, Tuple
 
 import torch.jit
 import torch.nn as nn
@@ -83,7 +86,9 @@ class JitGreedySearch:  # TODO: make nn.Module again
             assert (
                 agent.opt.get(key, val) == val
             ), f'The only currently supported value of "{key}" is {val}!'
-        self.dict = ScriptableDictionaryAgent()
+        self.dict = ScriptableDictionaryAgent(
+            bpe_add_prefix_space=agent.opt['bpe_add_prefix_space']
+        )
         self.v2t = agent._v2t
 
         # History tracking and start/end tokens
@@ -371,7 +376,7 @@ class ScriptableDictionaryAgent:
     #     dictionary = BPEHelper.add_cmdline_args(dictionary, partial_opt=partial_opt)
     #     return dictionary
 
-    def __init__(self):
+    def __init__(self, bpe_add_prefix_space: bool):
         """
         Initialize DictionaryAgent.
         """
@@ -462,7 +467,7 @@ class ScriptableDictionaryAgent:
         #         self.sent_tok = nltk.data.load(st_path)
         #     self.word_tok = nltk.tokenize.treebank.TreebankWordTokenizer()
         # elif self.tokenizer in ['bpe', 'gpt2', 'bytelevelbpe', 'slow_bytelevel_bpe']:
-        self.bpe = ScriptableGpt2BpeHelper()
+        self.bpe = ScriptableGpt2BpeHelper(add_prefix_space=bpe_add_prefix_space)
         self.bpe.sync_with_dict(self)
 
         # if not shared:
@@ -946,10 +951,11 @@ class ScriptableGpt2BpeHelper(object):
     # DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
     # ERRORS_METHOD = 'replace'
 
-    def __init__(self):
+    def __init__(self, add_prefix_space: bool):
         """
         Override init to build the data.
         """
+        self.add_prefix_space = add_prefix_space
 
         #     super().__init__(opt, shared)
         #     if self.lower:
@@ -960,206 +966,208 @@ class ScriptableGpt2BpeHelper(object):
         #             'You should not filter vocabulary with using --dict-tokenizer bytelevelbpe'
         #             ' (no --dict-minfreq or --dict-maxtokens).'
         #         )
-        #
-        #     self.bpe_data, self.json_path, self.merge_path = self._build_data()
-        #
-        #     # build encoder & decoder
+
+        # self.bpe_data, self.json_path, self.merge_path = self._build_data()  # TODO: reenable if you need this last attribute
+        self.bpe_data, self.json_path, _ = self._build_data()
+
+        # build encoder & decoder
         self.encoder: Dict[str, str] = self._build_encoder(self.json_path)
 
-    #     self.decoder: Dict[str, str] = {v: k for k, v in self.encoder.items()}
-    #
-    #     bpe_merges = [
-    #         tuple(merge_str.split()) for merge_str in self.bpe_data.split('\n')[1:-1]
-    #     ]
-    #     self.byte_encoder = self.bytes_to_unicode()
-    #     self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
-    #     self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
-    #
-    #     try:
-    #         import regex as re
-    #
-    #         self.re = re
-    #     except ImportError:
-    #         raise ImportError('Please install regex with: pip install regex')
-    #
-    #     # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
-    #     self.pat = self.re.compile(
-    #         r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-    #     )
-    #
-    # def _build_data(self) -> Tuple[str, str]:
-    #     """
-    #     Build data.
-    #
-    #     Maybe download the appropriate data.
-    #
-    #     :return (bpe_data, json_path):
-    #         bpe_data and path to encoder json
-    #     """
-    #     data_path = os.path.join(self.opt['datapath'], 'gpt2')
-    #     vocab_path = os.path.join(data_path, 'vocab.bpe')
-    #     json_path = os.path.join(data_path, 'encoder.json')
-    #     if not PathManager.exists(vocab_path) or not PathManager.exists(json_path):
-    #         make_dir(data_path)
-    #         download(self.DEFAULT_VOCAB_BPE, data_path, 'vocab.bpe')
-    #         download(self.DEFAULT_ENCODER_JSON, data_path, 'encoder.json')
-    #     with PathManager.open(vocab_path, 'r', encoding="utf-8") as f:
-    #         bpe_data = f.read()
-    #
-    #     return bpe_data, json_path, vocab_path
-    #
-    # def _build_encoder(self, json_path: str) -> Dict[str, str]:
-    #     """
-    #     Build and return the encoder.
-    #
-    #     :param json_path:
-    #         path to encoder json file
-    #
-    #     :return:
-    #         encoder, mapping tokens to unicode reps
-    #     """
-    #     with PathManager.open(json_path, 'r', encoding='utf8') as f:
-    #         encoder = json.load(f)
-    #     for each_token in encoder.keys():
-    #         new_token = ''.join(
-    #             # escape nonprintable characters
-    #             '\\' + hex(b).lstrip('0') if (b > 127 or b < 32) else chr(b)
-    #             for b in each_token.encode('utf-8')
-    #         )
-    #         encoder[each_token] = new_token
-    #
-    #     return encoder
-    #
-    # @lru_cache()
-    # def bytes_to_unicode(self) -> Dict[int, str]:
-    #     """
-    #     Returns list of utf-8 byte and a corresponding list of unicode strings.
-    #
-    #     The reversible bpe codes work on unicode strings. This means you need a large #
-    #     of unicode characters in your vocab if you want to avoid UNKs. When you're at
-    #     something like a 10B token dataset you end up needing around 5K for decent
-    #     coverage. This is a signficant percentage of your normal, say, 32K bpe vocab. To
-    #     avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
-    #     avoids mapping to whitespace/control characters the bpe code barfs on.
-    #     """
-    #     bs: List[int] = (
-    #         list(range(ord("!"), ord("~") + 1))
-    #         + list(range(ord("¡"), ord("¬") + 1))
-    #         + list(range(ord("®"), ord("ÿ") + 1))
-    #     )
-    #     cs: List[int] = bs[:]
-    #     n = 0
-    #     for b in range(2 ** 8):
-    #         if b not in bs:
-    #             bs.append(b)
-    #             cs.append(2 ** 8 + n)
-    #             n += 1
-    #     str_cs: List[str] = [chr(n) for n in cs]
-    #     return dict(zip(bs, str_cs))
-    #
-    # def get_pairs(self, word: Tuple[str, ...]) -> Set[Tuple[str, str]]:
-    #     """
-    #     Return set of symbol pairs in a word.
-    #
-    #     Word is represented as tuple of symbols (symbols being variable-length strings).
-    #
-    #     :param word:
-    #         word to symbolize
-    #
-    #     :return pairs:
-    #         set of tuples of symbols
-    #     """
-    #     pairs = []
-    #     prev_char = word[0]
-    #     for char in word[1:]:
-    #         pairs.append((prev_char, char))
-    #         prev_char = char
-    #     return pairs
-    #
-    # def _dropout_pairs(self, pairs):
-    #     """
-    #     Implements BPE dropout (Provlikov et al., 2019).
-    #
-    #     https://arxiv.org/abs/1910.13267
-    #
-    #     Randomly removes merges from the list of possible merges. This can
-    #     result in different subwords being used to realized the same string,
-    #     and effectively regularizes representations.
-    #     """
-    #     if not self.bpe_dropout or not self._bpe_dropout_enabled:
-    #         return pairs
-    #
-    #     dropped_pairs = [p for p in pairs if random.random() > self.bpe_dropout]
-    #     if not dropped_pairs:
-    #         dropped_pairs = [random.choice(pairs)]
-    #     return dropped_pairs
-    #
-    # def bpe(self, token: str) -> str:
-    #     """
-    #     Convert token to BPE.
-    #
-    #     :param token:
-    #         token to convert
-    #
-    #     :return bpe_encoding:
-    #         string bpe encoding
-    #     """
-    #     word = tuple(token)
-    #     pairs = self.get_pairs(word)
-    #
-    #     if not pairs:
-    #         return token
-    #
-    #     while True:
-    #         dropped_pairs = self._dropout_pairs(pairs)
-    #         bigram = min(
-    #             dropped_pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf'))
-    #         )
-    #         if bigram not in self.bpe_ranks:
-    #             break
-    #         first, second = bigram
-    #         new_word: List[str] = []
-    #         i = 0
-    #         while i < len(word):
-    #             try:
-    #                 j = word.index(first, i)
-    #                 new_word.extend(word[i:j])
-    #                 i = j
-    #             except Exception:
-    #                 new_word.extend(word[i:])
-    #                 break
-    #
-    #             if word[i] == first and i < len(word) - 1 and word[i + 1] == second:
-    #                 new_word.append(first + second)
-    #                 i += 2
-    #             else:
-    #                 new_word.append(word[i])
-    #                 i += 1
-    #         word = tuple(new_word)
-    #         if len(word) == 1:
-    #             break
-    #         else:
-    #             pairs = self.get_pairs(word)
-    #     return ' '.join(word)
-    #
-    # def helper_encode(self, text: str) -> List[str]:
-    #     """
-    #     Tokenize text.
-    #
-    #     :param text:
-    #         text to tokenize
-    #
-    #     :return tokens:
-    #         A list of tokens
-    #     """
-    #     bpe_tokens: List[str] = []
-    #     for token in self.re.findall(self.pat, text):
-    #         token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
-    #         bpe_tokens.extend(
-    #             self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
-    #         )
-    #     return bpe_tokens
-    #
+        #     self.decoder: Dict[str, str] = {v: k for k, v in self.encoder.items()}
+        #
+        bpe_merges = [
+            tuple(merge_str.split()) for merge_str in self.bpe_data.split('\n')[1:-1]
+        ]
+        self.byte_encoder = self.bytes_to_unicode()
+        #     self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
+        self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
+
+        try:
+            import regex as re
+
+            self.re = re
+        except ImportError:
+            raise ImportError('Please install regex with: pip install regex')
+
+        # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
+        self.pat = self.re.compile(
+            r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+        )
+
+    def encode(self, text: str) -> List[str]:
+        """
+        Tokenize text.
+
+        Checks for add_prefix_space; handles accordingly
+
+        NOTE: DO NOT OVERRIDE
+
+        :param text:
+            text to tokenize
+
+        :return tokens:
+            A list of tokens
+        """
+        if self.add_prefix_space:
+            text = f' {text}'
+        return self.helper_encode(text)
+
+    def _build_data(self) -> Tuple[str, str, str]:
+        """
+        Build data.
+
+        Maybe download the appropriate data.
+
+        :return (bpe_data, json_path):
+            bpe_data and path to encoder json
+        """
+        # TODO: revise below
+        data_path = os.path.join(self.opt['datapath'], 'gpt2')
+        vocab_path = os.path.join(data_path, 'vocab.bpe')
+        json_path = os.path.join(data_path, 'encoder.json')
+        if not PathManager.exists(vocab_path) or not PathManager.exists(json_path):
+            make_dir(data_path)
+            download(self.DEFAULT_VOCAB_BPE, data_path, 'vocab.bpe')
+            download(self.DEFAULT_ENCODER_JSON, data_path, 'encoder.json')
+        with PathManager.open(vocab_path, 'r', encoding="utf-8") as f:
+            bpe_data = f.read()
+
+        return bpe_data, json_path, vocab_path
+
+    def _build_encoder(self, json_path: str) -> Dict[str, str]:
+        """
+        Build and return the encoder.
+
+        :param json_path:
+            path to encoder json file
+
+        :return:
+            encoder, mapping tokens to unicode reps
+        """
+        with PathManager.open(json_path, 'r', encoding='utf8') as f:
+            encoder = json.load(f)
+        for each_token in encoder.keys():
+            new_token = ''.join(
+                # escape nonprintable characters
+                '\\' + hex(b).lstrip('0') if (b > 127 or b < 32) else chr(b)
+                for b in each_token.encode('utf-8')
+            )
+            encoder[each_token] = new_token
+
+        return encoder
+
+    @lru_cache()
+    def bytes_to_unicode(self) -> Dict[int, str]:
+        """
+        Returns list of utf-8 byte and a corresponding list of unicode strings.
+
+        The reversible bpe codes work on unicode strings. This means you need a large #
+        of unicode characters in your vocab if you want to avoid UNKs. When you're at
+        something like a 10B token dataset you end up needing around 5K for decent
+        coverage. This is a signficant percentage of your normal, say, 32K bpe vocab. To
+        avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
+        avoids mapping to whitespace/control characters the bpe code barfs on.
+        """
+        bs: List[int] = (
+            list(range(ord("!"), ord("~") + 1))
+            + list(range(ord("¡"), ord("¬") + 1))
+            + list(range(ord("®"), ord("ÿ") + 1))
+        )
+        cs: List[int] = bs[:]
+        n = 0
+        for b in range(2 ** 8):
+            if b not in bs:
+                bs.append(b)
+                cs.append(2 ** 8 + n)
+                n += 1
+        str_cs: List[str] = [chr(n) for n in cs]
+        return dict(zip(bs, str_cs))
+
+    def get_pairs(self, word: Tuple[str, ...]) -> List[Tuple[str, str]]:
+        """
+        Return set of symbol pairs in a word.
+
+        Word is represented as tuple of symbols (symbols being variable-length strings).
+
+        :param word:
+            word to symbolize
+
+        :return pairs:
+            set of tuples of symbols
+        """
+        pairs = []
+        prev_char = word[0]
+        for char in word[1:]:
+            pairs.append((prev_char, char))
+            prev_char = char
+        return pairs
+
+    def bpe(self, token: str) -> str:
+        """
+        Convert token to BPE.
+
+        :param token:
+            token to convert
+
+        :return bpe_encoding:
+            string bpe encoding
+        """
+        word = tuple(token)
+        pairs = self.get_pairs(word)
+
+        if not pairs:
+            return token
+
+        while True:
+            dropped_pairs = pairs  # Have not enabled bpe_dropout
+            bigram = min(
+                dropped_pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf'))
+            )
+            if bigram not in self.bpe_ranks:
+                break
+            first, second = bigram
+            new_word: List[str] = []
+            i = 0
+            while i < len(word):
+                try:
+                    j = word.index(first, i)
+                    new_word.extend(word[i:j])
+                    i = j
+                except Exception:
+                    new_word.extend(word[i:])
+                    break
+
+                if word[i] == first and i < len(word) - 1 and word[i + 1] == second:
+                    new_word.append(first + second)
+                    i += 2
+                else:
+                    new_word.append(word[i])
+                    i += 1
+            word = tuple(new_word)
+            if len(word) == 1:
+                break
+            else:
+                pairs = self.get_pairs(word)
+        return ' '.join(word)
+
+    def helper_encode(self, text: str) -> List[str]:
+        """
+        Tokenize text.
+
+        :param text:
+            text to tokenize
+
+        :return tokens:
+            A list of tokens
+        """
+        bpe_tokens: List[str] = []
+        for token in self.re.findall(self.pat, text):
+            token = ''.join(self.byte_encoder[b] for b in token.encode('utf-8'))
+            bpe_tokens.extend(
+                self.encoder[bpe_token] for bpe_token in self.bpe(token).split(' ')
+            )
+        return bpe_tokens
+
     # def helper_decode(
     #     self, tokens: List[str], token_ids: List[int], delimiter: str
     # ) -> str:
