@@ -52,6 +52,8 @@ class JitGreedySearch(nn.Module):
     >>> TODO: write this
     """
 
+    history_vecs: List[List[int]]
+
     def __init__(self, agent: TorchAgent):
         super().__init__()
 
@@ -137,9 +139,9 @@ class JitGreedySearch(nn.Module):
         if self.history_size > 0:
             while len(self.history_vecs) >= self.history_size:
                 self.history_vecs.pop(0)
-        new_vec = list(
-            self.dict._word_lookup(token) for token in self.dict.tokenize(str(text))
-        )
+        new_vec = []
+        for token in self.dict.tokenize(str(text)):
+            new_vec.append(self.dict._word_lookup(token))
         self.history_vecs.append(new_vec)
 
     def forward(self, input_: str, max_len: int = 128) -> str:
