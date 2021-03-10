@@ -1406,6 +1406,10 @@ class TorchAgent(ABC, Agent):
             )
             obs.force_set('original_context_length', text_length)
             obs.force_set('if_context_truncate', text_length != len(truncated_vec))
+            obs.force_set(
+                'context_truncate_token_length',
+                max(text_length - len(truncated_vec), 0),
+            )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
@@ -2053,6 +2057,13 @@ class TorchAgent(ABC, Agent):
                 'context_length',
                 AverageMetric.many(
                     [obs['original_context_length'] for obs in observations]
+                ),
+            )
+        if all('context_truncate_token_length' in obs for obs in observations):
+            self.record_local_metric(
+                'context_average_tokens_truncated',
+                AverageMetric.many(
+                    [obs['context_truncate_token_length'] for obs in observations]
                 ),
             )
         if all('original_label_length' in obs for obs in observations):
