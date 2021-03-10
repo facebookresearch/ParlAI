@@ -1094,7 +1094,7 @@ class DynamicBatchWorld(World):
             # we log the task act and the index of the act
             # in the buffer for world logging purposes
             self._task_acts[i] = act  # for world logging
-            self._task_acts[i]['dyn_batch_idx'] = i
+            self._task_acts[i].force_set('dyn_batch_idx', i)
 
             obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
