@@ -88,16 +88,20 @@ class SelfRevisedTeacher(FbDeprecatedDialogTeacher):
         super().__init__(opt, shared)
 
 
-class NormalizedTeacher(SelfOriginalTeacher):
+class NormalizedTeacherTrait(object):
     def normalize_replies(self, x):
         xs = x.split('\n')
         xs2 = []
         for x in xs:
-            if 'your persona:' in x:
+            if x.startswith('your persona: '):
                 # Normalize the sentence appearing after 'your persona:'
                 x = x[len('your persona: ') :]
                 x = normalize_reply(x)
                 x = 'your persona: ' + x
+            elif x.startswith("partner's persona: "):
+                x = x[len("partner's persona: ") :]
+                x = normalize_reply(x)
+                x = "partner's persona: " + x
             else:
                 x = normalize_reply(x)
 
@@ -111,6 +115,18 @@ class NormalizedTeacher(SelfOriginalTeacher):
             labels = [self.normalize_replies(l) for l in labels]
             candidates = [self.normalize_replies(c) for c in candidates]
             yield (text, labels, reward, candidates), new_episode
+
+
+class NormalizedTeacher(NormalizedTeacherTrait, SelfOriginalTeacher):
+    pass
+
+
+class NormalizedBothTeacher(NormalizedTeacherTrait, BothTeacher):
+    pass
+
+
+class NormalizedNoneTeacher(NormalizedTeacherTrait, NoneTeacher):
+    pass
 
 
 class DefaultTeacher(SelfOriginalTeacher):
