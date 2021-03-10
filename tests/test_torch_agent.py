@@ -1065,3 +1065,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._local_metrics['label_truncate'][0].value(), 1.0)
         self.assertEqual(agent._local_metrics['context_length'][0].value(), 9)
         self.assertEqual(agent._local_metrics['label_length'][0].value(), 11)
+        self.assertEqual(
+            agent._local_metrics['context_average_tokens_truncated'][0].value(), 4
+        )
+        self.assertEqual(
+            agent._local_metrics['label_average_tokens_truncated'][0].value(), 6
+        )

@@ -1450,6 +1450,9 @@ class TorchAgent(ABC, Agent):
             )
             obs.force_set('original_label_length', vec_label_length)
             obs.force_set('if_label_truncate', vec_label_truncated)
+            obs.force_set(
+                'label_tokens_truncated_cnt', max(vec_label_length - len(vec_label), 0)
+            )
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -2055,18 +2058,18 @@ class TorchAgent(ABC, Agent):
                     [float(obs['if_label_truncate']) for obs in observations]
                 ),
             )
-        if all('label_tokens_truncated_cnt' in obs for obs in observations):
-            self.record_local_metric(
-                'label_average_tokens_truncated',
-                AverageMetric.many(
-                    [float(obs['label_tokens_truncated_cnt']) for obs in observations]
-                ),
-            )
         if all('original_context_length' in obs for obs in observations):
             self.record_local_metric(
                 'context_length',
                 AverageMetric.many(
                     [obs['original_context_length'] for obs in observations]
+                ),
+            )
+        if all('original_label_length' in obs for obs in observations):
+            self.record_local_metric(
+                'label_length',
+                AverageMetric.many(
+                    [obs['original_label_length'] for obs in observations]
                 ),
             )
         if all('context_tokens_truncated_cnt' in obs for obs in observations):
@@ -2076,11 +2079,11 @@ class TorchAgent(ABC, Agent):
                     [obs['context_tokens_truncated_cnt'] for obs in observations]
                 ),
             )
-        if all('original_label_length' in obs for obs in observations):
+        if all('label_tokens_truncated_cnt' in obs for obs in observations):
             self.record_local_metric(
-                'label_length',
+                'label_average_tokens_truncated',
                 AverageMetric.many(
-                    [obs['original_label_length'] for obs in observations]
+                    [obs['label_tokens_truncated_cnt'] for obs in observations]
                 ),
             )
 
