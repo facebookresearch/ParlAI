@@ -208,8 +208,8 @@ class ClassificationMixin(Agent):
         explode_labels = []
         for x in labels:
             if x is not None and len(x) > 0:
-                assert len(x) == 1, 'Multiple labels are not currently supported!'
-                explode_labels.append(x[0])
+                explode_labels.append('+'.join(x))
+                # Join multiple labels together
             else:
                 explode_labels.append(None)
 
