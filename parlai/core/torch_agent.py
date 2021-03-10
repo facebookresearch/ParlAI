@@ -1407,8 +1407,7 @@ class TorchAgent(ABC, Agent):
             obs.force_set('original_context_length', text_length)
             obs.force_set('if_context_truncate', text_length != len(truncated_vec))
             obs.force_set(
-                'context_truncate_token_length',
-                max(text_length - len(truncated_vec), 0),
+                'context_tokens_truncated_cnt', max(text_length - len(truncated_vec), 0)
             )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
@@ -1437,6 +1436,10 @@ class TorchAgent(ABC, Agent):
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
             obs.force_set('original_label_length', vec_label_length)
             obs.force_set('if_label_truncate', vec_label_length > len(truncated_vec))
+            obs.force_set(
+                'label_tokens_truncated_cnt',
+                max(vec_label_length - len(truncated_vec), 0),
+            )
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
@@ -2052,6 +2055,13 @@ class TorchAgent(ABC, Agent):
                     [float(obs['if_label_truncate']) for obs in observations]
                 ),
             )
+        if all('label_tokens_truncated_cnt' in obs for obs in observations):
+            self.record_local_metric(
+                'label_average_tokens_truncated',
+                AverageMetric.many(
+                    [float(obs['label_tokens_truncated_cnt']) for obs in observations]
+                ),
+            )
         if all('original_context_length' in obs for obs in observations):
             self.record_local_metric(
                 'context_length',
@@ -2059,11 +2069,11 @@ class TorchAgent(ABC, Agent):
                     [obs['original_context_length'] for obs in observations]
                 ),
             )
-        if all('context_truncate_token_length' in obs for obs in observations):
+        if all('context_tokens_truncated_cnt' in obs for obs in observations):
             self.record_local_metric(
                 'context_average_tokens_truncated',
                 AverageMetric.many(
-                    [obs['context_truncate_token_length'] for obs in observations]
+                    [obs['context_tokens_truncated_cnt'] for obs in observations]
                 ),
             )
         if all('original_label_length' in obs for obs in observations):
