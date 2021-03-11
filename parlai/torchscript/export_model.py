@@ -288,8 +288,65 @@ class ScriptableGpt2BpeHelper(object):
         tokens = []
         idx = 0
         while idx < len(text):
-            pass
-            # {{{TODO}}}
+            if text[idx] == "'":
+                # Capture contradiction suffixes
+                for ending in contraction_endings:
+                    if text[idx + 1 : idx + 1 + len(ending)] == ending:
+                        tokens.append("'" + ending)
+                        idx += 1 + len(ending)
+                        continue
+            if not text[idx].isspace() or (
+                text[idx] == ' ' and not text[idx + 1].isspace()
+            ):
+                # Capture runs of one type of character
+                if text[idx] == ' ':
+                    last_matching_idx = idx + 1
+                else:
+                    last_matching_idx = idx
+                if text[last_matching_idx].isalpha():
+                    while (
+                        last_matching_idx + 1 < len(text)
+                        and text[last_matching_idx + 1].isalpha()
+                    ):
+                        last_matching_idx += 1
+                elif text[last_matching_idx].isnumeric():
+                    while (
+                        last_matching_idx + 1 < len(text)
+                        and text[last_matching_idx + 1].isnumeric()
+                    ):
+                        last_matching_idx += 1
+                else:
+                    while (
+                        last_matching_idx + 1 < len(text)
+                        and not text[last_matching_idx + 1].isspace()
+                        and not text[last_matching_idx + 1].isalpha()
+                        and not text[last_matching_idx + 1].isnumeric()
+                    ):
+                        last_matching_idx += 1
+                tokens.append(text[idx : last_matching_idx + 1])
+                idx = last_matching_idx + 1
+                continue
+            if text[idx + 1].isspace():
+                # Capture runs of space characters up until just before the final one
+                last_space_idx = idx + 1
+                while (
+                    last_space_idx + 1 < len(text)
+                    and text[last_space_idx + 1].isspace()
+                ):
+                    last_space_idx += 1
+                tokens.append(text[idx:last_space_idx])
+                idx = last_space_idx
+                continue
+            if True:
+                # Capture runs of space characters
+                last_space_idx = idx
+                while (
+                    last_space_idx + 1 < len(text)
+                    and text[last_space_idx + 1].isspace()
+                ):
+                    last_space_idx += 1
+                tokens.append(text[idx : last_space_idx + 1])
+                idx = last_space_idx + 1
         return tokens
 
     def __init__(

@@ -25,7 +25,10 @@ class TestTorchscript(unittest.TestCase):
             'How to tokenize for GPT2?!',
             'I love parfaits with açaí ',
             "He's't're've",
+            '  \t\t \t5 \t',
+            '\t\t  \t 5\t ',
         ]
+        # TODO: just loop through all of the BST val set, for instance, to get more cases?
 
         compiled_pattern = regex.compile(Gpt2BpeHelper.PATTERN)
 
