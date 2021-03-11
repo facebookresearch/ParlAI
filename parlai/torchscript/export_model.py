@@ -199,14 +199,19 @@ class JitGreedySearch(nn.Module):
         self._update_vecs(input_)
 
         # Get full history vec
-        text_vec = []
+        text_vecs: List[List[int]] = []
         for vec in self.history_vecs[:-1]:
-            text_vec += [vec]
-            text_vec += [self.delimiter_tok]
-        text_vec += [self.history_vecs[-1]]
+            text_vecs += [vec]
+            text_vecs += [self.delimiter_tok]
+        text_vecs += [self.history_vecs[-1]]
         if self.global_end_token is not None:
-            text_vec += [[self.global_end_token]]
-        text_vec = sum(text_vec, [])
+            text_vecs += [[self.global_end_token]]
+
+        # Flatten text_vecs
+        flattened_text_vec: List[int] = []
+        for vec in text_vecs:
+            for token in vec:
+                flattened_text_vec.append(token)
 
         # Format history vec given various logic
         if self.text_truncate is not None:
@@ -214,21 +219,21 @@ class JitGreedySearch(nn.Module):
                 truncate_length = self.text_truncate - 2  # Start and end tokens
             else:
                 truncate_length = self.text_truncate
-            if len(text_vec) > truncate_length:
-                text_vec = text_vec[-truncate_length:]
-        text_vec = torch.tensor(text_vec, dtype=torch.long)
+            if len(flattened_text_vec) > truncate_length:
+                flattened_text_vec = flattened_text_vec[-truncate_length:]
+        flattened_text_vec = torch.tensor(flattened_text_vec, dtype=torch.long)
         if self.is_bart:
-            text_vec = torch.cat(
+            flattened_text_vec = torch.cat(
                 [
-                    text_vec.new_tensor([self.start_idx]),
-                    text_vec,
-                    text_vec.new_tensor([self.end_idx]),
+                    torch.tensor([self.start_idx], dtype=torch.long),
+                    flattened_text_vec,
+                    torch.tensor([self.end_idx], dtype=torch.long),
                 ],
-                axis=0,
+                dim=0,
             )
 
         # Pass through the encoder and decoder to generate tokens
-        batch_text_vec = torch.unsqueeze(text_vec, dim=0)  # Add batch dim
+        batch_text_vec = torch.unsqueeze(flattened_text_vec, dim=0)  # Add batch dim
         encoder_states = self.encoder(batch_text_vec)
         generations = self._get_initial_decoder_input(batch_text_vec)
         # keep track of early stopping if all generations finish
@@ -296,9 +301,10 @@ class ScriptableGpt2BpeHelper(object):
                     if text[idx + 1 : idx + 1 + len(ending)] == ending:
                         tokens.append("'" + ending)
                         idx += 1 + len(ending)
-                        continue
+                        break
+                continue
             if not text[idx].isspace() or (
-                text[idx] == ' ' and not text[idx + 1].isspace()
+                text[idx] == ' ' and idx + 1 < len(text) and not text[idx + 1].isspace()
             ):
                 # Capture runs of one type of character
                 if text[idx] == ' ':
@@ -328,7 +334,7 @@ class ScriptableGpt2BpeHelper(object):
                 tokens.append(text[idx : last_matching_idx + 1])
                 idx = last_matching_idx + 1
                 continue
-            if text[idx + 1].isspace():
+            if idx + 1 < len(text) and text[idx + 1].isspace():
                 # Capture runs of space characters up until just before the final one
                 last_space_idx = idx + 1
                 while (
@@ -336,8 +342,13 @@ class ScriptableGpt2BpeHelper(object):
                     and text[last_space_idx + 1].isspace()
                 ):
                     last_space_idx += 1
-                tokens.append(text[idx:last_space_idx])
-                idx = last_space_idx
+                if last_space_idx + 1 == len(text):
+                    # Include the last char, which is a space char
+                    tokens.append(text[idx : last_space_idx + 1])
+                    idx = last_space_idx + 1
+                else:
+                    tokens.append(text[idx:last_space_idx])
+                    idx = last_space_idx
                 continue
             if True:
                 # Capture runs of space characters
