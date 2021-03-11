@@ -33,3 +33,7 @@ class TestTorchscript(unittest.TestCase):
             canonical_tokens = regex.findall(compiled_pattern, str_)
             scriptable_tokens = ScriptableGpt2BpeHelper.findall(str_)
             self.assertEqual(canonical_tokens, scriptable_tokens)
+
+
+if __name__ == '__main__':
+    unittest.main()
