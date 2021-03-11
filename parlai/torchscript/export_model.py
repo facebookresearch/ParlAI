@@ -106,7 +106,6 @@ class JitGreedySearch(nn.Module):
             bpe_byte_encoder=orig_bpe.byte_encoder,
             fused_key_bpe_ranks=fused_key_bpe_ranks,
         )
-        self.v2t = agent._v2t
 
         # History tracking and start/end tokens
         self.history_vecs = []
@@ -191,6 +190,18 @@ class JitGreedySearch(nn.Module):
                 self.history_vecs.pop(0)
         self.history_vecs.append(self.parse(text))
 
+    def _v2t(self, vec: List[int]) -> str:
+        """
+        Convert token indices to string of tokens.
+        """
+        new_vec: List[int] = []
+        for i in vec:
+            if i == self.end_idx:
+                break
+            elif i != self.start_idx:
+                new_vec.append(i)
+        return self.dict.vec2txt(new_vec)
+
     def forward(self, input_: str, max_len: int = 128) -> str:
         # TODO: docstring
 
@@ -267,7 +278,7 @@ class JitGreedySearch(nn.Module):
             generations = generations[:, 1:]
             # Hack: remove initial end token. I haven't found in the code where this is
             # done, but it seems to happen early on during generation
-        label = self.v2t(generations[0].tolist())
+        label = self._v2t(generations[0].tolist())
         self._update_vecs(label)
 
         return label
@@ -283,7 +294,7 @@ class ScriptableGpt2BpeHelper(object):
     #     'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/encoder.json'
     # )
     # DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
-    # ERRORS_METHOD = 'replace'
+    ERRORS_METHOD = 'replace'
 
     @classmethod
     def findall(cls, text: str) -> List[str]:
@@ -389,13 +400,17 @@ class ScriptableGpt2BpeHelper(object):
         # build encoder & decoder
         self.encoder = encoder
 
-        #     self.decoder: Dict[str, str] = {v: k for k, v in self.encoder.items()}
-        #
+        self.decoder: Dict[str, str] = {}
+        for k, v in self.encoder.items():
+            self.decoder[v] = k
+
         # bpe_merges = [
         #     tuple(merge_str.split()) for merge_str in self.bpe_data.split('\n')[1:-1]
         # ]
         self.byte_encoder = byte_encoder
-        #     self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
+        self.byte_decoder: Dict[str, int] = {}
+        for k, v in self.byte_encoder.items():
+            self.byte_decoder[v] = k
         self.bpe_ranks = fused_key_bpe_ranks
 
         # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
@@ -584,27 +599,40 @@ class ScriptableGpt2BpeHelper(object):
             bpe_tokens.extend(encoded)
         return bpe_tokens
 
-    # def helper_decode(
-    #     self, tokens: List[str], token_ids: List[int], delimiter: str
-    # ) -> str:
-    #     """
-    #     Decode list of tokens into text string.
-    #
-    #     :param tokens:
-    #         list of tokens
-    #     :param token_ids:
-    #         list of token ids
-    #     :param delimiter:
-    #         string delimiter for tokens
-    #
-    #     :return text:
-    #         decoded text
-    #     """
-    #     text = ''.join([self.decoder[token] for token in tokens])
-    #     text = bytearray([self.byte_decoder[c] for c in text]).decode(
-    #         'utf-8', errors=self.ERRORS_METHOD
-    #     )
-    #     return text
+    def decode(self, tokens: List[str]) -> str:
+        """
+        Decode list of tokens into a text string.
+
+        NOTE: DO NOT OVERRIDE
+
+        :param tokens:
+            list of tokens
+
+        :return text:
+            decoded text
+        """
+        # no special tokens found, we can fall back
+        text = self.helper_decode(tokens)
+        if self.add_prefix_space:
+            assert text.startswith(' ')
+            text = text.lstrip(' ')
+        return text
+
+    def helper_decode(self, tokens: List[str]) -> str:
+        """
+        Decode list of tokens into text string.
+
+        :param tokens:
+            list of tokens
+
+        :return text:
+            decoded text
+        """
+        text = ''.join([self.decoder[token] for token in tokens])
+        text = bytearray([self.byte_decoder[c] for c in text]).decode(
+            'utf-8', errors=self.ERRORS_METHOD
+        )
+        return text
 
     # def sync_with_dict(self, dict_agent: ScriptableDictionaryAgent):
     #     """
@@ -934,10 +962,13 @@ class ScriptableDictionaryAgent:
         else:
             return self._unk_token_idx
 
-    # def _index_lookup(self, key):
-    #     # return token from index, or unk_token
-    #     return self.ind2tok.get(key, self.unk_token)
-    #
+    def _index_lookup(self, key: int) -> str:
+        # return token from index, or unk_token
+        if key in self.ind2tok:
+            return self.ind2tok[key]
+        else:
+            return self.unk_token
+
     # def __getitem__(self, key):
     #     """
     #     Lookup the word or ID.
@@ -1262,34 +1293,17 @@ class ScriptableDictionaryAgent:
             itr.append(self._word_lookup(token))
         return itr
 
-    # def vec2txt(self, vector, delimiter=' '):
-    #     """
-    #     Convert a vector of IDs to a string.
-    #
-    #     Converts a vector (iterable of ints) into a string, with each token separated by
-    #     the delimiter (default ``' '``).
-    #     """
-    #     tokens = [self[int(idx)] for idx in vector]
-    #     if self.tokenizer in ['gpt2', 'bpe', 'slow_bytelevel_bpe']:
-    #         # if we used a BPE tokenizer we need to rejoin the encodings
-    #         text = self.bpe.decode(tokens, vector, delimiter)
-    #     elif self.tokenizer == 'bytelevelbpe':
-    #         # We add special tokens in the beginning of ParlAI dict but in the
-    #         # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
-    #         extra_tokens = 4  # length of special tokens
-    #         vector = [
-    #             self.bpe.special_tok_map[int(idx)]
-    #             if int(idx) in self.bpe.special_tok_map
-    #             else int(idx) - extra_tokens
-    #             for idx in vector
-    #         ]
-    #         tokens = [self[int(idx)] for idx in vector]
-    #         text = self.bpe.decode(tokens, vector, delimiter)
-    #     else:
-    #         text = delimiter.join(self[int(idx)] for idx in vector)
-    #
-    #     return text
-    #
+    def vec2txt(self, vector: List[int]) -> str:
+        """
+        Convert a vector of IDs to a string.
+
+        Converts a vector (iterable of ints) into a string, with each token separated by
+        the delimiter (default ``' '``).
+        """
+        tokens = [self._index_lookup(idx) for idx in vector]
+        text = self.bpe.decode(tokens)
+        return text
+
     # def act(self):
     #     """
     #     Add words in the last observation to the dictionary.
