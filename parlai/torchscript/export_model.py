@@ -6,7 +6,6 @@
 
 from typing import Dict, List, Tuple
 
-import regex
 import torch.jit
 import torch.nn as nn
 
@@ -279,6 +278,20 @@ class ScriptableGpt2BpeHelper(object):
     # DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
     # ERRORS_METHOD = 'replace'
 
+    @classmethod
+    def findall(cls, text: str) -> List[str]:
+        """
+        Split tokens in a manner that approximates parlai.utils.bpe.Gpt2BpeHelper.
+        """
+        contraction_endings = ['s', 't', 're', 've', 'm', 'll', 'd']
+
+        tokens = []
+        idx = 0
+        while idx < len(text):
+            pass
+            # {{{TODO}}}
+        return tokens
+
     def __init__(
         self,
         add_prefix_space: bool,
@@ -316,9 +329,9 @@ class ScriptableGpt2BpeHelper(object):
         self.bpe_ranks = fused_key_bpe_ranks
 
         # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
-        self.pat = regex.compile(
-            r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-        )
+        # self.pat = regex.compile(
+        #     r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+        # )
 
     def encode(self, text: str) -> List[str]:
         """
@@ -491,7 +504,7 @@ class ScriptableGpt2BpeHelper(object):
             A list of tokens
         """
         bpe_tokens: List[str] = []
-        for token in regex.findall(self.pat, text):
+        for token in self.findall(text):
             byte_encoded = []
             for b in token.encode('utf-8'):
                 byte_encoded.append(self.byte_encoder[b])
