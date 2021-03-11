@@ -32,15 +32,15 @@ def export_model(opt: Opt):
         label = original_module(input_)
         print("LABEL: " + label)
 
-    # Script the module and save
-    scripted_module = torch.jit.script(original_module)
-    with PathManager.open(opt['scripted_model_file'], 'wb') as f:
-        torch.jit.save(scripted_module, f)
+    # # Script the module and save
+    # scripted_module = torch.jit.script(original_module)
+    # with PathManager.open(opt['scripted_model_file'], 'wb') as f:
+    #     torch.jit.save(scripted_module, f)
 
-    print('\nGenerating given the scripted module:')
-    for input_ in inputs:
-        label = scripted_module(input_)
-        print("LABEL: " + label)
+    # print('\nGenerating given the scripted module:')
+    # for input_ in inputs:
+    #     label = scripted_module(input_)
+    #     print("LABEL: " + label)
 
 
 class JitGreedySearch(nn.Module):
@@ -89,8 +89,10 @@ class JitGreedySearch(nn.Module):
             i for key in orig_bpe.bpe_ranks.keys() for i in key if '\n' in i
         ), "We need to temporarily merge the bpe_ranks dict's keys with a newline character in order to use it as a TorchScript arg, but at least one of the dict's keys contains a newline character already!"
         fused_key_bpe_ranks = {
-            '\n'.join(key): val for key, val in orig_bpe.bpe_ranks.items()
+            '\n'.join(key): float(val) for key, val in orig_bpe.bpe_ranks.items()
         }
+        # Cast the values as floats to be able to compare to float('inf') when doing BPE
+        # splitting
         self.dict = ScriptableDictionaryAgent(
             null_token=orig_dict.null_token,
             end_token=orig_dict.end_token,
@@ -266,7 +268,7 @@ class JitGreedySearch(nn.Module):
         return label
 
 
-@torch.jit.script
+# @torch.jit.script
 class ScriptableGpt2BpeHelper(object):
     """
     Version of parlai.utils.bpe.Gpt2BpeHelper that can be TorchScripted.
@@ -285,7 +287,7 @@ class ScriptableGpt2BpeHelper(object):
         """
         contraction_endings = ['s', 't', 're', 've', 'm', 'll', 'd']
 
-        tokens = []
+        tokens: List[str] = []
         idx = 0
         while idx < len(text):
             if text[idx] == "'":
@@ -354,7 +356,7 @@ class ScriptableGpt2BpeHelper(object):
         add_prefix_space: bool,
         encoder: Dict[str, str],
         byte_encoder: Dict[int, str],
-        fused_key_bpe_ranks: Dict[str, int],
+        fused_key_bpe_ranks: Dict[str, float],
     ):
         """
         Override init to build the data.
@@ -478,11 +480,11 @@ class ScriptableGpt2BpeHelper(object):
     #     str_cs: List[str] = [chr(n) for n in cs]
     #     return dict(zip(bs, str_cs))
 
-    def get_pairs(self, word: Tuple[str, ...]) -> List[Tuple[str, str]]:
+    def get_pairs(self, word: List[str]) -> List[Tuple[str, str]]:
         """
         Return set of symbol pairs in a word.
 
-        Word is represented as tuple of symbols (symbols being variable-length strings).
+        Word is represented as list of symbols (symbols being variable-length strings).
 
         :param word:
             word to symbolize
@@ -490,7 +492,7 @@ class ScriptableGpt2BpeHelper(object):
         :return pairs:
             set of tuples of symbols
         """
-        pairs = []
+        pairs: List[Tuple[str, str]] = []
         prev_char = word[0]
         for char in word[1:]:
             pairs.append((prev_char, char))
@@ -507,10 +509,10 @@ class ScriptableGpt2BpeHelper(object):
         :return bpe_encoding:
             string bpe encoding
         """
-        word = tuple(token)
+        word = list(token)
         pairs = self.get_pairs(word)
 
-        if not pairs:
+        if len(pairs) == 0:
             return token
 
         while True:
@@ -527,12 +529,11 @@ class ScriptableGpt2BpeHelper(object):
             new_word: List[str] = []
             i = 0
             while i < len(word):
-                if first in word[i:]:
-                    # It's not performant to have to scan `word` twice, but this is a
-                    # workaround for the fact that try blocks aren't TorchScriptable
-                    j = word.index(first, i)
-                    new_word.extend(word[i:j])
-                    i = j
+                for j in range(i, len(word)):
+                    if word[j] == first:
+                        new_word.extend(word[i:j])
+                        i = j
+                        break
                 else:
                     new_word.extend(word[i:])
                     break
@@ -543,7 +544,7 @@ class ScriptableGpt2BpeHelper(object):
                 else:
                     new_word.append(word[i])
                     i += 1
-            word = tuple(new_word)
+            word = new_word.copy()
             if len(word) == 1:
                 break
             else:
@@ -562,11 +563,11 @@ class ScriptableGpt2BpeHelper(object):
         """
         bpe_tokens: List[str] = []
         for token in self.findall(text):
-            byte_encoded = []
-            for b in token.encode('utf-8'):
-                byte_encoded.append(self.byte_encoder[b])
+            byte_encoded: List[str] = []
+            for b in token:
+                byte_encoded.append(self.byte_encoder[ord(b)])
             token = ''.join(byte_encoded)
-            encoded = []
+            encoded: List[str] = []
             for bpe_token in self.bpe(token).split(' '):
                 encoded.append(self.encoder[bpe_token])
             bpe_tokens.extend(encoded)
@@ -630,7 +631,7 @@ class ScriptableGpt2BpeHelper(object):
     #         PathManager.copy(self.merge_path, out_merge_path)
 
 
-@torch.jit.script
+# @torch.jit.script
 class ScriptableDictionaryAgent:
     """
     Builds and/or loads a dictionary. All code is TorchScriptable.
@@ -768,7 +769,7 @@ class ScriptableDictionaryAgent:
         bpe_add_prefix_space: bool,
         bpe_encoder: Dict[str, str],
         bpe_byte_encoder: Dict[int, str],
-        fused_key_bpe_ranks: Dict[str, int],
+        fused_key_bpe_ranks: Dict[str, float],
     ):
         """
         Initialize DictionaryAgent.
@@ -843,7 +844,7 @@ class ScriptableDictionaryAgent:
         #     opt['dict_loaded'] = loaded
 
         # cache unk token for later
-        self._unk_token_idx = self.tok2ind.get(self.unk_token)
+        self._unk_token_idx = self.tok2ind[self.unk_token]
 
         # # initialize tokenizers
         # if self.tokenizer == 'nltk':
@@ -915,9 +916,12 @@ class ScriptableDictionaryAgent:
     #     elif type(key) == str:
     #         return key in self.tok2ind
 
-    def _word_lookup(self, key):
+    def _word_lookup(self, key: str) -> int:
         # return index from token, or unk_token's index, or None
-        return self.tok2ind.get(key, self._unk_token_idx)
+        if key in self.tok2ind:
+            return self.tok2ind[key]
+        else:
+            return self._unk_token_idx
 
     # def _index_lookup(self, key):
     #     # return token from index, or unk_token
@@ -1242,7 +1246,7 @@ class ScriptableDictionaryAgent:
 
         First runs a sentence tokenizer, then a word tokenizer.
         """
-        itr = []
+        itr: List[int] = []
         for token in self.tokenize(str(text)):
             itr.append(self._word_lookup(token))
         return itr
