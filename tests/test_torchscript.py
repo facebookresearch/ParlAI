@@ -11,6 +11,10 @@ Unit tests for exporting models via TorchScript.
 import regex
 import unittest
 
+import parlai.utils.testing as testing_utils
+from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.worlds import create_task
+from parlai.scripts.display_data import setup_args
 from parlai.torchscript.export_model import ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
@@ -20,22 +24,36 @@ class TestTorchscript(unittest.TestCase):
         """
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
         """
-        test_strings = [
-            " You 3, it's 2021, I'll be doing that   2morrow!  ",
-            'How to tokenize for GPT2?!',
-            'I love parfaits with açaí ',
-            "He's't're've",
-            '  \t\t \t5 \t',
-            '\t\t  \t 5\t ',
-        ]
-        # TODO: just loop through all of the BST val set, for instance, to get more cases?
 
+        # Params
+        tasks = ['taskmaster2', 'convai2']
         compiled_pattern = regex.compile(Gpt2BpeHelper.PATTERN)
 
-        for str_ in test_strings:
-            canonical_tokens = regex.findall(compiled_pattern, str_)
-            scriptable_tokens = ScriptableGpt2BpeHelper.findall(str_)
-            self.assertEqual(canonical_tokens, scriptable_tokens)
+        with testing_utils.tempdir() as tmpdir:
+            datapath = tmpdir
+
+            for task in tasks:
+                parser = setup_args()
+                args = f"""\
+--task {task}
+--datatype train
+--datapath {datapath}
+"""
+                opt = parser.parse_args(args.split())
+                agent = RepeatLabelAgent(opt)
+                teacher = create_task(opt, agent).get_task_agent()
+
+                print(
+                    f'\nStarting to test {teacher.num_examples():d} examples for the '
+                    f'{task} task.'
+                )
+                for idx, message in teacher:
+                    if idx % 100 == 0:
+                        print(f'Testing example #{idx:d}.')
+                    text = message['text']
+                    canonical_tokens = regex.findall(compiled_pattern, text)
+                    scriptable_tokens = ScriptableGpt2BpeHelper.findall(text)
+                    self.assertEqual(canonical_tokens, scriptable_tokens)
 
 
 if __name__ == '__main__':
