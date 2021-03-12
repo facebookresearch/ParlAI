@@ -97,12 +97,12 @@ class NormalizedTeacherTrait(object):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        agent = parser.add_argument_group('NormalizedBothTeacher Caption arguments')
+        agent = parser.add_argument_group('NormalizedTeacher arguments')
         agent.add_argument(
             '--your-persona-first',
             type='bool',
             default=True,
-            help="whether to prepend your persona followed by their persona, True by default to be consistent with the BothTeach",
+            help="whether to prepend your persona followed by partner's persona. True by default to be consistent with the BothTeach",
         )
         agent.add_argument(
             '--max-num-turns',
