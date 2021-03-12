@@ -295,7 +295,7 @@ class History(object):
 
         self.temp_history = temp_history
 
-    def get_history_str(self):
+    def get_history_str(self) -> Optional[str]:
         """
         Return the string version of the history.
         """
@@ -345,6 +345,9 @@ class History(object):
             return '\n'.join(split)
         else:
             return token + ' ' + text
+
+    def __str__(self) -> str:
+        return self.get_history_str() or ''
 
 
 class TorchAgent(ABC, Agent):
