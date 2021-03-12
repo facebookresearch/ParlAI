@@ -51,13 +51,13 @@ class HFTokenizerDictionaryAgent(DictionaryAgent, ABC):
     @abstractmethod
     def build_hf_tokenizer(self, opt):
         """
-        Return hf tokenizer
+        Return hf tokenizer.
         """
 
     @abstractmethod
     def format_text(self, text: str) -> str:
         """
-        Format text prior to encoding with tokenizer
+        Format text prior to encoding with tokenizer.
         """
 
     @abstractproperty
@@ -115,7 +115,7 @@ class T5TokenizerDictionaryAgent(HFTokenizerDictionaryAgent):
 
     def format_text(self, text: str) -> str:
         """
-        Format text prior to encoding with tokenizer
+        Format text prior to encoding with tokenizer.
         """
         return text
 

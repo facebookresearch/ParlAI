@@ -34,8 +34,6 @@ class T5Agent(TorchGeneratorAgent):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        """
-        """
         super().add_cmdline_args(parser, partial_opt=partial_opt)
         group = parser.add_argument_group('T5 Args')
         group.add_argument(
@@ -78,7 +76,7 @@ class T5Agent(TorchGeneratorAgent):
 
     def build_dictionary(self):
         """
-        Overrides TorchAgent.build_dictionary to use t5 dict
+        Overrides TorchAgent.build_dictionary to use t5 dict.
         """
         return T5TokenizerDictionaryAgent(self.opt)
 

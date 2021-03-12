@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Wrapped Encoders for ParlAI Use
+Wrapped Encoders for ParlAI Use.
 """
 import torch
 from transformers import T5ForConditionalGeneration
@@ -27,8 +27,8 @@ def set_device(func):
     """
     Decorator for setting device.
 
-    HF's model parallel uses `torch.cuda.set_device`, which does not
-    vibe well with ParlAI.
+    HF's model parallel uses `torch.cuda.set_device`, which does not vibe well with
+    ParlAI.
     """
 
     def wrap(*args, **kwargs):
