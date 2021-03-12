@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, Tuple, Optional, Union
+from typing import Dict, Tuple, Optional
 
 import numpy as np
 import torch
@@ -27,9 +27,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import parlai.utils.torch as parlai_torch
-
-# Preferred to `from parlai.utils.torch import ...`, given
-# https://github.com/pytorch/pytorch/issues/52312
 from parlai.core.opt import Opt
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
@@ -466,21 +463,22 @@ class TransformerEncoder(nn.Module):
         :return tensor:
             return embedding after applying transformer layers
         """
-        # if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
-        #     # factored out for readability. It is equivalent to the other
-        #     # condition
-        #     tensor = self._apply_model_parallel(tensor, mask)
-        # else:
-        for layer in self.layers:  # self.n_layers not recognized as an attribute
-            tensor = layer(tensor, mask)
+        if getattr(self.layers, 'is_model_parallel', False):
+            # factored out for readability. It is equivalent to the other
+            # condition
+            assert (
+                not torch.jit.is_scripting()
+            ), 'model_parallel not currently supported when TorchScripting!'
+            tensor = self._apply_model_parallel(tensor, mask)
+        else:
+            for layer in self.layers:
+                tensor = layer(tensor, mask)
 
         return tensor
 
     def reduce_output(
         self, tensor: torch.Tensor, mask: torch.BoolTensor
-    ) -> Tuple[
-        torch.Tensor, torch.BoolTensor
-    ]:  # For enc/dec models we always need to pass back the encoder mask
+    ) -> Tuple[torch.Tensor, Optional[torch.BoolTensor]]:
         """
         Reduce transformer output at end of forward pass.
 
@@ -493,22 +491,20 @@ class TransformerEncoder(nn.Module):
             returns the reduced tensor, and mask if appropriate
         """
         tensor *= self.output_scaling
-        # TODO: get this working with all reduction types!! Currently having trouble
-        #  getting JIT to recognize self.reduction_type
-        # if self.reduction_type == 'first':
-        #     return tensor[:, 0, :], None
-        # elif self.reduction_type == 'max':
-        #     return tensor.max(dim=1)[0], None
-        # elif self.reduction_type == 'mean':
-        #     divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
-        #     output = tensor.sum(dim=1) / divisor
-        #     return output, None
-        # elif self.reduction_type is None or 'none' in self.reduction_type:
-        return tensor, mask
-        # else:
-        #     raise ValueError(
-        #         "Can't handle --reduction-type {}".format(self.reduction_type)
-        #     )
+        if self.reduction_type == 'first':
+            return tensor[:, 0, :], None
+        elif self.reduction_type == 'max':
+            return tensor.max(dim=1)[0], None
+        elif self.reduction_type == 'mean':
+            divisor = mask.float().sum(dim=1).unsqueeze(-1).clamp(min=1).type_as(tensor)
+            output = tensor.sum(dim=1) / divisor
+            return output, None
+        elif self.reduction_type is None or 'none' in self.reduction_type:
+            return tensor, mask
+        else:
+            raise ValueError(
+                "Can't handle --reduction-type {}".format(self.reduction_type)
+            )
 
     def forward(  # type: ignore
         self,
@@ -545,11 +541,10 @@ class TransformerEncoder(nn.Module):
 
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
-        # TODO: revert once supporting other reduction types
-        # if out_mask is not None:
-        return tensor, out_mask
-        # else:
-        # return tensor
+        if out_mask is not None:
+            return tensor, out_mask
+        else:
+            return tensor
 
     def _apply_model_parallel(self, tensor, mask):
         """
@@ -610,7 +605,6 @@ class TransformerEncoderLayer(nn.Module):
         if self.variant == 'prelayernorm':
             tensor = self.norm1(tensor)
         attended_tensor = self.attention(tensor, key=None, value=None, mask=mask)[0]
-        # Problematic to set None as default with type Optional[torch.Tensor]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = self.norm1(tensor)
@@ -777,7 +771,10 @@ class TransformerDecoder(nn.Module):
             return encoding after applying decoder layers, as well
             as new incremental decoding state.
         """
-        if hasattr(self.layers, 'is_model_parallel') and self.layers.is_model_parallel:
+        if getattr(self.layers, 'is_model_parallel', False):
+            assert (
+                not torch.jit.is_scripting()
+            ), 'model_parallel not currently supported when TorchScripting!'
             tensor, new_incr_state = self._apply_model_parallel(
                 tensor, encoder_output, encoder_mask, incr_state
             )
@@ -828,7 +825,6 @@ class TransformerDecoder(nn.Module):
         positions = torch.arange(
             seq_len, dtype=torch.long, device=input.device
         ).unsqueeze(0)
-        # tensor.new() deprecated
 
         if incr_state is not None:
             # We're doing incremental decoding, so select only the most recent position
@@ -849,7 +845,13 @@ class TransformerDecoder(nn.Module):
 
         return tensor, new_incr_state
 
-    def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
+    def _apply_model_parallel(
+        self,
+        tensor,
+        encoder_output,
+        encoder_mask,
+        incr_state: Optional[Dict[str, torch.Tensor]],
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Pipeline application of model parallelism.
         """
@@ -1020,7 +1022,6 @@ class TransformerDecoderLayer(nn.Module):
         time = x.size(1)
         # make sure that we don't look into the future
         mask = torch.tril(torch.ones(time, time, dtype=x.dtype, device=x.device))
-        # tensor.new() deprecated and tensor.new_ones() unsupported
         # broadcast across batch
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask

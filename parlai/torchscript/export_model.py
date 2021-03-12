@@ -20,6 +20,11 @@ from parlai.utils.io import PathManager
 
 def export_model(opt: Opt):
 
+    opt['no_cuda'] = True
+    # TorchScripting is CPU only
+    opt['model_parallel'] = False
+    # model_parallel is not currently supported when TorchScripting
+
     agent = create_agent(opt, requireModelExists=True)
 
     inputs = opt['input'].split('|')
