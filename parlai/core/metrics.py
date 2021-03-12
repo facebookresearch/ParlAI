@@ -461,7 +461,8 @@ class BleuMetric(AverageMetric):
 
 class FairseqBleuMetric(Metric):
     """
-    Re-implementation of https://github.com/pytorch/fairseq/blob/master/fairseq/scoring/bleu.py
+    Re-implementation of
+    https://github.com/pytorch/fairseq/blob/master/fairseq/scoring/bleu.py.
     """
 
     def __init__(
