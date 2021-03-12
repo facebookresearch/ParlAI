@@ -168,6 +168,7 @@ class ConversionScript(ParlaiScript):
         # 3. Map other options
         transformer_common_config.update(
             {
+                'datatype': 'valid',  # don't save an optimizer
                 'model': self.opt['model'],
                 # number of layers
                 'n_encoder_layers': fairseq_args['encoder_layers'],
