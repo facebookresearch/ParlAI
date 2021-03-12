@@ -36,24 +36,27 @@ class TestTorchscript(unittest.TestCase):
                 parser = setup_args()
                 args = f"""\
 --task {task}
---datatype train
+--datatype train:ordered
 --datapath {datapath}
 """
                 opt = parser.parse_args(args.split())
                 agent = RepeatLabelAgent(opt)
                 teacher = create_task(opt, agent).get_task_agent()
+                num_examples = teacher.num_examples()
 
                 print(
-                    f'\nStarting to test {teacher.num_examples():d} examples for the '
+                    f'\nStarting to test {num_examples:d} examples for the '
                     f'{task} task.'
                 )
-                for idx, message in teacher:
-                    if idx % 100 == 0:
+                for idx, message in enumerate(teacher):
+                    if idx % 10000 == 0:
                         print(f'Testing example #{idx:d}.')
                     text = message['text']
                     canonical_tokens = regex.findall(compiled_pattern, text)
                     scriptable_tokens = ScriptableGpt2BpeHelper.findall(text)
                     self.assertEqual(canonical_tokens, scriptable_tokens)
+                    if idx + 1 == num_examples:
+                        break
 
 
 if __name__ == '__main__':

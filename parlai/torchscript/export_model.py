@@ -304,15 +304,22 @@ class ScriptableGpt2BpeHelper(object):
 
         tokens: List[str] = []
         idx = 0
+        num_passes = 0
         while idx < len(text):
+            num_passes += 1
+            if num_passes > 10000:
+                return ['*** Infinite loop in ScriptableGpt2BpeHelper.findall()! ***']
             if text[idx] == "'":
                 # Capture contradiction suffixes
+                captured_suffix = False
                 for ending in contraction_endings:
                     if text[idx + 1 : idx + 1 + len(ending)] == ending:
                         tokens.append("'" + ending)
                         idx += 1 + len(ending)
+                        captured_suffix = True
                         break
-                continue
+                if captured_suffix:
+                    continue
             if not text[idx].isspace() or (
                 text[idx] == ' ' and idx + 1 < len(text) and not text[idx + 1].isspace()
             ):
