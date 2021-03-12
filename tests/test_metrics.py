@@ -451,7 +451,6 @@ class TestFairseqBleuMetric(unittest.TestCase):
 
     def test_scorer(self):
         import random
-        from fairseq.scoring.bleu import Scorer, BleuConfig
 
         random.seed(42)
 
@@ -461,10 +460,18 @@ class TestFairseqBleuMetric(unittest.TestCase):
         eos_idx = 1
         unk_idx = 2
 
+        try:
+            from fairseq.scoring.bleu import Scorer
+            from fairseq.scoring.bleu import BleuConfig
+
+            fairseq_metrics: Scorer = Scorer(
+                BleuConfig(pad=pad_idx, eos=eos_idx, unk=unk_idx)
+            )
+        except ImportError:
+            # Bleuconfig is a recent version of fairseq
+            fairseq_metrics: Scorer = Scorer(pad_idx, eos_idx, unk_idx)
+
         parlai_metrics: Dict[int, FairseqBleuMetric] = {k: [] for k in range(1, 5)}
-        fairseq_metrics: Scorer = Scorer(
-            BleuConfig(pad=pad_idx, eos=eos_idx, unk=unk_idx)
-        )
 
         for _ in range(num_ex):
             guess = torch.LongTensor(random.sample(range(vocab_length), ex_length))
