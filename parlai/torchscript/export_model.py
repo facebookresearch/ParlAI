@@ -454,12 +454,14 @@ class ScriptableGpt2BpeHelper(object):
             new_word: List[str] = []
             i = 0
             while i < len(word):
+                found = False
                 for j in range(i, len(word)):
                     if word[j] == first:
                         new_word.extend(word[i:j])
                         i = j
+                        found = True
                         break
-                else:
+                if not found:
                     new_word.extend(word[i:])
                     break
 
