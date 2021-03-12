@@ -168,10 +168,10 @@ class JitGreedySearch(nn.Module):
     def _get_initial_decoder_input(self, x: torch.Tensor) -> torch.Tensor:
         """
         Workaround because we can't use TGM._get_initial_decoder_input() directly.
-        
-        When we try to call that function, we get a "RuntimeError: Type
-        'Tuple[int, int]' cannot be traced. Only Tensors and (possibly nested) Lists,
-        Dicts, and Tuples of Tensors can be traced" error.
+
+        When we try to call that function, we get a "RuntimeError: Type 'Tuple[int,
+        int]' cannot be traced. Only Tensors and (possibly nested) Lists, Dicts, and
+        Tuples of Tensors can be traced" error.
         """
         bsz = x.size(0)
         return (
@@ -550,13 +550,13 @@ class ScriptableGpt2BpeHelper(object):
 
     def utf8_chars(self, s: str) -> List[str]:
         """
-        An implementation of UTF8 character iteration in TorchScript.
-        There are no bitwise operations in torchscript, so we compare directly to
-        integer values. There isn't a lot of validation, for instance if you pass
-        in an improperly encoded string with an out-of-place continuation byte,
-        or with a non-left-to-right byte order, you'll get unexpected results
-        and likely throw. Torch itself takes in unicode strings and encodes them
-        as UTF8, so that should be actively hard to do.
+        An implementation of UTF8 character iteration in TorchScript. There are no
+        bitwise operations in torchscript, so we compare directly to integer values.
+        There isn't a lot of validation, for instance if you pass in an improperly
+        encoded string with an out-of-place continuation byte, or with a non-left-to-
+        right byte order, you'll get unexpected results and likely throw. Torch itself
+        takes in unicode strings and encodes them as UTF8, so that should be actively
+        hard to do.
 
         The logic is simple: looking at the current start-of-character byte.
         If its high bit is 0, it's a 1-byte character. Otherwise, the number of
@@ -597,7 +597,9 @@ class ScriptableGpt2BpeHelper(object):
 @torch.jit.script
 class ScriptableDictionaryAgent:
     """
-    Builds and/or loads a dictionary. All code is TorchScriptable.
+    Builds and/or loads a dictionary.
+
+    All code is TorchScriptable.
     """
 
     def __init__(

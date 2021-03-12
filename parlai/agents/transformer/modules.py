@@ -1103,8 +1103,8 @@ class TransformerGeneratorModel(TorchGeneratorModel, NegInfMixin):
 
         See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
 
-        Here, incremental_state is a dict whose keys are attention types (self- or 
-        enc/dec and prev key, prev value, or prev mask) and whose values are Tensors, 
+        Here, incremental_state is a dict whose keys are attention types (self- or
+        enc/dec and prev key, prev value, or prev mask) and whose values are Tensors,
         with matrices for each layer concatenated in the 0th dimension. The 1st
         dimension is the batch size and thus gets reindexed.
         """
