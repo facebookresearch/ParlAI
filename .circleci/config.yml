@@ -105,6 +105,20 @@ commands:
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
+  installtorchgpu16:
+    description: Install torch GPU and dependencies
+    steps:
+      - run:
+          name: Install torch GPU and dependencies
+          command: |
+            python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'torchtext==0.7.0'
+            python -m pip install --progress-bar off pytorch-pretrained-bert
+            python -m pip install --progress-bar off 'transformers<4.0.0'
+            python -m pip install --progress-bar off 'fairseq==0.10.0'
+            python -c 'import torch; print("Torch version:", torch.__version__)'
+            python -m torch.utils.collect_env
+
   installtorchgpu15:
     description: Install torch GPU and dependencies
     steps:
@@ -115,24 +129,13 @@ commands:
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
-  installtorchgpu14:
-    description: Install torch GPU and dependencies
-    steps:
-      - run:
-          name: Install torch GPU and dependencies
-          command: |
-            python -m pip install --progress-bar off 'numpy'
-            python -m pip install --progress-bar off 'torch==1.4.0'
-            python -c 'import torch; print("Torch version:", torch.__version__)'
-            python -m torch.utils.collect_env
-
   installtorchcpuosx:
     description: Install torch CPU and dependencies
     steps:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.6.0
+            python -m pip install --progress-bar off torch==1.7.1
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -142,7 +145,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.6.0+cpu torchtext==0.7.0 torchvision==0.7.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -357,18 +360,6 @@ jobs:
           cachename: ut38
           marker: unit
 
-  unittests_gpu14:
-    executor: gpu
-    working_directory: ~/ParlAI
-    parallelism: 2
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchgpu14
-          install_cuda: true
-          cachename: gpu14
-          marker: unit
-
   unittests_gpu15:
     executor: gpu
     working_directory: ~/ParlAI
@@ -382,6 +373,19 @@ jobs:
           marker: unit
 
   unittests_gpu16:
+    executor: gpu
+    working_directory: ~/ParlAI
+    parallelism: 8
+    steps:
+      - runtests:
+          more_installs:
+            - installtorchgpu16
+            - installdetectrondeps
+          install_cuda: true
+          cachename: gpu16
+          marker: unit
+
+  unittests_gpu17:
     executor: gpu
     working_directory: ~/ParlAI
     parallelism: 8
@@ -469,35 +473,35 @@ workflows:
   commit:
     jobs:
       - cleaninstall_37
-      - unittests_gpu16
+      - unittests_gpu17
+      - unittests_gpu16:
+          requires:
+            - unittests_37
+            - unittests_gpu17
       - unittests_gpu15:
           requires:
             - unittests_37
-            - unittests_gpu16
-      - unittests_gpu14:
-          requires:
-            - unittests_37
-            - unittests_gpu16
+            - unittests_gpu17
       - unittests_38:
           requires:
             - unittests_37
-            - unittests_gpu16
+            - unittests_gpu17
       - unittests_37
       - unittests_osx:
           requires:
-            - unittests_gpu16
+            - unittests_gpu17
             - unittests_37
       - long_gpu_tests:
           requires:
-            - unittests_gpu16
+            - unittests_gpu17
             - unittests_37
       - crowdsourcing_tests:
           requires:
-            - unittests_gpu16
+            - unittests_gpu17
             - unittests_37
       - teacher_tests:
           requires:
-            - unittests_gpu16
+            - unittests_gpu17
             - unittests_37
       - build_website:
           filters:
