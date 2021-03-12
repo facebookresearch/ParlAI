@@ -445,8 +445,8 @@ class TestDistinct(unittest.TestCase):
 @testing_utils.skipUnlessFairseq
 class TestFairseqBleuMetric(unittest.TestCase):
     """
-    We're just going to compare that scores from
-    Fairseq's Bleu scorer are the same as our scorer.
+    We're just going to compare that scores from Fairseq's Bleu scorer are the same as
+    our scorer.
     """
 
     def test_scorer(self):
