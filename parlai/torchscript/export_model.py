@@ -22,25 +22,23 @@ def export_model(opt: Opt):
 
     agent = create_agent(opt, requireModelExists=True)
 
-    # Script and trace the greedy search routine
-    original_module = JitGreedySearch(agent)
-
     inputs = opt['input'].split('|')
 
     print('\nGenerating given the original unscripted module:')
+    original_module = JitGreedySearch(agent)
     for input_ in inputs:
         label = original_module(input_)
         print("LABEL: " + label)
 
-    # # Script the module and save
-    # scripted_module = torch.jit.script(original_module)
-    # with PathManager.open(opt['scripted_model_file'], 'wb') as f:
-    #     torch.jit.save(scripted_module, f)
+    # Script the module and save
+    scripted_module = torch.jit.script(JitGreedySearch(agent))
+    with PathManager.open(opt['scripted_model_file'], 'wb') as f:
+        torch.jit.save(scripted_module, f)
 
-    # print('\nGenerating given the scripted module:')
-    # for input_ in inputs:
-    #     label = scripted_module(input_)
-    #     print("LABEL: " + label)
+    print('\nGenerating given the scripted module:')
+    for input_ in inputs:
+        label = scripted_module(input_)
+        print("LABEL: " + label)
 
 
 class JitGreedySearch(nn.Module):
@@ -278,13 +276,14 @@ class JitGreedySearch(nn.Module):
             generations = generations[:, 1:]
             # Hack: remove initial end token. I haven't found in the code where this is
             # done, but it seems to happen early on during generation
-        label = self._v2t(generations[0].tolist())
+        generation_tokens: List[int] = generations[0].tolist()
+        label = self._v2t(generation_tokens)
         self._update_vecs(label)
 
         return label
 
 
-# @torch.jit.script
+@torch.jit.script
 class ScriptableGpt2BpeHelper(object):
     """
     Version of parlai.utils.bpe.Gpt2BpeHelper that can be TorchScripted.
@@ -525,21 +524,20 @@ class ScriptableGpt2BpeHelper(object):
             prev_char = char
         return pairs
 
-    def bpe(self, token: str) -> str:
+    def bpe(self, word: List[str]) -> List[str]:
         """
         Convert token to BPE.
 
-        :param token:
-            token to convert
+        :param word:
+            list of tokens token to convert
 
         :return bpe_encoding:
             string bpe encoding
         """
-        word = list(token)
         pairs = self.get_pairs(word)
 
         if len(pairs) == 0:
-            return token
+            return word
 
         while True:
             min_rank = self.bpe_ranks.get('\n'.join(pairs[0]), float('inf'))
@@ -575,7 +573,7 @@ class ScriptableGpt2BpeHelper(object):
                 break
             else:
                 pairs = self.get_pairs(word)
-        return ' '.join(word)
+        return word
 
     def helper_encode(self, text: str) -> List[str]:
         """
@@ -592,9 +590,8 @@ class ScriptableGpt2BpeHelper(object):
             byte_encoded: List[str] = []
             for b in token:
                 byte_encoded.append(self.byte_encoder[ord(b)])
-            token = ''.join(byte_encoded)
             encoded: List[str] = []
-            for bpe_token in self.bpe(token).split(' '):
+            for bpe_token in self.bpe(byte_encoded):
                 encoded.append(self.encoder[bpe_token])
             bpe_tokens.extend(encoded)
         return bpe_tokens
@@ -628,11 +625,68 @@ class ScriptableGpt2BpeHelper(object):
         :return text:
             decoded text
         """
-        text = ''.join([self.decoder[token] for token in tokens])
-        text = bytearray([self.byte_decoder[c] for c in text]).decode(
-            'utf-8', errors=self.ERRORS_METHOD
-        )
-        return text
+        chars: List[str] = []
+        for token in tokens:
+            decoded_token = self.decoder[token]
+            token_chars = self.utf8_chars(decoded_token)
+            for char in token_chars:
+                if not torch.jit.is_scripting():
+                    # We iterate over "char", which is supposed to be a single
+                    # character, because the TorchScripted version of the code
+                    # correctly splits a string into single characters in
+                    # self.utf8_chars() but the non-TorchScripted version doesn't
+                    chars.extend([real_char for real_char in char])
+                else:
+                    chars.append(char)
+        decoded_chars: List[str] = []
+        for char in chars:
+            decoded_chars.append(chr(self.byte_decoder[char]))
+        return ''.join(decoded_chars)
+
+    def utf8_chars(self, s: str) -> List[str]:
+        """
+        An implementation of UTF8 character iteration in TorchScript.
+        There are no bitwise operations in torchscript, so we compare directly to
+        integer values. There isn't a lot of validation, for instance if you pass
+        in an improperly encoded string with an out-of-place continuation byte,
+        or with a non-left-to-right byte order, you'll get unexpected results
+        and likely throw. Torch itself takes in unicode strings and encodes them
+        as UTF8, so that should be actively hard to do.
+
+        The logic is simple: looking at the current start-of-character byte.
+        If its high bit is 0, it's a 1-byte character. Otherwise, the number of
+        bytes is the number of leading 1s in its binary representation, so
+        find that number by comparing it directly to ints with the appropriate
+        representation, then append that many bytes as a character and move past
+        them to the next start byte.
+
+        From pytext.torchscript.utils.
+        """
+        chars: List[str] = []
+        i = 0
+        while i < len(s):
+            byte = ord(s[i])
+            if byte < 0b10000000:
+                chars.append(s[i])
+                i += 1
+            else:
+                if byte < 0b11100000:
+                    num_bytes = 2
+                elif byte < 0b11110000:
+                    num_bytes = 3
+                elif byte < 0b11111000:
+                    num_bytes = 4
+                elif byte < 0b11111100:
+                    num_bytes = 5
+                elif byte < 0b11111110:
+                    num_bytes = 6
+                elif byte < 0b11111111:
+                    num_bytes = 7
+                else:
+                    num_bytes = 8
+                chars.append(s[i : i + num_bytes])
+                i += num_bytes
+        return chars
 
     # def sync_with_dict(self, dict_agent: ScriptableDictionaryAgent):
     #     """
@@ -670,7 +724,7 @@ class ScriptableGpt2BpeHelper(object):
     #         PathManager.copy(self.merge_path, out_merge_path)
 
 
-# @torch.jit.script
+@torch.jit.script
 class ScriptableDictionaryAgent:
     """
     Builds and/or loads a dictionary. All code is TorchScriptable.
