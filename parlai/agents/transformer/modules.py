@@ -779,7 +779,7 @@ class TransformerDecoder(nn.Module):
                 tensor, encoder_output, encoder_mask, incr_state
             )
         else:
-            new_incr_states = []
+            new_incr_state_by_layer = []
             for idx, layer in enumerate(self.layers):
                 if incr_state is not None:
                     single_layer_incr_state = {
@@ -793,10 +793,10 @@ class TransformerDecoder(nn.Module):
                     encoder_mask=encoder_mask,
                     incr_state=single_layer_incr_state,
                 )
-                new_incr_states.append(single_layer_new_incr_state)
+                new_incr_state_by_layer.append(single_layer_new_incr_state)
             new_incr_state = {
-                key: torch.stack([i[key] for i in new_incr_states], dim=0)
-                for key in new_incr_states[0].keys()
+                key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=0)
+                for key in new_incr_state_by_layer[0].keys()
             }
             # Stack all tensors with the layer idx as the 0th dimension
 
@@ -860,7 +860,7 @@ class TransformerDecoder(nn.Module):
         )
         work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
-        new_incr_state = {i: [] for i, _ in enumerate(self.layers)}
+        new_incr_state_by_layer = {i: [] for i, _ in enumerate(self.layers)}
 
         for chunk_idx, layer_nos, next_device in work_items:
             s_tensor, s_enc_out, s_enc_mask, s_incr_state = chunks[chunk_idx]
@@ -871,7 +871,7 @@ class TransformerDecoder(nn.Module):
                     encoder_mask=s_enc_mask,
                     incr_state=s_incr_state.get(layer_no),
                 )
-                new_incr_state[layer_no].append(nis)
+                new_incr_state_by_layer[layer_no].append(nis)
             # don't move incr state, it's always on the correct device
             s_tensor, s_enc_out, s_enc_mask = PipelineHelper.chunk_to(
                 (s_tensor, s_enc_out, s_enc_mask), next_device
@@ -879,10 +879,15 @@ class TransformerDecoder(nn.Module):
             chunks[chunk_idx] = (s_tensor, s_enc_out, s_enc_mask, s_incr_state)
 
         tensor_out = PipelineHelper.join([c[0] for c in chunks])
-        new_incr_state = {
+        new_incr_state_by_layer = {
             layer_no: PipelineHelper.join(pieces)
-            for layer_no, pieces in new_incr_state.items()
+            for layer_no, pieces in new_incr_state_by_layer.items()
         }
+        new_incr_state = {
+            key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=0)
+            for key in new_incr_state_by_layer[0].keys()
+        }
+        # Stack all tensors with the layer idx as the 0th dimension
 
         return tensor_out, new_incr_state
 
@@ -1028,7 +1033,9 @@ class TransformerDecoderLayer(nn.Module):
 
 
 class NegInfMixin:
-    # TODO: write docstring: basically, a way to get modules to use neginf. Avoids "Perhaps it is a closed over global variable? If so, please consider passing it in as an argument or use a local variable instead" error
+    """
+    Duplicating parlai.utils.torch.neginf() logic to bring into scope for TorchScript.
+    """
 
     def _neginf(self, dtype: torch.dtype) -> float:
         """
