@@ -4,13 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import List
-
-import torch
-import torch.nn as nn
-
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import TorchAgent
 
 
 def setup_args() -> ParlaiParser:

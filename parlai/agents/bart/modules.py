@@ -7,7 +7,7 @@ BART Module.
 """
 import torch
 import torch.nn.functional as F
-from typing import Any, Dict, Union, List, Optional
+from typing import Dict
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 

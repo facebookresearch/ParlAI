@@ -26,7 +26,7 @@ import torch.optim
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
 NEAR_INF: Final[int] = 1e20
 NEAR_INF_FP16: Final[int] = 65504
-# Final[] used to mark names as constants. See "How do I store attributes on a ScriptModule?" at https://pytorch.org/tutorials/beginner/deploy_seq2seq_hybrid_frontend_tutorial.html#changes
+# Final[] used to mark names as constants for TorchScripting
 
 # according to the tensor cores documentation from nvidia, the matmuls in fp16
 # must all be multiples of 8 in order to get the speedup from fp16. We set this
