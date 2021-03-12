@@ -395,7 +395,7 @@ jobs:
             - installtorchgpu17
             - installdetectrondeps
           install_cuda: true
-          cachename: gpu16
+          cachename: gpu17
           marker: unit
 
   long_gpu_tests:
