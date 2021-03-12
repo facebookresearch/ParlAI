@@ -12,7 +12,7 @@ RESOURCES = [
     DownloadableFile(
         'https://drive.google.com/uc?export=download&id=0B2MvoQfXtqZmMTJqclpBdGN2bmc',
         'dialog-bAbI-plus.zip',
-        'e67dfecbde5e6250833143a6148150a313204237b765d39e7b8ebc111cb3204e',
+        '3a987926ce1b782e9c95771444a98336801741c07ff44bf75bfc8a38fccbdf98',
     )
 ]
 
