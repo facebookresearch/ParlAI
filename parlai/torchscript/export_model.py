@@ -381,6 +381,8 @@ class ScriptableGpt2BpeHelper(object):
         self.encoder = encoder
         self.decoder: Dict[str, str] = {}
         for k, v in self.encoder.items():
+            assert isinstance(k, str), f'Key is actually: {k}'
+            assert isinstance(v, str), f'Value is actually: {v}'
             self.decoder[v] = k
 
         self.byte_encoder = byte_encoder
