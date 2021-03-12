@@ -110,13 +110,8 @@ class ParlaiT5Decoder(torch.nn.Module):
             self.stack.parallelize()
         encoder_output, encoder_mask = encoder_state
 
-        if incr_state is not None:
-            # We're doing incremental decoding, so select only the most recent position
-            input = input[:, -1:]
-        else:
-            incr_state = {}
         mask = input != self.padding_idx
-        mask[:, 0] = True
+        mask[:, 0] = True  # first token is pad
 
         outputs = self.stack(
             input_ids=input,
@@ -175,7 +170,7 @@ class ParlaiT5Model(TorchGeneratorModel):
         self, incremental_state: Dict[int, dict], inds: torch.Tensor
     ) -> Dict[int, dict]:
         """
-        Irrelevant as HF generates for us.
+        Not *quite* sure how to reconcile this with HF.
         """
         return {}
 

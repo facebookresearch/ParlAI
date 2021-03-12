@@ -37,7 +37,6 @@ class TestT5Model(unittest.TestCase):
     def setUp(self):
         opt = ParlaiParser(True, True).parse_args(['--model', 't5'])
         self.agent = create_agent(opt)
-        pass
 
     @set_device
     def test_small(self):
@@ -191,14 +190,6 @@ class TestT5Model(unittest.TestCase):
         self.assertEqual(translation, expected_translation)
 
     @set_device
-    def test_t5_repeat(self):
-        """
-        Test out-of-the-box T5 on repeat task.
-        """
-        valid, _ = testing_utils.eval_model(dict(task='integration_tests', model='t5'))
-        self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)
-
-    @set_device
     def test_t5_gen(self):
         """
         Test out-of-the-box T5 generation.
@@ -217,8 +208,6 @@ class TestT5Model(unittest.TestCase):
     def test_t5_ft(self):
         """
         FT T5 on a "reverse" task (the opposite of what it was trained to do).
-
-        Additionally tests model parallel
         """
         with tempdir() as tmpdir:
             # test finetuning
@@ -234,7 +223,8 @@ class TestT5Model(unittest.TestCase):
                     short_final_eval=True,
                     validation_max_exs=12,
                     model_file=mf,
-                    t5_model_parallel=True,
+                    t5_model_parallel=False,
+                    t5_model_arch='t5-small',
                 )
             )
             self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)
@@ -248,6 +238,32 @@ class TestT5Model(unittest.TestCase):
             t5.observe(obs)
             act = t5.act()
             self.assertEqual(act['text'], text[::-1])
+
+    @set_device
+    def test_t5_model_parallel(self):
+        """
+        Test model parallel.
+
+        Train on a few batches, evaluate, etc.
+        """
+        with tempdir() as tmpdir:
+            # test finetuning
+            mf = os.path.join(tmpdir, 'model')
+            valid, test = testing_utils.train_model(
+                dict(
+                    task='integration_tests:reverse',
+                    model='t5',
+                    optimizer='adam',
+                    learningrate=3e-5,
+                    batchsize=1,
+                    num_epochs=0.1,
+                    short_final_eval=True,
+                    validation_max_exs=12,
+                    model_file=mf,
+                    t5_model_parallel=True,
+                    t5_model_arch='t5-small',
+                )
+            )
 
 
 if __name__ == '__main__':
