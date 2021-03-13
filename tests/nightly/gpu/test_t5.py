@@ -38,7 +38,6 @@ class TestT5Model(unittest.TestCase):
         opt = ParlaiParser(True, True).parse_args(['--model', 't5'])
         self.agent = create_agent(opt)
 
-    @set_device
     def test_small(self):
         """
         From Huggingface.
@@ -58,7 +57,6 @@ class TestT5Model(unittest.TestCase):
         EXPECTED_SCORE = -19.0845
         self.assertAlmostEqual(score.item(), EXPECTED_SCORE, places=3)
 
-    @set_device
     def test_summarization(self):
         """
         From Huggingface.
@@ -99,7 +97,6 @@ class TestT5Model(unittest.TestCase):
 
         self.assertListEqual(expected_summaries, decoded)
 
-    @set_device
     def test_translation_en_to_de(self):
         """
         From Huggingface.
@@ -124,7 +121,6 @@ class TestT5Model(unittest.TestCase):
         )
         self.assertEqual(translation, expected_translation)
 
-    @set_device
     def test_translation_en_to_fr(self):
         """
         From Huggingface.
@@ -165,7 +161,6 @@ class TestT5Model(unittest.TestCase):
 
         self.assertEqual(translation, new_truncated_translation)
 
-    @set_device
     def test_translation_en_to_ro(self):
         """
         From Huggingface.
@@ -189,7 +184,6 @@ class TestT5Model(unittest.TestCase):
         )
         self.assertEqual(translation, expected_translation)
 
-    @set_device
     def test_t5_gen(self):
         """
         Test out-of-the-box T5 generation.
@@ -203,41 +197,27 @@ class TestT5Model(unittest.TestCase):
 
         self.assertEqual(act['text'], text)
 
-    @set_device
-    @testing_utils.retry(ntries=3, log_retry=True)
     def test_t5_ft(self):
         """
-        FT T5 on a "reverse" task (the opposite of what it was trained to do).
+        FT T5 on overfit task.
         """
         with tempdir() as tmpdir:
             # test finetuning
             mf = os.path.join(tmpdir, 'model')
             valid, test = testing_utils.train_model(
                 dict(
-                    task='integration_tests:reverse',
+                    task='integration_tests:overfit_multiturn',
                     model='t5',
-                    optimizer='adam',
-                    learningrate=3e-5,
-                    batchsize=4,
-                    num_epochs=1,
-                    short_final_eval=True,
-                    validation_max_exs=12,
+                    learningrate=1.0,
+                    batchsize=2,
+                    num_epochs=50,
                     model_file=mf,
                     t5_model_parallel=False,
                     t5_model_arch='t5-small',
                 )
             )
-            self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)
-            self.assertAlmostEqual(test['ppl'].value(), 1.0, places=1)
-
-            # test generation
-            opt = ParlaiParser(True, True).parse_args(['--model-file', mf])
-            t5 = create_agent(opt)
-            text = '1 2 3 4'
-            obs = {'text': text, 'episode_done': True}
-            t5.observe(obs)
-            act = t5.act()
-            self.assertEqual(act['text'], text[::-1])
+            self.assertLessEqual(valid['ppl'].value(), 1.5)
+            self.assertLessEqual(test['ppl'].value(), 1.5)
 
     @set_device
     def test_t5_model_parallel(self):
