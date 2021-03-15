@@ -12,8 +12,8 @@ import torch.nn as nn
 from parlai.core.agents import create_agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import TorchAgent
-from parlai.torchscript.util import setup_args
 from parlai.utils.bpe import Gpt2BpeHelper
 from parlai.utils.io import PathManager
 
@@ -31,9 +31,7 @@ def export_model(opt: Opt):
 
     print('\nGenerating given the original unscripted module:')
     original_module = JitGreedySearch(agent)
-    for input_ in inputs:
-        label = original_module(input_)
-        print("LABEL: " + label)
+    _run_conversation(module=original_module, inputs=inputs)
 
     # Script the module and save
     scripted_module = torch.jit.script(JitGreedySearch(agent))
@@ -41,9 +39,39 @@ def export_model(opt: Opt):
         torch.jit.save(scripted_module, f)
 
     print('\nGenerating given the scripted module:')
+    _run_conversation(module=scripted_module, inputs=inputs)
+
+
+def _setup_args() -> ParlaiParser:
+    parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
+    parser.add_argument(
+        '-smf',
+        '--scripted-model-file',
+        type=str,
+        default='_scripted.pt',
+        help='Where the scripted model checkpoint will be saved',
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        default="hello world",
+        help="Test input string to pass into the encoder of the scripted model. Separate lines with a pipe",
+    )
+    return parser
+
+
+def _run_conversation(module: nn.Module, inputs: List[str]):
+    """
+    Run a conversation with the given module given the input strings.
+    """
+    context = []
     for input_ in inputs:
-        label = scripted_module(input_)
+        print(' TEXT: ' + input_)
+        context.append(input_)
+        label = module('\n'.join(context))
         print("LABEL: " + label)
+        context.append(label)
 
 
 class JitGreedySearch(nn.Module):
@@ -53,7 +81,6 @@ class JitGreedySearch(nn.Module):
     Models with extra inputs will need to override to include more variables.
     """
 
-    history_vecs: List[List[int]]
     # We currently only support these specific dictionary settings
     CAIRAOKE_DICT_PARAMS = {
         "dict_class": "parlai.core.dict:DictionaryAgent",
@@ -105,7 +132,6 @@ class JitGreedySearch(nn.Module):
         )
 
         # History tracking and start/end tokens
-        self.history_vecs = []
         self.delimiter_tok = agent.history.delimiter_tok
         self.history_size = agent.opt['history_size']
         if agent.opt.get('history_add_global_end_token', None) is not None:
@@ -183,12 +209,6 @@ class JitGreedySearch(nn.Module):
     def parse(self, text: str) -> List[int]:
         return self.dict.txt2vec(text)
 
-    def _update_vecs(self, text: str):
-        if self.history_size > 0:
-            while len(self.history_vecs) >= self.history_size:
-                self.history_vecs.pop(0)
-        self.history_vecs.append(self.parse(text))
-
     def _v2t(self, vec: List[int]) -> str:
         """
         Convert token indices to string of tokens.
@@ -201,18 +221,22 @@ class JitGreedySearch(nn.Module):
                 new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def forward(self, input_: str, max_len: int = 128) -> str:
+    def forward(self, context: str, max_len: int = 128) -> str:
 
-        # Vectorize this line of context
-        print(" TEXT: " + input_)
-        self._update_vecs(input_)
+        # Vectorize all lines of context
+        history_vecs: List[List[int]] = []
+        context_lines = context.split('\n')
+        if self.history_size > 0:
+            context_lines = context_lines[-self.history_size :]
+        for line in context_lines:
+            history_vecs.append(self.parse(line))
 
         # Get full history vec
         text_vecs: List[List[int]] = []
-        for vec in self.history_vecs[:-1]:
+        for vec in history_vecs[:-1]:
             text_vecs += [vec]
             text_vecs += [self.delimiter_tok]
-        text_vecs += [self.history_vecs[-1]]
+        text_vecs += [history_vecs[-1]]
         if self.global_end_token is not None:
             text_vecs += [[self.global_end_token]]
 
@@ -278,7 +302,6 @@ class JitGreedySearch(nn.Module):
             # done, but it seems to happen early on during generation
         generation_tokens: List[int] = generations[0].tolist()
         label = self._v2t(generation_tokens)
-        self._update_vecs(label)
 
         return label
 
@@ -703,6 +726,6 @@ class ScriptableDictionaryAgent:
 
 
 if __name__ == '__main__':
-    parser_ = setup_args()
+    parser_ = _setup_args()
     opt_ = parser_.parse_args()
     export_model(opt_)
