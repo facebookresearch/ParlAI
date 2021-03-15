@@ -531,18 +531,21 @@ class FairseqBleuMetric(Metric):
         self.stat.reflen += other.stat.reflen
         return self
 
-    def precision(self):
-        def ratio(a, b):
-            return a / b if b > 0 else 0
+    def _ratio(self, a: int, b: int) -> float:
+        """
+        Safe division.
+        """
+        return a / b if b > 0 else 0
 
+    def _precision(self):
         return [
-            ratio(self.stat.match1, self.stat.count1),
-            ratio(self.stat.match2, self.stat.count2),
-            ratio(self.stat.match3, self.stat.count3),
-            ratio(self.stat.match4, self.stat.count4),
+            self._ratio(self.stat.match1, self.stat.count1),
+            self._ratio(self.stat.match2, self.stat.count2),
+            self._ratio(self.stat.match3, self.stat.count3),
+            self._ratio(self.stat.match4, self.stat.count4),
         ]
 
-    def brevity(self):
+    def _brevity(self):
         r = self.stat.reflen / self.stat.predlen
         return min(1, math.exp(1 - r))
 
@@ -552,9 +555,9 @@ class FairseqBleuMetric(Metric):
         """
         psum = sum(
             math.log(p) if p > 0 else float("-Inf")
-            for p in self.precision()[: self.order]
+            for p in self._precision()[: self.order]
         )
-        return self.brevity() * math.exp(psum / self.order) * 100
+        return self._brevity() * math.exp(psum / self.order) * 100
 
     @staticmethod
     def compute_many(

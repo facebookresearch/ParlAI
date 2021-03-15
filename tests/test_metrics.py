@@ -452,8 +452,6 @@ class TestFairseqBleuMetric(unittest.TestCase):
     def test_scorer(self):
         import random
 
-        random.seed(42)
-
         vocab_length = num_ex = 100
         ex_length = 10
         pad_idx = 0
