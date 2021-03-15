@@ -9,7 +9,6 @@ Utility methods for dealing with torch code.
 
 import os
 from typing import Union, Optional, Tuple, Any, List, Sized, TypeVar
-from typing_extensions import Final
 import itertools
 from collections import namedtuple
 import parlai.utils.logging as logging
@@ -24,9 +23,8 @@ except ImportError:
 import torch.optim
 
 """Near infinity, useful as a large penalty for scoring when inf is bad."""
-NEAR_INF: Final[int] = 1e20
-NEAR_INF_FP16: Final[int] = 65504
-# Final[] used to mark names as constants for TorchScripting
+NEAR_INF = 1e20
+NEAR_INF_FP16 = 65504
 
 # according to the tensor cores documentation from nvidia, the matmuls in fp16
 # must all be multiples of 8 in order to get the speedup from fp16. We set this

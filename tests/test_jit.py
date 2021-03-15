@@ -33,7 +33,6 @@ class TestJit(unittest.TestCase):
             datapath = tmpdir
 
             for task in tasks:
-                parser = setup_args()
                 opt = JitExport.setup_args().parse_kwargs(
                     task=task, datatype='train:ordered', datapath=datapath
                 )
