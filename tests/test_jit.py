@@ -15,7 +15,7 @@ import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
-from parlai.agents.jit import ScriptableGpt2BpeHelper
+from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
@@ -34,12 +34,9 @@ class TestJit(unittest.TestCase):
 
             for task in tasks:
                 parser = setup_args()
-                args = f"""\
---task {task}
---datatype train:ordered
---datapath {datapath}
-"""
-                opt = parser.parse_args(args.split())
+                opt = JitExport.setup_args().parse_kwargs(
+                    task=task, datatype='train:ordered', datapath=datapath
+                )
                 agent = RepeatLabelAgent(opt)
                 teacher = create_task(opt, agent).get_task_agent()
                 num_examples = teacher.num_examples()
