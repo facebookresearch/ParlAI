@@ -58,10 +58,21 @@ class Batch(AttrDict):
     """
     Batch is a namedtuple containing data being sent to an agent.
 
-    This is the input type of the train_step and eval_step functions.
-    Agents can override the batchify function to return an extended namedtuple
-    with additional fields if they would like, though we recommend calling the
-    parent function to set up these fields as a base.
+    This is the input type of the train_step and eval_step functions. Agents
+    can override the batchify function to return a Batch with additional fields
+    if they would like, though we recommend calling the parent function to set
+    up these fields as a base.
+
+    Batch objects contain some magic semantics when dealing with CUDA. Namely,
+    Batch objects have a to() method that can be used to send all tensors to
+    a particular device (GPU). This is undesireable in some instances, as some
+    fields may be used only for accumulating metrics, or are only used on CPU.
+    Prefixing a field with an underscore will prevent it from being transferred
+    to GPU.
+
+    Note that in upcoming versions of ParlAI, we will enable features for getting
+    speedups in training which work best when the number of non-Tensor objects
+    in a batch is minimal.
 
     :param text_vec:
         bsz x seqlen tensor containing the parsed text data.
@@ -74,7 +85,7 @@ class Batch(AttrDict):
         datasets have multiple labels per input example).
 
     :param valid_indices:
-        list of length bsz containing the original indices of each example in the
+        tensor of length bsz containing the original indices of each example in the
         batch. we use these to map predictions back to their proper row, since e.g.
         we may sort examples by their length or some examples may be invalid.
 
@@ -88,6 +99,9 @@ class Batch(AttrDict):
 
     :param image:
         list of image features in the format specified by the --image-mode arg.
+
+    :param reward:
+        Tensor containing the "reward" field of observations, if present
     """
 
     batchsize: int
@@ -142,8 +156,8 @@ class Batch(AttrDict):
         """
         Move all tensors in the batch to a device.
 
-        Happens in place. Note that valid_indices and fields starting with an
-        underscore are always kept on CPU.
+        Note that valid_indices and fields starting with an underscore are
+        always kept on CPU and never moved GPU.
 
         :return:
             self
@@ -2098,14 +2112,14 @@ class TorchAgent(ABC, Agent):
                 'clen', AverageMetric.many(batch._context_original_length)
             )
             self.record_local_metric(
-                'ctrun', AverageMetric.many(batch._context_truncate_rate)
+                'ctrunc', AverageMetric.many(batch._context_truncate_rate)
             )
         if batch._label_original_length is not None:
             self.record_local_metric(
                 'llen', AverageMetric.many(batch._label_original_length)
             )
             self.record_local_metric(
-                'ltrun', AverageMetric.many(batch._label_truncate_rate)
+                'ltrunc', AverageMetric.many(batch._label_truncate_rate)
             )
 
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))

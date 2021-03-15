@@ -425,7 +425,7 @@ please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issu
 | `clip`                  | Fraction of batches with clipped gradients |
 | `ctpb`                  | Context tokens per batch |
 | `ctps`                  | Context tokens per second |
-| `ctrun`                 | Fraction of samples with some context truncation |
+| `ctrunc`                | Fraction of samples with some context truncation |
 | `exps`                  | Examples per second |
 | `exs`                   | Number of examples processed since last print |
 | `f1`                    | Unigram F1 overlap, under a standardized (model-independent) tokenizer |
@@ -440,7 +440,7 @@ please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issu
 | `lr`                    | The most recent learning rate applied |
 | `ltpb`                  | Label tokens per batch |
 | `ltps`                  | Label tokens per second |
-| `ltrun`                 | Fraction of samples with some label truncation |
+| `ltrunc`                | Fraction of samples with some label truncation |
 | `rouge-1`, `rouge-1`, `rouge-L` | ROUGE metrics |
 | `token_acc`             | Token-wise accuracy (generative only) |
 | `token_em`              | Utterance-level token accuracy. Roughly corresponds to perfection under greedy search (generative only) |

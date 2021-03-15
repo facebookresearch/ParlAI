@@ -114,7 +114,7 @@ class MockTorchAgent(TorchAgent):
         """
         Return confirmation of training.
         """
-        return Output(['Training {}!'.format(i) for i in range(batch.batchsize)])
+        return Output([f'Training {i}!' for i in range(batch.batchsize)])
 
     def eval_step(self, batch):
         """
@@ -122,7 +122,7 @@ class MockTorchAgent(TorchAgent):
         """
         return Output(
             [
-                'Evaluating {} (responding to {})!'.format(i, batch.text_vec.tolist())
+                f'Evaluating {i} (responding to {batch.text_vec.tolist()})!'
                 for i in range(batch.batchsize)
             ]
         )
