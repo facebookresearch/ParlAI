@@ -62,7 +62,6 @@ class TestJit(unittest.TestCase):
     def test_jit_agent(self):
         """
         Test exporting a model to TorchScript and then testing it on sample data.
-    
         """
 
         from parlai.scripts.jit_export import JitExport
