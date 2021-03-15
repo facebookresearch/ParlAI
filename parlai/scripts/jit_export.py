@@ -13,6 +13,7 @@ from parlai.core.agents import create_agent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.bpe import Gpt2BpeHelper
 from parlai.utils.io import PathManager
@@ -42,7 +43,7 @@ def export_model(opt: Opt):
     _run_conversation(module=scripted_module, inputs=inputs)
 
 
-def _setup_args() -> ParlaiParser:
+def setup_args() -> ParlaiParser:
     parser = ParlaiParser(add_parlai_args=True, add_model_args=True)
     parser.add_argument(
         '-smf',
@@ -725,7 +726,15 @@ class ScriptableDictionaryAgent:
         return text
 
 
+@register_script('jit_export', hidden=True)
+class JitExport(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return export_model(self.opt)
+
+
 if __name__ == '__main__':
-    parser_ = _setup_args()
-    opt_ = parser_.parse_args()
-    export_model(opt_)
+    JitExport.main()

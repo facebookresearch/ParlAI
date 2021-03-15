@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Unit tests for exporting models via TorchScript.
+Unit tests for exporting models via TorchScript (i.e. JIT compilation).
 """
 
 import regex
@@ -15,11 +15,11 @@ import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
-from parlai.torchscript.export_model import ScriptableGpt2BpeHelper
+from parlai.agents.jit import ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
-class TestTorchscript(unittest.TestCase):
+class TestJit(unittest.TestCase):
     def test_token_splitter(self):
         """
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
