@@ -38,10 +38,10 @@ def export_model(opt: Opt):
 
     # Create the unscripted greedy-search module
     agent = create_agent(opt, requireModelExists=True)
-    original_module = JitGreedySearch(agent)
+    original_module = TorchScriptGreedySearch(agent)
 
     # Script the module and save
-    scripted_module = torch.jit.script(JitGreedySearch(agent))
+    scripted_module = torch.jit.script(TorchScriptGreedySearch(agent))
     with PathManager.open(opt['scripted_model_file'], 'wb') as f:
         torch.jit.save(scripted_module, f)
 
@@ -86,7 +86,7 @@ def _run_conversation(module: nn.Module, inputs: List[str]):
         context.append(label)
 
 
-class JitGreedySearch(nn.Module):
+class TorchScriptGreedySearch(nn.Module):
     """
     A helper class for exporting simple greedy-search models via TorchScript.
 
@@ -737,8 +737,8 @@ class ScriptableDictionaryAgent:
         return text
 
 
-@register_script('jit_export', hidden=True)
-class JitExport(ParlaiScript):
+@register_script('torchscript', hidden=True)
+class TorchScript(ParlaiScript):
     @classmethod
     def setup_args(cls):
         return setup_args()
@@ -748,4 +748,4 @@ class JitExport(ParlaiScript):
 
 
 if __name__ == '__main__':
-    JitExport.main()
+    TorchScript.main()

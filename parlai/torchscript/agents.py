@@ -14,7 +14,7 @@ from parlai.core.opt import Opt
 from parlai.utils.io import PathManager
 
 
-class JitAgent(Agent):
+class TorchScriptAgent(Agent):
     """
     ParlAI agent exported to TorchScript with JIT compilation and then loaded from disk.
 

@@ -4,7 +4,7 @@ This agent will read in a ParlAI agent that has been exported to TorchScript wit
 
 Sample call for exporting a BART model to TorchScript:
 ```
-parlai jit_export \
+parlai torchscript \
 --model-file ${MODEL_FILE} \
 --model bart \
 --no-cuda \
@@ -14,12 +14,14 @@ parlai jit_export \
 
 Interacting with an exported model using `parlai interactive`:
 ```
-parlai interactive --model-file ~/_test_scripted_model__bart.pt --model jit
+parlai interactive \
+--model-file ~/_test_scripted_model__bart.pt \
+--model parlai.torchscript.agents.TorchScript
 ```
 
 Loading in and running inference on an exported model, without any ParlAI overhead:
 ```
-python parlai/agents/jit/scripts/test_exported_model.py \
+python parlai/torchscript/scripts/test_exported_model.py \
 --scripted-model-file ~/_test_scripted_model__bart.pt \
 --input 'I am looking for a restaurant in the west part of town.|APIRESP: Restaurant 14 matches'
 ```

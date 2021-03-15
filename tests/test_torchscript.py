@@ -22,13 +22,13 @@ from parlai.utils.bpe import Gpt2BpeHelper
 
 @testing_utils.skipUnlessGPU
 @testing_utils.skipUnlessTorch17
-class TestJit(unittest.TestCase):
+class TestTorchScript(unittest.TestCase):
     def test_token_splitter(self):
         """
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
         """
 
-        from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
+        from parlai.scripts.torchscript import TorchScript, ScriptableGpt2BpeHelper
 
         # Params
         tasks = ['taskmaster2', 'convai2']
@@ -38,10 +38,11 @@ class TestJit(unittest.TestCase):
             datapath = tmpdir
 
             for task in tasks:
-                opt = JitExport.setup_args().parse_kwargs(
+                opt = TorchScript.setup_args().parse_kwargs(
                     task=task, datatype='train:ordered', datapath=datapath
                 )
                 agent = RepeatLabelAgent(opt)
+                # TODO(roller): make a proper create_teacher helper
                 teacher = create_task(opt, agent).get_task_agent()
                 num_examples = teacher.num_examples()
 
@@ -59,12 +60,12 @@ class TestJit(unittest.TestCase):
                     if idx + 1 == num_examples:
                         break
 
-    def test_jit_agent(self):
+    def test_torchscript_agent(self):
         """
         Test exporting a model to TorchScript and then testing it on sample data.
         """
 
-        from parlai.scripts.jit_export import JitExport
+        from parlai.scripts.torchscript import TorchScript
 
         test_phrase = "Don't have a cow, man!"  # From test_bart.py
 
@@ -73,10 +74,10 @@ class TestJit(unittest.TestCase):
             scripted_model_file = os.path.join(tmpdir, 'scripted_model.pt')
 
             # Export the BART model
-            export_opt = JitExport.setup_args().parse_kwargs(
+            export_opt = TorchScript.setup_args().parse_kwargs(
                 model='bart', scripted_model_file=scripted_model_file
             )
-            JitExport(export_opt).run()
+            TorchScript(export_opt).run()
 
             # Test the scripted BART model
             scripted_opt = ParlaiParser(True, True).parse_kwargs(
