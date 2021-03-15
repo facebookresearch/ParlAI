@@ -30,7 +30,7 @@ import parlai.utils.torch as parlai_torch
 from parlai.core.opt import Opt
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.misc import warn_once
-from parlai.utils.torch import PipelineHelper
+from parlai.utils.torch import neginf, PipelineHelper
 
 LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
 
@@ -512,7 +512,8 @@ class TransformerEncoder(nn.Module):
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ):
-    # TODO(spoff): Split TransformerEncoderLayer with and without reduction, and make type annotations always consistent
+        # TODO(spoff): Split TransformerEncoderLayer with and without reduction, and
+        # make type annotations always consistent
         """
         Forward pass.
 
@@ -1048,22 +1049,7 @@ class TransformerDecoderLayer(nn.Module):
         return mask
 
 
-class NegInfMixin:
-    """
-    Duplicating parlai.utils.torch.neginf() logic to bring into scope for TorchScript.
-    """
-
-    def _neginf(self, dtype: torch.dtype) -> float:
-        """
-        Return a representable finite number near -inf for a dtype.
-        """
-        if dtype is torch.float16:
-            return float(-parlai_torch.NEAR_INF_FP16)
-        else:
-            return float(-parlai_torch.NEAR_INF)
-
-
-class TransformerGeneratorModel(TorchGeneratorModel, NegInfMixin):
+class TransformerGeneratorModel(TorchGeneratorModel):
     """
     Implements a full generator model, with one encoder and one decoder.
     """
@@ -1137,11 +1123,11 @@ class TransformerGeneratorModel(TorchGeneratorModel, NegInfMixin):
         output = F.linear(tensor, self.embeddings.weight)
         # compatibility with fairseq: fairseq sometimes reuses BOS tokens and
         # we need to force their probability of generation to be 0.
-        output[:, :, self.start_idx] = self._neginf(output.dtype)
+        output[:, :, self.start_idx] = neginf(output.dtype)
         return output
 
 
-class BasicAttention(nn.Module, NegInfMixin):
+class BasicAttention(nn.Module):
     """
     Implements simple/classical attention.
     """
@@ -1181,7 +1167,7 @@ class BasicAttention(nn.Module, NegInfMixin):
         if mask_ys is not None:
             attn_mask = (mask_ys == 0).view(bsz, 1, y_len)
             attn_mask = attn_mask.repeat(1, x_len, 1)
-            l1.masked_fill_(attn_mask, self._neginf(l1.dtype))
+            l1.masked_fill_(attn_mask, neginf(l1.dtype))
         l2 = F.softmax(l1, dim=self.dim, dtype=torch.float).type_as(l1)
         if values is None:
             values = ys
@@ -1197,7 +1183,7 @@ class BasicAttention(nn.Module, NegInfMixin):
             return lhs_emb.squeeze(self.dim - 1)
 
 
-class MultiHeadAttention(nn.Module, NegInfMixin):
+class MultiHeadAttention(nn.Module):
     """
     Implements MultiHeadAttention; this is the core workhorse of the Transformer.
 
@@ -1344,7 +1330,7 @@ class MultiHeadAttention(nn.Module, NegInfMixin):
             .view(batch_size * n_heads, query_len, full_key_len)
         )
         assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, self._neginf(dot_prod.dtype))
+        dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
         attn_weights = F.softmax(
             dot_prod, dim=-1, dtype=torch.float  # type: ignore
