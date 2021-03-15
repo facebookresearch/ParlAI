@@ -512,6 +512,7 @@ class TransformerEncoder(nn.Module):
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ):
+    # TODO(spoff): Split TransformerEncoderLayer with and without reduction, and make type annotations always consistent
         """
         Forward pass.
 
