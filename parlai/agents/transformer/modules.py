@@ -861,8 +861,6 @@ class TransformerDecoder(nn.Module):
         chunks = PipelineHelper.split(
             (tensor, encoder_output, encoder_mask, incr_state)
         )
-        # if incr_state is not None and len(incr_state) > 0:
-        #     breakpoint()
         work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
         new_incr_state_by_layer = {i: [] for i, _ in enumerate(self.layers)}
