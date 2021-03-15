@@ -432,7 +432,7 @@ class TransformerEncoder(nn.Module):
         if self.embeddings_scale:
             tensor = tensor * math.sqrt(self.dim)
 
-        if positions.max().item() > self.n_positions and not torch.jit.is_scripting():
+        if not torch.jit.is_scripting() and positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
@@ -672,7 +672,7 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'bart'
         ):
             self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
-            if self.variant == 'xlm' and not torch.jit.is_scripting():
+            if not torch.jit.is_scripting() and self.variant == 'xlm':
                 warn_once(
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
                     'as it involves a less-stable layernorm operation.'
@@ -714,7 +714,7 @@ class TransformerDecoder(nn.Module):
     def forward_embedding(
         self,
         input: torch.LongTensor,
-        positions: torch.LongTensor,
+        positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ):
         """
@@ -735,7 +735,7 @@ class TransformerDecoder(nn.Module):
             tensor = tensor * math.sqrt(self.dim)
         if self.variant == 'xlm':
             tensor = self.norm_embeddings(tensor)
-        if positions.max().item() > self.n_positions and not torch.jit.is_scripting():
+        if not torch.jit.is_scripting() and positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
@@ -785,6 +785,7 @@ class TransformerDecoder(nn.Module):
                     single_layer_incr_state = {
                         key: val[..., idx] for key, val in incr_state.items()
                     }
+                    # Filter by layer `idx` on the last dimension of the tensor
                 else:
                     single_layer_incr_state = None
                 tensor, single_layer_new_incr_state = layer(
@@ -872,6 +873,7 @@ class TransformerDecoder(nn.Module):
                     single_layer_incr_state = {
                         key: val[..., layer_no] for key, val in s_incr_state.items()
                     }
+                    # Filter by layer `idx` on the last dimension of the tensor
                 else:
                     single_layer_incr_state = None
                 s_tensor, nis = self.layers[layer_no](
