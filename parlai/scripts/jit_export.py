@@ -26,10 +26,15 @@ def export_model(opt: Opt):
     Currently, only CPU greedy-search inference on BART models is supported.
     """
 
-    opt['no_cuda'] = True
-    # TorchScripting is CPU only
-    opt['model_parallel'] = False
-    # model_parallel is not currently supported when TorchScripting
+    overrides = {
+        'no_cuda': True,  # TorchScripting is CPU only
+        'model_parallel': False,  # model_parallel is not currently supported when TorchScripting
+    }
+    if 'override' not in opt:
+        opt['override'] = {}
+    for k, v in overrides.items():
+        opt[k] = v
+        opt['override'][k] = v
 
     # Create the unscripted greedy-search module
     agent = create_agent(opt, requireModelExists=True)
@@ -41,8 +46,8 @@ def export_model(opt: Opt):
         torch.jit.save(scripted_module, f)
 
     # Compare the original module to the scripted module against the test inputs
-    inputs = opt['input'].split('|')
-    if len(inputs) > 0:
+    if len(opt['input']) > 0:
+        inputs = opt['input'].split('|')
         print('\nGenerating given the original unscripted module:')
         _run_conversation(module=original_module, inputs=inputs)
         print('\nGenerating given the scripted module:')

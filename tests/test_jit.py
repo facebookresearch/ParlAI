@@ -70,15 +70,13 @@ class TestJit(unittest.TestCase):
 
             # Export the BART model
             export_opt = JitExport.setup_args().parse_kwargs(
-                model='bart',
-                model_file='zoo:bart/bart_large/model',
-                scripted_model_file=scripted_model_file,
+                model='bart', scripted_model_file=scripted_model_file
             )
             JitExport(export_opt).run()
 
             # Test the scripted BART model
             scripted_opt = ParlaiParser(True, True).parse_kwargs(
-                model='bart', model_file=scripted_model_file
+                model='jit', model_file=scripted_model_file
             )
             bart = create_agent(scripted_opt)
             bart.observe({'text': test_phrase, 'episode_done': True})
