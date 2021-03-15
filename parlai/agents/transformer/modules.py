@@ -836,19 +836,12 @@ class TransformerDecoder(nn.Module):
 
         tensor = self.dropout(tensor)  # --dropout
 
-        print('DECODER OUTPUT BEFORE FORWARD LAYERS: ', tensor.shape)  # TODO: remove
-
         tensor, new_incr_state = self.forward_layers(
             tensor, encoder_output, encoder_mask, incr_state
         )
 
         if self.variant == 'prelayernorm':
             tensor = self.norm_embeddings(tensor)
-
-        print('DECODER OUTPUT: ', tensor.shape)  # TODO: remove
-        print('NEW INCR STATE OUTPUTS:')  # TODO: remove
-        for k, v in new_incr_state.items():  # TODO: remove
-            print(k, v.shape)  # TODO: remove
 
         return tensor, new_incr_state
 
@@ -875,20 +868,12 @@ class TransformerDecoder(nn.Module):
         for chunk_idx, layer_nos, next_device in work_items:
             s_tensor, s_enc_out, s_enc_mask, s_incr_state = chunks[chunk_idx]
             for layer_no in layer_nos:
-                print(
-                    f'LAYER #{layer_no:d}, CHUNK #{chunk_idx:d}: ORIG TENSOR SHAPE ',
-                    s_tensor.shape,
-                )  # TODO: remove
                 s_tensor, nis = self.layers[layer_no](
                     x=s_tensor,
                     encoder_output=s_enc_out,
                     encoder_mask=s_enc_mask,
                     incr_state=s_incr_state.get(layer_no),
                 )
-                print(
-                    f'LAYER #{layer_no:d}, CHUNK #{chunk_idx:d}:  NEW TENSOR SHAPE ',
-                    s_tensor.shape,
-                )  # TODO: remove
                 new_incr_state_by_layer[layer_no].append(nis)
             # don't move incr state, it's always on the correct device
             s_tensor, s_enc_out, s_enc_mask = PipelineHelper.chunk_to(
@@ -897,8 +882,6 @@ class TransformerDecoder(nn.Module):
             chunks[chunk_idx] = (s_tensor, s_enc_out, s_enc_mask, s_incr_state)
 
         tensor_out = PipelineHelper.join([c[0] for c in chunks])
-        print('MODEL PARALLEL TENSOR IN: ', tensor.shape)  # TODO: remove
-        print('MODEL PARALLEL TENSOR OUT: ', tensor_out.shape)  # TODO: remove
         new_incr_state_by_layer = {
             layer_no: PipelineHelper.join(
                 [PipelineHelper.chunk_to(piece, 'cuda:0') for piece in pieces]
