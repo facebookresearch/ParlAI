@@ -21,6 +21,7 @@ from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
+@testing_utils.skipUnlessGPU
 @testing_utils.skipUnlessTorch17
 class TestJit(unittest.TestCase):
     def test_token_splitter(self):
