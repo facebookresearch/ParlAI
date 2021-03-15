@@ -17,13 +17,15 @@ from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
-from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
 @testing_utils.skipUnlessGPU
 @testing_utils.skipUnlessTorch17
 class TestJit(unittest.TestCase):
+
+    from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
+
     def test_token_splitter(self):
         """
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
@@ -61,6 +63,7 @@ class TestJit(unittest.TestCase):
     def test_jit_agent(self):
         """
         Test exporting a model to TorchScript and then testing it on sample data.
+    
         """
 
         test_phrase = "Don't have a cow, man!"  # From test_bart.py
