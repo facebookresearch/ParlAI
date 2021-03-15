@@ -23,13 +23,12 @@ from parlai.utils.bpe import Gpt2BpeHelper
 @testing_utils.skipUnlessGPU
 @testing_utils.skipUnlessTorch17
 class TestJit(unittest.TestCase):
-
-    from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
-
     def test_token_splitter(self):
         """
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
         """
+
+        from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
 
         # Params
         tasks = ['taskmaster2', 'convai2']
@@ -65,6 +64,8 @@ class TestJit(unittest.TestCase):
         Test exporting a model to TorchScript and then testing it on sample data.
     
         """
+
+        from parlai.scripts.jit_export import JitExport
 
         test_phrase = "Don't have a cow, man!"  # From test_bart.py
 
