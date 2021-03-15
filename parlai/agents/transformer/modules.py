@@ -783,7 +783,7 @@ class TransformerDecoder(nn.Module):
             for idx, layer in enumerate(self.layers):
                 if incr_state is not None:
                     single_layer_incr_state = {
-                        key: val[idx] for key, val in incr_state.items()
+                        key: val[..., idx] for key, val in incr_state.items()
                     }
                 else:
                     single_layer_incr_state = None
@@ -795,10 +795,10 @@ class TransformerDecoder(nn.Module):
                 )
                 new_incr_state_by_layer.append(single_layer_new_incr_state)
             new_incr_state = {
-                key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=0)
+                key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=-1)
                 for key in new_incr_state_by_layer[0].keys()
             }
-            # Stack all tensors with the layer idx as the 0th dimension
+            # Stack all tensors with the layer idx as the last dimension
 
         return tensor, new_incr_state
 
@@ -891,11 +891,11 @@ class TransformerDecoder(nn.Module):
 
         new_incr_state = {
             key: torch.stack(
-                [layer[key] for layer in new_incr_state_by_layer.values()], dim=0
+                [layer[key] for layer in new_incr_state_by_layer.values()], dim=-1
             )
             for key in new_incr_state_by_layer[0].keys()
         }
-        # Stack all tensors with the layer idx as the 0th dimension
+        # Stack all tensors with the layer idx as the last dimension
 
         return tensor_out, new_incr_state
 
@@ -1113,11 +1113,11 @@ class TransformerGeneratorModel(TorchGeneratorModel, NegInfMixin):
 
         Here, incremental_state is a dict whose keys are attention types (self- or
         enc/dec and prev key, prev value, or prev mask) and whose values are Tensors,
-        with matrices for each layer concatenated in the 0th dimension. The 1st
+        with matrices for each layer concatenated in the last dimension. The 0th
         dimension is the batch size and thus gets reindexed.
         """
         return {
-            key: torch.index_select(val, 1, inds.to(val.device)).contiguous()
+            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
             for key, val in incremental_state.items()
         }
 
