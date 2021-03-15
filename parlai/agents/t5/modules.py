@@ -8,7 +8,12 @@ Wrapped Encoders for ParlAI Use.
 """
 import torch
 from transformers import T5ForConditionalGeneration
-from transformers.models.t5.modeling_t5 import T5Stack
+
+try:
+    from transformers.models.t5.modeling_t5 import T5Stack
+except ModuleNotFoundError:
+    # Prior versions of transformers package do not have T5Stack
+    T5Stack = object
 from typing import Optional, Dict, Any, Tuple
 
 from parlai.core.opt import Opt
