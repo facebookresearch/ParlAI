@@ -14,7 +14,6 @@ import unittest
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
-from parlai.scripts.display_data import setup_args
 from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
