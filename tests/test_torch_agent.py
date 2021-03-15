@@ -1044,7 +1044,7 @@ class TestTorchAgent(unittest.TestCase):
         }
         obs = agent.observe(obs)
         agent.act()
-        self.assertEqual(agent._local_metrics['ctrun'][0].value(), 1.0)
-        self.assertEqual(agent._local_metrics['ltrun'][0].value(), 1.0)
+        self.assertEqual(agent._local_metrics['ctrunc'][0].value(), 1.0)
+        self.assertEqual(agent._local_metrics['ltrunc'][0].value(), 1.0)
         self.assertEqual(agent._local_metrics['clen'][0].value(), 9)
         self.assertEqual(agent._local_metrics['llen'][0].value(), 11)
