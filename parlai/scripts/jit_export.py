@@ -20,27 +20,33 @@ from parlai.utils.io import PathManager
 
 
 def export_model(opt: Opt):
+    """
+    Export a model to TorchScript so that inference can be run outside of ParlAI.
+
+    Currently, only CPU greedy-search inference on BART models is supported.
+    """
 
     opt['no_cuda'] = True
     # TorchScripting is CPU only
     opt['model_parallel'] = False
     # model_parallel is not currently supported when TorchScripting
 
+    # Create the unscripted greedy-search module
     agent = create_agent(opt, requireModelExists=True)
-
-    inputs = opt['input'].split('|')
-
-    print('\nGenerating given the original unscripted module:')
     original_module = JitGreedySearch(agent)
-    _run_conversation(module=original_module, inputs=inputs)
 
     # Script the module and save
     scripted_module = torch.jit.script(JitGreedySearch(agent))
     with PathManager.open(opt['scripted_model_file'], 'wb') as f:
         torch.jit.save(scripted_module, f)
 
-    print('\nGenerating given the scripted module:')
-    _run_conversation(module=scripted_module, inputs=inputs)
+    # Compare the original module to the scripted module against the test inputs
+    inputs = opt['input'].split('|')
+    if len(inputs) > 0:
+        print('\nGenerating given the original unscripted module:')
+        _run_conversation(module=original_module, inputs=inputs)
+        print('\nGenerating given the scripted module:')
+        _run_conversation(module=scripted_module, inputs=inputs)
 
 
 def setup_args() -> ParlaiParser:
@@ -56,8 +62,8 @@ def setup_args() -> ParlaiParser:
         "-i",
         "--input",
         type=str,
-        default="hello world",
-        help="Test input string to pass into the encoder of the scripted model. Separate lines with a pipe",
+        default='',
+        help="Input string to pass into the encoder of the scripted model, to test it against the unscripted version. Separate lines with a pipe",
     )
     return parser
 

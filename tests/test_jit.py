@@ -8,16 +8,20 @@
 Unit tests for exporting models via TorchScript (i.e. JIT compilation).
 """
 
+import os
 import regex
 import unittest
 
 import parlai.utils.testing as testing_utils
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser
 from parlai.core.worlds import create_task
 from parlai.scripts.jit_export import JitExport, ScriptableGpt2BpeHelper
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
+@testing_utils.skipUnlessTorch17
 class TestJit(unittest.TestCase):
     def test_token_splitter(self):
         """
@@ -52,6 +56,34 @@ class TestJit(unittest.TestCase):
                     self.assertEqual(canonical_tokens, scriptable_tokens)
                     if idx + 1 == num_examples:
                         break
+
+    def test_jit_agent(self):
+        """
+        Test exporting a model to TorchScript and then testing it on sample data.
+        """
+
+        test_phrase = "Don't have a cow, man!"  # From test_bart.py
+
+        with testing_utils.tempdir() as tmpdir:
+
+            scripted_model_file = os.path.join(tmpdir, 'scripted_model.pt')
+
+            # Export the BART model
+            export_opt = JitExport.setup_args().parse_kwargs(
+                model='bart',
+                model_file='zoo:bart/bart_large/model',
+                scripted_model_file=scripted_model_file,
+            )
+            JitExport(export_opt).run()
+
+            # Test the scripted BART model
+            scripted_opt = ParlaiParser(True, True).parse_kwargs(
+                model='bart', model_file=scripted_model_file
+            )
+            bart = create_agent(scripted_opt)
+            bart.observe({'text': test_phrase, 'episode_done': True})
+            act = bart.act()
+            self.assertEqual(act['text'], test_phrase)
 
 
 if __name__ == '__main__':
