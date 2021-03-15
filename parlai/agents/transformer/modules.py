@@ -836,12 +836,19 @@ class TransformerDecoder(nn.Module):
 
         tensor = self.dropout(tensor)  # --dropout
 
+        print('DECODER OUTPUT BEFORE FORWARD LAYERS: ', tensor.shape)
+
         tensor, new_incr_state = self.forward_layers(
             tensor, encoder_output, encoder_mask, incr_state
         )
 
         if self.variant == 'prelayernorm':
             tensor = self.norm_embeddings(tensor)
+
+        print('DECODER OUTPUT: ', tensor.shape)
+        print('NEW INCR STATE OUTPUTS:')
+        for k, v in new_incr_state.items():
+            print(k, v.shape)
 
         return tensor, new_incr_state
 
@@ -855,6 +862,9 @@ class TransformerDecoder(nn.Module):
         """
         Pipeline application of model parallelism.
         """
+        if incr_state is None:
+            # None can't be split into chunks
+            incr_state = {}
         chunks = PipelineHelper.split(
             (tensor, encoder_output, encoder_mask, incr_state)
         )
@@ -865,11 +875,19 @@ class TransformerDecoder(nn.Module):
         for chunk_idx, layer_nos, next_device in work_items:
             s_tensor, s_enc_out, s_enc_mask, s_incr_state = chunks[chunk_idx]
             for layer_no in layer_nos:
+                print(
+                    f'LAYER #{layer_no:d}, CHUNK #{chunk_idx:d}: ORIG TENSOR SHAPE ',
+                    s_tensor.shape,
+                )
                 s_tensor, nis = self.layers[layer_no](
                     x=s_tensor,
                     encoder_output=s_enc_out,
                     encoder_mask=s_enc_mask,
                     incr_state=s_incr_state.get(layer_no),
+                )
+                print(
+                    f'LAYER #{layer_no:d}, CHUNK #{chunk_idx:d}:  NEW TENSOR SHAPE ',
+                    s_tensor.shape,
                 )
                 new_incr_state_by_layer[layer_no].append(nis)
             # don't move incr state, it's always on the correct device
@@ -879,12 +897,19 @@ class TransformerDecoder(nn.Module):
             chunks[chunk_idx] = (s_tensor, s_enc_out, s_enc_mask, s_incr_state)
 
         tensor_out = PipelineHelper.join([c[0] for c in chunks])
+        print('MODEL PARALLEL TENSOR IN: ', tensor.shape)
+        print('MODEL PARALLEL TENSOR OUT: ', tensor_out.shape)
         new_incr_state_by_layer = {
-            layer_no: PipelineHelper.join(pieces)
+            layer_no: PipelineHelper.join(
+                [PipelineHelper.chunk_to(piece, 'cuda:0') for piece in pieces]
+            )
             for layer_no, pieces in new_incr_state_by_layer.items()
         }
+
         new_incr_state = {
-            key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=0)
+            key: torch.stack(
+                [layer[key] for layer in new_incr_state_by_layer.values()], dim=0
+            )
             for key in new_incr_state_by_layer[0].keys()
         }
         # Stack all tensors with the layer idx as the 0th dimension
