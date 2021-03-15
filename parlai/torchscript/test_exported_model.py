@@ -43,4 +43,6 @@ if __name__ == '__main__':
         help="Test input string to pass into the encoder of the scripted model. Separate lines with a pipe",
     )
     args = parser.parse_args()
-    test_exported_model(scripted_model_file=args.scripted_model_file, inputs=args.inputs.split('|'))
+    test_exported_model(
+        scripted_model_file=args.scripted_model_file, inputs=args.input.split('|')
+    )
