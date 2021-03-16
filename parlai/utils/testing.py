@@ -63,6 +63,14 @@ except ImportError:
     DETECTRON_AVAILABLE = False
 
 
+try:
+    import fairseq  # noqa: F401
+
+    FAIRSEQ_AVAILABLE = True
+except ImportError:
+    FAIRSEQ_AVAILABLE = False
+
+
 def is_this_circleci():
     """
     Return if we are currently running in CircleCI.
@@ -121,6 +129,13 @@ def skipUnlessDetectron(
     Decorate a test to skip unless maskrcnn_benchmark and opencv are installed.
     """
     return unittest.skipUnless(DETECTRON_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessFairseq(testfn, reason='fairseq not installed'):
+    """
+    Decorate a test to skip unless fairseq is installed.
+    """
+    return unittest.skipUnless(FAIRSEQ_AVAILABLE, reason)(testfn)
 
 
 class retry(object):

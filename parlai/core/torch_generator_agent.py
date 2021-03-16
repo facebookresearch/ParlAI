@@ -807,7 +807,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert label_vec is not None, "label_vec must exist for fairseq bleu"
         for i, t in enumerate(preds):
             result = FairseqBleuMetric.compute_many(
-                t[1:],
+                t,
                 label_vec[i].unsqueeze(0),
                 pad_idx=self.NULL_IDX,
                 end_idx=self.END_IDX,
