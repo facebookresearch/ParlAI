@@ -12,9 +12,12 @@ are GPT2 and DialoGPT. To use these models, run with `-m hugging_face/gpt2` or `
 hugging_face/dialogpt`.
 """
 try:
-    import transformers  # noqa: F401
+    import transformers
 except ImportError:
     raise ImportError('Please run `pip install transformers`.')
+
+
+version = float('.'.join(transformers.__version__.split('.')[:2]))
 
 
 class HuggingFaceAgent:

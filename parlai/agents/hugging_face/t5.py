@@ -20,17 +20,13 @@ except ModuleNotFoundError:
     # Prior versions of transformers package do not have T5Stack
     T5Stack = object
 
-
+from parlai.agents.hugging_face import version
 from parlai.agents.hugging_face.dict import T5DictionaryAgent
 
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
-
-# from parlai.agents.t5.dict import T5TokenizerDictionaryAgent
-# from parlai.agents.t5.modules import ParlaiT5Model
-# from parlai.agents.t5.task_specific_configs import
 
 
 def build_t5(opt: Opt) -> T5ForConditionalGeneration:
@@ -64,6 +60,11 @@ class T5Agent(TorchGeneratorAgent):
 
     Relies on the T5 model implemented in huggingface
     """
+
+    def __init__(self, *args, **kwargs):
+        if not version >= 4.3:
+            raise RuntimeError('Must use transformers package >= 4.3 to use t5')
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def add_cmdline_args(
