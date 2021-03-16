@@ -3,150 +3,97 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FixedDialogTeacher
+from parlai.core.teachers import DialogTeacher
 from parlai.utils.io import PathManager
+from parlai.utils.data import DatatypeHelper
 from .build import build
 import os
 import json
+import hashlib
 
 
-class CCPEAllTeacher(FixedDialogTeacher):
+class _Abstract(DialogTeacher):
     def __init__(self, opt, shared=None):
-        # store datatype
+        opt['datafile'] = DatatypeHelper.fold(opt['datatype'])
+        self.dpath = os.path.join(opt["datapath"], "CCPE")
         super().__init__(opt, shared)
 
-        dt = opt['datatype'].split(':')[0]
-        if dt != 'train':
-            raise RuntimeError('Not valid datatype (only train).')
+    def _get_turns_of_speaker(self, utts, idx, speaker):
+        result = {"speaker": speaker, "text": "", "segments": []}
+        while idx < len(utts) and utts[idx]["speaker"] == speaker:
+            if len(result["text"]) == 0:
+                result["text"] = utts[idx]["text"]
+            else:
+                result["text"] += "\n" + utts[idx]["text"]
+            result["segments"].extend(utts[idx].get("segments", []))
+            idx += 1
+        return result, idx
 
-        if shared:
-            self.data = shared['data']
-        else:
-            build(opt)
-            self._setup_data()
-
-        self.reset()
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return sum([len(x) for x in self.data])
-
-    def _setup_data(self):
-
+    def _load_data(self, fold):
         fpath = os.path.join(self.opt['datapath'], 'CCPE', 'ccpe.json')
-
         with PathManager.open(fpath, 'r') as infile:
             json_data = json.load(infile)
 
-        flattenedData = []
-        for ep in range(len(json_data)):
-            currEp = []
-            entry = {}
-            currSegments = []
-            for i, utterance in enumerate(json_data[ep]['utterances']):
-                if (
-                    i < len(json_data[ep]['utterances']) - 1
-                    and json_data[ep]['utterances'][i + 1]['speaker']
-                    == utterance['speaker']
-                ):
-                    json_data[ep]['utterances'][i + 1]['text'] = (
-                        utterance['text']
-                        + '\n'
-                        + json_data[ep]['utterances'][i + 1]['text']
-                    )
-                    currSegments.append(
-                        utterance['segments'] if 'segments' in utterance else []
-                    )
-                    continue
+        # do a 80:10:10 train/valid/test split
+        full_episode_length = len(json_data) // 10
+        if fold == 'train':
+            json_data = json_data[: full_episode_length * 8]
+        elif fold == 'valid':
+            json_data = json_data[full_episode_length * 8 : split_size * 9]
+        elif fold == 'test':
+            json_data = json_data[full_episode_length * 9 :]
 
-                if (
-                    i == len(json_data[ep]['utterances']) - 1
-                    or json_data[ep]['utterances'][i + 1]['speaker']
-                    != utterance['speaker']
-                ):
-                    entry['speaker'] = utterance['speaker']
-                    entry['text'] = utterance['text']
-                    currSegments.append(
-                        utterance['segments']
-                    ) if 'segments' in utterance else currSegments.append([])
-                    entry['segments'] = currSegments
-                    currEp.append(entry)
-                    entry = {}
-                    currSegments = []
-
-            flattenedData.append(currEp)
-
-        self.userData = []
-        self.assistantData = []
-
-        for ep in range(len(flattenedData)):
-            currUserEp = []
-            currAssistantEp = []
-
-            userCnt = 0
-            asssistantCnt = 0
-            for i, currUtt in enumerate(flattenedData[ep]):
-                if i > 0:
-                    if (
-                        currUtt['speaker'] == 'USER'
-                        and flattenedData[ep][i - 1]['speaker'] == 'ASSISTANT'
-                    ):
-                        entry = []
-                        entry.append(userCnt)
-                        entry.append(currUtt['text'])
-                        entry.append([flattenedData[ep][i - 1]['text']])
-                        entry.append(currUtt['segments'])
-                        entry.append(flattenedData[ep][i - 1]['segments'])
-                        entry.append(False)
-                        currUserEp.append(entry)
-                        userCnt += 1
-                    if (
-                        currUtt['speaker'] == 'ASSISTANT'
-                        and flattenedData[ep][i - 1]['speaker'] == 'USER'
-                    ):
-                        entry = []
-                        entry.append(asssistantCnt)
-                        entry.append(currUtt['text'])
-                        entry.append([flattenedData[ep][i - 1]['text']])
-                        entry.append(currUtt['segments'])
-                        entry.append(flattenedData[ep][i - 1]['segments'])
-                        entry.append(False)
-                        currAssistantEp.append(entry)
-                        asssistantCnt += 1
-
-            currUserEp[-1][5] = True
-            currAssistantEp[-1][5] = True
-            self.userData.append(currUserEp)
-            self.assistantData.append(currAssistantEp)
-
-        self.data = self.assistantData + self.userData
-
-    def get(self, episode_idx, entry_idx=0):
-        ep = self.data[episode_idx]
-        entry = ep[entry_idx]
-        action = {
-            'id': entry[0],
-            'text': entry[1],
-            'labels': entry[2],
-            'textSegments': entry[3],
-            'labelSegments': entry[4],
-            'episode_done': entry[5],
-        }
-        return action
-
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        return shared
+        episodes = []
+        for conversation in json_data:
+            episode = []  # Assume all turns are alternating with ASSISTANT first
+            idx = 0
+            utts = conversation["utterances"]
+            if utts[0]["speaker"] != "ASSISTANT":
+                # Make a dummy assistant turn and add a user turn
+                episode.append({"speaker": "ASSISTANT", "text": "", "segments": []})
+                turn, idx = self._get_turns_of_speaker(utts, idx, "USER")
+                episode.append(turn)
+            while idx < len(utts):
+                turn, idx = self._get_turns_of_speaker(utts, idx, "ASSISTANT")
+                episode.append(turn)
+                turn, idx = self._get_turns_of_speaker(utts, idx, "USER")
+                episode.append(turn)
+            if len(episode) % 2 != 0:
+                # Add a dummy user turn so we don't need to worry about labels
+                episode.append({"speaker": "USER", "text": "", "segments": []})
+            episodes.append(episode)
+        return episodes
 
 
-class CCPEAssistantTeacher(CCPEAllTeacher):
-    def _setup_data(self):
-        super()._setup_data()
-        self.data = self.assistantData
+class CcpeAssistantTeacher(_Abstract):
+    def setup_data(self, fold):
+        episodes = self._load_data(fold)
+        for episode in episodes:
+            for i in range(len(episode) // 2):
+                assistant_turn = episode[2 * i]
+                user_turn = episode[2 * i + 1]
+                yield {
+                    "text": assistant_turn["text"],
+                    "textSegments": assistant_turn["segments"],
+                    "label": user_turn["text"],
+                    "labelSegments": user_turn["segments"],
+                }, i == 0
 
 
-class DefaultTeacher(CCPEAllTeacher):
+class CcpeUserTeacher(_Abstract):
+    def setup_data(self, fold):
+        episodes = self._load_data(fold)
+        for episode in episodes:
+            for i in range((len(episode) // 2) - 1):
+                user_turn = episode[2 * i + 1]
+                assistant_turn = episode[2 * i + 2]
+                yield {
+                    "text": user_turn["text"],
+                    "textSegments": user_turn["segments"],
+                    "label": assistant_turn["text"],
+                    "labelSegments": assistant_turn["segments"],
+                }, i == 0
+
+
+class DefaultTeacher(CcpeAssistantTeacher):
     pass
