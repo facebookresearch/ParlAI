@@ -1041,6 +1041,21 @@ class TransformerDecoderLayer(nn.Module):
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask
 
+    def reorder_decoder_incremental_state(
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Reorder all incremental-state tensors for this layer.
+
+        Here, incremental_state is a dict whose keys are attention types (self- or
+        enc/dec and prev key, prev value, or prev mask) and whose values are Tensors.
+        The 0th dimension is the batch size and thus gets reindexed.
+        """
+        return {
+            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
+            for key, val in incremental_state.items()
+        }
+
 
 class TransformerGeneratorModel(TorchGeneratorModel):
     """
@@ -1103,10 +1118,20 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         with matrices for each layer concatenated in the last dimension. The 0th
         dimension is the batch size and thus gets reindexed.
         """
+        new_incr_state_by_layer = []
+        for idx, layer in enumerate(self.decoder.layers):
+            single_layer_incr_state = {
+                key: val[..., idx] for key, val in incremental_state.items()
+            }
+            # Filter by layer `idx` on the last dimension of the tensor
+            new_incr_state_by_layer.append(
+                layer.reorder_decoder_incremental_state(single_layer_incr_state, inds)
+            )
         return {
-            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
-            for key, val in incremental_state.items()
+            key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=-1)
+            for key in new_incr_state_by_layer[0].keys()
         }
+        # Stack all tensors with the layer idx as the last dimension
 
     def output(self, tensor):
         """
