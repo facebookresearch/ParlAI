@@ -21,7 +21,7 @@ try:
     from parlai.agents.hugging_face.t5 import set_device
 
     HF_AVAILABLE = True
-except ModuleNotFoundError:
+except ImportError:
     TASK_CONFIGS = set_device = None
 
     HF_AVAILABLE = False
