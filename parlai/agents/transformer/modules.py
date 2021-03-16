@@ -441,7 +441,7 @@ class TransformerEncoder(nn.Module):
         position_embs = self.position_embeddings(positions).expand_as(tensor)
         tensor = tensor + position_embs
 
-        if hasattr(self, 'segment_embeddings'):
+        if self.n_segments >= 1:
             if segments is None:
                 segments = torch.zeros_like(input)  # type: ignore
             tensor = tensor + self.segment_embeddings(segments)
@@ -470,8 +470,8 @@ class TransformerEncoder(nn.Module):
             ), 'model_parallel not currently supported when TorchScripting!'
             tensor = self._apply_model_parallel(tensor, mask)
         else:
-            for layer in self.layers:
-                tensor = layer(tensor, mask)
+            for i in range(self.n_layers):
+                tensor = self.layers[i](tensor, mask)
 
         return tensor
 
@@ -1261,6 +1261,18 @@ class MultiHeadAttention(nn.Module):
         dim_per_head = dim // n_heads
         scale = math.sqrt(dim_per_head)
 
+        def prepare_head(tensor):
+            # input is [batch_size, seq_len, n_heads * dim_per_head]
+            # output is [batch_size * n_heads, seq_len, dim_per_head]
+            bsz, seq_len, _ = tensor.size()
+            tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
+            tensor = (
+                tensor.transpose(1, 2)
+                .contiguous()
+                .view(batch_size * n_heads, seq_len, dim_per_head)
+            )
+            return tensor
+
         # q, k, v are the transformed values
         if key is None and value is None:
             # self attention
@@ -1274,10 +1286,9 @@ class MultiHeadAttention(nn.Module):
         assert key is not None  # let mypy know we sorted this
         _, _key_len, dim = key.size()
 
-        assert value is not None  # For TorchScript typing check
-        q = self._prepare_head(self.q_lin(query), batch_size, n_heads, dim_per_head)
-        k = self._prepare_head(self.k_lin(key), batch_size, n_heads, dim_per_head)
-        v = self._prepare_head(self.v_lin(value), batch_size, n_heads, dim_per_head)
+        q = prepare_head(self.q_lin(query))
+        k = prepare_head(self.k_lin(key))
+        v = prepare_head(self.v_lin(value))
 
         # Prepend incremental states. For each of the key, value, and mask, see if
         # a previous incremental state exists, and if so, reshape it to match the shape
