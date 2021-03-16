@@ -81,7 +81,7 @@ class TestTorchScript(unittest.TestCase):
 
             # Test the scripted BART model
             scripted_opt = ParlaiParser(True, True).parse_kwargs(
-                model='parlai.torchscript.agents.TorchScript',
+                model='parlai.torchscript.agents:TorchScriptAgent',
                 model_file=scripted_model_file,
             )
             bart = create_agent(scripted_opt)

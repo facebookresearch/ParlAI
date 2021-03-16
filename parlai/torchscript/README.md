@@ -16,7 +16,7 @@ Interacting with an exported model using `parlai interactive`:
 ```
 parlai interactive \
 --model-file ~/_test_scripted_model__bart.pt \
---model parlai.torchscript.agents.TorchScript
+--model parlai.torchscript.agents:TorchScriptAgent
 ```
 
 Loading in and running inference on an exported model, without any ParlAI overhead:
