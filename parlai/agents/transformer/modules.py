@@ -17,7 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 import math
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Union
 
 import numpy as np
 import torch
@@ -510,7 +510,7 @@ class TransformerEncoder(nn.Module):
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
-    ):
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
         # TODO(spoff): Split TransformerEncoderLayer with and without reduction, and
         # make type annotations always consistent
         """
@@ -605,7 +605,7 @@ class TransformerEncoderLayer(nn.Module):
         residual = tensor
         if self.variant == 'prelayernorm':
             tensor = self.norm1(tensor)
-        attended_tensor = self.attention(tensor, key=None, value=None, mask=mask)[0]
+        attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = self.norm1(tensor)
@@ -981,14 +981,8 @@ class TransformerDecoderLayer(nn.Module):
         else:
             self_attn_incr_state = None
         x, final_self_attn_incr_state = self.self_attention(
-            query=x,
-            key=None,
-            value=None,
-            mask=decoder_mask,
-            incr_state=self_attn_incr_state,
-            static_kv=False,
+            query=x, mask=decoder_mask, incr_state=self_attn_incr_state, static_kv=False
         )[:2]
-        # Problematic to set None as default with type Optional[torch.Tensor]
         x = self.dropout(x)  # --dropout
         x = x + residual
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
@@ -1207,26 +1201,14 @@ class MultiHeadAttention(nn.Module):
 
         nn.init.xavier_normal_(self.out_lin.weight)
 
-    def _prepare_head(self, tensor, batch_size: int, n_heads: int, dim_per_head: int):
-        # input is [batch_size, seq_len, n_heads * dim_per_head]
-        # output is [batch_size * n_heads, seq_len, dim_per_head]
-        bsz, seq_len, _ = tensor.size()
-        tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
-        tensor = (
-            tensor.transpose(1, 2)
-            .contiguous()
-            .view(batch_size * n_heads, seq_len, dim_per_head)
-        )
-        return tensor
-
     def forward(  # type: ignore
         # TODO: remove type ignore with pytorch 1.5:
         # https://github.com/pytorch/pytorch/pull/31057
         self,
         query: torch.Tensor,
-        key: Optional[torch.Tensor],
-        value: Optional[torch.Tensor],
-        mask: torch.Tensor,
+        key: Optional[torch.Tensor] = None,
+        value: Optional[torch.Tensor] = None,
+        mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
