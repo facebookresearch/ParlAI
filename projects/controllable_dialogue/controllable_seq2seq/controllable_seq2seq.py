@@ -684,11 +684,9 @@ class ControllableSeq2seqAgent(TorchAgent):
         if self.use_cuda and ctrl_vec is not None:
             ctrl_vec = ctrl_vec.cuda()
 
-        # Replace the old namedtuple with a new one that includes ctrl_vec and history
-        ControlBatch = namedtuple(
-            'Batch', tuple(batch.keys()) + ('ctrl_vec', 'history')
-        )
-        batch = ControlBatch(ctrl_vec=ctrl_vec, history=history, **dict(batch))
+        # include our specialty objects in batch
+        batch['ctrl_vec'] = ctrl_vec
+        batch['history'] = history
 
         return batch
 
@@ -780,9 +778,7 @@ class ControllableSeq2seqAgent(TorchAgent):
             [max([cand.size(0) for cand in cands_i]) for cands_i in cands]
         )
         for i, c in enumerate(cands):
-            cands[i] = padded_tensor(c, use_cuda=self.use_cuda, max_len=max_cands_len)[
-                0
-            ].unsqueeze(0)
+            cands[i] = padded_tensor(c, max_len=max_cands_len)[0].unsqueeze(0)
         cands = torch.cat(cands, 0)
         return cands, cand_inds
 
@@ -865,7 +861,7 @@ class ControllableSeq2seqAgent(TorchAgent):
         current_device = encoder_states[0][0].device
         vocab_size = len(dictionary)
 
-        batch_size = len(batch.text_lengths)
+        batch_size = batch.batchsize
         beams = [
             Beam(
                 beam_size,

@@ -37,7 +37,7 @@ LOGFILE_DATE_FORMAT = None
 
 COLORED_LEVEL_STYLES = {
     'spam': {'color': 'white', 'faint': True},
-    'debug': {'faint': True},
+    'debug': {'color': 'green', 'faint': True},
     'verbose': {'color': 'blue'},
     'error': {'color': 'red'},
     'info': {},
