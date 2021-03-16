@@ -1041,7 +1041,7 @@ class TransformerDecoderLayer(nn.Module):
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask
 
-    def reorder_decoder_incremental_state(
+    def reorder_incremental_state(
         self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
     ) -> Dict[str, torch.Tensor]:
         """
@@ -1125,7 +1125,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             }
             # Filter by layer `idx` on the last dimension of the tensor
             new_incr_state_by_layer.append(
-                layer.reorder_decoder_incremental_state(single_layer_incr_state, inds)
+                layer.reorder_incremental_state(single_layer_incr_state, inds)
             )
         return {
             key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=-1)
