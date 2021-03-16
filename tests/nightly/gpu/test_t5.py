@@ -22,7 +22,8 @@ try:
 
     HF_AVAILABLE = True
 except ImportError:
-    TASK_CONFIGS = set_device = None
+    TASK_CONFIGS = None
+    set_device = unittest.skip
 
     HF_AVAILABLE = False
 
