@@ -27,7 +27,6 @@ import warnings
 import torch
 import parlai.utils.logging as logging
 from torch import optim
-import fairscale
 
 from parlai.core.opt import Opt
 from parlai.core.agents import Agent
@@ -387,22 +386,10 @@ class TorchAgent(ABC, Agent):
             if not k.startswith('__') and k[0].isupper()
         }
         try:
-            import apex.optimizers.fused_adam as fused_adam
-            import apex.optimizers.fused_lamb as fused_lamb
+            from fairscale.optim import Adam as FusedAdam
 
-            optims['fused_adam'] = fused_adam.FusedAdam
-            optims['fused_lamb'] = fused_lamb.FusedLAMB
+            optims['fusedadam'] = FusedAdam
         except ImportError:
-            pass
-
-        try:
-            # https://openreview.net/pdf?id=S1fUpoR5FQ
-            from qhoptim.pyt import QHM, QHAdam
-
-            optims['qhm'] = QHM
-            optims['qhadam'] = QHAdam
-        except ImportError:
-            # no QHM installed
             pass
 
         # now pull in memory efficient implementations
