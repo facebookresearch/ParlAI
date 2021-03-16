@@ -15,8 +15,16 @@ import os
 import torch
 import unittest
 
-from parlai.agents.t5.task_specific_configs import TASK_CONFIGS
-from parlai.agents.t5.modules import set_device
+try:
+    from parlai.agents.hugging_face.t5 import TASK_CONFIGS
+    from parlai.agents.hugging_face.t5 import set_device
+
+    HF_AVAILABLE = True
+except ModuleNotFoundError:
+    TASK_CONFIGS = set_device = None
+
+    HF_AVAILABLE = False
+
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch
@@ -29,13 +37,14 @@ device = 'cpu' if not torch.cuda.is_available() else 'cuda:0'
 
 
 @testing_utils.skipUnlessGPU
+@unittest.skipUnless(HF_AVAILABLE, 'Must install transformers to run this test')
 class TestT5Model(unittest.TestCase):
     """
     Test of T5 model.
     """
 
     def setUp(self):
-        opt = ParlaiParser(True, True).parse_args(['--model', 't5'])
+        opt = ParlaiParser(True, True).parse_args(['--model', 'hugging_face/t5'])
         self.agent = create_agent(opt)
 
     def test_small(self):
@@ -43,7 +52,7 @@ class TestT5Model(unittest.TestCase):
         From Huggingface.
         """
         opt = ParlaiParser(True, True).parse_args(
-            ['--model', 't5', '--t5-model-arch', 't5-small', '--no-cuda']
+            ['--model', 'hugging_face/t5', '--t5-model-arch', 't5-small', '--no-cuda']
         )
         agent_small = create_agent(opt)
         text_vec = torch.LongTensor(agent_small.dict.txt2vec("Hello there")).unsqueeze(
@@ -188,7 +197,7 @@ class TestT5Model(unittest.TestCase):
         """
         Test out-of-the-box T5 generation.
         """
-        opt = ParlaiParser(True, True).parse_args(['--model', 't5'])
+        opt = ParlaiParser(True, True).parse_args(['--model', 'hugging_face/t5'])
         t5 = create_agent(opt)
         text = "Don't have a cow, Man!"
         obs = {"text": text, 'episode_done': True}
@@ -207,7 +216,7 @@ class TestT5Model(unittest.TestCase):
             valid, test = testing_utils.train_model(
                 dict(
                     task='integration_tests:overfit_multiturn',
-                    model='t5',
+                    model='hugging_face/t5',
                     learningrate=1.0,
                     batchsize=2,
                     num_epochs=50,
@@ -232,7 +241,7 @@ class TestT5Model(unittest.TestCase):
             valid, test = testing_utils.train_model(
                 dict(
                     task='integration_tests:reverse',
-                    model='t5',
+                    model='hugging_face/t5',
                     optimizer='adam',
                     learningrate=3e-5,
                     batchsize=1,

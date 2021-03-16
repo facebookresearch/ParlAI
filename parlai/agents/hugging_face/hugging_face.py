@@ -21,5 +21,6 @@ class HuggingFaceAgent:
     def __init__(self, opt, shared=None):
         raise RuntimeError(
             '`-m hugging_face` is not a valid choice. Please run with '
-            '`-m hugging_face/gpt2` or `-m hugging_face/dialogpt`.'
+            '`-m hugging_face/gpt2`, `-m hugging_face/dialogpt`, '
+            'or `-m hugging_face/t5`'
         )

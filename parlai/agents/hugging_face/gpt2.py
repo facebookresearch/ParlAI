@@ -40,7 +40,7 @@ class GPT2Decoder(torch.nn.Module):
         # add special tokens
         if opt["add_special_tokens"]:
             size_before = self.transformer.wte.weight.size(0)
-            self.transformer.resize_token_embeddings(len(dict.tokenizer))
+            self.transformer.resize_token_embeddings(len(dict.hf_tokenizer))
             with torch.no_grad():
                 # first reduce the random jitter of the initialization
                 self.transformer.wte.weight[size_before:] *= 0.1
