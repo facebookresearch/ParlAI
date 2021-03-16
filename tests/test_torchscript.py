@@ -28,7 +28,8 @@ class TestTorchScript(unittest.TestCase):
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
         """
 
-        from parlai.scripts.torchscript import TorchScript, ScriptableGpt2BpeHelper
+        from parlai.scripts.torchscript import TorchScript
+        from parlai.torchscript.modules import ScriptableGpt2BpeHelper
 
         # Params
         tasks = ['taskmaster2', 'convai2']
