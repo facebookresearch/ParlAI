@@ -35,13 +35,13 @@ class _Abstract(DialogTeacher):
             json_data = json.load(infile)
 
         # do a 80:10:10 train/valid/test split
-        full_episode_length = len(json_data) // 10
+        full_episode_count = len(json_data) // 10
         if fold == 'train':
-            json_data = json_data[: full_episode_length * 8]
+            json_data = json_data[: full_episode_count * 8]
         elif fold == 'valid':
-            json_data = json_data[full_episode_length * 8 : split_size * 9]
+            json_data = json_data[full_episode_count * 8 : full_episode_count * 9]
         elif fold == 'test':
-            json_data = json_data[full_episode_length * 9 :]
+            json_data = json_data[full_episode_count * 9 :]
 
         episodes = []
         for conversation in json_data:
@@ -69,30 +69,38 @@ class CcpeAssistantTeacher(_Abstract):
     def setup_data(self, fold):
         episodes = self._load_data(fold)
         for episode in episodes:
+            first = True
             for i in range(len(episode) // 2):
                 assistant_turn = episode[2 * i]
                 user_turn = episode[2 * i + 1]
+                if len(assistant_turn["text"]) == 0:
+                    continue  # trains fail otherwise
                 yield {
                     "text": assistant_turn["text"],
                     "textSegments": assistant_turn["segments"],
                     "label": user_turn["text"],
                     "labelSegments": user_turn["segments"],
-                }, i == 0
+                }, first
+                first = False
 
 
 class CcpeUserTeacher(_Abstract):
     def setup_data(self, fold):
         episodes = self._load_data(fold)
         for episode in episodes:
+            first = True
             for i in range((len(episode) // 2) - 1):
                 user_turn = episode[2 * i + 1]
                 assistant_turn = episode[2 * i + 2]
+                if len(user_turn["text"]) == 0:
+                    continue  # trains fail otherwise
                 yield {
                     "text": user_turn["text"],
                     "textSegments": user_turn["segments"],
                     "label": assistant_turn["text"],
                     "labelSegments": assistant_turn["segments"],
                 }, i == 0
+                first = False
 
 
 class DefaultTeacher(CcpeAssistantTeacher):
