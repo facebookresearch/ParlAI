@@ -1652,11 +1652,8 @@ class TorchAgent(ABC, Agent):
         valid_inds, exs = zip(*valid_obs)
 
         # TEXT
-        xs = (
-            x_lens
-        ) = (
-            context_original_lengths
-        ) = context_truncate_rate = context_truncated_lengths = None
+        xs = x_lens = context_original_lengths = None
+        context_truncate_rate = context_truncated_lengths = None
         if any(ex.get('text_vec') is not None for ex in exs):
             if any('context_original_length' in ex for ex in exs):
                 context_truncate_rate = torch.LongTensor(
@@ -1681,13 +1678,8 @@ class TorchAgent(ABC, Agent):
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
-        ys = (
-            y_lens
-        ) = (
-            labels
-        ) = (
-            label_original_lengths
-        ) = label_truncate_rate = label_truncated_lengths = None
+        ys = y_lens = labels = label_original_lengths = None
+        label_truncate_rate = label_truncated_lengths = None
         if some_labels_avail:
             if any('label_original_length' in ex for ex in exs):
                 label_truncate_rate = torch.LongTensor(
