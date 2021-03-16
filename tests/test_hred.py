@@ -48,14 +48,13 @@ class TestHred(unittest.TestCase):
                 model_file="zoo:unittest/hred_model/model",
                 dict_file="zoo:unittest/hred_model/model.dict",
                 skip_generation=False,
-                batchsize=32,
+                batchsize=1,
             )
         )
 
         self.assertLess(valid["ppl"], 1.2)
         self.assertLess(test["ppl"], 1.2)
 
-    @testing_utils.retry(ntries=3)
     def test_beamsearch(self):
         """
         Ensures beam search can generate the correct response.

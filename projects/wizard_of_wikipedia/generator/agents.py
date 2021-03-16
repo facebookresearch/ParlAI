@@ -265,7 +265,7 @@ class EndToEndAgent(_GenericWizardAgent):
             for k in flattened_knowledge
         ]
         knowledge_vec, _ = padded_tensor(
-            knowledge_vec, self.NULL_IDX, self.use_cuda, left_padded=True
+            knowledge_vec, pad_idx=self.NULL_IDX, left_padded=True
         )
         knowledge_vec[:, -1] = self.END_IDX
         T = knowledge_vec.size(-1)

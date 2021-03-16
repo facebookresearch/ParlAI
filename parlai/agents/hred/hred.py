@@ -129,26 +129,15 @@ class HredAgent(TorchGeneratorAgent):
         Store history vec as context_vec.
         """
         batch = super().batchify(obs_batch, sort)
-        batch["context_vec"], batch["hist_lens"] = self.parse_context_vec(batch)
-        return batch
-
-    def parse_context_vec(self, batch):
-        batch_context_vec = []
-        hist_lens = []
-        for i in range(len(batch["observations"])):
-            hist_len = len(batch["observations"][i]["context_vec"])
-            hist_lens.append(hist_len)
-            for j in range(hist_len):
-                context_vec = batch["observations"][i]["context_vec"][j]
-                batch_context_vec.append(torch.tensor(context_vec, device=self.device))
-
-        padded_context_vec = torch.nn.utils.rnn.pad_sequence(
-            batch_context_vec, batch_first=True
-        ).squeeze(1)
-        return (
-            padded_context_vec,
-            torch.tensor(hist_lens, dtype=torch.long, device=self.device),
+        # sum here is list concat, not addition
+        context_vec, hist_lens_ = self._pad_tensor(
+            sum([obs_batch[i]['context_vec'] for i in batch.valid_indices], [])
         )
+        batch['context_vec'] = context_vec
+        batch['hist_lens'] = torch.LongTensor(
+            [len(obs_batch[i]['context_vec']) for i in batch.valid_indices]
+        )
+        return batch
 
     def _model_input(self, batch):
         return (batch.text_vec, batch.context_vec, batch.hist_lens)
@@ -175,6 +164,7 @@ class HredAgent(TorchGeneratorAgent):
             if history_string:
                 history_vec = history.get_history_vec_list()
                 obs["text_vec"] = history_vec[-1]
+                obs["full_text_vec"] = history.get_history_vec()
                 obs["context_vec"] = history_vec
 
         # check truncation

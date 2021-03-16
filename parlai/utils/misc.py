@@ -659,6 +659,11 @@ def str_to_msg(txt, ignore_fields=''):
             or key == 'text_candidates'
         ):
             return tolist(value)
+        elif key == 'reward':
+            try:
+                return int(value)
+            except ValueError:
+                return float(value)
         elif key == 'episode_done':
             return bool(value)
         else:

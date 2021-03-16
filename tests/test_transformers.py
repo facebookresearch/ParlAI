@@ -545,13 +545,6 @@ class TestTransformerGenerator(TestTransformerBase):
         except ImportError:
             # fairseq not installed, let's just move on
             pass
-        try:
-            import nltk  # noqa: F401
-
-            assert valid['nltk_bleu1'] > 0.9
-        except ImportError:
-            # nltk not installed, let's just move on
-            pass
 
     def test_asymmetry(self):
         opt = Opt({'model': 'transformer/generator', 'n_layers': 1})

@@ -297,9 +297,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             and batch.memory_vecs is not None
             and sum(len(m) for m in batch.memory_vecs)
         ):
-            mems = padded_3d(
-                batch.memory_vecs, use_cuda=self.use_cuda, pad_idx=self.NULL_IDX
-            )
+            mems = padded_3d(batch.memory_vecs, pad_idx=self.NULL_IDX)
         else:
             mems = None
 
