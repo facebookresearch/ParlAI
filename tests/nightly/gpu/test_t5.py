@@ -16,6 +16,7 @@ import torch
 import unittest
 
 try:
+    import transformers  # noqa
     from parlai.agents.hugging_face.t5 import TASK_CONFIGS
     from parlai.agents.hugging_face.t5 import set_device
 
