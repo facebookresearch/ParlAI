@@ -81,7 +81,7 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
     @abstractproperty
     def skip_decode_special_tokens(self) -> bool:
         """
-        Whether to skip special tokens when converting tokens to text
+        Whether to skip special tokens when converting tokens to text.
         """
 
     def share(self):
@@ -132,7 +132,7 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
     @property
     def skip_decode_special_tokens(self) -> bool:
         """
-        Whether to skip special tokens when converting tokens to text
+        Whether to skip special tokens when converting tokens to text.
         """
         return False
 
