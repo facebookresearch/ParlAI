@@ -58,31 +58,34 @@ class Batch(AttrDict):
     """
     Batch is a namedtuple containing data being sent to an agent.
 
-    This is the input type of the train_step and eval_step functions.
-    Agents can override the batchify function to return an extended namedtuple
-    with additional fields if they would like, though we recommend calling the
-    parent function to set up these fields as a base.
+    This is the input type of the train_step and eval_step functions. Agents
+    can override the batchify function to return a Batch with additional fields
+    if they would like, though we recommend calling the parent function to set
+    up these fields as a base.
+
+    Batch objects contain some magic semantics when dealing with CUDA. Namely,
+    Batch objects have a to() method that can be used to send all tensors to
+    a particular device (GPU). This is undesireable in some instances, as some
+    fields may be used only for accumulating metrics, or are only used on CPU.
+    Prefixing a field with an underscore will prevent it from being transferred
+    to GPU.
+
+    Note that in upcoming versions of ParlAI, we will enable features for getting
+    speedups in training which work best when the number of non-Tensor objects
+    in a batch is minimal.
 
     :param text_vec:
         bsz x seqlen tensor containing the parsed text data.
 
-    :param text_lengths:
-        list of length bsz containing the lengths of the text in same order as
-        text_vec; necessary for pack_padded_sequence.
-
     :param label_vec:
         bsz x seqlen tensor containing the parsed label (one per batch row).
-
-    :param label_lengths:
-        list of length bsz containing the lengths of the labels in same order as
-        label_vec.
 
     :param labels:
         list of length bsz containing the selected label for each batch row (some
         datasets have multiple labels per input example).
 
     :param valid_indices:
-        list of length bsz containing the original indices of each example in the
+        tensor of length bsz containing the original indices of each example in the
         batch. we use these to map predictions back to their proper row, since e.g.
         we may sort examples by their length or some examples may be invalid.
 
@@ -97,21 +100,22 @@ class Batch(AttrDict):
     :param image:
         list of image features in the format specified by the --image-mode arg.
 
-    :param observations:
-        the original observations in the batched order
+    :param reward:
+        Tensor containing the "reward" field of observations, if present
     """
 
     batchsize: int
     text_vec: Optional[torch.LongTensor]
-    text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]
-    label_lengths: Optional[List[int]]
     labels: Optional[List[str]]
-    valid_indices: Optional[List[int]]
+    valid_indices: Optional[torch.LongTensor]
     candidates: Optional[List[List[str]]]
     candidate_vecs: Optional[List[List[torch.LongTensor]]]
     image: Optional[List[Any]]
-    observations: Optional[List[Message]]
+    _context_original_length: Optional[torch.LongTensor]
+    _context_truncate_rate: Optional[torch.LongTensor]
+    _label_original_length: Optional[torch.LongTensor]
+    _label_truncate_rate: Optional[torch.LongTensor]
 
     def __init__(
         self,
@@ -123,8 +127,12 @@ class Batch(AttrDict):
         valid_indices=None,
         candidates=None,
         candidate_vecs=None,
+        reward=None,
         image=None,
-        observations=None,
+        _context_original_length: Optional[torch.LongTensor] = None,
+        _context_truncate_rate: Optional[torch.LongTensor] = None,
+        _label_original_length: Optional[torch.LongTensor] = None,
+        _label_truncate_rate: Optional[torch.LongTensor] = None,
         **kwargs,
     ):
         super().__init__(
@@ -137,9 +145,49 @@ class Batch(AttrDict):
             candidates=candidates,
             candidate_vecs=candidate_vecs,
             image=image,
-            observations=observations,
+            _context_original_length=_context_original_length,
+            _context_truncate_rate=_context_truncate_rate,
+            _label_original_length=_label_original_length,
+            _label_truncate_rate=_label_truncate_rate,
             **kwargs,
         )
+
+    def to(self, dev):
+        """
+        Move all tensors in the batch to a device.
+
+        Note that valid_indices and fields starting with an underscore are
+        always kept on CPU and never moved GPU.
+
+        :return:
+            self
+        """
+        for key in self.keys():
+            # never move valid_indices or keys starting with a _
+            if key == 'valid_indices' or key.startswith('_'):
+                continue
+            if torch.is_tensor(self[key]):
+                self[key] = self[key].to(dev)
+        # just to enable batch = batch.to(dev) idomatics
+        return self
+
+    def __repr__(self):
+        output = ['Batch({']
+        for key in sorted(self.keys()):
+            value = self[key]
+            if key == 'observations' and value is None:
+                output.append(f'  {key}: {value} (use --debug to include),')
+            elif value is None:
+                output.append(f'  {key}: {value},')
+            elif isinstance(value, torch.Tensor):
+                typ = value.type().replace("torch.", "")
+                shape = ", ".join(str(s) for s in value.shape)
+                output.append(f'  {key}: {typ}[{shape}],')
+            else:
+                s = repr(value)
+                output.append(f'  {key}: {s},')
+        output.append('})')
+        return "\n".join(output)
 
 
 class Output(AttrDict):
@@ -689,6 +737,7 @@ class TorchAgent(ABC, Agent):
         Initialize agent.
         """
         super().__init__(opt, shared)
+        self.is_debug = opt.get('is_debug', False)
         opt = self.opt
 
         # Safety checkers to ensure TorchAgent assumptions aren't being violated.
@@ -1383,7 +1432,6 @@ class TorchAgent(ABC, Agent):
 
         Useful to override to change vectorization behavior
         """
-
         if 'text' not in obs:
             return obs
 
@@ -1407,8 +1455,8 @@ class TorchAgent(ABC, Agent):
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
             )
-            obs.force_set('original_context_length', text_length)
-            obs.force_set('if_context_truncate', text_length != len(truncated_vec))
+            obs.force_set('context_original_length', text_length)
+            obs.force_set('context_truncate_rate', text_length != len(truncated_vec))
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
@@ -1434,8 +1482,8 @@ class TorchAgent(ABC, Agent):
             # check truncation of pre-computed vector
             vec_label_length = len(obs[label_type + '_vec'])
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
-            obs.force_set('original_label_length', vec_label_length)
-            obs.force_set('if_label_truncate', vec_label_length > len(truncated_vec))
+            obs.force_set('label_original_length', vec_label_length)
+            obs.force_set('label_truncate_rate', vec_label_length > len(truncated_vec))
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
@@ -1444,8 +1492,8 @@ class TorchAgent(ABC, Agent):
             vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
                 label, add_start, add_end, truncate, False
             )
-            obs.force_set('original_label_length', vec_label_length)
-            obs.force_set('if_label_truncate', vec_label_truncated)
+            obs.force_set('label_original_length', vec_label_length)
+            obs.force_set('label_truncate_rate', vec_label_truncated)
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -1543,13 +1591,7 @@ class TorchAgent(ABC, Agent):
         This is intentionally overridable so that models can control how
         to pad their input.
         """
-        return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            fp16friendly=self.fp16,
-            device=self.opt['gpu'],
-        )
+        return padded_tensor(items, pad_idx=self.NULL_IDX, fp16friendly=self.fp16)
 
     def is_valid(self, obs):
         """
@@ -1595,8 +1637,15 @@ class TorchAgent(ABC, Agent):
         valid_inds, exs = zip(*valid_obs)
 
         # TEXT
-        xs, x_lens = None, None
+        xs = x_lens = context_original_lengths = context_truncate_rate = None
         if any(ex.get('text_vec') is not None for ex in exs):
+            if any('context_original_length' in ex for ex in exs):
+                context_truncate_rate = torch.LongTensor(
+                    [ex.get('context_truncate_rate', 0) for ex in exs]
+                )
+                context_original_lengths = torch.LongTensor(
+                    [ex.get('context_original_length', 0) for ex in exs]
+                )
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = self._pad_tensor(_xs)
             if sort:
@@ -1609,8 +1658,15 @@ class TorchAgent(ABC, Agent):
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
-        ys, y_lens, labels = None, None, None
+        ys = y_lens = labels = label_original_lengths = label_truncate_rate = None
         if some_labels_avail:
+            if any('label_original_length' in ex for ex in exs):
+                label_truncate_rate = torch.LongTensor(
+                    [ex.get('label_truncate_rate', 0) for ex in exs]
+                )
+                label_original_lengths = torch.LongTensor(
+                    [ex.get('label_original_length', 0) for ex in exs]
+                )
             field = 'labels' if labels_avail else 'eval_labels'
 
             label_vecs = [ex.get(field + '_vec', self.EMPTY) for ex in exs]
@@ -1635,18 +1691,29 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        # reward
+        rewards = None
+        if any('reward' in ex for ex in exs):
+            rewards = torch.Tensor([ex.get('reward', 0) for ex in exs])
+
+        # make sure we're only passing around tensors
+        valid_inds = torch.LongTensor(valid_inds)
+
         return Batch(
             batchsize=len(valid_inds),
             text_vec=xs,
-            text_lengths=x_lens,
             label_vec=ys,
-            label_lengths=y_lens,
             labels=labels,
             valid_indices=valid_inds,
             candidates=cands,
             candidate_vecs=cand_vecs,
             image=imgs,
-            observations=exs,
+            rewards=rewards,
+            observations=exs if self.is_debug else None,
+            _context_original_length=context_original_lengths,
+            _context_truncate_rate=context_truncate_rate,
+            _label_original_length=label_original_lengths,
+            _label_truncate_rate=label_truncate_rate,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -2036,38 +2103,25 @@ class TorchAgent(ABC, Agent):
         # check if there are any labels available, if so we will train on them
         self.is_training = any('labels' in obs for obs in observations)
 
-        # check if we should add truncate stats
-        if all('if_context_truncate' in obs for obs in observations):
-            self.record_local_metric(
-                'context_truncate',
-                AverageMetric.many(
-                    [float(obs['if_context_truncate']) for obs in observations]
-                ),
-            )
-        if all('if_label_truncate' in obs for obs in observations):
-            self.record_local_metric(
-                'label_truncate',
-                AverageMetric.many(
-                    [float(obs['if_label_truncate']) for obs in observations]
-                ),
-            )
-        if all('original_context_length' in obs for obs in observations):
-            self.record_local_metric(
-                'context_length',
-                AverageMetric.many(
-                    [obs['original_context_length'] for obs in observations]
-                ),
-            )
-        if all('original_label_length' in obs for obs in observations):
-            self.record_local_metric(
-                'label_length',
-                AverageMetric.many(
-                    [obs['original_label_length'] for obs in observations]
-                ),
-            )
-
         # create a batch from the vectors
         batch = self.batchify(observations)
+
+        # truncation statistics
+        if batch._context_original_length is not None:
+            self.record_local_metric(
+                'clen', AverageMetric.many(batch._context_original_length)
+            )
+            self.record_local_metric(
+                'ctrunc', AverageMetric.many(batch._context_truncate_rate)
+            )
+        if batch._label_original_length is not None:
+            self.record_local_metric(
+                'llen', AverageMetric.many(batch._label_original_length)
+            )
+            self.record_local_metric(
+                'ltrunc', AverageMetric.many(batch._label_truncate_rate)
+            )
+
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (
@@ -2092,6 +2146,10 @@ class TorchAgent(ABC, Agent):
             ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
             self.global_metrics.add('tpb', ttpb)
             self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
+
+        # move to GPU if necessary
+        if self.use_cuda:
+            batch = batch.to(0 if self.opt['gpu'] == -1 else self.opt['gpu'])
 
         if self.is_training:
             # register the start of updates for later counting when they occur

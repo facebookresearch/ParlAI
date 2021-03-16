@@ -66,14 +66,6 @@ class RewardUnlikelihoodAgentTrait(object):
         grp.add_argument('--alpha', default=1.0, type=float)
         return parser
 
-    def batchify(self, obs_batch, **kwargs):
-        batch = super().batchify(obs_batch, **kwargs)
-        rewards = torch.FloatTensor(
-            [float(o.get('reward', 0)) for o in batch.observations]
-        ).to(batch.text_vec.device)
-        batch['rewards'] = rewards
-        return batch
-
     def _dummy_batch(self, batchsize, maxlen):
         batch = super()._dummy_batch(batchsize, maxlen)
         batch['rewards'] = torch.ones(batchsize, dtype=torch.long).cuda()

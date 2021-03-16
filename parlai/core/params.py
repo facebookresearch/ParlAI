@@ -755,6 +755,12 @@ class ParlaiParser(argparse.ArgumentParser):
             action='store_true',
             help='Print all messages',
         )
+        parlai.add_argument(
+            '--debug',
+            dest='is_debug',
+            action='store_true',
+            help='Enables some debug behavior',
+        )
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):

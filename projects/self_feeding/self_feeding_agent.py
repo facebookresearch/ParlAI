@@ -883,18 +883,9 @@ class SelfFeedingAgent(TransformerRankerAgent):
         prev_cands = self.prev_responses
         prev_cand_vecs = [torch.Tensor(self.dict.txt2vec(cand)) for cand in prev_cands]
         if source == 'batch':
-            # Option 1: Change from one set of shared candidates to separate per example
-            # cands = [cands + [prev_cand] for prev_cand in prev_cands]
-            # list_of_lists_of_cand_vecs = [[vec for vec in cand_vecs] + [prev_cand_vec]
-            #                            for prev_cand_vec in prev_cand_vecs]
-            # cand_vecs = padded_3d(list_of_lists_of_cand_vecs, use_cuda=self.use_cuda,
-            #                       dtype=cand_vecs[0].dtype)
-
             # Option 2: Just add all prev responses for the whole batch (doubles bs)
             cands += prev_cands
-            cand_vecs, _ = padded_tensor(
-                [vec for vec in cand_vecs] + prev_cand_vecs, use_cuda=self.use_cuda
-            )
+            cand_vecs, _ = padded_tensor([vec for vec in cand_vecs] + prev_cand_vecs)
         elif source == 'inline':
             raise NotImplementedError
 

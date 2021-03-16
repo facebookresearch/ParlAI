@@ -65,11 +65,9 @@ def atomic_save(state_dict: Any, path: str) -> None:
 def padded_tensor(
     items: List[Union[List[int], torch.LongTensor]],
     pad_idx: int = 0,
-    use_cuda: bool = False,
     left_padded: bool = False,
     max_len: Optional[int] = None,
     fp16friendly: bool = False,
-    device: int = -1,
 ) -> Tuple[torch.LongTensor, List[int]]:
     """
     Create a padded matrix from an uneven list of lists.
@@ -85,11 +83,9 @@ def padded_tensor(
     :param list[iter[int]] items: List of items
     :param bool sort: If True, orders by the length
     :param int pad_idx: the value to use for padding
-    :param bool use_cuda: if true, places `padded` on GPU
     :param bool left_padded:
     :param int max_len: if None, the max length is the maximum item length
     :param bool fp16friendly: if True, pads the time dimension to be a multiple of 4.
-    :param int device: GPU device.
 
     :returns: (padded, lengths) tuple
     :rtype: (Tensor[int64], list[int])
@@ -130,29 +126,24 @@ def padded_tensor(
             # place at beginning
             output[i, :length] = item
 
-    if use_cuda:
-        output = output.cuda()
-        if device >= 0:
-            output = output.to(device)
     return output, lens
 
 
 def padded_3d(
     tensors: List[torch.LongTensor],
     pad_idx: int = 0,
-    use_cuda: bool = False,
     dtype: Optional[torch.dtype] = torch.long,
     fp16friendly: bool = False,
 ):
     """
     Make 3D padded tensor for list of lists of 1D tensors or lists.
 
+    Will keep items on the same device as originally.
+
     :param tensors:
         list of lists of 1D tensors (or lists)
     :param pad_idx:
         padding to fill tensor with
-    :param use_cuda:
-        whether to call cuda() before returning
     :param bool fp16friendly:
         if True, pads the final dimension to be a multiple of 8.
 
@@ -168,7 +159,8 @@ def padded_3d(
         c += FP16_PAD_SIZE - (c % FP16_PAD_SIZE)
     c = max(c, 1)
 
-    output = torch.full((a, b, c), pad_idx, dtype=dtype)
+    dev = tensors[0][0].device
+    output = torch.full((a, b, c), pad_idx, dtype=dtype, device=dev)
 
     for i, row in enumerate(tensors):
         item: Sized
@@ -176,11 +168,8 @@ def padded_3d(
             if len(item) == 0:
                 continue
             if not isinstance(item, torch.Tensor):
-                item = torch.Tensor(item, dtype=dtype)
+                item = torch.as_tensor(item, dtype=dtype)
             output[i, j, : len(item)] = item
-
-    if use_cuda:
-        output = output.cuda()
 
     return output
 
