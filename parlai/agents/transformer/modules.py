@@ -918,6 +918,8 @@ class TransformerDecoderLayer(nn.Module):
     2. Attend over all of the encoder states.
     """
 
+    ATTN_TYPES = ['prev_key', 'prev_value', 'prev_mask']
+
     def __init__(
         self,
         n_heads,
@@ -965,8 +967,6 @@ class TransformerDecoderLayer(nn.Module):
         states.
         """
 
-        attn_types = ['prev_key', 'prev_value', 'prev_mask']
-
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
         residual = x
@@ -976,7 +976,7 @@ class TransformerDecoderLayer(nn.Module):
         # don't peak into the future!
         if incr_state is not None:
             self_attn_incr_state = {
-                type_: incr_state[f'self_attn_{type_}'] for type_ in attn_types
+                type_: incr_state[f'self_attn_{type_}'] for type_ in self.ATTN_TYPES
             }
         else:
             self_attn_incr_state = None
@@ -994,7 +994,7 @@ class TransformerDecoderLayer(nn.Module):
             x = self.norm2(x)
         if incr_state is not None:
             encoder_attn_incr_state = {
-                type_: incr_state[f'encoder_attn_{type_}'] for type_ in attn_types
+                type_: incr_state[f'encoder_attn_{type_}'] for type_ in self.ATTN_TYPES
             }
         else:
             encoder_attn_incr_state = None
@@ -1022,7 +1022,7 @@ class TransformerDecoderLayer(nn.Module):
             x = self.norm3(x)
 
         new_incr_state = {}
-        for type_ in attn_types:
+        for type_ in self.ATTN_TYPES:
             new_incr_state.update(
                 {
                     f'self_attn_{type_}': final_self_attn_incr_state[type_],
@@ -1051,10 +1051,32 @@ class TransformerDecoderLayer(nn.Module):
         enc/dec and prev key, prev value, or prev mask) and whose values are Tensors.
         The 0th dimension is the batch size and thus gets reindexed.
         """
-        return {
-            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
-            for key, val in incremental_state.items()
+
+        self_attn_incr_state = {
+            type_: incremental_state[f'self_attn_{type_}'] for type_ in self.ATTN_TYPES
         }
+        encoder_attn_incr_state = {
+            type_: incremental_state[f'encoder_attn_{type_}']
+            for type_ in self.ATTN_TYPES
+        }
+
+        new_self_attn_incr_state = self.self_attention.reorder_incremental_state(
+            self_attn_incr_state, inds
+        )
+        new_encoder_attn_incr_state = self.encoder_attention.reorder_incremental_state(
+            encoder_attn_incr_state, inds
+        )
+
+        new_incr_state = {}
+        for type_ in self.ATTN_TYPES:
+            new_incr_state.update(
+                {
+                    f'self_attn_{type_}': new_self_attn_incr_state[type_],
+                    f'encoder_attn_{type_}': new_encoder_attn_incr_state[type_],
+                }
+            )
+
+        return new_incr_state
 
 
 class TransformerGeneratorModel(TorchGeneratorModel):
@@ -1366,6 +1388,17 @@ class MultiHeadAttention(nn.Module):
         out = self.out_lin(attentioned)
 
         return out, new_incr_state, dot_prod
+
+    def reorder_incremental_state(
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Reorder the input incremental-state tensors.
+        """
+        return {
+            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
+            for key, val in incremental_state.items()
+        }
 
 
 class TransformerFFN(nn.Module):
