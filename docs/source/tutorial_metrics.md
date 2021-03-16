@@ -421,11 +421,11 @@ please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issu
 | ----------------------- | ------------ |
 | `accuracy`              | Exact match text accuracy |
 | `bleu-4`                | BLEU-4 of the generation, under a standardized (model-independent) tokenizer |
+| `clen`                  | Average length of context in number of tokens |
 | `clip`                  | Fraction of batches with clipped gradients |
-|`context_truncate`       | Ratio of samples' contexts being truncated per batch |
-|`context_length`         | Average length of context tokens per batch |
 | `ctpb`                  | Context tokens per batch |
 | `ctps`                  | Context tokens per second |
+| `ctrunc`                | Fraction of samples with some context truncation |
 | `exps`                  | Examples per second |
 | `exs`                   | Number of examples processed since last print |
 | `f1`                    | Unigram F1 overlap, under a standardized (model-independent) tokenizer |
@@ -435,12 +435,12 @@ please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issu
 | `interdistinct-1`, `interdictinct-2` | Fraction of n-grams unique across _all_ generations |
 | `intradistinct-1`, `intradictinct-2` | Fraction of n-grams unique _within_ each utterance |
 | `jga`                   | Joint Goal Accuracy |
-|`label_length`           | Average length of label tokens per batch |
-|`label_truncate`         | Ratio of samples' labels being truncated per batch |
+| `llen`                  | Average length of label in number of tokens |
 | `loss`                  | Loss |
 | `lr`                    | The most recent learning rate applied |
 | `ltpb`                  | Label tokens per batch |
 | `ltps`                  | Label tokens per second |
+| `ltrunc`                | Fraction of samples with some label truncation |
 | `rouge-1`, `rouge-1`, `rouge-L` | ROUGE metrics |
 | `token_acc`             | Token-wise accuracy (generative only) |
 | `token_em`              | Utterance-level token accuracy. Roughly corresponds to perfection under greedy search (generative only) |
