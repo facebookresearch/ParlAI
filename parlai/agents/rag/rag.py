@@ -99,15 +99,15 @@ class RagAgent(TorchGeneratorAgent):
 
         retriever_type = RetrieverType(self.opt['rag_retriever_type'])
         if retriever_type is RetrieverType.DPR:
-            manifest.retriever = DPRRetriever
+            manifest.retriever.klass = DPRRetriever
         elif retriever_type is RetrieverType.TFIDF:
-            manifest.retriever = TFIDFRetriever
+            manifest.retriever.klass = TFIDFRetriever
         elif retriever_type is RetrieverType.TFIDF_AND_DPR:
-            manifest.retriever = TFIDFAndDPRRetriever
+            manifest.retriever.klass = TFIDFAndDPRRetriever
 
         query_model = QueryModelType(self.opt['rag_query_model'])
         if query_model in [QueryModelType.BERT, QueryModelType.BERT_FROM_PARLAI_RAG]:
-            manifest.retriever_manifest.query_encoder = RagDprQueryEncoder
+            manifest.retriever.manifest.query_encoder = RagDprQueryEncoder
 
         return DefaultRagModel(opt=self.opt, dictionary=self.dict, manifest=manifest)
 

@@ -11,7 +11,7 @@ from typing import List, Optional, Protocol, Type, Tuple
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.agents.rag.classes import Document
-from parlai.agents.transformer.interfaces import Transformer
+from parlai.agents.transformer.interfaces import ComponentSpec, TComponent, Transformer
 
 
 class RagTokenizer(Protocol):
@@ -46,7 +46,7 @@ class RagQueryEncoder(Protocol):
         ...
 
 
-class RagRetriever(Protocol):
+class RagRetriever(TComponent):
     @dataclass
     class Manifest:
         tokenizer: Type[RagTokenizer]
@@ -63,13 +63,11 @@ class RagRetriever(Protocol):
         ...
 
 
-class RAG(Protocol):
+class RAG(TComponent):
     @dataclass
     class Manifest:
-        retriever: Type[RagRetriever]
-        retriever_manifest: RagRetriever.Manifest
-        generator: Type[Transformer]
-        generator_manifest: Transformer.Manifest
+        retriever: ComponentSpec[RagRetriever, RagRetriever.Manifest]
+        generator: ComponentSpec[Transformer, Transformer.Manifest]
 
     @abstractmethod
     def __init__(self, opt: Opt, dictionary, manifest: Manifest = None, **kwargs):

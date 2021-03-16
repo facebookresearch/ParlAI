@@ -3,12 +3,29 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import torch
-from typing import Any, Dict, Optional, Protocol, Tuple, Type, Union
+from typing import Any, Dict, Generic, Optional, Protocol, Tuple, Type, TypeVar, Union
 
 from parlai.core.opt import Opt
+
+
+class TComponent(ABC):
+    @dataclass
+    class Manifest:
+        pass
+
+
+T = TypeVar('T', bound=TComponent)
+M = TypeVar('M', bound=TComponent.Manifest)
+
+
+# TODO: Figure out a way to get Manifest class directly from T
+@dataclass
+class ComponentSpec(Generic[T, M]):
+    klass: Type[T]
+    manifest: M
 
 
 class TransformerAttention(Protocol):
@@ -40,7 +57,7 @@ class TransformerFFN(Protocol):
         ...
 
 
-class TransformerEncoderLayer(Protocol):
+class TransformerEncoderLayer(TComponent):
     @dataclass
     class Manifest:
         self_attention: Type[TransformerAttention]
@@ -57,11 +74,10 @@ class TransformerEncoderLayer(Protocol):
         ...
 
 
-class TransformerEncoder(Protocol):
+class TransformerEncoder(TComponent):
     @dataclass
     class Manifest:
-        layer: Type[TransformerEncoderLayer]
-        layer_manifest: TransformerEncoderLayer.Manifest
+        layer: ComponentSpec[TransformerEncoderLayer, TransformerEncoderLayer.Manifest]
 
     @abstractmethod
     def __init__(
@@ -89,7 +105,7 @@ class TransformerEncoder(Protocol):
         ...
 
 
-class TransformerDecoderLayer(Protocol):
+class TransformerDecoderLayer(TComponent):
     @dataclass
     class Manifest:
         self_attention: Type[TransformerAttention]
@@ -106,11 +122,10 @@ class TransformerDecoderLayer(Protocol):
         ...
 
 
-class TransformerDecoder(Protocol):
+class TransformerDecoder(TComponent):
     @dataclass
     class Manifest:
-        layer: Type[TransformerDecoderLayer]
-        layer_manifest: TransformerDecoderLayer.Manifest
+        layer: ComponentSpec[TransformerDecoderLayer, TransformerDecoderLayer.Manifest]
 
     @abstractmethod
     def __init__(self, opt: Opt, manifest: Manifest, embedding=None, **kwargs):
@@ -123,13 +138,11 @@ class TransformerDecoder(Protocol):
         ...
 
 
-class Transformer(Protocol):
+class Transformer(TComponent):
     @dataclass
     class Manifest:
-        encoder: Type[TransformerEncoder]
-        encoder_manifest: TransformerEncoder.Manifest
-        decoder: Type[TransformerDecoder]
-        decoder_manifest: Type[TransformerDecoderLayer]
+        encoder: ComponentSpec[TransformerEncoder, TransformerEncoder.Manifest]
+        decoder: ComponentSpec[TransformerDecoder, TransformerDecoder.Manifest]
 
     @abstractmethod
     def __init__(self, opt: Opt, dictionary, manifest: Manifest = None, **kwargs):
@@ -142,18 +155,23 @@ class Transformer(Protocol):
         ...
 
 
-class DecoderOnlyTransformer(Protocol):
+class DecoderOnlyTransformerLayer(TComponent):
     @dataclass
     class Manifest:
-        decoder: Type[TransformerDecoder]
-        decoder_manifest: Type[TransformerDecoderLayer]
+        self_attention: Type[TransformerAttention]
+        feedforward: Type[TransformerFFN]
 
     @abstractmethod
-    def __init__(self, opt: Opt, dictionary, manifest: Manifest = None, **kwargs):
+    def __init__(self, opt: Opt, manifest: Manifest, **kwargs):
         ...
 
-    @abstractmethod
-    def forward(
-        self, input: torch.LongTensor, ys=None, prev_enc=None, **kwargs
-    ) -> Tuple[torch.FloatTensor, torch.FloatTensor, Any]:
+    def forward(self, x, incr_state=None, **kwargs) -> Tuple[torch.Tensor, Dict]:
         ...
+
+
+class DecoderOnlyTransformer(Transformer):
+    @dataclass
+    class Manifest:
+        layer: ComponentSpec[
+            DecoderOnlyTransformerLayer, DecoderOnlyTransformerLayer.Manifest
+        ]
