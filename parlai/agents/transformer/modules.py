@@ -429,9 +429,9 @@ class TransformerEncoder(nn.Module):
             positions = (mask.cumsum(dim=1, dtype=torch.int64) - 1).clamp_(min=0)
         tensor = self.embeddings(input)
         if self.embeddings_scale:
-            tensor = tensor * math.sqrt(self.dim)
+            tensor = tensor * np.sqrt(self.dim)
 
-        if not torch.jit.is_scripting() and positions.max().item() > self.n_positions:
+        if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
@@ -673,7 +673,7 @@ class TransformerDecoder(nn.Module):
             or self.variant == 'bart'
         ):
             self.norm_embeddings = torch.nn.LayerNorm(self.dim, eps=LAYER_NORM_EPS)
-            if not torch.jit.is_scripting() and self.variant == 'xlm':
+            if self.variant == 'xlm':
                 warn_once(
                     'DEPRECATED: XLM should only be used for backwards compatibility, '
                     'as it involves a less-stable layernorm operation.'
@@ -733,10 +733,10 @@ class TransformerDecoder(nn.Module):
         """
         tensor = self.embeddings(input)
         if self.embeddings_scale:
-            tensor = tensor * math.sqrt(self.dim)
+            tensor = tensor * np.sqrt(self.dim)
         if self.variant == 'xlm':
             tensor = self.norm_embeddings(tensor)
-        if not torch.jit.is_scripting() and positions.max().item() > self.n_positions:
+        if positions.max().item() > self.n_positions:
             warn_once(
                 'You are inputting a sequence of {x} length, but only have '
                 '--n-positions {y}. Set --truncate or increase --n-positions'.format(
