@@ -90,6 +90,7 @@ commands:
             pip install -v -r requirements.txt
             python setup.py develop
             python -c "import nltk; nltk.download('punkt')"
+            python -m pip install --progress-bar off 'transformers<4.0.0'
 
   installtorchgpu17:
     description: Install torch GPU and dependencies
@@ -100,7 +101,6 @@ commands:
             python -m pip install --progress-bar off torch==1.7.1+cu101 torchvision==0.8.2+cu101 -f https://download.pytorch.org/whl/torch_stable.html
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers<4.0.0'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -114,7 +114,6 @@ commands:
             python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers<4.0.0'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -146,7 +145,6 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
-            python -m pip install --progress-bar off 'transformers<4.0.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
