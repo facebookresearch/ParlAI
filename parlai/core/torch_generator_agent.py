@@ -504,6 +504,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
 
+            if self.fp16:
+                self.model = self.model.half()
+
             if init_model is not None:
                 # load model parameters if available
                 logging.info(f'Loading existing model params from {init_model}')
@@ -530,9 +533,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
             )
-
-        if shared is None and self.fp16:
-            self.model = self.model.half()
 
         self.reset()
 
@@ -807,7 +807,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert label_vec is not None, "label_vec must exist for fairseq bleu"
         for i, t in enumerate(preds):
             result = FairseqBleuMetric.compute_many(
-                t[1:],
+                t,
                 label_vec[i].unsqueeze(0),
                 pad_idx=self.NULL_IDX,
                 end_idx=self.END_IDX,

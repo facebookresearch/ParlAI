@@ -14,6 +14,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 import functools
 import datetime
+import math
 from typing import Union, List, Optional, Tuple, Set, Any, Dict, Counter as TCounter
 
 import torch
@@ -458,7 +459,106 @@ class BleuMetric(AverageMetric):
         return BleuMetric(score)
 
 
-class FairseqBleuMetric(AverageMetric):
+class FairseqBleuMetric(Metric):
+    """
+    Re-implementation of
+    https://github.com/pytorch/fairseq/blob/master/fairseq/scoring/bleu.py.
+    """
+
+    def __init__(
+        self,
+        pred: Union[torch.Tensor, List[int]],
+        ref: Union[torch.Tensor, List[int]],
+        pad_idx: int,
+        eos_idx: int,
+        unk_idx: int,
+        order: int,
+    ):
+        try:
+            from fairseq import libbleu
+            from fairseq.scoring.bleu import BleuStat
+            import ctypes
+        except ImportError:
+            return
+
+        self.stat = BleuStat()
+        self.order = order
+
+        C = ctypes.cdll.LoadLibrary(libbleu.__file__)
+        C.bleu_zero_init(ctypes.byref(self.stat))
+
+        if not torch.is_tensor(pred):
+            pred = torch.LongTensor(pred)
+        if not torch.is_tensor(ref):
+            ref = torch.LongTensor(ref)
+
+        rref = ref.clone()
+        assert not rref.lt(0).any()
+        rref[rref.eq(unk_idx)] = -999
+
+        rref = rref.contiguous().view(-1)
+        pred = pred.contiguous().view(-1)
+
+        C.bleu_add(
+            ctypes.byref(self.stat),
+            ctypes.c_size_t(rref.size(0)),
+            ctypes.c_void_p(rref.data_ptr()),
+            ctypes.c_size_t(pred.size(0)),
+            ctypes.c_void_p(pred.data_ptr()),
+            ctypes.c_int(pad_idx),
+            ctypes.c_int(eos_idx),
+        )
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return True
+
+    def __add__(self, other: Optional[FairseqBleuMetric]) -> FairseqBleuMetric:
+        if other is None:
+            return self
+        self.stat.match1 += other.stat.match1
+        self.stat.match2 += other.stat.match2
+        self.stat.match3 += other.stat.match3
+        self.stat.match4 += other.stat.match4
+        self.stat.count1 += other.stat.count1
+        self.stat.count2 += other.stat.count2
+        self.stat.count3 += other.stat.count3
+        self.stat.count4 += other.stat.count4
+        self.stat.predlen += other.stat.predlen
+        self.stat.reflen += other.stat.reflen
+        return self
+
+    def _ratio(self, a: int, b: int) -> float:
+        """
+        Safe division.
+        """
+        return a / b if b > 0 else 0
+
+    def _precision(self):
+        return [
+            self._ratio(self.stat.match1, self.stat.count1),
+            self._ratio(self.stat.match2, self.stat.count2),
+            self._ratio(self.stat.match3, self.stat.count3),
+            self._ratio(self.stat.match4, self.stat.count4),
+        ]
+
+    def _brevity(self):
+        r = self.stat.reflen / self.stat.predlen
+        return min(1, math.exp(1 - r))
+
+    def value(self) -> float:
+        """
+        Reimplementation of Fairseq's score.
+        """
+        psum = sum(
+            math.log(p) if p > 0 else float("-Inf")
+            for p in self._precision()[: self.order]
+        )
+        return self._brevity() * math.exp(psum / self.order) * 100
+
     @staticmethod
     def compute_many(
         guess: torch.Tensor, answers: torch.Tensor, pad_idx, end_idx, unk_idx
@@ -467,15 +567,21 @@ class FairseqBleuMetric(AverageMetric):
         Return BLEU-1..4 using fairseq and tokens.
         """
         try:
-            from fairseq.scoring import bleu as fairseqbleu
+            from fairseq.scoring import bleu as fairseqbleu  # noqa
         except ImportError:
             return None
 
-        scorer = fairseqbleu.Scorer(pad_idx, end_idx, unk_idx)
-        answers = answers.cpu().int()
-        guess = guess.cpu().int()
-        scorer.add(answers, guess)
-        return [FairseqBleuMetric(scorer.score(i) / 100.0) for i in range(1, 5)]
+        return [
+            FairseqBleuMetric(
+                guess.cpu().int(),
+                answers.cpu().int(),
+                pad_idx,
+                end_idx,
+                unk_idx,
+                order=i,
+            )
+            for i in range(1, 5)
+        ]
 
 
 class RougeMetric(AverageMetric):
