@@ -61,6 +61,7 @@ class TestControllableDialogue(unittest.TestCase):
         opt = parser.parse_args([])
         tcs2s.TrainLoop(opt).train()
 
+    @unittest.skip
     def test_convai2_finetuned_greedy(self):
         """
         Check the greedy model produces correct results.
@@ -102,6 +103,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1516, delta=0.0002)
 
+    @unittest.skip
     def test_convai2_finetuned_norepetition(self):
         """
         Checks the finetuned model with repetition blocking produces correct results.
