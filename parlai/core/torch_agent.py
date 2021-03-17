@@ -114,8 +114,10 @@ class Batch(AttrDict):
     image: Optional[List[Any]]
     _context_original_length: Optional[torch.LongTensor]
     _context_truncate_rate: Optional[torch.LongTensor]
+    _context_truncated_length: Optional[torch.LongTensor]
     _label_original_length: Optional[torch.LongTensor]
     _label_truncate_rate: Optional[torch.LongTensor]
+    _label_truncated_length: Optional[torch.LongTensor]
 
     def __init__(
         self,
@@ -131,8 +133,10 @@ class Batch(AttrDict):
         image=None,
         _context_original_length: Optional[torch.LongTensor] = None,
         _context_truncate_rate: Optional[torch.LongTensor] = None,
+        _context_truncated_length: Optional[torch.LongTensor] = None,
         _label_original_length: Optional[torch.LongTensor] = None,
         _label_truncate_rate: Optional[torch.LongTensor] = None,
+        _label_truncated_length: Optional[torch.LongTensor] = None,
         **kwargs,
     ):
         super().__init__(
@@ -147,8 +151,10 @@ class Batch(AttrDict):
             image=image,
             _context_original_length=_context_original_length,
             _context_truncate_rate=_context_truncate_rate,
+            _context_truncated_length=_context_truncated_length,
             _label_original_length=_label_original_length,
             _label_truncate_rate=_label_truncate_rate,
+            _label_truncated_length=_label_truncated_length,
             **kwargs,
         )
 
@@ -434,22 +440,10 @@ class TorchAgent(ABC, Agent):
             if not k.startswith('__') and k[0].isupper()
         }
         try:
-            import apex.optimizers.fused_adam as fused_adam
-            import apex.optimizers.fused_lamb as fused_lamb
+            from fairscale.optim import Adam as FusedAdam
 
-            optims['fused_adam'] = fused_adam.FusedAdam
-            optims['fused_lamb'] = fused_lamb.FusedLAMB
+            optims['fusedadam'] = FusedAdam
         except ImportError:
-            pass
-
-        try:
-            # https://openreview.net/pdf?id=S1fUpoR5FQ
-            from qhoptim.pyt import QHM, QHAdam
-
-            optims['qhm'] = QHM
-            optims['qhadam'] = QHAdam
-        except ImportError:
-            # no QHM installed
             pass
 
         # now pull in memory efficient implementations
@@ -1457,6 +1451,9 @@ class TorchAgent(ABC, Agent):
             )
             obs.force_set('context_original_length', text_length)
             obs.force_set('context_truncate_rate', text_length != len(truncated_vec))
+            obs.force_set(
+                'context_truncated_length', max(text_length - len(truncated_vec), 0)
+            )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
         return obs
@@ -1484,6 +1481,9 @@ class TorchAgent(ABC, Agent):
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
             obs.force_set('label_original_length', vec_label_length)
             obs.force_set('label_truncate_rate', vec_label_length > len(truncated_vec))
+            obs.force_set(
+                'label_truncated_length', max(vec_label_length - len(truncated_vec), 0)
+            )
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
@@ -1494,6 +1494,9 @@ class TorchAgent(ABC, Agent):
             )
             obs.force_set('label_original_length', vec_label_length)
             obs.force_set('label_truncate_rate', vec_label_truncated)
+            obs.force_set(
+                'label_truncated_length', max(vec_label_length - len(vec_label), 0)
+            )
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -1637,7 +1640,8 @@ class TorchAgent(ABC, Agent):
         valid_inds, exs = zip(*valid_obs)
 
         # TEXT
-        xs = x_lens = context_original_lengths = context_truncate_rate = None
+        xs = x_lens = context_original_lengths = None
+        context_truncate_rate = context_truncated_lengths = None
         if any(ex.get('text_vec') is not None for ex in exs):
             if any('context_original_length' in ex for ex in exs):
                 context_truncate_rate = torch.LongTensor(
@@ -1645,6 +1649,10 @@ class TorchAgent(ABC, Agent):
                 )
                 context_original_lengths = torch.LongTensor(
                     [ex.get('context_original_length', 0) for ex in exs]
+                )
+            if any('context_truncated_length' in ex for ex in exs):
+                context_truncated_lengths = torch.LongTensor(
+                    [ex.get('context_truncated_length', 0) for ex in exs]
                 )
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = self._pad_tensor(_xs)
@@ -1658,7 +1666,8 @@ class TorchAgent(ABC, Agent):
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
-        ys = y_lens = labels = label_original_lengths = label_truncate_rate = None
+        ys = y_lens = labels = label_original_lengths = None
+        label_truncate_rate = label_truncated_lengths = None
         if some_labels_avail:
             if any('label_original_length' in ex for ex in exs):
                 label_truncate_rate = torch.LongTensor(
@@ -1666,6 +1675,10 @@ class TorchAgent(ABC, Agent):
                 )
                 label_original_lengths = torch.LongTensor(
                     [ex.get('label_original_length', 0) for ex in exs]
+                )
+            if any('label_truncated_length' in ex for ex in exs):
+                label_truncated_lengths = torch.LongTensor(
+                    [ex.get('label_truncated_length') for ex in exs]
                 )
             field = 'labels' if labels_avail else 'eval_labels'
 
@@ -1712,8 +1725,10 @@ class TorchAgent(ABC, Agent):
             observations=exs if self.is_debug else None,
             _context_original_length=context_original_lengths,
             _context_truncate_rate=context_truncate_rate,
+            _context_truncated_length=context_truncated_lengths,
             _label_original_length=label_original_lengths,
             _label_truncate_rate=label_truncate_rate,
+            _label_truncated_length=label_truncated_lengths,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -2114,12 +2129,22 @@ class TorchAgent(ABC, Agent):
             self.record_local_metric(
                 'ctrunc', AverageMetric.many(batch._context_truncate_rate)
             )
+        if batch._context_truncated_length is not None:
+            self.record_local_metric(
+                'context_average_tokens_truncated',
+                AverageMetric.many(batch._context_truncated_length),
+            )
         if batch._label_original_length is not None:
             self.record_local_metric(
                 'llen', AverageMetric.many(batch._label_original_length)
             )
             self.record_local_metric(
                 'ltrunc', AverageMetric.many(batch._label_truncate_rate)
+            )
+        if batch._label_truncated_length is not None:
+            self.record_local_metric(
+                'label_average_tokens_truncated',
+                AverageMetric.many(batch._label_truncated_length),
             )
 
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))

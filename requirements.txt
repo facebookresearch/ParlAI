@@ -27,7 +27,7 @@ pyyaml==5.3.1
 pyzmq==18.1.0
 regex==2020.1.8
 myst-parser~=0.12.2
-attrs~=19.3
+attrs~=20.2.0
 requests-mock==1.7.0
 requests<3,>=2.21.0
 scikit-learn==0.23.1
