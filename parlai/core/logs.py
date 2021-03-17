@@ -14,7 +14,6 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
-from collections import namedtuple
 import os
 from typing import Optional
 from parlai.core.params import ParlaiParser
@@ -22,104 +21,9 @@ import json
 import numbers
 import datetime
 from parlai.core.opt import Opt
-from parlai.core.metrics import Metric, dict_report
+from parlai.core.metrics import Metric, dict_report, get_metric_display_data
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-
-
-MetricDisplayData = namedtuple('MetricDisplayData', ('title', 'description'))
-
-METRICS_DISPLAY_DATA = {
-    "accuracy": MetricDisplayData("Accuracy", "Exact match text accuracy"),
-    "bleu-4": MetricDisplayData(
-        "BLEU-4",
-        "BLEU-4 of the generation, under a standardized (model-independent) tokenizer",
-    ),
-    "clen": MetricDisplayData(
-        "Context Length", "Average length of context in number of tokens"
-    ),
-    "clip": MetricDisplayData(
-        "Clipped Gradients", "Fraction of batches with clipped gradients"
-    ),
-    "ctpb": MetricDisplayData("Context Tokens Per Batch", "Context tokens per batch"),
-    "ctps": MetricDisplayData("Context Tokens Per Second", "Context tokens per second"),
-    "ctrunc": MetricDisplayData(
-        "Context Truncation", "Fraction of samples with some context truncation"
-    ),
-    "ctrunclen": MetricDisplayData(
-        "Context Truncation Length", "Average length of context tokens truncated"
-    ),
-    "exps": MetricDisplayData("Examples Per Second", "Examples per second"),
-    "exs": MetricDisplayData(
-        "Examples", "Number of examples processed since last print"
-    ),
-    "f1": MetricDisplayData(
-        "F1", "Unigram F1 overlap, under a standardized (model-independent) tokenizer"
-    ),
-    "gnorm": MetricDisplayData("Gradient Norm", "Gradient norm"),
-    "gpu_mem": MetricDisplayData(
-        "GPU Memory",
-        "Fraction of GPU memory used. May slightly underestimate true value.",
-    ),
-    "hits@1": MetricDisplayData(
-        "Hits@1", "Fraction of correct choices in 1 guess. (Similar to recall@K)"
-    ),
-    "hits@5": MetricDisplayData(
-        "Hits@5", "Fraction of correct choices in 5 guesses. (Similar to recall@K)"
-    ),
-    "interdistinct-1": MetricDisplayData(
-        "Interdistinct-1", "Fraction of n-grams unique across _all_ generations"
-    ),
-    "interdistinct-2": MetricDisplayData(
-        "Interdistinct-1", "Fraction of n-grams unique across _all_ generations"
-    ),
-    "intradistinct-1": MetricDisplayData(
-        "Intradictinct-1", "Fraction of n-grams unique _within_ each utterance"
-    ),
-    "intradictinct-2": MetricDisplayData(
-        "Intradictinct-2", "Fraction of n-grams unique _within_ each utterance"
-    ),
-    "jga": MetricDisplayData("Joint Goal Accuracy", "Joint Goal Accuracy"),
-    "llen": MetricDisplayData(
-        "Label Length", "Average length of label in number of tokens"
-    ),
-    "loss": MetricDisplayData("Loss", "Loss"),
-    "lr": MetricDisplayData("Learning Rate", "The most recent learning rate applied"),
-    "ltpb": MetricDisplayData("Label Tokens Per Batch", "Label tokens per batch"),
-    "ltps": MetricDisplayData("Label Tokens Per Second", "Label tokens per second"),
-    "ltrunc": MetricDisplayData(
-        "Label Truncation", "Fraction of samples with some label truncation"
-    ),
-    "ltrunclen": MetricDisplayData(
-        "Label Truncation Length", "Average length of label tokens truncated"
-    ),
-    "rouge-1": MetricDisplayData("ROUGE-1", "ROUGE metrics"),
-    "rouge-2": MetricDisplayData("ROUGE-2", "ROUGE metrics"),
-    "rouge-L": MetricDisplayData("ROUGE-L", "ROUGE metrics"),
-    "token_acc": MetricDisplayData(
-        "Token Accuracy", "Token-wise accuracy (generative only)"
-    ),
-    "token_em": MetricDisplayData(
-        "Token Exact Match",
-        "Utterance-level token accuracy. Roughly corresponds to perfection under greedy search (generative only)",
-    ),
-    "total_train_updates": MetricDisplayData(
-        "Total Train Updates", "Number of SGD steps taken across all batches"
-    ),
-    "tpb": MetricDisplayData(
-        "Tokens Per Batch", "Total tokens (context + label) per batch"
-    ),
-    "tps": MetricDisplayData(
-        "Tokens Per Second", "Total tokens (context + label) per second"
-    ),
-    "ups": MetricDisplayData("Updates Per Second", "Updates per second (approximate)"),
-}
-
-
-def _get_display_data(metric: str) -> MetricDisplayData:
-    return METRICS_DISPLAY_DATA.get(
-        metric, MetricDisplayData(title=metric, description="No description provided.")
-    )
 
 
 class TensorboardLogger(object):
@@ -187,12 +91,12 @@ class TensorboardLogger(object):
             if not isinstance(v, numbers.Number):
                 logging.error(f'k {k} v {v} is not a number')
                 continue
-            display = _get_display_data(metric=k)
+            display = get_metric_display_data(metric=k)
             self.writer.add_scalar(
                 f'{k}/{setting}',
                 v,
                 global_step=step,
-                display_name=f"{display.title} ({k})",
+                display_name=f"{display.title}",
                 summary_description=display.description,
             )
 
