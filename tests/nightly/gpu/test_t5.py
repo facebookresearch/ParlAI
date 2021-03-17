@@ -50,6 +50,11 @@ class TestT5Model(unittest.TestCase):
         opt = ParlaiParser(True, True).parse_args(['--model', 'hugging_face/t5'])
         self.agent = create_agent(opt)
 
+    def tearDown(self):
+        del self.agent
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
     def test_small(self):
         """
         From Huggingface.
