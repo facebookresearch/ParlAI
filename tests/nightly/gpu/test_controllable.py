@@ -78,6 +78,7 @@ class TestControllableDialogue(unittest.TestCase):
         self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
         self.assertAlmostEqual(valid['f1'], 0.1702, delta=0.0002)
 
+    @unittest.skip
     def test_convai2_finetuned_beamsearch(self):
         """
         Check the beamsearch baseline produces correct results.
