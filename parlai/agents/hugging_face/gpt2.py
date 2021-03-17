@@ -185,7 +185,13 @@ class HFGPT2Model(TorchGeneratorModel):
     def reorder_decoder_incremental_state(self, incremental_state, inds):
         new_incr_state = []
         for layer_past in incremental_state:
-            new_incr_state.append(torch.index_select(layer_past, 1, inds))
+            if torch.is_tensor(layer_past):
+                new_incr_state.append(torch.index_select(layer_past, 1, inds))
+            else:
+                # newer versions of HF split up the intermediate outputs
+                assert isinstance(layer_past, tuple)
+                layer_past = torch.stack(layer_past, dim=0)
+                new_incr_state.append(torch.index_select(layer_past, 1, inds))
 
         return tuple(new_incr_state)
 

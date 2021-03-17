@@ -20,7 +20,7 @@ except ModuleNotFoundError:
     # Prior versions of transformers package do not have T5Stack
     T5Stack = object
 
-from parlai.agents.hugging_face import version
+from parlai.agents.hugging_face.hugging_face import version
 from parlai.agents.hugging_face.dict import T5DictionaryAgent
 
 from parlai.core.opt import Opt
