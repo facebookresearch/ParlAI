@@ -11,7 +11,6 @@ from typing import ClassVar, List, Type, Any, Dict, Iterable, TYPE_CHECKING
 
 from mephisto.abstractions.blueprint import Blueprint, BlueprintArgs, SharedTaskState
 from mephisto.data_model.assignment import InitializationData
-from mephisto.operations.logger_core import get_logger
 from mephisto.operations.registry import register_mephisto_abstraction
 from omegaconf import MISSING, DictConfig
 
@@ -20,6 +19,7 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_agent_state import (
 )
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_builder import AcuteEvalBuilder
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_runner import AcuteEvalRunner
+from parlai.utils.misc import warn_once
 
 if TYPE_CHECKING:
     from mephisto.abstractions.blueprint import AgentState, TaskRunner, TaskBuilder
@@ -119,8 +119,7 @@ class AcuteEvalBlueprint(Blueprint):
                 )
 
         if args.task.get('maximum_units_per_worker', None) != 1:
-            logger = get_logger(name=__name__, verbose=True, level="info")
-            logger.warning(
+            warn_once(
                 'It is *strongly* recommended to use a '
                 'args.task.maximum_units_per_worker value of 1, as was done in the '
                 'ACUTE-Eval paper! Go to GitHub Discussions for more information.'
