@@ -25,7 +25,7 @@ from parlai.agents.hugging_face.dict import T5DictionaryAgent
 
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch
+from parlai.core.torch_agent import Batch, TorchAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 
 
@@ -115,6 +115,16 @@ class T5Agent(TorchGeneratorAgent):
         Overrides TorchAgent.build_dictionary to use t5 dict.
         """
         return T5DictionaryAgent(self.opt)
+
+    def vectorize(self, *args, **kwargs):
+        """
+        Override vectorize for T5.
+
+        T5 dict already adds the end token.
+        """
+        kwargs['add_start'] = False  # model does this in module code
+        kwargs['add_end'] = False  # we do want this
+        return TorchAgent.vectorize(self, *args, **kwargs)
 
     def observe(self, observation):
         """
