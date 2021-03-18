@@ -502,7 +502,7 @@ class ScriptableGpt2BpeHelper(object):
                     # character, because the TorchScripted version of the code
                     # correctly splits a string into single characters in
                     # self.utf8_chars() but the non-TorchScripted version doesn't
-                    chars.extend([real_char for real_char in char])
+                    chars.extend(list(char))
                 else:
                     chars.append(char)
         decoded_chars: List[str] = []
