@@ -122,7 +122,9 @@ class AcuteEvalBlueprint(Blueprint):
             warn_once(
                 'It is *strongly* recommended to use a '
                 'args.task.maximum_units_per_worker value of 1, as was done in the '
-                'ACUTE-Eval paper! Go to GitHub Discussions for more information.'
+                'ACUTE-Eval paper! Anything else will not provide consistent results '
+                'as quoted there. Go to ParlAI\'s GitHub Discussion page if you\'d '
+                'like to discuss further.'
             )
 
     def get_frontend_args(self) -> Dict[str, Any]:
