@@ -11,11 +11,21 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from collections import Counter, namedtuple
+from collections import Counter
 import functools
 import datetime
 import math
-from typing import Union, List, Optional, Tuple, Set, Any, Dict, Counter as TCounter
+from typing import (
+    Any,
+    Counter as TCounter,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
 import torch
 
@@ -34,7 +44,11 @@ DISTINCT_METRICS = {
 }
 ALL_METRICS = DEFAULT_METRICS | ROUGE_METRICS | BLEU_METRICS | DISTINCT_METRICS
 
-MetricDisplayData = namedtuple('MetricDisplayData', ('title', 'description'))
+
+class MetricDisplayData(NamedTuple):
+    title: str
+    description: str
+
 
 METRICS_DISPLAY_DATA = {
     "accuracy": MetricDisplayData("Accuracy", "Exact match text accuracy"),
@@ -125,7 +139,11 @@ METRICS_DISPLAY_DATA = {
 
 def get_metric_display_data(metric: str) -> MetricDisplayData:
     return METRICS_DISPLAY_DATA.get(
-        metric, MetricDisplayData(title=metric, description="No description provided.")
+        metric,
+        MetricDisplayData(
+            title=metric,
+            description="No description provided. Please add it to metrics.py if this is an official metric in ParlAI.",
+        ),
     )
 
 
