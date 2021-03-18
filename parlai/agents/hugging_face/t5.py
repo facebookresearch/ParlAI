@@ -30,6 +30,8 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGenerato
 
 
 def build_t5(opt: Opt) -> T5ForConditionalGeneration:
+    if not version >= 4.3:
+        raise RuntimeError('Must use transformers package >= 4.3 to use t5')
     return T5ForConditionalGeneration.from_pretrained(
         opt['t5_model_arch'], dropout_rate=opt['t5_dropout']
     )
@@ -60,11 +62,6 @@ class T5Agent(TorchGeneratorAgent):
 
     Relies on the T5 model implemented in huggingface
     """
-
-    def __init__(self, *args, **kwargs):
-        if not version >= 4.3:
-            raise RuntimeError('Must use transformers package >= 4.3 to use t5')
-        super().__init__(*args, **kwargs)
 
     @classmethod
     def add_cmdline_args(
@@ -123,7 +120,7 @@ class T5Agent(TorchGeneratorAgent):
         T5 dict already adds the end token.
         """
         kwargs['add_start'] = False  # model does this in module code
-        kwargs['add_end'] = False  # we do want this
+        kwargs['add_end'] = False  # T5 tokenizer takes care of this
         return TorchAgent.vectorize(self, *args, **kwargs)
 
     def observe(self, observation):
