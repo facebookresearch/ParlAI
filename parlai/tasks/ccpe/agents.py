@@ -9,13 +9,14 @@ from parlai.utils.data import DatatypeHelper
 from .build import build
 import os
 import json
-import hashlib
 
 
 class _Abstract(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt['datafile'] = DatatypeHelper.fold(opt['datatype'])
         self.dpath = os.path.join(opt["datapath"], "CCPE")
+        if shared is None:
+            build(opt)
         super().__init__(opt, shared)
 
     def _get_turns_of_speaker(self, utts, idx, speaker):
@@ -99,7 +100,7 @@ class CcpeUserTeacher(_Abstract):
                     "textSegments": user_turn["segments"],
                     "label": assistant_turn["text"],
                     "labelSegments": assistant_turn["segments"],
-                }, i == 0
+                }, first
                 first = False
 
 
