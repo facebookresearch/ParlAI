@@ -21,7 +21,6 @@ from typing import Dict, Tuple, Optional, Union
 
 import numpy as np
 import torch
-import torch.jit
 import torch.cuda
 import torch.nn as nn
 import torch.nn.functional as F
@@ -465,9 +464,6 @@ class TransformerEncoder(nn.Module):
         if getattr(self.layers, 'is_model_parallel', False):
             # factored out for readability. It is equivalent to the other
             # condition
-            assert (
-                not torch.jit.is_scripting()
-            ), 'model_parallel not currently supported when TorchScripting!'
             tensor = self._apply_model_parallel(tensor, mask)
         else:
             for i in range(self.n_layers):
@@ -511,8 +507,6 @@ class TransformerEncoder(nn.Module):
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
-        # TODO(spoff): Split TransformerEncoderLayer with and without reduction, and
-        # make type annotations always consistent
         """
         Forward pass.
 
@@ -754,7 +748,7 @@ class TransformerDecoder(nn.Module):
         tensor: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Optional[Dict[str, torch.Tensor]],
+        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -772,44 +766,23 @@ class TransformerDecoder(nn.Module):
             return encoding after applying decoder layers, as well
             as new incremental decoding state.
         """
+        new_incr_state = {}
         if getattr(self.layers, 'is_model_parallel', False):
-            assert (
-                not torch.jit.is_scripting()
-            ), 'model_parallel not currently supported when TorchScripting!'
             tensor, new_incr_state = self._apply_model_parallel(
                 tensor, encoder_output, encoder_mask, incr_state
             )
         else:
-            new_incr_state_by_layer = []
             for idx, layer in enumerate(self.layers):
-                if incr_state is not None:
-                    single_layer_incr_state = {
-                        key: val[..., idx] for key, val in incr_state.items()
-                    }
-                    # Filter by layer `idx` on the last dimension of the tensor
-                else:
-                    single_layer_incr_state = None
-                tensor, single_layer_new_incr_state = layer(
+                tensor, new_incr_state[idx] = layer(
                     x=tensor,
                     encoder_output=encoder_output,
                     encoder_mask=encoder_mask,
-                    incr_state=single_layer_incr_state,
+                    incr_state=incr_state.get(idx),
                 )
-                new_incr_state_by_layer.append(single_layer_new_incr_state)
-            new_incr_state = {
-                key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=-1)
-                for key in new_incr_state_by_layer[0].keys()
-            }
-            # Stack all tensors with the layer idx as the last dimension
 
         return tensor, new_incr_state
 
-    def forward(
-        self,
-        input,
-        encoder_state: Tuple[torch.Tensor, torch.Tensor],
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    def forward(self, input, encoder_state, incr_state=None):
         """
         Forward pass.
 
@@ -824,15 +797,16 @@ class TransformerDecoder(nn.Module):
         encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
-        positions = torch.arange(
-            seq_len, dtype=torch.long, device=input.device
-        ).unsqueeze(0)
+        positions = input.new(seq_len).long()
+        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
 
         if incr_state is not None:
             # We're doing incremental decoding, so select only the most recent position
             input = input[:, -1:]
             if positions is not None:
                 positions = positions[:, -1:]
+        else:
+            incr_state = {}
 
         tensor = self.forward_embedding(input, positions)
 
@@ -847,63 +821,38 @@ class TransformerDecoder(nn.Module):
 
         return tensor, new_incr_state
 
-    def _apply_model_parallel(
-        self,
-        tensor,
-        encoder_output,
-        encoder_mask,
-        incr_state: Optional[Dict[str, torch.Tensor]],
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    def _apply_model_parallel(self, tensor, encoder_output, encoder_mask, incr_state):
         """
         Pipeline application of model parallelism.
         """
-        if incr_state is None:
-            # None can't be split into chunks
-            incr_state = {}
         chunks = PipelineHelper.split(
             (tensor, encoder_output, encoder_mask, incr_state)
         )
         work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
-        new_incr_state_by_layer = {i: [] for i, _ in enumerate(self.layers)}
+        new_incr_state = {i: [] for i, _ in enumerate(self.layers)}
 
         for chunk_idx, layer_nos, next_device in work_items:
             s_tensor, s_enc_out, s_enc_mask, s_incr_state = chunks[chunk_idx]
             for layer_no in layer_nos:
-                if len(s_incr_state) > 0:
-                    single_layer_incr_state = {
-                        key: val[..., layer_no] for key, val in s_incr_state.items()
-                    }
-                    # Filter by layer `idx` on the last dimension of the tensor
-                else:
-                    single_layer_incr_state = None
                 s_tensor, nis = self.layers[layer_no](
                     x=s_tensor,
                     encoder_output=s_enc_out,
                     encoder_mask=s_enc_mask,
-                    incr_state=single_layer_incr_state,
+                    incr_state=s_incr_state.get(layer_no),
                 )
-                new_incr_state_by_layer[layer_no].append(nis)
-            s_tensor, s_enc_out, s_enc_mask, s_incr_state = PipelineHelper.chunk_to(
-                (s_tensor, s_enc_out, s_enc_mask, s_incr_state), next_device
+                new_incr_state[layer_no].append(nis)
+            # don't move incr state, it's always on the correct device
+            s_tensor, s_enc_out, s_enc_mask = PipelineHelper.chunk_to(
+                (s_tensor, s_enc_out, s_enc_mask), next_device
             )
             chunks[chunk_idx] = (s_tensor, s_enc_out, s_enc_mask, s_incr_state)
 
         tensor_out = PipelineHelper.join([c[0] for c in chunks])
-        new_incr_state_by_layer = {
-            layer_no: PipelineHelper.join(
-                [PipelineHelper.chunk_to(piece, 'cuda:0') for piece in pieces]
-            )
-            for layer_no, pieces in new_incr_state_by_layer.items()
-        }
-
         new_incr_state = {
-            key: torch.stack(
-                [layer[key] for layer in new_incr_state_by_layer.values()], dim=-1
-            )
-            for key in new_incr_state_by_layer[0].keys()
+            layer_no: PipelineHelper.join(pieces)
+            for layer_no, pieces in new_incr_state.items()
         }
-        # Stack all tensors with the layer idx as the last dimension
 
         return tensor_out, new_incr_state
 
@@ -917,8 +866,6 @@ class TransformerDecoderLayer(nn.Module):
     1. Self-attention is limited in a casaul (auto-regressive) manner.
     2. Attend over all of the encoder states.
     """
-
-    ATTN_TYPES = ['prev_key', 'prev_value', 'prev_mask']
 
     def __init__(
         self,
@@ -953,19 +900,16 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-    def forward(
-        self,
-        x: torch.Tensor,
-        encoder_output: torch.Tensor,
-        encoder_mask: torch.Tensor,
-        incr_state: Optional[Dict[str, torch.Tensor]],
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    def forward(self, x, encoder_output, encoder_mask, incr_state=None):
         """
         Forward pass.
 
         The incremental state is a dict with values for self- and encoder-attention
         states.
         """
+
+        if incr_state is None:
+            incr_state = {}
 
         decoder_mask = self._create_selfattn_mask(x)
         # first self attn
@@ -974,14 +918,11 @@ class TransformerDecoderLayer(nn.Module):
             x = self.norm1(x)
 
         # don't peak into the future!
-        if incr_state is not None:
-            self_attn_incr_state = {
-                type_: incr_state[f'self_attn_{type_}'] for type_ in self.ATTN_TYPES
-            }
-        else:
-            self_attn_incr_state = None
         x, final_self_attn_incr_state = self.self_attention(
-            query=x, mask=decoder_mask, incr_state=self_attn_incr_state, static_kv=False
+            query=x,
+            mask=decoder_mask,
+            incr_state=incr_state.get('self_attn'),
+            static_kv=False,
         )[:2]
         x = self.dropout(x)  # --dropout
         x = x + residual
@@ -992,18 +933,12 @@ class TransformerDecoderLayer(nn.Module):
         # encoder_attn_layer_norm norm 2
         if self.variant == 'prelayernorm':
             x = self.norm2(x)
-        if incr_state is not None:
-            encoder_attn_incr_state = {
-                type_: incr_state[f'encoder_attn_{type_}'] for type_ in self.ATTN_TYPES
-            }
-        else:
-            encoder_attn_incr_state = None
         x, final_encoder_attn_incr_state = self.encoder_attention(
             query=x,
             key=encoder_output,
             value=encoder_output,
             mask=encoder_mask,
-            incr_state=encoder_attn_incr_state,
+            incr_state=incr_state.get('encoder_attn'),
             static_kv=True,
         )[:2]
         x = self.dropout(x)  # --dropout
@@ -1021,14 +956,10 @@ class TransformerDecoderLayer(nn.Module):
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             x = self.norm3(x)
 
-        new_incr_state = {}
-        for type_ in self.ATTN_TYPES:
-            new_incr_state.update(
-                {
-                    f'self_attn_{type_}': final_self_attn_incr_state[type_],
-                    f'encoder_attn_{type_}': final_encoder_attn_incr_state[type_],
-                }
-            )
+        new_incr_state = {
+            'self_attn': final_self_attn_incr_state,
+            'encoder_attn': final_encoder_attn_incr_state,
+        }
         return x, new_incr_state
 
     def _create_selfattn_mask(self, x):
@@ -1036,47 +967,27 @@ class TransformerDecoderLayer(nn.Module):
         bsz = x.size(0)
         time = x.size(1)
         # make sure that we don't look into the future
-        mask = torch.tril(torch.ones(time, time, dtype=x.dtype, device=x.device))
+        mask = torch.tril(x.new(time, time).fill_(1))
         # broadcast across batch
         mask = mask.unsqueeze(0).expand(bsz, -1, -1)
         return mask
 
     def reorder_incremental_state(
-        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
-    ) -> Dict[str, torch.Tensor]:
+        self, incremental_state: Dict[str, dict], inds: torch.Tensor
+    ) -> Dict[str, dict]:
         """
         Reorder all incremental-state tensors for this layer.
-
-        Here, incremental_state is a dict whose keys are attention types (self- or
-        enc/dec and prev key, prev value, or prev mask) and whose values are Tensors.
-        The 0th dimension is the batch size and thus gets reindexed.
         """
-
-        self_attn_incr_state = {
-            type_: incremental_state[f'self_attn_{type_}'] for type_ in self.ATTN_TYPES
+        attn_types = {
+            'self_attn': self.self_attention,
+            'encoder_attn': self.encoder_attention,
         }
-        encoder_attn_incr_state = {
-            type_: incremental_state[f'encoder_attn_{type_}']
-            for type_ in self.ATTN_TYPES
-        }
-
-        new_self_attn_incr_state = self.self_attention.reorder_incremental_state(
-            self_attn_incr_state, inds
-        )
-        new_encoder_attn_incr_state = self.encoder_attention.reorder_incremental_state(
-            encoder_attn_incr_state, inds
-        )
-
-        new_incr_state = {}
-        for type_ in self.ATTN_TYPES:
-            new_incr_state.update(
-                {
-                    f'self_attn_{type_}': new_self_attn_incr_state[type_],
-                    f'encoder_attn_{type_}': new_encoder_attn_incr_state[type_],
-                }
+        return {
+            attn_type: attn.reorder_incremental_state(
+                incremental_state[attn_type], inds
             )
-
-        return new_incr_state
+            for attn_type, attn in attn_types.items()
+        }
 
 
 class TransformerGeneratorModel(TorchGeneratorModel):
@@ -1128,32 +1039,20 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         return enc, mask
 
     def reorder_decoder_incremental_state(
-        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
-    ) -> Dict[str, torch.Tensor]:
+        self, incremental_state: Dict[int, dict], inds: torch.Tensor
+    ) -> Dict[int, dict]:
         """
         Reorder the decoder incremental state.
 
         See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
 
-        Here, incremental_state is a dict whose keys are attention types (self- or
-        enc/dec and prev key, prev value, or prev mask) and whose values are Tensors,
-        with matrices for each layer concatenated in the last dimension. The 0th
-        dimension is the batch size and thus gets reindexed.
+        Here, incremental_state is a dict whose keys are layer indices and whose values
+        are dicts containing the incremental state for that layer.
         """
-        new_incr_state_by_layer = []
-        for idx, layer in enumerate(self.decoder.layers):
-            single_layer_incr_state = {
-                key: val[..., idx] for key, val in incremental_state.items()
-            }
-            # Filter by layer `idx` on the last dimension of the tensor
-            new_incr_state_by_layer.append(
-                layer.reorder_incremental_state(single_layer_incr_state, inds)
-            )
         return {
-            key: torch.stack([i[key] for i in new_incr_state_by_layer], dim=-1)
-            for key in new_incr_state_by_layer[0].keys()
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(self.decoder.layers)
         }
-        # Stack all tensors with the layer idx as the last dimension
 
     def output(self, tensor):
         """
@@ -1390,7 +1289,7 @@ class MultiHeadAttention(nn.Module):
         return out, new_incr_state, dot_prod
 
     def reorder_incremental_state(
-        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
+        self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
         """
         Reorder the input incremental-state tensors.

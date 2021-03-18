@@ -7,7 +7,7 @@ BART Module.
 """
 import torch
 import torch.nn.functional as F
-from typing import Dict
+from typing import Any, Dict, Union, List, Optional
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 
@@ -50,8 +50,10 @@ class BartModel(TransformerGeneratorModel):
         return torch.cat([tens, inputs], 1)
 
     def reorder_decoder_incremental_state(
-        self, incremental_state: Dict[str, torch.Tensor], inds: torch.LongTensor
-    ) -> Dict[str, torch.Tensor]:
+        self,
+        incremental_state: Dict[str, Any],
+        inds: Union[List[int], torch.LongTensor],
+    ) -> Optional[Dict[str, Any]]:
         """
         Incremental state is weird to handle when we seed decoder with two inputs
         initially.
@@ -60,12 +62,14 @@ class BartModel(TransformerGeneratorModel):
         assert incremental_state is not None
         assert len(incremental_state) > 0
 
-        assert 'self_attn_prev_mask' in incremental_state
-        self_attn_mask = incremental_state['self_attn_prev_mask']
-        # check this is on the very first run with incremental state
-        if self_attn_mask.ndim == 4 and tuple(self_attn_mask.shape[1:3]) == (2, 2):
-            # cut off the inappropriate incremental state
-            incremental_state['self_attn_prev_mask'] = self_attn_mask[:, -1:, :, :]
+        for incr_state_l in incremental_state.values():
+            assert 'self_attn' in incr_state_l
+            assert 'prev_mask' in incr_state_l['self_attn']
+            self_attn_mask = incr_state_l['self_attn']['prev_mask']
+            # check this is on the very first run with incremental state
+            if self_attn_mask.ndim == 3 and tuple(self_attn_mask.shape[1:]) == (2, 2):
+                # cut off the inappropriate incremental state
+                incr_state_l['self_attn']['prev_mask'] = self_attn_mask[:, -1:, :]
 
         return super().reorder_decoder_incremental_state(incremental_state, inds)
 
