@@ -20,7 +20,7 @@ from parlai.core.worlds import create_task
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipUnlessFairseq
 @testing_utils.skipUnlessTorch17
 class TestTorchScript(unittest.TestCase):
     def test_token_splitter(self):
