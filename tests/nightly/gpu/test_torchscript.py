@@ -6,6 +6,9 @@
 
 """
 Unit tests for exporting models via TorchScript (i.e. JIT compilation).
+
+These do not require GPUs, but they are in nightly/gpu/ because they load fairseq, which
+only the GPU CI checks install.
 """
 
 import os
